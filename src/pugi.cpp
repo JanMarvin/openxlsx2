@@ -298,84 +298,90 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
   auto ws = doc->child("worksheet").child("sheetData");
   
   size_t n = std::distance(ws.begin(), ws.end());
-  auto itr_rows = 0;
   
   std::string r_str = "r";
   
   Rcpp::List cc(n);
   Rcpp::List row_attributes(n);
-  std::vector<std::string> rownames;
+  Rcpp::CharacterVector rownames(n);
   
   
+  auto itr_rows = 0;
   for (auto worksheet: ws.children("row"))
   {
     size_t k = std::distance(worksheet.begin(), worksheet.end());
-    auto itr_cols = 0;
     
     Rcpp::List cc_r(k);
-    std::vector<std::string> colnames;
+    Rcpp::CharacterVector colnames(k);
     
     
     /* ---------------------------------------------------------------------- */
     /* read cval, and ctyp -------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
-
-    for (auto col : worksheet.children("c"))
-    {
-
-      Rcpp::List cc_cell(3);
-
-
+    
+    auto itr_cols = 0;
+    for (auto col : worksheet.children("c")) {
+      
       auto nn = std::distance(col.children().begin(), col.children().end());
+      auto aa = std::distance(col.attributes_begin(), col.attributes_end());
+      // 2 per default, 3 maximum
+      auto ff = std::distance(col.child("f").attributes_begin(), col.child("f").attributes_end());
       auto tt = nn; if (tt == 0) ++tt;
-
-      Rcpp::List v_c(tt), t_c, a_c;
-      std::vector<std::string> val_name, typ_name, atr_name;
-
-
-      // get r attr e.g. "A1" and return colnames "A"
-      std::string colrow = col.attribute("r").value();
-      // remove numeric from string
-      colrow.erase(std::remove_if(colrow.begin(),
-                                  colrow.end(),
-                                  &isdigit),
-                                  colrow.end());
-      colnames.push_back(colrow);
-
-
+      
+      
+      Rcpp::List cc_cell(2+ff);
+      Rcpp::List v_c(tt), t_c(aa), a_c(ff);
+      Rcpp::CharacterVector val_name(tt), typ_name(aa), atr_name(ff);
+      
+      
       // typ: attribute ------------------------------------------------------
+      auto attr_itr = 0;
       for (auto attr : col.attributes())
       {
-        typ_name.push_back(attr.name());
-        t_c.push_back(attr.value());
+        typ_name[attr_itr] = attr.name();
+        t_c[attr_itr] = attr.value();
+        
+        if (attr.name() == r_str) {
+          // get r attr e.g. "A1" and return colnames "A"
+          std::string colrow = attr.value();
+          // remove numeric from string
+          colrow.erase(std::remove_if(colrow.begin(),
+                                      colrow.end(),
+                                      &isdigit),
+                                      colrow.end());
+          colnames[itr_cols]= colrow;
+        }
+        
+        ++attr_itr;
       }
-
+      
       // val -------------------------------------------------------------------
-
+      
       if (nn > 0) {
         auto val_itr = 0;
         for (auto val: col.children())
         {
-
+          
           std::string val_s = "";
           std::string val_n = "";
-
-
+          
+          auto ff_itr = 0;
+          
           // additional attributes to <f t="shared" ...>
           for (auto cattr : val.attributes())
           {
-            atr_name.push_back(cattr.name());
-            a_c.push_back(cattr.value());
+            atr_name[ff_itr] = cattr.name();
+            a_c[ff_itr] = cattr.value();
+            ++ff_itr;
           }
-
-          if (a_c.length() == 0) {
-            atr_name.push_back("empty");
-            a_c.push_back("empty");
-          }
-
-
+          // 
+          //           if (a_c.length() == 0) {
+          //             atr_name[0] = "empty";
+          //             a_c[0] = "empty";
+          //           }
+          
           val_n = val.name();
-
+          
           // is nodes contain additional t node.
           // TODO: check if multiple t nodes are possible, for now return one.
           if (val.child("t")) {
@@ -384,36 +390,37 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
           } else {
             val_s = val.child_value();
           }
-
-          val_name.push_back(val_n);
+          
+          val_name[val_itr] = val_n;
           v_c[val_itr] = val_s;
           ++val_itr;
         }
-      } else {
-        // write something so that we know its missing, NULL is nasty to handle
-        std::string val_s = "empty";
-        std::string val_n = "empty";
-        val_name.push_back(val_n);
-        v_c[0] = val_s;
-
-        // is empty too
-        atr_name.push_back("empty");
-        a_c.push_back("empty");
+        // } else {
+        //   // write something so that we know its missing, NULL is nasty to handle
+        //   std::string val_s = "empty";
+        //   std::string val_n = "empty";
+        //   val_name[0] = val_n;
+        //   v_c[0] = val_s;
+        //   
+        //   // is empty too
+        //   atr_name[0]  = "empty";
+        //   a_c[0] = "empty";
       }
-
+      
       v_c.attr("names") = val_name;
       t_c.attr("names") = typ_name;
-      a_c.attr("names") = atr_name;
-
+      if(ff >0) a_c.attr("names") = atr_name;
+      
       cc_cell[0] = v_c;
       cc_cell[1] = t_c;
-      cc_cell[2] = a_c;
-
-      std::vector<std::string> cc_cell_nam = {"val", "typ", "attr"};
+      if(ff >0) cc_cell[2] = a_c;
+      
+      Rcpp::CharacterVector cc_cell_nam = {"val", "typ", "attr"};
+      if (ff==0) cc_cell_nam = {"val", "typ"};
       cc_cell.attr("names") = cc_cell_nam;
-
+      
       cc_r[itr_cols] = cc_cell;
-
+      
       /* row is done */
       ++itr_cols;
     }
@@ -421,25 +428,28 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
     /* row attributes ------------------------------------------------------- */
 
-    Rcpp::List row_attr;
-    std::vector<std::string> row_attr_nam;
-
+    auto nn = std::distance(worksheet.attributes_begin(), worksheet.attributes_end());
+    Rcpp::List row_attr(nn);
+    Rcpp::CharacterVector row_attr_nam(nn);
+    
+    auto attr_itr = 0;
     for (auto attr : worksheet.attributes())
     {
-      row_attr_nam.push_back(attr.name());
-      row_attr.push_back(attr.value());
-
+      row_attr_nam[attr_itr] = attr.name();
+      row_attr[attr_itr] = attr.value();
+      ++attr_itr;
+      
       // push row name back (will assign it to list)
       if (attr.name() == r_str)
-        rownames.push_back(attr.value());
-
+        rownames[itr_rows] = attr.value();
+      
     }
     row_attr.attr("names") = row_attr_nam;
-
+    
     row_attributes[itr_rows] = row_attr;
-
+    
     /* ---------------------------------------------------------------------- */
-
+    
     cc_r.attr("names") = colnames;
     cc[itr_rows]  = cc_r;
     
