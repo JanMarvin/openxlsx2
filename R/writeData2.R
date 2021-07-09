@@ -87,7 +87,7 @@ writeData2 <-function(wb, sheet, data,
     
     # rtyp character vector per row 
     # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
-    rtyp <- openxlsx:::dims_to_dataframe(dims, fill = TRUE)
+    rtyp <- dims_to_dataframe(dims, fill = TRUE)
     
     rows_attr <- cols_attr <- cc <- vector("list", data_nrow)
     
@@ -101,7 +101,7 @@ writeData2 <-function(wb, sheet, data,
                                          style="0",
                                          width="9.14"))
     
-    wb$worksheets[[sheetno]]$cols_attr <- openxlsx:::list_to_attr(cols_attr, "col")
+    wb$worksheets[[sheetno]]$cols_attr <- list_to_attr(cols_attr, "col")
     
     
     

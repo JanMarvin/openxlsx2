@@ -203,7 +203,7 @@ wb_to_df <- function(xlsxFile,
     )
     nr$name <- sapply(dn, function(x) getXML1attr_one(x, "definedName", "name"))
     nr$local <- sapply(dn, function(x) ifelse(
-      openxlsx:::getXML1attr_one(x,"definedName", "localSheetId") == "", 0, 1)
+      getXML1attr_one(x,"definedName", "localSheetId") == "", 0, 1)
     )
     nr$sheet <- which(wb$sheet_names %in% nr$sheet)
     
@@ -249,8 +249,8 @@ wb_to_df <- function(xlsxFile,
         wb$styles$cellXfs, 
         FUN= function(x) 
           c(
-            as.numeric(openxlsx:::getXML1attr_one(x, "xf", "numFmtId")),
-            as.numeric(openxlsx:::getXML1attr_one(x, "xf", "applyNumberFormat"))
+            as.numeric(getXML1attr_one(x, "xf", "numFmtId")),
+            as.numeric(getXML1attr_one(x, "xf", "applyNumberFormat"))
           )
       ) 
     )
