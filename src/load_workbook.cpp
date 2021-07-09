@@ -1,4 +1,165 @@
 #include "openxlsx.h"
+#include "openxlsx2_types.h"
+
+
+// loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml, "worksheet", "sheetData", "row", "c")
+// [[Rcpp::export]]
+void loadvals(Rcpp::Reference wb, XPtrXML doc) {
+  
+  auto ws = doc->child("worksheet").child("sheetData");
+  
+  size_t n = std::distance(ws.begin(), ws.end());
+  
+  std::string r_str = "r";
+  
+  Rcpp::List cc(n);
+  Rcpp::List row_attributes(n);
+  Rcpp::CharacterVector rownames(n);
+  
+  
+  auto itr_rows = 0;
+  for (auto worksheet: ws.children("row"))
+  {
+    size_t k = std::distance(worksheet.begin(), worksheet.end());
+    
+    Rcpp::List cc_r(k);
+    Rcpp::CharacterVector colnames(k);
+    
+    
+    /* ---------------------------------------------------------------------- */
+    /* read cval, and ctyp -------------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
+    
+    auto itr_cols = 0;
+    for (auto col : worksheet.children("c")) {
+      
+      auto nn = std::distance(col.children().begin(), col.children().end());
+      auto aa = std::distance(col.attributes_begin(), col.attributes_end());
+      // 2 per default, 3 maximum
+      auto ff = std::distance(col.child("f").attributes_begin(), col.child("f").attributes_end());
+      auto tt = nn; if (tt == 0) ++tt;
+      
+      
+      Rcpp::List cc_cell(2+ff);
+      Rcpp::List v_c(tt), t_c(aa), a_c(ff);
+      Rcpp::CharacterVector val_name(tt), typ_name(aa), atr_name(ff);
+      
+      
+      // typ: attribute ------------------------------------------------------
+      auto attr_itr = 0;
+      for (auto attr : col.attributes())
+      {
+        typ_name[attr_itr] = attr.name();
+        t_c[attr_itr] = attr.value();
+        
+        if (attr.name() == r_str) {
+          // get r attr e.g. "A1" and return colnames "A"
+          std::string colrow = attr.value();
+          // remove numeric from string
+          colrow.erase(std::remove_if(colrow.begin(),
+                                      colrow.end(),
+                                      &isdigit),
+                                      colrow.end());
+          colnames[itr_cols]= colrow;
+        }
+        
+        ++attr_itr;
+      }
+      
+      // val -------------------------------------------------------------------
+      
+      if (nn > 0) {
+        auto val_itr = 0;
+        for (auto val: col.children())
+        {
+          
+          std::string val_s = "";
+          std::string val_n = "";
+          
+          auto ff_itr = 0;
+          
+          // additional attributes to <f t="shared" ...>
+          for (auto cattr : val.attributes())
+          {
+            atr_name[ff_itr] = cattr.name();
+            a_c[ff_itr] = cattr.value();
+            ++ff_itr;
+          }
+          
+          val_n = val.name();
+          
+          // is nodes contain additional t node.
+          // TODO: check if multiple t nodes are possible, for now return one.
+          if (val.child("t")) {
+            pugi::xml_node tval = val.child("t");
+            val_s = tval.child_value();
+          } else {
+            val_s = val.child_value();
+          }
+          
+          val_name[val_itr] = val_n;
+          v_c[val_itr] = val_s;
+          ++val_itr;
+        }
+      }
+      
+      v_c.attr("names") = val_name;
+      t_c.attr("names") = typ_name;
+      if(ff > 0) a_c.attr("names") = atr_name;
+      
+      cc_cell[0] = v_c;
+      cc_cell[1] = t_c;
+      if(ff > 0) cc_cell[2] = a_c;
+      
+      Rcpp::CharacterVector cc_cell_nam = {"val", "typ"};
+      if (ff > 0) cc_cell_nam = {"val", "typ", "attr"};
+      cc_cell.attr("names") = cc_cell_nam;
+      
+      cc_r[itr_cols] = cc_cell;
+      
+      /* row is done */
+      ++itr_cols;
+    }
+    
+    
+    /* row attributes ------------------------------------------------------- */
+    
+    auto nn = std::distance(worksheet.attributes_begin(), worksheet.attributes_end());
+    Rcpp::List row_attr(nn);
+    Rcpp::CharacterVector row_attr_nam(nn);
+    
+    auto attr_itr = 0;
+    for (auto attr : worksheet.attributes())
+    {
+      row_attr_nam[attr_itr] = attr.name();
+      row_attr[attr_itr] = attr.value();
+      ++attr_itr;
+      
+      // push row name back (will assign it to list)
+      if (attr.name() == r_str)
+        rownames[itr_rows] = attr.value();
+      
+    }
+    row_attr.attr("names") = row_attr_nam;
+    
+    row_attributes[itr_rows] = row_attr;
+    
+    /* ---------------------------------------------------------------------- */
+    
+    cc_r.attr("names") = colnames;
+    cc[itr_rows]  = cc_r;
+    
+    ++itr_rows;
+  }
+  
+  row_attributes.attr("names") = rownames;
+  
+  cc.attr("names") = rownames;
+  
+  wb.field("row_attr") = row_attributes;
+  wb.field("cc")  = cc;
+  
+}
 
 
 // [[Rcpp::export]]
