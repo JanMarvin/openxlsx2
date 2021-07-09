@@ -73,6 +73,10 @@ markUTF8 <- function(x, clone) {
     .Call(`_openxlsx2_markUTF8`, x, clone)
 }
 
+loadvals <- function(wb, doc) {
+    invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
+}
+
 getNodes <- function(xml, tagIn) {
     .Call(`_openxlsx2_getNodes`, xml, tagIn)
 }
@@ -143,10 +147,6 @@ getXMLXPtr4val <- function(doc, level1, level2, level3, child) {
 
 getXMLXPtr5val <- function(doc, level1, level2, level3, level4, child) {
     .Call(`_openxlsx2_getXMLXPtr5val`, doc, level1, level2, level3, level4, child)
-}
-
-loadvals <- function(wb, doc) {
-    invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
 }
 
 getXMLXPtr1attr <- function(doc, child) {

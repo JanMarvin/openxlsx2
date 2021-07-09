@@ -18,11 +18,13 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
   
   
   auto itr_rows = 0;
-  for (auto worksheet: ws.children("row"))
-  {
+  for (auto worksheet: ws.children("row")) {
+    
     size_t k = std::distance(worksheet.begin(), worksheet.end());
     
-    Rcpp::List cc_r(k);
+    SET_VECTOR_ELT(cc, itr_rows, Rcpp::List(k));
+    
+    // Rcpp::List cc_r(k);
     Rcpp::CharacterVector colnames(k);
     
     
@@ -39,18 +41,26 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
       auto ff = std::distance(col.child("f").attributes_begin(), col.child("f").attributes_end());
       auto tt = nn; if (tt == 0) ++tt;
       
+      std::vector<std::string> cc_r_nams = {"val", "typ"};
+      if (ff > 0) cc_r_nams = {"val", "typ", "attr"};
       
-      Rcpp::List cc_cell(2+ff);
-      Rcpp::List v_c(tt), t_c(aa), a_c(ff);
+      
+      // cc["1"]["A"] <- list("val" = NULL, "typ" = NULL)
+      SET_VECTOR_ELT(Rcpp::as<Rcpp::List>(cc[itr_rows]), itr_cols, Rcpp::List(Rcpp::no_init(ff+2)));
+      Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols]).attr("names") = cc_r_nams;
+      
+      SET_VECTOR_ELT(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols]), 0, Rcpp::List(Rcpp::no_init(tt)));
+      SET_VECTOR_ELT(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols]), 1, Rcpp::List(Rcpp::no_init(aa)));
+      if(ff > 0) SET_VECTOR_ELT(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols]), 2, Rcpp::List(Rcpp::no_init(ff)));
+      
       Rcpp::CharacterVector val_name(tt), typ_name(aa), atr_name(ff);
       
       
       // typ: attribute ------------------------------------------------------
       auto attr_itr = 0;
-      for (auto attr : col.attributes())
-      {
+      for (auto attr : col.attributes()) {
         typ_name[attr_itr] = attr.name();
-        t_c[attr_itr] = attr.value();
+        Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols])[1])[attr_itr] = attr.value();
         
         if (attr.name() == r_str) {
           // get r attr e.g. "A1" and return colnames "A"
@@ -66,15 +76,13 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
         ++attr_itr;
       }
       
-      // val -------------------------------------------------------------------
+      Rcpp::as<Rcpp::List>(cc[itr_rows]).attr("names") = colnames;
       
+      // val ------------------------------------------------------------------
       if (nn > 0) {
         auto val_itr = 0;
-        for (auto val: col.children())
-        {
+        for (auto val: col.children()) {
           
-          std::string val_s = "";
-          std::string val_n = "";
           
           auto ff_itr = 0;
           
@@ -82,57 +90,48 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
           for (auto cattr : val.attributes())
           {
             atr_name[ff_itr] = cattr.name();
-            a_c[ff_itr] = cattr.value();
+            Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols])[2])[ff_itr] = cattr.value();
+            
             ++ff_itr;
           }
           
-          val_n = val.name();
+          val_name[val_itr] = val.name();
           
           // is nodes contain additional t node.
           // TODO: check if multiple t nodes are possible, for now return one.
           if (val.child("t")) {
-            pugi::xml_node tval = val.child("t");
-            val_s = tval.child_value();
+            Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols])[0])[val_itr] = val.child("t").child_value();
           } else {
-            val_s = val.child_value();
+            Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols])[0])[val_itr] = val.child_value();
           }
           
-          val_name[val_itr] = val_n;
-          v_c[val_itr] = val_s;
           ++val_itr;
         }
+        
+        
+        Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols])[0]).attr("names") = val_name;
+        Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols])[1]).attr("names") = typ_name;
+        if(ff > 0) Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(cc[itr_rows])[itr_cols])[2]).attr("names") = atr_name;
+        
+        /* row is done */
       }
       
-      v_c.attr("names") = val_name;
-      t_c.attr("names") = typ_name;
-      if(ff > 0) a_c.attr("names") = atr_name;
-      
-      cc_cell[0] = v_c;
-      cc_cell[1] = t_c;
-      if(ff > 0) cc_cell[2] = a_c;
-      
-      Rcpp::CharacterVector cc_cell_nam = {"val", "typ"};
-      if (ff > 0) cc_cell_nam = {"val", "typ", "attr"};
-      cc_cell.attr("names") = cc_cell_nam;
-      
-      cc_r[itr_cols] = cc_cell;
-      
-      /* row is done */
       ++itr_cols;
     }
     
     
     /* row attributes ------------------------------------------------------- */
-    
     auto nn = std::distance(worksheet.attributes_begin(), worksheet.attributes_end());
-    Rcpp::List row_attr(nn);
+    
+    SET_VECTOR_ELT(row_attributes, itr_rows, Rcpp::List(Rcpp::no_init(nn)));
+    // Rcpp::List row_attr(nn);
     Rcpp::CharacterVector row_attr_nam(nn);
     
     auto attr_itr = 0;
-    for (auto attr : worksheet.attributes())
-    {
+    for (auto attr : worksheet.attributes()) {
+      
       row_attr_nam[attr_itr] = attr.name();
-      row_attr[attr_itr] = attr.value();
+      Rcpp::as<Rcpp::List>(row_attributes[itr_rows])[attr_itr] = attr.value();
       ++attr_itr;
       
       // push row name back (will assign it to list)
@@ -140,20 +139,15 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
         rownames[itr_rows] = attr.value();
       
     }
-    row_attr.attr("names") = row_attr_nam;
     
-    row_attributes[itr_rows] = row_attr;
+    Rcpp::as<Rcpp::List>(row_attributes[itr_rows]).attr("names") = row_attr_nam;
     
     /* ---------------------------------------------------------------------- */
-    
-    cc_r.attr("names") = colnames;
-    cc[itr_rows]  = cc_r;
     
     ++itr_rows;
   }
   
   row_attributes.attr("names") = rownames;
-  
   cc.attr("names") = rownames;
   
   wb.field("row_attr") = row_attributes;
