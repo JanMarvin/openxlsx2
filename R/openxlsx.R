@@ -3,9 +3,9 @@
 #' openxlsx simplifies the the process of writing and styling Excel xlsx files from R
 #' and removes the dependency on Java.
 #'
-#' @name openxlsx
+#' @name openxlsx2
 #' @docType package
-#' @useDynLib openxlsx, .registration=TRUE
+#' @useDynLib openxlsx2, .registration=TRUE
 #' @importFrom zip zipr
 #' @importFrom utils download.file head menu unzip
 #'

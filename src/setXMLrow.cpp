@@ -1,4 +1,4 @@
-#include "openxlsx_types.h"
+#include "openxlsx2_types.h"
 
 // [[Rcpp::export]]
 std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
