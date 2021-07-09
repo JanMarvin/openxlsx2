@@ -4,17 +4,17 @@
 
 
 
-IntegerVector which_cpp(Rcpp::LogicalVector x) {
-  IntegerVector v = seq(0, x.size() - 1);
+Rcpp::IntegerVector which_cpp(Rcpp::LogicalVector x) {
+  Rcpp::IntegerVector v = Rcpp::seq(0, x.size() - 1);
   return v[x];
 }
 
 
 // [[Rcpp::export]]
-CharacterVector get_shared_strings(std::string xmlFile, bool isFile){
+Rcpp::CharacterVector get_shared_strings(std::string xmlFile, bool isFile){
   
   
-  CharacterVector x;
+  Rcpp::CharacterVector x;
   size_t pos = 0;
   std::string line;
   std::vector<std::string> lines;
@@ -22,7 +22,7 @@ CharacterVector get_shared_strings(std::string xmlFile, bool isFile){
   if(isFile){
     
     // READ IN FILE
-    ifstream file;
+    std::ifstream file;
     file.open(xmlFile.c_str());
     
     
@@ -51,7 +51,7 @@ CharacterVector get_shared_strings(std::string xmlFile, bool isFile){
   
   // define variables for sharedString part
   int n = x.size();
-  CharacterVector strs(n);
+  Rcpp::CharacterVector strs(n);
   std::fill(strs.begin(), strs.end(), NA_STRING);
   
   std::string xml;
@@ -143,11 +143,11 @@ CharacterVector get_shared_strings(std::string xmlFile, bool isFile){
 
 
 // [[Rcpp::export]]
-List getCellInfo(std::string xmlFile,
-                 CharacterVector sharedStrings,
+Rcpp::List getCellInfo(std::string xmlFile,
+                       Rcpp::CharacterVector sharedStrings,
                  bool skipEmptyRows,
                  int startRow,
-                 IntegerVector rows,
+                 Rcpp::IntegerVector rows,
                  bool getDates){
   
   //read in file
@@ -170,14 +170,14 @@ List getCellInfo(std::string xmlFile,
   std::string vtagEnd = "</v>";
   
   std::string cell;
-  List res(6);
+  Rcpp::List res(6);
   
   std::size_t pos = xml.find("<sheetData>");      // find sheetData
   size_t endPos = 0;
   
   // If no data
   if(pos == std::string::npos){ 
-    res = List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
+    res = Rcpp::List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
     return res;
   }
   
@@ -206,7 +206,7 @@ List getCellInfo(std::string xmlFile,
     
     // no rows
     if(pos == std::string::npos){
-      res = List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
+      res = Rcpp::List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
       return res;
     }
     
@@ -216,12 +216,12 @@ List getCellInfo(std::string xmlFile,
   //rows cut off, loop over entire string and only take rows specified in rows vector
   if(!is_na(rows)[0]){
     
-    CharacterVector xml_rows = getNodes(xml, "<row");
+    Rcpp::CharacterVector xml_rows = getNodes(xml, "<row");
     int nr = xml_rows.size();
     
     // no rows
     if(nr == 0){
-      res = List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
+      res = Rcpp::List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
       return res;
     }
     
@@ -264,32 +264,32 @@ List getCellInfo(std::string xmlFile,
   
   // count cells with children
   int ocs = 0;
-  string::size_type start = 0;
-  while((start = xml.find("</v>", start)) != string::npos){
+  std::string::size_type start = 0;
+  while((start = xml.find("</v>", start)) != std::string::npos){
     ++ocs;
     start += 4;
   }
   
   if(ocs == 0){
-    res = List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
+    res = Rcpp::List::create(Rcpp::Named("nRows") = 0, Rcpp::Named("r") = 0);
     return res;
   }
   
   // pull out cell merges
-  CharacterVector merge_cell_xml = getChildlessNode(xml2, "mergeCell");
+  Rcpp::CharacterVector merge_cell_xml = getChildlessNode(xml2, "mergeCell");
   
   
-  CharacterVector r(ocs);
-  CharacterVector t(ocs);
-  CharacterVector v(ocs);
-  CharacterVector string_refs(ocs);
+  Rcpp::CharacterVector r(ocs);
+  Rcpp::CharacterVector t(ocs);
+  Rcpp::CharacterVector v(ocs);
+  Rcpp::CharacterVector string_refs(ocs);
   std::fill(string_refs.begin(), string_refs.end(), NA_STRING);
   
   int s_ocs = 0;
   if(getDates)
     s_ocs = ocs;
   
-  CharacterVector s(s_ocs);
+  Rcpp::CharacterVector s(s_ocs);
   
   std::fill(t.begin(), t.end(), "n");
   std::fill(v.begin(), v.end(), NA_STRING);
@@ -394,7 +394,7 @@ List getCellInfo(std::string xmlFile,
   string_refs = string_refs[!is_na(string_refs)];
   
   int nRows = calc_number_rows(r, skipEmptyRows);
-  res = List::create(Rcpp::Named("r") = r,
+  res = Rcpp::List::create(Rcpp::Named("r") = r,
                      Rcpp::Named("string_refs") = string_refs,
                      Rcpp::Named("v") = v,
                      Rcpp::Named("s") = s,
@@ -417,23 +417,23 @@ List getCellInfo(std::string xmlFile,
 
 
 // [[Rcpp::export]]
-SEXP read_workbook(IntegerVector cols_in,
-                   IntegerVector rows_in,
-                   CharacterVector v,
+SEXP read_workbook(Rcpp::IntegerVector cols_in,
+                   Rcpp::IntegerVector rows_in,
+                   Rcpp::CharacterVector v,
                    
-                   IntegerVector string_inds,
-                   LogicalVector is_date,
+                   Rcpp::IntegerVector string_inds,
+                   Rcpp::LogicalVector is_date,
                    bool hasColNames,
                    char hasSepNames,
                    bool skipEmptyRows,
                    bool skipEmptyCols,
                    int nRows,
-                   Function clean_names
+                   Rcpp::Function clean_names
 ){
   
   
-  IntegerVector cols = clone(cols_in);
-  IntegerVector rows = clone(rows_in);
+  Rcpp::IntegerVector cols = clone(cols_in);
+  Rcpp::IntegerVector rows = clone(rows_in);
   
   int nCells = rows.size();
   int nDates = is_date.size();
@@ -453,14 +453,14 @@ SEXP read_workbook(IntegerVector cols_in,
   }
   
   bool has_strings = true;
-  IntegerVector st_inds0 (1);
+  Rcpp::IntegerVector st_inds0 (1);
   st_inds0[0] = string_inds[0];
   if(is_true(all(is_na(st_inds0))))
     has_strings = false;
   
   
   
-  IntegerVector uni_cols = sort_unique(cols);
+  Rcpp::IntegerVector uni_cols = sort_unique(cols);
   if(!skipEmptyCols){  // want to keep all columns - just create a sequence from 1:max(cols)
     uni_cols = seq(1, max(uni_cols));
     cols = cols - 1;
@@ -472,7 +472,7 @@ SEXP read_workbook(IntegerVector cols_in,
   int nCols = *std::max_element(cols.begin(), cols.end()) + 1;
   
   // scale rows from i:j to 1:(j-i+1)
-  IntegerVector uni_rows = sort_unique(rows);
+  Rcpp::IntegerVector uni_rows = sort_unique(rows);
   
   if(skipEmptyRows){
     rows = match(rows, uni_rows) - 1;
@@ -484,8 +484,8 @@ SEXP read_workbook(IntegerVector cols_in,
   // Check if first row are all strings
   //get first row number
   
-  CharacterVector col_names(nCols);
-  IntegerVector removeFlag;
+  Rcpp::CharacterVector col_names(nCols);
+  Rcpp::IntegerVector removeFlag;
   int pos = 0;
   
   // If we are told col_names exist take the first row and fill any gaps with X.i
@@ -494,10 +494,10 @@ SEXP read_workbook(IntegerVector cols_in,
     int row_1 = rows[0];
     char name[6];
     
-    IntegerVector row1_inds = which_cpp(rows == row_1);
-    IntegerVector header_cols = cols[row1_inds];
-    IntegerVector header_inds = match(seq(0, nCols), na_omit(header_cols));
-    LogicalVector missing_header = is_na(header_inds);
+    Rcpp::IntegerVector row1_inds = which_cpp(rows == row_1);
+    Rcpp::IntegerVector header_cols = cols[row1_inds];
+    Rcpp::IntegerVector header_inds = match(Rcpp::seq(0, nCols), na_omit(header_cols));
+    Rcpp::LogicalVector missing_header = is_na(header_inds);
     
     // looping over each column
     for(unsigned short i=0; i < nCols; i++){
@@ -549,11 +549,11 @@ SEXP read_workbook(IntegerVector cols_in,
     //If nothing left return a data.frame with 0 rows
     if(rows.size() == 0){
       
-      List dfList(nCols);
-      IntegerVector rowNames(0);
+      Rcpp::List dfList(nCols);
+      Rcpp::IntegerVector rowNames(0);
       
       for(int i = 0; i < nCols; i++){
-        dfList[i] = LogicalVector(0); // this is what read.table does (bool type)
+        dfList[i] = Rcpp::LogicalVector(0); // this is what read.table does (bool type)
       }
       
       dfList.attr("names") = col_names;
@@ -626,18 +626,18 @@ SEXP read_workbook(IntegerVector cols_in,
   }else{
     
     // If it contains any strings it will be a character column
-    IntegerVector char_cols_unique;
+    Rcpp::IntegerVector char_cols_unique;
     if(all(is_na(string_inds))){
       char_cols_unique = -1;
     }else{
       
-      IntegerVector columns_which_are_characters = cols[string_inds - 1];
+      Rcpp::IntegerVector columns_which_are_characters = cols[string_inds - 1];
       char_cols_unique = unique(columns_which_are_characters);
       
     }
     
     //date columns
-    IntegerVector date_columns(1);
+    Rcpp::IntegerVector date_columns(1);
     if(has_date){
       
       date_columns = cols[is_date];
@@ -663,7 +663,7 @@ SEXP read_workbook(IntegerVector cols_in,
     
   }
   
-  return wrap(m) ;
+  return Rcpp::wrap(m) ;
   
   
 }
@@ -675,7 +675,7 @@ SEXP read_workbook(IntegerVector cols_in,
 
 
 // [[Rcpp::export]]  
-int calc_number_rows(CharacterVector x, bool skipEmptyRows){
+int calc_number_rows(Rcpp::CharacterVector x, bool skipEmptyRows){
   
   int n = x.size();
   if(n == 0)
@@ -685,7 +685,7 @@ int calc_number_rows(CharacterVector x, bool skipEmptyRows){
   
   if(skipEmptyRows){
     
-    CharacterVector res(n);
+    Rcpp::CharacterVector res(n);
     std::string r;
     for(int i = 0; i < n; i++){
       r = x[i];
@@ -693,13 +693,13 @@ int calc_number_rows(CharacterVector x, bool skipEmptyRows){
       res[i] = r;
     }
     
-    CharacterVector uRes = unique(res);
+    Rcpp::CharacterVector uRes = unique(res);
     nRows = uRes.size();
     
   }else{
     
-    std::string fRef = as<std::string>(x[0]);
-    std::string lRef = as<std::string>(x[n-1]);
+    std::string fRef = Rcpp::as<std::string>(x[0]);
+    std::string lRef = Rcpp::as<std::string>(x[n-1]);
     fRef.erase(std::remove_if(fRef.begin(), fRef.end(), ::isalpha), fRef.end());
     lRef.erase(std::remove_if(lRef.begin(), lRef.end(), ::isalpha), lRef.end());
     int firstRow = atoi(fRef.c_str());

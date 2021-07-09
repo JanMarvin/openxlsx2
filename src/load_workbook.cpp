@@ -10,7 +10,7 @@ SEXP getNodes(std::string xml, std::string tagIn){
   
   
   if(xml.length() == 0)
-    return wrap(NA_STRING);
+    return Rcpp::wrap(NA_STRING);
   
   xml = " " + xml;
   std::vector<std::string> r;
@@ -34,7 +34,7 @@ SEXP getNodes(std::string xml, std::string tagIn){
     
   }  
   
-  CharacterVector out = wrap(r);  
+  Rcpp::CharacterVector out = Rcpp::wrap(r);  
   return markUTF8(out);
 }
 
@@ -43,7 +43,7 @@ SEXP getNodes(std::string xml, std::string tagIn){
 SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_tag){
   
   if(xml.length() == 0)
-    return wrap(NA_STRING);
+    return Rcpp::wrap(NA_STRING);
   
   xml = " " + xml;
   size_t pos = 0;
@@ -66,22 +66,22 @@ SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_
     
   }  
   
-  CharacterVector out = wrap(r);  
+  Rcpp::CharacterVector out = Rcpp::wrap(r);  
   return markUTF8(out);
 }
 
 
 // [[Rcpp::export]]
-SEXP getAttr(CharacterVector x, std::string tag){
+SEXP getAttr(Rcpp::CharacterVector x, std::string tag){
   
   size_t n = x.size();
   size_t k = tag.length();
   
   if(n == 0)
-    return wrap(-1);
+    return Rcpp::wrap(-1);
   
   std::string xml;
-  CharacterVector r(n);
+  Rcpp::CharacterVector r(n);
   size_t pos = 0;
   size_t endPos = 0;
   std::string rtagEnd = "\"";
@@ -132,11 +132,11 @@ std::vector<std::string> getChildlessNode_ss(std::string xml, std::string tag){
 
 
 // [[Rcpp::export]]
-CharacterVector getChildlessNode(std::string xml, std::string tag) {
+Rcpp::CharacterVector getChildlessNode(std::string xml, std::string tag) {
   
   size_t k = tag.length();
   if(xml.length() == 0)
-    return wrap(NA_STRING);
+    return Rcpp::wrap(NA_STRING);
   
   size_t begPos = 0, endPos = 0;
   
@@ -181,19 +181,19 @@ CharacterVector getChildlessNode(std::string xml, std::string tag) {
   }
   
   
-  CharacterVector out = wrap(r);  
+  Rcpp::CharacterVector out = Rcpp::wrap(r);  
   return markUTF8(out);
   
 }
 
 
 // [[Rcpp::export]]
-CharacterVector get_extLst_Major(std::string xml){
+Rcpp::CharacterVector get_extLst_Major(std::string xml){
   
   // find page margin or pagesetup then take the extLst after that
   
   if(xml.length() == 0)
-    return wrap(NA_STRING);
+    return Rcpp::wrap(NA_STRING);
   
   std::vector<std::string> r;
   std::string tagEnd = "</extLst>";
@@ -209,7 +209,7 @@ CharacterVector get_extLst_Major(std::string xml){
     pos = xml.find("</conditionalFormatting>", 0);   
   
   if(pos == std::string::npos)
-    return wrap(NA_STRING);
+    return Rcpp::wrap(NA_STRING);
   
   while(1){
     
@@ -228,7 +228,7 @@ CharacterVector get_extLst_Major(std::string xml){
     
   }
   
-  CharacterVector out = wrap(r);  
+  Rcpp::CharacterVector out = Rcpp::wrap(r);  
   return markUTF8(out);
   
 }
@@ -257,12 +257,12 @@ int cell_ref_to_col( std::string x ){
 
 
 // [[Rcpp::export]]
-CharacterVector int_2_cell_ref(IntegerVector cols){
+Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector cols){
   
   std::vector<std::string> LETTERS = get_letters();
   
   int n = cols.size();  
-  CharacterVector res(n);
+  Rcpp::CharacterVector res(n);
   std::fill(res.begin(), res.end(), NA_STRING);
   
   int x;
@@ -271,9 +271,9 @@ CharacterVector int_2_cell_ref(IntegerVector cols){
   
   for(int i = 0; i < n; i++){
     
-    if(!IntegerVector::is_na(cols[i])){
+    if(!Rcpp::IntegerVector::is_na(cols[i])){
 
-      string columnName;
+      std::string columnName;
       x = cols[i];
       while(x > 0){  
         modulo = (x - 1) % 26;

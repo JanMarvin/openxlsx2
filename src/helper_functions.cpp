@@ -7,22 +7,22 @@
 
 
 // [[Rcpp::export]]
-SEXP calc_column_widths(Reference sheet_data
+SEXP calc_column_widths(Rcpp::Reference sheet_data
                           , std::vector<std::string> sharedStrings
-                          , IntegerVector autoColumns
-                          , NumericVector widths
+                          , Rcpp::IntegerVector autoColumns
+                          , Rcpp::NumericVector widths
                           , float baseFontCharWidth
                           , float minW
                           , float maxW){
   
   
   int n = sheet_data.field("n_elements");
-  IntegerVector cell_types = sheet_data.field("t");
-  StringVector cell_values(sheet_data.field("v"));
-  IntegerVector cell_cols = sheet_data.field("cols");
+  Rcpp::IntegerVector cell_types = sheet_data.field("t");
+  Rcpp::StringVector cell_values(sheet_data.field("v"));
+  Rcpp::IntegerVector cell_cols = sheet_data.field("cols");
   
-  NumericVector cell_n_character(n);
-  CharacterVector r(n);
+  Rcpp::NumericVector cell_n_character(n);
+  Rcpp::CharacterVector r(n);
   int nLen;
   
   std::string tmp;
@@ -35,7 +35,7 @@ SEXP calc_column_widths(Reference sheet_data
     }else{
       tmp = cell_values[i];
       nLen = tmp.length();
-      cell_n_character[i] = min(nLen, 11); // For numerics - max width is 11
+      cell_n_character[i] = std::min(nLen, 11); // For numerics - max width is 11
     }
     
   }
@@ -44,20 +44,20 @@ SEXP calc_column_widths(Reference sheet_data
   // get column for each value
 
   // reducing to only the columns that are auto
-  LogicalVector notNA = !is_na(match(cell_cols, autoColumns));
+  Rcpp::LogicalVector notNA = !is_na(match(cell_cols, autoColumns));
   cell_cols = cell_cols[notNA];
   cell_n_character = cell_n_character[notNA];
   widths = widths[notNA];
-  IntegerVector unique_cell_cols = sort_unique(cell_cols);
+  Rcpp::IntegerVector unique_cell_cols = sort_unique(cell_cols);
   
   size_t k = unique_cell_cols.size();
-  NumericVector column_widths(k);
+  Rcpp::NumericVector column_widths(k);
 
   
   // for each unique column, get all widths for that column and take max
   for(size_t i = 0; i < k; i++){
-    NumericVector wTmp = cell_n_character[cell_cols == unique_cell_cols[i]];
-    NumericVector thisColWidths = widths[cell_cols == unique_cell_cols[i]];
+    Rcpp::NumericVector wTmp = cell_n_character[cell_cols == unique_cell_cols[i]];
+    Rcpp::NumericVector thisColWidths = widths[cell_cols == unique_cell_cols[i]];
     column_widths[i] = max(wTmp * thisColWidths / baseFontCharWidth); 
   }
   
@@ -76,16 +76,16 @@ SEXP calc_column_widths(Reference sheet_data
 
 
 // [[Rcpp::export]]
-SEXP convert_to_excel_ref(IntegerVector cols, std::vector<std::string> LETTERS){
+SEXP convert_to_excel_ref(Rcpp::IntegerVector cols, std::vector<std::string> LETTERS){
   
   int n = cols.size();  
-  CharacterVector res(n);
+  Rcpp::CharacterVector res(n);
   
   int x;
   int modulo;
   for(int i = 0; i < n; i++){
     x = cols[i];
-    string columnName;
+    std::string columnName;
     
     while(x > 0){  
       modulo = (x - 1) % 26;
@@ -100,16 +100,16 @@ SEXP convert_to_excel_ref(IntegerVector cols, std::vector<std::string> LETTERS){
 }
 
 // [[Rcpp::export]]
-IntegerVector convert_from_excel_ref( CharacterVector x ){
+Rcpp::IntegerVector convert_from_excel_ref( Rcpp::CharacterVector x ){
   
   // This function converts the Excel column letter to an integer
   
-  std::vector<std::string> r = as<std::vector<std::string> >(x);
+  std::vector<std::string> r = Rcpp::as<std::vector<std::string> >(x);
   int n = r.size();
   int k;
   
   std::string a;
-  IntegerVector colNums(n);
+  Rcpp::IntegerVector colNums(n);
   char A = 'A';
   int aVal = (int)A - 1;
   
@@ -150,7 +150,7 @@ SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector
   size_t modulo;
   for(int i = 0; i < n; i++){
     x = cols[i];
-    string columnName;
+    std::string columnName;
     
     while(x > 0){  
       modulo = (x - 1) % 26;
@@ -160,8 +160,8 @@ SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector
     res[i] = columnName;
   }
   
-  CharacterVector r(n*nRows);
-  CharacterVector names(n*nRows);
+  Rcpp::CharacterVector r(n*nRows);
+  Rcpp::CharacterVector names(n*nRows);
   size_t c = 0;
   for(int i=0; i < nRows; i++)
     for(int j=0; j < n; j++){
@@ -178,13 +178,13 @@ SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector
 
 
 // [[Rcpp::export]]
-LogicalVector isInternalHyperlink(CharacterVector x){
+Rcpp::LogicalVector isInternalHyperlink(Rcpp::CharacterVector x){
   
   int n = x.size();
   std::string xml;
   std::string tag = "r:id=";
   size_t found;
-  LogicalVector isInternal(n);
+  Rcpp::LogicalVector isInternal(n);
   
   for(int i = 0; i < n; i++){ 
     
@@ -205,10 +205,10 @@ LogicalVector isInternalHyperlink(CharacterVector x){
 }
 
 
-string itos(int i){
+std::string itos(int i){
   
   // convert int to string
-  stringstream s;
+  std::stringstream s;
   s << i;
   return s.str();
   
@@ -238,7 +238,7 @@ std::string cppReadFile(std::string xmlFile){
   
   std::string buf;
   std::string xml;
-  ifstream file;
+  std::ifstream file;
   file.open(xmlFile.c_str());
   
   while (file >> buf)
@@ -252,7 +252,7 @@ std::string cppReadFile(std::string xmlFile){
 // [[Rcpp::export]]
 std::string read_file_newline(std::string xmlFile){
   
-  ifstream file;
+  std::ifstream file;
   file.open(xmlFile.c_str());
   std::vector<std::string> lines;
   
@@ -315,8 +315,8 @@ std::vector<std::string> get_letters(){
 
 
 // [[Rcpp::export]]
-CharacterVector markUTF8(CharacterVector x, bool clone) {
-  CharacterVector out;
+Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone) {
+  Rcpp::CharacterVector out;
   if (clone) {
     out = Rcpp::clone(x);
   } else {

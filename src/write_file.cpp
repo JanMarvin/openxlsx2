@@ -6,11 +6,11 @@
 // [[Rcpp::export]]
 SEXP write_worksheet_xml_2( std::string prior,
                             std::string post, 
-                            Reference sheet_data,
+                            Rcpp::Reference sheet_data,
                             Rcpp::CharacterVector cols_attr,
                             Rcpp::List rows_attr,
-                            Nullable<CharacterVector> row_heights_ = R_NilValue,
-                            Nullable<CharacterVector> outline_levels_ = R_NilValue,
+                            Rcpp::Nullable<Rcpp::CharacterVector> row_heights_ = R_NilValue,
+                            Rcpp::Nullable<Rcpp::CharacterVector> outline_levels_ = R_NilValue,
                             std::string R_fileName = "output"){
   
   
@@ -24,7 +24,7 @@ SEXP write_worksheet_xml_2( std::string prior,
   
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_2_cell_ref(sheet_data.field("cols"));
-  List cc = sheet_data.field("cc");
+  Rcpp::List cc = sheet_data.field("cc");
   
   xmlFile << "<sheetData>";
   
@@ -41,7 +41,7 @@ SEXP write_worksheet_xml_2( std::string prior,
   //close file
   xmlFile.close();
   
-  return wrap(0);
+  return Rcpp::wrap(0);
   
 }
 
@@ -57,10 +57,10 @@ SEXP write_worksheet_xml_2( std::string prior,
 
 
 // [[Rcpp::export]]
-SEXP buildMatrixNumeric(CharacterVector v, IntegerVector rowInd, IntegerVector colInd,
-                        CharacterVector colNames, int nRows, int nCols){
+SEXP buildMatrixNumeric(Rcpp::CharacterVector v, Rcpp::IntegerVector rowInd, Rcpp::IntegerVector colInd,
+                        Rcpp::CharacterVector colNames, int nRows, int nCols){
   
-  LogicalVector isNA_element = is_na(v);
+  Rcpp::LogicalVector isNA_element = is_na(v);
   if(is_true(any(isNA_element))){
     
     v = v[!isNA_element];
@@ -70,15 +70,15 @@ SEXP buildMatrixNumeric(CharacterVector v, IntegerVector rowInd, IntegerVector c
   }
   
   int k = v.size();
-  NumericMatrix m(nRows, nCols);
+  Rcpp::NumericMatrix m(nRows, nCols);
   std::fill(m.begin(), m.end(), NA_REAL);
   
   for(int i = 0; i < k; i++)
     m(rowInd[i], colInd[i]) = atof(v[i]);
   
-  List dfList(nCols);
+  Rcpp::List dfList(nCols);
   for(int i=0; i < nCols; ++i)
-    dfList[i] = m(_,i);
+    dfList[i] = m(Rcpp::_,i);
   
   std::vector<int> rowNames(nRows);
   for(int i = 0;i < nRows; ++i)
@@ -97,14 +97,14 @@ SEXP buildMatrixNumeric(CharacterVector v, IntegerVector rowInd, IntegerVector c
 
 
 // [[Rcpp::export]]
-SEXP buildMatrixMixed(CharacterVector v,
-                      IntegerVector rowInd,
-                      IntegerVector colInd,
-                      CharacterVector colNames,
+SEXP buildMatrixMixed(Rcpp::CharacterVector v,
+                      Rcpp::IntegerVector rowInd,
+                      Rcpp::IntegerVector colInd,
+                      Rcpp::CharacterVector colNames,
                       int nRows,
                       int nCols,
-                      IntegerVector charCols,
-                      IntegerVector dateCols){
+                      Rcpp::IntegerVector charCols,
+                      Rcpp::IntegerVector dateCols){
   
   
   /* List d(10);
@@ -125,7 +125,7 @@ SEXP buildMatrixMixed(CharacterVector v,
   std::string dt_str;
   
   // create and fill matrix
-  CharacterMatrix m(nRows, nCols);
+  Rcpp::CharacterMatrix m(nRows, nCols);
   std::fill(m.begin(), m.end(), NA_STRING);
   
   for(int i = 0;i < k; i++)
@@ -134,18 +134,18 @@ SEXP buildMatrixMixed(CharacterVector v,
   
   
   // this will be the return data.frame
-  List dfList(nCols); 
+  Rcpp::List dfList(nCols); 
   
   
   // loop over each column and check type
   for(int i = 0; i < nCols; i++){
     
-    CharacterVector tmp(nRows);
+    Rcpp::CharacterVector tmp(nRows);
     
     for(int ri = 0; ri < nRows; ri++)
       tmp[ri] = m(ri,i);
     
-    LogicalVector notNAElements = !is_na(tmp);
+    Rcpp::LogicalVector notNAElements = !is_na(tmp);
     
     
     // If column is date class and no strings exist in column
@@ -154,7 +154,7 @@ SEXP buildMatrixMixed(CharacterVector v,
       
       // these are all dates and no characters --> safe to convert numerics
       
-      DateVector datetmp(nRows);
+      Rcpp::DateVector datetmp(nRows);
       for(int ri=0; ri < nRows; ri++){
         if(!notNAElements[ri]){
           datetmp[ri] = NA_REAL; //IF TRUE, TRUE else FALSE
@@ -186,7 +186,7 @@ SEXP buildMatrixMixed(CharacterVector v,
       
       if(logCol){
         
-        LogicalVector logtmp(nRows);
+        Rcpp::LogicalVector logtmp(nRows);
         for(int ri=0; ri < nRows; ri++){
           if(!notNAElements[ri]){
             logtmp[ri] = NA_LOGICAL; //IF TRUE, TRUE else FALSE
@@ -205,7 +205,7 @@ SEXP buildMatrixMixed(CharacterVector v,
       
     }else{ // else if column NOT character class (thus numeric)
       
-      NumericVector ntmp(nRows);
+      Rcpp::NumericVector ntmp(nRows);
       for(int ri = 0; ri < nRows; ri++){
         if(notNAElements[ri]){
           ntmp[ri] = atof(m(ri, i)); 
@@ -234,11 +234,11 @@ SEXP buildMatrixMixed(CharacterVector v,
 
 
 // [[Rcpp::export]]
-IntegerVector matrixRowInds(IntegerVector indices) {
+Rcpp::IntegerVector matrixRowInds(Rcpp::IntegerVector indices) {
   
   int n = indices.size();
-  LogicalVector notDup = !duplicated(indices);
-  IntegerVector res(n);
+  Rcpp::LogicalVector notDup = !duplicated(indices);
+  Rcpp::IntegerVector res(n);
   
   int j = -1;
   for(int i =0; i < n; i ++){
@@ -256,7 +256,7 @@ IntegerVector matrixRowInds(IntegerVector indices) {
 
 
 // [[Rcpp::export]]
-CharacterVector build_table_xml(std::string table, std::string tableStyleXML, std::string ref, std::vector<std::string> colNames, bool showColNames, bool withFilter){
+Rcpp::CharacterVector build_table_xml(std::string table, std::string tableStyleXML, std::string ref, std::vector<std::string> colNames, bool showColNames, bool withFilter){
   
   int n = colNames.size();
   std::string tableCols;
@@ -275,7 +275,7 @@ CharacterVector build_table_xml(std::string table, std::string tableStyleXML, st
   table = table + tableCols + tableStyleXML + "</table>";
   
   
-  CharacterVector out = wrap(table);  
+  Rcpp::CharacterVector out = Rcpp::wrap(table);  
   return markUTF8(out);
   
 }
