@@ -19,18 +19,27 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     
     Rcpp::List cll = cells[i];
     // Rf_PrintValue(cll);
-
-    Rcpp::List cell_atr = cll["typ"];
-    Rcpp::List cell_val = cll["val"];
-    Rcpp::List attr_val = cll["attr"];
+    
+    Rcpp::List cell_atr, cell_val, attr_val;
+    std::vector<std::string> cell_atr_names, cell_val_names, attr_val_names;
+    
+    // Every cell consists of a typ and a val list. Certain functions have an
+    // additional attr list.
+    cell_atr = cll["typ"];
+    cell_atr_names = Rcpp::as<std::vector<std::string>>(cell_atr.names());
+    
+    cell_val = cll["val"];
+    cell_val_names = Rcpp::as<std::vector<std::string>>(cell_val.names());
+    
+    if (cll.size() == 3) {
+      attr_val = cll["attr"];
+      attr_val_names = Rcpp::as<std::vector<std::string>>(attr_val.names());
+    }
     
     // Rf_PrintValue(cell_atr);
     // Rf_PrintValue(cell_val);
     // Rf_PrintValue(attr_val);
     
-    std::vector<std::string> cell_atr_names = cell_atr.names();
-    std::vector<std::string> cell_val_names = cell_val.names();
-    std::vector<std::string> attr_val_names = attr_val.names();
     // append attributes <c r="A1" ...>
     for (auto j = 0; j < cell_atr.length(); ++j) {
       std::string c = cell_atr[j];
