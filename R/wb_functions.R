@@ -8,6 +8,9 @@
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
   
+  if(!grepl(":", dims))
+    dims <- paste0(dims, ":", dims)
+  
   dimensions <- strsplit(dims, ":")
   rows <- as.numeric(gsub("[[:upper:]]","", dimensions[[1]]))
   cols <- gsub("[[:digit:]]","", dimensions[[1]])
@@ -54,7 +57,7 @@ get_row_names <- function(rtyp) {
 guess_col_type <- function(tt) {
   
   # everythings character
-  types <- vector("numeric", ncol(tt))
+  types <- vector("numeric", NCOL(tt))
   names(types) <- names(tt)
   
   # but some values are numerics
