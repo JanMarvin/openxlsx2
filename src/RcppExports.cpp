@@ -75,9 +75,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// getXML3value
-SEXP getXML3value(std::string str, std::string level1, std::string level2, std::string child);
-RcppExport SEXP _openxlsx2_getXML3value(SEXP strSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP childSEXP) {
+// getXML3val
+SEXP getXML3val(std::string str, std::string level1, std::string level2, std::string child);
+RcppExport SEXP _openxlsx2_getXML3val(SEXP strSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP childSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,7 +85,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
     Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
     Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML3value(str, level1, level2, child));
+    rcpp_result_gen = Rcpp::wrap(getXML3val(str, level1, level2, child));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -493,7 +493,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // getXMLXPtr2attr
-SEXP getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child);
+Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child);
 RcppExport SEXP _openxlsx2_getXMLXPtr2attr(SEXP docSEXP, SEXP level1SEXP, SEXP childSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -520,7 +520,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // getXMLXPtr4attr
-SEXP getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child);
+Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child);
 RcppExport SEXP _openxlsx2_getXMLXPtr4attr(SEXP docSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP level3SEXP, SEXP childSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -896,7 +896,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXML2", (DL_FUNC) &_openxlsx2_getXML2, 3},
     {"_openxlsx2_getXML2val", (DL_FUNC) &_openxlsx2_getXML2val, 3},
     {"_openxlsx2_getXML3", (DL_FUNC) &_openxlsx2_getXML3, 4},
-    {"_openxlsx2_getXML3value", (DL_FUNC) &_openxlsx2_getXML3value, 4},
+    {"_openxlsx2_getXML3val", (DL_FUNC) &_openxlsx2_getXML3val, 4},
     {"_openxlsx2_getXMLattr", (DL_FUNC) &_openxlsx2_getXMLattr, 2},
     {"_openxlsx2_getXML1attr_one", (DL_FUNC) &_openxlsx2_getXML1attr_one, 3},
     {"_openxlsx2_calc_column_widths", (DL_FUNC) &_openxlsx2_calc_column_widths, 7},

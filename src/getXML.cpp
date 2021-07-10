@@ -119,7 +119,7 @@ SEXP getXML3(std::string str, std::string level1, std::string level2, std::strin
 }
 
 // [[Rcpp::export]]
-SEXP getXML3value(std::string str, std::string level1, std::string level2, std::string child) {
+SEXP getXML3val(std::string str, std::string level1, std::string level2, std::string child) {
   
   pugi::xml_document doc;
   pugi::xml_parse_result result = doc.load_string(str.c_str());

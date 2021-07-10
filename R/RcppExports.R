@@ -21,8 +21,8 @@ getXML3 <- function(str, level1, level2, child) {
     .Call(`_openxlsx2_getXML3`, str, level1, level2, child)
 }
 
-getXML3value <- function(str, level1, level2, child) {
-    .Call(`_openxlsx2_getXML3value`, str, level1, level2, child)
+getXML3val <- function(str, level1, level2, child) {
+    .Call(`_openxlsx2_getXML3val`, str, level1, level2, child)
 }
 
 getXMLattr <- function(strs, child) {

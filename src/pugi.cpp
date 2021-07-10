@@ -302,9 +302,7 @@ SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
   Rcpp::List z(n);
   
   auto itr = 0;
-  for (worksheet = doc->child(child.c_str());
-       worksheet;
-       worksheet = worksheet.next_sibling(child.c_str()))
+  for (auto ws : worksheet.children())
   {
     
     Rcpp::CharacterVector res;
@@ -321,76 +319,79 @@ SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
     // assign names
     res.attr("names") = nam;
     
-    z.push_back(res);
+    z[itr] = res;
+    ++itr;
   }
   
   return  Rcpp::wrap(z);
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child) {
+Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child) {
   
-  
-  pugi::xml_node worksheet = doc->child(level1.c_str()).child(child.c_str());
-  size_t n = std::distance(worksheet.begin(), worksheet.end());
-  
+  auto worksheet = doc->child(level1.c_str()).children(child.c_str());
+  auto n = std::distance(worksheet.begin() , worksheet.end());
   Rcpp::List z(n);
   
   auto itr = 0;
-  for (worksheet = doc->child(level1.c_str()).child(child.c_str());
-       worksheet;
-       worksheet = worksheet.next_sibling(child.c_str()))
+  for (auto ws : doc->child(level1.c_str()).children(child.c_str()))
   {
     
-    Rcpp::List res;
-    std::vector<std::string> nam;
+    auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
     
-    for (pugi::xml_attribute attr = worksheet.first_attribute();
-         attr;
-         attr = attr.next_attribute())
+    Rcpp::List res(n);
+    Rcpp::CharacterVector nam(n);
+    
+    auto attr_itr = 0;
+    for (auto attr : ws.attributes())
     {
-      nam.push_back(attr.name());
-      res.push_back(attr.value());
+      nam[attr_itr] = attr.name();
+      res[attr_itr] = attr.value();
+      ++attr_itr;
     }
     
     // assign names
     res.attr("names") = nam;
     
-    z.push_back(res);
+    z[itr] = res;
+    ++itr;
   }
   
-  return  Rcpp::wrap(z);
+  return z;
 }
 
 // [[Rcpp::export]]
 SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::string child) {
   
+  auto worksheet = doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str());
+  auto n = std::distance(worksheet.begin(), worksheet.end());
+  Rcpp::List z(n);
   
-  Rcpp::List z;
-  
-  for (pugi::xml_node worksheet = doc->child(level1.c_str()).child(level2.c_str()).child(child.c_str());
-       worksheet;
-       worksheet = worksheet.next_sibling(child.c_str()))
+  auto itr = 0;
+  for (auto ws : doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str()))
   {
     
-    Rcpp::List res;
-    std::vector<std::string> nam;
+    auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
     
-    for (pugi::xml_attribute attr = worksheet.first_attribute();
-         attr;
-         attr = attr.next_attribute())
+    Rcpp::List res(n);
+    Rcpp::CharacterVector nam(n);
+    
+    auto attr_itr = 0;
+    for (auto attr : ws.attributes())
     {
-      nam.push_back(attr.name());
-      res.push_back(attr.value());
+      nam[attr_itr] = attr.name();
+      res[attr_itr] = attr.value();
+      ++attr_itr;
     }
     
     // assign names
     res.attr("names") = nam;
     
-    z.push_back(res);
+    z[itr] = res;
+    ++itr;
   }
   
-  return  Rcpp::wrap(z);
+  return z;
 }
 
 
@@ -407,53 +408,47 @@ SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::s
 //  </sheetData>
 //</worksheet>
 // [[Rcpp::export]]
-SEXP getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child) {
+Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child) {
   
-  auto rows = doc->child(level1.c_str()).child(level2.c_str());
-  size_t n = std::distance(rows.begin(), rows.end());
-  auto itr_rows = 0;
+  auto worksheet = doc->child(level1.c_str()).child(level2.c_str());
+  
+  size_t n = std::distance(worksheet.begin(), worksheet.end());
   Rcpp::List z(n);
+  auto itr_rows = 0;
   
-  for (pugi::xml_node worksheet = doc->child(level1.c_str()).child(level2.c_str()).child(level3.c_str());
-       worksheet;
-       worksheet = worksheet.next_sibling(level3.c_str()))
+  for (auto ws : worksheet.children(level3.c_str()))
   {
-    size_t k = std::distance(worksheet.begin(), worksheet.end());
+    size_t k = std::distance(ws.begin(), ws.end());
     auto itr_cols = 0;
     Rcpp::List y(k);
     
-    for (pugi::xml_node row = worksheet.child(child.c_str());
-         row;
-         row = row.next_sibling(child.c_str()))
+    for (auto row : ws.children(child.c_str()))
     {
-      
-      Rcpp::List res;
-      std::vector<std::string> nam;
-      
-      for (pugi::xml_attribute attr = row.first_attribute();
-           attr;
-           attr = attr.next_attribute())
-      {
-        if (attr.value() != NULL) {
-          nam.push_back(attr.name());
-          res.push_back(attr.value());
-        } else {
-          res.push_back("");
+      size_t j = std::distance(row.attributes_begin(), row.attributes_end());
+        Rcpp::List res(j);
+        auto attr_itr = 0;
+        
+        Rcpp::CharacterVector nam(j);
+        
+        for (auto attr : row.attributes())
+        {
+          nam[attr_itr] = attr.name();
+          res[attr_itr] = attr.value();
+          ++attr_itr;
         }
-      }
-      
-      // assign names
-      res.attr("names") = nam;
-      
-      y[itr_cols] = res;
-      ++itr_cols;
+        
+        // assign names
+        res.attr("names") = nam;
+        
+        y[itr_cols] = res;
+        ++itr_cols;
     }
     
     z[itr_rows] = y;
     ++itr_rows;
   }
   
-  return  Rcpp::wrap(z);
+  return z;
 }
 
 // nested list below level 3. eg:
@@ -477,58 +472,46 @@ SEXP getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, std::s
 // [[Rcpp::export]]
 SEXP getXMLXPtr5attr(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string level4, std::string child) {
   
-  auto worksheet = doc->child(level1.c_str()).child(level2.c_str());
-  size_t n = std::distance(worksheet.begin(), worksheet.end());
-  auto itr_cols = 0; // rows
-  Rcpp::List z(n);
+  auto rows = doc->child(level1.c_str()).child(level2.c_str()).child(level3.c_str());
   
-  for (pugi::xml_node worksheet = doc->child(level1.c_str()).child(level2.c_str()).child(level3.c_str());
-       worksheet;
-       worksheet = worksheet.next_sibling(level3.c_str()))
+  size_t n = std::distance(rows.begin(), rows.end());
+  Rcpp::List z(n);
+  auto itr_rows = 0;
+  
+  for (auto ws : doc->child(level1.c_str()).child(level2.c_str()).child(level3.c_str()).children(level4.c_str()))
   {
-    
-    size_t k = std::distance(worksheet.begin(), worksheet.end());
-    auto itr_rows = 0; // cols
+    size_t k = std::distance(ws.begin(), ws.end());
     Rcpp::List y(k);
+    auto itr_cols = 0;
     
-    for (pugi::xml_node row = worksheet.child(level4.c_str());
-         row;
-         row = row.next_sibling(level4.c_str()))
+    for (auto row : ws.children(child.c_str()))
     {
-      Rcpp::List x;
+      size_t j = std::distance(row.begin(), row.end());
+      Rcpp::List res(j);
+      auto attr_itr = 0;
       
-      for (pugi::xml_node col = row.child(child.c_str());
-           col;
-           col = col.next_sibling(child.c_str()))
+      Rcpp::CharacterVector nam(j);
+      
+      for (auto attr : row.attributes())
       {
-        
-        Rcpp::List res;
-        std::vector<std::string> nam;
-        
-        for (pugi::xml_attribute attr = col.first_attribute();
-             attr;
-             attr = attr.next_attribute())
-        {
-          if (attr.value() != NULL) {
-            nam.push_back(attr.name());
-            res.push_back(attr.value());
-          } else {
-            res.push_back("");
-          }
+        if (attr.value() != NULL) {
+          nam[attr_itr] = attr.name();
+          res[attr_itr] = attr.value();
+        } else {
+          res[attr_itr] = "";
         }
-        
-        // assign names
-        res.attr("names") = nam;
-        
-        x.push_back(res);
+        ++attr_itr;
       }
       
-      y[itr_rows] = x;
-      ++itr_rows;
+      // assign names
+      res.attr("names") = nam;
+      
+      y[itr_cols] = res;
+      ++itr_cols;
     }
     
-    z[itr_cols] = y;
-    ++itr_cols;
+    z[itr_rows] = y;
+    ++itr_rows;
   }
   
   return  Rcpp::wrap(z);
