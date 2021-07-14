@@ -240,6 +240,7 @@ wb_to_df <- function(xlsxFile,
                             "ref")
   
   cc  <- wb$worksheets[[sheet]]$sheet_data$cc
+  sst <- attr(wb$sharedStrings, "text")
   
   rnams <- names(cc)
   
@@ -316,7 +317,7 @@ wb_to_df <- function(xlsxFile,
           
           # sharedString: string
           if (this_ttyp == "s") {
-            val$v <- wb$sharedStrings[as.numeric(val$v)+1]
+            val$v <- sst[as.numeric(val$v)+1]
             
             tt[[col]][rownames(tt) == row]  <- "s"
           }
@@ -389,8 +390,8 @@ wb_to_df <- function(xlsxFile,
     colnames(z)  <- z[1,]
     colnames(tt) <- z[1,]
     
-    z  <- z[-1, ]
-    tt <- tt[-1, ]
+    z  <- z[-1, , drop = FALSE]
+    tt <- tt[-1, , drop = FALSE]
   }
   
   if (rowNames) {

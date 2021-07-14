@@ -197,6 +197,41 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
   
 }
 
+// [[Rcpp::export]]
+SEXP si_to_txt(XPtrXML doc) {
+  
+  auto sst = doc->child("sst");
+  auto n = std::distance(sst.begin(), sst.end());
+  
+  Rcpp::CharacterVector res(n);
+  
+  auto i = 0;
+  for (auto si : doc->child("sst").children("si"))
+  {
+    // text to export
+    std::string text = "";
+    
+    // has only t node
+    for (auto t : si.children("t")) {
+      text = t.child_value();
+    }
+    
+    // has r node with t node
+    // linebreaks and spaces are handled in the nodes
+    for (auto r : si.children("r")) {
+      for (auto t :r.children("t")) {
+        text += t.child_value();
+      }
+    }
+    
+    // push everything back
+    res[i] = text;
+    ++i;
+  }
+  
+  return res;
+}
+
 
 // [[Rcpp::export]]
 SEXP getNodes(std::string xml, std::string tagIn){

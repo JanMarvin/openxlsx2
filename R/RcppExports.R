@@ -77,6 +77,10 @@ loadvals <- function(wb, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
 }
 
+si_to_txt <- function(doc) {
+    .Call(`_openxlsx2_si_to_txt`, doc)
+}
+
 getNodes <- function(xml, tagIn) {
     .Call(`_openxlsx2_getNodes`, xml, tagIn)
 }
