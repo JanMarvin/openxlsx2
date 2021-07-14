@@ -246,6 +246,8 @@ wb_to_df <- function(xlsxFile,
   
   
   # internet says: numFmtId > 0 and applyNumberFormat == 1
+  # https://stackoverflow.com/a/5251032/12340029
+  # standard date 14 - 22 || formatted date 165 - 180 & applyNumberFormat
   sd <- as.data.frame(
     do.call(
       "rbind",
@@ -263,7 +265,8 @@ wb_to_df <- function(xlsxFile,
   
   sd$id <- seq_len(nrow(sd))-1
   sd$isdate <- 0
-  sd$isdate[sd$numFmtId > 0 &
+  sd$isdate[(sd$numFmtId >= 14 & sd$numFmtId <= 22)] <- 1
+  sd$isdate[(sd$numFmtId >= 165 & sd$numFmtId <= 180) &
               sd$applyNumberFormat == 1] <- 1
   
   xlsx_date_style <- sd$id[sd$isdate == 1]
