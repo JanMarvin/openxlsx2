@@ -58,9 +58,9 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
       
     }
     if(!has_rowname) {
-      for (auto i = 1; i <= n; ++i) {
-        buffer = std::to_string(i);
-        SET_STRING_ELT(rownames, itr_rows, Rf_mkChar(buffer.c_str()));
+      for (auto i = 0; i < n; ++i) {
+        buffer = std::to_string(i+1);
+        SET_STRING_ELT(rownames, i, Rf_mkChar(buffer.c_str()));
       }
     }
 
