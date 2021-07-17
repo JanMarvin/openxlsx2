@@ -247,7 +247,7 @@ wb_to_df <- function(xlsxFile,
   
   # internet says: numFmtId > 0 and applyNumberFormat == 1
   # https://stackoverflow.com/a/5251032/12340029
-  # standard date 14 - 22 || formatted date 165 - 180 & applyNumberFormat
+  # standard date 14 - 22 || formatted date 164 - 180 & applyNumberFormat
   sd <- as.data.frame(
     do.call(
       "rbind",
@@ -266,7 +266,7 @@ wb_to_df <- function(xlsxFile,
   sd$id <- seq_len(nrow(sd))-1
   sd$isdate <- 0
   sd$isdate[(sd$numFmtId >= 14 & sd$numFmtId <= 22)] <- 1
-  sd$isdate[(sd$numFmtId >= 165 & sd$numFmtId <= 180) &
+  sd$isdate[(sd$numFmtId >= 164 & sd$numFmtId <= 180) &
               sd$applyNumberFormat == 1] <- 1
   
   xlsx_date_style <- sd$id[sd$isdate == 1]
@@ -363,9 +363,14 @@ wb_to_df <- function(xlsxFile,
         # dates
         if (!is.null(this_styp)) {
           
+          # if a cell is t="s" the content is a sst and not da date
+          is_string <- FALSE
+          if (!is.null(this_ttyp))
+            is_string <- this_ttyp %in% c("s", "str", "b", "inlineStr")
+          
           if (detectDates) {
-            if ( (this_styp %in% xlsx_date_style) ) {
-              val$v <- as.character(convertToDate(as.numeric(val$v)))
+            if ( (this_styp %in% xlsx_date_style) & !is_string ) {
+              val$v <- as.character(convertToDate(val$v))
               
               tt[[col]][rownames(tt) == row]  <- "d"
             }
@@ -443,6 +448,7 @@ wb_to_df <- function(xlsxFile,
   
   attr(z, "tt") <- tt
   attr(z, "types") <- types
+  # attr(z, "sd") <- sd
   if (!missing(definedName)) attr(z, "dn") <- nr
   z
 }
