@@ -36,6 +36,7 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
     Rcpp::Shield<SEXP> row_attr(Rf_allocVector(VECSXP, nn));
     Rcpp::Shield<SEXP> row_attr_nam(Rf_allocVector(STRSXP, nn));
     
+    bool has_rowname = false;
     auto attr_itr = 0;
     for (auto attr : worksheet.attributes()) {
       
@@ -52,8 +53,15 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
       if (attr.name() == r_str) {
         buffer = attr.value();
         SET_STRING_ELT(rownames, itr_rows, Rf_mkChar(buffer.c_str()));
+        has_rowname = true;
       }
       
+    }
+    if(!has_rowname) {
+      for (auto i = 1; i <= n; ++i) {
+        buffer = std::to_string(i);
+        SET_STRING_ELT(rownames, itr_rows, Rf_mkChar(buffer.c_str()));
+      }
     }
 
     // assign names and push back
@@ -94,6 +102,7 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
       Rcpp::Shield<SEXP> atr_name(Rf_allocVector(STRSXP, ff));
       
       // typ: attribute ------------------------------------------------------
+      bool has_colname = false;
       auto attr_itr = 0;
       for (auto attr : col.attributes()) {
         
@@ -114,9 +123,16 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
                                       &isdigit),
                                       colrow.end());
           SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(colrow.c_str()));
+          has_colname = true;
         }
         
         ++attr_itr;
+      }
+      if (!has_colname) {
+        Rcpp::IntegerVector itr_vec(1);
+        itr_vec[0] = itr_cols +1;
+        std::string tmp_colname= Rcpp::as<std::string>(int_2_cell_ref(itr_vec));
+        SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(tmp_colname.c_str()));
       }
       
       // val ------------------------------------------------------------------
