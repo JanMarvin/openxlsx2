@@ -120,6 +120,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   worksheet_rId_mapping <- NULL
   workbookRelsXML <- xmlFiles[grepl("workbook.xml.rels$", xmlFiles, perl = TRUE)]
   if (length(workbookRelsXML) > 0) {
+    # xml <- read_xml(workbookRelsXML)
+    # workbookRelsXML <- xml_attribute(xml, "Relationships", "Relationship")
+    
     workbookRelsXML <- paste(readUTF8(workbookRelsXML), collapse = "")
     workbookRelsXML <- getChildlessNode(xml = workbookRelsXML, tag = "Relationship")
     worksheet_rId_mapping <- workbookRelsXML[grepl("worksheets/sheet", workbookRelsXML, fixed = TRUE)]
@@ -148,12 +151,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## xl\workbook
   if (length(workbookXML) > 0) {
 
-    workbook_xml <- readXMLPtr(workbookXML)
+    workbook_xml <- read_xml(workbookXML)
 
     # wb$workbook$alternateContent <- getXML2(workbook_xml, "workbook", "mc:AlternateContent")  # breaks file for Excel
     # wb$workbook$extLst <- getXML2(workbook_xml, "workbook", "extLst")
 
-    sheets <- unlist(getXMLXPtr3(workbook_xml, "workbook", "sheets", "sheet"))
+    sheets <- xml_node(workbook_xml, "workbook", "sheets", "sheet")
 
     ## Some veryHidden sheets do not have a sheet content and their rId is empty.
     ## Such sheets need to be filtered out because otherwise their sheet names

@@ -11,6 +11,17 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// readXML
+SEXP readXML(std::string path);
+RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(readXML(path));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getXML1
 SEXP getXML1(std::string str, std::string child);
 RcppExport SEXP _openxlsx2_getXML1(SEXP strSEXP, SEXP childSEXP) {
@@ -631,17 +642,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// readXML
-SEXP readXML(std::string path);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path));
-    return rcpp_result_gen;
-END_RCPP
-}
 // get_shared_strings
 Rcpp::CharacterVector get_shared_strings(std::string xmlFile, bool isFile);
 RcppExport SEXP _openxlsx2_get_shared_strings(SEXP xmlFileSEXP, SEXP isFileSEXP) {
@@ -902,6 +902,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 1},
     {"_openxlsx2_getXML1", (DL_FUNC) &_openxlsx2_getXML1, 2},
     {"_openxlsx2_getXML1val", (DL_FUNC) &_openxlsx2_getXML1val, 2},
     {"_openxlsx2_getXML2", (DL_FUNC) &_openxlsx2_getXML2, 3},
@@ -950,7 +951,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr3attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr_one, 5},
     {"_openxlsx2_getXMLXPtr4attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr_one, 6},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 2},
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 1},
     {"_openxlsx2_get_shared_strings", (DL_FUNC) &_openxlsx2_get_shared_strings, 2},
     {"_openxlsx2_getCellInfo", (DL_FUNC) &_openxlsx2_getCellInfo, 6},
     {"_openxlsx2_read_workbook", (DL_FUNC) &_openxlsx2_read_workbook, 11},

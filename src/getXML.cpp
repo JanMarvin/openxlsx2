@@ -2,11 +2,27 @@
 #include <sstream>
 #include "pugixml.hpp"
 
+
+// [[Rcpp::export]]
+SEXP readXML(std::string path) {
+  
+  pugi::xml_document doc;
+  pugi::xml_parse_result result = doc.load_file(path.c_str(), pugi::parse_full);
+  if (!result) {
+    Rcpp::stop("xml import unsuccessfull");
+  }
+  
+  std::ostringstream oss;
+  doc.print(oss, " ", pugi::format_raw);
+  
+  return  Rcpp::wrap(oss.str());
+}
+
 // [[Rcpp::export]]
 SEXP getXML1(std::string str, std::string child) {
 
   pugi::xml_document doc;
-  pugi::xml_parse_result result = doc.load_string(str.c_str());
+  pugi::xml_parse_result result = doc.load_string(str.c_str(), pugi::parse_full);
   if (!result) {
     Rcpp::stop("xml import unsuccessfull");
   }
@@ -30,7 +46,7 @@ SEXP getXML1(std::string str, std::string child) {
 SEXP getXML1val(std::string str, std::string child) {
   
   pugi::xml_document doc;
-  pugi::xml_parse_result result = doc.load_string(str.c_str());
+  pugi::xml_parse_result result = doc.load_string(str.c_str(), pugi::parse_full);
   if (!result) {
     Rcpp::stop("xml import unsuccessfull");
   }
@@ -52,7 +68,7 @@ SEXP getXML1val(std::string str, std::string child) {
 SEXP getXML2(std::string str, std::string level1, std::string child) {
   
   pugi::xml_document doc;
-  pugi::xml_parse_result result = doc.load_string(str.c_str());
+  pugi::xml_parse_result result = doc.load_string(str.c_str(), pugi::parse_full);
   if (!result) {
     Rcpp::stop("xml import unsuccessfull");
   }
@@ -76,7 +92,7 @@ SEXP getXML2(std::string str, std::string level1, std::string child) {
 SEXP getXML2val(std::string str, std::string level1, std::string child) {
   
   pugi::xml_document doc;
-  pugi::xml_parse_result result = doc.load_string(str.c_str());
+  pugi::xml_parse_result result = doc.load_string(str.c_str(), pugi::parse_full);
   if (!result) {
     Rcpp::stop("xml import unsuccessfull");
   }
@@ -98,7 +114,7 @@ SEXP getXML2val(std::string str, std::string level1, std::string child) {
 SEXP getXML3(std::string str, std::string level1, std::string level2, std::string child) {
   
   pugi::xml_document doc;
-  pugi::xml_parse_result result = doc.load_string(str.c_str());
+  pugi::xml_parse_result result = doc.load_string(str.c_str(), pugi::parse_full);
   if (!result) {
     Rcpp::stop("xml import unsuccessfull");
   }
@@ -122,7 +138,7 @@ SEXP getXML3(std::string str, std::string level1, std::string level2, std::strin
 SEXP getXML3val(std::string str, std::string level1, std::string level2, std::string child) {
   
   pugi::xml_document doc;
-  pugi::xml_parse_result result = doc.load_string(str.c_str());
+  pugi::xml_parse_result result = doc.load_string(str.c_str(), pugi::parse_full);
   if (!result) {
     Rcpp::stop("xml import unsuccessfull");
   }
