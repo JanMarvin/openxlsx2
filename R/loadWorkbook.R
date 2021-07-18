@@ -55,7 +55,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## Not used
   # .relsXML           <- xmlFiles[grepl("_rels/.rels$", xmlFiles, perl = TRUE)]
   # appXML             <- xmlFiles[grepl("app.xml$", xmlFiles, perl = TRUE)]
-  
+
   ContentTypesXML <- xmlFiles[grepl("\\[Content_Types\\].xml$", xmlFiles, perl = TRUE)]
 
   drawingsXML <- xmlFiles[grepl("drawings/drawing[0-9]+.xml$", xmlFiles, perl = TRUE)]
@@ -122,7 +122,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   if (length(workbookRelsXML) > 0) {
     # xml <- read_xml(workbookRelsXML)
     # workbookRelsXML <- xml_attribute(xml, "Relationships", "Relationship")
-    
+
     workbookRelsXML <- paste(readUTF8(workbookRelsXML), collapse = "")
     workbookRelsXML <- getChildlessNode(xml = workbookRelsXML, tag = "Relationship")
     worksheet_rId_mapping <- workbookRelsXML[grepl("worksheets/sheet", workbookRelsXML, fixed = TRUE)]
@@ -237,7 +237,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     ## defined Names
     wb$workbook$definedNames <-  getXMLXPtr3(workbook_xml, "workbook", "definedNames", "definedName")
-    
+
   }
 
 
@@ -246,12 +246,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## xl\sharedStrings
   if (length(sharedStringsXML) > 0) {
-    
+
     sst <- readXMLPtr(sharedStringsXML)
     uniqueCount <- getXMLXPtr1attr_one(sst, "sst", "uniqueCount")
     vals <- getXMLXPtr2(sst, "sst", "si")
     text <- si_to_txt(sst)
-    
+
     attr(vals, "uniqueCount") <- uniqueCount
     attr(vals, "text") <- text
     wb$sharedStrings <- vals
@@ -549,10 +549,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
 
 
-    
+
     ## Slicers -------------------------------------------------------------------------------------
 
-    
+
 
     if (length(slicerXML) > 0) {
       slicerXML <- slicerXML[order(nchar(slicerXML), slicerXML)]
@@ -610,7 +610,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     ## Tables --------------------------------------------------------------------------------------
 
-    
+
 
     if (length(tablesXML) > 0) {
       tables <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=table)[0-9]+(?=\\.xml)", x, perl = TRUE))))
@@ -697,7 +697,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     ## Drawings ------------------------------------------------------------------------------------
 
-    
+
 
     ## xml is in the order of the sheets, drawIngs is toes to sheet position of hasDrawing
     ## Not every sheet has a drawing.xml
@@ -720,7 +720,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       dXML <- gsub("<xdr:wsDr .*?>", "", dXML)
       dXML <- gsub("</xdr:wsDr>", "", dXML)
 
-      
+
       for (drawing in seq_along(drawingsXML)) {
        drwng_xml <- readXMLPtr(drawingsXML[drawing])
        wb$drawings[[drawing]] <- getXMLXPtr1(drwng_xml, "xdr:wsDr")
@@ -868,7 +868,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
             style <- lapply(comments, getNodes, tagIn = "<rPr>")
 
-            comments <- regmatches(comments, 
+            comments <- regmatches(comments,
                                    gregexpr("(?<=<t( |>))[\\s\\S]+?(?=</t>)", comments, perl = TRUE))
             comments <- lapply(comments, function(x) gsub(".*?>", "", x, perl = TRUE))
 
@@ -899,17 +899,17 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             target <- basename(gsub('"$', "", target))
 
             wb$threadComments[[i]] <- threadCommentsXML[grepl(target, threadCommentsXML)]
-            
+
           }
         }
       }
       wb$Content_Types <- c(
-        wb$Content_Types, 
+        wb$Content_Types,
         sprintf('<Override PartName="/xl/threadedComments/%s" ContentType="application/vnd.ms-excel.threadedcomments+xml"/>',
                 sapply(threadCommentsXML, basename))
         )
     }
-    
+
     ## Persons (needed for Threaded Comment)
     if(length(personXML) > 0){
       wb$persons <- personXML
@@ -918,10 +918,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
         '<Override PartName="/xl/persons/person.xml" ContentType="application/vnd.ms-excel.person+xml"/>'
       )
       wb$workbook.xml.rels <- c(
-        wb$workbook.xml.rels, 
+        wb$workbook.xml.rels,
         '<Relationship Id="rId5" Type="http://schemas.microsoft.com/office/2017/10/relationships/person" Target="persons/person.xml"/>')
     }
-    
+
 
     ## rels image
     drawXMLrelationship <- lapply(xml, function(x) x[grepl("relationships/image", x)])
