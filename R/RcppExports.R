@@ -117,6 +117,10 @@ int_2_cell_ref <- function(cols) {
     .Call(`_openxlsx2_int_2_cell_ref`, cols)
 }
 
+read_wb <- function(z, cc, tt, keep_row, keep_cols, sst_or_null = NULL) {
+    invisible(.Call(`_openxlsx2_read_wb`, z, cc, tt, keep_row, keep_cols, sst_or_null))
+}
+
 readXMLPtr <- function(path) {
     .Call(`_openxlsx2_readXMLPtr`, path)
 }

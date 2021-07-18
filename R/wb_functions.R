@@ -270,10 +270,16 @@ wb_to_df <- function(xlsxFile,
               sd$applyNumberFormat == 1] <- 1
 
   xlsx_date_style <- sd$id[sd$isdate == 1]
-  
-  # create temporary data frame
-  z <- tt <- dims_to_dataframe(dims)
-  
+
+  # create temporary data frame. hard copy required
+  z  <- dims_to_dataframe(dims)
+  tt <- dims_to_dataframe(dims)
+
+  # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
+  # names(tt) <- names(z)
+  # rownames(tt) <- c("b", "s", "d", "n")
+
+
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
 
@@ -299,8 +305,10 @@ wb_to_df <- function(xlsxFile,
   }
 
   keep_row <- keep_rows[keep_rows %in% rnams]
-  
-  
+
+
+  # read_wb(z, cc, tt, keep_row, keep_cols, sst);
+
   for (row in keep_row) {
 
     rowvals    <-  cc[[row]]

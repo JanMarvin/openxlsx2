@@ -363,6 +363,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// read_wb
+void read_wb(Rcpp::DataFrame& z, Rcpp::List cc, Rcpp::DataFrame& tt, Rcpp::CharacterVector& keep_row, Rcpp::CharacterVector& keep_cols, Rcpp::Nullable<Rcpp::CharacterVector> sst_or_null);
+RcppExport SEXP _openxlsx2_read_wb(SEXP zSEXP, SEXP ccSEXP, SEXP ttSEXP, SEXP keep_rowSEXP, SEXP keep_colsSEXP, SEXP sst_or_nullSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type cc(ccSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type tt(ttSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector& >::type keep_row(keep_rowSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector& >::type keep_cols(keep_colsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type sst_or_null(sst_or_nullSEXP);
+    read_wb(z, cc, tt, keep_row, keep_cols, sst_or_null);
+    return R_NilValue;
+END_RCPP
+}
 // readXMLPtr
 SEXP readXMLPtr(std::string path);
 RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP) {
@@ -931,6 +946,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_get_extLst_Major", (DL_FUNC) &_openxlsx2_get_extLst_Major, 1},
     {"_openxlsx2_cell_ref_to_col", (DL_FUNC) &_openxlsx2_cell_ref_to_col, 1},
     {"_openxlsx2_int_2_cell_ref", (DL_FUNC) &_openxlsx2_int_2_cell_ref, 1},
+    {"_openxlsx2_read_wb", (DL_FUNC) &_openxlsx2_read_wb, 6},
     {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 1},
     {"_openxlsx2_getXMLXPtr1", (DL_FUNC) &_openxlsx2_getXMLXPtr1, 2},
     {"_openxlsx2_getXMLXPtr2", (DL_FUNC) &_openxlsx2_getXMLXPtr2, 3},
