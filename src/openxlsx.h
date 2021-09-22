@@ -55,14 +55,6 @@ SEXP buildMatrixMixed(Rcpp::CharacterVector v,
                       Rcpp::IntegerVector charCols,
                       Rcpp::IntegerVector dateCols);
 
-Rcpp::List getCellInfo(std::string xmlFile,
-                 Rcpp::CharacterVector sharedStrings,
-                 bool skipEmptyRows,
-                 int startRow,
-                 Rcpp::IntegerVector rows,
-                 bool getDates);
-
-
 SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector<std::string>& LETTERS, const std::vector<std::string>& rows);
 
 Rcpp::IntegerVector matrixRowInds(Rcpp::IntegerVector indices);
