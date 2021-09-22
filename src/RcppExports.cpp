@@ -658,55 +658,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// get_shared_strings
-Rcpp::CharacterVector get_shared_strings(std::string xmlFile, bool isFile);
-RcppExport SEXP _openxlsx2_get_shared_strings(SEXP xmlFileSEXP, SEXP isFileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type xmlFile(xmlFileSEXP);
-    Rcpp::traits::input_parameter< bool >::type isFile(isFileSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_shared_strings(xmlFile, isFile));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getCellInfo
-Rcpp::List getCellInfo(std::string xmlFile, Rcpp::CharacterVector sharedStrings, bool skipEmptyRows, int startRow, Rcpp::IntegerVector rows, bool getDates);
-RcppExport SEXP _openxlsx2_getCellInfo(SEXP xmlFileSEXP, SEXP sharedStringsSEXP, SEXP skipEmptyRowsSEXP, SEXP startRowSEXP, SEXP rowsSEXP, SEXP getDatesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type xmlFile(xmlFileSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type sharedStrings(sharedStringsSEXP);
-    Rcpp::traits::input_parameter< bool >::type skipEmptyRows(skipEmptyRowsSEXP);
-    Rcpp::traits::input_parameter< int >::type startRow(startRowSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type rows(rowsSEXP);
-    Rcpp::traits::input_parameter< bool >::type getDates(getDatesSEXP);
-    rcpp_result_gen = Rcpp::wrap(getCellInfo(xmlFile, sharedStrings, skipEmptyRows, startRow, rows, getDates));
-    return rcpp_result_gen;
-END_RCPP
-}
-// read_workbook
-SEXP read_workbook(Rcpp::IntegerVector cols_in, Rcpp::IntegerVector rows_in, Rcpp::CharacterVector v, Rcpp::IntegerVector string_inds, Rcpp::LogicalVector is_date, bool hasColNames, char hasSepNames, bool skipEmptyRows, bool skipEmptyCols, int nRows, Rcpp::Function clean_names);
-RcppExport SEXP _openxlsx2_read_workbook(SEXP cols_inSEXP, SEXP rows_inSEXP, SEXP vSEXP, SEXP string_indsSEXP, SEXP is_dateSEXP, SEXP hasColNamesSEXP, SEXP hasSepNamesSEXP, SEXP skipEmptyRowsSEXP, SEXP skipEmptyColsSEXP, SEXP nRowsSEXP, SEXP clean_namesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type cols_in(cols_inSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type rows_in(rows_inSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type v(vSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type string_inds(string_indsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type is_date(is_dateSEXP);
-    Rcpp::traits::input_parameter< bool >::type hasColNames(hasColNamesSEXP);
-    Rcpp::traits::input_parameter< char >::type hasSepNames(hasSepNamesSEXP);
-    Rcpp::traits::input_parameter< bool >::type skipEmptyRows(skipEmptyRowsSEXP);
-    Rcpp::traits::input_parameter< bool >::type skipEmptyCols(skipEmptyColsSEXP);
-    Rcpp::traits::input_parameter< int >::type nRows(nRowsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Function >::type clean_names(clean_namesSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_workbook(cols_in, rows_in, v, string_inds, is_date, hasColNames, hasSepNames, skipEmptyRows, skipEmptyCols, nRows, clean_names));
-    return rcpp_result_gen;
-END_RCPP
-}
 // calc_number_rows
 int calc_number_rows(Rcpp::CharacterVector x, bool skipEmptyRows);
 RcppExport SEXP _openxlsx2_calc_number_rows(SEXP xSEXP, SEXP skipEmptyRowsSEXP) {
@@ -968,9 +919,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr3attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr_one, 5},
     {"_openxlsx2_getXMLXPtr4attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr_one, 6},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 2},
-    {"_openxlsx2_get_shared_strings", (DL_FUNC) &_openxlsx2_get_shared_strings, 2},
-    {"_openxlsx2_getCellInfo", (DL_FUNC) &_openxlsx2_getCellInfo, 6},
-    {"_openxlsx2_read_workbook", (DL_FUNC) &_openxlsx2_read_workbook, 11},
     {"_openxlsx2_calc_number_rows", (DL_FUNC) &_openxlsx2_calc_number_rows, 2},
     {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 2},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},

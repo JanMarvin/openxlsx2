@@ -201,18 +201,6 @@ printXPtr <- function(doc, raw) {
     .Call(`_openxlsx2_printXPtr`, doc, raw)
 }
 
-get_shared_strings <- function(xmlFile, isFile) {
-    .Call(`_openxlsx2_get_shared_strings`, xmlFile, isFile)
-}
-
-getCellInfo <- function(xmlFile, sharedStrings, skipEmptyRows, startRow, rows, getDates) {
-    .Call(`_openxlsx2_getCellInfo`, xmlFile, sharedStrings, skipEmptyRows, startRow, rows, getDates)
-}
-
-read_workbook <- function(cols_in, rows_in, v, string_inds, is_date, hasColNames, hasSepNames, skipEmptyRows, skipEmptyCols, nRows, clean_names) {
-    .Call(`_openxlsx2_read_workbook`, cols_in, rows_in, v, string_inds, is_date, hasColNames, hasSepNames, skipEmptyRows, skipEmptyCols, nRows, clean_names)
-}
-
 calc_number_rows <- function(x, skipEmptyRows) {
     .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
 }
