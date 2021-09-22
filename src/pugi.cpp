@@ -1,4 +1,4 @@
-#include "openxlsx.h"
+#include "openxlsx2.h"
 
 // [[Rcpp::export]]
 SEXP readXMLPtr(std::string path) {
