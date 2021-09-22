@@ -474,7 +474,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     wb$worksheets[[i]]$cols_attr     <- getXMLXPtr3(worksheet_xml, "worksheet", "cols", "col")
 
     # load the data
-    loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
+    wb$worksheets[[i]]$sheet_data$cc <- loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
+    # stop("stop")
 
   }
 

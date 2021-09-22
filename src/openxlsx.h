@@ -1,5 +1,4 @@
 
-#include <Rcpp.h>
 #include "openxlsx2_types.h"
 
 #include <iostream>

@@ -1,21 +1,73 @@
 #include "openxlsx.h"
-#include "openxlsx2_types.h"
+
+// namespace Rcpp {
+// template <>
+// SEXP wrap(const std::vector<xml_col&> x) {
+//   Rcpp::CharacterVector v(x.v);
+//   Rcpp::CharacterVector t(x.t);
+//   return Rcpp::wrap(Rcpp::DataFrame::create(Rcpp::Named("v") = v,
+//                                        Rcpp::Named("t") = t));
+// };
+// }
+
+SEXP as_dataframe(const std::vector<xml_col> &x) {
+
+  auto n = x.size();
+
+  Rcpp::CharacterVector row_r(n);
+
+  Rcpp::CharacterVector c_r(n);
+  Rcpp::CharacterVector c_s(n);
+  Rcpp::CharacterVector c_t(n);
+
+  Rcpp::CharacterVector v(n);
+  Rcpp::CharacterVector f(n);
+  Rcpp::CharacterVector f_t(n);
+  Rcpp::CharacterVector t(n);
+
+  // struct to vector
+  for (auto i = 0; i < n; ++i) {
+    row_r[i] = x[i].row_r;
+    c_r[i] = x[i].c_r;
+    c_s[i] = x[i].c_s;
+    c_t[i] = x[i].c_t;
+    v[i] = x[i].v;
+    f[i] = x[i].f;
+    f_t[i] = x[i].f_t;
+    t[i] = x[i].t;
+  }
+
+  // vector to dataframe
+  return Rcpp::wrap(Rcpp::DataFrame::create(
+      Rcpp::Named("row_r") = row_r,
+      Rcpp::Named("c_r") = c_r,
+      Rcpp::Named("c_s") = c_s,
+      Rcpp::Named("c_t") = c_t,
+      Rcpp::Named("v") = v,
+      Rcpp::Named("f") = f,
+      Rcpp::Named("f_t") = f_t,
+      Rcpp::Named("t") = t
+  )
+  );
+}
 
 
 // loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml, "worksheet", "sheetData", "row", "c")
 // [[Rcpp::export]]
-void loadvals(Rcpp::Reference wb, XPtrXML doc) {
+Rcpp::List loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
   size_t n = std::distance(ws.begin(), ws.end());
 
   // list
-  Rcpp::Shield<SEXP> cc(Rf_allocVector(VECSXP, n));
+  // Rcpp::Shield<SEXP> cc(Rf_allocVector(VECSXP, n));
 
   // character
   Rcpp::Shield<SEXP> row_attributes(Rf_allocVector(VECSXP, n));
   Rcpp::Shield<SEXP> rownames(Rf_allocVector(STRSXP, n));
+
+  std::vector<xml_col> xml_cols;
 
 
   auto itr_rows = 0;
@@ -32,7 +84,12 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
     /* row attributes ------------------------------------------------------- */
     auto nn = std::distance(worksheet.attributes_begin(), worksheet.attributes_end());
 
+    std::string f_str = "f";
     std::string r_str = "r";
+    std::string s_str = "s";
+    std::string t_str = "t";
+    std::string v_str = "v";
+
     Rcpp::Shield<SEXP> row_attr(Rf_allocVector(VECSXP, nn));
     Rcpp::Shield<SEXP> row_attr_nam(Rf_allocVector(STRSXP, nn));
 
@@ -75,6 +132,9 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
     auto itr_cols = 0;
     for (auto col : worksheet.children("c")) {
 
+      // contains all values of a col
+      xml_col single_xml_col;
+
       // get number of children and attributes
       auto nn = std::distance(col.children().begin(), col.children().end());
       auto aa = std::distance(col.attributes_begin(), col.attributes_end());
@@ -85,21 +145,21 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
       // cc_cell_nam vector
       std::string val_str = "val", typ_str = "typ", attr_str = "attr";
-      Rcpp::Shield<SEXP> cc_cell_nam(Rf_allocVector(STRSXP, 2+ff));
-      SET_STRING_ELT(cc_cell_nam, 0, Rf_mkChar(val_str.c_str()));
-      SET_STRING_ELT(cc_cell_nam, 1, Rf_mkChar(typ_str.c_str()));
-      if (ff > 0) SET_STRING_ELT(cc_cell_nam, 2, Rf_mkChar(attr_str.c_str()));
-
-      // lists for cc_cell, v_c, t_c and a_c
-      Rcpp::Shield<SEXP> cc_cell(Rf_allocVector(VECSXP, 2+ff));
-      Rcpp::Shield<SEXP> v_c(Rf_allocVector(VECSXP, tt));
-      Rcpp::Shield<SEXP> t_c(Rf_allocVector(VECSXP, aa));
-      Rcpp::Shield<SEXP> a_c(Rf_allocVector(VECSXP, ff));
-
-      // character vectors val_name, typ_name, atr_name
-      Rcpp::Shield<SEXP> val_name(Rf_allocVector(STRSXP, tt));
-      Rcpp::Shield<SEXP> typ_name(Rf_allocVector(STRSXP, aa));
-      Rcpp::Shield<SEXP> atr_name(Rf_allocVector(STRSXP, ff));
+      // Rcpp::Shield<SEXP> cc_cell_nam(Rf_allocVector(STRSXP, 2+ff));
+      // SET_STRING_ELT(cc_cell_nam, 0, Rf_mkChar(val_str.c_str()));
+      // SET_STRING_ELT(cc_cell_nam, 1, Rf_mkChar(typ_str.c_str()));
+      // if (ff > 0) SET_STRING_ELT(cc_cell_nam, 2, Rf_mkChar(attr_str.c_str()));
+      //
+      // // lists for cc_cell, v_c, t_c and a_c
+      // Rcpp::Shield<SEXP> cc_cell(Rf_allocVector(VECSXP, 2+ff));
+      // Rcpp::Shield<SEXP> v_c(Rf_allocVector(VECSXP, tt));
+      // Rcpp::Shield<SEXP> t_c(Rf_allocVector(VECSXP, aa));
+      // Rcpp::Shield<SEXP> a_c(Rf_allocVector(VECSXP, ff));
+      //
+      // // character vectors val_name, typ_name, atr_name
+      // Rcpp::Shield<SEXP> val_name(Rf_allocVector(STRSXP, tt));
+      // Rcpp::Shield<SEXP> typ_name(Rf_allocVector(STRSXP, aa));
+      // Rcpp::Shield<SEXP> atr_name(Rf_allocVector(STRSXP, ff));
 
       // typ: attribute ------------------------------------------------------
       bool has_colname = false;
@@ -107,24 +167,38 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
       for (auto attr : col.attributes()) {
 
         buffer = attr.name();
-        SET_STRING_ELT(typ_name, attr_itr, Rf_mkChar(buffer.c_str()));
+        // SET_STRING_ELT(typ_name, attr_itr, Rf_mkChar(buffer.c_str()));
 
         buffer = attr.value();
-        Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
-        SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
-        SET_VECTOR_ELT(t_c, attr_itr, buf);
+        // Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
+        // SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
+        // SET_VECTOR_ELT(t_c, attr_itr, buf);
 
         if (attr.name() == r_str) {
           // get r attr e.g. "A1" and return colnames "A"
+          // get col name
           std::string colrow = attr.value();
-          // remove numeric from string
           colrow.erase(std::remove_if(colrow.begin(),
                                       colrow.end(),
                                       &isdigit),
                                       colrow.end());
-          SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(colrow.c_str()));
+          single_xml_col.c_r = colrow;
+          // SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(colrow.c_str()));
           has_colname = true;
+
+          // get colnum
+          colrow = attr.value();
+          // remove numeric from string
+          colrow.erase(std::remove_if(colrow.begin(),
+                                      colrow.end(),
+                                      &isalpha),
+                                      colrow.end());
+          single_xml_col.row_r = colrow;
+
         }
+
+        if (attr.name() == s_str) single_xml_col.c_s = buffer;
+        if (attr.name() == t_str) single_xml_col.c_t = buffer;
 
         ++attr_itr;
       }
@@ -132,7 +206,8 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
         Rcpp::IntegerVector itr_vec(1);
         itr_vec[0] = itr_cols +1;
         std::string tmp_colname= Rcpp::as<std::string>(int_2_cell_ref(itr_vec));
-        SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(tmp_colname.c_str()));
+        single_xml_col.c_r = tmp_colname;
+        // SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(tmp_colname.c_str()));
       }
 
       // val ------------------------------------------------------------------
@@ -147,51 +222,58 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
           for (auto cattr : val.attributes())
           {
             buffer = cattr.name();
-            SET_STRING_ELT(atr_name, ff_itr, Rf_mkChar(buffer.c_str()));
+            // SET_STRING_ELT(atr_name, ff_itr, Rf_mkChar(buffer.c_str()));
 
             buffer = cattr.value();
-            Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
-            SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
-            SET_VECTOR_ELT(a_c, ff_itr, buf);
+            if (val.name() == t_str) single_xml_col.f_t = buffer;
+            // Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
+            // SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
+            // SET_VECTOR_ELT(a_c, ff_itr, buf);
 
             ++ff_itr;
           }
 
           buffer = val.name();
-          SET_STRING_ELT(val_name, val_itr, Rf_mkChar(buffer.c_str()));
+          // SET_STRING_ELT(val_name, val_itr, Rf_mkChar(buffer.c_str()));
 
           // is nodes contain additional t node.
           // TODO: check if multiple t nodes are possible, for now return one.
           // the t-node can bring its very own attributes
-          Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
+          // Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
           if (val.child("t")) {
             buffer = val.child("t").child_value();
+            single_xml_col.t = buffer;
           } else {
             buffer = val.child_value();
+            // val.name() == v or f
+            if (val.name() == v_str) single_xml_col.v = buffer;
+            if (val.name() == f_str) single_xml_col.f = buffer;
           }
-          SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
-          SET_VECTOR_ELT(v_c, val_itr, buf);
+          // SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
+          // SET_VECTOR_ELT(v_c, val_itr, buf);
 
           ++val_itr;
         }
 
+        xml_cols.push_back(single_xml_col);
+
         /* row is done */
       }
 
-      // assign names
-      ::Rf_setAttrib(v_c, R_NamesSymbol, val_name);
-      ::Rf_setAttrib(t_c, R_NamesSymbol, typ_name);
-      if(ff > 0) ::Rf_setAttrib(a_c, R_NamesSymbol, atr_name);
-
-      ::Rf_setAttrib(cc_cell, R_NamesSymbol, cc_cell_nam);
-
-      // assign everything to cc_cell
-      SET_VECTOR_ELT(cc_cell, 0, v_c);
-      SET_VECTOR_ELT(cc_cell, 1, t_c);
-      if(ff > 0) SET_VECTOR_ELT(cc_cell, 2, a_c);
-
-      // assign cc_cell to cc_r
-      SET_VECTOR_ELT(cc_r, itr_cols, cc_cell);
+      // // assign names
+      // ::Rf_setAttrib(v_c, R_NamesSymbol, val_name);
+      // ::Rf_setAttrib(t_c, R_NamesSymbol, typ_name);
+      // if(ff > 0) ::Rf_setAttrib(a_c, R_NamesSymbol, atr_name);
+      //
+      // ::Rf_setAttrib(cc_cell, R_NamesSymbol, cc_cell_nam);
+      //
+      // // assign everything to cc_cell
+      // SET_VECTOR_ELT(cc_cell, 0, v_c);
+      // SET_VECTOR_ELT(cc_cell, 1, t_c);
+      // if(ff > 0) SET_VECTOR_ELT(cc_cell, 2, a_c);
+      //
+      // // assign cc_cell to cc_r
+      // SET_VECTOR_ELT(cc_r, itr_cols, cc_cell);
 
       ++itr_cols;
     }
@@ -199,18 +281,21 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
     /* ---------------------------------------------------------------------- */
 
-    ::Rf_setAttrib(cc_r, R_NamesSymbol, colnames);
-    SET_VECTOR_ELT(cc, itr_rows, cc_r);
+    // ::Rf_setAttrib(cc_r, R_NamesSymbol, colnames);
+    // SET_VECTOR_ELT(cc, itr_rows, cc_r);
 
     ++itr_rows;
   }
 
   ::Rf_setAttrib(row_attributes, R_NamesSymbol, rownames);
-  ::Rf_setAttrib(cc, R_NamesSymbol, rownames);
+  // ::Rf_setAttrib(cc, R_NamesSymbol, rownames);
 
   wb.field("row_attr") = row_attributes;
-  wb.field("cc")  = cc;
+  // wb.field("cc")  = cc;
 
+  xml_col test;
+
+  return as_dataframe(xml_cols);
 }
 
 // [[Rcpp::export]]
