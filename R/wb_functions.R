@@ -95,7 +95,7 @@ guess_col_type <- function(tt) {
 #'
 #'   ###########################################################################
 #'   # numerics, dates, missings, bool and string
-#'   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+#'   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #'   wb1 <- loadWorkbook(xlsxFile)
 #'
 #'   # import workbook
@@ -144,7 +144,7 @@ guess_col_type <- function(tt) {
 #'
 #'   ###########################################################################
 #'   # inlinestr
-#'   xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx")
+#'   xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
 #'   wb2 <- loadWorkbook(xlsxFile)
 #'
 #'   # read dataset with inlinestr
@@ -153,7 +153,7 @@ guess_col_type <- function(tt) {
 #'
 #'   ###########################################################################
 #'   # definedName // namedRegion
-#'   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx")
+#'   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 #'   wb3 <- loadWorkbook(xlsxFile)
 #'
 #'   # read dataset with definedName (returns global first)
@@ -389,7 +389,7 @@ wb_to_df <- function(xlsxFile,
     empty <- sapply(z, function(x) all(is.na(x)))
 
     if (any(empty)) {
-      sel <- names(empty[empty == TRUE])
+      sel <- which(names(empty) %in% names(empty[empty == TRUE]))
       z[sel]  <- NULL
       tt[sel] <- NULL
     }

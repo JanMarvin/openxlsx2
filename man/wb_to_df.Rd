@@ -60,7 +60,7 @@ written down and not optimized etc. The goal was to have something working.
 
   ###########################################################################
   # numerics, dates, missings, bool and string
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb1 <- loadWorkbook(xlsxFile)
 
   # import workbook
@@ -109,7 +109,7 @@ written down and not optimized etc. The goal was to have something working.
 
   ###########################################################################
   # inlinestr
-  xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
   wb2 <- loadWorkbook(xlsxFile)
 
   # read dataset with inlinestr
@@ -118,7 +118,7 @@ written down and not optimized etc. The goal was to have something working.
 
   ###########################################################################
   # definedName // namedRegion
-  xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
   wb3 <- loadWorkbook(xlsxFile)
 
   # read dataset with definedName (returns global first)
