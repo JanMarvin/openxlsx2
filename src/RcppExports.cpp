@@ -270,17 +270,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// which
-Rcpp::IntegerVector which(Rcpp::IntegerVector x);
-RcppExport SEXP _openxlsx2_which(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(which(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // long_to_wide
 SEXP long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame cc, Rcpp::List dn);
 RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP ccSEXP, SEXP dnSEXP) {
@@ -915,7 +904,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_markUTF8", (DL_FUNC) &_openxlsx2_markUTF8, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
-    {"_openxlsx2_which", (DL_FUNC) &_openxlsx2_which, 1},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 4},
     {"_openxlsx2_getNodes", (DL_FUNC) &_openxlsx2_getNodes, 2},
     {"_openxlsx2_getOpenClosedNode", (DL_FUNC) &_openxlsx2_getOpenClosedNode, 3},

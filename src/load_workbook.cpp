@@ -333,8 +333,7 @@ SEXP si_to_txt(XPtrXML doc) {
   return res;
 }
 
-// [[Rcpp::export]]
-Rcpp::IntegerVector which(Rcpp::IntegerVector x) {
+Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {
     Rcpp::IntegerVector v = Rcpp::seq(0, x.size()-1);
     return v[!Rcpp::is_na(x)];
 }
@@ -360,10 +359,10 @@ SEXP long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rc
     std::string val_tt   = Rcpp::as<std::string>(typ[i]);
 
     Rcpp::IntegerVector s1 = Rcpp::match(row_names, row_r_i);
-    int64_t sel_row = Rcpp::as<int64_t>(which(s1));
+    int64_t sel_row = Rcpp::as<int64_t>(rcpp_which(s1));
 
     Rcpp::IntegerVector s2 = Rcpp::match(col_names, c_r_i);
-    int64_t sel_col = Rcpp::as<int64_t>(which(s2));
+    int64_t sel_col = Rcpp::as<int64_t>(rcpp_which(s2));
 
     // Rcpp::Rcout << sel_row << " " << sel_col << " " << val_i << std::endl;
 

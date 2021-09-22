@@ -396,12 +396,14 @@ wb_to_df <- function(xlsxFile,
 
   }
 
+  # # faster guess_col_type alternative? to avoid tt
+  # types <- ftable(cc$row_r ~ cc$c_r ~ cc$typ)
+
   if (missing(types))
     types <- guess_col_type(tt)
 
   # could make it optional or explicit
   if (convert) {
-
     sel <- !is.na(names(types))
 
     if (any(sel)) {
@@ -411,7 +413,7 @@ wb_to_df <- function(xlsxFile,
       z[nums] <- lapply(z[nums], as.numeric)
       z[dtes] <- lapply(z[dtes], as.Date)
     } else {
-      warning("could not convert. Missing in row used for variable names")
+      warning("could not convert. All missing in row used for variable names")
     }
   }
 

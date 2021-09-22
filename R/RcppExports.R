@@ -85,10 +85,6 @@ si_to_txt <- function(doc) {
     .Call(`_openxlsx2_si_to_txt`, doc)
 }
 
-which <- function(x) {
-    .Call(`_openxlsx2_which`, x)
-}
-
 long_to_wide <- function(z, tt, cc, dn) {
     .Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn)
 }
