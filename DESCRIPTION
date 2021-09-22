@@ -69,7 +69,6 @@ Collate:
     'onUnload.R'
     'openXL.R'
     'openxlsx-package.R'
-    'openxlsx.R'
     'openxlsx2.R'
     'openxlsxCoerce.R'
     'pugixml.R'

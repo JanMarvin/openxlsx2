@@ -65,65 +65,65 @@ written down and not optimized etc. The goal was to have something working.
 
   # import workbook
   wb_to_df(wb1)
-  
-  # do not convert first row to colNames 
+
+  # do not convert first row to colNames
   wb_to_df(wb1, colNames = FALSE)
-  
+
   # do not try to identify dates in the data
   wb_to_df(wb1, detectDates = FALSE)
-  
+
   # return the underlying Excel formula instead of their values
   wb_to_df(wb1, showFormula = TRUE)
-  
+
   # read dimension withot colNames
   wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
-  
+
   # read selected cols
   wb_to_df(wb1, cols = c(1:2, 7))
-  
+
   # read selected rows
   wb_to_df(wb1, rows = c(1, 4, 6))
-  
+
   # convert characters to numerics and date (logical too?)
   wb_to_df(wb1, convert = FALSE)
-  
+
   # erase empty Rows from dataset
   wb_to_df(wb1, sheet = 3, skipEmptyRows = TRUE)
-  
+
   # erase rmpty Cols from dataset
   wb_to_df(wb1, skipEmptyCols = TRUE)
-  
+
   # convert first row to rownames
   wb_to_df(wb1, sheet = 3, dims = "C6:G9", rowNames = TRUE)
-  
+
   # define type of the data.frame
   wb_to_df(wb1, cols = c(1, 4), types = c("Var1" = 0, "Var3" = 1))
-  
+
   # start in row 5
   wb_to_df(wb1, startRow = 5, colNames = FALSE)
-  
+
   # na string
   wb_to_df(wb1, na.strings = "")
-  
+
   # read.xlsx(wb1)
 
   ###########################################################################
   # inlinestr
   xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx")
   wb2 <- loadWorkbook(xlsxFile)
-  
+
   # read dataset with inlinestr
   wb_to_df(wb2)
   # read.xlsx(wb2)
-  
+
   ###########################################################################
   # definedName // namedRegion
   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx")
   wb3 <- loadWorkbook(xlsxFile)
- 
+
   # read dataset with definedName (returns global first)
   wb_to_df(wb3, definedName = "MyRange", colNames = F)
-  
+
   # read definedName from sheet
   wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = F)
 

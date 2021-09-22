@@ -61,7 +61,7 @@ guess_col_type <- function(tt) {
   names(types) <- names(tt)
 
   # but some values are numerics
-  col_num <- sapply(tt, function(x) all(is.na(x)))
+  col_num <- sapply(tt, function(x) all(x[is.na(x) == FALSE] == "n"))
   types[names(col_num[col_num == TRUE])] <- 1
 
   # or even dates
@@ -235,14 +235,15 @@ wb_to_df <- function(xlsxFile,
 
   # must be available
   if (missing(dims))
-    dims <- getXML1attr_one(wb$worksheets[[sheet]]$dimension,
+    dims <- openxlsx2:::getXML1attr_one(wb$worksheets[[sheet]]$dimension,
                             "dimension",
                             "ref")
 
+  row_attr  <- wb$worksheets[[sheet]]$sheet_data$row_attr
   cc  <- wb$worksheets[[sheet]]$sheet_data$cc
   sst <- attr(wb$sharedStrings, "text")
 
-  rnams <- names(cc)
+  rnams <- names(row_attr)
 
 
   # internet says: numFmtId > 0 and applyNumberFormat == 1
@@ -255,8 +256,8 @@ wb_to_df <- function(xlsxFile,
         wb$styles$cellXfs,
         FUN= function(x)
           c(
-            as.numeric(getXML1attr_one(x, "xf", "numFmtId")),
-            as.numeric(getXML1attr_one(x, "xf", "applyNumberFormat"))
+            as.numeric(openxlsx2:::getXML1attr_one(x, "xf", "numFmtId")),
+            as.numeric(openxlsx2:::getXML1attr_one(x, "xf", "applyNumberFormat"))
           )
       )
     )
@@ -306,100 +307,58 @@ wb_to_df <- function(xlsxFile,
 
   keep_row <- keep_rows[keep_rows %in% rnams]
 
+  # reduce data to selected cases only
+  cc <- cc[cc$row_r %in% keep_row & cc$c_r %in% keep_cols, ]
 
-  # read_wb(z, cc, tt, keep_row, keep_cols, sst);
+  cc$val <- NA
+  cc$typ <- NA
 
-  for (row in keep_row) {
+  # bool
+  sel <- cc$c_t %in% c("b")
+  cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
+  cc$typ[sel] <- "b"
+  # text in v
+  sel <- cc$c_t %in% c("str", "e")
+  cc$val[sel] <- cc$v[sel]
+  cc$typ[sel] <- "s"
+  if (showFormula) {
+    sel <- cc$c_t %in% c("e")
+    cc$val[sel] <- cc$f[sel]
+    cc$typ[sel] <- "s"
+  }
+  # text in t
+  sel <- cc$c_t %in% c("inlineStr")
+  cc$val[sel] <- cc$t[sel]
+  cc$typ[sel] <- "s"
+  # test is sst
+  sel <- cc$c_t %in% c("s")
+  cc$val[sel] <- sst[as.numeric(cc$v[sel])+1]
+  cc$typ[sel] <- "s"
+  # convert missings
+  if (!is.na(na.strings) | !missing(na.strings)) {
+    sel <- cc$val %in% na.strings
+    cc$val[sel] <- NA
+    cc$typ[sel] <- NA
+  }
+  # dates
+  if (!is.null(cc$c_s)) {
+    # if a cell is t="s" the content is a sst and not da date
+    cc$is_string <- FALSE
+    if (!is.null(cc$c_t))
+      cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
 
-    rowvals    <-  cc[[row]]
-
-    keep_col <- keep_cols[keep_cols %in% names(rowvals)]
-
-    for (col in keep_col) {
-
-      val       <- rowvals[[col]][["val"]]
-
-      if (!is.null(val$v) | !is.null(val$is)) {
-
-        this_ttyp <- rowvals[[col]][["typ"]][["t"]]
-        this_styp <- rowvals[[col]][["typ"]][["s"]]
-
-        if (!is.null(this_ttyp)) {
-
-          # sharedString: string
-          if (this_ttyp == "s") {
-            val$v <- sst[as.numeric(val$v)+1]
-
-            tt[[col]][rownames(tt) == row]  <- "s"
-          }
-
-          # str: should be from function evaluation?
-          if (this_ttyp == "str") {
-            tt[[col]][rownames(tt) == row]  <- "s"
-          }
-
-          # inlinestr: string
-          if (this_ttyp == "inlineStr") {
-            val$v <- val$is
-
-            tt[[col]][rownames(tt) == row]  <- "s"
-          }
-
-          # bool: logical value
-          if (this_ttyp == "b") {
-            val$v <- as.logical(as.numeric(val$v))
-
-            tt[[col]][rownames(tt) == row]  <- "b"
-          }
-
-          # evaluation: takes the formula value?
-          if (showFormula) {
-            if(!is.null(val$f)) val$v <- val$f
-
-            tt[[col]][rownames(tt) == row]  <- "s"
-          }
-
-          # convert na.string to NA
-          if (!is.na(na.strings) | !missing(na.strings)) {
-            if(val$v %in% na.strings) {
-              val$v <- NA
-              tt[[col]][rownames(tt) == row]  <- NA
-            }
-          }
-        }
-
-        # dates
-        if (!is.null(this_styp)) {
-
-          # if a cell is t="s" the content is a sst and not da date
-          is_string <- FALSE
-          if (!is.null(this_ttyp))
-            is_string <- this_ttyp %in% c("s", "str", "b", "inlineStr")
-
-          if (detectDates) {
-            if ( (this_styp %in% xlsx_date_style) & !is_string ) {
-              val$v <- as.character(convertToDate(val$v))
-
-              tt[[col]][rownames(tt) == row]  <- "d"
-            }
-          }
-
-        }
-
-        # check if val is some kind of string expression
-        if ( !is.na(val$v) &  !(tt[[col]][rownames(tt) == row] %in% c("b", "d", "s", "str")) ) {
-
-          # check if it becomes NA when changing from character, to numeric and back
-          if (suppressWarnings(is.na(as.character(as.numeric(val$v)))))
-            tt[[col]][rownames(tt) == row]  <- "s"
-        }
-
-        z[[col]][rownames(z) == row] <- val$v
-
-      }
+    if (detectDates) {
+      sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string
+      cc$val[sel] <- as.character(convertToDate(cc$v[sel]))
+      cc$typ[sel]  <- "d"
     }
+  }
+  # remaining values are numeric?
+  sel <- is.na(cc$typ)
+  cc$val[sel] <- cc$v[sel]
+  cc$typ[sel] <- "n"
 
-  } # end row loop
+  openxlsx2:::long_to_wide(z, tt, cc, dimnames(z))
 
   # if colNames, then change tt too
   if (colNames) {
@@ -443,9 +402,11 @@ wb_to_df <- function(xlsxFile,
   # could make it optional or explicit
   if (convert) {
 
-    if (!any(is.na(names(types)))) {
-      nums <- names(types[types == 1])
-      dtes <- names(types[types == 2])
+    sel <- !is.na(names(types))
+
+    if (any(sel)) {
+      nums <- names( which(types[sel] == 1) )
+      dtes <- names( which(types[sel] == 2) )
 
       z[nums] <- lapply(z[nums], as.numeric)
       z[dtes] <- lapply(z[dtes], as.Date)
