@@ -40,9 +40,6 @@ Rcpp::CharacterVector get_extLst_Major(std::string xml);
 Rcpp::CharacterVector getChildlessNode(std::string xml, std::string tag);
 SEXP getAttr(Rcpp::CharacterVector x, std::string tag);
 
-Rcpp::CharacterVector get_shared_strings(std::string xmlFile, bool isFile);
-
-
 Rcpp::List buildCellList( Rcpp::CharacterVector r, Rcpp::CharacterVector t, Rcpp::CharacterVector v);
 SEXP openxlsx_convert_to_excel_ref(Rcpp::IntegerVector cols, std::vector<std::string> LETTERS);
 

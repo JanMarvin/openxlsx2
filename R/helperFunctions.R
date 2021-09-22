@@ -797,25 +797,6 @@ getDefinedNamesSheet <- function(x) {
 }
 
 
-getSharedStringsFromFile <- function(sharedStringsFile, isFile) {
-
-  ## read in, get si tags, get t tag value and  pull out all string nodes
-  sharedStrings <- get_shared_strings(xmlFile = sharedStringsFile, isFile = isFile) ## read from file
-
-
-  Encoding(sharedStrings) <- "UTF-8"
-  z <- tolower(sharedStrings)
-  sharedStrings[z == "true"] <- "TRUE"
-  sharedStrings[z == "false"] <- "FALSE"
-  z <- NULL ## effectivel remove z
-
-  ## XML replacements
-  sharedStrings <- replaceXMLEntities(sharedStrings)
-
-  return(sharedStrings)
-}
-
-
 clean_names <- function(x, schar) {
   x <- gsub("^[[:space:]]+|[[:space:]]+$", "", x)
   x <- gsub("[[:space:]]+", schar, x)
