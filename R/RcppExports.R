@@ -78,7 +78,7 @@ markUTF8 <- function(x, clone) {
 }
 
 loadvals <- function(wb, doc) {
-    .Call(`_openxlsx2_loadvals`, wb, doc)
+    invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
 }
 
 si_to_txt <- function(doc) {

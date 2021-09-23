@@ -248,15 +248,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // loadvals
-Rcpp::List loadvals(Rcpp::Reference wb, XPtrXML doc);
+void loadvals(Rcpp::Reference wb, XPtrXML doc);
 RcppExport SEXP _openxlsx2_loadvals(SEXP wbSEXP, SEXP docSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::Reference >::type wb(wbSEXP);
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    rcpp_result_gen = Rcpp::wrap(loadvals(wb, doc));
-    return rcpp_result_gen;
+    loadvals(wb, doc);
+    return R_NilValue;
 END_RCPP
 }
 // si_to_txt
