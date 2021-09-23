@@ -1,6 +1,6 @@
 #include "openxlsx2.h"
 
-
+//' @import Rcpp
 // this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
 void loadvals(Rcpp::Reference wb, XPtrXML doc) {
