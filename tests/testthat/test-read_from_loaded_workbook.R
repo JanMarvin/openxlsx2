@@ -7,7 +7,7 @@ context("Reading from workbook is identical to reading from file readTest.xlsx")
 
 test_that("Reading example workbook readTest.xlsx", {
   curr_wd <- getwd()
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(xlsxFile)
 
   ## sheet 1
@@ -193,7 +193,7 @@ test_that("Reading example workbook readTest.xlsx", {
 
 test_that("Load read - Skip Empty rows/cols", {
   curr_wd <- getwd()
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(xlsxFile)
 
 
@@ -308,7 +308,7 @@ context("Reading from workbook is identical to reading from file read_failure_te
 
 test_that("Reading example workbook read_failure_test.xlsx", {
   curr_wd <- getwd()
-  fl <- system.file("extdata", "read_failure_test.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "read_failure_test.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(fl)
 
   x <- read.xlsx(fl, sheet = 1, skipEmptyCols = TRUE)

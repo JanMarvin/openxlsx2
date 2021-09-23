@@ -12,43 +12,44 @@
 
 <meta name="author" content="Alexander Walker, Philipp Schauberger" />
 
-<meta name="date" content="2020-08-14" />
+<meta name="date" content="2021-09-23" />
 
 <title>Formating with xlsx</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
   }
-});
-</script>
-
-
-<style type="text/css">code{white-space: pre;}</style>
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -68,7 +69,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -125,187 +126,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
-}
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
-}
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
-}
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
-}
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
-}
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
-}
-pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
-}
-pre:not([class]) {
-background-color: #f7f7f7;
-}
-code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
-}
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
 
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
-</style>
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
 
 
 
@@ -319,58 +141,62 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Formating with xlsx</h1>
 <h4 class="author">Alexander Walker, Philipp Schauberger</h4>
-<h4 class="date">2020-08-14</h4>
+<h4 class="date">2021-09-23</h4>
 
 
 
 <div id="formatting-with-writedata-and-writedatatable" class="section level2">
 <h2>Formatting with writeData and writeDataTable</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">## data.frame to write</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a>df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Date =</span> <span class="kw">Sys.Date</span>() <span class="op">-</span><span class="st"> </span><span class="dv">0</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">Logical =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>, <span class="ot">TRUE</span>, <span class="ot">TRUE</span>, <span class="ot">FALSE</span>), </span>
-<span id="cb1-3"><a href="#cb1-3"></a>    <span class="dt">Currency =</span> <span class="kw">paste</span>(<span class="st">&quot;$&quot;</span>, <span class="dv">-2</span><span class="op">:</span><span class="dv">2</span>), <span class="dt">Accounting =</span> <span class="dv">-2</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">hLink =</span> <span class="st">&quot;https://CRAN.R-project.org/&quot;</span>, </span>
-<span id="cb1-4"><a href="#cb1-4"></a>    <span class="dt">Percentage =</span> <span class="kw">seq</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">5</span>), <span class="dt">TinyNumber =</span> <span class="kw">runif</span>(<span class="dv">5</span>)<span class="op">/</span><span class="fl">1e+09</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">class</span>(df<span class="op">$</span>Currency) &lt;-<span class="st"> &quot;currency&quot;</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="kw">class</span>(df<span class="op">$</span>Accounting) &lt;-<span class="st"> &quot;accounting&quot;</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="kw">class</span>(df<span class="op">$</span>hLink) &lt;-<span class="st"> &quot;hyperlink&quot;</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="kw">class</span>(df<span class="op">$</span>Percentage) &lt;-<span class="st"> &quot;percentage&quot;</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="kw">class</span>(df<span class="op">$</span>TinyNumber) &lt;-<span class="st"> &quot;scientific&quot;</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">## Formatting can be applied simply through the write functions global options can</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">## be set to further simplify things</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="kw">options</span>(<span class="dt">openxlsx.borderStyle =</span> <span class="st">&quot;thin&quot;</span>)</span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="kw">options</span>(<span class="dt">openxlsx.borderColour =</span> <span class="st">&quot;#4F81BD&quot;</span>)</span>
-<span id="cb1-16"><a href="#cb1-16"></a></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">## create a workbook and add a worksheet</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a>wb &lt;-<span class="st"> </span><span class="kw">createWorkbook</span>()</span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;writeData auto-formatting&quot;</span>)</span>
-<span id="cb1-20"><a href="#cb1-20"></a></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, df, <span class="dt">startRow =</span> <span class="dv">2</span>, <span class="dt">startCol =</span> <span class="dv">2</span>)</span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, df, <span class="dt">startRow =</span> <span class="dv">9</span>, <span class="dt">startCol =</span> <span class="dv">2</span>, <span class="dt">borders =</span> <span class="st">&quot;surrounding&quot;</span>)</span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, df, <span class="dt">startRow =</span> <span class="dv">16</span>, <span class="dt">startCol =</span> <span class="dv">2</span>, <span class="dt">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, df, <span class="dt">startRow =</span> <span class="dv">23</span>, <span class="dt">startCol =</span> <span class="dv">2</span>, <span class="dt">borders =</span> <span class="st">&quot;columns&quot;</span>)</span>
-<span id="cb1-25"><a href="#cb1-25"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, df, <span class="dt">startRow =</span> <span class="dv">30</span>, <span class="dt">startCol =</span> <span class="dv">2</span>, <span class="dt">borders =</span> <span class="st">&quot;all&quot;</span>)</span>
-<span id="cb1-26"><a href="#cb1-26"></a></span>
-<span id="cb1-27"><a href="#cb1-27"></a><span class="co">## headerStyles</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a>hs1 &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">fgFill =</span> <span class="st">&quot;#4F81BD&quot;</span>, <span class="dt">halign =</span> <span class="st">&quot;CENTER&quot;</span>, <span class="dt">textDecoration =</span> <span class="st">&quot;Bold&quot;</span>, </span>
-<span id="cb1-29"><a href="#cb1-29"></a>    <span class="dt">border =</span> <span class="st">&quot;Bottom&quot;</span>, <span class="dt">fontColour =</span> <span class="st">&quot;white&quot;</span>)</span>
-<span id="cb1-30"><a href="#cb1-30"></a></span>
-<span id="cb1-31"><a href="#cb1-31"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, df, <span class="dt">startRow =</span> <span class="dv">16</span>, <span class="dt">startCol =</span> <span class="dv">10</span>, <span class="dt">headerStyle =</span> hs1, <span class="dt">borders =</span> <span class="st">&quot;rows&quot;</span>, </span>
-<span id="cb1-32"><a href="#cb1-32"></a>    <span class="dt">borderStyle =</span> <span class="st">&quot;medium&quot;</span>)</span>
-<span id="cb1-33"><a href="#cb1-33"></a></span>
-<span id="cb1-34"><a href="#cb1-34"></a><span class="co">## to change the display text for a hyperlink column just write over those cells</span></span>
-<span id="cb1-35"><a href="#cb1-35"></a><span class="kw">writeData</span>(wb, <span class="dt">sheet =</span> <span class="dv">1</span>, <span class="dt">x =</span> <span class="kw">paste</span>(<span class="st">&quot;Hyperlink&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>), <span class="dt">startRow =</span> <span class="dv">17</span>, <span class="dt">startCol =</span> <span class="dv">14</span>)</span>
-<span id="cb1-36"><a href="#cb1-36"></a></span>
-<span id="cb1-37"><a href="#cb1-37"></a></span>
-<span id="cb1-38"><a href="#cb1-38"></a><span class="co">## writing as an Excel Table</span></span>
-<span id="cb1-39"><a href="#cb1-39"></a></span>
-<span id="cb1-40"><a href="#cb1-40"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;writeDataTable&quot;</span>)</span>
-<span id="cb1-41"><a href="#cb1-41"></a><span class="kw">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="dt">startRow =</span> <span class="dv">2</span>, <span class="dt">startCol =</span> <span class="dv">2</span>)</span>
-<span id="cb1-42"><a href="#cb1-42"></a><span class="kw">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="dt">startRow =</span> <span class="dv">9</span>, <span class="dt">startCol =</span> <span class="dv">2</span>, <span class="dt">tableStyle =</span> <span class="st">&quot;TableStyleLight9&quot;</span>)</span>
-<span id="cb1-43"><a href="#cb1-43"></a><span class="kw">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="dt">startRow =</span> <span class="dv">16</span>, <span class="dt">startCol =</span> <span class="dv">2</span>, <span class="dt">tableStyle =</span> <span class="st">&quot;TableStyleLight2&quot;</span>)</span>
-<span id="cb1-44"><a href="#cb1-44"></a><span class="kw">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="dt">startRow =</span> <span class="dv">23</span>, <span class="dt">startCol =</span> <span class="dv">2</span>, <span class="dt">tableStyle =</span> <span class="st">&quot;TableStyleMedium21&quot;</span>)</span>
-<span id="cb1-45"><a href="#cb1-45"></a></span>
-<span id="cb1-46"><a href="#cb1-46"></a><span class="kw">openXL</span>(wb)  <span class="co">## opens a temp version</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## data.frame to write</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;Date&quot;</span> <span class="ot">=</span> <span class="fu">Sys.Date</span>()<span class="sc">-</span><span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Logical&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Currency&quot;</span> <span class="ot">=</span> <span class="fu">paste</span>(<span class="st">&quot;$&quot;</span>,<span class="sc">-</span><span class="dv">2</span><span class="sc">:</span><span class="dv">2</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Accounting&quot;</span> <span class="ot">=</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;hLink&quot;</span> <span class="ot">=</span> <span class="st">&quot;https://CRAN.R-project.org/&quot;</span>, </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Percentage&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="at">length.out=</span><span class="dv">5</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;TinyNumber&quot;</span> <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">5</span>) <span class="sc">/</span> <span class="fl">1E9</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df<span class="sc">$</span>Currency) <span class="ot">&lt;-</span> <span class="st">&quot;currency&quot;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df<span class="sc">$</span>Accounting) <span class="ot">&lt;-</span> <span class="st">&quot;accounting&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df<span class="sc">$</span>hLink) <span class="ot">&lt;-</span> <span class="st">&quot;hyperlink&quot;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df<span class="sc">$</span>Percentage) <span class="ot">&lt;-</span> <span class="st">&quot;percentage&quot;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df<span class="sc">$</span>TinyNumber) <span class="ot">&lt;-</span> <span class="st">&quot;scientific&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Formatting can be applied simply through the write functions</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="do">## global options can be set to further simplify things</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.borderStyle&quot;</span> <span class="ot">=</span> <span class="st">&quot;thin&quot;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.borderColour&quot;</span> <span class="ot">=</span> <span class="st">&quot;#4F81BD&quot;</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="do">## create a workbook and add a worksheet</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>wb <span class="ot">&lt;-</span> <span class="fu">createWorkbook</span>()</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;writeData auto-formatting&quot;</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, df, <span class="at">startRow =</span> <span class="dv">2</span>, <span class="at">startCol =</span> <span class="dv">2</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, df, <span class="at">startRow =</span> <span class="dv">9</span>, <span class="at">startCol =</span> <span class="dv">2</span>, <span class="at">borders =</span> <span class="st">&quot;surrounding&quot;</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, df, <span class="at">startRow =</span> <span class="dv">16</span>, <span class="at">startCol =</span> <span class="dv">2</span>, <span class="at">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, df, <span class="at">startRow =</span> <span class="dv">23</span>, <span class="at">startCol =</span> <span class="dv">2</span>, <span class="at">borders =</span><span class="st">&quot;columns&quot;</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, df, <span class="at">startRow =</span> <span class="dv">30</span>, <span class="at">startCol =</span> <span class="dv">2</span>, <span class="at">borders =</span><span class="st">&quot;all&quot;</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="do">## headerStyles</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>hs1 <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">fgFill =</span> <span class="st">&quot;#4F81BD&quot;</span>, <span class="at">halign =</span> <span class="st">&quot;CENTER&quot;</span>, <span class="at">textDecoration =</span> <span class="st">&quot;Bold&quot;</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                   <span class="at">border =</span> <span class="st">&quot;Bottom&quot;</span>, <span class="at">fontColour =</span> <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, df, <span class="at">startRow =</span> <span class="dv">16</span>, <span class="at">startCol =</span> <span class="dv">10</span>, <span class="at">headerStyle =</span> hs1,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>          <span class="at">borders =</span> <span class="st">&quot;rows&quot;</span>, <span class="at">borderStyle =</span> <span class="st">&quot;medium&quot;</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="do">## to change the display text for a hyperlink column just write over those cells</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="at">sheet =</span> <span class="dv">1</span>, <span class="at">x =</span> <span class="fu">paste</span>(<span class="st">&quot;Hyperlink&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="at">startRow =</span> <span class="dv">17</span>, <span class="at">startCol =</span> <span class="dv">14</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="do">## writing as an Excel Table</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;writeDataTable&quot;</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="at">startRow =</span> <span class="dv">2</span>, <span class="at">startCol =</span> <span class="dv">2</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="at">startRow =</span> <span class="dv">9</span>, <span class="at">startCol =</span> <span class="dv">2</span>, <span class="at">tableStyle =</span> <span class="st">&quot;TableStyleLight9&quot;</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="fu">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="at">startRow =</span> <span class="dv">16</span>, <span class="at">startCol =</span> <span class="dv">2</span>, <span class="at">tableStyle =</span> <span class="st">&quot;TableStyleLight2&quot;</span>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">writeDataTable</span>(wb, <span class="dv">2</span>, df, <span class="at">startRow =</span> <span class="dv">23</span>, <span class="at">startCol =</span> <span class="dv">2</span>, <span class="at">tableStyle =</span> <span class="st">&quot;TableStyleMedium21&quot;</span>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="fu">openXL</span>(wb) <span class="do">## opens a temp version</span></span></code></pre></div>
 </div>
 <div id="use-of-pre-defined-table-styles" class="section level2">
 <h2>Use of pre-defined table styles</h2>
@@ -379,236 +205,227 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="date-formatting" class="section level2">
 <h2>Date Formatting</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># data.frame of dates</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>dates &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">d1 =</span> <span class="kw">Sys.Date</span>() <span class="op">-</span><span class="st"> </span><span class="dv">0</span><span class="op">:</span><span class="dv">4</span>)</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>) dates &lt;-<span class="st"> </span><span class="kw">cbind</span>(dates, dates)</span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">names</span>(dates) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</span>
-<span id="cb2-5"><a href="#cb2-5"></a></span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="co">## Date Formatting</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a>wb &lt;-<span class="st"> </span><span class="kw">createWorkbook</span>()</span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Date Formatting&quot;</span>, <span class="dt">gridLines =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb2-9"><a href="#cb2-9"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, dates)  <span class="co">## write without styling</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a></span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="co">## openxlsx converts columns of class &#39;Date&#39; to Excel dates with the format given</span></span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="co">## by</span></span>
-<span id="cb2-13"><a href="#cb2-13"></a><span class="kw">getOption</span>(<span class="st">&quot;openxlsx.dateFormat&quot;</span>, <span class="st">&quot;mm/dd/yyyy&quot;</span>)</span>
-<span id="cb2-14"><a href="#cb2-14"></a></span>
-<span id="cb2-15"><a href="#cb2-15"></a><span class="co">## this can be set via (for example)</span></span>
-<span id="cb2-16"><a href="#cb2-16"></a><span class="kw">options</span>(<span class="dt">openxlsx.dateFormat =</span> <span class="st">&quot;yyyy/mm/dd&quot;</span>)</span>
-<span id="cb2-17"><a href="#cb2-17"></a><span class="co">## custom date formats can be made up of any combination of: d, dd, ddd, dddd, m,</span></span>
-<span id="cb2-18"><a href="#cb2-18"></a><span class="co">## mm, mmm, mmmm, mmmmm, yy, yyyy</span></span>
-<span id="cb2-19"><a href="#cb2-19"></a></span>
-<span id="cb2-20"><a href="#cb2-20"></a><span class="co">## numFmt == &#39;DATE&#39; will use the date format specified by the above</span></span>
-<span id="cb2-21"><a href="#cb2-21"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> <span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;DATE&quot;</span>), <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">1</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-22"><a href="#cb2-22"></a></span>
-<span id="cb2-23"><a href="#cb2-23"></a><span class="co">## some custom date format examples</span></span>
-<span id="cb2-24"><a href="#cb2-24"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;yyyy/mm/dd&quot;</span>)</span>
-<span id="cb2-25"><a href="#cb2-25"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">2</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-26"><a href="#cb2-26"></a></span>
-<span id="cb2-27"><a href="#cb2-27"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;yyyy/mmm/dd&quot;</span>)</span>
-<span id="cb2-28"><a href="#cb2-28"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">3</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-29"><a href="#cb2-29"></a></span>
-<span id="cb2-30"><a href="#cb2-30"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;yy / mmmm / dd&quot;</span>)</span>
-<span id="cb2-31"><a href="#cb2-31"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">4</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-32"><a href="#cb2-32"></a></span>
-<span id="cb2-33"><a href="#cb2-33"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;ddddd&quot;</span>)</span>
-<span id="cb2-34"><a href="#cb2-34"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">5</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-35"><a href="#cb2-35"></a></span>
-<span id="cb2-36"><a href="#cb2-36"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;yyyy-mmm-dd&quot;</span>)</span>
-<span id="cb2-37"><a href="#cb2-37"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">6</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-38"><a href="#cb2-38"></a></span>
-<span id="cb2-39"><a href="#cb2-39"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;mm/ dd yyyy&quot;</span>)</span>
-<span id="cb2-40"><a href="#cb2-40"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">7</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-41"><a href="#cb2-41"></a></span>
-<span id="cb2-42"><a href="#cb2-42"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;mm/dd/yy&quot;</span>)</span>
-<span id="cb2-43"><a href="#cb2-43"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">8</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-44"><a href="#cb2-44"></a></span>
-<span id="cb2-45"><a href="#cb2-45"></a><span class="kw">setColWidths</span>(wb, <span class="dv">1</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">widths =</span> <span class="dv">23</span>)</span>
-<span id="cb2-46"><a href="#cb2-46"></a></span>
-<span id="cb2-47"><a href="#cb2-47"></a><span class="co">## The default date format used in writeData and writeDataTable can be set with:</span></span>
-<span id="cb2-48"><a href="#cb2-48"></a><span class="kw">options</span>(<span class="dt">openxlsx.dateFormat =</span> <span class="st">&quot;dd/mm/yyyy&quot;</span>)</span>
-<span id="cb2-49"><a href="#cb2-49"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Date Formatting&quot;</span>, dates, <span class="dt">startRow =</span> <span class="dv">8</span>, <span class="dt">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
-<span id="cb2-50"><a href="#cb2-50"></a><span class="kw">options</span>(<span class="dt">openxlsx.dateFormat =</span> <span class="st">&quot;yyyy-mm-dd&quot;</span>)</span>
-<span id="cb2-51"><a href="#cb2-51"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Date Formatting&quot;</span>, dates, <span class="dt">startRow =</span> <span class="dv">15</span>)</span>
-<span id="cb2-52"><a href="#cb2-52"></a></span>
-<span id="cb2-53"><a href="#cb2-53"></a><span class="kw">saveWorkbook</span>(wb, <span class="st">&quot;Date Formatting.xlsx&quot;</span>, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># data.frame of dates</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dates <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;d1&quot;</span> <span class="ot">=</span> <span class="fu">Sys.Date</span>() <span class="sc">-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) dates <span class="ot">&lt;-</span> <span class="fu">cbind</span>(dates, dates)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dates) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Date Formatting</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>wb <span class="ot">&lt;-</span> <span class="fu">createWorkbook</span>()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Date Formatting&quot;</span>, <span class="at">gridLines =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, dates) <span class="do">## write without styling</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="do">## openxlsx converts columns of class &quot;Date&quot; to Excel dates with the format given by</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">getOption</span>(<span class="st">&quot;openxlsx.dateFormat&quot;</span>, <span class="st">&quot;mm/dd/yyyy&quot;</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="do">## this can be set via (for example)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.dateFormat&quot;</span> <span class="ot">=</span> <span class="st">&quot;yyyy/mm/dd&quot;</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="do">## custom date formats can be made up of any combination of:</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="do">##   d, dd, ddd, dddd, m, mm, mmm, mmmm, mmmmm, yy, yyyy</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="do">## numFmt == &quot;DATE&quot; will use the date format specified by the above</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;DATE&quot;</span>), <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">1</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="do">## some custom date format examples</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;yyyy/mm/dd&quot;</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">2</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;yyyy/mmm/dd&quot;</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">3</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;yy / mmmm / dd&quot;</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">4</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;ddddd&quot;</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">5</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;yyyy-mmm-dd&quot;</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">6</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;mm/ dd yyyy&quot;</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">7</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;mm/dd/yy&quot;</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">8</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="fu">setColWidths</span>(wb, <span class="dv">1</span>, <span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">widths =</span> <span class="dv">23</span>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="do">## The default date format used in writeData and writeDataTable can be set with:</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.dateFormat&quot;</span> <span class="ot">=</span> <span class="st">&quot;dd/mm/yyyy&quot;</span>)</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Date Formatting&quot;</span>, dates, <span class="at">startRow  =</span> <span class="dv">8</span>, <span class="at">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.dateFormat&quot;</span> <span class="ot">=</span> <span class="st">&quot;yyyy-mm-dd&quot;</span>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Date Formatting&quot;</span>, dates, <span class="at">startRow  =</span> <span class="dv">15</span>)</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="fu">saveWorkbook</span>(wb, <span class="st">&quot;Date Formatting.xlsx&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
 <div id="datetime-formatting" class="section level2">
 <h2>DateTime Formatting</h2>
 <p>The conversion from POSIX to Excel datetimes is dependent on the timezone you are in. If POSIX values are being written incorrectly, try setting the timezone with (for example)</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">Sys.setenv</span>(<span class="dt">TZ =</span> <span class="st">&quot;Australia/Sydney&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>dateTimes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">d1 =</span> <span class="kw">Sys.time</span>() <span class="op">-</span><span class="st"> </span><span class="dv">0</span><span class="op">:</span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span><span class="dv">10000</span>)</span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>) dateTimes &lt;-<span class="st"> </span><span class="kw">cbind</span>(dateTimes, dateTimes)</span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">names</span>(dateTimes) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</span>
-<span id="cb3-6"><a href="#cb3-6"></a></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">## POSIX Formatting</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a>wb &lt;-<span class="st"> </span><span class="kw">createWorkbook</span>()</span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;DateTime Formatting&quot;</span>, <span class="dt">gridLines =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, dateTimes)  <span class="co">## write without styling</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co">## openxlsx converts columns of class &#39;POSIxt&#39; to Excel datetimes with the format</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">## given by</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="kw">getOption</span>(<span class="st">&quot;openxlsx.datetimeFormat&quot;</span>, <span class="st">&quot;yyyy/mm/dd hh:mm:ss&quot;</span>)</span>
-<span id="cb3-15"><a href="#cb3-15"></a></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co">## this can be set via (for example)</span></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="kw">options</span>(<span class="dt">openxlsx.datetimeFormat =</span> <span class="st">&quot;yyyy-mm-dd hh:mm:ss&quot;</span>)</span>
-<span id="cb3-18"><a href="#cb3-18"></a><span class="co">## custom datetime formats can be made up of any combination of: d, dd, ddd, dddd,</span></span>
-<span id="cb3-19"><a href="#cb3-19"></a><span class="co">## m, mm, mmm, mmmm, mmmmm, yy, yyyy, h, hh, m, mm, s, ss, AM/PM</span></span>
-<span id="cb3-20"><a href="#cb3-20"></a></span>
-<span id="cb3-21"><a href="#cb3-21"></a><span class="co">## numFmt == &#39;LONGDATE&#39; will use the date format specified by the above</span></span>
-<span id="cb3-22"><a href="#cb3-22"></a>long_date_style &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;LONGDATE&quot;</span>)</span>
-<span id="cb3-23"><a href="#cb3-23"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> long_date_style, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">1</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb3-24"><a href="#cb3-24"></a></span>
-<span id="cb3-25"><a href="#cb3-25"></a><span class="co">## some custom date format examples</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;yyyy/mm/dd hh:mm:ss AM/PM&quot;</span>)</span>
-<span id="cb3-27"><a href="#cb3-27"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">2</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb3-28"><a href="#cb3-28"></a></span>
-<span id="cb3-29"><a href="#cb3-29"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;hh:mm:ss AM/PM&quot;</span>)</span>
-<span id="cb3-30"><a href="#cb3-30"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">3</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb3-31"><a href="#cb3-31"></a></span>
-<span id="cb3-32"><a href="#cb3-32"></a>sty &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;hh:mm:ss&quot;</span>)</span>
-<span id="cb3-33"><a href="#cb3-33"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> sty, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">cols =</span> <span class="dv">4</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb3-34"><a href="#cb3-34"></a></span>
-<span id="cb3-35"><a href="#cb3-35"></a><span class="kw">setColWidths</span>(wb, <span class="dv">1</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">widths =</span> <span class="dv">30</span>)</span>
-<span id="cb3-36"><a href="#cb3-36"></a></span>
-<span id="cb3-37"><a href="#cb3-37"></a><span class="co">## The default date format used in writeData and writeDataTable can be set with:</span></span>
-<span id="cb3-38"><a href="#cb3-38"></a><span class="kw">options</span>(<span class="dt">openxlsx.datetimeFormat =</span> <span class="st">&quot;yyyy/mm/dd hh:mm:ss&quot;</span>)</span>
-<span id="cb3-39"><a href="#cb3-39"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;DateTime Formatting&quot;</span>, dateTimes, <span class="dt">startRow =</span> <span class="dv">8</span>, <span class="dt">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
-<span id="cb3-40"><a href="#cb3-40"></a></span>
-<span id="cb3-41"><a href="#cb3-41"></a><span class="kw">options</span>(<span class="dt">openxlsx.datetimeFormat =</span> <span class="st">&quot;hh:mm:ss AM/PM&quot;</span>)</span>
-<span id="cb3-42"><a href="#cb3-42"></a><span class="kw">writeDataTable</span>(wb, <span class="st">&quot;DateTime Formatting&quot;</span>, dateTimes, <span class="dt">startRow =</span> <span class="dv">15</span>)</span>
-<span id="cb3-43"><a href="#cb3-43"></a></span>
-<span id="cb3-44"><a href="#cb3-44"></a><span class="kw">saveWorkbook</span>(wb, <span class="st">&quot;DateTime Formatting.xlsx&quot;</span>, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb3-45"><a href="#cb3-45"></a><span class="kw">openXL</span>(<span class="st">&quot;DateTime Formatting.xlsx&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">TZ =</span> <span class="st">&quot;Australia/Sydney&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dateTimes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;d1&quot;</span> <span class="ot">=</span> <span class="fu">Sys.time</span>() <span class="sc">-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span><span class="sc">*</span><span class="dv">10000</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) dateTimes <span class="ot">&lt;-</span> <span class="fu">cbind</span>(dateTimes, dateTimes)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dateTimes) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;d&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="do">## POSIX Formatting</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>wb <span class="ot">&lt;-</span> <span class="fu">createWorkbook</span>()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;DateTime Formatting&quot;</span>, <span class="at">gridLines =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, dateTimes) <span class="do">## write without styling</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="do">## openxlsx converts columns of class &quot;POSIxt&quot; to Excel datetimes with the format given by</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">getOption</span>(<span class="st">&quot;openxlsx.datetimeFormat&quot;</span>, <span class="st">&quot;yyyy/mm/dd hh:mm:ss&quot;</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="do">## this can be set via (for example)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.datetimeFormat&quot;</span> <span class="ot">=</span> <span class="st">&quot;yyyy-mm-dd hh:mm:ss&quot;</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="do">## custom datetime formats can be made up of any combination of:</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="do">## d, dd, ddd, dddd, m, mm, mmm, mmmm, mmmmm, yy, yyyy, h, hh, m, mm, s, ss, AM/PM</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="do">## numFmt == &quot;LONGDATE&quot; will use the date format specified by the above</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>long_date_style <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;LONGDATE&quot;</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> long_date_style, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">1</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="do">## some custom date format examples</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;yyyy/mm/dd hh:mm:ss AM/PM&quot;</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">2</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;hh:mm:ss AM/PM&quot;</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">3</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>sty <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;hh:mm:ss&quot;</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> sty, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">cols =</span> <span class="dv">4</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu">setColWidths</span>(wb, <span class="dv">1</span>, <span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">widths =</span> <span class="dv">30</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="do">## The default date format used in writeData and writeDataTable can be set with:</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.datetimeFormat&quot;</span> <span class="ot">=</span> <span class="st">&quot;yyyy/mm/dd hh:mm:ss&quot;</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;DateTime Formatting&quot;</span>, dateTimes, <span class="at">startRow  =</span> <span class="dv">8</span>, <span class="at">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.datetimeFormat&quot;</span> <span class="ot">=</span> <span class="st">&quot;hh:mm:ss AM/PM&quot;</span>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="fu">writeDataTable</span>(wb, <span class="st">&quot;DateTime Formatting&quot;</span>, dateTimes, <span class="at">startRow  =</span> <span class="dv">15</span>)</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="fu">saveWorkbook</span>(wb, <span class="st">&quot;DateTime Formatting.xlsx&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="fu">openXL</span>(<span class="st">&quot;DateTime Formatting.xlsx&quot;</span>)</span></code></pre></div>
 </div>
 <div id="conditional-formatting" class="section level2">
 <h2>Conditional Formatting</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>wb &lt;-<span class="st"> </span><span class="kw">createWorkbook</span>()</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;cellIs&quot;</span>)</span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Moving Row&quot;</span>)</span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Moving Col&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>)</span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Duplicates&quot;</span>)</span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;containsText&quot;</span>)</span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="dt">zoom =</span> <span class="dv">30</span>)</span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;databar&quot;</span>)</span>
-<span id="cb4-10"><a href="#cb4-10"></a></span>
-<span id="cb4-11"><a href="#cb4-11"></a>negStyle &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">fontColour =</span> <span class="st">&quot;#9C0006&quot;</span>, <span class="dt">bgFill =</span> <span class="st">&quot;#FFC7CE&quot;</span>)</span>
-<span id="cb4-12"><a href="#cb4-12"></a>posStyle &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">fontColour =</span> <span class="st">&quot;#006100&quot;</span>, <span class="dt">bgFill =</span> <span class="st">&quot;#C6EFCE&quot;</span>)</span>
-<span id="cb4-13"><a href="#cb4-13"></a></span>
-<span id="cb4-14"><a href="#cb4-14"></a><span class="co">## rule applies to all each cell in range</span></span>
-<span id="cb4-15"><a href="#cb4-15"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;cellIs&quot;</span>, <span class="dv">-5</span><span class="op">:</span><span class="dv">5</span>)</span>
-<span id="cb4-16"><a href="#cb4-16"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;cellIs&quot;</span>, LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">11</span>], <span class="dt">startCol =</span> <span class="dv">2</span>)</span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;cellIs&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;!=0&quot;</span>, <span class="dt">style =</span> negStyle)</span>
-<span id="cb4-18"><a href="#cb4-18"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;cellIs&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;==0&quot;</span>, <span class="dt">style =</span> posStyle)</span>
-<span id="cb4-19"><a href="#cb4-19"></a></span>
-<span id="cb4-20"><a href="#cb4-20"></a><span class="co">## highlight row dependent on first cell in row</span></span>
-<span id="cb4-21"><a href="#cb4-21"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, <span class="dv">-5</span><span class="op">:</span><span class="dv">5</span>)</span>
-<span id="cb4-22"><a href="#cb4-22"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">11</span>], <span class="dt">startCol =</span> <span class="dv">2</span>)</span>
-<span id="cb4-23"><a href="#cb4-23"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;$A1&lt;0&quot;</span>, </span>
-<span id="cb4-24"><a href="#cb4-24"></a>    <span class="dt">style =</span> negStyle)</span>
-<span id="cb4-25"><a href="#cb4-25"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;$A1&gt;0&quot;</span>, </span>
-<span id="cb4-26"><a href="#cb4-26"></a>    <span class="dt">style =</span> posStyle)</span>
-<span id="cb4-27"><a href="#cb4-27"></a></span>
-<span id="cb4-28"><a href="#cb4-28"></a><span class="co">## highlight column dependent on first cell in column</span></span>
-<span id="cb4-29"><a href="#cb4-29"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, <span class="dv">-5</span><span class="op">:</span><span class="dv">5</span>)</span>
-<span id="cb4-30"><a href="#cb4-30"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">11</span>], <span class="dt">startCol =</span> <span class="dv">2</span>)</span>
-<span id="cb4-31"><a href="#cb4-31"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;A$1&lt;0&quot;</span>, </span>
-<span id="cb4-32"><a href="#cb4-32"></a>    <span class="dt">style =</span> negStyle)</span>
-<span id="cb4-33"><a href="#cb4-33"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;A$1&gt;0&quot;</span>, </span>
-<span id="cb4-34"><a href="#cb4-34"></a>    <span class="dt">style =</span> posStyle)</span>
-<span id="cb4-35"><a href="#cb4-35"></a></span>
-<span id="cb4-36"><a href="#cb4-36"></a><span class="co">## highlight entire range cols X rows dependent only on cell A1</span></span>
-<span id="cb4-37"><a href="#cb4-37"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, <span class="dv">-5</span><span class="op">:</span><span class="dv">5</span>)</span>
-<span id="cb4-38"><a href="#cb4-38"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">11</span>], <span class="dt">startCol =</span> <span class="dv">2</span>)</span>
-<span id="cb4-39"><a href="#cb4-39"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;$A$1&lt;0&quot;</span>, </span>
-<span id="cb4-40"><a href="#cb4-40"></a>    <span class="dt">style =</span> negStyle)</span>
-<span id="cb4-41"><a href="#cb4-41"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>, <span class="dt">rule =</span> <span class="st">&quot;$A$1&gt;0&quot;</span>, </span>
-<span id="cb4-42"><a href="#cb4-42"></a>    <span class="dt">style =</span> posStyle)</span>
-<span id="cb4-43"><a href="#cb4-43"></a></span>
-<span id="cb4-44"><a href="#cb4-44"></a><span class="co">## highlight duplicates using default style</span></span>
-<span id="cb4-45"><a href="#cb4-45"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;Duplicates&quot;</span>, <span class="kw">sample</span>(LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">15</span>], <span class="dt">size =</span> <span class="dv">10</span>, <span class="dt">replace =</span> <span class="ot">TRUE</span>))</span>
-<span id="cb4-46"><a href="#cb4-46"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;Duplicates&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">type =</span> <span class="st">&quot;duplicates&quot;</span>)</span>
-<span id="cb4-47"><a href="#cb4-47"></a></span>
-<span id="cb4-48"><a href="#cb4-48"></a><span class="co">## cells containing text</span></span>
-<span id="cb4-49"><a href="#cb4-49"></a>fn &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">paste</span>(<span class="kw">sample</span>(LETTERS, <span class="dv">10</span>), <span class="dt">collapse =</span> <span class="st">&quot;-&quot;</span>)</span>
-<span id="cb4-50"><a href="#cb4-50"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;containsText&quot;</span>, <span class="kw">sapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, fn))</span>
-<span id="cb4-51"><a href="#cb4-51"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;containsText&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">type =</span> <span class="st">&quot;contains&quot;</span>, </span>
-<span id="cb4-52"><a href="#cb4-52"></a>    <span class="dt">rule =</span> <span class="st">&quot;A&quot;</span>)</span>
-<span id="cb4-53"><a href="#cb4-53"></a></span>
-<span id="cb4-54"><a href="#cb4-54"></a><span class="co">## colourscale colours cells based on cell value</span></span>
-<span id="cb4-55"><a href="#cb4-55"></a>df &lt;-<span class="st"> </span><span class="kw">read.xlsx</span>(<span class="kw">system.file</span>(<span class="st">&quot;readTest.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;openxlsx&quot;</span>), <span class="dt">sheet =</span> <span class="dv">4</span>)</span>
-<span id="cb4-56"><a href="#cb4-56"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;colourScale&quot;</span>, df, <span class="dt">colNames =</span> <span class="ot">FALSE</span>)  <span class="co">## write data.frame</span></span>
-<span id="cb4-57"><a href="#cb4-57"></a></span>
-<span id="cb4-58"><a href="#cb4-58"></a><span class="co">## rule is a vector or colours of length 2 or 3 (any hex colour or any of</span></span>
-<span id="cb4-59"><a href="#cb4-59"></a><span class="co">## colours()) If rule is NULL, min and max of cells is used. Rule must be the same</span></span>
-<span id="cb4-60"><a href="#cb4-60"></a><span class="co">## length as style or NULL.</span></span>
-<span id="cb4-61"><a href="#cb4-61"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(df), <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(df), <span class="dt">style =</span> <span class="kw">c</span>(<span class="st">&quot;black&quot;</span>, </span>
-<span id="cb4-62"><a href="#cb4-62"></a>    <span class="st">&quot;white&quot;</span>), <span class="dt">rule =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">255</span>), <span class="dt">type =</span> <span class="st">&quot;colourScale&quot;</span>)</span>
-<span id="cb4-63"><a href="#cb4-63"></a></span>
-<span id="cb4-64"><a href="#cb4-64"></a><span class="kw">setColWidths</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(df), <span class="dt">widths =</span> <span class="fl">1.07</span>)</span>
-<span id="cb4-65"><a href="#cb4-65"></a><span class="kw">setRowHeights</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(df), <span class="dt">heights =</span> <span class="fl">7.5</span>)</span>
-<span id="cb4-66"><a href="#cb4-66"></a></span>
-<span id="cb4-67"><a href="#cb4-67"></a><span class="co">## Databars</span></span>
-<span id="cb4-68"><a href="#cb4-68"></a><span class="kw">writeData</span>(wb, <span class="st">&quot;databar&quot;</span>, <span class="dv">-5</span><span class="op">:</span><span class="dv">5</span>)</span>
-<span id="cb4-69"><a href="#cb4-69"></a><span class="kw">conditionalFormatting</span>(wb, <span class="st">&quot;databar&quot;</span>, <span class="dt">cols =</span> <span class="dv">1</span>, <span class="dt">rows =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">12</span>, <span class="dt">type =</span> <span class="st">&quot;databar&quot;</span>)  <span class="co">## Default colours</span></span>
-<span id="cb4-70"><a href="#cb4-70"></a></span>
-<span id="cb4-71"><a href="#cb4-71"></a><span class="kw">saveWorkbook</span>(wb, <span class="st">&quot;conditionalFormattingExample.xlsx&quot;</span>, <span class="ot">TRUE</span>)</span>
-<span id="cb4-72"><a href="#cb4-72"></a></span>
-<span id="cb4-73"><a href="#cb4-73"></a><span class="kw">openXL</span>(wb)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wb <span class="ot">&lt;-</span> <span class="fu">createWorkbook</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;cellIs&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Moving Row&quot;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Moving Col&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Duplicates&quot;</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;containsText&quot;</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="at">zoom =</span> <span class="dv">30</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;databar&quot;</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>negStyle <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">fontColour =</span> <span class="st">&quot;#9C0006&quot;</span>, <span class="at">bgFill =</span> <span class="st">&quot;#FFC7CE&quot;</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>posStyle <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">fontColour =</span> <span class="st">&quot;#006100&quot;</span>, <span class="at">bgFill =</span> <span class="st">&quot;#C6EFCE&quot;</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="do">## rule applies to all each cell in range</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;cellIs&quot;</span>, <span class="sc">-</span><span class="dv">5</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;cellIs&quot;</span>, LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>], <span class="at">startCol=</span><span class="dv">2</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;cellIs&quot;</span>, <span class="at">cols=</span><span class="dv">1</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;!=0&quot;</span>, <span class="at">style =</span> negStyle)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;cellIs&quot;</span>, <span class="at">cols=</span><span class="dv">1</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;==0&quot;</span>, <span class="at">style =</span> posStyle)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="do">## highlight row dependent on first cell in row</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, <span class="sc">-</span><span class="dv">5</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>], <span class="at">startCol=</span><span class="dv">2</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, <span class="at">cols=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;$A1&lt;0&quot;</span>, <span class="at">style =</span> negStyle)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Row&quot;</span>, <span class="at">cols=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;$A1&gt;0&quot;</span>, <span class="at">style =</span> posStyle)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="do">## highlight column dependent on first cell in column</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, <span class="sc">-</span><span class="dv">5</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>], <span class="at">startCol=</span><span class="dv">2</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, <span class="at">cols=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;A$1&lt;0&quot;</span>, <span class="at">style =</span> negStyle)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;Moving Col&quot;</span>, <span class="at">cols=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;A$1&gt;0&quot;</span>, <span class="at">style =</span> posStyle)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="do">## highlight entire range cols X rows dependent only on cell A1</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, <span class="sc">-</span><span class="dv">5</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>], <span class="at">startCol=</span><span class="dv">2</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, <span class="at">cols=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;$A$1&lt;0&quot;</span>, <span class="at">style =</span> negStyle)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;Dependent on 1&quot;</span>, <span class="at">cols=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">rule=</span><span class="st">&quot;$A$1&gt;0&quot;</span>, <span class="at">style =</span> posStyle)</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="do">## highlight duplicates using default style</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;Duplicates&quot;</span>, <span class="fu">sample</span>(LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>], <span class="at">size =</span> <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;Duplicates&quot;</span>, <span class="at">cols =</span> <span class="dv">1</span>, <span class="at">rows =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">type =</span> <span class="st">&quot;duplicates&quot;</span>)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="do">## cells containing text</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>fn <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">paste</span>(<span class="fu">sample</span>(LETTERS, <span class="dv">10</span>), <span class="at">collapse =</span> <span class="st">&quot;-&quot;</span>)</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;containsText&quot;</span>, <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, fn))</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;containsText&quot;</span>, <span class="at">cols =</span> <span class="dv">1</span>, <span class="at">rows =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">type =</span> <span class="st">&quot;contains&quot;</span>, <span class="at">rule =</span> <span class="st">&quot;A&quot;</span>)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="do">## colourscale colours cells based on cell value</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.xlsx</span>(<span class="fu">system.file</span>(<span class="st">&quot;readTest.xlsx&quot;</span>, <span class="at">package =</span> <span class="st">&quot;openxlsx2&quot;</span>), <span class="at">sheet =</span> <span class="dv">4</span>)</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;colourScale&quot;</span>, df, <span class="at">colNames=</span><span class="cn">FALSE</span>)  <span class="do">## write data.frame</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="do">## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="do">## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="at">cols=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(df), <span class="at">rows=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df),</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>   <span class="at">style =</span> <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;white&quot;</span>), </span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>   <span class="at">rule =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">255</span>), </span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>   <span class="at">type =</span> <span class="st">&quot;colourScale&quot;</span>)</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="fu">setColWidths</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(df), <span class="at">widths =</span> <span class="fl">1.07</span>)</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="fu">setRowHeights</span>(wb, <span class="st">&quot;colourScale&quot;</span>, <span class="at">rows =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df), <span class="at">heights =</span> <span class="fl">7.5</span>) </span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="do">## Databars</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="st">&quot;databar&quot;</span>, <span class="sc">-</span><span class="dv">5</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="fu">conditionalFormatting</span>(wb, <span class="st">&quot;databar&quot;</span>, <span class="at">cols =</span> <span class="dv">1</span>, <span class="at">rows =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">type =</span> <span class="st">&quot;databar&quot;</span>) <span class="do">## Default colours</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="fu">saveWorkbook</span>(wb, <span class="st">&quot;conditionalFormattingExample.xlsx&quot;</span>, <span class="cn">TRUE</span>)</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="fu">openXL</span>(wb)</span></code></pre></div>
 </div>
 <div id="numeric-formatting" class="section level2">
 <h2>Numeric Formatting</h2>
 <p>numeric columns styling can be set using the numFmt parameter in createStyle or a default can be set with, for example, options(“openxlsx.numFmt” = “#,#0.00”)</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">options</span>(<span class="dt">openxlsx.numFmt =</span> <span class="ot">NULL</span>)</span>
-<span id="cb5-2"><a href="#cb5-2"></a>wb &lt;-<span class="st"> </span><span class="kw">createWorkbook</span>()</span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Sheet 1&quot;</span>)</span>
-<span id="cb5-4"><a href="#cb5-4"></a>df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="fl">12.987654321</span>, <span class="dt">ncol =</span> <span class="dv">7</span>, <span class="dt">nrow =</span> <span class="dv">5</span>))  <span class="co">## data.frame to write</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>df[, <span class="dv">6</span><span class="op">:</span><span class="dv">7</span>] &lt;-<span class="st"> </span>df[, <span class="dv">6</span><span class="op">:</span><span class="dv">7</span>] <span class="op">*</span><span class="st"> </span><span class="fl">1e+06</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="co">## Set column 1 class to &#39;comma&#39; to get comma separated thousands</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="kw">class</span>(df<span class="op">$</span>X1) &lt;-<span class="st"> &quot;comma&quot;</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a></span>
-<span id="cb5-10"><a href="#cb5-10"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, df)</span>
-<span id="cb5-11"><a href="#cb5-11"></a>s &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;0.0&quot;</span>)</span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> s, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">cols =</span> <span class="dv">2</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb5-13"><a href="#cb5-13"></a></span>
-<span id="cb5-14"><a href="#cb5-14"></a>s &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;0.00&quot;</span>)</span>
-<span id="cb5-15"><a href="#cb5-15"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> s, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">cols =</span> <span class="dv">3</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb5-16"><a href="#cb5-16"></a></span>
-<span id="cb5-17"><a href="#cb5-17"></a>s &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;0.000&quot;</span>)</span>
-<span id="cb5-18"><a href="#cb5-18"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> s, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">cols =</span> <span class="dv">4</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb5-19"><a href="#cb5-19"></a></span>
-<span id="cb5-20"><a href="#cb5-20"></a>s &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;#,##0&quot;</span>)</span>
-<span id="cb5-21"><a href="#cb5-21"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> s, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">cols =</span> <span class="dv">5</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb5-22"><a href="#cb5-22"></a></span>
-<span id="cb5-23"><a href="#cb5-23"></a>s &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;#,##0.00&quot;</span>)</span>
-<span id="cb5-24"><a href="#cb5-24"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> s, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">cols =</span> <span class="dv">6</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb5-25"><a href="#cb5-25"></a></span>
-<span id="cb5-26"><a href="#cb5-26"></a>s &lt;-<span class="st"> </span><span class="kw">createStyle</span>(<span class="dt">numFmt =</span> <span class="st">&quot;$ #,##0.00&quot;</span>)</span>
-<span id="cb5-27"><a href="#cb5-27"></a><span class="kw">addStyle</span>(wb, <span class="dv">1</span>, <span class="dt">style =</span> s, <span class="dt">rows =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">cols =</span> <span class="dv">7</span>, <span class="dt">gridExpand =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb5-28"><a href="#cb5-28"></a></span>
-<span id="cb5-29"><a href="#cb5-29"></a><span class="co">## set a default number format for numeric columns of data.frames</span></span>
-<span id="cb5-30"><a href="#cb5-30"></a><span class="kw">options</span>(<span class="dt">openxlsx.numFmt =</span> <span class="st">&quot;$* #,#0.00&quot;</span>)</span>
-<span id="cb5-31"><a href="#cb5-31"></a><span class="kw">writeData</span>(wb, <span class="dv">1</span>, <span class="dt">x =</span> <span class="kw">data.frame</span>(<span class="st">`</span><span class="dt">Using Default Options</span><span class="st">`</span> =<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2345.1235</span>, <span class="dv">5</span>)), <span class="dt">startCol =</span> <span class="dv">9</span>)</span>
-<span id="cb5-32"><a href="#cb5-32"></a></span>
-<span id="cb5-33"><a href="#cb5-33"></a><span class="kw">setColWidths</span>(wb, <span class="dv">1</span>, <span class="dt">cols =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">widths =</span> <span class="dv">15</span>)</span>
-<span id="cb5-34"><a href="#cb5-34"></a></span>
-<span id="cb5-35"><a href="#cb5-35"></a><span class="co">## Using default numFmt to round to 2 dp (Any numeric column will be affected)</span></span>
-<span id="cb5-36"><a href="#cb5-36"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Sheet 2&quot;</span>)</span>
-<span id="cb5-37"><a href="#cb5-37"></a>df &lt;-<span class="st"> </span>iris</span>
-<span id="cb5-38"><a href="#cb5-38"></a>df[, <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>] &lt;-<span class="st"> </span>df[<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>] <span class="op">+</span><span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>)</span>
-<span id="cb5-39"><a href="#cb5-39"></a><span class="kw">writeDataTable</span>(wb, <span class="dt">sheet =</span> <span class="dv">2</span>, <span class="dt">x =</span> df)</span>
-<span id="cb5-40"><a href="#cb5-40"></a><span class="kw">writeData</span>(wb, <span class="dt">sheet =</span> <span class="dv">2</span>, <span class="dt">x =</span> df, <span class="dt">startCol =</span> <span class="dv">7</span>)</span>
-<span id="cb5-41"><a href="#cb5-41"></a><span class="kw">writeData</span>(wb, <span class="dt">sheet =</span> <span class="dv">2</span>, <span class="dt">x =</span> df, <span class="dt">startCol =</span> <span class="dv">13</span>, <span class="dt">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
-<span id="cb5-42"><a href="#cb5-42"></a></span>
-<span id="cb5-43"><a href="#cb5-43"></a><span class="co">## To stop auto-formatting numerics set</span></span>
-<span id="cb5-44"><a href="#cb5-44"></a><span class="kw">options</span>(<span class="dt">openxlsx.numFmt =</span> <span class="ot">NULL</span>)</span>
-<span id="cb5-45"><a href="#cb5-45"></a><span class="kw">addWorksheet</span>(wb, <span class="st">&quot;Sheet 3&quot;</span>)</span>
-<span id="cb5-46"><a href="#cb5-46"></a><span class="kw">writeDataTable</span>(wb, <span class="dt">sheet =</span> <span class="dv">3</span>, <span class="dt">x =</span> df)</span>
-<span id="cb5-47"><a href="#cb5-47"></a></span>
-<span id="cb5-48"><a href="#cb5-48"></a><span class="kw">openXL</span>(wb)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.numFmt&quot;</span> <span class="ot">=</span> <span class="cn">NULL</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>wb <span class="ot">&lt;-</span> <span class="fu">createWorkbook</span>()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Sheet 1&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fl">12.987654321</span>, <span class="at">ncol =</span> <span class="dv">7</span>, <span class="at">nrow =</span> <span class="dv">5</span>)) <span class="do">## data.frame to write</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>df[ ,<span class="dv">6</span><span class="sc">:</span><span class="dv">7</span>] <span class="ot">&lt;-</span> df[ ,<span class="dv">6</span><span class="sc">:</span><span class="dv">7</span>]<span class="sc">*</span><span class="fl">1E6</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Set column 1 class to &quot;comma&quot; to get comma separated thousands</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df<span class="sc">$</span>X1) <span class="ot">&lt;-</span> <span class="st">&quot;comma&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, df)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;0.0&quot;</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> s, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">cols =</span> <span class="dv">2</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;0.00&quot;</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> s, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">cols =</span> <span class="dv">3</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;0.000&quot;</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> s, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">cols =</span> <span class="dv">4</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;#,##0&quot;</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> s, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">cols =</span> <span class="dv">5</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;#,##0.00&quot;</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> s, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">cols =</span> <span class="dv">6</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">createStyle</span>(<span class="at">numFmt =</span> <span class="st">&quot;$ #,##0.00&quot;</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="fu">addStyle</span>(wb, <span class="dv">1</span>, <span class="at">style =</span> s, <span class="at">rows =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">cols =</span> <span class="dv">7</span>, <span class="at">gridExpand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="do">## set a default number format for numeric columns of data.frames</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.numFmt&quot;</span> <span class="ot">=</span> <span class="st">&quot;$* #,#0.00&quot;</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="dv">1</span>, <span class="at">x =</span> <span class="fu">data.frame</span>(<span class="st">&quot;Using Default Options&quot;</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="fl">2345.1235</span>, <span class="dv">5</span>)), <span class="at">startCol =</span> <span class="dv">9</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="fu">setColWidths</span>(wb, <span class="dv">1</span>, <span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">widths =</span> <span class="dv">15</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="do">## Using default numFmt to round to 2 dp (Any numeric column will be affected)</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Sheet 2&quot;</span>)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> iris; df[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>] <span class="ot">&lt;-</span> df[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>] <span class="sc">+</span> <span class="fu">runif</span>(<span class="dv">1</span>)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="fu">writeDataTable</span>(wb, <span class="at">sheet =</span> <span class="dv">2</span>, <span class="at">x =</span> df)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="at">sheet =</span> <span class="dv">2</span>, <span class="at">x =</span> df, <span class="at">startCol =</span> <span class="dv">7</span>)</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="fu">writeData</span>(wb, <span class="at">sheet =</span> <span class="dv">2</span>, <span class="at">x =</span> df, <span class="at">startCol =</span> <span class="dv">13</span>, <span class="at">borders =</span> <span class="st">&quot;rows&quot;</span>)</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="do">## To stop auto-formatting numerics set</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;openxlsx.numFmt&quot;</span> <span class="ot">=</span> <span class="cn">NULL</span>)</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="fu">addWorksheet</span>(wb, <span class="st">&quot;Sheet 3&quot;</span>)</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="fu">writeDataTable</span>(wb, <span class="at">sheet =</span> <span class="dv">3</span>, <span class="at">x =</span> df)</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="fu">openXL</span>(wb)</span></code></pre></div>
 </div>
 
 

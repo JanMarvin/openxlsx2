@@ -63,7 +63,7 @@ test_that("ungroup rows", {
 
 
 test_that("loading workbook preserves outlines", {
-  fl <- system.file("extdata", "groupTest.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "groupTest.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(fl)
 
   expect_equal(names(wb$colOutlineLevels[[1]]), c("2", "3", "4"))

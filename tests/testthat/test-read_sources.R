@@ -14,7 +14,7 @@ test_that("read.xlsx from different sources", {
   df_url <- read.xlsx(xlsxFile)
 
   ## File
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   df_file <- read.xlsx(xlsxFile)
 
   expect_true(all.equal(df_url, df_file), label = "Read from URL")
@@ -26,7 +26,7 @@ test_that("read.xlsx from different sources", {
 
 
   ## Non-existing File
-  xlsxFile <- file.path(dirname(system.file("extdata", "readTest.xlsx", package = "openxlsx")), "readTest00.xlsx")
+  xlsxFile <- file.path(dirname(system.file("extdata", "readTest.xlsx", package = "openxlsx2")), "readTest00.xlsx")
   expect_error(read.xlsx(xlsxFile), regexp = "File does not exist.")
 })
 
@@ -40,7 +40,7 @@ test_that("loadWorkbook from different sources", {
   wb_url <- loadWorkbook(xlsxFile)
 
   ## File
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb_file <- loadWorkbook(xlsxFile)
 
   ## check
@@ -56,7 +56,7 @@ test_that("getDateOrigin from different sources", {
   origin_url <- getDateOrigin(xlsxFile)
 
   ## File
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   origin_file <- getDateOrigin(xlsxFile)
 
   ## check

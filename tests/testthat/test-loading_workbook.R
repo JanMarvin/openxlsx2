@@ -6,7 +6,7 @@ context("Load Workbook Object")
 
 
 test_that("Loading readTest.xlsx Sheet 1", {
-  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(fl)
 
   sheet_data <- wb$worksheets[[2]]$sheet_data
@@ -114,7 +114,7 @@ test_that("Loading readTest.xlsx Sheet 1", {
 
 
 test_that("Loading readTest.xlsx Sheet 1", {
-  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(fl)
 
   sheet_data <- wb$worksheets[[1]]$sheet_data
@@ -905,7 +905,7 @@ test_that("Loading readTest.xlsx Sheet 1", {
 
 test_that("Loading multiple pivot tables: loadPivotTables.xlsx works",{
   ## loadPivotTables.xlsx is a file with 3 pivot tables and 2 of them have the same reference data (pivotCacheDefinition)
-  fl <- system.file("extdata", "loadPivotTables.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "loadPivotTables.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(fl)
   
   # Check that wb is correctly loaded
@@ -927,7 +927,7 @@ test_that("Loading multiple pivot tables: loadPivotTables.xlsx works",{
 
 test_that("Load and saving a file with Threaded Comments works", {
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
-  fl <- system.file("extdata", "loadThreadComment.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "loadThreadComment.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(fl)
   # Check that wb can be saved without error
   expect_silent(saveWorkbook(wb, file = tempfile()))

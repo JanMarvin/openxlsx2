@@ -1261,7 +1261,7 @@ convert2EMU <- function(d, units) {
 #' addWorksheet(wb, "Sheet 3")
 #'
 #' ## Insert images
-#' img <- system.file("extdata", "einstein.jpg", package = "openxlsx")
+#' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 #' insertImage(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
 #' insertImage(wb, 2, img, startRow = 2, startCol = 2)
 #' insertImage(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
@@ -1525,7 +1525,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove column widths in columns 1 to 20
 #' removeColWidths(wb, 1, cols = 1:20)
@@ -1570,7 +1570,7 @@ removeColWidths <- function(wb, sheet, cols) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove any custom row heights in rows 1 to 10
 #' removeRowHeights(wb, 1, rows = 1:10)
@@ -1707,7 +1707,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' @examples
 #'
 #' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## create a new style and replace style 2
 #'
@@ -1748,7 +1748,7 @@ replaceStyle <- function(wb, index, newStyle) {
 #' @seealso \code{\link{replaceStyle}}
 #' @examples
 #' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' getStyles(wb)[1:3]
 getStyles <- function(wb) {
   nStyles <- length(wb$styleObjects)
@@ -1774,7 +1774,7 @@ getStyles <- function(wb) {
 #' @export
 #' @examples
 #' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## Remove sheet 2
 #' removeWorksheet(wb, 2)
@@ -2471,7 +2471,7 @@ protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure =
 #' @param showGridLines A logical. If \code{FALSE}, grid lines are hidden.
 #' @export
 #' @examples
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' names(wb) ## list worksheets in workbook
 #' showGridLines(wb, 1, showGridLines = FALSE)
 #' showGridLines(wb, "testing", showGridLines = FALSE)
@@ -3310,7 +3310,7 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 #' m <- read.xlsx("getDateOriginExample.xlsx")
 #'
 #' ## convert to dates
-#' do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+#' do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' convertToDate(m[[1]], do)
 #' }
 #' @export
@@ -3356,7 +3356,7 @@ getDateOrigin <- function(xlsxFile) {
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples
-#' getSheetNames(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+#' getSheetNames(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' @export
 getSheetNames <- function(file) {
   if (!file.exists(file)) {

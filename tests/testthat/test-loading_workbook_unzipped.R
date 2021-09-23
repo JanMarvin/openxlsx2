@@ -6,7 +6,7 @@ context("Load Unzipped Workbook Object")
 
 
 test_that("Loading unzipped readTest.xlsx", {
-  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(fl)
 
   ## make unzipped file & load

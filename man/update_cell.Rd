@@ -23,7 +23,7 @@ update_cell(x, wb, sheet, cell, data_class, colNames = FALSE)
 Minimal invasive update of a single cell for imported workbooks.
 }
 \examples{
-   xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx")
+   xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
    wb <- loadWorkbook(xlsxFile)
    wb <- update_cell(x = c(1:3), wb = wb, sheet = "Sheet1", cell = "D4:D6")
    wb <- update_cell(x = c("x", "y", "z"), wb = wb, sheet = "Sheet1", cell = "B3:D3")

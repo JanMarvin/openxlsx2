@@ -6,7 +6,7 @@ context("Style Parsing")
 
 
 test_that("parsing border xml", {
-  wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+  wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
   styles <- getStyles(wb = wb)
 
 
