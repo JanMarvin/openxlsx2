@@ -683,18 +683,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// set_row
-std::string set_row(Rcpp::List row_attr, Rcpp::List cells);
-RcppExport SEXP _openxlsx2_set_row(SEXP row_attrSEXP, SEXP cellsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type row_attr(row_attrSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type cells(cellsSEXP);
-    rcpp_result_gen = Rcpp::wrap(set_row(row_attr, cells));
-    return rcpp_result_gen;
-END_RCPP
-}
 // set_sst
 Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings);
 RcppExport SEXP _openxlsx2_set_sst(SEXP sharedStringsSEXP) {
@@ -798,6 +786,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type t(tSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type v(vSEXP);
     rcpp_result_gen = Rcpp::wrap(buildCellList(r, t, v));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_row
+std::string set_row(Rcpp::List row_attr, Rcpp::List cells);
+RcppExport SEXP _openxlsx2_set_row(SEXP row_attrSEXP, SEXP cellsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type row_attr(row_attrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type cells(cellsSEXP);
+    rcpp_result_gen = Rcpp::wrap(set_row(row_attr, cells));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -934,7 +934,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr4attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr_one, 6},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 2},
     {"_openxlsx2_calc_number_rows", (DL_FUNC) &_openxlsx2_calc_number_rows, 2},
-    {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 2},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_list_to_attr", (DL_FUNC) &_openxlsx2_list_to_attr, 2},
     {"_openxlsx2_list_to_attr_full", (DL_FUNC) &_openxlsx2_list_to_attr_full, 3},
@@ -944,6 +943,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_buildCellTypes", (DL_FUNC) &_openxlsx2_buildCellTypes, 2},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_buildCellList", (DL_FUNC) &_openxlsx2_buildCellList, 3},
+    {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 2},
     {"_openxlsx2_write_worksheet_xml_2", (DL_FUNC) &_openxlsx2_write_worksheet_xml_2, 8},
     {"_openxlsx2_buildMatrixNumeric", (DL_FUNC) &_openxlsx2_buildMatrixNumeric, 6},
     {"_openxlsx2_buildMatrixMixed", (DL_FUNC) &_openxlsx2_buildMatrixMixed, 8},

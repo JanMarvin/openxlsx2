@@ -209,10 +209,6 @@ calc_number_rows <- function(x, skipEmptyRows) {
     .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
 }
 
-set_row <- function(row_attr, cells) {
-    .Call(`_openxlsx2_set_row`, row_attr, cells)
-}
-
 set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
@@ -249,7 +245,10 @@ buildCellList <- function(r, t, v) {
     .Call(`_openxlsx2_buildCellList`, r, t, v)
 }
 
-#' @import Rcpp
+set_row <- function(row_attr, cells) {
+    .Call(`_openxlsx2_set_row`, row_attr, cells)
+}
+
 write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, rows_attr, row_heights_ = NULL, outline_levels_ = NULL, R_fileName = "output") {
     .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, rows_attr, row_heights_, outline_levels_, R_fileName)
 }

@@ -1,13 +1,8 @@
-
 #include "openxlsx2_types.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-
-
-
 
 // load workbook2
 Rcpp::IntegerVector cell_ref_to_col(Rcpp::CharacterVector x );
@@ -17,7 +12,7 @@ Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector);
 // write_data.cpp
 Rcpp::CharacterVector map_cell_types_to_char(Rcpp::IntegerVector);
 Rcpp::IntegerVector map_cell_types_to_integer(Rcpp::CharacterVector);
-  
+
 
 
 std::vector<std::string> get_letters();

@@ -42,13 +42,13 @@ Imports:
     utils,
     zip,
     stringi
+LinkingTo: 
+    Rcpp
 Suggests:
     knitr,
     testthat,
     roxygen2,
     rmarkdown 
-LinkingTo: 
-    Rcpp
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
