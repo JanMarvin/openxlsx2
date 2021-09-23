@@ -194,6 +194,7 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
 }
 
+// converts sharedstrings xml tree to R-Character Vector
 // [[Rcpp::export]]
 SEXP si_to_txt(XPtrXML doc) {
 
@@ -229,11 +230,13 @@ SEXP si_to_txt(XPtrXML doc) {
   return res;
 }
 
+// mimics the R function which used below
 Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {
     Rcpp::IntegerVector v = Rcpp::seq(0, x.size()-1);
     return v[!Rcpp::is_na(x)];
 }
 
+// similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 SEXP long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rcpp::List dn) {
 
