@@ -238,7 +238,7 @@ Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {
 
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
-SEXP long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rcpp::List dn) {
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rcpp::List dn) {
 
   auto n = cc.nrow();
 
@@ -269,10 +269,6 @@ SEXP long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rc
     Rcpp::as<Rcpp::CharacterVector>(tt[sel_col])[sel_row] = val_tt;
 
   }
-
-  // Rf_PrintValue(z);
-
-  return Rcpp::wrap(1);
 }
 
 
