@@ -348,7 +348,7 @@ wb_to_df <- function(xlsxFile,
       cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
 
     if (detectDates) {
-      sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string
+      sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string & cc$v != "_openxlsx_NA_"
       cc$val[sel] <- as.character(convertToDate(cc$v[sel]))
       cc$typ[sel]  <- "d"
     }
@@ -377,6 +377,29 @@ wb_to_df <- function(xlsxFile,
     tt <- tt[ , -1]
   }
 
+  # # faster guess_col_type alternative? to avoid tt
+  # types <- ftable(cc$row_r ~ cc$c_r ~ cc$typ)
+
+  if (missing(types))
+    types <- guess_col_type(tt)
+
+  # could make it optional or explicit
+  if (convert) {
+    sel <- !is.na(names(types))
+
+    if (any(sel)) {
+      nums <- names( which(types[sel] == 1) )
+      dtes <- names( which(types[sel] == 2) )
+
+      # TODO convert NA to NA_character_ to avoid warnings
+      z[nums] <- lapply(z[nums], as.numeric)
+      z[dtes] <- lapply(z[dtes], as.Date)
+    } else {
+      warning("could not convert. All missing in row used for variable names")
+    }
+  }
+
+  # is.na needs convert
   if (skipEmptyRows) {
     empty <- apply(z, 1, function(x) all(is.na(x)), simplify = TRUE)
 
@@ -394,27 +417,6 @@ wb_to_df <- function(xlsxFile,
       tt[sel] <- NULL
     }
 
-  }
-
-  # # faster guess_col_type alternative? to avoid tt
-  # types <- ftable(cc$row_r ~ cc$c_r ~ cc$typ)
-
-  if (missing(types))
-    types <- guess_col_type(tt)
-
-  # could make it optional or explicit
-  if (convert) {
-    sel <- !is.na(names(types))
-
-    if (any(sel)) {
-      nums <- names( which(types[sel] == 1) )
-      dtes <- names( which(types[sel] == 2) )
-
-      z[nums] <- lapply(z[nums], as.numeric)
-      z[dtes] <- lapply(z[dtes], as.Date)
-    } else {
-      warning("could not convert. All missing in row used for variable names")
-    }
   }
 
   attr(z, "tt") <- tt
@@ -543,7 +545,7 @@ writeData2 <-function(wb, sheet, data,
     # original cc dataframe
     nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "t")
     cc <- as.data.frame(
-      matrix(data = "NA",
+      matrix(data = NA_character_,
              nrow = nrow(data) * ncol(data),
              ncol = length(nams))
     )
@@ -554,7 +556,7 @@ writeData2 <-function(wb, sheet, data,
       c(v = as.character(x),
         typ = "n",
         r = y,
-        c_t = "NA")
+        c_t = NA_character_)
     }
 
     chrcell <- function(x,y){
@@ -577,7 +579,7 @@ writeData2 <-function(wb, sheet, data,
 
     for (i in seq_len(nrow(data))) {
 
-      col <- data.frame(matrix(data = "NA", nrow = ncol(data), ncol = 4))
+      col <- data.frame(matrix(data = NA_character_, nrow = ncol(data), ncol = 4))
       names(col) <- c("v", "typ", "r", "c_t")
       for (j in seq_along(data)) {
         dc <- ifelse(colNames && i == 1, "character", data_class[j])

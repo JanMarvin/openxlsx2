@@ -264,8 +264,11 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rc
 
     // Rcpp::Rcout << sel_row << " " << sel_col << " " << val_i << std::endl;
 
-    Rcpp::as<Rcpp::CharacterVector>(z[sel_col])[sel_row] = val_i;
-    Rcpp::as<Rcpp::CharacterVector>(tt[sel_col])[sel_row] = val_tt;
+    // only update if not missing in the xml input
+    if (val_i.compare("_openxlsx_NA_") != 0) {
+      Rcpp::as<Rcpp::CharacterVector>(z[sel_col])[sel_row] = val_i;
+      Rcpp::as<Rcpp::CharacterVector>(tt[sel_col])[sel_row] = val_tt;
+    }
 
   }
 }

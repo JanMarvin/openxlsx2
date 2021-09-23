@@ -8,14 +8,14 @@
 #include <RcppCommon.h>
 
 typedef struct {
-  std::string row_r = "NA";
-  std::string c_r   = "NA";
-  std::string c_s   = "NA";
-  std::string c_t   = "NA";
-  std::string v     = "NA";
-  std::string f     = "NA";
-  std::string f_t   = "NA";
-  std::string t     = "NA";
+  std::string row_r = "_openxlsx_NA_";
+  std::string c_r   = "_openxlsx_NA_";
+  std::string c_s   = "_openxlsx_NA_";
+  std::string c_t   = "_openxlsx_NA_";
+  std::string v     = "_openxlsx_NA_";
+  std::string f     = "_openxlsx_NA_";
+  std::string f_t   = "_openxlsx_NA_";
+  std::string t     = "_openxlsx_NA_";
 } xml_col;
 
 #include <Rcpp.h>

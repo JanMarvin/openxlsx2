@@ -2094,10 +2094,11 @@ Workbook$methods(
 
         cc$r <- paste0(cc$c_r, cc$row_r)
         # prepare data for output
-        # cc_rows <- unique(cc$row_r)
-        cc_rows <- as.character(seq(min(as.numeric(cc$row_r)),
-                                    max(as.numeric(cc$row_r))
-        ))
+
+        # there can be files, where row_attr is incomplete because a row
+        # is lacking any attributes (presumably was added before saving)
+        # still row_attr is what we want!
+        cc_rows <- names(ws$sheet_data$row_attr)
         cc_out <- vector("list", length = length(cc_rows))
         names(cc_out) <- cc_rows
 
@@ -2116,6 +2117,16 @@ Workbook$methods(
 
         ws$sheet_data$cc_out <- cc_out
 
+        # row_attr <- ws$sheet_data$row_attr
+        # nam_at <- names(row_attr)
+        # wanted <- as.character(seq(min(as.numeric(nam_at)),
+        #                            max(as.numeric(nam_at))))
+        # empty_row_attr <- wanted[!wanted %in% nam_at]
+        # # add empty list
+        # if(!identical(empty_row_attr, character(0)))
+        #   row_attr[[empty_row_attr]] <- list()
+        # # restore order
+        # ws$sheet_data$row_attr <- row_attr[wanted]
 
         # message(i, " \n")
         write_worksheet_xml_2(

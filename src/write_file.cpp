@@ -19,6 +19,8 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     row.append_attribute(attrnams[i]) = Rcpp::as<std::string>(row_attr[i]).c_str();
   }
 
+  std::string rnastring = "_openxlsx_NA_";
+
   // Rf_PrintValue(attrnams);
 
   for (auto i = 0; i < cells.length(); ++i) {
@@ -50,10 +52,10 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     cell.append_attribute("r") = c_rnm.c_str();
 
     // assign type if not <v> aka numeric
-    if (c_typ.compare("NA") != 0)
+    if (c_typ.compare(rnastring.c_str()) != 0)
       cell.append_attribute("t") = c_typ.c_str();
 
-    if (c_sty.compare("NA") != 0)
+    if (c_sty.compare(rnastring.c_str()) != 0)
       cell.append_attribute("s") = c_sty.c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
@@ -66,15 +68,19 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
       std::string fml = Rcpp::as<std::string>(cll["f"]);
       std::string fml_type = Rcpp::as<std::string>(cll["f_t"]);
 
-      // f can not be missing
-      if (fml.compare("NA") != 0) {
+      // f node: formula to be evaluated
+      if (fml.compare(rnastring.c_str()) != 0) {
         pugi::xml_node f = cell.append_child("f");
-        if (fml_type.compare("NA") != 0) {
+        if (fml_type.compare(rnastring.c_str()) != 0) {
           f.append_attribute("t") = fml_type.c_str();
         }
 
-        f.append_child(pugi::node_pcdata).set_value(c_val.c_str());
+        f.append_child(pugi::node_pcdata).set_value(fml.c_str());
       }
+
+      // v node: value stored from evaluated formula
+      if (c_val.compare(rnastring.c_str()) != 0)
+        cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
 
     }
 
@@ -104,8 +110,8 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     }
 
     // <v> ... </v>
-    if(c_typ.compare("NA") == 0) {
-      if (c_val.compare("NA") != 0) // dont write defined missings (NA might be to generic for )
+    if(c_typ.compare(rnastring.c_str()) == 0) {
+      if (c_val.compare(rnastring.c_str()) != 0) // dont write defined missings (NA might be to generic for )
         cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
     }
 
