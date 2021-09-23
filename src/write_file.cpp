@@ -19,6 +19,8 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     row.append_attribute(attrnams[i]) = Rcpp::as<std::string>(row_attr[i]).c_str();
   }
 
+  // Rf_PrintValue(attrnams);
+
   for (auto i = 0; i < cells.length(); ++i) {
 
     // create node <c>
@@ -30,28 +32,29 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     Rcpp::List cell_atr, cell_val, cell_isval;
     std::vector<std::string> cell_val_names;
 
+
     // Every cell consists of a typ and a val list. Certain functions have an
     // additional attr list.
     std::string c_typ        = Rcpp::as<std::string>(cll["c_t"]);
-    std::string cell_style   = Rcpp::as<std::string>(cll["c_s"]);
-    std::string cell_rowname = Rcpp::as<std::string>(cll["r"]);
+    std::string c_sty        = Rcpp::as<std::string>(cll["c_s"]);
+    std::string c_rnm        = Rcpp::as<std::string>(cll["r"]);
 
-    std::string c_val = Rcpp::as<std::string>(cll["v"]);
-    std::string c_ist = Rcpp::as<std::string>(cll["t"]);
+    std::string c_val        = Rcpp::as<std::string>(cll["v"]);
+    std::string c_ist        = Rcpp::as<std::string>(cll["t"]);
 
     // Rf_PrintValue(cell_atr);
     // Rf_PrintValue(cell_val);
     // Rf_PrintValue(attr_val);
 
     // append attributes <c r="A1" ...>
-    cell.append_attribute("r") = cell_rowname.c_str();
+    cell.append_attribute("r") = c_rnm.c_str();
 
     // assign type if not <v> aka numeric
     if (c_typ.compare("NA") != 0)
       cell.append_attribute("t") = c_typ.c_str();
 
-    if (cell_style.compare("NA") != 0)
-      cell.append_attribute("s") = cell_style.c_str();
+    if (c_sty.compare("NA") != 0)
+      cell.append_attribute("s") = c_sty.c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
 

@@ -1062,7 +1062,7 @@ Workbook$methods(
       )
 
      ## write styles.xml
-    if(class(wb$styles_xml) == "uninitializedField") {
+    if(class(styles_xml) == "uninitializedField") {
       write_file(
         head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">',
         body = pxml(styleXML),
@@ -2094,7 +2094,10 @@ Workbook$methods(
 
         cc$r <- paste0(cc$c_r, cc$row_r)
         # prepare data for output
-        cc_rows <- unique(cc$row_r)
+        # cc_rows <- unique(cc$row_r)
+        cc_rows <- as.character(seq(min(as.numeric(cc$row_r)),
+                                    max(as.numeric(cc$row_r))
+        ))
         cc_out <- vector("list", length = length(cc_rows))
         names(cc_out) <- cc_rows
 
