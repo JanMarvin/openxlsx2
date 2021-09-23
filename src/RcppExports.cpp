@@ -270,17 +270,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // long_to_wide
-SEXP long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame cc, Rcpp::List dn);
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame cc, Rcpp::List dn);
 RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP ccSEXP, SEXP dnSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type tt(ttSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type cc(ccSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type dn(dnSEXP);
-    rcpp_result_gen = Rcpp::wrap(long_to_wide(z, tt, cc, dn));
-    return rcpp_result_gen;
+    long_to_wide(z, tt, cc, dn);
+    return R_NilValue;
 END_RCPP
 }
 // getNodes

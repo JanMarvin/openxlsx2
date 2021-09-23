@@ -20,7 +20,7 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
     return sst;
 }
 
-
+// creates xml content from R list
 // [[Rcpp::export]]
 std::string list_to_attr(Rcpp::List attributes, std::string node) {
 

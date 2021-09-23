@@ -81,6 +81,5 @@ Collate:
     'worksheet_class.R'
     'wrappers.R'
     'writeData.R'
-    'writeData2.R'
     'writeDataTable.R'
     'writexlsx.R'

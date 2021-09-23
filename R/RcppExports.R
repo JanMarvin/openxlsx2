@@ -77,6 +77,9 @@ markUTF8 <- function(x, clone) {
     .Call(`_openxlsx2_markUTF8`, x, clone)
 }
 
+#' @import Rcpp
+NULL
+
 loadvals <- function(wb, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
 }
@@ -86,7 +89,7 @@ si_to_txt <- function(doc) {
 }
 
 long_to_wide <- function(z, tt, cc, dn) {
-    .Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn)
+    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn))
 }
 
 getNodes <- function(xml, tagIn) {

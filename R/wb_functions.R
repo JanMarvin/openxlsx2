@@ -423,3 +423,216 @@ wb_to_df <- function(xlsxFile,
   if (!missing(definedName)) attr(z, "dn") <- nr
   z
 }
+
+
+#' dummy function to write data
+#' @param wb workbook
+#' @param sheet sheet
+#' @param data data to export
+#' @param colNames include colnames?
+#' @param rowNames include rownames?
+#' @param startRow row to place it
+#' @param startCol col to place it
+#'
+#' @examples
+#' # create a workbook and add some sheets
+#' wb <- createWorkbook()
+#'
+#' addWorksheet(wb, "sheet1")
+#' writeData2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
+#'
+#' addWorksheet(wb, "sheet2")
+#' writeData2(wb, "sheet2", cars, colNames = FALSE)
+#'
+#' addWorksheet(wb, "sheet3")
+#' writeData2(wb, "sheet3", letters)
+#'
+#' addWorksheet(wb, "sheet4")
+#' writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
+#'
+#' saveWorkbook(wb, file = "/tmp/test.xlsx", overwrite = TRUE)
+#'
+#' @export
+writeData2 <-function(wb, sheet, data,
+                      colNames = TRUE, rowNames = FALSE,
+                      startRow = 1, startCol = 1) {
+
+
+  is_data_frame <- FALSE
+  data_class <- sapply(data, class)
+
+  # convert factor to character
+  if (any(data_class == "factor")) {
+    fcts <- which(data_class == "factor")
+    data[fcts] <- lapply(data[fcts],as.character)
+  }
+
+  if (class(data) == "data.frame" | class(data) == "matrix") {
+    is_data_frame <- TRUE
+
+    # add colnames
+    if (colNames == TRUE)
+      data <- rbind(colnames(data), data)
+
+    # add rownames
+    if (rowNames == TRUE) {
+      nam <- names(data)
+      data <- cbind(rownames(data), data)
+      names(data) <- c("", nam)
+      data_class <- c("character", data_class)
+    }
+  }
+
+
+  sheetno <- wb$validateSheet(sheet)
+  # message("sheet no: ", sheetno)
+
+
+
+
+
+  # create a data frame
+  if (!is_data_frame)
+    data <- as.data.frame(t(data))
+
+  data_nrow <- NROW(data)
+  data_ncol <- NCOL(data)
+
+  endRow <- (startRow -1) + data_nrow
+  endCol <- (startCol -1) + data_ncol
+
+
+  dims <- paste0(int2col(startCol), startRow,
+                 ":",
+                 int2col(endCol), endRow)
+
+  if (class(wb$worksheets[[sheetno]]$sheet_data$cc) == "uninitializedField") {
+
+
+    sheet_data <- list()
+    wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")
+
+    # rtyp character vector per row
+    # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
+    rtyp <- dims_to_dataframe(dims, fill = TRUE)
+
+    rows_attr <- cols_attr <- cc_tmp <- vector("list", data_nrow)
+
+    cols_attr <- lapply(seq_len(data_nrow),
+                        function(x) list(collapsed="false",
+                                         customWidth="true",
+                                         hidden="false",
+                                         outlineLevel="0",
+                                         max="121",
+                                         min="1",
+                                         style="0",
+                                         width="9.14"))
+
+    wb$worksheets[[sheetno]]$cols_attr <- openxlsx2:::list_to_attr(cols_attr, "col")
+
+
+
+    rows_attr <- lapply(startRow:endRow,
+                        function(x) list("r" = as.character(x),
+                                         "spans" = paste0("1:", data_ncol),
+                                         "x14ac:dyDescent"="0.25"))
+    names(rows_attr) <- rownames(rtyp)
+
+    wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
+
+    # original cc dataframe
+    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "t")
+    cc <- as.data.frame(
+      matrix(data = "NA",
+             nrow = nrow(data) * ncol(data),
+             ncol = length(nams))
+    )
+    names(cc) <- nams
+
+
+    numcell <- function(x,y){
+      c(val = as.character(x),
+        typ = "n",
+        r = y,
+        c_t = "v")
+    }
+
+    chrcell <- function(x,y){
+      c(val = x,
+        typ = "c",
+        r = y,
+        c_t = "str")
+    }
+
+    cell <- function(x, y, data_class) {
+      z <- NULL
+      if (data_class == "numeric")
+        z <- numcell(x,y)
+      if (data_class %in% c("character", "factor"))
+        z <- chrcell(x,y)
+
+      z
+    }
+
+
+    for (i in seq_len(nrow(data))) {
+
+      col <- data.frame(matrix(data = "NA", nrow = ncol(data), ncol = 4))
+      names(col) <- c("val", "typ", "r", "c_t")
+      for (j in seq_along(data)) {
+        dc <- ifelse(colNames && i == 1, "character", data_class[j])
+        col[j,] <- cell(data[i, j], rtyp[i, j], dc)
+      }
+      col$row_r <- colnames(rtyp)
+      col$c_r   <- rownames(rtyp)[i]
+
+      cc_tmp[[i]] <- col
+    }
+
+    cc_tmp <- do.call("rbind", cc_tmp)
+
+    cc <- merge(cc[!names(cc) %in% names(cc_tmp)],
+                cc_tmp,
+                by = "row.names")
+
+    cc <- cc[order(as.numeric(cc$Row.names)),-1]
+    cc <- cc[c(nams, "val", "typ", "r")]
+
+    wb$worksheets[[sheetno]]$sheet_data$cc <- cc
+
+    # update a few styles informations
+    wb$styles$numFmts <- character(0)
+    wb$styles$cellXfs <- "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"
+    wb$styles$dxfs <- character(0)
+
+    # now the cc dataframe is similar to an imported cc dataframe. to save the
+    # file, we now need to split it up and store it in a list of lists.
+
+  } else {
+    # update cell(s)
+    wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames)
+  }
+
+  cc_rows <- unique(cc$c_r)
+  cc_out <- vector("list", length = length(cc_rows))
+  names(cc_out) <- cc_rows
+
+  for (cc_r in cc_rows) {
+    tmp <- cc[cc$c_r == cc_r, c("r", "val", "c_t")]
+    nams <- cc[cc$c_r == cc_r, c("row_r")]
+    ltmp <- vector("list", nrow(tmp))
+    names(ltmp) <- nams
+
+    for (i in seq_len(nrow(tmp))) {
+      ltmp[[i]] <- as.list(tmp[i,])
+    }
+
+    cc_out[[cc_r]] <- ltmp
+  }
+
+  wb$worksheets[[sheetno]]$sheet_data$cc_out <- cc_out
+
+
+  wb
+}
+

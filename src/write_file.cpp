@@ -1,5 +1,12 @@
 #include "openxlsx2.h"
 
+
+// creates an xml row
+// data in xml is ordered row wise. therefore we need the row attributes and
+// the colum data used in this row. This function uses both to create a single
+// row and passes it to write_worksheet_xml_2 which will create the entire
+// sheet_data part for this worksheet
+//
 // [[Rcpp::export]]
 std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
 
@@ -18,52 +25,49 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     pugi::xml_node cell = row.append_child("c");
 
     Rcpp::List cll = cells[i];
-    // Rf_PrintValue(cll);
+    Rf_PrintValue(cll);
 
     Rcpp::List cell_atr, cell_val, attr_val;
-    std::vector<std::string> cell_atr_names, cell_val_names, attr_val_names;
+    std::vector<std::string> cell_val_names;
 
     // Every cell consists of a typ and a val list. Certain functions have an
     // additional attr list.
-    cell_atr = cll["typ"];
-    cell_atr_names = Rcpp::as<std::vector<std::string>>(cell_atr.names());
+    std::string cell_type    = Rcpp::as<std::string>(cll["c_t"]);
+    std::string cell_rowname = Rcpp::as<std::string>(cll["r"]);
 
     cell_val = cll["val"];
-    cell_val_names = Rcpp::as<std::vector<std::string>>(cell_val.names());
-
-    if (cll.size() == 3) {
-      attr_val = cll["attr"];
-      attr_val_names = Rcpp::as<std::vector<std::string>>(attr_val.names());
-    }
 
     // Rf_PrintValue(cell_atr);
     // Rf_PrintValue(cell_val);
     // Rf_PrintValue(attr_val);
 
     // append attributes <c r="A1" ...>
-    for (auto j = 0; j < cell_atr.length(); ++j) {
-      std::string c = cell_atr[j];
-      cell.append_attribute(cell_atr_names[j].c_str()) = c.c_str();
-    }
+      std::string r = "r";
+      cell.append_attribute("r") = cell_rowname.c_str();
+
+    // assign type if not <v> aka numeric
+      std::string t = "t";
+      if (cell_type.compare("v") != 0)
+        cell.append_attribute("t") = cell_type.c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
     for (auto j = 0; j < cell_val.length(); ++j) {
       std::string c_val = cell_val[j];
-      std::string c_nam = cell_val_names[j];
+      std::string c_typ = cell_type;
 
       // Rcpp::Rcout << c_val << std::endl;
 
       // <f> ... </f>
-      if(c_nam.compare("f") == 0) {
+      if(c_typ.compare("e") == 0) {
 
-        pugi::xml_node f = cell.append_child(c_nam.c_str());
+        pugi::xml_node f = cell.append_child(c_typ.c_str());
 
         for (auto k = 0; k < attr_val.length(); ++k) {
-          std::string c_atr = attr_val_names[k];
+          std::string c_atr = cell_type;
 
           if (c_atr.compare("empty") != 0) {
             std::string c = attr_val[k];
-            f.append_attribute(attr_val_names[k].c_str()) = c.c_str();
+            f.append_attribute(cell_type.c_str()) = c.c_str();
             f.set_value(c_val.c_str());
           }
         }
@@ -73,13 +77,18 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
       }
 
       // <is><t> ... </t></is>
-      if(c_nam.compare("is") == 0) {
-        cell.append_child(c_nam.c_str()).append_child("t").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+      if(c_typ.compare("inlinestr") == 0) {
+        cell.append_child(c_typ.c_str()).append_child("t").append_child(pugi::node_pcdata).set_value(c_val.c_str());
       }
 
       // <v> ... </v>
-      if(c_nam.compare("v") == 0) {
-        cell.append_child(c_nam.c_str()).append_child(pugi::node_pcdata).set_value(c_val.c_str());
+      if(c_typ.compare("v") == 0) {
+        cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+      }
+
+      // <v> ... </v>
+      if(c_typ.compare("str") == 0) {
+        cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
       }
 
     }
@@ -93,14 +102,18 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
   return oss.str();
 }
 
+// function that creates the xml worksheet
+// uses preparated data and writes it. It passes data to set_row() which will
+// create single xml rows of sheet_data.
+//
 // [[Rcpp::export]]
 SEXP write_worksheet_xml_2( std::string prior,
                             std::string post,
                             Rcpp::Reference sheet_data,
-                            Rcpp::CharacterVector cols_attr,
+                            Rcpp::CharacterVector cols_attr, // currently unused
                             Rcpp::List rows_attr,
-                            Rcpp::Nullable<Rcpp::CharacterVector> row_heights_ = R_NilValue,
-                            Rcpp::Nullable<Rcpp::CharacterVector> outline_levels_ = R_NilValue,
+                            Rcpp::Nullable<Rcpp::CharacterVector> row_heights_ = R_NilValue, // unused should be added to cc
+                            Rcpp::Nullable<Rcpp::CharacterVector> outline_levels_ = R_NilValue, // unused ???
                             std::string R_fileName = "output"){
 
 
@@ -114,7 +127,7 @@ SEXP write_worksheet_xml_2( std::string prior,
 
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_2_cell_ref(sheet_data.field("cols"));
-  Rcpp::List cc = sheet_data.field("cc");
+  Rcpp::List cc = sheet_data.field("cc_out");
 
   xmlFile << "<sheetData>";
 
