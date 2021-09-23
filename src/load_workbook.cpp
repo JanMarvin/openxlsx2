@@ -172,10 +172,10 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
           ++val_itr;
         }
 
-        xml_cols.push_back(single_xml_col);
-
         /* row is done */
       }
+
+      xml_cols.push_back(single_xml_col);
 
       ++itr_cols;
     }
