@@ -551,14 +551,14 @@ writeData2 <-function(wb, sheet, data,
 
 
     numcell <- function(x,y){
-      c(val = as.character(x),
+      c(v = as.character(x),
         typ = "n",
         r = y,
-        c_t = "v")
+        c_t = "NA")
     }
 
     chrcell <- function(x,y){
-      c(val = x,
+      c(v = x,
         typ = "c",
         r = y,
         c_t = "str")
@@ -578,13 +578,13 @@ writeData2 <-function(wb, sheet, data,
     for (i in seq_len(nrow(data))) {
 
       col <- data.frame(matrix(data = "NA", nrow = ncol(data), ncol = 4))
-      names(col) <- c("val", "typ", "r", "c_t")
+      names(col) <- c("v", "typ", "r", "c_t")
       for (j in seq_along(data)) {
         dc <- ifelse(colNames && i == 1, "character", data_class[j])
         col[j,] <- cell(data[i, j], rtyp[i, j], dc)
       }
-      col$row_r <- colnames(rtyp)
-      col$c_r   <- rownames(rtyp)[i]
+      col$row_r <- rownames(rtyp)[i]
+      col$c_r   <- colnames(rtyp)
 
       cc_tmp[[i]] <- col
     }
@@ -596,7 +596,7 @@ writeData2 <-function(wb, sheet, data,
                 by = "row.names")
 
     cc <- cc[order(as.numeric(cc$Row.names)),-1]
-    cc <- cc[c(nams, "val", "typ", "r")]
+    cc <- cc[c(nams, "typ", "r")]
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
@@ -612,25 +612,6 @@ writeData2 <-function(wb, sheet, data,
     # update cell(s)
     wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames)
   }
-
-  cc_rows <- unique(cc$c_r)
-  cc_out <- vector("list", length = length(cc_rows))
-  names(cc_out) <- cc_rows
-
-  for (cc_r in cc_rows) {
-    tmp <- cc[cc$c_r == cc_r, c("r", "val", "c_t")]
-    nams <- cc[cc$c_r == cc_r, c("row_r")]
-    ltmp <- vector("list", nrow(tmp))
-    names(ltmp) <- nams
-
-    for (i in seq_len(nrow(tmp))) {
-      ltmp[[i]] <- as.list(tmp[i,])
-    }
-
-    cc_out[[cc_r]] <- ltmp
-  }
-
-  wb$worksheets[[sheetno]]$sheet_data$cc_out <- cc_out
 
 
   wb

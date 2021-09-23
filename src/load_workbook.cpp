@@ -15,6 +15,12 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
   std::vector<xml_col> xml_cols;
 
+  // we check against these
+  const std::string f_str = "f";
+  const std::string r_str = "r";
+  const std::string s_str = "s";
+  const std::string t_str = "t";
+  const std::string v_str = "v";
 
   /*****************************************************************************
    * Row information is returned as list of lists returning as much as possible.
@@ -35,13 +41,6 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
     /* row attributes ------------------------------------------------------- */
     auto nn = std::distance(worksheet.attributes_begin(), worksheet.attributes_end());
-
-    // we check against these
-    std::string f_str = "f";
-    std::string r_str = "r";
-    std::string s_str = "s";
-    std::string t_str = "t";
-    std::string v_str = "v";
 
     Rcpp::Shield<SEXP> row_attr(Rf_allocVector(VECSXP, nn));
     Rcpp::Shield<SEXP> row_attr_nam(Rf_allocVector(STRSXP, nn));

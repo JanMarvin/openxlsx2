@@ -25,72 +25,85 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     pugi::xml_node cell = row.append_child("c");
 
     Rcpp::List cll = cells[i];
-    Rf_PrintValue(cll);
+    // Rf_PrintValue(cll);
 
-    Rcpp::List cell_atr, cell_val, attr_val;
+    Rcpp::List cell_atr, cell_val, cell_isval;
     std::vector<std::string> cell_val_names;
 
     // Every cell consists of a typ and a val list. Certain functions have an
     // additional attr list.
-    std::string cell_type    = Rcpp::as<std::string>(cll["c_t"]);
+    std::string c_typ        = Rcpp::as<std::string>(cll["c_t"]);
+    std::string cell_style   = Rcpp::as<std::string>(cll["c_s"]);
     std::string cell_rowname = Rcpp::as<std::string>(cll["r"]);
 
-    cell_val = cll["val"];
+    std::string c_val = Rcpp::as<std::string>(cll["v"]);
+    std::string c_ist = Rcpp::as<std::string>(cll["t"]);
 
     // Rf_PrintValue(cell_atr);
     // Rf_PrintValue(cell_val);
     // Rf_PrintValue(attr_val);
 
     // append attributes <c r="A1" ...>
-      std::string r = "r";
-      cell.append_attribute("r") = cell_rowname.c_str();
+    cell.append_attribute("r") = cell_rowname.c_str();
 
     // assign type if not <v> aka numeric
-      std::string t = "t";
-      if (cell_type.compare("v") != 0)
-        cell.append_attribute("t") = cell_type.c_str();
+    if (c_typ.compare("NA") != 0)
+      cell.append_attribute("t") = c_typ.c_str();
+
+    if (cell_style.compare("NA") != 0)
+      cell.append_attribute("s") = cell_style.c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
-    for (auto j = 0; j < cell_val.length(); ++j) {
-      std::string c_val = cell_val[j];
-      std::string c_typ = cell_type;
 
-      // Rcpp::Rcout << c_val << std::endl;
+    // Rcpp::Rcout << c_val << std::endl;
 
-      // <f> ... </f>
-      if(c_typ.compare("e") == 0) {
+    // <f> ... </f>
+    if(c_typ.compare("e") == 0) {
 
-        pugi::xml_node f = cell.append_child(c_typ.c_str());
+      std::string fml = Rcpp::as<std::string>(cll["f"]);
+      std::string fml_type = Rcpp::as<std::string>(cll["f_t"]);
 
-        for (auto k = 0; k < attr_val.length(); ++k) {
-          std::string c_atr = cell_type;
-
-          if (c_atr.compare("empty") != 0) {
-            std::string c = attr_val[k];
-            f.append_attribute(cell_type.c_str()) = c.c_str();
-            f.set_value(c_val.c_str());
-          }
+      // f can not be missing
+      if (fml.compare("NA") != 0) {
+        pugi::xml_node f = cell.append_child("f");
+        if (fml_type.compare("NA") != 0) {
+          f.append_attribute("t") = fml_type.c_str();
         }
 
         f.append_child(pugi::node_pcdata).set_value(c_val.c_str());
-
       }
 
-      // <is><t> ... </t></is>
-      if(c_typ.compare("inlinestr") == 0) {
-        cell.append_child(c_typ.c_str()).append_child("t").append_child(pugi::node_pcdata).set_value(c_val.c_str());
-      }
+    }
 
-      // <v> ... </v>
-      if(c_typ.compare("v") == 0) {
+    // <is><t> ... </t></is>
+    if(c_typ.compare("inlineStr") == 0) {
+      cell.append_child("is").append_child("t").append_child(pugi::node_pcdata).set_value(c_ist.c_str());
+    }
+
+    // <v> ... </v>
+    if(c_typ.compare("b") == 0) {
+      cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+    }
+
+    // <v> ... </v>
+    if(c_typ.compare("s") == 0) {
+      cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+    }
+
+    // <v> ... </v>
+    if(c_typ.compare("str") == 0) {
+      cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+    }
+
+    // <v> ... </v>
+    if(c_typ.compare("n") == 0) { // random numeric type, shall we simply treat all non strings as numeric?
+      cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+    }
+
+    // <v> ... </v>
+    if(c_typ.compare("NA") == 0) {
+      if (c_val.compare("NA") != 0) // dont write defined missings (NA might be to generic for )
         cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
-      }
-
-      // <v> ... </v>
-      if(c_typ.compare("str") == 0) {
-        cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
-      }
-
     }
 
   }

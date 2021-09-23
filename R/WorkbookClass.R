@@ -2111,7 +2111,7 @@ Workbook$methods(
           cc_out[[cc_r]] <- ltmp
         }
 
-        ws$sheet_data$cc_out <<- cc_out
+        ws$sheet_data$cc_out <- cc_out
 
 
         # message(i, " \n")
