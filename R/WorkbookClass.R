@@ -981,7 +981,7 @@ Workbook$methods(
           length(sharedStrings),
           attr(sharedStrings, "uniqueCount")
         ),
-        body = stri_join(set_sst(sharedStrings), collapse = "", sep = " "),
+        body = stri_join(set_sst(attr(sharedStrings, "text")), collapse = "", sep = " "),
         tail = "</sst>",
         fl = file.path(xlDir, "sharedStrings.xml")
       )
