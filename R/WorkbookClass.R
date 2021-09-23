@@ -38,7 +38,7 @@ Workbook$methods(
     headFoot <<- NULL
 
     media <<- list()
-    
+
     persons <<- NULL
 
     pivotTables <<- NULL
@@ -630,7 +630,7 @@ Workbook$methods(
       dir.create(path = xlmediaDir, recursive = TRUE)
     }
 
-    
+
     ## will always have a theme
     xlthemeDir <- file.path(tmpDir, "xl", "theme")
     dir.create(path = xlthemeDir, recursive = TRUE)
@@ -704,12 +704,12 @@ Workbook$methods(
 
       .self$writeDrawingVML(xldrawingsDir)
     }
-    
+
     ## Threaded Comments xl/threadedComments/threadedComment.xml
     if (nThreadComments > 0){
       xlThreadComments <- file.path(tmpDir, "xl", "threadedComments")
       dir.create(path = xlThreadComments, recursive = TRUE)
-      
+
       for (i in seq_len(nSheets)) {
         if (length(threadComments[[i]]) > 0) {
           fl <- threadComments[[i]]
@@ -740,10 +740,10 @@ Workbook$methods(
         to = personDir,
         overwrite = TRUE
       )
-      
+
     }
-    
-    
+
+
 
     if (length(embeddings) > 0) {
       embeddingsDir <- file.path(tmpDir, "xl", "embeddings")
@@ -1068,7 +1068,7 @@ Workbook$methods(
         body = pxml(styleXML),
         tail = "</styleSheet>",
         fl = file.path(xlDir, "styles.xml")
-      ) 
+      )
     } else {
       write_file(
         head = '',
@@ -1219,7 +1219,7 @@ Workbook$methods(
       )
     # because tableName might be native encoded non-ASCII strings, we need to ensure
     # it's UTF-8 encoded
-    table <- enc2utf8(table) 
+    table <- enc2utf8(table)
 
     nms <- names(tables)
     tSheets <- attr(tables, "sheet")
@@ -2088,7 +2088,32 @@ Workbook$methods(
 
         # worksheets[[i]]$sheet_data$style_id <<-
         #   as.character(worksheets[[i]]$sheet_data$style_id)
-        
+
+        cc <- ws$sheet_data$cc
+
+
+        cc$r <- paste0(cc$c_r, cc$row_r)
+        # prepare data for output
+        cc_rows <- unique(cc$row_r)
+        cc_out <- vector("list", length = length(cc_rows))
+        names(cc_out) <- cc_rows
+
+        for (cc_r in cc_rows) {
+          tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "t")]
+          nams <- cc[cc$row_r == cc_r, c("c_r")]
+          ltmp <- vector("list", nrow(tmp))
+          names(ltmp) <- nams
+
+          for (nr in seq_len(nrow(tmp))) {
+            ltmp[[nr]] <- as.list(tmp[nr, ])
+          }
+
+          cc_out[[cc_r]] <- ltmp
+        }
+
+        ws$sheet_data$cc_out <<- cc_out
+
+
         # message(i, " \n")
         write_worksheet_xml_2(
           prior = prior,
@@ -2190,7 +2215,7 @@ Workbook$methods(
 
     hidden <- attr(colOutlineLevels[[sheet]], "hidden", exact = TRUE)
     cols <- names(colOutlineLevels[[sheet]])
-    
+
     if (!grepl("outlineLevelCol", worksheets[[sheet]]$sheetFormatPr)) {
       worksheets[[sheet]]$sheetFormatPr <<- sub("/>", ' outlineLevelCol="1"/>', worksheets[[sheet]]$sheetFormatPr)
     }
@@ -2822,7 +2847,7 @@ Workbook$methods(
                        </cfRule>',
           dxfId,
           values,
-          
+
           unlist(strsplit(sqref, split = ":"))[[1]],
           values,
           values
@@ -2835,7 +2860,7 @@ Workbook$methods(
                        </cfRule>',
           dxfId,
           values,
-          
+
           unlist(strsplit(sqref, split = ":"))[[1]],
           values,
           values
@@ -17941,7 +17966,7 @@ Workbook$methods(
     }
 
     ## fonts will maintain, sz, color, name, family scheme
-    
+
     styles$fonts <<- fonts <- getXML3(styles_XML, "styleSheet", "fonts", "font")
     fonts <- buildFontList(fonts)
 
@@ -17961,7 +17986,7 @@ Workbook$methods(
       style <- createStyle()
       if (any(s != "0")) {
         if ("fontId" %in% names(s)) {
-          
+
           style$fontId <- as.integer(s[["fontId"]])
 
           if (s[["fontId"]] != "0") {
