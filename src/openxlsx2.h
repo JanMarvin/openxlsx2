@@ -28,7 +28,6 @@ std::string cppReadFile(std::string xmlFile);
 std::string read_file_newline(std::string xmlFile);
 
 
-SEXP getNodes(std::string xml, std::string tagIn);
 Rcpp::CharacterVector get_extLst_Major(std::string xml);
 SEXP getAttr(Rcpp::CharacterVector x, std::string tag);
 

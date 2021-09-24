@@ -579,7 +579,12 @@ buildBorder <- function(x) {
   }
 
   ## gets all borders that have children
-  x <- unlist(lapply(c("<left", "<right", "<top", "<bottom", "<diagonal"), function(tag) getNodes(xml = x, tagIn = tag)))
+  directions <- c("left", "right", "top", "bottom", "diagonal")
+  x <- unlist(lapply(directions, function(x) {
+    y <- xml_node(border[2], "border", x)
+    sel <- length(xml_node(y, x, "color") > 0)
+    if (sel) y
+  }))
   if (length(x) == 0) {
     return(NULL)
   }

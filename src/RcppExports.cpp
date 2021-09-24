@@ -283,18 +283,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// getNodes
-SEXP getNodes(std::string xml, std::string tagIn);
-RcppExport SEXP _openxlsx2_getNodes(SEXP xmlSEXP, SEXP tagInSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type xml(xmlSEXP);
-    Rcpp::traits::input_parameter< std::string >::type tagIn(tagInSEXP);
-    rcpp_result_gen = Rcpp::wrap(getNodes(xml, tagIn));
-    return rcpp_result_gen;
-END_RCPP
-}
 // getOpenClosedNode
 SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_tag);
 RcppExport SEXP _openxlsx2_getOpenClosedNode(SEXP xmlSEXP, SEXP open_tagSEXP, SEXP close_tagSEXP) {
@@ -919,7 +907,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 4},
-    {"_openxlsx2_getNodes", (DL_FUNC) &_openxlsx2_getNodes, 2},
     {"_openxlsx2_getOpenClosedNode", (DL_FUNC) &_openxlsx2_getOpenClosedNode, 3},
     {"_openxlsx2_getAttr", (DL_FUNC) &_openxlsx2_getAttr, 2},
     {"_openxlsx2_get_extLst_Major", (DL_FUNC) &_openxlsx2_get_extLst_Major, 1},

@@ -92,10 +92,6 @@ long_to_wide <- function(z, tt, cc, dn) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn))
 }
 
-getNodes <- function(xml, tagIn) {
-    .Call(`_openxlsx2_getNodes`, xml, tagIn)
-}
-
 getOpenClosedNode <- function(xml, open_tag, close_tag) {
     .Call(`_openxlsx2_getOpenClosedNode`, xml, open_tag, close_tag)
 }

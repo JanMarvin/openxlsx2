@@ -17928,13 +17928,10 @@ Workbook$methods(
 Workbook$methods(
   loadStyles = function(stylesXML) {
     ## Build style objects from the styles XML
-    stylesTxt <- read_xml(stylesXML, pointer = FALSE)
-    stylesTxt <- removeHeadTag(stylesTxt)
-    # use pugi to import xml
     styles_XML <- read_xml(stylesXML)
 
     ## Indexed colours
-    vals <- getNodes(xml = stylesTxt, tagIn = "<indexedColors>")
+    vals <- xml_node(styles_XML, "styleSheet", "colors", "indexedColors")
     if (length(vals) > 0) {
       styles$indexedColors <<-
         stri_join("<colors>", vals, "</colors>")

@@ -274,45 +274,6 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rc
 }
 
 
-
-// [[Rcpp::export]]
-SEXP getNodes(std::string xml, std::string tagIn){
-
-  // This function loops over all characters in xml, looking for tag
-  // tag should look liked <tag>
-  // tagEnd is then generated to be <tag/>
-
-
-  if(xml.length() == 0)
-    return Rcpp::wrap(NA_STRING);
-
-  xml = " " + xml;
-  std::vector<std::string> r;
-  size_t pos = 0;
-  size_t endPos = 0;
-  std::string tag = tagIn;
-  std::string tagEnd = tagIn.insert(1,"/");
-
-  size_t k = tag.length();
-  size_t l = tagEnd.length();
-
-  while(1){
-
-    pos = xml.find(tag, pos+1);
-    endPos = xml.find(tagEnd, pos+k);
-
-    if((pos == std::string::npos) | (endPos == std::string::npos))
-      break;
-
-    r.push_back(xml.substr(pos, endPos-pos+l).c_str());
-
-  }
-
-  Rcpp::CharacterVector out = Rcpp::wrap(r);
-  return markUTF8(out);
-}
-
-
 // [[Rcpp::export]]
 SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_tag){
 

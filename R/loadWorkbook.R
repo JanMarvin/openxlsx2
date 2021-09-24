@@ -842,7 +842,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             txt <- paste(readUTF8(vmlDrawingXML[ind]), collapse = "\n")
             txt <- removeHeadTag(txt)
 
-            cd <- unique(getNodes(xml = txt, tagIn = "<x:ClientData"))
+            cd <- unique(xml_node(txt, "xml", "*", "x:ClientData"))
             cd <- cd[grepl('ObjectType="Note"', cd)]
             cd <- paste0(cd, ">")
 
@@ -850,22 +850,22 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             target <- unlist(lapply(commentXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
             target <- basename(gsub('"$', "", target))
 
-            txt <- paste(readUTF8(commentsXML[grepl(target, commentsXML)]), collapse = "\n")
-            txt <- removeHeadTag(txt)
+            # txt <- paste(readUTF8(commentsXML[grepl(target, commentsXML)]), collapse = "\n")
+            # txt <- removeHeadTag(txt)
+            txt <- read_xml(commentsXML[grepl(target, commentsXML)])
 
-            authors <- getNodes(xml = txt, tagIn = "<author>")
+
+            authors <- xml_node(txt, "comments", "authors", "author")
             authors <- gsub("<author>|</author>", "", authors)
 
-            comments <- getNodes(xml = txt, tagIn = "<commentList>")
-            comments <- gsub("<commentList>", "", comments)
-            comments <- getNodes(xml = comments, tagIn = "<comment")
+            comments <- xml_node(txt, "comments", "commentList", "comment")
 
             refs <- regmatches(comments, regexpr('(?<=ref=").*?[^"]+', comments, perl = TRUE))
 
             authorsInds <- as.integer(regmatches(comments, regexpr('(?<=authorId=").*?[^"]+', comments, perl = TRUE))) + 1
             authors <- authors[authorsInds]
 
-            style <- lapply(comments, getNodes, tagIn = "<rPr>")
+            style <- lapply(comments, function(x) unlist(xml_node(x, "comment", "text", "r", "rPr")) )
 
             comments <- regmatches(comments,
                                    gregexpr("(?<=<t( |>))[\\s\\S]+?(?=</t>)", comments, perl = TRUE))
