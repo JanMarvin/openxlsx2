@@ -74,7 +74,6 @@ Collate:
     'pugixml.R'
     'readWorkbook.R'
     'sheet_data_class.R'
-    'update_cell.R'
     'wb_functions.R'
     'workbook_column_widths.R'
     'workbook_write_data.R'
