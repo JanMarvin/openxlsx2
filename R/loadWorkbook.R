@@ -766,7 +766,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       drawXMLrelationship <<- lapply(xml, function(x) x[grepl("drawings/vmlDrawing", x)])
 
       for (i in seq_along(vmlDrawingXML)) {
-        wb$drawings_vml[[i]] <- read_xml(vmlDrawingXML[[i]])
+        wb$drawings_vml[[i]] <- read_xml(vmlDrawingXML[[i]], pointer = FALSE)
       }
 
 
