@@ -25,13 +25,21 @@ Minimal invasive update of a single cell for imported workbooks.
 \examples{
    xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
    wb <- loadWorkbook(xlsxFile)
+
+   # update Cells D4:D6 with 1:3
    wb <- update_cell(x = c(1:3), wb = wb, sheet = "Sheet1", cell = "D4:D6")
+
+   # update Cells B3:D3 (names())
    wb <- update_cell(x = c("x", "y", "z"), wb = wb, sheet = "Sheet1", cell = "B3:D3")
+
+   # update D4 again (single value this time)
    wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "D4")
-   
-   wb <- loadWorkbook(xlsxFile)
+
+   # add new column on the left of the existing workbook
    wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "A4")
-   
+
+   # add new row on the end of the existing workbook
+   wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "A9")
    wb_to_df(wb)
-   
+
 }
