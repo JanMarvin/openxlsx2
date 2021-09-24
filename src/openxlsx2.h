@@ -29,7 +29,6 @@ std::string read_file_newline(std::string xmlFile);
 
 
 SEXP getNodes(std::string xml, std::string tagIn);
-std::vector<std::string> getChildlessNode_ss(std::string xml, std::string tag);
 Rcpp::CharacterVector get_extLst_Major(std::string xml);
 Rcpp::CharacterVector getChildlessNode(std::string xml, std::string tag);
 SEXP getAttr(Rcpp::CharacterVector x, std::string tag);

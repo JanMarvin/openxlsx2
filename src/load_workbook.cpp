@@ -380,32 +380,6 @@ SEXP getAttr(Rcpp::CharacterVector x, std::string tag){
 
 
 // [[Rcpp::export]]
-std::vector<std::string> getChildlessNode_ss(std::string xml, std::string tag){
-
-  size_t k = tag.length();
-  std::vector<std::string> r;
-  size_t pos = 0;
-  size_t endPos = 0;
-  std::string tagEnd = "/>";
-
-  while(1){
-
-    pos = xml.find(tag, pos+1);
-    if(pos == std::string::npos)
-      break;
-
-    endPos = xml.find(tagEnd, pos+k);
-
-    r.push_back(xml.substr(pos, endPos-pos+2).c_str());
-
-  }
-
-  return r ;
-
-}
-
-
-// [[Rcpp::export]]
 Rcpp::CharacterVector getChildlessNode(std::string xml, std::string tag) {
 
   size_t k = tag.length();
