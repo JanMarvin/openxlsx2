@@ -113,6 +113,9 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
 
   z <- NULL
 
+  if(class(xml) != "pugi_xml")
+    xml <- read_xml(xml)
+
   if (class(xml) == "pugi_xml") {
     if (length(lvl) == 1) z <- getXMLXPtr1val(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2val(xml, level1, level2)
@@ -151,6 +154,9 @@ xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, leve
     stop("levels must be character vectors")
 
   z <- NULL
+
+  if(class(xml) != "pugi_xml")
+    xml <- read_xml(xml)
 
   if (class(xml) == "pugi_xml") {
     if (length(lvl) == 1) z <- getXMLXPtr1attr(xml, level1)
