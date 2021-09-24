@@ -15,6 +15,8 @@ xml_value(
 )
 }
 \arguments{
+\item{xml}{something xml}
+
 \item{level1}{to please check}
 
 \item{level2}{to please check}
@@ -24,9 +26,15 @@ xml_value(
 \item{level4}{to please check}
 
 \item{level5}{to please check}
-
-\item{x}{something xml}
 }
 \description{
 xml_value
+}
+\examples{
+#'
+  x <- read_xml("<a>1</a>")
+  xml_value(x, "a")
+
+  x <- read_xml("<a><b r=\"1\">2</b></a>")
+  xml_value(x, "a", "b")
 }

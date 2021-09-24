@@ -15,6 +15,8 @@ xml_node(
 )
 }
 \arguments{
+\item{xml}{something xml}
+
 \item{level1}{to please check}
 
 \item{level2}{to please check}
@@ -24,9 +26,18 @@ xml_node(
 \item{level4}{to please check}
 
 \item{level5}{to please check}
-
-\item{x}{something xml}
 }
 \description{
 xml_node
+}
+\details{
+This function returns XML nodes as used in openxlsx2. In theory they
+could be returned as pointers as well, but this has not yet been implemented.
+}
+\examples{
+  x <- read_xml("<a><b/></a>")
+  # return a
+  xml_node(x, "a")
+  # return b. requires the path to the node
+  xml_node(x, "a", "b")
 }

@@ -12,13 +12,14 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // readXML
-SEXP readXML(std::string path);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP) {
+SEXP readXML(std::string path, bool isfile);
+RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path));
+    Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
+    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -319,18 +320,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// getChildlessNode_ss
-std::vector<std::string> getChildlessNode_ss(std::string xml, std::string tag);
-RcppExport SEXP _openxlsx2_getChildlessNode_ss(SEXP xmlSEXP, SEXP tagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type xml(xmlSEXP);
-    Rcpp::traits::input_parameter< std::string >::type tag(tagSEXP);
-    rcpp_result_gen = Rcpp::wrap(getChildlessNode_ss(xml, tag));
-    return rcpp_result_gen;
-END_RCPP
-}
 // getChildlessNode
 Rcpp::CharacterVector getChildlessNode(std::string xml, std::string tag);
 RcppExport SEXP _openxlsx2_getChildlessNode(SEXP xmlSEXP, SEXP tagSEXP) {
@@ -392,13 +381,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // readXMLPtr
-SEXP readXMLPtr(std::string path);
-RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP) {
+SEXP readXMLPtr(std::string path, bool isfile);
+RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path));
+    Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
+    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -469,6 +459,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type level4(level4SEXP);
     Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtr5(doc, level1, level2, level3, level4, child));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getXMLXPtr1val
+SEXP getXMLXPtr1val(XPtrXML doc, std::string child);
+RcppExport SEXP _openxlsx2_getXMLXPtr1val(SEXP docSEXP, SEXP childSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    rcpp_result_gen = Rcpp::wrap(getXMLXPtr1val(doc, child));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -655,6 +657,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
     Rcpp::traits::input_parameter< std::string >::type attrname(attrnameSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtr4attr_one(doc, level1, level2, level3, child, attrname));
+    return rcpp_result_gen;
+END_RCPP
+}
+// font_val
+SEXP font_val(Rcpp::CharacterVector fonts, std::string level3, std::string child);
+RcppExport SEXP _openxlsx2_font_val(SEXP fontsSEXP, SEXP level3SEXP, SEXP childSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type fonts(fontsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level3(level3SEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    rcpp_result_gen = Rcpp::wrap(font_val(fonts, level3, child));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -881,7 +896,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 1},
+    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 2},
     {"_openxlsx2_getXML1", (DL_FUNC) &_openxlsx2_getXML1, 2},
     {"_openxlsx2_getXML1val", (DL_FUNC) &_openxlsx2_getXML1val, 2},
     {"_openxlsx2_getXML2", (DL_FUNC) &_openxlsx2_getXML2, 3},
@@ -906,18 +921,18 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getNodes", (DL_FUNC) &_openxlsx2_getNodes, 2},
     {"_openxlsx2_getOpenClosedNode", (DL_FUNC) &_openxlsx2_getOpenClosedNode, 3},
     {"_openxlsx2_getAttr", (DL_FUNC) &_openxlsx2_getAttr, 2},
-    {"_openxlsx2_getChildlessNode_ss", (DL_FUNC) &_openxlsx2_getChildlessNode_ss, 2},
     {"_openxlsx2_getChildlessNode", (DL_FUNC) &_openxlsx2_getChildlessNode, 2},
     {"_openxlsx2_get_extLst_Major", (DL_FUNC) &_openxlsx2_get_extLst_Major, 1},
     {"_openxlsx2_cell_ref_to_col", (DL_FUNC) &_openxlsx2_cell_ref_to_col, 1},
     {"_openxlsx2_int_2_cell_ref", (DL_FUNC) &_openxlsx2_int_2_cell_ref, 1},
     {"_openxlsx2_read_wb", (DL_FUNC) &_openxlsx2_read_wb, 6},
-    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 1},
+    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 2},
     {"_openxlsx2_getXMLXPtr1", (DL_FUNC) &_openxlsx2_getXMLXPtr1, 2},
     {"_openxlsx2_getXMLXPtr2", (DL_FUNC) &_openxlsx2_getXMLXPtr2, 3},
     {"_openxlsx2_getXMLXPtr3", (DL_FUNC) &_openxlsx2_getXMLXPtr3, 4},
     {"_openxlsx2_getXMLXPtr4", (DL_FUNC) &_openxlsx2_getXMLXPtr4, 5},
     {"_openxlsx2_getXMLXPtr5", (DL_FUNC) &_openxlsx2_getXMLXPtr5, 6},
+    {"_openxlsx2_getXMLXPtr1val", (DL_FUNC) &_openxlsx2_getXMLXPtr1val, 2},
     {"_openxlsx2_getXMLXPtr2val", (DL_FUNC) &_openxlsx2_getXMLXPtr2val, 3},
     {"_openxlsx2_getXMLXPtr3val", (DL_FUNC) &_openxlsx2_getXMLXPtr3val, 4},
     {"_openxlsx2_getXMLXPtr4val", (DL_FUNC) &_openxlsx2_getXMLXPtr4val, 5},
@@ -931,6 +946,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr2attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr2attr_one, 4},
     {"_openxlsx2_getXMLXPtr3attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr_one, 5},
     {"_openxlsx2_getXMLXPtr4attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr_one, 6},
+    {"_openxlsx2_font_val", (DL_FUNC) &_openxlsx2_font_val, 3},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 2},
     {"_openxlsx2_calc_number_rows", (DL_FUNC) &_openxlsx2_calc_number_rows, 2},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},

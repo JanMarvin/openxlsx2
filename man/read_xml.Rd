@@ -7,10 +7,34 @@
 read_xml(xml, pointer = TRUE)
 }
 \arguments{
-\item{pointer}{return pointer?}
+\item{xml}{somthing to read character string or file}
 
-\item{x}{somthing to read}
+\item{pointer}{should a pointer be returned?}
 }
 \description{
 read xml file
+}
+\details{
+Read xml files or strings to pointer and checks if the input is
+valid XML.
+If the input is read into a character object, it will be reevaluated every
+time it is called. A pointer is evaluated once, but lives only for the
+lifetime of the R session or once it is gc().
+}
+\examples{
+  # a pointer
+  x <- read_xml("<a><b/></a>")
+  print(x)
+  print(x, raw = TRUE)
+  str(x)
+
+  # a character
+  y <- read_xml("<a><b/></a>", pointer = FALSE)
+  print(y)
+  print(y, raw = TRUE)
+  str(y)
+
+  # Errors if the import was unsuccessful
+  try(z <- read_xml("<a><b/>"))
+
 }
