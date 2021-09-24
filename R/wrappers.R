@@ -2862,9 +2862,9 @@ getNamedRegions.default <- function(x) {
   xmlFiles <- unzip(x, exdir = xmlDir)
   
   workbook <- xmlFiles[grepl("workbook.xml$", xmlFiles, perl = TRUE)]
-  workbook <- unlist(readUTF8(workbook))
+  workbook <- read_xml(workbook)
   
-  dn <- getChildlessNode(xml = removeHeadTag(workbook), tag = "definedName")
+  dn <- xml_node(xml = workbook, "workbook", "definedNames", "definedName")
   if (length(dn) == 0) {
     return(NULL)
   }

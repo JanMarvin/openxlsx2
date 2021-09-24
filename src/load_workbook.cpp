@@ -380,62 +380,6 @@ SEXP getAttr(Rcpp::CharacterVector x, std::string tag){
 
 
 // [[Rcpp::export]]
-Rcpp::CharacterVector getChildlessNode(std::string xml, std::string tag) {
-
-  size_t k = tag.length();
-  if(xml.length() == 0)
-    return Rcpp::wrap(NA_STRING);
-
-  size_t begPos = 0, endPos = 0;
-
-  std::vector<std::string> r;
-  std::string res = "";
-
-  // check "<tag "
-  std::string begTag = "<" + tag + " ";
-  std::string endTag = ">";
-
-  // initial check, which kind of tags to expect
-  begPos = xml.find(begTag, begPos);
-
-  // if begTag was found
-  if(begPos != std::string::npos) {
-
-    endPos = xml.find(endTag, begPos);
-    res = xml.substr(begPos, (endPos - begPos) + endTag.length());
-
-    // check if last 2 characters are "/>"
-    // <foo/> or <foo></foo>
-    if (res.substr( res.length() - 2 ).compare("/>") != 0) {
-      // check </tag>
-      endTag = "</" + tag + ">";
-    }
-
-    // try with <foo ... />
-    while( 1 ) {
-
-      begPos = xml.find(begTag, begPos);
-      endPos = xml.find(endTag, begPos);
-
-      if(begPos == std::string::npos)
-        break;
-
-      // read from initial "<" to final ">"
-      res = xml.substr(begPos, (endPos - begPos) + endTag.length());
-
-      begPos = endPos + endTag.length();
-      r.push_back(res);
-    }
-  }
-
-
-  Rcpp::CharacterVector out = Rcpp::wrap(r);
-  return markUTF8(out);
-
-}
-
-
-// [[Rcpp::export]]
 Rcpp::CharacterVector get_extLst_Major(std::string xml){
 
   // find page margin or pagesetup then take the extLst after that

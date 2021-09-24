@@ -320,18 +320,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// getChildlessNode
-Rcpp::CharacterVector getChildlessNode(std::string xml, std::string tag);
-RcppExport SEXP _openxlsx2_getChildlessNode(SEXP xmlSEXP, SEXP tagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type xml(xmlSEXP);
-    Rcpp::traits::input_parameter< std::string >::type tag(tagSEXP);
-    rcpp_result_gen = Rcpp::wrap(getChildlessNode(xml, tag));
-    return rcpp_result_gen;
-END_RCPP
-}
 // get_extLst_Major
 Rcpp::CharacterVector get_extLst_Major(std::string xml);
 RcppExport SEXP _openxlsx2_get_extLst_Major(SEXP xmlSEXP) {
@@ -428,6 +416,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
     Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtr3(doc, level1, level2, child));
+    return rcpp_result_gen;
+END_RCPP
+}
+// unkgetXMLXPtr3
+SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child);
+RcppExport SEXP _openxlsx2_unkgetXMLXPtr3(SEXP docSEXP, SEXP level1SEXP, SEXP childSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    rcpp_result_gen = Rcpp::wrap(unkgetXMLXPtr3(doc, level1, child));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -921,7 +922,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getNodes", (DL_FUNC) &_openxlsx2_getNodes, 2},
     {"_openxlsx2_getOpenClosedNode", (DL_FUNC) &_openxlsx2_getOpenClosedNode, 3},
     {"_openxlsx2_getAttr", (DL_FUNC) &_openxlsx2_getAttr, 2},
-    {"_openxlsx2_getChildlessNode", (DL_FUNC) &_openxlsx2_getChildlessNode, 2},
     {"_openxlsx2_get_extLst_Major", (DL_FUNC) &_openxlsx2_get_extLst_Major, 1},
     {"_openxlsx2_cell_ref_to_col", (DL_FUNC) &_openxlsx2_cell_ref_to_col, 1},
     {"_openxlsx2_int_2_cell_ref", (DL_FUNC) &_openxlsx2_int_2_cell_ref, 1},
@@ -930,6 +930,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr1", (DL_FUNC) &_openxlsx2_getXMLXPtr1, 2},
     {"_openxlsx2_getXMLXPtr2", (DL_FUNC) &_openxlsx2_getXMLXPtr2, 3},
     {"_openxlsx2_getXMLXPtr3", (DL_FUNC) &_openxlsx2_getXMLXPtr3, 4},
+    {"_openxlsx2_unkgetXMLXPtr3", (DL_FUNC) &_openxlsx2_unkgetXMLXPtr3, 3},
     {"_openxlsx2_getXMLXPtr4", (DL_FUNC) &_openxlsx2_getXMLXPtr4, 5},
     {"_openxlsx2_getXMLXPtr5", (DL_FUNC) &_openxlsx2_getXMLXPtr5, 6},
     {"_openxlsx2_getXMLXPtr1val", (DL_FUNC) &_openxlsx2_getXMLXPtr1val, 2},

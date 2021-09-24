@@ -104,10 +104,6 @@ getAttr <- function(x, tag) {
     .Call(`_openxlsx2_getAttr`, x, tag)
 }
 
-getChildlessNode <- function(xml, tag) {
-    .Call(`_openxlsx2_getChildlessNode`, xml, tag)
-}
-
 get_extLst_Major <- function(xml) {
     .Call(`_openxlsx2_get_extLst_Major`, xml)
 }
@@ -138,6 +134,10 @@ getXMLXPtr2 <- function(doc, level1, child) {
 
 getXMLXPtr3 <- function(doc, level1, level2, child) {
     .Call(`_openxlsx2_getXMLXPtr3`, doc, level1, level2, child)
+}
+
+unkgetXMLXPtr3 <- function(doc, level1, child) {
+    .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
 }
 
 getXMLXPtr4 <- function(doc, level1, level2, level3, child) {

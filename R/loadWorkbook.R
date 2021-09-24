@@ -120,11 +120,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   worksheet_rId_mapping <- NULL
   workbookRelsXML <- xmlFiles[grepl("workbook.xml.rels$", xmlFiles, perl = TRUE)]
   if (length(workbookRelsXML) > 0) {
-    # xml <- read_xml(workbookRelsXML)
-    # workbookRelsXML <- xml_attribute(xml, "Relationships", "Relationship")
-
-    workbookRelsXML <- paste(readUTF8(workbookRelsXML), collapse = "")
-    workbookRelsXML <- getChildlessNode(xml = workbookRelsXML, tag = "Relationship")
+    xml <- read_xml(workbookRelsXML)
+    workbookRelsXML <- xml_node(xml, "Relationships", "Relationship")
     worksheet_rId_mapping <- workbookRelsXML[grepl("worksheets/sheet", workbookRelsXML, fixed = TRUE)]
   }
 
@@ -186,14 +183,16 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     for (i in seq_along(sheetrId)) {
       if (is_chart_sheet[i]) {
         count <- 0
-        txt <- paste(readUTF8(chartSheetsXML[j]), collapse = "")
+        txt <- read_xml(chartSheetsXML[j])
 
         zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))
         if (length(zoom) == 0) {
           zoom <- 100
         }
 
-        tabColour <- getChildlessNode(xml = txt, tag = "tabColor")
+        # FIXME I wanted to get rid of getChildlessNode
+        #tabColour <- getChildlessNode(xml = txt, tag = "tabColor")
+        tabColour <- NULL
         if (length(tabColour) == 0) {
           tabColour <- NULL
         }
@@ -202,10 +201,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
         wb$addChartSheet(sheetName = sheetNames[i], tabColour = tabColour, zoom = as.numeric(zoom))
       } else {
-        content_type <- readXML(ContentTypesXML)
-        override <- getXML2(content_type, "Types", "Override")
-        overrideAttr <- as.data.frame(do.call("rbind", getXMLattr(override, "Override")))
-        xmls <- basename(overrideAttr$PartName)
+        content_type <- read_xml(ContentTypesXML)
+        override <- xml_attribute(content_type, "Types", "Override")
+        overrideAttr <- as.data.frame(do.call("rbind", override))
+        xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- xmls[grepl("drawing", xmls)]
         wb$addWorksheet(sheetNames[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
@@ -247,7 +246,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## xl\sharedStrings
   if (length(sharedStringsXML) > 0) {
 
-    sst <- readXMLPtr(sharedStringsXML)
+    sst <- read_xml(sharedStringsXML)
     uniqueCount <- getXMLXPtr1attr_one(sst, "sst", "uniqueCount")
     vals <- getXMLXPtr2(sst, "sst", "si")
     text <- si_to_txt(sst)
@@ -366,7 +365,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## xl\styles
   if (length(stylesXML) > 0) {
     styleObjects <- wb$loadStyles(stylesXML)
-    wb$styles_xml <- readXML(stylesXML)
+    wb$styles_xml <- read_xml(stylesXML, pointer = FALSE)
   } else {
     styleObjects <- list()
   }
@@ -465,7 +464,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   # TODO this loop should live in loadworksheets
   for (i in seq_len(nSheets)) {
-    worksheet_xml <- readXMLPtr(worksheetsXML[i])
+    worksheet_xml <- read_xml(worksheetsXML[i])
 
     wb$worksheets[[i]]$dimension <- getXMLXPtr2(worksheet_xml, "worksheet", "dimension")
 
@@ -538,7 +537,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     xml <- lapply(seq_along(allRels), function(i) {
       if (haveRels[i]) {
-        xml <- readXMLPtr(allRels[[i]])
+        xml <- read_xml(allRels[[i]])
         xml <- getXMLXPtr2(xml, "Relationships", "Relationship")
       } else {
         xml <- "<Relationship >"
@@ -722,7 +721,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
 
       for (drawing in seq_along(drawingsXML)) {
-       drwng_xml <- readXMLPtr(drawingsXML[drawing])
+       drwng_xml <- read_xml(drawingsXML[drawing])
        wb$drawings[[drawing]] <- getXMLXPtr1(drwng_xml, "xdr:wsDr")
       }
 
@@ -767,7 +766,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       drawXMLrelationship <<- lapply(xml, function(x) x[grepl("drawings/vmlDrawing", x)])
 
       for (i in seq_along(vmlDrawingXML)) {
-        wb$drawings_vml[[i]] <- readXML(vmlDrawingXML[[i]])
+        wb$drawings_vml[[i]] <- read_xml(vmlDrawingXML[[i]])
       }
 
 
@@ -792,7 +791,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {
-                wb$vml_rels[i] <- readXML(fls[i])
+                wb$vml_rels[i] <- read_xml(fls[i])
               }
             }
           }
@@ -813,7 +812,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       names(com_rId) <- commentsrelXML
       for (com_rel in commentsrelXML) {
         # TODO: I do not get this, why does this work with the print and not without it?
-        rel_xml <- readXMLPtr(com_rel)
+        rel_xml <- read_xml(com_rel)
         attrs <- getXMLXPtr2attr(rel_xml, "Relationships", "Relationship")
         #print(attrs)
         #rels <- getXMLXPtr2(rel_xml, "Relationships", "Relationship")

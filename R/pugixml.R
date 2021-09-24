@@ -29,8 +29,9 @@ read_xml <- function(xml, pointer = TRUE)  {
 
   z <- NULL
 
-  if (is.character(xml))
-    isfile <- FALSE
+  isfile = FALSE
+  if (file.exists(xml))
+    isfile <- TRUE
 
   if (pointer) {
     z <- readXMLPtr(xml, isfile)
@@ -68,13 +69,18 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 
   z <- NULL
 
+  if(class(xml) != "pugi_xml")
+    xml <- read_xml(xml)
+
+
   if (class(xml) == "pugi_xml") {
     if (length(lvl) == 1) z <- getXMLXPtr1(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3(xml, level1, level2, level3)
+    if (length(lvl) == 3 & level2 == "*") z <- unkgetXMLXPtr3(xml, level1, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4(xml, level1, level2, level3, level4)
     if (length(lvl) == 5) z <- getXMLXPtr5(xml, level1, level2, level3, level4, level5)
-  } else {
+  } else { # should not happen?
     xml <- read_xml(xml, pointer = FALSE)
     if (length(lvl) == 1) z <- getXML1(xml, level1)
     if (length(lvl) == 2) z <- getXML2(xml, level1, level2)

@@ -68,6 +68,24 @@ SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::strin
   return  Rcpp::wrap(res);
 }
 
+// level2 is wildcard. (for border only color nodes are imported.
+// Do not know why :'( )
+// [[Rcpp::export]]
+SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
+
+  std::vector<std::string> res;
+
+  for (auto worksheet : doc->child(level1.c_str()).children())
+    for (auto cld : worksheet.children(child.c_str()))
+    {
+      std::ostringstream oss;
+      cld.print(oss, " ", pugi::format_raw);
+      res.push_back(oss.str());
+    }
+
+  return  Rcpp::wrap(res);
+}
+
 //nested list below level 3. eg:
 //<level1>
 //  <level2>

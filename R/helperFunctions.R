@@ -443,56 +443,16 @@ validateBorderStyle <- function(borderStyle) {
 }
 
 
-
-
-
-getAttrsFont <- function(xml, tag) {
-  x <- lapply(xml, getChildlessNode, tag = tag)
-  x[sapply(x, length) == 0] <- ""
-  x <- unlist(x)
-  a <- lapply(x, function(x) unlist(regmatches(x, gregexpr('[a-zA-Z]+=".*?"', x))))
-
-  nms <- lapply(a, function(xml) regmatches(xml, regexpr('[a-zA-Z]+(?=\\=".*?")', xml, perl = TRUE)))
-  vals <- lapply(a, function(xml) regmatches(xml, regexpr('(?<=").*?(?=")', xml, perl = TRUE)))
-  vals <- lapply(vals, function(x) {
-    Encoding(x) <- "UTF-8"
-    x
-  })
-  vals <- lapply(seq_along(vals), function(i) {
-    names(vals[[i]]) <- nms[[i]]
-    vals[[i]]
-  })
-
-  return(vals)
-}
-
-getAttrs <- function(xml, tag) {
-  x <- lapply(xml, getChildlessNode_ss, tag = tag)
-  x[sapply(x, length) == 0] <- ""
-  a <- lapply(x, function(x) regmatches(x, regexpr('[a-zA-Z]+=".*?"', x)))
-
-  names <- lapply(a, function(xml) regmatches(xml, regexpr('[a-zA-Z]+(?=\\=".*?")', xml, perl = TRUE)))
-  vals <- lapply(a, function(xml) regmatches(xml, regexpr('(?<=").*?(?=")', xml, perl = TRUE)))
-  vals <- lapply(vals, function(x) {
-    Encoding(x) <- "UTF-8"
-    x
-  })
-
-  names(vals) <- names
-  return(vals)
-}
-
-
 buildFontList <- function(fonts) {
-  sz <- getAttrs(fonts, "<sz ")
-  colour <- getAttrsFont(fonts, "<color ")
-  name <- getAttrs(fonts, tag = "<name ")
-  family <- getAttrs(fonts, "<family ")
-  scheme <- getAttrs(fonts, "<scheme ")
+  sz     <- openxlsx2:::font_val(fonts, "font", "sz")
+  colour <- openxlsx2:::font_val(fonts, "font", "color")
+  name   <- openxlsx2:::font_val(fonts, "font", "name")
+  family <- openxlsx2:::font_val(fonts, "font", "family")
+  scheme <- openxlsx2:::font_val(fonts, "font", "scheme")
 
-  italic <- lapply(fonts, getChildlessNode, tag = "i")
-  bold <- lapply(fonts, getChildlessNode, tag = "b")
-  underline <- lapply(fonts, getChildlessNode, tag = "u")
+  italic <- lapply(fonts, function(x)xml_node(x, "font", "i"))
+  bold <- lapply(fonts, function(x)xml_node(x, "font", "b"))
+  underline <- lapply(fonts, function(x)xml_node(x, "font", "u"))
 
   ## Build font objects
   ft <- replicate(list(), n = length(fonts))
@@ -647,7 +607,7 @@ buildBorder <- function(x) {
 
   ## Colours
   cols <- replicate(n = length(sideBorder), list(rgb = "FF000000"))
-  colNodes <- unlist(sapply(x, getChildlessNode, tag = "color", USE.NAMES = FALSE))
+  colNodes <- xml_node(border[2], "border", "*", "color")
 
   if (length(colNodes) > 0) {
     attrs <- regmatches(colNodes, regexpr('(theme|indexed|rgb|auto)=".+"', colNodes))
