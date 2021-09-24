@@ -109,9 +109,9 @@ openXL(wb)
 
 ################################################################################################################
 ## Load Example Workbook
-wb <- loadWorkbook(system.file("loadExample.xlsx", package = "openxlsx"))
+wb <- loadWorkbook(system.file("loadExample.xlsx", package = "openxlsx2"))
 openXL(wb)
-openXL(system.file("loadExample.xlsx", package = "openxlsx"))
+openXL(system.file("loadExample.xlsx", package = "openxlsx2"))
 
 ################################################################################################################
 ## Loading Pivot Tables
@@ -150,7 +150,7 @@ openXL(wb)
 
 ################################################################################################################
 ## package Example File
-wb <- loadWorkbook(file = system.file("loadExample.xlsx", package = "openxlsx"))
+wb <- loadWorkbook(file = system.file("loadExample.xlsx", package = "openxlsx2"))
 openXL(wb)
 
 

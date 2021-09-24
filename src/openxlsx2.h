@@ -1,11 +1,10 @@
-
 #include "openxlsx2_types.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
-// load workbook
+// load workbook2
 Rcpp::IntegerVector cell_ref_to_col(Rcpp::CharacterVector x );
 Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector);
 

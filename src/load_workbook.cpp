@@ -1,8 +1,7 @@
-#include "openxlsx.h"
-#include "openxlsx2_types.h"
+#include "openxlsx2.h"
 
-
-// loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml, "worksheet", "sheetData", "row", "c")
+//' @import Rcpp
+// this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
 void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
@@ -10,14 +9,25 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
   size_t n = std::distance(ws.begin(), ws.end());
 
-  // list
-  Rcpp::Shield<SEXP> cc(Rf_allocVector(VECSXP, n));
-
   // character
   Rcpp::Shield<SEXP> row_attributes(Rf_allocVector(VECSXP, n));
   Rcpp::Shield<SEXP> rownames(Rf_allocVector(STRSXP, n));
 
+  std::vector<xml_col> xml_cols;
 
+  // we check against these
+  const std::string f_str = "f";
+  const std::string r_str = "r";
+  const std::string s_str = "s";
+  const std::string t_str = "t";
+  const std::string v_str = "v";
+
+  /*****************************************************************************
+   * Row information is returned as list of lists returning as much as possible.
+   *
+   * Col information is returned as dataframe returning only a fraction of known
+   * tags and attributes.
+   ****************************************************************************/
   auto itr_rows = 0;
   for (auto worksheet: ws.children("row")) {
 
@@ -32,7 +42,6 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
     /* row attributes ------------------------------------------------------- */
     auto nn = std::distance(worksheet.attributes_begin(), worksheet.attributes_end());
 
-    std::string r_str = "r";
     Rcpp::Shield<SEXP> row_attr(Rf_allocVector(VECSXP, nn));
     Rcpp::Shield<SEXP> row_attr_nam(Rf_allocVector(STRSXP, nn));
 
@@ -75,64 +84,54 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
     auto itr_cols = 0;
     for (auto col : worksheet.children("c")) {
 
+      // contains all values of a col
+      xml_col single_xml_col;
+
       // get number of children and attributes
       auto nn = std::distance(col.children().begin(), col.children().end());
-      auto aa = std::distance(col.attributes_begin(), col.attributes_end());
-      // check if there are f attributes
-      auto ff = std::distance(col.child("f").attributes_begin(), col.child("f").attributes_end());
-      // prevent dying on a 0 node
-      auto tt = nn; if (tt == 0) ++tt;
-
-      // cc_cell_nam vector
-      std::string val_str = "val", typ_str = "typ", attr_str = "attr";
-      Rcpp::Shield<SEXP> cc_cell_nam(Rf_allocVector(STRSXP, 2+ff));
-      SET_STRING_ELT(cc_cell_nam, 0, Rf_mkChar(val_str.c_str()));
-      SET_STRING_ELT(cc_cell_nam, 1, Rf_mkChar(typ_str.c_str()));
-      if (ff > 0) SET_STRING_ELT(cc_cell_nam, 2, Rf_mkChar(attr_str.c_str()));
-
-      // lists for cc_cell, v_c, t_c and a_c
-      Rcpp::Shield<SEXP> cc_cell(Rf_allocVector(VECSXP, 2+ff));
-      Rcpp::Shield<SEXP> v_c(Rf_allocVector(VECSXP, tt));
-      Rcpp::Shield<SEXP> t_c(Rf_allocVector(VECSXP, aa));
-      Rcpp::Shield<SEXP> a_c(Rf_allocVector(VECSXP, ff));
-
-      // character vectors val_name, typ_name, atr_name
-      Rcpp::Shield<SEXP> val_name(Rf_allocVector(STRSXP, tt));
-      Rcpp::Shield<SEXP> typ_name(Rf_allocVector(STRSXP, aa));
-      Rcpp::Shield<SEXP> atr_name(Rf_allocVector(STRSXP, ff));
 
       // typ: attribute ------------------------------------------------------
       bool has_colname = false;
       auto attr_itr = 0;
       for (auto attr : col.attributes()) {
 
-        buffer = attr.name();
-        SET_STRING_ELT(typ_name, attr_itr, Rf_mkChar(buffer.c_str()));
+        // buffer = attr.name();
 
         buffer = attr.value();
-        Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
-        SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
-        SET_VECTOR_ELT(t_c, attr_itr, buf);
 
         if (attr.name() == r_str) {
           // get r attr e.g. "A1" and return colnames "A"
+          // get col name
           std::string colrow = attr.value();
-          // remove numeric from string
           colrow.erase(std::remove_if(colrow.begin(),
                                       colrow.end(),
                                       &isdigit),
                                       colrow.end());
-          SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(colrow.c_str()));
+          single_xml_col.c_r = colrow;
           has_colname = true;
+
+          // get colnum
+          colrow = attr.value();
+          // remove numeric from string
+          colrow.erase(std::remove_if(colrow.begin(),
+                                      colrow.end(),
+                                      &isalpha),
+                                      colrow.end());
+          single_xml_col.row_r = colrow;
+
         }
+
+        if (attr.name() == s_str) single_xml_col.c_s = buffer;
+        if (attr.name() == t_str) single_xml_col.c_t = buffer;
 
         ++attr_itr;
       }
+      // some files have no colnames. This used to work, check again
       if (!has_colname) {
         Rcpp::IntegerVector itr_vec(1);
         itr_vec[0] = itr_cols +1;
         std::string tmp_colname= Rcpp::as<std::string>(int_2_cell_ref(itr_vec));
-        SET_STRING_ELT(colnames, itr_cols, Rf_mkChar(tmp_colname.c_str()));
+        single_xml_col.c_r = tmp_colname;
       }
 
       // val ------------------------------------------------------------------
@@ -146,31 +145,29 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
           // additional attributes to <f t="shared" ...>
           for (auto cattr : val.attributes())
           {
-            buffer = cattr.name();
-            SET_STRING_ELT(atr_name, ff_itr, Rf_mkChar(buffer.c_str()));
+            // buffer = cattr.name();
 
             buffer = cattr.value();
-            Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
-            SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
-            SET_VECTOR_ELT(a_c, ff_itr, buf);
+            if (val.name() == t_str) single_xml_col.f_t = buffer;
 
             ++ff_itr;
           }
 
           buffer = val.name();
-          SET_STRING_ELT(val_name, val_itr, Rf_mkChar(buffer.c_str()));
 
-          // is nodes contain additional t node.
+          // <is> nodes contain additional <t> node.
           // TODO: check if multiple t nodes are possible, for now return one.
           // the t-node can bring its very own attributes
-          Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
+          // Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
           if (val.child("t")) {
             buffer = val.child("t").child_value();
+            single_xml_col.t = buffer;
           } else {
             buffer = val.child_value();
+            // val.name() == v or f
+            if (val.name() == v_str) single_xml_col.v = buffer;
+            if (val.name() == f_str) single_xml_col.f = buffer;
           }
-          SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
-          SET_VECTOR_ELT(v_c, val_itr, buf);
 
           ++val_itr;
         }
@@ -178,20 +175,7 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
         /* row is done */
       }
 
-      // assign names
-      ::Rf_setAttrib(v_c, R_NamesSymbol, val_name);
-      ::Rf_setAttrib(t_c, R_NamesSymbol, typ_name);
-      if(ff > 0) ::Rf_setAttrib(a_c, R_NamesSymbol, atr_name);
-
-      ::Rf_setAttrib(cc_cell, R_NamesSymbol, cc_cell_nam);
-
-      // assign everything to cc_cell
-      SET_VECTOR_ELT(cc_cell, 0, v_c);
-      SET_VECTOR_ELT(cc_cell, 1, t_c);
-      if(ff > 0) SET_VECTOR_ELT(cc_cell, 2, a_c);
-
-      // assign cc_cell to cc_r
-      SET_VECTOR_ELT(cc_r, itr_cols, cc_cell);
+      xml_cols.push_back(single_xml_col);
 
       ++itr_cols;
     }
@@ -199,20 +183,17 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
     /* ---------------------------------------------------------------------- */
 
-    ::Rf_setAttrib(cc_r, R_NamesSymbol, colnames);
-    SET_VECTOR_ELT(cc, itr_rows, cc_r);
-
     ++itr_rows;
   }
 
   ::Rf_setAttrib(row_attributes, R_NamesSymbol, rownames);
-  ::Rf_setAttrib(cc, R_NamesSymbol, rownames);
 
   wb.field("row_attr") = row_attributes;
-  wb.field("cc")  = cc;
+  wb.field("cc")  = Rcpp::wrap(xml_cols);
 
 }
 
+// converts sharedstrings xml tree to R-Character Vector
 // [[Rcpp::export]]
 SEXP si_to_txt(XPtrXML doc) {
 
@@ -247,6 +228,51 @@ SEXP si_to_txt(XPtrXML doc) {
 
   return res;
 }
+
+// mimics the R function which used below
+Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {
+    Rcpp::IntegerVector v = Rcpp::seq(0, x.size()-1);
+    return v[!Rcpp::is_na(x)];
+}
+
+// similar to dcast converts cc dataframe to z dataframe
+// [[Rcpp::export]]
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rcpp::List dn) {
+
+  auto n = cc.nrow();
+
+  Rcpp::CharacterVector row_r = cc["row_r"];
+  Rcpp::CharacterVector c_r   = cc["c_r"];
+  Rcpp::CharacterVector val   = cc["val"];
+  Rcpp::CharacterVector typ   = cc["typ"];
+
+  Rcpp::CharacterVector row_names = dn[0];
+  Rcpp::CharacterVector col_names = dn[1];
+
+  for (auto i = 0; i < n; ++i) {
+
+    Rcpp::CharacterVector row_r_i = Rcpp::as<Rcpp::CharacterVector>(row_r[i]);
+    Rcpp::CharacterVector c_r_i   = Rcpp::as<Rcpp::CharacterVector>(c_r[i]);
+    std::string val_i   = Rcpp::as<std::string>(val[i]);
+    std::string val_tt   = Rcpp::as<std::string>(typ[i]);
+
+    Rcpp::IntegerVector s1 = Rcpp::match(row_names, row_r_i);
+    int64_t sel_row = Rcpp::as<int64_t>(rcpp_which(s1));
+
+    Rcpp::IntegerVector s2 = Rcpp::match(col_names, c_r_i);
+    int64_t sel_col = Rcpp::as<int64_t>(rcpp_which(s2));
+
+    // Rcpp::Rcout << sel_row << " " << sel_col << " " << val_i << std::endl;
+
+    // only update if not missing in the xml input
+    if (val_i.compare("_openxlsx_NA_") != 0) {
+      Rcpp::as<Rcpp::CharacterVector>(z[sel_col])[sel_row] = val_i;
+      Rcpp::as<Rcpp::CharacterVector>(tt[sel_col])[sel_row] = val_tt;
+    }
+
+  }
+}
+
 
 
 // [[Rcpp::export]]

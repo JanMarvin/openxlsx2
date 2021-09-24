@@ -77,12 +77,19 @@ markUTF8 <- function(x, clone) {
     .Call(`_openxlsx2_markUTF8`, x, clone)
 }
 
+#' @import Rcpp
+NULL
+
 loadvals <- function(wb, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
 }
 
 si_to_txt <- function(doc) {
     .Call(`_openxlsx2_si_to_txt`, doc)
+}
+
+long_to_wide <- function(z, tt, cc, dn) {
+    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn))
 }
 
 getNodes <- function(xml, tagIn) {
@@ -201,24 +208,8 @@ printXPtr <- function(doc, raw) {
     .Call(`_openxlsx2_printXPtr`, doc, raw)
 }
 
-get_shared_strings <- function(xmlFile, isFile) {
-    .Call(`_openxlsx2_get_shared_strings`, xmlFile, isFile)
-}
-
-getCellInfo <- function(xmlFile, sharedStrings, skipEmptyRows, startRow, rows, getDates) {
-    .Call(`_openxlsx2_getCellInfo`, xmlFile, sharedStrings, skipEmptyRows, startRow, rows, getDates)
-}
-
-read_workbook <- function(cols_in, rows_in, v, string_inds, is_date, hasColNames, hasSepNames, skipEmptyRows, skipEmptyCols, nRows, clean_names) {
-    .Call(`_openxlsx2_read_workbook`, cols_in, rows_in, v, string_inds, is_date, hasColNames, hasSepNames, skipEmptyRows, skipEmptyCols, nRows, clean_names)
-}
-
 calc_number_rows <- function(x, skipEmptyRows) {
     .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
-}
-
-set_row <- function(row_attr, cells) {
-    .Call(`_openxlsx2_set_row`, row_attr, cells)
 }
 
 set_sst <- function(sharedStrings) {
@@ -257,7 +248,10 @@ buildCellList <- function(r, t, v) {
     .Call(`_openxlsx2_buildCellList`, r, t, v)
 }
 
-#' @import Rcpp
+set_row <- function(row_attr, cells) {
+    .Call(`_openxlsx2_set_row`, row_attr, cells)
+}
+
 write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, rows_attr, row_heights_ = NULL, outline_levels_ = NULL, R_fileName = "output") {
     .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, rows_attr, row_heights_, outline_levels_, R_fileName)
 }

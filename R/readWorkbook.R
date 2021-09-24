@@ -30,7 +30,7 @@
 #' @export
 #' @examples
 #'
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' df1 <- read.xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
 #' sapply(df1, class)
 #'
@@ -46,12 +46,12 @@
 #' sapply(df2, class)
 #' head(df2)
 #'
-#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' df3 <- read.xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 #' df4 <- read.xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 #' all.equal(df3, df4)
 #'
-#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' df3 <- read.xlsx(wb,
 #'   sheet = 2, skipEmptyRows = FALSE,
 #'   cols = c(1, 4), rows = c(1, 3, 4)
@@ -117,10 +117,10 @@ read.xlsx <- function(xlsxFile,
 #' @seealso \code{\link{read.xlsx}}
 #' @export
 #' @examples
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' df1 <- readWorkbook(xlsxFile = xlsxFile, sheet = 1)
 #'
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' df1 <- readWorkbook(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 readWorkbook <- function(xlsxFile,
                          sheet = 1,

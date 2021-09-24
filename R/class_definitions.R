@@ -106,6 +106,7 @@ Sheet_Data <- setRefClass("Sheet_Data",
     "f" = "ANY",
     "row_attr" = "ANY",
     "cc" = "ANY",
+    "cc_out" = "ANY",
     "style_id" = "ANY",
     "data_count" = "integer",
     "n_elements" = "integer"

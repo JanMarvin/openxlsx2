@@ -46,7 +46,7 @@ test_that("skip empty rows", {
 
 
 test_that("Version 4 fixes from File", {
-  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 
 
   x <- read.xlsx(xlsxFile = fl, sheet = 4, skipEmptyCols = TRUE, skipEmptyRows = TRUE, colNames = FALSE)
@@ -157,7 +157,7 @@ test_that("Version 4 fixes from File", {
 
 
 test_that("Version 4 fixes from Workbook Objects", {
-  fl <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+  fl <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 
 
   x <- read.xlsx(xlsxFile = fl, sheet = 4, skipEmptyCols = TRUE, skipEmptyRows = TRUE, colNames = FALSE)

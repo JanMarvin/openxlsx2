@@ -68,7 +68,7 @@ Opening, saving and closing the file with Excel will resolve this.
 }
 \examples{
 
-xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 df1 <- read.xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
 sapply(df1, class)
 
@@ -84,12 +84,12 @@ df2 <- read.xlsx(
 sapply(df2, class)
 head(df2)
 
-wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 df3 <- read.xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 df4 <- read.xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 all.equal(df3, df4)
 
-wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 df3 <- read.xlsx(wb,
   sheet = 2, skipEmptyRows = FALSE,
   cols = c(1, 4), rows = c(1, 3, 4)

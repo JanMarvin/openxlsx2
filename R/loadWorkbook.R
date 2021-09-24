@@ -14,7 +14,7 @@
 #' @seealso \code{\link{removeWorksheet}}
 #' @examples
 #' ## load existing workbook from package folder
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' names(wb) # list worksheets
 #' wb ## view object
 #' ## Add a worksheet

@@ -27,7 +27,7 @@ write.xlsx(as.Date("2015-01-10") - (0:4), file = "getDateOriginExample.xlsx")
 m <- read.xlsx("getDateOriginExample.xlsx")
 
 ## convert to dates
-do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx"))
+do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 convertToDate(m[[1]], do)
 }
 }

@@ -42,17 +42,17 @@ Imports:
     utils,
     zip,
     stringi
+LinkingTo: 
+    Rcpp
 Suggests:
     knitr,
     testthat,
     roxygen2,
     rmarkdown 
-LinkingTo: 
-    Rcpp
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Collate: 
     'CommentClass.R'
     'HyperlinkClass.R'
@@ -69,7 +69,7 @@ Collate:
     'onUnload.R'
     'openXL.R'
     'openxlsx-package.R'
-    'openxlsx.R'
+    'openxlsx2.R'
     'openxlsxCoerce.R'
     'pugixml.R'
     'readWorkbook.R'
@@ -81,6 +81,5 @@ Collate:
     'worksheet_class.R'
     'wrappers.R'
     'writeData.R'
-    'writeData2.R'
     'writeDataTable.R'
     'writexlsx.R'

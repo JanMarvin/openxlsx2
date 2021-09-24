@@ -38,7 +38,7 @@ Workbook$methods(
     headFoot <<- NULL
 
     media <<- list()
-    
+
     persons <<- NULL
 
     pivotTables <<- NULL
@@ -630,7 +630,7 @@ Workbook$methods(
       dir.create(path = xlmediaDir, recursive = TRUE)
     }
 
-    
+
     ## will always have a theme
     xlthemeDir <- file.path(tmpDir, "xl", "theme")
     dir.create(path = xlthemeDir, recursive = TRUE)
@@ -704,12 +704,12 @@ Workbook$methods(
 
       .self$writeDrawingVML(xldrawingsDir)
     }
-    
+
     ## Threaded Comments xl/threadedComments/threadedComment.xml
     if (nThreadComments > 0){
       xlThreadComments <- file.path(tmpDir, "xl", "threadedComments")
       dir.create(path = xlThreadComments, recursive = TRUE)
-      
+
       for (i in seq_len(nSheets)) {
         if (length(threadComments[[i]]) > 0) {
           fl <- threadComments[[i]]
@@ -740,10 +740,10 @@ Workbook$methods(
         to = personDir,
         overwrite = TRUE
       )
-      
+
     }
-    
-    
+
+
 
     if (length(embeddings) > 0) {
       embeddingsDir <- file.path(tmpDir, "xl", "embeddings")
@@ -981,7 +981,7 @@ Workbook$methods(
           length(sharedStrings),
           attr(sharedStrings, "uniqueCount")
         ),
-        body = stri_join(set_sst(sharedStrings), collapse = "", sep = " "),
+        body = stri_join(set_sst(attr(sharedStrings, "text")), collapse = "", sep = " "),
         tail = "</sst>",
         fl = file.path(xlDir, "sharedStrings.xml")
       )
@@ -1062,13 +1062,13 @@ Workbook$methods(
       )
 
      ## write styles.xml
-    if(class(wb$styles_xml) == "uninitializedField") {
+    if(class(styles_xml) == "uninitializedField") {
       write_file(
         head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">',
         body = pxml(styleXML),
         tail = "</styleSheet>",
         fl = file.path(xlDir, "styles.xml")
-      ) 
+      )
     } else {
       write_file(
         head = '',
@@ -1219,7 +1219,7 @@ Workbook$methods(
       )
     # because tableName might be native encoded non-ASCII strings, we need to ensure
     # it's UTF-8 encoded
-    table <- enc2utf8(table) 
+    table <- enc2utf8(table)
 
     nms <- names(tables)
     tSheets <- attr(tables, "sheet")
@@ -2088,7 +2088,46 @@ Workbook$methods(
 
         # worksheets[[i]]$sheet_data$style_id <<-
         #   as.character(worksheets[[i]]$sheet_data$style_id)
-        
+
+        cc <- ws$sheet_data$cc
+
+
+        cc$r <- paste0(cc$c_r, cc$row_r)
+        # prepare data for output
+
+        # there can be files, where row_attr is incomplete because a row
+        # is lacking any attributes (presumably was added before saving)
+        # still row_attr is what we want!
+        cc_rows <- names(ws$sheet_data$row_attr)
+        cc_out <- vector("list", length = length(cc_rows))
+        names(cc_out) <- cc_rows
+
+        for (cc_r in cc_rows) {
+          tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "t")]
+          nams <- cc[cc$row_r == cc_r, c("c_r")]
+          ltmp <- vector("list", nrow(tmp))
+          names(ltmp) <- nams
+
+          for (nr in seq_len(nrow(tmp))) {
+            ltmp[[nr]] <- as.list(tmp[nr, ])
+          }
+
+          cc_out[[cc_r]] <- ltmp
+        }
+
+        ws$sheet_data$cc_out <- cc_out
+
+        # row_attr <- ws$sheet_data$row_attr
+        # nam_at <- names(row_attr)
+        # wanted <- as.character(seq(min(as.numeric(nam_at)),
+        #                            max(as.numeric(nam_at))))
+        # empty_row_attr <- wanted[!wanted %in% nam_at]
+        # # add empty list
+        # if(!identical(empty_row_attr, character(0)))
+        #   row_attr[[empty_row_attr]] <- list()
+        # # restore order
+        # ws$sheet_data$row_attr <- row_attr[wanted]
+
         # message(i, " \n")
         write_worksheet_xml_2(
           prior = prior,
@@ -2190,7 +2229,7 @@ Workbook$methods(
 
     hidden <- attr(colOutlineLevels[[sheet]], "hidden", exact = TRUE)
     cols <- names(colOutlineLevels[[sheet]])
-    
+
     if (!grepl("outlineLevelCol", worksheets[[sheet]]$sheetFormatPr)) {
       worksheets[[sheet]]$sheetFormatPr <<- sub("/>", ' outlineLevelCol="1"/>', worksheets[[sheet]]$sheetFormatPr)
     }
@@ -2822,7 +2861,7 @@ Workbook$methods(
                        </cfRule>',
           dxfId,
           values,
-          
+
           unlist(strsplit(sqref, split = ":"))[[1]],
           values,
           values
@@ -2835,7 +2874,7 @@ Workbook$methods(
                        </cfRule>',
           dxfId,
           values,
-          
+
           unlist(strsplit(sqref, split = ":"))[[1]],
           values,
           values
@@ -17941,7 +17980,7 @@ Workbook$methods(
     }
 
     ## fonts will maintain, sz, color, name, family scheme
-    
+
     styles$fonts <<- fonts <- getXML3(styles_XML, "styleSheet", "fonts", "font")
     fonts <- buildFontList(fonts)
 
@@ -17961,7 +18000,7 @@ Workbook$methods(
       style <- createStyle()
       if (any(s != "0")) {
         if ("fontId" %in% names(s)) {
-          
+
           style$fontId <- as.integer(s[["fontId"]])
 
           if (s[["fontId"]] != "0") {

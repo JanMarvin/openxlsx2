@@ -216,7 +216,7 @@ writeData(wb, "endsWith", sapply(1:100, fn))
 conditionalFormatting(wb, "endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
 
 ## colourscale colours cells based on cell value
-df <- read.xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx"), sheet = 4)
+df <- read.xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
 writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
 
 ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())

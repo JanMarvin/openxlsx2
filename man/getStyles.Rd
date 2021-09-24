@@ -14,7 +14,7 @@ Returns list of style objects in the workbook
 }
 \examples{
 ## load a workbook
-wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"))
+wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 getStyles(wb)[1:3]
 }
 \seealso{
