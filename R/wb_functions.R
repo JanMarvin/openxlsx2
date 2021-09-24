@@ -556,7 +556,7 @@ writeData2 <-function(wb, sheet, data,
       c(v = as.character(x),
         typ = "n",
         r = y,
-        c_t = NA_character_)
+        c_t = "_openxlsx_NA_")
     }
 
     chrcell <- function(x,y){
