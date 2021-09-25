@@ -580,9 +580,9 @@ buildBorder <- function(x) {
 
   ## gets all borders that have children
   directions <- c("left", "right", "top", "bottom", "diagonal")
-  x <- unlist(lapply(directions, function(x) {
-    y <- xml_node(border[2], "border", x)
-    sel <- length(xml_node(y, x, "color") > 0)
+  x <- unlist(lapply(directions, function(z) {
+    y <- xml_node(x, "border", z)
+    sel <- length(xml_node(y, z, "color") > 0)
     if (sel) y
   }))
   if (length(x) == 0) {
@@ -612,7 +612,8 @@ buildBorder <- function(x) {
 
   ## Colours
   cols <- replicate(n = length(sideBorder), list(rgb = "FF000000"))
-  colNodes <- xml_node(border[2], "border", "*", "color")
+  colNodes <- sapply(x, function(xi) xml_node(xi, "border", "*", "color"))
+
 
   if (length(colNodes) > 0) {
     attrs <- regmatches(colNodes, regexpr('(theme|indexed|rgb|auto)=".+"', colNodes))
