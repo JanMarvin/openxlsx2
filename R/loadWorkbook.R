@@ -807,7 +807,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {
-                wb$vml_rels[i] <- read_xml(fls[i])
+                wb$vml_rels[i] <- vmlDrawingRelsXML[relsInd]
               }
             }
           }

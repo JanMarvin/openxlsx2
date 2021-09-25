@@ -16,7 +16,10 @@ read.xlsx(
   rows = NULL,
   cols = NULL,
   namedRegion,
-  na.strings = "NA"
+  na.strings = "NA",
+  check.names = FALSE,
+  sep.names = ".",
+  fillMergedCells = FALSE
 )
 }
 \arguments{
@@ -46,14 +49,14 @@ If NULL, all columns are read.}
 
 \item{namedRegion}{A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.}
 
-\item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
+\item{na.strings}{(unimplemented) A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 
 \item{check.names}{logical. If TRUE then the names of the variables in the data frame
 are checked to ensure that they are syntactically valid variable names}
 
-\item{sep.names}{One character which substitutes blanks in column names. By default, "."}
+\item{sep.names}{(unimplemented) One character which substitutes blanks in column names. By default, "."}
 
-\item{fillMergedCells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+\item{fillMergedCells}{(unimplemented) If TRUE, the value in a merged cell is given to all cells within the merge.}
 }
 \value{
 data.frame

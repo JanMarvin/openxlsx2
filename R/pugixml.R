@@ -51,6 +51,7 @@ read_xml <- function(xml, pointer = TRUE)  {
 #' @param level3 to please check
 #' @param level4 to please check
 #' @param level5 to please check
+#' @param level6 to please check
 #' @details This function returns XML nodes as used in openxlsx2. In theory they
 #' could be returned as pointers as well, but this has not yet been implemented.
 #' @examples
@@ -97,6 +98,7 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #' @param level3 to please check
 #' @param level4 to please check
 #' @param level5 to please check
+#' @param level6 to please check
 #' @examples#'
 #'   x <- read_xml("<a>1</a>")
 #'   xml_value(x, "a")
@@ -139,6 +141,7 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
 #' @param level3 to please check
 #' @param level4 to please check
 #' @param level5 to please check
+#' @param level6 to please check
 #' @examples#'
 #'   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
 #'   xml_attribute(x, "a")

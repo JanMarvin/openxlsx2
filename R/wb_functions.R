@@ -44,12 +44,6 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   z
 }
 
-#' @param rtyp rtyp object
-#' @export
-get_row_names <- function(rtyp) {
-  sapply(rtyp, function(x) gsub("[[:upper:]]","", x[[1]]))
-}
-
 #' function to estimate the column type.
 #' 0 = character, 1 = numeric, 2 = date.
 #' @param tt dataframe produced by wb_to_df()
@@ -79,12 +73,14 @@ guess_col_type <- function(tt) {
 #'
 #' @param xlsxFile An xlsx file, Workbook object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
-#' @param colnames If TRUE, the first row of data will be used as column names.
+#' @param colNames If TRUE, the first row of data will be used as column names.
+#' @param rowNames If TRUE, the first col of data will be used as row names.
 #' @param dims Character string of type "A1:B2" as optional dimentions to be imported.
 #' @param detectDates If TRUE, attempt to recognise dates and perform conversion.
 #' @param showFormula If TRUE, the underlying Excel formulas are shown.
 #' @param convert If TRUE, a conversion to dates and numerics is attempted.
 #' @param skipEmptyCols If TRUE, empty columns are skipped.
+#' @param skipEmptyRows If TRUE, empty rows are skipped.
 #' @param startRow first row to begin looking for data.
 #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
 #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
@@ -235,7 +231,7 @@ wb_to_df <- function(xlsxFile,
 
   # must be available
   if (missing(dims))
-    dims <- openxlsx2:::getXML1attr_one(wb$worksheets[[sheet]]$dimension,
+    dims <- getXML1attr_one(wb$worksheets[[sheet]]$dimension,
                             "dimension",
                             "ref")
 
@@ -256,8 +252,8 @@ wb_to_df <- function(xlsxFile,
         wb$styles$cellXfs,
         FUN= function(x)
           c(
-            as.numeric(openxlsx2:::getXML1attr_one(x, "xf", "numFmtId")),
-            as.numeric(openxlsx2:::getXML1attr_one(x, "xf", "applyNumberFormat"))
+            as.numeric(getXML1attr_one(x, "xf", "numFmtId")),
+            as.numeric(getXML1attr_one(x, "xf", "applyNumberFormat"))
           )
       )
     )
@@ -358,7 +354,7 @@ wb_to_df <- function(xlsxFile,
   cc$val[sel] <- cc$v[sel]
   cc$typ[sel] <- "n"
 
-  openxlsx2:::long_to_wide(z, tt, cc, dimnames(z))
+  long_to_wide(z, tt, cc, dimnames(z))
 
   # if colNames, then change tt too
   if (colNames) {
@@ -716,7 +712,7 @@ writeData2 <-function(wb, sheet, data,
                                          style="0",
                                          width="9.14"))
 
-    wb$worksheets[[sheetno]]$cols_attr <- openxlsx2:::list_to_attr(cols_attr, "col")
+    wb$worksheets[[sheetno]]$cols_attr <- list_to_attr(cols_attr, "col")
 
 
 

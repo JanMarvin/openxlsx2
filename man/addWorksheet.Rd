@@ -49,6 +49,8 @@ addWorksheet(
 
 \item{visible}{If FALSE, sheet is hidden else visible.}
 
+\item{hasDrawing}{If TRUE prepare a drawing output (TODO does this work?)}
+
 \item{paperSize}{An integer corresponding to a paper size. See ?pageSetup for details.}
 
 \item{orientation}{One of "portrait" or "landscape"}

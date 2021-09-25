@@ -1679,9 +1679,9 @@ Workbook$methods(
   getBaseFont = function() {
     baseFont <- styles$fonts[[1]]
 
-    sz     <- openxlsx2:::font_val(baseFont, "font", "sz")
-    colour <- openxlsx2:::font_val(baseFont, "font", "color")
-    name   <- openxlsx2:::font_val(baseFont, "font", "name")
+    sz     <- font_val(baseFont, "font", "sz")
+    colour <- font_val(baseFont, "font", "color")
+    name   <- font_val(baseFont, "font", "name")
 
     if (length(sz[[1]]) == 0) {
       sz <- list("val" = "10")

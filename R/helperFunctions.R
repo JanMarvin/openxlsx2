@@ -444,11 +444,11 @@ validateBorderStyle <- function(borderStyle) {
 
 
 buildFontList <- function(fonts) {
-  sz     <- openxlsx2:::font_val(fonts, "font", "sz")
-  colour <- openxlsx2:::font_val(fonts, "font", "color")
-  name   <- openxlsx2:::font_val(fonts, "font", "name")
-  family <- openxlsx2:::font_val(fonts, "font", "family")
-  scheme <- openxlsx2:::font_val(fonts, "font", "scheme")
+  sz     <- font_val(fonts, "font", "sz")
+  colour <- font_val(fonts, "font", "color")
+  name   <- font_val(fonts, "font", "name")
+  family <- font_val(fonts, "font", "family")
+  scheme <- font_val(fonts, "font", "scheme")
 
   italic <- lapply(fonts, function(x)xml_node(x, "font", "i"))
   bold <- lapply(fonts, function(x)xml_node(x, "font", "b"))

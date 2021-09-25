@@ -16,10 +16,10 @@
 #' If NULL, all rows are read.
 #' @param check.names logical. If TRUE then the names of the variables in the data frame
 #' are checked to ensure that they are syntactically valid variable names
-#' @param sep.names One character which substitutes blanks in column names. By default, "."
+#' @param sep.names (unimplemented) One character which substitutes blanks in column names. By default, "."
 #' @param namedRegion A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.
-#' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
-#' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+#' @param na.strings (unimplemented) A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+#' @param fillMergedCells (unimplemented) If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If \code{TRUE}, empty columns are skipped.
 #' @seealso \code{\link{getNamedRegions}}
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
@@ -76,7 +76,10 @@ read.xlsx <- function(xlsxFile,
                       rows = NULL,
                       cols = NULL,
                       namedRegion,
-                      na.strings = "NA") {
+                      na.strings = "NA",
+                      check.names = FALSE,
+                      sep.names = ".",
+                      fillMergedCells = FALSE) {
   
   if (missing(sheet))
     sheet <- 1

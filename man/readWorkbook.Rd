@@ -46,7 +46,7 @@ If NULL, all columns are read.}
 
 \item{namedRegion}{A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.}
 
-\item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
+\item{na.strings}{(unimplemented) A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 }
 \value{
 data.frame

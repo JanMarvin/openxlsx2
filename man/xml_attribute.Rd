@@ -26,6 +26,8 @@ xml_attribute(
 \item{level4}{to please check}
 
 \item{level5}{to please check}
+
+\item{level6}{to please check}
 }
 \description{
 xml_attribute

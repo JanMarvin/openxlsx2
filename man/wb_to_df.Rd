@@ -30,9 +30,15 @@ wb_to_df(
 
 \item{startRow}{first row to begin looking for data.}
 
+\item{colNames}{If TRUE, the first row of data will be used as column names.}
+
+\item{rowNames}{If TRUE, the first col of data will be used as row names.}
+
 \item{detectDates}{If TRUE, attempt to recognise dates and perform conversion.}
 
 \item{skipEmptyCols}{If TRUE, empty columns are skipped.}
+
+\item{skipEmptyRows}{If TRUE, empty rows are skipped.}
 
 \item{rows}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
 
@@ -49,8 +55,6 @@ wb_to_df(
 \item{types}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created}
 
 \item{definedName}{Character string with a definedName. If no sheet is selected, the first appearance will be selected.}
-
-\item{colnames}{If TRUE, the first row of data will be used as column names.}
 }
 \description{
 Simple function to create a dataframe from a workbook. Simple as in simply

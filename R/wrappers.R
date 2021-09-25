@@ -319,6 +319,7 @@ sheets <- function(wb) {
 #' @param firstHeader document header for first page only.
 #' @param firstFooter document footer for first page only.
 #' @param visible If FALSE, sheet is hidden else visible.
+#' @param hasDrawing If TRUE prepare a drawing output (TODO does this work?)
 #' @param paperSize An integer corresponding to a paper size. See ?pageSetup for details.
 #' @param orientation One of "portrait" or "landscape"
 #' @param hdpi Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or options("openxlsx.hdpi" = X)
