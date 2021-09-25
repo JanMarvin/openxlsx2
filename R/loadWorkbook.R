@@ -484,6 +484,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
     wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
 
+    wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
+    wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks", "hyperlink")
+    wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
 
     # load the data
     loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
@@ -735,37 +738,37 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
       for (drawing in seq_along(drawingsXML)) {
        drwng_xml <- read_xml(drawingsXML[drawing])
-       wb$drawings[[drawing]] <- getXMLXPtr1(drwng_xml, "xdr:wsDr")
+       wb$drawings[[drawing]] <- xml_node(drwng_xml, "xdr:wsDr")
       }
 
-      #       ptn1 <- "<(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)"
-      #       ptn2 <- "</(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)>"
+      # ptn1 <- "<(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)"
+      # ptn2 <- "</(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)>"
 
-      ## split at one/two cell Anchor
+      # ## split at one/two cell Anchor
       # dXML <- regmatches(dXML, gregexpr(paste0(ptn1, ".*?", ptn2), dXML))
     }
 
 
-    ## loop over all worksheets and assign drawing to sheet
-    # if (any(hasDrawing)) {
-    #   for (i in seq_along(xml)) {
-    #     if (hasDrawing[i]) {
-    #       target <- unlist(lapply(drawXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
-    #       target <- basename(gsub('"$', "", target))
+    # loop over all worksheets and assign drawing to sheet
+    if (any(hasDrawing)) {
+      for (i in seq_along(xml)) {
+        if (hasDrawing[i]) {
+          target <- unlist(lapply(drawXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
+          target <- basename(gsub('"$', "", target))
 
-    #       ## sheet_i has which(hasDrawing)[[i]]
-    #       relsInd <- grepl(target, drawingRelsXML)
-    #       if (any(relsInd)) {
-    #         wb$drawings_rels[i] <- dRels[relsInd]
-    #       }
+          ## sheet_i has which(hasDrawing)[[i]]
+          relsInd <- grepl(target, drawingRelsXML)
+          if (any(relsInd)) {
+            wb$drawings_rels[i] <- dRels[relsInd]
+          }
 
-    #       drawingInd <- grepl(target, drawingsXML)
-    #       if (any(drawingInd)) {
-    #         wb$drawings[i] <- dXML[drawingInd]
-    #       }
-    #     }
-    #   }
-    # }
+          drawingInd <- grepl(target, drawingsXML)
+          if (any(drawingInd)) {
+            wb$drawings[i] <- sprintf("<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">%s</xdr:wsDr>", dXML[drawingInd])
+          }
+        }
+      }
+    }
 
 
 
