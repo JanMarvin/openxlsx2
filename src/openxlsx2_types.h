@@ -15,6 +15,8 @@ typedef struct {
   std::string v     = "_openxlsx_NA_";
   std::string f     = "_openxlsx_NA_";
   std::string f_t   = "_openxlsx_NA_";
+  std::string f_si  = "_openxlsx_NA_";
+  std::string f_ref = "_openxlsx_NA_";
   std::string t     = "_openxlsx_NA_";
 } xml_col;
 
@@ -39,6 +41,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   Rcpp::CharacterVector v(n);         // <v> tag
   Rcpp::CharacterVector f(n);         // <f> tag
   Rcpp::CharacterVector f_t(n);       // <f t=""> attribute most likely shared
+  Rcpp::CharacterVector f_ref(n);       // <f t=""> attribute most likely shared
+  Rcpp::CharacterVector f_si(n);       // <f t=""> attribute most likely shared
   Rcpp::CharacterVector t(n);         // <is><t> tag
 
   // struct to vector
@@ -50,6 +54,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
     v[i]     = x[i].v;
     f[i]     = x[i].f;
     f_t[i]   = x[i].f_t;
+    f_ref[i] = x[i].f_ref;
+    f_si[i]  = x[i].f_si;
     t[i]     = x[i].t;
   }
 
@@ -62,6 +68,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
       Rcpp::Named("v")     = v,
       Rcpp::Named("f")     = f,
       Rcpp::Named("f_t")   = f_t,
+      Rcpp::Named("f_ref")   = f_ref,
+      Rcpp::Named("f_si")   = f_si,
       Rcpp::Named("t")     = t
   )
   );

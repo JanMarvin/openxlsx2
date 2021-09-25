@@ -63,16 +63,24 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     // Rcpp::Rcout << c_val << std::endl;
 
     // <f> ... </f>
-    if(c_typ.compare("e") == 0) {
+    if(c_typ.compare("e") == 0 || c_typ.compare("str") == 0) {
 
       std::string fml = Rcpp::as<std::string>(cll["f"]);
       std::string fml_type = Rcpp::as<std::string>(cll["f_t"]);
+      std::string fml_si = Rcpp::as<std::string>(cll["f_si"]);
+      std::string fml_ref = Rcpp::as<std::string>(cll["f_ref"]);
 
       // f node: formula to be evaluated
       if (fml.compare(rnastring.c_str()) != 0) {
         pugi::xml_node f = cell.append_child("f");
         if (fml_type.compare(rnastring.c_str()) != 0) {
           f.append_attribute("t") = fml_type.c_str();
+        }
+        if (fml_si.compare(rnastring.c_str()) != 0) {
+          f.append_attribute("ref") = fml_ref.c_str();
+        }
+        if (fml_si.compare(rnastring.c_str()) != 0) {
+          f.append_attribute("si") = fml_si.c_str();
         }
 
         f.append_child(pugi::node_pcdata).set_value(fml.c_str());
@@ -96,11 +104,6 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
 
     // <v> ... </v>
     if(c_typ.compare("s") == 0) {
-      cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
-    }
-
-    // <v> ... </v>
-    if(c_typ.compare("str") == 0) {
       cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
     }
 

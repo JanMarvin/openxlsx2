@@ -21,6 +21,8 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
   const std::string s_str = "s";
   const std::string t_str = "t";
   const std::string v_str = "v";
+  const std::string si_str = "si";
+  const std::string ref_str = "ref";
 
   /*****************************************************************************
    * Row information is returned as list of lists returning as much as possible.
@@ -148,7 +150,9 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
             // buffer = cattr.name();
 
             buffer = cattr.value();
-            if (val.name() == t_str) single_xml_col.f_t = buffer;
+            if (cattr.name() == t_str) single_xml_col.f_t = buffer;
+            if (cattr.name() == si_str) single_xml_col.f_si = buffer;
+            if (cattr.name() == ref_str) single_xml_col.f_ref = buffer;
 
             ++ff_itr;
           }

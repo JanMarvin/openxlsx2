@@ -582,7 +582,7 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
         value <- ifelse(is.null(dim(x)), x[i], x[n, m])
 
         sel <- cc$row_r == row & cc$c_r == col
-        cc[sel, c("c_s", "c_t", "v", "f", "f_t", "t")] <- "_openxlsx_NA_"
+        cc[sel, c("c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "t")] <- "_openxlsx_NA_"
 
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
@@ -729,7 +729,7 @@ writeData2 <-function(wb, sheet, data,
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
     # original cc dataframe
-    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "t")
+    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si","t")
     cc <- as.data.frame(
       matrix(data = NA_character_,
              nrow = nrow(data) * ncol(data),
