@@ -352,25 +352,25 @@ writeCommentXML <- function(comment_list, file_name) {
   for (i in seq_along(comment_list)) {
     authorInd <- which(authors == comment_list[[i]]$author) - 1L
     xml <- c(xml, sprintf('<comment ref="%s" authorId="%s" shapeId="0"><text>', comment_list[[i]]$ref, authorInd))
-    
+
     if(length(comment_list[[i]]$style) != 0){ ## check that style information is present
       for (j in seq_along(comment_list[[i]]$comment)) {
         if (j == 1) # author
-          xml <- c(xml, sprintf('<r>%s<t>%s</t></r>', 
-                                comment_list[[i]]$style[[j]], 
+          xml <- c(xml, sprintf('<r>%s<t>%s</t></r>',
+                                comment_list[[i]]$style[[j]],
                                 comment_list[[i]]$comment[[j]]))
         if (j == 2) # comment
-          xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>', 
-                                comment_list[[i]]$style[[j]], 
+          xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
+                                comment_list[[i]]$style[[j]],
                                 comment_list[[i]]$comment[[j]]))
       }
     }else{ ## Case with no styling information.
       for (j in seq_along(comment_list[[i]]$comment)) {
-        xml <- c(xml, sprintf('<t>%s</t>', 
+        xml <- c(xml, sprintf('<t>%s</t>',
                               comment_list[[i]]$comment[[j]]))
       }
     }
-    
+
     xml <- c(xml, "</text></comment>")
   }
 
