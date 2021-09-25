@@ -248,7 +248,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     sst <- read_xml(sharedStringsXML)
     uniqueCount <- getXMLXPtr1attr_one(sst, "sst", "uniqueCount")
-    vals <- getXMLXPtr2(sst, "sst", "si")
+    vals <- xml_node(sst, "sst", "si")
     text <- si_to_txt(sst)
 
     attr(vals, "uniqueCount") <- uniqueCount
