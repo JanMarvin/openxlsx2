@@ -2104,7 +2104,7 @@ Workbook$methods(
         names(cc_out) <- cc_rows
 
         for (cc_r in cc_rows) {
-          tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "t")]
+          tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
           nams <- cc[cc$row_r == cc_r, c("c_r")]
           ltmp <- vector("list", nrow(tmp))
           names(ltmp) <- nams

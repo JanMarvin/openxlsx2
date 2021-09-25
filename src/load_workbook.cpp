@@ -21,6 +21,7 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
   const std::string s_str = "s";
   const std::string t_str = "t";
   const std::string v_str = "v";
+  const std::string is_str = "is";
   const std::string si_str = "si";
   const std::string ref_str = "ref";
 
@@ -141,37 +142,35 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
         auto val_itr = 0;
         for (auto val: col.children()) {
 
+          // <is>
+          if (val.name() == is_str) {
+            std::ostringstream oss;
+            val.print(oss, " ", pugi::format_raw);
+            single_xml_col.is = oss.str();
+          } // </is>
 
-          auto ff_itr = 0;
+          // <v>
+          if (val.name() == v_str)  single_xml_col.v = val.child_value();
 
-          // additional attributes to <f t="shared" ...>
-          for (auto cattr : val.attributes())
-          {
-            // buffer = cattr.name();
+          // <f>
+          if (val.name() == f_str)  {
 
-            buffer = cattr.value();
-            if (cattr.name() == t_str) single_xml_col.f_t = buffer;
-            if (cattr.name() == si_str) single_xml_col.f_si = buffer;
-            if (cattr.name() == ref_str) single_xml_col.f_ref = buffer;
+            single_xml_col.f = val.child_value();
 
-            ++ff_itr;
-          }
+            // additional attributes to <f>
+            // This currently handles
+            //  * t=
+            //  * ref=
+            //  * si=
+            for (auto cattr : val.attributes())
+            {
+              buffer = cattr.value();
+              if (cattr.name() == t_str) single_xml_col.f_t = buffer;
+              if (cattr.name() == si_str) single_xml_col.f_si = buffer;
+              if (cattr.name() == ref_str) single_xml_col.f_ref = buffer;
+            }
 
-          buffer = val.name();
-
-          // <is> nodes contain additional <t> node.
-          // TODO: check if multiple t nodes are possible, for now return one.
-          // the t-node can bring its very own attributes
-          // Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
-          if (val.child("t")) {
-            buffer = val.child("t").child_value();
-            single_xml_col.t = buffer;
-          } else {
-            buffer = val.child_value();
-            // val.name() == v or f
-            if (val.name() == v_str) single_xml_col.v = buffer;
-            if (val.name() == f_str) single_xml_col.f = buffer;
-          }
+          } // </f>
 
           ++val_itr;
         }
@@ -232,6 +231,57 @@ SEXP si_to_txt(XPtrXML doc) {
 
   return res;
 }
+
+// converts inlineStr xml tree to R-Character Vector
+// [[Rcpp::export]]
+SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
+
+  auto n = is_vec.length();
+  Rcpp::CharacterVector res(Rcpp::no_init(n));
+
+  for (auto i = 0; i < n; ++i) {
+
+    std::string tmp = Rcpp::as<std::string>(is_vec[i]);
+
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_string(tmp.c_str(), pugi::parse_default | pugi::parse_escapes);
+
+    if (!result) {
+      Rcpp::stop("inlineStr xml import unsuccessfull");
+    }
+
+    for (auto is : doc.children("is"))
+    {
+      // text to export
+      std::string text = "";
+
+      // has only t node
+      for (auto t : is.children("t")) {
+        text = t.child_value();
+      }
+
+      // has r node with t node
+      // phoneticPr (Phonetic Properties)
+      // r (Rich Text Run)
+      // rPr (Run Properties)
+      // rPh (Phonetic Run)
+      // t (Text)
+      // linebreaks and spaces are handled in the nodes
+      for (auto r : is.children("r")) {
+        for (auto t :r.children("t")) {
+          text += t.child_value();
+        }
+      }
+
+      // push everything back
+      res[i] = text;
+    }
+
+  }
+
+  return res;
+}
+
 
 // mimics the R function which used below
 Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {

@@ -328,7 +328,7 @@ wb_to_df <- function(xlsxFile,
   }
   # text in t
   sel <- cc$c_t %in% c("inlineStr")
-  cc$val[sel] <- cc$t[sel]
+  cc$val[sel] <- is_to_txt(cc$is[sel])
   cc$typ[sel] <- "s"
   # test is sst
   sel <- cc$c_t %in% c("s")
@@ -531,7 +531,7 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
       total_cols <- int2col(sort(col2int(total_cols)))
 
       # create candidate
-      cc_row_new <- data.frame(matrix(NA_character_, nrow = length(total_cols), ncol = 2))
+      cc_row_new <- data.frame(matrix("_openxlsx_NA_", nrow = length(total_cols), ncol = 2))
       names(cc_row_new) <- names(cc)[1:2]
       cc_row_new$row_r <- row
       cc_row_new$c_r <- total_cols
@@ -582,13 +582,13 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
         value <- ifelse(is.null(dim(x)), x[i], x[n, m])
 
         sel <- cc$row_r == row & cc$c_r == col
-        cc[sel, c("c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "t")] <- "_openxlsx_NA_"
+        cc[sel, c("c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
 
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
         if (data_class[m] %in% c("character", "factor") | (colNames == TRUE & n == 1)) {
           cc[sel, "c_t"] <- "inlineStr"
-          cc[sel, "t"]   <- as.character(value)
+          cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
         } else {
           cc[sel, "v"]   <- as.character(value)
         }
@@ -729,9 +729,9 @@ writeData2 <-function(wb, sheet, data,
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
     # original cc dataframe
-    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si","t")
+    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")
     cc <- as.data.frame(
-      matrix(data = NA_character_,
+      matrix(data = "_openxlsx_NA_",
              nrow = nrow(data) * ncol(data),
              ncol = length(nams))
     )
@@ -739,17 +739,19 @@ writeData2 <-function(wb, sheet, data,
 
 
     numcell <- function(x,y){
-      c(v = as.character(x),
+      c(v   = as.character(x),
         typ = "n",
-        r = y,
-        c_t = "_openxlsx_NA_")
+        r   = y,
+        c_t = "_openxlsx_NA_",
+        is  =  "_openxlsx_NA_")
     }
 
     chrcell <- function(x,y){
-      c(v = x,
+      c(v   = "_openxlsx_NA_",
         typ = "c",
-        r = y,
-        c_t = "str")
+        r   = y,
+        c_t = "inlineStr",
+        is  = paste0("<is><t>", as.character(x), "</t></is>"))
     }
 
     cell <- function(x, y, data_class) {
@@ -765,8 +767,8 @@ writeData2 <-function(wb, sheet, data,
 
     for (i in seq_len(nrow(data))) {
 
-      col <- data.frame(matrix(data = NA_character_, nrow = ncol(data), ncol = 4))
-      names(col) <- c("v", "typ", "r", "c_t")
+      col <- data.frame(matrix(data = "_openxlsx_NA_", nrow = ncol(data), ncol = 5))
+      names(col) <- c("v", "typ", "r", "c_t", "is")
       for (j in seq_along(data)) {
         dc <- ifelse(colNames && i == 1, "character", data_class[j])
         col[j,] <- cell(data[i, j], rtyp[i, j], dc)

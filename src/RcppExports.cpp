@@ -270,6 +270,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// is_to_txt
+SEXP is_to_txt(Rcpp::CharacterVector is_vec);
+RcppExport SEXP _openxlsx2_is_to_txt(SEXP is_vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type is_vec(is_vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(is_to_txt(is_vec));
+    return rcpp_result_gen;
+END_RCPP
+}
 // long_to_wide
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame cc, Rcpp::List dn);
 RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP ccSEXP, SEXP dnSEXP) {
@@ -891,6 +902,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_markUTF8", (DL_FUNC) &_openxlsx2_markUTF8, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
+    {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 4},
     {"_openxlsx2_getOpenClosedNode", (DL_FUNC) &_openxlsx2_getOpenClosedNode, 3},
     {"_openxlsx2_getAttr", (DL_FUNC) &_openxlsx2_getAttr, 2},

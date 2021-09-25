@@ -42,7 +42,6 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
     std::string c_rnm        = Rcpp::as<std::string>(cll["r"]);
 
     std::string c_val        = Rcpp::as<std::string>(cll["v"]);
-    std::string c_ist        = Rcpp::as<std::string>(cll["t"]);
 
     // Rf_PrintValue(cell_atr);
     // Rf_PrintValue(cell_val);
@@ -94,7 +93,15 @@ std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
 
     // <is><t> ... </t></is>
     if(c_typ.compare("inlineStr") == 0) {
-      cell.append_child("is").append_child("t").append_child(pugi::node_pcdata).set_value(c_ist.c_str());
+      std::string c_ist = Rcpp::as<std::string>(cll["is"]);
+      if (c_ist.compare(rnastring.c_str()) != 0) {
+
+        pugi::xml_document is_node;
+        pugi::xml_parse_result result = is_node.load_string(c_ist.c_str(), pugi::parse_default | pugi::parse_escapes);
+        if (!result) Rcpp::stop("loading inlineStr node while writing failed");
+
+        cell.append_copy(is_node.first_child());
+      }
     }
 
     // <v> ... </v>
