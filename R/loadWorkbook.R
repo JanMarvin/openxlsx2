@@ -481,10 +481,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
 
     wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
-    wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
+    wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst", "ext")
     wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
 
-    wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
+    # wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
     wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks", "hyperlink")
     wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
 
