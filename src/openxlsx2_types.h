@@ -41,8 +41,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   Rcpp::CharacterVector v(n);         // <v> tag
   Rcpp::CharacterVector f(n);         // <f> tag
   Rcpp::CharacterVector f_t(n);       // <f t=""> attribute most likely shared
-  Rcpp::CharacterVector f_ref(n);       // <f t=""> attribute most likely shared
-  Rcpp::CharacterVector f_si(n);       // <f t=""> attribute most likely shared
+  Rcpp::CharacterVector f_ref(n);     // <f ref=""> attribute most likely reference
+  Rcpp::CharacterVector f_si(n);      // <f si=""> attribute most likely sharedString
   Rcpp::CharacterVector t(n);         // <is><t> tag
 
   // struct to vector
@@ -68,8 +68,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
       Rcpp::Named("v")     = v,
       Rcpp::Named("f")     = f,
       Rcpp::Named("f_t")   = f_t,
-      Rcpp::Named("f_ref")   = f_ref,
-      Rcpp::Named("f_si")   = f_si,
+      Rcpp::Named("f_ref") = f_ref,
+      Rcpp::Named("f_si")  = f_si,
       Rcpp::Named("t")     = t
   )
   );

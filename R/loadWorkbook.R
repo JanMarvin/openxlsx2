@@ -466,11 +466,24 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   for (i in seq_len(nSheets)) {
     worksheet_xml <- read_xml(worksheetsXML[i])
 
-    wb$worksheets[[i]]$dimension <- getXMLXPtr2(worksheet_xml, "worksheet", "dimension")
+    wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
 
-    wb$worksheets[[i]]$sheetFormatPr <- getXMLXPtr2(worksheet_xml, "worksheet", "sheetFormatPr")
-    wb$worksheets[[i]]$sheetViews    <- getXMLXPtr2(worksheet_xml, "worksheet", "sheetViews")
-    wb$worksheets[[i]]$cols_attr     <- getXMLXPtr3(worksheet_xml, "worksheet", "cols", "col")
+    wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
+    wb$worksheets[[i]]$sheetViews    <- xml_node(worksheet_xml, "worksheet", "sheetViews")
+    wb$worksheets[[i]]$cols_attr     <- xml_node(worksheet_xml, "worksheet", "cols", "col")
+
+
+    cf <- xml_node(worksheet_xml, "worksheet", "*", "cfRule")
+    nams <- unlist(xml_attribute(worksheet_xml, "worksheet", "conditionalFormatting"))
+    names(cf) <- nams
+
+    wb$worksheets[[i]]$conditionalFormatting <- cf
+    wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
+
+    wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
+    wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
+    wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
+
 
     # load the data
     loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
