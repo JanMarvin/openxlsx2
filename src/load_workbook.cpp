@@ -204,7 +204,7 @@ SEXP si_to_txt(XPtrXML doc) {
   auto sst = doc->child("sst");
   auto n = std::distance(sst.begin(), sst.end());
 
-  Rcpp::CharacterVector res(n);
+  Rcpp::CharacterVector res(Rcpp::no_init(n));
 
   auto i = 0;
   for (auto si : doc->child("sst").children("si"))

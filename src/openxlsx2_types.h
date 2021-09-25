@@ -32,18 +32,18 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   auto n = x.size();
 
   // Vector structure identical to xml_col from openxlsx2_types.h
-  Rcpp::CharacterVector row_r(n);     // row name: 1, 2, ..., 9999
+  Rcpp::CharacterVector row_r(no_init(n));     // row name: 1, 2, ..., 9999
 
-  Rcpp::CharacterVector c_r(n);       // col name: A, B, ..., ZZ
-  Rcpp::CharacterVector c_s(n);       // cell style
-  Rcpp::CharacterVector c_t(n);       // cell type
+  Rcpp::CharacterVector c_r(no_init(n));       // col name: A, B, ..., ZZ
+  Rcpp::CharacterVector c_s(no_init(n));       // cell style
+  Rcpp::CharacterVector c_t(no_init(n));       // cell type
 
-  Rcpp::CharacterVector v(n);         // <v> tag
-  Rcpp::CharacterVector f(n);         // <f> tag
-  Rcpp::CharacterVector f_t(n);       // <f t=""> attribute most likely shared
-  Rcpp::CharacterVector f_ref(n);     // <f ref=""> attribute most likely reference
-  Rcpp::CharacterVector f_si(n);      // <f si=""> attribute most likely sharedString
-  Rcpp::CharacterVector t(n);         // <is><t> tag
+  Rcpp::CharacterVector v(no_init(n));         // <v> tag
+  Rcpp::CharacterVector f(no_init(n));         // <f> tag
+  Rcpp::CharacterVector f_t(no_init(n));       // <f t=""> attribute most likely shared
+  Rcpp::CharacterVector f_ref(no_init(n));     // <f ref=""> attribute most likely reference
+  Rcpp::CharacterVector f_si(no_init(n));      // <f si=""> attribute most likely sharedString
+  Rcpp::CharacterVector t(no_init(n));         // <is><t> tag
 
   // struct to vector
   for (auto i = 0; i < n; ++i) {
