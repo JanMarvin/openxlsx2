@@ -803,3 +803,49 @@ writeData2 <-function(wb, sheet, data,
   wb
 }
 
+
+#' dummy function to create styleObjects
+#' @param styleObjects styleObjects
+#' @param wb wb
+#'
+#' @export
+get_styles <- function(styleObjects, wb) {
+
+  oNA <- "_openxlsx_NA_"
+  nums <- seq_along(styleObjects)
+
+  CC <- NULL
+  for (i in seq_along(wb$worksheets) ) {
+    cc <- wb$worksheets[[i]]$sheet_data$cc
+    cc <- cc[cc$c_s != oNA,]
+    if (NROW(cc) > 0) {
+      cc$sheet <- wb$sheet_names[i]
+      CC <- rbind(CC, cc)
+    }
+  }
+
+
+  z <- vector("list", length = length(nums))
+
+  for (num in nums) {
+
+    # subset of valid rows
+    cc <- CC[CC$c_s == num, ]
+
+    # prepare output
+    nams <- c("style", "sheet", "rows", "cols")
+    res <- vector("list", length(nams))
+    names(res) <- nams
+
+    if (NROW(cc) > 0) {
+      res[["style"]] <- styleObjects[[num]]
+      res[["sheet"]] <- unique(cc$sheet)
+      res[["rows"]]  <- as.numeric(cc[cc$c_s == num, "row_r"])
+      res[["cols"]]  <- convertFromExcelRef(cc[cc$c_s == num, "c_r"])
+    }
+
+    z[[num]] <- res
+  }
+
+  z
+}
