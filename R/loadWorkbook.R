@@ -212,30 +212,30 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
 
     ## replace sheetId
-    for (i in 1:nSheets) {
+    for (i in seq_len(nSheets)) {
       wb$workbook$sheets[[i]] <- gsub(sprintf(' sheetId="%s"', i), sprintf(' sheetId="%s"', sheetId[i]), wb$workbook$sheets[[i]])
     }
 
 
     ## additional workbook attributes
-    calcPr <- getXMLXPtr2(workbook_xml, "workbook", "calcPr")
+    calcPr <- xml_node(workbook_xml, "workbook", "calcPr")
     if (length(calcPr) > 0) {
       wb$workbook$calcPr <- calcPr
     }
 
-    workbookPr <- getXMLXPtr2(workbook_xml, "workbook", "workbookPr")
+    workbookPr <- xml_node(workbook_xml, "workbook", "workbookPr")
     if (length(workbookPr) > 0) {
       wb$workbook$workbookPr <- workbookPr
     }
 
-    workbookProtection <- getXMLXPtr2(workbook_xml, "workbook", "workbookProtection")
+    workbookProtection <- xml_node(workbook_xml, "workbook", "workbookProtection")
     if (length(workbookProtection) > 0) {
       wb$workbook$workbookProtection <- workbookProtection
     }
 
 
     ## defined Names
-    wb$workbook$definedNames <-  getXMLXPtr3(workbook_xml, "workbook", "definedNames", "definedName")
+    wb$workbook$definedNames <-  xml_node(workbook_xml, "workbook", "definedNames", "definedName")
 
   }
 
@@ -262,7 +262,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     # pivotTable cacheId links to workbook.xml which links to workbook.xml.rels via rId
     # we don't modify the cacheId, only the rId
     nPivotTables <- length(pivotDefXML)
-    rIds <- 20000L + 1:nPivotTables
+    rIds <- 20000L + seq_len(nPivotTables)
 
     ## pivot tables
     pivotTableXML <- pivotTableXML[order(nchar(pivotTableXML), pivotTableXML)]
@@ -345,7 +345,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     )
 
 
-    caches <- getXMLXPtr3(workbook_xml, "workbook", "pivotCaches", "pivotCache")
+    caches <- xml_node(workbook_xml, "workbook", "pivotCaches", "pivotCache")
 
     for (i in seq_along(caches)) {
       caches[i] <- gsub('"rId[0-9]+"', sprintf('"rId%s"', rIds[i]), caches[i])
@@ -393,15 +393,15 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     nChartCol <- sum(grepl("colors[0-9]+.xml", chartNames))
 
     if (nCharts > 0) {
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/chart%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', 1:nCharts))
+      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/chart%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', seq_len(nCharts)))
     }
 
     if (nChartStyles > 0) {
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/style%s.xml" ContentType="application/vnd.ms-office.chartstyle+xml"/>', 1:nChartStyles))
+      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/style%s.xml" ContentType="application/vnd.ms-office.chartstyle+xml"/>', seq_len(nChartStyles)))
     }
 
     if (nChartCol > 0) {
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/colors%s.xml" ContentType="application/vnd.ms-office.chartcolorstyle+xml"/>', 1:nChartCol))
+      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/colors%s.xml" ContentType="application/vnd.ms-office.chartcolorstyle+xml"/>', seq_len(nChartCol)))
     }
 
     if (length(chartsRels)) {
@@ -533,7 +533,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       haveRels <- rep(FALSE, length(wb$worksheets))
       allRels <- rep("", length(wb$worksheets))
 
-      for (i in 1:nSheets) {
+      for (i in seq_len(nSheets)) {
         if (is_chart_sheet[i]) {
           ind <- which(chartSheetRIds == sheetrId[i])
           rels_file <- file.path(chartSheetsRelsDir, paste0(chartsheet_rId_mapping[ind], ".rels"))
@@ -554,7 +554,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     xml <- lapply(seq_along(allRels), function(i) {
       if (haveRels[i]) {
         xml <- read_xml(allRels[[i]])
-        xml <- getXMLXPtr2(xml, "Relationships", "Relationship")
+        xml <- xml_node(xml, "Relationships", "Relationship")
       } else {
         xml <- "<Relationship >"
       }
@@ -578,7 +578,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       ## worksheet_rels Id for slicer will be rId0
       k <- 1L
       wb$slicers <- rep("", nSheets)
-      for (i in 1:nSheets) {
+      for (i in seq_len(nSheets)) {
 
         ## read in slicer[j].XML sheets into sheet[i]
         if (inds[i]) {
@@ -1023,7 +1023,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   } ## end of worksheetRels
 
   ## convert hyperliks to hyperlink objects
-  for (i in 1:nSheets) {
+  for (i in seq_len(nSheets)) {
     wb$worksheets[[i]]$hyperlinks <- xml_to_hyperlink(wb$worksheets[[i]]$hyperlinks)
   }
 
