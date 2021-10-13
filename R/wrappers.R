@@ -3119,6 +3119,7 @@ setFooter <- function(wb, text, position = "center") {
 #' @param showErrorMsg logical
 #' @export
 #' @examples
+#' \dontrun{
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "Sheet 1")
 #' addWorksheet(wb, "Sheet 2")
@@ -3152,9 +3153,7 @@ setFooter <- function(wb, text, position = "center") {
 #'   col = 2, rows = 2:12, type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
-#' \dontrun{
 #' saveWorkbook(wb, "dataValidationExample.xlsx", overwrite = TRUE)
-#' }
 #'
 #'
 #' ######################################################################
@@ -3169,6 +3168,7 @@ setFooter <- function(wb, text, position = "center") {
 #' writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
 #' dataValidation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#' }
 #'
 #' # openXL(wb)
 dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBlank = TRUE, showInputMsg = TRUE, showErrorMsg = TRUE) {
