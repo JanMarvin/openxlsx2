@@ -752,7 +752,7 @@ writeData2 <-function(wb, sheet, data,
 
     cell <- function(x, y, data_class) {
       z <- NULL
-      if (data_class == "numeric")
+      if (data_class %in% c("numeric", "integer"))
         z <- numcell(x,y)
       if (data_class %in% c("character", "factor"))
         z <- chrcell(x,y)
@@ -761,7 +761,7 @@ writeData2 <-function(wb, sheet, data,
     }
 
 
-    for (i in seq_len(nrow(data))) {
+    for (i in seq_len(NROW(data))) {
 
       col <- data.frame(matrix(data = "_openxlsx_NA_", nrow = ncol(data), ncol = 5))
       names(col) <- c("v", "typ", "r", "c_t", "is")
