@@ -739,7 +739,8 @@ writeData2 <-function(wb, sheet, data,
         typ = "n",
         r   = y,
         c_t = "_openxlsx_NA_",
-        is  =  "_openxlsx_NA_")
+        is  =  "_openxlsx_NA_",
+        f   =  "_openxlsx_NA_")
     }
 
     chrcell <- function(x,y){
@@ -747,7 +748,17 @@ writeData2 <-function(wb, sheet, data,
         typ = "c",
         r   = y,
         c_t = "inlineStr",
-        is  = paste0("<is><t>", as.character(x), "</t></is>"))
+        is  = paste0("<is><t>", as.character(x), "</t></is>"),
+        f   =  "_openxlsx_NA_")
+    }
+
+    fmlcell <- function(x,y){
+      c(v   = "_openxlsx_NA_",
+        typ = "c",
+        r   = y,
+        c_t = "str",
+        is  =  "_openxlsx_NA_",
+        f   = as.character(x))
     }
 
     cell <- function(x, y, data_class) {
@@ -756,6 +767,8 @@ writeData2 <-function(wb, sheet, data,
         z <- numcell(x,y)
       if (data_class %in% c("character", "factor"))
         z <- chrcell(x,y)
+      if (data_class %in% list(c("character", "formula")))
+        z <- fmlcell(x,y)
 
       z
     }
@@ -763,8 +776,9 @@ writeData2 <-function(wb, sheet, data,
 
     for (i in seq_len(NROW(data))) {
 
-      col <- data.frame(matrix(data = "_openxlsx_NA_", nrow = ncol(data), ncol = 5))
-      names(col) <- c("v", "typ", "r", "c_t", "is")
+      col_nams <- c("v", "typ", "r", "c_t", "is", "f")
+      col <- data.frame(matrix(data = "_openxlsx_NA_", nrow = ncol(data), ncol = length(col_nams)))
+      names(col) <- col_nams
       for (j in seq_along(data)) {
         dc <- ifelse(colNames && i == 1, "character", data_class[j])
         col[j,] <- cell(data[i, j], rtyp[i, j], dc)
