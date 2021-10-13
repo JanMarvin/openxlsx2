@@ -126,9 +126,9 @@ written down and not optimized etc. The goal was to have something working.
   wb3 <- loadWorkbook(xlsxFile)
 
   # read dataset with definedName (returns global first)
-  wb_to_df(wb3, definedName = "MyRange", colNames = F)
+  wb_to_df(wb3, definedName = "MyRange", colNames = FALSE)
 
   # read definedName from sheet
-  wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = F)
+  wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
 
 }
