@@ -218,7 +218,7 @@ int2col <- function(x) {
 #' @param x A character vector
 #' @export
 #' @examples
-#' col2int(1:10)
+#' col2int(LETTERS)
 col2int <- function(x) {
   
   if (!is.character(x)) {

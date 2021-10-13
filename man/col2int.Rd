@@ -13,5 +13,5 @@ col2int(x)
 Converts an Excel column label to an integer.
 }
 \examples{
-col2int(1:10)
+col2int(LETTERS)
 }
