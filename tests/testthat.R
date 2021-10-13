@@ -1,4 +1,4 @@
 library(testthat)
-library(openxlsx)
+library(openxlsx2)
 
-test_check("openxlsx")
+test_check("openxlsx2")

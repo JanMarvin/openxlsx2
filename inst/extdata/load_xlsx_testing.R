@@ -1,5 +1,5 @@
 # nolint start
-require('openxlsx')
+require('openxlsx2')
 
 unzip_xlsx <- function(fl){
   

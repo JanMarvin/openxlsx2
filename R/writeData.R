@@ -345,6 +345,8 @@ writeData <- function(wb,
   #   list_sep = sep
   # )
 
+  rownames(x) <- seq_len(NROW(x))
+
   # actual driver, the rest should not create data used for writing
   wb <- writeData2(wb = wb, sheet = sheet, data = x, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol)
 
