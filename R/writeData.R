@@ -140,7 +140,7 @@
 #'
 #' df <- data.frame(
 #'   x = 1:3, y = 1:3,
-#'   z = paste0(paste0("A", 1:3 + 1L), paste0("B", 1:3 + 1L), sep = " + "),
+#'   z = paste(paste0("A", 1:3 + 1L), paste0("B", 1:3 + 1L), sep = "+"),
 #'   stringsAsFactors = FALSE
 #' )
 #'
