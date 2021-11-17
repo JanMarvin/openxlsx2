@@ -1,4 +1,8 @@
-# development
+# development (new)
+
+* Moves `openxlsxFontSizeLookupTable` and `openxlsxFontSizeLookupTableBold` to `data-raw` directory ([#7](https://github.com/JanMarvin/openxlsx2/pull/7))
+
+# development (old)
 
 ## Fixes
 
