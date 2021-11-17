@@ -1,4 +1,63 @@
 
+Workbook <- setRefClass("Workbook",
+  fields = c(
+    "sheet_names" = "character",
+
+    "charts" = "ANY",
+    "isChartSheet" = "logical",
+
+    "colOutlineLevels" = "ANY",
+    "colWidths" = "ANY",
+    "connections" = "ANY",
+    "Content_Types" = "character",
+    "core" = "character",
+    "drawings" = "ANY",
+    "drawings_rels" = "ANY",
+    "drawings_vml" = "ANY",
+    "embeddings" = "ANY",
+    "externalLinks" = "ANY",
+    "externalLinksRels" = "ANY",
+
+    "headFoot" = "ANY",
+    "media" = "ANY",
+    "outlineLevels" = "ANY",
+
+    "persons" = "ANY",
+
+    "pivotTables" = "ANY",
+    "pivotTables.xml.rels" = "ANY",
+    "pivotDefinitions" = "ANY",
+    "pivotRecords" = "ANY",
+    "pivotDefinitionsRels" = "ANY",
+
+    "queryTables" = "ANY",
+    "rowHeights" = "ANY",
+
+    "slicers" = "ANY",
+    "slicerCaches" = "ANY",
+
+    "sharedStrings" = "ANY",
+    "styleObjects" = "ANY",
+
+    "styles" = "ANY",
+    "styles_xml" = "ANY",
+    "tables" = "ANY",
+    "tables.xml.rels" = "ANY",
+    "theme" = "ANY",
+
+    "vbaProject" = "ANY",
+    "vml" = "ANY",
+    "vml_rels" = "ANY",
+    "comments" = "ANY",
+    "threadComments" = "ANY",
+
+    "workbook" = "ANY",
+    "workbook.xml.rels" = "ANY",
+    "worksheets" = "ANY",
+    "worksheets_rels" = "ANY",
+    "sheetOrder" = "integer"
+  )
+)
 
 #' @include class_definitions.R
 #' @import stringi

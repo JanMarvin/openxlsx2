@@ -1,6 +1,15 @@
 
 
-#' @include class_definitions.R
+ChartSheet <- setRefClass("ChartSheet",
+  fields = c(
+    "sheetPr" = "character",
+    "sheetViews" = "character",
+    "pageMargins" = "character",
+    "drawing" = "character",
+    "hyperlinks" = "ANY"
+  )
+)
+
 
 
 ChartSheet$methods(initialize = function(tabSelected = FALSE,

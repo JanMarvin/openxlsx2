@@ -1,6 +1,23 @@
 
 
-#' @include class_definitions.R
+Sheet_Data <- setRefClass("Sheet_Data",
+  fields = c(
+    "rows" = "integer",
+    "cols" = "integer",
+    "s" = "ANY",
+    "r" = "ANY",
+    "t" = "ANY",
+    "v" = "ANY",
+    "f" = "ANY",
+    "row_attr" = "ANY",
+    "cc" = "ANY",
+    "cc_out" = "ANY",
+    "style_id" = "ANY",
+    "data_count" = "integer",
+    "n_elements" = "integer"
+  )
+)
+
 
 Sheet_Data$methods(initialize = function() {
   rows <<- integer(0)

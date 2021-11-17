@@ -1,8 +1,38 @@
 
-
-
-#' @include class_definitions.R
-
+Style <- setRefClass("Style",
+  fields = c(
+    "fontId",
+    "fontName",
+    "fontColour",
+    "fontSize",
+    "fontFamily",
+    "fontScheme",
+    "fontDecoration",
+    "borderTop",
+    "borderLeft",
+    "borderRight",
+    "borderBottom",
+    "borderTopColour",
+    "borderLeftColour",
+    "borderRightColour",
+    "borderBottomColour",
+    "borderDiagonal",
+    "borderDiagonalColour",
+    "borderDiagonalUp",
+    "borderDiagonalDown",
+    "halign",
+    "valign",
+    "indent",
+    "textRotation",
+    "numFmt",
+    "fill",
+    "wrapText",
+    "locked",
+    "hidden",
+    "xfId"
+  ),
+  methods = list()
+)
 
 Style$methods(initialize = function() {
   fontId <<- NULL

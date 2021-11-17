@@ -1,5 +1,40 @@
 
-#' @include class_definitions.R
+WorkSheet <- setRefClass("WorkSheet",
+  fields = c(
+    "sheetPr" = "character",
+    "dimension" = "character",
+    "sheetViews" = "character",
+    "sheetFormatPr" = "character",
+
+    "sheet_data" = "Sheet_Data",
+    "rows_attr" = "ANY",
+    "cols_attr" = "ANY",
+    "cols" = "ANY",
+
+    "autoFilter" = "character",
+    "mergeCells" = "ANY",
+    "conditionalFormatting" = "character",
+    "dataValidations" = "ANY",
+    "dataValidationsLst" = "character",
+
+    "freezePane" = "character",
+    "hyperlinks" = "ANY",
+
+    "sheetProtection" = "character",
+    "pageMargins" = "character",
+    "pageSetup" = "character",
+    "headerFooter" = "ANY",
+    "rowBreaks" = "character",
+    "colBreaks" = "character",
+    "drawing" = "character",
+    "legacyDrawing" = "character",
+    "legacyDrawingHF" = "character",
+    "oleObjects" = "character",
+    "tableParts" = "character",
+    "extLst" = "character"
+  )
+)
+
 
 
 WorkSheet$methods(initialize = function(showGridLines = TRUE,
