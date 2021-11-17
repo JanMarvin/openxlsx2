@@ -1,6 +1,4 @@
 
-
-
 Comment <- setRefClass("Comment",
   fields = c(
     "text",
@@ -11,54 +9,51 @@ Comment <- setRefClass("Comment",
     "height"
   ),
 
-  methods = list()
-)
+  methods = list(
+    initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
+      text <<- text
+      author <<- author
+      style <<- style
+      visible <<- visible
+      width <<- width
+      height <<- height
+    },
+    show = function() {
+      showText <- sprintf("Author: %s\n", author)
+      showText <- c(showText, sprintf("Text:\n %s\n\n", paste(text, collapse = "")))
+      styleShow <- "Style:\n"
 
+      if ("list" %in% class(style)) {
+        for (i in seq_along(style)) {
+          styleShow <- append(styleShow, sprintf("Font name: %s\n", style[[i]]$fontName[[1]])) ## Font name
+          styleShow <- append(styleShow, sprintf("Font size: %s\n", style[[i]]$fontSize[[1]])) ## Font size
+          styleShow <- append(styleShow, sprintf("Font colour: %s\n", gsub("^FF", "#", style[[i]]$fontColour[[1]]))) ## Font colour
 
-Comment$methods(initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
-  text <<- text
-  author <<- author
-  style <<- style
-  visible <<- visible
-  width <<- width
-  height <<- height
-})
+          ## Font decoration
+          if (length(style[[i]]$fontDecoration) > 0) {
+            styleShow <- append(styleShow, sprintf("Font decoration: %s\n", paste(style[[i]]$fontDecoration, collapse = ", ")))
+          }
 
+          styleShow <- append(styleShow, "\n\n")
+        }
+      } else {
+        styleShow <- append(styleShow, sprintf("Font name: %s \n", style$fontName[[1]])) ## Font name
+        styleShow <- append(styleShow, sprintf("Font size: %s \n", style$fontSize[[1]])) ## Font size
+        styleShow <- append(styleShow, sprintf("Font colour: %s \n", gsub("^FF", "#", style$fontColour[[1]]))) ## Font colour
 
-Comment$methods(show = function() {
-  showText <- sprintf("Author: %s\n", author)
-  showText <- c(showText, sprintf("Text:\n %s\n\n", paste(text, collapse = "")))
-  styleShow <- "Style:\n"
+        ## Font decoration
+        if (length(style$fontDecoration) > 0) {
+          styleShow <- append(styleShow, sprintf("Font decoration: %s \n", paste(style$fontDecoration, collapse = ", ")))
+        }
 
-  if ("list" %in% class(style)) {
-    for (i in seq_along(style)) {
-      styleShow <- append(styleShow, sprintf("Font name: %s\n", style[[i]]$fontName[[1]])) ## Font name
-      styleShow <- append(styleShow, sprintf("Font size: %s\n", style[[i]]$fontSize[[1]])) ## Font size
-      styleShow <- append(styleShow, sprintf("Font colour: %s\n", gsub("^FF", "#", style[[i]]$fontColour[[1]]))) ## Font colour
-
-      ## Font decoration
-      if (length(style[[i]]$fontDecoration) > 0) {
-        styleShow <- append(styleShow, sprintf("Font decoration: %s\n", paste(style[[i]]$fontDecoration, collapse = ", ")))
+        styleShow <- append(styleShow, "\n\n")
       }
 
-      styleShow <- append(styleShow, "\n\n")
+      showText <- paste0(paste(showText, collapse = ""), paste(styleShow, collapse = ""), collapse = "")
+      cat(showText)
     }
-  } else {
-    styleShow <- append(styleShow, sprintf("Font name: %s \n", style$fontName[[1]])) ## Font name
-    styleShow <- append(styleShow, sprintf("Font size: %s \n", style$fontSize[[1]])) ## Font size
-    styleShow <- append(styleShow, sprintf("Font colour: %s \n", gsub("^FF", "#", style$fontColour[[1]]))) ## Font colour
-
-    ## Font decoration
-    if (length(style$fontDecoration) > 0) {
-      styleShow <- append(styleShow, sprintf("Font decoration: %s \n", paste(style$fontDecoration, collapse = ", ")))
-    }
-
-    styleShow <- append(styleShow, "\n\n")
-  }
-
-  showText <- paste0(paste(showText, collapse = ""), paste(styleShow, collapse = ""), collapse = "")
-  cat(showText)
-})
+  )
+)
 
 
 
@@ -138,8 +133,6 @@ createComment <- function(comment,
 
 
 
-
-
 #' @name writeComment
 #' @title write a cell comment
 #' @description Write a Comment object to a worksheet
@@ -216,8 +209,6 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
   invisible(wb)
 }
-
-
 
 
 

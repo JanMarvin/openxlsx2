@@ -1,6 +1,4 @@
 
-
-
 Hyperlink <- setRefClass("Hyperlink",
   fields = c(
     "ref",
@@ -10,40 +8,38 @@ Hyperlink <- setRefClass("Hyperlink",
     "is_external"
   ),
 
-  methods = list()
+  methods = list(
+    initialize = function(ref, target, location, display = NULL, is_external = TRUE) {
+      ref <<- ref
+      target <<- target
+      location <<- location
+      display <<- display
+      is_external <<- is_external
+    },
+
+    to_xml = function(id) {
+      loc <- sprintf('location="%s"', location)
+      disp <- sprintf('display="%s"', display)
+      rf <- sprintf('ref="%s"', ref)
+
+      if (is_external) {
+        rid <- sprintf('r:id="rId%s"', id)
+      } else {
+        rid <- NULL
+      }
+
+      paste("<hyperlink", rf, rid, disp, loc, "/>")
+    },
+
+    to_target_xml = function(id) {
+      if (is_external) {
+        return(sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, target))
+      } else {
+        return(NULL)
+      }
+    }
+  )
 )
-
-
-Hyperlink$methods(initialize = function(ref, target, location, display = NULL, is_external = TRUE) {
-  ref <<- ref
-  target <<- target
-  location <<- location
-  display <<- display
-  is_external <<- is_external
-})
-
-Hyperlink$methods(to_xml = function(id) {
-  loc <- sprintf('location="%s"', location)
-  disp <- sprintf('display="%s"', display)
-  rf <- sprintf('ref="%s"', ref)
-
-  if (is_external) {
-    rid <- sprintf('r:id="rId%s"', id)
-  } else {
-    rid <- NULL
-  }
-
-  paste("<hyperlink", rf, rid, disp, loc, "/>")
-})
-
-Hyperlink$methods(to_target_xml = function(id) {
-  if (is_external) {
-    return(sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, target))
-  } else {
-    return(NULL)
-  }
-})
-
 
 
 xml_to_hyperlink <- function(xml) {
