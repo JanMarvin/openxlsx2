@@ -59,7 +59,6 @@ Workbook <- setRefClass("Workbook",
   )
 )
 
-#' @include class_definitions.R
 #' @import stringi
 
 Workbook$methods(
@@ -18338,3 +18337,944 @@ Workbook$methods(
     }
   }
 )
+
+Workbook$methods(surroundingBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
+  sheet <- sheet_names[[validateSheet(sheet)]]
+  ## steps
+  # get column class
+  # get corresponding base style
+
+  for (i in 1:nCol) {
+    tmp <- genBaseColStyle(colClasses[[i]])
+
+    colStyle <- tmp$style
+    specialFormat <- tmp$specialFormat
+
+    ## create style objects
+    sTop <- colStyle$copy()
+    sMid <- colStyle$copy()
+    sBot <- colStyle$copy()
+
+    ## First column
+    if (i == 1) {
+      if (nRow == 1 & nCol == 1) {
+
+        ## All
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        sTop$borderBottom <- borderStyle
+        sTop$borderBottomColour <- borderColour
+
+        sTop$borderLeft <- borderStyle
+        sTop$borderLeftColour <- borderColour
+
+        sTop$borderRight <- borderStyle
+        sTop$borderRightColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol
+          )
+        ))
+      } else if (nCol == 1) {
+
+        ## Top
+        sTop$borderLeft <- borderStyle
+        sTop$borderLeftColour <- borderColour
+
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        sTop$borderRight <- borderStyle
+        sTop$borderRightColour <- borderColour
+
+        ## Middle
+        sMid$borderLeft <- borderStyle
+        sMid$borderLeftColour <- borderColour
+
+        sMid$borderRight <- borderStyle
+        sMid$borderRightColour <- borderColour
+
+        ## Bottom
+        sBot$borderBottom <- borderStyle
+        sBot$borderBottomColour <- borderColour
+
+        sBot$borderLeft <- borderStyle
+        sBot$borderLeftColour <- borderColour
+
+        sBot$borderRight <- borderStyle
+        sBot$borderRightColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol
+          )
+        ))
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sMid,
+            "sheet" = sheet,
+            "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+            "cols" = rep.int(startCol, nRow - 2L)
+          )
+        ))
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sBot,
+            "sheet" = sheet,
+            "rows" = startRow + nRow - 1L,
+            "cols" = startCol
+          )
+        ))
+      } else if (nRow == 1) {
+
+        ## All
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        sTop$borderBottom <- borderStyle
+        sTop$borderBottomColour <- borderColour
+
+        sTop$borderLeft <- borderStyle
+        sTop$borderLeftColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol
+          )
+        ))
+      } else {
+
+        ## Top
+        sTop$borderLeft <- borderStyle
+        sTop$borderLeftColour <- borderColour
+
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        ## Middle
+        sMid$borderLeft <- borderStyle
+        sMid$borderLeftColour <- borderColour
+
+        ## Bottom
+        sBot$borderLeft <- borderStyle
+        sBot$borderLeftColour <- borderColour
+
+        sBot$borderBottom <- borderStyle
+        sBot$borderBottomColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol
+          )
+        ))
+
+        if (nRow > 2) {
+          styleObjects <<- append(styleObjects, list(
+            list(
+              "style" = sMid,
+              "sheet" = sheet,
+              "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+              "cols" = rep.int(startCol, nRow - 2L)
+            )
+          ))
+        }
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sBot,
+            "sheet" = sheet,
+            "rows" = startRow + nRow - 1L,
+            "cols" = startCol
+          )
+        ))
+      }
+    } else if (i == nCol) {
+      if (nRow == 1) {
+
+        ## All
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        sTop$borderBottom <- borderStyle
+        sTop$borderBottomColour <- borderColour
+
+        sTop$borderRight <- borderStyle
+        sTop$borderRightColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol + nCol - 1L
+          )
+        ))
+      } else {
+
+        ## Top
+        sTop$borderRight <- borderStyle
+        sTop$borderRightColour <- borderColour
+
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        ## Middle
+        sMid$borderRight <- borderStyle
+        sMid$borderRightColour <- borderColour
+
+        ## Bottom
+        sBot$borderRight <- borderStyle
+        sBot$borderRightColour <- borderColour
+
+        sBot$borderBottom <- borderStyle
+        sBot$borderBottomColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol + nCol - 1L
+          )
+        ))
+
+        if (nRow > 2) {
+          styleObjects <<- append(styleObjects, list(
+            list(
+              "style" = sMid,
+              "sheet" = sheet,
+              "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+              "cols" = rep.int(startCol + nCol - 1L, nRow - 2L)
+            )
+          ))
+        }
+
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sBot,
+            "sheet" = sheet,
+            "rows" = startRow + nRow - 1L,
+            "cols" = startCol + nCol - 1L
+          )
+        ))
+      }
+    } else { ## inside columns
+
+      if (nRow == 1) {
+
+        ## Top
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        ## Bottom
+        sTop$borderBottom <- borderStyle
+        sTop$borderBottomColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol + i - 1L
+          )
+        ))
+      } else {
+
+        ## Top
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        ## Bottom
+        sBot$borderBottom <- borderStyle
+        sBot$borderBottomColour <- borderColour
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = startRow,
+            "cols" = startCol + i - 1L
+          )
+        ))
+
+        ## Middle
+        if (specialFormat) {
+          styleObjects <<- append(styleObjects, list(
+            list(
+              "style" = sMid,
+              "sheet" = sheet,
+              "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+              "cols" = rep.int(startCol + i - 1L, nRow - 2L)
+            )
+          ))
+        }
+
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sBot,
+            "sheet" = sheet,
+            "rows" = startRow + nRow - 1L,
+            "cols" = startCol + i - 1L
+          )
+        ))
+      }
+    } ## End of if(i == 1), i == NCol, else inside columns
+  } ## End of loop through columns
+
+
+  invisible(0)
+})
+
+Workbook$methods(rowBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
+  sheet <- sheet_names[[validateSheet(sheet)]]
+  ## steps
+  # get column class
+  # get corresponding base style
+
+  for (i in 1:nCol) {
+    tmp <- genBaseColStyle(colClasses[[i]])
+    sTop <- tmp$style
+
+    ## First column
+    if (i == 1) {
+      if (nCol == 1) {
+
+        ## All borders (rows and surrounding)
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        sTop$borderBottom <- borderStyle
+        sTop$borderBottomColour <- borderColour
+
+        sTop$borderLeft <- borderStyle
+        sTop$borderLeftColour <- borderColour
+
+        sTop$borderRight <- borderStyle
+        sTop$borderRightColour <- borderColour
+      } else {
+
+        ## Top, Left, Bottom
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        sTop$borderBottom <- borderStyle
+        sTop$borderBottomColour <- borderColour
+
+        sTop$borderLeft <- borderStyle
+        sTop$borderLeftColour <- borderColour
+      }
+    } else if (i == nCol) {
+
+      ## Top, Right, Bottom
+      sTop$borderTop <- borderStyle
+      sTop$borderTopColour <- borderColour
+
+      sTop$borderBottom <- borderStyle
+      sTop$borderBottomColour <- borderColour
+
+      sTop$borderRight <- borderStyle
+      sTop$borderRightColour <- borderColour
+    } else { ## inside columns
+
+      ## Top, Middle, Bottom
+      sTop$borderTop <- borderStyle
+      sTop$borderTopColour <- borderColour
+
+      sTop$borderBottom <- borderStyle
+      sTop$borderBottomColour <- borderColour
+    } ## End of if(i == 1), i == NCol, else inside columns
+
+    styleObjects <<- append(styleObjects, list(
+      list(
+        "style" = sTop,
+        "sheet" = sheet,
+        "rows" = (startRow):(startRow + nRow - 1L),
+        "cols" = rep(startCol + i - 1L, nRow)
+      )
+    ))
+  } ## End of loop through columns
+
+
+  invisible(0)
+})
+
+Workbook$methods(columnBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
+  sheet <- sheet_names[[validateSheet(sheet)]]
+  ## steps
+  # get column class
+  # get corresponding base style
+
+  for (i in 1:nCol) {
+    tmp <- genBaseColStyle(colClasses[[i]])
+    colStyle <- tmp$style
+    specialFormat <- tmp$specialFormat
+
+    ## create style objects
+    sTop <- colStyle$copy()
+    sMid <- colStyle$copy()
+    sBot <- colStyle$copy()
+
+    if (nRow == 1) {
+
+      ## Top
+      sTop$borderTop <- borderStyle
+      sTop$borderTopColour <- borderColour
+
+      sTop$borderBottom <- borderStyle
+      sTop$borderBottomColour <- borderColour
+
+      sTop$borderLeft <- borderStyle
+      sTop$borderLeftColour <- borderColour
+
+      sTop$borderRight <- borderStyle
+      sTop$borderRightColour <- borderColour
+
+      styleObjects <<- append(styleObjects, list(
+        list(
+          "style" = sTop,
+          "sheet" = sheet,
+          "rows" = startRow,
+          "cols" = startCol + i - 1L
+        )
+      ))
+    } else {
+
+      ## Top
+      sTop$borderTop <- borderStyle
+      sTop$borderTopColour <- borderColour
+
+      sTop$borderLeft <- borderStyle
+      sTop$borderLeftColour <- borderColour
+
+      sTop$borderRight <- borderStyle
+      sTop$borderRightColour <- borderColour
+
+      ## Middle
+      sMid$borderLeft <- borderStyle
+      sMid$borderLeftColour <- borderColour
+
+      sMid$borderRight <- borderStyle
+      sMid$borderRightColour <- borderColour
+
+      ## Bottom
+      sBot$borderBottom <- borderStyle
+      sBot$borderBottomColour <- borderColour
+
+      sBot$borderLeft <- borderStyle
+      sBot$borderLeftColour <- borderColour
+
+      sBot$borderRight <- borderStyle
+      sBot$borderRightColour <- borderColour
+
+      colInd <- startCol + i - 1L
+
+      styleObjects <<- append(styleObjects, list(
+        list(
+          "style" = sTop,
+          "sheet" = sheet,
+          "rows" = startRow,
+          "cols" = colInd
+        )
+      ))
+
+      if (nRow > 2) {
+        styleObjects <<- append(styleObjects, list(
+          list(
+            "style" = sMid,
+            "sheet" = sheet,
+            "rows" = (startRow + 1L):(startRow + nRow - 2L),
+            "cols" = rep(colInd, nRow - 2L)
+          )
+        ))
+      }
+
+
+      styleObjects <<- append(styleObjects, list(
+        list(
+          "style" = sBot,
+          "sheet" = sheet,
+          "rows" = startRow + nRow - 1L,
+          "cols" = colInd
+        )
+      ))
+    }
+  } ## End of loop through columns
+
+
+  invisible(0)
+})
+
+Workbook$methods(allBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
+  sheet <- sheet_names[[validateSheet(sheet)]]
+  ## steps
+  # get column class
+  # get corresponding base style
+
+  for (i in 1:nCol) {
+    tmp <- genBaseColStyle(colClasses[[i]])
+    sTop <- tmp$style
+
+    ## All borders
+    sTop$borderTop <- borderStyle
+    sTop$borderTopColour <- borderColour
+
+    sTop$borderBottom <- borderStyle
+    sTop$borderBottomColour <- borderColour
+
+    sTop$borderLeft <- borderStyle
+    sTop$borderLeftColour <- borderColour
+
+    sTop$borderRight <- borderStyle
+    sTop$borderRightColour <- borderColour
+
+    styleObjects <<- append(styleObjects, list(
+      list(
+        "style" = sTop,
+        "sheet" = sheet,
+        "rows" = (startRow):(startRow + nRow - 1L),
+        "cols" = rep(startCol + i - 1L, nRow)
+      )
+    ))
+  } ## End of loop through columns
+
+
+  invisible(0)
+})
+
+Workbook$methods(setColWidths = function(sheet) {
+  sheet <- validateSheet(sheet)
+
+  widths <- colWidths[[sheet]]
+  hidden <- attr(colWidths[[sheet]], "hidden", exact = TRUE)
+  if (length(hidden) != length(widths)) {
+    hidden <- rep("0", length(widths))
+  }
+
+  cols <- names(colWidths[[sheet]])
+
+  autoColsInds <- widths %in% c("auto", "auto2")
+  autoCols <- cols[autoColsInds]
+
+  ## If any not auto
+  if (any(!autoColsInds)) {
+    widths[!autoColsInds] <- as.numeric(widths[!autoColsInds]) + 0.71
+  }
+
+  ## If any auto
+  if (length(autoCols) > 0) {
+
+    ## only run if data on worksheet
+    if (worksheets[[sheet]]$sheet_data$n_elements == 0) {
+      missingAuto <- autoCols
+    } else if (all(is.na(worksheets[[sheet]]$sheet_data$v))) {
+      missingAuto <- autoCols
+    } else {
+
+      ## First thing - get base font max character width
+      baseFont <- getBaseFont()
+      baseFontName <- unlist(baseFont$name, use.names = FALSE)
+      if (is.null(baseFontName)) {
+        baseFontName <- "calibri"
+      } else {
+        baseFontName <- gsub(" ", ".", tolower(baseFontName), fixed = TRUE)
+        if (!baseFontName %in% names(openxlsxFontSizeLookupTable)) {
+          baseFontName <- "calibri"
+        }
+      }
+
+      baseFontSize <- unlist(baseFont$size, use.names = FALSE)
+      if (is.null(baseFontSize)) {
+        baseFontSize <- 11
+      } else {
+        baseFontSize <- as.numeric(baseFontSize)
+        baseFontSize <- ifelse(baseFontSize < 8, 8, ifelse(baseFontSize > 36, 36, baseFontSize))
+      }
+
+      baseFontCharWidth <- openxlsxFontSizeLookupTable[[baseFontName]][baseFontSize - 7]
+      allCharWidths <- rep(baseFontCharWidth, worksheets[[sheet]]$sheet_data$n_elements)
+      ######### ----------------------------------------------------------------
+
+      ## get char widths for each style object
+      if (length(styleObjects) > 0 & any(!is.na(worksheets[[sheet]]$sheet_data$style_id))) {
+        thisSheetName <- sheet_names[sheet]
+
+        ## Calc font width for all styles on this worksheet
+        styleIds <- worksheets[[sheet]]$sheet_data$style_id
+        styObSubet <- styleObjects[sort(unique(styleIds))]
+        stySubset <- lapply(styObSubet, "[[", "style")
+
+        ## loop through stlye objects assignin a charWidth else baseFontCharWidth
+        styleCharWidths <- sapply(stySubset, get_style_max_char_width, USE.NAMES = FALSE)
+
+
+        ## Now assign all cells a character width
+        allCharWidths <- styleCharWidths[worksheets[[sheet]]$sheet_data$style_id]
+        allCharWidths[is.na(allCharWidths)] <- baseFontCharWidth
+      }
+
+      ## Now check for columns that are auto2
+      auto2Inds <- which(widths %in% "auto2")
+      if (length(auto2Inds) > 0 & length(worksheets[[sheet]]$mergeCells) > 0) {
+
+        ## get cell merges
+        merged_cells <- regmatches(worksheets[[sheet]]$mergeCells, regexpr("[A-Z0-9]+:[A-Z0-9]+", worksheets[[sheet]]$mergeCells))
+
+        comps <- lapply(merged_cells, function(rectCoords) unlist(strsplit(rectCoords, split = ":")))
+        merge_cols <- lapply(comps, convertFromExcelRef)
+        merge_cols <- lapply(merge_cols, function(x) x[x %in% cols[auto2Inds]]) ## subset to auto2Inds
+
+        merge_rows <- lapply(comps, function(x) as.numeric(gsub("[A-Z]", "", x, perl = TRUE)))
+        merge_rows <- merge_rows[sapply(merge_cols, length) > 0]
+        merge_cols <- merge_cols[sapply(merge_cols, length) > 0]
+
+        sd <- worksheets[[sheet]]$sheet_data
+
+        if (length(merge_cols) > 0) {
+          all_merged_cells <- lapply(1:length(merge_cols), function(i) {
+            expand.grid(
+              "rows" = min(merge_rows[[i]]):max(merge_rows[[i]]),
+              "cols" = min(merge_cols[[i]]):max(merge_cols[[i]])
+            )
+          })
+
+          all_merged_cells <- do.call("rbind", all_merged_cells)
+
+          ## only want the sheet data in here
+          refs <- paste(all_merged_cells[[1]], all_merged_cells[[2]], sep = ",")
+          existing_cells <- paste(worksheets[[sheet]]$sheet_data$rows, worksheets[[sheet]]$sheet_data$cols, sep = ",")
+          keep <- which(!existing_cells %in% refs & !is.na(worksheets[[sheet]]$sheet_data$v))
+
+          sd <- Sheet_Data$new()
+          sd$cols <- worksheets[[sheet]]$sheet_data$cols[keep]
+          sd$t <- worksheets[[sheet]]$sheet_data$t[keep]
+          sd$v <- worksheets[[sheet]]$sheet_data$v[keep]
+          sd$n_elements <- length(sd$cols)
+          allCharWidths <- allCharWidths[keep]
+        } else {
+          sd <- worksheets[[sheet]]$sheet_data
+        }
+      } else {
+        sd <- worksheets[[sheet]]$sheet_data
+      }
+
+      ## Now that we have the max character width for the largest font on the page calculate the column widths
+      calculatedWidths <- calc_column_widths(
+        sheet_data = sd,
+        sharedStrings = unlist(sharedStrings, use.names = FALSE),
+        autoColumns = as.integer(autoCols),
+        widths = allCharWidths,
+        baseFontCharWidth = baseFontCharWidth,
+        minW = getOption("openxlsx.minWidth", 3),
+        maxW = getOption("openxlsx.maxWidth", 250)
+      )
+
+      missingAuto <- autoCols[!autoCols %in% names(calculatedWidths)]
+      widths[names(calculatedWidths)] <- calculatedWidths + 0.71
+    }
+
+    widths[missingAuto] <- 9.15
+  }
+
+  # # Check if any conflicting existing levels
+  # if (any(cols %in% names(worksheets[[sheet]]$cols))) {
+  #
+  #   for (i in intersect(cols, names(worksheets[[sheet]]$cols))) {
+  #
+  #     width_hidden <- attr(colWidths[[sheet]], "hidden")[attr(colWidths[[sheet]], "names") == i]
+  #     width_widths <- as.numeric(colWidths[[sheet]][attr(colWidths[[sheet]], "names") == i]) + 0.71
+  #
+  #     # If column already has a custom width, just update the width and hidden attributes
+  #     if (grepl("customWidth", worksheets[[sheet]]$cols[[i]])) {
+  #       worksheets[[sheet]]$cols[[i]] <<- sub('(width=\\").*?(\\"\\shidden=\\").*?(\\")', paste0("\\1", width_widths, "\\2", width_hidden, "\\3"), worksheets[[sheet]]$cols[[i]], perl = TRUE)
+  #     } else {
+  #     # If column exists, but doesn't have a custom width
+  #       worksheets[[sheet]]$cols[[i]] <<- sub("((?<=hidden=\")(\\w)\")", paste0(width_hidden, "\" width=\"", width_widths, "\" customWidth=\"1\"/>"), worksheets[[sheet]]$cols[[i]], perl = TRUE)
+  #     }
+  #   }
+  #
+  #   cols <- cols[!cols %in% names(worksheets[[sheet]]$cols)]
+  # }
+
+  # Add remaining columns
+  #if (length(cols) > 0) {
+  #  colNodes <- sprintf('<col min="%s" max="%s" width="%s" hidden="%s" customWidth="1"/>', cols, cols, widths, hidden)
+  #  names(colNodes) <- cols
+  #  worksheets[[sheet]]$cols <<- append(worksheets[[sheet]]$cols, colNodes)
+  #}
+
+})
+
+Workbook$methods(writeData = function(df, sheet, startRow, startCol, colNames, colClasses, hlinkNames, keepNA, na.string, list_sep) {
+  sheet <- validateSheet(sheet)
+  nCols <- ncol(df)
+  nRows <- nrow(df)
+  df_nms <- names(df)
+
+  allColClasses <- unlist(colClasses)
+  df <- as.list(df)
+
+  ######################################################################
+  ## standardise all column types
+
+
+  ## pull out NaN values
+  nans <- unlist(lapply(1:nCols, function(i) {
+    tmp <- df[[i]]
+    if (!"character" %in% class(tmp) & !"list" %in% class(tmp)) {
+      v <- which(is.nan(tmp) | is.infinite(tmp))
+      if (length(v) == 0) {
+        return(v)
+      }
+      return(as.integer(nCols * (v - 1) + i)) ## row position
+    }
+  }))
+
+  ## convert any Dates to integers and create date style object
+  if (any(c("date", "posixct", "posixt") %in% allColClasses)) {
+    dInds <- which(sapply(colClasses, function(x) "date" %in% x))
+
+    origin <- 25569L
+    if (grepl('date1904="1"|date1904="true"', stri_join(unlist(workbook), collapse = ""), ignore.case = TRUE)) {
+      origin <- 24107L
+    }
+
+    for (i in dInds) {
+      df[[i]] <- as.integer(df[[i]]) + origin
+      if (origin == 25569L){
+        earlyDate <- df[[i]] < 60
+        df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
+      }
+    }
+
+    pInds <- which(sapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x)))
+    if (length(pInds) > 0 & nRows > 0) {
+      parseOffset <- function(tz) {
+        suppressWarnings(
+          ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
+          * (as.integer(stri_sub(tz, 2, 3)) + as.integer(stri_sub(tz, 4, 5)) / 60) / 24
+        )
+      }
+
+      t <- lapply(df[pInds], function(x) format(x, "%z"))
+      offSet <- lapply(t, parseOffset)
+      offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
+
+      for (i in 1:length(pInds)) {
+        df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
+      }
+    }
+  }
+
+
+  ## convert any Dates to integers and create date style object
+  if (any(c("currency", "accounting", "percentage", "3", "comma") %in% allColClasses)) {
+    cInds <- which(sapply(colClasses, function(x) any(c("accounting", "currency", "percentage", "3", "comma") %in% tolower(x))))
+    for (i in cInds) {
+      df[[i]] <- as.numeric(gsub("[^0-9\\.-]", "", df[[i]], perl = TRUE))
+    }
+    class(df[[i]]) <- "numeric"
+  }
+
+  ## convert scientific
+  if ("scientific" %in% allColClasses) {
+    for (i in which(sapply(colClasses, function(x) "scientific" %in% x))) {
+      class(df[[i]]) <- "numeric"
+    }
+  }
+
+  ##
+  if ("list" %in% allColClasses) {
+    for (i in which(sapply(colClasses, function(x) "list" %in% x))) {
+      df[[i]] <- sapply(lapply(df[[i]], unlist), stri_join, collapse = list_sep)
+    }
+  }
+
+  if (any(c("formula", "array_formula") %in% allColClasses)) {
+
+    frm <- "formula"
+    cls <- "openxlsx_formula"
+
+    if ("array_formula" %in% allColClasses) {
+      frm <- "array_formula"
+      cls <- "openxlsx_array_formula"
+    }
+
+    for (i in which(sapply(colClasses, function(x) frm %in% x))) {
+      df[[i]] <- replaceIllegalCharacters(as.character(df[[i]]))
+      class(df[[i]]) <- cls
+    }
+  }
+
+  if ("hyperlink" %in% allColClasses) {
+    for (i in which(sapply(colClasses, function(x) "hyperlink" %in% x))) {
+      class(df[[i]]) <- "hyperlink"
+    }
+  }
+
+  colClasses <- sapply(df, function(x) tolower(class(x))[[1]]) ## by here all cols must have a single class only
+
+
+  ## convert logicals (Excel stores logicals as 0 & 1)
+  if ("logical" %in% allColClasses) {
+    for (i in which(sapply(colClasses, function(x) "logical" %in% x))) {
+      class(df[[i]]) <- "numeric"
+    }
+  }
+
+  ## convert all numerics to character (this way preserves digits)
+  if ("numeric" %in% colClasses) {
+    for (i in which(sapply(colClasses, function(x) "numeric" %in% x))) {
+      class(df[[i]]) <- "character"
+    }
+  }
+
+
+  ## End standardise all column types
+  ######################################################################
+
+
+  ## cell types
+  t <- build_cell_types_integer(classes = colClasses, n_rows = nRows)
+
+  for (i in which(sapply(colClasses, function(x) !"character" %in% x & !"numeric" %in% x))) {
+    df[[i]] <- as.character(df[[i]])
+  }
+
+  ## cell values
+  v <- as.character(t(as.matrix(
+    data.frame(df, stringsAsFactors = FALSE, check.names = FALSE, fix.empty.names = FALSE)
+  )))
+
+
+  if (keepNA) {
+    if (is.null(na.string)) {
+      # t[is.na(v)] <- 4L
+      v[is.na(v)] <- "#N/A"
+    } else {
+      # t[is.na(v)] <- 1L
+      v[is.na(v)] <- as.character(na.string)
+    }
+  } else {
+    t[is.na(v)] <- as.character(NA)
+    v[is.na(v)] <- as.character(NA)
+  }
+
+  ## If any NaN values
+  if (length(nans) > 0) {
+    t[nans] <- 4L
+    v[nans] <- "#NUM!"
+  }
+
+
+  # prepend column headers
+  if (colNames) {
+    t <- c(rep.int(1L, nCols), t)
+    v <- c(df_nms, v)
+    nRows <- nRows + 1L
+  }
+
+
+  ## Formulas
+  f_in <- rep.int(as.character(NA), length(t))
+  any_functions <- FALSE
+  ref_cell <- paste0(int_2_cell_ref(startCol), startRow)
+
+  if (any(c("openxlsx_formula", "openxlsx_array_formula") %in% colClasses)) {
+
+    ## alter the elements of t where we have a formula to be "str"
+    if ("openxlsx_formula" %in% colClasses) {
+      formula_cols <- which(sapply(colClasses, function(x) "openxlsx_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
+      formula_strs <- stri_join("<f>", unlist(df[formula_cols], use.names = FALSE), "</f>")
+    } else { # openxlsx_array_formula
+      formula_cols <- which(sapply(colClasses, function(x) "openxlsx_array_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
+      formula_strs <- stri_join("<f t=\"array\" ref=\"", ref_cell, ":", ref_cell, "\">", unlist(df[formula_cols], use.names = FALSE), "</f>")
+    }
+    formula_inds <- unlist(lapply(formula_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE)
+    f_in[formula_inds] <- formula_strs
+    any_functions <- TRUE
+
+    rm(formula_cols)
+    rm(formula_strs)
+    rm(formula_inds)
+  }
+
+  suppressWarnings(try(rm(df), silent = TRUE))
+
+  ## Append hyperlinks, convert h to s in cell type
+  hyperlink_cols <- which(sapply(colClasses, function(x) "hyperlink" %in% x, USE.NAMES = FALSE), useNames = FALSE)
+  if (length(hyperlink_cols) > 0) {
+    hyperlink_inds <- sort(unlist(lapply(hyperlink_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE))
+    na_hyperlink <- intersect(hyperlink_inds, which(is.na(t)))
+
+    if (length(hyperlink_inds) > 0) {
+      t[t %in% 9] <- 1L ## set cell type to "s"
+
+      hyperlink_refs <- convert_to_excel_ref_expand(cols = hyperlink_cols + startCol - 1, LETTERS = LETTERS, rows = as.character((startRow + colNames):(startRow + nRows - 1L)))
+
+      if (length(na_hyperlink) > 0) {
+        to_remove <- which(hyperlink_inds %in% na_hyperlink)
+        hyperlink_refs <- hyperlink_refs[-to_remove]
+        hyperlink_inds <- hyperlink_inds[-to_remove]
+      }
+
+      exHlinks <- worksheets[[sheet]]$hyperlinks
+      targets <- replaceIllegalCharacters(v[hyperlink_inds])
+
+      if (!is.null(hlinkNames) & length(hlinkNames) == length(hyperlink_inds)) {
+        v[hyperlink_inds] <- hlinkNames
+      } ## this is text to display instead of hyperlink
+
+      ## create hyperlink objects
+      newhl <- lapply(1:length(hyperlink_inds), function(i) {
+        Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
+      })
+
+      worksheets[[sheet]]$hyperlinks <<- append(worksheets[[sheet]]$hyperlinks, newhl)
+    }
+  }
+
+
+  ## convert all strings to references in sharedStrings and update values (v)
+  strFlag <- which(t == 1L)
+  newStrs <- v[strFlag]
+  if (length(newStrs) > 0) {
+    newStrs <- replaceIllegalCharacters(newStrs)
+    newStrs <- stri_join("<si><t xml:space=\"preserve\">", newStrs, "</t></si>")
+
+    uNewStr <- unique(newStrs)
+
+    .self$updateSharedStrings(uNewStr)
+    v[strFlag] <- match(newStrs, sharedStrings) - 1L
+  }
+
+  # ## Create cell list of lists
+  worksheets[[sheet]]$sheet_data$write(
+    rows_in = startRow:(startRow + nRows - 1L),
+    cols_in = startCol:(startCol + nCols - 1L),
+    t_in = t,
+    v_in = v,
+    f_in = f_in,
+    any_functions = any_functions
+  )
+
+
+
+  invisible(0)
+})
