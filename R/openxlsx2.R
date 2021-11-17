@@ -8,6 +8,7 @@
 #' @useDynLib openxlsx2, .registration=TRUE
 #' @importFrom zip zipr
 #' @importFrom utils download.file head menu unzip
+#' @import stringi
 #'
 #' @seealso
 #' \itemize{

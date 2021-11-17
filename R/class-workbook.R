@@ -59,8 +59,6 @@ Workbook <- setRefClass("Workbook",
   )
 )
 
-#' @import stringi
-
 Workbook$methods(
   initialize = function(creator = "",
                         title = NULL,
