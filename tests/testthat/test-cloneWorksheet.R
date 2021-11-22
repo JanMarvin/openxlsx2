@@ -1,8 +1,4 @@
 
-
-context("clone Worksheet")
-
-
 test_that("clone Worksheet with data", {
   wb <- createWorkbook()
   addWorksheet(wb, "Sheet 1")

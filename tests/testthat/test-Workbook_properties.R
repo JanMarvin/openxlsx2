@@ -1,6 +1,4 @@
 
-context("Workbook properties")
-
 test_that("Workbook properties", {
 
   ## check creator

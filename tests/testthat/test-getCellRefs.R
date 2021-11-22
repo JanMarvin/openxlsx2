@@ -1,9 +1,4 @@
 
-
-context("Check Cell Ref")
-
-
-
 test_that("Provide tests for single getCellRefs", {
   expect_equal(getCellRefs(data.frame(1, 2)), "B1")
 

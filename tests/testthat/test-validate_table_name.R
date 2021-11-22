@@ -1,6 +1,4 @@
 
-
-
 test_that("Validate Table Names", {
   wb <- createWorkbook()
   addWorksheet(wb, "Sheet 1")

@@ -1,9 +1,4 @@
 
-
-context("Date/Time Conversions")
-
-
-
 test_that("convert to date", {
   dates <- as.Date("2015-02-07") + -10:10
   origin <- 25569L
