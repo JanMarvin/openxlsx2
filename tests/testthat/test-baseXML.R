@@ -18,11 +18,11 @@ test_that("genBaseShapeVML() works", {
 test_that("genClientData() works", {
   x <- genClientData(1, 1, TRUE, 1, 1)
   expect_length(x, 1L)
-  expect_type(x, "character)")
+  expect_type(x, "character")
 
-  x <- genClientData(1, 1, FALE, 1, 1)
+  x <- genClientData(1, 1, FALSE, 1, 1)
   expect_length(x, 1L)
-  expect_type(x, "character)")
+  expect_type(x, "character")
 })
 
 test_that("genBaseCore() works", {
@@ -64,7 +64,7 @@ test_that("genBaseSheetRels() works", {
 test_that("genBaseStyleSheet() works", {
   x <- genBaseStyleSheet()
   expect_length(x, 11L)
-  expect_type(x, "class")
+  expect_type(x, "list")
 })
 
 test_that("genBasePic() works", {
@@ -122,3 +122,4 @@ test_that("genSlicerCachesExtLst() works", {
   expect_length(x, 1L)
   expect_type(x, "character")
 })
+
