@@ -46,9 +46,9 @@ LinkingTo:
     Rcpp
 Suggests:
     knitr,
-    testthat,
+    testthat (>= 3.0.0),
     roxygen2,
-    rmarkdown 
+    rmarkdown
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
@@ -82,3 +82,4 @@ Collate:
     'writeData.R'
     'writeDataTable.R'
     'writexlsx.R'
+Config/testthat/edition: 3
