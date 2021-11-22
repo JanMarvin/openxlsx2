@@ -2611,6 +2611,7 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
 #' @description Convert from excel time number to R POSIXct type.
 #' @param x A numeric vector
 #' @param origin date. Default value is for Windows Excel 2010
+#' @param tz An optional timezone
 #' @param ... Additional parameters passed to as.POSIXct
 #' @details Excel stores dates as number of days from some origin date
 #' @export
@@ -2620,7 +2621,7 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
 #' convertToDateTime(x)
 #' convertToDateTime(x, tz = "Australia/Perth")
 #' convertToDateTime(x, tz = "UTC")
-convertToDateTime <- function(x, origin = "1900-01-01", ...) {
+convertToDateTime <- function(x, origin = "1900-01-01", tz = NULL, ...) {
   sci_pen <- getOption("scipen")
   options("scipen" = 10000)
   on.exit(options("scipen" = sci_pen), add = TRUE)
@@ -2641,8 +2642,8 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
   date_time <- rep(NA, length(x))
   date_time[notNA] <- as.POSIXct(paste(date[notNA], y[notNA]), ...)
   
-  date_time <- .POSIXct(date_time)
   
+  date_time <- .POSIXct(date_time, tz = tz)
   return(date_time)
 }
 
