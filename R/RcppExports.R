@@ -2,273 +2,273 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 readXML <- function(path, isfile) {
-  .Call(`_openxlsx2_readXML`, path, isfile)
+    .Call(`_openxlsx2_readXML`, path, isfile)
 }
 
 getXML1 <- function(str, child) {
-  .Call(`_openxlsx2_getXML1`, str, child)
+    .Call(`_openxlsx2_getXML1`, str, child)
 }
 
 getXML1val <- function(str, child) {
-  .Call(`_openxlsx2_getXML1val`, str, child)
+    .Call(`_openxlsx2_getXML1val`, str, child)
 }
 
 getXML2 <- function(str, level1, child) {
-  .Call(`_openxlsx2_getXML2`, str, level1, child)
+    .Call(`_openxlsx2_getXML2`, str, level1, child)
 }
 
 getXML2val <- function(str, level1, child) {
-  .Call(`_openxlsx2_getXML2val`, str, level1, child)
+    .Call(`_openxlsx2_getXML2val`, str, level1, child)
 }
 
 getXML3 <- function(str, level1, level2, child) {
-  .Call(`_openxlsx2_getXML3`, str, level1, level2, child)
+    .Call(`_openxlsx2_getXML3`, str, level1, level2, child)
 }
 
 getXML3val <- function(str, level1, level2, child) {
-  .Call(`_openxlsx2_getXML3val`, str, level1, level2, child)
+    .Call(`_openxlsx2_getXML3val`, str, level1, level2, child)
 }
 
 getXMLattr <- function(strs, child) {
-  .Call(`_openxlsx2_getXMLattr`, strs, child)
+    .Call(`_openxlsx2_getXMLattr`, strs, child)
 }
 
 getXML1attr_one <- function(str, child, attr) {
-  .Call(`_openxlsx2_getXML1attr_one`, str, child, attr)
+    .Call(`_openxlsx2_getXML1attr_one`, str, child, attr)
 }
 
 calc_column_widths <- function(sheet_data, sharedStrings, autoColumns, widths, baseFontCharWidth, minW, maxW) {
-  .Call(`_openxlsx2_calc_column_widths`, sheet_data, sharedStrings, autoColumns, widths, baseFontCharWidth, minW, maxW)
+    .Call(`_openxlsx2_calc_column_widths`, sheet_data, sharedStrings, autoColumns, widths, baseFontCharWidth, minW, maxW)
 }
 
 convert_to_excel_ref <- function(cols, LETTERS) {
-  .Call(`_openxlsx2_convert_to_excel_ref`, cols, LETTERS)
+    .Call(`_openxlsx2_convert_to_excel_ref`, cols, LETTERS)
 }
 
 convert_from_excel_ref <- function(x) {
-  .Call(`_openxlsx2_convert_from_excel_ref`, x)
+    .Call(`_openxlsx2_convert_from_excel_ref`, x)
 }
 
 convert_to_excel_ref_expand <- function(cols, LETTERS, rows) {
-  .Call(`_openxlsx2_convert_to_excel_ref_expand`, cols, LETTERS, rows)
+    .Call(`_openxlsx2_convert_to_excel_ref_expand`, cols, LETTERS, rows)
 }
 
 isInternalHyperlink <- function(x) {
-  .Call(`_openxlsx2_isInternalHyperlink`, x)
+    .Call(`_openxlsx2_isInternalHyperlink`, x)
 }
 
 write_file <- function(head = "", body = "", tail = "", fl = "") {
-  .Call(`_openxlsx2_write_file`, head, body, tail, fl)
+    .Call(`_openxlsx2_write_file`, head, body, tail, fl)
 }
 
 cppReadFile <- function(xmlFile) {
-  .Call(`_openxlsx2_cppReadFile`, xmlFile)
+    .Call(`_openxlsx2_cppReadFile`, xmlFile)
 }
 
 read_file_newline <- function(xmlFile) {
-  .Call(`_openxlsx2_read_file_newline`, xmlFile)
+    .Call(`_openxlsx2_read_file_newline`, xmlFile)
 }
 
 get_letters <- function() {
-  .Call(`_openxlsx2_get_letters`)
+    .Call(`_openxlsx2_get_letters`)
 }
 
 markUTF8 <- function(x, clone) {
-  .Call(`_openxlsx2_markUTF8`, x, clone)
+    .Call(`_openxlsx2_markUTF8`, x, clone)
 }
 
 #' @import Rcpp
 NULL
 
 loadvals <- function(wb, doc) {
-  invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
+    invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
 }
 
 si_to_txt <- function(doc) {
-  .Call(`_openxlsx2_si_to_txt`, doc)
+    .Call(`_openxlsx2_si_to_txt`, doc)
 }
 
 is_to_txt <- function(is_vec) {
-  .Call(`_openxlsx2_is_to_txt`, is_vec)
+    .Call(`_openxlsx2_is_to_txt`, is_vec)
 }
 
 long_to_wide <- function(z, tt, cc, dn) {
-  invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn))
+    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn))
 }
 
 getOpenClosedNode <- function(xml, open_tag, close_tag) {
-  .Call(`_openxlsx2_getOpenClosedNode`, xml, open_tag, close_tag)
+    .Call(`_openxlsx2_getOpenClosedNode`, xml, open_tag, close_tag)
 }
 
 getAttr <- function(x, tag) {
-  .Call(`_openxlsx2_getAttr`, x, tag)
+    .Call(`_openxlsx2_getAttr`, x, tag)
 }
 
 get_extLst_Major <- function(xml) {
-  .Call(`_openxlsx2_get_extLst_Major`, xml)
+    .Call(`_openxlsx2_get_extLst_Major`, xml)
 }
 
 cell_ref_to_col <- function(x) {
-  .Call(`_openxlsx2_cell_ref_to_col`, x)
+    .Call(`_openxlsx2_cell_ref_to_col`, x)
 }
 
 int_2_cell_ref <- function(cols) {
-  .Call(`_openxlsx2_int_2_cell_ref`, cols)
+    .Call(`_openxlsx2_int_2_cell_ref`, cols)
 }
 
 readXMLPtr <- function(path, isfile) {
-  .Call(`_openxlsx2_readXMLPtr`, path, isfile)
+    .Call(`_openxlsx2_readXMLPtr`, path, isfile)
 }
 
 getXMLXPtr1 <- function(doc, child) {
-  .Call(`_openxlsx2_getXMLXPtr1`, doc, child)
+    .Call(`_openxlsx2_getXMLXPtr1`, doc, child)
 }
 
 getXMLXPtr2 <- function(doc, level1, child) {
-  .Call(`_openxlsx2_getXMLXPtr2`, doc, level1, child)
+    .Call(`_openxlsx2_getXMLXPtr2`, doc, level1, child)
 }
 
 getXMLXPtr3 <- function(doc, level1, level2, child) {
-  .Call(`_openxlsx2_getXMLXPtr3`, doc, level1, level2, child)
+    .Call(`_openxlsx2_getXMLXPtr3`, doc, level1, level2, child)
 }
 
 unkgetXMLXPtr3 <- function(doc, level1, child) {
-  .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
+    .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
 }
 
 getXMLXPtr4 <- function(doc, level1, level2, level3, child) {
-  .Call(`_openxlsx2_getXMLXPtr4`, doc, level1, level2, level3, child)
+    .Call(`_openxlsx2_getXMLXPtr4`, doc, level1, level2, level3, child)
 }
 
 getXMLXPtr5 <- function(doc, level1, level2, level3, level4, child) {
-  .Call(`_openxlsx2_getXMLXPtr5`, doc, level1, level2, level3, level4, child)
+    .Call(`_openxlsx2_getXMLXPtr5`, doc, level1, level2, level3, level4, child)
 }
 
 getXMLXPtr1val <- function(doc, child) {
-  .Call(`_openxlsx2_getXMLXPtr1val`, doc, child)
+    .Call(`_openxlsx2_getXMLXPtr1val`, doc, child)
 }
 
 getXMLXPtr2val <- function(doc, level1, child) {
-  .Call(`_openxlsx2_getXMLXPtr2val`, doc, level1, child)
+    .Call(`_openxlsx2_getXMLXPtr2val`, doc, level1, child)
 }
 
 getXMLXPtr3val <- function(doc, level1, level2, child) {
-  .Call(`_openxlsx2_getXMLXPtr3val`, doc, level1, level2, child)
+    .Call(`_openxlsx2_getXMLXPtr3val`, doc, level1, level2, child)
 }
 
 getXMLXPtr4val <- function(doc, level1, level2, level3, child) {
-  .Call(`_openxlsx2_getXMLXPtr4val`, doc, level1, level2, level3, child)
+    .Call(`_openxlsx2_getXMLXPtr4val`, doc, level1, level2, level3, child)
 }
 
 getXMLXPtr5val <- function(doc, level1, level2, level3, level4, child) {
-  .Call(`_openxlsx2_getXMLXPtr5val`, doc, level1, level2, level3, level4, child)
+    .Call(`_openxlsx2_getXMLXPtr5val`, doc, level1, level2, level3, level4, child)
 }
 
 getXMLXPtr1attr <- function(doc, child) {
-  .Call(`_openxlsx2_getXMLXPtr1attr`, doc, child)
+    .Call(`_openxlsx2_getXMLXPtr1attr`, doc, child)
 }
 
 getXMLXPtr2attr <- function(doc, level1, child) {
-  .Call(`_openxlsx2_getXMLXPtr2attr`, doc, level1, child)
+    .Call(`_openxlsx2_getXMLXPtr2attr`, doc, level1, child)
 }
 
 getXMLXPtr3attr <- function(doc, level1, level2, child) {
-  .Call(`_openxlsx2_getXMLXPtr3attr`, doc, level1, level2, child)
+    .Call(`_openxlsx2_getXMLXPtr3attr`, doc, level1, level2, child)
 }
 
 getXMLXPtr4attr <- function(doc, level1, level2, level3, child) {
-  .Call(`_openxlsx2_getXMLXPtr4attr`, doc, level1, level2, level3, child)
+    .Call(`_openxlsx2_getXMLXPtr4attr`, doc, level1, level2, level3, child)
 }
 
 getXMLXPtr5attr <- function(doc, level1, level2, level3, level4, child) {
-  .Call(`_openxlsx2_getXMLXPtr5attr`, doc, level1, level2, level3, level4, child)
+    .Call(`_openxlsx2_getXMLXPtr5attr`, doc, level1, level2, level3, level4, child)
 }
 
 getXMLXPtr1attr_one <- function(doc, child, attrname) {
-  .Call(`_openxlsx2_getXMLXPtr1attr_one`, doc, child, attrname)
+    .Call(`_openxlsx2_getXMLXPtr1attr_one`, doc, child, attrname)
 }
 
 getXMLXPtr2attr_one <- function(doc, level1, child, attrname) {
-  .Call(`_openxlsx2_getXMLXPtr2attr_one`, doc, level1, child, attrname)
+    .Call(`_openxlsx2_getXMLXPtr2attr_one`, doc, level1, child, attrname)
 }
 
 getXMLXPtr3attr_one <- function(doc, level1, level2, child, attrname) {
-  .Call(`_openxlsx2_getXMLXPtr3attr_one`, doc, level1, level2, child, attrname)
+    .Call(`_openxlsx2_getXMLXPtr3attr_one`, doc, level1, level2, child, attrname)
 }
 
 getXMLXPtr4attr_one <- function(doc, level1, level2, level3, child, attrname) {
-  .Call(`_openxlsx2_getXMLXPtr4attr_one`, doc, level1, level2, level3, child, attrname)
+    .Call(`_openxlsx2_getXMLXPtr4attr_one`, doc, level1, level2, level3, child, attrname)
 }
 
 font_val <- function(fonts, level3, child) {
-  .Call(`_openxlsx2_font_val`, fonts, level3, child)
+    .Call(`_openxlsx2_font_val`, fonts, level3, child)
 }
 
 printXPtr <- function(doc, raw) {
-  .Call(`_openxlsx2_printXPtr`, doc, raw)
+    .Call(`_openxlsx2_printXPtr`, doc, raw)
 }
 
 calc_number_rows <- function(x, skipEmptyRows) {
-  .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
+    .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
 }
 
 set_sst <- function(sharedStrings) {
-  .Call(`_openxlsx2_set_sst`, sharedStrings)
+    .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
 list_to_attr <- function(attributes, node) {
-  .Call(`_openxlsx2_list_to_attr`, attributes, node)
+    .Call(`_openxlsx2_list_to_attr`, attributes, node)
 }
 
 list_to_attr_full <- function(attributes, node, child) {
-  .Call(`_openxlsx2_list_to_attr_full`, attributes, node, child)
+    .Call(`_openxlsx2_list_to_attr_full`, attributes, node, child)
 }
 
 map_cell_types_to_integer <- function(t) {
-  .Call(`_openxlsx2_map_cell_types_to_integer`, t)
+    .Call(`_openxlsx2_map_cell_types_to_integer`, t)
 }
 
 map_cell_types_to_char <- function(t) {
-  .Call(`_openxlsx2_map_cell_types_to_char`, t)
+    .Call(`_openxlsx2_map_cell_types_to_char`, t)
 }
 
 build_cell_types_integer <- function(classes, n_rows) {
-  .Call(`_openxlsx2_build_cell_types_integer`, classes, n_rows)
+    .Call(`_openxlsx2_build_cell_types_integer`, classes, n_rows)
 }
 
 buildCellTypes <- function(classes, nRows) {
-  .Call(`_openxlsx2_buildCellTypes`, classes, nRows)
+    .Call(`_openxlsx2_buildCellTypes`, classes, nRows)
 }
 
 build_cell_merges <- function(comps) {
-  .Call(`_openxlsx2_build_cell_merges`, comps)
+    .Call(`_openxlsx2_build_cell_merges`, comps)
 }
 
 buildCellList <- function(r, t, v) {
-  .Call(`_openxlsx2_buildCellList`, r, t, v)
+    .Call(`_openxlsx2_buildCellList`, r, t, v)
 }
 
 set_row <- function(row_attr, cells) {
-  .Call(`_openxlsx2_set_row`, row_attr, cells)
+    .Call(`_openxlsx2_set_row`, row_attr, cells)
 }
 
 write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, rows_attr, row_heights_ = NULL, outline_levels_ = NULL, R_fileName = "output") {
-  .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, rows_attr, row_heights_, outline_levels_, R_fileName)
+    .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, rows_attr, row_heights_, outline_levels_, R_fileName)
 }
 
 buildMatrixNumeric <- function(v, rowInd, colInd, colNames, nRows, nCols) {
-  .Call(`_openxlsx2_buildMatrixNumeric`, v, rowInd, colInd, colNames, nRows, nCols)
+    .Call(`_openxlsx2_buildMatrixNumeric`, v, rowInd, colInd, colNames, nRows, nCols)
 }
 
 buildMatrixMixed <- function(v, rowInd, colInd, colNames, nRows, nCols, charCols, dateCols) {
-  .Call(`_openxlsx2_buildMatrixMixed`, v, rowInd, colInd, colNames, nRows, nCols, charCols, dateCols)
+    .Call(`_openxlsx2_buildMatrixMixed`, v, rowInd, colInd, colNames, nRows, nCols, charCols, dateCols)
 }
 
 matrixRowInds <- function(indices) {
-  .Call(`_openxlsx2_matrixRowInds`, indices)
+    .Call(`_openxlsx2_matrixRowInds`, indices)
 }
 
 build_table_xml <- function(table, tableStyleXML, ref, colNames, showColNames, withFilter) {
-  .Call(`_openxlsx2_build_table_xml`, table, tableStyleXML, ref, colNames, showColNames, withFilter)
+    .Call(`_openxlsx2_build_table_xml`, table, tableStyleXML, ref, colNames, showColNames, withFilter)
 }
 

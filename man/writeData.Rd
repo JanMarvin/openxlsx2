@@ -194,7 +194,7 @@ class(df$z) <- c(class(df$z), "formula")
 writeData(wb, sheet = "Formula", x = df)
 
 ###########################################################################
-# update cell range and add mtcars 
+# update cell range and add mtcars
 xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
 wb2 <- loadWorkbook(xlsxFile)
 
