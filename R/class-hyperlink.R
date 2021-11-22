@@ -10,11 +10,11 @@ Hyperlink <- setRefClass("Hyperlink",
 
   methods = list(
     initialize = function(ref, target, location, display = NULL, is_external = TRUE) {
-      ref <<- ref
-      target <<- target
-      location <<- location
-      display <<- display
-      is_external <<- is_external
+      .self$ref <- ref
+      .self$target <- target
+      .self$location <- location
+      .self$display <- display
+      .self$is_external <- is_external
     },
 
     to_xml = function(id) {

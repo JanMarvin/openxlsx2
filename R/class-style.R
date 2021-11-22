@@ -33,37 +33,37 @@ Style <- setRefClass("Style",
   ),
   methods = list(
     initialize = function() {
-      fontId <<- NULL
-      fontName <<- NULL
-      fontColour <<- NULL
-      fontSize <<- NULL
-      fontFamily <<- NULL
-      fontScheme <<- NULL
-      fontDecoration <<- NULL
+      .self$fontId <- NULL
+      .self$fontName <- NULL
+      .self$fontColour <- NULL
+      .self$fontSize <- NULL
+      .self$fontFamily <- NULL
+      .self$fontScheme <- NULL
+      .self$fontDecoration <- NULL
 
-      borderTop <<- NULL
-      borderLeft <<- NULL
-      borderRight <<- NULL
-      borderBottom <<- NULL
-      borderTopColour <<- NULL
-      borderLeftColour <<- NULL
-      borderRightColour <<- NULL
-      borderBottomColour <<- NULL
-      borderDiagonal <<- NULL
-      borderDiagonalColour <<- NULL
-      borderDiagonalUp <<- FALSE
-      borderDiagonalDown <<- FALSE
+      .self$borderTop <- NULL
+      .self$borderLeft <- NULL
+      .self$borderRight <- NULL
+      .self$borderBottom <- NULL
+      .self$borderTopColour <- NULL
+      .self$borderLeftColour <- NULL
+      .self$borderRightColour <- NULL
+      .self$borderBottomColour <- NULL
+      .self$borderDiagonal <- NULL
+      .self$borderDiagonalColour <- NULL
+      .self$borderDiagonalUp <- FALSE
+      .self$borderDiagonalDown <- FALSE
 
-      halign <<- NULL
-      valign <<- NULL
-      indent <<- NULL
-      textRotation <<- NULL
-      numFmt <<- NULL
-      fill <<- NULL
-      wrapText <<- NULL
-      hidden <<- NULL
-      locked <<- NULL
-      xfId <<- NULL
+      .self$halign <- NULL
+      .self$valign <- NULL
+      .self$indent <- NULL
+      .self$textRotation <- NULL
+      .self$numFmt <- NULL
+      .self$fill <- NULL
+      .self$wrapText <- NULL
+      .self$hidden <- NULL
+      .self$locked <- NULL
+      .self$xfId <- NULL
     },
 
     show = function(print = TRUE) {

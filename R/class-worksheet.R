@@ -88,33 +88,33 @@ WorkSheet <- setRefClass("WorkSheet",
       }
 
       ## list of all possible children
-      sheetPr <<- tabColour
-      dimension <<- '<dimension ref="A1"/>'
-      sheetViews <<- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
-      sheetFormatPr <<- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
-      cols_attr <<- character(0)
+      .self$sheetPr <- tabColour
+      .self$dimension <- '<dimension ref="A1"/>'
+      .self$sheetViews <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
+      .self$sheetFormatPr <- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
+      .self$cols_attr <- character(0)
 
-      autoFilter <<- character(0)
-      mergeCells <<- character(0)
-      conditionalFormatting <<- character(0)
-      dataValidations <<- NULL
-      dataValidationsLst <<- character(0)
-      hyperlinks <<- list()
-      pageMargins <<- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
-      pageSetup <<- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
-      headerFooter <<- hf
-      rowBreaks <<- character(0)
-      colBreaks <<- character(0)
-      drawing <<- '<drawing r:id=\"rId1\"/>' ## will always be 1
-      legacyDrawing <<- character(0)
-      legacyDrawingHF <<- character(0)
-      oleObjects <<- character(0)
-      tableParts <<- character(0)
-      extLst <<- character(0)
+      .self$autoFilter <- character(0)
+      .self$mergeCells <- character(0)
+      .self$conditionalFormatting <- character(0)
+      .self$dataValidations <- NULL
+      .self$dataValidationsLst <- character(0)
+      .self$hyperlinks <- list()
+      .self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
+      .self$pageSetup <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
+      .self$headerFooter <- hf
+      .self$rowBreaks <- character(0)
+      .self$colBreaks <- character(0)
+      .self$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
+      .self$legacyDrawing <- character(0)
+      .self$legacyDrawingHF <- character(0)
+      .self$oleObjects <- character(0)
+      .self$tableParts <- character(0)
+      .self$extLst <- character(0)
 
-      freezePane <<- character(0)
+      .self$freezePane <- character(0)
 
-      sheet_data <<- Sheet_Data$new()
+      .self$sheet_data <- Sheet_Data$new()
     },
 
     get_prior_sheet_data = function() {
@@ -280,22 +280,22 @@ WorkSheet <- setRefClass("WorkSheet",
 
       if (sheet_data$data_count > 1) {
         ord <- order(sheet_data$rows, sheet_data$cols, method = "radix", na.last = TRUE)
-        sheet_data$rows <<- sheet_data$rows[ord]
-        sheet_data$cols <<- sheet_data$cols[ord]
-        sheet_data$t <<- sheet_data$t[ord]
-        sheet_data$v <<- sheet_data$v[ord]
-        sheet_data$f <<- sheet_data$f[ord]
+        .self$sheet_data$rows <- sheet_data$rows[ord]
+        .self$sheet_data$cols <- sheet_data$cols[ord]
+        .self$sheet_data$t <- sheet_data$t[ord]
+        .self$sheet_data$v <- sheet_data$v[ord]
+        .self$sheet_data$f <- sheet_data$f[ord]
 
-        sheet_data$style_id <<- sheet_data$style_id[ord]
+        .self$sheet_data$style_id <- sheet_data$style_id[ord]
 
-        sheet_data$data_count <<- 1L
+        .self$sheet_data$data_count <- 1L
 
         dm1 <- paste0(int_2_cell_ref(cols = sheet_data$cols[1]), sheet_data$rows[1])
         dm2 <- paste0(int_2_cell_ref(cols = sheet_data$cols[sheet_data$n_elements]), sheet_data$rows[sheet_data$n_elements])
 
         if (length(dm1) == 1 & length(dm2) != 1) {
           if (!is.na(dm1) & !is.na(dm2) & dm1 != "NA" & dm2 != "NA") {
-            dimension <<- sprintf("<dimension ref=\"%s:%s\"/>", dm1, dm2)
+            .self$dimension <- sprintf("<dimension ref=\"%s:%s\"/>", dm1, dm2)
           }
         }
       }

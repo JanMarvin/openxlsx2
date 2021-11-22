@@ -26,11 +26,11 @@ ChartSheet <- setRefClass("ChartSheet",
         zoom <- 400
       }
 
-      sheetPr <<- tabColour
-      sheetViews <<- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(tabSelected))
-      pageMargins <<- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
-      drawing <<- '<drawing r:id=\"rId1\"/>'
-      hyperlinks <<- character(0)
+      .self$sheetPr <- tabColour
+      .self$sheetViews <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(tabSelected))
+      .self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
+      .self$drawing <- '<drawing r:id=\"rId1\"/>'
+      .self$hyperlinks <- character(0)
 
       return(invisible(0))
     },

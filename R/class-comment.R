@@ -11,12 +11,12 @@ Comment <- setRefClass("Comment",
 
   methods = list(
     initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
-      text <<- text
-      author <<- author
-      style <<- style
-      visible <<- visible
-      width <<- width
-      height <<- height
+      .self$text <- text
+      .self$author <- author
+      .self$style <- style
+      .self$visible <- visible
+      .self$width <- width
+      .self$height <- height
     },
     show = function() {
       showText <- sprintf("Author: %s\n", author)

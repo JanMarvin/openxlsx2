@@ -19,17 +19,17 @@ Sheet_Data <- setRefClass("Sheet_Data",
 
   methods = list(
     initialize = function() {
-      rows <<- integer(0)
-      cols <<- integer(0)
+      .self$rows <- integer(0)
+      .self$cols <- integer(0)
 
-      t <<- integer(0)
-      v <<- character(0)
-      f <<- character(0)
+      .self$t <- integer(0)
+      .self$v <- character(0)
+      .self$f <- character(0)
 
-      style_id <<- character(0)
+      .self$style_id <- character(0)
 
-      data_count <<- 0L
-      n_elements <<- 0L
+      .self$data_count <- 0L
+      .self$n_elements <- 0L
     },
 
     delete = function(rows_in, cols_in, grid_expand) {
@@ -51,16 +51,16 @@ Sheet_Data <- setRefClass("Sheet_Data",
 
       if (length(inds) > 0) { ## writing over existing data
 
-        rows <<- rows[-inds]
-        cols <<- cols[-inds]
-        t <<- t[-inds]
-        v <<- v[-inds]
-        f <<- f[-inds]
+        .self$rows <- rows[-inds]
+        .self$cols <- cols[-inds]
+        .self$t <- t[-inds]
+        .self$v <- v[-inds]
+        .self$f <- f[-inds]
 
-        n_elements <<- as.integer(length(rows))
+        .self$n_elements <- as.integer(length(rows))
 
         if (n_elements == 0) {
-          data_count <<- 0L
+          .self$data_count <- 0L
         }
       }
     },
@@ -96,21 +96,21 @@ Sheet_Data <- setRefClass("Sheet_Data",
       }
 
       if (length(inds) > 0) {
-        rows <<- c(rows[-inds], rows_in)
-        cols <<- c(cols[-inds], cols_in)
-        t <<- c(t[-inds], t_in)
-        v <<- c(v[-inds], v_in)
-        f <<- c(f[-inds], f_in)
+        .self$rows <- c(rows[-inds], rows_in)
+        .self$cols <- c(cols[-inds], cols_in)
+        .self$t <- c(t[-inds], t_in)
+        .self$v <- c(v[-inds], v_in)
+        .self$f <- c(f[-inds], f_in)
       } else {
-        rows <<- c(rows, rows_in)
-        cols <<- c(cols, cols_in)
-        t <<- c(t, t_in)
-        v <<- c(v, v_in)
-        f <<- c(f, f_in)
+        .self$rows <- c(rows, rows_in)
+        .self$cols <- c(cols, cols_in)
+        .self$t <- c(t, t_in)
+        .self$v <- c(v, v_in)
+        .self$f <- c(f, f_in)
       }
 
-      n_elements <<- as.integer(length(rows))
-      data_count <<- data_count + 1L
+      .self$n_elements <- as.integer(length(rows))
+      .self$data_count <- data_count + 1L
     }
   )
 )
