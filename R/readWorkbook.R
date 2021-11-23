@@ -66,46 +66,46 @@
 #'
 #' @export
 read.xlsx <- function(xlsxFile,
-                      sheet,
-                      startRow = 1,
-                      colNames = TRUE,
-                      rowNames = FALSE,
-                      detectDates = FALSE,
-                      skipEmptyRows = TRUE,
-                      skipEmptyCols = TRUE,
-                      rows = NULL,
-                      cols = NULL,
-                      namedRegion,
-                      na.strings = "NA",
-                      check.names = FALSE,
-                      sep.names = ".",
-                      fillMergedCells = FALSE) {
-  
+  sheet,
+  startRow = 1,
+  colNames = TRUE,
+  rowNames = FALSE,
+  detectDates = FALSE,
+  skipEmptyRows = TRUE,
+  skipEmptyCols = TRUE,
+  rows = NULL,
+  cols = NULL,
+  namedRegion,
+  na.strings = "NA",
+  check.names = FALSE,
+  sep.names = ".",
+  fillMergedCells = FALSE) {
+
   if (missing(sheet))
     sheet <- 1
-  
+
   if (class(xlsxFile) == "Workbook"){
     wb <- xlsxFile
   } else {
     wb <- loadWorkbook(xlsxFile = xlsxFile)
   }
-  
+
   z <- wb_to_df(
-    wb, 
+    wb,
     sheet = sheet,
     startRow = startRow,
-    colNames = colNames, 
-    rowNames = rowNames, 
-    detectDates = detectDates, 
+    colNames = colNames,
+    rowNames = rowNames,
+    detectDates = detectDates,
     skipEmptyRows = skipEmptyRows,
     rows = rows,
     cols = cols,
     definedName = namedRegion,
     na.strings = na.strings)
-  
-  
+
+
   return(z)
-  
+
 }
 
 
@@ -126,17 +126,17 @@ read.xlsx <- function(xlsxFile,
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' df1 <- readWorkbook(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 readWorkbook <- function(xlsxFile,
-                         sheet = 1,
-                         startRow = 1,
-                         colNames = TRUE,
-                         rowNames = FALSE,
-                         detectDates = FALSE,
-                         skipEmptyRows = TRUE,
-                         skipEmptyCols = TRUE,
-                         rows = NULL,
-                         cols = NULL,
-                         namedRegion,
-                         na.strings = "NA") {
+  sheet = 1,
+  startRow = 1,
+  colNames = TRUE,
+  rowNames = FALSE,
+  detectDates = FALSE,
+  skipEmptyRows = TRUE,
+  skipEmptyCols = TRUE,
+  rows = NULL,
+  cols = NULL,
+  namedRegion,
+  na.strings = "NA") {
   z <- wb_to_df(
     xlsxFile = xlsxFile,
     sheet = sheet,
@@ -151,6 +151,6 @@ readWorkbook <- function(xlsxFile,
     definedName = namedRegion,
     na.strings = na.strings
   )
-  
+
   return(z)
 }

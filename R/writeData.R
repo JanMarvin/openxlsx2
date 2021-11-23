@@ -8,7 +8,7 @@
 #' @param x Object to be written. For classes supported look at the examples.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
-#' @param array A bool if the function written is of type array 
+#' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying \code{startCol} and
 #' \code{startRow} individually.  A vector of the form
 #' \code{c(startCol, startRow)}.
@@ -147,12 +147,12 @@
 #' class(df$z) <- c(class(df$z), "formula")
 #'
 #' writeData(wb, sheet = "Formula", x = df)
-#' 
+#'
 #' ###########################################################################
-#' # update cell range and add mtcars 
+#' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
 #' wb2 <- loadWorkbook(xlsxFile)
-#' 
+#'
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)
 #' # read.xlsx(wb2)
@@ -168,23 +168,23 @@
 #' saveWorkbook(wb, "writeDataExample.xlsx", overwrite = TRUE)
 #' }
 writeData <- function(wb,
-                      sheet,
-                      x,
-                      startCol = 1,
-                      startRow = 1,
-                      array = FALSE,
-                      xy = NULL,
-                      colNames = TRUE,
-                      rowNames = FALSE,
-                      headerStyle = NULL,
-                      borders = c("none", "surrounding", "rows", "columns", "all"),
-                      borderColour = getOption("openxlsx.borderColour", "black"),
-                      borderStyle = getOption("openxlsx.borderStyle", "thin"),
-                      withFilter = FALSE,
-                      keepNA = FALSE,
-                      na.string = NULL,
-                      name = NULL,
-                      sep = ", ") {
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  array = FALSE,
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  headerStyle = NULL,
+  borders = c("none", "surrounding", "rows", "columns", "all"),
+  borderColour = getOption("openxlsx.borderColour", "black"),
+  borderStyle = getOption("openxlsx.borderStyle", "thin"),
+  withFilter = FALSE,
+  keepNA = FALSE,
+  na.string = NULL,
+  name = NULL,
+  sep = ", ") {
 
   ## increase scipen to avoid writing in scientific
   exSciPen <- getOption("scipen")
@@ -239,7 +239,7 @@ writeData <- function(wb,
     hlinkNames <- names(x)
     colNames <- FALSE
   }
-  
+
   ## special case - formula
   if ("formula" %in% class(x)) {
     x <- data.frame("X" = x, stringsAsFactors = FALSE)
@@ -516,16 +516,16 @@ writeData <- function(wb,
 #' }
 #'
 writeFormula <- function(wb,
-                         sheet,
-                         x,
-                         startCol = 1,
-                         startRow = 1,
-                         array = FALSE,
-                         xy = NULL) {
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  array = FALSE,
+  xy = NULL) {
   if (!"character" %in% class(x)) {
     stop("x must be a character vector.")
   }
-  
+
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   class(dfx$X) <- c("character", ifelse(array, "array_formula", "formula"))
 

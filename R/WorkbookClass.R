@@ -5,9 +5,9 @@
 
 Workbook$methods(
   initialize = function(creator = "",
-                        title = NULL,
-                        subject = NULL,
-                        category = NULL) {
+    title = NULL,
+    subject = NULL,
+    category = NULL) {
     charts <<- list()
     isChartSheet <<- logical(0)
 
@@ -92,21 +92,21 @@ Workbook$methods(
 
 Workbook$methods(
   addWorksheet = function(sheetName,
-                          showGridLines = TRUE,
-                          tabColour = NULL,
-                          zoom = 100,
-                          oddHeader = NULL,
-                          oddFooter = NULL,
-                          evenHeader = NULL,
-                          evenFooter = NULL,
-                          firstHeader = NULL,
-                          firstFooter = NULL,
-                          visible = TRUE,
-                          hasDrawing = FALSE,
-                          paperSize = 9,
-                          orientation = "portrait",
-                          hdpi = 300,
-                          vdpi = 300) {
+    showGridLines = TRUE,
+    tabColour = NULL,
+    zoom = 100,
+    oddHeader = NULL,
+    oddFooter = NULL,
+    evenHeader = NULL,
+    evenFooter = NULL,
+    firstHeader = NULL,
+    firstFooter = NULL,
+    visible = TRUE,
+    hasDrawing = FALSE,
+    paperSize = 9,
+    orientation = "portrait",
+    hdpi = 300,
+    vdpi = 300) {
     if (!missing(sheetName)) {
       if (grepl(pattern = ":", x = sheetName)) {
         stop("colon not allowed in sheet names in Excel")
@@ -179,27 +179,27 @@ Workbook$methods(
     ## update content_tyes
     ## add a drawing.xml for the worksheet
     if (hasDrawing) {
-    Content_Types <<-
-      c(
-        Content_Types,
-        sprintf(
-          '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
-          newSheetIndex
-        ),
-        sprintf(
-          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-          newSheetIndex
+      Content_Types <<-
+        c(
+          Content_Types,
+          sprintf(
+            '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
+            newSheetIndex
+          ),
+          sprintf(
+            '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
+            newSheetIndex
+          )
         )
-      )
     } else {
       Content_Types <<-
-      c(
-        Content_Types,
-        sprintf(
-          '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
-          newSheetIndex
+        c(
+          Content_Types,
+          sprintf(
+            '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
+            newSheetIndex
+          )
         )
-      )
     }
 
     ## Update xl/rels
@@ -488,8 +488,8 @@ Workbook$methods(
 
 Workbook$methods(
   addChartSheet = function(sheetName,
-                           tabColour = NULL,
-                           zoom = 100) {
+    tabColour = NULL,
+    zoom = 100) {
     newSheetIndex <- length(worksheets) + 1L
 
     if (newSheetIndex > 1) {
@@ -1193,17 +1193,17 @@ Workbook$methods(
 
 Workbook$methods(
   buildTable = function(sheet,
-                        colNames,
-                        ref,
-                        showColNames,
-                        tableStyle,
-                        tableName,
-                        withFilter,
-                        totalsRowCount = 0,
-                        showFirstColumn = 0,
-                        showLastColumn = 0,
-                        showRowStripes = 1,
-                        showColumnStripes = 0) {
+    colNames,
+    ref,
+    showColNames,
+    tableStyle,
+    tableName,
+    withFilter,
+    totalsRowCount = 0,
+    showFirstColumn = 0,
+    showLastColumn = 0,
+    showRowStripes = 1,
+    showColumnStripes = 0) {
     ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
     id <- as.character(length(tables) + 3L)
     sheet <- validateSheet(sheet)
@@ -1260,7 +1260,7 @@ Workbook$methods(
       )
     attr(worksheets[[sheet]]$tableParts, "tableName") <<-
       c(tNames[tSheets == sheet &
-        !grepl("openxlsx_deleted", tNames, fixed = TRUE)], tableName)
+          !grepl("openxlsx_deleted", tNames, fixed = TRUE)], tableName)
 
 
 
@@ -1347,12 +1347,12 @@ Workbook$methods(
 
     }
 
-      for (i in seq_along(drawings_vml)) {
-        write(
-          x = drawings_vml[[i]],
-          file = file.path(dir, sprintf("vmlDrawing%s.vml", i))
-        )
-      }
+    for (i in seq_along(drawings_vml)) {
+      write(
+        x = drawings_vml[[i]],
+        file = file.path(dir, sprintf("vmlDrawing%s.vml", i))
+      )
+    }
   }
 )
 
@@ -1468,8 +1468,8 @@ Workbook$methods(
       if (!is.null(style$textRotation)) {
         alignNode <-
           stri_join(alignNode,
-                    sprintf('textRotation="%s"', style$textRotation),
-                    sep = " "
+            sprintf('textRotation="%s"', style$textRotation),
+            sep = " "
           )
       }
 
@@ -1574,11 +1574,11 @@ Workbook$methods(
 
       ## Font
       if (!is.null(style$fontName) |
-        !is.null(style$fontSize) |
-        !is.null(style$fontColour) |
-        !is.null(style$fontDecoration) |
-        !is.null(style$fontFamily) |
-        !is.null(style$fontScheme)) {
+          !is.null(style$fontSize) |
+          !is.null(style$fontColour) |
+          !is.null(style$fontDecoration) |
+          !is.null(style$fontFamily) |
+          !is.null(style$fontScheme)) {
         fontNode <- .self$createFontNode(style)
         fontId <- which(styles$font == fontNode) - 1L
 
@@ -2011,9 +2011,9 @@ Workbook$methods(
 
 Workbook$methods(
   writeSheetDataXML = function(xldrawingsDir,
-                               xldrawingsRelsDir,
-                               xlworksheetsDir,
-                               xlworksheetsRelsDir) {
+    xldrawingsRelsDir,
+    xlworksheetsDir,
+    xlworksheetsRelsDir) {
     ## write worksheets
     nSheets <- length(worksheets)
 
@@ -2184,7 +2184,7 @@ Workbook$methods(
           }
 
 
-        # if (i < 3)
+          # if (i < 3)
           write_file(
             head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
             body = pxml(ws_rels),
@@ -2410,7 +2410,7 @@ Workbook$methods(
 
       inds <-
         tableSheets %in% sheet &
-          !grepl("openxlsx_deleted", attr(tables, "tableName"), fixed = TRUE)
+        !grepl("openxlsx_deleted", attr(tables, "tableName"), fixed = TRUE)
       tableSheets[tableSheets > sheet] <-
         tableSheets[tableSheets > sheet] - 1L
 
@@ -2512,24 +2512,24 @@ Workbook$methods(
 
 Workbook$methods(
   dataValidation = function(sheet,
-                            startRow,
-                            endRow,
-                            startCol,
-                            endCol,
-                            type,
-                            operator,
-                            value,
-                            allowBlank,
-                            showInputMsg,
-                            showErrorMsg) {
+    startRow,
+    endRow,
+    startCol,
+    endCol,
+    type,
+    operator,
+    value,
+    allowBlank,
+    showInputMsg,
+    showErrorMsg) {
     sheet <- validateSheet(sheet)
     sqref <-
       stri_join(getCellRefs(data.frame(
         "x" = c(startRow, endRow),
         "y" = c(startCol, endCol)
       )),
-      sep = " ",
-      collapse = ":"
+        sep = " ",
+        collapse = ":"
       )
 
     header <-
@@ -2595,22 +2595,22 @@ Workbook$methods(
 
 Workbook$methods(
   dataValidation_list = function(sheet,
-                                 startRow,
-                                 endRow,
-                                 startCol,
-                                 endCol,
-                                 value,
-                                 allowBlank,
-                                 showInputMsg,
-                                 showErrorMsg) {
+    startRow,
+    endRow,
+    startCol,
+    endCol,
+    value,
+    allowBlank,
+    showInputMsg,
+    showErrorMsg) {
     sheet <- validateSheet(sheet)
     sqref <-
       stri_join(getCellRefs(data.frame(
         "x" = c(startRow, endRow),
         "y" = c(startCol, endCol)
       )),
-      sep = " ",
-      collapse = ":"
+        sep = " ",
+        collapse = ":"
       )
     data_val <-
       sprintf(
@@ -2639,15 +2639,15 @@ Workbook$methods(
 
 Workbook$methods(
   conditionalFormatting = function(sheet,
-                                   startRow,
-                                   endRow,
-                                   startCol,
-                                   endCol,
-                                   dxfId,
-                                   formula,
-                                   type,
-                                   values,
-                                   params) {
+    startRow,
+    endRow,
+    startCol,
+    endCol,
+    dxfId,
+    formula,
+    type,
+    values,
+    params) {
     sheet <- validateSheet(sheet)
     sqref <-
       stri_join(getCellRefs(data.frame(
@@ -3014,10 +3014,10 @@ Workbook$methods(
 
 Workbook$methods(
   freezePanes = function(sheet,
-                         firstActiveRow = NULL,
-                         firstActiveCol = NULL,
-                         firstRow = FALSE,
-                         firstCol = FALSE) {
+    firstActiveRow = NULL,
+    firstActiveCol = NULL,
+    firstRow = FALSE,
+    firstCol = FALSE) {
     sheet <- validateSheet(sheet)
     paneNode <- NULL
 
@@ -3077,13 +3077,13 @@ Workbook$methods(
 
 Workbook$methods(
   insertImage = function(sheet,
-                         file,
-                         startRow,
-                         startCol,
-                         width,
-                         height,
-                         rowOffset = 0,
-                         colOffset = 0) {
+    file,
+    startRow,
+    startCol,
+    width,
+    height,
+    rowOffset = 0,
+    colOffset = 0) {
     ## within the sheet the drawing node's Id refernce an id in the sheetRels
     ## sheet rels reference the drawingi.xml file
     ## drawingi.xml refernece drawingRels
@@ -3544,7 +3544,7 @@ Workbook$methods(
                 styleObjects[[i]]$cols[-to_remove_from_this_style_object]
 
               if (length(styleObjects[[i]]$rows) == 0 |
-                length(styleObjects[[i]]$cols) == 0) {
+                  length(styleObjects[[i]]$cols) == 0) {
                 keepStyle[i] <-
                   FALSE
               } ## this style applies to no rows or columns anymore
@@ -3674,10 +3674,10 @@ Workbook$methods(
 
 Workbook$methods(
   check_overwrite_tables = function(sheet,
-                                    new_rows,
-                                    new_cols,
-                                    error_msg = "Cannot overwrite existing table with another table.",
-                                    check_table_header_only = FALSE) {
+    new_rows,
+    new_cols,
+    error_msg = "Cannot overwrite existing table with another table.",
+    check_table_header_only = FALSE) {
     ## check not overwriting another table
     if (length(tables) > 0) {
       tableSheets <- attr(tables, "sheet")
@@ -3685,7 +3685,7 @@ Workbook$methods(
 
       to_check <-
         which(tableSheets %in% sheetNo &
-          !grepl("openxlsx_deleted", attr(tables, "tableName"), fixed = TRUE))
+            !grepl("openxlsx_deleted", attr(tables, "tableName"), fixed = TRUE))
 
       if (length(to_check) > 0) {
         ## only look at tables on this sheet
@@ -3718,9 +3718,9 @@ Workbook$methods(
           existing_rows <- rows[[i]]
 
           if ((min(new_cols) <= max(existing_cols)) &
-            (max(new_cols) >= min(existing_cols)) &
-            (min(new_rows) <= max(existing_rows)) &
-            (max(new_rows) >= min(existing_rows))) {
+              (max(new_cols) >= min(existing_cols)) &
+              (min(new_rows) <= max(existing_rows)) &
+              (max(new_rows) >= min(existing_rows))) {
             stop(error_msg)
           }
         }
@@ -3863,13 +3863,13 @@ Workbook$methods(
 ## TO BE DEPRECATED
 Workbook$methods(
   conditionalFormatCell = function(sheet,
-                                   startRow,
-                                   endRow,
-                                   startCol,
-                                   endCol,
-                                   dxfId,
-                                   formula,
-                                   type) {
+    startRow,
+    endRow,
+    startCol,
+    endCol,
+    dxfId,
+    formula,
+    type) {
     sheet <- validateSheet(sheet)
     sqref <-
       stri_join(getCellRefs(data.frame(
@@ -4086,50 +4086,50 @@ Workbook$methods(
           if (s[["borderId"]] != "0") {
             # & "applyBorder" %in% names(s)){
 
-             border_ind <- as.integer(s[["borderId"]]) + 1L
-             if (border_ind <= length(borders)) {
-               thisBorder <- borders[[border_ind]]
+            border_ind <- as.integer(s[["borderId"]]) + 1L
+            if (border_ind <= length(borders)) {
+              thisBorder <- borders[[border_ind]]
 
-               if ("borderLeft" %in% names(thisBorder)) {
-                 style$borderLeft <- thisBorder$borderLeft
-                 style$borderLeftColour <- thisBorder$borderLeftColour
-               }
+              if ("borderLeft" %in% names(thisBorder)) {
+                style$borderLeft <- thisBorder$borderLeft
+                style$borderLeftColour <- thisBorder$borderLeftColour
+              }
 
-               if ("borderRight" %in% names(thisBorder)) {
-                 style$borderRight <- thisBorder$borderRight
-                 style$borderRightColour <-
-                   thisBorder$borderRightColour
-               }
+              if ("borderRight" %in% names(thisBorder)) {
+                style$borderRight <- thisBorder$borderRight
+                style$borderRightColour <-
+                  thisBorder$borderRightColour
+              }
 
-               if ("borderTop" %in% names(thisBorder)) {
-                 style$borderTop <- thisBorder$borderTop
-                 style$borderTopColour <- thisBorder$borderTopColour
-               }
+              if ("borderTop" %in% names(thisBorder)) {
+                style$borderTop <- thisBorder$borderTop
+                style$borderTopColour <- thisBorder$borderTopColour
+              }
 
-               if ("borderBottom" %in% names(thisBorder)) {
-                 style$borderBottom <- thisBorder$borderBottom
-                 style$borderBottomColour <-
-                   thisBorder$borderBottomColour
-               }
+              if ("borderBottom" %in% names(thisBorder)) {
+                style$borderBottom <- thisBorder$borderBottom
+                style$borderBottomColour <-
+                  thisBorder$borderBottomColour
+              }
 
-               if ("borderDiagonal" %in% names(thisBorder)) {
-                 style$borderDiagonal <- thisBorder$borderDiagonal
-                 style$borderDiagonalColour <-
-                   thisBorder$borderDiagonalColour
-               }
+              if ("borderDiagonal" %in% names(thisBorder)) {
+                style$borderDiagonal <- thisBorder$borderDiagonal
+                style$borderDiagonalColour <-
+                  thisBorder$borderDiagonalColour
+              }
 
-               if ("borderDiagonalUp" %in% names(thisBorder)) {
-                 style$borderDiagonalUp <-
-                   thisBorder$borderDiagonalUp
-               }
+              if ("borderDiagonalUp" %in% names(thisBorder)) {
+                style$borderDiagonalUp <-
+                  thisBorder$borderDiagonalUp
+              }
 
-               if ("borderDiagonalDown" %in% names(thisBorder)) {
-                 style$borderDiagonalDown <-
-                   thisBorder$borderDiagonalDown
-               }
-             }
-           }
-         }
+              if ("borderDiagonalDown" %in% names(thisBorder)) {
+                style$borderDiagonalDown <-
+                  thisBorder$borderDiagonalDown
+              }
+            }
+          }
+        }
 
         ## alignment
         # applyAlignment <- "applyAlignment" %in% names(s)
@@ -4213,9 +4213,9 @@ Workbook$methods(
 
 Workbook$methods(
   protectWorkbook = function(protect = TRUE,
-                             lockStructure = FALSE,
-                             lockWindows = FALSE,
-                             password = NULL) {
+    lockStructure = FALSE,
+    lockWindows = FALSE,
+    password = NULL) {
     attr <- c()
     if (!is.null(password)) {
       attr["workbookPassword"] <- hashPassword(password)

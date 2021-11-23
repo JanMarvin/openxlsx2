@@ -14,7 +14,7 @@
 #' @param rows Rows to apply conditional formatting to
 #' @param rule The condition under which to apply the formatting. See examples.
 #' @param style A style to apply to those cells that satisfy the rule. Default is createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-#' @param type Either 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith', 
+#' @param type Either 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith',
 #' 'endsWith', 'topN', 'bottomN', 'contains' or 'notContains' (case insensitive).
 #' @param ... See below
 #' @details See Examples.
@@ -73,7 +73,7 @@
 #'      }
 #'    }
 #' }
-#' 
+#'
 #' If type == "bottomN"
 #' \itemize{
 #'   \item{style is a Style object. See \code{\link{createStyle}}}
@@ -85,7 +85,7 @@
 #'      }
 #'    }
 #' }
-#' 
+#'
 #' @seealso \code{\link{createStyle}}
 #' @export
 #' @examples
@@ -177,20 +177,20 @@
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "containsText", sapply(1:10, fn))
 #' conditionalFormatting(wb, "containsText", cols = 1, rows = 1:10, type = "contains", rule = "A")
-#' 
+#'
 #' ## cells not containing text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "containsText", sapply(1:10, fn))
-#' conditionalFormatting(wb, "notcontainsText", cols = 1, 
+#' conditionalFormatting(wb, "notcontainsText", cols = 1,
 #'                      rows = 1:10, type = "notcontains", rule = "A")
-#' 
-#' 
+#'
+#'
 #' ## cells begins with text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "beginsWith", sapply(1:100, fn))
 #' conditionalFormatting(wb, "beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
-#' 
-#' 
+#'
+#'
 #' ## cells ends with text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "endsWith", sapply(1:100, fn))
@@ -221,22 +221,22 @@
 #' writeData(wb, "between", -5:5)
 #' conditionalFormatting(wb, "between", cols = 1, rows = 1:11, type = "between", rule = c(-2, 2))
 #'
-#' ## Top N 
+#' ## Top N
 #' writeData(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
 #' # Highlight top 5 values in column x
-#' conditionalFormatting(wb, "topN", cols = 1, rows = 2:11, 
+#' conditionalFormatting(wb, "topN", cols = 1, rows = 2:11,
 #'  style = posStyle, type = "topN", rank = 5)#'
 #' # Highlight top 20 percentage in column y
-#' conditionalFormatting(wb, "topN", cols = 2, rows = 2:11, 
+#' conditionalFormatting(wb, "topN", cols = 2, rows = 2:11,
 #'  style = posStyle, type = "topN", rank = 20, percent = TRUE)
 #'
-#'## Bottom N 
+#'## Bottom N
 #' writeData(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
 #' # Highlight bottom 5 values in column x
-#' conditionalFormatting(wb, "bottomN", cols = 1, rows = 2:11, 
+#' conditionalFormatting(wb, "bottomN", cols = 1, rows = 2:11,
 #'  style = negStyle, type = "topN", rank = 5)
 #' # Highlight bottom 20 percentage in column y
-#' conditionalFormatting(wb, "bottomN", cols = 2, rows = 2:11, 
+#' conditionalFormatting(wb, "bottomN", cols = 2, rows = 2:11,
 #'  style = negStyle, type = "topN", rank = 20, percent = TRUE)
 #'
 #' ## Logical Operators
@@ -287,13 +287,13 @@
 #'
 conditionalFormatting <-
   function(wb,
-           sheet,
-           cols,
-           rows,
-           rule = NULL,
-           style = NULL,
-           type = "expression",
-           ...) {
+    sheet,
+    cols,
+    rows,
+    rule = NULL,
+    style = NULL,
+    type = "expression",
+    ...) {
     od <- getOption("OutDec")
     options("OutDec" = ".")
     on.exit(expr = options("OutDec" = od), add = TRUE)
@@ -465,21 +465,21 @@ conditionalFormatting <-
       # type == "contains"
       # - style is Style object
       # - rule is text to look for
-      
+
       if (is.null(style)) {
         style <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
-      
-      
+
+
       if (!"character" %in% class(rule)) {
         stop("If type == 'contains', rule must be a character vector of length 1.")
       }
-      
+
       if (!"Style" %in% class(style)) {
         stop("If type == 'contains', style must be a Style object.")
       }
-      
+
       invisible(dxfId <- wb$addDXFS(style))
       values <- rule
       rule <- style
@@ -487,21 +487,21 @@ conditionalFormatting <-
       # type == "contains"
       # - style is Style object
       # - rule is text to look for
-      
+
       if (is.null(style)) {
         style <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
-      
-      
+
+
       if (!"character" %in% class(rule)) {
         stop("If type == 'notContains', rule must be a character vector of length 1.")
       }
-      
+
       if (!"Style" %in% class(style)) {
         stop("If type == 'notContains', style must be a Style object.")
       }
-      
+
       invisible(dxfId <- wb$addDXFS(style))
       values <- rule
       rule <- style
@@ -509,21 +509,21 @@ conditionalFormatting <-
       # type == "contains"
       # - style is Style object
       # - rule is text to look for
-      
+
       if (is.null(style)) {
         style <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
-      
-      
+
+
       if (!"character" %in% class(rule)) {
         stop("If type == 'beginsWith', rule must be a character vector of length 1.")
       }
-      
+
       if (!"Style" %in% class(style)) {
         stop("If type == 'beginsWith', style must be a Style object.")
       }
-      
+
       invisible(dxfId <- wb$addDXFS(style))
       values <- rule
       rule <- style
@@ -531,21 +531,21 @@ conditionalFormatting <-
       # type == "contains"
       # - style is Style object
       # - rule is text to look for
-      
+
       if (is.null(style)) {
         style <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
-      
-      
+
+
       if (!"character" %in% class(rule)) {
         stop("If type == 'endsWith', rule must be a character vector of length 1.")
       }
-      
+
       if (!"Style" %in% class(style)) {
         stop("If type == 'endsWith', style must be a Style object.")
       }
-      
+
       invisible(dxfId <- wb$addDXFS(style))
       values <- rule
       rule <- style
@@ -565,68 +565,68 @@ conditionalFormatting <-
     } else if (type == "topN") {
       # type == "topN"
       # - rule is ignored
-      # - 'rank' and 'percent' are named params 
-      
+      # - 'rank' and 'percent' are named params
+
       if (is.null(style)) {
         style <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-      } 
-      
+      }
+
       if (!"Style" %in% class(style)) {
         stop("If type == 'topN', style must be a Style object.")
-      } 
-      
-      invisible(dxfId <- wb$addDXFS(style)) 
-      
+      }
+
+      invisible(dxfId <- wb$addDXFS(style))
+
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
         params$percent <- as.integer(params$percent)
         if (is.na(params$percent)) {
           stop("percent must be 0/1 or TRUE/FALSE")
         }
-      } 
-      
+      }
+
       if ("rank" %in% names(params)) {
         params$rank <- as.integer(params$rank)
         if (is.na(params$rank)) {
           stop("rank must be a number")
         }
-      } 
-      
+      }
+
       invisible(dxfId <- wb$addDXFS(style))
       values <- params
       rule <- style
     } else if (type == "bottomN") {
       # type == "bottomN"
       # - rule is ignored
-      # - 'rank' and 'percent' are named params 
-      
+      # - 'rank' and 'percent' are named params
+
       if (is.null(style)) {
         style <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-      } 
-      
+      }
+
       if (!"Style" %in% class(style)) {
         stop("If type == 'bottomN', style must be a Style object.")
       }
-      
-      invisible(dxfId <- wb$addDXFS(style)) 
-      
+
+      invisible(dxfId <- wb$addDXFS(style))
+
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
         params$percent <- as.integer(params$percent)
         if (is.na(params$percent)) {
           stop("percent must be 0/1 or TRUE/FALSE")
         }
-      } 
-      
+      }
+
       if ("rank" %in% names(params)) {
         params$rank <- as.integer(params$rank)
         if (is.na(params$rank)) {
           stop("rank must be a number")
         }
-      } 
-      
+      }
+
       invisible(dxfId <- wb$addDXFS(style))
       values <- params
       rule <- style

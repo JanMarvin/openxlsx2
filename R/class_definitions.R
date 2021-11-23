@@ -20,7 +20,7 @@ Workbook <- setRefClass("Workbook",
     "headFoot" = "ANY",
     "media" = "ANY",
     "outlineLevels" = "ANY",
-    
+
     "persons" = "ANY",
 
     "pivotTables" = "ANY",

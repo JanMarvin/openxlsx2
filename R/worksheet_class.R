@@ -3,21 +3,21 @@
 
 
 WorkSheet$methods(initialize = function(showGridLines = TRUE,
-                                        tabSelected = FALSE,
-                                        tabColour = NULL,
-                                        zoom = 100,
+  tabSelected = FALSE,
+  tabColour = NULL,
+  zoom = 100,
 
-                                        oddHeader = NULL,
-                                        oddFooter = NULL,
-                                        evenHeader = NULL,
-                                        evenFooter = NULL,
-                                        firstHeader = NULL,
-                                        firstFooter = NULL,
+  oddHeader = NULL,
+  oddFooter = NULL,
+  evenHeader = NULL,
+  evenFooter = NULL,
+  firstHeader = NULL,
+  firstFooter = NULL,
 
-                                        paperSize = 9,
-                                        orientation = "portrait",
-                                        hdpi = 300,
-                                        vdpi = 300) {
+  paperSize = 9,
+  orientation = "portrait",
+  hdpi = 300,
+  vdpi = 300) {
   if (!is.null(tabColour)) {
     tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
   } else {
