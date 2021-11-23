@@ -196,7 +196,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
     sheetName <- as.character(params$sheetName)
 
-    if ("list" %in% class(x) & length(sheetName) == length(x)) {
+    if (inherits(x, "list") & length(sheetName) == length(x)) {
       names(x) <- sheetName
     }
   }
@@ -311,13 +311,10 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   headerStyle <- NULL
   if ("headerStyle" %in% names(params)) {
     if (length(params$headerStyle) == 1) {
-      if ("Style" %in% class(params$headerStyle)) {
-        headerStyle <- params$headerStyle
-      } else {
-        stop("headerStyle must be a style object.")
-      }
+      assert_style(params$headerStyle)
+      headerStyle <- params$headerStyle
     } else {
-      if (all(sapply(params$headerStyle, function(x) "Style" %in% class(x)))) {
+      if (all(sapply(params$headerStyle, inherits, "Style"))) {
         headerStyle <- params$headerStyle
       } else {
         stop("headerStyle must be a style object.")
@@ -345,11 +342,8 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   keepNA <- FALSE
   if ("keepNA" %in% names(params)) {
-    if (!"logical" %in% class(keepNA)) {
-      stop("keepNA must be a logical.")
-    } else {
-      keepNA <- params$keepNA
-    }
+    assert_class(keepNA, "logical")
+    keepNA <- params$keepNA
   }
 
   na.string <- NULL
@@ -380,7 +374,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   ## If a list is supplied write to individual worksheets using names if available
   nSheets <- 1
-  if ("list" %in% class(x)) {
+  if (inherits(x, "list")) {
     nms <- names(x)
     nSheets <- length(x)
 
@@ -519,9 +513,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     wb$addWorksheet(sheetName, showGridLines = gridLines, tabColour = tabColour, zoom = zoom)
 
     if (asTable) {
-      if (!"data.frame" %in% class(x)) {
-        stop("x must be a data.frame is asTable == TRUE")
-      }
+      assert_class(x, "data.frame")
 
       writeDataTable(
         wb = wb,
@@ -595,7 +587,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   if ("firstRow" %in% names(params)) {
     firstRow <- params$firstRow
     freezePanes <- TRUE
-    if ("list" %in% class(x) & length(firstRow) != nSheets) {
+    if (inherits(x, "list") & length(firstRow) != nSheets) {
       firstRow <- rep_len(firstRow, length.out = nSheets)
     }
   }
@@ -604,7 +596,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   if ("firstCol" %in% names(params)) {
     firstCol <- params$firstCol
     freezePanes <- TRUE
-    if ("list" %in% class(x) & length(firstCol) != nSheets) {
+    if (inherits(x, "list") & length(firstCol) != nSheets) {
       firstCol <- rep_len(firstCol, length.out = nSheets)
     }
   }

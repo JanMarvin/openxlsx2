@@ -848,7 +848,7 @@ getFile <- function(xlsxFile) {
   fl <- file(description = xlsxFile)
 
   ## If URL download
-  if ("url" %in% class(fl)) {
+  if (inherits(fl, "url")) {
     tmpFile <- tempfile(fileext = ".xlsx")
     download.file(url = xlsxFile, destfile = tmpFile, cacheOK = FALSE, mode = "wb", quiet = TRUE)
     xlsxFile <- tmpFile

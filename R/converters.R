@@ -91,19 +91,11 @@ convertFromExcelRef <- function(col) {
 #' # "B1" "C2" "D3"
 #' @export
 getCellRefs <- function(cellCoords) {
-  if (!"data.frame" %in% class(cellCoords)) {
-    stop("Provide a data.frame!")
-  }
+  assert_class(cellCoords, "data.frame")
+  stopifnot(ncol(cellCoords) == 2L)
 
-
-
-  if (!("numeric" %in% sapply(cellCoords[, 1], class) |
-      "integer" %in% sapply(cellCoords[, 1], class))
-    & ("numeric" %in% sapply(cellCoords[, 2], class) |
-        "integer" %in% sapply(cellCoords[, 2], class))
-
-  ) {
-    stop("Provide a data.frame containing integers!")
+  if (!all(vapply(cellCoords, is_integer_ish, NA))) {
+    stop("cellCoords must only contain integers", call. = FALSE)
   }
 
   od <- getOption("OutDec")

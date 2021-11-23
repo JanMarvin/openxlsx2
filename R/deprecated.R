@@ -8,3 +8,13 @@ setFooter <- function(wb, text, position = "center") {
   stop()
 }
 
+sheetVisible <- function(wb) {
+  .Deprecated("sheetVisibility()")
+  stop()
+}
+
+
+`sheetVisible<-` <- function(wb, value) {
+  .Deprecated("sheetVisibility()")
+  stop()
+}

@@ -39,30 +39,15 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
   ## check all inputs are valid
   if (length(creator) > 1) creator <- creator[[1]]
   if (length(creator) == 0) creator <- ""
-  if (!"character" %in% class(creator)) creator <- ""
+  if (!inherits(creator, "character")) creator <- ""
 
   if (length(title) > 1) title <- title[[1]]
   if (length(subject) > 1) subject <- subject[[1]]
   if (length(category) > 1) category <- category[[1]]
 
-  if (!is.null(title)) {
-    if (!"character" %in% class(title)) {
-      stop("title must be a string")
-    }
-  }
-
-  if (!is.null(subject)) {
-    if (!"character" %in% class(subject)) {
-      stop("subject must be a string")
-    }
-  }
-
-  if (!is.null(category)) {
-    if (!"character" %in% class(category)) {
-      stop("category must be a string")
-    }
-  }
-
+  assert_class(title, "character", or_null = TRUE)
+  assert_class(subject, "character", or_null = TRUE)
+  assert_class(category, "character", or_null = TRUE)
   invisible(Workbook$new(creator = creator, title = title, subject = subject, category = category))
 }
 
@@ -101,9 +86,7 @@ saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = FALSE) {
   options("scipen" = 10000)
   on.exit(options("scipen" = sci_pen), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (!is.logical(overwrite)) {
     overwrite <- FALSE
@@ -180,9 +163,7 @@ mergeCells <- function(wb, sheet, cols, rows) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (!is.numeric(cols)) {
     cols <- convertFromExcelRef(cols)
@@ -207,9 +188,7 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   cols <- convertFromExcelRef(cols)
   rows <- as.integer(rows)
@@ -249,9 +228,7 @@ sheets <- function(wb) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   nms <- wb$sheet_names
   nms <- replaceXMLEntities(nms)
@@ -361,9 +338,7 @@ addWorksheet <- function(wb, sheetName,
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
     stop(paste0("A worksheet by the name '", sheetName, "' already exists! Sheet names must be unique case-insensitive."))
@@ -480,9 +455,7 @@ addWorksheet <- function(wb, sheetName,
 #' saveWorkbook(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 cloneWorksheet <- function(wb, sheetName, clonedSheet) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
     stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
@@ -536,9 +509,7 @@ cloneWorksheet <- function(wb, sheetName, clonedSheet) {
 #' saveWorkbook(wb, "renameWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 renameWorksheet <- function(wb, sheet, newName) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   od <- getOption("OutDec")
   options("OutDec" = ".")
@@ -610,13 +581,8 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
   }
   sheet <- wb$validateSheet(sheet)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
-  if (!"Style" %in% class(style)) {
-    stop("style argument must be a Style object.")
-  }
+  assert_workbook(wb)
+  assert_style(style)
 
   if (!is.logical(stack)) {
     stop("stack parameter must be a logical!")
@@ -828,9 +794,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 
   sheet <- wb$validateSheet(sheet)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   widths <- tolower(widths) ## possibly "auto"
   if (ignoreMergedCells) {
@@ -1053,9 +1017,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
     return()
   }
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (!is.null(xy)) {
     startCol <- xy[[1]]
@@ -1125,6 +1087,8 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' saveWorkbook(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
 #' }
 replaceStyle <- function(wb, index, newStyle) {
+  assert_style(newStyle)
+
   nStyles <- length(wb$styleObjects)
 
   if (nStyles == 0) {
@@ -1133,10 +1097,6 @@ replaceStyle <- function(wb, index, newStyle) {
 
   if (index > nStyles) {
     stop(sprintf("Invalid index. Workbook only has %s styles.", nStyles))
-  }
-
-  if (!all("Style" %in% class(newStyle))) {
-    stop("Invalid style object.")
   }
 
   wb$styleObjects[[index]]$style <- newStyle
@@ -1228,16 +1188,9 @@ removeWorksheet <- function(wb, sheet) {
 #' saveWorkbook(wb, "deleteDataExample.xlsx", overwrite = TRUE)
 #' }
 deleteData <- function(wb, sheet, cols, rows, gridExpand = FALSE) {
+  assert_workbook(wb)
   sheet <- wb$validateSheet(sheet)
-
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
-
   wb$worksheets[[sheet]]$sheet_data$delete(rows_in = rows, cols_in = cols, grid_expand = gridExpand)
-
-
   invisible(0)
 }
 
@@ -1265,13 +1218,11 @@ deleteData <- function(wb, sheet, cols, rows, gridExpand = FALSE) {
 #' saveWorkbook(wb, "modifyBaseFontExample.xlsx", overwrite = TRUE)
 #' }
 modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
+
+  assert_workbook(wb)
 
   if (fontSize < 0) stop("Invalid fontSize")
   fontColour <- validateColour(fontColour)
@@ -1298,10 +1249,7 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
 #' getBaseFont(wb)
 getBaseFont <- function(wb) {
   # TODO all of these class checks need to be cleaned up
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
+  assert_workbook(wb)
   wb$getBaseFont()
 }
 
@@ -1381,10 +1329,8 @@ setHeaderFooter <- function(wb, sheet,
   evenFooter = NULL,
   firstHeader = NULL,
   firstFooter = NULL) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
 
+  assert_workbook(wb)
   sheet <- wb$validateSheet(sheet)
 
   if (!is.null(header) & length(header) != 3) {
@@ -1578,9 +1524,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
   xml <- wb$worksheets[[sheet]]$pageSetup
@@ -1761,9 +1705,8 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
   lockDeletingColumns = NULL, lockDeletingRows = NULL,
   lockSorting = NULL, lockAutoFilter = NULL, lockPivotTables = NULL,
   lockObjects = NULL, lockScenarios = NULL) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+
+  assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
   xml <- wb$worksheets[[sheet]]$sheetProtection
@@ -1853,10 +1796,7 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' saveWorkbook(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
 protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
+  assert_workbook(wb)
   invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows))
 }
 
@@ -1881,9 +1821,7 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
 
@@ -1934,10 +1872,7 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 #' saveWorkbook(wb, "worksheetOrderExample2.xlsx", overwrite = TRUE)
 #' }
 worksheetOrder <- function(wb) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("Argument must be a Workbook.")
-  }
-
+  assert_workbook(wb)
   wb$sheetOrder
 }
 
@@ -1946,9 +1881,7 @@ worksheetOrder <- function(wb) {
 #' @param value Vector specifying order to write worksheets to file
 #' @export
 `worksheetOrder<-` <- function(wb, value) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("Argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (any(value != as.integer(value))) {
     stop("values must be integers")
@@ -2023,9 +1956,7 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
 
   sheet <- wb$validateSheet(sheet)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (!is.numeric(rows)) {
     stop("rows argument must be a numeric/integer vector")
@@ -2100,9 +2031,7 @@ addFilter <- function(wb, sheet, rows, cols) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
 
@@ -2147,9 +2076,7 @@ addFilter <- function(wb, sheet, rows, cols) {
 #' saveWorkbook(wb, file = "removeFilterExample.xlsx", overwrite = TRUE)
 #' }
 removeFilter <- function(wb, sheet) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   for (s in sheet) {
     s <- wb$validateSheet(s)
@@ -2296,11 +2223,11 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
   type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
 
   ## check input combinations
-  if (type == "date" & !"Date" %in% class(value)) {
+  if (type == "date" & !inherits(value, "Date")) {
     stop("If type == 'date' value argument must be a Date vector.")
   }
 
-  if (type == "time" & !any(tolower(class(value)) %in% c("posixct", "posixt"))) {
+  if (type == "time" & !inherits(value, c("POSIXct", "POSIXt"))) {
     stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
   }
 
@@ -2364,9 +2291,7 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 #' sheetVisibility(wb)[3] <- "veryHidden" ## hide sheet 3 from UI
 #' @export
 sheetVisibility <- function(wb) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   state <- rep("visible", length(wb$workbook$sheets))
   state[grepl("hidden", wb$workbook$sheets)] <- "hidden"
@@ -2444,9 +2369,7 @@ pageBreak <- function(wb, sheet, i, type = "row") {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
 
@@ -2569,77 +2492,6 @@ conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, 
 
   invisible(0)
 }
-
-
-#' @name sheetVisible
-#' @title Get worksheet visible state.
-#' @description DEPRECATED - Use function 'sheetVisibility()
-#' @author Alexander Walker
-#' @param wb A workbook object
-#' @return Character vector of worksheet names.
-#' @return  TRUE if sheet is visible, FALSE if sheet is hidden
-#' @examples
-#'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, sheetName = "S1", visible = FALSE)
-#' addWorksheet(wb, sheetName = "S2", visible = TRUE)
-#' addWorksheet(wb, sheetName = "S3", visible = FALSE)
-#'
-#' sheetVisible(wb)
-#' sheetVisible(wb)[1] <- TRUE ## show sheet 1
-#' sheetVisible(wb)[2] <- FALSE ## hide sheet 2
-#' @export
-sheetVisible <- function(wb) {
-  warning("This function is deprecated. Use function 'sheetVisibility()'")
-
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
-  state <- rep(TRUE, length(wb$workbook$sheets))
-  state[grepl("hidden", wb$workbook$sheets)] <- FALSE
-
-  return(state)
-}
-
-
-#' @rdname sheetVisible
-#' @param value a logical vector the same length as sheetVisible(wb)
-#' @export
-`sheetVisible<-` <- function(wb, value) {
-  warning("This function is deprecated. Use function 'sheetVisibility()'")
-
-  if (!is.logical(value)) {
-    stop("value must be a logical vector.")
-  }
-
-  if (!any(value)) {
-    stop("A workbook must have atleast 1 visible worksheet.")
-  }
-
-  value <- as.character(value)
-  value[value %in% "TRUE"] <- "visible"
-  value[value %in% "FALSE"] <- "hidden"
-
-  exState <- rep("visible", length(wb$workbook$sheets))
-  exState[grepl("hidden", wb$workbook$sheets)] <- "hidden"
-
-  if (length(value) != length(wb$workbook$sheets)) {
-    stop(sprintf("value vector must have length equal to number of worksheets in Workbook [%s]", length(exState)))
-  }
-
-  inds <- which(value != exState)
-  if (length(inds) == 0) {
-    return(invisible(wb))
-  }
-
-  for (i in inds) {
-    wb$workbook$sheets[i] <- gsub(exState[i], value[i], wb$workbook$sheets[i])
-  }
-
-  invisible(wb)
-}
-
 
 
 #' @name copyWorkbook
@@ -2822,11 +2674,8 @@ groupColumns <- function(wb, sheet, cols, hidden = FALSE) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
+  assert_workbook(wb)
   sheet <- wb$validateSheet(sheet)
-
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
 
   if (any(cols) < 1L) {
     stop("Invalid columns selected (<= 0).")
@@ -2919,9 +2768,7 @@ groupColumns <- function(wb, sheet, cols, hidden = FALSE) {
 #' @export
 
 ungroupColumns <- function(wb, sheet, cols) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
 
@@ -2971,9 +2818,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' @export
 
 groupRows <- function(wb, sheet, rows, hidden = FALSE) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
 
@@ -3023,9 +2868,7 @@ ungroupRows <- function(wb, sheet, rows) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
+
 
   sheet <- wb$validateSheet(sheet)
 

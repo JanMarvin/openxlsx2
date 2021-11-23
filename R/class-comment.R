@@ -23,7 +23,7 @@ Comment <- setRefClass("Comment",
       showText <- c(showText, sprintf("Text:\n %s\n\n", paste(text, collapse = "")))
       styleShow <- "Style:\n"
 
-      if ("list" %in% class(style)) {
+      if (inherits(style, "list")) {
         for (i in seq_along(style)) {
           styleShow <- append(styleShow, sprintf("Font name: %s\n", style[[i]]$fontName[[1]])) ## Font name
           styleShow <- append(styleShow, sprintf("Font size: %s\n", style[[i]]$fontSize[[1]])) ## Font size
@@ -91,27 +91,12 @@ createComment <- function(comment,
   visible = TRUE,
   width = 2,
   height = 4) {
-  if (!"character" %in% class(author)) {
-    stop("author argument must be a character vector")
-  }
 
-  if (!"character" %in% class(comment)) {
-    stop("comment argument must be a character vector")
-  }
-
-  if (!"numeric" %in% class(width)) {
-    stop("width argument must be a numeric vector")
-  }
-
-  if (!"numeric" %in% class(height)) {
-    stop("height argument must be a numeric vector")
-  }
-
-  if (!"logical" %in% class(visible)) {
-    stop("visible argument must be a logical vector")
-  }
-
-
+  assert_class(author, "character")
+  assert_class(comment, "character")
+  assert_class(width, "numeric")
+  assert_class(height, "numeric")
+  assert_class(visible, "logical")
 
   width <- round(width)
   height <- round(height)
@@ -164,14 +149,8 @@ createComment <- function(comment,
 #' saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
 #' }
 writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
-  if (!"Comment" %in% class(comment)) {
-    stop("comment argument must be a Comment object")
-  }
-
+  assert_workbook(wb)
+  assert_comment(comment)
 
   if (length(comment$style) == 1) {
     rPr <- wb$createFontNode(comment$style)
@@ -225,12 +204,9 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 #' @seealso \code{\link{createComment}}
 #' @seealso \code{\link{writeComment}}
 removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
+  assert_workbook(wb)
+
   sheet <- wb$validateSheet(sheet)
-
-  if (!"Workbook" %in% class(wb)) {
-    stop("First argument must be a Workbook.")
-  }
-
   cols <- convertFromExcelRef(cols)
   rows <- as.integer(rows)
 

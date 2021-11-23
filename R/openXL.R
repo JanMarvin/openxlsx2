@@ -39,7 +39,7 @@ openXL <- function(file = NULL) {
   if (is.null(file)) stop("A file has to be specified.")
 
   ## workbook handling
-  if ("Workbook" %in% class(file)) {
+  if (inherits(file, "Workbook")) {
     file <- file$saveWorkbook()
   }
 

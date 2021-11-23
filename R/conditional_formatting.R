@@ -440,7 +440,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'expression', style must be a Style object.")
       }
 
@@ -455,7 +455,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'duplicates', style must be a Style object.")
       }
 
@@ -472,11 +472,11 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'contains', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'contains', style must be a Style object.")
       }
 
@@ -494,11 +494,11 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'notContains', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'notContains', style must be a Style object.")
       }
 
@@ -516,11 +516,11 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'beginsWith', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'beginsWith', style must be a Style object.")
       }
 
@@ -538,11 +538,11 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'endsWith', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'endsWith', style must be a Style object.")
       }
 
@@ -557,7 +557,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'between', style must be a Style object.")
       }
 
@@ -572,7 +572,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'topN', style must be a Style object.")
       }
 
@@ -606,7 +606,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'bottomN', style must be a Style object.")
       }
 

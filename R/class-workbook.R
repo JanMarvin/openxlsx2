@@ -4877,7 +4877,7 @@ Workbook <- setRefClass("Workbook",
       ## pull out NaN values
       nans <- unlist(lapply(1:nCols, function(i) {
         tmp <- df[[i]]
-        if (!"character" %in% class(tmp) & !"list" %in% class(tmp)) {
+        if (!inherits(tmp, c("character", "list"))) {
           v <- which(is.nan(tmp) | is.infinite(tmp))
           if (length(v) == 0) {
             return(v)
