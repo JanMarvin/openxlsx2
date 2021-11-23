@@ -154,3 +154,45 @@ readWorkbook <- function(xlsxFile,
 
   return(z)
 }
+
+#' @name getSheetNames
+#' @title Get names of worksheets
+#' @description Returns the worksheet names within an xlsx file
+#' @author Alexander Walker
+#' @param file An xlsx or xlsm file.
+#' @return Character vector of worksheet names.
+#' @examples
+#' getSheetNames(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' @export
+getSheetNames <- function(file) {
+  if (!file.exists(file)) {
+    stop("file does not exist.")
+  }
+
+  if (grepl("\\.xls$|\\.xlm$", file)) {
+    stop("openxlsx can not read .xls or .xlm files!")
+  }
+
+  ## create temp dir and unzip
+  xmlDir <- file.path(tempdir(), "_excelXMLRead")
+  xmlFiles <- unzip(file, exdir = xmlDir)
+
+  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
+
+  workbook <- xmlFiles[grepl("workbook.xml$", xmlFiles, perl = TRUE)]
+  workbook <- readUTF8(workbook)
+  workbook <- removeHeadTag(workbook)
+  sheets <- unlist(regmatches(workbook, gregexpr("(?<=<sheets>).*(?=</sheets>)", workbook, perl = TRUE)))
+  sheets <- unlist(regmatches(sheets, gregexpr("<sheet[^>]*>", sheets, perl = TRUE)))
+
+  ## Some veryHidden sheets do not have a sheet content and their rId is empty.
+  ## Such sheets need to be filtered out because otherwise their sheet names
+  ## occur in the list of all sheet names, leading to a wrong association
+  ## of sheet names with sheet indeces.
+  sheets <- grep('r:id="[[:blank:]]*"', sheets, invert = TRUE, value = TRUE)
+
+  sheetNames <- unlist(regmatches(sheets, gregexpr('(?<=name=")[^"]+', sheets, perl = TRUE)))
+  sheetNames <- replaceXMLEntities(sheetNames)
+
+  return(sheetNames)
+}
