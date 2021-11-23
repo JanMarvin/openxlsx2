@@ -86,11 +86,11 @@ Comment <- setRefClass("Comment",
 #' saveWorkbook(wb, file = "createCommentExample.xlsx", overwrite = TRUE)
 #' }
 createComment <- function(comment,
-                          author = Sys.getenv("USERNAME"),
-                          style = NULL,
-                          visible = TRUE,
-                          width = 2,
-                          height = 4) {
+  author = Sys.getenv("USERNAME"),
+  style = NULL,
+  visible = TRUE,
+  width = 2,
+  height = 4) {
   if (!"character" %in% class(author)) {
     stop("author argument must be a character vector")
   }

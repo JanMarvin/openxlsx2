@@ -136,23 +136,23 @@
 #' }
 #'
 writeDataTable <- function(wb, sheet, x,
-                           startCol = 1,
-                           startRow = 1,
-                           xy = NULL,
-                           colNames = TRUE,
-                           rowNames = FALSE,
-                           tableStyle = "TableStyleLight9",
-                           tableName = NULL,
-                           headerStyle = NULL,
-                           withFilter = TRUE,
-                           keepNA = FALSE,
-                           na.string = NULL,
-                           sep = ", ",
-                           stack = FALSE,
-                           firstColumn = FALSE,
-                           lastColumn = FALSE,
-                           bandedRows = TRUE,
-                           bandedCols = FALSE) {
+  startCol = 1,
+  startRow = 1,
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  tableStyle = "TableStyleLight9",
+  tableName = NULL,
+  headerStyle = NULL,
+  withFilter = TRUE,
+  keepNA = FALSE,
+  na.string = NULL,
+  sep = ", ",
+  stack = FALSE,
+  firstColumn = FALSE,
+  lastColumn = FALSE,
+  bandedRows = TRUE,
+  bandedCols = FALSE) {
   if (!is.null(xy)) {
     if (length(xy) != 2) {
       stop("xy parameter must have length 2")
