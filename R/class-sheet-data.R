@@ -116,3 +116,6 @@ SheetData <- setRefClass(
   )
 )
 
+new_sheet_data <- function() {
+  SheetData$new()
+}

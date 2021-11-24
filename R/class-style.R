@@ -321,6 +321,10 @@ mergeStyle <- function(oldStyle, newStyle) {
 
 # wrapper -----------------------------------------------------------------
 
+new_style <- function() {
+  Style$new()
+}
+
 #' @name createStyle
 #' @title Create a cell style
 #' @description Create a new style to apply to worksheet cells

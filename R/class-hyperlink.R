@@ -41,6 +41,9 @@ Hyperlink <- setRefClass("Hyperlink",
   )
 )
 
+new_hyperlink <- function() {
+  Hyperlink$new(ref = character(), target = character(), location = character())
+}
 
 xml_to_hyperlink <- function(xml) {
 
