@@ -1,12 +1,12 @@
 
-WorkSheet <- setRefClass("WorkSheet",
+Worksheet <- setRefClass("Worksheet",
   fields = c(
     "sheetPr" = "character",
     "dimension" = "character",
     "sheetViews" = "character",
     "sheetFormatPr" = "character",
 
-    "sheet_data" = "Sheet_Data",
+    "sheet_data" = "SheetData",
     "rows_attr" = "ANY",
     "cols_attr" = "ANY",
     "cols" = "ANY",

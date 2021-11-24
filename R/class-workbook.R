@@ -208,7 +208,7 @@ Workbook <- setRefClass("Workbook",
       .self$worksheets <-
         append(
           worksheets,
-          WorkSheet$new(
+          Worksheet$new(
             showGridLines = showGridLines,
             tabSelected = newSheetIndex == 1,
             tabColour = tabColour,
@@ -4801,7 +4801,7 @@ Workbook <- setRefClass("Workbook",
               existing_cells <- paste(worksheets[[sheet]]$sheet_data$rows, worksheets[[sheet]]$sheet_data$cols, sep = ",")
               keep <- which(!existing_cells %in% refs & !is.na(worksheets[[sheet]]$sheet_data$v))
 
-              sd <- Sheet_Data$new()
+              sd <- SheetData$new()
               sd$cols <- worksheets[[sheet]]$sheet_data$cols[keep]
               sd$t <- worksheets[[sheet]]$sheet_data$t[keep]
               sd$v <- worksheets[[sheet]]$sheet_data$v[keep]
