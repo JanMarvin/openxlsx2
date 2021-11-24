@@ -1,5 +1,5 @@
 
-assert_class <- function (x, class, or_null = FALSE, envir = parent.frame()) {
+assert_class <- function(x, class, or_null = FALSE, envir = parent.frame()) {
   sx <- as.character(substitute(x, envir))
   ok <- inherits(x, class)
 

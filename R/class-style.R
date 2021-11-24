@@ -1,7 +1,8 @@
 
 # class -------------------------------------------------------------------
 
-Style <- setRefClass("Style",
+Style <- setRefClass(
+  "Style",
   fields = c(
     "fontId",
     "fontName",
