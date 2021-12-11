@@ -661,6 +661,50 @@ SEXP font_val(Rcpp::CharacterVector fonts, std::string level3, std::string child
 }
 
 
+// specially designed for <fonts>
+// [[Rcpp::export]]
+SEXP style_xml_as_list(Rcpp::CharacterVector xml_input, std::string level3) {
+
+  Rcpp::List z(xml_input.length());
+
+  for (auto i = 0; i < xml_input.length(); ++i) {
+
+    Rcpp::List zi;
+    Rcpp::CharacterVector names;
+
+    std::string xml_string = Rcpp::as<std::string>(xml_input[i]);
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_string(xml_string.c_str(), pugi::parse_default | pugi::parse_escapes);
+    if (!result) {
+      Rcpp::stop("xml import unsuccessfull");
+    }
+
+
+    for (auto l3 : doc.children(level3.c_str())) {
+      for (auto cld : l3.children()) {
+
+        for (auto attrs : cld.attributes()) {
+          if (attrs.value() != NULL) {
+            zi.push_back(attrs.value());
+          } else {
+            zi.push_back("");
+          }
+          names.push_back(attrs.name());
+        }
+
+      }
+
+      zi.attr("names") = names;
+    }
+
+    z[i] = zi;
+  }
+
+  return Rcpp::wrap(z);
+}
+
+
+
 // [[Rcpp::export]]
 std::string printXPtr(XPtrXML doc, bool raw) {
 
