@@ -193,4 +193,34 @@ xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, leve
 #' @export
 print.pugi_xml <- function(x, raw = FALSE, ...) {
   cat(printXPtr(x, raw))
+  if (raw) cat("\n")
+}
+
+#' loads character string to pugixml and returns an externalptr
+#' @details
+#' might be usefull for larger documents where single nodes are shortened
+#' and otherwise the full tree has to be reimported. unsure where we have
+#' such a case.
+#' is usefull, for printing nodes from a larger tree, that have been exported
+#' as characters (at some point in time we have to convert the xml to R)
+#' @param x input as xml
+#' @examples
+#' tmp_xlsx <- tempdir()
+#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+#' unzip(xlsxFile, exdir = tmp_xlsx)
+#'
+#' wb <- loadWorkbook(xlsxFile)
+#' styles_xml <- sprintf("%s/xl/styles.xml", tmp_xlsx)
+#'
+#' # is external pointer
+#' sxml <- read_xml(styles_xml)
+#'
+#' # is character
+#' font <- xml_node(sxml, "styleSheet", "fonts", "font")
+#'
+#' # is again external pointer
+#' as_xml(font)
+#' @export
+as_xml <- function(x) {
+  read_xml(paste(x, collapse = ""))
 }
