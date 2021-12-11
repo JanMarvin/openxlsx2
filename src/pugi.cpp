@@ -306,29 +306,27 @@ SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
   pugi::xml_node worksheet = doc->child(child.c_str());
   size_t n = std::distance(worksheet.begin(), worksheet.end());
 
+  // for a childless single line node the distance might be zero
+  if (n == 0) n++;
+
   Rcpp::List z(n);
 
   auto itr = 0;
-  for (auto ws : worksheet.children())
+
+  Rcpp::CharacterVector res;
+  std::vector<std::string> nam;
+
+  for (auto attrs : worksheet.attributes())
   {
-
-    Rcpp::CharacterVector res;
-    std::vector<std::string> nam;
-
-    for (pugi::xml_attribute attr = worksheet.first_attribute();
-         attr;
-         attr = attr.next_attribute())
-    {
-      nam.push_back(attr.name());
-      res.push_back(attr.value());
-    }
-
-    // assign names
-    res.attr("names") = nam;
-
-    z[itr] = res;
-    ++itr;
+    nam.push_back(attrs.name());
+    res.push_back(attrs.value());
   }
+
+  // assign names
+  res.attr("names") = nam;
+
+  z[itr] = res;
+  ++itr;
 
   return  Rcpp::wrap(z);
 }

@@ -142,12 +142,18 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
 #' @param level4 to please check
 #' @param level5 to please check
 #' @param level6 to please check
-#' @examples#'
+#' @examples
+#'
 #'   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
 #'   xml_attribute(x, "a")
 #'
 #'   x <- read_xml("<a><b r=\"1\">2</b></a>")
 #'   xml_attribute(x, "a", "b")
+#'   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
+#'   xml_attribute(x, "a")
+#'
+#'   x <- read_xml("<b><a a=\"1\" b=\"2\"/></b>")
+#'   xml_attribute(x, "b", "a")
 #' @export
 xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, level5 = NULL, level6 = NULL) {
 
