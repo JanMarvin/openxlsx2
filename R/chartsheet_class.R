@@ -4,8 +4,8 @@
 
 
 ChartSheet$methods(initialize = function(tabSelected = FALSE,
-                                         tabColour = character(0),
-                                         zoom = 100) {
+  tabColour = character(0),
+  zoom = 100) {
   if (length(tabColour) > 0) {
     tabColour <- sprintf("<sheetPr>%s</sheetPr>", tabColour)
   } else {

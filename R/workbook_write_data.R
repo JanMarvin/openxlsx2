@@ -36,7 +36,7 @@ Workbook$methods(writeData = function(df, sheet, startRow, startCol, colNames, c
     if (grepl('date1904="1"|date1904="true"', stri_join(unlist(workbook), collapse = ""), ignore.case = TRUE)) {
       origin <- 24107L
     }
-    
+
     for (i in dInds) {
       df[[i]] <- as.integer(df[[i]]) + origin
       if (origin == 25569L){
@@ -89,15 +89,15 @@ Workbook$methods(writeData = function(df, sheet, startRow, startCol, colNames, c
   }
 
   if (any(c("formula", "array_formula") %in% allColClasses)) {
-    
+
     frm <- "formula"
     cls <- "openxlsx_formula"
-    
+
     if ("array_formula" %in% allColClasses) {
       frm <- "array_formula"
       cls <- "openxlsx_array_formula"
     }
-    
+
     for (i in which(sapply(colClasses, function(x) frm %in% x))) {
       df[[i]] <- replaceIllegalCharacters(as.character(df[[i]]))
       class(df[[i]]) <- cls
@@ -182,7 +182,7 @@ Workbook$methods(writeData = function(df, sheet, startRow, startCol, colNames, c
   ref_cell <- paste0(int_2_cell_ref(startCol), startRow)
 
   if (any(c("openxlsx_formula", "openxlsx_array_formula") %in% colClasses)) {
-    
+
     ## alter the elements of t where we have a formula to be "str"
     if ("openxlsx_formula" %in% colClasses) {
       formula_cols <- which(sapply(colClasses, function(x) "openxlsx_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
