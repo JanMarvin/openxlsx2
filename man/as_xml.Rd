@@ -20,8 +20,9 @@ is usefull, for printing nodes from a larger tree, that have been exported
 as characters (at some point in time we have to convert the xml to R)
 }
 \examples{
+\dontrun{
 tmp_xlsx <- tempdir()
-xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 unzip(xlsxFile, exdir = tmp_xlsx)
 
 wb <- loadWorkbook(xlsxFile)
@@ -35,4 +36,5 @@ font <- xml_node(sxml, "styleSheet", "fonts", "font")
 
 # is again external pointer
 as_xml(font)
+}
 }

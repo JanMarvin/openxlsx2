@@ -205,8 +205,9 @@ print.pugi_xml <- function(x, raw = FALSE, ...) {
 #' as characters (at some point in time we have to convert the xml to R)
 #' @param x input as xml
 #' @examples
+#' \dontrun{
 #' tmp_xlsx <- tempdir()
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx")
+#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' unzip(xlsxFile, exdir = tmp_xlsx)
 #'
 #' wb <- loadWorkbook(xlsxFile)
@@ -220,6 +221,7 @@ print.pugi_xml <- function(x, raw = FALSE, ...) {
 #'
 #' # is again external pointer
 #' as_xml(font)
+#' }
 #' @export
 as_xml <- function(x) {
   read_xml(paste(x, collapse = ""))
