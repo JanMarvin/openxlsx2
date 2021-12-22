@@ -138,12 +138,12 @@ Workbook$methods(setColWidths = function(sheet) {
 
   # # Check if any conflicting existing levels
   # if (any(cols %in% names(worksheets[[sheet]]$cols))) {
-  # 
+  #
   #   for (i in intersect(cols, names(worksheets[[sheet]]$cols))) {
-  #     
+  #
   #     width_hidden <- attr(colWidths[[sheet]], "hidden")[attr(colWidths[[sheet]], "names") == i]
   #     width_widths <- as.numeric(colWidths[[sheet]][attr(colWidths[[sheet]], "names") == i]) + 0.71
-  # 
+  #
   #     # If column already has a custom width, just update the width and hidden attributes
   #     if (grepl("customWidth", worksheets[[sheet]]$cols[[i]])) {
   #       worksheets[[sheet]]$cols[[i]] <<- sub('(width=\\").*?(\\"\\shidden=\\").*?(\\")', paste0("\\1", width_widths, "\\2", width_hidden, "\\3"), worksheets[[sheet]]$cols[[i]], perl = TRUE)
@@ -152,7 +152,7 @@ Workbook$methods(setColWidths = function(sheet) {
   #       worksheets[[sheet]]$cols[[i]] <<- sub("((?<=hidden=\")(\\w)\")", paste0(width_hidden, "\" width=\"", width_widths, "\" customWidth=\"1\"/>"), worksheets[[sheet]]$cols[[i]], perl = TRUE)
   #     }
   #   }
-  # 
+  #
   #   cols <- cols[!cols %in% names(worksheets[[sheet]]$cols)]
   # }
 
@@ -162,7 +162,7 @@ Workbook$methods(setColWidths = function(sheet) {
   #  names(colNodes) <- cols
   #  worksheets[[sheet]]$cols <<- append(worksheets[[sheet]]$cols, colNodes)
   #}
-  
+
 })
 
 

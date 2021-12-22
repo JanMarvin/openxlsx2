@@ -33,10 +33,15 @@ xml_attribute(
 xml_attribute
 }
 \examples{
-#'
+
   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
   xml_attribute(x, "a")
 
   x <- read_xml("<a><b r=\"1\">2</b></a>")
   xml_attribute(x, "a", "b")
+  x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
+  xml_attribute(x, "a")
+
+  x <- read_xml("<b><a a=\"1\" b=\"2\"/></b>")
+  xml_attribute(x, "b", "a")
 }

@@ -204,6 +204,10 @@ font_val <- function(fonts, level3, child) {
     .Call(`_openxlsx2_font_val`, fonts, level3, child)
 }
 
+style_xml_as_list <- function(xml_input, level3) {
+    .Call(`_openxlsx2_style_xml_as_list`, xml_input, level3)
+}
+
 printXPtr <- function(doc, raw) {
     .Call(`_openxlsx2_printXPtr`, doc, raw)
 }

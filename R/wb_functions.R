@@ -36,9 +36,9 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 
   # matrix as.data.frame
   mm <- matrix(data = data,
-               nrow = length(rows),
-               ncol = length(cols),
-               dimnames = list(rows, cols), byrow = TRUE)
+    nrow = length(rows),
+    ncol = length(cols),
+    dimnames = list(rows, cols), byrow = TRUE)
 
   z <- as.data.frame(mm)
   z
@@ -160,21 +160,21 @@ guess_col_type <- function(tt) {
 #'
 #' @export
 wb_to_df <- function(xlsxFile,
-                     sheet,
-                     startRow = 1,
-                     colNames = TRUE,
-                     rowNames = FALSE,
-                     detectDates = TRUE,
-                     skipEmptyCols = FALSE,
-                     skipEmptyRows = FALSE,
-                     rows = NULL,
-                     cols = NULL,
-                     na.strings = "#N/A",
-                     dims,
-                     showFormula = FALSE,
-                     convert = TRUE,
-                     types,
-                     definedName) {
+  sheet,
+  startRow = 1,
+  colNames = TRUE,
+  rowNames = FALSE,
+  detectDates = TRUE,
+  skipEmptyCols = FALSE,
+  skipEmptyRows = FALSE,
+  rows = NULL,
+  cols = NULL,
+  na.strings = "#N/A",
+  dims,
+  showFormula = FALSE,
+  convert = TRUE,
+  types,
+  definedName) {
 
   if (is.character(xlsxFile)){
     # if using it this way, it might be benefitial to only load the sheet we
@@ -195,10 +195,10 @@ wb_to_df <- function(xlsxFile,
 
     nr <- as.data.frame(
       matrix(wo,
-             ncol = 2,
-             byrow = TRUE,
-             dimnames = list(seq_len(length(dn)),
-                             c("sheet", "dims") ))
+        ncol = 2,
+        byrow = TRUE,
+        dimnames = list(seq_len(length(dn)),
+          c("sheet", "dims") ))
     )
     nr$name <- sapply(dn, function(x) getXML1attr_one(x, "definedName", "name"))
     nr$local <- sapply(dn, function(x) ifelse(
@@ -232,8 +232,8 @@ wb_to_df <- function(xlsxFile,
   # must be available
   if (missing(dims))
     dims <- getXML1attr_one(wb$worksheets[[sheet]]$dimension,
-                            "dimension",
-                            "ref")
+      "dimension",
+      "ref")
 
   row_attr  <- wb$worksheets[[sheet]]$sheet_data$row_attr
   cc  <- wb$worksheets[[sheet]]$sheet_data$cc
@@ -264,7 +264,7 @@ wb_to_df <- function(xlsxFile,
   sd$isdate <- 0
   sd$isdate[(sd$numFmtId >= 14 & sd$numFmtId <= 22)] <- 1
   sd$isdate[(sd$numFmtId >= 164 & sd$numFmtId <= 180) &
-              sd$applyNumberFormat == 1] <- 1
+      sd$applyNumberFormat == 1] <- 1
 
   xlsx_date_style <- sd$id[sd$isdate == 1]
 
@@ -638,8 +638,8 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
 #'
 #' @export
 writeData2 <-function(wb, sheet, data,
-                      colNames = TRUE, rowNames = FALSE,
-                      startRow = 1, startCol = 1) {
+  colNames = TRUE, rowNames = FALSE,
+  startRow = 1, startCol = 1) {
 
 
   is_data_frame <- FALSE
@@ -687,8 +687,8 @@ writeData2 <-function(wb, sheet, data,
 
 
   dims <- paste0(int2col(startCol), startRow,
-                 ":",
-                 int2col(endCol), endRow)
+    ":",
+    int2col(endCol), endRow)
 
   if (class(wb$worksheets[[sheetno]]$sheet_data$cc) == "uninitializedField") {
 
@@ -703,23 +703,23 @@ writeData2 <-function(wb, sheet, data,
     rows_attr <- cols_attr <- cc_tmp <- vector("list", data_nrow)
 
     cols_attr <- lapply(seq_len(data_nrow),
-                        function(x) list(collapsed="false",
-                                         customWidth="true",
-                                         hidden="false",
-                                         outlineLevel="0",
-                                         max="121",
-                                         min="1",
-                                         style="0",
-                                         width="9.14"))
+      function(x) list(collapsed="false",
+        customWidth="true",
+        hidden="false",
+        outlineLevel="0",
+        max="121",
+        min="1",
+        style="0",
+        width="9.14"))
 
     wb$worksheets[[sheetno]]$cols_attr <- list_to_attr(cols_attr, "col")
 
 
 
     rows_attr <- lapply(startRow:endRow,
-                        function(x) list("r" = as.character(x),
-                                         "spans" = paste0("1:", data_ncol),
-                                         "x14ac:dyDescent"="0.25"))
+      function(x) list("r" = as.character(x),
+        "spans" = paste0("1:", data_ncol),
+        "x14ac:dyDescent"="0.25"))
     names(rows_attr) <- rownames(rtyp)
 
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
@@ -728,8 +728,8 @@ writeData2 <-function(wb, sheet, data,
     nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")
     cc <- as.data.frame(
       matrix(data = "_openxlsx_NA_",
-             nrow = nrow(data) * ncol(data),
-             ncol = length(nams))
+        nrow = nrow(data) * ncol(data),
+        ncol = length(nams))
     )
     names(cc) <- nams
 
@@ -792,8 +792,8 @@ writeData2 <-function(wb, sheet, data,
     cc_tmp <- do.call("rbind", cc_tmp)
 
     cc <- merge(cc[!names(cc) %in% names(cc_tmp)],
-                cc_tmp,
-                by = "row.names")
+      cc_tmp,
+      by = "row.names")
 
     cc <- cc[order(as.numeric(cc$Row.names)),-1]
     cc <- cc[c(nams, "typ", "r")]

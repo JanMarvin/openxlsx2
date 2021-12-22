@@ -111,7 +111,7 @@
 #'   asTable = c(TRUE, TRUE, FALSE), withFilter = c(TRUE, FALSE, FALSE)
 #' )
 #' }
-#' 
+#'
 #' # specify column widths for multiple sheets
 #' \dontrun{
 #' write.xlsx(l, "writeList2.xlsx", colWidths = 20)

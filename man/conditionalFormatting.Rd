@@ -29,7 +29,7 @@ conditionalFormatting(
 
 \item{style}{A style to apply to those cells that satisfy the rule. Default is createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")}
 
-\item{type}{Either 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith', 
+\item{type}{Either 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith',
 'endsWith', 'topN', 'bottomN', 'contains' or 'notContains' (case insensitive).}
 
 \item{...}{See below}
@@ -200,7 +200,7 @@ conditionalFormatting(wb, "containsText", cols = 1, rows = 1:10, type = "contain
 ## cells not containing text
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 writeData(wb, "containsText", sapply(1:10, fn))
-conditionalFormatting(wb, "notcontainsText", cols = 1, 
+conditionalFormatting(wb, "notcontainsText", cols = 1,
                      rows = 1:10, type = "notcontains", rule = "A")
 
 
@@ -240,22 +240,22 @@ conditionalFormatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ##
 writeData(wb, "between", -5:5)
 conditionalFormatting(wb, "between", cols = 1, rows = 1:11, type = "between", rule = c(-2, 2))
 
-## Top N 
+## Top N
 writeData(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
 # Highlight top 5 values in column x
-conditionalFormatting(wb, "topN", cols = 1, rows = 2:11, 
+conditionalFormatting(wb, "topN", cols = 1, rows = 2:11,
  style = posStyle, type = "topN", rank = 5)#'
 # Highlight top 20 percentage in column y
-conditionalFormatting(wb, "topN", cols = 2, rows = 2:11, 
+conditionalFormatting(wb, "topN", cols = 2, rows = 2:11,
  style = posStyle, type = "topN", rank = 20, percent = TRUE)
 
-## Bottom N 
+## Bottom N
 writeData(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
 # Highlight bottom 5 values in column x
-conditionalFormatting(wb, "bottomN", cols = 1, rows = 2:11, 
+conditionalFormatting(wb, "bottomN", cols = 1, rows = 2:11,
  style = negStyle, type = "topN", rank = 5)
 # Highlight bottom 20 percentage in column y
-conditionalFormatting(wb, "bottomN", cols = 2, rows = 2:11, 
+conditionalFormatting(wb, "bottomN", cols = 2, rows = 2:11,
  style = negStyle, type = "topN", rank = 20, percent = TRUE)
 
 ## Logical Operators

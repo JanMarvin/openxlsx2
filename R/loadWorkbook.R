@@ -733,8 +733,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
 
       for (drawing in seq_along(drawingsXML)) {
-       drwng_xml <- read_xml(drawingsXML[drawing])
-       wb$drawings[[drawing]] <- xml_node(drwng_xml, "xdr:wsDr")
+        drwng_xml <- read_xml(drawingsXML[drawing])
+        wb$drawings[[drawing]] <- xml_node(drwng_xml, "xdr:wsDr")
       }
 
       # ptn1 <- "<(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)"
@@ -880,7 +880,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             style <- lapply(comments, function(x) unlist(xml_node(x, "comment", "text", "r", "rPr")) )
 
             comments <- regmatches(comments,
-                                   gregexpr("(?<=<t( |>))[\\s\\S]+?(?=</t>)", comments, perl = TRUE))
+              gregexpr("(?<=<t( |>))[\\s\\S]+?(?=</t>)", comments, perl = TRUE))
             comments <- lapply(comments, function(x) gsub(".*?>", "", x, perl = TRUE))
 
 
@@ -917,8 +917,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       wb$Content_Types <- c(
         wb$Content_Types,
         sprintf('<Override PartName="/xl/threadedComments/%s" ContentType="application/vnd.ms-excel.threadedcomments+xml"/>',
-                sapply(threadCommentsXML, basename))
-        )
+          sapply(threadCommentsXML, basename))
+      )
     }
 
     ## Persons (needed for Threaded Comment)
