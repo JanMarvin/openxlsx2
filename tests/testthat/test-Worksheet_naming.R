@@ -1,7 +1,5 @@
 
 
-context("Worksheet naming")
-
 test_that("Worksheet names", {
 
   ### test for names without special character
