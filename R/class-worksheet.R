@@ -1,5 +1,6 @@
 
-Worksheet <- setRefClass("Worksheet",
+Worksheet <- setRefClass(
+  "Worksheet",
   fields = c(
     "sheetPr"       = "character",
     "dimension"     = "character",
