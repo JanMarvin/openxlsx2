@@ -32,7 +32,7 @@ ChartSheet <- setRefClass(
       .self$drawing <- '<drawing r:id=\"rId1\"/>'
       .self$hyperlinks <- character(0)
 
-      return(invisible(0))
+      invisible(.self)
     },
 
     get_prior_sheet_data = function() {

@@ -1,37 +1,37 @@
 
 Worksheet <- setRefClass("Worksheet",
   fields = c(
-    "sheetPr" = "character",
-    "dimension" = "character",
-    "sheetViews" = "character",
+    "sheetPr"       = "character",
+    "dimension"     = "character",
+    "sheetViews"    = "character",
     "sheetFormatPr" = "character",
 
     "sheet_data" = "SheetData",
-    "rows_attr" = "ANY",
-    "cols_attr" = "ANY",
-    "cols" = "ANY",
+    "rows_attr"  = "ANY",
+    "cols_attr"  = "ANY",
+    "cols"       = "ANY",
 
-    "autoFilter" = "character",
-    "mergeCells" = "ANY",
+    "autoFilter"            = "character",
+    "mergeCells"            = "ANY",
     "conditionalFormatting" = "character",
-    "dataValidations" = "ANY",
-    "dataValidationsLst" = "character",
+    "dataValidations"       = "ANY",
+    "dataValidationsLst"    = "character",
 
     "freezePane" = "character",
     "hyperlinks" = "ANY",
 
     "sheetProtection" = "character",
-    "pageMargins" = "character",
-    "pageSetup" = "character",
-    "headerFooter" = "ANY",
-    "rowBreaks" = "character",
-    "colBreaks" = "character",
-    "drawing" = "character",
-    "legacyDrawing" = "character",
+    "pageMargins"     = "character",
+    "pageSetup"       = "character",
+    "headerFooter"    = "ANY",
+    "rowBreaks"       = "character",
+    "colBreaks"       = "character",
+    "drawing"         = "character",
+    "legacyDrawing"   = "character",
     "legacyDrawingHF" = "character",
-    "oleObjects" = "character",
-    "tableParts" = "character",
-    "extLst" = "character"
+    "oleObjects"      = "character",
+    "tableParts"      = "character",
+    "extLst"          = "character"
   ),
 
   methods = list(
@@ -56,7 +56,7 @@ Worksheet <- setRefClass("Worksheet",
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
       } else {
-        tabColour <- character(0)
+        tabColour <- character()
       }
 
       if (zoom < 10) {
@@ -65,22 +65,13 @@ Worksheet <- setRefClass("Worksheet",
         zoom <- 400
       }
 
-      naToNULLList <- function(x) {
-        lapply(x, function(x) {
-          if (is.na(x)) {
-            return(NULL)
-          }
-          x
-        })
-      }
-
       hf <- list(
-        oddHeader = naToNULLList(oddHeader),
-        oddFooter = naToNULLList(oddFooter),
-        evenHeader = naToNULLList(evenHeader),
-        evenFooter = naToNULLList(evenFooter),
-        firstHeader = naToNULLList(firstHeader),
-        firstFooter = naToNULLList(firstFooter)
+        oddHeader   = na_to_null(oddHeader),
+        oddFooter   = na_to_null(oddFooter),
+        evenHeader  = na_to_null(evenHeader),
+        evenFooter  = na_to_null(evenFooter),
+        firstHeader = na_to_null(firstHeader),
+        firstFooter = na_to_null(firstFooter)
       )
 
       if (all(sapply(hf, length) == 0)) {
@@ -88,33 +79,32 @@ Worksheet <- setRefClass("Worksheet",
       }
 
       ## list of all possible children
-      .self$sheetPr <- tabColour
-      .self$dimension <- '<dimension ref="A1"/>'
-      .self$sheetViews <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
-      .self$sheetFormatPr <- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
-      .self$cols_attr <- character(0)
+      .self$sheetPr               <- tabColour
+      .self$dimension             <- '<dimension ref="A1"/>'
+      .self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
+      .self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
+      .self$cols_attr             <- character()
+      .self$autoFilter            <- character()
+      .self$mergeCells            <- character()
+      .self$conditionalFormatting <- character()
+      .self$dataValidations       <- NULL
+      .self$dataValidationsLst    <- character()
+      .self$hyperlinks            <- list()
+      .self$pageMargins           <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
+      .self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
+      .self$headerFooter          <- hf
+      .self$rowBreaks             <- character()
+      .self$colBreaks             <- character()
+      .self$drawing               <- '<drawing r:id=\"rId1\"/>' ## will always be 1
+      .self$legacyDrawing         <- character()
+      .self$legacyDrawingHF       <- character()
+      .self$oleObjects            <- character()
+      .self$tableParts            <- character()
+      .self$extLst                <- character()
+      .self$freezePane            <- character()
+      .self$sheet_data            <- SheetData$new()
 
-      .self$autoFilter <- character(0)
-      .self$mergeCells <- character(0)
-      .self$conditionalFormatting <- character(0)
-      .self$dataValidations <- NULL
-      .self$dataValidationsLst <- character(0)
-      .self$hyperlinks <- list()
-      .self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
-      .self$pageSetup <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
-      .self$headerFooter <- hf
-      .self$rowBreaks <- character(0)
-      .self$colBreaks <- character(0)
-      .self$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
-      .self$legacyDrawing <- character(0)
-      .self$legacyDrawingHF <- character(0)
-      .self$oleObjects <- character(0)
-      .self$tableParts <- character(0)
-      .self$extLst <- character(0)
-
-      .self$freezePane <- character(0)
-
-      .self$sheet_data <- Sheet_Data$new()
+      invisible(.self)
     },
 
     get_prior_sheet_data = function() {
@@ -274,24 +264,24 @@ Worksheet <- setRefClass("Worksheet",
     },
 
     order_sheetdata = function() {
-      if (sheet_data$n_elements == 0) {
         return(invisible(0))
       }
 
-      if (sheet_data$data_count > 1) {
-        ord <- order(sheet_data$rows, sheet_data$cols, method = "radix", na.last = TRUE)
-        .self$sheet_data$rows <- sheet_data$rows[ord]
-        .self$sheet_data$cols <- sheet_data$cols[ord]
-        .self$sheet_data$t <- sheet_data$t[ord]
-        .self$sheet_data$v <- sheet_data$v[ord]
-        .self$sheet_data$f <- sheet_data$f[ord]
+      if (.self$sheet_data$data_count > 1) {
+        ord <- order(.self$sheet_data$rows, .self$sheet_data$cols, method = "radix", na.last = TRUE)
 
-        .self$sheet_data$style_id <- sheet_data$style_id[ord]
+        .self$sheet_data$rows <- .self$sheet_data$rows[ord]
+        .self$sheet_data$cols <- .self$sheet_data$cols[ord]
+        .self$sheet_data$t    <- .self$sheet_data$t[ord]
+        .self$sheet_data$v    <- .self$sheet_data$v[ord]
+        .self$sheet_data$f    <- .self$sheet_data$f[ord]
+
+        .self$sheet_data$style_id <- .self$sheet_data$style_id[ord]
 
         .self$sheet_data$data_count <- 1L
 
-        dm1 <- paste0(int_2_cell_ref(cols = sheet_data$cols[1]), sheet_data$rows[1])
-        dm2 <- paste0(int_2_cell_ref(cols = sheet_data$cols[sheet_data$n_elements]), sheet_data$rows[sheet_data$n_elements])
+        dm1 <- paste0(int_2_cell_ref(cols = .self$sheet_data$cols[1]), .self$sheet_data$rows[1])
+        dm2 <- paste0(int_2_cell_ref(cols = .self$sheet_data$cols[.self$sheet_data$n_elements]), .self$sheet_data$rows[.self$sheet_data$n_elements])
 
         if (length(dm1) == 1 & length(dm2) != 1) {
           if (!is.na(dm1) & !is.na(dm2) & dm1 != "NA" & dm2 != "NA") {
@@ -300,8 +290,7 @@ Worksheet <- setRefClass("Worksheet",
         }
       }
 
-
-      invisible(0)
+      invisible(.self)
     }
   )
 )

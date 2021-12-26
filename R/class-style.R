@@ -71,15 +71,15 @@ Style <- setRefClass(
 
     show = function(print = TRUE) {
       numFmtMapping <- list(
-        list("numFmtId" = 0),
-        list("numFmtId" = 2),
-        list("numFmtId" = 164),
-        list("numFmtId" = 44),
-        list("numFmtId" = 14),
-        list("numFmtId" = 167),
-        list("numFmtId" = 10),
-        list("numFmtId" = 11),
-        list("numFmtId" = 49)
+        list(numFmtId =   0),
+        list(numFmtId =   2),
+        list(numFmtId = 164),
+        list(numFmtId =  44),
+        list(numFmtId =  14),
+        list(numFmtId = 167),
+        list(numFmtId =  10),
+        list(numFmtId =  11),
+        list(numFmtId =  49)
       )
 
       validNumFmt <- c("GENERAL", "NUMBER", "CURRENCY", "ACCOUNTING", "DATE", "TIME", "PERCENTAGE", "SCIENTIFIC", "TEXT")
@@ -108,6 +108,7 @@ Style <- setRefClass(
       styleShow <- append(styleShow, sprintf("Font colour: %s \n", gsub("^FF", "#", fontColour[[1]]))) ## Font colour
 
       ## Font decoration
+      # TODO append() to c()
       if (length(fontDecoration) > 0) {
         styleShow <- append(styleShow, sprintf("Font decoration: %s \n", paste(fontDecoration, collapse = ", ")))
       }
@@ -162,34 +163,34 @@ Style <- setRefClass(
 
     as.list = function() {
       l <- list(
-        "fontId" = fontId,
-        "fontName" = fontName,
-        "fontColour" = fontColour,
-        "fontSize" = fontSize,
-        "fontFamily" = fontFamily,
-        "fontScheme" = fontScheme,
-        "fontDecoration" = fontDecoration,
+        fontId         = fontId,
+        fontName       = fontName,
+        fontColour     = fontColour,
+        fontSize       = fontSize,
+        fontFamily     = fontFamily,
+        fontScheme     = fontScheme,
+        fontDecoration = fontDecoration,
 
-        "borderTop" = borderTop,
-        "borderLeft" = borderLeft,
-        "borderRight" = borderRight,
-        "borderBottom" = borderBottom,
-        "borderTopColour" = borderTopColour,
-        "borderLeftColour" = borderLeftColour,
-        "borderRightColour" = borderRightColour,
-        "borderBottomColour" = borderBottomColour,
+        borderTop          = borderTop,
+        borderLeft         = borderLeft,
+        borderRight        = borderRight,
+        borderBottom       = borderBottom,
+        borderTopColour    = borderTopColour,
+        borderLeftColour   = borderLeftColour,
+        borderRightColour  = borderRightColour,
+        borderBottomColour = borderBottomColour,
 
-        "halign" = halign,
-        "valign" = valign,
-        "indent" = indent,
-        "textRotation" = textRotation,
-        "numFmt" = numFmt,
-        "fillFg" = fill$fillFg,
-        "fillBg" = fill$fillBg,
-        "wrapText" = wrapText,
-        "locked" = locked,
-        "hidden" = hidden,
-        "xfId" = xfId
+        halign       = halign,
+        valign       = valign,
+        indent       = indent,
+        textRotation = textRotation,
+        numFmt       = numFmt,
+        fillFg       = fill$fillFg,
+        fillBg       = fill$fillBg,
+        wrapText     = wrapText,
+        locked       = locked,
+        hidden       = hidden,
+        xfId         = xfId
       )
 
       l[sapply(l, length) > 0]
@@ -199,6 +200,8 @@ Style <- setRefClass(
 
 
 mergeStyle <- function(oldStyle, newStyle) {
+  assert_style(oldStyle)
+  assert_style(newStyle)
 
   ## This function is used to merge an existing cell style with a new style to create a stacked style.
   oldStyle <- oldStyle$copy()
@@ -455,19 +458,25 @@ new_style <- function() {
 #'
 #' # supply all colours
 #' createStyle(border = "TopBottomLeft", borderColour = c("red", "yellow", "green"))
-createStyle <- function(fontName = NULL,
+createStyle <- function(
+  fontName = NULL,
   fontSize = NULL,
   fontColour = NULL,
   numFmt = "GENERAL",
   border = NULL,
   borderColour = getOption("openxlsx.borderColour", "black"),
   borderStyle = getOption("openxlsx.borderStyle", "thin"),
-  bgFill = NULL, fgFill = NULL,
-  halign = NULL, valign = NULL,
-  textDecoration = NULL, wrapText = FALSE,
+  bgFill = NULL,
+  fgFill = NULL,
+  halign = NULL,
+  valign = NULL,
+  textDecoration = NULL,
+  wrapText = FALSE,
   textRotation = NULL,
   indent = NULL,
-  locked = NULL, hidden = NULL) {
+  locked = NULL,
+  hidden = NULL
+) {
 
   ### Error checking
   od <- getOption("OutDec")

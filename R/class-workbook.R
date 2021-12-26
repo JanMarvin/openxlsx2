@@ -139,6 +139,8 @@ Workbook <- setRefClass("Workbook",
 
       .self$worksheets <- list()
       .self$worksheets_rels <- list()
+
+      invisible(.self)
     },
 
 
@@ -5012,8 +5014,8 @@ Workbook <- setRefClass("Workbook",
           v[is.na(v)] <- as.character(na.string)
         }
       } else {
-        t[is.na(v)] <- as.character(NA)
-        v[is.na(v)] <- as.character(NA)
+        t[is.na(v)] <- NA_character_
+        v[is.na(v)] <- NA_character_
       }
 
       ## If any NaN values
