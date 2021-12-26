@@ -264,7 +264,8 @@ Worksheet <- setRefClass("Worksheet",
     },
 
     order_sheetdata = function() {
-        return(invisible(0))
+      if (.self$sheet_data$n_elements == 0) {
+        return(invisible(.self))
       }
 
       if (.self$sheet_data$data_count > 1) {
