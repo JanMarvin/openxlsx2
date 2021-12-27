@@ -1,6 +1,7 @@
 
 
-ChartSheet <- setRefClass("ChartSheet",
+ChartSheet <- setRefClass(
+  "ChartSheet",
   fields = c(
     "sheetPr" = "character",
     "sheetViews" = "character",

@@ -1,6 +1,7 @@
 
 
-SheetData <- setRefClass("SheetData",
+SheetData <- setRefClass(
+  "SheetData",
   fields = c(
     "rows" = "integer",
     "cols" = "integer",

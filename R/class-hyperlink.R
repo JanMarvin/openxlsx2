@@ -1,5 +1,6 @@
 
-Hyperlink <- setRefClass("Hyperlink",
+Hyperlink <- setRefClass(
+  "Hyperlink",
   fields = c(
     "ref",
     "target",

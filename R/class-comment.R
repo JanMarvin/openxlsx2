@@ -1,5 +1,6 @@
 
-Comment <- setRefClass("Comment",
+Comment <- setRefClass(
+  "Comment",
   fields = c(
     "text",
     "author",
