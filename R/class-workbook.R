@@ -208,7 +208,7 @@ Workbook <- setRefClass("Workbook",
       .self$worksheets <-
         append(
           worksheets,
-          WorkSheet$new(
+          Worksheet$new(
             showGridLines = showGridLines,
             tabSelected = newSheetIndex == 1,
             tabColour = tabColour,
