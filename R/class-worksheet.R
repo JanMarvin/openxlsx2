@@ -66,15 +66,6 @@ Worksheet <- setRefClass(
         zoom <- 400
       }
 
-      naToNULLList <- function(x) {
-        lapply(x, function(x) {
-          if (is.na(x)) {
-            return(NULL)
-          }
-          x
-        })
-      }
-
       hf <- list(
         oddHeader = naToNULLList(oddHeader),
         oddFooter = naToNULLList(oddFooter),

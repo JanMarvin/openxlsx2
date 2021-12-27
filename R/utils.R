@@ -9,3 +9,7 @@ is_integer_ish <- function(x) {
 
   all(x[!is.na(x)] %% 1 == 0)
 }
+
+naToNULLList <- function(x) {
+  lapply(x, function(i) if (is.na(i)) NULL else i)
+}

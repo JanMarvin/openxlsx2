@@ -1372,15 +1372,6 @@ setHeaderFooter <- function(wb, sheet,
   firstHeader <- headerFooterSub(firstHeader)
   firstFooter <- headerFooterSub(firstFooter)
 
-  naToNULLList <- function(x) {
-    lapply(x, function(x) {
-      if (is.na(x)) {
-        return(NULL)
-      }
-      x
-    })
-  }
-
   hf <- list(
     oddHeader = naToNULLList(oddHeader),
     oddFooter = naToNULLList(oddFooter),
