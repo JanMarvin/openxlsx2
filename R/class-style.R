@@ -687,3 +687,7 @@ createStyle <- function(fontName = NULL,
 
   return(style)
 }
+
+new_style <- function() {
+  Style$new()
+}

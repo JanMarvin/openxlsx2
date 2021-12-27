@@ -60,3 +60,7 @@ ChartSheet <- setRefClass("ChartSheet",
     }
   )
 )
+
+new_chart_sheet <- function() {
+  ChartSheet$new()
+}

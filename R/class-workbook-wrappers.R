@@ -1,4 +1,8 @@
 
+new_workbook <- function() {
+  Workbook$new()
+}
+
 #' @name createWorkbook
 #' @title Create a new Workbook object
 #' @description Create a new Workbook object

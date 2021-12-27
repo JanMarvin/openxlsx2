@@ -103,3 +103,7 @@ xml_to_hyperlink <- function(xml) {
 
   return(hyperlink_objects)
 }
+
+new_hyperlink <- function() {
+  Hyperlink$new(ref = character(), target = character(), location = character())
+}

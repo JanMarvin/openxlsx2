@@ -306,3 +306,8 @@ Worksheet <- setRefClass(
     }
   )
 )
+
+new_worksheet <- function() {
+  Worksheet$new()
+}
+
