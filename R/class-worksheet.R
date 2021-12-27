@@ -7,7 +7,7 @@ Worksheet <- setRefClass(
     "sheetViews" = "character",
     "sheetFormatPr" = "character",
 
-    "sheet_data" = "Sheet_Data",
+    "sheet_data" = "SheetData",
     "rows_attr" = "ANY",
     "cols_attr" = "ANY",
     "cols" = "ANY",
@@ -115,7 +115,7 @@ Worksheet <- setRefClass(
 
       .self$freezePane <- character(0)
 
-      .self$sheet_data <- Sheet_Data$new()
+      .self$sheet_data <- SheetData$new()
     },
 
     get_prior_sheet_data = function() {
