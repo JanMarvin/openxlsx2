@@ -1251,6 +1251,7 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
 #' modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
 #' getBaseFont(wb)
+# TODO change to wb_get_base_font() ?
 getBaseFont <- function(wb) {
   # TODO all of these class checks need to be cleaned up
   assert_workbook(wb)

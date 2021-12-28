@@ -112,8 +112,8 @@ Worksheet <- setRefClass(
     get_prior_sheet_data = function() {
       xml <- '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">'
 
-      if (length(sheetPr) > 0) {
-        tmp <- sheetPr
+      if (length(.self$sheetPr) > 0) {
+        tmp <- .self$sheetPr
         if (!any(grepl("<sheetPr>", tmp, fixed = TRUE))) {
           tmp <- paste0("<sheetPr>", paste(tmp, collapse = ""), "</sheetPr>")
         }
@@ -121,25 +121,25 @@ Worksheet <- setRefClass(
         xml <- paste(xml, tmp, collapse = "")
       }
 
-      if (length(dimension) > 0) {
-        xml <- paste(xml, dimension, collapse = "")
+      if (length(.self$dimension) > 0) {
+        xml <- paste(xml, .self$dimension, collapse = "")
       }
 
       ## sheetViews handled here
-      if (length(freezePane) > 0) {
-        xml <- paste(xml, gsub("/></sheetViews>", paste0(">", freezePane, "</sheetView></sheetViews>"), sheetViews, fixed = TRUE), collapse = "")
-      } else if (length(sheetViews) > 0) {
-        xml <- paste(xml, sheetViews, collapse = "")
+      if (length(.self$freezePane) > 0) {
+        xml <- paste(xml, gsub("/></sheetViews>", paste0(">", .self$freezePane, "</sheetView></sheetViews>"), .self$sheetViews, fixed = TRUE), collapse = "")
+      } else if (length(.self$sheetViews) > 0) {
+        xml <- paste(xml, .self$sheetViews, collapse = "")
       }
 
-      if (length(sheetFormatPr) > 0) {
-        xml <- paste(xml, sheetFormatPr, collapse = "")
+      if (length(.self$sheetFormatPr) > 0) {
+        xml <- paste(xml, .self$sheetFormatPr, collapse = "")
       }
 
       # TODO write function for new cols_attr
-      if (length(cols_attr) > 0) {
+      if (length(.self$cols_attr) > 0) {
         # xml <- paste0(xml, paste(c("<cols>", setXMLcols(cols_attr), "</cols>"), collapse = ""))
-        xml <- paste0(xml, paste(c("<cols>", cols_attr, "</cols>"), collapse = ""))
+        xml <- paste0(xml, paste(c("<cols>", .self$cols_attr, "</cols>"), collapse = ""))
       }
 
 
@@ -147,30 +147,31 @@ Worksheet <- setRefClass(
     },
 
     get_post_sheet_data = function() {
+      # TODO use paste_c()
       xml <- ""
 
-      if (length(sheetProtection) > 0) {
-        xml <- paste0(xml, sheetProtection, collapse = "")
+      if (length(.self$sheetProtection) > 0) {
+        xml <- paste0(xml, .self$sheetProtection, collapse = "")
       }
 
-      if (length(autoFilter) > 0) {
-        xml <- paste0(xml, autoFilter, collapse = "")
+      if (length(.self$autoFilter) > 0) {
+        xml <- paste0(xml, .self$autoFilter, collapse = "")
       }
 
-      if (length(mergeCells) > 0) {
-        xml <- paste0(xml, paste0(sprintf('<mergeCells count="%s">', length(mergeCells)), pxml(mergeCells), "</mergeCells>"), collapse = "")
+      if (length(.self$mergeCells) > 0) {
+        xml <- paste0(xml, paste0(sprintf('<mergeCells count="%s">', length(.self$mergeCells)), pxml(.self$mergeCells), "</mergeCells>"), collapse = "")
       }
 
 
 
-      if (length(conditionalFormatting) > 0) {
-        nms <- names(conditionalFormatting)
+      if (length(.self$conditionalFormatting) > 0) {
+        nms <- names(.self$conditionalFormatting)
         xml <- paste0(xml,
           paste(
             sapply(unique(nms), function(x) {
               paste0(
                 sprintf('<conditionalFormatting sqref="%s">', x),
-                pxml(conditionalFormatting[nms == x]),
+                pxml(.self$conditionalFormatting[nms == x]),
                 "</conditionalFormatting>"
               )
             }),
@@ -181,74 +182,76 @@ Worksheet <- setRefClass(
       }
 
 
-      if (length(dataValidations) > 0) {
-        xml <- paste0(xml, paste0(sprintf('<dataValidations count="%s">', length(dataValidations)), pxml(dataValidations), "</dataValidations>"))
+      if (length(.self$dataValidations) > 0) {
+        xml <- paste0(xml, paste0(sprintf('<dataValidations count="%s">', length(.self$dataValidations)), pxml(.self$dataValidations), "</dataValidations>"))
       }
 
 
 
-      if (length(hyperlinks) > 0) {
-        h_inds <- paste0(1:length(hyperlinks), "h")
-        xml <- paste(xml, paste("<hyperlinks>", paste(sapply(1:length(h_inds), function(i) hyperlinks[[i]]$to_xml(h_inds[i])), collapse = ""), "</hyperlinks>"), collapse = "")
+      if (length(.self$hyperlinks) > 0) {
+        # TODO use seq_along?  seq_len?
+        h_inds <- paste0(1:length(.self$hyperlinks), "h")
+        xml <- paste(xml, paste("<hyperlinks>", paste(sapply(1:length(h_inds), function(i) .self$hyperlinks[[i]]$to_xml(h_inds[i])), collapse = ""), "</hyperlinks>"), collapse = "")
       }
 
 
-      if (length(pageMargins) > 0) {
-        xml <- paste0(xml, pageMargins, collapse = "")
+      if (length(.self$pageMargins) > 0) {
+        xml <- paste0(xml, .self$pageMargins, collapse = "")
       }
 
-      if (length(pageSetup) > 0) {
-        xml <- paste0(xml, pageSetup, collapse = "")
+      if (length(.self$pageSetup) > 0) {
+        xml <- paste0(xml, .self$pageSetup, collapse = "")
       }
 
-      if (length(headerFooter) > 0) {
-        xml <- paste0(xml, genHeaderFooterNode(headerFooter), collapse = "")
+      if (length(.self$headerFooter) > 0) {
+        xml <- paste0(xml, genHeaderFooterNode(.self$headerFooter), collapse = "")
       }
 
 
       ## rowBreaks and colBreaks
-      if (length(rowBreaks) > 0) {
+      if (length(.self$rowBreaks) > 0) {
+        # TODO just save length as n object
         xml <- paste0(xml,
-          paste0(sprintf('<rowBreaks count="%s" manualBreakCount="%s">', length(rowBreaks), length(rowBreaks)), paste(rowBreaks, collapse = ""), "</rowBreaks>"),
+          paste0(sprintf('<rowBreaks count="%s" manualBreakCount="%s">', length(.self$rowBreaks), length(.self$rowBreaks)), paste(.self$rowBreaks, collapse = ""), "</rowBreaks>"),
           collapse = ""
         )
       }
 
 
-      if (length(colBreaks) > 0) {
+      if (length(.self$colBreaks) > 0) {
         xml <- paste0(xml,
-          paste0(sprintf('<colBreaks count="%s" manualBreakCount="%s">', length(colBreaks), length(colBreaks)), paste(colBreaks, collapse = ""), "</colBreaks>"),
+          paste0(sprintf('<colBreaks count="%s" manualBreakCount="%s">', length(.self$colBreaks), length(.self$colBreaks)), paste(.self$colBreaks, collapse = ""), "</colBreaks>"),
           collapse = ""
         )
       }
 
-      if (length(drawing) > 0) {
-        xml <- paste0(xml, drawing, collapse = "")
+      if (length(.self$drawing) > 0) {
+        xml <- paste0(xml, .self$drawing, collapse = "")
       }
 
-      if (length(legacyDrawing) > 0) {
-        xml <- paste0(xml, legacyDrawing, collapse = "")
+      if (length(.self$legacyDrawing) > 0) {
+        xml <- paste0(xml, .self$legacyDrawing, collapse = "")
       }
 
-      if (length(legacyDrawingHF) > 0) {
-        xml <- paste0(xml, legacyDrawingHF, collapse = "")
+      if (length(.self$legacyDrawingHF) > 0) {
+        xml <- paste0(xml, .self$legacyDrawingHF, collapse = "")
       }
 
-      if (length(oleObjects) > 0) {
-        xml <- paste0(xml, oleObjects, collapse = "")
+      if (length(.self$oleObjects) > 0) {
+        xml <- paste0(xml, .self$oleObjects, collapse = "")
       }
 
-      if (length(tableParts) > 0) {
+      if (length(.self$tableParts) > 0) {
         xml <- paste0(xml,
-          paste0(sprintf('<tableParts count="%s">', length(tableParts)), pxml(tableParts), "</tableParts>"),
+          paste0(sprintf('<tableParts count="%s">', length(.self$tableParts)), pxml(.self$tableParts), "</tableParts>"),
           collapse = ""
         )
       }
 
 
-      if (length(dataValidationsLst) > 0) {
+      if (length(.self$dataValidationsLst) > 0) {
         dataValidationsLst_xml <- paste0(sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%s" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', length(dataValidationsLst)),
-          paste0(pxml(dataValidationsLst), "</x14:dataValidations></ext>"),
+          paste0(pxml(.self$dataValidationsLst), "</x14:dataValidations></ext>"),
           collapse = ""
         )
       } else {
@@ -256,8 +259,8 @@ Worksheet <- setRefClass(
       }
 
 
-      if (length(extLst) > 0 || length(dataValidationsLst) > 0) {
-        xml <- paste0(xml, sprintf("<extLst>%s</extLst>", paste0(pxml(extLst), dataValidationsLst_xml)))
+      if (length(.self$extLst) > 0 || length(.self$dataValidationsLst) > 0) {
+        xml <- paste0(xml, sprintf("<extLst>%s</extLst>", paste0(pxml(.self$extLst), dataValidationsLst_xml)))
       }
 
       xml <- paste0(xml, "</worksheet>")
@@ -266,24 +269,24 @@ Worksheet <- setRefClass(
     },
 
     order_sheetdata = function() {
-      if (sheet_data$n_elements == 0) {
-        return(invisible(0))
+      if (.self$sheet_data$n_elements == 0) {
+        return(invisible(.self))
       }
 
-      if (sheet_data$data_count > 1) {
-        ord <- order(sheet_data$rows, sheet_data$cols, method = "radix", na.last = TRUE)
-        .self$sheet_data$rows <- sheet_data$rows[ord]
-        .self$sheet_data$cols <- sheet_data$cols[ord]
-        .self$sheet_data$t <- sheet_data$t[ord]
-        .self$sheet_data$v <- sheet_data$v[ord]
-        .self$sheet_data$f <- sheet_data$f[ord]
+      if (.self$sheet_data$data_count > 1) {
+        ord <- order(.self$sheet_data$rows, .self$sheet_data$cols, method = "radix", na.last = TRUE)
+        .self$sheet_data$rows <- .self$sheet_data$rows[ord]
+        .self$sheet_data$cols <- .self$sheet_data$cols[ord]
+        .self$sheet_data$t <- .self$sheet_data$t[ord]
+        .self$sheet_data$v <- .self$sheet_data$v[ord]
+        .self$sheet_data$f <- .self$sheet_data$f[ord]
 
-        .self$sheet_data$style_id <- sheet_data$style_id[ord]
+        .self$sheet_data$style_id <- .self$sheet_data$style_id[ord]
 
         .self$sheet_data$data_count <- 1L
 
-        dm1 <- paste0(int_2_cell_ref(cols = sheet_data$cols[1]), sheet_data$rows[1])
-        dm2 <- paste0(int_2_cell_ref(cols = sheet_data$cols[sheet_data$n_elements]), sheet_data$rows[sheet_data$n_elements])
+        dm1 <- paste0(int_2_cell_ref(cols = .self$sheet_data$cols[1]), .self$sheet_data$rows[1])
+        dm2 <- paste0(int_2_cell_ref(cols = .self$sheet_data$cols[.self$sheet_data$n_elements]), .self$sheet_data$rows[sheet_data$n_elements])
 
         if (length(dm1) == 1 & length(dm2) != 1) {
           if (!is.na(dm1) & !is.na(dm2) & dm1 != "NA" & dm2 != "NA") {

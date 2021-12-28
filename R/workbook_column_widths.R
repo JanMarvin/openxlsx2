@@ -1,6 +1,8 @@
 
+# TODO rename file or move somewhere else?
 
 get_style_max_char_width <- function(thisStyle) {
+  # TODO assert_class() style
   fN <- unlist(thisStyle$fontName, use.names = FALSE)
   if (is.null(fN)) {
     fN <- "calibri"

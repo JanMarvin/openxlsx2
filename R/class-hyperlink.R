@@ -21,11 +21,12 @@ Hyperlink <- setRefClass(
     },
 
     to_xml = function(id) {
-      loc <- sprintf('location="%s"', location)
-      disp <- sprintf('display="%s"', display)
-      rf <- sprintf('ref="%s"', ref)
+      loc <- sprintf('location="%s"', .self$location)
+      disp <- sprintf('display="%s"', .self$display)
+      rf <- sprintf('ref="%s"', .self$ref)
 
-      if (is_external) {
+      # TODO simplify
+      if (.self$is_external) {
         rid <- sprintf('r:id="rId%s"', id)
       } else {
         rid <- NULL
@@ -35,8 +36,8 @@ Hyperlink <- setRefClass(
     },
 
     to_target_xml = function(id) {
-      if (is_external) {
-        return(sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, target))
+      if (.self$is_external) {
+        return(sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, .self$target))
       } else {
         return(NULL)
       }

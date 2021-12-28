@@ -2,16 +2,17 @@
 Comment <- setRefClass(
   "Comment",
   fields = c(
-    "text",
-    "author",
-    "style",
-    "visible",
-    "width",
-    "height"
+    "text" = "character",
+    "author" = "character",
+    "style" = "ANY", # Not defined yet, should be Style.
+    "visible" = "logical",
+    "width" = "numeric",
+    "height" = "numeric"
   ),
 
   methods = list(
     initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
+      # TODO this needs the validations that the comment wrappers have
       .self$text <- text
       .self$author <- author
       .self$style <- style
@@ -20,6 +21,7 @@ Comment <- setRefClass(
       .self$height <- height
       invisible(.self)
     },
+    # TODO R6 show() to print()
     show = function() {
       showText <- sprintf("Author: %s\n", author)
       showText <- c(showText, sprintf("Text:\n %s\n\n", paste(text, collapse = "")))
@@ -95,6 +97,9 @@ createComment <- function(comment,
   width = 2,
   height = 4) {
 
+  # TODO move this to Comment$new(); this could then be replaced with
+  # new_comment()
+
   assert_class(author, "character")
   assert_class(comment, "character")
   assert_class(width, "numeric")
@@ -104,6 +109,7 @@ createComment <- function(comment,
   width <- round(width)
   height <- round(height)
 
+  # is n even used?
   n <- length(comment)
   author <- author[1]
   visible <- visible[1]
@@ -152,6 +158,7 @@ createComment <- function(comment,
 #' saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
 #' }
 writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
+  # TODO add as method: Workbook$addComment(); add param for replace?
   assert_workbook(wb)
   assert_comment(comment)
 
@@ -207,6 +214,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 #' @seealso \code{\link{createComment}}
 #' @seealso \code{\link{writeComment}}
 removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
+  # TODO add as method; Workbook$removeComment()
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)

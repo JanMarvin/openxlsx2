@@ -19,6 +19,7 @@ SheetData <- setRefClass(
   ),
 
   methods = list(
+    # TODO should SheetData$new() have params?
     initialize = function() {
       .self$rows <- integer(0)
       .self$cols <- integer(0)
@@ -72,7 +73,6 @@ SheetData <- setRefClass(
 
     write = function(rows_in, cols_in, t_in, v_in, f_in, any_functions = TRUE) {
       if (length(rows_in) == 0 | length(cols_in) == 0) {
-        return(invisible(0))
         return(invisible(.self))
       }
 
@@ -96,27 +96,28 @@ SheetData <- setRefClass(
         }
       }
 
+      # TODO change inds to ! x %in% y; don't need length() check
       inds <- integer(0)
       if (possible_overlap) {
         inds <- which(paste(rows, cols, sep = ",") %in% paste(rows_in, cols_in, sep = ","))
       }
 
       if (length(inds) > 0) {
-        .self$rows <- c(rows[-inds], rows_in)
-        .self$cols <- c(cols[-inds], cols_in)
-        .self$t <- c(t[-inds], t_in)
-        .self$v <- c(v[-inds], v_in)
-        .self$f <- c(f[-inds], f_in)
+        .self$rows <- c(.self$rows[-inds], rows_in)
+        .self$cols <- c(.self$cols[-inds], cols_in)
+        .self$t <- c(.self$t[-inds], t_in)
+        .self$v <- c(.self$v[-inds], v_in)
+        .self$f <- c(.self$f[-inds], f_in)
       } else {
-        .self$rows <- c(rows, rows_in)
-        .self$cols <- c(cols, cols_in)
-        .self$t <- c(t, t_in)
-        .self$v <- c(v, v_in)
-        .self$f <- c(f, f_in)
+        .self$rows <- c(.self$rows, rows_in)
+        .self$cols <- c(.self$cols, cols_in)
+        .self$t <- c(.self$t, t_in)
+        .self$v <- c(.self$v, v_in)
+        .self$f <- c(.self$f, f_in)
       }
 
       .self$n_elements <- as.integer(length(rows))
-      .self$data_count <- data_count + 1L
+      .self$data_count <- .self$data_count + 1L
       invisible(.self)
     }
   )
