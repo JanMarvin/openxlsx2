@@ -80,7 +80,13 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
 #' \dontrun{
 #' saveWorkbook(wb, file = "saveWorkbookExample.xlsx", overwrite = TRUE)
 #' }
-saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = FALSE) {
+saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = NULL) {
+  if (!is.null(returnValue)) {
+    .Deprecated(msg = "returnValue in saveWorkbook() is deprecated'")
+  }
+
+  # TODO set options in saveWorkbook
+
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
@@ -90,36 +96,13 @@ saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = FALSE) {
   options("scipen" = 10000)
   on.exit(options("scipen" = sci_pen), add = TRUE)
 
-  assert_workbook(wb)
+  # TODO move this to separate function
+  wb_save_workbook(wb = wb, path = file, overwrite = overwrite)
+}
 
-  if (!is.logical(overwrite)) {
-    overwrite <- FALSE
-  }
-
-  if (!is.logical(returnValue)) {
-    returnValue <- FALSE
-  }
-
-  if (file.exists(file) & !overwrite) {
-    stop("File already exists!")
-  }
-
-  xlsx_file <- wb$saveWorkbook()
-
-  result<-tryCatch(file.copy(from = xlsx_file, to = file, overwrite = overwrite),
-    error = function(e) e, warning = function(w) w)
-
-
-
-
-  ## delete temporary dir
-  unlink(dirname(xlsx_file), force = TRUE, recursive = TRUE)
-  if(returnValue == FALSE){
-    invisible(1)
-  }else{
-    return(result)
-  }
-
+# TODO export wb_save_workbook rather than saveWorkbook
+wb_save_workbook <- function(wb, path, overwrite = FALSE) {
+  wb$copy()$saveWorkbook(path = path, overwrite = overwrite)$path
 }
 
 

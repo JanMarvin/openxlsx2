@@ -56,7 +56,10 @@ Workbook <- setRefClass(
     "workbook.xml.rels" = "ANY",
     "worksheets" = "ANY",
     "worksheets_rels" = "ANY",
-    "sheetOrder" = "integer"
+    "sheetOrder" = "integer",
+
+    # allows path to be set during initiation or later
+    "path" = "character"
   ),
 
   methods = list(
@@ -140,6 +143,10 @@ Workbook <- setRefClass(
 
       .self$worksheets <- list()
       .self$worksheets_rels <- list()
+
+      if (!is.null(path)) {
+        .self$path <- path
+      }
 
       invisible(.self)
     },
@@ -636,9 +643,17 @@ Workbook <- setRefClass(
     # TODO saveWorkbook can be shortened a lot by some formatting and by using a
     # function that creates all the temporary directories and subdirectries as a
     # named list
-    saveWorkbook = function() {
+    saveWorkbook = function(path = .self$path, overwrite = TRUE) {
+      assert_class(path, "character")
+      assert_class(overwrite, "logical")
+
+      if (file.exists(path) & !overwrite) {
+        stop("File already exists!")
+      }
+
       ## temp directory to save XML files prior to compressing
       tmpDir <- file.path(tempfile(pattern = "workbookTemp_"))
+      on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 
       if (file.exists(tmpDir)) {
         unlink(tmpDir, recursive = TRUE, force = TRUE)
@@ -1167,24 +1182,24 @@ Workbook <- setRefClass(
         .self$workbook$sheets[order(.self$sheetOrder)] ## Need to reset sheet order to allow multiple savings
 
       ## compress to xlsx
-      wd <- getwd()
-      tmpFile <-
-        basename(tempfile(fileext = ifelse(is.null(.self$vbaProject), ".xlsx", ".xlsm")))
-      on.exit(expr = setwd(wd), add = TRUE)
+
+      tmpFile <- tempfile(
+        tmpdir = tmpDir,
+        # TODO make .self$vbaProject be TRUE/FALSE
+        fileext = if (isTRUE(.self$vbaProject)) ".xlsm" else ".xlsx"
+      )
 
       ## zip it
-      setwd(dir = tmpDir)
-      cl <-
-        ifelse(
-          !is.null(getOption("openxlsx.compresssionLevel")),
-          getOption("openxlsx.compresssionLevel"),
-          getOption("openxlsx.compresssionevel", 6)
-        )
-      zipr(
-        zipfile = tmpFile, include_directories = FALSE,
-        files = list.files(path = tmpDir, all.files = FALSE),
+      zip::zip(
+        zipfile = tmpFile,
+        files = list.files(tmpDir, full.names = FALSE),
         recurse = TRUE,
-        compression_level = cl
+        compression_level = getOption("openxlsx.compresssionevel", 6),
+        include_directories = FALSE,
+        # change the working directory for this
+        root = tmpDir,
+        # change default to match historical zipr
+        mode = "cherry-pick"
       )
 
       # reset styles - maintain any changes to base font
@@ -1198,10 +1213,14 @@ Workbook <- setRefClass(
       .self$styles$fonts[[1]] <- baseFont
 
 
-      # TODO consider if Workbook$saveWorkbook() should return invisible(.self)
-      # or the file path.  The file path can always be grabbed afterwards, in a
-      # wrapper:  Workbook$doStuf()$saveWorkbook()$filePath()
-      return(file.path(tmpDir, tmpFile))
+      # Copy file; stop if filed
+      if (!file.copy(from = tmpFile, to = path, overwrite = overwrite)) {
+        stop("Failed to save workbook")
+      }
+
+      # (re)assign file path (if successful)
+      .self$path <- path
+      invisible(.self)
     },
 
     updateSharedStrings = function(uNewStr) {
