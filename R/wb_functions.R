@@ -867,3 +867,55 @@ get_styles <- function(styleObjects, wb) {
 
   z
 }
+
+#' clone sheets style
+#'
+#' @param wb workbook
+#' @param from_sheet sheet we select the style from
+#' @param to_sheet sheet we apply the style from
+#' @export
+cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
+
+  # check if sheets exist in wb
+  id_org <- wb$validateSheet(from_sheet)
+  id_new <- wb$validateSheet(to_sheet)
+
+  org_style <- wb$worksheets[[id_org]]$sheet_data$cc
+  new_style <- wb$worksheets[[id_new]]$sheet_data$cc
+
+  # remove all values
+  org_style <- org_style[c("row_r", "c_r", "c_s")]
+
+  merged_style <- merge(org_style, new_style, all = TRUE)
+  merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
+
+  wb$worksheets[[id_new]]$sheet_data$cc <- merged_style
+}
+
+#' clean sheet (remove all values)
+#'
+#' @param wb workbook
+#' @param sheet sheet to clean
+#' @param numbers remove all numbers
+#' @param characters remove all characters
+#' @param styles remove all styles
+#' @export
+cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE) {
+
+  sheet_id <- wb$validateSheet(sheet)
+
+  cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
+
+  if (numbers)
+    cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
+       c("v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
+
+  if (characters)
+    cc[cc$c_t %in% c("inlineStr", "s"),
+       c("v", "f", "f_t", "f_ref", "f_si", "is")] <- ""
+
+  if (styles)
+    cc[c("c_s")] <- "_openxlsx_NA_"
+
+  wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
+}
