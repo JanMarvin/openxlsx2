@@ -293,7 +293,7 @@ Worksheet <- setRefClass(
       }
 
 
-      invisible(0)
+      invisible(.self)
     }
   )
 )

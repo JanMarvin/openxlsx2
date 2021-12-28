@@ -140,6 +140,8 @@ Workbook <- setRefClass(
 
       .self$worksheets <- list()
       .self$worksheets_rels <- list()
+
+      invisible(.self)
     },
 
 
@@ -285,7 +287,9 @@ Workbook <- setRefClass(
       .self$sheetOrder <- c(sheetOrder, as.integer(newSheetIndex))
       .self$sheet_names <- c(sheet_names, sheetName)
 
-      invisible(newSheetIndex)
+      # Jordan is a little worried this may change something
+      # invisible(newSheetIndex)
+      invisible(.self)
     },
 
     cloneWorksheet = function(sheetName, clonedSheet) {
@@ -530,7 +534,8 @@ Workbook <- setRefClass(
       #   - Comments
       #   - Pivot tables
 
-      invisible(newSheetIndex)
+      # invisible(newSheetIndex)
+      invisible(.self)
     },
 
     addChartSheet = function(sheetName,
@@ -622,7 +627,8 @@ Workbook <- setRefClass(
 
       .self$sheetOrder <- c(sheetOrder, newSheetIndex)
 
-      invisible(newSheetIndex)
+      # invisible(newSheetIndex)
+      invisible(.self)
     },
 
     saveWorkbook = function() {
@@ -1185,6 +1191,7 @@ Workbook <- setRefClass(
       .self$sharedStrings <- append(sharedStrings, uStr)
 
       attr(.self$sharedStrings, "uniqueCount") <- uCount + length(uStr)
+      invisible(.self)
     },
 
     validateSheet = function(sheetName) {
@@ -1312,6 +1319,8 @@ Workbook <- setRefClass(
           id
         )
       )
+
+      invisible(.self)
     },
 
     writeDrawingVML = function(dir) {
@@ -1671,6 +1680,8 @@ Workbook <- setRefClass(
           .self$styles$cellStyleXfs <- c(styles$cellStyleXfs, xfNode)
         }
       }
+
+      invisible(.self)
     },
 
     createFontNode = function(style) {
@@ -1983,6 +1994,8 @@ Workbook <- setRefClass(
           .self$workbook$definedNames[toChange] <- tmp
         }
       }
+
+      invisible(.self)
     },
 
     writeSheetDataXML = function(xldrawingsDir,
@@ -2170,7 +2183,7 @@ Workbook <- setRefClass(
         } ## end of isChartSheet[i]
       } ## end of loop through 1:nSheets
 
-      invisible(0)
+      invisible(.self)
     },
 
 
@@ -2191,6 +2204,7 @@ Workbook <- setRefClass(
         allRowHeights[order(as.integer(names(allRowHeights)))]
 
       .self$rowHeights[[sheet]] <- allRowHeights
+      invisible(.self)
     },
 
     groupColumns = function(sheet) {
@@ -2226,6 +2240,8 @@ Workbook <- setRefClass(
         names(colNodes) <- cols
         .self$worksheets[[sheet]]$cols <- append(worksheets[[sheet]]$cols, colNodes)
       }
+
+      invisible(.self)
     },
 
     groupRows = function(sheet, rows, hidden, levels) {
@@ -2256,6 +2272,8 @@ Workbook <- setRefClass(
       if (!grepl("outlineLevelRow", worksheets[[sheet]]$sheetFormatPr)) {
         .self$worksheets[[sheet]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', worksheets[[sheet]]$sheetFormatPr)
       }
+
+      invisible(.self)
     },
 
     deleteWorksheet = function(sheet) {
@@ -2431,7 +2449,7 @@ Workbook <- setRefClass(
           workbook$definedNames[!belongTo %in% sheetName]
       }
 
-      invisible(1)
+      invisible(.self)
     },
 
     addDXFS = function(style) {
@@ -2463,7 +2481,8 @@ Workbook <- setRefClass(
       dxfId <- length(styles$dxfs)
       .self$styles$dxfs <- c(styles$dxfs, dxf)
 
-      return(dxfId)
+      # return(dxfId)
+      invisible(.self)
     },
 
     dataValidation = function(sheet,
@@ -2542,7 +2561,7 @@ Workbook <- setRefClass(
           stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
         )
 
-      invisible(0)
+      invisible(.self)
     },
 
     dataValidation_list = function(sheet,
@@ -2582,7 +2601,7 @@ Workbook <- setRefClass(
       .self$worksheets[[sheet]]$dataValidationsLst <-
         c(worksheets[[sheet]]$dataValidationsLst, xmlData)
 
-      invisible(0)
+      invisible(.self)
     },
 
     conditionalFormatting = function(sheet,
@@ -2909,6 +2928,8 @@ Workbook <- setRefClass(
             )
           )
         )
+
+      invisible(.self)
     },
 
     removeCellMerge = function(sheet, startRow, endRow, startCol, endCol) {
@@ -2943,6 +2964,8 @@ Workbook <- setRefClass(
       ## Remove intersection
       .self$worksheets[[sheet]]$mergeCells <-
         worksheets[[sheet]]$mergeCells[!mergeIntersections]
+
+      invisible(.self)
     },
 
     freezePanes = function(sheet,
@@ -2965,7 +2988,8 @@ Workbook <- setRefClass(
       if (is.null(paneNode)) {
         if (firstActiveRow == 1 & firstActiveCol == 1) {
           ## nothing to do
-          return(NULL)
+          # return(NULL)
+          return(invisible(.self))
         }
 
         if (firstActiveRow > 1 & firstActiveCol == 1) {
@@ -3002,6 +3026,8 @@ Workbook <- setRefClass(
       }
 
       .self$worksheets[[sheet]]$freezePane <- paneNode
+
+      invisible(.self)
     },
 
     insertImage = function(sheet,
@@ -3090,6 +3116,8 @@ Workbook <- setRefClass(
 
       ## append to workbook drawing
       .self$drawings[[sheet]] <- c(drawings[[sheet]], drawingsXML)
+
+      invisible(.self)
     },
 
     preSaveCleanUp = function() {
@@ -3412,6 +3440,8 @@ Workbook <- setRefClass(
           invisible(.self$groupColumns(i))
         }
       }
+
+      invisible(.self)
     },
 
     addStyle = function(sheet, style, rows, cols, stack) {
@@ -3514,6 +3544,8 @@ Workbook <- setRefClass(
           cols = cols
         )))
       } ## End if(length(styleObjects) > 0) else if(stack) {}
+
+      invisible(.self)
     },
 
     createNamedRegion = function(ref1, ref2, name, sheet, localSheetId = NULL) {
@@ -3543,6 +3575,8 @@ Workbook <- setRefClass(
           )
         )
       }
+
+      invisible(.self)
     },
 
     validate_table_name = function(tableName) {
@@ -3637,7 +3671,7 @@ Workbook <- setRefClass(
         } ## end if(sheet %in% tableSheets)
       } ## end (length(tables) > 0)
 
-      invisible(0)
+      invisible(.self)
     },
 
     show = function() {
@@ -3844,7 +3878,7 @@ Workbook <- setRefClass(
 
       names(.self$worksheets[[sheet]]$conditionalFormatting) <- nms
 
-      invisible(0)
+      invisible(.self)
     },
 
     loadStyles = function(stylesXML) {
@@ -4138,6 +4172,8 @@ Workbook <- setRefClass(
       } else {
         .self$workbook$workbookProtection <- ""
       }
+
+      invisible(.self)
     },
 
     addCreator = function(Creator = NULL) {
@@ -4151,6 +4187,8 @@ Workbook <- setRefClass(
             replacement = stri_c(current_creator, Creator, sep = ";")
           )
       }
+
+      invisible(.self)
     },
 
     getCreators = function() {
@@ -4177,6 +4215,8 @@ Workbook <- setRefClass(
             replacement = LastModifiedBy
           )
       }
+
+      invisible(.self)
     },
 
     surroundingBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
@@ -4480,7 +4520,7 @@ Workbook <- setRefClass(
       } ## End of loop through columns
 
 
-      invisible(0)
+      invisible(.self)
     },
 
     rowBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
@@ -4553,7 +4593,7 @@ Workbook <- setRefClass(
       } ## End of loop through columns
 
 
-      invisible(0)
+      invisible(.self)
     },
 
     columnBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
@@ -4659,7 +4699,7 @@ Workbook <- setRefClass(
       } ## End of loop through columns
 
 
-      invisible(0)
+      invisible(.self)
     },
 
     allBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
@@ -4696,7 +4736,7 @@ Workbook <- setRefClass(
       } ## End of loop through columns
 
 
-      invisible(0)
+      invisible(.self)
     },
 
     setColWidths = function(sheet) {
@@ -4860,6 +4900,7 @@ Workbook <- setRefClass(
       #  worksheets[[sheet]]$cols <- append(worksheets[[sheet]]$cols, colNodes)
       #}
 
+      invisible(.self)
     },
 
     writeData = function(df, sheet, startRow, startCol, colNames, colClasses, hlinkNames, keepNA, na.string, list_sep) {
@@ -5117,7 +5158,7 @@ Workbook <- setRefClass(
 
 
 
-      invisible(0)
+      invisible(.self)
     }
   )
 

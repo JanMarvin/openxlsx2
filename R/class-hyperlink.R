@@ -16,6 +16,8 @@ Hyperlink <- setRefClass(
       .self$location <- location
       .self$display <- display
       .self$is_external <- is_external
+
+      invisible(.self)
     },
 
     to_xml = function(id) {

@@ -18,6 +18,7 @@ Comment <- setRefClass(
       .self$visible <- visible
       .self$width <- width
       .self$height <- height
+      invisible(.self)
     },
     show = function() {
       showText <- sprintf("Author: %s\n", author)
@@ -52,6 +53,7 @@ Comment <- setRefClass(
 
       showText <- paste0(paste(showText, collapse = ""), paste(styleShow, collapse = ""), collapse = "")
       cat(showText)
+      invisible(.self)
     }
   )
 )

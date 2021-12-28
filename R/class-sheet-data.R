@@ -31,6 +31,8 @@ SheetData <- setRefClass(
 
       .self$data_count <- 0L
       .self$n_elements <- 0L
+
+      invisible(.self)
     },
 
     delete = function(rows_in, cols_in, grid_expand) {
@@ -64,11 +66,14 @@ SheetData <- setRefClass(
           .self$data_count <- 0L
         }
       }
+
+      invisible(.self)
     },
 
     write = function(rows_in, cols_in, t_in, v_in, f_in, any_functions = TRUE) {
       if (length(rows_in) == 0 | length(cols_in) == 0) {
         return(invisible(0))
+        return(invisible(.self))
       }
 
 
@@ -112,6 +117,7 @@ SheetData <- setRefClass(
 
       .self$n_elements <- as.integer(length(rows))
       .self$data_count <- data_count + 1L
+      invisible(.self)
     }
   )
 )
