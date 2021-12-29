@@ -925,7 +925,6 @@ cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TR
     cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
        c("c_t", "v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
 
-
   if (characters)
     cc[cc$c_t %in% c("inlineStr", "s"),
        c("v", "f", "f_t", "f_ref", "f_si", "is")] <- ""
