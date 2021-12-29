@@ -227,7 +227,7 @@ wb_to_df <- function(xlsxFile,
   if (missing(sheet)) sheet <- 1
 
   if (is.character(sheet))
-    sheet <- which(wb$sheet_names %in% sheet)
+    sheet <- wb$validateSheet(sheet)
 
   # must be available
   if (missing(dims))
@@ -979,3 +979,4 @@ import_styles <- function(x) {
 
   z
 }
+
