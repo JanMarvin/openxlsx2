@@ -192,7 +192,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
     "clientData" = genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
   )
 
-  wb$comments[[sheet]] <- append(wb$comments[[sheet]], list(comment_list))
+  wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
 
   invisible(wb)
 }
