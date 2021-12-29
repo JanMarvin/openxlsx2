@@ -166,38 +166,38 @@ Style <- setRefClass(
     },
 
     as.list = function() {
-      l <- list(
-        "fontId" = fontId,
-        "fontName" = fontName,
-        "fontColour" = fontColour,
-        "fontSize" = fontSize,
-        "fontFamily" = fontFamily,
-        "fontScheme" = fontScheme,
-        "fontDecoration" = fontDecoration,
+      ls <- list(
+        fontId         = .self$fontId,
+        fontName       = .self$fontName,
+        fontColour     = .self$fontColour,
+        fontSize       = .self$fontSize,
+        fontFamily     = .self$fontFamily,
+        fontScheme     = .self$fontScheme,
+        fontDecoration = .self$fontDecoration,
 
-        "borderTop" = borderTop,
-        "borderLeft" = borderLeft,
-        "borderRight" = borderRight,
-        "borderBottom" = borderBottom,
-        "borderTopColour" = borderTopColour,
-        "borderLeftColour" = borderLeftColour,
-        "borderRightColour" = borderRightColour,
-        "borderBottomColour" = borderBottomColour,
+        borderTop          = .self$borderTop,
+        borderLeft         = .self$borderLeft,
+        borderRight        = .self$borderRight,
+        borderBottom       = .self$borderBottom,
+        borderTopColour    = .self$borderTopColour,
+        borderLeftColour   = .self$borderLeftColour,
+        borderRightColour  = .self$borderRightColour,
+        borderBottomColour = .self$borderBottomColour,
 
-        "halign" = halign,
-        "valign" = valign,
-        "indent" = indent,
-        "textRotation" = textRotation,
-        "numFmt" = numFmt,
-        "fillFg" = fill$fillFg,
-        "fillBg" = fill$fillBg,
-        "wrapText" = wrapText,
-        "locked" = locked,
-        "hidden" = hidden,
-        "xfId" = xfId
+        halign       = .self$halign,
+        valign       = .self$valign,
+        indent       = .self$indent,
+        textRotation = .self$textRotation,
+        numFmt       = .self$numFmt,
+        fillFg       = .self$fill$fillFg,
+        fillBg       = .self$fill$fillBg,
+        wrapText     = .self$wrapText,
+        locked       = .self$locked,
+        hidden       = .self$hidden,
+        xfId         = .self$xfId
       )
 
-      l[sapply(l, length) > 0]
+      ls[lengths(ls) > 0]
     }
   )
 )
