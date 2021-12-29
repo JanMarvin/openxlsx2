@@ -23,38 +23,35 @@ Comment <- setRefClass(
     },
     # TODO R6 show() to print()
     show = function() {
-      showText <- sprintf("Author: %s\n", author)
-      showText <- c(showText, sprintf("Text:\n %s\n\n", paste(text, collapse = "")))
-      styleShow <- "Style:\n"
+      showText <- c(
+        sprintf("Author: %s\n", .self$author),
+        sprintf("Text:\n %s\n\n", paste(.self$text, collapse = ""))
+      )
 
-      if (inherits(style, "list")) {
-        for (i in seq_along(style)) {
-          styleShow <- append(styleShow, sprintf("Font name: %s\n", style[[i]]$fontName[[1]])) ## Font name
-          styleShow <- append(styleShow, sprintf("Font size: %s\n", style[[i]]$fontSize[[1]])) ## Font size
-          styleShow <- append(styleShow, sprintf("Font colour: %s\n", gsub("^FF", "#", style[[i]]$fontColour[[1]]))) ## Font colour
 
-          ## Font decoration
-          if (length(style[[i]]$fontDecoration) > 0) {
-            styleShow <- append(styleShow, sprintf("Font decoration: %s\n", paste(style[[i]]$fontDecoration, collapse = ", ")))
-          }
-
-          styleShow <- append(styleShow, "\n\n")
-        }
-      } else {
-        styleShow <- append(styleShow, sprintf("Font name: %s \n", style$fontName[[1]])) ## Font name
-        styleShow <- append(styleShow, sprintf("Font size: %s \n", style$fontSize[[1]])) ## Font size
-        styleShow <- append(styleShow, sprintf("Font colour: %s \n", gsub("^FF", "#", style$fontColour[[1]]))) ## Font colour
-
-        ## Font decoration
-        if (length(style$fontDecoration) > 0) {
-          styleShow <- append(styleShow, sprintf("Font decoration: %s \n", paste(style$fontDecoration, collapse = ", ")))
-        }
-
-        styleShow <- append(styleShow, "\n\n")
+      # TODO style should probably always be a list?
+      s <- if (inherits(.self$style, "list")) {
+        .self$style
+      }  else  {
+        list(.self$style)
       }
 
-      showText <- paste0(paste(showText, collapse = ""), paste(styleShow, collapse = ""), collapse = "")
-      cat(showText)
+      styleShow <- "Style:\n"
+      for (i in seq_along(s)) {
+        styleShow <- c(
+          styleShow,
+          sprintf("Font name: %s\n", s[[i]]$fontName[[1]]), ## Font name
+          sprintf("Font size: %s\n", s[[i]]$fontSize[[1]]), ## Font size
+          sprintf("Font colour: %s\n", gsub("^FF", "#", s[[i]]$fontColour[[1]])), ## Font colour
+          ## Font decoration
+          if (length(s[[i]]$fontDecoration)) {
+            sprintf("Font decoration: %s\n", paste(s[[i]]$fontDecoration, collapse = ", "))
+          },
+          "\n\n"
+        )
+      }
+
+      cat(showText, styleShow, sep = "")
       invisible(.self)
     }
   )
@@ -239,6 +236,6 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
 }
 
-new_comment <- function() {
-  Comment$new(text = character(), author = character(), style = new_style())
+new_comment <- function(text = character(), author = character(), style = new_style()) {
+  Comment$new(text = text, author = author, style = style)
 }
