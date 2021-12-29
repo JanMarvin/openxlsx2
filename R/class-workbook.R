@@ -59,7 +59,8 @@ Workbook <- setRefClass(
     "sheetOrder" = "integer",
 
     # allows path to be set during initiation or later
-    "path" = "character"
+    "path" = "character",
+    "styleObjectsList" = "list"
   ),
 
   methods = list(
@@ -147,6 +148,8 @@ Workbook <- setRefClass(
       if (!is.null(path)) {
         .self$path <- path
       }
+
+      .self$styleObjectsList <- list()
 
       invisible(.self)
     },
@@ -1208,7 +1211,6 @@ Workbook <- setRefClass(
       .self$styles <-
         genBaseStyleSheet(.self$styles$dxfs,
           tableStyles = .self$styles$tableStyles,
-          extLst = .self$styles$extLst
         )
       .self$styles$fonts[[1]] <- baseFont
 
@@ -4240,14 +4242,8 @@ Workbook <- setRefClass(
 
       ## ------------------------------ build styleObjects Complete ------------------------------ ##
 
-
-      # TODO should this return self?
-      # invisible(.self)
-
-      # What is the point of returning this "temp" object?  Can this be saved as
-      # a private element?
-
-      return(styleObjects_tmp)
+      .self$styleObjectsList <- styleObjects_tmp
+      invisible(.self)
     },
 
     protectWorkbook = function(protect = TRUE,
