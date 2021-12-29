@@ -88,7 +88,7 @@
 #'
 #'
 #' hs <- createStyle(
-#'   textDecoration = "BOLD", fontColour = "#FFFFFF", fontSize = 12,
+#'   textDecoration = "bold", fontColour = "#FFFFFF", fontSize = 12,
 #'   fontName = "Arial Narrow", fgFill = "#4F80BD"
 #' )
 #' \dontrun{
