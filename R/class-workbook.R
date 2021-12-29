@@ -2324,7 +2324,7 @@ Workbook <- setRefClass(
         tableNames <- attr(.self$tables, "tableName")
 
         inds <-
-          .self$tableSheets %in% sheet &
+          tableSheets %in% sheet &
           !grepl("openxlsx_deleted", attr(.self$tables, "tableName"), fixed = TRUE)
         tableSheets[tableSheets > sheet] <-
           tableSheets[tableSheets > sheet] - 1L
