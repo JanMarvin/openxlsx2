@@ -61,6 +61,7 @@ Comment <- setRefClass(
 )
 
 
+# wrappers ----------------------------------------------------------------
 
 #' @name createComment
 #' @title create a Comment object

@@ -444,6 +444,8 @@ addWorksheet <- function(wb, sheetName,
 cloneWorksheet <- function(wb, sheetName, clonedSheet) {
   assert_workbook(wb)
 
+  # TODO move these checks into Workbook$cloneWorksheet()
+
   if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
     stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
   }
@@ -455,6 +457,7 @@ cloneWorksheet <- function(wb, sheetName, clonedSheet) {
   if (!is.character(sheetName)) {
     sheetName <- as.character(sheetName)
   }
+
 
   ## Invalid XML characters
   sheetName <- replaceIllegalCharacters(sheetName)

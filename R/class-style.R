@@ -102,6 +102,7 @@ Style <- setRefClass(
 
       styleShow <- "A custom cell style. \n\n"
 
+      # TODO use c() not append()
       styleShow <- append(styleShow, sprintf("Cell formatting: %s \n", numFmtStr)) ## numFmt
       styleShow <- append(styleShow, sprintf("Font name: %s \n", fontName[[1]])) ## Font name
       styleShow <- append(styleShow, sprintf("Font size: %s \n", fontSize[[1]])) ## Font size

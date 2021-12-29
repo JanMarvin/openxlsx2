@@ -1235,6 +1235,7 @@ Workbook <- setRefClass(
       invisible(.self)
     },
 
+    # Doesn't make any assignments, could be pulled out
     validateSheet = function(sheetName) {
       if (!is.numeric(sheetName)) {
         if (is.null(.self$sheet_names)) {
@@ -1256,12 +1257,13 @@ Workbook <- setRefClass(
         stop(sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheetName)), call. = FALSE)
       }
 
-      # TODO consider invisible(.self)
       return(which(replaceXMLEntities(sheet_names) == sheetName))
     },
 
     # TODO Does this need to be checked?  No sheet name can be NA right?
     # res <- .self$sheet_names[ind]; stopifnot(!anyNA(ind))
+
+    # Doesn't make any assignments, could be pulled out
     getSheetName = function(sheetIndex) {
       if (any(length(.self$sheet_names) < sheetIndex)) {
         stop(sprintf("Workbook only contains %s sheet(s).", length(.self$sheet_names)))
@@ -3538,10 +3540,15 @@ Workbook <- setRefClass(
       invisible(.self)
     },
 
+    # returns the new tableName -- basically just lowercase
     validate_table_name = function(tableName) {
       tableName <-
         tolower(tableName) ## Excel forces named regions to lowercase
 
+      # TODO set these to warnings? trim and peplace bad characters with
+
+      # TODO add a strict = getOption("openxlsx.tableName.strict", FALSE)
+      # param to force these to allow to stopping
       if (nchar(tableName) > 255) {
         stop("tableName must be less than 255 characters.")
       }

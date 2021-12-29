@@ -48,6 +48,8 @@ Hyperlink <- setRefClass(
 
 xml_to_hyperlink <- function(xml) {
 
+  # TODO allow Hyperlink$new(xml = xml)
+
   # xml <- c('<hyperlink ref="A1" r:id="rId1" location="Authority"/>',
   # '<hyperlink ref="B1" r:id="rId2"/>',
   # '<hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1"/>')
