@@ -890,6 +890,20 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
   merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
 
   wb$worksheets[[id_new]]$sheet_data$cc <- merged_style
+
+  # copy entire attributes from original sheet to new sheet
+  wb$worksheets[[id_new]]$sheet_data$row_attr <-
+    wb$worksheets[[id_org]]$sheet_data$row_attr
+
+  wb$worksheets[[id_new]]$cols_attr <-
+    wb$worksheets[[id_org]]$cols_attr
+
+  wb$worksheets[[id_new]]$dimension <-
+    wb$worksheets[[id_org]]$dimension
+
+  wb$worksheets[[id_new]]$mergeCells <-
+    wb$worksheets[[id_org]]$mergeCells
+
 }
 
 #' clean sheet (remove all values)
@@ -899,8 +913,9 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
 #' @param numbers remove all numbers
 #' @param characters remove all characters
 #' @param styles remove all styles
+#' @param merged_cells remove all merged_cells
 #' @export
-cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE) {
+cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
 
   sheet_id <- wb$validateSheet(sheet)
 
@@ -918,4 +933,8 @@ cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TR
     cc[c("c_s")] <- "_openxlsx_NA_"
 
   wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
+
+  if (merged_cells)
+    wb$worksheets[[sheet_id]]$mergeCells <- character(0)
+
 }

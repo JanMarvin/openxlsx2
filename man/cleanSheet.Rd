@@ -4,7 +4,14 @@
 \alias{cleanSheet}
 \title{clean sheet (remove all values)}
 \usage{
-cleanSheet(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE)
+cleanSheet(
+  wb,
+  sheet,
+  numbers = TRUE,
+  characters = TRUE,
+  styles = TRUE,
+  merged_cells = TRUE
+)
 }
 \arguments{
 \item{wb}{workbook}
@@ -16,6 +23,8 @@ cleanSheet(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE)
 \item{characters}{remove all characters}
 
 \item{styles}{remove all styles}
+
+\item{merged_cells}{remove all merged_cells}
 }
 \description{
 clean sheet (remove all values)
