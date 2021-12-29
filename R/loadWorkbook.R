@@ -365,9 +365,11 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## xl\styles
   if (length(stylesXML) > 0) {
-    styleObjects <- wb$loadStyles(stylesXML)$styleObjectsList
     # assign("styleObjects", styleObjects, globalenv())
     wb$styles_xml <- read_xml(stylesXML, pointer = FALSE)
+
+    wb$styles <- import_styles(wb$styles_xml)
+
   } else {
     wb$styleObjects <- list()
   }
@@ -493,11 +495,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     # load the data
     loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
 
-  }
-
-  ## Fix styleobject encoding
-  if (length(styleObjects) > 0) {
-    wb$styleObjects <- get_styles(styleObjects, wb)
   }
 
 

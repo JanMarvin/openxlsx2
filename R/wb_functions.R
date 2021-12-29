@@ -938,3 +938,44 @@ cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TR
     wb$worksheets[[sheet_id]]$mergeCells <- character(0)
 
 }
+
+
+import_styles <- function(x) {
+
+  sxml <- openxlsx2::read_xml(x)
+
+  z <- NULL
+
+  z$numFmts <- xml_node(sxml, "styleSheet", "numFmts", "numFmt")
+
+  # Position is numFmtId
+  z$fonts <- xml_node(sxml, "styleSheet", "fonts", "font")
+
+  # Position is fillId
+  z$fills <- xml_node(sxml, "styleSheet", "fills", "fill")
+
+  # Position is borderId
+  z$borders <- xml_node(sxml, "styleSheet", "borders", "border")
+
+  # No clue?
+  z$cellStyleXfs <- xml_node(sxml, "styleSheet", "cellStyleXfs", "xf")
+
+  # Position is s="value" used in worksheet <c ...>
+  z$cellXfs <- xml_node(sxml, "styleSheet", "cellXfs", "xf")
+
+  # No clue?
+  z$cellStyles <- xml_node(sxml, "styleSheet", "cellStyles", "cellStyle")
+
+  # No clue?
+  z$dxfs <- xml_node(sxml, "styleSheet", "dxfs")
+
+  # Table style? Maybe position Id?
+  z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles")
+
+  z$indexedColors <- xml_node(sxml, "styleSheet", "colors", "indexedColors")
+
+  # No clue, some special styles
+  z$extLst <- xml_node(sxml, "styleSheet", "extLst", "ext")
+
+  z
+}
