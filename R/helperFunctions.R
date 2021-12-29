@@ -427,22 +427,6 @@ removeHeadTag <- function(x) {
 }
 
 
-
-validateBorderStyle <- function(borderStyle) {
-  valid <- c(
-    "none", "thin", "medium", "dashed", "dotted", "thick", "double", "hair", "mediumDashed",
-    "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot"
-  )
-
-  ind <- match(tolower(borderStyle), tolower(valid))
-  if (any(is.na(ind))) {
-    stop("Invalid borderStyle", call. = FALSE)
-  }
-
-  return(valid[ind])
-}
-
-
 buildFontList <- function(fonts) {
   sz     <- font_val(fonts, "font", "sz")
   colour <- font_val(fonts, "font", "color")

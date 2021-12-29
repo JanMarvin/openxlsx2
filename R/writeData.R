@@ -232,7 +232,7 @@ writeData <- function(wb,
 
   ## borderColours validation
   borderColour <- validateColour(borderColour, "Invalid border colour")
-  borderStyle <- validateBorderStyle(borderStyle)[[1]]
+  borderStyle <- validate_border_style(borderStyle)[[1]]
 
   ## special case - vector of hyperlinks
   hlinkNames <- NULL

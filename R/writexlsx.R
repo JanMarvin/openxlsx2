@@ -337,7 +337,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   borderStyle <- getOption("openxlsx.borderStyle", "thin")
   if ("borderStyle" %in% names(params)) {
-    borderStyle <- validateBorderStyle(params$borderStyle)
+    borderStyle <- validate_border_style(params$borderStyle)
   }
 
   keepNA <- FALSE

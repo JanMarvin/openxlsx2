@@ -22,3 +22,20 @@ paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
   if (unlist) x <- unlist(x, use.names = FALSE)
   paste(x[nzchar(x)], sep = "", collapse = " ")
 }
+
+`%||%` <- function(x, y) if (is.null(x)) y else x
+
+na_to_null <- function(x) {
+  if (is.null(x)) {
+    return(NULL)
+  }
+
+  if (isTRUE(is.na(x))) {
+    return(NULL)
+  }
+
+  x
+}
+
+# opposite of %in%
+`%out%` <- function(x, table) match(x, table, nomatch = 0L) == 0L
