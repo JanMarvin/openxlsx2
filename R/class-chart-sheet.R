@@ -37,28 +37,15 @@ ChartSheet <- setRefClass(
     },
 
     get_prior_sheet_data = function() {
-      # TODO use paste_c()
-      xml <- '<chartsheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">>'
-
-      if (length(.self$sheetPr) > 0) {
-        xml <- paste(xml, .self$sheetPr, collapse = "")
-      }
-
-      if (length(.self$sheetViews) > 0) {
-        xml <- paste(xml, .self$sheetViews, collapse = "")
-      }
-
-      if (length(.self$pageMargins) > 0) {
-        xml <- paste(xml, .self$pageMargins, collapse = "")
-      }
-
-      if (length(.self$drawing) > 0) {
-        xml <- paste(xml, .self$drawing, collapse = "")
-      }
-
-      xml <- paste(xml, "</chartsheet>")
-
-      return(xml)
+      paste_c(
+        '<chartsheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">>',
+        .self$sheetPr,
+        .self$sheetViews,
+        .self$pageMargins,
+        .self$drawing,
+        "</chartsheet>",
+        sep = " "
+      )
     }
   )
 )

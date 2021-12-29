@@ -691,6 +691,10 @@ genHeaderFooterNode <- function(x) {
 
   # TODO clean up length(x) > 0
   # TODO clean up to x <- if (cond) value; default here is NULL
+
+  # return nothing if there is no length
+  if (!length(x)) return(NULL)
+
   if (length(x$oddHeader) > 0) {
     oddHeader <- paste0("<oddHeader>", sprintf("&amp;L%s", x$oddHeader[[1]]), sprintf("&amp;C%s", x$oddHeader[[2]]), sprintf("&amp;R%s", x$oddHeader[[3]]), "</oddHeader>", collapse = "")
   } else {

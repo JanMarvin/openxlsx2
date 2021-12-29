@@ -110,162 +110,149 @@ Worksheet <- setRefClass(
     },
 
     get_prior_sheet_data = function() {
-      xml <- '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">'
+      paste_c(
+        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
 
-      if (length(.self$sheetPr) > 0) {
-        tmp <- .self$sheetPr
-        if (!any(grepl("<sheetPr>", tmp, fixed = TRUE))) {
-          tmp <- paste0("<sheetPr>", paste(tmp, collapse = ""), "</sheetPr>")
-        }
+        # sheetPr
+        if (length(.self$sheetPr) && !any(grepl("<sheetPr>", .self$sheetPr, fixed = TRUE))) {
+          paste0("<sheetPr>", paste(.self$sheetPr, collapse = ""), "</sheetPr>")
+        } else {
+          .self$sheetPr
+        },
 
-        xml <- paste(xml, tmp, collapse = "")
-      }
+        .self$dimension,
 
-      if (length(.self$dimension) > 0) {
-        xml <- paste(xml, .self$dimension, collapse = "")
-      }
-
-      ## sheetViews handled here
-      if (length(.self$freezePane) > 0) {
-        xml <- paste(xml, gsub("/></sheetViews>", paste0(">", .self$freezePane, "</sheetView></sheetViews>"), .self$sheetViews, fixed = TRUE), collapse = "")
-      } else if (length(.self$sheetViews) > 0) {
-        xml <- paste(xml, .self$sheetViews, collapse = "")
-      }
-
-      if (length(.self$sheetFormatPr) > 0) {
-        xml <- paste(xml, .self$sheetFormatPr, collapse = "")
-      }
-
-      # TODO write function for new cols_attr
-      if (length(.self$cols_attr) > 0) {
-        # xml <- paste0(xml, paste(c("<cols>", setXMLcols(cols_attr), "</cols>"), collapse = ""))
-        xml <- paste0(xml, paste(c("<cols>", .self$cols_attr, "</cols>"), collapse = ""))
-      }
-
-
-      return(xml)
+        if (length(.self$freezePane)) {
+          gsub("/></sheetViews>", paste0(">", .self$freezePane, "</sheetView></sheetViews>"), .self$sheetViews, fixed = TRUE)
+        } else if (length(.self$sheetViews)) {
+          .self$sheetViews
+        },
+        .self$sheetFormatPr,
+        # cols_attr
+        # is this fine if it's just <cols></cols>?
+        if (length(.self$cols_attr)) {
+          paste(c("<cols>", .self$cols_attr, "</cols>"), collapse = "")
+        },
+        sep = " "
+      )
     },
 
     get_post_sheet_data = function() {
-      # TODO use paste_c()
-      xml <- ""
+      paste_c(
+        .self$sheetProtection,
+        .self$autoFilter,
 
-      if (length(.self$sheetProtection) > 0) {
-        xml <- paste0(xml, .self$sheetProtection, collapse = "")
-      }
+        # mergeCells
+        if (length(.self$mergeCells)) {
+          paste0(
+            sprintf('<mergeCells count="%i">', length(.self$mergeCells)),
+            pxml(.self$mergeCells),
+            "</mergeCells>"
+          )
+        },
 
-      if (length(.self$autoFilter) > 0) {
-        xml <- paste0(xml, .self$autoFilter, collapse = "")
-      }
-
-      if (length(.self$mergeCells) > 0) {
-        xml <- paste0(xml, paste0(sprintf('<mergeCells count="%s">', length(.self$mergeCells)), pxml(.self$mergeCells), "</mergeCells>"), collapse = "")
-      }
-
-
-
-      if (length(.self$conditionalFormatting) > 0) {
-        nms <- names(.self$conditionalFormatting)
-        xml <- paste0(xml,
+        # conditionalFormatting
+        if (length(.self$conditionalFormatting)) {
+          nms <- names(.self$conditionalFormatting)
           paste(
-            sapply(unique(nms), function(x) {
-              paste0(
-                sprintf('<conditionalFormatting sqref="%s">', x),
-                pxml(.self$conditionalFormatting[nms == x]),
-                "</conditionalFormatting>"
-              )
-            }),
+            vapply(
+              unique(nms),
+              function(i) {
+                paste0(
+                  sprintf('<conditionalFormatting sqref="%s">', i),
+                  pxml(.self$conditionalFormatting[nms == i]),
+                  "</conditionalFormatting>"
+                )
+              },
+              NA_character_
+            ),
             collapse = ""
-          ),
-          collapse = ""
-        )
-      }
+          )
+        },
 
+        # dataValidations
+        if (length(.self$dataValidations)) {
+          paste0(
+            sprintf('<dataValidations count="%i">', length(.self$dataValidations)),
+            pxml(.self$dataValidations),
+            "</dataValidations>"
+          )
+        },
 
-      if (length(.self$dataValidations) > 0) {
-        xml <- paste0(xml, paste0(sprintf('<dataValidations count="%s">', length(.self$dataValidations)), pxml(.self$dataValidations), "</dataValidations>"))
-      }
+        # hyperlinks
+        if (n <- length(.self$hyperlinks)) {
+          h_inds <- paste0(seq_len(n), "h")
+          paste(
+            "<hyperlinks>",
+            paste(
+              vapply(
+                seq_along(h_inds),
+                function(i)  {
+                  .self$hyperlinks[[i]]$to_xml(h_inds[i])
+                },
+                NA_character_
+              ),
+              collapse = ""
+            ),
+            "</hyperlinks>"
+          )
+        },
 
+        .self$pageMargins,
+        .self$pageSetup,
 
+        # headerFooter
+        # should return NULL when !length(.self$headerFooter)
+        genHeaderFooterNode(.self$headerFooter),
 
-      if (length(.self$hyperlinks) > 0) {
-        # TODO use seq_along?  seq_len?
-        h_inds <- paste0(1:length(.self$hyperlinks), "h")
-        xml <- paste(xml, paste("<hyperlinks>", paste(sapply(1:length(h_inds), function(i) .self$hyperlinks[[i]]$to_xml(h_inds[i])), collapse = ""), "</hyperlinks>"), collapse = "")
-      }
+        # rowBreaks
+        if (n <- length(.self$rowBreaks)) {
+          paste0(
+            sprintf('<rowBreaks count="%i" manualBreakCount="%i">', n, n),
+            paste(.self$rowBreaks, collapse = ""),
+            "</rowBreaks>"
+          )
+        },
 
+        # colBreaks
+        if (n <- length(.self$colBreaks)) {
+          paste0(
+            sprintf('<colBreaks count="%i" manualBreakCount="%i">', n, n),
+            paste(.self$colBreaks, collapse = ""),
+            "</colBreaks>"
+          )
+        },
 
-      if (length(.self$pageMargins) > 0) {
-        xml <- paste0(xml, .self$pageMargins, collapse = "")
-      }
+        .self$drawing,
+        .self$legacyDrawing,
+        .self$legacyDrawingHF,
+        .self$oleObjects,
 
-      if (length(.self$pageSetup) > 0) {
-        xml <- paste0(xml, .self$pageSetup, collapse = "")
-      }
+        # tableParts
+        if (n <- length(.self$tableParts)) {
+          paste0(sprintf('<tableParts count="%i">', n), pxml(.self$tableParts), "</tableParts>")
+        },
 
-      if (length(.self$headerFooter) > 0) {
-        xml <- paste0(xml, genHeaderFooterNode(.self$headerFooter), collapse = "")
-      }
+        # dataValidationsLst
+        if (n <- length(.self$dataValidationsLst)) {
+          paste0(
+            sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
+            paste0(pxml(.self$dataValidationsLst), "</x14:dataValidations></ext>"),
+            collapse = ""
+          )
+        },
 
+        # extLst, dataValidationsLst
+        if (length(.self$extLst) | length(.self$dataValidationsLst)) {
+          sprintf("<extLst>%s</extLst>", paste0(pxml(.self$extLst), dataValidationsLst_xml))
+        },
 
-      ## rowBreaks and colBreaks
-      if (length(.self$rowBreaks) > 0) {
-        # TODO just save length as n object
-        xml <- paste0(xml,
-          paste0(sprintf('<rowBreaks count="%s" manualBreakCount="%s">', length(.self$rowBreaks), length(.self$rowBreaks)), paste(.self$rowBreaks, collapse = ""), "</rowBreaks>"),
-          collapse = ""
-        )
-      }
+        "</worksheet>",
 
+        # end
+        sep = " "
+      )
 
-      if (length(.self$colBreaks) > 0) {
-        xml <- paste0(xml,
-          paste0(sprintf('<colBreaks count="%s" manualBreakCount="%s">', length(.self$colBreaks), length(.self$colBreaks)), paste(.self$colBreaks, collapse = ""), "</colBreaks>"),
-          collapse = ""
-        )
-      }
-
-      if (length(.self$drawing) > 0) {
-        xml <- paste0(xml, .self$drawing, collapse = "")
-      }
-
-      if (length(.self$legacyDrawing) > 0) {
-        xml <- paste0(xml, .self$legacyDrawing, collapse = "")
-      }
-
-      if (length(.self$legacyDrawingHF) > 0) {
-        xml <- paste0(xml, .self$legacyDrawingHF, collapse = "")
-      }
-
-      if (length(.self$oleObjects) > 0) {
-        xml <- paste0(xml, .self$oleObjects, collapse = "")
-      }
-
-      if (length(.self$tableParts) > 0) {
-        xml <- paste0(xml,
-          paste0(sprintf('<tableParts count="%s">', length(.self$tableParts)), pxml(.self$tableParts), "</tableParts>"),
-          collapse = ""
-        )
-      }
-
-
-      if (length(.self$dataValidationsLst) > 0) {
-        dataValidationsLst_xml <- paste0(sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%s" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', length(dataValidationsLst)),
-          paste0(pxml(.self$dataValidationsLst), "</x14:dataValidations></ext>"),
-          collapse = ""
-        )
-      } else {
-        dataValidationsLst_xml <- character(0)
-      }
-
-
-      if (length(.self$extLst) > 0 || length(.self$dataValidationsLst) > 0) {
-        xml <- paste0(xml, sprintf("<extLst>%s</extLst>", paste0(pxml(.self$extLst), dataValidationsLst_xml)))
-      }
-
-      xml <- paste0(xml, "</worksheet>")
-
-      return(xml)
     },
 
     order_sheetdata = function() {

@@ -21,18 +21,15 @@ Hyperlink <- setRefClass(
     },
 
     to_xml = function(id) {
-      loc <- sprintf('location="%s"', .self$location)
-      disp <- sprintf('display="%s"', .self$display)
-      rf <- sprintf('ref="%s"', .self$ref)
-
-      # TODO simplify
-      if (.self$is_external) {
-        rid <- sprintf('r:id="rId%s"', id)
-      } else {
-        rid <- NULL
-      }
-
-      paste("<hyperlink", rf, rid, disp, loc, "/>")
+      paste_c(
+        "<hyperlink",
+        sprintf('ref="%s"', .self$ref),                     # rf
+        if (.self$is_external) sprintf('r:id="rId%s"', id), # rid
+        sprintf('display="%s"', .self$display),             # disp
+        sprintf('location="%s"', .self$location),           # loc
+        "/>",
+        sep = " "
+      )
     },
 
     to_target_xml = function(id) {
