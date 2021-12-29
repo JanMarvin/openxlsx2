@@ -2476,7 +2476,7 @@ conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, 
       style <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
     }
 
-    invisible(dxfId <- wb$addDXFS(style))
+    dxfId <- wb$addDXFS(style)$styles$dxfs
   }
 
 

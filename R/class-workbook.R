@@ -2398,6 +2398,7 @@ Workbook <- setRefClass(
         dxf <- stri_join(dxf, createFillNode(style))
       }
 
+      # TODO go with length()
       if (any(!is.null(
         c(
           style$borderLeft,
@@ -2411,6 +2412,7 @@ Workbook <- setRefClass(
       }
 
       dxf <- stri_join(dxf, "</dxf>", sep = " ")
+
       if (dxf %in% styles$dxfs) {
         # return(which(styles$dxfs == dxf) - 1L)
         return(invisible(.self))
