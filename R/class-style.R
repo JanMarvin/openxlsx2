@@ -32,7 +32,8 @@ Style <- setRefClass(
     "wrapText",
     "locked",
     "hidden",
-    "xfId"
+    "xfId",
+    "styleShow"
   ),
   methods = list(
     initialize = function() {
@@ -71,94 +72,97 @@ Style <- setRefClass(
 
     show = function(print = TRUE) {
       numFmtMapping <- list(
-        list("numFmtId" = 0),
-        list("numFmtId" = 2),
-        list("numFmtId" = 164),
-        list("numFmtId" = 44),
-        list("numFmtId" = 14),
-        list("numFmtId" = 167),
-        list("numFmtId" = 10),
-        list("numFmtId" = 11),
-        list("numFmtId" = 49)
+        list(numFmtId =   0),
+        list(numFmtId =   2),
+        list(numFmtId = 164),
+        list(numFmtId =  44),
+        list(numFmtId =  14),
+        list(numFmtId = 167),
+        list(numFmtId =  10),
+        list(numFmtId =  11),
+        list(numFmtId =  49)
       )
 
       validNumFmt <- c("GENERAL", "NUMBER", "CURRENCY", "ACCOUNTING", "DATE", "TIME", "PERCENTAGE", "SCIENTIFIC", "TEXT")
 
-      if (!is.null(numFmt)) {
-        if (as.integer(numFmt$numFmtId) %in% unlist(numFmtMapping)) {
-          numFmtStr <- validNumFmt[unlist(numFmtMapping) == as.integer(numFmt$numFmtId)]
+      numFmtStr <- if (!is.null(.self$numFmt)) {
+        if (as.integer(.self$numFmt$numFmtId) %in% unlist(numFmtMapping)) {
+          validNumFmt[unlist(numFmtMapping) == as.integer(.self$numFmt$numFmtId)]
         } else {
-          numFmtStr <- sprintf('"%s"', numFmt$formatCode)
+          sprintf('"%s"', .self$numFmt$formatCode)
         }
       } else {
-        numFmtStr <- "GENERAL"
+        "GENERAL"
       }
 
-      borders <- c(sprintf("Top: %s", borderTop), sprintf("Bottom: %s", borderBottom), sprintf("Left: %s", borderLeft), sprintf("Right: %s", borderRight))
-      borderColours <- gsub("^FF", "#", c(borderTopColour, borderBottomColour, borderLeftColour, borderRightColour))
+      # if all are NULL
+      borders <- c(
+        sprintf("Top: %s",    .self$borderTop),
+        sprintf("Bottom: %s", .self$borderBottom),
+        sprintf("Left: %s",   .self$borderLeft),
+        sprintf("Right: %s",  .self$borderRight)
+      )
 
-      fgFill <- fill$fillFg
-      bgFill <- fill$fillBg
+      borderColours <- c(.self$borderTopColour, .self$borderBottomColour, .self$borderLeftColour, .self$borderRightColour)
+      borderColours <- gsub("^FF", "#", borderColours)
 
-      styleShow <- "A custom cell style. \n\n"
+      .self$styleShow  <- c(
+        "A custom cell style. \n\n",
+        # numFmt
+        sprintf("Cell formatting: %s \n", numFmtStr),
+        # Font name
+        sprintf("Font name: %s \n", .self$fontName[[1]]),
+        # Font size
+        sprintf("Font size: %s \n", .self$fontSize[[1]]),
+        # Font colour
+        sprintf("Font colour: %s \n", gsub("^FF", "#", .self$fontColour[[1]])),
+        # Font decoration
+        if (length(.self$fontDecoration)) {
+          sprintf("Font decoration: %s \n", paste(.self$fontDecoration, collapse = ", "))
+        },
 
-      # TODO use c() not append()
-      styleShow <- append(styleShow, sprintf("Cell formatting: %s \n", numFmtStr)) ## numFmt
-      styleShow <- append(styleShow, sprintf("Font name: %s \n", fontName[[1]])) ## Font name
-      styleShow <- append(styleShow, sprintf("Font size: %s \n", fontSize[[1]])) ## Font size
-      styleShow <- append(styleShow, sprintf("Font colour: %s \n", gsub("^FF", "#", fontColour[[1]]))) ## Font colour
+        # Cell borders
+        if (length(borders)) {
+          c(
+            sprintf("Cell borders: %s \n", paste(borders, collapse = ", ")),
+            sprintf("Cell border colours: %s \n", paste(borderColours, collapse = ", "))
+          )
+        },
 
-      ## Font decoration
-      if (length(fontDecoration) > 0) {
-        styleShow <- append(styleShow, sprintf("Font decoration: %s \n", paste(fontDecoration, collapse = ", ")))
-      }
+        # sprtinf("this %s", NULL) returns character()
+        # Cell horizontal alignment
+        sprintf("Cell horz. align: %s \n", .self$halign),
+        # Cell vertical alignment
+        sprintf("Cell vert. align: %s \n", .self$valign),
+        # Cell indent
+        sprintf("Cell indent: %s \n", .self$indent),
+        # Cell text rotation
+        sprintf("Cell text rotation: %s \n", .self$textRotation),
+        # Cell fill colour
+        if (length(.self$fill$fillFg)) {
+          sprintf(
+            "Cell fill foreground: %s \n",
+            paste(paste0(names(.self$fill$fillFg), ": ", sub("^FF", "#", .self$fill$fillFg)), collapse = ", ")
+          )
+        },
+        # Cell background  fill
+        if (length(.self$fill$fillBg)) {
+          sprintf(
+            "Cell fill background: %s \n",
+            paste(paste0(names(.self$fill$fillBg), ": ", sub("^FF", "#", .self$fill$fillBg)), collapse = ", ")
+          )
+        },
+        # locked
+        sprintf("Cell protection: %s \n", .self$locked),
+        # hidden
+        sprintf("Cell formula hidden: %s \n", .self$hidden),
+        # wrapText
+        sprintf("wraptext: %s", .self$wrapText),
+        "\n\n"
+      )
 
-      if (length(borders) > 0) {
-        styleShow <- append(styleShow, sprintf("Cell borders: %s \n", paste(borders, collapse = ", "))) ## Cell borders
-        styleShow <- append(styleShow, sprintf("Cell border colours: %s \n", paste(borderColours, collapse = ", "))) ## Cell borders
-      }
-
-      if (!is.null(halign)) {
-        styleShow <- append(styleShow, sprintf("Cell horz. align: %s \n", halign))
-      } ## Cell horizontal alignment
-
-      if (!is.null(valign)) {
-        styleShow <- append(styleShow, sprintf("Cell vert. align: %s \n", valign))
-      } ## Cell vertical alignment
-
-      if (!is.null(indent)) {
-        styleShow <- append(styleShow, sprintf("Cell indent: %s \n", indent))
-      } ## Cell indent
-
-      if (!is.null(textRotation)) {
-        styleShow <- append(styleShow, sprintf("Cell text rotation: %s \n", textRotation))
-      } ## Cell text rotation
-
-      ## Cell fill colour
-      if (length(fgFill) > 0) {
-        styleShow <- append(styleShow, sprintf("Cell fill foreground: %s \n", paste(paste0(names(fgFill), ": ", sub("^FF", "#", fgFill)), collapse = ", ")))
-      }
-
-      if (length(bgFill) > 0) {
-        styleShow <- append(styleShow, sprintf("Cell fill background: %s \n", paste(paste0(names(bgFill), ": ", sub("^FF", "#", bgFill)), collapse = ", ")))
-      }
-
-      if (!is.null(locked)) {
-        styleShow <- append(styleShow, sprintf("Cell protection: %s \n", locked))
-      } ## Cell protection
-      if (!is.null(hidden)) {
-        styleShow <- append(styleShow, sprintf("Cell formula hidden: %s \n", hidden))
-      } ## Cell formula hidden
-
-      styleShow <- append(styleShow, sprintf("wraptext: %s", wrapText)) ## wrap text
-
-      styleShow <- c(styleShow, "\n\n")
-
-      if (print) {
-        cat(styleShow)
-      }
-
-      return(invisible(styleShow))
+      if (print) cat(.self$styleShow)
+      invisible(.self)
     },
 
     as.list = function() {
