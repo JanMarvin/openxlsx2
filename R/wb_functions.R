@@ -946,37 +946,85 @@ import_styles <- function(x) {
 
   z <- NULL
 
+  # numFmtId
+  # overrides for
+  # + numFmtId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
   z$numFmts <- xml_node(sxml, "styleSheet", "numFmts", "numFmt")
 
-  # Position is numFmtId
+  # fontId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
   z$fonts <- xml_node(sxml, "styleSheet", "fonts", "font")
 
-  # Position is fillId
+  # fillId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.fill?view=openxml-2.8.1
   z$fills <- xml_node(sxml, "styleSheet", "fills", "fill")
 
-  # Position is borderId
+  # borderId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
   z$borders <- xml_node(sxml, "styleSheet", "borders", "border")
 
-  # No clue?
+  # xfId
+  # links
+  # + numFmtId
+  # + fontId
+  # + fillId
+  # + borderId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellstyleformats?view=openxml-2.8.1
   z$cellStyleXfs <- xml_node(sxml, "styleSheet", "cellStyleXfs", "xf")
 
-  # Position is s="value" used in worksheet <c ...>
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformat?view=openxml-2.8.1
+  #
+  # Position is 0 index s="value" used in worksheet <c ...>
+  # links
+  # + numFmtId
+  # + fontId
+  # + fillId
+  # + borderId
+  # + xfId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformats?view=openxml-2.8.1
   z$cellXfs <- xml_node(sxml, "styleSheet", "cellXfs", "xf")
 
   # No clue?
+  # links
+  # + xfId
+  # + builtinId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellstyle?view=openxml-2.8.1
   z$cellStyles <- xml_node(sxml, "styleSheet", "cellStyles", "cellStyle")
 
   # No clue?
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.differentialformat?view=openxml-2.8.1
   z$dxfs <- xml_node(sxml, "styleSheet", "dxfs")
 
   # Table style? Maybe position Id?
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.tablestyle?view=openxml-2.8.1
   z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles")
 
+  # colors
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.indexedcolors?view=openxml-2.8.1
+  z$mruColors <- xml_node(sxml, "styleSheet", "colors", "mruColors")
   z$indexedColors <- xml_node(sxml, "styleSheet", "colors", "indexedColors")
 
   # No clue, some special styles
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.extensionlist?view=openxml-2.8.1
   z$extLst <- xml_node(sxml, "styleSheet", "extLst", "ext")
 
   z
 }
 
+#' get all styles on a sheet
+#'
+#' @param wb workbook
+#' @param sheet worksheet
+#'
+#' @export
+styles_on_sheet <- function(wb, sheet) {
+
+  sheet_id <- wb$validateSheet(sheet)
+
+  z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
+
+  as.numeric(z)
+
+}
