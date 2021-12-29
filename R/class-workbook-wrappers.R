@@ -458,8 +458,26 @@ cloneWorksheet <- function(wb, sheetName, clonedSheet) {
 
   ## Invalid XML characters
   sheetName <- replaceIllegalCharacters(sheetName)
+  wb$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
+  # TODO change to return wb$copy()$cloneWorksheet(...) [which returns self]
+  # TODO use wb_clone_worksheet()
+  invisible(length(wb$worksheets))
+}
 
-  invisible(wb$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet))
+wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
+  assert_workbook(wb)
+  if (!missing(sheetName)) {
+    warning("sheetName is soft deprecated: use old")
+    old <- sheetName
+  }
+
+  if (!missing(sheetName)) {
+    warning("clonedSheet is soft deprecated: use new")
+    new <- clonedSheet
+  }
+
+  # TODO use old_sheet, new_sheet
+  wb$copy()$cloneWorksheet(sheetName = old, clonedSheet = new)
 }
 
 
