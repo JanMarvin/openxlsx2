@@ -1,23 +1,15 @@
 
-assert_class <- function(x, class, or_null = FALSE, all = TRUE, package = NULL, envir = parent.frame()) {
+assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL, envir = parent.frame()) {
   sx <- as.character(substitute(x, envir))
 
-  if (is.null(package)) {
-    ok <- if (all) {
-      all(vapply(class, function(i) inherits(x, i), NA))
-    } else {
-      inherits(x, class)
-    }
+  ok <- if (all) {
+    all(vapply(class, function(i) inherits(x, i), NA))
   } else {
-    cl <- class(x)
+    inherits(x, class)
+  }
 
-    ok <- if (all) {
-      all(class %in% cl)
-    } else {
-      any(cl == class)
-    }
-
-    ok <- ok && attr(cl, "package") == package
+  if (!is.null(package)) {
+    ok <- ok & isTRUE(attr(class(x), "package") == package)
   }
 
   if (or_null) {
@@ -78,6 +70,10 @@ match_allof <- function(x, y, or_null = FALSE, envir = parent.frame()) {
 
 validate_colour <- function(colour = NULL, or_null = FALSE, envir = parent.frame()) {
   sx <- as.character(substitute(colour, envir))
+
+  if (identical(colour, "none") && or_null) {
+    return(NULL)
+  }
 
   # returns black
   if (is.null(colour)) {

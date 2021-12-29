@@ -557,13 +557,13 @@ renameWorksheet <- function(wb, sheet, newName) {
 #' ## create and add a style to the column headers
 #' headerStyle <- createStyle(
 #'   fontSize = 14, fontColour = "#FFFFFF", halign = "center",
-#'   fgFill = "#4F81BD", border = "TopBottom", borderColour = "#4F81BD"
+#'   fgFill = "#4F81BD", border = c("top", "bottom"), borderColour = "#4F81BD"
 #' )
 #'
 #' addStyle(wb, sheet = 1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
 #'
 #' ## style for body
-#' bodyStyle <- createStyle(border = "TopBottom", borderColour = "#4F81BD")
+#' bodyStyle <- createStyle(border = c("top", "bottom"), borderColour = "#4F81BD")
 #' addStyle(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
 #' setColWidths(wb, 1, cols = 1, widths = 21) ## set column width for row names column
 #' \dontrun{
