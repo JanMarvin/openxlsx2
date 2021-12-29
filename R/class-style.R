@@ -202,126 +202,42 @@ Style <- setRefClass(
   )
 )
 
-
+# TODO would this make sense as a method? Style$merge(newStyle)?
 mergeStyle <- function(oldStyle, newStyle) {
 
   ## This function is used to merge an existing cell style with a new style to create a stacked style.
-  oldStyle <- oldStyle$copy()
+  res <- oldStyle$copy()
 
-  if (!is.null(newStyle$fontName)) {
-    oldStyle$fontName <- newStyle$fontName
+  for (i in merge_style_fields()) {
+    res[[i]] <- newStyle[[i]] %||% oldStyle[[i]]
   }
 
-  if (!is.null(newStyle$fontColour)) {
-    oldStyle$fontColour <- newStyle$fontColour
-  }
+  # separately
+  res$fontDecoration <- c(oldStyle$fontDecoration, newStyle$fontDecoration)
 
-  if (!is.null(newStyle$fontSize)) {
-    oldStyle$fontSize <- newStyle$fontSize
-  }
+  # do these need checks?
+  res$borderDiagonalUp   <- newStyle$borderDiagonalUp
+  res$borderDiagonalDown <- newStyle$borderDiagonalDown
 
-  if (!is.null(newStyle$fontFamily)) {
-    oldStyle$fontFamily <- newStyle$fontFamily
-  }
+  res
+}
 
-  if (!is.null(newStyle$fontScheme)) {
-    oldStyle$fontScheme <- newStyle$fontScheme
-  }
-
-  if (length(newStyle$fontDecoration) > 0) {
-    if (length(oldStyle$fontDecoration) == 0) {
-      oldStyle$fontDecoration <- newStyle$fontDecoration
-    } else {
-      oldStyle$fontDecoration <- c(oldStyle$fontDecoration, newStyle$fontDecoration)
-    }
-  }
-
-
-  ## borders
-  if (!is.null(newStyle$borderTop)) {
-    oldStyle$borderTop <- newStyle$borderTop
-  }
-
-  if (!is.null(newStyle$borderLeft)) {
-    oldStyle$borderLeft <- newStyle$borderLeft
-  }
-
-  if (!is.null(newStyle$borderRight)) {
-    oldStyle$borderRight <- newStyle$borderRight
-  }
-
-  if (!is.null(newStyle$borderBottom)) {
-    oldStyle$borderBottom <- newStyle$borderBottom
-  }
-
-  if (!is.null(newStyle$borderDiagonal)) {
-    oldStyle$borderDiagonal <- newStyle$borderDiagonal
-  }
-
-  oldStyle$borderDiagonalUp <- newStyle$borderDiagonalUp
-  oldStyle$borderDiagonalDown <- newStyle$borderDiagonalDown
-
-
-  if (!is.null(newStyle$borderTopColour)) {
-    oldStyle$borderTopColour <- newStyle$borderTopColour
-  }
-
-  if (!is.null(newStyle$borderLeftColour)) {
-    oldStyle$borderLeftColour <- newStyle$borderLeftColour
-  }
-
-  if (!is.null(newStyle$borderRightColour)) {
-    oldStyle$borderRightColour <- newStyle$borderRightColour
-  }
-
-  if (!is.null(newStyle$borderBottomColour)) {
-    oldStyle$borderBottomColour <- newStyle$borderBottomColour
-  }
-
-
-
-  ## other
-  if (!is.null(newStyle$halign)) {
-    oldStyle$halign <- newStyle$halign
-  }
-
-  if (!is.null(newStyle$valign)) {
-    oldStyle$valign <- newStyle$valign
-  }
-
-  if (!is.null(newStyle$indent)) {
-    oldStyle$indent <- newStyle$indent
-  }
-
-  if (!is.null(newStyle$textRotation)) {
-    oldStyle$textRotation <- newStyle$textRotation
-  }
-
-  if (!is.null(newStyle$numFmt)) {
-    oldStyle$numFmt <- newStyle$numFmt
-  }
-
-  if (!is.null(newStyle$fill)) {
-    oldStyle$fill <- newStyle$fill
-  }
-
-  if (!is.null(newStyle$wrapText)) {
-    oldStyle$wrapText <- newStyle$wrapText
-  }
-
-  if (!is.null(newStyle$locked)) {
-    oldStyle$locked <- newStyle$locked
-  }
-
-  if (!is.null(newStyle$hidden)) {
-    oldStyle$hidden <- newStyle$hidden
-  }
-
-  if (!is.null(newStyle$xfId)) {
-    oldStyle$xfId <- newStyle$xfId
-  }
-
-  return(oldStyle)
+merge_style_fields <- function() {
+  c(
+    paste0("font"), c("Name", "Colour", "Size", "Family", "Scheme"),
+    paste0("border", c("Top", "Left", "Right", "Bottom", "Diagonal")),
+    paste0("border", c("Top", "Left", "Right", "Bottom"), "Colour"),
+    "halign",
+    "valign",
+    "indent",
+    "textRotation",
+    "numFmt",
+    "fill",
+    "wrapText",
+    "locked",
+    "hidden",
+    "xfId"
+  )
 }
 
 
