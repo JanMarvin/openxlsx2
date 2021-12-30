@@ -3296,56 +3296,9 @@ Workbook <- setRefClass(
             }
           }
 
-
           ## convert sheet name to index
-          # TODO consider match()
-          sheet <- which(.self$sheet_names == x$sheet)
-          sId <-
-            .self$updateStyles(this.sty) ## this creates the XML for styles.XML
-
-          cells_to_style <- stri_join(x$rows, x$cols, sep = ",")
-          existing_cells <-
-            stri_join(.self$worksheets[[sheet]]$sheet_data$rows,
-              .self$worksheets[[sheet]]$sheet_data$cols,
-              sep = ","
-            )
-
-          ## In here we create any style_ids that don't yet exist in sheet_data
-          #worksheets[[sheet]]$sheet_data$style_id[existing_cells %in% cells_to_style] <-
-          #  sId
-
-
-          new_cells_to_append <-
-            which(!cells_to_style %in% existing_cells)
-          if (length(new_cells_to_append) > 0) {
-            #worksheets[[sheet]]$sheet_data$style_id <-
-            #  c(
-            #    worksheets[[sheet]]$sheet_data$style_id,
-            #    rep.int(x = sId, times = length(new_cells_to_append))
-            #  )
-
-            .self$worksheets[[sheet]]$sheet_data$rows <-
-              c(.self$worksheets[[sheet]]$sheet_data$rows, x$rows[new_cells_to_append])
-            .self$worksheets[[sheet]]$sheet_data$cols <-
-              c(.self$worksheets[[sheet]]$sheet_data$cols, x$cols[new_cells_to_append])
-            .self$worksheets[[sheet]]$sheet_data$t <-
-              c(.self$worksheets[[sheet]]$sheet_data$t, rep(as.integer(NA), length(new_cells_to_append)))
-            .self$worksheets[[sheet]]$sheet_data$v <-
-              c(
-                .self$worksheets[[sheet]]$sheet_data$v,
-                rep(as.character(NA), length(new_cells_to_append))
-              )
-            .self$worksheets[[sheet]]$sheet_data$f <-
-              c(
-                .self$worksheets[[sheet]]$sheet_data$f,
-                rep(as.character(NA), length(new_cells_to_append))
-              )
-            .self$worksheets[[sheet]]$sheet_data$data_count <-
-              .self$worksheets[[sheet]]$sheet_data$data_count + 1L
-
-            .self$worksheets[[sheet]]$sheet_data$n_elements <-
-              as.integer(length(.self$worksheets[[sheet]]$sheet_data$rows))
-          }
+          ## this creates the XML for styles.XML
+          .self$updateStyles(this.sty)
         }
       }
 
