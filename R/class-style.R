@@ -32,294 +32,322 @@ Style <- setRefClass(
     "wrapText",
     "locked",
     "hidden",
-    "xfId"
+    "xfId",
+    "styleShow"
   ),
   methods = list(
-    initialize = function() {
-      .self$fontId <- NULL
-      .self$fontName <- NULL
-      .self$fontColour <- NULL
-      .self$fontSize <- NULL
-      .self$fontFamily <- NULL
-      .self$fontScheme <- NULL
-      .self$fontDecoration <- NULL
+    initialize = function(
+      fontName       = NULL,
+      fontSize       = NULL,
+      fontColour     = "none",
+      numFmt         = "GENERAL",
+      # numberFormat   = c("GENERAL", "NUMBER", "CURRENCY", "ACCOUNTING", "DATE", "LONGDATE", "TIME", "PERCENTAGE", "SCIENTIFIC", "TEXT", "3", "4", "COMMA"),
+      # customFormat   = NULL, # this could be used to overwrite number format, and allow for easier match.arg()
+      # if any border == none, sets to NULL
+      border         = c("none", "top", "bottom", "left", "right", "all"),
+      borderColour   = getOption("openxlsx.borderColour", "black"),
+      # should borderStyle default to "none"?
+      borderStyle    = getOption("openxlsx.borderStyle", "thin"),
+      bgFill         = "none",
+      fgFill         = "none",
+      halign         = c("left", "right", "center"),
+      valign         = c("top", "center", "bottom"),
+      # TODO should this be fontDecoration or textDecoration?
+      textDecoration = c("none", "bold", "strikeout", "italic", "underline", "underline2"),
+      wrapText       = FALSE,
+      textRotation   = 0,
+      indent         = NULL,
+      locked         = FALSE,
+      hidden         = FALSE
+    ) {
 
-      .self$borderTop <- NULL
-      .self$borderLeft <- NULL
-      .self$borderRight <- NULL
-      .self$borderBottom <- NULL
-      .self$borderTopColour <- NULL
-      .self$borderLeftColour <- NULL
-      .self$borderRightColour <- NULL
-      .self$borderBottomColour <- NULL
-      .self$borderDiagonal <- NULL
+      # asserts and validations ----
+      assert_class(wrapText, "logical")
+      assert_class(indent, c("numeric", "integer"), or_null = TRUE)
+      assert_class(locked, "logical", or_null = TRUE)
+      assert_class(hidden, "logical", or_null = TRUE)
+
+      validFontColour <- validate_colour(fontColour, or_null = TRUE)
+      bgFill          <- validate_colour(bgFill, or_null = TRUE)
+      fgFill          <- validate_colour(fgFill, or_null = TRUE)
+
+
+      # fonts ----
+      .self$fontName   <- value_list(fontName)
+      .self$fontSize   <- value_list(validate_font_size(fontSize))
+      .self$fontColour <- colour_list(validFontColour)
+
+      .self$halign         <- match.arg(halign)
+      .self$valign         <- match.arg(valign)
+      text_style           <- match.arg(textDecoration, several.ok = TRUE)
+      .self$fontDecoration <- validate_text_style(text_style)
+      .self$numFmt         <- validate_number_format(numFmt)
+
+
+      # fill ----
+      .self$fill <- c(
+        if (!is.null(bgFill)) list(fillBg = list(rgb = bgFill)),
+        if (!is.null(fgFill)) list(fillFg = list(rgb = fgFill))
+      )
+
+      # text rotation ----
+      .self$textRotation <- validate_text_rotation(textRotation)
+
+      # borders ----
+      .self$set_borders(
+        match.arg(border, several.ok = TRUE),
+        colour = borderColour,
+        style = borderStyle
+      )
+
+      # others ----
+      .self$indent   <- isTRUE(indent)
+      .self$locked   <- isTRUE(locked)
+      .self$hidden   <- isTRUE(hidden)
+      .self$wrapText <- isTRUE(wrapText)
+
+      # auto set ----
+      # when are these set?
+      .self$fontId               <- NULL
+      .self$fontFamily           <- NULL
+      .self$fontScheme           <- NULL
+      .self$borderDiagonal       <- NULL
       .self$borderDiagonalColour <- NULL
-      .self$borderDiagonalUp <- FALSE
-      .self$borderDiagonalDown <- FALSE
+      .self$borderDiagonalUp     <- FALSE
+      .self$borderDiagonalDown   <- FALSE
+      .self$xfId                 <- NULL
 
-      .self$halign <- NULL
-      .self$valign <- NULL
-      .self$indent <- NULL
-      .self$textRotation <- NULL
-      .self$numFmt <- NULL
-      .self$fill <- NULL
-      .self$wrapText <- NULL
-      .self$hidden <- NULL
-      .self$locked <- NULL
-      .self$xfId <- NULL
+      invisible(.self)
+    },
+
+    # set to private function
+    set_borders = function(border, colour, style) {
+      if (any(border == "none")) {
+        # default will override
+        .self$borderLeft         <- NULL
+        .self$borderLeftColour   <- NULL
+        .self$borderRight        <- NULL
+        .self$borderRightColour  <- NULL
+        .self$borderTop          <- NULL
+        .self$borderTopColour    <- NULL
+        .self$borderBottom       <- NULL
+        .self$borderBottomColour <- NULL
+        return(invisible(.self))
+      }
+
+      if (identical(border, "all")) {
+        pos <- c(left = 1L, right = 2L, top = 3L, bottom = 4L)
+        n_sides <- 4L
+      } else {
+
+        ## find position of each side in string
+        pos <- match(c("left", "right", "top", "bottom"), border, nomatch = 0L)
+        names(pos) <- c("left", "right", "top", "bottom")
+        pos <- sort(pos[pos > 0L])
+        n_sides <- length(pos)
+
+        if (!n_sides) {
+          stop("border argument is not valid")
+        }
+      }
+
+      colour <- rep.int(validate_colour(colour), n_sides)
+      style  <- rep.int(validate_border_style(style), n_sides)
+
+      names(colour) <- names(pos)
+      names(style)  <- names(pos)
+
+      # These are fine to be set to NULL
+      .self$borderLeft   <- na_to_null(style["left"])
+      .self$borderRight  <- na_to_null(style["right"])
+      .self$borderTop    <- na_to_null(style["top"])
+      .self$borderBottom <- na_to_null(style["bottom"])
+
+      .self$borderLeftColour   <- colour_list(colour["left"])
+      .self$borderRightColour  <- colour_list(colour["right"])
+      .self$borderTopColour    <- colour_list(colour["top"])
+      .self$borderBottomColour <- colour_list(colour["bottom"])
+
+      invisible(.self)
     },
 
     show = function(print = TRUE) {
-      numFmtMapping <- list(
-        list(numFmtId =   0),
-        list(numFmtId =   2),
-        list(numFmtId = 164),
-        list(numFmtId =  44),
-        list(numFmtId =  14),
-        list(numFmtId = 167),
-        list(numFmtId =  10),
-        list(numFmtId =  11),
-        list(numFmtId =  49)
+      .numFmtMapping <- c(
+        GENERAL    =   0,
+        NUMBER     =   2,
+        CURRENCY   = 164,
+        ACCOUNTING =  44,
+        DATE       =  14,
+        TIME       = 167,
+        PERCENTAGE =  10,
+        SCIENTIFIC =  11,
+        TEXT       =  49
       )
 
-      validNumFmt <- c("GENERAL", "NUMBER", "CURRENCY", "ACCOUNTING", "DATE", "TIME", "PERCENTAGE", "SCIENTIFIC", "TEXT")
-
-      if (!is.null(numFmt)) {
-        if (as.integer(numFmt$numFmtId) %in% unlist(numFmtMapping)) {
-          numFmtStr <- validNumFmt[unlist(numFmtMapping) == as.integer(numFmt$numFmtId)]
+      numFmtStr <- if (!is.null(.self$numFmt)) {
+        if (as.integer(.self$numFmt$numFmtId) %in% .numFmtMapping) {
+          names(.numFmtMapping)[.numFmtMapping == as.integer(.self$numFmt$numFmtId)]
         } else {
-          numFmtStr <- sprintf('"%s"', numFmt$formatCode)
+          sprintf('"%s"', .self$numFmt$formatCode)
         }
       } else {
-        numFmtStr <- "GENERAL"
+        "GENERAL"
       }
 
-      borders <- c(sprintf("Top: %s", borderTop), sprintf("Bottom: %s", borderBottom), sprintf("Left: %s", borderLeft), sprintf("Right: %s", borderRight))
-      borderColours <- gsub("^FF", "#", c(borderTopColour, borderBottomColour, borderLeftColour, borderRightColour))
-
-      fgFill <- fill$fillFg
-      bgFill <- fill$fillBg
-
-      styleShow <- "A custom cell style. \n\n"
-
-      styleShow <- append(styleShow, sprintf("Cell formatting: %s \n", numFmtStr)) ## numFmt
-      styleShow <- append(styleShow, sprintf("Font name: %s \n", fontName[[1]])) ## Font name
-      styleShow <- append(styleShow, sprintf("Font size: %s \n", fontSize[[1]])) ## Font size
-      styleShow <- append(styleShow, sprintf("Font colour: %s \n", gsub("^FF", "#", fontColour[[1]]))) ## Font colour
-
-      ## Font decoration
-      # TODO append() to c()
-      if (length(fontDecoration) > 0) {
-        styleShow <- append(styleShow, sprintf("Font decoration: %s \n", paste(fontDecoration, collapse = ", ")))
-      }
-
-      if (length(borders) > 0) {
-        styleShow <- append(styleShow, sprintf("Cell borders: %s \n", paste(borders, collapse = ", "))) ## Cell borders
-        styleShow <- append(styleShow, sprintf("Cell border colours: %s \n", paste(borderColours, collapse = ", "))) ## Cell borders
-      }
-
-      if (!is.null(halign)) {
-        styleShow <- append(styleShow, sprintf("Cell horz. align: %s \n", halign))
-      } ## Cell horizontal alignment
-
-      if (!is.null(valign)) {
-        styleShow <- append(styleShow, sprintf("Cell vert. align: %s \n", valign))
-      } ## Cell vertical alignment
-
-      if (!is.null(indent)) {
-        styleShow <- append(styleShow, sprintf("Cell indent: %s \n", indent))
-      } ## Cell indent
-
-      if (!is.null(textRotation)) {
-        styleShow <- append(styleShow, sprintf("Cell text rotation: %s \n", textRotation))
-      } ## Cell text rotation
-
-      ## Cell fill colour
-      if (length(fgFill) > 0) {
-        styleShow <- append(styleShow, sprintf("Cell fill foreground: %s \n", paste(paste0(names(fgFill), ": ", sub("^FF", "#", fgFill)), collapse = ", ")))
-      }
-
-      if (length(bgFill) > 0) {
-        styleShow <- append(styleShow, sprintf("Cell fill background: %s \n", paste(paste0(names(bgFill), ": ", sub("^FF", "#", bgFill)), collapse = ", ")))
-      }
-
-      if (!is.null(locked)) {
-        styleShow <- append(styleShow, sprintf("Cell protection: %s \n", locked))
-      } ## Cell protection
-      if (!is.null(hidden)) {
-        styleShow <- append(styleShow, sprintf("Cell formula hidden: %s \n", hidden))
-      } ## Cell formula hidden
-
-      styleShow <- append(styleShow, sprintf("wraptext: %s", wrapText)) ## wrap text
-
-      styleShow <- c(styleShow, "\n\n")
-
-      if (print) {
-        cat(styleShow)
-      }
-
-      return(invisible(styleShow))
-    },
-
-    as.list = function() {
-      l <- list(
-        fontId         = fontId,
-        fontName       = fontName,
-        fontColour     = fontColour,
-        fontSize       = fontSize,
-        fontFamily     = fontFamily,
-        fontScheme     = fontScheme,
-        fontDecoration = fontDecoration,
-
-        borderTop          = borderTop,
-        borderLeft         = borderLeft,
-        borderRight        = borderRight,
-        borderBottom       = borderBottom,
-        borderTopColour    = borderTopColour,
-        borderLeftColour   = borderLeftColour,
-        borderRightColour  = borderRightColour,
-        borderBottomColour = borderBottomColour,
-
-        halign       = halign,
-        valign       = valign,
-        indent       = indent,
-        textRotation = textRotation,
-        numFmt       = numFmt,
-        fillFg       = fill$fillFg,
-        fillBg       = fill$fillBg,
-        wrapText     = wrapText,
-        locked       = locked,
-        hidden       = hidden,
-        xfId         = xfId
+      # if all are NULL
+      borders <- c(
+        sprintf("Top: %s",    .self$borderTop),
+        sprintf("Bottom: %s", .self$borderBottom),
+        sprintf("Left: %s",   .self$borderLeft),
+        sprintf("Right: %s",  .self$borderRight)
       )
 
-      l[sapply(l, length) > 0]
+      borderColours <- c(.self$borderTopColour, .self$borderBottomColour, .self$borderLeftColour, .self$borderRightColour)
+      borderColours <- gsub("^FF", "#", borderColours)
+
+      # make as private
+      .self$styleShow  <- c(
+        "A custom cell style. \n\n",
+        # numFmt
+        sprintf("Cell formatting: %s \n", numFmtStr),
+        # Font name
+        sprintf("Font name: %s \n", .self$fontName[[1]]),
+        # Font size
+        sprintf("Font size: %s \n", .self$fontSize[[1]]),
+        # Font colour
+        sprintf("Font colour: %s \n", gsub("^FF", "#", .self$fontColour[[1]])),
+        # Font decoration
+        if (length(.self$fontDecoration)) {
+          sprintf("Font decoration: %s \n", paste(.self$fontDecoration, collapse = ", "))
+        },
+
+        # Cell borders
+        if (length(borders)) {
+          c(
+            sprintf("Cell borders: %s \n", paste(borders, collapse = ", ")),
+            sprintf("Cell border colours: %s \n", paste(borderColours, collapse = ", "))
+          )
+        },
+
+        # sprtinf("this %s", NULL) returns character()
+        # Cell horizontal alignment
+        sprintf("Cell horzizontal align: %s \n", .self$halign),
+        # Cell vertical alignment
+        sprintf("Cell vertical align: %s \n", .self$valign),
+        # Cell indent
+        sprintf("Cell indent: %s \n", .self$indent),
+        # Cell text rotation
+        sprintf("Cell text rotation: %s \n", .self$textRotation),
+        # Cell fill colour
+        if (length(.self$fill$fillFg)) {
+          sprintf(
+            "Cell fill foreground: %s \n",
+            paste(paste0(names(.self$fill$fillFg), ": ", sub("^FF", "#", .self$fill$fillFg)), collapse = ", ")
+          )
+        },
+        # Cell background  fill
+        if (length(.self$fill$fillBg)) {
+          sprintf(
+            "Cell fill background: %s \n",
+            paste(paste0(names(.self$fill$fillBg), ": ", sub("^FF", "#", .self$fill$fillBg)), collapse = ", ")
+          )
+        },
+        # locked
+        sprintf("Cell protection: %s \n", .self$locked),
+        # hidden
+        sprintf("Cell formula hidden: %s \n", .self$hidden),
+        # wrapText
+        sprintf("Cell wrap text: %s", .self$wrapText),
+        "\n\n"
+      )
+
+      if (print) cat(.self$styleShow)
+      invisible(.self)
+    },
+
+    # TODO as.list() to to_list() ?
+    as.list = function(include_null = FALSE) {
+      ls <- list(
+        fontId         = .self$fontId,
+        fontName       = .self$fontName,
+        fontColour     = .self$fontColour,
+        fontSize       = .self$fontSize,
+        fontFamily     = .self$fontFamily,
+        fontScheme     = .self$fontScheme,
+        fontDecoration = .self$fontDecoration,
+
+        borderTop          = .self$borderTop,
+        borderLeft         = .self$borderLeft,
+        borderRight        = .self$borderRight,
+        borderBottom       = .self$borderBottom,
+        borderTopColour    = .self$borderTopColour,
+        borderLeftColour   = .self$borderLeftColour,
+        borderRightColour  = .self$borderRightColour,
+        borderBottomColour = .self$borderBottomColour,
+
+        halign       = .self$halign,
+        valign       = .self$valign,
+        indent       = .self$indent,
+        textRotation = .self$textRotation,
+        numFmt       = .self$numFmt,
+        fillFg       = .self$fill$fillFg,
+        fillBg       = .self$fill$fillBg,
+        wrapText     = .self$wrapText,
+        locked       = .self$locked,
+        hidden       = .self$hidden,
+        xfId         = .self$xfId
+      )
+
+      if (include_null) {
+        ls
+      } else {
+        ls[lengths(ls) > 0]
+      }
     }
   )
 )
 
 
+# wrappers ----------------------------------------------------------------
+
+# TODO would this make sense as a method? Style$merge(newStyle)?
 mergeStyle <- function(oldStyle, newStyle) {
   assert_style(oldStyle)
   assert_style(newStyle)
 
   ## This function is used to merge an existing cell style with a new style to create a stacked style.
-  oldStyle <- oldStyle$copy()
+  res <- oldStyle$copy()
 
-  if (!is.null(newStyle$fontName)) {
-    oldStyle$fontName <- newStyle$fontName
+  for (i in merge_style_fields()) {
+    res[[i]] <- newStyle[[i]] %||% oldStyle[[i]]
   }
 
-  if (!is.null(newStyle$fontColour)) {
-    oldStyle$fontColour <- newStyle$fontColour
-  }
+  # separately
+  res$fontDecoration <- c(oldStyle$fontDecoration, newStyle$fontDecoration)
 
-  if (!is.null(newStyle$fontSize)) {
-    oldStyle$fontSize <- newStyle$fontSize
-  }
+  # do these need checks?
+  res$borderDiagonalUp   <- newStyle$borderDiagonalUp
+  res$borderDiagonalDown <- newStyle$borderDiagonalDown
 
-  if (!is.null(newStyle$fontFamily)) {
-    oldStyle$fontFamily <- newStyle$fontFamily
-  }
+  res
+}
 
-  if (!is.null(newStyle$fontScheme)) {
-    oldStyle$fontScheme <- newStyle$fontScheme
-  }
-
-  if (length(newStyle$fontDecoration) > 0) {
-    if (length(oldStyle$fontDecoration) == 0) {
-      oldStyle$fontDecoration <- newStyle$fontDecoration
-    } else {
-      oldStyle$fontDecoration <- c(oldStyle$fontDecoration, newStyle$fontDecoration)
-    }
-  }
-
-
-  ## borders
-  if (!is.null(newStyle$borderTop)) {
-    oldStyle$borderTop <- newStyle$borderTop
-  }
-
-  if (!is.null(newStyle$borderLeft)) {
-    oldStyle$borderLeft <- newStyle$borderLeft
-  }
-
-  if (!is.null(newStyle$borderRight)) {
-    oldStyle$borderRight <- newStyle$borderRight
-  }
-
-  if (!is.null(newStyle$borderBottom)) {
-    oldStyle$borderBottom <- newStyle$borderBottom
-  }
-
-  if (!is.null(newStyle$borderDiagonal)) {
-    oldStyle$borderDiagonal <- newStyle$borderDiagonal
-  }
-
-  oldStyle$borderDiagonalUp <- newStyle$borderDiagonalUp
-  oldStyle$borderDiagonalDown <- newStyle$borderDiagonalDown
-
-
-  if (!is.null(newStyle$borderTopColour)) {
-    oldStyle$borderTopColour <- newStyle$borderTopColour
-  }
-
-  if (!is.null(newStyle$borderLeftColour)) {
-    oldStyle$borderLeftColour <- newStyle$borderLeftColour
-  }
-
-  if (!is.null(newStyle$borderRightColour)) {
-    oldStyle$borderRightColour <- newStyle$borderRightColour
-  }
-
-  if (!is.null(newStyle$borderBottomColour)) {
-    oldStyle$borderBottomColour <- newStyle$borderBottomColour
-  }
-
-
-
-  ## other
-  if (!is.null(newStyle$halign)) {
-    oldStyle$halign <- newStyle$halign
-  }
-
-  if (!is.null(newStyle$valign)) {
-    oldStyle$valign <- newStyle$valign
-  }
-
-  if (!is.null(newStyle$indent)) {
-    oldStyle$indent <- newStyle$indent
-  }
-
-  if (!is.null(newStyle$textRotation)) {
-    oldStyle$textRotation <- newStyle$textRotation
-  }
-
-  if (!is.null(newStyle$numFmt)) {
-    oldStyle$numFmt <- newStyle$numFmt
-  }
-
-  if (!is.null(newStyle$fill)) {
-    oldStyle$fill <- newStyle$fill
-  }
-
-  if (!is.null(newStyle$wrapText)) {
-    oldStyle$wrapText <- newStyle$wrapText
-  }
-
-  if (!is.null(newStyle$locked)) {
-    oldStyle$locked <- newStyle$locked
-  }
-
-  if (!is.null(newStyle$hidden)) {
-    oldStyle$hidden <- newStyle$hidden
-  }
-
-  if (!is.null(newStyle$xfId)) {
-    oldStyle$xfId <- newStyle$xfId
-  }
-
-  return(oldStyle)
+merge_style_fields <- function() {
+  c(
+    paste0("font"), c("Name", "Colour", "Size", "Family", "Scheme"),
+    paste0("border", c("Top", "Left", "Right", "Bottom", "Diagonal")),
+    paste0("border", c("Top", "Left", "Right", "Bottom"), "Colour"),
+    "halign",
+    "valign",
+    "indent",
+    "textRotation",
+    "numFmt",
+    "fill",
+    "wrapText",
+    "locked",
+    "hidden",
+    "xfId"
+  )
 }
 
 
@@ -361,14 +389,12 @@ new_style <- function() {
 #'
 #' @param border Cell border. A vector of "top", "bottom", "left", "right" or a single string).
 #' \itemize{
+#'    \item{\bold{none}}{ No border}
 #'    \item{\bold{"top"}}{ Top border}
 #'    \item{\bold{bottom}}{ Bottom border}
 #'    \item{\bold{left}}{ Left border}
 #'    \item{\bold{right}}{ Right border}
-#'    \item{\bold{TopBottom} or \bold{c("top", "bottom")}}{ Top and bottom border}
-#'    \item{\bold{LeftRight} or \bold{c("left", "right")}}{ Left and right border}
-#'    \item{\bold{TopLeftRight} or \bold{c("top", "left", "right")}}{ Top, Left and right border}
-#'    \item{\bold{TopBottomLeftRight} or \bold{c("top", "bottom", "left", "right")}}{ All borders}
+#'    \item{\bold{all}}{ all borders}
 #'   }
 #'
 #' @param borderColour Colour of cell border vector the same length as the number of sides specified in "border"
@@ -417,6 +443,7 @@ new_style <- function() {
 #' @param textDecoration
 #' Text styling.
 #' \itemize{
+#'    \item{\bold{none}}{ No cell contents}
 #'    \item{\bold{bold}}{ Bold cell contents}
 #'    \item{\bold{strikeout}}{ Strikeout cell contents}
 #'    \item{\bold{italic}}{ Italicise cell contents}
@@ -435,269 +462,196 @@ new_style <- function() {
 #' ## See package vignettes for further examples
 #'
 #' ## Modify default values of border colour and border line style
-#' options("openxlsx.borderColour" = "#4F80BD")
-#' options("openxlsx.borderStyle" = "thin")
+#' # options("openxlsx.borderColour" = "#4F80BD")
+#' # options("openxlsx.borderStyle" = "thin")
 #'
 #' ## Size 18 Arial, Bold, left horz. aligned, fill colour #1A33CC, all borders,
 #' style <- createStyle(
 #'   fontSize = 18, fontName = "Arial",
-#'   textDecoration = "bold", halign = "left", fgFill = "#1A33CC", border = "TopBottomLeftRight"
+#'   textDecoration = "bold", halign = "left", fgFill = "#1A33CC", border = "all"
 #' )
 #'
 #' ## Red, size 24, Bold, italic, underline, center aligned Font, bottom border
 #' style <- createStyle(
 #'   fontSize = 24, fontColour = rgb(1, 0, 0),
 #'   textDecoration = c("bold", "italic", "underline"),
-#'   halign = "center", valign = "center", border = "Bottom"
+#'   halign = "center", valign = "center", border = "bottom"
 #' )
 #'
 #' # borderColour is recycled for each border or all colours can be supplied
 #'
 #' # colour is recycled 3 times for "Top", "Bottom" & "Right" sides.
-#' createStyle(border = "TopBottomRight", borderColour = "red")
+#' createStyle(border = c("top", "bottom", "right"), borderColour = "red")
 #'
 #' # supply all colours
-#' createStyle(border = "TopBottomLeft", borderColour = c("red", "yellow", "green"))
+#' createStyle(border = c("top", "bottom", "left"), borderColour = c("red", "yellow", "green"))
 createStyle <- function(
-  fontName = NULL,
-  fontSize = NULL,
-  fontColour = NULL,
-  numFmt = "GENERAL",
-  border = NULL,
-  borderColour = getOption("openxlsx.borderColour", "black"),
-  borderStyle = getOption("openxlsx.borderStyle", "thin"),
-  bgFill = NULL,
-  fgFill = NULL,
-  halign = NULL,
-  valign = NULL,
-  textDecoration = NULL,
-  wrapText = FALSE,
-  textRotation = NULL,
-  indent = NULL,
-  locked = NULL,
-  hidden = NULL
+  fontName       = NULL,
+  fontSize       = NULL,
+  fontColour     = NULL,
+  numFmt         = "GENERAL",
+  border         = NULL,
+  borderColour   = getOption("openxlsx.borderColour", "black"),
+  borderStyle    = getOption("openxlsx.borderStyle", "thin"),
+  bgFill         = NULL,
+  fgFill         = NULL,
+  halign         = c("left", "right", "center"),
+  valign         = c("top", "center", "bottom"),
+  # TODO should this be fontDecoration or textDecoration?
+  textDecoration = c("none", "bold", "strikeout", "italic", "underline", "underline2"),
+  wrapText       = FALSE,
+  textRotation   = 0,
+  indent         = NULL,
+  locked         = FALSE,
+  hidden         = FALSE
 ) {
 
-  ### Error checking
+  # TODO simplify options() setting
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  ## if num fmt is made up of dd, mm, yy
-  numFmt_original <- numFmt[[1]]
-  numFmt <- tolower(numFmt_original)
-  validNumFmt <- c("general", "number", "currency", "accounting", "date", "longdate", "time", "percentage", "scientific", "text", "3", "4", "comma")
 
-  if (numFmt == "date") {
-    numFmt <- getOption("openxlsx.dateFormat", getOption("openxlsx.dateformat", "date"))
-  } else if (numFmt == "longdate") {
-    numFmt <- getOption("openxlsx.datetimeFormat", getOption("openxlsx.datetimeformat", getOption("openxlsx.dateTimeFormat", "longdate")))
-  } else if (!numFmt %in% validNumFmt) {
-    numFmt <- replaceIllegalCharacters(numFmt_original)
+  Style$new(
+    fontName       = fontName,
+    fontSize       = fontSize,
+    fontColour     = fontColour,
+    numFmt         = numFmt,
+    border         = border,
+    borderColour   = borderColour,
+    borderStyle    = borderStyle,
+    bgFill         = bgFill,
+    fgFill         = fgFill,
+    halign         = halign,
+    valign         = valign,
+    textDecoration = textDecoration,
+    wrapText       = wrapText,
+    textRotation   = textRotation,
+    indent         = indent,
+    locked         = locked,
+    hidden         = hidden
+  )
+}
+
+# TODO switch new_style() and createStyle()
+new_style <- function(...) {
+  Style$new(...)
+}
+
+
+# helpers -----------------------------------------------------------------
+
+number_formats <- function() {
+  list(
+    GENERAL     = list(numFmtId =   0L),
+    NUMBER      = list(numFmtId =   2L),
+    CURRENCY    = list(numFmtId = 164L, formatCode = "&quot;$&quot;#,##0.00"),
+    ACCOUNTING  = list(numFmtId =  44L),
+    DATE        = list(numFmtId =  14L),
+    LONGDATE    = list(numFmtId = 166L, formatCode = "yyyy/mm/dd hh:mm:ss"),
+    TIME        = list(numFmtId = 167L),
+    PERCENTAGE  = list(numFmtId =  10L),
+    SCIENTIFIC  = list(numFmtId =  11L),
+    TEXT        = list(numFmtId =  49L),
+    `3`         = list(numFmtId =   3L),
+    `4`         = list(numFmtId =   4L),
+    COMMA       = list(numFmtId =   3L)
+  )
+}
+
+validate_text_style <- function(textDecoration = c("none", "bold", "strikeout", "italic", "underline", "underline2")) {
+  x <- match.arg(textDecoration, several.ok = TRUE)
+  x <- unique(x)
+
+  # would consider warnings but then can't really use match.arg(); would need
+  # something separate, maybe just the matching part without the errors
+
+  if (any(x == "none")) {
+    return(NULL)
   }
 
+  if ("underline2" %in% x) {
+    x <- x[x != "underline"]
+  }
 
+  x
+}
 
+validate_number_format <- function(x) {
+  if (length(x) > 1) {
+    stop("numFmt must be a single value")
+  }
 
-  numFmtMapping <- list(
-    list("numFmtId" = 0), # GENERAL
-    list("numFmtId" = 2), # NUMBER
-    list("numFmtId" = 164, formatCode = "&quot;$&quot;#,##0.00"), ## CURRENCY
-    list("numFmtId" = 44), # ACCOUNTING
-    list("numFmtId" = 14), # DATE
-    list("numFmtId" = 166, formatCode = "yyyy/mm/dd hh:mm:ss"), # LONGDATE
-    list("numFmtId" = 167), # TIME
-    list("numFmtId" = 10), # PERCENTAGE
-    list("numFmtId" = 11), # SCIENTIFIC
-    list("numFmtId" = 49), # TEXT
+  x <- toupper(x)
 
-    list("numFmtId" = 3),
-    list("numFmtId" = 4),
-    list("numFmtId" = 3)
+  if (x %out% names(number_formats())) {
+    x <- replaceIllegalCharacters(x)
+  }
+
+  x <- switch(
+    x,
+    # TODO make options more simple; use internal ox_options()
+    date = getOption("openxlsx.dateFormat", getOption("openxlsx.dateformat", "date")),
+    longdate = getOption("openxlsx.datetimeFormat", getOption("openxlsx.datetimeformat", getOption("openxlsx.dateTimeFormat", "longdate"))),
+    x
   )
 
-  names(numFmtMapping) <- validNumFmt
+  number_formats()[[x]] %||% list(numFmtId = 165, formatCode = x)
+}
 
-  ## Validate border line style
-  if (!is.null(borderStyle)) {
-    borderStyle <- validateBorderStyle(borderStyle)
+validate_font_size <- function(fontSize) {
+  if (is.null(fontSize)) {
+    return(NULL)
   }
 
-  if (!is.null(halign)) {
-    halign <- tolower(halign[[1]])
-    if (!halign %in% c("left", "right", "center")) {
-      stop("Invalid halign argument!")
-    }
+  assert_class(fontSize, c("numeric", "integer"))
+
+  if (length(fontSize) > 1 || fontSize < 1) {
+    stop("fontSize must be a single >= 1")
   }
 
-  if (!is.null(valign)) {
-    valign <- tolower(valign[[1]])
-    if (!valign %in% c("top", "bottom", "center")) {
-      stop("Invalid valign argument!")
-    }
+  fontSize
+}
+
+validate_text_rotation <- function(x) {
+  if (is.null(x)) {
+    return(NULL)
   }
 
-  if (!is.logical(wrapText)) {
-    stop("Invalid wrapText")
+  if (!is.numeric(x) && length(x) == 1) {
+    stop("textRotation must be single number")
   }
 
-  if (!is.null(indent)) {
-    if (!is.numeric(indent) & !is.integer(indent)) {
-      stop("indent must be numeric")
-    }
+  if (x < 0 & x >= -90) {
+    x <- (x * -1) + 90
   }
 
-  textDecoration <- tolower(textDecoration)
-  if (!is.null(textDecoration)) {
-    if (!all(textDecoration %in% c("bold", "strikeout", "italic", "underline", "underline2", ""))) {
-      stop("Invalid textDecoration!")
-    }
+  round(x)
+}
+
+validate_border_style <- function(borderStyle = c("none", "thin", "medium", "dashed", "dotted", "thick", "double", "hair", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot")) {
+  borderStyle <- match.arg(borderStyle, several.ok = TRUE)
+
+  if (any(borderStyle == "none")) {
+    return(NULL)
   }
 
-  borderColour <- validateColour(borderColour, "Invalid border colour!")
+  borderStyle
+}
 
-  if (!is.null(fontColour)) {
-    fontColour <- validateColour(fontColour, "Invalid font colour!")
+
+value_list <- function(x) {
+  if (is.null(na_to_null(x))) {
+    return(NULL)
   }
 
-  if (!is.null(fontSize)) {
-    if (fontSize < 1) stop("Font size must be greater than 0!")
+  list(val = x)
+}
+
+colour_list <- function(x) {
+  if (is.null(na_to_null(x))) {
+    return(NULL)
   }
 
-  if (!is.null(locked)) {
-    if (!is.logical(locked)) stop("Cell attribute locked must be TRUE or FALSE")
-  }
-  if (!is.null(hidden)) {
-    if (!is.logical(hidden)) stop("Cell attribute hidden must be TRUE or FALSE")
-  }
-
-
-
-
-
-  ######################### error checking complete #############################
-  style <- Style$new()
-
-  if (!is.null(fontName)) {
-    style$fontName <- list("val" = fontName)
-  }
-
-  if (!is.null(fontSize)) {
-    style$fontSize <- list("val" = fontSize)
-  }
-
-  if (!is.null(fontColour)) {
-    style$fontColour <- list("rgb" = fontColour)
-  }
-
-  style$fontDecoration <- toupper(textDecoration)
-
-  ## background fill
-  if (is.null(bgFill)) {
-    bgFillList <- NULL
-  } else {
-    bgFill <- validateColour(bgFill, "Invalid bgFill colour")
-    style$fill <- append(style$fill, list(fillBg = list("rgb" = bgFill)))
-  }
-
-  ## foreground fill
-  if (is.null(fgFill)) {
-    fgFillList <- NULL
-  } else {
-    fgFill <- validateColour(fgFill, "Invalid fgFill colour")
-    style$fill <- append(style$fill, list(fillFg = list(rgb = fgFill)))
-  }
-
-
-  ## border
-  if (!is.null(border)) {
-    border <- toupper(border)
-    border <- paste(border, collapse = "")
-
-    ## find position of each side in string
-    sides <- c("LEFT", "RIGHT", "TOP", "BOTTOM")
-    pos <- sapply(sides, function(x) regexpr(x, border))
-    pos <- pos[order(pos, decreasing = FALSE)]
-    nSides <- sum(pos > 0)
-
-    borderColour <- rep(borderColour, length.out = nSides)
-    borderStyle <- rep(borderStyle, length.out = nSides)
-
-    pos <- pos[pos > 0]
-
-    if (length(pos) == 0) {
-      stop("Unknown border argument")
-    }
-
-    names(borderColour) <- names(pos)
-    names(borderStyle) <- names(pos)
-
-    if ("LEFT" %in% names(pos)) {
-      style$borderLeft <- borderStyle[["LEFT"]]
-      style$borderLeftColour <- list("rgb" = borderColour[["LEFT"]])
-    }
-
-    if ("RIGHT" %in% names(pos)) {
-      style$borderRight <- borderStyle[["RIGHT"]]
-      style$borderRightColour <- list("rgb" = borderColour[["RIGHT"]])
-    }
-
-    if ("TOP" %in% names(pos)) {
-      style$borderTop <- borderStyle[["TOP"]]
-      style$borderTopColour <- list("rgb" = borderColour[["TOP"]])
-    }
-
-    if ("BOTTOM" %in% names(pos)) {
-      style$borderBottom <- borderStyle[["BOTTOM"]]
-      style$borderBottomColour <- list("rgb" = borderColour[["BOTTOM"]])
-    }
-  }
-
-  ## other fields
-  if (!is.null(halign)) {
-    style$halign <- halign
-  }
-
-  if (!is.null(valign)) {
-    style$valign <- valign
-  }
-
-  if (!is.null(indent)) {
-    style$indent <- indent
-  }
-
-  if (wrapText) {
-    style$wrapText <- TRUE
-  }
-
-  if (!is.null(textRotation)) {
-    if (!is.numeric(textRotation)) {
-      stop("textRotation must be numeric.")
-    }
-
-    if (textRotation < 0 & textRotation >= -90) {
-      textRotation <- (textRotation * -1) + 90
-    }
-
-    style$textRotation <- round(textRotation[[1]], 0)
-  }
-
-  if (numFmt != "general") {
-    if (numFmt %in% validNumFmt) {
-      style$numFmt <- numFmtMapping[[numFmt[[1]]]]
-    } else {
-      style$numFmt <- list("numFmtId" = 165, formatCode = numFmt) ## Custom numFmt
-    }
-  }
-
-
-  if (!is.null(locked)) {
-    style$locked <- locked
-  }
-
-  if (!is.null(hidden)) {
-    style$hidden <- hidden
-  }
-
-  return(style)
+  list(rgb = x)
 }

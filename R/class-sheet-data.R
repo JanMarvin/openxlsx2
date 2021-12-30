@@ -2,6 +2,7 @@
 
 SheetData <- setRefClass(
   "SheetData",
+  # TODO should all fields be initiated?  Why would any not be?
   fields = c(
     rows       = "integer",
     cols       = "integer",
@@ -10,8 +11,7 @@ SheetData <- setRefClass(
     t          = "ANY",
     v          = "ANY",
     f          = "ANY",
-    # row_attr was "ANY"
-    row_attr   = "list",
+    row_attr   = "ANY",
     cc         = "ANY", # not initialized
     cc_out     = "ANY", # not initialized
     style_id   = "ANY",
@@ -20,6 +20,7 @@ SheetData <- setRefClass(
   ),
 
   methods = list(
+    # TODO should SheetData$new() have params?
     initialize = function() {
       .self$rows <- integer()
       .self$cols <- integer()
@@ -32,9 +33,6 @@ SheetData <- setRefClass(
 
       .self$data_count <- 0L
       .self$n_elements <- 0L
-
-      .self$cc <- empty_sheet_data_cc()
-      .self$row_attr <- list()
 
       invisible(.self)
     },
@@ -76,7 +74,7 @@ SheetData <- setRefClass(
 
     write = function(rows_in, cols_in, t_in, v_in, f_in, any_functions = TRUE) {
       if (length(rows_in) == 0 | length(cols_in) == 0) {
-        return(invisible(0))
+        return(invisible(.self))
       }
 
 
@@ -99,28 +97,28 @@ SheetData <- setRefClass(
         }
       }
 
+      # TODO change inds to ! x %in% y; don't need length() check
       inds <- integer(0)
       if (possible_overlap) {
         inds <- which(paste(rows, cols, sep = ",") %in% paste(rows_in, cols_in, sep = ","))
       }
 
       if (length(inds) > 0) {
-        .self$rows <- c(rows[-inds], rows_in)
-        .self$cols <- c(cols[-inds], cols_in)
-        .self$t <- c(t[-inds], t_in)
-        .self$v <- c(v[-inds], v_in)
-        .self$f <- c(f[-inds], f_in)
+        .self$rows <- c(.self$rows[-inds], rows_in)
+        .self$cols <- c(.self$cols[-inds], cols_in)
+        .self$t <- c(.self$t[-inds], t_in)
+        .self$v <- c(.self$v[-inds], v_in)
+        .self$f <- c(.self$f[-inds], f_in)
       } else {
-        .self$rows <- c(rows, rows_in)
-        .self$cols <- c(cols, cols_in)
-        .self$t <- c(t, t_in)
-        .self$v <- c(v, v_in)
-        .self$f <- c(f, f_in)
+        .self$rows <- c(.self$rows, rows_in)
+        .self$cols <- c(.self$cols, cols_in)
+        .self$t <- c(.self$t, t_in)
+        .self$v <- c(.self$v, v_in)
+        .self$f <- c(.self$f, f_in)
       }
 
       .self$n_elements <- as.integer(length(rows))
-      .self$data_count <- data_count + 1L
-
+      .self$data_count <- .self$data_count + 1L
       invisible(.self)
     }
   )
@@ -133,8 +131,11 @@ new_sheet_data <- function() {
 
 # helpers -----------------------------------------------------------------
 
+# Consider making some helpers for the cc stuff.
+
 empty_sheet_data_cc <- function() {
-  # make make this a specific object?
+  # make make this a specific class/object?
+  stop("this isn't in use")
   data.frame(
     row_r = character(),
     c_r   = character(),

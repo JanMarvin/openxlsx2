@@ -427,22 +427,6 @@ removeHeadTag <- function(x) {
 }
 
 
-
-validateBorderStyle <- function(borderStyle) {
-  valid <- c(
-    "none", "thin", "medium", "dashed", "dotted", "thick", "double", "hair", "mediumDashed",
-    "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot"
-  )
-
-  ind <- match(tolower(borderStyle), tolower(valid))
-  if (any(is.na(ind))) {
-    stop("Invalid borderStyle", call. = FALSE)
-  }
-
-  return(valid[ind])
-}
-
-
 buildFontList <- function(fonts) {
   sz     <- font_val(fonts, "font", "sz")
   colour <- font_val(fonts, "font", "color")
@@ -676,6 +660,7 @@ buildBorder <- function(x) {
 
 
 genHeaderFooterNode <- function(x) {
+  # TODO is x some class of something?
 
   # <headerFooter differentOddEven="1" differentFirst="1" scaleWithDoc="0" alignWithMargins="0">
   #   <oddHeader>&amp;Lfirst L&amp;CfC&amp;RfR</oddHeader>
@@ -687,6 +672,13 @@ genHeaderFooterNode <- function(x) {
   #   </headerFooter>
 
   ## ODD
+
+  # TODO clean up length(x) > 0
+  # TODO clean up to x <- if (cond) value; default here is NULL
+
+  # return nothing if there is no length
+  if (!length(x)) return(NULL)
+
   if (length(x$oddHeader) > 0) {
     oddHeader <- paste0("<oddHeader>", sprintf("&amp;L%s", x$oddHeader[[1]]), sprintf("&amp;C%s", x$oddHeader[[2]]), sprintf("&amp;R%s", x$oddHeader[[3]]), "</oddHeader>", collapse = "")
   } else {
@@ -860,6 +852,8 @@ getFile <- function(xlsxFile) {
 # Rotate the 15-bit integer by n bits to the
 hashPassword <- function(password) {
   # password limited to 15 characters
+  # TODO add warning about password length
+  # TODO use substr(password, 1, 15) instead
   chars <- head(strsplit(password, "")[[1]], 15)
   # See OpenOffice's documentation of the Excel format: http://www.openoffice.org/sc/excelfileformat.pdf
   # Start from the last character and for each character

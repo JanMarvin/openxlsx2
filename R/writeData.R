@@ -100,8 +100,8 @@
 #' ## Header Styles
 #'
 #' hs1 <- createStyle(
-#'   fgFill = "#DCE6F1", halign = "CENTER", textDecoration = "italic",
-#'   border = "Bottom"
+#'   fgFill = "#DCE6F1", halign = "center", textDecoration = "italic",
+#'   border = "bottom"
 #' )
 #'
 #' writeData(wb, "Cars", x,
@@ -113,7 +113,7 @@
 #' hs2 <- createStyle(
 #'   fontColour = "#ffffff", fgFill = "#4F80BD",
 #'   halign = "center", valign = "center", textDecoration = "bold",
-#'   border = "TopBottomLeftRight"
+#'   border = "all"
 #' )
 #'
 #' writeData(wb, "Cars", x,
@@ -158,8 +158,11 @@
 #' # read.xlsx(wb2)
 #' writeData(wb2, 1, mtcars, startCol = 4, startRow = 4)
 #' wb_to_df(wb2)
-#' saveWorkbook(wb2, "/tmp/test.xlsx", overwrite = TRUE)
-#'
+#' \dontrun{
+#' file <- tempfile(fileext = ".xlsx")
+#' saveWorkbook(wb2, file, overwrite = TRUE)
+#' file.remove(file)
+#' }
 #'
 #' #####################################################################################
 #' ## Save workbook
@@ -232,7 +235,7 @@ writeData <- function(wb,
 
   ## borderColours validation
   borderColour <- validateColour(borderColour, "Invalid border colour")
-  borderStyle <- validateBorderStyle(borderStyle)[[1]]
+  borderStyle <- validate_border_style(borderStyle)[[1]]
 
   ## special case - vector of hyperlinks
   hlinkNames <- NULL

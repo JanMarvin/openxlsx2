@@ -1,5 +1,6 @@
 
-Hyperlink <- setRefClass("Hyperlink",
+Hyperlink <- setRefClass(
+  "Hyperlink",
   fields = c(
     "ref",
     "target",
@@ -22,18 +23,23 @@ Hyperlink <- setRefClass("Hyperlink",
 
     # converts the Hyperlink to XML
     to_xml = function(id) {
-      loc <- sprintf('location="%s"', location)
-      disp <- sprintf('display="%s"', display)
-      rf <- sprintf('ref="%s"', ref)
-
-      rid <- if (is_external) sprintf('r:id="rId%s"', id)
-      paste("<hyperlink", rf, rid, disp, loc, "/>")
+      paste_c(
+        "<hyperlink",
+        sprintf('ref="%s"', .self$ref),                     # rf
+        if (.self$is_external) sprintf('r:id="rId%s"', id), # rid
+        sprintf('display="%s"', .self$display),             # disp
+        sprintf('location="%s"', .self$location),           # loc
+        "/>",
+        sep = " "
+      )
     },
 
     # converts the Hyperlink to target xml
     to_target_xml = function(id) {
       if (.self$is_external) {
-        sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, target)
+        return(sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, .self$target))
+      } else {
+        return(NULL)
       }
     }
   )
@@ -44,6 +50,12 @@ new_hyperlink <- function() {
 }
 
 xml_to_hyperlink <- function(xml) {
+
+  # TODO allow Hyperlink$new(xml = xml)
+
+  # xml <- c('<hyperlink ref="A1" r:id="rId1" location="Authority"/>',
+  # '<hyperlink ref="B1" r:id="rId2"/>',
+  # '<hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1"/>')
 
   if (length(xml) == 0) {
     return(xml)
@@ -89,4 +101,8 @@ xml_to_hyperlink <- function(xml) {
       is_external = is_external
     )
   })
+}
+
+new_hyperlink <- function() {
+  Hyperlink$new(ref = character(), target = character(), location = character())
 }

@@ -1,4 +1,5 @@
 
+
 ChartSheet <- setRefClass(
   "ChartSheet",
   fields = c(
@@ -36,27 +37,15 @@ ChartSheet <- setRefClass(
     },
 
     get_prior_sheet_data = function() {
-      xml <- '<chartsheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">>'
-
-      if (length(sheetPr) > 0) {
-        xml <- paste(xml, sheetPr, collapse = "")
-      }
-
-      if (length(sheetViews) > 0) {
-        xml <- paste(xml, sheetViews, collapse = "")
-      }
-
-      if (length(pageMargins) > 0) {
-        xml <- paste(xml, pageMargins, collapse = "")
-      }
-
-      if (length(drawing) > 0) {
-        xml <- paste(xml, drawing, collapse = "")
-      }
-
-      xml <- paste(xml, "</chartsheet>")
-
-      return(xml)
+      paste_c(
+        '<chartsheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">>',
+        .self$sheetPr,
+        .self$sheetViews,
+        .self$pageMargins,
+        .self$drawing,
+        "</chartsheet>",
+        sep = " "
+      )
     }
   )
 )
