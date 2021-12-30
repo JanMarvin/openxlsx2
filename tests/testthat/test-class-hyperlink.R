@@ -1,4 +1,4 @@
 
-test_that("Class Hyperlink works", {
-  expect_error(new_hyperlink(), NA)
+test_that("class Hyperlink works", {
+  expect_s4_class(new_hyperlink(), "Hyperlink")
 })

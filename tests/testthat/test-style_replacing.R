@@ -1,11 +1,5 @@
 
 
-
-
-# context("Replacing styles")
-#
-#
-#
 # test_that("Replace styles", {
 #
 # #   tempFile <- file.path(tempdir(), "temp.xlsx")

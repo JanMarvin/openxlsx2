@@ -1,4 +1,4 @@
 
-test_that("Class Workbook works", {
-  expect_error(new_workbook(), NA)
+test_that("Worksheet Class works", {
+  expect_s4_class(new_worksheet(), "Worksheet")
 })

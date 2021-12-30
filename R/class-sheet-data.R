@@ -3,35 +3,40 @@
 SheetData <- setRefClass(
   "SheetData",
   fields = c(
-    "rows" = "integer",
-    "cols" = "integer",
-    "s" = "ANY",
-    "r" = "ANY",
-    "t" = "ANY",
-    "v" = "ANY",
-    "f" = "ANY",
-    "row_attr" = "ANY",
-    "cc" = "ANY",
-    "cc_out" = "ANY",
-    "style_id" = "ANY",
-    "data_count" = "integer",
-    "n_elements" = "integer"
+    rows       = "integer",
+    cols       = "integer",
+    s          = "ANY", # not initialized
+    r          = "ANY", # not initialized
+    t          = "ANY",
+    v          = "ANY",
+    f          = "ANY",
+    # row_attr was "ANY"
+    row_attr   = "list",
+    cc         = "ANY", # not initialized
+    cc_out     = "ANY", # not initialized
+    style_id   = "ANY",
+    data_count = "integer",
+    n_elements = "integer"
   ),
 
   methods = list(
     # TODO should SheetData$new() have params?
     initialize = function() {
-      .self$rows <- integer(0)
-      .self$cols <- integer(0)
+      .self$rows <- integer()
+      .self$cols <- integer()
 
-      .self$t <- integer(0)
-      .self$v <- character(0)
-      .self$f <- character(0)
+      .self$t <- integer()
+      .self$v <- character()
+      .self$f <- character()
 
-      .self$style_id <- character(0)
+      .self$style_id <- character()
 
       .self$data_count <- 0L
       .self$n_elements <- 0L
+
+      # FIXME Jordan can't remember how these got here.  These could cause issues.
+      .self$cc <- empty_sheet_data_cc()
+      .self$row_attr <- list()
 
       invisible(.self)
     },
@@ -125,4 +130,28 @@ SheetData <- setRefClass(
 
 new_sheet_data <- function() {
   SheetData$new()
+}
+
+
+# helpers -----------------------------------------------------------------
+
+# FIXME Jordan doesn't know if he added this
+
+empty_sheet_data_cc <- function() {
+  # make make this a specific object?
+  data.frame(
+    row_r = character(),
+    c_r   = character(),
+    c_s   = character(),
+    c_t   = character(),
+    v     = character(),
+    f     = character(),
+    f_t   = character(),
+    f_ref = character(),
+    f_si  = character(),
+    is    = character(),
+    typ   = character(),
+    r     = character(),
+    stringsAsFactors = FALSE
+  )
 }

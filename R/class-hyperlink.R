@@ -10,16 +10,18 @@ Hyperlink <- setRefClass(
   ),
 
   methods = list(
+    # initiated the object
     initialize = function(ref, target, location, display = NULL, is_external = TRUE) {
-      .self$ref <- ref
-      .self$target <- target
-      .self$location <- location
-      .self$display <- display
+      .self$ref         <- ref
+      .self$target      <- target
+      .self$location    <- location
+      .self$display     <- display
       .self$is_external <- is_external
 
       invisible(.self)
     },
 
+    # converts the Hyperlink to XML
     to_xml = function(id) {
       paste_c(
         "<hyperlink",
@@ -32,6 +34,7 @@ Hyperlink <- setRefClass(
       )
     },
 
+    # converts the Hyperlink to target xml
     to_target_xml = function(id) {
       if (.self$is_external) {
         return(sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, .self$target))
@@ -42,6 +45,9 @@ Hyperlink <- setRefClass(
   )
 )
 
+new_hyperlink <- function() {
+  Hyperlink$new(ref = character(), target = character(), location = character())
+}
 
 xml_to_hyperlink <- function(xml) {
 
@@ -55,22 +61,18 @@ xml_to_hyperlink <- function(xml) {
     return(xml)
   }
 
-  targets <- names(xml)
-  if (is.null(targets)) {
-    targets <- rep(NA, length(xml))
-  }
-
+  targets <- names(xml) %||% rep(NA, length(xml))
   xml <- unname(xml)
 
-  a <- unlist(lapply(xml, function(x) regmatches(x, gregexpr('[a-zA-Z]+=".*?"', x))), recursive = FALSE)
-  names <- lapply(a, function(xml) regmatches(xml, regexpr('[a-zA-Z]+(?=\\=".*?")', xml, perl = TRUE)))
-  vals <- lapply(a, function(xml) regmatches(xml, regexpr('(?<=").*?(?=")', xml, perl = TRUE)))
-  vals <- lapply(vals, function(x) {
-    Encoding(x) <- "UTF-8"
-    x
+  a <- unlist(lapply(xml, function(i) regmatches(i, gregexpr('[a-zA-Z]+=".*?"', i))), recursive = FALSE)
+  names <- lapply(a, function(i) regmatches(i, regexpr('[a-zA-Z]+(?=\\=".*?")', i, perl = TRUE)))
+  vals <- lapply(a, function(i) {
+    res <- regmatches(i, regexpr('(?<=").*?(?=")', i, perl = TRUE))
+    Encoding(res) <- "UTF-8"
+    res
   })
 
-  hyperlink_objects <- lapply(seq_along(xml), function(i) {
+  lapply(seq_along(xml), function(i) {
     tmp_vals <- vals[[i]]
     tmp_nms <- names[[i]]
     names(tmp_vals) <- tmp_nms
@@ -79,18 +81,8 @@ xml_to_hyperlink <- function(xml) {
     ref <- tmp_vals[["ref"]]
 
     ## location
-    if ("location" %in% tmp_nms) {
-      location <- tmp_vals[["location"]]
-    } else {
-      location <- NULL
-    }
-
-    ## location
-    if ("display" %in% tmp_nms) {
-      display <- tmp_vals[["display"]]
-    } else {
-      display <- NULL
-    }
+    location <- if ("location" %in% tmp_nms) tmp_vals[["location"]]
+    display <- if ("display" %in% tmp_nms) tmp_vals[["display"]]
 
     ## target/external
     if (is.na(targets[i])) {
@@ -101,10 +93,14 @@ xml_to_hyperlink <- function(xml) {
       target <- targets[i]
     }
 
-    Hyperlink$new(ref = ref, target = target, location = location, display = display, is_external = is_external)
+    Hyperlink$new(
+      ref         = ref,
+      target      = target,
+      location    = location,
+      display     = display,
+      is_external = is_external
+    )
   })
-
-  return(hyperlink_objects)
 }
 
 new_hyperlink <- function() {

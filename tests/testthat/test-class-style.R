@@ -2,8 +2,8 @@
 test_that("Class Style works", {
   expect_error(new_style(), NA)
   expect_error(createStyle(), NA)
+  expect_s4_class(new_style(), "Style")
 })
-
 
 test_that("validate_text_style() works", {
   expect_null(validate_text_style("none"))

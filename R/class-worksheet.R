@@ -2,37 +2,37 @@
 Worksheet <- setRefClass(
   "Worksheet",
   fields = c(
-    "sheetPr" = "character",
-    "dimension" = "character",
-    "sheetViews" = "character",
+    "sheetPr"       = "character",
+    "dimension"     = "character",
+    "sheetViews"    = "character",
     "sheetFormatPr" = "character",
 
     "sheet_data" = "SheetData",
-    "rows_attr" = "ANY",
-    "cols_attr" = "ANY",
-    "cols" = "ANY",
+    "rows_attr"  = "ANY",
+    "cols_attr"  = "ANY",
+    "cols"       = "ANY",
 
-    "autoFilter" = "character",
-    "mergeCells" = "ANY",
+    "autoFilter"            = "character",
+    "mergeCells"            = "ANY",
     "conditionalFormatting" = "character",
-    "dataValidations" = "ANY",
-    "dataValidationsLst" = "character",
+    "dataValidations"       = "ANY",
+    "dataValidationsLst"    = "character",
 
     "freezePane" = "character",
     "hyperlinks" = "ANY",
 
     "sheetProtection" = "character",
-    "pageMargins" = "character",
-    "pageSetup" = "character",
-    "headerFooter" = "ANY",
-    "rowBreaks" = "character",
-    "colBreaks" = "character",
-    "drawing" = "character",
-    "legacyDrawing" = "character",
+    "pageMargins"     = "character",
+    "pageSetup"       = "character",
+    "headerFooter"    = "ANY",
+    "rowBreaks"       = "character",
+    "colBreaks"       = "character",
+    "drawing"         = "character",
+    "legacyDrawing"   = "character",
     "legacyDrawingHF" = "character",
-    "oleObjects" = "character",
-    "tableParts" = "character",
-    "extLst" = "character"
+    "oleObjects"      = "character",
+    "tableParts"      = "character",
+    "extLst"          = "character"
   ),
 
   methods = list(
@@ -57,7 +57,7 @@ Worksheet <- setRefClass(
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
       } else {
-        tabColour <- character(0)
+        tabColour <- character()
       }
 
       if (zoom < 10) {
@@ -67,12 +67,12 @@ Worksheet <- setRefClass(
       }
 
       hf <- list(
-        oddHeader = naToNULLList(oddHeader),
-        oddFooter = naToNULLList(oddFooter),
-        evenHeader = naToNULLList(evenHeader),
-        evenFooter = naToNULLList(evenFooter),
-        firstHeader = naToNULLList(firstHeader),
-        firstFooter = naToNULLList(firstFooter)
+        oddHeader   = na_to_null(oddHeader),
+        oddFooter   = na_to_null(oddFooter),
+        evenHeader  = na_to_null(evenHeader),
+        evenFooter  = na_to_null(evenFooter),
+        firstHeader = na_to_null(firstHeader),
+        firstFooter = na_to_null(firstFooter)
       )
 
       if (all(sapply(hf, length) == 0)) {
@@ -282,7 +282,6 @@ Worksheet <- setRefClass(
         }
       }
 
-
       invisible(.self)
     }
   )
@@ -291,4 +290,3 @@ Worksheet <- setRefClass(
 new_worksheet <- function() {
   Worksheet$new()
 }
-

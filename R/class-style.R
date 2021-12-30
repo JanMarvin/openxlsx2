@@ -312,6 +312,8 @@ Style <- setRefClass(
 
 # TODO would this make sense as a method? Style$merge(newStyle)?
 mergeStyle <- function(oldStyle, newStyle) {
+  assert_style(oldStyle)
+  assert_style(newStyle)
 
   ## This function is used to merge an existing cell style with a new style to create a stacked style.
   res <- oldStyle$copy()
@@ -350,6 +352,10 @@ merge_style_fields <- function() {
 
 
 # wrapper -----------------------------------------------------------------
+
+new_style <- function() {
+  Style$new()
+}
 
 #' @name createStyle
 #' @title Create a cell style

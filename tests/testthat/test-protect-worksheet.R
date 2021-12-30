@@ -1,8 +1,5 @@
 
 
-context("Protection")
-
-
 test_that("Protection", {
   wb <- createWorkbook()
   addWorksheet(wb, "s1")

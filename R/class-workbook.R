@@ -145,10 +145,11 @@ Workbook <- setRefClass(
       .self$worksheets <- list()
       .self$worksheets_rels <- list()
 
-      if (!is.null(path)) {
+      if (length(path)) {
         .self$path <- path
       }
 
+      # FIXME styleObjectsList() may be getting removed [11]
       .self$styleObjectsList <- list()
 
       invisible(.self)
@@ -5082,9 +5083,8 @@ Workbook <- setRefClass(
           v[is.na(v)] <- as.character(na.string)
         }
       } else {
-        # TODO use NA_character_
-        t[is.na(v)] <- as.character(NA)
-        v[is.na(v)] <- as.character(NA)
+        t[is.na(v)] <- NA_character_
+        v[is.na(v)] <- NA_character_
       }
 
       ## If any NaN values

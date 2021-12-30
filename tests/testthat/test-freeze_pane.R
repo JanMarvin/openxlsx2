@@ -1,5 +1,4 @@
 
-context("Freeze Panes")
 
 test_that("Freeze Panes", {
   wb <- createWorkbook()
