@@ -658,6 +658,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// style_xml_as_list
+SEXP style_xml_as_list(Rcpp::CharacterVector xml_input, std::string level3);
+RcppExport SEXP _openxlsx2_style_xml_as_list(SEXP xml_inputSEXP, SEXP level3SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type xml_input(xml_inputSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level3(level3SEXP);
+    rcpp_result_gen = Rcpp::wrap(style_xml_as_list(xml_input, level3));
+    return rcpp_result_gen;
+END_RCPP
+}
 // printXPtr
 std::string printXPtr(XPtrXML doc, bool raw);
 RcppExport SEXP _openxlsx2_printXPtr(SEXP docSEXP, SEXP rawSEXP) {
@@ -931,6 +943,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr3attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr_one, 5},
     {"_openxlsx2_getXMLXPtr4attr_one", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr_one, 6},
     {"_openxlsx2_font_val", (DL_FUNC) &_openxlsx2_font_val, 3},
+    {"_openxlsx2_style_xml_as_list", (DL_FUNC) &_openxlsx2_style_xml_as_list, 2},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 2},
     {"_openxlsx2_calc_number_rows", (DL_FUNC) &_openxlsx2_calc_number_rows, 2},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},

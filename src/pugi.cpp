@@ -306,29 +306,27 @@ SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
   pugi::xml_node worksheet = doc->child(child.c_str());
   size_t n = std::distance(worksheet.begin(), worksheet.end());
 
+  // for a childless single line node the distance might be zero
+  if (n == 0) n++;
+
   Rcpp::List z(n);
 
   auto itr = 0;
-  for (auto ws : worksheet.children())
+
+  Rcpp::CharacterVector res;
+  std::vector<std::string> nam;
+
+  for (auto attrs : worksheet.attributes())
   {
-
-    Rcpp::CharacterVector res;
-    std::vector<std::string> nam;
-
-    for (pugi::xml_attribute attr = worksheet.first_attribute();
-         attr;
-         attr = attr.next_attribute())
-    {
-      nam.push_back(attr.name());
-      res.push_back(attr.value());
-    }
-
-    // assign names
-    res.attr("names") = nam;
-
-    z[itr] = res;
-    ++itr;
+    nam.push_back(attrs.name());
+    res.push_back(attrs.value());
   }
+
+  // assign names
+  res.attr("names") = nam;
+
+  z[itr] = res;
+  ++itr;
 
   return  Rcpp::wrap(z);
 }
@@ -659,6 +657,50 @@ SEXP font_val(Rcpp::CharacterVector fonts, std::string level3, std::string child
 
   return Rcpp::wrap(z);
 }
+
+
+// specially designed for <fonts>
+// [[Rcpp::export]]
+SEXP style_xml_as_list(Rcpp::CharacterVector xml_input, std::string level3) {
+
+  Rcpp::List z(xml_input.length());
+
+  for (auto i = 0; i < xml_input.length(); ++i) {
+
+    Rcpp::List zi;
+    Rcpp::CharacterVector names;
+
+    std::string xml_string = Rcpp::as<std::string>(xml_input[i]);
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_string(xml_string.c_str(), pugi::parse_default | pugi::parse_escapes);
+    if (!result) {
+      Rcpp::stop("xml import unsuccessfull");
+    }
+
+
+    for (auto l3 : doc.children(level3.c_str())) {
+      for (auto cld : l3.children()) {
+
+        for (auto attrs : cld.attributes()) {
+          if (attrs.value() != NULL) {
+            zi.push_back(attrs.value());
+          } else {
+            zi.push_back("");
+          }
+          names.push_back(attrs.name());
+        }
+
+      }
+
+      zi.attr("names") = names;
+    }
+
+    z[i] = zi;
+  }
+
+  return Rcpp::wrap(z);
+}
+
 
 
 // [[Rcpp::export]]
