@@ -88,7 +88,7 @@
 #'
 #'
 #' hs <- createStyle(
-#'   textDecoration = "BOLD", fontColour = "#FFFFFF", fontSize = 12,
+#'   textDecoration = "bold", fontColour = "#FFFFFF", fontSize = 12,
 #'   fontName = "Arial Narrow", fgFill = "#4F80BD"
 #' )
 #' \dontrun{
@@ -337,7 +337,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   borderStyle <- getOption("openxlsx.borderStyle", "thin")
   if ("borderStyle" %in% names(params)) {
-    borderStyle <- validateBorderStyle(params$borderStyle)
+    borderStyle <- validate_border_style(params$borderStyle)
   }
 
   keepNA <- FALSE

@@ -4,7 +4,7 @@
 \alias{saveWorkbook}
 \title{save Workbook to file}
 \usage{
-saveWorkbook(wb, file, overwrite = FALSE, returnValue = FALSE)
+saveWorkbook(wb, file, overwrite = FALSE, returnValue = NULL)
 }
 \arguments{
 \item{wb}{A Workbook object to write to file}

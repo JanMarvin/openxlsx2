@@ -80,7 +80,13 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
 #' \dontrun{
 #' saveWorkbook(wb, file = "saveWorkbookExample.xlsx", overwrite = TRUE)
 #' }
-saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = FALSE) {
+saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = NULL) {
+  if (!is.null(returnValue)) {
+    .Deprecated(msg = "returnValue in saveWorkbook() is deprecated'")
+  }
+
+  # TODO set options in saveWorkbook
+
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
@@ -90,36 +96,13 @@ saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = FALSE) {
   options("scipen" = 10000)
   on.exit(options("scipen" = sci_pen), add = TRUE)
 
-  assert_workbook(wb)
+  # TODO move this to separate function
+  wb_save_workbook(wb = wb, path = file, overwrite = overwrite)
+}
 
-  if (!is.logical(overwrite)) {
-    overwrite <- FALSE
-  }
-
-  if (!is.logical(returnValue)) {
-    returnValue <- FALSE
-  }
-
-  if (file.exists(file) & !overwrite) {
-    stop("File already exists!")
-  }
-
-  xlsx_file <- wb$saveWorkbook()
-
-  result<-tryCatch(file.copy(from = xlsx_file, to = file, overwrite = overwrite),
-    error = function(e) e, warning = function(w) w)
-
-
-
-
-  ## delete temporary dir
-  unlink(dirname(xlsx_file), force = TRUE, recursive = TRUE)
-  if(returnValue == FALSE){
-    invisible(1)
-  }else{
-    return(result)
-  }
-
+# TODO export wb_save_workbook rather than saveWorkbook
+wb_save_workbook <- function(wb, path, overwrite = FALSE) {
+  wb$copy()$saveWorkbook(path = path, overwrite = overwrite)$path
 }
 
 
@@ -461,6 +444,8 @@ addWorksheet <- function(wb, sheetName,
 cloneWorksheet <- function(wb, sheetName, clonedSheet) {
   assert_workbook(wb)
 
+  # TODO move these checks into Workbook$cloneWorksheet()
+
   if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
     stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
   }
@@ -473,10 +458,29 @@ cloneWorksheet <- function(wb, sheetName, clonedSheet) {
     sheetName <- as.character(sheetName)
   }
 
+
   ## Invalid XML characters
   sheetName <- replaceIllegalCharacters(sheetName)
+  wb$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
+  # TODO change to return wb$copy()$cloneWorksheet(...) [which returns self]
+  # TODO use wb_clone_worksheet()
+  invisible(length(wb$worksheets))
+}
 
-  invisible(wb$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet))
+wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
+  assert_workbook(wb)
+  if (!missing(sheetName)) {
+    warning("sheetName is soft deprecated: use old")
+    old <- sheetName
+  }
+
+  if (!missing(sheetName)) {
+    warning("clonedSheet is soft deprecated: use new")
+    new <- clonedSheet
+  }
+
+  # TODO use old_sheet, new_sheet
+  wb$copy()$cloneWorksheet(sheetName = old, clonedSheet = new)
 }
 
 
@@ -553,13 +557,13 @@ renameWorksheet <- function(wb, sheet, newName) {
 #' ## create and add a style to the column headers
 #' headerStyle <- createStyle(
 #'   fontSize = 14, fontColour = "#FFFFFF", halign = "center",
-#'   fgFill = "#4F81BD", border = "TopBottom", borderColour = "#4F81BD"
+#'   fgFill = "#4F81BD", border = c("top", "bottom"), borderColour = "#4F81BD"
 #' )
 #'
 #' addStyle(wb, sheet = 1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
 #'
 #' ## style for body
-#' bodyStyle <- createStyle(border = "TopBottom", borderColour = "#4F81BD")
+#' bodyStyle <- createStyle(border = c("top", "bottom"), borderColour = "#4F81BD")
 #' addStyle(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
 #' setColWidths(wb, 1, cols = 1, widths = 21) ## set column width for row names column
 #' \dontrun{
@@ -1251,6 +1255,7 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
 #' modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
 #' getBaseFont(wb)
+# TODO change to wb_get_base_font() ?
 getBaseFont <- function(wb) {
   # TODO all of these class checks need to be cleaned up
   assert_workbook(wb)
@@ -1371,15 +1376,6 @@ setHeaderFooter <- function(wb, sheet,
   evenFooter <- headerFooterSub(evenFooter)
   firstHeader <- headerFooterSub(firstHeader)
   firstFooter <- headerFooterSub(firstFooter)
-
-  naToNULLList <- function(x) {
-    lapply(x, function(x) {
-      if (is.na(x)) {
-        return(NULL)
-      }
-      x
-    })
-  }
 
   hf <- list(
     oddHeader = naToNULLList(oddHeader),
@@ -2480,7 +2476,7 @@ conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, 
       style <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
     }
 
-    invisible(dxfId <- wb$addDXFS(style))
+    dxfId <- wb$addDXFS(style)$styles$dxfs
   }
 
 

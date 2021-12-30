@@ -1,61 +1,64 @@
 
-Comment <- setRefClass("Comment",
+Comment <- setRefClass(
+  "Comment",
   fields = c(
-    "text",
-    "author",
-    "style",
-    "visible",
-    "width",
-    "height"
+    "text" = "character",
+    "author" = "character",
+    "style" = "ANY", # Not defined yet, should be Style.
+    "visible" = "logical",
+    "width" = "numeric",
+    "height" = "numeric"
   ),
 
   methods = list(
     initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
+      # TODO this needs the validations that the comment wrappers have
       .self$text <- text
       .self$author <- author
       .self$style <- style
       .self$visible <- visible
       .self$width <- width
       .self$height <- height
+      invisible(.self)
     },
+    # TODO R6 show() to print()
     show = function() {
-      showText <- sprintf("Author: %s\n", author)
-      showText <- c(showText, sprintf("Text:\n %s\n\n", paste(text, collapse = "")))
-      styleShow <- "Style:\n"
+      showText <- c(
+        sprintf("Author: %s\n", .self$author),
+        sprintf("Text:\n %s\n\n", paste(.self$text, collapse = ""))
+      )
 
-      if (inherits(style, "list")) {
-        for (i in seq_along(style)) {
-          styleShow <- append(styleShow, sprintf("Font name: %s\n", style[[i]]$fontName[[1]])) ## Font name
-          styleShow <- append(styleShow, sprintf("Font size: %s\n", style[[i]]$fontSize[[1]])) ## Font size
-          styleShow <- append(styleShow, sprintf("Font colour: %s\n", gsub("^FF", "#", style[[i]]$fontColour[[1]]))) ## Font colour
 
-          ## Font decoration
-          if (length(style[[i]]$fontDecoration) > 0) {
-            styleShow <- append(styleShow, sprintf("Font decoration: %s\n", paste(style[[i]]$fontDecoration, collapse = ", ")))
-          }
-
-          styleShow <- append(styleShow, "\n\n")
-        }
-      } else {
-        styleShow <- append(styleShow, sprintf("Font name: %s \n", style$fontName[[1]])) ## Font name
-        styleShow <- append(styleShow, sprintf("Font size: %s \n", style$fontSize[[1]])) ## Font size
-        styleShow <- append(styleShow, sprintf("Font colour: %s \n", gsub("^FF", "#", style$fontColour[[1]]))) ## Font colour
-
-        ## Font decoration
-        if (length(style$fontDecoration) > 0) {
-          styleShow <- append(styleShow, sprintf("Font decoration: %s \n", paste(style$fontDecoration, collapse = ", ")))
-        }
-
-        styleShow <- append(styleShow, "\n\n")
+      # TODO style should probably always be a list?
+      s <- if (inherits(.self$style, "list")) {
+        .self$style
+      }  else  {
+        list(.self$style)
       }
 
-      showText <- paste0(paste(showText, collapse = ""), paste(styleShow, collapse = ""), collapse = "")
-      cat(showText)
+      styleShow <- "Style:\n"
+      for (i in seq_along(s)) {
+        styleShow <- c(
+          styleShow,
+          sprintf("Font name: %s\n", s[[i]]$fontName[[1]]), ## Font name
+          sprintf("Font size: %s\n", s[[i]]$fontSize[[1]]), ## Font size
+          sprintf("Font colour: %s\n", gsub("^FF", "#", s[[i]]$fontColour[[1]])), ## Font colour
+          ## Font decoration
+          if (length(s[[i]]$fontDecoration)) {
+            sprintf("Font decoration: %s\n", paste(s[[i]]$fontDecoration, collapse = ", "))
+          },
+          "\n\n"
+        )
+      }
+
+      cat(showText, styleShow, sep = "")
+      invisible(.self)
     }
   )
 )
 
 
+# wrappers ----------------------------------------------------------------
 
 #' @name createComment
 #' @title create a Comment object
@@ -75,7 +78,7 @@ Comment <- setRefClass("Comment",
 #' c1 <- createComment(comment = "this is comment")
 #' writeComment(wb, 1, col = "B", row = 10, comment = c1)
 #'
-#' s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = c("BOLD"))
+#' s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = "bold")
 #' s2 <- createStyle(fontSize = 9, fontColour = "black")
 #'
 #' c2 <- createComment(comment = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
@@ -92,6 +95,9 @@ createComment <- function(comment,
   width = 2,
   height = 4) {
 
+  # TODO move this to Comment$new(); this could then be replaced with
+  # new_comment()
+
   assert_class(author, "character")
   assert_class(comment, "character")
   assert_class(width, "numeric")
@@ -101,6 +107,7 @@ createComment <- function(comment,
   width <- round(width)
   height <- round(height)
 
+  # is n even used?
   n <- length(comment)
   author <- author[1]
   visible <- visible[1]
@@ -138,7 +145,7 @@ createComment <- function(comment,
 #' c1 <- createComment(comment = "this is comment")
 #' writeComment(wb, 1, col = "B", row = 10, comment = c1)
 #'
-#' s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = c("BOLD"))
+#' s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = "bold")
 #' s2 <- createStyle(fontSize = 9, fontColour = "black")
 #'
 #' c2 <- createComment(comment = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
@@ -149,6 +156,7 @@ createComment <- function(comment,
 #' saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
 #' }
 writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
+  # TODO add as method: Workbook$addComment(); add param for replace?
   assert_workbook(wb)
   assert_comment(comment)
 
@@ -184,7 +192,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
     "clientData" = genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
   )
 
-  wb$comments[[sheet]] <- append(wb$comments[[sheet]], list(comment_list))
+  wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
 
   invisible(wb)
 }
@@ -204,6 +212,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 #' @seealso \code{\link{createComment}}
 #' @seealso \code{\link{writeComment}}
 removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
+  # TODO add as method; Workbook$removeComment()
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
@@ -227,6 +236,6 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
 }
 
-new_comment <- function() {
-  Comment$new(text = character(), author = character(), style = new_style())
+new_comment <- function(text = character(), author = character(), style = new_style()) {
+  Comment$new(text = text, author = author, style = style)
 }

@@ -1,3 +1,4 @@
+
 test_that("paste_c() works", {
   res <- paste_c("a", "", "b", NULL, "c", " ")
   exp <- "a b c  "
