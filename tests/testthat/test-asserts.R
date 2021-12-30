@@ -8,7 +8,7 @@ test_that("assert_class() works", {
   expect_null(assert_class(Sys.time(), "POSIXt"))
 })
 
-test_that("class utils", {
+test_that("class assertions work", {
   expect_null(assert_chart_sheet(new_chart_sheet()))
   expect_null(assert_comment(    new_comment()))
   expect_null(assert_hyperlink(  new_hyperlink()))
