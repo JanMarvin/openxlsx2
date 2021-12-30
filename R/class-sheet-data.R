@@ -2,6 +2,7 @@
 
 SheetData <- setRefClass(
   "SheetData",
+  # TODO should all fields be initiated?  Why would any not be?
   fields = c(
     rows       = "integer",
     cols       = "integer",
@@ -10,8 +11,7 @@ SheetData <- setRefClass(
     t          = "ANY",
     v          = "ANY",
     f          = "ANY",
-    # row_attr was "ANY"
-    row_attr   = "list",
+    row_attr   = "ANY",
     cc         = "ANY", # not initialized
     cc_out     = "ANY", # not initialized
     style_id   = "ANY",
@@ -33,10 +33,6 @@ SheetData <- setRefClass(
 
       .self$data_count <- 0L
       .self$n_elements <- 0L
-
-      # FIXME Jordan can't remember how these got here.  These could cause issues.
-      .self$cc <- empty_sheet_data_cc()
-      .self$row_attr <- list()
 
       invisible(.self)
     },
@@ -135,10 +131,11 @@ new_sheet_data <- function() {
 
 # helpers -----------------------------------------------------------------
 
-# FIXME Jordan doesn't know if he added this
+# Consider making some helpers for the cc stuff.
 
 empty_sheet_data_cc <- function() {
-  # make make this a specific object?
+  # make make this a specific class/object?
+  stop("this isn't in use")
   data.frame(
     row_r = character(),
     c_r   = character(),
