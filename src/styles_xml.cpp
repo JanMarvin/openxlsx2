@@ -53,12 +53,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
   // 2. fill the list
   // <xf ...>
   auto itr = 0;
-  for (auto xml_xf : xml_doc_xf->children()) {
-
-    std::string xf_name = xml_xf.name();
-    if (xf_name != "xf")
-      Rcpp::stop("xml_node is not xf");
-
+  for (auto xml_xf : xml_doc_xf->children("xf")) {
     for (auto attrs : xml_xf.attributes()) {
 
       Rcpp::CharacterVector attr_name = attrs.name();
@@ -128,6 +123,9 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
   return df;
 }
+
+
+
 
 // helper function to check if row contains any of the expected types
 bool has_it(Rcpp::DataFrame df_xf, Rcpp::CharacterVector xf_nams, size_t row) {
@@ -301,3 +299,124 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
   return z;
 }
 
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
+
+  // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector nams = {
+    "b",
+    "charset",
+    "color",
+    "condense",
+    "extend",
+    "family",
+    "i",
+    "name",
+    "outline",
+    "scheme",
+    "shadow",
+    "strike",
+    "sz",
+    "u",
+    "vertAlign"
+  };
+
+
+  auto nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
+  auto kk = nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <xf ...>
+  auto itr = 0;
+  for (auto xml_font : xml_doc_font->children("font")) {
+
+    for (auto cld : xml_font.children()) {
+
+      Rcpp::CharacterVector name = cld.name();
+      std::string value = cld.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << name << ": not found in xf name table" << std::endl;
+      } else {
+
+        std::ostringstream oss;
+        cld.print(oss, " ", pugi::format_raw);
+
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
+      }
+
+    } // end aligment, extLst, protection
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
+
+  auto n = df_font.nrow();
+  Rcpp::CharacterVector z(n);
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+
+    pugi::xml_node font = doc.append_child("font");
+
+
+    for (auto j = 0; j < df_font.ncol(); ++j) {
+
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_font[j])[i];
+
+      if (cv_s[0] != "") {
+
+        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+
+        pugi::xml_document font_node;
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        if (!result) Rcpp::stop("loading font node fail:", cv_s);
+
+        font.append_copy(font_node.first_child());
+
+      }
+
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
+}
