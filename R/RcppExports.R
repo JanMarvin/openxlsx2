@@ -228,6 +228,10 @@ list_to_attr_full <- function(attributes, node, child) {
     .Call(`_openxlsx2_list_to_attr_full`, attributes, node, child)
 }
 
+read_xf <- function(xml_doc_xf) {
+    .Call(`_openxlsx2_read_xf`, xml_doc_xf)
+}
+
 map_cell_types_to_integer <- function(t) {
     .Call(`_openxlsx2_map_cell_types_to_integer`, t)
 }

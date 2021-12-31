@@ -730,6 +730,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// read_xf
+Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf);
+RcppExport SEXP _openxlsx2_read_xf(SEXP xml_doc_xfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_xf(xml_doc_xfSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_xf(xml_doc_xf));
+    return rcpp_result_gen;
+END_RCPP
+}
 // map_cell_types_to_integer
 Rcpp::IntegerVector map_cell_types_to_integer(Rcpp::CharacterVector t);
 RcppExport SEXP _openxlsx2_map_cell_types_to_integer(SEXP tSEXP) {
@@ -949,6 +960,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_list_to_attr", (DL_FUNC) &_openxlsx2_list_to_attr, 2},
     {"_openxlsx2_list_to_attr_full", (DL_FUNC) &_openxlsx2_list_to_attr_full, 3},
+    {"_openxlsx2_read_xf", (DL_FUNC) &_openxlsx2_read_xf, 1},
     {"_openxlsx2_map_cell_types_to_integer", (DL_FUNC) &_openxlsx2_map_cell_types_to_integer, 1},
     {"_openxlsx2_map_cell_types_to_char", (DL_FUNC) &_openxlsx2_map_cell_types_to_char, 1},
     {"_openxlsx2_build_cell_types_integer", (DL_FUNC) &_openxlsx2_build_cell_types_integer, 2},
