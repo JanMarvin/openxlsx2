@@ -1,8 +1,5 @@
 
 
-context("Page setup")
-
-
 test_that("Page setup", {
   wb <- createWorkbook()
   addWorksheet(wb, "s1")

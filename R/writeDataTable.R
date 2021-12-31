@@ -162,11 +162,14 @@ writeDataTable <- function(wb, sheet, x,
   }
 
   ## Input validating
-  if (!"Workbook" %in% class(wb)) stop("First argument must be a Workbook.")
-  if (!"data.frame" %in% class(x)) stop("x must be a data.frame.")
+  assert_workbook(wb)
+  assert_class(x, "data.frame")
+  assert_class(headerStyle, "Style", or_null = TRUE)
+
+  # TODO sipmlify these --
   if (!is.logical(colNames)) stop("colNames must be a logical.")
   if (!is.logical(rowNames)) stop("rowNames must be a logical.")
-  if (!is.null(headerStyle) & !"Style" %in% class(headerStyle)) stop("headerStyle must be a style object or NULL.")
+
   if (!is.logical(withFilter)) stop("withFilter must be a logical.")
   if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
@@ -221,7 +224,7 @@ writeDataTable <- function(wb, sheet, x,
   }
 
   ## header style
-  if ("Style" %in% class(headerStyle)) {
+  if (inherits(headerStyle, "Style")) {
     addStyle(
       wb = wb, sheet = sheet, style = headerStyle,
       rows = startRow,

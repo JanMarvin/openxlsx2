@@ -48,6 +48,10 @@ writeData2(wb, "sheet3", letters)
 addWorksheet(wb, "sheet4")
 writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
-saveWorkbook(wb, file = "/tmp/test.xlsx", overwrite = TRUE)
+\dontrun{
+file <- tempfile(fileext = ".xlsx")
+saveWorkbook(wb, file = file, overwrite = TRUE)
+file.remove(file)
+}
 
 }

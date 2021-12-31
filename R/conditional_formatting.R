@@ -440,11 +440,11 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'expression', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
     } else if (type == "duplicatedValues") {
       # type == "duplicatedValues"
       # - style is a Style object
@@ -455,11 +455,11 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'duplicates', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
       rule <- style
     } else if (type == "containsText") {
       # type == "contains"
@@ -472,15 +472,15 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'contains', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'contains', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "notContainsText") {
@@ -494,15 +494,15 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'notContains', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'notContains', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "beginsWith") {
@@ -516,15 +516,15 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'beginsWith', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'beginsWith', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "endsWith") {
@@ -538,15 +538,15 @@ conditionalFormatting <-
       }
 
 
-      if (!"character" %in% class(rule)) {
+      if (!inherits(rule, "character")) {
         stop("If type == 'endsWith', rule must be a character vector of length 1.")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'endsWith', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "between") {
@@ -557,11 +557,11 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'between', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
     } else if (type == "topN") {
       # type == "topN"
       # - rule is ignored
@@ -572,11 +572,11 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'topN', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
 
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
@@ -593,7 +593,7 @@ conditionalFormatting <-
         }
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- params
       rule <- style
     } else if (type == "bottomN") {
@@ -606,11 +606,11 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!"Style" %in% class(style)) {
+      if (!inherits(style, "Style")) {
         stop("If type == 'bottomN', style must be a Style object.")
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
 
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
@@ -627,7 +627,7 @@ conditionalFormatting <-
         }
       }
 
-      invisible(dxfId <- wb$addDXFS(style))
+      dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- params
       rule <- style
     }

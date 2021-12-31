@@ -1,8 +1,5 @@
 
 
-context("Load Workbook Object Tables")
-
-
 test_that("Tables loaded correctly", {
   wb <- loadWorkbook(system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 

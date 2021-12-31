@@ -26,7 +26,7 @@
 #' }
 #'
 loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
-
+  # TODO  default of isUnzipped to tools::file_ext(file) == "zip" ?
   ## If this is a unzipped workbook, skip the temp dir stuff
   if (isUnzipped) {
     xmlDir <- file
@@ -56,6 +56,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   # .relsXML           <- xmlFiles[grepl("_rels/.rels$", xmlFiles, perl = TRUE)]
   # appXML             <- xmlFiles[grepl("app.xml$", xmlFiles, perl = TRUE)]
 
+  # TODO update to grep(x, value = TRUE)
   ContentTypesXML <- xmlFiles[grepl("\\[Content_Types\\].xml$", xmlFiles, perl = TRUE)]
 
   drawingsXML <- xmlFiles[grepl("drawings/drawing[0-9]+.xml$", xmlFiles, perl = TRUE)]
@@ -364,7 +365,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## xl\styles
   if (length(stylesXML) > 0) {
-    styleObjects <- wb$loadStyles(stylesXML)
+    styleObjects <- wb$loadStyles(stylesXML)$styleObjectsList
     # assign("styleObjects", styleObjects, globalenv())
     wb$styles_xml <- read_xml(stylesXML, pointer = FALSE)
   } else {

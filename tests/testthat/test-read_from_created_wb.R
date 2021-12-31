@@ -1,6 +1,4 @@
 
-context("Reading from wb object is identical to reading from file")
-
 test_that("Reading from new workbook", {
   curr_wd <- getwd()
 

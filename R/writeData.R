@@ -100,8 +100,8 @@
 #' ## Header Styles
 #'
 #' hs1 <- createStyle(
-#'   fgFill = "#DCE6F1", halign = "CENTER", textDecoration = "italic",
-#'   border = "Bottom"
+#'   fgFill = "#DCE6F1", halign = "center", textDecoration = "italic",
+#'   border = "bottom"
 #' )
 #'
 #' writeData(wb, "Cars", x,
@@ -113,7 +113,7 @@
 #' hs2 <- createStyle(
 #'   fontColour = "#ffffff", fgFill = "#4F80BD",
 #'   halign = "center", valign = "center", textDecoration = "bold",
-#'   border = "TopBottomLeftRight"
+#'   border = "all"
 #' )
 #'
 #' writeData(wb, "Cars", x,
@@ -158,8 +158,11 @@
 #' # read.xlsx(wb2)
 #' writeData(wb2, 1, mtcars, startCol = 4, startRow = 4)
 #' wb_to_df(wb2)
-#' saveWorkbook(wb2, "/tmp/test.xlsx", overwrite = TRUE)
-#'
+#' \dontrun{
+#' file <- tempfile(fileext = ".xlsx")
+#' saveWorkbook(wb2, file, overwrite = TRUE)
+#' file.remove(file)
+#' }
 #'
 #' #####################################################################################
 #' ## Save workbook
@@ -220,10 +223,11 @@ writeData <- function(wb,
   }
   startRow <- as.integer(startRow)
 
-  if (!"Workbook" %in% class(wb)) stop("First argument must be a Workbook.")
-  if (!is.logical(colNames)) stop("colNames must be a logical.")
-  if (!is.logical(rowNames)) stop("rowNames must be a logical.")
-  if (!is.null(headerStyle) & !"Style" %in% class(headerStyle)) stop("headerStyle must be a style object or NULL.")
+  assert_workbook(wb)
+  assert_class(headerStyle, "Style", or_null = TRUE)
+  assert_class(colNames, "logical")
+  assert_class(rowNames, "logical")
+
   if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
   borders <- match.arg(borders)
@@ -231,17 +235,17 @@ writeData <- function(wb,
 
   ## borderColours validation
   borderColour <- validateColour(borderColour, "Invalid border colour")
-  borderStyle <- validateBorderStyle(borderStyle)[[1]]
+  borderStyle <- validate_border_style(borderStyle)[[1]]
 
   ## special case - vector of hyperlinks
   hlinkNames <- NULL
-  if ("hyperlink" %in% class(x)) {
+  if (inherits(x, "hyperlink")) {
     hlinkNames <- names(x)
     colNames <- FALSE
   }
 
   ## special case - formula
-  if ("formula" %in% class(x)) {
+  if (inherits(x, "formula")) {
     x <- data.frame("X" = x, stringsAsFactors = FALSE)
     class(x[[1]]) <- ifelse(array, "array_formula", "formula")
     colNames <- FALSE
@@ -331,101 +335,14 @@ writeData <- function(wb,
     }
   }
 
-  # ## write data.frame
-  # wb$writeData(
-  #   df = x,
-  #   colNames = colNames,
-  #   sheet = sheet,
-  #   startCol = startCol,
-  #   startRow = startRow,
-  #   colClasses = colClasss2,
-  #   hlinkNames = hlinkNames,
-  #   keepNA = keepNA,
-  #   na.string = na.string,
-  #   list_sep = sep
-  # )
-
   if (is.data.frame(x))
     rownames(x) <- seq_len(NROW(x))
 
   # actual driver, the rest should not create data used for writing
   wb <- writeData2(wb = wb, sheet = sheet, data = x, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol)
 
-  # ## header style
-  # if ("Style" %in% class(headerStyle) & colNames) {
-  #   addStyle(
-  #     wb = wb, sheet = sheet, style = headerStyle,
-  #     rows = startRow,
-  #     cols = 0:(nCol - 1) + startCol,
-  #     gridExpand = TRUE, stack = TRUE
-  #   )
-  # }
-
-  # ## If we don't have any rows to write return
-  # if (nRow == 0) {
-  #   return(invisible(0))
-  # }
-
-  # ## named region
-  # if (!is.null(name)) {
-  #   ref1 <- stri_join("$", convert_to_excel_ref(cols = startCol, LETTERS = LETTERS), "$", startRow)
-  #   ref2 <- stri_join("$", convert_to_excel_ref(cols = startCol + nCol - 1L, LETTERS = LETTERS), "$", startRow + nRow - 1L + colNames)
-  #   wb$createNamedRegion(ref1 = ref1, ref2 = ref2, name = name, sheet = wb$sheet_names[wb$validateSheet(sheet)])
-  # }
-
-
-  # ## hyperlink style, if no borders
-  # if (borders == "none") {
-  #   invisible(classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol, colNames = colNames, nRow = nrow(x), colClasses = colClasses, stack = TRUE))
-  # } else if (borders == "surrounding") {
-  #   wb$surroundingBorders(colClasses,
-  #     sheet = sheet,
-  #     startRow = startRow + colNames,
-  #     startCol = startCol,
-  #     nRow = nRow, nCol = nCol,
-  #     borderColour = list("rgb" = borderColour),
-  #     borderStyle = borderStyle
-  #   )
-  # } else if (borders == "rows") {
-  #   wb$rowBorders(colClasses,
-  #     sheet = sheet,
-  #     startRow = startRow + colNames,
-  #     startCol = startCol,
-  #     nRow = nRow, nCol = nCol,
-  #     borderColour = list("rgb" = borderColour),
-  #     borderStyle = borderStyle
-  #   )
-  # } else if (borders == "columns") {
-  #   wb$columnBorders(colClasses,
-  #     sheet = sheet,
-  #     startRow = startRow + colNames,
-  #     startCol = startCol,
-  #     nRow = nRow, nCol = nCol,
-  #     borderColour = list("rgb" = borderColour),
-  #     borderStyle = borderStyle
-  #   )
-  # } else if (borders == "all") {
-  #   wb$allBorders(colClasses,
-  #     sheet = sheet,
-  #     startRow = startRow + colNames,
-  #     startCol = startCol,
-  #     nRow = nRow, nCol = nCol,
-  #     borderColour = list("rgb" = borderColour),
-  #     borderStyle = borderStyle
-  #   )
-  # }
-
   invisible(0)
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -522,10 +439,7 @@ writeFormula <- function(wb,
   startRow = 1,
   array = FALSE,
   xy = NULL) {
-  if (!"character" %in% class(x)) {
-    stop("x must be a character vector.")
-  }
-
+  assert_class(x, "character")
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   class(dfx$X) <- c("character", ifelse(array, "array_formula", "formula"))
 

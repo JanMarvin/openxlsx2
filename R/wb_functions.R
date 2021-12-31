@@ -634,7 +634,11 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
 #' addWorksheet(wb, "sheet4")
 #' writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 #'
-#' saveWorkbook(wb, file = "/tmp/test.xlsx", overwrite = TRUE)
+#' \dontrun{
+#' file <- tempfile(fileext = ".xlsx")
+#' saveWorkbook(wb, file = file, overwrite = TRUE)
+#' file.remove(file)
+#' }
 #'
 #' @export
 writeData2 <-function(wb, sheet, data,
