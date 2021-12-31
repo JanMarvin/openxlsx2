@@ -80,7 +80,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
     // only handle known names
     // <alignment ...>
-    // <extLst ...>
+    // <extLst ...> // FIXME should be imported as single node. most likely broken
     // <protection ...>
     for (auto cld : xml_xf.children()) {
 
@@ -265,6 +265,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
       }
 
+      // FIXME should be written as single node. most likely broken
       if (has_extLst && is_extLst) {
 
         Rcpp::CharacterVector cv_s = "";
