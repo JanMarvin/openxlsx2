@@ -41,7 +41,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
   auto nn = std::distance(xml_doc_xf->begin(), xml_doc_xf->end());
   auto kk = nams.length();
 
-  Rcpp::IntegerVector rvec = Rcpp::seq_len(nn);
+  Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -113,6 +113,9 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
       }
 
     } // end aligment, extLst, protection
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }
