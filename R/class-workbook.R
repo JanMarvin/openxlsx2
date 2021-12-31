@@ -72,7 +72,7 @@ Workbook <- setRefClass(
       category = NULL
     ) {
       .self$charts <- list()
-      .self$isChartSheet <- logical(0)
+      .self$isChartSheet <- logical()
 
       .self$colWidths <- list()
       .self$colOutlineLevels <- list()
@@ -118,8 +118,8 @@ Workbook <- setRefClass(
       .self$slicers <- NULL
       .self$slicerCaches <- NULL
 
-      .self$sheet_names <- character(0)
-      .self$sheetOrder <- integer(0)
+      .self$sheet_names <- character()
+      .self$sheetOrder <- integer()
 
       .self$sharedStrings <- list()
       attr(.self$sharedStrings, "uniqueCount") <- 0
@@ -1953,7 +1953,7 @@ Workbook <- setRefClass(
             )
           }
         } else {
-          .self$worksheets[[i]]$drawing <- character(0)
+          .self$worksheets[[i]]$drawing <- character()
         }
 
         ## vml drawing
@@ -2042,7 +2042,7 @@ Workbook <- setRefClass(
           #                            max(as.numeric(nam_at))))
           # empty_row_attr <- wanted[!wanted %in% nam_at]
           # # add empty list
-          # if(!identical(empty_row_attr, character(0)))
+          # if(!identical(empty_row_attr, character()))
           #   row_attr[[empty_row_attr]] <- list()
           # # restore order
           # ws$sheet_data$row_attr <- row_attr[wanted]
@@ -2060,7 +2060,7 @@ Workbook <- setRefClass(
           )
 
           # # why would I want to erase everything in here?
-          # worksheets[[i]]$sheet_data$style_id <- integer(0)
+          # worksheets[[i]]$sheet_data$style_id <- integer()
 
 
           ## write worksheet rels

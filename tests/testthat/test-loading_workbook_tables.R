@@ -22,9 +22,9 @@ test_that("Tables loaded correctly", {
 
   removeTable(wb, sheet = 1, table = "Table2")
 
-  expect_equal(getTables(wb, sheet = 1), character(0), check.attributes = FALSE)
+  expect_equal(getTables(wb, sheet = 1), character(), check.attributes = FALSE)
   expect_equal(length(wb$worksheets[[1]]$tableParts), 0)
-  expect_equal(wb$worksheets[[1]]$tableParts, character(0), check.attributes = FALSE)
+  expect_equal(wb$worksheets[[1]]$tableParts, character(), check.attributes = FALSE)
 
   expect_equal(wb$worksheets[[3]]$tableParts, "<tablePart r:id=\"rId4\"/>", check.attributes = FALSE)
   expect_equal(unname(attr(wb$worksheets[[3]]$tableParts, "tableName")), "Table3")

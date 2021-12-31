@@ -84,27 +84,27 @@ Worksheet <- setRefClass(
       .self$dimension <- '<dimension ref="A1"/>'
       .self$sheetViews <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
       .self$sheetFormatPr <- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
-      .self$cols_attr <- character(0)
+      .self$cols_attr <- character()
 
-      .self$autoFilter <- character(0)
-      .self$mergeCells <- character(0)
-      .self$conditionalFormatting <- character(0)
+      .self$autoFilter <- character()
+      .self$mergeCells <- character()
+      .self$conditionalFormatting <- character()
       .self$dataValidations <- NULL
-      .self$dataValidationsLst <- character(0)
+      .self$dataValidationsLst <- character()
       .self$hyperlinks <- list()
       .self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       .self$pageSetup <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
       .self$headerFooter <- hf
-      .self$rowBreaks <- character(0)
-      .self$colBreaks <- character(0)
+      .self$rowBreaks <- character()
+      .self$colBreaks <- character()
       .self$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
-      .self$legacyDrawing <- character(0)
-      .self$legacyDrawingHF <- character(0)
-      .self$oleObjects <- character(0)
-      .self$tableParts <- character(0)
-      .self$extLst <- character(0)
+      .self$legacyDrawing <- character()
+      .self$legacyDrawingHF <- character()
+      .self$oleObjects <- character()
+      .self$tableParts <- character()
+      .self$extLst <- character()
 
-      .self$freezePane <- character(0)
+      .self$freezePane <- character()
 
       .self$sheet_data <- SheetData$new()
     },

@@ -480,7 +480,7 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
   if (missing(data_class))
     data_class <- sapply(x, class)
 
-  # if(identical(sheet_id, integer(0)))
+  # if(identical(sheet_id, integer()))
   #   stop("sheet not in workbook")
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
@@ -805,9 +805,9 @@ writeData2 <-function(wb, sheet, data,
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
     # update a few styles informations
-    wb$styles$numFmts <- character(0)
+    wb$styles$numFmts <- character()
     wb$styles$cellXfs <- "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"
-    wb$styles$dxfs <- character(0)
+    wb$styles$dxfs <- character()
 
     # now the cc dataframe is similar to an imported cc dataframe. to save the
     # file, we now need to split it up and store it in a list of lists.

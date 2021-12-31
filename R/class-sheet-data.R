@@ -98,7 +98,7 @@ SheetData <- setRefClass(
       }
 
       # TODO change inds to ! x %in% y; don't need length() check
-      inds <- integer(0)
+      inds <- integer()
       if (possible_overlap) {
         inds <- which(paste(rows, cols, sep = ",") %in% paste(rows_in, cols_in, sep = ","))
       }
