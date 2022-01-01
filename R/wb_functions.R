@@ -239,7 +239,7 @@ wb_to_df <- function(xlsxFile,
   cc  <- wb$worksheets[[sheet]]$sheet_data$cc
   sst <- attr(wb$sharedStrings, "text")
 
-  rnams <- names(row_attr)
+  rnams <- row_attr$r
 
 
   # internet says: numFmtId > 0 and applyNumberFormat == 1
@@ -492,7 +492,7 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
   # contain fields A1 and C1.
   cc$row <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$rw
-  rows_in_wb <- names(row_attr)
+  rows_in_wb <- row_attr$r
 
 
   # check if there are rows not available
@@ -503,14 +503,11 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
     total_rows <- as.character(sort(unique(as.numeric(c(rows, rows_in_wb)))))
 
     # new row_attr
-    row_attr_new <- vector("list", length(rows_in_wb))
-    names(row_attr_new) <- rows_in_wb
+    row_attr_new <- empty_row_attr(n = length(total_rows))
+    row_attr_new$r <- total_rows
 
-    row_attr_new[rows_in_wb] <- row_attr[rows_in_wb]
-
-    for (trow in total_rows) {
-      row_attr_new[[trow]] <- list(r = trow)
-    }
+    row_attr_new <- merge(row_attr_new[c("r")], row_attr, all.x = TRUE)
+    row_attr_new[is.na(row_attr_new)] <- ""
 
     wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr_new
     # provide output
@@ -718,13 +715,11 @@ writeData2 <-function(wb, sheet, data,
 
     wb$worksheets[[sheetno]]$cols_attr <- list_to_attr(cols_attr, "col")
 
-
-
-    rows_attr <- lapply(startRow:endRow,
-      function(x) list("r" = as.character(x),
-        "spans" = paste0("1:", data_ncol),
-        "x14ac:dyDescent"="0.25"))
-    names(rows_attr) <- rownames(rtyp)
+    want_rows <- startRow:endRow
+    rows_attr <- empty_row_attr(n = length(want_rows))
+    rows_attr$r <- rownames(rtyp)
+    rows_attr$spans <- paste0("1:", data_ncol)
+    rows_attr$`x14ac:dyDescent` <- "0.25"
 
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 

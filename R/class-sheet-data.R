@@ -152,3 +152,20 @@ empty_sheet_data_cc <- function() {
     stringsAsFactors = FALSE
   )
 }
+
+
+empty_row_attr <- function(n = 0) {
+  # make make this a specific class/object?
+
+  row_attr_nams <- c("collapsed", "customFormat", "customHeight",
+                     "x14ac:dyDescent", "ht", "hidden", "outlineLevel",
+                     "r", "ph", "spans", "s", "thickBot", "thickTop")
+
+  z <- data.frame(
+    matrix("", nrow = n, ncol = length(row_attr_nams)),
+    stringsAsFactors = FALSE
+  )
+  names(z) <- row_attr_nams
+
+  z
+}
