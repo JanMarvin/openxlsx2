@@ -190,20 +190,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// write_file
-SEXP write_file(std::string head, std::string body, std::string tail, std::string fl);
-RcppExport SEXP _openxlsx2_write_file(SEXP headSEXP, SEXP bodySEXP, SEXP tailSEXP, SEXP flSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type head(headSEXP);
-    Rcpp::traits::input_parameter< std::string >::type body(bodySEXP);
-    Rcpp::traits::input_parameter< std::string >::type tail(tailSEXP);
-    Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
-    rcpp_result_gen = Rcpp::wrap(write_file(head, body, tail, fl));
-    return rcpp_result_gen;
-END_RCPP
-}
 // cppReadFile
 std::string cppReadFile(std::string xmlFile);
 RcppExport SEXP _openxlsx2_cppReadFile(SEXP xmlFileSEXP) {
@@ -682,6 +668,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// write_xml_file
+void write_xml_file(std::string xml_content, std::string fl);
+RcppExport SEXP _openxlsx2_write_xml_file(SEXP xml_contentSEXP, SEXP flSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type xml_content(xml_contentSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
+    write_xml_file(xml_content, fl);
+    return R_NilValue;
+END_RCPP
+}
 // calc_number_rows
 int calc_number_rows(Rcpp::CharacterVector x, bool skipEmptyRows);
 RcppExport SEXP _openxlsx2_calc_number_rows(SEXP xSEXP, SEXP skipEmptyRowsSEXP) {
@@ -907,7 +904,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_convert_from_excel_ref", (DL_FUNC) &_openxlsx2_convert_from_excel_ref, 1},
     {"_openxlsx2_convert_to_excel_ref_expand", (DL_FUNC) &_openxlsx2_convert_to_excel_ref_expand, 3},
     {"_openxlsx2_isInternalHyperlink", (DL_FUNC) &_openxlsx2_isInternalHyperlink, 1},
-    {"_openxlsx2_write_file", (DL_FUNC) &_openxlsx2_write_file, 4},
     {"_openxlsx2_cppReadFile", (DL_FUNC) &_openxlsx2_cppReadFile, 1},
     {"_openxlsx2_read_file_newline", (DL_FUNC) &_openxlsx2_read_file_newline, 1},
     {"_openxlsx2_get_letters", (DL_FUNC) &_openxlsx2_get_letters, 0},
@@ -945,6 +941,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_font_val", (DL_FUNC) &_openxlsx2_font_val, 3},
     {"_openxlsx2_style_xml_as_list", (DL_FUNC) &_openxlsx2_style_xml_as_list, 2},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 2},
+    {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
     {"_openxlsx2_calc_number_rows", (DL_FUNC) &_openxlsx2_calc_number_rows, 2},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_list_to_attr", (DL_FUNC) &_openxlsx2_list_to_attr, 2},

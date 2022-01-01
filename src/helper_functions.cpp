@@ -215,23 +215,6 @@ std::string itos(int i){
 }
 
 
-// [[Rcpp::export]]
-SEXP write_file(std::string head = "", std::string body = "", std::string tail = "", std::string fl = "") {
-  
-  const char * s = fl.c_str();
-  
-  std::ofstream xmlFile;
-  xmlFile.open (s);
-  xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
-  xmlFile << head;
-  xmlFile << body;
-  xmlFile << tail;
-  xmlFile.close();
-  
-  return R_NilValue;
-}
-
-
 
 // [[Rcpp::export]]
 std::string cppReadFile(std::string xmlFile){

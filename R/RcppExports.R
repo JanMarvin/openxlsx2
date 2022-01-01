@@ -57,10 +57,6 @@ isInternalHyperlink <- function(x) {
     .Call(`_openxlsx2_isInternalHyperlink`, x)
 }
 
-write_file <- function(head = "", body = "", tail = "", fl = "") {
-    .Call(`_openxlsx2_write_file`, head, body, tail, fl)
-}
-
 cppReadFile <- function(xmlFile) {
     .Call(`_openxlsx2_cppReadFile`, xmlFile)
 }
@@ -210,6 +206,10 @@ style_xml_as_list <- function(xml_input, level3) {
 
 printXPtr <- function(doc, raw) {
     .Call(`_openxlsx2_printXPtr`, doc, raw)
+}
+
+write_xml_file <- function(xml_content, fl) {
+    invisible(.Call(`_openxlsx2_write_xml_file`, xml_content, fl))
 }
 
 calc_number_rows <- function(x, skipEmptyRows) {

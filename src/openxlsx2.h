@@ -57,7 +57,6 @@ Rcpp::LogicalVector isInternalHyperlink(Rcpp::CharacterVector x);
 
 // helper functions
 std::string itos(int i);
-SEXP write_file(std::string parent, std::string xmlText, std::string parentEnd, std::string R_fileName);
 Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone = false);
 
 std::string set_row(Rcpp::List row_attr, Rcpp::List cell_typ);
