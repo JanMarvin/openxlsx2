@@ -17,11 +17,11 @@ strs <- "openxlsxFontSizeLookupTable <- \ndata.frame("
 allWidths <- rep(8.43, 29)
 names(allWidths) <- 1:29
 for(i in seq_along(files)){
-  
+
   f <- font[[i]]
   widths <- round(as.numeric(read.xlsx(files[[i]])[2,]), 6)
   strs <- c(strs, sprintf('"%s"= c(%s),\n', f, paste(widths, collapse = ", ")))
-  
+
 }
 
 strs[length(strs)] <- gsub(",\n", ")", strs[length(strs)])
@@ -32,10 +32,10 @@ strs[length(strs)] <- gsub(",\n", ")", strs[length(strs)])
 ## loop through all fonts
 fontDir <- "C:\\Users\\Alex\\Desktop\\font_workbooks"
 files <- list.files(fontDir, patter = "\\.xlsx$", full.names = TRUE)
-files <- files[grepl("-bold.xlsx", files)]
+files <- grep("-bold.xlsx", files, value = TRUE)
 
 files2 <- list.files(fontDir, patter = "\\.xlsx$", full.names = FALSE)
-files2 <- files2[grepl("-bold.xlsx", files2)]
+files2 <- grep("-bold.xlsx", files2, value = TRUE)
 
 font <- tolower(gsub(" ", ".", gsub("\\-bold.xlsx", "", files2)))
 
@@ -44,11 +44,11 @@ strsBold <- "openxlsxFontSizeLookupTableBold <- \ndata.frame("
 allWidths <- rep(8.43, 29)
 names(allWidths) <- 1:29
 for(i in seq_along(files)){
-  
+
   f <- font[[i]]
   widths <- round(as.numeric(read.xlsx(files[[i]])[2,]), 6)
   strsBold <- c(strsBold, sprintf('"%s"= c(%s),\n', f, paste(widths, collapse = ", ")))
-  
+
 }
 
 strsBold[length(strsBold)] <- gsub(",\n", ")", strsBold[length(strsBold)])

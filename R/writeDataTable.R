@@ -215,7 +215,7 @@ writeDataTable <- function(wb, sheet, x,
   if (!tolower(tableStyle) %in% tolower(validNames)) {
     stop("Invalid table style.")
   } else {
-    tableStyle <- validNames[grepl(paste0("^", tableStyle, "$"), validNames, ignore.case = TRUE)]
+    tableStyle <- grep(paste0("^", tableStyle, "$"), validNames, ignore.case = TRUE, value = TRUE)
   }
 
   tableStyle <- na.omit(tableStyle)

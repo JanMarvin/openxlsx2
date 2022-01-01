@@ -28,7 +28,7 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 
   rows <- seq(rows_min, rows_max)
 
-  data <- as.character(NA)
+  data <- NA_character_
   if (fill) {
     data <- expand.grid(cols, rows, stringsAsFactors = FALSE)
     data <- paste0(data$Var1, data$Var2)
