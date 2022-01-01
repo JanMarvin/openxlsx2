@@ -25,8 +25,6 @@ SEXP calc_column_widths(Rcpp::Reference sheet_data, std::vector<std::string> sha
 SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_tag);
 
 std::string cppReadFile(std::string xmlFile);
-std::string read_file_newline(std::string xmlFile);
-
 
 Rcpp::CharacterVector get_extLst_Major(std::string xml);
 SEXP getAttr(Rcpp::CharacterVector x, std::string tag);
@@ -57,7 +55,6 @@ Rcpp::LogicalVector isInternalHyperlink(Rcpp::CharacterVector x);
 
 // helper functions
 std::string itos(int i);
-SEXP write_file(std::string parent, std::string xmlText, std::string parentEnd, std::string R_fileName);
 Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone = false);
 
 std::string set_row(Rcpp::List row_attr, Rcpp::List cell_typ);
