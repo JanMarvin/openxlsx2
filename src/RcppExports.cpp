@@ -749,6 +749,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// read_font
+Rcpp::DataFrame read_font(XPtrXML xml_doc_font);
+RcppExport SEXP _openxlsx2_read_font(SEXP xml_doc_fontSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_font(xml_doc_fontSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_font(xml_doc_font));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_font
+Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font);
+RcppExport SEXP _openxlsx2_write_font(SEXP df_fontSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_font(df_fontSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_font(df_font));
+    return rcpp_result_gen;
+END_RCPP
+}
 // map_cell_types_to_integer
 Rcpp::IntegerVector map_cell_types_to_integer(Rcpp::CharacterVector t);
 RcppExport SEXP _openxlsx2_map_cell_types_to_integer(SEXP tSEXP) {
@@ -970,6 +992,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_list_to_attr_full", (DL_FUNC) &_openxlsx2_list_to_attr_full, 3},
     {"_openxlsx2_read_xf", (DL_FUNC) &_openxlsx2_read_xf, 1},
     {"_openxlsx2_write_xf", (DL_FUNC) &_openxlsx2_write_xf, 1},
+    {"_openxlsx2_read_font", (DL_FUNC) &_openxlsx2_read_font, 1},
+    {"_openxlsx2_write_font", (DL_FUNC) &_openxlsx2_write_font, 1},
     {"_openxlsx2_map_cell_types_to_integer", (DL_FUNC) &_openxlsx2_map_cell_types_to_integer, 1},
     {"_openxlsx2_map_cell_types_to_char", (DL_FUNC) &_openxlsx2_map_cell_types_to_char, 1},
     {"_openxlsx2_build_cell_types_integer", (DL_FUNC) &_openxlsx2_build_cell_types_integer, 2},
