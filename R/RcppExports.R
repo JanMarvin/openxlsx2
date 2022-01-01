@@ -61,10 +61,6 @@ cppReadFile <- function(xmlFile) {
     .Call(`_openxlsx2_cppReadFile`, xmlFile)
 }
 
-read_file_newline <- function(xmlFile) {
-    .Call(`_openxlsx2_read_file_newline`, xmlFile)
-}
-
 get_letters <- function() {
     .Call(`_openxlsx2_get_letters`)
 }
