@@ -25,8 +25,6 @@ SEXP calc_column_widths(Rcpp::Reference sheet_data, std::vector<std::string> sha
 SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_tag);
 
 std::string cppReadFile(std::string xmlFile);
-std::string read_file_newline(std::string xmlFile);
-
 
 Rcpp::CharacterVector get_extLst_Major(std::string xml);
 SEXP getAttr(Rcpp::CharacterVector x, std::string tag);
