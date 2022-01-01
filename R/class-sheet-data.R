@@ -92,7 +92,7 @@ SheetData <- setRefClass(
 
       if (any_functions) {
         if (any(!is.na(f_in))) {
-          v_in[!is.na(f_in)] <- as.character(NA)
+          v_in[!is.na(f_in)] <- NA_character_
           t_in[!is.na(f_in)] <- 3L ## "str"
         }
       }

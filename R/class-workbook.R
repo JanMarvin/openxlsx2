@@ -3278,7 +3278,7 @@ Workbook <- setRefClass(
       numFmtIds <- 50000L
       #for (i in which(!isChartSheet)) {
       #  worksheets[[i]]$sheet_data$style_id <-
-      #    rep.int(x = as.integer(NA), times = worksheets[[i]]$sheet_data$n_elements)
+      #    rep.int(x = NA_integer_, times = worksheets[[i]]$sheet_data$n_elements)
       #}
 
 
@@ -3311,7 +3311,7 @@ Workbook <- setRefClass(
             #worksheets[[i]]$sheet_data$style_id <-
             #  c(
             #    worksheets[[i]]$sheet_data$style_id,
-            #    rep.int(as.integer(NA), times = n)
+            #    rep.int(NA_integer_, times = n)
             #  )
 
             .self$worksheets[[i]]$sheet_data$rows <-
@@ -3319,20 +3319,20 @@ Workbook <- setRefClass(
             .self$worksheets[[i]]$sheet_data$cols <-
               c(
                 .self$worksheets[[i]]$sheet_data$cols,
-                rep.int(as.integer(NA), times = n)
+                rep.int(NA_integer_, times = n)
               )
 
             .self$worksheets[[i]]$sheet_data$t <-
-              c(.self$worksheets[[i]]$sheet_data$t, rep(as.integer(NA), times = n))
+              c(.self$worksheets[[i]]$sheet_data$t, rep(NA_integer_, times = n))
             .self$worksheets[[i]]$sheet_data$v <-
               c(
                 .self$worksheets[[i]]$sheet_data$v,
-                rep(as.character(NA), times = n)
+                rep(NA_character_, times = n)
               )
             .self$worksheets[[i]]$sheet_data$f <-
               c(
                 .self$worksheets[[i]]$sheet_data$f,
-                rep(as.character(NA), times = n)
+                rep(NA_character_, times = n)
               )
             .self$worksheets[[i]]$sheet_data$data_count <-
               .self$worksheets[[i]]$sheet_data$data_count + 1L
@@ -5053,7 +5053,7 @@ Workbook <- setRefClass(
 
 
       ## Formulas
-      f_in <- rep.int(as.character(NA), length(t))
+      f_in <- rep.int(NA_character_, length(t))
       any_functions <- FALSE
       ref_cell <- paste0(int_2_cell_ref(startCol), startRow)
 
