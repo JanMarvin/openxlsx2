@@ -2017,7 +2017,7 @@ Workbook <- setRefClass(
           # there can be files, where row_attr is incomplete because a row
           # is lacking any attributes (presumably was added before saving)
           # still row_attr is what we want!
-          cc_rows <- names(ws$sheet_data$row_attr)
+          cc_rows <- ws$sheet_data$row_attr$r
           cc_out <- vector("list", length = length(cc_rows))
           names(cc_out) <- cc_rows
 
@@ -2053,9 +2053,6 @@ Workbook <- setRefClass(
             post = post,
             sheet_data = ws$sheet_data,
             cols_attr = ws$cols_attr,
-            rows_attr = ws$sheet_data$row_attr,
-            row_heights_ = NULL,
-            outline_levels_ = unlist(outlineLevels[[i]]),
             R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
           )
 

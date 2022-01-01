@@ -57,16 +57,8 @@ isInternalHyperlink <- function(x) {
     .Call(`_openxlsx2_isInternalHyperlink`, x)
 }
 
-write_file <- function(head = "", body = "", tail = "", fl = "") {
-    .Call(`_openxlsx2_write_file`, head, body, tail, fl)
-}
-
 cppReadFile <- function(xmlFile) {
     .Call(`_openxlsx2_cppReadFile`, xmlFile)
-}
-
-read_file_newline <- function(xmlFile) {
-    .Call(`_openxlsx2_read_file_newline`, xmlFile)
 }
 
 get_letters <- function() {
@@ -212,6 +204,10 @@ printXPtr <- function(doc, raw) {
     .Call(`_openxlsx2_printXPtr`, doc, raw)
 }
 
+write_xml_file <- function(xml_content, fl) {
+    invisible(.Call(`_openxlsx2_write_xml_file`, xml_content, fl))
+}
+
 calc_number_rows <- function(x, skipEmptyRows) {
     .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
 }
@@ -252,12 +248,12 @@ buildCellList <- function(r, t, v) {
     .Call(`_openxlsx2_buildCellList`, r, t, v)
 }
 
-set_row <- function(row_attr, cells) {
-    .Call(`_openxlsx2_set_row`, row_attr, cells)
+set_row <- function(row_attr, cells, row_idx) {
+    .Call(`_openxlsx2_set_row`, row_attr, cells, row_idx)
 }
 
-write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, rows_attr, row_heights_ = NULL, outline_levels_ = NULL, R_fileName = "output") {
-    .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, rows_attr, row_heights_, outline_levels_, R_fileName)
+write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
+    .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, R_fileName)
 }
 
 buildMatrixNumeric <- function(v, rowInd, colInd, colNames, nRows, nCols) {

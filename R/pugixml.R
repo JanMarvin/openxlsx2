@@ -226,3 +226,15 @@ print.pugi_xml <- function(x, raw = FALSE, ...) {
 as_xml <- function(x) {
   read_xml(paste(x, collapse = ""))
 }
+
+#' write xml file
+#' @description brings the added benefit of xml checking
+#' @param head head part of xml
+#' @param body body part of xml
+#' @param tail tail part of xml
+#' @param fl file name with full path
+#' @export
+write_file <- function(head = "", body = "", tail = "", fl = "") {
+  xml_content <- paste0(head, body, tail, collapse = "")
+  write_xml_file(xml_content = xml_content, fl = fl)
+}

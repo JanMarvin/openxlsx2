@@ -715,3 +715,27 @@ std::string printXPtr(XPtrXML doc, bool raw) {
 
   return  oss.str();
 }
+
+
+
+// [[Rcpp::export]]
+void write_xml_file(std::string xml_content, std::string fl) {
+
+  pugi::xml_document doc;
+  pugi::xml_parse_result result;
+
+  // load and validate node
+  if (xml_content != "") {
+    result = doc.load_string(xml_content.c_str(), pugi::parse_default | pugi::parse_escapes);
+    if (!result) Rcpp::stop("Loading xml_content node failed: \n %s \n When writing: \n%s", xml_content, fl);
+  }
+
+  // Needs to be added after the node has been loaded and validated
+  pugi::xml_node decl = doc.prepend_child(pugi::node_declaration);
+  decl.append_attribute("version") = "1.0";
+  decl.append_attribute("encoding") = "UTF-8";
+  decl.append_attribute("standalone") = "yes";
+
+  doc.save_file(fl.c_str(), "\t", pugi::format_raw );
+
+}
