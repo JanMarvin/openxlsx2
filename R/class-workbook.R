@@ -713,7 +713,7 @@ Workbook <- setRefClass(
         close(con)
       } else {
         # TODO replace with seq_len() or seq_along()
-        lapply(1:nThemes, function(i) {
+        lapply(seq_len(nThemes), function(i) {
           con <-
             file(file.path(xlthemeDir, stri_join("theme", i, ".xml")), open = "wb")
           writeBin(charToRaw(pxml(.self$theme[[i]])), con)
@@ -749,7 +749,7 @@ Workbook <- setRefClass(
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
         # TODO use seq_len() or seq_along()?
-        for (i in 1:nSheets) {
+        for (i in seq_len(nSheets)) {
           if (length(comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
@@ -1030,7 +1030,7 @@ Workbook <- setRefClass(
       # # printerSettings
       # printDir <- file.path(tmpDir, "xl", "printerSettings")
       # dir.create(path = printDir, recursive = TRUE)
-      # for (i in 1:nSheets) {
+      # for (i in seq_len(nSheets)) {
       #   writeLines(genPrinterSettings(), file.path(printDir, sprintf("printerSettings%s.bin", i)))
       # }
 
@@ -1389,15 +1389,13 @@ Workbook <- setRefClass(
         }
 
         # TODO use seq_along()
-        if (nComments > 0) {
-          for (j in 1:nComments) {
-            id <- id + 1L
-            write(
-              x = genBaseShapeVML(cd[j], id),
-              file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-              append = TRUE
-            )
-          }
+        for (j in seq_len(nComments)) {
+          id <- id + 1L
+          write(
+            x = genBaseShapeVML(cd[j], id),
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
         }
 
         if (length(.self$vml[[i]])) {
@@ -2106,7 +2104,7 @@ Workbook <- setRefClass(
             )
           }
         } ## end of isChartSheet[i]
-      } ## end of loop through 1:nSheets
+      } ## end of loop through nSheets
 
       invisible(.self)
     },
@@ -3075,7 +3073,7 @@ Workbook <- setRefClass(
       # Order workbook.xml.rels:
       #   sheets -> style -> theme -> sharedStrings -> persons -> tables -> calcChain
       # Assign workbook.xml.rels children rIds, seq_along(workbook.xml.rels)
-      # Assign workbook$sheets rIds 1:nSheets
+      # Assign workbook$sheets rIds nSheets
       #
       ## drawings will always be r:id1 on worksheet
       ## tables will always have r:id equal to table xml file number tables/table(i).xml
@@ -3167,7 +3165,7 @@ Workbook <- setRefClass(
         }))
 
       ## re-order worksheets if need to
-      if (any(.self$sheetOrder != 1:nSheets)) {
+      if (any(.self$sheetOrder != seq_len(nSheets))) {
         .self$workbook$sheets <- .self$workbook$sheets[sheetOrder]
       }
 
@@ -3194,7 +3192,7 @@ Workbook <- setRefClass(
           ignore.case = TRUE
         )
       if (nSheets > 1) {
-        for (i in (1:nSheets)[!(1:nSheets) %in% visible_sheet_index]) {
+        for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
           .self$worksheets[[i]]$sheetViews <-
             sub(
               ' tabSelected="(1|true|false|0)"',
@@ -3354,9 +3352,9 @@ Workbook <- setRefClass(
         ## ********** Assume all styleObjects cells have one a single worksheet **********
         ## Loop through existing styleObjects
         # TODO use seq_along()
-        newInds <- 1:length(rows)
+        newInds <- seq_along(rows)
         keepStyle <- rep(TRUE, nStyles)
-        for (i in 1:nStyles) {
+        for (i in seq_len(nStyles)) {
           if (sheet == .self$styleObjects[[i]]$sheet) {
             ## Now check rows and cols intersect
             ## toRemove are the elements that the new style doesn't apply to, we remove these from the style object as it
@@ -3561,7 +3559,7 @@ Workbook <- setRefClass(
 
           ## loop through existing tables checking if any over lap with new table
           # TODO use seq_along()
-          for (i in 1:length(exTable)) {
+          for (i in seq_along(exTable)) {
             existing_cols <- cols[[i]]
             existing_rows <- rows[[i]]
 
@@ -3594,7 +3592,7 @@ Workbook <- setRefClass(
         showText <- c(showText, "\nWorksheets:\n")
 
         # TODO use seq_along()
-        sheetTxt <- lapply(1:nSheets, function(i) {
+        sheetTxt <- lapply(seq_len(nSheets), function(i) {
           tmpTxt <- sprintf('Sheet %s: "%s"\n', i, exSheets[[i]])
 
           if (length(.self$rowHeights[[i]])) {
@@ -3680,7 +3678,7 @@ Workbook <- setRefClass(
           c(
             showText,
             "\nImages:\n",
-            sprintf('Image %s: "%s"\n', 1:nImages, .self$media)
+            sprintf('Image %s: "%s"\n', seq_len(nImages), .self$media)
           )
       }
 
@@ -3689,7 +3687,7 @@ Workbook <- setRefClass(
           c(
             showText,
             "\nCharts:\n",
-            sprintf('Chart %s: "%s"\n', 1:nCharts, .self$charts)
+            sprintf('Chart %s: "%s"\n', seq_len(nCharts), .self$charts)
           )
       }
 
@@ -3838,7 +3836,7 @@ Workbook <- setRefClass(
         formatCodes <-
           sapply(numFmts, getAttr, tag = 'formatCode="', USE.NAMES = FALSE)
         numFmts <-
-          lapply(1:length(numFmts), function(i) {
+          lapply(seq_along(numFmts), function(i) {
             list("numFmtId" = numFmtsIds[[i]], "formatCode" = formatCodes[[i]])
           })
         numFmtFlag <- TRUE
@@ -4139,8 +4137,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODO use seq_length()
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         tmp <- genBaseColStyle(colClasses[[i]])
 
         colStyle <- tmp$style
@@ -4462,8 +4459,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODO use seq_len()
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         # TODO use seq_along() with colClasses?
         tmp <- genBaseColStyle(colClasses[[i]])
         sTop <- tmp$style
@@ -4540,8 +4536,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODO use seq_along() with colClasses
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         tmp <- genBaseColStyle(colClasses[[i]])
         colStyle <- tmp$style
         # TODO Is specialFormat used?
@@ -4647,6 +4642,7 @@ Workbook <- setRefClass(
     },
 
     # TODO safe to remove nCol?
+    # TODO is nCol just length(colClasses?)
     # TODO rename to setAllBorders
     allBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
       sheet <- .self$sheet_names[[.self$validateSheet(sheet)]]
@@ -4654,8 +4650,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODo use seq_along() with colClasses
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         tmp <- genBaseColStyle(colClasses[[i]])
         sTop <- tmp$style
 
@@ -4779,7 +4774,7 @@ Workbook <- setRefClass(
 
             if (length(merge_cols)) {
               # TODO use seq_along()
-              all_merged_cells <- lapply(1:length(merge_cols), function(i) {
+              all_merged_cells <- lapply(seq_along(merge_cols), function(i) {
                 expand.grid(
                   "rows" = min(merge_rows[[i]]):max(merge_rows[[i]]),
                   "cols" = min(merge_cols[[i]]):max(merge_cols[[i]])
@@ -4872,8 +4867,7 @@ Workbook <- setRefClass(
 
 
       ## pull out NaN values
-      # TODO use seq_len()
-      nans <- unlist(lapply(1:nCols, function(i) {
+      nans <- unlist(lapply(seq_len(nCols), function(i) {
         tmp <- df[[i]]
         if (!inherits(tmp, c("character", "list"))) {
           v <- which(is.nan(tmp) | is.infinite(tmp))
@@ -4914,8 +4908,7 @@ Workbook <- setRefClass(
           offSet <- lapply(t, parseOffset)
           offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
 
-          # TODO use seq_along()
-          for (i in 1:length(pInds)) {
+          for (i in seq_along(pInds)) {
             df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
           }
         }
@@ -5085,7 +5078,7 @@ Workbook <- setRefClass(
           } ## this is text to display instead of hyperlink
 
           ## create hyperlink objects
-          newhl <- lapply(1:length(hyperlink_inds), function(i) {
+          newhl <- lapply(seq_along(hyperlink_inds), function(i) {
             Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
           })
 

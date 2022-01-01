@@ -1926,8 +1926,8 @@ worksheetOrder <- function(wb) {
 #'   wb = wb,
 #'   sheet = 1,
 #'   name = "iris",
-#'   rows = 1:(nrow(iris) + 1),
-#'   cols = 1:ncol(iris)
+#'   rows = seq_len(nrow(iris) + 1),
+#'   cols = seq_along(iris)
 #' )
 #'
 #'
@@ -2016,7 +2016,7 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
 #' addWorksheet(wb, "Sheet 3")
 #'
 #' writeData(wb, 1, iris)
-#' addFilter(wb, 1, row = 1, cols = 1:ncol(iris))
+#' addFilter(wb, 1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
 #' writeData(wb, 2, x = iris, withFilter = TRUE)
@@ -2061,7 +2061,7 @@ addFilter <- function(wb, sheet, rows, cols) {
 #' addWorksheet(wb, "Sheet 3")
 #'
 #' writeData(wb, 1, iris)
-#' addFilter(wb, 1, row = 1, cols = 1:ncol(iris))
+#' addFilter(wb, 1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
 #' writeData(wb, 2, x = iris, withFilter = TRUE)
@@ -2335,7 +2335,7 @@ sheetVisibility <- function(wb) {
     return(invisible(wb))
   }
 
-  for (i in 1:length(wb$worksheets)) {
+  for (i in seq_along(wb$worksheets)) {
     wb$workbook$sheets[i] <- gsub(exState0[i], value[i], wb$workbook$sheets[i], fixed = TRUE)
   }
 
