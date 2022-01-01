@@ -16,3 +16,5 @@ cran-comments.md
 ^\.pre-commit-config\.yaml$
 ^img$
 ^\.lintr$
+# temp MS files
+^~$.*\\.[a-z]+$
