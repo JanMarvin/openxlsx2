@@ -16,7 +16,7 @@ ChartSheet <- setRefClass(
       tabColour = character(),
       zoom = 100
     ) {
-      if (length(tabColour) > 0) {
+      if (length(tabColour)) {
         tabColour <- sprintf("<sheetPr>%s</sheetPr>", tabColour)
       } else {
         tabColour <- character()

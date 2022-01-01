@@ -577,7 +577,7 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
 
 
 
-  if (!is.null(style$numFmt) & length(wb$styleObjects) > 0) {
+  if (!is.null(style$numFmt) & length(wb$styleObjects)) {
     if (style$numFmt$numFmtId == 165) {
       maxnumFmtId <- max(c(sapply(wb$styleObjects, function(i) {
         as.integer(
@@ -834,7 +834,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   cols <- cols[!duplicated(cols)]
   cols <- convertFromExcelRef(cols)
 
-  if (length(wb$colWidths[[sheet]]) > 0) {
+  if (length(wb$colWidths[[sheet]])) {
     existing_cols <- names(wb$colWidths[[sheet]])
     existing_widths <- unname(wb$colWidths[[sheet]])
     existing_hidden <- attr(wb$colWidths[[sheet]], "hidden")
@@ -867,7 +867,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   }
 
   # Check if any conflicting column outline levels
-  if (length(wb$colOutlineLevels[[sheet]]) > 0) {
+  if (length(wb$colOutlineLevels[[sheet]])) {
     existing_cols <- names(wb$colOutlineLevels[[sheet]])
 
     if (any(existing_cols %in% cols)) {
@@ -920,7 +920,7 @@ removeColWidths <- function(wb, sheet, cols) {
 
   customCols <- as.integer(names(wb$colWidths[[sheet]]))
   removeInds <- which(customCols %in% cols)
-  if (length(removeInds) > 0) {
+  if (length(removeInds)) {
     remainingCols <- customCols[-removeInds]
     if (length(remainingCols) == 0) {
       wb$colWidths[[sheet]] <- list()
@@ -961,7 +961,7 @@ removeRowHeights <- function(wb, sheet, rows) {
 
   customRows <- as.integer(names(wb$rowHeights[[sheet]]))
   removeInds <- which(customRows %in% rows)
-  if (length(removeInds) > 0) {
+  if (length(removeInds)) {
     wb$rowHeights[[sheet]] <- wb$rowHeights[[sheet]][-removeInds]
   }
 }
@@ -1386,7 +1386,7 @@ setHeaderFooter <- function(wb, sheet,
     firstFooter = naToNULLList(firstFooter)
   )
 
-  if (all(sapply(hf, length) == 0)) {
+  if (all(lengths(hf) == 0)) {
     hf <- NULL
   }
 
@@ -2558,7 +2558,7 @@ getTables <- function(wb, sheet) {
   refs <- refs[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
   tables <- tables[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
 
-  if (length(tables) > 0) {
+  if (length(tables)) {
     attr(tables, "refs") <- refs
   }
 
@@ -2697,7 +2697,7 @@ groupColumns <- function(wb, sheet, cols, hidden = FALSE) {
   cols <- cols[!duplicated(cols)]
   cols <- convertFromExcelRef(cols)
 
-  if (length(wb$colWidths[[sheet]]) > 0) {
+  if (length(wb$colWidths[[sheet]])) {
     existing_cols <- names(wb$colWidths[[sheet]])
     existing_hidden <- attr(wb$colWidths[[sheet]], "hidden", exact = TRUE)
 
@@ -2719,7 +2719,7 @@ groupColumns <- function(wb, sheet, cols, hidden = FALSE) {
     }
   }
 
-  if (length(wb$colOutlineLevels[[sheet]]) > 0) {
+  if (length(wb$colOutlineLevels[[sheet]])) {
     existing_cols <- names(wb$colOutlineLevels[[sheet]])
     existing_levels <- unname(wb$colOutlineLevels[[sheet]])
     existing_hidden <- attr(wb$colOutlineLevels[[sheet]], "hidden")
@@ -2788,7 +2788,7 @@ ungroupColumns <- function(wb, sheet, cols) {
   removeInds <- which(customCols %in% cols)
 
   # Check if any selected columns are already grouped
-  if (length(removeInds) > 0) {
+  if (length(removeInds)) {
     remainingCols <- customCols[-removeInds]
     if (length(remainingCols) == 0) {
       wb$colOutlineLevels[[sheet]] <- list()
@@ -2800,7 +2800,7 @@ ungroupColumns <- function(wb, sheet, cols) {
     }
   }
 
-  if (length(wb$colWidths[[sheet]]) > 0) {
+  if (length(wb$colWidths[[sheet]])) {
     if (any(cols %in% names(wb$colWidths[[sheet]]))) {
       attr(wb$colWidths[[sheet]], "hidden")[attr(wb$colWidths[[sheet]], "names") %in% cols] <- "0"
     }
@@ -2878,7 +2878,7 @@ ungroupRows <- function(wb, sheet, rows) {
 
   customRows <- as.integer(names(wb$outlineLevels[[sheet]]))
   removeInds <- which(customRows %in% rows)
-  if (length(removeInds) > 0) {
+  if (length(removeInds)) {
     wb$outlineLevels[[sheet]] <- wb$outlineLevels[[sheet]][-removeInds]
   }
 
