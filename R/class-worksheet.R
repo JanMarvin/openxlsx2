@@ -234,7 +234,8 @@ Worksheet <- setRefClass(
         },
 
         # extLst, dataValidationsLst
-        if (length(.self$extLst) || n <- length(.self$dataValidationsLst)) {
+        # parenthese or R gets confused with the ||
+        if ((length(.self$extLst)) || (n <- length(.self$dataValidationsLst))) {
           sprintf(
             "<extLst>%s</extLst>",
             paste0(
