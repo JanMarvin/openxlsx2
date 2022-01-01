@@ -201,17 +201,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// read_file_newline
-std::string read_file_newline(std::string xmlFile);
-RcppExport SEXP _openxlsx2_read_file_newline(SEXP xmlFileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type xmlFile(xmlFileSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_file_newline(xmlFile));
-    return rcpp_result_gen;
-END_RCPP
-}
 // get_letters
 std::vector<std::string> get_letters();
 RcppExport SEXP _openxlsx2_get_letters() {
@@ -903,7 +892,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_convert_to_excel_ref_expand", (DL_FUNC) &_openxlsx2_convert_to_excel_ref_expand, 3},
     {"_openxlsx2_isInternalHyperlink", (DL_FUNC) &_openxlsx2_isInternalHyperlink, 1},
     {"_openxlsx2_cppReadFile", (DL_FUNC) &_openxlsx2_cppReadFile, 1},
-    {"_openxlsx2_read_file_newline", (DL_FUNC) &_openxlsx2_read_file_newline, 1},
     {"_openxlsx2_get_letters", (DL_FUNC) &_openxlsx2_get_letters, 0},
     {"_openxlsx2_markUTF8", (DL_FUNC) &_openxlsx2_markUTF8, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
