@@ -168,7 +168,7 @@ SEXP write_worksheet_xml_2( std::string prior,
 
   xmlFile << "<sheetData>";
 
-  for (size_t i = 0; i < row_attr.nrow(); ++i) {
+  for (int i = 0; i < row_attr.nrow(); ++i) {
 
     xmlFile << set_row(row_attr, cc[i], i);
 

@@ -29,7 +29,7 @@ namespace Rcpp {
 template <>
 inline SEXP wrap(const std::vector<xml_col> &x) {
 
-  auto n = x.size();
+  size_t n = x.size();
 
   // Vector structure identical to xml_col from openxlsx2_types.h
   Rcpp::CharacterVector row_r(no_init(n));     // row name: 1, 2, ..., 9999
@@ -46,7 +46,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   Rcpp::CharacterVector is(no_init(n));        // <is> tag
 
   // struct to vector
-  for (auto i = 0; i < n; ++i) {
+  for (size_t i = 0; i < n; ++i) {
     row_r[i] = x[i].row_r;
     c_r[i]   = x[i].c_r;
     c_s[i]   = x[i].c_s;
@@ -73,7 +73,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
       Rcpp::Named("is")     = is
   )
   );
-};
+}
 }
 
 // pugixml defines. This creates the xmlptr
