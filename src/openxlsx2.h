@@ -57,4 +57,4 @@ Rcpp::LogicalVector isInternalHyperlink(Rcpp::CharacterVector x);
 std::string itos(int i);
 Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone = false);
 
-std::string set_row(Rcpp::List row_attr, Rcpp::List cell_typ);
+std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx);

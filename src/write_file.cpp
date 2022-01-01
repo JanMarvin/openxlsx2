@@ -8,15 +8,22 @@
 // sheet_data part for this worksheet
 //
 // [[Rcpp::export]]
-std::string set_row(Rcpp::List row_attr, Rcpp::List cells) {
+std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) {
 
   pugi::xml_document doc;
 
   pugi::xml_node row = doc.append_child("row");
   Rcpp::CharacterVector attrnams = row_attr.names();
 
-  for (auto i = 0; i < row_attr.length(); ++i) {
-    row.append_attribute(attrnams[i]) = Rcpp::as<std::string>(row_attr[i]).c_str();
+  for (auto j = 0; j < row_attr.ncol(); ++j) {
+
+    Rcpp::CharacterVector cv_s = "";
+    cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+
+    if (cv_s[0] != "") {
+      const std::string val_strl = Rcpp::as<std::string>(cv_s);
+      row.append_attribute(attrnams[j]) = val_strl.c_str();
+    }
   }
 
   std::string rnastring = "_openxlsx_NA_";
@@ -143,9 +150,6 @@ SEXP write_worksheet_xml_2( std::string prior,
                             std::string post,
                             Rcpp::Reference sheet_data,
                             Rcpp::CharacterVector cols_attr, // currently unused
-                            Rcpp::List rows_attr,
-                            Rcpp::Nullable<Rcpp::CharacterVector> row_heights_ = R_NilValue, // unused should be added to cc
-                            Rcpp::Nullable<Rcpp::CharacterVector> outline_levels_ = R_NilValue, // unused ???
                             std::string R_fileName = "output"){
 
 
@@ -159,13 +163,14 @@ SEXP write_worksheet_xml_2( std::string prior,
 
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_2_cell_ref(sheet_data.field("cols"));
+  Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data.field("row_attr"));
   Rcpp::List cc = sheet_data.field("cc_out");
 
   xmlFile << "<sheetData>";
 
-  for (size_t i = 0; i < rows_attr.length(); ++i) {
+  for (int i = 0; i < row_attr.nrow(); ++i) {
 
-    xmlFile << set_row(rows_attr[i], cc[i]);
+    xmlFile << set_row(row_attr, cc[i], i);
 
   }
 
