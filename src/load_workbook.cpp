@@ -1,5 +1,74 @@
 #include "openxlsx2.h"
 
+Rcpp::DataFrame row_to_df(XPtrXML doc) {
+
+  auto ws = doc->child("worksheet").child("sheetData");
+
+  Rcpp::CharacterVector row_nams= {
+    "collapsed",
+    "customFormat",
+    "customHeight",
+    "x14ac:dyDescent",
+    "ht",
+    "hidden",
+    "outlineLevel",
+    "r",
+    "ph",
+    "spans",
+    "s",
+    "thickBot",
+    "thickTop"
+  };
+
+  auto nn = std::distance(ws.children("row").begin(), ws.children("row").end());
+  auto kk = row_nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <row ...>
+  auto itr = 0;
+  for (auto row : ws.children("row")) {
+    for (auto attrs : row.attributes()) {
+
+      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_value = attrs.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(row_nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << attr_name << ": not found in xf name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+      }
+
+    }
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = row_nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
 //' @import Rcpp
 // this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
@@ -10,7 +79,7 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
   size_t n = std::distance(ws.begin(), ws.end());
 
   // character
-  Rcpp::Shield<SEXP> row_attributes(Rf_allocVector(VECSXP, n));
+  Rcpp::DataFrame row_attributes;
   Rcpp::Shield<SEXP> rownames(Rf_allocVector(STRSXP, n));
 
   std::vector<xml_col> xml_cols;
@@ -25,64 +94,24 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
   const std::string si_str = "si";
   const std::string ref_str = "ref";
 
+
+
   /*****************************************************************************
    * Row information is returned as list of lists returning as much as possible.
    *
    * Col information is returned as dataframe returning only a fraction of known
    * tags and attributes.
    ****************************************************************************/
+  row_attributes = row_to_df(doc);
+
   auto itr_rows = 0;
   for (auto worksheet: ws.children("row")) {
-
-    size_t k = std::distance(worksheet.begin(), worksheet.end());
-
-    Rcpp::Shield<SEXP> cc_r(Rf_allocVector(VECSXP, k));
-    Rcpp::Shield<SEXP> colnames(Rf_allocVector(STRSXP, k));
-
-    // buffer is string buf is SEXP
-    std::string buffer;
-
-    /* row attributes ------------------------------------------------------- */
-    auto nn = std::distance(worksheet.attributes_begin(), worksheet.attributes_end());
-
-    Rcpp::Shield<SEXP> row_attr(Rf_allocVector(VECSXP, nn));
-    Rcpp::Shield<SEXP> row_attr_nam(Rf_allocVector(STRSXP, nn));
-
-    bool has_rowname = false;
-    auto attr_itr = 0;
-    for (auto attr : worksheet.attributes()) {
-
-      buffer = attr.name();
-      SET_STRING_ELT(row_attr_nam, attr_itr, Rf_mkChar(buffer.c_str()));
-
-      buffer = attr.value();
-      Rcpp::Shield<SEXP> buf(Rf_allocVector(STRSXP, 1));
-      SET_STRING_ELT(buf, 0, Rf_mkChar(buffer.c_str()));
-      SET_VECTOR_ELT(row_attr, attr_itr, buf);
-      ++attr_itr;
-
-      // push row name back (will assign it to list)
-      if (attr.name() == r_str) {
-        buffer = attr.value();
-        SET_STRING_ELT(rownames, itr_rows, Rf_mkChar(buffer.c_str()));
-        has_rowname = true;
-      }
-
-    }
-    if(!has_rowname) {
-      for (auto i = 0; i < n; ++i) {
-        buffer = std::to_string(i+1);
-        SET_STRING_ELT(rownames, i, Rf_mkChar(buffer.c_str()));
-      }
-    }
-
-    // assign names and push back
-    ::Rf_setAttrib(row_attr, R_NamesSymbol, row_attr_nam);
-    SET_VECTOR_ELT(row_attributes, itr_rows, row_attr);
-
     /* ---------------------------------------------------------------------- */
     /* read cval, and ctyp -------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
+
+    // buffer is string buf is SEXP
+    std::string buffer;
 
     auto itr_cols = 0;
     for (auto col : worksheet.children("c")) {
@@ -189,8 +218,6 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
     ++itr_rows;
   }
 
-  ::Rf_setAttrib(row_attributes, R_NamesSymbol, rownames);
-
   wb.field("row_attr") = row_attributes;
   wb.field("cc")  = Rcpp::wrap(xml_cols);
 
@@ -285,8 +312,8 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
 
 // mimics the R function which used below
 Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {
-    Rcpp::IntegerVector v = Rcpp::seq(0, x.size()-1);
-    return v[!Rcpp::is_na(x)];
+  Rcpp::IntegerVector v = Rcpp::seq(0, x.size()-1);
+  return v[!Rcpp::is_na(x)];
 }
 
 // similar to dcast converts cc dataframe to z dataframe
