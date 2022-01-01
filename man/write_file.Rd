@@ -12,6 +12,8 @@ write_file(head = "", body = "", tail = "", fl = "")
 \item{body}{body part of xml}
 
 \item{tail}{tail part of xml}
+
+\item{fl}{file name with full path}
 }
 \description{
 brings the added benefit of xml checking

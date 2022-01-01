@@ -232,6 +232,7 @@ as_xml <- function(x) {
 #' @param head head part of xml
 #' @param body body part of xml
 #' @param tail tail part of xml
+#' @param fl file name with full path
 #' @export
 write_file <- function(head = "", body = "", tail = "", fl = "") {
   xml_content <- paste0(head, body, tail, collapse = "")
