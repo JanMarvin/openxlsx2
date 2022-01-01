@@ -21,7 +21,7 @@ addWorksheet(wb, "Sheet 2")
 addWorksheet(wb, "Sheet 3")
 
 writeData(wb, 1, iris)
-addFilter(wb, 1, row = 1, cols = 1:ncol(iris))
+addFilter(wb, 1, row = 1, cols = seq_along(iris))
 
 ## Equivalently
 writeData(wb, 2, x = iris, withFilter = TRUE)
