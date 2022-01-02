@@ -219,7 +219,7 @@ Workbook <- setRefClass(
 
       ## append to worksheets list
       .self$worksheets <-
-        append(
+        c(
           .self$worksheets,
           Worksheet$new(
             showGridLines = showGridLines,
@@ -343,7 +343,7 @@ Workbook <- setRefClass(
 
       ## append to worksheets list
       .self$worksheets <-
-        append(.self$worksheets, .self$worksheets[[clonedSheet]]$copy())
+        c(.self$worksheets, .self$worksheets[[clonedSheet]]$copy())
 
 
       ## update content_tyes
@@ -529,7 +529,7 @@ Workbook <- setRefClass(
               newid
             )
           )
-        .self$tables.xml.rels <- append(.self$tables.xml.rels, "")
+        .self$tables.xml.rels <- c(.self$tables.xml.rels, "")
 
         .self$worksheets_rels[[newSheetIndex]] <-
           c(
@@ -580,7 +580,7 @@ Workbook <- setRefClass(
 
       ## append to worksheets list
       .self$worksheets <-
-        append(
+        c(
           .self$worksheets,
           ChartSheet$new(
             tabSelected = newSheetIndex == 1,
@@ -1229,7 +1229,7 @@ Workbook <- setRefClass(
       ## Function will return named list of references to new strings
       uStr <- uNewStr[which(!uNewStr %in% .self$sharedStrings)]
       uCount <- attr(.self$sharedStrings, "uniqueCount")
-      .self$sharedStrings <- append(.self$sharedStrings, uStr)
+      .self$sharedStrings <- c(.self$sharedStrings, uStr)
 
       attr(.self$sharedStrings, "uniqueCount") <- uCount + length(uStr)
       invisible(.self)
@@ -1335,7 +1335,7 @@ Workbook <- setRefClass(
       attr(.self$tables, "tableName") <- c(tNames, tableName)
 
       .self$worksheets[[sheet]]$tableParts <-
-        append(
+        c(
           .self$worksheets[[sheet]]$tableParts,
           sprintf('<tablePart r:id="rId%s"/>', id)
         )
@@ -1355,7 +1355,7 @@ Workbook <- setRefClass(
         )
 
       ## create a table.xml.rels
-      .self$tables.xml.rels <- append(.self$tables.xml.rels, "")
+      .self$tables.xml.rels <- c(.self$tables.xml.rels, "")
 
       ## update worksheets_rels
       .self$worksheets_rels[[sheet]] <- c(
@@ -1456,11 +1456,11 @@ Workbook <- setRefClass(
 
         if (length(fontId) == 0) {
           fontId <- style$fontId
-          .self$styles$fonts <- append(styles[["fonts"]], fontNode)
+          .self$styles$fonts <- c(styles[["fonts"]], fontNode)
         }
 
         xfNode$fontId <- fontId
-        xfNode <- append(xfNode, list("applyFont" = "1"))
+        xfNode <- c(xfNode, list("applyFont" = "1"))
       }
 
 
@@ -1482,7 +1482,7 @@ Workbook <- setRefClass(
           }
 
           xfNode$numFmtId <- numFmtId
-          xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
+          xfNode <- c(xfNode, list("applyNumberFormat" = "1"))
         }
       }
 
@@ -1497,7 +1497,7 @@ Workbook <- setRefClass(
             .self$styles$fills <- c(styles$fills, fillNode)
           }
           xfNode$fillId <- fillId
-          xfNode <- append(xfNode, list("applyFill" = "1"))
+          xfNode <- c(xfNode, list("applyFill" = "1"))
         }
       }
 
@@ -1520,7 +1520,7 @@ Workbook <- setRefClass(
         }
 
         xfNode$borderId <- borderId
-        xfNode <- append(xfNode, list("applyBorder" = "1"))
+        xfNode <- c(xfNode, list("applyBorder" = "1"))
       }
 
 
@@ -1570,13 +1570,13 @@ Workbook <- setRefClass(
         alignNode <- stri_join(alignNode, "/>")
 
         alignmentFlag <- TRUE
-        xfNode <- append(xfNode, list("applyAlignment" = "1"))
+        xfNode <- c(xfNode, list("applyAlignment" = "1"))
 
         childNodes <- stri_join(childNodes, alignNode)
       }
 
       if (!is.null(style$hidden) | !is.null(style$locked)) {
-        xfNode <- append(xfNode, list("applyProtection" = "1"))
+        xfNode <- c(xfNode, list("applyProtection" = "1"))
         protectionNode <- "<protection"
 
         if (!is.null(style$hidden)) {
@@ -1652,11 +1652,11 @@ Workbook <- setRefClass(
 
           if (length(fontId) == 0) {
             fontId <- length(.self$styles$fonts)
-            .self$styles$fonts <- append(.self$styles[["fonts"]], fontNode)
+            .self$styles$fonts <- c(.self$styles[["fonts"]], fontNode)
           }
 
           xfNode$fontId <- fontId
-          xfNode <- append(xfNode, list("applyFont" = "1"))
+          xfNode <- c(xfNode, list("applyFont" = "1"))
         }
 
 
@@ -1678,7 +1678,7 @@ Workbook <- setRefClass(
             }
 
             xfNode$numFmtId <- numFmtId
-            xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
+            xfNode <- c(xfNode, list("applyNumberFormat" = "1"))
           }
         }
 
@@ -1693,7 +1693,7 @@ Workbook <- setRefClass(
               .self$styles$fills <- c(.self$styles$fills, fillNode)
             }
             xfNode$fillId <- fillId
-            xfNode <- append(xfNode, list("applyFill" = "1"))
+            xfNode <- c(xfNode, list("applyFill" = "1"))
           }
         }
 
@@ -1716,7 +1716,7 @@ Workbook <- setRefClass(
           }
 
           xfNode$borderId <- borderId
-          xfNode <- append(xfNode, list("applyBorder" = "1"))
+          xfNode <- c(xfNode, list("applyBorder" = "1"))
         }
 
         xfNode <-
@@ -2162,7 +2162,7 @@ Workbook <- setRefClass(
       if (length(cols)) {
         colNodes <- sprintf('<col min="%s" max="%s" outlineLevel="1" hidden="%s"/>', cols, cols, hidden)
         names(colNodes) <- cols
-        .self$worksheets[[sheet]]$cols <- append(.self$worksheets[[sheet]]$cols, colNodes)
+        .self$worksheets[[sheet]]$cols <- c(.self$worksheets[[sheet]]$cols, colNodes)
       }
 
       invisible(.self)
@@ -2814,9 +2814,8 @@ Workbook <- setRefClass(
           )
       }
 
-      # TODO replace append() with just c()
       .self$worksheets[[sheet]]$conditionalFormatting <-
-        append(.self$worksheets[[sheet]]$conditionalFormatting, cfRule)
+        c(.self$worksheets[[sheet]]$conditionalFormatting, cfRule)
 
       names(.self$worksheets[[sheet]]$conditionalFormatting) <- nms
 
@@ -3028,7 +3027,7 @@ Workbook <- setRefClass(
       ## write file path to media slot to copy across on save
       tmp <- file
       names(tmp) <- stri_join("image", mediaNo, ".", imageType)
-      .self$media <- append(.self$media, tmp)
+      .self$media <- c(.self$media, tmp)
 
       ## create drawing.xml
       anchor <-
@@ -3400,9 +3399,8 @@ Workbook <- setRefClass(
                 c(keepStyle, TRUE) ## keepStyle is used to remove styles that apply to 0 rows OR 0 columns
 
               ## Merge Style and append to styleObjects
-              # TODO replace append() with c()
               .self$styleObjects <-
-                append(.self$styleObjects, list(
+                c(.self$styleObjects, list(
                   list(
                     style = mergeStyle(.self$styleObjects[[i]]$style, newStyle = style),
                     sheet = sheet,
@@ -3421,8 +3419,7 @@ Workbook <- setRefClass(
 
         ## append style object for non-intersecting cells
         if (length(newInds)) {
-          # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(list(
+          .self$styleObjects <- c(.self$styleObjects, list(list(
             style = style,
             sheet = sheet,
             rows = rows[newInds],
@@ -3431,8 +3428,7 @@ Workbook <- setRefClass(
         }
       } else {
         ## else we are not stacking
-        # TODO use c() not append()
-        .self$styleObjects <- append(.self$styleObjects, list(list(
+        .self$styleObjects <- c(.self$styleObjects, list(list(
           style = style,
           sheet = sheet,
           rows = rows,
@@ -3597,7 +3593,7 @@ Workbook <- setRefClass(
 
           if (length(.self$rowHeights[[i]])) {
             tmpTxt <-
-              append(
+              c(
                 tmpTxt,
                 c(
                   "\n\tCustom row heights (row: height)\n\t",
@@ -3614,7 +3610,7 @@ Workbook <- setRefClass(
 
           if (length(.self$outlineLevels[[i]])) {
             tmpTxt <-
-              append(
+              c(
                 tmpTxt,
                 c(
                   "\n\tGrouped rows:\n\t",
@@ -3629,7 +3625,7 @@ Workbook <- setRefClass(
 
           if (length(.self$colOutlineLevels[[i]])) {
             tmpTxt <-
-              append(
+              c(
                 tmpTxt,
                 c(
                   "\n\tGrouped columns:\n\t",
@@ -3650,7 +3646,7 @@ Workbook <- setRefClass(
             widths[widths != "auto"] <-
               as.numeric(widths[widths != "auto"])
             tmpTxt <-
-              append(
+              c(
                 tmpTxt,
                 c(
                   "\n\tCustom column widths (column: width)\n\t ",
@@ -3781,9 +3777,8 @@ Workbook <- setRefClass(
           )
       }
 
-      # TODO use c() instead of append()
       .self$worksheets[[sheet]]$conditionalFormatting <-
-        append(.self$worksheets[[sheet]]$conditionalFormatting, cfRule)
+        c(.self$worksheets[[sheet]]$conditionalFormatting, cfRule)
 
       names(.self$worksheets[[sheet]]$conditionalFormatting) <- nms
 
@@ -3896,17 +3891,17 @@ Workbook <- setRefClass(
                 style$fontDecoration <- NULL
                 if (flags[[1]]) {
                   style$fontDecoration <-
-                    append(style$fontDecoration, "BOLD")
+                    c(style$fontDecoration, "BOLD")
                 }
 
                 if (flags[[2]]) {
                   style$fontDecoration <-
-                    append(style$fontDecoration, "ITALIC")
+                    c(style$fontDecoration, "ITALIC")
                 }
 
                 if (flags[[3]]) {
                   style$fontDecoration <-
-                    append(style$fontDecoration, "UNDERLINE")
+                    c(style$fontDecoration, "UNDERLINE")
                 }
               }
             }
@@ -4038,7 +4033,7 @@ Workbook <- setRefClass(
 
         ## we need to skip the first one as this is used as the base style
         if (flag) {
-          styleObjects_tmp <- append(styleObjects_tmp, list(style))
+          styleObjects_tmp <- c(styleObjects_tmp, list(style))
         }
 
         flag <- TRUE
@@ -4165,8 +4160,7 @@ Workbook <- setRefClass(
             sTop$borderRight <- borderStyle
             sTop$borderRightColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4203,8 +4197,7 @@ Workbook <- setRefClass(
             sBot$borderRight <- borderStyle
             sBot$borderRightColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4213,8 +4206,7 @@ Workbook <- setRefClass(
               )
             ))
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sMid,
                 "sheet" = sheet,
@@ -4223,8 +4215,7 @@ Workbook <- setRefClass(
               )
             ))
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sBot,
                 "sheet" = sheet,
@@ -4244,8 +4235,7 @@ Workbook <- setRefClass(
             sTop$borderLeft <- borderStyle
             sTop$borderLeftColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4273,8 +4263,7 @@ Workbook <- setRefClass(
             sBot$borderBottom <- borderStyle
             sBot$borderBottomColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4284,8 +4273,7 @@ Workbook <- setRefClass(
             ))
 
             if (nRow > 2) {
-              # TODO use c() not append()
-              .self$styleObjects <- append(.self$styleObjects, list(
+              .self$styleObjects <- c(.self$styleObjects, list(
                 list(
                   "style" = sMid,
                   "sheet" = sheet,
@@ -4295,8 +4283,7 @@ Workbook <- setRefClass(
               ))
             }
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sBot,
                 "sheet" = sheet,
@@ -4318,8 +4305,7 @@ Workbook <- setRefClass(
             sTop$borderRight <- borderStyle
             sTop$borderRightColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4347,8 +4333,7 @@ Workbook <- setRefClass(
             sBot$borderBottom <- borderStyle
             sBot$borderBottomColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4358,8 +4343,7 @@ Workbook <- setRefClass(
             ))
 
             if (nRow > 2) {
-              # TODO use c() not append()
-              .self$styleObjects <- append(.self$styleObjects, list(
+              .self$styleObjects <- c(.self$styleObjects, list(
                 list(
                   "style" = sMid,
                   "sheet" = sheet,
@@ -4370,8 +4354,7 @@ Workbook <- setRefClass(
             }
 
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sBot,
                 "sheet" = sheet,
@@ -4392,8 +4375,7 @@ Workbook <- setRefClass(
             sTop$borderBottom <- borderStyle
             sTop$borderBottomColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4411,8 +4393,7 @@ Workbook <- setRefClass(
             sBot$borderBottom <- borderStyle
             sBot$borderBottomColour <- borderColour
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sTop,
                 "sheet" = sheet,
@@ -4423,8 +4404,7 @@ Workbook <- setRefClass(
 
             ## Middle
             if (specialFormat) {
-              # TODO use c() not append()
-              .self$styleObjects <- append(.self$styleObjects, list(
+              .self$styleObjects <- c(.self$styleObjects, list(
                 list(
                   "style" = sMid,
                   "sheet" = sheet,
@@ -4434,8 +4414,7 @@ Workbook <- setRefClass(
               ))
             }
 
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sBot,
                 "sheet" = sheet,
@@ -4513,8 +4492,7 @@ Workbook <- setRefClass(
           sTop$borderBottomColour <- borderColour
         } ## End of if(i == 1), i == NCol, else inside columns
 
-        # TODO use c() not append()
-        .self$styleObjects <- append(.self$styleObjects, list(
+        .self$styleObjects <- c(.self$styleObjects, list(
           list(
             "style" = sTop,
             "sheet" = sheet,
@@ -4562,8 +4540,7 @@ Workbook <- setRefClass(
           sTop$borderRight <- borderStyle
           sTop$borderRightColour <- borderColour
 
-          # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(
+          .self$styleObjects <- c(.self$styleObjects, list(
             list(
               "style" = sTop,
               "sheet" = sheet,
@@ -4602,8 +4579,7 @@ Workbook <- setRefClass(
 
           colInd <- startCol + i - 1L
 
-          # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(
+          .self$styleObjects <- c(.self$styleObjects, list(
             list(
               "style" = sTop,
               "sheet" = sheet,
@@ -4613,8 +4589,7 @@ Workbook <- setRefClass(
           ))
 
           if (nRow > 2) {
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
+            .self$styleObjects <- c(.self$styleObjects, list(
               list(
                 "style" = sMid,
                 "sheet" = sheet,
@@ -4625,8 +4600,7 @@ Workbook <- setRefClass(
           }
 
 
-          # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(
+          .self$styleObjects <- c(.self$styleObjects, list(
             list(
               "style" = sBot,
               "sheet" = sheet,
@@ -4667,8 +4641,7 @@ Workbook <- setRefClass(
         sTop$borderRight <- borderStyle
         sTop$borderRightColour <- borderColour
 
-        # TODO use c() not append()
-        .self$styleObjects <- append(.self$styleObjects, list(
+        .self$styleObjects <- c(.self$styleObjects, list(
           list(
             "style" = sTop,
             "sheet" = sheet,
@@ -4846,7 +4819,7 @@ Workbook <- setRefClass(
       #if (length(cols)) {
       #  colNodes <- sprintf('<col min="%s" max="%s" width="%s" hidden="%s" customWidth="1"/>', cols, cols, widths, hidden)
       #  names(colNodes) <- cols
-      #  worksheets[[sheet]]$cols <- append(worksheets[[sheet]]$cols, colNodes)
+      #  worksheets[[sheet]]$cols <- c(worksheets[[sheet]]$cols, colNodes)
       #}
 
       invisible(.self)
@@ -5082,7 +5055,7 @@ Workbook <- setRefClass(
             Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
           })
 
-          .self$worksheets[[sheet]]$hyperlinks <- append(worksheets[[sheet]]$hyperlinks, newhl)
+          .self$worksheets[[sheet]]$hyperlinks <- c(worksheets[[sheet]]$hyperlinks, newhl)
         }
       }
 

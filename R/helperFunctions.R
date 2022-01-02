@@ -136,7 +136,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   if ("date" %in% allColClasses) {
@@ -151,7 +151,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   if (any(c("posixlt", "posixct", "posixt") %in% allColClasses)) {
@@ -166,7 +166,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
 
@@ -181,7 +181,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style accounting as ACCOUNTING
@@ -195,7 +195,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style percentages
@@ -209,7 +209,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style big mark
@@ -223,7 +223,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style big mark
@@ -237,7 +237,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## numeric sigfigs (Col must be numeric and numFmt options must only have 0s and \\.)
@@ -251,7 +251,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
 
@@ -266,7 +266,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
         )
       }
     } else {
-      wb$styleObjects <- append(wb$styleObjects, newStylesElements)
+      wb$styleObjects <- c(wb$styleObjects, newStylesElements)
     }
   }
 
