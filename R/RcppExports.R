@@ -244,6 +244,14 @@ write_font <- function(df_font) {
     .Call(`_openxlsx2_write_font`, df_font)
 }
 
+read_numfmt <- function(xml_doc_font) {
+    .Call(`_openxlsx2_read_numfmt`, xml_doc_font)
+}
+
+write_numfmt <- function(df_numfmt) {
+    .Call(`_openxlsx2_write_numfmt`, df_numfmt)
+}
+
 map_cell_types_to_integer <- function(t) {
     .Call(`_openxlsx2_map_cell_types_to_integer`, t)
 }

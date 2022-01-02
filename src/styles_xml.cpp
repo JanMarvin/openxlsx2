@@ -420,3 +420,96 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
 
   return z;
 }
+
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_font) {
+
+  // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector nams = {
+    "formatCode",
+    "numFmtId"
+  };
+
+  auto nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
+  auto kk = nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <numFmt ...>
+  auto itr = 0;
+  for (auto xml_numfmt : xml_doc_font->children("numFmt")) {
+    for (auto attrs : xml_numfmt.attributes()) {
+
+      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_value = attrs.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << attr_name << ": not found in xf name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+      }
+    }
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
+
+  auto n = df_numfmt.nrow();
+  Rcpp::CharacterVector z(n);
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+    Rcpp::CharacterVector attrnams = df_numfmt.names();
+
+    pugi::xml_node numFmt = doc.append_child("numFmt");
+
+    for (auto j = 0; j < df_numfmt.ncol(); ++j) {
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_numfmt[j])[i];
+
+      // only write attributes where cv_s has a value
+      if (cv_s[0] != "") {
+        // Rf_PrintValue(cv_s);
+        const std::string val_strl = Rcpp::as<std::string>(cv_s);
+        numFmt.append_attribute(attrnams[j]) = val_strl.c_str();
+      }
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
