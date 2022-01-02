@@ -303,6 +303,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
     "i",
     "name",
     "outline",
+    // TODO might contain child <localName ...>
     "scheme",
     "shadow",
     "strike",
