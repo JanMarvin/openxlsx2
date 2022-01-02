@@ -37,7 +37,6 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
     "locked"
   };
 
-
   auto nn = std::distance(xml_doc_xf->begin(), xml_doc_xf->end());
   auto kk = nams.length();
 
@@ -70,7 +69,6 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
       }
-
     }
 
     // only handle known names
@@ -85,7 +83,6 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
       if (cld_name ==  "alignment" | cld_name == "extLst" | cld_name == "protection") {
 
         for (auto attrs : cld.attributes()) {
-
           Rcpp::CharacterVector attr_name = attrs.name();
           std::string attr_value = attrs.value();
 
@@ -100,9 +97,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
             size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
             Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
           }
-
         }
-
       } else {
         Rcpp::Rcout << cld_name << ": not valid for xf in openxml 2.8.1" << std::endl;
       }
@@ -114,7 +109,6 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
     ++itr;
   }
-
 
   // 3. Create a data.frame
   df.attr("row.names") = rvec;
@@ -239,7 +233,6 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
       // <xf ...>
       if (is_xf) {
-
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
@@ -252,7 +245,6 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
       }
 
       if (has_alignment && is_alignment) {
-
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
@@ -260,12 +252,10 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
           xf_alignment.append_attribute(attrnams[j]) = val_strl.c_str();
         }
-
       }
 
       // FIXME should be written as single node. most likely broken
       if (has_extLst && is_extLst) {
-
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
@@ -273,11 +263,9 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
           xf_extLst.append_attribute(attrnams[j]) = val_strl.c_str();
         }
-
       }
 
       if (has_protection && is_protection) {
-
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
@@ -285,7 +273,6 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
           xf_protection.append_attribute(attrnams[j]) = val_strl.c_str();
         }
-
       }
 
     }
@@ -324,7 +311,6 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
     "vertAlign"
   };
 
-
   auto nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
   auto kk = nams.length();
 
@@ -353,9 +339,8 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << name << ": not found in xf name table" << std::endl;
+        Rcpp::Rcout << name << ": not found in font name table" << std::endl;
       } else {
-
         std::ostringstream oss;
         cld.print(oss, " ", pugi::format_raw);
 
@@ -370,7 +355,6 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
 
     ++itr;
   }
-
 
   // 3. Create a data.frame
   df.attr("row.names") = rvec;
@@ -513,3 +497,4 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
   }
 
   return z;
+}
