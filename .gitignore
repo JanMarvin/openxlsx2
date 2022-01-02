@@ -16,3 +16,5 @@ Rprof.out
 docs/*.*
 docs/reference/*.html
 docs/
+# temporary xlsx files
+~$*

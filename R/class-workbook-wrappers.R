@@ -2080,7 +2080,7 @@ removeFilter <- function(wb, sheet) {
 
   for (s in sheet) {
     s <- wb$validateSheet(s)
-    wb$worksheets[[s]]$autoFilter <- character(0)
+    wb$worksheets[[s]]$autoFilter <- character()
   }
 
   invisible(wb)
@@ -2546,7 +2546,7 @@ getTables <- function(wb, sheet) {
   }
 
   if (length(wb$tables) == 0) {
-    return(character(0))
+    return(character())
   }
 
   sheet <- wb$validateSheet(sheetName = sheet)

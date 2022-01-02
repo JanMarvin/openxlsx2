@@ -52,7 +52,7 @@ getNamedRegions.default <- function(x) {
   xmlDir <- file.path(tempdir(), "named_regions_tmp")
   xmlFiles <- unzip(x, exdir = xmlDir)
 
-  workbook <- xmlFiles[grepl("workbook.xml$", xmlFiles, perl = TRUE)]
+  workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- read_xml(workbook)
 
   dn <- xml_node(xml = workbook, "workbook", "definedNames", "definedName")

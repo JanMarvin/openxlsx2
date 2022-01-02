@@ -13,13 +13,13 @@ ChartSheet <- setRefClass(
   methods = list(
     initialize = function(
       tabSelected = FALSE,
-      tabColour = character(0),
+      tabColour = character(),
       zoom = 100
     ) {
       if (length(tabColour) > 0) {
         tabColour <- sprintf("<sheetPr>%s</sheetPr>", tabColour)
       } else {
-        tabColour <- character(0)
+        tabColour <- character()
       }
       if (zoom < 10) {
         zoom <- 10
@@ -31,7 +31,7 @@ ChartSheet <- setRefClass(
       .self$sheetViews <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(tabSelected))
       .self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       .self$drawing <- '<drawing r:id=\"rId1\"/>'
-      .self$hyperlinks <- character(0)
+      .self$hyperlinks <- character()
 
       invisible(.self)
     },

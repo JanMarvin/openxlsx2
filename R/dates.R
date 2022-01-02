@@ -103,7 +103,7 @@ getDateOrigin <- function(xlsxFile) {
 
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
-  workbook <- xmlFiles[grepl("workbook.xml$", xmlFiles, perl = TRUE)]
+  workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- paste(unlist(readUTF8(workbook)), collapse = "")
 
   if (grepl('date1904="1"|date1904="true"', workbook, ignore.case = TRUE)) {

@@ -72,7 +72,7 @@ Workbook <- setRefClass(
       category = NULL
     ) {
       .self$charts <- list()
-      .self$isChartSheet <- logical(0)
+      .self$isChartSheet <- logical()
 
       .self$colWidths <- list()
       .self$colOutlineLevels <- list()
@@ -118,8 +118,8 @@ Workbook <- setRefClass(
       .self$slicers <- NULL
       .self$slicerCaches <- NULL
 
-      .self$sheet_names <- character(0)
-      .self$sheetOrder <- integer(0)
+      .self$sheet_names <- character()
+      .self$sheetOrder <- integer()
 
       .self$sharedStrings <- list()
       attr(.self$sharedStrings, "uniqueCount") <- 0
@@ -1953,7 +1953,7 @@ Workbook <- setRefClass(
             )
           }
         } else {
-          .self$worksheets[[i]]$drawing <- character(0)
+          .self$worksheets[[i]]$drawing <- character()
         }
 
         ## vml drawing
@@ -2036,6 +2036,17 @@ Workbook <- setRefClass(
 
           ws$sheet_data$cc_out <- cc_out
 
+          # row_attr <- ws$sheet_data$row_attr
+          # nam_at <- names(row_attr)
+          # wanted <- as.character(seq(min(as.numeric(nam_at)),
+          #                            max(as.numeric(nam_at))))
+          # empty_row_attr <- wanted[!wanted %in% nam_at]
+          # # add empty list
+          # if(!identical(empty_row_attr, character()))
+          #   row_attr[[empty_row_attr]] <- list()
+          # # restore order
+          # ws$sheet_data$row_attr <- row_attr[wanted]
+
           # message(i, " \n")
           write_worksheet_xml_2(
             prior = prior,
@@ -2046,7 +2057,7 @@ Workbook <- setRefClass(
           )
 
           # # why would I want to erase everything in here?
-          # worksheets[[i]]$sheet_data$style_id <- integer(0)
+          # worksheets[[i]]$sheet_data$style_id <- integer()
 
 
           ## write worksheet rels
@@ -2064,8 +2075,7 @@ Workbook <- setRefClass(
 
             ## Check if any tables were deleted - remove these from rels
             if (length(.self$tables) > 0) {
-              # TODO which(grepl()) >> grep()
-              table_inds <- which(grepl("tables/table[0-9].xml", ws_rels))
+              table_inds <- grep("tables/table[0-9].xml", ws_rels)
 
               if (length(table_inds) > 0) {
                 ids <-
@@ -2262,8 +2272,7 @@ Workbook <- setRefClass(
       }
 
       ## Need to remove reference from workbook.xml.rels to pivotCache
-      removeRels <-
-        .self$worksheets_rels[[sheet]][grepl("pivotTables", .self$worksheets_rels[[sheet]])]
+      removeRels <- grep("pivotTables", .self$worksheets_rels[[sheet]], value = TRUE)
       if (length(removeRels) > 0) {
         ## sheet rels links to a pivotTable file, the corresponding pivotTable_rels file links to the cacheDefn which is listing in workbook.xml.rels
         ## remove reference to this file from the workbook.xml.rels
@@ -2279,7 +2288,7 @@ Workbook <- setRefClass(
             collapse = "|"
           )
 
-        fileNo <- which(grepl(toRemove, .self$pivotTables.xml.rels))
+        fileNo <- grep(toRemove, .self$pivotTables.xml.rels)
         toRemove <-
           stri_join(
             sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
@@ -3100,33 +3109,20 @@ Workbook <- setRefClass(
 
       ## get index of each child element for ordering
       # TODO replace which(grepl()) to grep()
-      sheetInds <-
-        which(grepl(
-          "(worksheets|chartsheets)/sheet[0-9]+\\.xml",
-          .self$workbook.xml.rels
-        ))
-      stylesInd <- which(grepl("styles\\.xml", .self$workbook.xml.rels))
-      themeInd <-
-        which(grepl("theme/theme[0-9]+.xml", .self$workbook.xml.rels))
-      connectionsInd <-
-        which(grepl("connections.xml", .self$workbook.xml.rels))
-      extRefInds <-
-        which(grepl("externalLinks/externalLink[0-9]+.xml", .self$workbook.xml.rels))
-      sharedStringsInd <-
-        which(grepl("sharedStrings.xml", .self$workbook.xml.rels))
-      tableInds <- which(grepl("table[0-9]+.xml", .self$workbook.xml.rels))
-      personInds <- which(grepl("person.xml", .self$workbook.xml.rels))
+      sheetInds <- grep( "(worksheets|chartsheets)/sheet[0-9]+\\.xml", .self$workbook.xml.rels)
+      stylesInd <- grep("styles\\.xml", .self$workbook.xml.rels)
+      themeInd <- grep("theme/theme[0-9]+.xml", .self$workbook.xml.rels)
+      connectionsInd <- grep("connections.xml", .self$workbook.xml.rels)
+      extRefInds <- grep("externalLinks/externalLink[0-9]+.xml", .self$workbook.xml.rels)
+      sharedStringsInd <- grep("sharedStrings.xml", .self$workbook.xml.rels)
+      tableInds <- grep("table[0-9]+.xml", .self$workbook.xml.rels)
+      personInds <- grep("person.xml", .self$workbook.xml.rels)
 
 
       ## Reordering of workbook.xml.rels
       ## don't want to re-assign rIds for pivot tables or slicer caches
-      pivotNode <-
-        .self$workbook.xml.rels[grepl(
-          "pivotCache/pivotCacheDefinition[0-9].xml",
-          .self$workbook.xml.rels
-        )]
-      slicerNode <-
-        workbook.xml.rels[which(grepl("slicerCache[0-9]+.xml", .self$workbook.xml.rels))]
+      pivotNode <- grep("pivotCache/pivotCacheDefinition[0-9].xml", .self$workbook.xml.rels, value = TRUE)
+      slicerNode <- grep("slicerCache[0-9]+.xml", .self$workbook.xml.rels, value = TRUE)
 
       ## Reorder children of workbook.xml.rels
       .self$workbook.xml.rels <-
@@ -3267,7 +3263,7 @@ Workbook <- setRefClass(
       numFmtIds <- 50000L
       #for (i in which(!isChartSheet)) {
       #  worksheets[[i]]$sheet_data$style_id <-
-      #    rep.int(x = as.integer(NA), times = worksheets[[i]]$sheet_data$n_elements)
+      #    rep.int(x = NA_integer_, times = worksheets[[i]]$sheet_data$n_elements)
       #}
 
 
@@ -3300,7 +3296,7 @@ Workbook <- setRefClass(
             #worksheets[[i]]$sheet_data$style_id <-
             #  c(
             #    worksheets[[i]]$sheet_data$style_id,
-            #    rep.int(as.integer(NA), times = n)
+            #    rep.int(NA_integer_, times = n)
             #  )
 
             .self$worksheets[[i]]$sheet_data$rows <-
@@ -3308,20 +3304,20 @@ Workbook <- setRefClass(
             .self$worksheets[[i]]$sheet_data$cols <-
               c(
                 .self$worksheets[[i]]$sheet_data$cols,
-                rep.int(as.integer(NA), times = n)
+                rep.int(NA_integer_, times = n)
               )
 
             .self$worksheets[[i]]$sheet_data$t <-
-              c(.self$worksheets[[i]]$sheet_data$t, rep(as.integer(NA), times = n))
+              c(.self$worksheets[[i]]$sheet_data$t, rep(NA_integer_, times = n))
             .self$worksheets[[i]]$sheet_data$v <-
               c(
                 .self$worksheets[[i]]$sheet_data$v,
-                rep(as.character(NA), times = n)
+                rep(NA_character_, times = n)
               )
             .self$worksheets[[i]]$sheet_data$f <-
               c(
                 .self$worksheets[[i]]$sheet_data$f,
-                rep(as.character(NA), times = n)
+                rep(NA_character_, times = n)
               )
             .self$worksheets[[i]]$sheet_data$data_count <-
               .self$worksheets[[i]]$sheet_data$data_count + 1L
@@ -5042,7 +5038,7 @@ Workbook <- setRefClass(
 
 
       ## Formulas
-      f_in <- rep.int(as.character(NA), length(t))
+      f_in <- rep.int(NA_character_, length(t))
       any_functions <- FALSE
       ref_cell <- paste0(int_2_cell_ref(startCol), startRow)
 

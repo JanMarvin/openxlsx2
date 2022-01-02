@@ -92,13 +92,13 @@ SheetData <- setRefClass(
 
       if (any_functions) {
         if (any(!is.na(f_in))) {
-          v_in[!is.na(f_in)] <- as.character(NA)
+          v_in[!is.na(f_in)] <- NA_character_
           t_in[!is.na(f_in)] <- 3L ## "str"
         }
       }
 
       # TODO change inds to ! x %in% y; don't need length() check
-      inds <- integer(0)
+      inds <- integer()
       if (possible_overlap) {
         inds <- which(paste(rows, cols, sep = ",") %in% paste(rows_in, cols_in, sep = ","))
       }

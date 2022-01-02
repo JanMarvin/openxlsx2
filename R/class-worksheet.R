@@ -84,27 +84,27 @@ Worksheet <- setRefClass(
       .self$dimension <- '<dimension ref="A1"/>'
       .self$sheetViews <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
       .self$sheetFormatPr <- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
-      .self$cols_attr <- character(0)
+      .self$cols_attr <- character()
 
-      .self$autoFilter <- character(0)
-      .self$mergeCells <- character(0)
-      .self$conditionalFormatting <- character(0)
+      .self$autoFilter <- character()
+      .self$mergeCells <- character()
+      .self$conditionalFormatting <- character()
       .self$dataValidations <- NULL
-      .self$dataValidationsLst <- character(0)
+      .self$dataValidationsLst <- character()
       .self$hyperlinks <- list()
       .self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       .self$pageSetup <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
       .self$headerFooter <- hf
-      .self$rowBreaks <- character(0)
-      .self$colBreaks <- character(0)
+      .self$rowBreaks <- character()
+      .self$colBreaks <- character()
       .self$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
-      .self$legacyDrawing <- character(0)
-      .self$legacyDrawingHF <- character(0)
-      .self$oleObjects <- character(0)
-      .self$tableParts <- character(0)
-      .self$extLst <- character(0)
+      .self$legacyDrawing <- character()
+      .self$legacyDrawingHF <- character()
+      .self$oleObjects <- character()
+      .self$tableParts <- character()
+      .self$extLst <- character()
 
-      .self$freezePane <- character(0)
+      .self$freezePane <- character()
 
       .self$sheet_data <- SheetData$new()
     },
@@ -233,19 +233,24 @@ Worksheet <- setRefClass(
           paste0(sprintf('<tableParts count="%i">', n), pxml(.self$tableParts), "</tableParts>")
         },
 
-        # dataValidationsLst
-        if (n <- length(.self$dataValidationsLst)) {
-          paste0(
-            sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
-            paste0(pxml(.self$dataValidationsLst), "</x14:dataValidations></ext>"),
-            collapse = ""
+        # extLst, dataValidationsLst
+        # parenthese or R gets confused with the ||
+        if ((length(.self$extLst)) || (n <- length(.self$dataValidationsLst))) {
+          sprintf(
+            "<extLst>%s</extLst>",
+            paste0(
+              pxml(.self$extLst),
+              # dataValidationsLst_xml
+              if (n) {
+                paste0(
+                  sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
+                  paste0(pxml(.self$dataValidationsLst), "</x14:dataValidations></ext>"),
+                  collapse = ""
+                )
+              }
+            )
           )
         },
-
-        # # extLst, dataValidationsLst
-        # if (length(.self$extLst) | length(.self$dataValidationsLst)) {
-        #   sprintf("<extLst>%s</extLst>", paste0(pxml(.self$extLst), dataValidationsLst_xml))
-        # },
 
         "</worksheet>",
 
