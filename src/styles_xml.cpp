@@ -388,7 +388,7 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
 
         pugi::xml_document font_node;
         pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
-        if (!result) Rcpp::stop("loading font node fail:", cv_s);
+        if (!result) Rcpp::stop("loading font node fail: %s", cv_s);
 
         font.append_copy(font_node.first_child());
 

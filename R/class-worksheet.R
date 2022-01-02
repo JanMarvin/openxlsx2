@@ -242,10 +242,10 @@ Worksheet <- setRefClass(
           )
         },
 
-        # extLst, dataValidationsLst
-        if (length(.self$extLst) | length(.self$dataValidationsLst)) {
-          sprintf("<extLst>%s</extLst>", paste0(pxml(.self$extLst), dataValidationsLst_xml))
-        },
+        # # extLst, dataValidationsLst
+        # if (length(.self$extLst) | length(.self$dataValidationsLst)) {
+        #   sprintf("<extLst>%s</extLst>", paste0(pxml(.self$extLst), dataValidationsLst_xml))
+        # },
 
         "</worksheet>",
 
