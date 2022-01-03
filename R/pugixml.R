@@ -30,8 +30,11 @@ read_xml <- function(xml, pointer = TRUE)  {
   z <- NULL
 
   isfile = FALSE
-  if (file.exists(xml))
+  if (length(xml) == 1 && file.exists(xml))
     isfile <- TRUE
+
+  if (!isfile)
+    xml <- paste0(xml, collapse = "")
 
   if (pointer) {
     z <- readXMLPtr(xml, isfile)
