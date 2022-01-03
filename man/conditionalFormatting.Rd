@@ -222,14 +222,14 @@ writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
 ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
 ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
 conditionalFormatting(wb, "colourScale",
-  cols = 1:ncol(df), rows = 1:nrow(df),
+  cols = seq_along(df), rows = 1:nrow(df),
   style = c("black", "white"),
   rule = c(0, 255),
   type = "colourScale"
 )
 
-setColWidths(wb, "colourScale", cols = 1:ncol(df), widths = 1.07)
-setRowHeights(wb, "colourScale", rows = 1:nrow(df), heights = 7.5)
+setColWidths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
+setRowHeights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
 ## Databars
 writeData(wb, "databar", -5:5)

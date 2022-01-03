@@ -247,7 +247,7 @@ writeDataTable <- function(wb, sheet, x,
       colNames[char0] <- colnames(x)[char0] <- paste0("Column", which(char0))
     }
   } else {
-    colNames <- paste0("Column", 1:ncol(x))
+    colNames <- paste0("Column", seq_along(x))
     names(x) <- colNames
   }
   ## If zero rows, append an empty row (prevent XML from corrupting)

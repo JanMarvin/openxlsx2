@@ -674,11 +674,10 @@ Workbook <- setRefClass(
       nThemes <- length(.self$theme)
       nPivots <- length(.self$pivotDefinitions)
       nSlicers <- length(.self$slicers)
-      # TODO use lengths() instead (and in multiple places)
-      nComments <- sum(sapply(.self$comments, length) > 0)
-      nThreadComments <- sum(sapply(.self$threadComments, length) > 0)
+      nComments <- sum(lengths(.self$comments) > 0)
+      nThreadComments <- sum(lengths(.self$threadComments) > 0)
       nPersons <- length(.self$persons)
-      nVML <- sum(sapply(.self$vml, length) > 0)
+      nVML <- sum(lengths(.self$vml) > 0)
 
       relsDir <- file.path(tmpDir, "_rels")
       dir.create(path = relsDir, recursive = TRUE)
@@ -698,7 +697,7 @@ Workbook <- setRefClass(
       xlTablesRelsDir <- file.path(xlTablesDir, "_rels")
       dir.create(path = xlTablesRelsDir, recursive = TRUE)
 
-      if (length(.self$media) > 0) {
+      if (length(.self$media)) {
         xlmediaDir <- file.path(tmpDir, "xl", "media")
         dir.create(path = xlmediaDir, recursive = TRUE)
       }
@@ -714,7 +713,7 @@ Workbook <- setRefClass(
         close(con)
       } else {
         # TODO replace with seq_len() or seq_along()
-        lapply(1:nThemes, function(i) {
+        lapply(seq_len(nThemes), function(i) {
           con <-
             file(file.path(xlthemeDir, stri_join("theme", i, ".xml")), open = "wb")
           writeBin(charToRaw(pxml(.self$theme[[i]])), con)
@@ -738,7 +737,7 @@ Workbook <- setRefClass(
       dir.create(path = xldrawingsRelsDir, recursive = TRUE)
 
       ## charts
-      if (length(.self$charts) > 0) {
+      if (length(.self$charts)) {
         file.copy(
           from = dirname(.self$charts[1]),
           to = file.path(tmpDir, "xl"),
@@ -750,8 +749,8 @@ Workbook <- setRefClass(
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
         # TODO use seq_len() or seq_along()?
-        for (i in 1:nSheets) {
-          if (length(comments[[i]]) > 0) {
+        for (i in seq_len(nSheets)) {
+          if (length(comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
             .self$Content_Types <- c(
@@ -786,7 +785,7 @@ Workbook <- setRefClass(
         dir.create(path = xlThreadComments, recursive = TRUE)
 
         for (i in seq_len(nSheets)) {
-          if (length(.self$threadComments[[i]]) > 0) {
+          if (length(.self$threadComments[[i]])) {
             fl <- .self$threadComments[[i]]
             file.copy(
               from = fl,
@@ -820,7 +819,7 @@ Workbook <- setRefClass(
 
 
 
-      if (length(.self$embeddings) > 0) {
+      if (length(.self$embeddings)) {
         embeddingsDir <- file.path(tmpDir, "xl", "embeddings")
         dir.create(path = embeddingsDir, recursive = TRUE)
         for (fl in embeddings) {
@@ -908,7 +907,7 @@ Workbook <- setRefClass(
 
         for (i in seq_along(.self$slicers)) {
           # TODO consider nzchar()?
-          if (nchar(.self$slicers[i]) > 0) {
+          if (nchar(.self$slicers[i])) {
             file.copy(from = .self$slicers[i], to = file.path(slicersDir, sprintf("slicer%s.xml", i)))
           }
         }
@@ -962,7 +961,7 @@ Workbook <- setRefClass(
       ## write tables
 
       # TODO remove length() check since we have seq_along()
-      if (length(unlist(.self$tables, use.names = FALSE)) > 0) {
+      if (length(unlist(.self$tables, use.names = FALSE))) {
         for (i in seq_along(unlist(.self$tables, use.names = FALSE))) {
           if (!grepl("openxlsx_deleted", attr(.self$tables, "tableName")[i], fixed = TRUE)) {
             write_file(
@@ -981,7 +980,7 @@ Workbook <- setRefClass(
 
 
       ## write query tables
-      if (length(.self$queryTables) > 0) {
+      if (length(.self$queryTables)) {
         xlqueryTablesDir <- file.path(tmpDir, "xl", "queryTables")
         dir.create(path = xlqueryTablesDir, recursive = TRUE)
 
@@ -994,7 +993,7 @@ Workbook <- setRefClass(
       }
 
       ## connections
-      if (length(.self$connections) > 0) {
+      if (length(.self$connections)) {
         write_file(body = .self$connections, fl = file.path(xlDir, "connections.xml"))
       }
 
@@ -1031,7 +1030,7 @@ Workbook <- setRefClass(
       # # printerSettings
       # printDir <- file.path(tmpDir, "xl", "printerSettings")
       # dir.create(path = printDir, recursive = TRUE)
-      # for (i in 1:nSheets) {
+      # for (i in seq_len(nSheets)) {
       #   writeLines(genPrinterSettings(), file.path(printDir, sprintf("printerSettings%s.bin", i)))
       # }
 
@@ -1056,7 +1055,7 @@ Workbook <- setRefClass(
 
       ## write sharedStrings.xml
       ct <- .self$Content_Types
-      if (length(.self$sharedStrings) > 0) {
+      if (length(.self$sharedStrings)) {
         write_file(
           head = sprintf(
             '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="%s" uniqueCount="%s">',
@@ -1167,7 +1166,7 @@ Workbook <- setRefClass(
       workbookXML <- .self$workbook
       workbookXML$sheets <-
         stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
-      if (length(workbookXML$definedNames) > 0) {
+      if (length(workbookXML$definedNames)) {
         workbookXML$definedNames <-
           stri_join(
             "<definedNames>",
@@ -1379,7 +1378,7 @@ Workbook <- setRefClass(
         nComments <- length(cd)
 
         ## write head
-        if (nComments > 0 | length(.self$vml[[i]]) > 0) {
+        if (nComments > 0 | length(.self$vml[[i]])) {
           write(
             x = stri_join(
               '<xml xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
@@ -1390,18 +1389,16 @@ Workbook <- setRefClass(
         }
 
         # TODO use seq_along()
-        if (nComments > 0) {
-          for (j in 1:nComments) {
-            id <- id + 1L
-            write(
-              x = genBaseShapeVML(cd[j], id),
-              file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-              append = TRUE
-            )
-          }
+        for (j in seq_len(nComments)) {
+          id <- id + 1L
+          write(
+            x = genBaseShapeVML(cd[j], id),
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
         }
 
-        if (length(.self$vml[[i]]) > 0) {
+        if (length(.self$vml[[i]])) {
           write(
             x = .self$vml[[i]],
             file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
@@ -1410,7 +1407,7 @@ Workbook <- setRefClass(
         }
 
         # TODO nComments and .self$vml is already checked
-        if (nComments > 0 | length(.self$vml[[i]]) > 0) {
+        if (nComments > 0 | length(.self$vml[[i]])) {
           write(
             x = "</xml>",
             file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
@@ -1469,7 +1466,7 @@ Workbook <- setRefClass(
 
       ## numFmt
       if (!is.null(style$numFmt)) {
-        if (as.integer(style$numFmt$numFmtId) > 0) {
+        if (as.integer(style$numFmt$numFmtId)) {
           numFmtId <- style$numFmt$numFmtId
           if (as.integer(numFmtId) > 163L) {
             tmp <- style$numFmt$formatCode
@@ -1595,7 +1592,7 @@ Workbook <- setRefClass(
         childNodes <- stri_join(childNodes, protectionNode)
       }
 
-      if (length(childNodes) > 0) {
+      if (length(childNodes)) {
         xfNode <-
           stri_join(
             "<xf ",
@@ -1665,7 +1662,7 @@ Workbook <- setRefClass(
 
         ## numFmt
         if (!is.null(style$numFmt)) {
-          if (as.integer(style$numFmt$numFmtId) > 0) {
+          if (as.integer(style$numFmt$numFmtId)) {
             numFmtId <- style$numFmt$numFmtId
             if (as.integer(numFmtId) > 163L) {
               tmp <- style$numFmt$formatCode
@@ -1900,7 +1897,7 @@ Workbook <- setRefClass(
         )
 
       ## rename styleObjects sheet component
-      if (length(styleObjects) > 0) {
+      if (length(styleObjects)) {
         .self$styleObjects <- lapply(styleObjects, function(x) {
           if (x$sheet == oldName) {
             x$sheet <- newSheetName
@@ -1911,7 +1908,7 @@ Workbook <- setRefClass(
       }
 
       ## rename defined names
-      if (length(.self$workbook$definedNames) > 0) {
+      if (length(.self$workbook$definedNames)) {
         belongTo <- getDefinedNamesSheet(.self$workbook$definedNames)
         toChange <- belongTo == oldName
         if (any(toChange)) {
@@ -1957,7 +1954,7 @@ Workbook <- setRefClass(
         }
 
         ## vml drawing
-        if (length(.self$vml_rels[[i]]) > 0) {
+        if (length(.self$vml_rels[[i]])) {
           file.copy(
             from = .self$vml_rels[[i]],
             to = file.path(
@@ -1968,7 +1965,7 @@ Workbook <- setRefClass(
         }
 
         # outlineLevelRow in SheetformatPr
-        if ((length(.self$outlineLevels[[i]]) > 0) && (!grepl("outlineLevelRow", .self$worksheets[[i]]$sheetFormatPr))) {
+        if ((length(.self$outlineLevels[[i]])) && (!grepl("outlineLevelRow", .self$worksheets[[i]]$sheetFormatPr))) {
           .self$worksheets[[i]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', .self$worksheets[[i]]$sheetFormatPr)
         }
 
@@ -1996,8 +1993,7 @@ Workbook <- setRefClass(
         } else {
           ## Write worksheets
           ws <- .self$worksheets[[i]]
-          hasHL <-
-            ifelse(length(ws$hyperlinks) > 0, TRUE, FALSE)
+          hasHL <- length(ws$hyperlinks) > 0
 
           ## reorder sheet data
           ws$order_sheetdata()
@@ -2061,7 +2057,7 @@ Workbook <- setRefClass(
 
 
           ## write worksheet rels
-          if (length(.self$worksheets_rels[[i]]) > 0) {
+          if (length(.self$worksheets_rels[[i]])) {
             ws_rels <- .self$worksheets_rels[[i]]
             if (hasHL) {
               h_inds <- stri_join(seq_along(.self$worksheets[[i]]$hyperlinks), "h")
@@ -2074,10 +2070,10 @@ Workbook <- setRefClass(
             }
 
             ## Check if any tables were deleted - remove these from rels
-            if (length(.self$tables) > 0) {
+            if (length(.self$tables)) {
               table_inds <- grep("tables/table[0-9].xml", ws_rels)
 
-              if (length(table_inds) > 0) {
+              if (length(table_inds)) {
                 ids <-
                   regmatches(
                     ws_rels[table_inds],
@@ -2108,7 +2104,7 @@ Workbook <- setRefClass(
             )
           }
         } ## end of isChartSheet[i]
-      } ## end of loop through 1:nSheets
+      } ## end of loop through nSheets
 
       invisible(.self)
     },
@@ -2163,7 +2159,7 @@ Workbook <- setRefClass(
         hidden <- attr(.self$colOutlineLevels[[sheet]], "hidden")[attr(.self$colOutlineLevels[[sheet]], "names") %in% cols]
       }
 
-      if (length(cols) > 0) {
+      if (length(cols)) {
         colNodes <- sprintf('<col min="%s" max="%s" outlineLevel="1" hidden="%s"/>', cols, cols, hidden)
         names(colNodes) <- cols
         .self$worksheets[[sheet]]$cols <- append(.self$worksheets[[sheet]]$cols, colNodes)
@@ -2266,14 +2262,14 @@ Workbook <- setRefClass(
 
 
       ## remove styleObjects
-      if (length(.self$styleObjects) > 0) {
+      if (length(.self$styleObjects)) {
         .self$styleObjects <-
           .self$styleObjects[unlist(lapply(.self$styleObjects, "[[", "sheet"), use.names = FALSE) != sheetName]
       }
 
       ## Need to remove reference from workbook.xml.rels to pivotCache
       removeRels <- grep("pivotTables", .self$worksheets_rels[[sheet]], value = TRUE)
-      if (length(removeRels) > 0) {
+      if (length(removeRels)) {
         ## sheet rels links to a pivotTable file, the corresponding pivotTable_rels file links to the cacheDefn which is listing in workbook.xml.rels
         ## remove reference to this file from the workbook.xml.rels
         fileNo <-
@@ -2315,7 +2311,7 @@ Workbook <- setRefClass(
       .self$worksheets[[sheet]] <- NULL
       .self$worksheets_rels[[sheet]] <- NULL
 
-      if (length(.self$tables) > 0) {
+      if (length(.self$tables)) {
         tableSheets <- attr(.self$tables, "sheet")
         tableNames <- attr(.self$tables, "tableName")
 
@@ -2374,7 +2370,7 @@ Workbook <- setRefClass(
         .self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), .self$workbook.xml.rels)]
 
       ## definedNames
-      if (length(.self$workbook$definedNames) > 0) {
+      if (length(.self$workbook$definedNames)) {
         belongTo <- getDefinedNamesSheet(.self$workbook$definedNames)
         .self$workbook$definedNames <-
           .self$workbook$definedNames[!belongTo %in% sheetName]
@@ -2570,7 +2566,7 @@ Workbook <- setRefClass(
 
 
       ## Increment priority of conditional formatting rule
-      if (length(.self$worksheets[[sheet]]$conditionalFormatting) > 0) {
+      if (length(.self$worksheets[[sheet]]$conditionalFormatting)) {
         for (i in length(.self$worksheets[[sheet]]$conditionalFormatting):1) {
           priority <-
             regmatches(
@@ -3077,7 +3073,7 @@ Workbook <- setRefClass(
       # Order workbook.xml.rels:
       #   sheets -> style -> theme -> sharedStrings -> persons -> tables -> calcChain
       # Assign workbook.xml.rels children rIds, seq_along(workbook.xml.rels)
-      # Assign workbook$sheets rIds 1:nSheets
+      # Assign workbook$sheets rIds nSheets
       #
       ## drawings will always be r:id1 on worksheet
       ## tables will always have r:id equal to table xml file number tables/table(i).xml
@@ -3169,7 +3165,7 @@ Workbook <- setRefClass(
         }))
 
       ## re-order worksheets if need to
-      if (any(.self$sheetOrder != 1:nSheets)) {
+      if (any(.self$sheetOrder != seq_len(nSheets))) {
         .self$workbook$sheets <- .self$workbook$sheets[sheetOrder]
       }
 
@@ -3196,7 +3192,7 @@ Workbook <- setRefClass(
           ignore.case = TRUE
         )
       if (nSheets > 1) {
-        for (i in (1:nSheets)[!(1:nSheets) %in% visible_sheet_index]) {
+        for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
           .self$worksheets[[i]]$sheetViews <-
             sub(
               ' tabSelected="(1|true|false|0)"',
@@ -3211,7 +3207,7 @@ Workbook <- setRefClass(
 
 
 
-      if (length(.self$workbook$definedNames) > 0) {
+      if (length(.self$workbook$definedNames)) {
         # TODO consider .self$get_sheet_names() which orders the sheet names?
         sheetNames <- .self$sheet_names[.self$sheetOrder]
 
@@ -3246,7 +3242,7 @@ Workbook <- setRefClass(
 
 
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
-      if (length(extRefInds) > 0) {
+      if (length(extRefInds)) {
         newInds <- as.integer(seq_along(extRefInds) + length(sheetInds))
         .self$workbook$externalReferences <-
           stri_join(
@@ -3268,7 +3264,7 @@ Workbook <- setRefClass(
 
 
       for (x in .self$styleObjects) {
-        if (length(x$rows) > 0 & length(x$cols) > 0) {
+        if (length(x$rows) & length(x$cols)) {
           this.sty <- x$style$copy()
 
           if (!is.null(this.sty$numFmt)) {
@@ -3287,7 +3283,7 @@ Workbook <- setRefClass(
 
       ## Make sure all rowHeights have rows, if not append them!
       for (i in seq_along(.self$worksheets)) {
-        if (length(.self$rowHeights[[i]]) > 0) {
+        if (length(.self$rowHeights[[i]])) {
           rh <- as.integer(names(.self$rowHeights[[i]]))
           missing_rows <- rh[!rh %in% .self$worksheets[[i]]$sheet_data$rows]
           n <- length(missing_rows)
@@ -3328,11 +3324,11 @@ Workbook <- setRefClass(
         }
 
         ## write colwidth and coloutline XML
-        if (length(.self$colWidths[[i]]) > 0) {
+        if (length(.self$colWidths[[i]])) {
           invisible(.self$setColWidths(i))
         }
 
-        if (length(.self$colOutlineLevels[[i]]) > 0) {
+        if (length(.self$colOutlineLevels[[i]])) {
           invisible(.self$groupColumns(i))
         }
       }
@@ -3356,9 +3352,9 @@ Workbook <- setRefClass(
         ## ********** Assume all styleObjects cells have one a single worksheet **********
         ## Loop through existing styleObjects
         # TODO use seq_along()
-        newInds <- 1:length(rows)
+        newInds <- seq_along(rows)
         keepStyle <- rep(TRUE, nStyles)
-        for (i in 1:nStyles) {
+        for (i in seq_len(nStyles)) {
           if (sheet == .self$styleObjects[[i]]$sheet) {
             ## Now check rows and cols intersect
             ## toRemove are the elements that the new style doesn't apply to, we remove these from the style object as it
@@ -3377,13 +3373,13 @@ Workbook <- setRefClass(
 
 
             ## If the new style does not merge
-            if (length(mergeInds) > 0) {
+            if (length(mergeInds)) {
               to_remove_from_this_style_object <-
                 which(ex_row_cols %in% new_row_cols)
 
               ## the new style intersects with this styleObjects[[i]], we need to remove the intersecting rows and
               ## columns from styleObjects[[i]]
-              if (length(to_remove_from_this_style_object) > 0) {
+              if (length(to_remove_from_this_style_object)) {
                 ## remove these from style object
                 .self$styleObjects[[i]]$rows <-
                   .self$styleObjects[[i]]$rows[-to_remove_from_this_style_object]
@@ -3424,7 +3420,7 @@ Workbook <- setRefClass(
         }
 
         ## append style object for non-intersecting cells
-        if (length(newInds) > 0) {
+        if (length(newInds)) {
           # TODO use c() not append()
           .self$styleObjects <- append(.self$styleObjects, list(list(
             style = style,
@@ -3442,7 +3438,7 @@ Workbook <- setRefClass(
           rows = rows,
           cols = cols
         )))
-      } ## End if(length(styleObjects) > 0) else if(stack) {}
+      } ## End if(length(styleObjects)) else if(stack) {}
 
       invisible(.self)
     },
@@ -3528,7 +3524,7 @@ Workbook <- setRefClass(
       error_msg = "Cannot overwrite existing table with another table.",
       check_table_header_only = FALSE) {
       ## check not overwriting another table
-      if (length(.self$tables) > 0) {
+      if (length(.self$tables)) {
         tableSheets <- attr(.self$tables, "sheet")
         sheetNo <- .self$validateSheet(sheet)
 
@@ -3536,7 +3532,7 @@ Workbook <- setRefClass(
           which(tableSheets %in% sheetNo &
               !grepl("openxlsx_deleted", attr(.self$tables, "tableName"), fixed = TRUE))
 
-        if (length(to_check) > 0) {
+        if (length(to_check)) {
           ## only look at tables on this sheet
 
           exTable <- .self$tables[to_check]
@@ -3563,7 +3559,7 @@ Workbook <- setRefClass(
 
           ## loop through existing tables checking if any over lap with new table
           # TODO use seq_along()
-          for (i in 1:length(exTable)) {
+          for (i in seq_along(exTable)) {
             existing_cols <- cols[[i]]
             existing_rows <- rows[[i]]
 
@@ -3575,7 +3571,7 @@ Workbook <- setRefClass(
             }
           }
         } ## end if(sheet %in% tableSheets)
-      } ## end (length(tables) > 0)
+      } ## end (length(tables))
 
       invisible(.self)
     },
@@ -3596,10 +3592,10 @@ Workbook <- setRefClass(
         showText <- c(showText, "\nWorksheets:\n")
 
         # TODO use seq_along()
-        sheetTxt <- lapply(1:nSheets, function(i) {
+        sheetTxt <- lapply(seq_len(nSheets), function(i) {
           tmpTxt <- sprintf('Sheet %s: "%s"\n', i, exSheets[[i]])
 
-          if (length(.self$rowHeights[[i]]) > 0) {
+          if (length(.self$rowHeights[[i]])) {
             tmpTxt <-
               append(
                 tmpTxt,
@@ -3616,7 +3612,7 @@ Workbook <- setRefClass(
               )
           }
 
-          if (length(.self$outlineLevels[[i]]) > 0) {
+          if (length(.self$outlineLevels[[i]])) {
             tmpTxt <-
               append(
                 tmpTxt,
@@ -3631,7 +3627,7 @@ Workbook <- setRefClass(
               )
           }
 
-          if (length(.self$colOutlineLevels[[i]]) > 0) {
+          if (length(.self$colOutlineLevels[[i]])) {
             tmpTxt <-
               append(
                 tmpTxt,
@@ -3646,7 +3642,7 @@ Workbook <- setRefClass(
               )
           }
 
-          if (length(.self$colWidths[[i]]) > 0) {
+          if (length(.self$colWidths[[i]])) {
             cols <- names(.self$colWidths[[i]])
             widths <- unname(.self$colWidths[[i]])
 
@@ -3682,7 +3678,7 @@ Workbook <- setRefClass(
           c(
             showText,
             "\nImages:\n",
-            sprintf('Image %s: "%s"\n', 1:nImages, .self$media)
+            sprintf('Image %s: "%s"\n', seq_len(nImages), .self$media)
           )
       }
 
@@ -3691,7 +3687,7 @@ Workbook <- setRefClass(
           c(
             showText,
             "\nCharts:\n",
-            sprintf('Chart %s: "%s"\n', 1:nCharts, .self$charts)
+            sprintf('Chart %s: "%s"\n', seq_len(nCharts), .self$charts)
           )
       }
 
@@ -3727,7 +3723,7 @@ Workbook <- setRefClass(
         )), collapse = ":")
 
       ## Increment priority of conditional formatting rule
-      if (length((.self$worksheets[[sheet]]$conditionalFormatting)) > 0) {
+      if (length((.self$worksheets[[sheet]]$conditionalFormatting))) {
         # TODO use seq_along(); then rev()
         for (i in length(.self$worksheets[[sheet]]$conditionalFormatting):1) {
           .self$worksheets[[sheet]]$conditionalFormatting[[i]] <-
@@ -3801,7 +3797,7 @@ Workbook <- setRefClass(
 
       ## Indexed colours
       vals <- xml_node(styles_XML, "styleSheet", "colors", "indexedColors")
-      if (length(vals) > 0) {
+      if (length(vals)) {
         .self$styles$indexedColors <-
           stri_join("<colors>", vals, "</colors>")
       }
@@ -3813,12 +3809,12 @@ Workbook <- setRefClass(
       .self$styles$dxfs <- dxf <- xml_node(styles_XML, "styleSheet", "dxfs", "dxf")
 
       tableStyles <- xml_node(styles_XML, "styleSheet", "tableStyles")
-      if (length(tableStyles) > 0) {
+      if (length(tableStyles)) {
         .self$styles$tableStyles <- tableStyles
       }
 
       # extLst <- getXML2(styles_XML, "styleSheet", "extLst")
-      # if (length(extLst) > 0) {
+      # if (length(extLst)) {
       #  styles$extLst <- extLst
       # }
 
@@ -3834,13 +3830,13 @@ Workbook <- setRefClass(
       # numFmts <- getChildlessNode(xml = stylesTxt, tag = "numFmt")
       numFmts <- xml_node(styles_XML, "styleSheet", "numFmts", "numFmt")
       numFmtFlag <- FALSE
-      if (length(numFmts) > 0) {
+      if (length(numFmts)) {
         numFmtsIds <-
           sapply(numFmts, getAttr, tag = 'numFmtId="', USE.NAMES = FALSE)
         formatCodes <-
           sapply(numFmts, getAttr, tag = 'formatCode="', USE.NAMES = FALSE)
         numFmts <-
-          lapply(1:length(numFmts), function(i) {
+          lapply(seq_along(numFmts), function(i) {
             list("numFmtId" = numFmtsIds[[i]], "formatCode" = formatCodes[[i]])
           })
         numFmtFlag <- TRUE
@@ -4141,8 +4137,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODO use seq_length()
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         tmp <- genBaseColStyle(colClasses[[i]])
 
         colStyle <- tmp$style
@@ -4464,8 +4459,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODO use seq_len()
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         # TODO use seq_along() with colClasses?
         tmp <- genBaseColStyle(colClasses[[i]])
         sTop <- tmp$style
@@ -4542,8 +4536,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODO use seq_along() with colClasses
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         tmp <- genBaseColStyle(colClasses[[i]])
         colStyle <- tmp$style
         # TODO Is specialFormat used?
@@ -4649,6 +4642,7 @@ Workbook <- setRefClass(
     },
 
     # TODO safe to remove nCol?
+    # TODO is nCol just length(colClasses?)
     # TODO rename to setAllBorders
     allBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
       sheet <- .self$sheet_names[[.self$validateSheet(sheet)]]
@@ -4656,8 +4650,7 @@ Workbook <- setRefClass(
       # get column class
       # get corresponding base style
 
-      # TODo use seq_along() with colClasses
-      for (i in 1:nCol) {
+      for (i in seq_len(nCol)) {
         tmp <- genBaseColStyle(colClasses[[i]])
         sTop <- tmp$style
 
@@ -4710,7 +4703,7 @@ Workbook <- setRefClass(
       }
 
       ## If any auto
-      if (length(autoCols) > 0) {
+      if (length(autoCols)) {
 
         ## only run if data on worksheet
         if (.self$worksheets[[sheet]]$sheet_data$n_elements == 0) {
@@ -4744,7 +4737,7 @@ Workbook <- setRefClass(
           ######### ----------------------------------------------------------------
 
           ## get char widths for each style object
-          if (length(.self$styleObjects) > 0 & any(!is.na(.self$worksheets[[sheet]]$sheet_data$style_id))) {
+          if (length(.self$styleObjects) & any(!is.na(.self$worksheets[[sheet]]$sheet_data$style_id))) {
             # TODO is thisSheetName used?
             thisSheetName <- .self$sheet_names[sheet]
 
@@ -4764,7 +4757,7 @@ Workbook <- setRefClass(
 
           ## Now check for columns that are auto2
           auto2Inds <- which(widths %in% "auto2")
-          if (length(auto2Inds) > 0 & length(.self$worksheets[[sheet]]$mergeCells) > 0) {
+          if (length(auto2Inds) & length(.self$worksheets[[sheet]]$mergeCells)) {
 
             ## get cell merges
             merged_cells <- regmatches(.self$worksheets[[sheet]]$mergeCells, regexpr("[A-Z0-9]+:[A-Z0-9]+", worksheets[[sheet]]$mergeCells))
@@ -4774,15 +4767,14 @@ Workbook <- setRefClass(
             merge_cols <- lapply(merge_cols, function(x) x[x %in% cols[auto2Inds]]) ## subset to auto2Inds
 
             merge_rows <- lapply(comps, function(x) as.numeric(gsub("[A-Z]", "", x, perl = TRUE)))
-            # TODO use lengths()
-            merge_rows <- merge_rows[sapply(merge_cols, length) > 0]
-            merge_cols <- merge_cols[sapply(merge_cols, length) > 0]
+            merge_rows <- merge_rows[lengths(merge_cols) > 0]
+            merge_cols <- merge_cols[lengths(merge_cols) > 0]
 
             sd <- .self$worksheets[[sheet]]$sheet_data
 
-            if (length(merge_cols) > 0) {
+            if (length(merge_cols)) {
               # TODO use seq_along()
-              all_merged_cells <- lapply(1:length(merge_cols), function(i) {
+              all_merged_cells <- lapply(seq_along(merge_cols), function(i) {
                 expand.grid(
                   "rows" = min(merge_rows[[i]]):max(merge_rows[[i]]),
                   "cols" = min(merge_cols[[i]]):max(merge_cols[[i]])
@@ -4851,7 +4843,7 @@ Workbook <- setRefClass(
       # }
 
       # Add remaining columns
-      #if (length(cols) > 0) {
+      #if (length(cols)) {
       #  colNodes <- sprintf('<col min="%s" max="%s" width="%s" hidden="%s" customWidth="1"/>', cols, cols, widths, hidden)
       #  names(colNodes) <- cols
       #  worksheets[[sheet]]$cols <- append(worksheets[[sheet]]$cols, colNodes)
@@ -4875,8 +4867,7 @@ Workbook <- setRefClass(
 
 
       ## pull out NaN values
-      # TODO use seq_len()
-      nans <- unlist(lapply(1:nCols, function(i) {
+      nans <- unlist(lapply(seq_len(nCols), function(i) {
         tmp <- df[[i]]
         if (!inherits(tmp, c("character", "list"))) {
           v <- which(is.nan(tmp) | is.infinite(tmp))
@@ -4905,7 +4896,7 @@ Workbook <- setRefClass(
         }
 
         pInds <- which(sapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x)))
-        if (length(pInds) > 0 & nRows > 0) {
+        if (length(pInds) & nRows > 0) {
           parseOffset <- function(tz) {
             suppressWarnings(
               ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
@@ -4917,8 +4908,7 @@ Workbook <- setRefClass(
           offSet <- lapply(t, parseOffset)
           offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
 
-          # TODO use seq_along()
-          for (i in 1:length(pInds)) {
+          for (i in seq_along(pInds)) {
             df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
           }
         }
@@ -5023,7 +5013,7 @@ Workbook <- setRefClass(
       }
 
       ## If any NaN values
-      if (length(nans) > 0) {
+      if (length(nans)) {
         t[nans] <- 4L
         v[nans] <- "#NUM!"
       }
@@ -5065,16 +5055,16 @@ Workbook <- setRefClass(
 
       ## Append hyperlinks, convert h to s in cell type
       hyperlink_cols <- which(sapply(colClasses, function(x) "hyperlink" %in% x, USE.NAMES = FALSE), useNames = FALSE)
-      if (length(hyperlink_cols) > 0) {
+      if (length(hyperlink_cols)) {
         hyperlink_inds <- sort(unlist(lapply(hyperlink_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE))
         na_hyperlink <- intersect(hyperlink_inds, which(is.na(t)))
 
-        if (length(hyperlink_inds) > 0) {
+        if (length(hyperlink_inds)) {
           t[t %in% 9] <- 1L ## set cell type to "s"
 
           hyperlink_refs <- convert_to_excel_ref_expand(cols = hyperlink_cols + startCol - 1, LETTERS = LETTERS, rows = as.character((startRow + colNames):(startRow + nRows - 1L)))
 
-          if (length(na_hyperlink) > 0) {
+          if (length(na_hyperlink)) {
             to_remove <- which(hyperlink_inds %in% na_hyperlink)
             hyperlink_refs <- hyperlink_refs[-to_remove]
             hyperlink_inds <- hyperlink_inds[-to_remove]
@@ -5088,7 +5078,7 @@ Workbook <- setRefClass(
           } ## this is text to display instead of hyperlink
 
           ## create hyperlink objects
-          newhl <- lapply(1:length(hyperlink_inds), function(i) {
+          newhl <- lapply(seq_along(hyperlink_inds), function(i) {
             Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
           })
 
@@ -5100,7 +5090,7 @@ Workbook <- setRefClass(
       ## convert all strings to references in sharedStrings and update values (v)
       strFlag <- which(t == 1L)
       newStrs <- v[strFlag]
-      if (length(newStrs) > 0) {
+      if (length(newStrs)) {
         newStrs <- replaceIllegalCharacters(newStrs)
         newStrs <- stri_join("<si><t xml:space=\"preserve\">", newStrs, "</t></si>")
 

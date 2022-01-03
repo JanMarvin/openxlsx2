@@ -54,7 +54,7 @@ SheetData <- setRefClass(
 
       inds <- which(paste(rows, cols, sep = ",") %in% paste(rows_in, cols_in, sep = ","))
 
-      if (length(inds) > 0) { ## writing over existing data
+      if (length(inds)) { ## writing over existing data
 
         .self$rows <- rows[-inds]
         .self$cols <- cols[-inds]
@@ -103,7 +103,7 @@ SheetData <- setRefClass(
         inds <- which(paste(rows, cols, sep = ",") %in% paste(rows_in, cols_in, sep = ","))
       }
 
-      if (length(inds) > 0) {
+      if (length(inds)) {
         .self$rows <- c(.self$rows[-inds], rows_in)
         .self$cols <- c(.self$cols[-inds], cols_in)
         .self$t <- c(.self$t[-inds], t_in)

@@ -75,7 +75,7 @@ Worksheet <- setRefClass(
         firstFooter = na_to_null(firstFooter)
       )
 
-      if (all(sapply(hf, length) == 0)) {
+      if (all(lengths(hf) == 0)) {
         hf <- list()
       }
 

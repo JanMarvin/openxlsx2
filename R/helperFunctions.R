@@ -443,42 +443,42 @@ buildFontList <- function(fonts) {
   for (i in seq_along(fonts)) {
     f <- NULL
     nms <- NULL
-    if (length(unlist(sz[i])) > 0) {
+    if (length(unlist(sz[i]))) {
       f <- c(f, sz[i])
       nms <- c(nms, "sz")
     }
 
-    if (length(unlist(colour[i])) > 0) {
+    if (length(unlist(colour[i]))) {
       f <- c(f, colour[i])
       nms <- c(nms, "color")
     }
 
-    if (length(unlist(name[i])) > 0) {
+    if (length(unlist(name[i]))) {
       f <- c(f, name[i])
       nms <- c(nms, "name")
     }
 
-    if (length(unlist(family[i])) > 0) {
+    if (length(unlist(family[i]))) {
       f <- c(f, family[i])
       nms <- c(nms, "family")
     }
 
-    if (length(unlist(scheme[i])) > 0) {
+    if (length(unlist(scheme[i]))) {
       f <- c(f, scheme[i])
       nms <- c(nms, "scheme")
     }
 
-    if (length(italic[[i]]) > 0) {
+    if (length(italic[[i]])) {
       f <- c(f, "italic")
       nms <- c(nms, "italic")
     }
 
-    if (length(bold[[i]]) > 0) {
+    if (length(bold[[i]])) {
       f <- c(f, "bold")
       nms <- c(nms, "bold")
     }
 
-    if (length(underline[[i]]) > 0) {
+    if (length(underline[[i]])) {
       f <- c(f, "underline")
       nms <- c(nms, "underline")
     }
@@ -566,7 +566,7 @@ buildBorder <- function(x) {
   directions <- c("left", "right", "top", "bottom", "diagonal")
   x <- unlist(lapply(directions, function(z) {
     y <- xml_node(x, "border", z)
-    sel <- length(xml_node(y, z, "color") > 0)
+    sel <- length(xml_node(y, z, "color"))
     if (sel) y
   }))
   if (length(x) == 0) {
@@ -599,7 +599,7 @@ buildBorder <- function(x) {
   colNodes <- sapply(x, function(xi) xml_node(xi, "border", "*", "color"))
 
 
-  if (length(colNodes) > 0) {
+  if (length(colNodes)) {
     attrs <- regmatches(colNodes, regexpr('(theme|indexed|rgb|auto)=".+"', colNodes))
   } else {
     attrs <- NULL
@@ -673,45 +673,45 @@ genHeaderFooterNode <- function(x) {
 
   ## ODD
 
-  # TODO clean up length(x) > 0
+  # TODO clean up length(x)
   # TODO clean up to x <- if (cond) value; default here is NULL
 
   # return nothing if there is no length
   if (!length(x)) return(NULL)
 
-  if (length(x$oddHeader) > 0) {
+  if (length(x$oddHeader)) {
     oddHeader <- paste0("<oddHeader>", sprintf("&amp;L%s", x$oddHeader[[1]]), sprintf("&amp;C%s", x$oddHeader[[2]]), sprintf("&amp;R%s", x$oddHeader[[3]]), "</oddHeader>", collapse = "")
   } else {
     oddHeader <- NULL
   }
 
-  if (length(x$oddFooter) > 0) {
+  if (length(x$oddFooter)) {
     oddFooter <- paste0("<oddFooter>", sprintf("&amp;L%s", x$oddFooter[[1]]), sprintf("&amp;C%s", x$oddFooter[[2]]), sprintf("&amp;R%s", x$oddFooter[[3]]), "</oddFooter>", collapse = "")
   } else {
     oddFooter <- NULL
   }
 
   ## EVEN
-  if (length(x$evenHeader) > 0) {
+  if (length(x$evenHeader)) {
     evenHeader <- paste0("<evenHeader>", sprintf("&amp;L%s", x$evenHeader[[1]]), sprintf("&amp;C%s", x$evenHeader[[2]]), sprintf("&amp;R%s", x$evenHeader[[3]]), "</evenHeader>", collapse = "")
   } else {
     evenHeader <- NULL
   }
 
-  if (length(x$evenFooter) > 0) {
+  if (length(x$evenFooter)) {
     evenFooter <- paste0("<evenFooter>", sprintf("&amp;L%s", x$evenFooter[[1]]), sprintf("&amp;C%s", x$evenFooter[[2]]), sprintf("&amp;R%s", x$evenFooter[[3]]), "</evenFooter>", collapse = "")
   } else {
     evenFooter <- NULL
   }
 
   ## FIRST
-  if (length(x$firstHeader) > 0) {
+  if (length(x$firstHeader)) {
     firstHeader <- paste0("<firstHeader>", sprintf("&amp;L%s", x$firstHeader[[1]]), sprintf("&amp;C%s", x$firstHeader[[2]]), sprintf("&amp;R%s", x$firstHeader[[3]]), "</firstHeader>", collapse = "")
   } else {
     firstHeader <- NULL
   }
 
-  if (length(x$firstFooter) > 0) {
+  if (length(x$firstFooter)) {
     firstFooter <- paste0("<firstFooter>", sprintf("&amp;L%s", x$firstFooter[[1]]), sprintf("&amp;C%s", x$firstFooter[[2]]), sprintf("&amp;R%s", x$firstFooter[[3]]), "</firstFooter>", collapse = "")
   } else {
     firstFooter <- NULL
@@ -796,7 +796,7 @@ mergeCell2mapping <- function(x) {
 splitHeaderFooter <- function(x) {
   tmp <- gsub("<(/|)(odd|even|first)(Header|Footer)>(&amp;|)", "", x, perl = TRUE)
   special_tags <- regmatches(tmp, regexpr("&amp;[^LCR]", tmp))
-  if (length(special_tags) > 0) {
+  if (length(special_tags)) {
     for (i in seq_along(special_tags)) {
       tmp <- gsub(special_tags[i], sprintf("openxlsx__%s67298679", i), tmp, fixed = TRUE)
     }
@@ -804,7 +804,7 @@ splitHeaderFooter <- function(x) {
 
   tmp <- strsplit(tmp, split = "&amp;")[[1]]
 
-  if (length(special_tags) > 0) {
+  if (length(special_tags)) {
     for (i in seq_along(special_tags)) {
       tmp <- gsub(sprintf("openxlsx__%s67298679", i), special_tags[i], tmp, fixed = TRUE)
     }
