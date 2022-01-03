@@ -870,7 +870,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             txt <- removeHeadTag(txt)
 
             cd <- unique(xml_node(txt, "xml", "*", "x:ClientData"))
-            cd <- grepl('ObjectType="Note"', cd, value = TRUE)
+            cd <- grep('ObjectType="Note"', cd, value = TRUE)
             cd <- paste0(cd, ">")
 
             ## now loada comment
@@ -879,7 +879,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
             # txt <- paste(readUTF8(grep(target, commentsXML, value = TRUE)), collapse = "\n")
             # txt <- removeHeadTag(txt)
-            txt <- read_xml(grepl(target, commentsXML, value = TRUE))
+            txt <- read_xml(grep(target, commentsXML, value = TRUE))
 
 
             authors <- xml_node(txt, "comments", "authors", "author")
