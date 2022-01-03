@@ -223,6 +223,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// col_to_df
+Rcpp::DataFrame col_to_df(XPtrXML doc);
+RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    rcpp_result_gen = Rcpp::wrap(col_to_df(doc));
+    return rcpp_result_gen;
+END_RCPP
+}
+// df_to_col
+Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col);
+RcppExport SEXP _openxlsx2_df_to_col(SEXP df_colSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_col(df_colSEXP);
+    rcpp_result_gen = Rcpp::wrap(df_to_col(df_col));
+    return rcpp_result_gen;
+END_RCPP
+}
 // loadvals
 void loadvals(Rcpp::Reference wb, XPtrXML doc);
 RcppExport SEXP _openxlsx2_loadvals(SEXP wbSEXP, SEXP docSEXP) {
@@ -894,6 +916,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_cppReadFile", (DL_FUNC) &_openxlsx2_cppReadFile, 1},
     {"_openxlsx2_get_letters", (DL_FUNC) &_openxlsx2_get_letters, 0},
     {"_openxlsx2_markUTF8", (DL_FUNC) &_openxlsx2_markUTF8, 2},
+    {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
+    {"_openxlsx2_df_to_col", (DL_FUNC) &_openxlsx2_df_to_col, 1},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},

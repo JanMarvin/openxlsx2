@@ -72,6 +72,14 @@ markUTF8 <- function(x, clone) {
 #' @import Rcpp
 NULL
 
+col_to_df <- function(doc) {
+    .Call(`_openxlsx2_col_to_df`, doc)
+}
+
+df_to_col <- function(df_col) {
+    .Call(`_openxlsx2_df_to_col`, df_col)
+}
+
 loadvals <- function(wb, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
 }
