@@ -692,6 +692,13 @@ writeData2 <-function(wb, sheet, data,
     data[fcts] <- lapply(data[fcts],as.character)
   }
 
+  has_date1904 <- grepl('date1904="1"|date1904="true"',
+                        stri_join(unlist(wb$workbook), collapse = ""),
+                        ignore.case = TRUE)
+
+  # TODO need to tell excel that we have a date, apply some kind of numFmt
+  data <- convertToExcelDate(df = data, date1904 = has_date1904)
+
   if (class(data) == "data.frame" | class(data) == "matrix") {
     is_data_frame <- TRUE
 
