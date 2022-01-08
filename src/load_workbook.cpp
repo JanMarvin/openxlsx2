@@ -416,15 +416,12 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
 
   std::vector<uint64_t> rows = zz["rows"];
   std::vector<uint64_t> cols = zz["cols"];
-  std::vector<std::string> vals = zz["val"];
-  std::vector<std::string> typs = zz["typ"];
+  Rcpp::CharacterVector vals = zz["val"];
+  Rcpp::CharacterVector typs = zz["typ"];
 
   for (auto i = 0; i < n; ++i) {
-    // only update if not missing in the xml input
-    if (vals[i].compare("_openxlsx_NA_") != 0) {
-      Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
-      Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
-    }
+    Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
+    Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
   }
 }
 

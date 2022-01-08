@@ -370,12 +370,10 @@ wb_to_df <- function(xlsxFile,
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
-  # we need to create the correct col and row position.
-  #  cc$c_r is the column: "A", "B" ...
-  #  cc$row_r is the row: "1", "2" ...
-  # we convert both to ordered integers and start at 0.
-  zz$cols <- as.integer(as.ordered(col2int(cc$c_r))) - 1
-  zz$rows <- as.integer(as.ordered(as.integer(cc$row_r))) - 1
+  # we need to create the correct col and row position as integer starting at 0.
+  zz$cols <- match(cc$c_r, colnames(z)) - 1
+  zz$rows <- match(cc$row_r, rownames(z)) - 1
+
   zz <- zz[with(zz, ordered(order(cols, rows))),]
   zz <- zz[zz$val != "_openxlsx_NA_",]
   long_to_wide(z, tt, zz)
