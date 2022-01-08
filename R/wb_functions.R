@@ -65,6 +65,46 @@ guess_col_type <- function(tt) {
   types
 }
 
+#' check if numFmt is date
+#' @param numFmt numFmt xml nodes
+#' @export
+numfmt_is_date <- function(numFmt) {
+
+  # if numFmt is character(0)
+  if (length(numFmt) ==0) return(z <- NULL)
+
+  numFmt_df <- openxlsx2:::read_numfmt(read_xml(numFmt))
+  date_fmts <- c(
+    "yy", "yyyy",
+    "m", "mm", "mmm", "mmmm", "mmmmm",
+    "d", "dd", "ddd", "dddd",
+    "h", "hh", "m", "mm", "s", "ss",
+    "AM", "PM", "A", "P"
+  )
+  date_or_fmt <- paste0(date_fmts, collapse = "|")
+
+  z <- numFmt_df$numFmtId[grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)]
+  if (length(z)==0) z <- NULL
+  z
+}
+
+#' check if style is date
+#'
+#' @param cellXfs cellXfs xml nodes
+#' @param numfmt_date custom numFmtId dates
+#' @export
+style_is_date <- function(cellXfs, numfmt_date) {
+
+  # numfmt_date: some basic date formats and custom formats
+  date_numfmts <- as.character(14:22)
+  numfmt_date <- c(numfmt_date, date_numfmts)
+
+  # cellXfs <- wb$styles$cellXfs
+  cellXfs_df <- openxlsx2:::read_xf(read_xml(cellXfs))
+  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date,])
+  if (length(z)==0) z <- NA
+  z
+}
 
 #' Create Dataframe from Workbook
 #'
@@ -241,32 +281,8 @@ wb_to_df <- function(xlsxFile,
 
   rnams <- row_attr$r
 
-
-  # internet says: numFmtId > 0 and applyNumberFormat == 1
-  # https://stackoverflow.com/a/5251032/12340029
-  # standard date 14 - 22 || formatted date 164 - 180 & applyNumberFormat
-  sd <- as.data.frame(
-    do.call(
-      "rbind",
-      lapply(
-        wb$styles$cellXfs,
-        FUN= function(x)
-          c(
-            as.numeric(getXML1attr_one(x, "xf", "numFmtId")),
-            as.numeric(getXML1attr_one(x, "xf", "applyNumberFormat"))
-          )
-      )
-    )
-  )
-  names(sd) <- c("numFmtId", "applyNumberFormat")
-
-  sd$id <- seq_len(nrow(sd))-1
-  sd$isdate <- 0
-  sd$isdate[(sd$numFmtId >= 14 & sd$numFmtId <= 22)] <- 1
-  sd$isdate[(sd$numFmtId >= 164 & sd$numFmtId <= 180) &
-      sd$applyNumberFormat == 1] <- 1
-
-  xlsx_date_style <- sd$id[sd$isdate == 1]
+  numfmt_date <- numfmt_is_date(wb$styles$numFmts)
+  xlsx_date_style <- style_is_date(wb$styles$cellXfs, numfmt_date)
 
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
@@ -1023,3 +1039,4 @@ styles_on_sheet <- function(wb, sheet) {
   as.numeric(z)
 
 }
+
