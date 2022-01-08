@@ -92,8 +92,8 @@ is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
 }
 
-long_to_wide <- function(z, tt, cc, dn) {
-    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, cc, dn))
+long_to_wide <- function(z, tt, zz) {
+    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
 getOpenClosedNode <- function(xml, open_tag, close_tag) {

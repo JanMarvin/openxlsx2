@@ -50,15 +50,15 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 #' @export
 guess_col_type <- function(tt) {
 
-  # everythings character
+  # all columns are character
   types <- vector("numeric", NCOL(tt))
   names(types) <- names(tt)
 
-  # but some values are numerics
+  # but some values are numeric
   col_num <- sapply(tt, function(x) all(x[is.na(x) == FALSE] == "n"))
   types[names(col_num[col_num == TRUE])] <- 1
 
-  # or even dates
+  # or even date
   col_dte <- sapply(tt[!col_num], function(x) all(x[is.na(x) == FALSE] == "d"))
   types[names(col_dte[col_dte == TRUE])] <- 2
 
@@ -370,12 +370,30 @@ wb_to_df <- function(xlsxFile,
   cc$val[sel] <- cc$v[sel]
   cc$typ[sel] <- "n"
 
-  long_to_wide(z, tt, cc, dimnames(z))
+  # prepare to create output object z
+  zz <- cc[c("val", "typ")]
+  # we need to create the correct col and row position.
+  #  cc$c_r is the column: "A", "B" ...
+  #  cc$row_r is the row: "1", "2" ...
+  # we convert both to ordered integers and start at 0.
+  zz$cols <- as.integer(as.ordered(col2int(cc$c_r))) - 1
+  zz$rows <- as.integer(as.ordered(as.integer(cc$row_r))) - 1
+  zz <- zz[with(zz, ordered(order(cols, rows))),]
+  zz <- zz[zz$val != "_openxlsx_NA_",]
+  long_to_wide(z, tt, zz)
+
+  # prepare colnames object
+  xlsx_cols_names <- colnames(z)
+  names(xlsx_cols_names) <- xlsx_cols_names
 
   # if colNames, then change tt too
   if (colNames) {
-    colnames(z)  <- z[1,]
-    colnames(tt) <- z[1,]
+    # select first row as colnames, but do not yet assing. it might contain
+    # missing values and if assigned, convert below might break with unambiguous
+    # names.
+    nams <- names(xlsx_cols_names)
+    xlsx_cols_names  <- z[1,]
+    names(xlsx_cols_names) <- nams
 
     z  <- z[-1, , drop = FALSE]
     tt <- tt[-1, , drop = FALSE]
@@ -384,6 +402,7 @@ wb_to_df <- function(xlsxFile,
   if (rowNames) {
     rownames(z)  <- z[,1]
     rownames(tt) <- z[,1]
+    xlsx_cols_names <- xlsx_cols_names[-1]
 
     z  <- z[ ,-1]
     tt <- tt[ , -1]
@@ -392,8 +411,12 @@ wb_to_df <- function(xlsxFile,
   # # faster guess_col_type alternative? to avoid tt
   # types <- ftable(cc$row_r ~ cc$c_r ~ cc$typ)
 
-  if (missing(types))
+  if (missing(types)) {
     types <- guess_col_type(tt)
+  } else {
+    # assign types the correct column name "A", "B" etc.
+    names(types) <- names(xlsx_cols_names[names(types) %in% xlsx_cols_names])
+  }
 
   # could make it optional or explicit
   if (convert) {
@@ -403,12 +426,17 @@ wb_to_df <- function(xlsxFile,
       nums <- names( which(types[sel] == 1) )
       dtes <- names( which(types[sel] == 2) )
 
-      # TODO convert NA to NA_character_ to avoid warnings
+      # TODO convert NA to NA_character_ to avoid warnings or suppressWarnings
       z[nums] <- lapply(z[nums], as.numeric)
       z[dtes] <- lapply(z[dtes], as.Date)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }
+  }
+
+  if (colNames) {
+    names(z) <- xlsx_cols_names
+    names(tt) <- xlsx_cols_names
   }
 
   # is.na needs convert

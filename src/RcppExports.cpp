@@ -279,15 +279,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // long_to_wide
-void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame cc, Rcpp::List dn);
-RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP ccSEXP, SEXP dnSEXP) {
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz);
+RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP zzSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type tt(ttSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type cc(ccSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type dn(dnSEXP);
-    long_to_wide(z, tt, cc, dn);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
+    long_to_wide(z, tt, zz);
     return R_NilValue;
 END_RCPP
 }
@@ -1012,7 +1011,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
-    {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 4},
+    {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_getOpenClosedNode", (DL_FUNC) &_openxlsx2_getOpenClosedNode, 3},
     {"_openxlsx2_getAttr", (DL_FUNC) &_openxlsx2_getAttr, 2},
     {"_openxlsx2_get_extLst_Major", (DL_FUNC) &_openxlsx2_get_extLst_Major, 1},

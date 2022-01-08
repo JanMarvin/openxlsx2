@@ -408,50 +408,26 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
   return res;
 }
 
-
-// mimics the R function which used below
-Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {
-  Rcpp::IntegerVector v = Rcpp::seq(0, x.size()-1);
-  return v[!Rcpp::is_na(x)];
-}
-
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
-void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rcpp::List dn) {
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
 
-  auto n = cc.nrow();
+  auto n = zz.nrow();
 
-  Rcpp::CharacterVector row_r = cc["row_r"];
-  Rcpp::CharacterVector c_r   = cc["c_r"];
-  Rcpp::CharacterVector val   = cc["val"];
-  Rcpp::CharacterVector typ   = cc["typ"];
-
-  Rcpp::CharacterVector row_names = dn[0];
-  Rcpp::CharacterVector col_names = dn[1];
+  std::vector<uint64_t> rows = zz["rows"];
+  std::vector<uint64_t> cols = zz["cols"];
+  std::vector<std::string> vals = zz["val"];
+  std::vector<std::string> typs = zz["typ"];
 
   for (auto i = 0; i < n; ++i) {
-
-    Rcpp::CharacterVector row_r_i = Rcpp::as<Rcpp::CharacterVector>(row_r[i]);
-    Rcpp::CharacterVector c_r_i   = Rcpp::as<Rcpp::CharacterVector>(c_r[i]);
-    std::string val_i   = Rcpp::as<std::string>(val[i]);
-    std::string val_tt   = Rcpp::as<std::string>(typ[i]);
-
-    Rcpp::IntegerVector s1 = Rcpp::match(row_names, row_r_i);
-    int64_t sel_row = Rcpp::as<int64_t>(rcpp_which(s1));
-
-    Rcpp::IntegerVector s2 = Rcpp::match(col_names, c_r_i);
-    int64_t sel_col = Rcpp::as<int64_t>(rcpp_which(s2));
-
-    // Rcpp::Rcout << sel_row << " " << sel_col << " " << val_i << std::endl;
-
     // only update if not missing in the xml input
-    if (val_i.compare("_openxlsx_NA_") != 0) {
-      Rcpp::as<Rcpp::CharacterVector>(z[sel_col])[sel_row] = val_i;
-      Rcpp::as<Rcpp::CharacterVector>(tt[sel_col])[sel_row] = val_tt;
+    if (vals[i].compare("_openxlsx_NA_") != 0) {
+      Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
+      Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
     }
-
   }
 }
+
 
 
 // [[Rcpp::export]]
