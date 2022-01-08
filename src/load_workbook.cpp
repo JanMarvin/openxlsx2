@@ -1,5 +1,104 @@
 #include "openxlsx2.h"
 
+// [[Rcpp::export]]
+Rcpp::DataFrame col_to_df(XPtrXML doc) {
+
+  Rcpp::CharacterVector col_nams= {
+    "bestFit",
+    "collapsed",
+    "customWidth",
+    "hidden",
+    "max",
+    "min",
+    "outlineLevel",
+    "phonetic",
+    "style",
+    "width"
+  };
+
+  auto nn = std::distance(doc->begin(), doc->end());
+  auto kk = col_nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <row ...>
+  auto itr = 0;
+  for (auto col : doc->children("col")) {
+    for (auto attrs : col.attributes()) {
+
+      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_value = attrs.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(col_nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << attr_name << ": not found in col name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+      }
+
+    }
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = col_nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col) {
+
+  auto n = df_col.nrow();
+  Rcpp::CharacterVector z(n);
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+    Rcpp::CharacterVector attrnams = df_col.names();
+
+    pugi::xml_node col = doc.append_child("col");
+
+    for (auto j = 0; j < df_col.ncol(); ++j) {
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_col[j])[i];
+
+      // only write attributes where cv_s has a value
+      if (cv_s[0] != "") {
+        // Rf_PrintValue(cv_s);
+        const std::string val_strl = Rcpp::as<std::string>(cv_s);
+        col.append_attribute(attrnams[j]) = val_strl.c_str();
+      }
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
+}
+
+
 Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
@@ -47,7 +146,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << attr_name << ": not found in xf name table" << std::endl;
+        Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
@@ -522,3 +621,4 @@ Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector cols){
   return res ;
 
 }
+

@@ -379,9 +379,9 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     nSheets <- length(x)
 
     if (is.null(nms)) {
-      nms <- paste("Sheet", 1:nSheets)
+      nms <- paste("Sheet", seq_len(nSheets))
     } else if (any("" %in% nms)) {
-      nms[nms %in% ""] <- paste("Sheet", (1:nSheets)[nms %in% ""])
+      nms[nms == ""] <- paste("Sheet", (seq_len(nSheets))[nms %in% ""])
     } else {
       nms <- make.unique(nms)
     }
@@ -427,9 +427,8 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     }
 
     if (!is.null(headerStyle)) {
-      headerStyle <- lapply(1:nSheets, function(x) {
-        return(headerStyle)
-      })
+      headerStyle <- rep_len(list(headerStyle), nSheets)
+      # headerStyle <- lapply(seq_len(nSheets), function(x) headerStyle)
     }
 
     if (length(borders) != nSheets & !is.null(borders)) {
@@ -464,7 +463,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       colWidths <- rep_len(colWidths, length.out = nSheets)
     }
 
-    for (i in 1:nSheets) {
+    for (i in seq_len(nSheets)) {
       wb$addWorksheet(nms[[i]], showGridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
 
       if (asTable[i]) {
@@ -602,7 +601,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   }
 
   if (freezePanes) {
-    for (i in 1:nSheets) {
+    for (i in seq_len(nSheets)) {
       freezePane(
         wb = wb,
         sheet = i,

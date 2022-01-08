@@ -75,7 +75,7 @@ Worksheet <- setRefClass(
         firstFooter = na_to_null(firstFooter)
       )
 
-      if (all(sapply(hf, length) == 0)) {
+      if (all(lengths(hf) == 0)) {
         hf <- list()
       }
 
@@ -294,4 +294,19 @@ Worksheet <- setRefClass(
 
 new_worksheet <- function() {
   Worksheet$new()
+}
+
+empty_cols_attr <- function(n = 0) {
+  # make make this a specific class/object?
+
+  cols_attr_nams <- c("bestFit", "collapsed", "customWidth", "hidden", "max",
+                      "min", "outlineLevel", "phonetic", "style", "width")
+
+  z <- data.frame(
+    matrix("", nrow = n, ncol = length(cols_attr_nams)),
+    stringsAsFactors = FALSE
+  )
+  names(z) <- cols_attr_nams
+
+  z
 }

@@ -223,6 +223,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// col_to_df
+Rcpp::DataFrame col_to_df(XPtrXML doc);
+RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    rcpp_result_gen = Rcpp::wrap(col_to_df(doc));
+    return rcpp_result_gen;
+END_RCPP
+}
+// df_to_col
+Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col);
+RcppExport SEXP _openxlsx2_df_to_col(SEXP df_colSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_col(df_colSEXP);
+    rcpp_result_gen = Rcpp::wrap(df_to_col(df_col));
+    return rcpp_result_gen;
+END_RCPP
+}
 // loadvals
 void loadvals(Rcpp::Reference wb, XPtrXML doc);
 RcppExport SEXP _openxlsx2_loadvals(SEXP wbSEXP, SEXP docSEXP) {
@@ -668,6 +690,31 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// xml_attr_mod
+Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes);
+RcppExport SEXP _openxlsx2_xml_attr_mod(SEXP xml_contentSEXP, SEXP xml_attributesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type xml_content(xml_contentSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type xml_attributes(xml_attributesSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_attr_mod(xml_content, xml_attributes));
+    return rcpp_result_gen;
+END_RCPP
+}
+// xml_node_create
+Rcpp::CharacterVector xml_node_create(std::string xml_name, Rcpp::Nullable<Rcpp::CharacterVector> xml_children, Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes);
+RcppExport SEXP _openxlsx2_xml_node_create(SEXP xml_nameSEXP, SEXP xml_childrenSEXP, SEXP xml_attributesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type xml_name(xml_nameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type xml_children(xml_childrenSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type xml_attributes(xml_attributesSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_node_create(xml_name, xml_children, xml_attributes));
+    return rcpp_result_gen;
+END_RCPP
+}
 // calc_number_rows
 int calc_number_rows(Rcpp::CharacterVector x, bool skipEmptyRows);
 RcppExport SEXP _openxlsx2_calc_number_rows(SEXP xSEXP, SEXP skipEmptyRowsSEXP) {
@@ -960,6 +1007,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_cppReadFile", (DL_FUNC) &_openxlsx2_cppReadFile, 1},
     {"_openxlsx2_get_letters", (DL_FUNC) &_openxlsx2_get_letters, 0},
     {"_openxlsx2_markUTF8", (DL_FUNC) &_openxlsx2_markUTF8, 2},
+    {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
+    {"_openxlsx2_df_to_col", (DL_FUNC) &_openxlsx2_df_to_col, 1},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
@@ -994,6 +1043,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_style_xml_as_list", (DL_FUNC) &_openxlsx2_style_xml_as_list, 2},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 2},
     {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
+    {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 2},
+    {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 3},
     {"_openxlsx2_calc_number_rows", (DL_FUNC) &_openxlsx2_calc_number_rows, 2},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_list_to_attr", (DL_FUNC) &_openxlsx2_list_to_attr, 2},
