@@ -507,15 +507,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   }
 
-<<<<<<< HEAD
-=======
-  ## Fix styleobject encoding
-  if (length(styleObjects)) {
-    wb$styleObjects <- get_styles(styleObjects, wb)
-  }
-
->>>>>>> main
-
   ## Fix headers/footers
   for (i in seq_along(worksheetsXML)) {
     if (!is_chart_sheet[i]) {
