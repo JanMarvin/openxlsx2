@@ -65,9 +65,8 @@ guess_col_type <- function(tt) {
   types
 }
 
-#' check if numFmt is date
+#' check if numFmt is date. internal function
 #' @param numFmt numFmt xml nodes
-#' @export
 numfmt_is_date <- function(numFmt) {
 
   # if numFmt is character(0)
@@ -88,11 +87,10 @@ numfmt_is_date <- function(numFmt) {
   z
 }
 
-#' check if style is date
+#' check if style is date. internal function
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
-#' @export
 style_is_date <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
