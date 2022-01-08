@@ -216,6 +216,70 @@ write_xml_file <- function(xml_content, fl) {
     invisible(.Call(`_openxlsx2_write_xml_file`, xml_content, fl))
 }
 
+#' adds or updates attribute(s) in existing xml node
+#'
+#' @description Needs xml node and named character vector as input. Modifies
+#' the argutments of each first child found in the xml node and adds or updates
+#' the attribute vector.
+#' @details If a named attribute in `xml_attributes` is "" remove the attribute
+#' from the node.
+#' If `xml_attributes` contains a named entry found in the xml node, it is
+#' updated else it is added as attribute.
+#'
+#' @param xml_content some valid xml_node
+#' @param xml_attributes R vector of named attributes
+#'
+#' @examples
+#'   # add single node
+#'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+#'     xml_attr <- c(qux = "quux")
+#'     # "<a foo=\"bar\" qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
+#'     xml_attr_mod(xml_node, xml_attr)
+#'
+#'   # update node and add node
+#'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+#'     xml_attr <- c(foo = "baz", qux = "quux")
+#'     # "<a foo=\"baz\" qux=\"quux\">openxlsx2</a><b foo=\"baz\" qux=\"quux\"/>"
+#'     xml_attr_mod(xml_node, xml_attr)
+#'
+#'   # remove node and add node
+#'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+#'     xml_attr <- c(foo = "", qux = "quux")
+#'     # "<a qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
+#'     xml_attr_mod(xml_node, xml_attr)
+#' @export
+xml_attr_mod <- function(xml_content, xml_attributes) {
+    .Call(`_openxlsx2_xml_attr_mod`, xml_content, xml_attributes)
+}
+
+#' create xml_node from R objects
+#' @description takes xml_name, xml_children and xml_attributes to create a new
+#' xml_node.
+#' @param xml_name the name of the new xml_node
+#' @param xml_children character vector children attached to the xml_node
+#' @param xml_attributes named character vector of attributes for the xml_node
+#' @details if xml_children or xml_attributes should be empty, use NULL
+#'
+#' @examples
+#' xml_name <- "a"
+#' # "<a/>"
+#' xml_node_create(xml_name)
+#'
+#' xml_child <- "openxlsx"
+#' # "<a>openxlsx</a>"
+#' xml_node_create(xml_name, xml_children = xml_child)
+#'
+#' xml_attr <- c(foo = "baz", qux = "quux")
+#' # "<a foo=\"baz\" qux=\"quux\"/>"
+#' xml_node_create(xml_name, xml_attributes = xml_attr)
+#'
+#' # "<a foo=\"baz\" qux=\"quux\">openxlsx</a>"
+#' xml_node_create(xml_name, xml_children = xml_child, xml_attributes = xml_attr)
+#' @export
+xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL) {
+    .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes)
+}
+
 calc_number_rows <- function(x, skipEmptyRows) {
     .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
 }
