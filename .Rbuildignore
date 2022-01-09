@@ -18,3 +18,4 @@ cran-comments.md
 ^\.lintr$
 # temp MS files
 \~\$.*\.[a-z]+$
+^codecov\.yml$
