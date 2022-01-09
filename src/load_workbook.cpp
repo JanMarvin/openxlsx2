@@ -414,8 +414,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
 
   auto n = zz.nrow();
 
-  std::vector<uint64_t> rows = zz["rows"];
-  std::vector<uint64_t> cols = zz["cols"];
+  Rcpp::IntegerVector rows = zz["rows"];
+  Rcpp::IntegerVector cols = zz["cols"];
   Rcpp::CharacterVector vals = zz["val"];
   Rcpp::CharacterVector typs = zz["typ"];
 
