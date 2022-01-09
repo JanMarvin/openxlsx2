@@ -374,10 +374,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
 
   ## xl\styles
-  if (length(stylesXML)) {
-    styleObjects <- wb$loadStyles(stylesXML)$styleObjectsList
+  if (length(stylesXML) > 0) {
     # assign("styleObjects", styleObjects, globalenv())
     wb$styles_xml <- read_xml(stylesXML, pointer = FALSE)
+
+    wb$styles <- import_styles(wb$styles_xml)
+
   } else {
     wb$styleObjects <- list()
   }
@@ -504,12 +506,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
 
   }
-
-  ## Fix styleobject encoding
-  if (length(styleObjects)) {
-    wb$styleObjects <- get_styles(styleObjects, wb)
-  }
-
 
   ## Fix headers/footers
   for (i in seq_along(worksheetsXML)) {

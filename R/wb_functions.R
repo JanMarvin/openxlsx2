@@ -65,6 +65,50 @@ guess_col_type <- function(tt) {
   types
 }
 
+#' check if numFmt is date. internal function
+#' @param numFmt numFmt xml nodes
+numfmt_is_date <- function(numFmt) {
+
+  # if numFmt is character(0)
+  if (length(numFmt) ==0) return(z <- NULL)
+
+  numFmt_df <- read_numfmt(read_xml(numFmt))
+  num_fmts <- c(
+    "#", as.character(0:9)
+  )
+  num_or_fmt <- paste0(num_fmts, collapse = "|")
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$formatCode)
+
+  date_fmts <- c(
+    "yy", "yyyy",
+    "m", "mm", "mmm", "mmmm", "mmmmm",
+    "d", "dd", "ddd", "dddd",
+    "h", "hh", "m", "mm", "s", "ss",
+    "AM", "PM", "A", "P"
+  )
+  date_or_fmt <- paste0(date_fmts, collapse = "|")
+  maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)
+
+  z <- numFmt_df$numFmtId[maybe_dates & !maybe_num]
+  if (length(z)==0) z <- NULL
+  z
+}
+
+#' check if style is date. internal function
+#'
+#' @param cellXfs cellXfs xml nodes
+#' @param numfmt_date custom numFmtId dates
+style_is_date <- function(cellXfs, numfmt_date) {
+
+  # numfmt_date: some basic date formats and custom formats
+  date_numfmts <- as.character(14:22)
+  numfmt_date <- c(numfmt_date, date_numfmts)
+
+  cellXfs_df <- read_xf(read_xml(cellXfs))
+  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date,])
+  if (length(z)==0) z <- NA
+  z
+}
 
 #' Create Dataframe from Workbook
 #'
@@ -227,7 +271,7 @@ wb_to_df <- function(xlsxFile,
   if (missing(sheet)) sheet <- 1
 
   if (is.character(sheet))
-    sheet <- which(wb$sheet_names %in% sheet)
+    sheet <- wb$validateSheet(sheet)
 
   # must be available
   if (missing(dims))
@@ -241,32 +285,8 @@ wb_to_df <- function(xlsxFile,
 
   rnams <- row_attr$r
 
-
-  # internet says: numFmtId > 0 and applyNumberFormat == 1
-  # https://stackoverflow.com/a/5251032/12340029
-  # standard date 14 - 22 || formatted date 164 - 180 & applyNumberFormat
-  sd <- as.data.frame(
-    do.call(
-      "rbind",
-      lapply(
-        wb$styles$cellXfs,
-        FUN= function(x)
-          c(
-            as.numeric(getXML1attr_one(x, "xf", "numFmtId")),
-            as.numeric(getXML1attr_one(x, "xf", "applyNumberFormat"))
-          )
-      )
-    )
-  )
-  names(sd) <- c("numFmtId", "applyNumberFormat")
-
-  sd$id <- seq_len(nrow(sd))-1
-  sd$isdate <- 0
-  sd$isdate[(sd$numFmtId >= 14 & sd$numFmtId <= 22)] <- 1
-  sd$isdate[(sd$numFmtId >= 164 & sd$numFmtId <= 180) &
-      sd$applyNumberFormat == 1] <- 1
-
-  xlsx_date_style <- sd$id[sd$isdate == 1]
+  numfmt_date <- numfmt_is_date(wb$styles$numFmts)
+  xlsx_date_style <- style_is_date(wb$styles$cellXfs, numfmt_date)
 
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
@@ -895,3 +915,164 @@ get_styles <- function(styleObjects, wb) {
 
   z
 }
+
+#' clone sheets style
+#'
+#' @param wb workbook
+#' @param from_sheet sheet we select the style from
+#' @param to_sheet sheet we apply the style from
+#' @export
+cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
+
+  # check if sheets exist in wb
+  id_org <- wb$validateSheet(from_sheet)
+  id_new <- wb$validateSheet(to_sheet)
+
+  org_style <- wb$worksheets[[id_org]]$sheet_data$cc
+  new_style <- wb$worksheets[[id_new]]$sheet_data$cc
+
+  # remove all values
+  org_style <- org_style[c("row_r", "c_r", "c_s")]
+
+  merged_style <- merge(org_style, new_style, all = TRUE)
+  merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
+
+  wb$worksheets[[id_new]]$sheet_data$cc <- merged_style
+
+  # copy entire attributes from original sheet to new sheet
+  wb$worksheets[[id_new]]$sheet_data$row_attr <-
+    wb$worksheets[[id_org]]$sheet_data$row_attr
+
+  wb$worksheets[[id_new]]$cols_attr <-
+    wb$worksheets[[id_org]]$cols_attr
+
+  wb$worksheets[[id_new]]$dimension <-
+    wb$worksheets[[id_org]]$dimension
+
+  wb$worksheets[[id_new]]$mergeCells <-
+    wb$worksheets[[id_org]]$mergeCells
+
+}
+
+#' clean sheet (remove all values)
+#'
+#' @param wb workbook
+#' @param sheet sheet to clean
+#' @param numbers remove all numbers
+#' @param characters remove all characters
+#' @param styles remove all styles
+#' @param merged_cells remove all merged_cells
+#' @export
+cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
+
+  sheet_id <- wb$validateSheet(sheet)
+
+  cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
+
+  if (numbers)
+    cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
+       c("c_t", "v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
+
+  if (characters)
+    cc[cc$c_t %in% c("inlineStr", "s"),
+       c("v", "f", "f_t", "f_ref", "f_si", "is")] <- ""
+
+  if (styles)
+    cc[c("c_s")] <- "_openxlsx_NA_"
+
+  wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
+
+  if (merged_cells)
+    wb$worksheets[[sheet_id]]$mergeCells <- character(0)
+
+}
+
+
+import_styles <- function(x) {
+
+  sxml <- openxlsx2::read_xml(x)
+
+  z <- NULL
+
+  # numFmtId
+  # overrides for
+  # + numFmtId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
+  z$numFmts <- xml_node(sxml, "styleSheet", "numFmts", "numFmt")
+
+  # fontId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
+  z$fonts <- xml_node(sxml, "styleSheet", "fonts", "font")
+
+  # fillId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.fill?view=openxml-2.8.1
+  z$fills <- xml_node(sxml, "styleSheet", "fills", "fill")
+
+  # borderId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
+  z$borders <- xml_node(sxml, "styleSheet", "borders", "border")
+
+  # xfId
+  # links
+  # + numFmtId
+  # + fontId
+  # + fillId
+  # + borderId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellstyleformats?view=openxml-2.8.1
+  z$cellStyleXfs <- xml_node(sxml, "styleSheet", "cellStyleXfs", "xf")
+
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformat?view=openxml-2.8.1
+  #
+  # Position is 0 index s="value" used in worksheet <c ...>
+  # links
+  # + numFmtId
+  # + fontId
+  # + fillId
+  # + borderId
+  # + xfId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformats?view=openxml-2.8.1
+  z$cellXfs <- xml_node(sxml, "styleSheet", "cellXfs", "xf")
+
+  # No clue?
+  # links
+  # + xfId
+  # + builtinId
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellstyle?view=openxml-2.8.1
+  z$cellStyles <- xml_node(sxml, "styleSheet", "cellStyles", "cellStyle")
+
+  # No clue?
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.differentialformat?view=openxml-2.8.1
+  z$dxfs <- xml_node(sxml, "styleSheet", "dxfs", "dxf")
+
+  # Table style? Maybe position Id?
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.tablestyle?view=openxml-2.8.1
+  z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles")
+
+  # colors
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.indexedcolors?view=openxml-2.8.1
+  z$colors <- xml_node(sxml, "styleSheet", "colors")
+
+  # No clue, some special styles
+  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.extensionlist?view=openxml-2.8.1
+  z$extLst <- xml_node(sxml, "styleSheet", "extLst")
+
+  z
+}
+
+#' get all styles on a sheet
+#'
+#' @param wb workbook
+#' @param sheet worksheet
+#'
+#' @export
+styles_on_sheet <- function(wb, sheet) {
+
+  sheet_id <- wb$validateSheet(sheet)
+
+  z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
+
+  as.numeric(z)
+
+}
+

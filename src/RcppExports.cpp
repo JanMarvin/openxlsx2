@@ -715,6 +715,204 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// read_xf
+Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf);
+RcppExport SEXP _openxlsx2_read_xf(SEXP xml_doc_xfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_xf(xml_doc_xfSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_xf(xml_doc_xf));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_xf
+Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf);
+RcppExport SEXP _openxlsx2_write_xf(SEXP df_xfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_xf(df_xfSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_xf(df_xf));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_font
+Rcpp::DataFrame read_font(XPtrXML xml_doc_font);
+RcppExport SEXP _openxlsx2_read_font(SEXP xml_doc_fontSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_font(xml_doc_fontSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_font(xml_doc_font));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_font
+Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font);
+RcppExport SEXP _openxlsx2_write_font(SEXP df_fontSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_font(df_fontSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_font(df_font));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_numfmt
+Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt);
+RcppExport SEXP _openxlsx2_read_numfmt(SEXP xml_doc_numfmtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_numfmt(xml_doc_numfmtSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_numfmt(xml_doc_numfmt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_numfmt
+Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt);
+RcppExport SEXP _openxlsx2_write_numfmt(SEXP df_numfmtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_numfmt(df_numfmtSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_numfmt(df_numfmt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_border
+Rcpp::DataFrame read_border(XPtrXML xml_doc_border);
+RcppExport SEXP _openxlsx2_read_border(SEXP xml_doc_borderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_border(xml_doc_borderSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_border(xml_doc_border));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_border
+Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border);
+RcppExport SEXP _openxlsx2_write_border(SEXP df_borderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_border(df_borderSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_border(df_border));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_fill
+Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill);
+RcppExport SEXP _openxlsx2_read_fill(SEXP xml_doc_fillSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_fill(xml_doc_fillSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_fill(xml_doc_fill));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_fill
+Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill);
+RcppExport SEXP _openxlsx2_write_fill(SEXP df_fillSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_fill(df_fillSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_fill(df_fill));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_cellStyle
+Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle);
+RcppExport SEXP _openxlsx2_read_cellStyle(SEXP xml_doc_cellStyleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_cellStyle(xml_doc_cellStyleSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_cellStyle(xml_doc_cellStyle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_cellStyle
+Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle);
+RcppExport SEXP _openxlsx2_write_cellStyle(SEXP df_cellstyleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_cellstyle(df_cellstyleSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_cellStyle(df_cellstyle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_tableStyle
+Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle);
+RcppExport SEXP _openxlsx2_read_tableStyle(SEXP xml_doc_tableStyleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_tableStyle(xml_doc_tableStyleSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_tableStyle(xml_doc_tableStyle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_tableStyle
+Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle);
+RcppExport SEXP _openxlsx2_write_tableStyle(SEXP df_tablestyleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_tablestyle(df_tablestyleSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_tableStyle(df_tablestyle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_dxf
+Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf);
+RcppExport SEXP _openxlsx2_read_dxf(SEXP xml_doc_dxfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_dxf(xml_doc_dxfSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_dxf(xml_doc_dxf));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_dxf
+Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf);
+RcppExport SEXP _openxlsx2_write_dxf(SEXP df_dxfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_dxf(df_dxfSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_dxf(df_dxf));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_colors
+Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors);
+RcppExport SEXP _openxlsx2_read_colors(SEXP xml_doc_colorsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_colors(xml_doc_colorsSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_colors(xml_doc_colors));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_colors
+Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors);
+RcppExport SEXP _openxlsx2_write_colors(SEXP df_colorsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_colors(df_colorsSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_colors(df_colors));
+    return rcpp_result_gen;
+END_RCPP
+}
 // build_cell_types_integer
 Rcpp::IntegerVector build_cell_types_integer(Rcpp::CharacterVector classes, int n_rows);
 RcppExport SEXP _openxlsx2_build_cell_types_integer(SEXP classesSEXP, SEXP n_rowsSEXP) {
@@ -839,6 +1037,24 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_list_to_attr", (DL_FUNC) &_openxlsx2_list_to_attr, 2},
     {"_openxlsx2_list_to_attr_full", (DL_FUNC) &_openxlsx2_list_to_attr_full, 3},
+    {"_openxlsx2_read_xf", (DL_FUNC) &_openxlsx2_read_xf, 1},
+    {"_openxlsx2_write_xf", (DL_FUNC) &_openxlsx2_write_xf, 1},
+    {"_openxlsx2_read_font", (DL_FUNC) &_openxlsx2_read_font, 1},
+    {"_openxlsx2_write_font", (DL_FUNC) &_openxlsx2_write_font, 1},
+    {"_openxlsx2_read_numfmt", (DL_FUNC) &_openxlsx2_read_numfmt, 1},
+    {"_openxlsx2_write_numfmt", (DL_FUNC) &_openxlsx2_write_numfmt, 1},
+    {"_openxlsx2_read_border", (DL_FUNC) &_openxlsx2_read_border, 1},
+    {"_openxlsx2_write_border", (DL_FUNC) &_openxlsx2_write_border, 1},
+    {"_openxlsx2_read_fill", (DL_FUNC) &_openxlsx2_read_fill, 1},
+    {"_openxlsx2_write_fill", (DL_FUNC) &_openxlsx2_write_fill, 1},
+    {"_openxlsx2_read_cellStyle", (DL_FUNC) &_openxlsx2_read_cellStyle, 1},
+    {"_openxlsx2_write_cellStyle", (DL_FUNC) &_openxlsx2_write_cellStyle, 1},
+    {"_openxlsx2_read_tableStyle", (DL_FUNC) &_openxlsx2_read_tableStyle, 1},
+    {"_openxlsx2_write_tableStyle", (DL_FUNC) &_openxlsx2_write_tableStyle, 1},
+    {"_openxlsx2_read_dxf", (DL_FUNC) &_openxlsx2_read_dxf, 1},
+    {"_openxlsx2_write_dxf", (DL_FUNC) &_openxlsx2_write_dxf, 1},
+    {"_openxlsx2_read_colors", (DL_FUNC) &_openxlsx2_read_colors, 1},
+    {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_build_cell_types_integer", (DL_FUNC) &_openxlsx2_build_cell_types_integer, 2},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 3},
