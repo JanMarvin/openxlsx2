@@ -72,7 +72,7 @@ numfmt_is_date <- function(numFmt) {
   # if numFmt is character(0)
   if (length(numFmt) ==0) return(z <- NULL)
 
-  numFmt_df <- openxlsx2:::read_numfmt(read_xml(numFmt))
+  numFmt_df <- read_numfmt(read_xml(numFmt))
   date_fmts <- c(
     "yy", "yyyy",
     "m", "mm", "mmm", "mmmm", "mmmmm",
@@ -97,8 +97,7 @@ style_is_date <- function(cellXfs, numfmt_date) {
   date_numfmts <- as.character(14:22)
   numfmt_date <- c(numfmt_date, date_numfmts)
 
-  # cellXfs <- wb$styles$cellXfs
-  cellXfs_df <- openxlsx2:::read_xf(read_xml(cellXfs))
+  cellXfs_df <- read_xf(read_xml(cellXfs))
   z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date,])
   if (length(z)==0) z <- NA
   z

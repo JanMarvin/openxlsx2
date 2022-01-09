@@ -1079,6 +1079,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' @seealso \code{\link{getStyles}}
 #' @examples
 #'
+#' \dontrun{
 #' ## load a workbook
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
@@ -1091,23 +1092,10 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' replaceStyle(wb, 2, newStyle = newStyle)
 #'
 #' ## Save workbook
-#' \dontrun{
 #' saveWorkbook(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
 #' }
 replaceStyle <- function(wb, index, newStyle) {
-  assert_style(newStyle)
-
-  nStyles <- length(wb$styleObjects)
-
-  if (nStyles == 0) {
-    stop("Workbook has no existing styles.")
-  }
-
-  if (index > nStyles) {
-    stop(sprintf("Invalid index. Workbook only has %s styles.", nStyles))
-  }
-
-  wb$styleObjects[[index]]$style <- newStyle
+  return(NULL)
 }
 
 
@@ -1122,16 +1110,8 @@ replaceStyle <- function(wb, index, newStyle) {
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' getStyles(wb)[1:3]
 getStyles <- function(wb) {
-  # TODO how is this just just workbookWorkbook$get_styles()?
-  nStyles <- length(wb$styleObjects)
 
-  if (nStyles == 0) {
-    stop("Workbook has no existing styles.")
-  }
-
-  styles <- lapply(wb$styleObjects, "[[", "style")
-
-  return(styles)
+  return(NULL)
 }
 
 
