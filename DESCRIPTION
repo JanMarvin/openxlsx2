@@ -48,7 +48,8 @@ Suggests:
     knitr,
     testthat,
     roxygen2,
-    rmarkdown 
+    rmarkdown,
+    covr
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
