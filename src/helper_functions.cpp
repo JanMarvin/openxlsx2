@@ -184,22 +184,6 @@ std::string itos(int i){
   
 }
 
-
-
-// [[Rcpp::export]]
-std::string cppReadFile(std::string xmlFile){
-  
-  std::string buf;
-  std::string xml;
-  std::ifstream file;
-  file.open(xmlFile.c_str());
-  
-  while (file >> buf)
-    xml += buf + ' ';
-  
-  return xml;
-}
-
 // [[Rcpp::export]]
 std::vector<std::string> get_letters(){
   

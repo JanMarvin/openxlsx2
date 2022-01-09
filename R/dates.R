@@ -88,6 +88,7 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' }
 #' @export
 getDateOrigin <- function(xlsxFile) {
+  # TODO: allow using a workbook? 
   xlsxFile <- getFile(xlsxFile)
   if (!file.exists(xlsxFile)) {
     stop("File does not exist.")
@@ -104,7 +105,7 @@ getDateOrigin <- function(xlsxFile) {
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- paste(unlist(readUTF8(workbook)), collapse = "")
+  workbook <- read_xml(workbook, pointer = FALSE)
 
   if (grepl('date1904="1"|date1904="true"', workbook, ignore.case = TRUE)) {
     origin <- "1904-01-01"

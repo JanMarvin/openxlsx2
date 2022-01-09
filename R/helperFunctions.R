@@ -415,17 +415,6 @@ pxml <- function(x) {
 }
 
 
-removeHeadTag <- function(x) {
-  x <- paste(x, collapse = "")
-
-  if (any(grepl("<\\?", x))) {
-    x <- gsub("<\\?xml [^>]+", "", x)
-  }
-
-  x <- gsub("^>", "", x)
-  x
-}
-
 
 buildFontList <- function(fonts) {
   sz     <- font_val(fonts, "font", "sz")
@@ -870,8 +859,4 @@ hashPassword <- function(password) {
   }, chars, 0, right = TRUE)
   hash <- bitwXor(bitwXor(hash, length(chars)), 0xCE4B)
   format(as.hexmode(hash), upper.case = TRUE)
-}
-
-readUTF8 <- function(x) {
-  readLines(x, warn = FALSE, encoding = "UTF-8")
 }

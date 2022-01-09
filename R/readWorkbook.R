@@ -180,8 +180,7 @@ getSheetNames <- function(file) {
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- readUTF8(workbook)
-  workbook <- removeHeadTag(workbook)
+  workbook <- read_xml(workbook, pointer = FALSE)
   sheets <- unlist(regmatches(workbook, gregexpr("(?<=<sheets>).*(?=</sheets>)", workbook, perl = TRUE)))
   sheets <- unlist(regmatches(sheets, gregexpr("<sheet[^>]*>", sheets, perl = TRUE)))
 

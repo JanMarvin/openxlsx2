@@ -53,10 +53,6 @@ convert_to_excel_ref_expand <- function(cols, LETTERS, rows) {
     .Call(`_openxlsx2_convert_to_excel_ref_expand`, cols, LETTERS, rows)
 }
 
-cppReadFile <- function(xmlFile) {
-    .Call(`_openxlsx2_cppReadFile`, xmlFile)
-}
-
 get_letters <- function() {
     .Call(`_openxlsx2_get_letters`)
 }

@@ -393,7 +393,7 @@ Workbook <- setRefClass(
             # The result is saved to a new chart xml file
             newfl <- file.path(dirname(fl), newname)
             .self$charts[newname] <- newfl
-            chart <- readUTF8(fl)
+            chart <- read_xml(fl, pointer = FALSE)
             chart <-
               gsub(
                 stri_join("(?<=')", .self$sheet_names[[clonedSheet]], "(?='!)"),
