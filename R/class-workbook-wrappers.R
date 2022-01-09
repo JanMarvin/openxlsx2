@@ -974,9 +974,9 @@ removeRowHeights <- function(wb, sheet, rows) {
 #' This file is then written to the workbook using insertImage.
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param startRow Row coordinate of upper left corner of figure. xy[[2]] when xy is given.
-#' @param startCol Column coordinate of upper left corner of figure. xy[[1]] when xy is given.
 #' @param xy Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)
+#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when xy is given.
+#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]` when xy is given.
 #' @param width Width of figure. Defaults to 6in.
 #' @param height Height of figure . Defaults to 4in.
 #' @param fileType File type of image
