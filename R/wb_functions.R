@@ -376,12 +376,10 @@ wb_to_df <- function(xlsxFile,
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
-  # we need to create the correct col and row position.
-  #  cc$c_r is the column: "A", "B" ...
-  #  cc$row_r is the row: "1", "2" ...
-  # we convert both to ordered integers and start at 0.
-  zz$cols <- as.integer(as.ordered(col2int(cc$c_r))) - 1
-  zz$rows <- as.integer(as.ordered(as.integer(cc$row_r))) - 1
+  # we need to create the correct col and row position as integer starting at 0.
+  zz$cols <- match(cc$c_r, colnames(z)) - 1
+  zz$rows <- match(cc$row_r, rownames(z)) - 1
+
   zz <- zz[with(zz, ordered(order(cols, rows))),]
   zz <- zz[zz$val != "_openxlsx_NA_",]
   long_to_wide(z, tt, zz)
@@ -699,6 +697,13 @@ writeData2 <-function(wb, sheet, data,
     fcts <- which(data_class == "factor")
     data[fcts] <- lapply(data[fcts],as.character)
   }
+
+  has_date1904 <- grepl('date1904="1"|date1904="true"',
+                        stri_join(unlist(wb$workbook), collapse = ""),
+                        ignore.case = TRUE)
+
+  # TODO need to tell excel that we have a date, apply some kind of numFmt
+  data <- convertToExcelDate(df = data, date1904 = has_date1904)
 
   if (class(data) == "data.frame" | class(data) == "matrix") {
     is_data_frame <- TRUE
