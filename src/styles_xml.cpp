@@ -666,3 +666,657 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
   return z;
 }
 
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
+
+  // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector nams = {
+    "gradientFill",
+    "patternFill"
+  };
+
+  auto nn = std::distance(xml_doc_fill->begin(), xml_doc_fill->end());
+  auto kk = nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <xf ...>
+  auto itr = 0;
+  for (auto xml_fill : xml_doc_fill->children("fill")) {
+
+    for (auto cld : xml_fill.children()) {
+
+      Rcpp::CharacterVector name = cld.name();
+      std::string value = cld.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << name << ": not found in fill name table" << std::endl;
+      } else {
+        std::ostringstream oss;
+        cld.print(oss, " ", pugi::format_raw);
+
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
+      }
+
+    } // end aligment, extLst, protection
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
+
+  auto n = df_fill.nrow();
+  Rcpp::CharacterVector z(n);
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+
+    pugi::xml_node fill = doc.append_child("fill");
+
+
+    for (auto j = 0; j < df_fill.ncol(); ++j) {
+
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_fill[j])[i];
+
+      if (cv_s[0] != "") {
+
+        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+
+        pugi::xml_document font_node;
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        if (!result) Rcpp::stop("loading fill node fail: %s", cv_s);
+
+        fill.append_copy(font_node.first_child());
+
+      }
+
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
+
+  // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector nam_attrs = {"builtinId", "customBuiltin", "hidden",
+                                     "iLevel", "name", "xfId"};
+
+  Rcpp::CharacterVector nam_chlds = {"extLst"};
+
+  auto total_length = nam_attrs.size() + nam_chlds.size();
+  Rcpp::CharacterVector nams(Rcpp::no_init(total_length));
+
+  std::copy(nam_attrs.begin(), nam_attrs.end(), nams.begin());
+  std::copy(nam_chlds.begin(), nam_chlds.end(), nams.begin() + nam_attrs.size());
+
+
+  auto nn = std::distance(xml_doc_cellStyle->begin(), xml_doc_cellStyle->end());
+  auto kk = nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <numFmt ...>
+  auto itr = 0;
+  for (auto xml_cellStyle : xml_doc_cellStyle->children("cellStyle")) {
+    for (auto attrs : xml_cellStyle.attributes()) {
+
+      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_value = attrs.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << attr_name << ": not found in cellStyle name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+      }
+    }
+
+    for (auto cld : xml_cellStyle.children()) {
+
+      Rcpp::CharacterVector cld_name = cld.name();
+      std::ostringstream oss;
+      cld.print(oss, " ", pugi::format_raw);
+      std::string cld_value = oss.str();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, cld_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << cld_name << ": not found in cellStyle name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = cld_value;
+      }
+    }
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+    ++itr;
+
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
+
+  auto n = df_cellstyle.nrow();
+  Rcpp::CharacterVector z(n);
+
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector attrnams = df_cellstyle.names();
+  Rcpp::CharacterVector nam_attrs = {"builtinId", "customBuiltin", "hidden",
+                                     "iLevel", "name", "xfId"};
+
+  Rcpp::CharacterVector nam_chlds = {"extLst"};
+
+
+  Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+    pugi::xml_node cellstyle = doc.append_child("cellStyle");
+
+
+
+    for (auto j = 0; j < df_cellstyle.ncol(); ++j) {
+
+      Rcpp::CharacterVector attr_j = Rcpp::as<Rcpp::CharacterVector>(attrnams[j]);
+
+      // mimic which
+      mtc1 = Rcpp::match(attr_j, nam_attrs);
+      idx1 = Rcpp::seq(0, mtc1.length()-1);
+
+      mtc2 = Rcpp::match(attr_j, nam_chlds);
+      idx2 = Rcpp::seq(0, mtc2.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc1))) {
+      } else {
+        Rcpp::CharacterVector cv_s = "";
+        cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
+
+        // only write attributes where cv_s has a value
+        if (cv_s[0] != "") {
+          // Rf_PrintValue(cv_s);
+          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          cellstyle.append_attribute(attrnams[j]) = val_strl.c_str();
+        }
+      }
+
+      if (all(Rcpp::is_na(mtc2))) {
+      } else {
+        Rcpp::CharacterVector cv_s = "";
+        cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
+
+        if (cv_s[0] != "") {
+
+          std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+
+          pugi::xml_document border_node;
+          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+          if (!result) Rcpp::stop("loading cellStyle node fail: %s", cv_s);
+
+          cellstyle.append_copy(border_node.first_child());
+
+        }
+      }
+
+      if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
+        Rcpp::Rcout << attr_j << ": not found in cellStyle name table" << std::endl;
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+    z[i] = oss.str();
+  }
+
+  return z;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
+
+  // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector nam_attrs = {"count", "name", "pivot", "table"};
+
+  Rcpp::CharacterVector nam_chlds = {"tableStyleElement"};
+
+  auto total_length = nam_attrs.size() + nam_chlds.size();
+  Rcpp::CharacterVector nams(Rcpp::no_init(total_length));
+
+  std::copy(nam_attrs.begin(), nam_attrs.end(), nams.begin());
+  std::copy(nam_chlds.begin(), nam_chlds.end(), nams.begin() + nam_attrs.size());
+
+
+  auto nn = std::distance(xml_doc_tableStyle->begin(), xml_doc_tableStyle->end());
+  auto kk = nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <numFmt ...>
+  auto itr = 0;
+  for (auto xml_tableStyle : xml_doc_tableStyle->children("tableStyle")) {
+    for (auto attrs : xml_tableStyle.attributes()) {
+
+      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_value = attrs.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << attr_name << ": not found in tableStyle name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+      }
+    }
+
+    for (auto cld : xml_tableStyle.children()) {
+
+      Rcpp::CharacterVector cld_name = cld.name();
+      std::ostringstream oss;
+      cld.print(oss, " ", pugi::format_raw);
+      std::string cld_value = oss.str();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, cld_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << cld_name << ": not found in cellStyle name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = cld_value;
+      }
+    }
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+    ++itr;
+
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
+
+  auto n = df_tablestyle.nrow();
+  Rcpp::CharacterVector z(n);
+
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector attrnams = df_tablestyle.names();
+  Rcpp::CharacterVector nam_attrs = {"count", "name", "pivot", "table"};
+
+  Rcpp::CharacterVector nam_chlds = {"tableStyleElement"};
+
+
+  Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+    pugi::xml_node tablestyle = doc.append_child("tableStyle");
+
+
+
+    for (auto j = 0; j < df_tablestyle.ncol(); ++j) {
+
+      Rcpp::CharacterVector attr_j = Rcpp::as<Rcpp::CharacterVector>(attrnams[j]);
+
+      // mimic which
+      mtc1 = Rcpp::match(attr_j, nam_attrs);
+      idx1 = Rcpp::seq(0, mtc1.length()-1);
+
+      mtc2 = Rcpp::match(attr_j, nam_chlds);
+      idx2 = Rcpp::seq(0, mtc2.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc1))) {
+      } else {
+        Rcpp::CharacterVector cv_s = "";
+        cv_s = Rcpp::as<Rcpp::CharacterVector>(df_tablestyle[j])[i];
+
+        // only write attributes where cv_s has a value
+        if (cv_s[0] != "") {
+          // Rf_PrintValue(cv_s);
+          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          tablestyle.append_attribute(attrnams[j]) = val_strl.c_str();
+        }
+      }
+
+      if (all(Rcpp::is_na(mtc2))) {
+      } else {
+        Rcpp::CharacterVector cv_s = "";
+        cv_s = Rcpp::as<Rcpp::CharacterVector>(df_tablestyle[j])[i];
+
+        if (cv_s[0] != "") {
+
+          std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+
+          pugi::xml_document border_node;
+          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+          if (!result) Rcpp::stop("loading df_tablestyle node fail: %s", cv_s);
+
+          tablestyle.append_copy(border_node.first_child());
+
+        }
+      }
+
+      if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
+        Rcpp::Rcout << attr_j << ": not found in df_tablestyle name table" << std::endl;
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+    z[i] = oss.str();
+  }
+
+  return z;
+}
+
+
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
+
+  // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector nams = {
+    "alignment",
+    "border",
+    "extLst",
+    "fill",
+    "font",
+    "numFmt",
+    "protection"
+  };
+
+  auto nn = std::distance(xml_doc_dxf->begin(), xml_doc_dxf->end());
+  auto kk = nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <xf ...>
+  auto itr = 0;
+  for (auto xml_dxf : xml_doc_dxf->children("dxf")) {
+
+    for (auto cld : xml_dxf.children()) {
+
+      Rcpp::CharacterVector name = cld.name();
+      std::string value = cld.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << name << ": not found in dxf name table" << std::endl;
+      } else {
+        std::ostringstream oss;
+        cld.print(oss, " ", pugi::format_raw);
+
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
+      }
+
+    } // end aligment, extLst, protection
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
+
+  auto n = df_dxf.nrow();
+  Rcpp::CharacterVector z(n);
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+
+    pugi::xml_node dxf = doc.append_child("dxf");
+
+
+    for (auto j = 0; j < df_dxf.ncol(); ++j) {
+
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_dxf[j])[i];
+
+      if (cv_s[0] != "") {
+
+        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+
+        pugi::xml_document font_node;
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        if (!result) Rcpp::stop("loading dxf node fail: %s", cv_s);
+
+        dxf.append_copy(font_node.first_child());
+
+      }
+
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
+}
+
+
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
+
+  // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
+
+  // openxml 2.8.1
+  Rcpp::CharacterVector nams = {
+    "indexedColors",
+    "mruColors"
+  };
+
+  auto nn = std::distance(xml_doc_colors->begin(), xml_doc_colors->end());
+  auto kk = nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <xf ...>
+  auto itr = 0;
+  for (auto xml_color : xml_doc_colors->children("colors")) {
+
+    for (auto cld : xml_color.children()) {
+
+      Rcpp::CharacterVector name = cld.name();
+      std::string value = cld.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(nams, name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << name << ": not found in color name table" << std::endl;
+      } else {
+        std::ostringstream oss;
+        cld.print(oss, " ", pugi::format_raw);
+
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
+      }
+
+    } // end aligment, extLst, protection
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
+
+  auto n = df_colors.nrow();
+  Rcpp::CharacterVector z(n);
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+
+    pugi::xml_node color = doc.append_child("colors");
+
+
+    for (auto j = 0; j < df_colors.ncol(); ++j) {
+
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_colors[j])[i];
+
+      if (cv_s[0] != "") {
+
+        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+
+        pugi::xml_document font_node;
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        if (!result) Rcpp::stop("loading color node fail: %s", cv_s);
+
+        color.append_copy(font_node.first_child());
+
+      }
+
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
+}

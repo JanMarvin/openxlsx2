@@ -312,6 +312,46 @@ write_border <- function(df_border) {
     .Call(`_openxlsx2_write_border`, df_border)
 }
 
+read_fill <- function(xml_doc_fill) {
+    .Call(`_openxlsx2_read_fill`, xml_doc_fill)
+}
+
+write_fill <- function(df_fill) {
+    .Call(`_openxlsx2_write_fill`, df_fill)
+}
+
+read_cellStyle <- function(xml_doc_cellStyle) {
+    .Call(`_openxlsx2_read_cellStyle`, xml_doc_cellStyle)
+}
+
+write_cellStyle <- function(df_cellstyle) {
+    .Call(`_openxlsx2_write_cellStyle`, df_cellstyle)
+}
+
+read_tableStyle <- function(xml_doc_tableStyle) {
+    .Call(`_openxlsx2_read_tableStyle`, xml_doc_tableStyle)
+}
+
+write_tableStyle <- function(df_tablestyle) {
+    .Call(`_openxlsx2_write_tableStyle`, df_tablestyle)
+}
+
+read_dxf <- function(xml_doc_dxf) {
+    .Call(`_openxlsx2_read_dxf`, xml_doc_dxf)
+}
+
+write_dxf <- function(df_dxf) {
+    .Call(`_openxlsx2_write_dxf`, df_dxf)
+}
+
+read_colors <- function(xml_doc_colors) {
+    .Call(`_openxlsx2_read_colors`, xml_doc_colors)
+}
+
+write_colors <- function(df_colors) {
+    .Call(`_openxlsx2_write_colors`, df_colors)
+}
+
 build_cell_types_integer <- function(classes, n_rows) {
     .Call(`_openxlsx2_build_cell_types_integer`, classes, n_rows)
 }

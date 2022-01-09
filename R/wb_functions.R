@@ -1051,8 +1051,7 @@ import_styles <- function(x) {
   # colors
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.indexedcolors?view=openxml-2.8.1
-  z$mruColors <- xml_node(sxml, "styleSheet", "colors", "mruColors")
-  z$indexedColors <- xml_node(sxml, "styleSheet", "colors", "indexedColors")
+  z$colors <- xml_node(sxml, "styleSheet", "colors")
 
   # No clue, some special styles
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.extensionlist?view=openxml-2.8.1
