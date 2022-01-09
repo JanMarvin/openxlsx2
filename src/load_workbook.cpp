@@ -414,8 +414,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
 
   auto n = zz.nrow();
 
-  std::vector<uint64_t> rows = zz["rows"];
-  std::vector<uint64_t> cols = zz["cols"];
+  Rcpp::IntegerVector rows = zz["rows"];
+  Rcpp::IntegerVector cols = zz["cols"];
   Rcpp::CharacterVector vals = zz["val"];
   Rcpp::CharacterVector typs = zz["typ"];
 
@@ -423,39 +423,6 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
     Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
     Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
   }
-}
-
-
-
-// [[Rcpp::export]]
-SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_tag){
-
-  if(xml.length() == 0)
-    return Rcpp::wrap(NA_STRING);
-
-  xml = " " + xml;
-  size_t pos = 0;
-  size_t endPos = 0;
-
-  size_t k = open_tag.length();
-  size_t l = close_tag.length();
-
-  std::vector<std::string> r;
-
-  while(1){
-
-    pos = xml.find(open_tag, pos+1);
-    endPos = xml.find(close_tag, pos+k);
-
-    if((pos == std::string::npos) | (endPos == std::string::npos))
-      break;
-
-    r.push_back(xml.substr(pos, endPos-pos+l).c_str());
-
-  }
-
-  Rcpp::CharacterVector out = Rcpp::wrap(r);
-  return markUTF8(out);
 }
 
 
@@ -489,53 +456,6 @@ SEXP getAttr(Rcpp::CharacterVector x, std::string tag){
   }
 
   return markUTF8(r);   // no need to wrap as r is already a CharacterVector
-
-}
-
-
-// [[Rcpp::export]]
-Rcpp::CharacterVector get_extLst_Major(std::string xml){
-
-  // find page margin or pagesetup then take the extLst after that
-
-  if(xml.length() == 0)
-    return Rcpp::wrap(NA_STRING);
-
-  std::vector<std::string> r;
-  std::string tagEnd = "</extLst>";
-  size_t endPos = 0;
-  std::string node;
-
-
-  size_t pos = xml.find("<pageSetup ", 0);
-  if(pos == std::string::npos)
-    pos = xml.find("<pageMargins ", 0);
-
-  if(pos == std::string::npos)
-    pos = xml.find("</conditionalFormatting>", 0);
-
-  if(pos == std::string::npos)
-    return Rcpp::wrap(NA_STRING);
-
-  while(1){
-
-    pos = xml.find("<extLst>", pos + 1);
-    if(pos == std::string::npos)
-      break;
-
-    endPos = xml.find(tagEnd, pos + 8);
-
-    node = xml.substr(pos + 8, endPos - pos - 8);
-    //pos = xml.find("conditionalFormattings", pos + 1);
-    //if(pos == std::string::npos)
-    //  break;
-
-    r.push_back(node.c_str());
-
-  }
-
-  Rcpp::CharacterVector out = Rcpp::wrap(r);
-  return markUTF8(out);
 
 }
 

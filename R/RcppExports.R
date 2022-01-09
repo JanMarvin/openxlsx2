@@ -53,10 +53,6 @@ convert_to_excel_ref_expand <- function(cols, LETTERS, rows) {
     .Call(`_openxlsx2_convert_to_excel_ref_expand`, cols, LETTERS, rows)
 }
 
-isInternalHyperlink <- function(x) {
-    .Call(`_openxlsx2_isInternalHyperlink`, x)
-}
-
 cppReadFile <- function(xmlFile) {
     .Call(`_openxlsx2_cppReadFile`, xmlFile)
 }
@@ -96,16 +92,8 @@ long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
-getOpenClosedNode <- function(xml, open_tag, close_tag) {
-    .Call(`_openxlsx2_getOpenClosedNode`, xml, open_tag, close_tag)
-}
-
 getAttr <- function(x, tag) {
     .Call(`_openxlsx2_getAttr`, x, tag)
-}
-
-get_extLst_Major <- function(xml) {
-    .Call(`_openxlsx2_get_extLst_Major`, xml)
 }
 
 cell_ref_to_col <- function(x) {
@@ -280,10 +268,6 @@ xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL
     .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes)
 }
 
-calc_number_rows <- function(x, skipEmptyRows) {
-    .Call(`_openxlsx2_calc_number_rows`, x, skipEmptyRows)
-}
-
 set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
@@ -328,28 +312,12 @@ write_border <- function(df_border) {
     .Call(`_openxlsx2_write_border`, df_border)
 }
 
-map_cell_types_to_integer <- function(t) {
-    .Call(`_openxlsx2_map_cell_types_to_integer`, t)
-}
-
-map_cell_types_to_char <- function(t) {
-    .Call(`_openxlsx2_map_cell_types_to_char`, t)
-}
-
 build_cell_types_integer <- function(classes, n_rows) {
     .Call(`_openxlsx2_build_cell_types_integer`, classes, n_rows)
 }
 
-buildCellTypes <- function(classes, nRows) {
-    .Call(`_openxlsx2_buildCellTypes`, classes, nRows)
-}
-
 build_cell_merges <- function(comps) {
     .Call(`_openxlsx2_build_cell_merges`, comps)
-}
-
-buildCellList <- function(r, t, v) {
-    .Call(`_openxlsx2_buildCellList`, r, t, v)
 }
 
 set_row <- function(row_attr, cells, row_idx) {
@@ -358,18 +326,6 @@ set_row <- function(row_attr, cells, row_idx) {
 
 write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
     .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, R_fileName)
-}
-
-buildMatrixNumeric <- function(v, rowInd, colInd, colNames, nRows, nCols) {
-    .Call(`_openxlsx2_buildMatrixNumeric`, v, rowInd, colInd, colNames, nRows, nCols)
-}
-
-buildMatrixMixed <- function(v, rowInd, colInd, colNames, nRows, nCols, charCols, dateCols) {
-    .Call(`_openxlsx2_buildMatrixMixed`, v, rowInd, colInd, colNames, nRows, nCols, charCols, dateCols)
-}
-
-matrixRowInds <- function(indices) {
-    .Call(`_openxlsx2_matrixRowInds`, indices)
 }
 
 build_table_xml <- function(table, tableStyleXML, ref, colNames, showColNames, withFilter) {

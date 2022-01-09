@@ -175,36 +175,6 @@ SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector
   
 }
 
-
-
-// [[Rcpp::export]]
-Rcpp::LogicalVector isInternalHyperlink(Rcpp::CharacterVector x){
-  
-  int n = x.size();
-  std::string xml;
-  std::string tag = "r:id=";
-  size_t found;
-  Rcpp::LogicalVector isInternal(n);
-  
-  for(int i = 0; i < n; i++){ 
-    
-    // find location tag  
-    xml = x[i];
-    found = xml.find(tag, 0);
-    
-    if (found != std::string::npos){
-      isInternal[i] = false;
-    }else{
-      isInternal[i] = true;
-    }
-    
-  }
-  
-  return wrap(isInternal) ;  
-  
-}
-
-
 std::string itos(int i){
   
   // convert int to string
