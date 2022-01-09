@@ -1042,7 +1042,7 @@ import_styles <- function(x) {
 
   # No clue?
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.differentialformat?view=openxml-2.8.1
-  z$dxfs <- xml_node(sxml, "styleSheet", "dxfs")
+  z$dxfs <- xml_node(sxml, "styleSheet", "dxfs", "dxf")
 
   # Table style? Maybe position Id?
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.tablestyle?view=openxml-2.8.1
@@ -1055,7 +1055,7 @@ import_styles <- function(x) {
 
   # No clue, some special styles
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.extensionlist?view=openxml-2.8.1
-  z$extLst <- xml_node(sxml, "styleSheet", "extLst", "ext")
+  z$extLst <- xml_node(sxml, "styleSheet", "extLst")
 
   z
 }
