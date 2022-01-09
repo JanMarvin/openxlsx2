@@ -73,6 +73,12 @@ numfmt_is_date <- function(numFmt) {
   if (length(numFmt) ==0) return(z <- NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
+  num_fmts <- c(
+    "#", as.character(0:9)
+  )
+  num_or_fmt <- paste0(num_fmts, collapse = "|")
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$formatCode)
+
   date_fmts <- c(
     "yy", "yyyy",
     "m", "mm", "mmm", "mmmm", "mmmmm",
@@ -81,8 +87,9 @@ numfmt_is_date <- function(numFmt) {
     "AM", "PM", "A", "P"
   )
   date_or_fmt <- paste0(date_fmts, collapse = "|")
+  maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)
 
-  z <- numFmt_df$numFmtId[grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)]
+  z <- numFmt_df$numFmtId[maybe_dates & !maybe_num]
   if (length(z)==0) z <- NULL
   z
 }
