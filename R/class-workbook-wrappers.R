@@ -579,14 +579,18 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
 
   if (!is.null(style$numFmt) & length(wb$styleObjects)) {
     if (style$numFmt$numFmtId == 165) {
-      maxnumFmtId <- max(c(sapply(wb$styleObjects, function(i) {
-        as.integer(
-          max(c(i$style$numFmt$numFmtId, 0))
-        )
-      }), 165))
-      style$numFmt$numFmtId <- maxnumFmtId + 1
+      # get max numFmtId
+      maxnumFmtId <- vapply(
+        wb$styleObjects,
+        # was as.integer() needed?  can this just be double?
+        function(i) max(i$style$numFmt$numFmtId, 0),
+        NA_real_
+      )
+      style$numFmt$numFmtId <- as.integer(max(maxnumFmtId, 165L)) + 1L
     }
   }
+
+
   sheet <- wb$validateSheet(sheet)
 
   assert_workbook(wb)

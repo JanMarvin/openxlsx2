@@ -377,51 +377,55 @@ Workbook <- setRefClass(
 
       # give each chart its own filename (images can re-use the same file, but charts can't)
       .self$drawings_rels[[newSheetIndex]] <-
-        sapply(.self$drawings_rels[[newSheetIndex]], function(rl) {
-          chartfiles <-
-            regmatches(
-              rl,
-              gregexpr("(?<=charts/)chart[0-9]+\\.xml", rl, perl = TRUE)
-            )[[1]]
-          for (cf in chartfiles) {
-            chartid <- length(.self$charts) + 1
-            newname <- stri_join("chart", chartid, ".xml")
-            fl <- .self$charts[cf]
+        # TODO Can this be simplified?  There's a bit going on here
+        vapply(
+          .self$drawings_rels[[newSheetIndex]],
+          function(rl) {
+            # is rl here a length of 1?
+            stopifnot(length(rl) == 1L) # lets find out...  if this fails, just remove it
+            chartfiles <- regmatches(rl, gregexpr("(?<=charts/)chart[0-9]+\\.xml", rl, perl = TRUE))[[1]]
 
-            # Read the chartfile and adjust all formulas to point to the new
-            # sheet name instead of the clone source
-            # The result is saved to a new chart xml file
-            newfl <- file.path(dirname(fl), newname)
-            .self$charts[newname] <- newfl
-            chart <- readUTF8(fl)
-            chart <-
-              gsub(
+            for (cf in chartfiles) {
+              chartid <- length(.self$charts) + 1L
+              newname <- stri_join("chart", chartid, ".xml")
+              fl <- .self$charts[cf]
+
+              # Read the chartfile and adjust all formulas to point to the new
+              # sheet name instead of the clone source
+              # The result is saved to a new chart xml file
+              newfl <- file.path(dirname(fl), newname)
+
+              .self$charts[newname] <- newfl
+
+              chart <- readUTF8(fl)
+              chart <- gsub(
                 stri_join("(?<=')", .self$sheet_names[[clonedSheet]], "(?='!)"),
                 stri_join("'", sheetName, "'"),
                 chart,
                 perl = TRUE
               )
-            chart <-
-              gsub(
+
+              chart <- gsub(
                 stri_join("(?<=[^A-Za-z0-9])", .self$sheet_names[[clonedSheet]], "(?=!)"),
                 stri_join("'", sheetName, "'"),
                 chart,
                 perl = TRUE
               )
-            writeLines(chart, newfl)
-            # file.copy(fl, newfl)
-            .self$Content_Types <-
-              c(
-                Content_Types,
-                sprintf(
-                  '<Override PartName="/xl/charts/%s" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>',
-                  newname
-                )
+
+              writeLines(chart, newfl)
+
+              .self$Content_Types <- c(
+                .self$Content_Types,
+                sprintf('<Override PartName="/xl/charts/%s" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', newname)
               )
-            rl <- gsub(stri_join("(?<=charts/)", cf), newname, rl, perl = TRUE)
-          }
-          rl
-        }, USE.NAMES = FALSE)
+
+              rl <- gsub(stri_join("(?<=charts/)", cf), newname, rl, perl = TRUE)
+            }
+            rl
+          },
+          NA_character_,
+          USE.NAMES = FALSE
+        )
       # The IDs in the drawings array are sheet-specific, so within the new cloned sheet
       # the same IDs can be used => no need to modify drawings
       .self$drawings[[newSheetIndex]] <- .self$drawings[[clonedSheet]]
