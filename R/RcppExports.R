@@ -312,12 +312,20 @@ write_font <- function(df_font) {
     .Call(`_openxlsx2_write_font`, df_font)
 }
 
-read_numfmt <- function(xml_doc_font) {
-    .Call(`_openxlsx2_read_numfmt`, xml_doc_font)
+read_numfmt <- function(xml_doc_numfmt) {
+    .Call(`_openxlsx2_read_numfmt`, xml_doc_numfmt)
 }
 
 write_numfmt <- function(df_numfmt) {
     .Call(`_openxlsx2_write_numfmt`, df_numfmt)
+}
+
+read_border <- function(xml_doc_border) {
+    .Call(`_openxlsx2_read_border`, xml_doc_border)
+}
+
+write_border <- function(df_border) {
+    .Call(`_openxlsx2_write_border`, df_border)
 }
 
 map_cell_types_to_integer <- function(t) {

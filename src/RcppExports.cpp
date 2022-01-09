@@ -807,13 +807,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // read_numfmt
-Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_font);
-RcppExport SEXP _openxlsx2_read_numfmt(SEXP xml_doc_fontSEXP) {
+Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt);
+RcppExport SEXP _openxlsx2_read_numfmt(SEXP xml_doc_numfmtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_font(xml_doc_fontSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_numfmt(xml_doc_font));
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_numfmt(xml_doc_numfmtSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_numfmt(xml_doc_numfmt));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -825,6 +825,28 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_numfmt(df_numfmtSEXP);
     rcpp_result_gen = Rcpp::wrap(write_numfmt(df_numfmt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_border
+Rcpp::DataFrame read_border(XPtrXML xml_doc_border);
+RcppExport SEXP _openxlsx2_read_border(SEXP xml_doc_borderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml_doc_border(xml_doc_borderSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_border(xml_doc_border));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_border
+Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border);
+RcppExport SEXP _openxlsx2_write_border(SEXP df_borderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_border(df_borderSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_border(df_border));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1054,6 +1076,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_font", (DL_FUNC) &_openxlsx2_write_font, 1},
     {"_openxlsx2_read_numfmt", (DL_FUNC) &_openxlsx2_read_numfmt, 1},
     {"_openxlsx2_write_numfmt", (DL_FUNC) &_openxlsx2_write_numfmt, 1},
+    {"_openxlsx2_read_border", (DL_FUNC) &_openxlsx2_read_border, 1},
+    {"_openxlsx2_write_border", (DL_FUNC) &_openxlsx2_write_border, 1},
     {"_openxlsx2_map_cell_types_to_integer", (DL_FUNC) &_openxlsx2_map_cell_types_to_integer, 1},
     {"_openxlsx2_map_cell_types_to_char", (DL_FUNC) &_openxlsx2_map_cell_types_to_char, 1},
     {"_openxlsx2_build_cell_types_integer", (DL_FUNC) &_openxlsx2_build_cell_types_integer, 2},
