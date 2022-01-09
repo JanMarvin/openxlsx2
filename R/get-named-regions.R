@@ -5,7 +5,7 @@
 #' Workbook object
 #' @param x An xlsx file or Workbook object
 #' @export
-#' @seealso \code{\link{createNamedRegion}}
+#' @seealso [createNamedRegion()]
 #' @examples
 #' ## create named regions
 #' wb <- createWorkbook()
