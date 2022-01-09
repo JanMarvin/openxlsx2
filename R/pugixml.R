@@ -1,7 +1,8 @@
 
 
 #' read xml file
-#' @param xml somthing to read character string or file
+#' @param xml something to read character string or file
+#' @param declaration should the declaration be imported
 #' @details Read xml files or strings to pointer and checks if the input is
 #' valid XML.
 #' If the input is read into a character object, it will be reevaluated every
@@ -25,7 +26,7 @@
 #'   try(z <- read_xml("<a><b/>"))
 #'
 #' @export
-read_xml <- function(xml, pointer = TRUE)  {
+read_xml <- function(xml, pointer = TRUE, declaration = FALSE)  {
 
   z <- NULL
 
@@ -37,10 +38,10 @@ read_xml <- function(xml, pointer = TRUE)  {
     xml <- paste0(xml, collapse = "")
 
   if (pointer) {
-    z <- readXMLPtr(xml, isfile)
+    z <- readXMLPtr(xml, isfile, declaration)
   }
   else {
-    z <- readXML(xml, isfile)
+    z <- readXML(xml, isfile, declaration)
   }
 
   z

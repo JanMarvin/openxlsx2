@@ -12,14 +12,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // readXML
-SEXP readXML(std::string path, bool isfile);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP) {
+SEXP readXML(std::string path, bool isfile, bool declaration);
+RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP declarationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile));
+    Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
+    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, declaration));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -314,14 +315,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // readXMLPtr
-SEXP readXMLPtr(std::string path, bool isfile);
-RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP) {
+SEXP readXMLPtr(std::string path, bool isfile, bool declaration);
+RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP declarationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile));
+    Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
+    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile, declaration));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -982,7 +984,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 2},
+    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 3},
     {"_openxlsx2_getXML1", (DL_FUNC) &_openxlsx2_getXML1, 2},
     {"_openxlsx2_getXML1val", (DL_FUNC) &_openxlsx2_getXML1val, 2},
     {"_openxlsx2_getXML2", (DL_FUNC) &_openxlsx2_getXML2, 3},
@@ -1007,7 +1009,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getAttr", (DL_FUNC) &_openxlsx2_getAttr, 2},
     {"_openxlsx2_cell_ref_to_col", (DL_FUNC) &_openxlsx2_cell_ref_to_col, 1},
     {"_openxlsx2_int_2_cell_ref", (DL_FUNC) &_openxlsx2_int_2_cell_ref, 1},
-    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 2},
+    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 3},
     {"_openxlsx2_getXMLXPtr1", (DL_FUNC) &_openxlsx2_getXMLXPtr1, 2},
     {"_openxlsx2_getXMLXPtr2", (DL_FUNC) &_openxlsx2_getXMLXPtr2, 3},
     {"_openxlsx2_getXMLXPtr3", (DL_FUNC) &_openxlsx2_getXMLXPtr3, 4},

@@ -1,15 +1,23 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile) {
+SEXP readXMLPtr(std::string path, bool isfile, bool declaration) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
 
-  if (isfile) {
-    result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+  if (declaration) {
+    if (isfile) {
+      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
+    } else {
+      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
+    }
   } else {
-    result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+    if (isfile) {
+      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+    } else {
+      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+    }
   }
 
   if (!result) {
