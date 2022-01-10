@@ -92,10 +92,6 @@ long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
-getAttr <- function(x, tag) {
-    .Call(`_openxlsx2_getAttr`, x, tag)
-}
-
 cell_ref_to_col <- function(x) {
     .Call(`_openxlsx2_cell_ref_to_col`, x)
 }

@@ -3834,14 +3834,7 @@ Workbook <- setRefClass(
       numFmts <- xml_node(styles_XML, "styleSheet", "numFmts", "numFmt")
       numFmtFlag <- FALSE
       if (length(numFmts)) {
-        numFmtsIds <-
-          sapply(numFmts, getAttr, tag = 'numFmtId="', USE.NAMES = FALSE)
-        formatCodes <-
-          sapply(numFmts, getAttr, tag = 'formatCode="', USE.NAMES = FALSE)
-        numFmts <-
-          lapply(seq_along(numFmts), function(i) {
-            list("numFmtId" = numFmtsIds[[i]], "formatCode" = formatCodes[[i]])
-          })
+        numFmts <- read_numfmt(numFmts)
         numFmtFlag <- TRUE
       }
 

@@ -427,40 +427,6 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
 
 
 // [[Rcpp::export]]
-SEXP getAttr(Rcpp::CharacterVector x, std::string tag){
-
-  size_t n = x.size();
-  size_t k = tag.length();
-
-  if(n == 0)
-    return Rcpp::wrap(-1);
-
-  std::string xml;
-  Rcpp::CharacterVector r(n);
-  size_t pos = 0;
-  size_t endPos = 0;
-  std::string rtagEnd = "\"";
-
-  for(size_t i = 0; i < n; i++){
-
-    // find opening tag
-    xml = x[i];
-    pos = xml.find(tag, 0);
-
-    if(pos == std::string::npos){
-      r[i] = NA_STRING;
-    }else{
-      endPos = xml.find(rtagEnd, pos+k);
-      r[i] = xml.substr(pos+k, endPos-pos-k).c_str();
-    }
-  }
-
-  return markUTF8(r);   // no need to wrap as r is already a CharacterVector
-
-}
-
-
-// [[Rcpp::export]]
 int cell_ref_to_col( std::string x ){
 
   // This function converts the Excel column letter to an integer

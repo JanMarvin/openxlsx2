@@ -280,18 +280,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// getAttr
-SEXP getAttr(Rcpp::CharacterVector x, std::string tag);
-RcppExport SEXP _openxlsx2_getAttr(SEXP xSEXP, SEXP tagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< std::string >::type tag(tagSEXP);
-    rcpp_result_gen = Rcpp::wrap(getAttr(x, tag));
-    return rcpp_result_gen;
-END_RCPP
-}
 // cell_ref_to_col
 int cell_ref_to_col(std::string x);
 RcppExport SEXP _openxlsx2_cell_ref_to_col(SEXP xSEXP) {
@@ -1006,7 +994,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
-    {"_openxlsx2_getAttr", (DL_FUNC) &_openxlsx2_getAttr, 2},
     {"_openxlsx2_cell_ref_to_col", (DL_FUNC) &_openxlsx2_cell_ref_to_col, 1},
     {"_openxlsx2_int_2_cell_ref", (DL_FUNC) &_openxlsx2_int_2_cell_ref, 1},
     {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 3},
