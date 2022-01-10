@@ -1298,7 +1298,11 @@ Workbook <- setRefClass(
 
 
       ### autofilter
-      autofilter <- ifelse(withFilter, xml_node_create(xml_name = "autofilter", xml_attributes = c(ref = ref)), NULL)
+      autofilter <- if (withFilter) {
+       xml_node_create(xml_name = "autofilter", xml_attributes = c(ref = ref))
+      } else {
+        NULL
+      }
 
       ### tableColumn
       tableColumn <- sapply(colNames, function(x) {
