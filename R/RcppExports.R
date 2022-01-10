@@ -61,6 +61,10 @@ markUTF8 <- function(x, clone) {
     .Call(`_openxlsx2_markUTF8`, x, clone)
 }
 
+rbindlist <- function(x) {
+    .Call(`_openxlsx2_rbindlist`, x)
+}
+
 #' @import Rcpp
 NULL
 
