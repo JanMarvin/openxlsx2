@@ -3,8 +3,8 @@
 #' @title Check equality of workbooks
 #' @description Check equality of workbooks
 #' @method all.equal Workbook
-#' @param target A \code{Workbook} object
-#' @param current A \code{Workbook} object
+#' @param target A `Workbook` object
+#' @param current A `Workbook` object
 #' @param ... ignored
 all.equal.Workbook <- function(target, current, ...) {
 

@@ -361,7 +361,7 @@ new_style <- function() {
 #' @title Create a cell style
 #' @description Create a new style to apply to worksheet cells
 #' @author Alexander Walker
-#' @seealso \code{\link{addStyle}}
+#' @seealso [addStyle()]
 #' @param fontName A name of a font. Note the font name is not validated. If fontName is NULL,
 #' the workbook base font is used. (Defaults to Calibri)
 #' @param fontColour Colour of text in cell.  A valid hex colour beginning with "#"
@@ -371,30 +371,30 @@ new_style <- function() {
 #' If fontSize is NULL, the workbook base font size is used. (Defaults to 11)
 #' @param numFmt Cell formatting
 #' \itemize{
-#'   \item{\bold{GENERAL}}
-#'   \item{\bold{NUMBER}}
-#'   \item{\bold{CURRENCY}}
-#'   \item{\bold{ACCOUNTING}}
-#'   \item{\bold{DATE}}
-#'   \item{\bold{LONGDATE}}
-#'   \item{\bold{TIME}}
-#'   \item{\bold{PERCENTAGE}}
-#'   \item{\bold{FRACTION}}
-#'   \item{\bold{SCIENTIFIC}}
-#'   \item{\bold{TEXT}}
-#'   \item{\bold{COMMA}{  for comma separated thousands}}
+#'   \item{**GENERAL**}
+#'   \item{**NUMBER**}
+#'   \item{**CURRENCY**}
+#'   \item{**ACCOUNTING**}
+#'   \item{**DATE**}
+#'   \item{**LONGDATE**}
+#'   \item{**TIME**}
+#'   \item{**PERCENTAGE**}
+#'   \item{**FRACTION**}
+#'   \item{**SCIENTIFIC**}
+#'   \item{**TEXT**}
+#'   \item{**COMMA**{  for comma separated thousands}}
 #'   \item{For date/datetime styling a combination of d, m, y and punctuation marks}
 #'   \item{For numeric rounding use "0.00" with the preferred number of decimal places}
 #' }
 #'
 #' @param border Cell border. A vector of "top", "bottom", "left", "right" or a single string).
 #' \itemize{
-#'    \item{\bold{none}}{ No border}
-#'    \item{\bold{"top"}}{ Top border}
-#'    \item{\bold{bottom}}{ Bottom border}
-#'    \item{\bold{left}}{ Left border}
-#'    \item{\bold{right}}{ Right border}
-#'    \item{\bold{all}}{ all borders}
+#'    \item{**none**}{ No border}
+#'    \item{**"top"**}{ Top border}
+#'    \item{**bottom**}{ Bottom border}
+#'    \item{**left**}{ Left border}
+#'    \item{**right**}{ Right border}
+#'    \item{**all**}{ all borders}
 #'   }
 #'
 #' @param borderColour Colour of cell border vector the same length as the number of sides specified in "border"
@@ -402,56 +402,56 @@ new_style <- function() {
 #'
 #' @param borderStyle Border line style vector the same length as the number of sides specified in "border"
 #' \itemize{
-#'    \item{\bold{none}}{ No Border}
-#'    \item{\bold{thin}}{ thin border}
-#'    \item{\bold{medium}}{ medium border}
-#'    \item{\bold{dashed}}{ dashed border}
-#'    \item{\bold{dotted}}{ dotted border}
-#'    \item{\bold{thick}}{ thick border}
-#'    \item{\bold{double}}{ double line border}
-#'    \item{\bold{hair}}{ Hairline border}
-#'    \item{\bold{mediumDashed}}{ medium weight dashed border}
-#'    \item{\bold{dashDot}}{ dash-dot border}
-#'    \item{\bold{mediumDashDot}}{ medium weight dash-dot border}
-#'    \item{\bold{dashDotDot}}{ dash-dot-dot border}
-#'    \item{\bold{mediumDashDotDot}}{ medium weight dash-dot-dot border}
-#'    \item{\bold{slantDashDot}}{ slanted dash-dot border}
+#'    \item{**none**}{ No Border}
+#'    \item{**thin**}{ thin border}
+#'    \item{**medium**}{ medium border}
+#'    \item{**dashed**}{ dashed border}
+#'    \item{**dotted**}{ dotted border}
+#'    \item{**thick**}{ thick border}
+#'    \item{**double**}{ double line border}
+#'    \item{**hair**}{ Hairline border}
+#'    \item{**mediumDashed**}{ medium weight dashed border}
+#'    \item{**dashDot**}{ dash-dot border}
+#'    \item{**mediumDashDot**}{ medium weight dash-dot border}
+#'    \item{**dashDotDot**}{ dash-dot-dot border}
+#'    \item{**mediumDashDotDot**}{ medium weight dash-dot-dot border}
+#'    \item{**slantDashDot**}{ slanted dash-dot border}
 #'   }
 #'
 #' @param bgFill Cell background fill colour.
 #' A valid colour (belonging to colours()) or a valid hex colour beginning with "#".
-#' --  \bold{Use for conditional formatting styles only.}
+#' --  **Use for conditional formatting styles only.**
 #' @param fgFill Cell foreground fill colour.
 #' A valid colour (belonging to colours()) or a valid hex colour beginning with "#"
 #'
 #' @param halign
 #' Horizontal alignment of cell contents
 #' \itemize{
-#'    \item{\bold{left}}{ Left horizontal align cell contents}
-#'    \item{\bold{right}}{ Right horizontal align cell contents}
-#'    \item{\bold{center}}{ Center horizontal align cell contents}
+#'    \item{**left**}{ Left horizontal align cell contents}
+#'    \item{**right**}{ Right horizontal align cell contents}
+#'    \item{**center**}{ Center horizontal align cell contents}
 #'   }
 #'
 #' @param valign A name
 #' Vertical alignment of cell contents
 #' \itemize{
-#'    \item{\bold{top}}{ Top vertical align cell contents}
-#'    \item{\bold{center}}{ Center vertical align cell contents}
-#'    \item{\bold{bottom}}{ Bottom vertical align cell contents}
+#'    \item{**top**}{ Top vertical align cell contents}
+#'    \item{**center**}{ Center vertical align cell contents}
+#'    \item{**bottom**}{ Bottom vertical align cell contents}
 #'   }
 #'
 #' @param textDecoration
 #' Text styling.
 #' \itemize{
-#'    \item{\bold{none}}{ No cell contents}
-#'    \item{\bold{bold}}{ Bold cell contents}
-#'    \item{\bold{strikeout}}{ Strikeout cell contents}
-#'    \item{\bold{italic}}{ Italicise cell contents}
-#'    \item{\bold{underline}}{ Underline cell contents}
-#'    \item{\bold{underline2}}{ Double underline cell contents}
+#'    \item{**none**}{ No cell contents}
+#'    \item{**bold**}{ Bold cell contents}
+#'    \item{**strikeout**}{ Strikeout cell contents}
+#'    \item{**italic**}{ Italicise cell contents}
+#'    \item{**underline**}{ Underline cell contents}
+#'    \item{**underline2**}{ Double underline cell contents}
 #'   }
 #'
-#' @param wrapText Logical. If \code{TRUE} cell contents will wrap to fit in column.
+#' @param wrapText Logical. If `TRUE` cell contents will wrap to fit in column.
 #' @param textRotation Rotation of text in degrees. 255 for vertical text.
 #' @param indent Horizontal indentation of cell contents.
 #' @param hidden Whether the formula of the cell contents will be hidden (if worksheet protection is turned on)

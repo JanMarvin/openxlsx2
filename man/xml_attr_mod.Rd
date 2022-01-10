@@ -17,9 +17,9 @@ the argutments of each first child found in the xml node and adds or updates
 the attribute vector.
 }
 \details{
-If a named attribute in `xml_attributes` is "" remove the attribute
+If a named attribute in \code{xml_attributes} is "" remove the attribute
 from the node.
-If `xml_attributes` contains a named entry found in the xml node, it is
+If \code{xml_attributes} contains a named entry found in the xml node, it is
 updated else it is added as attribute.
 }
 \examples{

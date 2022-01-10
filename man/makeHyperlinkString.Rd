@@ -88,5 +88,5 @@ saveWorkbook(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 
 }
 \seealso{
-\code{\link{writeFormula}}
+\code{\link[=writeFormula]{writeFormula()}}
 }
