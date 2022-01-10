@@ -1334,9 +1334,12 @@ Workbook <- setRefClass(
         totalsRowShown="0"
       )
 
-      .self$tables <- xml_node_create(xml_name = "table",
-                                      xml_children = c(autofilter, tableColumn, tableStyleXML),
-                                      xml_attributes = table_attrs)
+      .self$tables <- c(
+        .self$tables,
+        xml_node_create(xml_name = "table",
+                        xml_children = c(autofilter, tableColumn, tableStyleXML),
+                        xml_attributes = table_attrs)
+      )
 
       names(.self$tables) <- c(nms, ref)
       attr(.self$tables, "sheet") <- c(tSheets, sheet)
