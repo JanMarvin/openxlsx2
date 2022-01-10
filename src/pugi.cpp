@@ -310,31 +310,33 @@ SEXP getXMLXPtr5val(XPtrXML doc, std::string level1, std::string level2, std::st
 // [[Rcpp::export]]
 SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
 
+  auto children = doc->children(child.c_str());
 
-  pugi::xml_node worksheet = doc->child(child.c_str());
-  size_t n = std::distance(worksheet.begin(), worksheet.end());
+  size_t n = std::distance(children.begin(),
+                           children.end());
 
   // for a childless single line node the distance might be zero
   if (n == 0) n++;
-
   Rcpp::List z(n);
 
   auto itr = 0;
+  for (auto child : children) {
 
-  Rcpp::CharacterVector res;
-  std::vector<std::string> nam;
+    Rcpp::CharacterVector res;
+    std::vector<std::string> nam;
 
-  for (auto attrs : worksheet.attributes())
-  {
-    nam.push_back(attrs.name());
-    res.push_back(attrs.value());
+    for (auto attrs : child.attributes())
+    {
+      nam.push_back(attrs.name());
+      res.push_back(attrs.value());
+    }
+
+    // assign names
+    res.attr("names") = nam;
+
+    z[itr] = res;
+    ++itr;
   }
-
-  // assign names
-  res.attr("names") = nam;
-
-  z[itr] = res;
-  ++itr;
 
   return  Rcpp::wrap(z);
 }
@@ -347,12 +349,12 @@ Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child) {
   Rcpp::List z(n);
 
   auto itr = 0;
-  for (auto ws : doc->child(level1.c_str()).children(child.c_str()))
+  for (auto ws : worksheet)
   {
 
     auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
 
-    Rcpp::List res(n);
+    Rcpp::CharacterVector res(n);
     Rcpp::CharacterVector nam(n);
 
     auto attr_itr = 0;
@@ -381,12 +383,12 @@ SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::s
   Rcpp::List z(n);
 
   auto itr = 0;
-  for (auto ws : doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str()))
+  for (auto ws : worksheet)
   {
 
     auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
 
-    Rcpp::List res(n);
+    Rcpp::CharacterVector res(n);
     Rcpp::CharacterVector nam(n);
 
     auto attr_itr = 0;
