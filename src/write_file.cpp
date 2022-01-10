@@ -184,29 +184,3 @@ SEXP write_worksheet_xml_2( std::string prior,
   return Rcpp::wrap(0);
 
 }
-
-
-// [[Rcpp::export]]
-Rcpp::CharacterVector build_table_xml(std::string table, std::string tableStyleXML, std::string ref, std::vector<std::string> colNames, bool showColNames, bool withFilter){
-
-  int n = colNames.size();
-  std::string tableCols;
-  table += " totalsRowShown=\"0\">";
-
-  if(withFilter)
-    table += "<autoFilter ref=\"" + ref + "\"/>";
-
-
-  for(int i = 0; i < n; i ++){
-    tableCols += "<tableColumn id=\"" + itos(i+1) + "\" name=\"" + colNames[i] + "\"/>";
-  }
-
-  tableCols = "<tableColumns count=\"" + itos(n) + "\">" + tableCols + "</tableColumns>";
-
-  table = table + tableCols + tableStyleXML + "</table>";
-
-
-  Rcpp::CharacterVector out = Rcpp::wrap(table);
-  return markUTF8(out);
-
-}

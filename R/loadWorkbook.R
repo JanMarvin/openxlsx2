@@ -121,8 +121,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## core
   if (length(coreXML) == 1) {
-    coreXML <- paste(readUTF8(coreXML), collapse = "")
-    wb$core <- removeHeadTag(x = coreXML)
+    wb$core <- read_xml(coreXML, pointer = FALSE)
   }
 
   nSheets <- length(worksheetsXML) + length(chartSheetsXML)
@@ -165,29 +164,27 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     # wb$workbook$extLst <- getXML2(workbook_xml, "workbook", "extLst")
 
     sheets <- xml_node(workbook_xml, "workbook", "sheets", "sheet")
+    sheets <- xml_attribute(sheets, "sheet")
+    sheets <- rbindlist(sheets)
 
     ## Some veryHidden sheets do not have a sheet content and their rId is empty.
     ## Such sheets need to be filtered out because otherwise their sheet names
     ## occur in the list of all sheet names, leading to a wrong association
     ## of sheet names with sheet indeces.
-    sheets <- grep('r:id="[[:blank:]]*"', sheets, invert = TRUE, value = TRUE)
+    sheets <- sheets[sheets$`r:id` != "",]
 
 
     ## sheetId is meaningless
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
 
-    sheetrId <- unlist(getRId(sheets))
-    sheetId <- unlist(regmatches(sheets, gregexpr('(?<=sheetId=")[0-9]+', sheets, perl = TRUE)))
-    sheetNames <- unlist(regmatches(sheets, gregexpr('(?<=name=")[^"]+', sheets, perl = TRUE)))
-    sheetNames <- replaceXMLEntities(sheetNames)
-
+    sheetrId <- sheets$`r:id`
+    sheetId <- sheets$sheetId
+    sheetNames <- sheets$name
 
     is_chart_sheet <- sheetrId %in% chartSheetRIds
-    is_visible <- !grepl("hidden", unlist(strsplit(sheets, split = "<sheet ")[-1]))
-    if (length(is_visible) != length(sheetrId)) {
-      is_visible <- rep(TRUE, length(sheetrId))
-    }
+    if (is.null(sheets$state)) sheets$state <- "visible"
+    is_visible <- sheets$state == "visible"
 
     ## add worksheets to wb
     j <- 1
@@ -290,7 +287,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     pivot_content_type <- NULL
 
     if (length(pivotTableRelsXML)) {
-      wb$pivotTables.xml.rels <- unlist(lapply(pivotTableRelsXML, function(x) removeHeadTag(cppReadFile(x))))
+      wb$pivotTables.xml.rels <- unlist(lapply(pivotTableRelsXML, read_xml, pointer = FALSE)) 
     }
 
 
@@ -434,13 +431,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## xl\theme
   if (length(themeXML)) {
-    wb$theme <- removeHeadTag(paste(unlist(lapply(sort(themeXML)[[1]], readUTF8)), collapse = ""))
+    wb$theme <- read_xml(themeXML, pointer = FALSE)
   }
 
 
   ## externalLinks
   if (length(extLinksXML)) {
-    wb$externalLinks <- lapply(sort(extLinksXML), function(x) removeHeadTag(cppReadFile(x)))
+    wb$externalLinks <- lapply(sort(extLinksXML), read_xml, pointer = FALSE)
 
     wb$Content_Types <- c(
       wb$Content_Types,
@@ -455,7 +452,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## externalLinksRels
   if (length(extLinksRelsXML)) {
-    wb$externalLinksRels <- lapply(sort(extLinksRelsXML), function(x) removeHeadTag(cppReadFile(x)))
+    wb$externalLinksRels <- lapply(sort(extLinksRelsXML), read_xml, pointer = FALSE)
   }
 
 
@@ -508,6 +505,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   }
 
   ## Fix headers/footers
+  # TODO wb$worksheets[[i]]$headerFooter is currently not imported
   for (i in seq_along(worksheetsXML)) {
     if (!is_chart_sheet[i]) {
       if (length(wb$worksheets[[i]]$headerFooter)) {
@@ -620,7 +618,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       ## ---- slicerCaches
       inds <- seq_along(slicerCachesXML)
       wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds))
-      wb$slicerCaches <- sapply(slicerCachesXML[order(nchar(slicerCachesXML), slicerCachesXML)], function(x) removeHeadTag(cppReadFile(x)))
+      wb$slicerCaches <- sapply(slicerCachesXML[order(nchar(slicerCachesXML), slicerCachesXML)], read_xml, pointer = FALSE)
       wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds, inds))
       wb$workbook$extLst <- c(wb$workbook$extLst, genSlicerCachesExtLst(1E5 + inds))
     }
@@ -656,7 +654,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
         tablesXML <- tablesXML[sprintf("table%s.xml", unlist(tables))]
 
         ## tables are now in correct order so we can read them in as they are
-        wb$tables <- sapply(tablesXML, function(x) removeHeadTag(paste(readUTF8(x), collapse = "")))
+        wb$tables <- sapply(tablesXML, read_xml, pointer = FALSE)
 
         ## pull out refs and attach names
         refs <- regmatches(wb$tables, regexpr('(?<=ref=")[0-9A-Z:]+', wb$tables, perl = TRUE))
@@ -727,15 +725,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
 
     if (length(drawingRelsXML)) {
-      dRels <- lapply(drawingRelsXML, readUTF8)
-      dRels <- unlist(lapply(dRels, removeHeadTag))
+      dRels <- lapply(drawingRelsXML, read_xml, pointer = FALSE)
+      # TODO lapply xml_node Relationships?
       dRels <- gsub("<Relationships .*?>", "", dRels)
       dRels <- gsub("</Relationships>", "", dRels)
     }
 
     if (length(drawingsXML)) {
-      dXML <- lapply(drawingsXML, readUTF8)
-      dXML <- unlist(lapply(dXML, removeHeadTag))
+      dXML <- lapply(drawingsXML, read_xml, pointer = FALSE)
       # this creates crippled drawings files
       dXML <- gsub("<xdr:wsDr .*?>", "", dXML)
       dXML <- gsub("</xdr:wsDr>", "", dXML)
@@ -804,8 +801,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             ind <- grepl(target, vmlDrawingXML)
 
             if (any(ind)) {
-              txt <- paste(readUTF8(vmlDrawingXML[ind]), collapse = "\n")
-              txt <- removeHeadTag(txt)
+              txt <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
 
               i1 <- regexpr("<v:shapetype", txt, fixed = TRUE)
               i2 <- regexpr("</xml>", txt, fixed = TRUE)
@@ -834,21 +830,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       com_rId <- vector("list", length(commentsrelXML))
       names(com_rId) <- commentsrelXML
       for (com_rel in commentsrelXML) {
-        # TODO: I do not get this, why does this work with the print and not without it?
         rel_xml <- read_xml(com_rel)
-        attrs <- getXMLXPtr2attr(rel_xml, "Relationships", "Relationship")
-        #print(attrs)
-        #rels <- getXMLXPtr2(rel_xml, "Relationships", "Relationship")
-        #print(rels)
-        #attrs <- getXMLattr(rels, "Relationship")
-        #print(attrs)
-        # commentID <- sapply(attrs, FUN= function(x)any(grepl(x, pattern = "comments")))
-        # s <- unlist(attrs[commentID])
-        attrs <- as.data.frame(do.call("rbind", attrs))
-        # print(attrs)
-        com_rId[[com_rel]] <- attrs
+        attrs <- xml_attribute(rel_xml, "Relationships", "Relationship")
+        rel <- rbindlist(attrs)
+        com_rId[[com_rel]] <- rel
       }
-      com_rId <<- com_rId
+
       drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing[0-9]+\\.vml", x, value = TRUE))
       hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
 
@@ -862,8 +849,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
           ind <- grepl(target, vmlDrawingXML)
 
           if (any(ind)) {
-            txt <- paste(readUTF8(vmlDrawingXML[ind]), collapse = "\n")
-            txt <- removeHeadTag(txt)
+            txt <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
 
             cd <- unique(xml_node(txt, "xml", "*", "x:ClientData"))
             cd <- grep('ObjectType="Note"', cd, value = TRUE)
@@ -873,8 +859,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             target <- unlist(lapply(commentXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
             target <- basename(gsub('"$', "", target))
 
-            # txt <- paste(readUTF8(grep(target, commentsXML, value = TRUE)), collapse = "\n")
-            # txt <- removeHeadTag(txt)
             txt <- read_xml(grep(target, commentsXML, value = TRUE))
 
 
@@ -1039,7 +1023,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## queryTables
   if (length(queryTablesXML) > 0) {
     ids <- as.numeric(regmatches(queryTablesXML, regexpr("[0-9]+(?=\\.xml)", queryTablesXML, perl = TRUE)))
-    wb$queryTables <- unlist(lapply(queryTablesXML[order(ids)], function(x) removeHeadTag(cppReadFile(xmlFile = x))))
+    wb$queryTables <- unlist(lapply(queryTablesXML[order(ids)], read_xml, pointer = FALSE))
     wb$Content_Types <- c(
       wb$Content_Types,
       sprintf('<Override PartName="/xl/queryTables/queryTable%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.queryTable+xml"/>', seq_along(queryTablesXML))
@@ -1049,7 +1033,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## connections
   if (length(connectionsXML) > 0) {
-    wb$connections <- removeHeadTag(cppReadFile(xmlFile = connectionsXML))
+    wb$connections <- read_xml(connectionsXML, pointer = FALSE)
     wb$workbook.xml.rels <- c(wb$workbook.xml.rels, '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/connections" Target="connections.xml"/>')
     wb$Content_Types <- c(wb$Content_Types, '<Override PartName="/xl/connections.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.connections+xml"/>')
   }
@@ -1073,8 +1057,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     wb$tables.xml.rels <- character(length = length(tablesXML))
 
     ## which sheet does it belong to
-    xml <- sapply(tableRelsXML, cppReadFile, USE.NAMES = FALSE)
-    xml <- sapply(xml, removeHeadTag, USE.NAMES = FALSE)
+    xml <- sapply(tableRelsXML, read_xml, pointer = FALSE)
 
     wb$tables.xml.rels[hasRels] <- xml
   } else if (length(tablesXML) > 0) {
