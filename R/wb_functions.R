@@ -854,7 +854,8 @@ writeData2 <-function(wb, sheet, data,
 
     # update a few styles informations
     wb$styles$numFmts <- character()
-    wb$styles$cellXfs <- "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"
+    if (is.null(wb$styles$cellXfs))
+      wb$styles$cellXfs <- "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"
     wb$styles$dxfs <- character()
 
     # now the cc dataframe is similar to an imported cc dataframe. to save the
