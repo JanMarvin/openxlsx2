@@ -248,13 +248,13 @@ sheets <- function(wb) {
 #' @param vdpi Vertical DPI. Can be set with options("openxlsx.dpi" = X) or options("openxlsx.vdpi" = X)
 #' @details Headers and footers can contain special tags
 #' \itemize{
-#'   \item{**&[Page]**}{ Page number}
-#'   \item{**&[Pages]**}{ Number of pages}
-#'   \item{**&[Date]**}{ Current date}
-#'   \item{**&[Time]**}{ Current time}
-#'   \item{**&[Path]**}{ File path}
-#'   \item{**&[File]**}{ File name}
-#'   \item{**&[Tab]**}{ Worksheet name}
+#'   \item{**&\[Page\]**}{ Page number}
+#'   \item{**&\[Pages\]**}{ Number of pages}
+#'   \item{**&\[Date\]**}{ Current date}
+#'   \item{**&\[Time\]**}{ Current time}
+#'   \item{**&\[Path\]**}{ File path}
+#'   \item{**&\[File\]**}{ File name}
+#'   \item{**&\[Tab\]**}{ Worksheet name}
 #' }
 #' @return XML tree
 #' @export
@@ -1256,13 +1256,13 @@ getBaseFont <- function(wb) {
 #' @param firstFooter document footer for first page only.
 #' @details Headers and footers can contain special tags
 #' \itemize{
-#'   \item{**&[Page]**}{ Page number}
-#'   \item{**&[Pages]**}{ Number of pages}
-#'   \item{**&[Date]**}{ Current date}
-#'   \item{**&[Time]**}{ Current time}
-#'   \item{**&[Path]**}{ File path}
-#'   \item{**&[File]**}{ File name}
-#'   \item{**&[Tab]**}{ Worksheet name}
+#'   \item{**&\[Page\]**}{ Page number}
+#'   \item{**&\[Pages\]**}{ Number of pages}
+#'   \item{**&\[Date\]**}{ Current date}
+#'   \item{**&\[Time\]**}{ Current time}
+#'   \item{**&\[Path\]**}{ File path}
+#'   \item{**&\[File\]**}{ File name}
+#'   \item{**&\[Tab\]**}{ Worksheet name}
 #' }
 #' @export
 #' @seealso [addWorksheet()] to set headers and footers when adding a worksheet
