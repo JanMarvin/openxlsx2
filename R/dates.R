@@ -5,7 +5,7 @@
 #' @param origin date. Default value is for Windows Excel 2010
 #' @param ... additional parameters passed to as.Date()
 #' @details Excel stores dates as number of days from some origin day
-#' @seealso \code{\link{writeData}}
+#' @seealso [writeData()]
 #' @export
 #' @examples
 #' ## 2014 April 21st to 25th
@@ -72,9 +72,9 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' @author Alexander Walker
 #' @param xlsxFile An xlsx or xlsm file.
 #' @details Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
-#' checks the date origin being used in an Excel file and returns is so it can be used in \code{\link{convertToDate}}
+#' checks the date origin being used in an Excel file and returns is so it can be used in [convertToDate()]
 #' @return One of "1900-01-01" or "1904-01-01".
-#' @seealso \code{\link{convertToDate}}
+#' @seealso [convertToDate()]
 #' @examples
 #'
 #' ## create a file with some dates
