@@ -164,29 +164,27 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     # wb$workbook$extLst <- getXML2(workbook_xml, "workbook", "extLst")
 
     sheets <- xml_node(workbook_xml, "workbook", "sheets", "sheet")
+    sheets <- xml_attribute(sheets, "sheet")
+    sheets <- rbindlist(sheets)
 
     ## Some veryHidden sheets do not have a sheet content and their rId is empty.
     ## Such sheets need to be filtered out because otherwise their sheet names
     ## occur in the list of all sheet names, leading to a wrong association
     ## of sheet names with sheet indeces.
-    sheets <- grep('r:id="[[:blank:]]*"', sheets, invert = TRUE, value = TRUE)
+    sheets <- sheets[sheets$`r:id` != "",]
 
 
     ## sheetId is meaningless
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
 
-    sheetrId <- unlist(getRId(sheets))
-    sheetId <- unlist(regmatches(sheets, gregexpr('(?<=sheetId=")[0-9]+', sheets, perl = TRUE)))
-    sheetNames <- unlist(regmatches(sheets, gregexpr('(?<=name=")[^"]+', sheets, perl = TRUE)))
-    sheetNames <- replaceXMLEntities(sheetNames)
-
+    sheetrId <- sheets$`r:id`
+    sheetId <- sheets$sheetId
+    sheetNames <- sheets$name
 
     is_chart_sheet <- sheetrId %in% chartSheetRIds
-    is_visible <- !grepl("hidden", unlist(strsplit(sheets, split = "<sheet ")[-1]))
-    if (length(is_visible) != length(sheetrId)) {
-      is_visible <- rep(TRUE, length(sheetrId))
-    }
+    if (is.null(sheets$state)) sheets$state <- "visible"
+    is_visible <- sheets$state == "visible"
 
     ## add worksheets to wb
     j <- 1
