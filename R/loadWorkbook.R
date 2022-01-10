@@ -505,6 +505,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   }
 
   ## Fix headers/footers
+  # TODO wb$worksheets[[i]]$headerFooter is currently not imported
   for (i in seq_along(worksheetsXML)) {
     if (!is_chart_sheet[i]) {
       if (length(wb$worksheets[[i]]$headerFooter)) {
@@ -829,21 +830,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       com_rId <- vector("list", length(commentsrelXML))
       names(com_rId) <- commentsrelXML
       for (com_rel in commentsrelXML) {
-        # TODO: I do not get this, why does this work with the print and not without it?
         rel_xml <- read_xml(com_rel)
-        attrs <- getXMLXPtr2attr(rel_xml, "Relationships", "Relationship")
-        #print(attrs)
-        #rels <- getXMLXPtr2(rel_xml, "Relationships", "Relationship")
-        #print(rels)
-        #attrs <- getXMLattr(rels, "Relationship")
-        #print(attrs)
-        # commentID <- sapply(attrs, FUN= function(x)any(grepl(x, pattern = "comments")))
-        # s <- unlist(attrs[commentID])
-        attrs <- as.data.frame(do.call("rbind", attrs))
-        # print(attrs)
-        com_rId[[com_rel]] <- attrs
+        attrs <- xml_attribute(rel_xml, "Relationships", "Relationship")
+        rel <- rbindlist(attrs)
+        com_rId[[com_rel]] <- rel
       }
-      com_rId <<- com_rId
+
       drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing[0-9]+\\.vml", x, value = TRUE))
       hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
 
