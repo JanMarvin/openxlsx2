@@ -190,18 +190,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// markUTF8
-Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone);
-RcppExport SEXP _openxlsx2_markUTF8(SEXP xSEXP, SEXP cloneSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< bool >::type clone(cloneSEXP);
-    rcpp_result_gen = Rcpp::wrap(markUTF8(x, clone));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rbindlist
 SEXP rbindlist(Rcpp::List x);
 RcppExport SEXP _openxlsx2_rbindlist(SEXP xSEXP) {
@@ -954,22 +942,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// build_table_xml
-Rcpp::CharacterVector build_table_xml(std::string table, std::string tableStyleXML, std::string ref, std::vector<std::string> colNames, bool showColNames, bool withFilter);
-RcppExport SEXP _openxlsx2_build_table_xml(SEXP tableSEXP, SEXP tableStyleXMLSEXP, SEXP refSEXP, SEXP colNamesSEXP, SEXP showColNamesSEXP, SEXP withFilterSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type table(tableSEXP);
-    Rcpp::traits::input_parameter< std::string >::type tableStyleXML(tableStyleXMLSEXP);
-    Rcpp::traits::input_parameter< std::string >::type ref(refSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type colNames(colNamesSEXP);
-    Rcpp::traits::input_parameter< bool >::type showColNames(showColNamesSEXP);
-    Rcpp::traits::input_parameter< bool >::type withFilter(withFilterSEXP);
-    rcpp_result_gen = Rcpp::wrap(build_table_xml(table, tableStyleXML, ref, colNames, showColNames, withFilter));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 3},
@@ -986,7 +958,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_convert_from_excel_ref", (DL_FUNC) &_openxlsx2_convert_from_excel_ref, 1},
     {"_openxlsx2_convert_to_excel_ref_expand", (DL_FUNC) &_openxlsx2_convert_to_excel_ref_expand, 3},
     {"_openxlsx2_get_letters", (DL_FUNC) &_openxlsx2_get_letters, 0},
-    {"_openxlsx2_markUTF8", (DL_FUNC) &_openxlsx2_markUTF8, 2},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_col", (DL_FUNC) &_openxlsx2_df_to_col, 1},
@@ -1048,7 +1019,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 3},
     {"_openxlsx2_write_worksheet_xml_2", (DL_FUNC) &_openxlsx2_write_worksheet_xml_2, 5},
-    {"_openxlsx2_build_table_xml", (DL_FUNC) &_openxlsx2_build_table_xml, 6},
     {NULL, NULL, 0}
 };
 

@@ -1287,52 +1287,57 @@ Workbook <- setRefClass(
       showLastColumn = 0,
       showRowStripes = 1,
       showColumnStripes = 0) {
+
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
       id <- as.character(length(.self$tables) + 3L)
       sheet <- .self$validateSheet(sheet)
-
-      ## build table XML and save to tables field
-      table <-
-        sprintf(
-          '<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="%s" name="%s" displayName="%s" ref="%s" totalsRowCount="%s"',
-          id,
-          tableName,
-          tableName,
-          ref,
-          # TODO force as.integer() for all values
-          as.integer(totalsRowCount)
-        )
-      # because tableName might be native encoded non-ASCII strings, we need to ensure
-      # it's UTF-8 encoded
-      table <- enc2utf8(table)
 
       nms <- names(.self$tables)
       tSheets <- attr(.self$tables, "sheet")
       tNames <- attr(.self$tables, "tableName")
 
-      tableStyleXML <-
-        sprintf(
-          '<tableStyleInfo name="%s" showFirstColumn="%s" showLastColumn="%s" showRowStripes="%s" showColumnStripes="%s"/>',
-          tableStyle,
-          as.integer(showFirstColumn),
-          as.integer(showLastColumn),
-          as.integer(showRowStripes),
-          as.integer(showColumnStripes)
-        )
+
+      ### autofilter
+      autofilter <- ifelse(withFilter, xml_node_create(xml_name = "autofilter", xml_attributes = c(ref = ref)), NULL)
+
+      ### tableColumn
+      tableColumn <- sapply(colNames, function(x) {
+        id <- which(colNames %in% x)
+        xml_node_create("tableColumn", xml_attributes = c(id = 1, name = x))
+      })
+
+      tableColumns <- xml_node_create(xml_name = "tableColumns",
+                                      xml_children = tableColumn,
+                                      xml_attributes = c(count = as.character(length(colNames))))
 
 
-      .self$tables <-
-        c(
-          .self$tables,
-          build_table_xml(
-            table = table,
-            tableStyleXML = tableStyleXML,
-            ref = ref,
-            colNames = gsub("\n|\r", "_x000a_", colNames),
-            showColNames = showColNames,
-            withFilter = withFilter
-          )
-        )
+      ### tableStyleInfo
+      tablestyle_attr <- c(
+        name = tableStyle,
+        showFirstColumn = as.integer(showFirstColumn),
+        showLastColumn = as.integer(showLastColumn),
+        showRowStripes = as.integer(showRowStripes),
+        showColumnStripes = as.integer(showColumnStripes)
+      )
+
+      tableStyleXML <- xml_node_create(xml_name = "tableStyleInfo", xml_attributes = tablestyle_attr)
+
+
+      ### full table
+      table_attrs <- c(
+        xmlns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+        id = id,
+        name = tableName,
+        displayname = tableName,
+        ref = ref,
+        totalsRowCount = totalsRowCount,
+        totalsRowShown="0"
+      )
+
+      .self$tables <- xml_node_create(xml_name = "table",
+                                      xml_children = c(autofilter, tableColumn, tableStyleXML),
+                                      xml_attributes = table_attrs)
+
       names(.self$tables) <- c(nms, ref)
       attr(.self$tables, "sheet") <- c(tSheets, sheet)
       attr(.self$tables, "tableName") <- c(tNames, tableName)

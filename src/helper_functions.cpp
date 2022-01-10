@@ -175,15 +175,6 @@ SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector
   
 }
 
-std::string itos(int i){
-  
-  // convert int to string
-  std::stringstream s;
-  s << i;
-  return s.str();
-  
-}
-
 // [[Rcpp::export]]
 std::vector<std::string> get_letters(){
   
@@ -220,21 +211,6 @@ std::vector<std::string> get_letters(){
   
 }
 
-
-// [[Rcpp::export]]
-Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone) {
-  Rcpp::CharacterVector out;
-  if (clone) {
-    out = Rcpp::clone(x);
-  } else {
-    out = x;
-  }
-  const size_t n = x.size();
-  for (size_t i = 0; i < n; ++i) {
-    out[i] = Rf_mkCharCE(x[i], CE_UTF8);
-  }
-  return out;
-}
 
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]

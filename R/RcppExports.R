@@ -57,10 +57,6 @@ get_letters <- function() {
     .Call(`_openxlsx2_get_letters`)
 }
 
-markUTF8 <- function(x, clone) {
-    .Call(`_openxlsx2_markUTF8`, x, clone)
-}
-
 rbindlist <- function(x) {
     .Call(`_openxlsx2_rbindlist`, x)
 }
@@ -362,9 +358,5 @@ set_row <- function(row_attr, cells, row_idx) {
 
 write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
     .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, R_fileName)
-}
-
-build_table_xml <- function(table, tableStyleXML, ref, colNames, showColNames, withFilter) {
-    .Call(`_openxlsx2_build_table_xml`, table, tableStyleXML, ref, colNames, showColNames, withFilter)
 }
 

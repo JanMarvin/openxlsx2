@@ -18,11 +18,4 @@ SEXP calc_column_widths(Rcpp::Reference sheet_data, std::vector<std::string> sha
 
 SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector<std::string>& LETTERS, const std::vector<std::string>& rows);
 
-Rcpp::CharacterVector build_table_xml(std::string table, std::string ref, std::vector<std::string> colNames, bool showColNames, std::string tableStyle, bool withFilter);
-
-
-// helper functions
-std::string itos(int i);
-Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone = false);
-
 std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx);
