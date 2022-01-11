@@ -280,17 +280,18 @@ wb_to_df <- function(xlsxFile,
     return (NULL);
   }
 
-  # Should be available, but is optional according to openxml-2.8.1. Still some
-  # third party applications are known to require it. Maybe make using
-  # dimensions an optional parameter?
-  if (missing(dims))
-    dims <- getXML1attr_one(wb$worksheets[[sheet]]$dimension,
-      "dimension",
-      "ref")
+  # # Should be available, but is optional according to openxml-2.8.1. Still some
+  # # third party applications are known to require it. Maybe make using
+  # # dimensions an optional parameter?
+  # if (missing(dims))
+  #   dims <- getXML1attr_one(wb$worksheets[[sheet]]$dimension,
+  #                           "dimension",
+  #                           "ref")
 
   # If no dims are requested via definedName, simply construct them from min
   # and max columns and row found on worksheet
-  if (missing(definedName)) {
+  # in theory it could be useful to have both definedName and dims?
+  if (missing(definedName) & missing(dims)) {
 
     sd <- wb$worksheets[[sheet]]$sheet_data$cc[c("row_r", "c_r")]
     sd$row <- as.integer(sd$row_r)
