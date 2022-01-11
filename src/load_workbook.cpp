@@ -135,6 +135,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
   // <row ...>
   auto itr = 0;
   for (auto row : ws.children("row")) {
+    bool has_rowname = false;
     for (auto attrs : row.attributes()) {
 
       Rcpp::CharacterVector attr_name = attrs.name();
@@ -150,8 +151,18 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+        if (attr_name[0] == "r") has_rowname = true;
       }
 
+    }
+
+    // some files have no row name in this case, we add one
+    if (!has_rowname) {
+      Rcpp::CharacterVector attr_name = {"r"};
+      Rcpp::IntegerVector mtc = Rcpp::match(row_nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+      size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+      Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = std::to_string(itr + 1);
     }
 
     // rownames as character vectors matching to <c s= ...>
@@ -257,12 +268,14 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
         ++attr_itr;
       }
-      // some files have no colnames. This used to work, check again
+      // some files have no colnames. in this case we need to add c_r and row_r
+      // if the file provides dimensions, they could be fixed later
       if (!has_colname) {
         Rcpp::IntegerVector itr_vec(1);
         itr_vec[0] = itr_cols +1;
         std::string tmp_colname= Rcpp::as<std::string>(int_2_cell_ref(itr_vec));
         single_xml_col.c_r = tmp_colname;
+        single_xml_col.row_r = std::to_string(itr_rows + 1);
       }
 
       // val ------------------------------------------------------------------
