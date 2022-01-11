@@ -960,11 +960,19 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
   merged_style <- merge(org_style, new_style, all = TRUE)
   merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
 
+  # TODO order this as well?
   wb$worksheets[[id_new]]$sheet_data$cc <- merged_style
 
   # copy entire attributes from original sheet to new sheet
-  wb$worksheets[[id_new]]$sheet_data$row_attr <-
-    wb$worksheets[[id_org]]$sheet_data$row_attr
+  org_rows <- wb$worksheets[[id_org]]$sheet_data$row_attr
+  new_rows <- wb$worksheets[[id_new]]$sheet_data$row_attr
+
+  merged_rows <- merge(org_rows[c("r")], new_rows, all = TRUE)
+  merged_rows[is.na(merged_rows)] <- ""
+  ordr <- ordered(order(as.integer(merged_rows$r)))
+  merged_rows <- merged_rows[ordr,]
+
+  wb$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
 
   wb$worksheets[[id_new]]$cols_attr <-
     wb$worksheets[[id_org]]$cols_attr
