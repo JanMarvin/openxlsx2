@@ -273,11 +273,33 @@ wb_to_df <- function(xlsxFile,
   if (is.character(sheet))
     sheet <- wb$validateSheet(sheet)
 
-  # must be available
+  # the sheet has no data
+  if (class(wb$worksheets[[sheet]]$sheet_data$cc) == "uninitializedField") {
+    # TODO do we need more checks or do we need to initialize a new cc object?
+    message("sheet found, but contains no data")
+    return (NULL);
+  }
+
+  # Should be available, but is optional according to openxml-2.8.1. Still some
+  # third party applications are known to require it. Maybe make using
+  # dimensions an optional parameter?
   if (missing(dims))
     dims <- getXML1attr_one(wb$worksheets[[sheet]]$dimension,
       "dimension",
       "ref")
+
+  # If no dims are requested via definedName, simply construct them from min
+  # and max columns and row found on worksheet
+  if (missing(definedName)) {
+
+    sd <- wb$worksheets[[sheet]]$sheet_data$cc[c("row_r", "c_r")]
+    sd$row <- as.integer(sd$row_r)
+    sd$col <- col2int(sd$c_r)
+
+    dims <- paste0(int2col(min(sd$col)), min(sd$row), ":",
+                   int2col(max(sd$col)), max(sd$row))
+
+  }
 
   row_attr  <- wb$worksheets[[sheet]]$sheet_data$row_attr
   cc  <- wb$worksheets[[sheet]]$sheet_data$cc
