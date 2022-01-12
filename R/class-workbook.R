@@ -1299,7 +1299,7 @@ Workbook <- setRefClass(
 
       ### autofilter
       autofilter <- if (withFilter) {
-       xml_node_create(xml_name = "autofilter", xml_attributes = c(ref = ref))
+       xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = ref))
       } else {
         NULL
       }
@@ -1307,7 +1307,7 @@ Workbook <- setRefClass(
       ### tableColumn
       tableColumn <- sapply(colNames, function(x) {
         id <- which(colNames %in% x)
-        xml_node_create("tableColumn", xml_attributes = c(id = 1, name = x))
+        xml_node_create("tableColumn", xml_attributes = c(id = id, name = x))
       })
 
       tableColumns <- xml_node_create(xml_name = "tableColumns",
@@ -1332,16 +1332,17 @@ Workbook <- setRefClass(
         xmlns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
         id = id,
         name = tableName,
-        displayname = tableName,
+        displayName = tableName,
         ref = ref,
         totalsRowCount = totalsRowCount,
         totalsRowShown="0"
+        #headerRowDxfId="1"
       )
 
       .self$tables <- c(
         .self$tables,
         xml_node_create(xml_name = "table",
-                        xml_children = c(autofilter, tableColumn, tableStyleXML),
+                        xml_children = c(autofilter, tableColumns, tableStyleXML),
                         xml_attributes = table_attrs)
       )
 
