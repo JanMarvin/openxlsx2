@@ -849,7 +849,7 @@ writeData2 <-function(wb, sheet, data,
       z <- NULL
       if (data_class %in% c("numeric", "integer"))
         z <- numcell(x,y)
-      if (data_class %in% c("character", "factor"))
+      if (data_class %in% c("character", "factor", "hyperlink"))
         z <- chrcell(x,y)
       if (data_class %in% list(c("character", "formula")))
         z <- fmlcell(x,y)
