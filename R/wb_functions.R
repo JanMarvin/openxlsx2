@@ -786,18 +786,20 @@ writeData2 <-function(wb, sheet, data,
 
     rows_attr <- cols_attr <- cc_tmp <- vector("list", data_nrow)
 
-    cols_attr <- lapply(seq_len(data_nrow),
-      function(x) list(collapsed="false",
-        customWidth="true",
-        hidden="false",
-        outlineLevel="0",
-        max="121",
-        min="1",
-        style="0",
-        width="9.14"))
+    # create <cols ...>
+    cols_attr <- empty_cols_attr(n = data_nrow)
+    cols_attr$collapsed <- "false"
+    cols_attr$customWidth <- "true"
+    cols_attr$hidden <- "false"
+    cols_attr$outlineLevel <- "0"
+    cols_attr$max <- "121"
+    cols_attr$min <- "1"
+    cols_attr$style <- "0"
+    cols_attr$width <- "9.14"
 
-    wb$worksheets[[sheetno]]$cols_attr <- list_to_attr(cols_attr, "col")
+    wb$worksheets[[sheetno]]$cols_attr <- df_to_col(cols_attr)
 
+    # create <rows ...>
     want_rows <- startRow:endRow
     rows_attr <- empty_row_attr(n = length(want_rows))
     rows_attr$r <- rownames(rtyp)
