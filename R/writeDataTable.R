@@ -270,20 +270,30 @@ writeDataTable <- function(wb, sheet, x,
 
   ## column class styling
   colClasses <- lapply(x, function(x) tolower(class(x)))
-  classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol, colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
+  classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
+              colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
 
-  ## write data to worksheet
-  wb$writeData(
-    df = x,
-    colNames = TRUE,
+  # ## write data to worksheet
+  # wb$writeData(
+  #   df = x,
+  #   colNames = TRUE,
+  #   sheet = sheet,
+  #   startRow = startRow,
+  #   startCol = startCol,
+  #   colClasses = colClasses,
+  #   hlinkNames = NULL,
+  #   keepNA = keepNA,
+  #   na.string = na.string,
+  #   list_sep = sep
+  # )
+
+  wb <- writeData2(
+    wb =  wb,
     sheet = sheet,
+    data = x,
+    colNames = TRUE,
     startRow = startRow,
-    startCol = startCol,
-    colClasses = colClasses,
-    hlinkNames = NULL,
-    keepNA = keepNA,
-    na.string = na.string,
-    list_sep = sep
+    startCol = startCol
   )
 
   ## replace invalid XML characters
