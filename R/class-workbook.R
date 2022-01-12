@@ -1330,6 +1330,7 @@ Workbook <- setRefClass(
       ### full table
       table_attrs <- c(
         xmlns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+        `xmlns:mc` = "http://schemas.openxmlformats.org/markup-compatibility/2006",
         id = id,
         name = tableName,
         displayName = tableName,
