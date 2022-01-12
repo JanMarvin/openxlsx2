@@ -44,6 +44,7 @@
 #' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+#' @param removeCellStyle keep the cell style?
 #' @seealso [writeDataTable()]
 #' @export writeData
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
@@ -187,7 +188,8 @@ writeData <- function(wb,
   keepNA = FALSE,
   na.string = NULL,
   name = NULL,
-  sep = ", ") {
+  sep = ", ",
+  removeCellStyle = TRUE) {
 
   ## increase scipen to avoid writing in scientific
   exSciPen <- getOption("scipen")
@@ -339,7 +341,7 @@ writeData <- function(wb,
     rownames(x) <- seq_len(NROW(x))
 
   # actual driver, the rest should not create data used for writing
-  wb <- writeData2(wb = wb, sheet = sheet, data = x, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol)
+  wb <- writeData2(wb = wb, sheet = sheet, data = x, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
 
   invisible(0)
 }

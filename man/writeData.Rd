@@ -22,7 +22,8 @@ writeData(
   keepNA = FALSE,
   na.string = NULL,
   name = NULL,
-  sep = ", "
+  sep = ", ",
+  removeCellStyle = TRUE
 )
 }
 \arguments{
@@ -84,6 +85,8 @@ each column. If "\code{all}" all cell borders are drawn.}
 \item{name}{If not NULL, a named region is defined.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
+
+\item{removeCellStyle}{keep the cell style?}
 }
 \value{
 invisible(0)

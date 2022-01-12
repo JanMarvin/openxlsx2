@@ -4,7 +4,15 @@
 \alias{update_cell}
 \title{Replace data cell(s)}
 \usage{
-update_cell(x, wb, sheet, cell, data_class, colNames = FALSE)
+update_cell(
+  x,
+  wb,
+  sheet,
+  cell,
+  data_class,
+  colNames = FALSE,
+  removeCellStyle = FALSE
+)
 }
 \arguments{
 \item{x}{value you want to insert}
@@ -18,6 +26,8 @@ update_cell(x, wb, sheet, cell, data_class, colNames = FALSE)
 \item{data_class}{optional data class object}
 
 \item{colNames}{if TRUE colNames are passed down}
+
+\item{removeCellStyle}{keep the cell style?}
 }
 \description{
 Minimal invasive update of cell(s) inside of imported workbooks.

@@ -502,6 +502,7 @@ wb_to_df <- function(xlsxFile,
 #' @param cell the cell you want to update in Excel conotation e.g. "A1"
 #' @param data_class optional data class object
 #' @param colNames if TRUE colNames are passed down
+#' @param removeCellStyle keep the cell style?
 #'
 #' @examples
 #'    xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
@@ -524,7 +525,8 @@ wb_to_df <- function(xlsxFile,
 #'    wb_to_df(wb)
 #'
 #' @export
-update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
+update_cell <- function(x, wb, sheet, cell, data_class,
+                        colNames = FALSE, removeCellStyle = FALSE) {
 
   dimensions <- unlist(strsplit(cell, ":"))
   rows <- gsub("[[:upper:]]","", dimensions)
@@ -644,7 +646,10 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
         value <- ifelse(is.null(dim(x)), x[i], x[n, m])
 
         sel <- cc$row_r == row & cc$c_r == col
-        cc[sel, c("c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
+        c_s <- NULL
+        if (removeCellStyle) c_s <- "c_s"
+
+        cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
 
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
@@ -683,6 +688,7 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
 #' @param rowNames include rownames?
 #' @param startRow row to place it
 #' @param startCol col to place it
+#' @param removeCellStyle keep the cell style?
 #'
 #' @examples
 #' # create a workbook and add some sheets
@@ -709,7 +715,8 @@ update_cell <- function(x, wb, sheet, cell, data_class, colNames = FALSE) {
 #' @export
 writeData2 <-function(wb, sheet, data,
   colNames = TRUE, rowNames = FALSE,
-  startRow = 1, startCol = 1) {
+  startRow = 1, startCol = 1,
+  removeCellStyle = FALSE) {
 
 
   is_data_frame <- FALSE
@@ -886,7 +893,7 @@ writeData2 <-function(wb, sheet, data,
 
   } else {
     # update cell(s)
-    wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames)
+    wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames, removeCellStyle)
   }
 
 

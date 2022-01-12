@@ -11,7 +11,8 @@ writeData2(
   colNames = TRUE,
   rowNames = FALSE,
   startRow = 1,
-  startCol = 1
+  startCol = 1,
+  removeCellStyle = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ writeData2(
 \item{startRow}{row to place it}
 
 \item{startCol}{col to place it}
+
+\item{removeCellStyle}{keep the cell style?}
 }
 \description{
 dummy function to write data
