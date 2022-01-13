@@ -725,7 +725,7 @@ writeData2 <-function(wb, sheet, data,
   # convert factor to character
   if (any(data_class == "factor")) {
     fcts <- which(data_class == "factor")
-    data[fcts] <- lapply(data[fcts],as.character)
+    data[fcts] <- lapply(data[fcts], as.character)
   }
 
   has_date1904 <- grepl('date1904="1"|date1904="true"',
@@ -817,11 +817,21 @@ writeData2 <-function(wb, sheet, data,
     )
     names(cc) <- nams
 
+    dtecell <- function(x,y){
+      c(v   = as.character(x),
+        typ = "n",
+        r   = y,
+        c_s = as.character(length(wb$styles$cellXfs)),
+        c_t = "_openxlsx_NA_",
+        is  =  "_openxlsx_NA_",
+        f   =  "_openxlsx_NA_")
+    }
 
     numcell <- function(x,y){
       c(v   = as.character(x),
         typ = "n",
         r   = y,
+        c_s = "_openxlsx_NA_",
         c_t = "_openxlsx_NA_",
         is  =  "_openxlsx_NA_",
         f   =  "_openxlsx_NA_")
@@ -831,6 +841,7 @@ writeData2 <-function(wb, sheet, data,
       c(v   = "_openxlsx_NA_",
         typ = "c",
         r   = y,
+        c_s = "_openxlsx_NA_",
         c_t = "inlineStr",
         is  = paste0("<is><t>", as.character(x), "</t></is>"),
         f   =  "_openxlsx_NA_")
@@ -840,6 +851,7 @@ writeData2 <-function(wb, sheet, data,
       c(v   = "_openxlsx_NA_",
         typ = "c",
         r   = y,
+        c_s = "_openxlsx_NA_",
         c_t = "str",
         is  =  "_openxlsx_NA_",
         f   = as.character(x))
@@ -847,6 +859,8 @@ writeData2 <-function(wb, sheet, data,
 
     cell <- function(x, y, data_class) {
       z <- NULL
+      if (data_class %in% c("Date"))
+        z <- dtecell(x,y)
       if (data_class %in% c("numeric", "integer"))
         z <- numcell(x,y)
       if (data_class %in% c("character", "factor", "hyperlink"))
@@ -857,15 +871,15 @@ writeData2 <-function(wb, sheet, data,
       z
     }
 
-
     for (i in seq_len(NROW(data))) {
 
-      col_nams <- c("v", "typ", "r", "c_t", "is", "f")
+      col_nams <- c("v", "typ", "r", "c_s", "c_t", "is", "f")
       col <- data.frame(matrix(data = "_openxlsx_NA_", nrow = ncol(data), ncol = length(col_nams)))
       names(col) <- col_nams
       for (j in seq_along(data)) {
         dc <- ifelse(colNames && i == 1, "character", data_class[j])
-        col[j,] <- cell(data[i, j], rtyp[i, j], dc)
+        val <- data[i, j]
+        col[j,] <- cell(val, rtyp[i, j], dc)
       }
       col$row_r <- rownames(rtyp)[i]
       col$c_r   <- colnames(rtyp)
@@ -886,8 +900,24 @@ writeData2 <-function(wb, sheet, data,
 
     # update a few styles informations
     wb$styles$numFmts <- character()
-    if (is.null(wb$styles$cellXfs))
-      wb$styles$cellXfs <- "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"
+
+    ## create a cell style format for dates at the end of the existing styles.
+    ## This uses the builtin style 14: yyyy-mm-dd
+    if (any(data_class == "Date")) {
+      # "<xf />"
+      # Date format
+      df_cellXfs <- data.frame(
+        numFmtId = c("14"),
+        fontId = c("0"),
+        fillId = c("0"),
+        borderId = c("0"),
+        xfId = c("0"),
+        applyNumberFormat = c("1"),
+        stringsAsFactors = FALSE
+      )
+      wb$styles$cellXfs <- c(wb$styles$cellXfs, write_xf(df_cellXfs))
+    }
+
     wb$styles$dxfs <- character()
 
     # now the cc dataframe is similar to an imported cc dataframe. to save the
