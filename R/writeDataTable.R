@@ -48,7 +48,7 @@
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "S1")
 #' addWorksheet(wb, "S2")
-#' addWorksheet(wb, "S3")
+#' # addWorksheet(wb, "S3")
 #'
 #'
 #' #####################################################################################
@@ -72,19 +72,20 @@
 #'   "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE
 #' )
 #'
-#' ## openxlsx will apply default Excel styling for these classes
-#' class(df$Cash) <- c(class(df$Cash), "currency")
-#' class(df$Cash2) <- c(class(df$Cash2), "accounting")
-#' class(df$hLink) <- "hyperlink"
-#' class(df$Percentage) <- c(class(df$Percentage), "percentage")
-#' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
-#'
-#' writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+#' # ## openxlsx will apply default Excel styling for these classes
+#' # class(df$Cash) <- c(class(df$Cash), "currency")
+#' # class(df$Cash2) <- c(class(df$Cash2), "accounting")
+#' # class(df$hLink) <- "hyperlink"
+#' # class(df$Percentage) <- c(class(df$Percentage), "percentage")
+#' # class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
+#' #
+#' # writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 #'
 #' #####################################################################################
 #' ## Additional Header Styling and remove column filters
 #'
 #' writeDataTable(wb,
+#'   # todo createStyle does not work
 #'   sheet = 1, x = iris, startCol = 7, headerStyle = createStyle(textRotation = 45),
 #'   withFilter = FALSE
 #' )
