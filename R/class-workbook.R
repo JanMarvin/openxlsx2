@@ -297,6 +297,10 @@ Workbook <- setRefClass(
       .self$sheetOrder <- c(.self$sheetOrder, as.integer(newSheetIndex))
       .self$sheet_names <- c(.self$sheet_names, sheetName)
 
+      # TODO this should live wherever the other default values for an empty worksheet are initialized
+      empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
+      .self$styles$cellXfs <- write_xf(empty_cellXfs)
+
       # Jordan is a little worried this may change something
       # invisible(newSheetIndex)
       invisible(.self)
@@ -1090,12 +1094,14 @@ Workbook <- setRefClass(
 
 
       styleXML <- .self$styles
-      styleXML$numFmts <-
-        stri_join(
-          sprintf('<numFmts count="%s">', length(.self$styles$numFmts)),
-          pxml(.self$styles$numFmts),
-          "</numFmts>"
-        )
+      if (length(.self$styles$numFmts)) {
+        styleXML$numFmts <-
+          stri_join(
+            sprintf('<numFmts count="%s">', length(.self$styles$numFmts)),
+            pxml(.self$styles$numFmts),
+            "</numFmts>"
+          )
+      }
       styleXML$fonts <-
         stri_join(
           sprintf('<fonts count="%s">', length(.self$styles$fonts)),
@@ -2024,30 +2030,35 @@ Workbook <- setRefClass(
           cc <- ws$sheet_data$cc
 
 
-          cc$r <- paste0(cc$c_r, cc$row_r)
-          # prepare data for output
+          if (class(cc) != "uninitializedField") {
+            cc$r <- paste0(cc$c_r, cc$row_r)
+            # prepare data for output
 
-          # there can be files, where row_attr is incomplete because a row
-          # is lacking any attributes (presumably was added before saving)
-          # still row_attr is what we want!
-          cc_rows <- ws$sheet_data$row_attr$r
-          cc_out <- vector("list", length = length(cc_rows))
-          names(cc_out) <- cc_rows
+            # there can be files, where row_attr is incomplete because a row
+            # is lacking any attributes (presumably was added before saving)
+            # still row_attr is what we want!
+            cc_rows <- ws$sheet_data$row_attr$r
+            cc_out <- vector("list", length = length(cc_rows))
+            names(cc_out) <- cc_rows
 
-          for (cc_r in cc_rows) {
-            tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
-            nams <- cc[cc$row_r == cc_r, c("c_r")]
-            ltmp <- vector("list", nrow(tmp))
-            names(ltmp) <- nams
+            for (cc_r in cc_rows) {
+              tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
+              nams <- cc[cc$row_r == cc_r, c("c_r")]
+              ltmp <- vector("list", nrow(tmp))
+              names(ltmp) <- nams
 
-            for (nr in seq_len(nrow(tmp))) {
-              ltmp[[nr]] <- as.list(tmp[nr, ])
+              for (nr in seq_len(nrow(tmp))) {
+                ltmp[[nr]] <- as.list(tmp[nr, ])
+              }
+
+              cc_out[[cc_r]] <- ltmp
             }
 
-            cc_out[[cc_r]] <- ltmp
+            ws$sheet_data$cc_out <- cc_out
+          } else {
+            ws$sheet_data$row_attr <- NULL
+            ws$sheet_data$cc_out <- NULL
           }
-
-          ws$sheet_data$cc_out <- cc_out
 
           # row_attr <- ws$sheet_data$row_attr
           # nam_at <- names(row_attr)

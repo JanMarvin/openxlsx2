@@ -166,16 +166,22 @@ SEXP write_worksheet_xml_2( std::string prior,
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data.field("row_attr"));
   Rcpp::List cc = sheet_data.field("cc_out");
 
-  xmlFile << "<sheetData>";
+  if (Rf_isNull(row_attr)) {
+    xmlFile << "<sheetData />";
+  } else {
 
-  for (int i = 0; i < row_attr.nrow(); ++i) {
+    xmlFile << "<sheetData>";
 
-    xmlFile << set_row(row_attr, cc[i], i);
+    for (int i = 0; i < row_attr.nrow(); ++i) {
+
+      xmlFile << set_row(row_attr, cc[i], i);
+
+    }
+
+    // write closing tag and XML post data
+    xmlFile << "</sheetData>";
 
   }
-
-  // write closing tag and XML post data
-  xmlFile << "</sheetData>";
   xmlFile << post;
 
   //close file
