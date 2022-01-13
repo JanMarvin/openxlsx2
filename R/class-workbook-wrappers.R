@@ -63,8 +63,6 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
 #' @param wb A Workbook object to write to file
 #' @param file A character string naming an xlsx file
 #' @param overwrite If `TRUE`, overwrite any existing file.
-#' @param returnValue  If `TRUE`, returns  `TRUE` in case of a success, else `FALSE`.
-#' If flag is `FALSE`, then no return value is returned.
 #' @seealso [createWorkbook()]
 #' @seealso [addWorksheet()]
 #' @seealso [loadWorkbook()]
@@ -80,10 +78,7 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
 #' \dontrun{
 #' saveWorkbook(wb, file = "saveWorkbookExample.xlsx", overwrite = TRUE)
 #' }
-saveWorkbook <- function(wb, file, overwrite = FALSE, returnValue = NULL) {
-  if (!is.null(returnValue)) {
-    .Deprecated(msg = "returnValue in saveWorkbook() is deprecated'")
-  }
+saveWorkbook <- function(wb, file, overwrite = FALSE) {
 
   # TODO set options in saveWorkbook
 

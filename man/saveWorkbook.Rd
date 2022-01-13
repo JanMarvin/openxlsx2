@@ -4,7 +4,7 @@
 \alias{saveWorkbook}
 \title{save Workbook to file}
 \usage{
-saveWorkbook(wb, file, overwrite = FALSE, returnValue = NULL)
+saveWorkbook(wb, file, overwrite = FALSE)
 }
 \arguments{
 \item{wb}{A Workbook object to write to file}
@@ -12,9 +12,6 @@ saveWorkbook(wb, file, overwrite = FALSE, returnValue = NULL)
 \item{file}{A character string naming an xlsx file}
 
 \item{overwrite}{If \code{TRUE}, overwrite any existing file.}
-
-\item{returnValue}{If \code{TRUE}, returns  \code{TRUE} in case of a success, else \code{FALSE}.
-If flag is \code{FALSE}, then no return value is returned.}
 }
 \description{
 save a Workbook object to file
