@@ -1148,3 +1148,10 @@ styles_on_sheet <- function(wb, sheet) {
 
 }
 
+#' little worksheet helper
+#' @param wb a workbook
+#' @param sheet a worksheet either id or character
+#' @export
+wb_ws <- function(wb, sheet) {
+  wb$ws(sheet)
+}
