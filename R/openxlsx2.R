@@ -12,12 +12,12 @@
 #'
 #' @seealso
 #' \itemize{
-#'    \item{\code{vignette("Introduction", package = "openxlsx2")}}
-#'    \item{\code{vignette("formatting", package = "openxlsx2")}}
-#'    \item{\code{\link{writeData}}}
-#'    \item{\code{\link{writeDataTable}}}
-#'    \item{\code{\link{write.xlsx}}}
-#'    \item{\code{\link{read.xlsx}}}
+#'    \item{`vignette("Introduction", package = "openxlsx2")`}
+#'    \item{`vignette("formatting", package = "openxlsx2")`}
+#'    \item{[writeData()]}
+#'    \item{[writeDataTable()]}
+#'    \item{[write.xlsx()]}
+#'    \item{[read.xlsx()]}
 #'   }
 #' for examples
 #'
@@ -25,13 +25,13 @@
 #' The openxlsx package uses global options to simplify formatting:
 #'
 #' \itemize{
-#'    \item{\code{options("openxlsx2.borderColour" = "black")}}
-#'    \item{\code{options("openxlsx2.borderStyle" = "thin")}}
-#'    \item{\code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}}
-#'    \item{\code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}}
-#'    \item{\code{options("openxlsx2.numFmt" = NULL)}}
-#'    \item{\code{options("openxlsx2.paperSize" = 9)}} ## A4
-#'    \item{\code{options("openxlsx2.orientation" = "portrait")}} ## page orientation
+#'    \item{`options("openxlsx2.borderColour" = "black")`}
+#'    \item{`options("openxlsx2.borderStyle" = "thin")`}
+#'    \item{`options("openxlsx2.dateFormat" = "mm/dd/yyyy")`}
+#'    \item{`options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`}
+#'    \item{`options("openxlsx2.numFmt" = NULL)`}
+#'    \item{`options("openxlsx2.paperSize" = 9)`} ## A4
+#'    \item{`options("openxlsx2.orientation" = "portrait")`} ## page orientation
 #' }
 #'  See the Formatting vignette for examples.
 #'
@@ -41,7 +41,7 @@
 #' Additional options
 #'
 #' \itemize{
-#' \item{\code{options("openxlsx2.compressionLevel" = "9")}} ## set zip compression level, default is "1".
+#' \item{`options("openxlsx2.compressionLevel" = "9")`} ## set zip compression level, default is "1".
 #' }
 #'
 NULL

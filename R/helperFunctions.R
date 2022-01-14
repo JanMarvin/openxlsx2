@@ -10,7 +10,7 @@
 #' @param col column number of letter for hyperlink to link to
 #' @param text display text
 #' @param file Excel file name to point to. If NULL hyperlink is internal.
-#' @seealso \code{\link{writeFormula}}
+#' @seealso [writeFormula()]
 #' @export makeHyperlinkString
 #' @examples
 #'
@@ -414,17 +414,6 @@ pxml <- function(x) {
   paste(unique(unlist(x)), collapse = "")
 }
 
-
-removeHeadTag <- function(x) {
-  x <- paste(x, collapse = "")
-
-  if (any(grepl("<\\?", x))) {
-    x <- gsub("<\\?xml [^>]+", "", x)
-  }
-
-  x <- gsub("^>", "", x)
-  x
-}
 
 
 buildFontList <- function(fonts) {
@@ -870,8 +859,4 @@ hashPassword <- function(password) {
   }, chars, 0, right = TRUE)
   hash <- bitwXor(bitwXor(hash, length(chars)), 0xCE4B)
   format(as.hexmode(hash), upper.case = TRUE)
-}
-
-readUTF8 <- function(x) {
-  readLines(x, warn = FALSE, encoding = "UTF-8")
 }

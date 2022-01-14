@@ -1,15 +1,23 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile) {
+SEXP readXMLPtr(std::string path, bool isfile, bool declaration) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
 
-  if (isfile) {
-    result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+  if (declaration) {
+    if (isfile) {
+      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
+    } else {
+      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
+    }
   } else {
-    result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+    if (isfile) {
+      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+    } else {
+      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes);
+    }
   }
 
   if (!result) {
@@ -302,31 +310,33 @@ SEXP getXMLXPtr5val(XPtrXML doc, std::string level1, std::string level2, std::st
 // [[Rcpp::export]]
 SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
 
+  auto children = doc->children(child.c_str());
 
-  pugi::xml_node worksheet = doc->child(child.c_str());
-  size_t n = std::distance(worksheet.begin(), worksheet.end());
+  size_t n = std::distance(children.begin(),
+                           children.end());
 
   // for a childless single line node the distance might be zero
   if (n == 0) n++;
-
   Rcpp::List z(n);
 
   auto itr = 0;
+  for (auto child : children) {
 
-  Rcpp::CharacterVector res;
-  std::vector<std::string> nam;
+    Rcpp::CharacterVector res;
+    std::vector<std::string> nam;
 
-  for (auto attrs : worksheet.attributes())
-  {
-    nam.push_back(attrs.name());
-    res.push_back(attrs.value());
+    for (auto attrs : child.attributes())
+    {
+      nam.push_back(attrs.name());
+      res.push_back(attrs.value());
+    }
+
+    // assign names
+    res.attr("names") = nam;
+
+    z[itr] = res;
+    ++itr;
   }
-
-  // assign names
-  res.attr("names") = nam;
-
-  z[itr] = res;
-  ++itr;
 
   return  Rcpp::wrap(z);
 }
@@ -339,12 +349,12 @@ Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child) {
   Rcpp::List z(n);
 
   auto itr = 0;
-  for (auto ws : doc->child(level1.c_str()).children(child.c_str()))
+  for (auto ws : worksheet)
   {
 
     auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
 
-    Rcpp::List res(n);
+    Rcpp::CharacterVector res(n);
     Rcpp::CharacterVector nam(n);
 
     auto attr_itr = 0;
@@ -373,12 +383,12 @@ SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::s
   Rcpp::List z(n);
 
   auto itr = 0;
-  for (auto ws : doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str()))
+  for (auto ws : worksheet)
   {
 
     auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
 
-    Rcpp::List res(n);
+    Rcpp::CharacterVector res(n);
     Rcpp::CharacterVector nam(n);
 
     auto attr_itr = 0;
@@ -738,4 +748,151 @@ void write_xml_file(std::string xml_content, std::string fl) {
 
   doc.save_file(fl.c_str(), "\t", pugi::format_raw );
 
+}
+
+//' adds or updates attribute(s) in existing xml node
+//'
+//' @description Needs xml node and named character vector as input. Modifies
+//' the argutments of each first child found in the xml node and adds or updates
+//' the attribute vector.
+//' @details If a named attribute in `xml_attributes` is "" remove the attribute
+//' from the node.
+//' If `xml_attributes` contains a named entry found in the xml node, it is
+//' updated else it is added as attribute.
+//'
+//' @param xml_content some valid xml_node
+//' @param xml_attributes R vector of named attributes
+//'
+//' @examples
+//'   # add single node
+//'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+//'     xml_attr <- c(qux = "quux")
+//'     # "<a foo=\"bar\" qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
+//'     xml_attr_mod(xml_node, xml_attr)
+//'
+//'   # update node and add node
+//'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+//'     xml_attr <- c(foo = "baz", qux = "quux")
+//'     # "<a foo=\"baz\" qux=\"quux\">openxlsx2</a><b foo=\"baz\" qux=\"quux\"/>"
+//'     xml_attr_mod(xml_node, xml_attr)
+//'
+//'   # remove node and add node
+//'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+//'     xml_attr <- c(foo = "", qux = "quux")
+//'     # "<a qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
+//'     xml_attr_mod(xml_node, xml_attr)
+//' @export
+// [[Rcpp::export]]
+Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes) {
+
+  pugi::xml_document doc;
+  pugi::xml_parse_result result;
+
+  // load and validate node
+  if (xml_content != "") {
+    result = doc.load_string(xml_content.c_str(), pugi::parse_default | pugi::parse_escapes);
+    if (!result) Rcpp::stop("Loading xml_content node failed: \n %s ", xml_content);
+  }
+
+  std::vector<std::string> new_attr_nam = xml_attributes.names();
+  std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attributes);
+
+  for (auto cld : doc.children()) {
+    for (auto i = 0; i < xml_attributes.length(); ++i){
+
+      // check if attribute_val is empty. if yes, remove the attribute.
+      // otherwise add or update the attribute
+      if (new_attr_val[i] == "") {
+        cld.remove_attribute(new_attr_nam[i].c_str());
+      } else {
+        // update attribute if found else add attribute
+        if (cld.attribute(new_attr_nam[i].c_str())) {
+          cld.attribute(new_attr_nam[i].c_str()).set_value(new_attr_val[i].c_str());
+        } else {
+          cld.append_attribute(new_attr_nam[i].c_str()) = new_attr_val[i].c_str();
+        }
+      }
+    }
+  }
+
+  std::ostringstream oss;
+  doc.print(oss, " ", pugi::format_raw);
+
+  return oss.str();
+}
+
+//' create xml_node from R objects
+//' @description takes xml_name, xml_children and xml_attributes to create a new
+//' xml_node.
+//' @param xml_name the name of the new xml_node
+//' @param xml_children character vector children attached to the xml_node
+//' @param xml_attributes named character vector of attributes for the xml_node
+//' @details if xml_children or xml_attributes should be empty, use NULL
+//'
+//' @examples
+//' xml_name <- "a"
+//' # "<a/>"
+//' xml_node_create(xml_name)
+//'
+//' xml_child <- "openxlsx"
+//' # "<a>openxlsx</a>"
+//' xml_node_create(xml_name, xml_children = xml_child)
+//'
+//' xml_attr <- c(foo = "baz", qux = "quux")
+//' # "<a foo=\"baz\" qux=\"quux\"/>"
+//' xml_node_create(xml_name, xml_attributes = xml_attr)
+//'
+//' # "<a foo=\"baz\" qux=\"quux\">openxlsx</a>"
+//' xml_node_create(xml_name, xml_children = xml_child, xml_attributes = xml_attr)
+//' @export
+// [[Rcpp::export]]
+Rcpp::CharacterVector xml_node_create(
+    std::string xml_name,
+    Rcpp::Nullable<Rcpp::CharacterVector> xml_children = R_NilValue,
+    Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes = R_NilValue) {
+
+  pugi::xml_document doc;
+  pugi::xml_parse_result result;
+
+  pugi::xml_node cld = doc.append_child(xml_name.c_str());
+
+  // check if children are attached
+  if (xml_children.isNotNull()) {
+
+    Rcpp::CharacterVector xml_child(xml_children.get());
+
+    for (auto i = 0; i < xml_child.size(); ++i) {
+
+      std::string xml_cld = Rcpp::as<std::string>(xml_child[i]);
+
+      pugi::xml_document is_node;
+      pugi::xml_parse_result result = is_node.load_string(xml_cld.c_str(), pugi::parse_default | pugi::parse_escapes);
+
+      // check if result is a valid xml_node, else append as is
+      if (result) {
+        cld.append_copy(is_node.first_child());
+      } else {
+        cld.append_child(pugi::node_pcdata).set_value(xml_cld.c_str());
+      }
+    }
+  }
+
+  // check if attributes are attached
+  if (xml_attributes.isNotNull()) {
+
+    Rcpp::CharacterVector xml_attr(xml_attributes.get());
+
+    std::vector<std::string> new_attr_nam = xml_attr.names();
+    std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attr);
+
+    for (auto i = 0; i < xml_attr.length(); ++i){
+      cld.append_attribute(new_attr_nam[i].c_str()) = new_attr_val[i].c_str();
+    }
+  }
+
+  std::ostringstream oss;
+  doc.print(oss, " ", pugi::format_raw);
+  std::string xml_return = oss.str();
+
+  return xml_return;
 }

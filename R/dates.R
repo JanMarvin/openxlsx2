@@ -5,7 +5,7 @@
 #' @param origin date. Default value is for Windows Excel 2010
 #' @param ... additional parameters passed to as.Date()
 #' @details Excel stores dates as number of days from some origin day
-#' @seealso \code{\link{writeData}}
+#' @seealso [writeData()]
 #' @export
 #' @examples
 #' ## 2014 April 21st to 25th
@@ -72,9 +72,9 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' @author Alexander Walker
 #' @param xlsxFile An xlsx or xlsm file.
 #' @details Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
-#' checks the date origin being used in an Excel file and returns is so it can be used in \code{\link{convertToDate}}
+#' checks the date origin being used in an Excel file and returns is so it can be used in [convertToDate()]
 #' @return One of "1900-01-01" or "1904-01-01".
-#' @seealso \code{\link{convertToDate}}
+#' @seealso [convertToDate()]
 #' @examples
 #'
 #' ## create a file with some dates
@@ -88,6 +88,7 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' }
 #' @export
 getDateOrigin <- function(xlsxFile) {
+  # TODO: allow using a workbook? 
   xlsxFile <- getFile(xlsxFile)
   if (!file.exists(xlsxFile)) {
     stop("File does not exist.")
@@ -104,7 +105,7 @@ getDateOrigin <- function(xlsxFile) {
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- paste(unlist(readUTF8(workbook)), collapse = "")
+  workbook <- read_xml(workbook, pointer = FALSE)
 
   if (grepl('date1904="1"|date1904="true"', workbook, ignore.case = TRUE)) {
     origin <- "1904-01-01"
@@ -113,4 +114,57 @@ getDateOrigin <- function(xlsxFile) {
   }
 
   return(origin)
+}
+
+#' convert back to ExcelDate
+#' @param df dataframe
+#' @param date1904 take different origin
+#' @export
+convertToExcelDate <- function(df, date1904 = FALSE) {
+
+
+  isPOSIXlt <- function(data) sapply(lapply(data, class), FUN = function(x) any(x == "POSIXlt"))
+  to_convert <- isPOSIXlt(df)
+
+  if (any(to_convert)) {
+    message("Found POSIXlt. Converting to POSIXct")
+    df[to_convert] <- lapply(df[to_convert], as.POSIXct)
+  }
+
+  df_class <- sapply(df, class)
+  ## convert any Dates to integers and create date style object
+  if (any(df_class %in%  c("Date", "POSIXct"))) {
+    dInds <- which(sapply(df_class, function(x) "Date" %in% x))
+
+    origin <- 25569L
+    if (date1904) origin <- 24107L
+
+    for (i in dInds) {
+      df[[i]] <- as.integer(df[[i]]) + origin
+      if (origin == 25569L){
+        earlyDate <- which(df[[i]] < 60)
+        df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
+      }
+    }
+
+    pInds <- which(sapply(df_class, function(x) any(c("POSIXct") %in% x)))
+    if (length(pInds) > 0 & nrow(df) > 0) {
+      parseOffset <- function(tz) {
+        suppressWarnings(
+          ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
+          * (as.integer(stri_sub(tz, 2, 3)) + as.integer(stri_sub(tz, 4, 5)) / 60) / 24
+        )
+      }
+
+      t <- lapply(df[pInds], function(x) format(x, "%z"))
+      offSet <- lapply(t, parseOffset)
+      offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
+
+      for (i in seq_along(pInds)) {
+        df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
+      }
+    }
+  }
+
+  return(df)
 }

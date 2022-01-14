@@ -12,18 +12,15 @@ and removes the dependency on Java.
 The openxlsx package uses global options to simplify formatting:
 
 \itemize{
-   \item{\code{options("openxlsx2.borderColour" = "black")}}
-   \item{\code{options("openxlsx2.borderStyle" = "thin")}}
-   \item{\code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}}
-   \item{\code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}}
-   \item{\code{options("openxlsx2.numFmt" = NULL)}}
-   \item{\code{options("openxlsx2.paperSize" = 9)}} ## A4
-   \item{\code{options("openxlsx2.orientation" = "portrait")}} ## page orientation
+\item{\code{options("openxlsx2.borderColour" = "black")}}
+\item{\code{options("openxlsx2.borderStyle" = "thin")}}
+\item{\code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}}
+\item{\code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}}
+\item{\code{options("openxlsx2.numFmt" = NULL)}}
+\item{\code{options("openxlsx2.paperSize" = 9)}} ## A4
+\item{\code{options("openxlsx2.orientation" = "portrait")}} ## page orientation
 }
- See the Formatting vignette for examples.
-
-
-
+See the Formatting vignette for examples.
 
 Additional options
 
@@ -33,12 +30,12 @@ Additional options
 }
 \seealso{
 \itemize{
-   \item{\code{vignette("Introduction", package = "openxlsx2")}}
-   \item{\code{vignette("formatting", package = "openxlsx2")}}
-   \item{\code{\link{writeData}}}
-   \item{\code{\link{writeDataTable}}}
-   \item{\code{\link{write.xlsx}}}
-   \item{\code{\link{read.xlsx}}}
-  }
+\item{\code{vignette("Introduction", package = "openxlsx2")}}
+\item{\code{vignette("formatting", package = "openxlsx2")}}
+\item{\code{\link[=writeData]{writeData()}}}
+\item{\code{\link[=writeDataTable]{writeDataTable()}}}
+\item{\code{\link[=write.xlsx]{write.xlsx()}}}
+\item{\code{\link[=read.xlsx]{read.xlsx()}}}
+}
 for examples
 }

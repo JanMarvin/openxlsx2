@@ -48,5 +48,5 @@ head(df)
 }
 }
 \seealso{
-\code{\link{createNamedRegion}}
+\code{\link[=createNamedRegion]{createNamedRegion()}}
 }

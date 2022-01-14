@@ -5,11 +5,11 @@
 #' @param sheet The name or index of the sheet to read data from.
 #' @param startRow first row to begin looking for data.  Empty rows at the top of a file are always skipped,
 #' regardless of the value of startRow.
-#' @param colNames If \code{TRUE}, the first row of data will be used as column names.
-#' @param skipEmptyRows If \code{TRUE}, empty rows are skipped else empty rows after the first row containing data
+#' @param colNames If `TRUE`, the first row of data will be used as column names.
+#' @param skipEmptyRows If `TRUE`, empty rows are skipped else empty rows after the first row containing data
 #' will return a row of NAs.
-#' @param rowNames If \code{TRUE}, first column of data will be used as row names.
-#' @param detectDates If \code{TRUE}, attempt to recognise dates and perform conversion.
+#' @param rowNames If `TRUE`, first column of data will be used as row names.
+#' @param detectDates If `TRUE`, attempt to recognise dates and perform conversion.
 #' @param cols A numeric vector specifying which columns in the Excel file to read.
 #' If NULL, all columns are read.
 #' @param rows A numeric vector specifying which rows in the Excel file to read.
@@ -20,8 +20,8 @@
 #' @param namedRegion A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.
 #' @param na.strings (unimplemented) A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells (unimplemented) If TRUE, the value in a merged cell is given to all cells within the merge.
-#' @param skipEmptyCols If \code{TRUE}, empty columns are skipped.
-#' @seealso \code{\link{getNamedRegions}}
+#' @param skipEmptyCols If `TRUE`, empty columns are skipped.
+#' @seealso [getNamedRegions()]
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
@@ -116,8 +116,8 @@ read.xlsx <- function(xlsxFile,
 #' @details Creates a data.frame of all data in worksheet.
 #' @author Alexander Walker
 #' @return data.frame
-#' @seealso \code{\link{getNamedRegions}}
-#' @seealso \code{\link{read.xlsx}}
+#' @seealso [getNamedRegions()]
+#' @seealso [read.xlsx()]
 #' @export
 #' @examples
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
@@ -180,18 +180,16 @@ getSheetNames <- function(file) {
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- readUTF8(workbook)
-  workbook <- removeHeadTag(workbook)
-  sheets <- unlist(regmatches(workbook, gregexpr("(?<=<sheets>).*(?=</sheets>)", workbook, perl = TRUE)))
-  sheets <- unlist(regmatches(sheets, gregexpr("<sheet[^>]*>", sheets, perl = TRUE)))
+  workbook <- read_xml(workbook)
+  sheets <- xml_node(workbook, "workbook", "sheets", "sheet")
+  sheets <- xml_attribute(sheets, "sheet")
+  sheets <- rbindlist(sheets)
 
   ## Some veryHidden sheets do not have a sheet content and their rId is empty.
   ## Such sheets need to be filtered out because otherwise their sheet names
   ## occur in the list of all sheet names, leading to a wrong association
   ## of sheet names with sheet indeces.
-  sheets <- grep('r:id="[[:blank:]]*"', sheets, invert = TRUE, value = TRUE)
-
-  sheetNames <- unlist(regmatches(sheets, gregexpr('(?<=name=")[^"]+', sheets, perl = TRUE)))
+  sheetNames <- sheets$name[sheets$`r:id` != ""]
   sheetNames <- replaceXMLEntities(sheetNames)
 
   return(sheetNames)

@@ -5,7 +5,7 @@
 #' @aliases names.Workbook
 #' @export
 #' @method names Workbook
-#' @param x A \code{Workbook} object
+#' @param x A `Workbook` object
 #' @examples
 #'
 #' wb <- createWorkbook()

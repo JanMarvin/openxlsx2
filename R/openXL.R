@@ -8,14 +8,14 @@
 #' In Windows (c) and Mac (c), it uses system default handlers,
 #' given the file type.
 #'
-#' In Linux it searches (via \code{which}) for available xls/xlsx
-#' reader applications (unless \code{options('openxlsx.excelApp')}
+#' In Linux it searches (via `which`) for available xls/xlsx
+#' reader applications (unless `options('openxlsx.excelApp')`
 #' is set to the app bin path), and if it finds anything, sets
-#' \code{options('openxlsx.excelApp')} to the program choosen by
+#' `options('openxlsx.excelApp')` to the program choosen by
 #' the user via a menu (if many are present, otherwise it will
 #' set the only available). Currently searched for apps are
-#' Libreoffice/Openoffice (\code{soffice} bin), Gnumeric
-#' (\code{gnumeric}) and Calligra Sheets (\code{calligrasheets}).
+#' Libreoffice/Openoffice (`soffice` bin), Gnumeric
+#' (`gnumeric`) and Calligra Sheets (`calligrasheets`).
 #'
 #' @param file path to the Excel (xls/xlsx) file or Workbook object.
 #' @usage openXL(file=NULL)
@@ -40,7 +40,7 @@ openXL <- function(file = NULL) {
 
   ## workbook handling
   if (inherits(file, "Workbook")) {
-    file <- file$saveWorkbook()
+    file <- file$saveWorkbook(path = file.path(tempdir(), "temp_xlsx.xlsx"))$path
   }
 
   if (!file.exists(file)) stop("Non existent file or wrong path.")

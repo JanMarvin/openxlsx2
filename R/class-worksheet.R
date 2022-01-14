@@ -8,9 +8,9 @@ Worksheet <- setRefClass(
     "sheetFormatPr" = "character",
 
     "sheet_data" = "SheetData",
-    "rows_attr"  = "ANY",
+    #"rows_attr"  = "ANY",
     "cols_attr"  = "ANY",
-    "cols"       = "ANY",
+    #"cols"       = "ANY",
 
     "autoFilter"            = "character",
     "mergeCells"            = "ANY",
@@ -32,7 +32,47 @@ Worksheet <- setRefClass(
     "legacyDrawingHF" = "character",
     "oleObjects"      = "character",
     "tableParts"      = "character",
-    "extLst"          = "character"
+    "extLst"          = "character",
+
+    ### list with imported openxml-2.8.1 nodes
+    # "autoFilter"
+    "cellWatches" = "character",
+    # "colBreaks"
+    # "cols" 
+    # "conditionalFormatting"
+    "controls" = "character",
+    "customProperties" = "character",
+    "customSheetViews" = "character",
+    "dataConsolidate" = "character",
+    # "dataValidations"
+    # "dimension"
+    # "drawing"
+    "drawingHF" = "character",
+    # "extLst"
+    # "headerFooter"
+    # "hyperlinks"
+    "ignoredErrors" = "character",
+    # "mergeCells"
+    # "oleObjects"
+    # "pageMargins"
+    # "pageSetup"
+    "phoneticPr" = "character",
+    "picture" = "character",
+    "printOptions" = "character",
+    "protectedRanges" = "character",
+    # "rowBreaks"
+    "scenarios" = "character",
+    "sheetCalcPr" = "character",
+    # "sheetData"
+    # "sheetFormatPr"
+    # "sheetPr"
+    # "sheetProtection"
+    # "sheetViews"
+    "smartTags" = "character",
+    "sortState" = "character",
+    # "tableParts"
+    "webPublishItems" = "character"
+
   ),
 
   methods = list(
@@ -294,4 +334,19 @@ Worksheet <- setRefClass(
 
 new_worksheet <- function() {
   Worksheet$new()
+}
+
+empty_cols_attr <- function(n = 0) {
+  # make make this a specific class/object?
+
+  cols_attr_nams <- c("bestFit", "collapsed", "customWidth", "hidden", "max",
+                      "min", "outlineLevel", "phonetic", "style", "width")
+
+  z <- data.frame(
+    matrix("", nrow = n, ncol = length(cols_attr_nams)),
+    stringsAsFactors = FALSE
+  )
+  names(z) <- cols_attr_nams
+
+  z
 }

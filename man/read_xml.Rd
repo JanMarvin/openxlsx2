@@ -4,12 +4,14 @@
 \alias{read_xml}
 \title{read xml file}
 \usage{
-read_xml(xml, pointer = TRUE)
+read_xml(xml, pointer = TRUE, declaration = FALSE)
 }
 \arguments{
-\item{xml}{somthing to read character string or file}
+\item{xml}{something to read character string or file}
 
 \item{pointer}{should a pointer be returned?}
+
+\item{declaration}{should the declaration be imported}
 }
 \description{
 read xml file

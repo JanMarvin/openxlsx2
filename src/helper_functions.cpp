@@ -175,61 +175,6 @@ SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector
   
 }
 
-
-
-// [[Rcpp::export]]
-Rcpp::LogicalVector isInternalHyperlink(Rcpp::CharacterVector x){
-  
-  int n = x.size();
-  std::string xml;
-  std::string tag = "r:id=";
-  size_t found;
-  Rcpp::LogicalVector isInternal(n);
-  
-  for(int i = 0; i < n; i++){ 
-    
-    // find location tag  
-    xml = x[i];
-    found = xml.find(tag, 0);
-    
-    if (found != std::string::npos){
-      isInternal[i] = false;
-    }else{
-      isInternal[i] = true;
-    }
-    
-  }
-  
-  return wrap(isInternal) ;  
-  
-}
-
-
-std::string itos(int i){
-  
-  // convert int to string
-  std::stringstream s;
-  s << i;
-  return s.str();
-  
-}
-
-
-
-// [[Rcpp::export]]
-std::string cppReadFile(std::string xmlFile){
-  
-  std::string buf;
-  std::string xml;
-  std::ifstream file;
-  file.open(xmlFile.c_str());
-  
-  while (file >> buf)
-    xml += buf + ' ';
-  
-  return xml;
-}
-
 // [[Rcpp::export]]
 std::vector<std::string> get_letters(){
   
@@ -267,17 +212,50 @@ std::vector<std::string> get_letters(){
 }
 
 
+// provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
-Rcpp::CharacterVector markUTF8(Rcpp::CharacterVector x, bool clone) {
-  Rcpp::CharacterVector out;
-  if (clone) {
-    out = Rcpp::clone(x);
-  } else {
-    out = x;
+SEXP rbindlist(Rcpp::List x) {
+
+  auto nn = x.length();
+  std::vector<std::string> all_names;
+
+  for (auto i = 0; i < nn; ++i) {
+    std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
+    std::copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
   }
-  const size_t n = x.size();
-  for (size_t i = 0; i < n; ++i) {
-    out[i] = Rf_mkCharCE(x[i], CE_UTF8);
+
+  Rcpp::CharacterVector all_nams = Rcpp::wrap(all_names);
+  Rcpp::CharacterVector unique_names = Rcpp::unique(all_nams).sort();
+
+  auto kk = unique_names.length();
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
-  return out;
+
+  for (auto i = 0; i < nn; ++i) {
+
+    Rcpp::CharacterVector values = Rcpp::as<Rcpp::CharacterVector>(x[i]);
+    Rcpp::CharacterVector names = values.attr("names");
+
+    // mimic which
+    Rcpp::IntegerVector mtc = Rcpp::match(names, unique_names);
+    std::vector<size_t> ii = Rcpp::as<std::vector<size_t>>(mtc[!Rcpp::is_na(mtc)]);
+
+    for (auto j = 0; j < ii.size(); ++j) {
+      Rcpp::as<Rcpp::CharacterVector>(df[ii[j] -1 ])[i] = values[j];
+    }
+
+  }
+
+  // 3. Create a data.frame
+  R_xlen_t nrows = Rf_length(df[0]);
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, nrows);
+  df.attr("names") = unique_names;
+  df.attr("class") = "data.frame";
+
+  return df;
 }

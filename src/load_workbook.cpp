@@ -1,5 +1,104 @@
 #include "openxlsx2.h"
 
+// [[Rcpp::export]]
+Rcpp::DataFrame col_to_df(XPtrXML doc) {
+
+  Rcpp::CharacterVector col_nams= {
+    "bestFit",
+    "collapsed",
+    "customWidth",
+    "hidden",
+    "max",
+    "min",
+    "outlineLevel",
+    "phonetic",
+    "style",
+    "width"
+  };
+
+  auto nn = std::distance(doc->begin(), doc->end());
+  auto kk = col_nams.length();
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <row ...>
+  auto itr = 0;
+  for (auto col : doc->children("col")) {
+    for (auto attrs : col.attributes()) {
+
+      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_value = attrs.value();
+
+      // mimic which
+      Rcpp::IntegerVector mtc = Rcpp::match(col_nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+      // check if name is already known
+      if (all(Rcpp::is_na(mtc))) {
+        Rcpp::Rcout << attr_name << ": not found in col name table" << std::endl;
+      } else {
+        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+      }
+
+    }
+
+    // rownames as character vectors matching to <c s= ...>
+    rvec[itr] = std::to_string(itr);
+
+    ++itr;
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = col_nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col) {
+
+  auto n = df_col.nrow();
+  Rcpp::CharacterVector z(n);
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+    Rcpp::CharacterVector attrnams = df_col.names();
+
+    pugi::xml_node col = doc.append_child("col");
+
+    for (auto j = 0; j < df_col.ncol(); ++j) {
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_col[j])[i];
+
+      // only write attributes where cv_s has a value
+      if (cv_s[0] != "") {
+        // Rf_PrintValue(cv_s);
+        const std::string val_strl = Rcpp::as<std::string>(cv_s);
+        col.append_attribute(attrnams[j]) = val_strl.c_str();
+      }
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
+}
+
+
 Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
@@ -36,6 +135,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
   // <row ...>
   auto itr = 0;
   for (auto row : ws.children("row")) {
+    bool has_rowname = false;
     for (auto attrs : row.attributes()) {
 
       Rcpp::CharacterVector attr_name = attrs.name();
@@ -47,12 +147,22 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << attr_name << ": not found in xf name table" << std::endl;
+        Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+        if (attr_name[0] == "r") has_rowname = true;
       }
 
+    }
+
+    // some files have no row name in this case, we add one
+    if (!has_rowname) {
+      Rcpp::CharacterVector attr_name = {"r"};
+      Rcpp::IntegerVector mtc = Rcpp::match(row_nams, attr_name);
+      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+      size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
+      Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = std::to_string(itr + 1);
     }
 
     // rownames as character vectors matching to <c s= ...>
@@ -158,12 +268,14 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
 
         ++attr_itr;
       }
-      // some files have no colnames. This used to work, check again
+      // some files have no colnames. in this case we need to add c_r and row_r
+      // if the file provides dimensions, they could be fixed later
       if (!has_colname) {
         Rcpp::IntegerVector itr_vec(1);
         itr_vec[0] = itr_cols +1;
         std::string tmp_colname= Rcpp::as<std::string>(int_2_cell_ref(itr_vec));
         single_xml_col.c_r = tmp_colname;
+        single_xml_col.row_r = std::to_string(itr_rows + 1);
       }
 
       // val ------------------------------------------------------------------
@@ -309,162 +421,21 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
   return res;
 }
 
-
-// mimics the R function which used below
-Rcpp::IntegerVector rcpp_which(Rcpp::IntegerVector x) {
-  Rcpp::IntegerVector v = Rcpp::seq(0, x.size()-1);
-  return v[!Rcpp::is_na(x)];
-}
-
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
-void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame cc, Rcpp::List dn) {
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
 
-  auto n = cc.nrow();
+  auto n = zz.nrow();
 
-  Rcpp::CharacterVector row_r = cc["row_r"];
-  Rcpp::CharacterVector c_r   = cc["c_r"];
-  Rcpp::CharacterVector val   = cc["val"];
-  Rcpp::CharacterVector typ   = cc["typ"];
-
-  Rcpp::CharacterVector row_names = dn[0];
-  Rcpp::CharacterVector col_names = dn[1];
+  Rcpp::IntegerVector rows = zz["rows"];
+  Rcpp::IntegerVector cols = zz["cols"];
+  Rcpp::CharacterVector vals = zz["val"];
+  Rcpp::CharacterVector typs = zz["typ"];
 
   for (auto i = 0; i < n; ++i) {
-
-    Rcpp::CharacterVector row_r_i = Rcpp::as<Rcpp::CharacterVector>(row_r[i]);
-    Rcpp::CharacterVector c_r_i   = Rcpp::as<Rcpp::CharacterVector>(c_r[i]);
-    std::string val_i   = Rcpp::as<std::string>(val[i]);
-    std::string val_tt   = Rcpp::as<std::string>(typ[i]);
-
-    Rcpp::IntegerVector s1 = Rcpp::match(row_names, row_r_i);
-    int64_t sel_row = Rcpp::as<int64_t>(rcpp_which(s1));
-
-    Rcpp::IntegerVector s2 = Rcpp::match(col_names, c_r_i);
-    int64_t sel_col = Rcpp::as<int64_t>(rcpp_which(s2));
-
-    // Rcpp::Rcout << sel_row << " " << sel_col << " " << val_i << std::endl;
-
-    // only update if not missing in the xml input
-    if (val_i.compare("_openxlsx_NA_") != 0) {
-      Rcpp::as<Rcpp::CharacterVector>(z[sel_col])[sel_row] = val_i;
-      Rcpp::as<Rcpp::CharacterVector>(tt[sel_col])[sel_row] = val_tt;
-    }
-
+    Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
+    Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
   }
-}
-
-
-// [[Rcpp::export]]
-SEXP getOpenClosedNode(std::string xml, std::string open_tag, std::string close_tag){
-
-  if(xml.length() == 0)
-    return Rcpp::wrap(NA_STRING);
-
-  xml = " " + xml;
-  size_t pos = 0;
-  size_t endPos = 0;
-
-  size_t k = open_tag.length();
-  size_t l = close_tag.length();
-
-  std::vector<std::string> r;
-
-  while(1){
-
-    pos = xml.find(open_tag, pos+1);
-    endPos = xml.find(close_tag, pos+k);
-
-    if((pos == std::string::npos) | (endPos == std::string::npos))
-      break;
-
-    r.push_back(xml.substr(pos, endPos-pos+l).c_str());
-
-  }
-
-  Rcpp::CharacterVector out = Rcpp::wrap(r);
-  return markUTF8(out);
-}
-
-
-// [[Rcpp::export]]
-SEXP getAttr(Rcpp::CharacterVector x, std::string tag){
-
-  size_t n = x.size();
-  size_t k = tag.length();
-
-  if(n == 0)
-    return Rcpp::wrap(-1);
-
-  std::string xml;
-  Rcpp::CharacterVector r(n);
-  size_t pos = 0;
-  size_t endPos = 0;
-  std::string rtagEnd = "\"";
-
-  for(size_t i = 0; i < n; i++){
-
-    // find opening tag
-    xml = x[i];
-    pos = xml.find(tag, 0);
-
-    if(pos == std::string::npos){
-      r[i] = NA_STRING;
-    }else{
-      endPos = xml.find(rtagEnd, pos+k);
-      r[i] = xml.substr(pos+k, endPos-pos-k).c_str();
-    }
-  }
-
-  return markUTF8(r);   // no need to wrap as r is already a CharacterVector
-
-}
-
-
-// [[Rcpp::export]]
-Rcpp::CharacterVector get_extLst_Major(std::string xml){
-
-  // find page margin or pagesetup then take the extLst after that
-
-  if(xml.length() == 0)
-    return Rcpp::wrap(NA_STRING);
-
-  std::vector<std::string> r;
-  std::string tagEnd = "</extLst>";
-  size_t endPos = 0;
-  std::string node;
-
-
-  size_t pos = xml.find("<pageSetup ", 0);
-  if(pos == std::string::npos)
-    pos = xml.find("<pageMargins ", 0);
-
-  if(pos == std::string::npos)
-    pos = xml.find("</conditionalFormatting>", 0);
-
-  if(pos == std::string::npos)
-    return Rcpp::wrap(NA_STRING);
-
-  while(1){
-
-    pos = xml.find("<extLst>", pos + 1);
-    if(pos == std::string::npos)
-      break;
-
-    endPos = xml.find(tagEnd, pos + 8);
-
-    node = xml.substr(pos + 8, endPos - pos - 8);
-    //pos = xml.find("conditionalFormattings", pos + 1);
-    //if(pos == std::string::npos)
-    //  break;
-
-    r.push_back(node.c_str());
-
-  }
-
-  Rcpp::CharacterVector out = Rcpp::wrap(r);
-  return markUTF8(out);
-
 }
 
 
@@ -522,3 +493,4 @@ Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector cols){
   return res ;
 
 }
+

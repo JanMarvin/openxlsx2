@@ -10,19 +10,19 @@
 #' @param startRow A vector specifying the starting row to write df
 #' @param xy An alternative to specifying startCol and startRow individually.
 #' A vector of the form c(startCol, startRow)
-#' @param colNames If \code{TRUE}, column names of x are written.
-#' @param rowNames If \code{TRUE}, row names of x are written.
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, row names of x are written.
 #' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
 #' @param tableName name of table in workbook. The table name must be unique.
 #' @param headerStyle Custom style to apply to column names.
-#' @param withFilter If \code{TRUE}, columns with have filters in the first row.
-#' @param keepNA If \code{TRUE}, NA values are converted to #N/A (or \code{na.string}, if not NULL) in Excel, else NA cells will be empty.
-#' @param na.string If not NULL, and if \code{keepNA} is \code{TRUE}, NA values are converted to this string in Excel.
+#' @param withFilter If `TRUE`, columns with have filters in the first row.
+#' @param keepNA If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty.
+#' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' @param stack If \code{TRUE} the new style is merged with any existing cell styles.  If FALSE, any
+#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
 #' existing style is replaced by the new style.
 #' \cr\cr
-#' \cr\bold{The below options correspond to Excel table options:}
+#' \cr**The below options correspond to Excel table options:**
 #' \cr
 #' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 #' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
@@ -34,10 +34,10 @@
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.
-#' @seealso \code{\link{addWorksheet}}
-#' @seealso \code{\link{writeData}}
-#' @seealso \code{\link{removeTable}}
-#' @seealso \code{\link{getTables}}
+#' @seealso [addWorksheet()]
+#' @seealso [writeData()]
+#' @seealso [removeTable()]
+#' @seealso [getTables()]
 #' @importFrom stats na.omit
 #' @export
 #' @examples
@@ -48,7 +48,7 @@
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "S1")
 #' addWorksheet(wb, "S2")
-#' addWorksheet(wb, "S3")
+#' # addWorksheet(wb, "S3")
 #'
 #'
 #' #####################################################################################
@@ -72,19 +72,20 @@
 #'   "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE
 #' )
 #'
-#' ## openxlsx will apply default Excel styling for these classes
-#' class(df$Cash) <- c(class(df$Cash), "currency")
-#' class(df$Cash2) <- c(class(df$Cash2), "accounting")
-#' class(df$hLink) <- "hyperlink"
-#' class(df$Percentage) <- c(class(df$Percentage), "percentage")
-#' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
-#'
-#' writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+#' # ## openxlsx will apply default Excel styling for these classes
+#' # class(df$Cash) <- c(class(df$Cash), "currency")
+#' # class(df$Cash2) <- c(class(df$Cash2), "accounting")
+#' # class(df$hLink) <- "hyperlink"
+#' # class(df$Percentage) <- c(class(df$Percentage), "percentage")
+#' # class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
+#' #
+#' # writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 #'
 #' #####################################################################################
 #' ## Additional Header Styling and remove column filters
 #'
 #' writeDataTable(wb,
+#'   # todo createStyle does not work
 #'   sheet = 1, x = iris, startCol = 7, headerStyle = createStyle(textRotation = 45),
 #'   withFilter = FALSE
 #' )
@@ -204,10 +205,6 @@ writeDataTable <- function(wb, sheet, x,
   }
   startRow <- as.integer(startRow)
 
-  ## Coordinates for each section
-  if (rowNames) {
-    x <- cbind(data.frame("row names" = rownames(x)), as.data.frame(x))
-  }
 
   ## If 0 rows append a blank row
 
@@ -270,20 +267,30 @@ writeDataTable <- function(wb, sheet, x,
 
   ## column class styling
   colClasses <- lapply(x, function(x) tolower(class(x)))
-  classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol, colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
+  classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
+              colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
 
-  ## write data to worksheet
-  wb$writeData(
-    df = x,
-    colNames = TRUE,
+  # ## write data to worksheet
+  # wb$writeData(
+  #   df = x,
+  #   colNames = TRUE,
+  #   sheet = sheet,
+  #   startRow = startRow,
+  #   startCol = startCol,
+  #   colClasses = colClasses,
+  #   hlinkNames = NULL,
+  #   keepNA = keepNA,
+  #   na.string = na.string,
+  #   list_sep = sep
+  # )
+
+  wb <- writeData2(
+    wb =  wb,
     sheet = sheet,
+    data = x,
+    colNames = TRUE,
     startRow = startRow,
-    startCol = startCol,
-    colClasses = colClasses,
-    hlinkNames = NULL,
-    keepNA = keepNA,
-    na.string = na.string,
-    list_sep = sep
+    startCol = startCol
   )
 
   ## replace invalid XML characters

@@ -63,7 +63,7 @@ A vector of the form c(startCol, startRow)}
 \item{stack}{If \code{TRUE} the new style is merged with any existing cell styles.  If FALSE, any
 existing style is replaced by the new style.
 \cr\cr
-\cr\bold{The below options correspond to Excel table options:}
+\cr\strong{The below options correspond to Excel table options:}
 \cr
 \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}}
@@ -92,7 +92,7 @@ hyperlinks, percentages respectively.
 wb <- createWorkbook()
 addWorksheet(wb, "S1")
 addWorksheet(wb, "S2")
-addWorksheet(wb, "S3")
+# addWorksheet(wb, "S3")
 
 
 #####################################################################################
@@ -116,19 +116,20 @@ df <- data.frame(
   "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE
 )
 
-## openxlsx will apply default Excel styling for these classes
-class(df$Cash) <- c(class(df$Cash), "currency")
-class(df$Cash2) <- c(class(df$Cash2), "accounting")
-class(df$hLink) <- "hyperlink"
-class(df$Percentage) <- c(class(df$Percentage), "percentage")
-class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
-
-writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+# ## openxlsx will apply default Excel styling for these classes
+# class(df$Cash) <- c(class(df$Cash), "currency")
+# class(df$Cash2) <- c(class(df$Cash2), "accounting")
+# class(df$hLink) <- "hyperlink"
+# class(df$Percentage) <- c(class(df$Percentage), "percentage")
+# class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
+#
+# writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 
 #####################################################################################
 ## Additional Header Styling and remove column filters
 
 writeDataTable(wb,
+  # todo createStyle does not work
   sheet = 1, x = iris, startCol = 7, headerStyle = createStyle(textRotation = 45),
   withFilter = FALSE
 )
@@ -181,11 +182,11 @@ saveWorkbook(wb, file = "tableStylesGallery.xlsx", overwrite = TRUE)
 
 }
 \seealso{
-\code{\link{addWorksheet}}
+\code{\link[=addWorksheet]{addWorksheet()}}
 
-\code{\link{writeData}}
+\code{\link[=writeData]{writeData()}}
 
-\code{\link{removeTable}}
+\code{\link[=removeTable]{removeTable()}}
 
-\code{\link{getTables}}
+\code{\link[=getTables]{getTables()}}
 }

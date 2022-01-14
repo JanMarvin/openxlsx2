@@ -297,6 +297,10 @@ Workbook <- setRefClass(
       .self$sheetOrder <- c(.self$sheetOrder, as.integer(newSheetIndex))
       .self$sheet_names <- c(.self$sheet_names, sheetName)
 
+      # TODO this should live wherever the other default values for an empty worksheet are initialized
+      empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
+      .self$styles$cellXfs <- write_xf(empty_cellXfs)
+
       # Jordan is a little worried this may change something
       # invisible(newSheetIndex)
       invisible(.self)
@@ -397,7 +401,7 @@ Workbook <- setRefClass(
 
               .self$charts[newname] <- newfl
 
-              chart <- readUTF8(fl)
+              chart <- read_xml(fl, pointer = FALSE)
               chart <- gsub(
                 stri_join("(?<=')", .self$sheet_names[[clonedSheet]], "(?='!)"),
                 stri_join("'", sheetName, "'"),
@@ -1094,12 +1098,14 @@ Workbook <- setRefClass(
 
 
       styleXML <- .self$styles
-      styleXML$numFmts <-
-        stri_join(
-          sprintf('<numFmts count="%s">', length(.self$styles$numFmts)),
-          pxml(.self$styles$numFmts),
-          "</numFmts>"
-        )
+      if (length(.self$styles$numFmts)) {
+        styleXML$numFmts <-
+          stri_join(
+            sprintf('<numFmts count="%s">', length(.self$styles$numFmts)),
+            pxml(.self$styles$numFmts),
+            "</numFmts>"
+          )
+      }
       styleXML$fonts <-
         stri_join(
           sprintf('<fonts count="%s">', length(.self$styles$fonts)),
@@ -1136,6 +1142,9 @@ Workbook <- setRefClass(
           pxml(.self$styles$cellStyles),
           "</cellStyles>"
         )
+      # TODO
+      # tableStyles
+      # extLst
 
       # TODO replace ifelse() with just if () else
       styleXML$dxfs <-
@@ -1150,21 +1159,21 @@ Workbook <- setRefClass(
         )
 
       ## write styles.xml
-      if(class(.self$styles_xml) == "uninitializedField") {
+      #if(class(.self$styles_xml) == "uninitializedField") {
         write_file(
           head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">',
           body = pxml(styleXML),
           tail = "</styleSheet>",
           fl = file.path(xlDir, "styles.xml")
         )
-      } else {
-        write_file(
-          head = '',
-          body = .self$styles_xml,
-          tail = '',
-          fl = file.path(xlDir, "styles.xml")
-        )
-      }
+      #} else {
+      #  write_file(
+      #    head = '',
+      #    body = .self$styles_xml,
+      #    tail = '',
+      #    fl = file.path(xlDir, "styles.xml")
+      #  )
+      #}
 
       ## write workbook.xml
       workbookXML <- .self$workbook
@@ -1288,52 +1297,66 @@ Workbook <- setRefClass(
       showLastColumn = 0,
       showRowStripes = 1,
       showColumnStripes = 0) {
+
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
       id <- as.character(length(.self$tables) + 3L)
       sheet <- .self$validateSheet(sheet)
-
-      ## build table XML and save to tables field
-      table <-
-        sprintf(
-          '<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="%s" name="%s" displayName="%s" ref="%s" totalsRowCount="%s"',
-          id,
-          tableName,
-          tableName,
-          ref,
-          # TODO force as.integer() for all values
-          as.integer(totalsRowCount)
-        )
-      # because tableName might be native encoded non-ASCII strings, we need to ensure
-      # it's UTF-8 encoded
-      table <- enc2utf8(table)
 
       nms <- names(.self$tables)
       tSheets <- attr(.self$tables, "sheet")
       tNames <- attr(.self$tables, "tableName")
 
-      tableStyleXML <-
-        sprintf(
-          '<tableStyleInfo name="%s" showFirstColumn="%s" showLastColumn="%s" showRowStripes="%s" showColumnStripes="%s"/>',
-          tableStyle,
-          as.integer(showFirstColumn),
-          as.integer(showLastColumn),
-          as.integer(showRowStripes),
-          as.integer(showColumnStripes)
-        )
+
+      ### autofilter
+      autofilter <- if (withFilter) {
+       xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = ref))
+      } else {
+        NULL
+      }
+
+      ### tableColumn
+      tableColumn <- sapply(colNames, function(x) {
+        id <- which(colNames %in% x)
+        xml_node_create("tableColumn", xml_attributes = c(id = id, name = x))
+      })
+
+      tableColumns <- xml_node_create(xml_name = "tableColumns",
+                                      xml_children = tableColumn,
+                                      xml_attributes = c(count = as.character(length(colNames))))
 
 
-      .self$tables <-
-        c(
-          .self$tables,
-          build_table_xml(
-            table = table,
-            tableStyleXML = tableStyleXML,
-            ref = ref,
-            colNames = gsub("\n|\r", "_x000a_", colNames),
-            showColNames = showColNames,
-            withFilter = withFilter
-          )
-        )
+      ### tableStyleInfo
+      tablestyle_attr <- c(
+        name = tableStyle,
+        showFirstColumn = as.integer(showFirstColumn),
+        showLastColumn = as.integer(showLastColumn),
+        showRowStripes = as.integer(showRowStripes),
+        showColumnStripes = as.integer(showColumnStripes)
+      )
+
+      tableStyleXML <- xml_node_create(xml_name = "tableStyleInfo", xml_attributes = tablestyle_attr)
+
+
+      ### full table
+      table_attrs <- c(
+        xmlns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+        `xmlns:mc` = "http://schemas.openxmlformats.org/markup-compatibility/2006",
+        id = id,
+        name = tableName,
+        displayName = tableName,
+        ref = ref,
+        totalsRowCount = totalsRowCount,
+        totalsRowShown="0"
+        #headerRowDxfId="1"
+      )
+
+      .self$tables <- c(
+        .self$tables,
+        xml_node_create(xml_name = "table",
+                        xml_children = c(autofilter, tableColumns, tableStyleXML),
+                        xml_attributes = table_attrs)
+      )
+
       names(.self$tables) <- c(nms, ref)
       attr(.self$tables, "sheet") <- c(tSheets, sheet)
       attr(.self$tables, "tableName") <- c(tNames, tableName)
@@ -2011,30 +2034,35 @@ Workbook <- setRefClass(
           cc <- ws$sheet_data$cc
 
 
-          cc$r <- paste0(cc$c_r, cc$row_r)
-          # prepare data for output
+          if (class(cc) != "uninitializedField") {
+            cc$r <- paste0(cc$c_r, cc$row_r)
+            # prepare data for output
 
-          # there can be files, where row_attr is incomplete because a row
-          # is lacking any attributes (presumably was added before saving)
-          # still row_attr is what we want!
-          cc_rows <- ws$sheet_data$row_attr$r
-          cc_out <- vector("list", length = length(cc_rows))
-          names(cc_out) <- cc_rows
+            # there can be files, where row_attr is incomplete because a row
+            # is lacking any attributes (presumably was added before saving)
+            # still row_attr is what we want!
+            cc_rows <- ws$sheet_data$row_attr$r
+            cc_out <- vector("list", length = length(cc_rows))
+            names(cc_out) <- cc_rows
 
-          for (cc_r in cc_rows) {
-            tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
-            nams <- cc[cc$row_r == cc_r, c("c_r")]
-            ltmp <- vector("list", nrow(tmp))
-            names(ltmp) <- nams
+            for (cc_r in cc_rows) {
+              tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
+              nams <- cc[cc$row_r == cc_r, c("c_r")]
+              ltmp <- vector("list", nrow(tmp))
+              names(ltmp) <- nams
 
-            for (nr in seq_len(nrow(tmp))) {
-              ltmp[[nr]] <- as.list(tmp[nr, ])
+              for (nr in seq_len(nrow(tmp))) {
+                ltmp[[nr]] <- as.list(tmp[nr, ])
+              }
+
+              cc_out[[cc_r]] <- ltmp
             }
 
-            cc_out[[cc_r]] <- ltmp
+            ws$sheet_data$cc_out <- cc_out
+          } else {
+            ws$sheet_data$row_attr <- NULL
+            ws$sheet_data$cc_out <- NULL
           }
-
-          ws$sheet_data$cc_out <- cc_out
 
           # row_attr <- ws$sheet_data$row_attr
           # nam_at <- names(row_attr)
@@ -3830,14 +3858,7 @@ Workbook <- setRefClass(
       numFmts <- xml_node(styles_XML, "styleSheet", "numFmts", "numFmt")
       numFmtFlag <- FALSE
       if (length(numFmts)) {
-        numFmtsIds <-
-          sapply(numFmts, getAttr, tag = 'numFmtId="', USE.NAMES = FALSE)
-        formatCodes <-
-          sapply(numFmts, getAttr, tag = 'formatCode="', USE.NAMES = FALSE)
-        numFmts <-
-          lapply(seq_along(numFmts), function(i) {
-            list("numFmtId" = numFmtsIds[[i]], "formatCode" = formatCodes[[i]])
-          })
+        numFmts <- read_numfmt(numFmts)
         numFmtFlag <- TRUE
       }
 
@@ -4829,267 +4850,274 @@ Workbook <- setRefClass(
       invisible(.self)
     },
 
-    # TODO add default values?
-    writeData = function(df, sheet, startRow, startCol, colNames, colClasses, hlinkNames, keepNA, na.string, list_sep) {
-      sheet <- .self$validateSheet(sheet)
-      nCols <- ncol(df)
-      nRows <- nrow(df)
-      df_nms <- names(df)
 
-      allColClasses <- unlist(colClasses)
-      df <- as.list(df)
+    ##### should be revived (for the time beeing use writeData2() )
+    # # TODO add default values?
+    # writeData = function(df, sheet, startRow, startCol, colNames, colClasses, hlinkNames, keepNA, na.string, list_sep) {
+    #   sheet <- .self$validateSheet(sheet)
+    #   nCols <- ncol(df)
+    #   nRows <- nrow(df)
+    #   df_nms <- names(df)
+    #
+    #   allColClasses <- unlist(colClasses)
+    #   df <- as.list(df)
+    #
+    #   ######################################################################
+    #   ## standardise all column types
+    #
+    #
+    #   ## pull out NaN values
+    #   nans <- unlist(lapply(seq_len(nCols), function(i) {
+    #     tmp <- df[[i]]
+    #     if (!inherits(tmp, c("character", "list"))) {
+    #       v <- which(is.nan(tmp) | is.infinite(tmp))
+    #       if (length(v) == 0) {
+    #         return(v)
+    #       }
+    #       return(as.integer(nCols * (v - 1) + i)) ## row position
+    #     }
+    #   }))
+    #
+    #   ## convert any Dates to integers and create date style object
+    #   if (any(c("date", "posixct", "posixt") %in% allColClasses)) {
+    #     dInds <- which(sapply(colClasses, function(x) "date" %in% x))
+    #
+    #     origin <- 25569L
+    #     if (grepl('date1904="1"|date1904="true"', stri_join(unlist(.self$workbook), collapse = ""), ignore.case = TRUE)) {
+    #       origin <- 24107L
+    #     }
+    #
+    #     for (i in dInds) {
+    #       df[[i]] <- as.integer(df[[i]]) + origin
+    #       if (origin == 25569L){
+    #         earlyDate <- df[[i]] < 60
+    #         df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
+    #       }
+    #     }
+    #
+    #     pInds <- which(sapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x)))
+    #     if (length(pInds) & nRows > 0) {
+    #       parseOffset <- function(tz) {
+    #         suppressWarnings(
+    #           ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
+    #           * (as.integer(stri_sub(tz, 2, 3)) + as.integer(stri_sub(tz, 4, 5)) / 60) / 24
+    #         )
+    #       }
+    #
+    #       t <- lapply(df[pInds], function(x) format(x, "%z"))
+    #       offSet <- lapply(t, parseOffset)
+    #       offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
+    #
+    #       for (i in seq_along(pInds)) {
+    #         df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
+    #       }
+    #     }
+    #   }
+    #
+    #   # TODO for these if () ... for (i in ...); just use the loop?
+    #
+    #   ## convert any Dates to integers and create date style object
+    #   if (any(c("currency", "accounting", "percentage", "3", "comma") %in% allColClasses)) {
+    #     cInds <- which(sapply(colClasses, function(x) any(c("accounting", "currency", "percentage", "3", "comma") %in% tolower(x))))
+    #     for (i in cInds) {
+    #       df[[i]] <- as.numeric(gsub("[^0-9\\.-]", "", df[[i]], perl = TRUE))
+    #     }
+    #     class(df[[i]]) <- "numeric"
+    #     # TODO is the above line a typo?  Only assign numeric to the last column?
+    #   }
+    #
+    #   ## convert scientific
+    #   if ("scientific" %in% allColClasses) {
+    #     for (i in which(sapply(colClasses, function(x) "scientific" %in% x))) {
+    #       class(df[[i]]) <- "numeric"
+    #     }
+    #   }
+    #
+    #   ##
+    #   if ("list" %in% allColClasses) {
+    #     for (i in which(sapply(colClasses, function(x) "list" %in% x))) {
+    #       df[[i]] <- sapply(lapply(df[[i]], unlist), stri_join, collapse = list_sep)
+    #     }
+    #   }
+    #
+    #   if (any(c("formula", "array_formula") %in% allColClasses)) {
+    #
+    #     frm <- "formula"
+    #     cls <- "openxlsx_formula"
+    #
+    #     # TODO use if () ... else ...
+    #
+    #     if ("array_formula" %in% allColClasses) {
+    #       frm <- "array_formula"
+    #       cls <- "openxlsx_array_formula"
+    #     }
+    #
+    #     for (i in which(sapply(colClasses, function(x) frm %in% x))) {
+    #       df[[i]] <- replaceIllegalCharacters(as.character(df[[i]]))
+    #       class(df[[i]]) <- cls
+    #     }
+    #   }
+    #
+    #   if ("hyperlink" %in% allColClasses) {
+    #     for (i in which(sapply(colClasses, function(x) "hyperlink" %in% x))) {
+    #       class(df[[i]]) <- "hyperlink"
+    #     }
+    #   }
+    #
+    #   colClasses <- sapply(df, function(x) tolower(class(x))[[1]]) ## by here all cols must have a single class only
+    #
+    #
+    #   ## convert logicals (Excel stores logicals as 0 & 1)
+    #   if ("logical" %in% allColClasses) {
+    #     for (i in which(sapply(colClasses, function(x) "logical" %in% x))) {
+    #       class(df[[i]]) <- "numeric"
+    #     }
+    #   }
+    #
+    #   ## convert all numerics to character (this way preserves digits)
+    #   if ("numeric" %in% colClasses) {
+    #     for (i in which(sapply(colClasses, function(x) "numeric" %in% x))) {
+    #       class(df[[i]]) <- "character"
+    #     }
+    #   }
+    #
+    #
+    #   ## End standardise all column types
+    #   ######################################################################
+    #
+    #
+    #   ## cell types
+    #   t <- build_cell_types_integer(classes = colClasses, n_rows = nRows)
+    #
+    #   for (i in which(sapply(colClasses, function(x) !"character" %in% x & !"numeric" %in% x))) {
+    #     df[[i]] <- as.character(df[[i]])
+    #   }
+    #
+    #   ## cell values
+    #   v <- as.character(t(as.matrix(
+    #     data.frame(df, stringsAsFactors = FALSE, check.names = FALSE, fix.empty.names = FALSE)
+    #   )))
+    #
+    #
+    #   if (keepNA) {
+    #     if (is.null(na.string)) {
+    #       # t[is.na(v)] <- 4L
+    #       v[is.na(v)] <- "#N/A"
+    #     } else {
+    #       # t[is.na(v)] <- 1L
+    #       v[is.na(v)] <- as.character(na.string)
+    #     }
+    #   } else {
+    #     t[is.na(v)] <- NA_character_
+    #     v[is.na(v)] <- NA_character_
+    #   }
+    #
+    #   ## If any NaN values
+    #   if (length(nans)) {
+    #     t[nans] <- 4L
+    #     v[nans] <- "#NUM!"
+    #   }
+    #
+    #
+    #   # prepend column headers
+    #   if (colNames) {
+    #     t <- c(rep.int(1L, nCols), t)
+    #     v <- c(df_nms, v)
+    #     nRows <- nRows + 1L
+    #   }
+    #
+    #
+    #   ## Formulas
+    #   f_in <- rep.int(NA_character_, length(t))
+    #   any_functions <- FALSE
+    #   ref_cell <- paste0(int_2_cell_ref(startCol), startRow)
+    #
+    #   if (any(c("openxlsx_formula", "openxlsx_array_formula") %in% colClasses)) {
+    #
+    #     ## alter the elements of t where we have a formula to be "str"
+    #     if ("openxlsx_formula" %in% colClasses) {
+    #       formula_cols <- which(sapply(colClasses, function(x) "openxlsx_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
+    #       formula_strs <- stri_join("<f>", unlist(df[formula_cols], use.names = FALSE), "</f>")
+    #     } else { # openxlsx_array_formula
+    #       formula_cols <- which(sapply(colClasses, function(x) "openxlsx_array_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
+    #       formula_strs <- stri_join("<f t=\"array\" ref=\"", ref_cell, ":", ref_cell, "\">", unlist(df[formula_cols], use.names = FALSE), "</f>")
+    #     }
+    #     formula_inds <- unlist(lapply(formula_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE)
+    #     f_in[formula_inds] <- formula_strs
+    #     any_functions <- TRUE
+    #
+    #     rm(formula_cols)
+    #     rm(formula_strs)
+    #     rm(formula_inds)
+    #   }
+    #
+    #   suppressWarnings(try(rm(df), silent = TRUE))
+    #
+    #   ## Append hyperlinks, convert h to s in cell type
+    #   hyperlink_cols <- which(sapply(colClasses, function(x) "hyperlink" %in% x, USE.NAMES = FALSE), useNames = FALSE)
+    #   if (length(hyperlink_cols)) {
+    #     hyperlink_inds <- sort(unlist(lapply(hyperlink_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE))
+    #     na_hyperlink <- intersect(hyperlink_inds, which(is.na(t)))
+    #
+    #     if (length(hyperlink_inds)) {
+    #       t[t %in% 9] <- 1L ## set cell type to "s"
+    #
+    #       hyperlink_refs <- convert_to_excel_ref_expand(cols = hyperlink_cols + startCol - 1, LETTERS = LETTERS, rows = as.character((startRow + colNames):(startRow + nRows - 1L)))
+    #
+    #       if (length(na_hyperlink)) {
+    #         to_remove <- which(hyperlink_inds %in% na_hyperlink)
+    #         hyperlink_refs <- hyperlink_refs[-to_remove]
+    #         hyperlink_inds <- hyperlink_inds[-to_remove]
+    #       }
+    #
+    #       exHlinks <- worksheets[[sheet]]$hyperlinks
+    #       targets <- replaceIllegalCharacters(v[hyperlink_inds])
+    #
+    #       if (!is.null(hlinkNames) & length(hlinkNames) == length(hyperlink_inds)) {
+    #         v[hyperlink_inds] <- hlinkNames
+    #       } ## this is text to display instead of hyperlink
+    #
+    #       ## create hyperlink objects
+    #       newhl <- lapply(seq_along(hyperlink_inds), function(i) {
+    #         Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
+    #       })
+    #
+    #       .self$worksheets[[sheet]]$hyperlinks <- append(worksheets[[sheet]]$hyperlinks, newhl)
+    #     }
+    #   }
+    #
+    #
+    #   ## convert all strings to references in sharedStrings and update values (v)
+    #   strFlag <- which(t == 1L)
+    #   newStrs <- v[strFlag]
+    #   if (length(newStrs)) {
+    #     newStrs <- replaceIllegalCharacters(newStrs)
+    #     newStrs <- stri_join("<si><t xml:space=\"preserve\">", newStrs, "</t></si>")
+    #
+    #     uNewStr <- unique(newStrs)
+    #
+    #     .self$updateSharedStrings(uNewStr)
+    #     v[strFlag] <- match(newStrs, sharedStrings) - 1L
+    #   }
+    #
+    #   # ## Create cell list of lists
+    #   .self$worksheets[[sheet]]$sheet_data$write(
+    #     rows_in = startRow:(startRow + nRows - 1L),
+    #     cols_in = startCol:(startCol + nCols - 1L),
+    #     t_in = t,
+    #     v_in = v,
+    #     f_in = f_in,
+    #     any_functions = any_functions
+    #   )
+    #
+    #
+    #
+    #   invisible(.self)
+    # },
 
-      ######################################################################
-      ## standardise all column types
-
-
-      ## pull out NaN values
-      nans <- unlist(lapply(seq_len(nCols), function(i) {
-        tmp <- df[[i]]
-        if (!inherits(tmp, c("character", "list"))) {
-          v <- which(is.nan(tmp) | is.infinite(tmp))
-          if (length(v) == 0) {
-            return(v)
-          }
-          return(as.integer(nCols * (v - 1) + i)) ## row position
-        }
-      }))
-
-      ## convert any Dates to integers and create date style object
-      if (any(c("date", "posixct", "posixt") %in% allColClasses)) {
-        dInds <- which(sapply(colClasses, function(x) "date" %in% x))
-
-        origin <- 25569L
-        if (grepl('date1904="1"|date1904="true"', stri_join(unlist(.self$workbook), collapse = ""), ignore.case = TRUE)) {
-          origin <- 24107L
-        }
-
-        for (i in dInds) {
-          df[[i]] <- as.integer(df[[i]]) + origin
-          if (origin == 25569L){
-            earlyDate <- df[[i]] < 60
-            df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
-          }
-        }
-
-        pInds <- which(sapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x)))
-        if (length(pInds) & nRows > 0) {
-          parseOffset <- function(tz) {
-            suppressWarnings(
-              ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
-              * (as.integer(stri_sub(tz, 2, 3)) + as.integer(stri_sub(tz, 4, 5)) / 60) / 24
-            )
-          }
-
-          t <- lapply(df[pInds], function(x) format(x, "%z"))
-          offSet <- lapply(t, parseOffset)
-          offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
-
-          for (i in seq_along(pInds)) {
-            df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
-          }
-        }
-      }
-
-      # TODO for these if () ... for (i in ...); just use the loop?
-
-      ## convert any Dates to integers and create date style object
-      if (any(c("currency", "accounting", "percentage", "3", "comma") %in% allColClasses)) {
-        cInds <- which(sapply(colClasses, function(x) any(c("accounting", "currency", "percentage", "3", "comma") %in% tolower(x))))
-        for (i in cInds) {
-          df[[i]] <- as.numeric(gsub("[^0-9\\.-]", "", df[[i]], perl = TRUE))
-        }
-        class(df[[i]]) <- "numeric"
-        # TODO is the above line a typo?  Only assign numeric to the last column?
-      }
-
-      ## convert scientific
-      if ("scientific" %in% allColClasses) {
-        for (i in which(sapply(colClasses, function(x) "scientific" %in% x))) {
-          class(df[[i]]) <- "numeric"
-        }
-      }
-
-      ##
-      if ("list" %in% allColClasses) {
-        for (i in which(sapply(colClasses, function(x) "list" %in% x))) {
-          df[[i]] <- sapply(lapply(df[[i]], unlist), stri_join, collapse = list_sep)
-        }
-      }
-
-      if (any(c("formula", "array_formula") %in% allColClasses)) {
-
-        frm <- "formula"
-        cls <- "openxlsx_formula"
-
-        # TODO use if () ... else ...
-
-        if ("array_formula" %in% allColClasses) {
-          frm <- "array_formula"
-          cls <- "openxlsx_array_formula"
-        }
-
-        for (i in which(sapply(colClasses, function(x) frm %in% x))) {
-          df[[i]] <- replaceIllegalCharacters(as.character(df[[i]]))
-          class(df[[i]]) <- cls
-        }
-      }
-
-      if ("hyperlink" %in% allColClasses) {
-        for (i in which(sapply(colClasses, function(x) "hyperlink" %in% x))) {
-          class(df[[i]]) <- "hyperlink"
-        }
-      }
-
-      colClasses <- sapply(df, function(x) tolower(class(x))[[1]]) ## by here all cols must have a single class only
-
-
-      ## convert logicals (Excel stores logicals as 0 & 1)
-      if ("logical" %in% allColClasses) {
-        for (i in which(sapply(colClasses, function(x) "logical" %in% x))) {
-          class(df[[i]]) <- "numeric"
-        }
-      }
-
-      ## convert all numerics to character (this way preserves digits)
-      if ("numeric" %in% colClasses) {
-        for (i in which(sapply(colClasses, function(x) "numeric" %in% x))) {
-          class(df[[i]]) <- "character"
-        }
-      }
-
-
-      ## End standardise all column types
-      ######################################################################
-
-
-      ## cell types
-      t <- build_cell_types_integer(classes = colClasses, n_rows = nRows)
-
-      for (i in which(sapply(colClasses, function(x) !"character" %in% x & !"numeric" %in% x))) {
-        df[[i]] <- as.character(df[[i]])
-      }
-
-      ## cell values
-      v <- as.character(t(as.matrix(
-        data.frame(df, stringsAsFactors = FALSE, check.names = FALSE, fix.empty.names = FALSE)
-      )))
-
-
-      if (keepNA) {
-        if (is.null(na.string)) {
-          # t[is.na(v)] <- 4L
-          v[is.na(v)] <- "#N/A"
-        } else {
-          # t[is.na(v)] <- 1L
-          v[is.na(v)] <- as.character(na.string)
-        }
-      } else {
-        t[is.na(v)] <- NA_character_
-        v[is.na(v)] <- NA_character_
-      }
-
-      ## If any NaN values
-      if (length(nans)) {
-        t[nans] <- 4L
-        v[nans] <- "#NUM!"
-      }
-
-
-      # prepend column headers
-      if (colNames) {
-        t <- c(rep.int(1L, nCols), t)
-        v <- c(df_nms, v)
-        nRows <- nRows + 1L
-      }
-
-
-      ## Formulas
-      f_in <- rep.int(NA_character_, length(t))
-      any_functions <- FALSE
-      ref_cell <- paste0(int_2_cell_ref(startCol), startRow)
-
-      if (any(c("openxlsx_formula", "openxlsx_array_formula") %in% colClasses)) {
-
-        ## alter the elements of t where we have a formula to be "str"
-        if ("openxlsx_formula" %in% colClasses) {
-          formula_cols <- which(sapply(colClasses, function(x) "openxlsx_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
-          formula_strs <- stri_join("<f>", unlist(df[formula_cols], use.names = FALSE), "</f>")
-        } else { # openxlsx_array_formula
-          formula_cols <- which(sapply(colClasses, function(x) "openxlsx_array_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
-          formula_strs <- stri_join("<f t=\"array\" ref=\"", ref_cell, ":", ref_cell, "\">", unlist(df[formula_cols], use.names = FALSE), "</f>")
-        }
-        formula_inds <- unlist(lapply(formula_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE)
-        f_in[formula_inds] <- formula_strs
-        any_functions <- TRUE
-
-        rm(formula_cols)
-        rm(formula_strs)
-        rm(formula_inds)
-      }
-
-      suppressWarnings(try(rm(df), silent = TRUE))
-
-      ## Append hyperlinks, convert h to s in cell type
-      hyperlink_cols <- which(sapply(colClasses, function(x) "hyperlink" %in% x, USE.NAMES = FALSE), useNames = FALSE)
-      if (length(hyperlink_cols)) {
-        hyperlink_inds <- sort(unlist(lapply(hyperlink_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE))
-        na_hyperlink <- intersect(hyperlink_inds, which(is.na(t)))
-
-        if (length(hyperlink_inds)) {
-          t[t %in% 9] <- 1L ## set cell type to "s"
-
-          hyperlink_refs <- convert_to_excel_ref_expand(cols = hyperlink_cols + startCol - 1, LETTERS = LETTERS, rows = as.character((startRow + colNames):(startRow + nRows - 1L)))
-
-          if (length(na_hyperlink)) {
-            to_remove <- which(hyperlink_inds %in% na_hyperlink)
-            hyperlink_refs <- hyperlink_refs[-to_remove]
-            hyperlink_inds <- hyperlink_inds[-to_remove]
-          }
-
-          exHlinks <- worksheets[[sheet]]$hyperlinks
-          targets <- replaceIllegalCharacters(v[hyperlink_inds])
-
-          if (!is.null(hlinkNames) & length(hlinkNames) == length(hyperlink_inds)) {
-            v[hyperlink_inds] <- hlinkNames
-          } ## this is text to display instead of hyperlink
-
-          ## create hyperlink objects
-          newhl <- lapply(seq_along(hyperlink_inds), function(i) {
-            Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
-          })
-
-          .self$worksheets[[sheet]]$hyperlinks <- c(worksheets[[sheet]]$hyperlinks, newhl)
-        }
-      }
-
-
-      ## convert all strings to references in sharedStrings and update values (v)
-      strFlag <- which(t == 1L)
-      newStrs <- v[strFlag]
-      if (length(newStrs)) {
-        newStrs <- replaceIllegalCharacters(newStrs)
-        newStrs <- stri_join("<si><t xml:space=\"preserve\">", newStrs, "</t></si>")
-
-        uNewStr <- unique(newStrs)
-
-        .self$updateSharedStrings(uNewStr)
-        v[strFlag] <- match(newStrs, sharedStrings) - 1L
-      }
-
-      # ## Create cell list of lists
-      .self$worksheets[[sheet]]$sheet_data$write(
-        rows_in = startRow:(startRow + nRows - 1L),
-        cols_in = startCol:(startCol + nCols - 1L),
-        t_in = t,
-        v_in = v,
-        f_in = f_in,
-        any_functions = any_functions
-      )
-
-
-
-      invisible(.self)
+    ws = function(sheet) {
+      sheet_id <- .self$validateSheet(sheet)
+      .self$worksheets[[sheet_id]]
     }
   )
 

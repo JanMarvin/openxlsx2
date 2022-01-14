@@ -7,7 +7,7 @@
 write.xlsx(x, file, asTable = FALSE, ...)
 }
 \arguments{
-\item{x}{object or a list of objects that can be handled by \code{\link{writeData}} to write to file}
+\item{x}{object or a list of objects that can be handled by \code{\link[=writeData]{writeData()}} to write to file}
 
 \item{file}{xlsx file name}
 
@@ -15,11 +15,11 @@ write.xlsx(x, file, asTable = FALSE, ...)
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
-  \item{createWorkbook}
-  \item{addWorksheet}
-  \item{writeData}
-  \item{freezePane}
-  \item{saveWorkbook}
+\item{createWorkbook}
+\item{addWorksheet}
+\item{writeData}
+\item{freezePane}
+\item{saveWorkbook}
 }
 
 see details.}
@@ -33,57 +33,55 @@ write a data.frame or list of data.frames to an xlsx file
 \details{
 Optional parameters are:
 
-\bold{createWorkbook Parameters}
+\strong{createWorkbook Parameters}
 \itemize{
-  \item{\bold{creator}}{ A string specifying the workbook author}
+\item{\strong{creator}}{ A string specifying the workbook author}
 }
 
-\bold{addWorksheet Parameters}
+\strong{addWorksheet Parameters}
 \itemize{
-  \item{\bold{sheetName}}{ Name of the worksheet}
-  \item{\bold{gridLines}}{ A logical. If \code{FALSE}, the worksheet grid lines will be hidden.}
-  \item{\bold{tabColour}}{ Colour of the worksheet tab. A valid colour (belonging to colours())
-  or a valid hex colour beginning with "#".}
-  \item{\bold{zoom}}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
+\item{\strong{sheetName}}{ Name of the worksheet}
+\item{\strong{gridLines}}{ A logical. If \code{FALSE}, the worksheet grid lines will be hidden.}
+\item{\strong{tabColour}}{ Colour of the worksheet tab. A valid colour (belonging to colours())
+or a valid hex colour beginning with "#".}
+\item{\strong{zoom}}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
 }
 
-\bold{writeData/writeDataTable Parameters}
+\strong{writeData/writeDataTable Parameters}
 \itemize{
-  \item{\bold{startCol}}{ A vector specifying the starting column(s) to write df}
-  \item{\bold{startRow}}{ A vector specifying the starting row(s) to write df}
-  \item{\bold{xy}}{ An alternative to specifying startCol and startRow individually.
- A vector of the form c(startCol, startRow)}
-  \item{\bold{colNames or col.names}}{ If \code{TRUE}, column names of x are written.}
-  \item{\bold{rowNames or row.names}}{ If \code{TRUE}, row names of x are written.}
-  \item{\bold{headerStyle}}{ Custom style to apply to column names.}
-  \item{\bold{borders}}{ Either "surrounding", "columns" or "rows" or NULL.  If "surrounding", a border is drawn around the
+\item{\strong{startCol}}{ A vector specifying the starting column(s) to write df}
+\item{\strong{startRow}}{ A vector specifying the starting row(s) to write df}
+\item{\strong{xy}}{ An alternative to specifying startCol and startRow individually.
+A vector of the form c(startCol, startRow)}
+\item{\strong{colNames or col.names}}{ If \code{TRUE}, column names of x are written.}
+\item{\strong{rowNames or row.names}}{ If \code{TRUE}, row names of x are written.}
+\item{\strong{headerStyle}}{ Custom style to apply to column names.}
+\item{\strong{borders}}{ Either "surrounding", "columns" or "rows" or NULL.  If "surrounding", a border is drawn around the
 data.  If "rows", a surrounding border is drawn a border around each row. If "columns", a surrounding border is drawn with a border
 between each column.  If "\code{all}" all cell borders are drawn.}
-  \item{\bold{borderColour}}{ Colour of cell border}
-  \item{\bold{borderStyle}}{ Border line style.}
-  \item{\bold{keepNA}} {If \code{TRUE}, NA values are converted to #N/A (or \code{na.string}, if not NULL) in Excel, else NA cells will be empty. Defaults to FALSE.}
-  \item{\bold{na.string}} {If not NULL, and if \code{keepNA} is \code{TRUE}, NA values are converted to this string in Excel. Defaults to NULL.}
+\item{\strong{borderColour}}{ Colour of cell border}
+\item{\strong{borderStyle}}{ Border line style.}
+\item{\strong{keepNA}} {If \code{TRUE}, NA values are converted to #N/A (or \code{na.string}, if not NULL) in Excel, else NA cells will be empty. Defaults to FALSE.}
+\item{\strong{na.string}} {If not NULL, and if \code{keepNA} is \code{TRUE}, NA values are converted to this string in Excel. Defaults to NULL.}
 }
 
-\bold{freezePane Parameters}
+\strong{freezePane Parameters}
 \itemize{
-  \item{\bold{firstActiveRow}} {Top row of active region to freeze pane.}
-  \item{\bold{firstActiveCol}} {Furthest left column of active region to freeze pane.}
-  \item{\bold{firstRow}} {If \code{TRUE}, freezes the first row (equivalent to firstActiveRow = 2)}
-  \item{\bold{firstCol}} {If \code{TRUE}, freezes the first column (equivalent to firstActiveCol = 2)}
+\item{\strong{firstActiveRow}} {Top row of active region to freeze pane.}
+\item{\strong{firstActiveCol}} {Furthest left column of active region to freeze pane.}
+\item{\strong{firstRow}} {If \code{TRUE}, freezes the first row (equivalent to firstActiveRow = 2)}
+\item{\strong{firstCol}} {If \code{TRUE}, freezes the first column (equivalent to firstActiveCol = 2)}
 }
 
-\bold{colWidths Parameters}
+\strong{colWidths Parameters}
 \itemize{
-  \item{\bold{colWidths}} {May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)}
+\item{\strong{colWidths}} {May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)}
 }
 
-
-\bold{saveWorkbook Parameters}
+\strong{saveWorkbook Parameters}
 \itemize{
-  \item{\bold{overwrite}}{ Overwrite existing file (Defaults to TRUE as with write.table)}
+\item{\strong{overwrite}}{ Overwrite existing file (Defaults to TRUE as with write.table)}
 }
-
 
 columns of x with class Date or POSIXt are automatically
 styled as dates and datetimes respectively.
@@ -132,11 +130,11 @@ write.xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5,
 
 }
 \seealso{
-\code{\link{addWorksheet}}
+\code{\link[=addWorksheet]{addWorksheet()}}
 
-\code{\link{writeData}}
+\code{\link[=writeData]{writeData()}}
 
-\code{\link{createStyle}} for style parameters
+\code{\link[=createStyle]{createStyle()}} for style parameters
 }
 \author{
 Alexander Walker
