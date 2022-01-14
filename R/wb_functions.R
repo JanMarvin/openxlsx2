@@ -1155,3 +1155,11 @@ styles_on_sheet <- function(wb, sheet) {
 wb_ws <- function(wb, sheet) {
   wb$ws(sheet)
 }
+
+#' little worksheet saver
+#' @param wb a workbook
+#' @param file a file
+#' @export
+wb_save <- function(wb, file) {
+  saveWorkbook(wb = wb, file = file, overwrite = TRUE)
+}
