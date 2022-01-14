@@ -287,7 +287,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     pivot_content_type <- NULL
 
     if (length(pivotTableRelsXML)) {
-      wb$pivotTables.xml.rels <- unlist(lapply(pivotTableRelsXML, read_xml, pointer = FALSE)) 
+      wb$pivotTables.xml.rels <- unlist(lapply(pivotTableRelsXML, read_xml, pointer = FALSE))
     }
 
 
@@ -477,6 +477,47 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   for (i in seq_len(nSheets)) {
     worksheet_xml <- read_xml(worksheetsXML[i])
 
+    wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
+    wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
+    wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks")
+    # wb$worksheets[[i]]$cols <- xml_node(worksheet_xml, "worksheet", "cols")
+    # wb$worksheets[[i]]$conditionalFormatting <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
+    wb$worksheets[[i]]$controls <- xml_node(worksheet_xml, "worksheet", "controls")
+    wb$worksheets[[i]]$customProperties <- xml_node(worksheet_xml, "worksheet", "customProperties")
+    wb$worksheets[[i]]$customSheetViews <- xml_node(worksheet_xml, "worksheet", "customSheetViews")
+    wb$worksheets[[i]]$dataConsolidate <- xml_node(worksheet_xml, "worksheet", "dataConsolidate")
+    # wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations")
+    # wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
+    # has <drawing> a child <legacyDrawing> ?
+    wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
+    wb$worksheets[[i]]$drawingHF <- xml_node(worksheet_xml, "worksheet", "drawingHF")
+    # wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
+    wb$worksheets[[i]]$headerFooter <- xml_node(worksheet_xml, "worksheet", "headerFooter")
+    # wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks")
+    wb$worksheets[[i]]$ignoredErrors <- xml_node(worksheet_xml, "worksheet", "ignoredErrors")
+    # wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells")
+    wb$worksheets[[i]]$oleObjects <- xml_node(worksheet_xml, "worksheet", "oleObjects")
+    wb$worksheets[[i]]$pageMargins <- xml_node(worksheet_xml, "worksheet", "pageMargins")
+    wb$worksheets[[i]]$pageSetup <- xml_node(worksheet_xml, "worksheet", "pageSetup")
+    wb$worksheets[[i]]$phoneticPr <- xml_node(worksheet_xml, "worksheet", "phoneticPr")
+    wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
+    wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")
+    wb$worksheets[[i]]$protectedRanges <- xml_node(worksheet_xml, "worksheet", "protectedRanges")
+    wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks")
+    wb$worksheets[[i]]$scenarios <- xml_node(worksheet_xml, "worksheet", "scenarios")
+    wb$worksheets[[i]]$sheetCalcPr <- xml_node(worksheet_xml, "worksheet", "sheetCalcPr")
+    # wb$worksheets[[i]]$sheetData <- xml_node(worksheet_xml, "worksheet", "sheetData")
+    # wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
+    wb$worksheets[[i]]$sheetPr <- xml_node(worksheet_xml, "worksheet", "sheetPr")
+    wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
+    # wb$worksheets[[i]]$sheetViews <- xml_node(worksheet_xml, "worksheet", "sheetViews")
+    wb$worksheets[[i]]$smartTags <- xml_node(worksheet_xml, "worksheet", "smartTags")
+    wb$worksheets[[i]]$sortState <- xml_node(worksheet_xml, "worksheet", "sortState")
+    # wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts")
+    wb$worksheets[[i]]$webPublishItems <- xml_node(worksheet_xml, "worksheet", "webPublishItems")
+
+
+
     wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
 
     wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
@@ -499,14 +540,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks", "hyperlink")
     wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
 
-    # load the data
+    # load the data. This function reads sheet_data and returns cc and row_attr
     loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
 
   }
 
   ## Fix headers/footers
-  # TODO wb$worksheets[[i]]$headerFooter is currently not imported
-  for (i in seq_along(worksheetsXML)) {
+  for (i in seq_len(nSheets)) {
     if (!is_chart_sheet[i]) {
       if (length(wb$worksheets[[i]]$headerFooter)) {
         wb$worksheets[[i]]$headerFooter <- lapply(wb$worksheets[[i]]$headerFooter, splitHeaderFooter)
