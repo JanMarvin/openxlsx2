@@ -39,3 +39,12 @@ na_to_null <- function(x) {
 
 # opposite of %in%
 `%out%` <- function(x, table) match(x, table, nomatch = 0L) == 0L
+
+
+
+#' helper function to create tempory directory for testing purpose
+#' @param name for the temp file
+#' @export
+temp_xlsx <- function(name = "temp_xlsx") {
+  tempfile(pattern = paste0(name, "_"), fileext = ".xlsx")
+}
