@@ -982,3 +982,12 @@ wb_ws <- function(wb, sheet) {
 wb_save <- function(wb, file) {
   saveWorkbook(wb = wb, file = file, overwrite = TRUE)
 }
+
+#' little worksheet opener
+#' @param wb a workbook
+#' @export
+wb_open <- function(wb) {
+  tmp <- temp_xlsx()
+  wb_save(wb, tmp)
+  openXL(tmp)
+}
