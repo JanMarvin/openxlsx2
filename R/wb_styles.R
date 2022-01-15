@@ -144,11 +144,10 @@ styles_on_sheet <- function(wb, sheet) {
 
 # TODO can be further generalized with additional xf attributes and children
 #' create_cell_style
-#' @param x a numFmt ID for a builin style
 #' @param borderId dummy
 #' @param fillId dummy
 #' @param fontId dummy
-#' @param numFmtId dummy
+#' @param numFmtId a numFmt ID for a builin style
 #' @param pivotButton dummy
 #' @param quotePrefix dummy
 #' @param xfId dummy

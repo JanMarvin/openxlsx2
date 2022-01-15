@@ -33,7 +33,7 @@ create_cell_style(
 
 \item{fontId}{dummy}
 
-\item{numFmtId}{dummy}
+\item{numFmtId}{a numFmt ID for a builin style}
 
 \item{pivotButton}{dummy}
 
@@ -64,8 +64,6 @@ create_cell_style(
 \item{hidden}{dummy}
 
 \item{locked}{dummy}
-
-\item{x}{a numFmt ID for a builin style}
 }
 \description{
 create_cell_style
