@@ -141,6 +141,198 @@ styles_on_sheet <- function(wb, sheet) {
 
 }
 
+#' create number format
+#' @param numFmtId an id
+#' @param formatCode a format code
+#' @export
+create_numfmt <- function(numFmtId, formatCode) {
+
+  df_numfmt <- data.frame(
+    numFmtId = numFmtId,
+    formatCode  = formatCode,
+    stringsAsFactors = FALSE
+  )
+  numfmt <- write_numfmt(df_numfmt)
+
+  return(numfmt)
+}
+
+# TODO should not be required to check for uniqueness of numFmts. This should
+# have been done prior to calling this function.
+merge_numFmts <- function(wb, new_numfmts) {
+
+  # read old and new into dataframe
+  # FIXME if (length(wb$styles$numFmts)) else broken
+  old <- read_numfmt(read_xml(wb$styles$numFmts))
+  new <- read_numfmt(read_xml(new_numfmts))
+
+  # get new rownames
+  new_rownames <- seq(max(as.numeric(rownames(old)))+1,
+                      length.out = NROW(new))
+  row.names(new) <- as.character(new_rownames)
+
+  # both have identical length, therefore can be rbind
+  numfmts <- rbind(old, new)
+
+  wb$styles$numFmts <- write_numfmt(numfmts)
+
+  attr(wb, "new_numfmts") <- new_rownames
+  # let the user now, which styles are new
+  return(wb)
+}
+
+#' create number format
+#' @param b bold
+#' @param charset charset
+#' @param color rgb color: default "FF000000"
+#' @param condense condese
+#' @param extend extend
+#' @param family font family: default "2"
+#' @param i italic
+#' @param name font name: default "Calibri"
+#' @param outline outline
+#' @param scheme font scheme: default "minor"
+#' @param shadow shadow
+#' @param strike strike
+#' @param sz font size: default "11",
+#' @param u underline
+#' @param vertAlign vertical alignment
+#' @examples
+#' \dontrun{
+#' font <- create_font()
+#' # openxml has the alpha value leading
+#' hex8 <- unlist(xml_attribute(read_xml(font), "font", "color"))
+#' hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1,2))
+#'
+#' # write test color
+#' col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
+#' cat(col("Test"))
+#' }
+#' @export
+create_font <- function(
+    b = "",
+    charset = "",
+    color = "FF000000",
+    condense ="",
+    extend = "",
+    family = "2",
+    i = "",
+    name = "Calibri",
+    outline = "",
+    scheme = "minor",
+    shadow = "",
+    strike = "",
+    sz = "11",
+    u = "",
+    vertAlign = ""
+) {
+
+  if (b != "") {
+    b <- xml_node_create("b", xml_attributes = c("val" = b))
+  }
+
+  if (charset != "") {
+    charset <- xml_node_create("charset", xml_attributes = c("val" = charset))
+  }
+
+  if (color != "") {
+    # alt xml_attributes(theme:)
+    color <- xml_node_create("color", xml_attributes = c("rgb" = color))
+  }
+
+  if (condense != "") {
+    condense <- xml_node_create("condense", xml_attributes = c("val" = condense))
+  }
+
+  if (extend != "") {
+    extend <- xml_node_create("extend", xml_attributes = c("val" = extend))
+  }
+
+  if (family != "") {
+    family <- xml_node_create("family", xml_attributes = c("val" = family))
+  }
+
+  if (i != "") {
+    i <- xml_node_create("i", xml_attributes = c("val" = i))
+  }
+
+  if (name != "") {
+    name <- xml_node_create("name", xml_attributes = c("val" = name))
+  }
+
+  if (outline != "") {
+    outline <- xml_node_create("outline", xml_attributes = c("val" = outline))
+  }
+
+  if (scheme != "") {
+    scheme <- xml_node_create("scheme", xml_attributes = c("val" = scheme))
+  }
+
+  if (shadow != "") {
+    shadow <- xml_node_create("shadow", xml_attributes = c("val" = shadow))
+  }
+
+  if (strike != "") {
+    strike <- xml_node_create("strike", xml_attributes = c("val" = strike))
+  }
+
+  if (sz != "") {
+    sz <- xml_node_create("sz", xml_attributes = c("val" = sz))
+  }
+
+  if (u != "") {
+    u <- xml_node_create("u", xml_attributes = c("val" = u))
+  }
+
+  if (vertAlign != "") {
+    vertAlign <- xml_node_create("vertAlign", xml_attributes = c("val" = vertAlign))
+  }
+
+  df_font <- data.frame(
+    b = b,
+    charset = charset,
+    color = color,
+    condense = condense,
+    extend = extend,
+    family = family,
+    i = i,
+    name = name,
+    outline = outline,
+    scheme = scheme,
+    shadow = shadow,
+    strike = strike,
+    sz = sz,
+    u = u,
+    vertAlign = vertAlign,
+    stringsAsFactors = FALSE
+  )
+  font <- write_font(df_font)
+
+  return(font)
+}
+
+merge_fonts <- function(wb, new_fonts) {
+
+  # read old and new into dataframe
+  # FIXME if (length(wb$styles$numFmts)) else broken
+  old <- read_font(read_xml(wb$styles$fonts))
+  new <- read_font(read_xml(new_fonts))
+
+  # get new rownames
+  new_rownames <- seq(max(as.numeric(rownames(old)))+1,
+                      length.out = NROW(new))
+  row.names(new) <- as.character(new_rownames)
+
+  # both have identical length, therefore can be rbind
+  fonts <- rbind(old, new)
+
+  wb$styles$fonts <- write_font(fonts)
+
+  attr(wb, "new_fonts") <- new_rownames
+  # let the user now, which styles are new
+  return(wb)
+}
+
 
 # TODO can be further generalized with additional xf attributes and children
 #' create_cell_style
@@ -223,7 +415,7 @@ create_cell_style <- function(
   x <- as.character(numFmtId)
 
   applyAlignment <- ""
-  if (any(horizontal != "") | any(vertical != "")) applyAlignment <- "1"
+  if (any(horizontal != "") | any(textRotation != "") | any(vertical != "")) applyAlignment <- "1"
 
   applyBorder <- ""
   if (any(borderId != "")) applyBorder <- "1"
