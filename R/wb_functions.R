@@ -1148,6 +1148,138 @@ styles_on_sheet <- function(wb, sheet) {
 
 }
 
+
+# TODO can be further generalized with additional xf attributes and children
+#' create_builtin_cell_style
+#' @param x a numFmt ID for a builin style
+#' @param horizontal alignment can be "", "center", "right"
+#' @param vertical alignment can be "", "center", "right"
+#'
+#' @details
+#'  | "ID" | "numFmt"                    |
+#'  |------|-----------------------------|
+#'  | "0"  | "General"                   |
+#'  | "1"  | "0"                         |
+#'  | "2"  | "0.00"                      |
+#'  | "3"  | "#,##0"                     |
+#'  | "4"  | "#,##0.00"                  |
+#'  | "9"  | "0%"                        |
+#'  | "10" | "0.00%"                     |
+#'  | "11" | "0.00E+00"                  |
+#'  | "12" | "# ?/?"                     |
+#'  | "13" | "# ??/??"                   |
+#'  | "14" | "mm-dd-yy"                  |
+#'  | "15" | "d-mmm-yy"                  |
+#'  | "16" | "d-mmm"                     |
+#'  | "17" | "mmm-yy"                    |
+#'  | "18" | "h:mm AM/PM"                |
+#'  | "19" | "h:mm:ss AM/PM"             |
+#'  | "20" | "h:mm"                      |
+#'  | "21" | "h:mm:ss"                   |
+#'  | "22" | "m/d/yy h:mm"               |
+#'  | "37" | "#,##0 ;(#,##0)"            |
+#'  | "38" | "#,##0 ;\[Red\](#,##0)"     |
+#'  | "39" | "#,##0.00;(#,##0.00)"       |
+#'  | "40" | "#,##0.00;\[Red\](#,##0.00)"|
+#'  | "45" | "mm:ss"                     |
+#'  | "46" | "\[h\]:mm:ss"               |
+#'  | "47" | "mmss.0"                    |
+#'  | "48" | "##0.0E+0"                  |
+#'  | "49" | "@"                         |
+#' @export
+create_builtin_cell_style <- function(x, horizontal = "", vertical = "") {
+  n <- length(x)
+  x <- as.character(x)
+
+  applyNumberFormat <- ""
+  if (any(x != "0")) applyNumberFormat <- "1"
+
+  applyAlignment <- ""
+  if (horizontal != "" | vertical != "") applyAlignment <- "1"
+
+  df_cellXfs <- data.frame(
+    numFmtId = as.character(x),
+    fontId = rep("0", n),
+    fillId = rep("0", n),
+    borderId = rep("0", n),
+    xfId = rep("0", n),
+    applyNumberFormat = rep(applyNumberFormat, n),
+    applyAlignment = rep(applyAlignment, n),
+    horizontal = rep(horizontal, n),
+    vertical = rep(vertical, n),
+    stringsAsFactors = FALSE
+  )
+
+  cellXfs <- write_xf(df_cellXfs)
+  cellXfs
+}
+
+
+#' helper get_cell_style
+#' @param wb a workbook
+#' @param sheet a worksheet
+#' @param cell a cell
+#' @export
+get_cell_style <- function(wb, sheet, cell) {
+
+  sheet <- wb$validateSheet(sheet)
+
+  cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
+  cc <- wb$worksheets[[sheet]]$sheet_data$cc
+
+  cc$cell <- paste0(cc$c_r, cc$row_r)
+
+  sel <- cc$cell %in% cell
+  cc$c_s[sel]
+}
+
+#' helper set_cell_style
+#' @param wb a workbook
+#' @param sheet a worksheet
+#' @param cell a cell
+#' @param value a value to assign
+#' @examples
+#' wb <- createWorkbook()
+#' addWorksheet(wb, "test")
+#'
+#' mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
+#' writeData(wb, "test", mat, colNames = FALSE)
+#'
+#'
+#' x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
+#'        "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
+#'        "47", "48", "49")
+#'
+#' # combine original and new styles
+#' wb$styles$cellXfs <- c(
+#'   wb$styles$cellXfs,
+#'   create_builtin_cell_style(x, horizontal = "center")
+#' )
+#'
+#' # new styles are 1:28, because s in a 0-index
+#' for (i in seq_len(28)) {
+#'   cell <- sprintf("%s1:%s28", int2col(i), int2col(i))
+#'   set_cell_style(wb, "test", cell, as.character(i))
+#' }
+#'
+#' wb_save(wb, "test.xlsx")
+#' @export
+set_cell_style <- function(wb, sheet, cell, value) {
+
+  sheet <- wb$validateSheet(sheet)
+
+  cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
+  cc <- wb$worksheets[[sheet]]$sheet_data$cc
+
+  cc$cell <- paste0(cc$c_r, cc$row_r)
+
+  sel <- cc$cell %in% cell
+  cc$c_s[sel] <- value
+  cc$cell <- NULL
+
+  wb$worksheets[[sheet]]$sheet_data$cc <- cc
+}
+
 #' little worksheet helper
 #' @param wb a workbook
 #' @param sheet a worksheet either id or character
