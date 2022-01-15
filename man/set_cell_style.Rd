@@ -30,17 +30,20 @@ x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
        "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
        "47", "48", "49")
 
+new_cellxfs <- create_cell_style(numFmtId = x, horizontal = "center")
+
 # combine original and new styles
-wb$styles$cellXfs <- c(
-  wb$styles$cellXfs,
-  create_builtin_cell_style(x, horizontal = "center")
-)
+wb <- merge_cellXfs(wb, new_cellxfs)
+new_styles <- attr(wb, "new_styles")
 
 # new styles are 1:28, because s in a 0-index
-for (i in seq_len(28)) {
+for (i in new_styles) {
   cell <- sprintf("\%s1:\%s28", int2col(i), int2col(i))
   set_cell_style(wb, "test", cell, as.character(i))
 }
 
-wb_save(wb, "test.xlsx")
+\dontrun{
+# look at the beauty you've created
+wb_open(wb)
+}
 }

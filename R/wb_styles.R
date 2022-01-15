@@ -143,8 +143,27 @@ styles_on_sheet <- function(wb, sheet) {
 
 
 # TODO can be further generalized with additional xf attributes and children
-#' create_builtin_cell_style
+#' create_cell_style
 #' @param x a numFmt ID for a builin style
+#' @param borderId dummy
+#' @param fillId dummy
+#' @param fontId dummy
+#' @param numFmtId dummy
+#' @param pivotButton dummy
+#' @param quotePrefix dummy
+#' @param xfId dummy
+#' @param horizontal dummy
+#' @param indent dummy
+#' @param justifyLastLine dummy
+#' @param readingOrder dummy
+#' @param relativeIndent dummy
+#' @param shrinkToFit dummy
+#' @param textRotation dummy
+#' @param vertical dummy
+#' @param wrapText dummy
+#' @param extLst dummy
+#' @param hidden dummy
+#' @param locked dummy
 #' @param horizontal alignment can be "", "center", "right"
 #' @param vertical alignment can be "", "center", "right"
 #'
@@ -180,31 +199,106 @@ styles_on_sheet <- function(wb, sheet) {
 #'  | "48" | "##0.0E+0"                  |
 #'  | "49" | "@"                         |
 #' @export
-create_builtin_cell_style <- function(x, horizontal = "", vertical = "") {
-  n <- length(x)
-  x <- as.character(x)
+create_cell_style <- function(
+    borderId = "",
+    fillId = "",
+    fontId = "",
+    numFmtId = "",
+    pivotButton = "",
+    quotePrefix = "",
+    xfId = "",
+    horizontal = "",
+    indent = "",
+    justifyLastLine = "",
+    readingOrder = "",
+    relativeIndent = "",
+    shrinkToFit = "",
+    textRotation = "",
+    vertical = "",
+    wrapText = "",
+    extLst = "",
+    hidden = "",
+    locked = ""
+    ) {
+  n <- length(numFmtId)
+  x <- as.character(numFmtId)
+
+  applyAlignment <- ""
+  if (any(horizontal != "") | any(vertical != "")) applyAlignment <- "1"
+
+  applyBorder <- ""
+  if (any(borderId != "")) applyBorder <- "1"
+
+  applyFill <- ""
+  if (any(fillId != "")) applyFill <- "1"
+
+  applyFont <- ""
+  if (any(fontId != "")) applyFont <- "1"
 
   applyNumberFormat <- ""
   if (any(x != "0")) applyNumberFormat <- "1"
 
-  applyAlignment <- ""
-  if (horizontal != "" | vertical != "") applyAlignment <- "1"
+  applyProtection <- ""
+  if (any(hidden != "") | any(locked != "")) applyProtection <- "1"
+
 
   df_cellXfs <- data.frame(
-    numFmtId = as.character(x),
-    fontId = rep("0", n),
-    fillId = rep("0", n),
-    borderId = rep("0", n),
-    xfId = rep("0", n),
-    applyNumberFormat = rep(applyNumberFormat, n),
     applyAlignment = rep(applyAlignment, n),
+    applyBorder = rep(applyBorder, n),
+    applyFill = rep(applyFill, n),
+    applyFont = rep(applyFont, n),
+    applyNumberFormat = rep(applyNumberFormat, n),
+    applyProtection = rep(applyProtection, n),
+
+    borderId = rep(borderId, n),
+    fillId = rep(fillId, n),
+    fontId = rep(fontId, n),
+    numFmtId = rep(numFmtId, n),
+    pivotButton = rep(pivotButton, n),
+    quotePrefix = rep(quotePrefix, n),
+    xfId = rep(xfId, n),
     horizontal = rep(horizontal, n),
+    indent = rep(indent, n),
+    justifyLastLine = rep(justifyLastLine, n),
+    readingOrder = rep(readingOrder, n),
+    relativeIndent = rep(relativeIndent, n),
+    shrinkToFit = rep(shrinkToFit, n),
+    textRotation = rep(textRotation, n),
     vertical = rep(vertical, n),
+    wrapText = rep(wrapText, n),
+    extLst = rep(extLst, n),
+    hidden = rep(hidden, n),
+    locked = rep(locked, n),
     stringsAsFactors = FALSE
   )
 
   cellXfs <- write_xf(df_cellXfs)
   cellXfs
+}
+
+#' merge cellXfs styles from workbook and new
+#' @param wb a workbook
+#' @param new_cellxfs new character vector of <xf ...>
+#' @export
+merge_cellXfs <- function(wb, new_cellxfs) {
+
+  # read old and new into dataframe
+  old <- read_xf(read_xml(wb$styles$cellXfs))
+  new <- read_xf(read_xml(new_cellxfs))
+
+  # get new rownames
+  new_rownames <- seq(max(as.numeric(rownames(old)))+1,
+                      length.out = NROW(new))
+  row.names(new) <- as.character(new_rownames)
+
+  # both have identical length, therefore can be rbind
+  cellxfs <- rbind(old, new)
+
+  wb$styles$cellXfs <- openxlsx2:::write_xf(cellxfs)
+
+  attr(wb, "new_styles") <- new_rownames
+  # let the user now, which styles are new
+  return(wb)
 }
 
 
@@ -244,19 +338,22 @@ get_cell_style <- function(wb, sheet, cell) {
 #'        "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
 #'        "47", "48", "49")
 #'
+#' new_cellxfs <- create_cell_style(numFmtId = x, horizontal = "center")
+#'
 #' # combine original and new styles
-#' wb$styles$cellXfs <- c(
-#'   wb$styles$cellXfs,
-#'   create_builtin_cell_style(x, horizontal = "center")
-#' )
+#' wb <- merge_cellXfs(wb, new_cellxfs)
+#' new_styles <- attr(wb, "new_styles")
 #'
 #' # new styles are 1:28, because s in a 0-index
-#' for (i in seq_len(28)) {
+#' for (i in new_styles) {
 #'   cell <- sprintf("%s1:%s28", int2col(i), int2col(i))
 #'   set_cell_style(wb, "test", cell, as.character(i))
 #' }
 #'
-#' wb_save(wb, "test.xlsx")
+#' \dontrun{
+#' # look at the beauty you've created
+#' wb_open(wb)
+#' }
 #' @export
 set_cell_style <- function(wb, sheet, cell, value) {
 
@@ -273,3 +370,47 @@ set_cell_style <- function(wb, sheet, cell, value) {
 
   wb$worksheets[[sheet]]$sheet_data$cc <- cc
 }
+
+
+# create_style <- function(wb, x) {
+#
+#
+#
+#   z <- list()
+#
+#   # Borders
+#   z$borders <- character()
+#
+#   # Cell Styles
+#   z$cellStyles <- character()
+#
+#   # Formatting Records
+#   z$cellStyleXfs <- character()
+#
+#   # Cell Formats
+#   z$cellXfs <- create_cell_style(x)
+#
+#   # Colors
+#   z$colors <- character()
+#
+#   # Formats
+#   z$dxfs <- character()
+#
+#   # Future extensions
+#   z$extLst <- character()
+#
+#   # Fills
+#   z$fills <- character()
+#
+#   # Fonts
+#   z$fonts <- character()
+#
+#   # Number Formats
+#   z$numFmts <- character()
+#
+#   # Table Styles
+#   z$tableStyles <- character()
+#
+#   z
+# }
+
