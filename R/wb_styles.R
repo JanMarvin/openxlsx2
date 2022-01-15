@@ -444,7 +444,7 @@ create_cell_style <- function(
     borderId = rep(borderId, n),
     fillId = rep(fillId, n),
     fontId = rep(fontId, n),
-    numFmtId = rep(numFmtId, n),
+    numFmtId = numFmtId,
     pivotButton = rep(pivotButton, n),
     quotePrefix = rep(quotePrefix, n),
     xfId = rep(xfId, n),
