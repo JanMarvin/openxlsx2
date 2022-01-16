@@ -183,11 +183,11 @@ create_border <- function(
     vertical = ""
 ) {
 
-  if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = c(rgb = left_color))
-  if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = c(rgb = right_color))
-  if (!is.null(top_color))      top_color      <- xml_node_create("color", xml_attributes = c(rgb = top_color))
-  if (!is.null(bottom_color))   bottom_color   <- xml_node_create("color", xml_attributes = c(rgb = bottom_color))
-  if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = c(rgb = diagonal_color))
+  if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
+  if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
+  if (!is.null(top_color))      top_color      <- xml_node_create("color", xml_attributes = top_color)
+  if (!is.null(bottom_color))   bottom_color   <- xml_node_create("color", xml_attributes = bottom_color)
+  if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
 
   # excel dies on style=\"\"
   if (!is.null(left))     left     <- c(style = left)
@@ -216,8 +216,8 @@ create_border <- function(
     top = top,
     vertical = vertical,
     stringsAsFactors = FALSE
-  ) # FIXME border is dependent on the order?
-  border <- write_border(df_border[c("left", "right", "top", "bottom", "diagonal")])
+  )
+  border <- write_border(df_border)
 
   return(border)
 }
@@ -242,7 +242,7 @@ merge_borders <- function(wb, new_borders) {
     # both have identical length, therefore can be rbind
     borders <- rbind(old, new)
 
-    wb$styles$borders <- write_border(borders[c("left", "right", "top", "bottom", "diagonal")])
+    wb$styles$borders <- write_border(borders)
   } else {
     wb$styles$borders <- new_borders
     new_rownames <- seq_along(new_borders)
@@ -334,7 +334,7 @@ merge_numFmts <- function(wb, new_numfmts) {
 create_font <- function(
     b = "",
     charset = "",
-    color = "FF000000",
+    color = c(rgb = "FF000000"),
     condense ="",
     extend = "",
     family = "2",
@@ -359,7 +359,7 @@ create_font <- function(
 
   if (color != "") {
     # alt xml_attributes(theme:)
-    color <- xml_node_create("color", xml_attributes = c("rgb" = color))
+    color <- xml_node_create("color", xml_attributes = color)
   }
 
   if (condense != "") {
@@ -480,11 +480,11 @@ create_fill <- function(
 ) {
 
   if (bgColor != ""){
-    bgColor <- xml_node_create("bgColor", xml_attributes = c(rgb = bgColor))
+    bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
   }
 
   if (fgColor != ""){
-    fgColor <- xml_node_create("fgColor", xml_attributes = c(rgb = fgColor))
+    fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
   patternFill <- xml_node_create("patternFill",
