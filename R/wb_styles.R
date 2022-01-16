@@ -141,6 +141,111 @@ styles_on_sheet <- function(wb, sheet) {
 
 }
 
+# TODO guessing here
+#' create fill
+#'
+#' @param diagonalDown x
+#' @param diagonalUp x
+#' @param outline x
+#' @param bottom X
+#' @param bottom_color X
+#' @param diagonal X
+#' @param diagonal_color X,
+#' @param end x,
+#' @param horizontal x
+#' @param left x
+#' @param left_color x
+#' @param right x
+#' @param right_color x
+#' @param start x
+#' @param top x
+#' @param top_color x
+#' @param vertical x
+#'
+#' @export
+create_border <- function(
+    diagonalDown = "",
+    diagonalUp = "",
+    outline = "",
+    bottom = "",
+    bottom_color = "",
+    diagonal = "",
+    diagonal_color = "",
+    end = "",
+    horizontal = "",
+    left = "",
+    left_color = "",
+    right = "",
+    right_color = "",
+    start = "",
+    top = "",
+    top_color = "",
+    vertical = ""
+) {
+
+  if (left_color != "")     left_color     <- xml_node_create("color", xml_attributes = c(auto = left_color))
+  if (right_color != "")    right_color    <- xml_node_create("color", xml_attributes = c(auto = right_color))
+  if (top_color != "")      top_color      <- xml_node_create("color", xml_attributes = c(auto = top_color))
+  if (bottom_color != "")   bottom_color   <- xml_node_create("color", xml_attributes = c(auto = bottom_color))
+  if (diagonal_color != "") diagonal_color <- xml_node_create("color", xml_attributes = c(auto = diagonal_color))
+
+  left     <- xml_node_create("left", xml_children = left_color, xml_attributes = c(style = left))
+  right    <- xml_node_create("right", xml_children = right_color, xml_attributes = c(style = right))
+  top      <- xml_node_create("top", xml_children = top_color, xml_attributes = c(style = top))
+  bottom   <- xml_node_create("bottom", xml_children = bottom_color, xml_attributes = c(style = bottom))
+  diagonal <- xml_node_create("diagonal", xml_children = diagonal_color, xml_attributes = c(style = diagonal))
+
+  df_border <- data.frame(
+    diagonalDown = diagonalDown,
+    diagonalUp = diagonalUp,
+    outline = outline,
+    bottom = bottom,
+    diagonal = diagonal,
+    end = end,
+    horizontal = horizontal,
+    left = left,
+    right = right,
+    start = start,
+    top = top,
+    vertical = vertical,
+    stringsAsFactors = FALSE
+  )
+  border <- write_border(df_border)
+
+  return(border)
+}
+
+
+#' merge_borders
+#' @param wb a workbook
+#' @param new_borders <fill ...>
+#' @export
+merge_borders <- function(wb, new_borders) {
+
+  # read old and new into dataframe
+  if (length(wb$styles$borders)) {
+    old <- read_border(read_xml(wb$styles$borders))
+    new <- read_border(read_xml(new_borders))
+
+    # get new rownames
+    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
+                        length.out = NROW(new))
+    row.names(new) <- as.character(new_rownames)
+
+    # both have identical length, therefore can be rbind
+    borders <- rbind(old, new)
+
+    wb$styles$borders <- write_border(borders)
+  } else {
+    wb$styles$borders <- new_borders
+    new_rownames <- seq_along(new_borders)
+  }
+
+  attr(wb, "new_borders") <- new_rownames
+  # let the user now, which styles are new
+  return(wb)
+}
+
 #' create number format
 #' @param numFmtId an id
 #' @param formatCode a format code
@@ -159,22 +264,32 @@ create_numfmt <- function(numFmtId, formatCode) {
 
 # TODO should not be required to check for uniqueness of numFmts. This should
 # have been done prior to calling this function.
+
+#' merge_numFmts
+#' @param wb a workbook
+#' @param new_numfmts <numFmt ...>
+#' @export
 merge_numFmts <- function(wb, new_numfmts) {
 
-  # read old and new into dataframe
-  # FIXME if (length(wb$styles$numFmts)) else broken
-  old <- read_numfmt(read_xml(wb$styles$numFmts))
-  new <- read_numfmt(read_xml(new_numfmts))
+  if (length(wb$styles$numFmts)) {
+    # read old and new into dataframe
+    # FIXME if (length(wb$styles$numFmts)) else broken
+    old <- read_numfmt(read_xml(wb$styles$numFmts))
+    new <- read_numfmt(read_xml(new_numfmts))
 
-  # get new rownames
-  new_rownames <- seq(max(as.numeric(rownames(old)))+1,
-                      length.out = NROW(new))
-  row.names(new) <- as.character(new_rownames)
+    # get new rownames
+    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
+                        length.out = NROW(new))
+    row.names(new) <- as.character(new_rownames)
 
-  # both have identical length, therefore can be rbind
-  numfmts <- rbind(old, new)
+    # both have identical length, therefore can be rbind
+    numfmts <- rbind(old, new)
 
-  wb$styles$numFmts <- write_numfmt(numfmts)
+    wb$styles$numFmts <- write_numfmt(numfmts)
+  } else {
+    wb$styles$numFmts <- new_numfmts
+    new_rownames <- seq_along(new_numfmts)
+  }
 
   attr(wb, "new_numfmts") <- new_rownames
   # let the user now, which styles are new
@@ -311,28 +426,104 @@ create_font <- function(
   return(font)
 }
 
+#' merge_fonts
+#' @param wb a workbook
+#' @param new_fonts <font ...>
+#' @export
 merge_fonts <- function(wb, new_fonts) {
 
   # read old and new into dataframe
-  # FIXME if (length(wb$styles$numFmts)) else broken
-  old <- read_font(read_xml(wb$styles$fonts))
-  new <- read_font(read_xml(new_fonts))
 
-  # get new rownames
-  new_rownames <- seq(max(as.numeric(rownames(old)))+1,
-                      length.out = NROW(new))
-  row.names(new) <- as.character(new_rownames)
+  if (length(wb$styles$fonts)) {
+    old <- read_font(read_xml(wb$styles$fonts))
+    new <- read_font(read_xml(new_fonts))
 
-  # both have identical length, therefore can be rbind
-  fonts <- rbind(old, new)
+    # get new rownames
+    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
+                        length.out = NROW(new))
+    row.names(new) <- as.character(new_rownames)
 
-  wb$styles$fonts <- write_font(fonts)
+    # both have identical length, therefore can be rbind
+    fonts <- rbind(old, new)
+
+    wb$styles$fonts <- write_font(fonts)
+  } else {
+    wb$styles$fonts <- new_fonts
+    new_rownames <- seq_along(new_fonts)
+  }
 
   attr(wb, "new_fonts") <- new_rownames
   # let the user now, which styles are new
   return(wb)
 }
 
+#' create fill
+#'
+#' @param gradientFill complex fills
+#' @param patternType various default is "none", but also "solid", or a color like "gray125"
+#' @param bgColor hex8 color with alpha, red, green, blue only for patternFill
+#' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
+#'
+#' @export
+create_fill <- function(
+    gradientFill = "",
+    patternType = "",
+    bgColor = "",
+    fgColor = ""
+) {
+
+  if (bgColor != ""){
+    bgColor <- xml_node_create("bgColor", xml_attributes = c(rgb = bgColor))
+  }
+
+  if (fgColor != ""){
+    fgColor <- xml_node_create("fgColor", xml_attributes = c(rgb = fgColor))
+  }
+
+  patternFill <- xml_node_create("patternFill",
+                                 xml_children = c(bgColor, fgColor),
+                                 xml_attributes = c(patternType = patternType))
+
+  df_fill <- data.frame(
+    gradientFill = gradientFill,
+    patternFill = patternFill,
+    stringsAsFactors = FALSE
+  )
+  fill <- write_fill(df_fill)
+
+  return(fill)
+}
+
+
+#' merge_fills
+#' @param wb a workbook
+#' @param new_fills <fill ...>
+#' @export
+merge_fills <- function(wb, new_fills) {
+
+  # read old and new into dataframe
+  if (length(wb$styles$fills)) {
+    old <- read_fill(read_xml(wb$styles$fills))
+    new <- read_fill(read_xml(new_fills))
+
+    # get new rownames
+    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
+                        length.out = NROW(new))
+    row.names(new) <- as.character(new_rownames)
+
+    # both have identical length, therefore can be rbind
+    fills <- rbind(old, new)
+
+    wb$styles$fills <- write_fill(fills)
+  } else {
+    wb$styles$fills <- new_fills
+    new_rownames <- seq_along(new_fills)
+  }
+
+  attr(wb, "new_fills") <- new_rownames
+  # let the user now, which styles are new
+  return(wb)
+}
 
 # TODO can be further generalized with additional xf attributes and children
 #' create_cell_style
@@ -410,7 +601,7 @@ create_cell_style <- function(
     extLst = "",
     hidden = "",
     locked = ""
-    ) {
+) {
   n <- length(numFmtId)
   x <- as.character(numFmtId)
 
