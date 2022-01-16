@@ -508,9 +508,9 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
   // openxml 2.8.1
   Rcpp::CharacterVector nam_attrs = {"diagonalDown", "diagonalUp", "outline"};
 
-  Rcpp::CharacterVector nam_chlds = {"bottom", "diagonal", "end", "horizontal",
-                                     "left", "right", "start", "top",
-                                     "vertical"};
+  Rcpp::CharacterVector nam_chlds = {"start", "end",
+                                     "left", "right", "top", "bottom", "diagonal",
+                                     "vertical",  "horizontal"};
 
   auto total_length = nam_attrs.size() + nam_chlds.size();
   Rcpp::CharacterVector nams(Rcpp::no_init(total_length));

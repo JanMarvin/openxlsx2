@@ -7,7 +7,7 @@
 create_font(
   b = "",
   charset = "",
-  color = "FF000000",
+  color = c(rgb = "FF000000"),
   condense = "",
   extend = "",
   family = "2",
