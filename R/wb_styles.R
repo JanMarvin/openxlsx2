@@ -167,33 +167,40 @@ create_border <- function(
     diagonalDown = "",
     diagonalUp = "",
     outline = "",
-    bottom = "",
-    bottom_color = "",
-    diagonal = "",
-    diagonal_color = "",
+    bottom = NULL,
+    bottom_color = NULL,
+    diagonal = NULL,
+    diagonal_color = NULL,
     end = "",
     horizontal = "",
-    left = "",
-    left_color = "",
-    right = "",
-    right_color = "",
+    left = NULL,
+    left_color = NULL,
+    right = NULL,
+    right_color = NULL,
     start = "",
-    top = "",
-    top_color = "",
+    top = NULL,
+    top_color = NULL,
     vertical = ""
 ) {
 
-  if (left_color != "")     left_color     <- xml_node_create("color", xml_attributes = c(auto = left_color))
-  if (right_color != "")    right_color    <- xml_node_create("color", xml_attributes = c(auto = right_color))
-  if (top_color != "")      top_color      <- xml_node_create("color", xml_attributes = c(auto = top_color))
-  if (bottom_color != "")   bottom_color   <- xml_node_create("color", xml_attributes = c(auto = bottom_color))
-  if (diagonal_color != "") diagonal_color <- xml_node_create("color", xml_attributes = c(auto = diagonal_color))
+  if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = c(rgb = left_color))
+  if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = c(rgb = right_color))
+  if (!is.null(top_color))      top_color      <- xml_node_create("color", xml_attributes = c(rgb = top_color))
+  if (!is.null(bottom_color))   bottom_color   <- xml_node_create("color", xml_attributes = c(rgb = bottom_color))
+  if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = c(rgb = diagonal_color))
 
-  left     <- xml_node_create("left", xml_children = left_color, xml_attributes = c(style = left))
-  right    <- xml_node_create("right", xml_children = right_color, xml_attributes = c(style = right))
-  top      <- xml_node_create("top", xml_children = top_color, xml_attributes = c(style = top))
-  bottom   <- xml_node_create("bottom", xml_children = bottom_color, xml_attributes = c(style = bottom))
-  diagonal <- xml_node_create("diagonal", xml_children = diagonal_color, xml_attributes = c(style = diagonal))
+  # excel dies on style=\"\"
+  if (!is.null(left))     left     <- c(style = left)
+  if (!is.null(right))    right    <- c(style = right)
+  if (!is.null(top))      top      <- c(style = top)
+  if (!is.null(bottom))   bottom   <- c(style = bottom)
+  if (!is.null(diagonal)) diagonal <- c(style = diagonal)
+
+  left     <- xml_node_create("left", xml_children = left_color, xml_attributes = left)
+  right    <- xml_node_create("right", xml_children = right_color, xml_attributes = right)
+  top      <- xml_node_create("top", xml_children = top_color, xml_attributes = top)
+  bottom   <- xml_node_create("bottom", xml_children = bottom_color, xml_attributes = bottom)
+  diagonal <- xml_node_create("diagonal", xml_children = diagonal_color, xml_attributes = diagonal)
 
   df_border <- data.frame(
     diagonalDown = diagonalDown,
@@ -209,8 +216,8 @@ create_border <- function(
     top = top,
     vertical = vertical,
     stringsAsFactors = FALSE
-  )
-  border <- write_border(df_border)
+  ) # FIXME border is dependent on the order?
+  border <- write_border(df_border[c("left", "right", "top", "bottom", "diagonal")])
 
   return(border)
 }
@@ -235,7 +242,7 @@ merge_borders <- function(wb, new_borders) {
     # both have identical length, therefore can be rbind
     borders <- rbind(old, new)
 
-    wb$styles$borders <- write_border(borders)
+    wb$styles$borders <- write_border(borders[c("left", "right", "top", "bottom", "diagonal")])
   } else {
     wb$styles$borders <- new_borders
     new_rownames <- seq_along(new_borders)
