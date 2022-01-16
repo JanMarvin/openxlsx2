@@ -1138,6 +1138,10 @@ Workbook <- setRefClass(
           pxml(.self$styles$cellStyles),
           "</cellStyles>"
         )
+      # styleXML$cellStyles <-
+      #   stri_join(
+      #     pxml(.self$styles$tableStyles)
+      #   )
       # TODO
       # tableStyles
       # extLst
