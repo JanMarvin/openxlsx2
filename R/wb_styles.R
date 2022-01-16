@@ -676,7 +676,7 @@ merge_cellXfs <- function(wb, new_cellxfs) {
   # both have identical length, therefore can be rbind
   cellxfs <- rbind(old, new)
 
-  wb$styles$cellXfs <- openxlsx2:::write_xf(cellxfs)
+  wb$styles$cellXfs <- write_xf(cellxfs)
 
   attr(wb, "new_styles") <- new_rownames
   # let the user now, which styles are new
