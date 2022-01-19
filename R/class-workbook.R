@@ -3015,6 +3015,13 @@ Workbook <- setRefClass(
 
       sheet <- .self$validateSheet(sheet)
 
+      .self$Content_Types <- c(.self$Content_Types, 
+        sprintf(
+          "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
+          sheet
+        )
+      )
+
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
@@ -3081,6 +3088,16 @@ Workbook <- setRefClass(
         "<xdr:clientData/>",
         "</xdr:oneCellAnchor>"
       )
+
+      # FIXME add a better logic for drawings. This initiates a new drawing. Idealy the newly created nodes 
+      # should be merged with already existing nodes. Slicers etc. We do not want to lose these. Something
+      # like check if drawings != NULL then xml_child append else create new child.
+      xml_attr = c(
+        "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+        "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
+        "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+      )
+      drawingsXML <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
 
 
       ## append to workbook drawing
