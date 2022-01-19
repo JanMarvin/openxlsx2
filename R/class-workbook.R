@@ -970,12 +970,12 @@ Workbook <- setRefClass(
           if (!grepl("openxlsx_deleted", attr(.self$tables, "tableName")[i], fixed = TRUE)) {
             write_file(
               body = pxml(unlist(.self$tables, use.names = FALSE)[[i]]),
-              fl = file.path(xlTablesDir, sprintf("table%s.xml", i + 2))
+              fl = file.path(xlTablesDir, sprintf("table%s.xml", i))
             )
             if (.self$tables.xml.rels[[i]] != "") {
               write_file(
                 body = .self$tables.xml.rels[[i]],
-                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", i + 2))
+                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", i))
               )
             }
           }
