@@ -896,3 +896,25 @@ Rcpp::CharacterVector xml_node_create(
 
   return xml_return;
 }
+
+// xml_append_child
+// @param node xml_node a child is appended to
+// @param child the xml_node appended to node
+// @export
+// [[Rcpp::export]]
+SEXP xml_append_child(XPtrXML node, XPtrXML child, bool pointer) {
+
+  for (auto cld: child->children()) {
+    node->first_child().append_copy(cld);
+  }
+
+  if (pointer) {
+    return (node);
+  } else {
+    std::ostringstream oss;
+    node->print(oss, " ", pugi::format_raw);
+    std::string xml_return = oss.str();
+
+    return Rcpp::wrap(xml_return);
+  }
+}

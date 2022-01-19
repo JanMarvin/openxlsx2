@@ -657,6 +657,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// xml_append_child
+SEXP xml_append_child(XPtrXML node, XPtrXML child, bool pointer);
+RcppExport SEXP _openxlsx2_xml_append_child(SEXP nodeSEXP, SEXP childSEXP, SEXP pointerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
+    Rcpp::traits::input_parameter< XPtrXML >::type child(childSEXP);
+    Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_append_child(node, child, pointer));
+    return rcpp_result_gen;
+END_RCPP
+}
 // set_sst
 Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings);
 RcppExport SEXP _openxlsx2_set_sst(SEXP sharedStringsSEXP) {
@@ -994,6 +1007,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
     {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 2},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 3},
+    {"_openxlsx2_xml_append_child", (DL_FUNC) &_openxlsx2_xml_append_child, 3},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_list_to_attr", (DL_FUNC) &_openxlsx2_list_to_attr, 2},
     {"_openxlsx2_list_to_attr_full", (DL_FUNC) &_openxlsx2_list_to_attr_full, 3},

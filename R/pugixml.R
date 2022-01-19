@@ -242,3 +242,29 @@ write_file <- function(head = "", body = "", tail = "", fl = "") {
   xml_content <- paste0(head, body, tail, collapse = "")
   write_xml_file(xml_content = xml_content, fl = fl)
 }
+
+#' append xml child to node
+#' @param xml_node xml_node
+#' @param xml_child xml_child
+#' @param pointer pointer
+#' @examples
+#' xml_node <- "<node><child1/><child2/></node>"
+#' xml_child <- "<new_child/>"
+#'
+#' xml_add_child(xml_node, xml_child)
+#' @export
+xml_add_child <- function(xml_node, xml_child, pointer = FALSE) {
+
+  if (missing(xml_node))
+    stop("need xml_node")
+
+  if (missing(xml_child))
+    stop("need xml_child")
+
+  xml_node <- read_xml(xml_node)
+  xml_child <- read_xml(xml_child)
+
+  z <- xml_append_child(xml_node, xml_child, pointer)
+
+  return(z)
+}

@@ -260,6 +260,10 @@ xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL
     .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes)
 }
 
+xml_append_child <- function(node, child, pointer) {
+    .Call(`_openxlsx2_xml_append_child`, node, child, pointer)
+}
+
 set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
