@@ -3015,10 +3015,14 @@ Workbook <- setRefClass(
 
       sheet <- .self$validateSheet(sheet)
 
-      .self$Content_Types <- c(.self$Content_Types, 
-        sprintf(
-          "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
-          sheet
+      # TODO this simply adds the required drawings to the Content_Types. Might want to look
+      # into a way to handle such things.
+      .self$Content_Types <- unique(
+        c(.self$Content_Types, 
+          sprintf(
+            "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
+            sheet
+          )
         )
       )
 
@@ -3089,19 +3093,24 @@ Workbook <- setRefClass(
         "</xdr:oneCellAnchor>"
       )
 
-      # FIXME add a better logic for drawings. This initiates a new drawing. Idealy the newly created nodes 
-      # should be merged with already existing nodes. Slicers etc. We do not want to lose these. Something
-      # like check if drawings != NULL then xml_child append else create new child.
-      xml_attr = c(
-        "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
-        "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
-        "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-      )
-      drawingsXML <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
+
+      # If no drawing is found, initiate one. If one is found, append a child to the exisiting node.
+      # Might look into updating attributes as well.
+      if (length(.self$drawings[[sheet]]) == 0) {
+        xml_attr = c(
+          "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+          "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
+          "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+        )
+        drawingsXML <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
+        drawingsXML <- c(.self$drawings[[sheet]], drawingsXML)
+      } else {
+        drawingsXML <- xml_add_child(.self$drawings[[sheet]], drawingsXML)
+      }
 
 
       ## append to workbook drawing
-      .self$drawings[[sheet]] <- c(.self$drawings[[sheet]], drawingsXML)
+      .self$drawings[[sheet]] <- drawingsXML
 
       invisible(.self)
     },
