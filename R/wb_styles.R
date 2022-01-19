@@ -280,7 +280,6 @@ merge_numFmts <- function(wb, new_numfmts) {
 
   if (length(wb$styles$numFmts)) {
     # read old and new into dataframe
-    # FIXME if (length(wb$styles$numFmts)) else broken
     old <- read_numfmt(read_xml(wb$styles$numFmts))
     new <- read_numfmt(read_xml(new_numfmts))
 
