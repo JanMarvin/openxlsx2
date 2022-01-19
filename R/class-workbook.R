@@ -3029,7 +3029,11 @@ Workbook <- setRefClass(
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
-      imageNo <- length((.self$drawings[[sheet]])) + 1L
+      drawing_len <- 0
+      if (length(.self$drawings_rels[[sheet]]))
+        drawing_len <- length(xml_node(.self$drawings_rels[[sheet]], "Relationship"))
+
+      imageNo <- drawing_len + 1L
       mediaNo <- length(.self$media) + 1L
 
       startCol <- convertFromExcelRef(startCol)
