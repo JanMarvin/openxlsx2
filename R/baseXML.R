@@ -238,23 +238,23 @@ genBaseStyleSheet <- function(dxfs = NULL, tableStyles = NULL, extLst = NULL) {
 
 
 genBasePic <- function(imageNo) {
-  sprintf('<xdr:pic xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-      <xdr:nvPicPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-        <xdr:cNvPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" id="%s" name="Picture %s"/>
-        <xdr:cNvPicPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-          <a:picLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/>
+  sprintf('<xdr:pic>
+      <xdr:nvPicPr>
+        <xdr:cNvPr id="%s" name="Picture %s"/>
+        <xdr:cNvPicPr>
+          <a:picLocks noChangeAspect="1"/>
         </xdr:cNvPicPr>
       </xdr:nvPicPr>
-      <xdr:blipFill xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-        <a:blip xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="rId%s">
+      <xdr:blipFill>
+        <a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="rId%s">
         </a:blip>
-        <a:stretch xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+        <a:stretch>
           <a:fillRect/>
         </a:stretch>
       </xdr:blipFill>
-      <xdr:spPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-        <a:prstGeom xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" prst="rect">
-          <a:avLst xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"/>
+      <xdr:spPr>
+        <a:prstGeom prst="rect">
+          <a:avLst/>
         </a:prstGeom>
       </xdr:spPr>
     </xdr:pic>', imageNo, imageNo, imageNo)

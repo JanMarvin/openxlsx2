@@ -3061,14 +3061,14 @@ Workbook <- setRefClass(
 
       ## create drawing.xml
       anchor <-
-        '<xdr:oneCellAnchor xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">'
+        '<xdr:oneCellAnchor>'
 
       from <- sprintf(
-        '<xdr:from xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-    <xdr:col xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:col>
-    <xdr:colOff xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:colOff>
-    <xdr:row xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:row>
-    <xdr:rowOff xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:rowOff>
+        '<xdr:from>
+    <xdr:col>%s</xdr:col>
+    <xdr:colOff>%s</xdr:colOff>
+    <xdr:row>%s</xdr:row>
+    <xdr:rowOff>%s</xdr:rowOff>
   </xdr:from>',
         startCol - 1L,
         colOffset,
@@ -3080,7 +3080,7 @@ Workbook <- setRefClass(
         anchor,
         from,
         sprintf(
-          '<xdr:ext xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" cx="%s" cy="%s"/>',
+          '<xdr:ext cx="%s" cy="%s"/>',
           width,
           height
         ),
