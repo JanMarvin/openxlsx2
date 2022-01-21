@@ -2001,12 +2001,14 @@ Workbook <- setRefClass(
             fl = file.path(chartSheetDir, stri_join("sheet", i, ".xml"))
           )
 
-          write_file(
-            head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
-            body = pxml(.self$worksheets_rels[[i]]),
-            tail = "</Relationships>",
-            fl = file.path(chartSheetRelsDir, sprintf("sheet%s.xml.rels", i))
-          )
+          if (length(.self$worksheets_rels[[i]])) {
+            write_file(
+              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
+              body = pxml(.self$worksheets_rels[[i]]),
+              tail = "</Relationships>",
+              fl = file.path(chartSheetRelsDir, sprintf("sheet%s.xml.rels", i))
+            )
+          }
         } else {
           ## Write worksheets
           ws <- .self$worksheets[[i]]

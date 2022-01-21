@@ -595,7 +595,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
         xml <- read_xml(allRels[[i]])
         xml <- xml_node(xml, "Relationships", "Relationship")
       } else {
-        xml <- "<Relationship >"
+        xml <- character()
       }
       return(xml)
     })
