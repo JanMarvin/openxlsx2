@@ -275,13 +275,13 @@ Worksheet <- setRefClass(
 
         # extLst, dataValidationsLst
         # parenthese or R gets confused with the ||
-        if ((length(.self$extLst)) || (n <- length(.self$dataValidationsLst))) {
+        if ((length(.self$extLst)) || (length(.self$dataValidationsLst))) {
           sprintf(
             "<extLst>%s</extLst>",
             paste0(
               pxml(.self$extLst),
               # dataValidationsLst_xml
-              if (n) {
+              if (length(.self$dataValidationsLst)) {
                 paste0(
                   sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
                   paste0(pxml(.self$dataValidationsLst), "</x14:dataValidations></ext>"),
