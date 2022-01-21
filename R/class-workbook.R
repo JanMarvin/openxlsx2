@@ -4,6 +4,7 @@ Workbook <- setRefClass(
   fields = c(
     "sheet_names" = "character",
 
+    "calcChain" = "character",
     "charts" = "ANY",
     "isChartSheet" = "logical",
 
@@ -1177,6 +1178,15 @@ Workbook <- setRefClass(
       #    fl = file.path(xlDir, "styles.xml")
       #  )
       #}
+
+      if (length(.self$calcChain)) {
+        write_file(
+            head = '',
+            body = pxml(.self$calcChain),
+            tail = "",
+            fl = file.path(xlDir, "calcChain.xml")
+        )
+      }
 
       ## write workbook.xml
       workbookXML <- .self$workbook

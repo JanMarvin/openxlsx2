@@ -76,6 +76,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   media             <- grep_xml("image[0-9]+.[a-z]+$")
   vmlDrawingXML     <- grep_xml("drawings/vmlDrawing[0-9]+\\.vml$")
   vmlDrawingRelsXML <- grep_xml("vmlDrawing[0-9]+.vml.rels$")
+  calcChainXML      <- grep_xml("xl/calcChain.xml")
   commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
   threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
   personXML         <- grep_xml("xl/persons/person.xml$")
@@ -303,15 +304,18 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       wb$workbook$webPublishObjects <- webPublishObjects
     }
 
-
-
-
     ## defined Names
     wb$workbook$definedNames <-  xml_node(workbook_xml, "workbook", "definedNames", "definedName")
 
   }
 
-
+  if (length(calcChainXML)) {
+    wb$calcChain <- read_xml(calcChainXML, pointer = FALSE)
+    wb$Content_Types <- c(
+      wb$Content_Types,
+      '<Override PartName="/xl/calcChain.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml"/>'
+    )
+  }
 
 
 
