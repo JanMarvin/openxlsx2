@@ -182,16 +182,48 @@ genBaseWorkbook.xml.rels <- function() {
 
 
 genBaseWorkbook <- function() {
+
+    # bookViews
+    # calcPr
+    # customWorkbookViews
+    # definedNames
+    # externalReferences
+    # extLst
+    # fileRecoveryPr
+    # fileSharing
+    # fileVersion
+    # functionGroups
+    # oleSize
+    # pivotCaches
+    # sheets
+    # smartTagPr
+    # smartTagTypes
+    # webPublishing
+    # webPublishObjects
+    # workbookPr
+    # workbookProtection
+
   list(
+    fileVersion = NULL,
+    fileSharing = NULL,
     workbookPr = '<workbookPr date1904="false"/>',
+    alternateContent = NULL,
+    absPath = NULL, # "x15ac:absPath"
     workbookProtection = NULL,
-    bookViews = '<bookViews><workbookView xWindow="0" yWindow="0" windowWidth="13125" windowHeight="6105"/></bookViews>',
+    bookViews = NULL,
     sheets = NULL,
+    functionGroups = NULL,
     externalReferences = NULL,
     definedNames = NULL,
     calcPr = NULL,
-    alternateContent = NULL,
+    oleSize = NULL,
+    customWorkbookViews = NULL,
     pivotCaches = NULL,
+    smartTagPr = NULL,
+    smartTagTypes = NULL,
+    webPublishing = NULL,
+    fileRecoveryPr = NULL,
+    webPublishObjects = NULL,
     extLst = NULL
   )
 }

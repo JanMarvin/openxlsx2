@@ -940,7 +940,7 @@ Workbook <- setRefClass(
 
 
       ## write app.xml
-      if (length(wb$app) == 0) {
+      if (length(.self$app) == 0) {
         write_file(
           head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
           body = "<Application>Microsoft Excel</Application>",
@@ -3030,7 +3030,7 @@ Workbook <- setRefClass(
       # TODO this simply adds the required drawings to the Content_Types. Might want to look
       # into a way to handle such things.
       .self$Content_Types <- unique(
-        c(.self$Content_Types, 
+        c(.self$Content_Types,
           sprintf(
             "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
             sheet
@@ -3241,7 +3241,8 @@ Workbook <- setRefClass(
       state[grepl("hidden", .self$workbook$sheets)] <- "hidden"
       visible_sheet_index <- which(state %in% "visible")[[1]]
 
-      .self$workbook$bookViews <-
+      if (is.null(.self$workbook$bookViews))
+        .self$workbook$bookViews <-
         sprintf(
           '<bookViews><workbookView xWindow="0" yWindow="0" windowWidth="13125" windowHeight="6105" firstSheet="%s" activeTab="%s"/></bookViews>',
           visible_sheet_index - 1L,

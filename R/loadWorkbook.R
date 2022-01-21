@@ -164,11 +164,11 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     workbook_xml <- read_xml(workbookXML)
 
-    # wb$workbook$alternateContent <- getXML2(workbook_xml, "workbook", "mc:AlternateContent")  # breaks file for Excel
-    # wb$workbook$extLst <- getXML2(workbook_xml, "workbook", "extLst")
+    wb$workbook$fileVersion <- xml_node(workbook_xml, "workbook", "fileVersion")
+    wb$workbook$alternateContent <- xml_node(workbook_xml, "workbook", "mc:AlternateContent")
+    wb$workbook$bookViews <- xml_node(workbook_xml, "workbook", "bookViews")
 
-    sheets <- xml_node(workbook_xml, "workbook", "sheets", "sheet")
-    sheets <- xml_attribute(sheets, "sheet")
+    sheets <- xml_attribute(workbook_xml, "workbook", "sheets", "sheet")
     sheets <- rbindlist(sheets)
 
     ## Some veryHidden sheets do not have a sheet content and their rId is empty.
@@ -201,7 +201,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
         if (length(zoom) == 0) {
           zoom <- 100
         }
-        
+
         tabColour <- xml_node(txt, "worksheet", "sheetPr", "tabColor")
         if (length(tabColour) == 0) {
           tabColour <- NULL
@@ -242,6 +242,68 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     if (length(workbookProtection)) {
       wb$workbook$workbookProtection <- workbookProtection
     }
+
+    customWorkbookViews <- xml_node(workbook_xml, "workbook", "customWorkbookViews")
+    if (length(customWorkbookViews)) {
+      wb$workbook$customWorkbookViews <- customWorkbookViews
+    }
+
+    smartTagPr <- xml_node(workbook_xml, "workbook", "smartTagPr")
+    if (length(smartTagPr)) {
+      wb$workbook$smartTagPr <- smartTagPr
+    }
+
+    smartTagTypes <- xml_node(workbook_xml, "workbook", "smartTagTypes")
+    if (length(smartTagTypes)) {
+      wb$workbook$smartTagTypes <- smartTagTypes
+    }
+
+    webPublishing <- xml_node(workbook_xml, "workbook", "webPublishing")
+    if (length(webPublishing)) {
+      wb$workbook$webPublishing <- webPublishing
+    }
+
+    externalReferences <- xml_node(workbook_xml, "workbook", "externalReferences")
+    if (length(externalReferences)) {
+      wb$workbook$externalReferences <- externalReferences
+    }
+
+    fileRecoveryPr <- xml_node(workbook_xml, "workbook", "fileRecoveryPr")
+    if (length(fileRecoveryPr)) {
+      wb$workbook$fileRecoveryPr <- fileRecoveryPr
+    }
+
+    fileSharing <- xml_node(workbook_xml, "workbook", "fileSharing")
+    if (length(fileSharing)) {
+      wb$workbook$fileSharing <- fileSharing
+    }
+
+    functionGroups <- xml_node(workbook_xml, "workbook", "functionGroups")
+    if (length(functionGroups)) {
+      wb$workbook$functionGroups <- functionGroups
+    }
+
+    oleSize <- xml_node(workbook_xml, "workbook", "oleSize")
+    if (length(oleSize)) {
+      wb$workbook$oleSize <- oleSize
+    }
+
+    webPublishing <- xml_node(workbook_xml, "workbook", "webPublishing")
+    if (length(webPublishing)) {
+      wb$workbook$webPublishing <- webPublishing
+    }
+
+    webPublishObjects <- xml_node(workbook_xml, "workbook", "webPublishObjects")
+    if (length(webPublishObjects)) {
+      wb$workbook$webPublishObjects <- webPublishObjects
+    }
+
+    webPublishObjects <- xml_node(workbook_xml, "workbook", "webPublishObjects")
+    if (length(webPublishObjects)) {
+      wb$workbook$webPublishObjects <- webPublishObjects
+    }
+
+
 
 
     ## defined Names
