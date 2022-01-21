@@ -1041,13 +1041,6 @@ Workbook <- setRefClass(
         }
       }
 
-      # # printerSettings
-      # printDir <- file.path(tmpDir, "xl", "printerSettings")
-      # dir.create(path = printDir, recursive = TRUE)
-      # for (i in seq_len(nSheets)) {
-      #   writeLines(genPrinterSettings(), file.path(printDir, sprintf("printerSettings%s.bin", i)))
-      # }
-
       ## media (copy file from origin to destination)
       # TODO replace with seq_along()
       for (x in .self$media) {
@@ -2366,7 +2359,7 @@ Workbook <- setRefClass(
       }
 
 
-      ## drawing will always be the first relationship and printerSettings second
+      ## drawing will always be the first relationship
       if (nSheets > 1) {
         for (i in 1:(nSheets - 1L)) {
           .self$worksheets_rels[[i]][1:3] <- genBaseSheetRels(i)
@@ -3143,8 +3136,7 @@ Workbook <- setRefClass(
       ## tables will always have r:id equal to table xml file number tables/table(i).xml
 
       ## Every worksheet has a drawingXML as r:id 1
-      ## Every worksheet has a printerSettings as r:id 2
-      ## Tables from r:id 3 to nTables+3 - 1
+      ## Tables from r:id 2
       ## HyperLinks from nTables+3 to nTables+3+nHyperLinks-1
       ## vmlDrawing to have rId
 
