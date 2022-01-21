@@ -11,6 +11,7 @@ Workbook <- setRefClass(
     "colWidths" = "ANY",
     "connections" = "ANY",
     "Content_Types" = "character",
+    "app" = "character",
     "core" = "character",
     "drawings" = "ANY",
     "drawings_rels" = "ANY",
@@ -939,12 +940,21 @@ Workbook <- setRefClass(
 
 
       ## write app.xml
-      write_file(
-        head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
-        body = "<Application>Microsoft Excel</Application>",
-        tail = "</Properties>",
-        fl = file.path(docPropsDir, "app.xml")
-      )
+      if (length(wb$app) == 0) {
+        write_file(
+          head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
+          body = "<Application>Microsoft Excel</Application>",
+          tail = "</Properties>",
+          fl = file.path(docPropsDir, "app.xml")
+        )
+      } else {
+         write_file(
+          head = '',
+          body = pxml(.self$app),
+          tail = '',
+          fl = file.path(docPropsDir, "app.xml")
+        )
+      }
 
       ## write core.xml
       write_file(

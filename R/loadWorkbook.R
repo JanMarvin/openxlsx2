@@ -59,7 +59,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
   ## Not used
   # .relsXML          <- grep_xml("_rels/.rels$")
-  # appXML            <- grep_xml("app.xml$")
+  appXML            <- grep_xml("app.xml$")
 
   ContentTypesXML   <- grep_xml("\\[Content_Types\\].xml$")
 
@@ -122,6 +122,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## core
   if (length(coreXML) == 1) {
     wb$core <- read_xml(coreXML, pointer = FALSE)
+  }
+
+  if (length(appXML)) {
+    wb$app <- read_xml(appXML, pointer = FALSE)
   }
 
   nSheets <- length(worksheetsXML) + length(chartSheetsXML)
