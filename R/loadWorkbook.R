@@ -665,7 +665,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       inds <- seq_along(slicerCachesXML)
       wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds))
       wb$slicerCaches <- sapply(slicerCachesXML[order(nchar(slicerCachesXML), slicerCachesXML)], read_xml, pointer = FALSE)
-      # wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds, inds))
+      wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds, inds))
       wb$workbook$extLst <- c(wb$workbook$extLst, genSlicerCachesExtLst(1E5 + inds))
     }
 
@@ -706,7 +706,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
         refs <- regmatches(wb$tables, regexpr('(?<=ref=")[0-9A-Z:]+', wb$tables, perl = TRUE))
         names(wb$tables) <- refs
 
-        # wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', seq_along(wb$tables)))
+        wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', seq_along(wb$tables)))
 
         ## relabel ids
         for (i in seq_along(wb$tables)) {
