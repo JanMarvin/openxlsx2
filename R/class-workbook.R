@@ -1077,7 +1077,7 @@ Workbook <- setRefClass(
             attr(.self$sharedStrings, "uniqueCount")
           ),
           #body = stri_join(set_sst(attr(sharedStrings, "text")), collapse = "", sep = " "),
-          body = stri_join(.self$sharedStrings, collapse = "", sep = " "),
+          body = stri_join(.self$sharedStrings, collapse = "", sep = ""),
           tail = "</sst>",
           fl = file.path(xlDir, "sharedStrings.xml")
         )

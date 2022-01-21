@@ -173,7 +173,7 @@ Worksheet <- setRefClass(
         if (length(.self$cols_attr)) {
           paste(c("<cols>", .self$cols_attr, "</cols>"), collapse = "")
         },
-        sep = " "
+        sep = ""
       )
     },
 
@@ -295,7 +295,7 @@ Worksheet <- setRefClass(
         "</worksheet>",
 
         # end
-        sep = " "
+        sep = ""
       )
 
     },

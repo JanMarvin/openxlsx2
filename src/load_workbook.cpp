@@ -4,16 +4,16 @@
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
 
   Rcpp::CharacterVector col_nams= {
-    "bestFit",
-    "collapsed",
-    "customWidth",
-    "hidden",
-    "max",
     "min",
+    "max",
+    "width",
+    "bestFit",
+    "customWidth",
+    "collapsed",
+    "hidden",
     "outlineLevel",
     "phonetic",
-    "style",
-    "width"
+    "style"
   };
 
   auto nn = std::distance(doc->begin(), doc->end());
@@ -104,16 +104,16 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
   auto ws = doc->child("worksheet").child("sheetData");
 
   Rcpp::CharacterVector row_nams= {
+    "r",
+    "spans",
     "collapsed",
     "customFormat",
     "customHeight",
-    "x14ac:dyDescent",
     "ht",
+    "x14ac:dyDescent",
     "hidden",
     "outlineLevel",
-    "r",
     "ph",
-    "spans",
     "s",
     "thickBot",
     "thickTop"

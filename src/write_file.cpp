@@ -57,12 +57,12 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
     // append attributes <c r="A1" ...>
     cell.append_attribute("r") = c_rnm.c_str();
 
+    if (c_sty.compare(rnastring.c_str()) != 0)
+      cell.append_attribute("s") = c_sty.c_str();
+
     // assign type if not <v> aka numeric
     if (c_typ.compare(rnastring.c_str()) != 0)
       cell.append_attribute("t") = c_typ.c_str();
-
-    if (c_sty.compare(rnastring.c_str()) != 0)
-      cell.append_attribute("s") = c_sty.c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
 
