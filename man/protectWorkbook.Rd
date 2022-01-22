@@ -39,6 +39,3 @@ protectWorkbook(wb, protect = FALSE)
 saveWorkbook(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Reinhold Kainhofer
-}

@@ -109,6 +109,3 @@ head(read.xlsx(xlsxFile))
 \seealso{
 \code{\link[=getNamedRegions]{getNamedRegions()}}
 }
-\author{
-Alexander Walker
-}

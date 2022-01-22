@@ -37,6 +37,3 @@ saveWorkbook(wb, file = "saveWorkbookExample.xlsx", overwrite = TRUE)
 
 \code{\link[=writeDataTable]{writeDataTable()}}
 }
-\author{
-Alexander Walker, Philipp Schauberger
-}

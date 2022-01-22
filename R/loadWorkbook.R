@@ -3,7 +3,6 @@
 
 #' @name loadWorkbook
 #' @title Load an existing .xlsx file
-#' @author Alexander Walker
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param xlsxFile alias for file
 #' @param isUnzipped Set to TRUE if the xlsx file is already unzipped

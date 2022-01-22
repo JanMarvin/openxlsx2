@@ -163,6 +163,3 @@ createStyle(border = c("top", "bottom", "left"), borderColour = c("red", "yellow
 \seealso{
 \code{\link[=addStyle]{addStyle()}}
 }
-\author{
-Alexander Walker
-}

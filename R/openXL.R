@@ -1,6 +1,5 @@
 #' @name openXL
 #' @title Open a Microsoft Excel file (xls/xlsx) or an openxlsx Workbook
-#' @author Luca Braglia
 #' @description This function tries to open a Microsoft Excel
 #' (xls/xlsx) file or an openxlsx Workbook with the proper
 #' application, in a portable manner.

@@ -22,6 +22,3 @@ If column was previously hidden, it will now be shown
 \seealso{
 \code{\link[=ungroupRows]{ungroupRows()}} To ungroup rows
 }
-\author{
-Joshua Sturm
-}

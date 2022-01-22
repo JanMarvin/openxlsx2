@@ -110,6 +110,3 @@ saveWorkbook(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 \seealso{
 \code{\link[=writeData]{writeData()}}
 }
-\author{
-Alexander Walker
-}

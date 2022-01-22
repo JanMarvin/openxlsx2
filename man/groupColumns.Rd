@@ -26,6 +26,3 @@ NOTE: \code{\link[=setColWidths]{setColWidths()}} has a conflicting \code{hidden
 \seealso{
 \code{\link[=ungroupColumns]{ungroupColumns()}} to ungroup columns. \code{\link[=groupRows]{groupRows()}} for grouping rows.
 }
-\author{
-Joshua Sturm
-}

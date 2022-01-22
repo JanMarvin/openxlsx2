@@ -308,6 +308,3 @@ saveWorkbook(wb, file = "databarExample.xlsx", overwrite = TRUE)
 \seealso{
 \code{\link[=createStyle]{createStyle()}}
 }
-\author{
-Alexander Walker, Philipp Schauberger
-}

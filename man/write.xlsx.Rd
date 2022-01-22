@@ -136,6 +136,3 @@ write.xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5,
 
 \code{\link[=createStyle]{createStyle()}} for style parameters
 }
-\author{
-Alexander Walker
-}

@@ -49,6 +49,3 @@ wb <- createWorkbook(
 
 \code{\link[=saveWorkbook]{saveWorkbook()}}
 }
-\author{
-Alexander Walker
-}

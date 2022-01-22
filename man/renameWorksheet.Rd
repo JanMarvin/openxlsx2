@@ -43,6 +43,3 @@ names(wb)[[3]] <- "A better name"
 saveWorkbook(wb, "renameWorksheetExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Alexander Walker
-}

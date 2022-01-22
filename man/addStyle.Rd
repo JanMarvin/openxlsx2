@@ -58,6 +58,3 @@ saveWorkbook(wb, "addStyleExample.xlsx", overwrite = TRUE)
 
 expand.grid
 }
-\author{
-Alexander Walker
-}

@@ -360,7 +360,6 @@ new_style <- function() {
 #' @name createStyle
 #' @title Create a cell style
 #' @description Create a new style to apply to worksheet cells
-#' @author Alexander Walker
 #' @seealso [addStyle()]
 #' @param fontName A name of a font. Note the font name is not validated. If fontName is NULL,
 #' the workbook base font is used. (Defaults to Calibri)

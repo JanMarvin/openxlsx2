@@ -10,7 +10,6 @@ new_workbook <- function() {
 #' @param title Workbook properties title
 #' @param subject Workbook properties subject
 #' @param category Workbook properties category
-#' @author Alexander Walker
 #' @return Workbook object
 #' @export
 #' @seealso [loadWorkbook()]
@@ -59,7 +58,6 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
 #' @name saveWorkbook
 #' @title save Workbook to file
 #' @description save a Workbook object to file
-#' @author Alexander Walker, Philipp Schauberger
 #' @param wb A Workbook object to write to file
 #' @param file A character string naming an xlsx file
 #' @param overwrite If `TRUE`, overwrite any existing file.
@@ -109,7 +107,6 @@ wb_save_workbook <- function(wb, path, overwrite = FALSE) {
 #' @param cols Columns to merge
 #' @param rows corresponding rows to merge
 #' @details As merged region must be rectangular, only min and max of cols and rows are used.
-#' @author Alexander Walker
 #' @seealso [removeCellMerge()]
 #' @export
 #' @examples
@@ -162,7 +159,6 @@ mergeCells <- function(wb, sheet, cols, rows) {
 #' @param sheet A name or index of a worksheet
 #' @param cols vector of column indices
 #' @param rows vector of row indices
-#' @author Alexander Walker
 #' @export
 #' @seealso [mergeCells()]
 removeCellMerge <- function(wb, sheet, cols, rows) {
@@ -184,7 +180,6 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 #' @description DEPRECATED. Use names().
 #' @param wb A workbook object
 #' @return Name of worksheet(s) for a given index
-#' @author Alexander Walker
 #' @seealso [names()] to rename a worksheet in a Workbook
 #' @details DEPRECATED. Use [names()]
 #' @export
@@ -223,7 +218,6 @@ sheets <- function(wb) {
 #' @name addWorksheet
 #' @title Add a worksheet to a workbook
 #' @description Add a worksheet to a Workbook object
-#' @author Alexander Walker
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheetName A name for the new worksheet
 #' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be hidden.
@@ -418,7 +412,6 @@ addWorksheet <- function(wb, sheetName,
 #' @name cloneWorksheet
 #' @title Clone a worksheet to a workbook
 #' @description Clone a worksheet to a Workbook object
-#' @author Reinhold Kainhofer
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheetName A name for the new worksheet
 #' @param clonedSheet The name of the existing worksheet to be cloned.
@@ -482,7 +475,6 @@ wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
 #' @name renameWorksheet
 #' @title Rename a worksheet
 #' @description Rename a worksheet
-#' @author Alexander Walker
 #' @param wb A Workbook object containing a worksheet
 #' @param sheet The name or index of the worksheet to rename
 #' @param newName The new name of the worksheet. No longer than 31 chars.
@@ -525,7 +517,6 @@ renameWorksheet <- function(wb, sheet, newName) {
 #' @name addStyle
 #' @title Add a style to a set of cells
 #' @description Function adds a style to a specified set of cells.
-#' @author Alexander Walker
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet A worksheet to apply the style to.
 #' @param style A style object returned from createStyle()
@@ -620,7 +611,6 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
 #' @name freezePane
 #' @title Freeze a worksheet pane
 #' @description Freeze a worksheet pane
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param firstActiveRow Top row of active region
@@ -695,7 +685,6 @@ freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, 
 #' @name setRowHeights
 #' @title Set worksheet row heights
 #' @description Set worksheet row heights
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to set height
@@ -749,7 +738,6 @@ setRowHeights <- function(wb, sheet, rows, heights) {
 #' @name setColWidths
 #' @title Set worksheet column widths
 #' @description Set worksheet column widths to specific width or "auto".
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
@@ -887,7 +875,6 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' @title Remove column widths from a worksheet
 
 #' @description Remove column widths from a worksheet
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of columns to remove custom width (if any) from.
@@ -932,7 +919,6 @@ removeColWidths <- function(wb, sheet, cols) {
 #' @name removeRowHeights
 #' @title Remove custom row heights from a worksheet
 #' @description Remove row heights from a worksheet
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to remove custom height (if any) from.
@@ -964,7 +950,6 @@ removeRowHeights <- function(wb, sheet, rows) {
 
 #' @name insertPlot
 #' @title Insert the current plot into a worksheet
-#' @author Alexander Walker
 #' @description The current plot is saved to a temporary image file using dev.copy.
 #' This file is then written to the workbook using insertImage.
 #' @param wb A workbook object
@@ -1065,7 +1050,6 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' @name replaceStyle
 #' @title Replace an existing cell style
 #' @description Replace an existing cell style
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param index Index of style object to replace
 #' @param newStyle A style to replace the existing style as position index
@@ -1114,7 +1098,6 @@ getStyles <- function(wb) {
 #' @name removeWorksheet
 #' @title Remove a worksheet from a workbook
 #' @description Remove a worksheet from a Workbook object
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @description Remove a worksheet from a workbook
@@ -1148,7 +1131,6 @@ removeWorksheet <- function(wb, sheet) {
 #' @name deleteData
 #' @title Delete cell data
 #' @description Delete contents and styling from a cell.
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Rows to delete data from.
@@ -1180,7 +1162,6 @@ deleteData <- function(wb, sheet, cols, rows, gridExpand = FALSE) {
 #' @name modifyBaseFont
 #' @title Modify the default font
 #' @description Modify the default font for this workbook
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param fontSize font size
 #' @param fontColour font colour
@@ -1217,7 +1198,6 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
 #' @name getBaseFont
 #' @title Return the workbook default font
 #' @description Return the workbook default font
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @description Returns the base font used in the workbook.
 #' @export
@@ -1240,7 +1220,6 @@ getBaseFont <- function(wb) {
 #' @name setHeaderFooter
 #' @title Set document headers and footers
 #' @description Set document headers and footers
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param header document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
@@ -1374,7 +1353,6 @@ setHeaderFooter <- function(wb, sheet,
 #' @name pageSetup
 #' @title Set page margins, orientation and print scaling
 #' @description Set page margins, orientation and print scaling
-#' @author Alexander Walker, Joshua Sturm
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param orientation Page orientation. One of "portrait" or "landscape"
@@ -1636,7 +1614,6 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 #' @name protectWorksheet
 #' @title Protect a worksheet from modifications
 #' @description Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
-#' @author Reinhold Kainhofer
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
@@ -1751,7 +1728,6 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' @name protectWorkbook
 #' @title Protect a workbook from modifications
 #' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
-#' @author Reinhold Kainhofer
 #' @param wb A workbook object
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the workbook
@@ -1778,7 +1754,6 @@ protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure =
 #' @name showGridLines
 #' @title Set worksheet gridlines to show or hide.
 #' @description Set worksheet gridlines to show or hide.
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param showGridLines A logical. If `FALSE`, grid lines are hidden.
@@ -1881,7 +1856,6 @@ worksheetOrder <- function(wb) {
 #' @name createNamedRegion
 #' @title Create a named region.
 #' @description Create a named region
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Numeric vector specifying rows to include in region
@@ -2381,7 +2355,6 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 #' @name conditionalFormat
 #' @title Add conditional formatting to cells
 #' @description DEPRECATED! USE [conditionalFormatting()]
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Columns to apply conditional formatting to
@@ -2633,7 +2606,6 @@ removeTable <- function(wb, sheet, table) {
 #' @name groupColumns
 #' @title Group columns
 #' @description Group a selection of columns
-#' @author Joshua Sturm
 #' @param wb A workbook object.
 #' @param sheet A name or index of a worksheet.
 #' @param cols Indices of cols to group.
@@ -2734,7 +2706,6 @@ groupColumns <- function(wb, sheet, cols, hidden = FALSE) {
 #' @name ungroupColumns
 #' @title Ungroup Columns
 #' @description Ungroup a selection of columns
-#' @author Joshua Sturm
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of columns to ungroup
@@ -2784,7 +2755,6 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' @name groupRows
 #' @title Group Rows
 #' @description Group a selection of rows
-#' @author Joshua Sturm
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to group
@@ -2830,7 +2800,6 @@ groupRows <- function(wb, sheet, rows, hidden = FALSE) {
 #' @name ungroupRows
 #' @title Ungroup Rows
 #' @description Ungroup a selection of rows
-#' @author Joshua Sturm
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to ungroup
@@ -2867,7 +2836,6 @@ ungroupRows <- function(wb, sheet, rows) {
 
 #' @name addCreator
 #' @title Add another author to the meta data of the file.
-#' @author Philipp Schauberger
 #' @description Just a wrapper of wb$addCreator()
 #' @param wb A workbook object
 #' @param Creator A string object with the name of the creator
@@ -2886,7 +2854,6 @@ addCreator <- function(wb, Creator) {
 
 #' @name setLastModifiedBy
 #' @title Add another author to the meta data of the file.
-#' @author Philipp Schauberger
 #' @description Just a wrapper of wb$changeLastModifiedBy()
 #' @param wb A workbook object
 #' @param LastModifiedBy A string object with the name of the LastModifiedBy-User
@@ -2910,7 +2877,6 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #' @description Just a wrapper of wb$getCreators()
 #' Get the names of the
 #' @param wb A workbook object
-#' @author Philipp Schauberger
 #' @return vector of creators
 #' @examples
 #'
@@ -2928,7 +2894,6 @@ getCreators <- function(wb) {
 #' @name insertImage
 #' @title Insert an image into a worksheet
 #' @description Insert an image into a worksheet
-#' @author Alexander Walker
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param file An image file. Valid file types are: jpeg, png, bmp

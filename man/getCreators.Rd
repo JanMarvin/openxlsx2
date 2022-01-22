@@ -21,6 +21,3 @@ Get the names of the
 wb <- createWorkbook()
 getCreators(wb)
 }
-\author{
-Philipp Schauberger
-}

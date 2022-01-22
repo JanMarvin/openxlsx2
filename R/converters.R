@@ -81,7 +81,6 @@ convertFromExcelRef <- function(col) {
 #' @name getCellRefs
 #' @title Return excel cell coordinates from (x,y) coordinates
 #' @description Return excel cell coordinates from (x,y) coordinates
-#' @author Philipp Schauberger, Alexander Walker
 #' @param cellCoords A data.frame with two columns coordinate pairs.
 #' @return Excel alphanumeric cell reference
 #' @examples

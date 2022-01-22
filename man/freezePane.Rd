@@ -50,6 +50,3 @@ freezePane(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
 saveWorkbook(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Alexander Walker
-}

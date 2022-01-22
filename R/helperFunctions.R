@@ -289,7 +289,6 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
 #' @description validate the colour input
 #' @param colour colour
 #' @param errorMsg Error message
-#' @author Philipp Schauberger
 #' @importFrom grDevices colours
 #' @keywords internal
 #' @noRd
@@ -318,7 +317,6 @@ validateColour <- function(colour, errorMsg = "Invalid colour!") {
 #' @name col2hex
 #' @description convert rgb to hex
 #' @param creator my.col
-#' @author Philipp Schauberger
 #' @importFrom grDevices col2rgb rgb
 #' @keywords internal
 #' @noRd

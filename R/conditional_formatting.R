@@ -7,7 +7,6 @@
 #' @aliases databar
 #' @title Add conditional formatting to cells
 #' @description Add conditional formatting to cells
-#' @author Alexander Walker, Philipp Schauberger
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Columns to apply conditional formatting to

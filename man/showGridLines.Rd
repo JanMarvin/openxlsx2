@@ -25,6 +25,3 @@ showGridLines(wb, "testing", showGridLines = FALSE)
 saveWorkbook(wb, "showGridLinesExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Alexander Walker
-}

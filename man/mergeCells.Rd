@@ -53,6 +53,3 @@ saveWorkbook(wb, "mergeCellsExample.xlsx", overwrite = TRUE)
 \seealso{
 \code{\link[=removeCellMerge]{removeCellMerge()}}
 }
-\author{
-Alexander Walker
-}
