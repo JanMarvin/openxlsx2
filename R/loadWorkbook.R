@@ -593,11 +593,17 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     wb$worksheets[[i]]$cols_attr     <- xml_node(worksheet_xml, "worksheet", "cols", "col")
 
 
-    cf <- xml_node(worksheet_xml, "worksheet", "*", "cfRule")
-    nams <- unlist(xml_attribute(worksheet_xml, "worksheet", "conditionalFormatting"))
-    names(cf) <- nams
+    # need to expand the names. multiple conditions can be combined in one conditionalFormatting
+    cfs <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
+    if (length(cfs)) {
+      nms <- unlist(xml_attribute(cfs, "conditionalFormatting"))
+      cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
+      names(cf) <- nms
+      conditionalFormatting <- unlist(cf)
+      names(conditionalFormatting) <- unlist(lapply(nms, function(x) rep(x, length(cf[[x]]))))
 
-    wb$worksheets[[i]]$conditionalFormatting <- cf
+      wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
+    }
     wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
 
     wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")

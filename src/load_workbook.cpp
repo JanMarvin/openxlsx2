@@ -106,15 +106,15 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
   Rcpp::CharacterVector row_nams= {
     "r",
     "spans",
+    "s",
+    "ht",
+    "hidden",
     "collapsed",
     "customFormat",
     "customHeight",
-    "ht",
     "x14ac:dyDescent",
-    "hidden",
     "outlineLevel",
     "ph",
-    "s",
     "thickBot",
     "thickTop"
   };
