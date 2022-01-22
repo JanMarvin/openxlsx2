@@ -27,7 +27,7 @@ assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL,
 
 
 # With R6 use assert_class(x, c("class", "R6"), all = TRUE)
-assert_chart_sheet <- function(x) assert_class(x, "ChartSheet", package = "openxlsx2")
+assert_chart_sheet <- function(x) assert_class(x, c("wbChartSheet", "R6"), all = TRUE)
 assert_comment     <- function(x) assert_class(x, "Comment",    package = "openxlsx2")
 assert_hyperlink   <- function(x) assert_class(x, "Hyperlink",  package = "openxlsx2")
 assert_sheet_data  <- function(x) assert_class(x, "SheetData",  package = "openxlsx2")

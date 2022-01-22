@@ -41,7 +41,8 @@ Imports:
     stats,
     utils,
     zip,
-    stringi
+    stringi,
+    R6
 LinkingTo: 
     Rcpp
 Suggests:
