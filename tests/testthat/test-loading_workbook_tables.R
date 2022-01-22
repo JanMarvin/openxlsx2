@@ -11,7 +11,7 @@ test_that("Tables loaded correctly", {
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), "Table2")
   expect_equal(names(attr(wb$worksheets[[1]]$tableParts, "tableName")), "A1:E51")
 
-  expect_equal(wb$worksheets[[3]]$tableParts, "<tablePart r:id=\"rId4\"/>", check.attributes = FALSE)
+  expect_equal(wb$worksheets[[3]]$tableParts, "<tablePart r:id=\"rId2\"/>", check.attributes = FALSE)
   expect_equal(unname(attr(wb$worksheets[[3]]$tableParts, "tableName")), "Table3")
   expect_equal(names(attr(wb$worksheets[[3]]$tableParts, "tableName")), "A1:K30")
 
@@ -26,7 +26,7 @@ test_that("Tables loaded correctly", {
   expect_equal(length(wb$worksheets[[1]]$tableParts), 0)
   expect_equal(wb$worksheets[[1]]$tableParts, character(), check.attributes = FALSE)
 
-  expect_equal(wb$worksheets[[3]]$tableParts, "<tablePart r:id=\"rId4\"/>", check.attributes = FALSE)
+  expect_equal(wb$worksheets[[3]]$tableParts, "<tablePart r:id=\"rId2\"/>", check.attributes = FALSE)
   expect_equal(unname(attr(wb$worksheets[[3]]$tableParts, "tableName")), "Table3")
   expect_equal(names(attr(wb$worksheets[[3]]$tableParts, "tableName")), "A1:K30")
 

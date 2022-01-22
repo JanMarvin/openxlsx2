@@ -4,7 +4,13 @@
 \alias{xml_node_create}
 \title{create xml_node from R objects}
 \usage{
-xml_node_create(xml_name, xml_children = NULL, xml_attributes = NULL)
+xml_node_create(
+  xml_name,
+  xml_children = NULL,
+  xml_attributes = NULL,
+  escapes = FALSE,
+  declaration = FALSE
+)
 }
 \arguments{
 \item{xml_name}{the name of the new xml_node}
@@ -12,6 +18,10 @@ xml_node_create(xml_name, xml_children = NULL, xml_attributes = NULL)
 \item{xml_children}{character vector children attached to the xml_node}
 
 \item{xml_attributes}{named character vector of attributes for the xml_node}
+
+\item{escapes}{bool if escapes should be used}
+
+\item{declaration}{bool if declaration should be imported}
 }
 \description{
 takes xml_name, xml_children and xml_attributes to create a new

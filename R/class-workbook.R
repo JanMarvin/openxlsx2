@@ -4,6 +4,7 @@ Workbook <- setRefClass(
   fields = c(
     "sheet_names" = "character",
 
+    "calcChain" = "character",
     "charts" = "ANY",
     "isChartSheet" = "logical",
 
@@ -11,6 +12,7 @@ Workbook <- setRefClass(
     "colWidths" = "ANY",
     "connections" = "ANY",
     "Content_Types" = "character",
+    "app" = "character",
     "core" = "character",
     "drawings" = "ANY",
     "drawings_rels" = "ANY",
@@ -943,12 +945,21 @@ Workbook <- setRefClass(
 
 
       ## write app.xml
-      write_file(
-        head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
-        body = "<Application>Microsoft Excel</Application>",
-        tail = "</Properties>",
-        fl = file.path(docPropsDir, "app.xml")
-      )
+      if (length(.self$app) == 0) {
+        write_file(
+          head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
+          body = "<Application>Microsoft Excel</Application>",
+          tail = "</Properties>",
+          fl = file.path(docPropsDir, "app.xml")
+        )
+      } else {
+         write_file(
+          head = '',
+          body = pxml(.self$app),
+          tail = '',
+          fl = file.path(docPropsDir, "app.xml")
+        )
+      }
 
       ## write core.xml
       write_file(
@@ -974,12 +985,12 @@ Workbook <- setRefClass(
           if (!grepl("openxlsx_deleted", attr(.self$tables, "tableName")[i], fixed = TRUE)) {
             write_file(
               body = pxml(unlist(.self$tables, use.names = FALSE)[[i]]),
-              fl = file.path(xlTablesDir, sprintf("table%s.xml", i + 2))
+              fl = file.path(xlTablesDir, sprintf("table%s.xml", i))
             )
             if (.self$tables.xml.rels[[i]] != "") {
               write_file(
                 body = .self$tables.xml.rels[[i]],
-                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", i + 2))
+                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", i))
               )
             }
           }
@@ -1035,13 +1046,6 @@ Workbook <- setRefClass(
         }
       }
 
-      # # printerSettings
-      # printDir <- file.path(tmpDir, "xl", "printerSettings")
-      # dir.create(path = printDir, recursive = TRUE)
-      # for (i in seq_len(nSheets)) {
-      #   writeLines(genPrinterSettings(), file.path(printDir, sprintf("printerSettings%s.bin", i)))
-      # }
-
       ## media (copy file from origin to destination)
       # TODO replace with seq_along()
       for (x in .self$media) {
@@ -1071,7 +1075,7 @@ Workbook <- setRefClass(
             attr(.self$sharedStrings, "uniqueCount")
           ),
           #body = stri_join(set_sst(attr(sharedStrings, "text")), collapse = "", sep = " "),
-          body = stri_join(.self$sharedStrings, collapse = "", sep = " "),
+          body = stri_join(.self$sharedStrings, collapse = "", sep = ""),
           tail = "</sst>",
           fl = file.path(xlDir, "sharedStrings.xml")
         )
@@ -1142,6 +1146,10 @@ Workbook <- setRefClass(
           pxml(.self$styles$cellStyles),
           "</cellStyles>"
         )
+      # styleXML$cellStyles <-
+      #   stri_join(
+      #     pxml(.self$styles$tableStyles)
+      #   )
       # TODO
       # tableStyles
       # extLst
@@ -1174,6 +1182,15 @@ Workbook <- setRefClass(
       #    fl = file.path(xlDir, "styles.xml")
       #  )
       #}
+
+      if (length(.self$calcChain)) {
+        write_file(
+            head = '',
+            body = pxml(.self$calcChain),
+            tail = "",
+            fl = file.path(xlDir, "calcChain.xml")
+        )
+      }
 
       ## write workbook.xml
       workbookXML <- .self$workbook
@@ -1217,16 +1234,6 @@ Workbook <- setRefClass(
         # change default to match historical zipr
         mode = "cherry-pick"
       )
-
-      # reset styles - maintain any changes to base font
-      # TODO: why would I want to do that?
-      baseFont <- .self$styles$fonts[[1]]
-      .self$styles <-
-        genBaseStyleSheet(.self$styles$dxfs,
-          tableStyles = .self$styles$tableStyles,
-        )
-      .self$styles$fonts[[1]] <- baseFont
-
 
       # Copy file; stop if filed
       if (!file.copy(from = tmpFile, to = path, overwrite = overwrite)) {
@@ -1870,9 +1877,9 @@ Workbook <- setRefClass(
     getBaseFont = function() {
       baseFont <- .self$styles$fonts[[1]]
 
-      sz     <- font_val(baseFont, "font", "sz")
-      colour <- font_val(baseFont, "font", "color")
-      name   <- font_val(baseFont, "font", "name")
+      sz     <- as.list(xml_attribute(baseFont, "font", "sz")[[1]])
+      colour <- as.list(xml_attribute(baseFont, "font", "color")[[1]])
+      name   <- as.list(xml_attribute(baseFont, "font", "name")[[1]])
 
       if (length(sz[[1]]) == 0) {
         sz <- list("val" = "10")
@@ -2011,12 +2018,14 @@ Workbook <- setRefClass(
             fl = file.path(chartSheetDir, stri_join("sheet", i, ".xml"))
           )
 
-          write_file(
-            head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
-            body = pxml(.self$worksheets_rels[[i]]),
-            tail = "</Relationships>",
-            fl = file.path(chartSheetRelsDir, sprintf("sheet%s.xml.rels", i))
-          )
+          if (length(.self$worksheets_rels[[i]])) {
+            write_file(
+              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
+              body = pxml(.self$worksheets_rels[[i]]),
+              tail = "</Relationships>",
+              fl = file.path(chartSheetRelsDir, sprintf("sheet%s.xml.rels", i))
+            )
+          }
         } else {
           ## Write worksheets
           ws <- .self$worksheets[[i]]
@@ -2364,7 +2373,7 @@ Workbook <- setRefClass(
       }
 
 
-      ## drawing will always be the first relationship and printerSettings second
+      ## drawing will always be the first relationship
       if (nSheets > 1) {
         for (i in 1:(nSheets - 1L)) {
           .self$worksheets_rels[[i]][1:3] <- genBaseSheetRels(i)
@@ -3024,10 +3033,25 @@ Workbook <- setRefClass(
 
       sheet <- .self$validateSheet(sheet)
 
+      # TODO this simply adds the required drawings to the Content_Types. Might want to look
+      # into a way to handle such things.
+      .self$Content_Types <- unique(
+        c(.self$Content_Types,
+          sprintf(
+            "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
+            sheet
+          )
+        )
+      )
+
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
-      imageNo <- length((.self$drawings[[sheet]])) + 1L
+      drawing_len <- 0
+      if (length(.self$drawings_rels[[sheet]]))
+        drawing_len <- length(xml_node(.self$drawings_rels[[sheet]], "Relationship"))
+
+      imageNo <- drawing_len + 1L
       mediaNo <- length(.self$media) + 1L
 
       startCol <- convertFromExcelRef(startCol)
@@ -3063,14 +3087,14 @@ Workbook <- setRefClass(
 
       ## create drawing.xml
       anchor <-
-        '<xdr:oneCellAnchor xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">'
+        '<xdr:oneCellAnchor>'
 
       from <- sprintf(
-        '<xdr:from xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-    <xdr:col xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:col>
-    <xdr:colOff xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:colOff>
-    <xdr:row xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:row>
-    <xdr:rowOff xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">%s</xdr:rowOff>
+        '<xdr:from>
+    <xdr:col>%s</xdr:col>
+    <xdr:colOff>%s</xdr:colOff>
+    <xdr:row>%s</xdr:row>
+    <xdr:rowOff>%s</xdr:rowOff>
   </xdr:from>',
         startCol - 1L,
         colOffset,
@@ -3082,7 +3106,7 @@ Workbook <- setRefClass(
         anchor,
         from,
         sprintf(
-          '<xdr:ext xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" cx="%s" cy="%s"/>',
+          '<xdr:ext cx="%s" cy="%s"/>',
           width,
           height
         ),
@@ -3092,8 +3116,23 @@ Workbook <- setRefClass(
       )
 
 
+      # If no drawing is found, initiate one. If one is found, append a child to the exisiting node.
+      # Might look into updating attributes as well.
+      if (length(.self$drawings[[sheet]]) == 0) {
+        xml_attr = c(
+          "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+          "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
+          "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+        )
+        drawingsXML <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
+        drawingsXML <- c(.self$drawings[[sheet]], drawingsXML)
+      } else {
+        drawingsXML <- xml_add_child(.self$drawings[[sheet]], drawingsXML)
+      }
+
+
       ## append to workbook drawing
-      .self$drawings[[sheet]] <- c(.self$drawings[[sheet]], drawingsXML)
+      .self$drawings[[sheet]] <- drawingsXML
 
       invisible(.self)
     },
@@ -3110,8 +3149,7 @@ Workbook <- setRefClass(
       ## tables will always have r:id equal to table xml file number tables/table(i).xml
 
       ## Every worksheet has a drawingXML as r:id 1
-      ## Every worksheet has a printerSettings as r:id 2
-      ## Tables from r:id 3 to nTables+3 - 1
+      ## Tables from r:id 2
       ## HyperLinks from nTables+3 to nTables+3+nHyperLinks-1
       ## vmlDrawing to have rId
 
@@ -3208,7 +3246,8 @@ Workbook <- setRefClass(
       state[grepl("hidden", .self$workbook$sheets)] <- "hidden"
       visible_sheet_index <- which(state %in% "visible")[[1]]
 
-      .self$workbook$bookViews <-
+      if (is.null(.self$workbook$bookViews))
+        .self$workbook$bookViews <-
         sprintf(
           '<bookViews><workbookView xWindow="0" yWindow="0" windowWidth="13125" windowHeight="6105" firstSheet="%s" activeTab="%s"/></bookViews>',
           visible_sheet_index - 1L,
@@ -3814,260 +3853,6 @@ Workbook <- setRefClass(
 
       names(.self$worksheets[[sheet]]$conditionalFormatting) <- nms
 
-      invisible(.self)
-    },
-
-    # TODO This currently does not return .self but does alter .self
-    loadStyles = function(stylesXML) {
-      ## Build style objects from the styles XML
-      styles_XML <- read_xml(stylesXML)
-
-      ## Indexed colours
-      vals <- xml_node(styles_XML, "styleSheet", "colors", "indexedColors")
-      if (length(vals)) {
-        .self$styles$indexedColors <-
-          stri_join("<colors>", vals, "</colors>")
-      }
-
-      .self$styles$numFmts <- numFmts <- xml_node(styles_XML, "styleSheet", "numFmts", "numFmt")
-      # numFmts_attr <- getXMLattr(numFmts, "numFmt")
-
-      ## dxf
-      .self$styles$dxfs <- dxf <- xml_node(styles_XML, "styleSheet", "dxfs", "dxf")
-
-      tableStyles <- xml_node(styles_XML, "styleSheet", "tableStyles")
-      if (length(tableStyles)) {
-        .self$styles$tableStyles <- tableStyles
-      }
-
-      # extLst <- getXML2(styles_XML, "styleSheet", "extLst")
-      # if (length(extLst)) {
-      #  styles$extLst <- extLst
-      # }
-
-      .self$styles$borders <- borders <- xml_node(styles_XML, "styleSheet", "borders", "border")
-
-      .self$styles$fills <- fills <- xml_node(styles_XML, "styleSheet", "fills", "fill")
-
-      .self$styles$cellStyleXfs <- cellStyleXfs <- xml_node(styles_XML, "styleSheet", "cellStyleXfs", "xf")
-
-      .self$styles$cellXfs <- cellXfs <- xml_node(styles_XML, "styleSheet", "cellXfs", "xf")
-
-      ## Number formats
-      # numFmts <- getChildlessNode(xml = stylesTxt, tag = "numFmt")
-      numFmts <- xml_node(styles_XML, "styleSheet", "numFmts", "numFmt")
-      numFmtFlag <- FALSE
-      if (length(numFmts)) {
-        numFmts <- read_numfmt(numFmts)
-        numFmtFlag <- TRUE
-      }
-
-      ## fonts will maintain, sz, color, name, family scheme
-
-      .self$styles$fonts <- fonts <- xml_node(styles_XML, "styleSheet", "fonts", "font")
-      fonts <- buildFontList(fonts)
-
-
-      fills <- buildFillList(fills)
-
-      borders <- sapply(borders, buildBorder, USE.NAMES = FALSE)
-
-
-      ## ------------------------------ build styleObjects ------------------------------ ##
-
-      xfVals <- getXMLattr(cellXfs, "xf")
-
-      styleObjects_tmp <- list()
-      flag <- FALSE
-      for (s in xfVals) {
-        style <- createStyle()
-        if (any(s != "0")) {
-          if ("fontId" %in% names(s)) {
-
-            style$fontId <- as.integer(s[["fontId"]])
-
-            if (s[["fontId"]] != "0") {
-              thisFont <- fonts[[(as.integer(s[["fontId"]]) + 1)]]
-
-
-              if ("sz" %in% names(thisFont)) {
-                style$fontSize <- thisFont$sz
-              }
-
-              if ("name" %in% names(thisFont)) {
-                style$fontName <- thisFont$name
-              }
-
-              if ("family" %in% names(thisFont)) {
-                style$fontFamily <- thisFont$family
-              }
-
-              if ("color" %in% names(thisFont)) {
-                style$fontColour <- thisFont$color
-              }
-
-              if ("scheme" %in% names(thisFont)) {
-                style$fontScheme <- thisFont$scheme
-              }
-
-              flags <-
-                c("bold", "italic", "underline") %in% names(thisFont)
-              if (any(flags)) {
-                style$fontDecoration <- NULL
-                if (flags[[1]]) {
-                  style$fontDecoration <-
-                    c(style$fontDecoration, "BOLD")
-                }
-
-                if (flags[[2]]) {
-                  style$fontDecoration <-
-                    c(style$fontDecoration, "ITALIC")
-                }
-
-                if (flags[[3]]) {
-                  style$fontDecoration <-
-                    c(style$fontDecoration, "UNDERLINE")
-                }
-              }
-            }
-          }
-
-          if ("numFmtId" %in% names(s)) {
-            if (s[["numFmtId"]] != "0") {
-              if (as.integer(s[["numFmtId"]]) < 164) {
-                style$numFmt <- list(numFmtId = s[["numFmtId"]])
-              } else if (numFmtFlag) {
-                style$numFmt <- numFmts[[which(s[["numFmtId"]] == numFmtsIds)[1]]]
-              }
-            }
-          }
-
-          ## Border
-          if ("borderId" %in% names(s)) {
-            if (s[["borderId"]] != "0") {
-              # & "applyBorder" %in% names(s)){
-
-              border_ind <- as.integer(s[["borderId"]]) + 1L
-              if (border_ind <= length(borders)) {
-                thisBorder <- borders[[border_ind]]
-
-                if ("borderLeft" %in% names(thisBorder)) {
-                  style$borderLeft <- thisBorder$borderLeft
-                  style$borderLeftColour <- thisBorder$borderLeftColour
-                }
-
-                if ("borderRight" %in% names(thisBorder)) {
-                  style$borderRight <- thisBorder$borderRight
-                  style$borderRightColour <-
-                    thisBorder$borderRightColour
-                }
-
-                if ("borderTop" %in% names(thisBorder)) {
-                  style$borderTop <- thisBorder$borderTop
-                  style$borderTopColour <- thisBorder$borderTopColour
-                }
-
-                if ("borderBottom" %in% names(thisBorder)) {
-                  style$borderBottom <- thisBorder$borderBottom
-                  style$borderBottomColour <-
-                    thisBorder$borderBottomColour
-                }
-
-                if ("borderDiagonal" %in% names(thisBorder)) {
-                  style$borderDiagonal <- thisBorder$borderDiagonal
-                  style$borderDiagonalColour <-
-                    thisBorder$borderDiagonalColour
-                }
-
-                if ("borderDiagonalUp" %in% names(thisBorder)) {
-                  style$borderDiagonalUp <-
-                    thisBorder$borderDiagonalUp
-                }
-
-                if ("borderDiagonalDown" %in% names(thisBorder)) {
-                  style$borderDiagonalDown <-
-                    thisBorder$borderDiagonalDown
-                }
-              }
-            }
-          }
-
-          ## alignment
-          # applyAlignment <- "applyAlignment" %in% names(s)
-          if ("horizontal" %in% names(s)) {
-            # & applyAlignment)
-            style$halign <- s[["horizontal"]]
-          }
-
-          if ("vertical" %in% names(s)) {
-            style$valign <- s[["vertical"]]
-          }
-
-          if ("indent" %in% names(s)) {
-            style$indent <- s[["indent"]]
-          }
-
-          if ("textRotation" %in% names(s)) {
-            style$textRotation <- s[["textRotation"]]
-          }
-
-          ## wrap text
-          if ("wrapText" %in% names(s)) {
-            if (s[["wrapText"]] %in% c("1", "true")) {
-              style$wrapText <- TRUE
-            }
-          }
-
-          if ("fillId" %in% names(s)) {
-            if (s[["fillId"]] != "0") {
-              fillId <- as.integer(s[["fillId"]]) + 1L
-
-              if ("fgColor" %in% names(fills[[fillId]])) {
-                tmpFg <- fills[[fillId]]$fgColor
-                tmpBg <- fills[[fillId]]$bgColor
-
-                if (!is.null(tmpFg)) {
-                  style$fill$fillFg <- tmpFg
-                }
-
-                if (!is.null(tmpFg)) {
-                  style$fill$fillBg <- tmpBg
-                }
-              } else {
-                style$fill <- fills[[fillId]]
-              }
-            }
-          }
-
-
-          if ("xfId" %in% names(s)) {
-            if (s[["xfId"]] != "0") {
-              style$xfId <- s[["xfId"]]
-            }
-          }
-        } ## end if !all(s == "0")
-
-        # Cell protection settings can be "0", so we cannot just skip all zeroes
-        if ("locked" %in% names(s)) {
-          style$locked <- (s[["locked"]] == "1")
-        }
-
-        if ("hidden" %in% names(s)) {
-          style$hidden <- (s[["hidden"]] == "1")
-        }
-
-        ## we need to skip the first one as this is used as the base style
-        if (flag) {
-          styleObjects_tmp <- c(styleObjects_tmp, list(style))
-        }
-
-        flag <- TRUE
-      } ## end of for loop through styles s in ...
-
-
-      ## ------------------------------ build styleObjects Complete ------------------------------ ##
-
-      .self$styleObjectsList <- styleObjects_tmp
       invisible(.self)
     },
 

@@ -233,7 +233,7 @@ wb_to_df <- function(xlsxFile,
   if (!missing(definedName)) {
 
     dn <- wb$workbook$definedNames
-    wo <- unlist(lapply(dn, function(x) getXML1val(x, "definedName")))
+    wo <- xml_value(dn, "definedName")
     wo <- gsub("\\$", "", wo)
     wo <- unlist(sapply(wo, strsplit, "!"))
 
@@ -244,10 +244,10 @@ wb_to_df <- function(xlsxFile,
         dimnames = list(seq_len(length(dn)),
           c("sheet", "dims") ))
     )
-    nr$name <- sapply(dn, function(x) getXML1attr_one(x, "definedName", "name"))
-    nr$local <- sapply(dn, function(x) ifelse(
-      getXML1attr_one(x,"definedName", "localSheetId") == "", 0, 1)
-    )
+    dn_attr <- rbindlist(xml_attribute(dn, "definedName"))
+
+    nr$name <- dn_attr$name
+    nr$local <- ifelse(dn_attr$localSheetId == "", 0, 1)
     nr$sheet <- which(wb$sheet_names %in% nr$sheet)
 
     nr <- nr[order(nr$local, nr$name, nr$sheet),]

@@ -151,7 +151,7 @@ Worksheet <- setRefClass(
 
     get_prior_sheet_data = function() {
       paste_c(
-        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
+        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
 
         # sheetPr
         if (length(.self$sheetPr) && !any(grepl("<sheetPr>", .self$sheetPr, fixed = TRUE))) {
@@ -173,7 +173,7 @@ Worksheet <- setRefClass(
         if (length(.self$cols_attr)) {
           paste(c("<cols>", .self$cols_attr, "</cols>"), collapse = "")
         },
-        sep = " "
+        sep = ""
       )
     },
 
@@ -275,13 +275,13 @@ Worksheet <- setRefClass(
 
         # extLst, dataValidationsLst
         # parenthese or R gets confused with the ||
-        if ((length(.self$extLst)) || (n <- length(.self$dataValidationsLst))) {
+        if ((length(.self$extLst)) || (length(.self$dataValidationsLst))) {
           sprintf(
             "<extLst>%s</extLst>",
             paste0(
               pxml(.self$extLst),
               # dataValidationsLst_xml
-              if (n) {
+              if (length(.self$dataValidationsLst)) {
                 paste0(
                   sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
                   paste0(pxml(.self$dataValidationsLst), "</x14:dataValidations></ext>"),
@@ -295,7 +295,7 @@ Worksheet <- setRefClass(
         "</worksheet>",
 
         # end
-        sep = " "
+        sep = ""
       )
 
     },

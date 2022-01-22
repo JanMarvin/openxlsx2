@@ -1,23 +1,20 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile, bool declaration) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
 
-  if (declaration) {
-    if (isfile) {
-      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
-    } else {
-      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
-    }
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
+  if (declaration) pugi_parse_flags |= pugi::parse_declaration;
+
+  if (isfile) {
+    result = doc->load_file(path.c_str(), pugi_parse_flags);
   } else {
-    if (isfile) {
-      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes);
-    } else {
-      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes);
-    }
+    result = doc->load_string(path.c_str(), pugi_parse_flags);
   }
 
   if (!result) {
@@ -26,19 +23,58 @@ SEXP readXMLPtr(std::string path, bool isfile, bool declaration) {
 
   XPtrXML ptr(doc, true);
   ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
+  ptr.attr("escapes") = escapes;
   return ptr;
 }
 
+// [[Rcpp::export]]
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration) {
+
+  pugi::xml_document doc;
+  pugi::xml_parse_result result;
+
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
+  if (declaration) pugi_parse_flags |= pugi::parse_declaration;
+
+  unsigned int pugi_format_flags = pugi::format_raw;
+  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+
+  if (isfile) {
+    result = doc.load_file(path.c_str(), pugi_parse_flags);
+  } else {
+    result = doc.load_string(path.c_str(), pugi_parse_flags);
+  }
+
+  if (!result) {
+    Rcpp::stop("xml import unsuccessfull");
+  }
+
+  std::ostringstream oss;
+  doc.print(oss, " ", pugi_format_flags);
+
+  return  Rcpp::wrap(oss.str());
+}
+
+unsigned int pugi_format(XPtrXML doc){
+  bool escapes = Rcpp::as<bool>(doc.attr("escapes"));
+  unsigned int pugi_format_flags = pugi::format_raw;
+  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+
+  return pugi_format_flags;
+}
 
 // [[Rcpp::export]]
 SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
 
   std::vector<std::string> res;
+  unsigned int  pugi_format_flags = pugi_format(doc);
 
   for (auto worksheet : doc->children(child.c_str()))
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi::format_raw);
+    worksheet.print(oss, " ", pugi_format_flags);
     res.push_back(oss.str());
   }
 
@@ -50,11 +86,12 @@ SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
 SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
 
   std::vector<std::string> res;
+  unsigned int  pugi_format_flags = pugi_format(doc);
 
   for (auto worksheet : doc->child(level1.c_str()).children(child.c_str()))
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi::format_raw);
+    worksheet.print(oss, " ", pugi_format_flags);
     res.push_back(oss.str());
   }
 
@@ -65,11 +102,12 @@ SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
 SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::string child) {
 
   std::vector<std::string> res;
+  unsigned int  pugi_format_flags = pugi_format(doc);
 
   for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str()))
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi::format_raw);
+    worksheet.print(oss, " ", pugi_format_flags);
     res.push_back(oss.str());
   }
 
@@ -82,12 +120,13 @@ SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::strin
 SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
 
   std::vector<std::string> res;
+  unsigned int  pugi_format_flags = pugi_format(doc);
 
   for (auto worksheet : doc->child(level1.c_str()).children())
     for (auto cld : worksheet.children(child.c_str()))
     {
       std::ostringstream oss;
-      cld.print(oss, " ", pugi::format_raw);
+      cld.print(oss, " ", pugi_format_flags);
       res.push_back(oss.str());
     }
 
@@ -111,6 +150,7 @@ SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
 SEXP getXMLXPtr4(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child) {
 
   std::vector<std::vector<std::string>> x;
+  unsigned int  pugi_format_flags = pugi_format(doc);
 
   for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(level3.c_str()))
   {
@@ -119,7 +159,7 @@ SEXP getXMLXPtr4(XPtrXML doc, std::string level1, std::string level2, std::strin
     for (auto col : worksheet.children(child.c_str()))
     {
       std::ostringstream oss;
-      col.print(oss, " ", pugi::format_raw);
+      col.print(oss, " ", pugi_format_flags);
 
       y.push_back(oss.str());
     }
@@ -152,6 +192,7 @@ SEXP getXMLXPtr4(XPtrXML doc, std::string level1, std::string level2, std::strin
 SEXP getXMLXPtr5(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string level4, std::string child) {
 
   std::vector<std::vector<std::vector<std::string>>> x;
+  unsigned int  pugi_format_flags = pugi_format(doc);
 
   for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(level3.c_str()))
   {
@@ -164,7 +205,7 @@ SEXP getXMLXPtr5(XPtrXML doc, std::string level1, std::string level2, std::strin
       for (auto val : col.children(child.c_str()))
       {
         std::ostringstream oss;
-        val.print(oss, " ", pugi::format_raw);
+        val.print(oss, " ", pugi_format_flags);
         z.push_back(oss.str());
       }
 
@@ -628,115 +669,38 @@ SEXP getXMLXPtr4attr_one(XPtrXML doc, std::string level1, std::string level2, st
   return  Rcpp::wrap(z);
 }
 
-// specially designed for <fonts>
-// [[Rcpp::export]]
-SEXP font_val(Rcpp::CharacterVector fonts, std::string level3, std::string child) {
-
-  Rcpp::List z;
-  Rcpp::CharacterVector names;
-
-  for (auto i = 0; i < fonts.length(); ++i) {
-
-    std::string xml_string = Rcpp::as<std::string>(fonts[i]);
-    pugi::xml_document doc;
-    pugi::xml_parse_result result = doc.load_string(xml_string.c_str(),
-                                                    pugi::parse_default | pugi::parse_escapes);
-    if (!result) {
-      Rcpp::stop("xml import unsuccessfull");
-    }
-
-    for (auto l3 : doc.children(level3.c_str())) {
-      for (auto cld : l3.children(child.c_str())) {
-
-        for (auto attrs : cld.attributes()) {
-
-          if (attrs.value() != NULL) {
-            z.push_back(attrs.value());
-          } else {
-            z.push_back("");
-          }
-          names.push_back(attrs.name());
-        }
-
-      }
-    }
-
-  }
-
-  z.attr("names") = names;
-
-  return Rcpp::wrap(z);
-}
-
-
-// specially designed for <fonts>
-// [[Rcpp::export]]
-SEXP style_xml_as_list(Rcpp::CharacterVector xml_input, std::string level3) {
-
-  Rcpp::List z(xml_input.length());
-
-  for (auto i = 0; i < xml_input.length(); ++i) {
-
-    Rcpp::List zi;
-    Rcpp::CharacterVector names;
-
-    std::string xml_string = Rcpp::as<std::string>(xml_input[i]);
-    pugi::xml_document doc;
-    pugi::xml_parse_result result = doc.load_string(xml_string.c_str(), pugi::parse_default | pugi::parse_escapes);
-    if (!result) {
-      Rcpp::stop("xml import unsuccessfull");
-    }
-
-
-    for (auto l3 : doc.children(level3.c_str())) {
-      for (auto cld : l3.children()) {
-
-        for (auto attrs : cld.attributes()) {
-          if (attrs.value() != NULL) {
-            zi.push_back(attrs.value());
-          } else {
-            zi.push_back("");
-          }
-          names.push_back(attrs.name());
-        }
-
-      }
-
-      zi.attr("names") = names;
-    }
-
-    z[i] = zi;
-  }
-
-  return Rcpp::wrap(z);
-}
-
-
 
 // [[Rcpp::export]]
-std::string printXPtr(XPtrXML doc, bool raw) {
+std::string printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
+
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_flags = pugi::format_indent;
+  if (no_escapes) pugi_flags |= pugi::format_no_escapes;
+  if (raw)  pugi_flags |= pugi::format_raw;
 
   std::ostringstream oss;
-  if (raw) {
-    doc->print(oss, " ", pugi::format_raw);
-  } else {
-    doc->print(oss);
-  }
+  doc->print(oss, " ", pugi_flags);
 
   return  oss.str();
 }
 
 
-
 // [[Rcpp::export]]
-void write_xml_file(std::string xml_content, std::string fl) {
+void write_xml_file(std::string xml_content, std::string fl, bool escapes) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
+
+  unsigned int pugi_format_flags = pugi::format_raw;
+  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+
   // load and validate node
   if (xml_content != "") {
-    result = doc.load_string(xml_content.c_str(), pugi::parse_default | pugi::parse_escapes);
+    result = doc.load_string(xml_content.c_str(), pugi_parse_flags);
     if (!result) Rcpp::stop("Loading xml_content node failed: \n %s \n When writing: \n%s", xml_content, fl);
   }
 
@@ -746,7 +710,7 @@ void write_xml_file(std::string xml_content, std::string fl) {
   decl.append_attribute("encoding") = "UTF-8";
   decl.append_attribute("standalone") = "yes";
 
-  doc.save_file(fl.c_str(), "\t", pugi::format_raw );
+  doc.save_file(fl.c_str(), "\t", pugi_format_flags);
 
 }
 
@@ -762,6 +726,8 @@ void write_xml_file(std::string xml_content, std::string fl) {
 //'
 //' @param xml_content some valid xml_node
 //' @param xml_attributes R vector of named attributes
+//' @param escapes bool if escapes should be used
+//' @param declaration bool if declaration should be imported
 //'
 //' @examples
 //'   # add single node
@@ -783,14 +749,22 @@ void write_xml_file(std::string xml_content, std::string fl) {
 //'     xml_attr_mod(xml_node, xml_attr)
 //' @export
 // [[Rcpp::export]]
-Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes) {
+Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes,
+                                   bool escapes = false, bool declaration = false) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
+  if (declaration) pugi_parse_flags |= pugi::parse_declaration;
+
+  unsigned int pugi_format_flags = pugi::format_raw;
+  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+
   // load and validate node
   if (xml_content != "") {
-    result = doc.load_string(xml_content.c_str(), pugi::parse_default | pugi::parse_escapes);
+    result = doc.load_string(xml_content.c_str(), pugi_parse_flags);
     if (!result) Rcpp::stop("Loading xml_content node failed: \n %s ", xml_content);
   }
 
@@ -816,7 +790,7 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
   }
 
   std::ostringstream oss;
-  doc.print(oss, " ", pugi::format_raw);
+  doc.print(oss, " ", pugi_format_flags);
 
   return oss.str();
 }
@@ -827,6 +801,8 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
 //' @param xml_name the name of the new xml_node
 //' @param xml_children character vector children attached to the xml_node
 //' @param xml_attributes named character vector of attributes for the xml_node
+//' @param escapes bool if escapes should be used
+//' @param declaration bool if declaration should be imported
 //' @details if xml_children or xml_attributes should be empty, use NULL
 //'
 //' @examples
@@ -849,10 +825,18 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
 Rcpp::CharacterVector xml_node_create(
     std::string xml_name,
     Rcpp::Nullable<Rcpp::CharacterVector> xml_children = R_NilValue,
-    Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes = R_NilValue) {
+    Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes = R_NilValue,
+    bool escapes = false, bool declaration = false) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
+
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
+  if (declaration) pugi_parse_flags |= pugi::parse_declaration;
+
+  unsigned int pugi_format_flags = pugi::format_raw;
+  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
 
   pugi::xml_node cld = doc.append_child(xml_name.c_str());
 
@@ -866,7 +850,7 @@ Rcpp::CharacterVector xml_node_create(
       std::string xml_cld = Rcpp::as<std::string>(xml_child[i]);
 
       pugi::xml_document is_node;
-      pugi::xml_parse_result result = is_node.load_string(xml_cld.c_str(), pugi::parse_default | pugi::parse_escapes);
+      pugi::xml_parse_result result = is_node.load_string(xml_cld.c_str(), pugi_parse_flags);
 
       // check if result is a valid xml_node, else append as is
       if (result) {
@@ -891,8 +875,34 @@ Rcpp::CharacterVector xml_node_create(
   }
 
   std::ostringstream oss;
-  doc.print(oss, " ", pugi::format_raw);
+  doc.print(oss, " ", pugi_format_flags);
   std::string xml_return = oss.str();
 
   return xml_return;
+}
+
+// xml_append_child
+// @param node xml_node a child is appended to
+// @param child the xml_node appended to node
+// @param escapes bool if escapes should be used
+// @export
+// [[Rcpp::export]]
+SEXP xml_append_child(XPtrXML node, XPtrXML child, bool pointer, bool escapes) {
+
+  unsigned int pugi_format_flags = pugi::format_raw;
+  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+
+  for (auto cld: child->children()) {
+    node->first_child().append_copy(cld);
+  }
+
+  if (pointer) {
+    return (node);
+  } else {
+    std::ostringstream oss;
+    node->print(oss, " ", pugi_format_flags);
+    std::string xml_return = oss.str();
+
+    return Rcpp::wrap(xml_return);
+  }
 }

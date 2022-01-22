@@ -4,7 +4,7 @@
 \alias{write_file}
 \title{write xml file}
 \usage{
-write_file(head = "", body = "", tail = "", fl = "")
+write_file(head = "", body = "", tail = "", fl = "", escapes = FALSE)
 }
 \arguments{
 \item{head}{head part of xml}
@@ -14,6 +14,9 @@ write_file(head = "", body = "", tail = "", fl = "")
 \item{tail}{tail part of xml}
 
 \item{fl}{file name with full path}
+
+\item{escapes}{bool if characters like "&" should be escaped. The default is
+no escape, assuming that xml to export is already valid.}
 }
 \description{
 brings the added benefit of xml checking

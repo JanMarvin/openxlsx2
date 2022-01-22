@@ -2,7 +2,6 @@
 
 genBaseContent_Type <- function() {
   c(
-    # '<Default Extension="bin" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.printerSettings"/>',
     '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>',
     '<Default Extension="xml" ContentType="application/xml"/>',
     '<Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>',
@@ -182,16 +181,48 @@ genBaseWorkbook.xml.rels <- function() {
 
 
 genBaseWorkbook <- function() {
+
+    # bookViews
+    # calcPr
+    # customWorkbookViews
+    # definedNames
+    # externalReferences
+    # extLst
+    # fileRecoveryPr
+    # fileSharing
+    # fileVersion
+    # functionGroups
+    # oleSize
+    # pivotCaches
+    # sheets
+    # smartTagPr
+    # smartTagTypes
+    # webPublishing
+    # webPublishObjects
+    # workbookPr
+    # workbookProtection
+
   list(
+    fileVersion = NULL,
+    fileSharing = NULL,
     workbookPr = '<workbookPr date1904="false"/>',
+    alternateContent = NULL,
+    absPath = NULL, # "x15ac:absPath"
     workbookProtection = NULL,
-    bookViews = '<bookViews><workbookView xWindow="0" yWindow="0" windowWidth="13125" windowHeight="6105"/></bookViews>',
+    bookViews = NULL,
     sheets = NULL,
+    functionGroups = NULL,
     externalReferences = NULL,
     definedNames = NULL,
     calcPr = NULL,
-    alternateContent = NULL,
+    oleSize = NULL,
+    customWorkbookViews = NULL,
     pivotCaches = NULL,
+    smartTagPr = NULL,
+    smartTagTypes = NULL,
+    webPublishing = NULL,
+    fileRecoveryPr = NULL,
+    webPublishObjects = NULL,
     extLst = NULL
   )
 }
@@ -202,7 +233,6 @@ genBaseWorkbook <- function() {
 genBaseSheetRels <- function(sheetInd) {
   c(
     sprintf('<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', sheetInd),
-    #sprintf('<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/printerSettings" Target="../printerSettings/printerSettings%s.bin"/>', sheetInd),
     sprintf('<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>', sheetInd)
   )
 }
@@ -238,23 +268,23 @@ genBaseStyleSheet <- function(dxfs = NULL, tableStyles = NULL, extLst = NULL) {
 
 
 genBasePic <- function(imageNo) {
-  sprintf('<xdr:pic xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-      <xdr:nvPicPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-        <xdr:cNvPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" id="%s" name="Picture %s"/>
-        <xdr:cNvPicPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-          <a:picLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/>
+  sprintf('<xdr:pic>
+      <xdr:nvPicPr>
+        <xdr:cNvPr id="%s" name="Picture %s"/>
+        <xdr:cNvPicPr>
+          <a:picLocks noChangeAspect="1"/>
         </xdr:cNvPicPr>
       </xdr:nvPicPr>
-      <xdr:blipFill xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-        <a:blip xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="rId%s">
+      <xdr:blipFill>
+        <a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="rId%s">
         </a:blip>
-        <a:stretch xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+        <a:stretch>
           <a:fillRect/>
         </a:stretch>
       </xdr:blipFill>
-      <xdr:spPr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
-        <a:prstGeom xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" prst="rect">
-          <a:avLst xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"/>
+      <xdr:spPr>
+        <a:prstGeom prst="rect">
+          <a:avLst/>
         </a:prstGeom>
       </xdr:spPr>
     </xdr:pic>', imageNo, imageNo, imageNo)
@@ -418,14 +448,6 @@ genBaseTheme <- function() {
   <a:path path="circle"><a:fillToRect l="50000" t="50000" r="50000" b="50000"/></a:path>
   </a:gradFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements><a:objectDefaults/><a:extraClrSchemeLst/></a:theme>'
 }
-
-
-
-
-genPrinterSettings <- function() {
-  "5c 00 5c 00 41 00 55 00 43 00 41 00 4c 00 50 00 52 00 4f 00 44 00 46 00 50 00 5c 00 4c 00 31 00 34 00 78 00 65 00 72 00 6f 00 78 00 31 00 20 00 2d 00 20 00 58 00 65 00 72 00 6f 00 00 00 00 00 01 04 00 52 dc 00 5c 05 13 ff 81 07 02 00 09 00 9a 0b 34 08 64 00 01 00 0f 00 2c 01 02 00 02 00 2c 01 03 00 01 00 41 00 34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 52 c0 21 46 00 58 00 20 00 41 00 70 00 65 00 6f 00 73 00 50 00 6f 00 72 00 74 00 2d 00 49 00 49 00 49 00 20 00 43 00 34 00 34 00 30 00 30 00 20 00 50 00 43 00 4c 00 20 00 36 00 00 00 00 00 00 00 00 00 4e 08 a0 13 40 09 08 00 0b 01 64 00 01 00 07 00 01 00 00 00 00 00 00 00 00 00 07 00 01 00 08 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 08 08 08 00 08 08 08 00 08 08 08 00 08 08 08 00 00 01 03 00 02 02 00 01 02 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 02 02 48 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 bc 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05 00 00 00 00 00 00 08 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0b 96 00 00 00 c8 00 01 01 01 01 01 01 01 01 01 01 01 01 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 bc 02 00 00 00 00 00 00 00 00 02 00 41 00 72 00 69 00 61 00 6c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 12 70 5f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
-}
-
 
 gen_databar_extlst <- function(guid, sqref, posColour, negColour, values, border, gradient) {
   xml <- sprintf('<x14:cfRule type="dataBar" id="{%s}"><x14:dataBar minLength="0" maxLength="100" border="%s" gradient = "%s" negativeBarBorderColorSameAsPositive="0">', guid, border, gradient)

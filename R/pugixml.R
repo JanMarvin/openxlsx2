@@ -3,6 +3,8 @@
 #' read xml file
 #' @param xml something to read character string or file
 #' @param declaration should the declaration be imported
+#' @param escapes bool if characters like "&" should be escaped. The default is
+#' no escapes. Assuming that the input already provides valid information.
 #' @details Read xml files or strings to pointer and checks if the input is
 #' valid XML.
 #' If the input is read into a character object, it will be reevaluated every
@@ -25,8 +27,18 @@
 #'   # Errors if the import was unsuccessful
 #'   try(z <- read_xml("<a><b/>"))
 #'
+#'   xml <- '<?xml test="yay" ?><a>A & B</a>'
+#'   # difference in escapes
+#'   read_xml(xml, escapes = TRUE, pointer = FALSE)
+#'   read_xml(xml, escapes = FALSE, pointer = FALSE)
+#'   read_xml(xml, escapes = TRUE)
+#'   read_xml(xml, escapes = FALSE)
+#'
+#'   # read declaration
+#'   read_xml(xml, declaration = TRUE)
+#'
 #' @export
-read_xml <- function(xml, pointer = TRUE, declaration = FALSE)  {
+read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) {
 
   z <- NULL
 
@@ -38,10 +50,10 @@ read_xml <- function(xml, pointer = TRUE, declaration = FALSE)  {
     xml <- paste0(xml, collapse = "")
 
   if (pointer) {
-    z <- readXMLPtr(xml, isfile, declaration)
+    z <- readXMLPtr(xml, isfile, escapes, declaration)
   }
   else {
-    z <- readXML(xml, isfile, declaration)
+    z <- readXML(xml, isfile, escapes, declaration)
   }
 
   z
@@ -85,11 +97,6 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
     if (length(lvl) == 3) if (level2 == "*") z <- unkgetXMLXPtr3(xml, level1, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4(xml, level1, level2, level3, level4)
     if (length(lvl) == 5) z <- getXMLXPtr5(xml, level1, level2, level3, level4, level5)
-  } else { # should not happen?
-    xml <- read_xml(xml, pointer = FALSE)
-    if (length(lvl) == 1) z <- getXML1(xml, level1)
-    if (length(lvl) == 2) z <- getXML2(xml, level1, level2)
-    if (length(lvl) == 3) z <- getXML3(xml, level1, level2, level3)
   }
 
   z
@@ -128,11 +135,6 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
     if (length(lvl) == 3) z <- getXMLXPtr3val(xml, level1, level2, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4val(xml, level1, level2, level3, level4)
     if (length(lvl) == 5) z <- getXMLXPtr5val(xml, level1, level2, level3, level4, level5)
-  } else {
-    xml <- read_xml(xml, pointer = FALSE)
-    if (length(lvl) == 1) z <- getXML1val(xml, level1)
-    if (length(lvl) == 2) z <- getXML2val(xml, level1, level2)
-    if (length(lvl) == 3) z <- getXML3val(xml, level1, level2, level3)
   }
 
   z
@@ -177,8 +179,6 @@ xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, leve
     if (length(lvl) == 3) z <- getXMLXPtr3attr(xml, level1, level2, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4attr(xml, level1, level2, level3, level4)
     if (length(lvl) == 5) z <- getXMLXPtr5attr(xml, level1, level2, level3, level4, level5)
-  } else {
-    warning("nothing available")
   }
 
   z
@@ -196,7 +196,10 @@ xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, leve
 #'   print(x, raw = TRUE)
 #' @export
 print.pugi_xml <- function(x, raw = FALSE, ...) {
-  cat(printXPtr(x, raw))
+
+  escapes <- attr(x, "escapes")
+
+  cat(printXPtr(x, !escapes, raw))
   if (raw) cat("\n")
 }
 
@@ -237,8 +240,37 @@ as_xml <- function(x) {
 #' @param body body part of xml
 #' @param tail tail part of xml
 #' @param fl file name with full path
+#' @param escapes bool if characters like "&" should be escaped. The default is
+#' no escape, assuming that xml to export is already valid.
 #' @export
-write_file <- function(head = "", body = "", tail = "", fl = "") {
+write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   xml_content <- paste0(head, body, tail, collapse = "")
-  write_xml_file(xml_content = xml_content, fl = fl)
+  write_xml_file(xml_content = xml_content, fl = fl, escapes = escapes)
+}
+
+#' append xml child to node
+#' @param xml_node xml_node
+#' @param xml_child xml_child
+#' @param pointer pointer
+#' @param escapes escapes
+#' @examples
+#' xml_node <- "<node><child1/><child2/></node>"
+#' xml_child <- "<new_child/>"
+#'
+#' xml_add_child(xml_node, xml_child)
+#' @export
+xml_add_child <- function(xml_node, xml_child, pointer = FALSE, escapes = FALSE) {
+
+  if (missing(xml_node))
+    stop("need xml_node")
+
+  if (missing(xml_child))
+    stop("need xml_child")
+
+  xml_node <- read_xml(xml_node)
+  xml_child <- read_xml(xml_child)
+
+  z <- xml_append_child(xml_node, xml_child, pointer, escapes)
+
+  return(z)
 }
