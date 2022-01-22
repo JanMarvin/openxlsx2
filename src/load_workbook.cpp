@@ -290,9 +290,6 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
             single_xml_col.is = oss.str();
           } // </is>
 
-          // <v>
-          if (val.name() == v_str)  single_xml_col.v = val.child_value();
-
           // <f>
           if (val.name() == f_str)  {
 
@@ -312,6 +309,9 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
             }
 
           } // </f>
+
+          // <v>
+          if (val.name() == v_str)  single_xml_col.v = val.child_value();
 
           ++val_itr;
         }
