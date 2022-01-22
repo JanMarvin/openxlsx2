@@ -12,6 +12,10 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
 
   pugi::xml_document doc;
 
+  // non optional: treat input as valid at this stage
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+
   pugi::xml_node row = doc.append_child("row");
   Rcpp::CharacterVector attrnams = row_attr.names();
 
@@ -112,7 +116,7 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
       if (c_ist.compare(rnastring.c_str()) != 0) {
 
         pugi::xml_document is_node;
-        pugi::xml_parse_result result = is_node.load_string(c_ist.c_str(), pugi::parse_default | pugi::parse_escapes);
+        pugi::xml_parse_result result = is_node.load_string(c_ist.c_str(), pugi_parse_flags);
         if (!result) Rcpp::stop("loading inlineStr node while writing failed");
 
         cell.append_copy(is_node.first_child());
@@ -122,7 +126,7 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
   }
 
   std::ostringstream oss;
-  doc.print(oss, " ", pugi::format_raw);
+  doc.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
   // doc.print(oss);
 
   return oss.str();

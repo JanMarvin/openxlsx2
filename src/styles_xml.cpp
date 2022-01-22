@@ -151,6 +151,8 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
   auto n = df_xf.nrow();
   Rcpp::CharacterVector z(n);
 
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+
   Rcpp::CharacterVector xf_nams = {
     "applyAlignment",
     "applyBorder",
@@ -278,7 +280,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -314,6 +316,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
 
   auto nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
   auto kk = nams.length();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -343,7 +346,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
         Rcpp::Rcout << name << ": not found in font name table" << std::endl;
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi::format_raw);
+        cld.print(oss, " ", pugi_format_flags);
 
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
@@ -371,6 +374,8 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
 
   auto n = df_font.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -388,7 +393,7 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
         std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
         pugi::xml_document font_node;
-        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
         if (!result) Rcpp::stop("loading font node fail: %s", cv_s);
 
         font.append_copy(font_node.first_child());
@@ -398,7 +403,7 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -472,6 +477,7 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
 
   auto n = df_numfmt.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -492,7 +498,7 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -521,6 +527,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
 
   auto nn = std::distance(xml_doc_border->begin(), xml_doc_border->end());
   auto kk = nams.length();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -557,7 +564,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
 
       Rcpp::CharacterVector cld_name = cld.name();
       std::ostringstream oss;
-      cld.print(oss, " ", pugi::format_raw);
+      cld.print(oss, " ", pugi_format_flags);
       std::string cld_value = oss.str();
 
       // mimic which
@@ -593,6 +600,8 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
 
   auto n = df_border.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
   // openxml 2.8.1
@@ -646,7 +655,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
           std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
           pugi::xml_document border_node;
-          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi_parse_flags);
           if (!result) Rcpp::stop("loading font node fail: %s", cv_s);
 
           border.append_copy(border_node.first_child());
@@ -659,7 +668,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
     z[i] = oss.str();
   }
 
@@ -680,6 +689,7 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
 
   auto nn = std::distance(xml_doc_fill->begin(), xml_doc_fill->end());
   auto kk = nams.length();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -709,7 +719,7 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
         Rcpp::Rcout << name << ": not found in fill name table" << std::endl;
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi::format_raw);
+        cld.print(oss, " ", pugi_format_flags);
 
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
@@ -737,6 +747,8 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
 
   auto n = df_fill.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -754,7 +766,7 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
         std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
         pugi::xml_document font_node;
-        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
         if (!result) Rcpp::stop("loading fill node fail: %s", cv_s);
 
         fill.append_copy(font_node.first_child());
@@ -764,7 +776,7 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -793,6 +805,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
 
   auto nn = std::distance(xml_doc_cellStyle->begin(), xml_doc_cellStyle->end());
   auto kk = nams.length();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -829,7 +842,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
 
       Rcpp::CharacterVector cld_name = cld.name();
       std::ostringstream oss;
-      cld.print(oss, " ", pugi::format_raw);
+      cld.print(oss, " ", pugi_format_flags);
       std::string cld_value = oss.str();
 
       // mimic which
@@ -865,6 +878,8 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
 
   auto n = df_cellstyle.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
   // openxml 2.8.1
@@ -918,7 +933,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
           std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
           pugi::xml_document border_node;
-          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi_parse_flags);
           if (!result) Rcpp::stop("loading cellStyle node fail: %s", cv_s);
 
           cellstyle.append_copy(border_node.first_child());
@@ -931,7 +946,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
     z[i] = oss.str();
   }
 
@@ -958,6 +973,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
 
   auto nn = std::distance(xml_doc_tableStyle->begin(), xml_doc_tableStyle->end());
   auto kk = nams.length();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -994,7 +1010,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
 
       Rcpp::CharacterVector cld_name = cld.name();
       std::ostringstream oss;
-      cld.print(oss, " ", pugi::format_raw);
+      cld.print(oss, " ", pugi_format_flags);
       std::string cld_value = oss.str();
 
       // mimic which
@@ -1030,6 +1046,8 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
   auto n = df_tablestyle.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
   // openxml 2.8.1
@@ -1082,7 +1100,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
           std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
           pugi::xml_document border_node;
-          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi_parse_flags);
           if (!result) Rcpp::stop("loading df_tablestyle node fail: %s", cv_s);
 
           tablestyle.append_copy(border_node.first_child());
@@ -1095,7 +1113,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
     z[i] = oss.str();
   }
 
@@ -1122,6 +1140,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
 
   auto nn = std::distance(xml_doc_dxf->begin(), xml_doc_dxf->end());
   auto kk = nams.length();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -1151,7 +1170,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
         Rcpp::Rcout << name << ": not found in dxf name table" << std::endl;
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi::format_raw);
+        cld.print(oss, " ", pugi_format_flags);
 
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
@@ -1179,6 +1198,8 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
 
   auto n = df_dxf.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -1196,7 +1217,7 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
         std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
         pugi::xml_document font_node;
-        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
         if (!result) Rcpp::stop("loading dxf node fail: %s", cv_s);
 
         dxf.append_copy(font_node.first_child());
@@ -1206,7 +1227,7 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -1229,6 +1250,7 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
 
   auto nn = std::distance(xml_doc_colors->begin(), xml_doc_colors->end());
   auto kk = nams.length();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -1258,7 +1280,7 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
         Rcpp::Rcout << name << ": not found in color name table" << std::endl;
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi::format_raw);
+        cld.print(oss, " ", pugi_format_flags);
 
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = oss.str();
@@ -1286,6 +1308,8 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
 
   auto n = df_colors.nrow();
   Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -1303,7 +1327,7 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
         std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
         pugi::xml_document font_node;
-        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi::parse_default | pugi::parse_escapes);
+        pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
         if (!result) Rcpp::stop("loading color node fail: %s", cv_s);
 
         color.append_copy(font_node.first_child());
@@ -1313,7 +1337,7 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, " ", pugi_format_flags);
 
     z[i] = oss.str();
   }

@@ -163,7 +163,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## xl\workbook
   if (length(workbookXML)) {
 
-    workbook_xml <- read_xml(workbookXML)
+    # escape
+    workbook_xml <- read_xml(workbookXML, escapes = TRUE)
 
     wb$workbook$fileVersion <- xml_node(workbook_xml, "workbook", "fileVersion")
     wb$workbook$alternateContent <- xml_node(workbook_xml, "workbook", "mc:AlternateContent")
