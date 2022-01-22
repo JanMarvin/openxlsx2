@@ -1,39 +1,61 @@
 
-Comment <- setRefClass(
-  "Comment",
-  fields = c(
-    "text" = "character",
-    "author" = "character",
-    "style" = "ANY", # Not defined yet, should be Style.
-    "visible" = "logical",
-    "width" = "numeric",
-    "height" = "numeric"
-  ),
+#' R6 class for a Workbook Comments
+#'
+#' A comment
+#'
+#' @export
+Comment <- R6::R6Class(
+  "wbComment",
 
-  methods = list(
+  public = list(
+    #' @field text Comment text
+    text = character(),
+
+    #' @field author The comment author
+    author = character(),
+
+    #' @field style A style (class `wbStyle`) for the comment (?)
+    style = NULL,
+
+    #' @field visible `logical`, if `FALSE` is not visible
+    visible = TRUE,
+
+    # TODO what unit is width/height?
+    #' @field width Width of the comment in ... units
+    width = 2,
+
+    #' @field height Height of comment in ... units
+    height = 4,
+
+    #' @description
+    #' Creates a new `wbComment` object
+    #' @return a `wbComment` object
     initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
       # TODO this needs the validations that the comment wrappers have
-      .self$text <- text
-      .self$author <- author
-      .self$style <- style
-      .self$visible <- visible
-      .self$width <- width
-      .self$height <- height
-      invisible(.self)
+      self$text <- text
+      self$author <- author
+      self$style <- style
+      self$visible <- visible
+      self$width <- width
+      self$height <- height
+      invisible(self)
     },
-    # TODO R6 show() to print()
-    show = function() {
+
+    #' @description
+    #' Prints the object
+    #' @returns The `wbComment` object, invisibly; called for its side effects
+    print = function() {
       showText <- c(
-        sprintf("Author: %s\n", .self$author),
-        sprintf("Text:\n %s\n\n", paste(.self$text, collapse = ""))
+        sprintf("Author: %s\n", self$author),
+        sprintf("Text:\n %s\n\n", paste(self$text, collapse = ""))
       )
 
-
       # TODO style should probably always be a list?
-      s <- if (inherits(.self$style, "list")) {
-        .self$style
+      # TODO would style be a style object?
+      s <- if (inherits(self$style, "list")) {
+        self$style
       }  else  {
-        list(.self$style)
+        list(self$style)
       }
 
       styleShow <- "Style:\n"
@@ -52,13 +74,17 @@ Comment <- setRefClass(
       }
 
       cat(showText, styleShow, sep = "")
-      invisible(.self)
+      invisible(self)
     }
   )
 )
 
 
 # wrappers ----------------------------------------------------------------
+
+# TODO createComment() should leverage wbComment$new() more
+# TODO writeComment() should leverage wbWorkbook$addComment() more
+# TODO removeComment() should leverage wbWorkbook$removeComment() more
 
 #' @name createComment
 #' @title create a Comment object
