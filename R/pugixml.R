@@ -97,11 +97,6 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
     if (length(lvl) == 3) if (level2 == "*") z <- unkgetXMLXPtr3(xml, level1, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4(xml, level1, level2, level3, level4)
     if (length(lvl) == 5) z <- getXMLXPtr5(xml, level1, level2, level3, level4, level5)
-  } else { # should not happen?
-    xml <- read_xml(xml, pointer = FALSE)
-    if (length(lvl) == 1) z <- getXML1(xml, level1)
-    if (length(lvl) == 2) z <- getXML2(xml, level1, level2)
-    if (length(lvl) == 3) z <- getXML3(xml, level1, level2, level3)
   }
 
   z
@@ -140,11 +135,6 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
     if (length(lvl) == 3) z <- getXMLXPtr3val(xml, level1, level2, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4val(xml, level1, level2, level3, level4)
     if (length(lvl) == 5) z <- getXMLXPtr5val(xml, level1, level2, level3, level4, level5)
-  } else {
-    xml <- read_xml(xml, pointer = FALSE)
-    if (length(lvl) == 1) z <- getXML1val(xml, level1)
-    if (length(lvl) == 2) z <- getXML2val(xml, level1, level2)
-    if (length(lvl) == 3) z <- getXML3val(xml, level1, level2, level3)
   }
 
   z
@@ -189,8 +179,6 @@ xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, leve
     if (length(lvl) == 3) z <- getXMLXPtr3attr(xml, level1, level2, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4attr(xml, level1, level2, level3, level4)
     if (length(lvl) == 5) z <- getXMLXPtr5attr(xml, level1, level2, level3, level4, level5)
-  } else {
-    warning("nothing available")
   }
 
   z

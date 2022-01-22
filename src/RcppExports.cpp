@@ -11,122 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// readXML
-SEXP readXML(std::string path, bool isfile, bool declaration);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP declarationSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
-    Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
-    Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, declaration));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXML1
-SEXP getXML1(std::string str, std::string child);
-RcppExport SEXP _openxlsx2_getXML1(SEXP strSEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type str(strSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML1(str, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXML1val
-SEXP getXML1val(std::string str, std::string child);
-RcppExport SEXP _openxlsx2_getXML1val(SEXP strSEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type str(strSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML1val(str, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXML2
-SEXP getXML2(std::string str, std::string level1, std::string child);
-RcppExport SEXP _openxlsx2_getXML2(SEXP strSEXP, SEXP level1SEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type str(strSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML2(str, level1, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXML2val
-SEXP getXML2val(std::string str, std::string level1, std::string child);
-RcppExport SEXP _openxlsx2_getXML2val(SEXP strSEXP, SEXP level1SEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type str(strSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML2val(str, level1, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXML3
-SEXP getXML3(std::string str, std::string level1, std::string level2, std::string child);
-RcppExport SEXP _openxlsx2_getXML3(SEXP strSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type str(strSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML3(str, level1, level2, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXML3val
-SEXP getXML3val(std::string str, std::string level1, std::string level2, std::string child);
-RcppExport SEXP _openxlsx2_getXML3val(SEXP strSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type str(strSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML3val(str, level1, level2, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXMLattr
-SEXP getXMLattr(std::vector<std::string> strs, std::string child);
-RcppExport SEXP _openxlsx2_getXMLattr(SEXP strsSEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type strs(strsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLattr(strs, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXML1attr_one
-SEXP getXML1attr_one(std::string str, std::string child, std::string attr);
-RcppExport SEXP _openxlsx2_getXML1attr_one(SEXP strSEXP, SEXP childSEXP, SEXP attrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type str(strSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    Rcpp::traits::input_parameter< std::string >::type attr(attrSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXML1attr_one(str, child, attr));
-    return rcpp_result_gen;
-END_RCPP
-}
 // calc_column_widths
 SEXP calc_column_widths(Rcpp::Reference sheet_data, std::vector<std::string> sharedStrings, Rcpp::IntegerVector autoColumns, Rcpp::NumericVector widths, float baseFontCharWidth, float minW, float maxW);
 RcppExport SEXP _openxlsx2_calc_column_widths(SEXP sheet_dataSEXP, SEXP sharedStringsSEXP, SEXP autoColumnsSEXP, SEXP widthsSEXP, SEXP baseFontCharWidthSEXP, SEXP minWSEXP, SEXP maxWSEXP) {
@@ -974,15 +858,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 3},
-    {"_openxlsx2_getXML1", (DL_FUNC) &_openxlsx2_getXML1, 2},
-    {"_openxlsx2_getXML1val", (DL_FUNC) &_openxlsx2_getXML1val, 2},
-    {"_openxlsx2_getXML2", (DL_FUNC) &_openxlsx2_getXML2, 3},
-    {"_openxlsx2_getXML2val", (DL_FUNC) &_openxlsx2_getXML2val, 3},
-    {"_openxlsx2_getXML3", (DL_FUNC) &_openxlsx2_getXML3, 4},
-    {"_openxlsx2_getXML3val", (DL_FUNC) &_openxlsx2_getXML3val, 4},
-    {"_openxlsx2_getXMLattr", (DL_FUNC) &_openxlsx2_getXMLattr, 2},
-    {"_openxlsx2_getXML1attr_one", (DL_FUNC) &_openxlsx2_getXML1attr_one, 3},
     {"_openxlsx2_calc_column_widths", (DL_FUNC) &_openxlsx2_calc_column_widths, 7},
     {"_openxlsx2_convert_to_excel_ref", (DL_FUNC) &_openxlsx2_convert_to_excel_ref, 2},
     {"_openxlsx2_convert_from_excel_ref", (DL_FUNC) &_openxlsx2_convert_from_excel_ref, 1},

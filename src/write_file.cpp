@@ -48,7 +48,6 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
     std::string c_typ        = Rcpp::as<std::string>(cll["c_t"]);
     std::string c_sty        = Rcpp::as<std::string>(cll["c_s"]);
     std::string c_rnm        = Rcpp::as<std::string>(cll["r"]);
-
     std::string c_val        = Rcpp::as<std::string>(cll["v"]);
 
     // Rf_PrintValue(cell_atr);
@@ -98,7 +97,7 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
 
     // v node: value stored from evaluated formula
     if (c_val.compare(rnastring.c_str()) != 0) {
-      if (!f_si & c_val.compare(xml_preserver.c_str()) == 0) {
+      if (!f_si & (c_val.compare(xml_preserver.c_str()) == 0)) {
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
@@ -129,6 +128,7 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
   return oss.str();
 }
 
+// TODO: convert to pugi
 // function that creates the xml worksheet
 // uses preparated data and writes it. It passes data to set_row() which will
 // create single xml rows of sheet_data.
