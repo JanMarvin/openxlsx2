@@ -1,23 +1,21 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile, bool declaration) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
 
-  if (declaration) {
-    if (isfile) {
-      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
-    } else {
-      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes | pugi::parse_declaration);
-    }
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+
+  if (escapes) pugi_flags |= pugi::parse_escapes;
+  if (declaration) pugi_flags |= pugi::parse_declaration;
+
+  if (isfile) {
+    result = doc->load_file(path.c_str(), pugi_flags);
   } else {
-    if (isfile) {
-      result = doc->load_file(path.c_str(), pugi::parse_default | pugi::parse_escapes);
-    } else {
-      result = doc->load_string(path.c_str(), pugi::parse_default | pugi::parse_escapes);
-    }
+    result = doc->load_string(path.c_str(), pugi_flags);
   }
 
   if (!result) {
@@ -26,7 +24,39 @@ SEXP readXMLPtr(std::string path, bool isfile, bool declaration) {
 
   XPtrXML ptr(doc, true);
   ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
+  ptr.attr("escapes") = escapes;
   return ptr;
+}
+
+// [[Rcpp::export]]
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration) {
+
+  pugi::xml_document doc;
+  pugi::xml_parse_result result;
+
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
+  if (declaration) pugi_parse_flags |= pugi::parse_declaration;
+
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_format_flags = pugi::format_raw;
+  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+
+  if (isfile) {
+    result = doc.load_file(path.c_str(), pugi_parse_flags);
+  } else {
+    result = doc.load_string(path.c_str(), pugi_parse_flags);
+  }
+
+  if (!result) {
+    Rcpp::stop("xml import unsuccessfull");
+  }
+
+  std::ostringstream oss;
+  doc.print(oss, " ", pugi_format_flags);
+
+  return  Rcpp::wrap(oss.str());
 }
 
 
@@ -714,14 +744,15 @@ SEXP style_xml_as_list(Rcpp::CharacterVector xml_input, std::string level3) {
 
 
 // [[Rcpp::export]]
-std::string printXPtr(XPtrXML doc, bool raw) {
+std::string printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
+
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_flags = pugi::format_indent;
+  if (no_escapes) pugi_flags |= pugi::format_no_escapes;
+  if (raw)  pugi_flags |= pugi::format_raw;
 
   std::ostringstream oss;
-  if (raw) {
-    doc->print(oss, " ", pugi::format_raw);
-  } else {
-    doc->print(oss);
-  }
+  doc->print(oss, " ", pugi_flags);
 
   return  oss.str();
 }
@@ -729,14 +760,17 @@ std::string printXPtr(XPtrXML doc, bool raw) {
 
 
 // [[Rcpp::export]]
-void write_xml_file(std::string xml_content, std::string fl) {
+void write_xml_file(std::string xml_content, std::string fl, bool escapes) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
+  unsigned int pugi_flags = pugi::parse_default;
+  if (escapes) pugi_flags |= pugi::parse_escapes;
+
   // load and validate node
   if (xml_content != "") {
-    result = doc.load_string(xml_content.c_str(), pugi::parse_default | pugi::parse_escapes);
+    result = doc.load_string(xml_content.c_str(), pugi_flags);
     if (!result) Rcpp::stop("Loading xml_content node failed: \n %s \n When writing: \n%s", xml_content, fl);
   }
 

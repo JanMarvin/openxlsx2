@@ -3,6 +3,8 @@
 #' read xml file
 #' @param xml something to read character string or file
 #' @param declaration should the declaration be imported
+#' @param escapes bool if characters like "&" should be escaped. The default is
+#' no escapes. Assuming that the input already provides valid information.
 #' @details Read xml files or strings to pointer and checks if the input is
 #' valid XML.
 #' If the input is read into a character object, it will be reevaluated every
@@ -25,8 +27,18 @@
 #'   # Errors if the import was unsuccessful
 #'   try(z <- read_xml("<a><b/>"))
 #'
+#'   xml <- '<?xml test="yay" ?><a>A & B</a>'
+#'   # difference in escapes
+#'   read_xml(xml, escapes = TRUE, pointer = FALSE)
+#'   read_xml(xml, escapes = FALSE, pointer = FALSE)
+#'   read_xml(xml, escapes = TRUE)
+#'   read_xml(xml, escapes = FALSE)
+#'
+#'   # read declaration
+#'   read_xml(xml, declaration = TRUE)
+#'
 #' @export
-read_xml <- function(xml, pointer = TRUE, declaration = FALSE)  {
+read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) {
 
   z <- NULL
 
@@ -38,10 +50,10 @@ read_xml <- function(xml, pointer = TRUE, declaration = FALSE)  {
     xml <- paste0(xml, collapse = "")
 
   if (pointer) {
-    z <- readXMLPtr(xml, isfile, declaration)
+    z <- readXMLPtr(xml, isfile, escapes, declaration)
   }
   else {
-    z <- readXML(xml, isfile, declaration)
+    z <- readXML(xml, isfile, escapes, declaration)
   }
 
   z
@@ -196,7 +208,10 @@ xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, leve
 #'   print(x, raw = TRUE)
 #' @export
 print.pugi_xml <- function(x, raw = FALSE, ...) {
-  cat(printXPtr(x, raw))
+
+  escapes <- attr(x, "escapes")
+
+  cat(printXPtr(x, !escapes, raw))
   if (raw) cat("\n")
 }
 
@@ -237,10 +252,12 @@ as_xml <- function(x) {
 #' @param body body part of xml
 #' @param tail tail part of xml
 #' @param fl file name with full path
+#' @param escapes bool if characters like "&" should be escaped. The default is
+#' no escape, assuming that xml to export is already valid.
 #' @export
-write_file <- function(head = "", body = "", tail = "", fl = "") {
+write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   xml_content <- paste0(head, body, tail, collapse = "")
-  write_xml_file(xml_content = xml_content, fl = fl)
+  write_xml_file(xml_content = xml_content, fl = fl, escapes)
 }
 
 #' append xml child to node

@@ -4,12 +4,15 @@
 \alias{read_xml}
 \title{read xml file}
 \usage{
-read_xml(xml, pointer = TRUE, declaration = FALSE)
+read_xml(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE)
 }
 \arguments{
 \item{xml}{something to read character string or file}
 
 \item{pointer}{should a pointer be returned?}
+
+\item{escapes}{bool if characters like "&" should be escaped. The default is
+no escapes. Assuming that the input already provides valid information.}
 
 \item{declaration}{should the declaration be imported}
 }
@@ -38,5 +41,15 @@ lifetime of the R session or once it is gc().
 
   # Errors if the import was unsuccessful
   try(z <- read_xml("<a><b/>"))
+
+  xml <- '<?xml test="yay" ?><a>A & B</a>'
+  # difference in escapes
+  read_xml(xml, escapes = TRUE, pointer = FALSE)
+  read_xml(xml, escapes = FALSE, pointer = FALSE)
+  read_xml(xml, escapes = TRUE)
+  read_xml(xml, escapes = FALSE)
+
+  # read declaration
+  read_xml(xml, declaration = TRUE)
 
 }

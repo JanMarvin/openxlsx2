@@ -96,8 +96,12 @@ int_2_cell_ref <- function(cols) {
     .Call(`_openxlsx2_int_2_cell_ref`, cols)
 }
 
-readXMLPtr <- function(path, isfile, declaration) {
-    .Call(`_openxlsx2_readXMLPtr`, path, isfile, declaration)
+readXMLPtr <- function(path, isfile, escapes, declaration) {
+    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration)
+}
+
+readXML <- function(path, isfile, escapes, declaration) {
+    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration)
 }
 
 getXMLXPtr1 <- function(doc, child) {
@@ -188,12 +192,12 @@ style_xml_as_list <- function(xml_input, level3) {
     .Call(`_openxlsx2_style_xml_as_list`, xml_input, level3)
 }
 
-printXPtr <- function(doc, raw) {
-    .Call(`_openxlsx2_printXPtr`, doc, raw)
+printXPtr <- function(doc, no_escapes, raw) {
+    .Call(`_openxlsx2_printXPtr`, doc, no_escapes, raw)
 }
 
-write_xml_file <- function(xml_content, fl) {
-    invisible(.Call(`_openxlsx2_write_xml_file`, xml_content, fl))
+write_xml_file <- function(xml_content, fl, escapes) {
+    invisible(.Call(`_openxlsx2_write_xml_file`, xml_content, fl, escapes))
 }
 
 #' adds or updates attribute(s) in existing xml node
