@@ -2039,7 +2039,7 @@ Workbook <- setRefClass(
           cc <- ws$sheet_data$cc
 
 
-          if (class(cc) != "uninitializedField") {
+          if (!is.null(cc)) {
             cc$r <- paste0(cc$c_r, cc$row_r)
             # prepare data for output
 
@@ -3362,31 +3362,17 @@ Workbook <- setRefClass(
             #    rep.int(NA_integer_, times = n)
             #  )
 
-            .self$worksheets[[i]]$sheet_data$rows <-
-              c(.self$worksheets[[i]]$sheet_data$rows, missing_rows)
-            .self$worksheets[[i]]$sheet_data$cols <-
-              c(
-                .self$worksheets[[i]]$sheet_data$cols,
-                rep.int(NA_integer_, times = n)
-              )
-
-            .self$worksheets[[i]]$sheet_data$t <-
-              c(.self$worksheets[[i]]$sheet_data$t, rep(NA_integer_, times = n))
-            .self$worksheets[[i]]$sheet_data$v <-
-              c(
-                .self$worksheets[[i]]$sheet_data$v,
-                rep(NA_character_, times = n)
-              )
-            .self$worksheets[[i]]$sheet_data$f <-
-              c(
-                .self$worksheets[[i]]$sheet_data$f,
-                rep(NA_character_, times = n)
-              )
-            .self$worksheets[[i]]$sheet_data$data_count <-
-              .self$worksheets[[i]]$sheet_data$data_count + 1L
-
-            .self$worksheets[[i]]$sheet_data$n_elements <-
-              as.integer(length(.self$worksheets[[i]]$sheet_data$rows))
+            # TODO make into simple functions: sheetData$append("rows", x), etc
+            # TODO make into simple functions: sheetData$inc_data_count()
+            # TODO make into simple functions: sheetData$calc_n_elements()
+            # use method chaining
+            .self$worksheets[[i]]$sheet_data$rows <- c(.self$worksheets[[i]]$sheet_data$rows, missing_rows)
+            .self$worksheets[[i]]$sheet_data$cols <- c(.self$worksheets[[i]]$sheet_data$cols, rep.int(NA_integer_, times = n))
+            .self$worksheets[[i]]$sheet_data$t <- c(.self$worksheets[[i]]$sheet_data$t, rep(NA_integer_, times = n))
+            .self$worksheets[[i]]$sheet_data$v <- c(.self$worksheets[[i]]$sheet_data$v, rep(NA_character_, times = n))
+            .self$worksheets[[i]]$sheet_data$f <- c(.self$worksheets[[i]]$sheet_data$f, rep(NA_character_, times = n))
+            .self$worksheets[[i]]$sheet_data$data_count <- .self$worksheets[[i]]$sheet_data$data_count + 1L
+            .self$worksheets[[i]]$sheet_data$n_elements <- as.integer(length(.self$worksheets[[i]]$sheet_data$rows))
           }
         }
 

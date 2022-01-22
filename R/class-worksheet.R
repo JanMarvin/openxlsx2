@@ -7,7 +7,8 @@ Worksheet <- setRefClass(
     "sheetViews"    = "character",
     "sheetFormatPr" = "character",
 
-    "sheet_data" = "SheetData",
+    # "sheet_data" = "wbSheetData",
+    "sheet_data" = "ANY",
     #"rows_attr"  = "ANY",
     "cols_attr"  = "ANY",
     #"cols"       = "ANY",
@@ -38,7 +39,7 @@ Worksheet <- setRefClass(
     # "autoFilter"
     "cellWatches" = "character",
     # "colBreaks"
-    # "cols" 
+    # "cols"
     # "conditionalFormatting"
     "controls" = "character",
     "customProperties" = "character",

@@ -8,40 +8,40 @@
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
 
-  if(!grepl(":", dims))
+  if (!grepl(":", dims)) {
     dims <- paste0(dims, ":", dims)
+  }
 
-  dimensions <- strsplit(dims, ":")
-  rows <- as.numeric(gsub("[[:upper:]]","", dimensions[[1]]))
-  cols <- gsub("[[:digit:]]","", dimensions[[1]])
+  if (identical(dims, "Inf:-Inf")) {
+    # This should probably be fixed elsewhere?
+    cols <- NA
+    rows <- NA
+  } else {
+    dimensions <- strsplit(dims, ":")[[1]]
 
-  # cols
-  col_min <- col2int(cols[1])
-  col_max <- col2int(cols[2])
+    rows <- as.numeric(gsub("[[:upper:]]","", dimensions))
+    rows <- seq.int(rows[1], rows[2])
 
-  cols <- seq(col_min, col_max)
-  cols <- int2col(cols)
+    # TODO seq.wb_columns?  make a wb_cols vector?
+    cols <- gsub("[[:digit:]]","", dimensions)
+    cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
+  }
 
-  # rows
-  rows_min <- rows[1]
-  rows_max <- rows[2]
-
-  rows <- seq(rows_min, rows_max)
-
-  data <- NA_character_
   if (fill) {
     data <- expand.grid(cols, rows, stringsAsFactors = FALSE)
-    data <- paste0(data$Var1, data$Var2)
+    data <- paste0(data[[1L]], data[[2L]])
+  } else {
+    data <- NA_character_
   }
 
   # matrix as.data.frame
-  mm <- matrix(data = data,
-    nrow = length(rows),
-    ncol = length(cols),
-    dimnames = list(rows, cols), byrow = TRUE)
-
-  z <- as.data.frame(mm)
-  z
+  as.data.frame(matrix(
+    data     = data,
+    nrow     = max(length(rows), 1L),
+    ncol     = max(length(cols), 1L),
+    dimnames = list(rows, cols),
+    byrow    = TRUE
+  ))
 }
 
 #' function to estimate the column type.
@@ -203,24 +203,31 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #'   wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
 #'
 #' @export
-wb_to_df <- function(xlsxFile,
+wb_to_df <- function(
+  xlsxFile,
   sheet,
-  startRow = 1,
-  colNames = TRUE,
-  rowNames = FALSE,
-  detectDates = TRUE,
+  startRow      = 1,
+  colNames      = TRUE,
+  rowNames      = FALSE,
+  detectDates   = TRUE,
   skipEmptyCols = FALSE,
   skipEmptyRows = FALSE,
-  rows = NULL,
-  cols = NULL,
-  na.strings = "#N/A",
+  rows          = NULL,
+  cols          = NULL,
+  na.strings    = "#N/A",
   dims,
-  showFormula = FALSE,
-  convert = TRUE,
+  showFormula   = FALSE,
+  convert       = TRUE,
   types,
-  definedName) {
+  definedName
+) {
 
-  if (is.character(xlsxFile)){
+  .mc <- match.call()
+
+  if (is.character(xlsxFile)) {
+    # TODO this should instead check for the Workbook class?  Maybe also check
+    # if the file exists?
+
     # if using it this way, it might be benefitial to only load the sheet we
     # want to read instead of every sheet of the entire xlsx file WHEN we do
     # not even see it
@@ -260,24 +267,28 @@ wb_to_df <- function(xlsxFile,
       sel <- nr[nr$name == definedName & nr$sheet == sheet, ]
       if (NROW(sel) == 0) {
         stop("no such definedName on selected sheet")
-      } else {
-        dims <- sel$dims
       }
+      dims <- sel$dims
     } else {
       stop("no such definedName")
     }
   }
 
-  if (missing(sheet)) sheet <- 1
+  if (missing(sheet)) {
+    # TODO default sheet as 1
+    sheet <- 1
+  }
 
-  if (is.character(sheet))
+  if (is.character(sheet)) {
     sheet <- wb$validateSheet(sheet)
+  }
 
   # the sheet has no data
-  if (class(wb$worksheets[[sheet]]$sheet_data$cc) == "uninitializedField") {
+  if (is.null(wb$worksheets[[sheet]]$sheet_data$cc)) {
     # TODO do we need more checks or do we need to initialize a new cc object?
+    # TODO would this also apply of nrow(cc) == 0?
     message("sheet found, but contains no data")
-    return (NULL);
+    return(NULL)
   }
 
   # # Should be available, but is optional according to openxml-2.8.1. Still some
@@ -315,10 +326,10 @@ wb_to_df <- function(xlsxFile,
   z  <- dims_to_dataframe(dims)
   tt <- dims_to_dataframe(dims)
 
+
   # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
   # names(tt) <- names(z)
   # rownames(tt) <- c("b", "s", "d", "n")
-
 
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
@@ -344,10 +355,12 @@ wb_to_df <- function(xlsxFile,
     tt <- tt[keep_cols]
   }
 
-  keep_row <- keep_rows[keep_rows %in% rnams]
+  keep_rows <- keep_rows[keep_rows %in% rnams]
 
   # reduce data to selected cases only
-  cc <- cc[cc$row_r %in% keep_row & cc$c_r %in% keep_cols, ]
+  cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
+
+  # if (!nrow(cc)) browser()
 
   cc$val <- NA
   cc$typ <- NA
@@ -774,7 +787,7 @@ writeData2 <-function(wb, sheet, data,
     ":",
     int2col(endCol), endRow)
 
-  if (class(wb$worksheets[[sheetno]]$sheet_data$cc) == "uninitializedField") {
+  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
 
 
     sheet_data <- list()
