@@ -933,98 +933,6 @@ writeData2 <-function(wb, sheet, data,
 }
 
 
-#' dummy function to create styleObjects
-#' @param styleObjects styleObjects
-#' @param wb wb
-#'
-#' @export
-get_styles <- function(styleObjects, wb) {
-
-  oNA <- "_openxlsx_NA_"
-  nums <- seq_along(styleObjects)
-
-  CC <- NULL
-  for (i in seq_along(wb$worksheets) ) {
-    cc <- wb$worksheets[[i]]$sheet_data$cc
-    cc <- cc[cc$c_s != oNA,]
-    if (NROW(cc) > 0) {
-      cc$sheet <- wb$sheet_names[i]
-      CC <- rbind(CC, cc)
-    }
-  }
-
-
-  z <- vector("list", length = length(nums))
-
-  for (num in nums) {
-
-    # subset of valid rows
-    cc <- CC[CC$c_s == num, ]
-
-    # prepare output
-    nams <- c("style", "sheet", "rows", "cols")
-    res <- vector("list", length(nams))
-    names(res) <- nams
-
-    if (NROW(cc) > 0) {
-      res[["style"]] <- styleObjects[[num]]
-      res[["sheet"]] <- unique(cc$sheet)
-      res[["rows"]]  <- as.numeric(cc[cc$c_s == num, "row_r"])
-      res[["cols"]]  <- convertFromExcelRef(cc[cc$c_s == num, "c_r"])
-    }
-
-    z[[num]] <- res
-  }
-
-  z
-}
-
-#' clone sheets style
-#'
-#' @param wb workbook
-#' @param from_sheet sheet we select the style from
-#' @param to_sheet sheet we apply the style from
-#' @export
-cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
-
-  # check if sheets exist in wb
-  id_org <- wb$validateSheet(from_sheet)
-  id_new <- wb$validateSheet(to_sheet)
-
-  org_style <- wb$worksheets[[id_org]]$sheet_data$cc
-  new_style <- wb$worksheets[[id_new]]$sheet_data$cc
-
-  # remove all values
-  org_style <- org_style[c("row_r", "c_r", "c_s")]
-
-  merged_style <- merge(org_style, new_style, all = TRUE)
-  merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
-
-  # TODO order this as well?
-  wb$worksheets[[id_new]]$sheet_data$cc <- merged_style
-
-  # copy entire attributes from original sheet to new sheet
-  org_rows <- wb$worksheets[[id_org]]$sheet_data$row_attr
-  new_rows <- wb$worksheets[[id_new]]$sheet_data$row_attr
-
-  merged_rows <- merge(org_rows[c("r")], new_rows, all = TRUE)
-  merged_rows[is.na(merged_rows)] <- ""
-  ordr <- ordered(order(as.integer(merged_rows$r)))
-  merged_rows <- merged_rows[ordr,]
-
-  wb$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
-
-  wb$worksheets[[id_new]]$cols_attr <-
-    wb$worksheets[[id_org]]$cols_attr
-
-  wb$worksheets[[id_new]]$dimension <-
-    wb$worksheets[[id_org]]$dimension
-
-  wb$worksheets[[id_new]]$mergeCells <-
-    wb$worksheets[[id_org]]$mergeCells
-
-}
-
 #' clean sheet (remove all values)
 #'
 #' @param wb workbook
@@ -1059,99 +967,27 @@ cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TR
 }
 
 
-import_styles <- function(x) {
-
-  sxml <- openxlsx2::read_xml(x)
-
-  z <- NULL
-
-  # Borders borderId
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
-  z$borders <- xml_node(sxml, "styleSheet", "borders", "border")
-
-  # Cell Styles (no clue)
-  # links
-  # + xfId
-  # + builtinId
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellstyle?view=openxml-2.8.1
-  z$cellStyles <- xml_node(sxml, "styleSheet", "cellStyles", "cellStyle")
-
-  # Formatting Records
-  # links
-  # + numFmtId
-  # + fontId
-  # + fillId
-  # + borderId
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellstyleformats?view=openxml-2.8.1
-  z$cellStyleXfs <- xml_node(sxml, "styleSheet", "cellStyleXfs", "xf")
-
-  # Cell Formats
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformat?view=openxml-2.8.1
-  #
-  # Position is 0 index s="value" used in worksheet <c ...>
-  # links
-  # + numFmtId
-  # + fontId
-  # + fillId
-  # + borderId
-  # + xfId
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformats?view=openxml-2.8.1
-  z$cellXfs <- xml_node(sxml, "styleSheet", "cellXfs", "xf")
-
-  # Colors
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.indexedcolors?view=openxml-2.8.1
-  z$colors <- xml_node(sxml, "styleSheet", "colors")
-
-  # Formats (No clue?)
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.differentialformat?view=openxml-2.8.1
-  z$dxfs <- xml_node(sxml, "styleSheet", "dxfs", "dxf")
-
-  # Future extensions No clue, some special styles
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.extensionlist?view=openxml-2.8.1
-  z$extLst <- xml_node(sxml, "styleSheet", "extLst")
-
-  # Fills fillId
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.fill?view=openxml-2.8.1
-  z$fills <- xml_node(sxml, "styleSheet", "fills", "fill")
-
-  # Fonts fontId
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
-  z$fonts <- xml_node(sxml, "styleSheet", "fonts", "font")
-
-  # Number Formats numFmtId
-  # overrides for
-  # + numFmtId
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
-  z$numFmts <- xml_node(sxml, "styleSheet", "numFmts", "numFmt")
-
-  # Table Styles Maybe position Id?
-  # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.tablestyle?view=openxml-2.8.1
-  z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles")
-
-  z
-}
-
-#' get all styles on a sheet
-#'
-#' @param wb workbook
-#' @param sheet worksheet
-#'
-#' @export
-styles_on_sheet <- function(wb, sheet) {
-
-  sheet_id <- wb$validateSheet(sheet)
-
-  z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
-
-  as.numeric(z)
-
-}
-
 #' little worksheet helper
 #' @param wb a workbook
 #' @param sheet a worksheet either id or character
 #' @export
 wb_ws <- function(wb, sheet) {
   wb$ws(sheet)
+}
+
+#' little worksheet saver
+#' @param wb a workbook
+#' @param file a file
+#' @export
+wb_save <- function(wb, file) {
+  saveWorkbook(wb = wb, file = file, overwrite = TRUE)
+}
+
+#' little worksheet opener
+#' @param wb a workbook
+#' @export
+wb_open <- function(wb) {
+  tmp <- temp_xlsx()
+  wb_save(wb, tmp)
+  openXL(tmp)
 }

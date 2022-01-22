@@ -197,10 +197,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
         if (length(zoom) == 0) {
           zoom <- 100
         }
-
-        # FIXME I wanted to get rid of getChildlessNode
-        #tabColour <- getChildlessNode(xml = txt, tag = "tabColor")
-        tabColour <- NULL
+        
+        tabColour <- xml_node(txt, "worksheet", "sheetPr", "tabColor")
         if (length(tabColour) == 0) {
           tabColour <- NULL
         }
