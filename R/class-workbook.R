@@ -1873,9 +1873,9 @@ Workbook <- setRefClass(
     getBaseFont = function() {
       baseFont <- .self$styles$fonts[[1]]
 
-      sz     <- font_val(baseFont, "font", "sz")
-      colour <- font_val(baseFont, "font", "color")
-      name   <- font_val(baseFont, "font", "name")
+      sz     <- as.list(xml_attribute(baseFont, "font", "sz")[[1]])
+      colour <- as.list(xml_attribute(baseFont, "font", "color")[[1]])
+      name   <- as.list(xml_attribute(baseFont, "font", "name")[[1]])
 
       if (length(sz[[1]]) == 0) {
         sz <- list("val" = "10")
