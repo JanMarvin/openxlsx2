@@ -27,6 +27,7 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
   }
 
   std::string rnastring = "_openxlsx_NA_";
+  std::string xml_preserver = "";
 
   // Rf_PrintValue(attrnams);
 
@@ -67,6 +68,7 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
     // append nodes <c r="A1" ...><v>...</v></c>
 
     // Rcpp::Rcout << c_val << std::endl;
+    bool f_si = false;
 
     // <f> ... </f>
     if(c_typ.compare("e") == 0 || c_typ.compare("str") == 0) {
@@ -82,19 +84,26 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
         if (fml_type.compare(rnastring.c_str()) != 0) {
           f.append_attribute("t") = fml_type.c_str();
         }
-        if (fml_si.compare(rnastring.c_str()) != 0) {
+        if (fml_ref.compare(rnastring.c_str()) != 0) {
           f.append_attribute("ref") = fml_ref.c_str();
         }
         if (fml_si.compare(rnastring.c_str()) != 0) {
           f.append_attribute("si") = fml_si.c_str();
+          f_si = true;
         }
 
         f.append_child(pugi::node_pcdata).set_value(fml.c_str());
       }
 
       // v node: value stored from evaluated formula
-      if (c_val.compare(rnastring.c_str()) != 0)
-        cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+      if (c_val.compare(rnastring.c_str()) != 0) {
+        if (!f_si & c_val.compare(xml_preserver.c_str()) == 0) {
+          cell.append_child("v").append_attribute("xml:space").set_value("preserve");
+          cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
+        } else {
+          cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+        }
+      }
 
     }
 
@@ -112,12 +121,12 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
     }
 
     // <v> ... </v>
-    if(c_typ.compare("b") == 0) {
+    if(c_typ.compare("b") == 0) { // bool
       cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
     }
 
     // <v> ... </v>
-    if(c_typ.compare("s") == 0) {
+    if(c_typ.compare("s") == 0) { // shared string
       cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
     }
 
