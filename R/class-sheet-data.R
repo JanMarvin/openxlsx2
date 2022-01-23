@@ -181,7 +181,7 @@ wbSheetData <- R6::R6Class(
 
 #' @rdname wbSheetData
 #' @export
-new_sheet_data <- function() {
+wb_sheet_data <- function() {
   wbSheetData$new()
 }
 

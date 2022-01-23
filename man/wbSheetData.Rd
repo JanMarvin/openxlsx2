@@ -2,10 +2,10 @@
 % Please edit documentation in R/class-sheet-data.R
 \name{wbSheetData}
 \alias{wbSheetData}
-\alias{new_sheet_data}
+\alias{wb_sheet_data}
 \title{R6 class for a Workbook Hyperlink}
 \usage{
-new_sheet_data()
+wb_sheet_data()
 }
 \description{
 R6 class for a Workbook Hyperlink

@@ -1,5 +1,5 @@
 
-new_workbook <- function() {
+wb_workbook <- function() {
   wbWorkbook$new()
 }
 

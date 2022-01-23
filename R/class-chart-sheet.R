@@ -81,6 +81,6 @@ wbChartSheet <- R6::R6Class(
 #'
 #' @returns a `wbChartSheet` object
 #' @export
-new_chart_sheet <- function() {
+wb_chart_sheet <- function() {
   wbChartSheet$new()
 }

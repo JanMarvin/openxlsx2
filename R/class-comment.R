@@ -128,7 +128,7 @@ createComment <- function(comment,
   height = 4) {
 
   # TODO move this to wbComment$new(); this could then be replaced with
-  # new_comment()
+  # wb_comment()
 
   assert_class(author, "character")
   assert_class(comment, "character")
@@ -268,6 +268,6 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
 }
 
-new_comment <- function(text = character(), author = character(), style = new_style()) {
+wb_comment <- function(text = character(), author = character(), style = wb_style()) {
   wbComment$new(text = text, author = author, style = style)
 }

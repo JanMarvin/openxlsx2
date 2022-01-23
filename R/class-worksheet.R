@@ -425,7 +425,7 @@ wbWorksheet <- R6::R6Class(
   )
 )
 
-new_worksheet <- function() {
+wb_worksheet <- function() {
   wbWorksheet$new()
 }
 

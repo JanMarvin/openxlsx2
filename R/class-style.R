@@ -430,7 +430,7 @@ merge_style_fields <- function() {
 
 # wrapper -----------------------------------------------------------------
 
-new_style <- function() {
+wb_style <- function() {
   wbStyle$new()
 }
 
