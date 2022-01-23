@@ -22,6 +22,3 @@ with the region specified by, min(cols):max(cols) X min(rows):max(rows)
 \seealso{
 \code{\link[=mergeCells]{mergeCells()}}
 }
-\author{
-Alexander Walker
-}

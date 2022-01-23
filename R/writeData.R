@@ -1,6 +1,5 @@
 #' @name writeData
 #' @title Write an object to a worksheet
-#' @author Alexander Walker
 #' @import stringi
 #' @description Write an object to worksheet with optional styling.
 #' @param wb A Workbook object containing a worksheet.
@@ -351,7 +350,6 @@ writeData <- function(wb,
 
 #' @name writeFormula
 #' @title Write a character vector as an Excel Formula
-#' @author Alexander Walker
 #' @description Write a a character vector containing Excel formula to a worksheet.
 #' @details Currently only the english version of functions are supported. Please don't use the local translation.
 #' The examples below show a small list of possible formulas:

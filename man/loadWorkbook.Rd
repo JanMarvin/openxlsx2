@@ -37,6 +37,3 @@ saveWorkbook(wb, "loadExample.xlsx", overwrite = TRUE)
 \seealso{
 \code{\link[=removeWorksheet]{removeWorksheet()}}
 }
-\author{
-Alexander Walker
-}

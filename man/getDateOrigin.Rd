@@ -34,6 +34,3 @@ convertToDate(m[[1]], do)
 \seealso{
 \code{\link[=convertToDate]{convertToDate()}}
 }
-\author{
-Alexander Walker
-}

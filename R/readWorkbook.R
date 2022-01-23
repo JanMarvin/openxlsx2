@@ -25,7 +25,6 @@
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
-#' @author Alexander Walker
 #' @return data.frame
 #' @export
 #' @examples
@@ -116,7 +115,6 @@ read.xlsx <- function(
 #' @description Read data from an Excel file or Workbook object into a data.frame
 #' @inheritParams read.xlsx
 #' @details Creates a data.frame of all data in worksheet.
-#' @author Alexander Walker
 #' @return data.frame
 #' @seealso [getNamedRegions()]
 #' @seealso [read.xlsx()]
@@ -161,7 +159,6 @@ readWorkbook <- function(
 #' @name getSheetNames
 #' @title Get names of worksheets
 #' @description Returns the worksheet names within an xlsx file
-#' @author Alexander Walker
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples

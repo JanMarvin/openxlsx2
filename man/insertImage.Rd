@@ -61,6 +61,3 @@ saveWorkbook(wb, "insertImageExample.xlsx", overwrite = TRUE)
 \seealso{
 \code{\link[=insertPlot]{insertPlot()}}
 }
-\author{
-Alexander Walker
-}

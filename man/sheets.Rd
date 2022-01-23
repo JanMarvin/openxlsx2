@@ -39,6 +39,3 @@ names(wb)
 \seealso{
 \code{\link[=names]{names()}} to rename a worksheet in a Workbook
 }
-\author{
-Alexander Walker
-}

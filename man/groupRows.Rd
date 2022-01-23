@@ -21,6 +21,3 @@ Group a selection of rows
 \seealso{
 \code{\link[=ungroupRows]{ungroupRows()}} to ungroup rows. \code{\link[=groupColumns]{groupColumns()}} for grouping columns.
 }
-\author{
-Joshua Sturm
-}

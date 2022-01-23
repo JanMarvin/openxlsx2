@@ -35,6 +35,3 @@ writeDataTable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect
 saveWorkbook(wb, "modifyBaseFontExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Alexander Walker
-}

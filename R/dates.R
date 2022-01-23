@@ -69,7 +69,6 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' @name getDateOrigin
 #' @title Get the date origin an xlsx file is using
 #' @description Return the date origin used internally by an xlsx or xlsm file
-#' @author Alexander Walker
 #' @param xlsxFile An xlsx or xlsm file.
 #' @details Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
 #' checks the date origin being used in an Excel file and returns is so it can be used in [convertToDate()]

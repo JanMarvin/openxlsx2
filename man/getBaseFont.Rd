@@ -24,6 +24,3 @@ modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narr
 
 getBaseFont(wb)
 }
-\author{
-Alexander Walker
-}

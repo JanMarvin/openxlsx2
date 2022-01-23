@@ -19,6 +19,3 @@ Just a wrapper of wb$changeLastModifiedBy()
 wb <- createWorkbook()
 setLastModifiedBy(wb, "test")
 }
-\author{
-Philipp Schauberger
-}

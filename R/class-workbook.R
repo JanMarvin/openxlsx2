@@ -1435,8 +1435,9 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
-      id <- as.character(length(self$tables) + 3L)
+      id <- as.character(length(self$tables) + 1) # otherwise will start at 0 for table 1 length indicates the last known
       sheet <- self$validateSheet(sheet)
+      rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) +1
 
       nms <- names(self$tables)
       tSheets <- attr(self$tables, "sheet")
@@ -1503,10 +1504,11 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$tableParts <- c(
         self$worksheets[[sheet]]$tableParts,
-        sprintf('<tablePart r:id="rId%s"/>', id)
+          sprintf('<tablePart r:id="rId%s"/>', rid)
       )
       attr(self$worksheets[[sheet]]$tableParts, "tableName") <- c(
-        tNames[tSheets == sheet & !grepl("openxlsx_deleted", tNames, fixed = TRUE)],
+        tNames[tSheets == sheet &
+        !grepl("openxlsx_deleted", tNames, fixed = TRUE)],
         tableName
       )
 
@@ -1525,11 +1527,12 @@ wbWorkbook <- R6::R6Class(
       self$tables.xml.rels <- c(self$tables.xml.rels, "")
 
       ## update worksheets_rels
+      # TODO do we have to worry about exisiting table relationships?
       self$worksheets_rels[[sheet]] <- c(
         self$worksheets_rels[[sheet]],
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-          id,
+          rid,
           id
         )
       )

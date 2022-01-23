@@ -36,6 +36,3 @@ deleteData(wb, sheet = 1, cols = LETTERS, rows = 18, gridExpand = TRUE)
 saveWorkbook(wb, "deleteDataExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Alexander Walker
-}

@@ -125,6 +125,3 @@ writeData(wb, sheet = 8, 1:400)
 saveWorkbook(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Alexander Walker
-}

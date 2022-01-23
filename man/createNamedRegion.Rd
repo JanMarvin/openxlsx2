@@ -61,6 +61,3 @@ head(df)
 \seealso{
 \code{\link[=getNamedRegions]{getNamedRegions()}}
 }
-\author{
-Alexander Walker
-}

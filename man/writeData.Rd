@@ -222,6 +222,3 @@ saveWorkbook(wb, "writeDataExample.xlsx", overwrite = TRUE)
 \seealso{
 \code{\link[=writeDataTable]{writeDataTable()}}
 }
-\author{
-Alexander Walker
-}

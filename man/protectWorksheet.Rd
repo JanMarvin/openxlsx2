@@ -85,6 +85,3 @@ protectWorksheet(wb, "S1", protect = FALSE)
 saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Reinhold Kainhofer
-}

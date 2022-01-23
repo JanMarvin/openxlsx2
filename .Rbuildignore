@@ -19,3 +19,4 @@ cran-comments.md
 # temp MS files
 \~\$.*\.[a-z]+$
 ^codecov\.yml$
+^data-raw$

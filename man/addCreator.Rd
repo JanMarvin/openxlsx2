@@ -19,6 +19,3 @@ Just a wrapper of wb$addCreator()
 wb <- createWorkbook()
 addCreator(wb, "test")
 }
-\author{
-Philipp Schauberger
-}

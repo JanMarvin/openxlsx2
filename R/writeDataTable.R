@@ -48,7 +48,7 @@
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "S1")
 #' addWorksheet(wb, "S2")
-#' # addWorksheet(wb, "S3")
+#' addWorksheet(wb, "S3")
 #'
 #'
 #' #####################################################################################
@@ -72,14 +72,14 @@
 #'   "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE
 #' )
 #'
-#' # ## openxlsx will apply default Excel styling for these classes
-#' # class(df$Cash) <- c(class(df$Cash), "currency")
-#' # class(df$Cash2) <- c(class(df$Cash2), "accounting")
-#' # class(df$hLink) <- "hyperlink"
-#' # class(df$Percentage) <- c(class(df$Percentage), "percentage")
-#' # class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
-#' #
-#' # writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+#' ## openxlsx will apply default Excel styling for these classes
+#' class(df$Cash) <- c(class(df$Cash), "currency")
+#' class(df$Cash2) <- c(class(df$Cash2), "accounting")
+#' class(df$hLink) <- "hyperlink"
+#' class(df$Percentage) <- c(class(df$Percentage), "percentage")
+#' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
+#' 
+#' writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 #'
 #' #####################################################################################
 #' ## Additional Header Styling and remove column filters
@@ -180,7 +180,7 @@ writeDataTable <- function(wb, sheet, x,
   if (!is.logical(bandedCols)) stop("bandedCols must be a logical.")
 
   if (is.null(tableName)) {
-    tableName <- paste0("Table", as.character(length(wb$tables) + 3L))
+    tableName <- paste0("Table", as.character(length(wb$tables) + 1L))
   } else {
     tableName <- wb$validate_table_name(tableName)
   }
@@ -267,8 +267,8 @@ writeDataTable <- function(wb, sheet, x,
 
   ## column class styling
   colClasses <- lapply(x, function(x) tolower(class(x)))
-  classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
-              colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
+  # classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
+  #             colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
 
   # ## write data to worksheet
   # wb$writeData(
@@ -304,11 +304,11 @@ writeDataTable <- function(wb, sheet, x,
     showColNames = showColNames,
     tableStyle = tableStyle,
     tableName = tableName,
-    withFilter = withFilter[1],
+    withFilter = withFilter,
     totalsRowCount = 0L,
-    showFirstColumn = firstColumn[1],
-    showLastColumn = lastColumn[1],
-    showRowStripes = bandedRows[1],
-    showColumnStripes = bandedCols[1]
+    showFirstColumn = firstColumn,
+    showLastColumn = lastColumn,
+    showRowStripes = bandedRows,
+    showColumnStripes = bandedCols
   )
 }
