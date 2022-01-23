@@ -34,10 +34,10 @@ new_cellxfs <- create_cell_style(numFmtId = x, horizontal = "center")
 
 # combine original and new styles
 wb <- merge_cellXfs(wb, new_cellxfs)
-new_styles <- attr(wb, "new_styles")
+wb_styles <- attr(wb, "wb_styles")
 
 # new styles are 1:28, because s in a 0-index
-for (i in new_styles) {
+for (i in wb_styles) {
   cell <- sprintf("\%s1:\%s28", int2col(i), int2col(i))
   set_cell_style(wb, "test", cell, as.character(i))
 }

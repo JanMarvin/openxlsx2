@@ -15,12 +15,12 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
   id_new <- wb$validateSheet(to_sheet)
 
   org_style <- wb$worksheets[[id_org]]$sheet_data$cc
-  new_style <- wb$worksheets[[id_new]]$sheet_data$cc
+  wb_style <- wb$worksheets[[id_new]]$sheet_data$cc
 
   # remove all values
   org_style <- org_style[c("row_r", "c_r", "c_s")]
 
-  merged_style <- merge(org_style, new_style, all = TRUE)
+  merged_style <- merge(org_style, wb_style, all = TRUE)
   merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
 
   # TODO order this as well?
@@ -684,7 +684,7 @@ merge_cellXfs <- function(wb, new_cellxfs) {
 
   wb$styles$cellXfs <- write_xf(cellxfs)
 
-  attr(wb, "new_styles") <- new_rownames
+  attr(wb, "wb_styles") <- new_rownames
   # let the user now, which styles are new
   return(wb)
 }
@@ -730,10 +730,10 @@ get_cell_style <- function(wb, sheet, cell) {
 #'
 #' # combine original and new styles
 #' wb <- merge_cellXfs(wb, new_cellxfs)
-#' new_styles <- attr(wb, "new_styles")
+#' wb_styles <- attr(wb, "wb_styles")
 #'
 #' # new styles are 1:28, because s in a 0-index
-#' for (i in new_styles) {
+#' for (i in wb_styles) {
 #'   cell <- sprintf("%s1:%s28", int2col(i), int2col(i))
 #'   set_cell_style(wb, "test", cell, as.character(i))
 #' }

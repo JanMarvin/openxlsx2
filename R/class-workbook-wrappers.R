@@ -1,6 +1,6 @@
 
-new_workbook <- function() {
-  Workbook$new()
+wb_workbook <- function() {
+  wbWorkbook$new()
 }
 
 #' @name createWorkbook
@@ -51,7 +51,7 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
   assert_class(title, "character", or_null = TRUE)
   assert_class(subject, "character", or_null = TRUE)
   assert_class(category, "character", or_null = TRUE)
-  invisible(Workbook$new(creator = creator, title = title, subject = subject, category = category))
+  wbWorkbook$new(creator = creator, title = title, subject = subject, category = category)
 }
 
 
@@ -95,7 +95,7 @@ saveWorkbook <- function(wb, file, overwrite = FALSE) {
 
 # TODO export wb_save_workbook rather than saveWorkbook
 wb_save_workbook <- function(wb, path, overwrite = FALSE) {
-  wb$copy()$saveWorkbook(path = path, overwrite = overwrite)$path
+  wb$clone()$saveWorkbook(path = path, overwrite = overwrite)$path
 }
 
 
@@ -450,7 +450,7 @@ cloneWorksheet <- function(wb, sheetName, clonedSheet) {
   ## Invalid XML characters
   sheetName <- replaceIllegalCharacters(sheetName)
   wb$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
-  # TODO change to return wb$copy()$cloneWorksheet(...) [which returns self]
+  # TODO change to return wb$clone()$cloneWorksheet(...) [which returns self]
   # TODO use wb_clone_worksheet()
   invisible(length(wb$worksheets))
 }
@@ -468,7 +468,7 @@ wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
   }
 
   # TODO use old_sheet, new_sheet
-  wb$copy()$cloneWorksheet(sheetName = old, clonedSheet = new)
+  wb$clone()$cloneWorksheet(sheetName = old, clonedSheet = new)
 }
 
 
@@ -1114,10 +1114,8 @@ getStyles <- function(wb) {
 #' saveWorkbook(wb, "removeWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 removeWorksheet <- function(wb, sheet) {
-  # TODO this should just be workbookWorkbook$remove_worksheet(...)
-  if (class(wb) != "Workbook") {
-    stop("wb must be a Workbook object!")
-  }
+  # TODO this should just be wbWorkbook$remove_worksheet(...)
+  assert_workbook(wb)
 
   if (length(sheet) != 1) {
     stop("sheet must have length 1.")
@@ -2444,14 +2442,14 @@ conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, 
 
 #' @name copyWorkbook
 #' @title Copy a Workbook object.
-#' @description Just a wrapper of wb$copy()
+#' @description Just a wrapper of wb$clone()
 #' @param wb A workbook object
 #' @return Workbook
 #' @examples
 #'
 #' wb <- createWorkbook()
 #' wb2 <- wb ## does not create a copy
-#' wb3 <- copyWorkbook(wb) ## wrapper for wb$copy()
+#' wb3 <- copyWorkbook(wb) ## wrapper for wb$clone()
 #'
 #' addWorksheet(wb, "Sheet1") ## adds worksheet to both wb and wb2 but not wb3
 #'
@@ -2460,13 +2458,9 @@ conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, 
 #' names(wb3)
 #' @export
 copyWorkbook <- function(wb) {
-  if (!inherits(wb, "Workbook")) {
-    stop("argument must be a Workbook.")
-  }
-
-  return(wb$copy())
+  assert_workbook(wb)
+  wb$clone()
 }
-
 
 
 #' @name getTables
@@ -2485,9 +2479,7 @@ copyWorkbook <- function(wb) {
 #' getTables(wb, sheet = "Sheet 1")
 #' @export
 getTables <- function(wb, sheet) {
-  if (!inherits(wb, "Workbook")) {
-    stop("argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (length(sheet) != 1) {
     stop("sheet argument must be length 1")
@@ -2550,9 +2542,7 @@ getTables <- function(wb, sheet) {
 #'
 #' @export
 removeTable <- function(wb, sheet, table) {
-  if (!inherits(wb, "Workbook")) {
-    stop("argument must be a Workbook.")
-  }
+  assert_workbook(wb)
 
   if (length(sheet) != 1) {
     stop("sheet argument must be length 1")
@@ -2845,11 +2835,8 @@ ungroupRows <- function(wb, sheet, rows) {
 #' addCreator(wb, "test")
 #' @export
 addCreator <- function(wb, Creator) {
-  if (!inherits(wb, "Workbook")) {
-    stop("argument must be a Workbook.")
-  }
-
-  invisible(wb$addCreator(Creator))
+  assert_workbook(wb)
+  wb$addCreator(Creator)
 }
 
 #' @name setLastModifiedBy
@@ -2863,13 +2850,9 @@ addCreator <- function(wb, Creator) {
 #' setLastModifiedBy(wb, "test")
 #' @export
 setLastModifiedBy <- function(wb, LastModifiedBy) {
-  if (!inherits(wb, "Workbook")) {
-    stop("argument must be a Workbook.")
-  }
-
-  invisible(wb$changeLastModifiedBy(LastModifiedBy))
+  assert_workbook(wb)
+  wb$changeLastModifiedBy(LastModifiedBy)
 }
-
 
 
 #' @name getCreators
@@ -2884,11 +2867,8 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #' getCreators(wb)
 #' @export
 getCreators <- function(wb) {
-  if (!inherits(wb, "Workbook")) {
-    stop("argument must be a Workbook.")
-  }
-
-  return(wb$getCreators())
+  assert_workbook(wb)
+  wb$getCreators()
 }
 
 #' @name insertImage

@@ -1,3 +1,3 @@
 test_that("Workbook class", {
-  expect_s4_class(new_workbook(), "Workbook")
+  expect_null(assert_workbook(wb_workbook()))
 })

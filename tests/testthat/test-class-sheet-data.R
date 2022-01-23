@@ -1,4 +1,4 @@
 
-test_that("class SheetData works", {
-  expect_s4_class(new_sheet_data(), "SheetData")
+test_that("class wbSheetData works", {
+  expect_null(assert_sheet_data(wb_sheet_data()))
 })

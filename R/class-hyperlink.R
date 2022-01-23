@@ -1,57 +1,87 @@
+#' R6 class for a Workbook Hyperlink
+#'
+#' A hyperlink
+#'
+#' @export
+wbHyperlink <- R6::R6Class(
+  "wbHyperlink",
 
-Hyperlink <- setRefClass(
-  "Hyperlink",
-  fields = c(
-    "ref",
-    "target",
-    "location",
-    "display",
-    "is_external"
-  ),
+  public = list(
 
-  methods = list(
-    # initiated the object
+    #' @field ref ref
+    ref = NULL,
+
+    #' @field target target
+    target = NULL,
+
+    #' @field location location
+    location = NULL,
+
+    #' @field display display
+    display = NULL,
+
+    #' @field is_external is_external
+    is_external = NULL,
+
+    #' @description
+    #' Creates a new `wbHyperlink` object
+    #' @param ref ref
+    #' @param target target
+    #' @param location location
+    #' @param display display
+    #' @param is_external is_external
+    #' @return a `wbHyperlink` object
     initialize = function(ref, target, location, display = NULL, is_external = TRUE) {
-      .self$ref         <- ref
-      .self$target      <- target
-      .self$location    <- location
-      .self$display     <- display
-      .self$is_external <- is_external
+      self$ref         <- ref
+      self$target      <- target
+      self$location    <- location
+      self$display     <- display
+      self$is_external <- is_external
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # converts the Hyperlink to XML
+    #' @description
+    #' Convert to xml
+    #' @param id ???
+    #' @return A character vector of xml
     to_xml = function(id) {
       paste_c(
         "<hyperlink",
-        sprintf('ref="%s"', .self$ref),                     # rf
-        if (.self$is_external) sprintf('r:id="rId%s"', id), # rid
-        sprintf('display="%s"', .self$display),             # disp
-        sprintf('location="%s"', .self$location),           # loc
+        sprintf('ref="%s"', self$ref),                     # rf
+        if (self$is_external) sprintf('r:id="rId%s"', id), # rid
+        sprintf('display="%s"', self$display),             # disp
+        sprintf('location="%s"', self$location),           # loc
         "/>",
         sep = " "
       )
     },
 
-    # converts the Hyperlink to target xml
+    # TODO is this needed?  If target is TRUE then use this instead?
+
+    #' @description
+    #' Convert to target xml
+    #' @param id ???
+    #' @returns A character vector of html if `is_external` is `TRUE`, otherwise `NULL`
     to_target_xml = function(id) {
-      if (.self$is_external) {
-        return(sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, .self$target))
-      } else {
-        return(NULL)
+      if (self$is_external) {
+        sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>', id, self$target)
       }
     }
   )
 )
 
-new_hyperlink <- function() {
-  Hyperlink$new(ref = character(), target = character(), location = character())
+#' Create a new hyperlink object
+#' @rdname Hyperlink
+wb_hyperlink <- function() {
+  wbHyperlink$new(ref = character(), target = character(), location = character())
 }
 
-xml_to_hyperlink <- function(xml) {
 
-  # TODO allow Hyperlink$new(xml = xml)
+xml_to_hyperlink <- function(xml) {
+  # xml_to_hyperlink() is used once in loadWorkbook()
+
+  # TODO allow wbHyperlink$new(xml = xml)
 
   # xml <- c('<hyperlink ref="A1" r:id="rId1" location="Authority"/>',
   # '<hyperlink ref="B1" r:id="rId2"/>',
@@ -64,6 +94,7 @@ xml_to_hyperlink <- function(xml) {
   targets <- names(xml) %||% rep(NA, length(xml))
   xml <- unname(xml)
 
+  # TODO a, names, and vals could be moved within the larger lapply()
   a <- unlist(lapply(xml, function(i) regmatches(i, gregexpr('[a-zA-Z]+=".*?"', i))), recursive = FALSE)
   names <- lapply(a, function(i) regmatches(i, regexpr('[a-zA-Z]+(?=\\=".*?")', i, perl = TRUE)))
   vals <- lapply(a, function(i) {
@@ -93,7 +124,7 @@ xml_to_hyperlink <- function(xml) {
       target <- targets[i]
     }
 
-    Hyperlink$new(
+    wbHyperlink$new(
       ref         = ref,
       target      = target,
       location    = location,
@@ -101,8 +132,4 @@ xml_to_hyperlink <- function(xml) {
       is_external = is_external
     )
   })
-}
-
-new_hyperlink <- function() {
-  Hyperlink$new(ref = character(), target = character(), location = character())
 }

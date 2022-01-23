@@ -102,8 +102,8 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
     std::string fml_ref = Rcpp::as<std::string>(cll["f_ref"]);
 
     // f node: formula to be evaluated
-    if (fml.compare(rnastring.c_str()) != 0 |
-        fml_type.compare(rnastring.c_str()) != 0 |
+    if (fml.compare(rnastring.c_str()) != 0 ||
+        fml_type.compare(rnastring.c_str()) != 0 ||
         fml_si.compare(rnastring.c_str()) != 0) {
       pugi::xml_node f = cell.append_child("f");
       if (fml_type.compare(rnastring.c_str()) != 0) {
@@ -161,7 +161,7 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
 // [[Rcpp::export]]
 SEXP write_worksheet_xml_2( std::string prior,
                             std::string post,
-                            Rcpp::Reference sheet_data,
+                            Rcpp::Environment sheet_data,
                             Rcpp::CharacterVector cols_attr, // currently unused
                             std::string R_fileName = "output"){
 
@@ -176,8 +176,8 @@ SEXP write_worksheet_xml_2( std::string prior,
 
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_2_cell_ref(sheet_data.field("cols"));
-  Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data.field("row_attr"));
-  Rcpp::List cc = sheet_data.field("cc_out");
+  Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
+  Rcpp::List cc = sheet_data["cc_out"];
 
   if (Rf_isNull(row_attr)) {
     xmlFile << "<sheetData />";

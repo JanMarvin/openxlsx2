@@ -36,8 +36,8 @@ df_to_col <- function(df_col) {
     .Call(`_openxlsx2_df_to_col`, df_col)
 }
 
-loadvals <- function(wb, doc) {
-    invisible(.Call(`_openxlsx2_loadvals`, wb, doc))
+loadvals <- function(sheet_data, doc) {
+    invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
 si_to_txt <- function(doc) {

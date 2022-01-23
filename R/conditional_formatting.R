@@ -300,6 +300,7 @@ conditionalFormatting <-
     type <- tolower(type)
     params <- list(...)
 
+    # TODO use switch() instead
     if (type %in% c("colorscale", "colourscale")) {
       type <- "colorScale"
     } else if (type == "databar") {
@@ -337,6 +338,7 @@ conditionalFormatting <-
     values <- NULL
     dxfId <- NULL
 
+    # use switch() instead
     if (type == "colorScale") {
       # type == "colourScale"
       # - style is a vector of colours with length 2 or 3
@@ -374,6 +376,7 @@ conditionalFormatting <-
         style <- "#638EC6"
       }
 
+      # TODO use inherits() not class()
       if (class(style) != "character") {
         stop("If type == 'dataBar', style must be a vector of colours of length 1 or 2.")
       }
@@ -439,7 +442,9 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!inherits(style, "Style")) {
+      # TODO check type up front and validate selections there...
+      # or only use style class...
+      if (!is_wb_style(style)) {
         stop("If type == 'expression', style must be a Style object.")
       }
 
@@ -454,7 +459,8 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!inherits(style, "Style")) {
+
+      if (!is_wb_style(style)) {
         stop("If type == 'duplicates', style must be a Style object.")
       }
 
@@ -475,9 +481,10 @@ conditionalFormatting <-
         stop("If type == 'contains', rule must be a character vector of length 1.")
       }
 
-      if (!inherits(style, "Style")) {
+      if (!is_wb_style(style)) {
         stop("If type == 'contains', style must be a Style object.")
       }
+
 
       dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
@@ -497,7 +504,7 @@ conditionalFormatting <-
         stop("If type == 'notContains', rule must be a character vector of length 1.")
       }
 
-      if (!inherits(style, "Style")) {
+      if (!is_wb_style(style)) {
         stop("If type == 'notContains', style must be a Style object.")
       }
 
@@ -519,7 +526,7 @@ conditionalFormatting <-
         stop("If type == 'beginsWith', rule must be a character vector of length 1.")
       }
 
-      if (!inherits(style, "Style")) {
+      if (!is_wb_style(style)) {
         stop("If type == 'beginsWith', style must be a Style object.")
       }
 
@@ -541,7 +548,7 @@ conditionalFormatting <-
         stop("If type == 'endsWith', rule must be a character vector of length 1.")
       }
 
-      if (!inherits(style, "Style")) {
+      if (!is_wb_style(style)) {
         stop("If type == 'endsWith', style must be a Style object.")
       }
 
@@ -556,7 +563,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!inherits(style, "Style")) {
+      if (!is_wb_style(style)) {
         stop("If type == 'between', style must be a Style object.")
       }
 
@@ -571,7 +578,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!inherits(style, "Style")) {
+      if (!is_wb_style(style)) {
         stop("If type == 'topN', style must be a Style object.")
       }
 
@@ -605,7 +612,7 @@ conditionalFormatting <-
           createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
       }
 
-      if (!inherits(style, "Style")) {
+      if (!is_wb_style(style)) {
         stop("If type == 'bottomN', style must be a Style object.")
       }
 
