@@ -4,7 +4,7 @@
 #' A hyperlink
 #'
 #' @export
-SheetData <- R6::R6Class(
+wbSheetData <- R6::R6Class(
   "wbSheetData",
   public = list(
     # TODO which fields should be moved to private?
@@ -179,10 +179,10 @@ SheetData <- R6::R6Class(
   )
 )
 
-#' @rdname SheetData
+#' @rdname wbSheetData
 #' @export
 new_sheet_data <- function() {
-  SheetData$new()
+  wbSheetData$new()
 }
 
 

@@ -1,4 +1,4 @@
 
-test_that("class Comment works", {
+test_that("class wbComment works", {
   expect_null(assert_comment(new_comment()))
 })

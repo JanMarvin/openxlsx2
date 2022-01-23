@@ -1,6 +1,6 @@
 
 new_workbook <- function() {
-  Workbook$new()
+  wbWorkbook$new()
 }
 
 #' @name createWorkbook
@@ -52,7 +52,7 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
   assert_class(title, "character", or_null = TRUE)
   assert_class(subject, "character", or_null = TRUE)
   assert_class(category, "character", or_null = TRUE)
-  invisible(Workbook$new(creator = creator, title = title, subject = subject, category = category))
+  wbWorkbook$new(creator = creator, title = title, subject = subject, category = category)
 }
 
 
@@ -1131,7 +1131,7 @@ getStyles <- function(wb) {
 #' saveWorkbook(wb, "removeWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 removeWorksheet <- function(wb, sheet) {
-  # TODO this should just be workbookWorkbook$remove_worksheet(...)
+  # TODO this should just be wbWorkbook$remove_worksheet(...)
   if (class(wb) != "Workbook") {
     stop("wb must be a Workbook object!")
   }

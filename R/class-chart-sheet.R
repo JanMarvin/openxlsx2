@@ -4,7 +4,7 @@
 #' A chart sheet
 #'
 #' @export
-ChartSheet <- R6::R6Class(
+wbChartSheet <- R6::R6Class(
   "wbChartSheet",
 
   # TODO add field definitions
@@ -82,5 +82,5 @@ ChartSheet <- R6::R6Class(
 #' @returns a `wbChartSheet` object
 #' @export
 new_chart_sheet <- function() {
-  ChartSheet$new()
+  wbChartSheet$new()
 }

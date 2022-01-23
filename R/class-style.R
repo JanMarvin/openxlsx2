@@ -6,7 +6,7 @@
 #' A style
 #'
 #' @export
-Style <- R6::R6Class(
+wbStyle <- R6::R6Class(
   "wbStyle",
   public = list(
     # TODO consider what could just be a private field?
@@ -387,7 +387,7 @@ Style <- R6::R6Class(
 
 # wrappers ----------------------------------------------------------------
 
-# TODO would this make sense as a method? Style$merge(newStyle)?
+# TODO would this make sense as a method? wbStyle$merge(newStyle)?
 mergeStyle <- function(oldStyle, newStyle) {
   assert_style(oldStyle)
   assert_style(newStyle)
@@ -431,7 +431,7 @@ merge_style_fields <- function() {
 # wrapper -----------------------------------------------------------------
 
 new_style <- function() {
-  Style$new()
+  wbStyle$new()
 }
 
 #' @name createStyle
@@ -589,7 +589,7 @@ createStyle <- function(
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
 
-  Style$new(
+  wbStyle$new(
     fontName       = fontName,
     fontSize       = fontSize,
     fontColour     = fontColour,
@@ -608,11 +608,6 @@ createStyle <- function(
     locked         = locked,
     hidden         = hidden
   )
-}
-
-# TODO switch new_style() and createStyle()
-new_style <- function(...) {
-  Style$new(...)
 }
 
 

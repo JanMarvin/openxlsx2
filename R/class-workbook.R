@@ -7,7 +7,7 @@
 #' A Workbook
 #'
 #' @export
-Workbook <- R6::R6Class(
+wbWorkbook <- R6::R6Class(
   "wbWorkbook",
 
   # TODO which can be private?
@@ -345,7 +345,7 @@ Workbook <- R6::R6Class(
       self$worksheets <-
         append(
           self$worksheets,
-          Worksheet$new(
+          wbWorksheet$new(
             showGridLines = showGridLines,
             tabSelected   = newSheetIndex == 1,
             tabColour     = tabColour,
@@ -708,7 +708,7 @@ Workbook <- R6::R6Class(
       ## append to worksheets list
       self$worksheets <- c(
         self$worksheets,
-        ChartSheet$new(
+        wbChartSheet$new(
           tabSelected = newSheetIndex == 1,
           tabColour = tabColour,
           zoom = zoom
@@ -3556,7 +3556,7 @@ Workbook <- R6::R6Class(
               keep <- which(!existing_cells %in% refs & !is.na(self$worksheets[[sheet]]$sheet_data$v))
 
               # TODO ad params to SheetData$new() to simplify this
-              sd <- SheetData$new()
+              sd <- wbSheetData$new()
               sd$cols <- self$worksheets[[sheet]]$sheet_data$cols[keep]
               sd$t <- self$worksheets[[sheet]]$sheet_data$t[keep]
               sd$v <- self$worksheets[[sheet]]$sheet_data$v[keep]
@@ -3845,7 +3845,7 @@ Workbook <- R6::R6Class(
     #
     #       ## create hyperlink objects
     #       newhl <- lapply(seq_along(hyperlink_inds), function(i) {
-    #         Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
+    #         wbHyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
     #       })
     #
     #       self$worksheets[[sheet]]$hyperlinks <- append(worksheets[[sheet]]$hyperlinks, newhl)

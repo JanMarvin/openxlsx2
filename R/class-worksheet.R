@@ -6,7 +6,7 @@
 #' A Worksheet
 #'
 #' @export
-Worksheet <- R6::R6Class(
+wbWorksheet <- R6::R6Class(
   "wbWorksheet",
 
   ## public ----
@@ -220,7 +220,7 @@ Worksheet <- R6::R6Class(
       self$tableParts            <- character()
       self$extLst                <- character()
       self$freezePane            <- character()
-      self$sheet_data            <- SheetData$new()
+      self$sheet_data            <- wbSheetData$new()
 
       invisible(self)
     },
@@ -426,7 +426,7 @@ Worksheet <- R6::R6Class(
 )
 
 new_worksheet <- function() {
-  Worksheet$new()
+  wbWorksheet$new()
 }
 
 empty_cols_attr <- function(n = 0) {

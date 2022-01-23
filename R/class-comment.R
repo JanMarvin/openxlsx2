@@ -4,7 +4,7 @@
 #' A comment
 #'
 #' @export
-Comment <- R6::R6Class(
+wbComment <- R6::R6Class(
   "wbComment",
 
   public = list(
@@ -88,7 +88,7 @@ Comment <- R6::R6Class(
 
 # wrappers ----------------------------------------------------------------
 
-# TODO createComment() should leverage wbComment$new() more
+# TODO createComment() should leverage wbwbComment$new() more
 # TODO writeComment() should leverage wbWorkbook$addComment() more
 # TODO removeComment() should leverage wbWorkbook$removeComment() more
 
@@ -127,7 +127,7 @@ createComment <- function(comment,
   width = 2,
   height = 4) {
 
-  # TODO move this to Comment$new(); this could then be replaced with
+  # TODO move this to wbComment$new(); this could then be replaced with
   # new_comment()
 
   assert_class(author, "character")
@@ -152,7 +152,7 @@ createComment <- function(comment,
   comment <- replaceIllegalCharacters(comment)
 
 
-  invisible(Comment$new(text = comment, author = author, style = style, visible = visible, width = width[1], height = height[1]))
+  invisible(wbComment$new(text = comment, author = author, style = style, visible = visible, width = width[1], height = height[1]))
 }
 
 
@@ -188,7 +188,7 @@ createComment <- function(comment,
 #' saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
 #' }
 writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
-  # TODO add as method: Workbook$addComment(); add param for replace?
+  # TODO add as method: wbWorkbook$addComment(); add param for replace?
   assert_workbook(wb)
   assert_comment(comment)
 
@@ -244,7 +244,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 #' @seealso [createComment()]
 #' @seealso [writeComment()]
 removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
-  # TODO add as method; Workbook$removeComment()
+  # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
@@ -269,5 +269,5 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
 }
 
 new_comment <- function(text = character(), author = character(), style = new_style()) {
-  Comment$new(text = text, author = author, style = style)
+  wbComment$new(text = text, author = author, style = style)
 }

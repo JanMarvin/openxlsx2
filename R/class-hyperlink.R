@@ -3,7 +3,7 @@
 #' A hyperlink
 #'
 #' @export
-Hyperlink <- R6::R6Class(
+wbHyperlink <- R6::R6Class(
   "wbHyperlink",
 
   public = list(
@@ -74,14 +74,14 @@ Hyperlink <- R6::R6Class(
 #' Create a new hyperlink object
 #' @rdname Hyperlink
 new_hyperlink <- function() {
-  Hyperlink$new(ref = character(), target = character(), location = character())
+  wbHyperlink$new(ref = character(), target = character(), location = character())
 }
 
 
 xml_to_hyperlink <- function(xml) {
   # xml_to_hyperlink() is used once in loadWorkbook()
 
-  # TODO allow Hyperlink$new(xml = xml)
+  # TODO allow wbHyperlink$new(xml = xml)
 
   # xml <- c('<hyperlink ref="A1" r:id="rId1" location="Authority"/>',
   # '<hyperlink ref="B1" r:id="rId2"/>',
@@ -124,7 +124,7 @@ xml_to_hyperlink <- function(xml) {
       target <- targets[i]
     }
 
-    Hyperlink$new(
+    wbHyperlink$new(
       ref         = ref,
       target      = target,
       location    = location,
