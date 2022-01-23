@@ -349,7 +349,7 @@ Workbook <- setRefClass(
 
       ## append to worksheets list
       .self$worksheets <-
-        append(.self$worksheets, .self$worksheets[[clonedSheet]]$copy())
+        append(.self$worksheets, .self$worksheets[[clonedSheet]]$clone())
 
 
       ## update content_tyes

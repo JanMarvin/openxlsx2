@@ -33,7 +33,7 @@ assert_hyperlink   <- function(x) assert_class(x, c("wbHyperlink",  "R6"), all =
 assert_sheet_data  <- function(x) assert_class(x, c("wbSheetData",  "R6"), all = TRUE)
 assert_style       <- function(x) assert_class(x, c("wbStyle",      "R6"), all = TRUE)
 assert_workbook    <- function(x) assert_class(x, "Workbook",   package = "openxlsx2")
-assert_worksheet   <- function(x) assert_class(x, "Worksheet",  package = "openxlsx2")
+assert_worksheet   <- function(x) assert_class(x, c("wbWorksheet",   "R6"), all = TRUE)
 
 
 match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.frame()) {
