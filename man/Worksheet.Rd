@@ -9,7 +9,7 @@ R6 class for a Workbook Worksheet
 R6 class for a Workbook Worksheet
 }
 \details{
-A style
+A Worksheet
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

@@ -1,11 +1,9 @@
 
 # class -------------------------------------------------------------------
 
-
-
 #' R6 class for a Workbook Worksheet
 #'
-#' A style
+#' A Worksheet
 #'
 #' @export
 Worksheet <- R6::R6Class(
