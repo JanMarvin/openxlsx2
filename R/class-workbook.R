@@ -465,7 +465,7 @@ wbWorkbook <- R6::R6Class(
           visible,
           newSheetIndex
         )
-        )
+      )
 
       ## append to worksheets list
       self$worksheets <- c(self$worksheets, self$worksheets[[clonedSheet]]$clone())
@@ -1490,9 +1490,11 @@ wbWorkbook <- R6::R6Class(
 
       self$tables <- c(
         self$tables,
-        xml_node_create(xml_name = "table",
+        xml_node_create(
+          xml_name = "table",
           xml_children = c(autofilter, tableColumns, tableStyleXML),
-          xml_attributes = table_attrs)
+          xml_attributes = table_attrs
+        )
       )
 
       names(self$tables) <- c(nms, ref)
@@ -1543,19 +1545,17 @@ wbWorkbook <- R6::R6Class(
     createFontNode = function(style) {
       # Nothing is assigned to self, so this is fine to not return self
       # TODO pull out from public methods
-
-      # TODO assert_class(style, "Style")
+      # assert_style(style)
       baseFont <- self$getBaseFont()
 
+      # TODO implement paste_c()
       fontNode <- "<font>"
 
       ## size
       if (is.null(style$fontSize[[1]])) {
-        fontNode <-
-          stri_join(fontNode, sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size))
+        fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size))
       } else {
-        fontNode <-
-          stri_join(fontNode, sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize))
+        fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize))
       }
 
       ## colour
@@ -1697,7 +1697,7 @@ wbWorkbook <- R6::R6Class(
         )
       rId <-
         regmatches(
-          workbook$sheets[[sheet]],
+          self$workbook$sheets[[sheet]],
           regexpr('(?<= r:id="rId)[0-9]+', self$workbook$sheets[[sheet]], perl = TRUE)
         )
       self$workbook$sheets[[sheet]] <-
@@ -1709,8 +1709,8 @@ wbWorkbook <- R6::R6Class(
         )
 
       ## rename styleObjects sheet component
-      if (length(styleObjects)) {
-        self$styleObjects <- lapply(styleObjects, function(x) {
+      if (length(self$styleObjects)) {
+        self$styleObjects <- lapply(self$styleObjects, function(x) {
           if (x$sheet == oldName) {
             x$sheet <- newSheetName
           }
@@ -1745,7 +1745,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- self$validateSheet(sheet)
 
       ## remove any conflicting heights
-      flag <- names(rowHeights[[sheet]]) %in% rows
+      flag <- names(self$rowHeights[[sheet]]) %in% rows
       if (any(flag)) {
         self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][!flag]
       }
@@ -1975,8 +1975,9 @@ wbWorkbook <- R6::R6Class(
 
       ## drawing will always be the first relationship
       if (nSheets > 1) {
-        for (i in 1:(nSheets - 1L)) {
-          self$worksheets_rels[[i]][1:3] <- genBaseSheetRels(i)
+        for (i in seq_len(nSheets - 1L)) {
+          # did this get updated from length of 3 to 2?
+          self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
         }
       } else {
         self$worksheets_rels <- list()
@@ -2050,13 +2051,13 @@ wbWorkbook <- R6::R6Class(
 
       dxf <- stri_join(dxf, "</dxf>", sep = " ")
 
-      if (dxf %in% styles$dxfs) {
+      if (dxf %in% self$styles$dxfs) {
         # return(which(styles$dxfs == dxf) - 1L)
         return(invisible(self))
       }
 
       # dxfId <- length(styles$dxfs)
-      self$styles$dxfs <- c(styles$dxfs, dxf)
+      self$styles$dxfs <- c(self$styles$dxfs, dxf)
 
       # return(dxfId)
       invisible(self)

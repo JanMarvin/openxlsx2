@@ -226,7 +226,7 @@ writeData <- function(wb,
   startRow <- as.integer(startRow)
 
   assert_workbook(wb)
-  assert_class(headerStyle, "Style", or_null = TRUE)
+  if (!is.null(headerStyle)) assert_style(headerStyle)
   assert_class(colNames, "logical")
   assert_class(rowNames, "logical")
 
@@ -242,6 +242,7 @@ writeData <- function(wb,
   ## special case - vector of hyperlinks
   hlinkNames <- NULL
   if (inherits(x, "hyperlink")) {
+    # consider wbHyperlink?
     hlinkNames <- names(x)
     colNames <- FALSE
   }

@@ -463,9 +463,9 @@ wb_to_df <- function(
     if (any(sel)) {
       nums <- names( which(types[sel] == 1) )
       dtes <- names( which(types[sel] == 2) )
-
-      # TODO convert NA to NA_character_ to avoid warnings or suppressWarnings
-      z[nums] <- lapply(z[nums], as.numeric)
+      # convert "#NUM!" to "NaN" -- then converts to NaN
+      # maybe consider this an option to instead return NA?
+      z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       z[dtes] <- lapply(z[dtes], as.Date)
     } else {
       warning("could not convert. All missing in row used for variable names")

@@ -1132,9 +1132,7 @@ getStyles <- function(wb) {
 #' }
 removeWorksheet <- function(wb, sheet) {
   # TODO this should just be wbWorkbook$remove_worksheet(...)
-  if (class(wb) != "Workbook") {
-    stop("wb must be a Workbook object!")
-  }
+  assert_workbook(wb)
 
   if (length(sheet) != 1) {
     stop("sheet must have length 1.")

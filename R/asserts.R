@@ -34,6 +34,9 @@ assert_style       <- function(x) assert_class(x, c("wbStyle",      "R6"), all =
 assert_workbook    <- function(x) assert_class(x, c("wbWorkbook",   "R6"), all = TRUE)
 assert_worksheet   <- function(x) assert_class(x, c("wbWorksheet",  "R6"), all = TRUE)
 
+is_wb_style <- function(x) {
+  inherits(x, "wbStyle") & inherits(x, "R6")
+}
 
 match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.frame()) {
   sx <- as.character(substitute(x, envir))

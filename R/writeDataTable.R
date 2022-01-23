@@ -165,7 +165,7 @@ writeDataTable <- function(wb, sheet, x,
   ## Input validating
   assert_workbook(wb)
   assert_class(x, "data.frame")
-  assert_class(headerStyle, "Style", or_null = TRUE)
+  if (!is.null(headerStyle)) assert_style(headerStyle)
 
   # TODO sipmlify these --
   if (!is.logical(colNames)) stop("colNames must be a logical.")

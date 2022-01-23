@@ -192,11 +192,13 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
   assert_workbook(wb)
   assert_comment(comment)
 
-  if (length(comment$style) == 1) {
-    rPr <- wb$createFontNode(comment$style)
-  } else {
-    rPr <- sapply(comment$style, function(x) wb$createFontNode(x))
-  }
+  # if (length(comment$style) == 1) {
+  #   rPr <- wb$createFontNode(comment$style)
+  # } else {
+  #   rPr <- sapply(comment$style, function(x) wb$createFontNode(x))
+  # }
+  assert_comment(comment)
+  rPr <- wb$createFontNode(comment$style)
 
   rPr <- gsub("font>", "rPr>", rPr)
   sheet <- wb$validateSheet(sheet)
