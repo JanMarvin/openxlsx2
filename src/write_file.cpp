@@ -81,8 +81,8 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
     std::string fml_ref = Rcpp::as<std::string>(cll["f_ref"]);
 
     // f node: formula to be evaluated
-    if (fml.compare(rnastring.c_str()) != 0 |
-        fml_type.compare(rnastring.c_str()) != 0 |
+    if (fml.compare(rnastring.c_str()) != 0 ||
+        fml_type.compare(rnastring.c_str()) != 0 ||
         fml_si.compare(rnastring.c_str()) != 0) {
       pugi::xml_node f = cell.append_child("f");
       if (fml_type.compare(rnastring.c_str()) != 0) {
