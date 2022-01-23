@@ -1,164 +1,285 @@
 
-Workbook <- setRefClass(
-  "Workbook",
-  fields = c(
-    "sheet_names" = "character",
 
-    "calcChain" = "character",
-    "charts" = "ANY",
-    "isChartSheet" = "logical",
+# R6 class ----------------------------------------------------------------
 
-    "colOutlineLevels" = "ANY",
-    "colWidths" = "ANY",
-    "connections" = "ANY",
-    "Content_Types" = "character",
-    "app" = "character",
-    "core" = "character",
-    "drawings" = "ANY",
-    "drawings_rels" = "ANY",
-    "drawings_vml" = "ANY",
-    "embeddings" = "ANY",
-    "externalLinks" = "ANY",
-    "externalLinksRels" = "ANY",
+#' R6 class for a Workbook
+#'
+#' A Workbook
+#'
+#' @export
+Workbook <- R6::R6Class(
+  "wbWorkbook",
 
-    "headFoot" = "ANY",
-    "media" = "ANY",
-    "outlineLevels" = "ANY",
+  # TODO which can be private?
 
-    "persons" = "ANY",
+  ## public ----
 
-    "pivotTables" = "ANY",
-    "pivotTables.xml.rels" = "ANY",
-    "pivotDefinitions" = "ANY",
-    "pivotRecords" = "ANY",
-    "pivotDefinitionsRels" = "ANY",
+  public = list(
+    #' @field sheet_names sheet_names
+    sheet_names = character(),
 
-    "queryTables" = "ANY",
-    "rowHeights" = "ANY",
+    #' @field calcChain calcChain
+    calcChain = character(),
 
-    "slicers" = "ANY",
-    "slicerCaches" = "ANY",
+    #' @field charts charts
+    charts = NULL,
 
-    "sharedStrings" = "ANY",
-    "styleObjects" = "ANY",
+    #' @field isChartSheet isChartSheet
+    isChartSheet = logical(),
 
-    "styles" = "ANY",
-    "styles_xml" = "ANY",
-    "tables" = "ANY",
-    "tables.xml.rels" = "ANY",
-    "theme" = "ANY",
+    #' @field colOutlineLevels colOutlineLevels
+    colOutlineLevels = NULL,
 
-    "vbaProject" = "ANY",
-    "vml" = "ANY",
-    "vml_rels" = "ANY",
-    "comments" = "ANY",
-    "threadComments" = "ANY",
+    #' @field colWidths colWidths
+    colWidths = NULL,
 
-    "workbook" = "ANY",
-    "workbook.xml.rels" = "ANY",
-    "worksheets" = "ANY",
-    "worksheets_rels" = "ANY",
-    "sheetOrder" = "integer",
+    #' @field connections connections
+    connections = NULL,
 
-    # allows path to be set during initiation or later
-    "path" = "character",
-    "styleObjectsList" = "list"
-  ),
+    #' @field Content_Types Content_Types
+    Content_Types = character(),
 
-  methods = list(
+    #' @field app app
+    app = character(),
 
+    #' @field core core
+    core = character(),
+
+    #' @field drawings drawings
+    drawings = NULL,
+
+    #' @field drawings_rels drawings_rels
+    drawings_rels = NULL,
+
+    #' @field drawings_vml drawings_vml
+    drawings_vml = NULL,
+
+    #' @field embeddings embeddings
+    embeddings = NULL,
+
+    #' @field externalLinks externalLinks
+    externalLinks = NULL,
+
+    #' @field externalLinksRels externalLinksRels
+    externalLinksRels = NULL,
+
+    #' @field headFoot headFoot
+    headFoot = NULL,
+
+    #' @field media media
+    media = NULL,
+
+    #' @field outlineLevels outlineLevels
+    outlineLevels = NULL,
+
+    #' @field persons persons
+    persons = NULL,
+
+    #' @field pivotTables pivotTables
+    pivotTables = NULL,
+
+    #' @field pivotTables.xml.rels pivotTables.xml.rels
+    pivotTables.xml.rels = NULL,
+
+    #' @field pivotDefinitions pivotDefinitions
+    pivotDefinitions = NULL,
+
+    #' @field pivotRecords pivotRecords
+    pivotRecords = NULL,
+
+    #' @field pivotDefinitionsRels pivotDefinitionsRels
+    pivotDefinitionsRels = NULL,
+
+    #' @field queryTables queryTables
+    queryTables = NULL,
+
+    #' @field rowHeights rowHeights
+    rowHeights = NULL,
+
+    #' @field slicers slicers
+    slicers = NULL,
+
+    #' @field slicerCaches slicerCaches
+    slicerCaches = NULL,
+
+    #' @field sharedStrings sharedStrings
+    sharedStrings = NULL,
+
+    #' @field styleObjects styleObjects
+    styleObjects = NULL,
+
+    #' @field styles styles
+    styles = NULL,
+
+    #' @field styles_xml styles_xml
+    styles_xml = NULL,
+
+    #' @field tables tables
+    tables = NULL,
+
+    #' @field tables.xml.rels tables.xml.rels
+    tables.xml.rels = NULL,
+
+    #' @field theme theme
+    theme = NULL,
+
+    #' @field vbaProject vbaProject
+    vbaProject = NULL,
+
+    #' @field vml vml
+    vml = NULL,
+
+    #' @field vml_rels vml_rels
+    vml_rels = NULL,
+
+    #' @field comments comments
+    comments = NULL,
+
+    #' @field threadComments threadComments
+    threadComments = NULL,
+
+    #' @field workbook workbook
+    workbook = NULL,
+
+    #' @field workbook.xml.rels workbook.xml.rels
+    workbook.xml.rels = NULL,
+
+    #' @field worksheets worksheets
+    worksheets = NULL,
+
+    #' @field worksheets_rels worksheets_rels
+    worksheets_rels = NULL,
+
+    #' @field sheetOrder sheetOrder
+    sheetOrder = integer(),
+
+    #' @field path path
+    path = character(),     # allows path to be set during initiation or later
+
+    #' @field styleObjectsList styleObjectsList
+    styleObjectsList = list(),
+
+    #' @description
+    #' Creates a new `wbWorkbook` object
+    #' @param creator creator
+    #' @param title title
+    #' @param subject subject
+    #' @param category category
+    #' @return a `wbWorkbook` object
     initialize = function(
       creator = "",
       title = NULL,
       subject = NULL,
       category = NULL
     ) {
-      .self$charts <- list()
-      .self$isChartSheet <- logical()
+      self$charts <- list()
+      self$isChartSheet <- logical()
 
-      .self$colWidths <- list()
-      .self$colOutlineLevels <- list()
-      attr(.self$colOutlineLevels, "hidden") <- NULL
-      .self$connections <- NULL
-      .self$Content_Types <- genBaseContent_Type()
-      .self$core <-
+      self$colWidths <- list()
+      self$colOutlineLevels <- list()
+      attr(self$colOutlineLevels, "hidden") <- NULL
+      self$connections <- NULL
+      self$Content_Types <- genBaseContent_Type()
+      self$core <-
         genBaseCore(
           creator = creator,
           title = title,
           subject = subject,
           category = category
         )
-      .self$comments <- list()
-      .self$threadComments <- list()
+      self$comments <- list()
+      self$threadComments <- list()
 
 
-      .self$drawings <- list()
-      .self$drawings_rels <- list()
-      .self$drawings_vml <- list()
+      self$drawings <- list()
+      self$drawings_rels <- list()
+      self$drawings_vml <- list()
 
-      .self$embeddings <- NULL
-      .self$externalLinks <- NULL
-      .self$externalLinksRels <- NULL
+      self$embeddings <- NULL
+      self$externalLinks <- NULL
+      self$externalLinksRels <- NULL
 
-      .self$headFoot <- NULL
+      self$headFoot <- NULL
 
-      .self$media <- list()
+      self$media <- list()
 
-      .self$persons <- NULL
+      self$persons <- NULL
 
-      .self$pivotTables <- NULL
-      .self$pivotTables.xml.rels <- NULL
-      .self$pivotDefinitions <- NULL
-      .self$pivotRecords <- NULL
-      .self$pivotDefinitionsRels <- NULL
+      self$pivotTables <- NULL
+      self$pivotTables.xml.rels <- NULL
+      self$pivotDefinitions <- NULL
+      self$pivotRecords <- NULL
+      self$pivotDefinitionsRels <- NULL
 
-      .self$queryTables <- NULL
-      .self$rowHeights <- list()
-      .self$outlineLevels <- list()
-      attr(.self$outlineLevels, "hidden") <- NULL
+      self$queryTables <- NULL
+      self$rowHeights <- list()
+      self$outlineLevels <- list()
+      attr(self$outlineLevels, "hidden") <- NULL
 
-      .self$slicers <- NULL
-      .self$slicerCaches <- NULL
+      self$slicers <- NULL
+      self$slicerCaches <- NULL
 
-      .self$sheet_names <- character()
-      .self$sheetOrder <- integer()
+      self$sheet_names <- character()
+      self$sheetOrder <- integer()
 
-      .self$sharedStrings <- list()
-      attr(.self$sharedStrings, "uniqueCount") <- 0
+      self$sharedStrings <- list()
+      attr(self$sharedStrings, "uniqueCount") <- 0
 
-      .self$styles <- genBaseStyleSheet()
-      .self$styleObjects <- list()
-
-
-      .self$tables <- NULL
-      .self$tables.xml.rels <- NULL
-      .self$theme <- NULL
+      self$styles <- genBaseStyleSheet()
+      self$styleObjects <- list()
 
 
-      .self$vbaProject <- NULL
-      .self$vml <- list()
-      .self$vml_rels <- list()
+      self$tables <- NULL
+      self$tables.xml.rels <- NULL
+      self$theme <- NULL
+
+
+      self$vbaProject <- NULL
+      self$vml <- list()
+      self$vml_rels <- list()
 
 
 
-      .self$workbook <- genBaseWorkbook()
-      .self$workbook.xml.rels <- genBaseWorkbook.xml.rels()
+      self$workbook <- genBaseWorkbook()
+      self$workbook.xml.rels <- genBaseWorkbook.xml.rels()
 
-      .self$worksheets <- list()
-      .self$worksheets_rels <- list()
+      self$worksheets <- list()
+      self$worksheets_rels <- list()
 
-      if (length(path)) {
-        .self$path <- path
+      if (length(self$path)) {
+        self$path <- path
+      } else {
+        self$path <- NULL
       }
 
       # FIXME styleObjectsList() may be getting removed [11]
-      .self$styleObjectsList <- list()
+      self$styleObjectsList <- list()
 
-      invisible(.self)
+      self
     },
 
 
-    addWorksheet = function(sheetName,
+    #' @description
+    #' Add worksheet to the `wbWorkbook` object
+    #' @param sheetName sheetName
+    #' @param showGridLines showGridLines
+    #' @param tabColour tabColour
+    #' @param zoom zoom
+    #' @param oddHeader oddHeader
+    #' @param oddFooter oddFooter
+    #' @param evenHeader evenHeader
+    #' @param evenFooter evenFooter
+    #' @param firstHeader firstHeader
+    #' @param firstFooter firstFooter
+    #' @param visible visible
+    #' @param hasDrawing hasDrawing
+    #' @param paperSize paperSize
+    #' @param orientation orientation
+    #' @param hdpi hdpi
+    #' @param vdpi vdpi
+    #' @return The `wbWorkbook` object, invisibly
+    addWorksheet = function(
+      sheetName,
       showGridLines = TRUE,
       tabColour = NULL,
       zoom = 100,
@@ -173,19 +294,20 @@ Workbook <- setRefClass(
       paperSize = 9,
       orientation = "portrait",
       hdpi = 300,
-      vdpi = 300) {
+      vdpi = 300
+    ) {
       if (!missing(sheetName)) {
         if (grepl(pattern = ":", x = sheetName)) {
           stop("colon not allowed in sheet names in Excel")
         }
       }
-      newSheetIndex <- length(.self$worksheets) + 1L
+      newSheetIndex <- length(self$worksheets) + 1L
 
       if (newSheetIndex > 1) {
         sheetId <-
           max(as.integer(regmatches(
-            workbook$sheets,
-            regexpr('(?<=sheetId=")[0-9]+', workbook$sheets, perl = TRUE)
+            self$workbook$sheets,
+            regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets, perl = TRUE)
           ))) + 1L
       } else {
         sheetId <- 1
@@ -207,9 +329,9 @@ Workbook <- setRefClass(
 
 
       ##  Add sheet to workbook.xml
-      .self$workbook$sheets <-
+      self$workbook$sheets <-
         c(
-          workbook$sheets,
+          self$workbook$sheets,
           sprintf(
             '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
             sheetName,
@@ -220,9 +342,9 @@ Workbook <- setRefClass(
         )
 
       ## append to worksheets list
-      .self$worksheets <-
+      self$worksheets <-
         append(
-          .self$worksheets,
+          self$worksheets,
           Worksheet$new(
             showGridLines = showGridLines,
             tabSelected   = newSheetIndex == 1,
@@ -245,118 +367,8 @@ Workbook <- setRefClass(
       ## update content_tyes
       ## add a drawing.xml for the worksheet
       if (hasDrawing) {
-        .self$Content_Types <-
-          c(
-            Content_Types,
-            sprintf(
-              '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
-              newSheetIndex
-            ),
-            sprintf(
-              '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-              newSheetIndex
-            )
-          )
-      } else {
-        .self$Content_Types <-
-          c(
-            Content_Types,
-            sprintf(
-              '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
-              newSheetIndex
-            )
-          )
-      }
-
-      ## Update xl/rels
-      .self$workbook.xml.rels <- c(
-        workbook.xml.rels,
-        sprintf(
-          '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>',
-          newSheetIndex
-        )
-      )
-
-
-      ## create sheet.rels to simplify id assignment
-      .self$worksheets_rels[[newSheetIndex]] <-
-        genBaseSheetRels(newSheetIndex)
-      .self$drawings_rels[[newSheetIndex]] <- list()
-      .self$drawings[[newSheetIndex]] <- list()
-
-      .self$vml_rels[[newSheetIndex]] <- list()
-      .self$vml[[newSheetIndex]] <- list()
-
-      .self$isChartSheet[[newSheetIndex]] <- FALSE
-      .self$comments[[newSheetIndex]] <- list()
-      .self$threadComments[[newSheetIndex]] <- list()
-
-      .self$rowHeights[[newSheetIndex]] <- list()
-      .self$colWidths[[newSheetIndex]] <- list()
-      .self$colOutlineLevels[[newSheetIndex]] <- list()
-      .self$outlineLevels[[newSheetIndex]] <- list()
-
-      .self$sheetOrder <- c(.self$sheetOrder, as.integer(newSheetIndex))
-      .self$sheet_names <- c(.self$sheet_names, sheetName)
-
-      # TODO this should live wherever the other default values for an empty worksheet are initialized
-      empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-      .self$styles$cellXfs <- write_xf(empty_cellXfs)
-
-      # Jordan is a little worried this may change something
-      # invisible(newSheetIndex)
-      invisible(.self)
-    },
-
-    cloneWorksheet = function(sheetName, clonedSheet) {
-      clonedSheet <- .self$validateSheet(clonedSheet)
-      if (!missing(sheetName)) {
-        if (grepl(pattern = ":", x = sheetName)) {
-          stop("colon not allowed in sheet names in Excel")
-        }
-      }
-      newSheetIndex <- length(.self$worksheets) + 1L
-      if (newSheetIndex > 1) {
-        sheetId <-
-          max(as.integer(regmatches(
-            .self$workbook$sheets,
-            regexpr('(?<=sheetId=")[0-9]+', .self$workbook$sheets, perl = TRUE)
-          ))) + 1L
-      } else {
-        sheetId <- 1
-      }
-
-
-      ## copy visibility from cloned sheet!
-      visible <-
-        regmatches(
-          .self$workbook$sheets[[clonedSheet]],
-          regexpr('(?<=state=")[^"]+', .self$workbook$sheets[[clonedSheet]], perl = TRUE)
-        )
-
-      ##  Add sheet to workbook.xml
-      .self$workbook$sheets <-
-        c(
-          workbook$sheets,
-          sprintf(
-            '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-            sheetName,
-            sheetId,
-            visible,
-            newSheetIndex
-          )
-        )
-
-      ## append to worksheets list
-      .self$worksheets <-
-        append(.self$worksheets, .self$worksheets[[clonedSheet]]$clone())
-
-
-      ## update content_tyes
-      ## add a drawing.xml for the worksheet
-      .self$Content_Types <-
-        c(
-          .self$Content_Types,
+        self$Content_Types <- c(
+          self$Content_Types,
           sprintf(
             '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
             newSheetIndex
@@ -366,10 +378,116 @@ Workbook <- setRefClass(
             newSheetIndex
           )
         )
+      } else {
+        self$Content_Types <- c(
+          self$Content_Types,
+          sprintf(
+            '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
+            newSheetIndex
+          )
+        )
+      }
 
       ## Update xl/rels
-      .self$workbook.xml.rels <- c(
-        .self$workbook.xml.rels,
+      self$workbook.xml.rels <- c(
+        self$workbook.xml.rels,
+        sprintf(
+          '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>',
+          newSheetIndex
+        )
+      )
+
+
+      ## create sheet.rels to simplify id assignment
+      self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
+      self$drawings_rels[[newSheetIndex]]    <- list()
+      self$drawings[[newSheetIndex]]         <- list()
+      self$vml_rels[[newSheetIndex]]         <- list()
+      self$vml[[newSheetIndex]]              <- list()
+      self$isChartSheet[[newSheetIndex]]     <- FALSE
+      self$comments[[newSheetIndex]]         <- list()
+      self$threadComments[[newSheetIndex]]   <- list()
+      self$rowHeights[[newSheetIndex]]       <- list()
+      self$colWidths[[newSheetIndex]]        <- list()
+      self$colOutlineLevels[[newSheetIndex]] <- list()
+      self$outlineLevels[[newSheetIndex]]    <- list()
+      self$sheetOrder                        <- c(self$sheetOrder, as.integer(newSheetIndex))
+      self$sheet_names                       <- c(self$sheet_names, sheetName)
+
+      # TODO this should live wherever the other default values for an empty worksheet are initialized
+      empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
+      self$styles$cellXfs <- write_xf(empty_cellXfs)
+
+      # Jordan is a little worried this may change something
+      # invisible(newSheetIndex)
+      invisible(self)
+    },
+
+    # TODO should this be as simple as: wb$addWorksheet(wb$worksheets[[1]]$clone()) ?
+
+    #' @description
+    #' Clone a workbooksheet
+    #' @param sheetName sheetName
+    #' @param clonedSheet clonedSheet
+    cloneWorksheet = function(sheetName, clonedSheet) {
+      clonedSheet <- self$validateSheet(clonedSheet)
+      if (!missing(sheetName)) {
+        if (grepl(pattern = ":", x = sheetName)) {
+          stop("colon not allowed in sheet names in Excel")
+        }
+      }
+      newSheetIndex <- length(self$worksheets) + 1L
+      if (newSheetIndex > 1) {
+        sheetId <-
+          max(as.integer(regmatches(
+            self$workbook$sheets,
+            regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets, perl = TRUE)
+          ))) + 1L
+      } else {
+        sheetId <- 1
+      }
+
+
+      ## copy visibility from cloned sheet!
+      visible <-
+        regmatches(
+          self$workbook$sheets[[clonedSheet]],
+          regexpr('(?<=state=")[^"]+', self$workbook$sheets[[clonedSheet]], perl = TRUE)
+        )
+
+      ##  Add sheet to workbook.xml
+      self$workbook$sheets <- c(
+        self$workbook$sheets,
+        sprintf(
+          '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
+          sheetName,
+          sheetId,
+          visible,
+          newSheetIndex
+        )
+        )
+
+      ## append to worksheets list
+      self$worksheets <- c(self$worksheets, self$worksheets[[clonedSheet]]$clone())
+
+
+      ## update content_tyes
+      ## add a drawing.xml for the worksheet
+      self$Content_Types <- c(
+        self$Content_Types,
+        sprintf(
+          '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
+          newSheetIndex
+        ),
+        sprintf(
+          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
+          newSheetIndex
+        )
+      )
+
+      ## Update xl/rels
+      self$workbook.xml.rels <- c(
+        self$workbook.xml.rels,
         sprintf(
           '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>',
           newSheetIndex
@@ -377,48 +495,48 @@ Workbook <- setRefClass(
       )
 
       ## create sheet.rels to simplify id assignment
-      .self$worksheets_rels[[newSheetIndex]] <-
+      self$worksheets_rels[[newSheetIndex]] <-
         genBaseSheetRels(newSheetIndex)
-      .self$drawings_rels[[newSheetIndex]] <- .self$drawings_rels[[clonedSheet]]
+      self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[clonedSheet]]
 
       # give each chart its own filename (images can re-use the same file, but charts can't)
-      .self$drawings_rels[[newSheetIndex]] <-
-        sapply(.self$drawings_rels[[newSheetIndex]], function(rl) {
+      self$drawings_rels[[newSheetIndex]] <-
+        sapply(self$drawings_rels[[newSheetIndex]], function(rl) {
           chartfiles <-
             regmatches(
               rl,
               gregexpr("(?<=charts/)chart[0-9]+\\.xml", rl, perl = TRUE)
             )[[1]]
           for (cf in chartfiles) {
-            chartid <- length(.self$charts) + 1
+            chartid <- length(self$charts) + 1
             newname <- stri_join("chart", chartid, ".xml")
-            fl <- .self$charts[cf]
+            fl <- self$charts[cf]
 
             # Read the chartfile and adjust all formulas to point to the new
             # sheet name instead of the clone source
             # The result is saved to a new chart xml file
             newfl <- file.path(dirname(fl), newname)
-            .self$charts[newname] <- newfl
+            self$charts[newname] <- newfl
             chart <- read_xml(fl, pointer = FALSE)
             chart <-
               gsub(
-                stri_join("(?<=')", .self$sheet_names[[clonedSheet]], "(?='!)"),
+                stri_join("(?<=')", self$sheet_names[[clonedSheet]], "(?='!)"),
                 stri_join("'", sheetName, "'"),
                 chart,
                 perl = TRUE
               )
             chart <-
               gsub(
-                stri_join("(?<=[^A-Za-z0-9])", .self$sheet_names[[clonedSheet]], "(?=!)"),
+                stri_join("(?<=[^A-Za-z0-9])", self$sheet_names[[clonedSheet]], "(?=!)"),
                 stri_join("'", sheetName, "'"),
                 chart,
                 perl = TRUE
               )
             writeLines(chart, newfl)
             # file.copy(fl, newfl)
-            .self$Content_Types <-
+            self$Content_Types <-
               c(
-                Content_Types,
+                self$Content_Types,
                 sprintf(
                   '<Override PartName="/xl/charts/%s" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>',
                   newname
@@ -430,23 +548,23 @@ Workbook <- setRefClass(
         }, USE.NAMES = FALSE)
       # The IDs in the drawings array are sheet-specific, so within the new cloned sheet
       # the same IDs can be used => no need to modify drawings
-      .self$drawings[[newSheetIndex]] <- .self$drawings[[clonedSheet]]
+      self$drawings[[newSheetIndex]] <- self$drawings[[clonedSheet]]
 
-      .self$vml_rels[[newSheetIndex]] <- .self$vml_rels[[clonedSheet]]
-      .self$vml[[newSheetIndex]] <- .self$vml[[clonedSheet]]
+      self$vml_rels[[newSheetIndex]] <- self$vml_rels[[clonedSheet]]
+      self$vml[[newSheetIndex]] <- self$vml[[clonedSheet]]
 
-      .self$isChartSheet[[newSheetIndex]] <- .self$isChartSheet[[clonedSheet]]
-      .self$comments[[newSheetIndex]] <- .self$comments[[clonedSheet]]
-      .self$threadComments[[newSheetIndex]] <- .self$threadComments[[clonedSheet]]
+      self$isChartSheet[[newSheetIndex]] <- self$isChartSheet[[clonedSheet]]
+      self$comments[[newSheetIndex]] <- self$comments[[clonedSheet]]
+      self$threadComments[[newSheetIndex]] <- self$threadComments[[clonedSheet]]
 
-      .self$rowHeights[[newSheetIndex]] <- .self$rowHeights[[clonedSheet]]
-      .self$colWidths[[newSheetIndex]] <- .self$colWidths[[clonedSheet]]
+      self$rowHeights[[newSheetIndex]] <- self$rowHeights[[clonedSheet]]
+      self$colWidths[[newSheetIndex]] <- self$colWidths[[clonedSheet]]
 
-      .self$colOutlineLevels[[newSheetIndex]] <- .self$colOutlineLevels[[clonedSheet]]
-      .self$outlineLevels[[newSheetIndex]] <- .self$outlineLevels[[clonedSheet]]
+      self$colOutlineLevels[[newSheetIndex]] <- self$colOutlineLevels[[clonedSheet]]
+      self$outlineLevels[[newSheetIndex]] <- self$outlineLevels[[clonedSheet]]
 
-      .self$sheetOrder <- c(.self$sheetOrder, as.integer(newSheetIndex))
-      .self$sheet_names <- c(.self$sheet_names, sheetName)
+      self$sheetOrder <- c(self$sheetOrder, as.integer(newSheetIndex))
+      self$sheet_names <- c(self$sheet_names, sheetName)
 
 
       ############################
@@ -455,15 +573,22 @@ Workbook <- setRefClass(
       ## assigned to the cloned sheet and duplicate them
 
       # TODO can we replace Filter() and Map()?
-      sheetStyles <- Filter(function(s) {
-        s$sheet == sheet_names[[clonedSheet]]
-      }, .self$styleObjects)
-      .self$styleObjects <- c(
-        .self$styleObjects,
-        Map(function(s) {
-          s$sheet <- sheetName
-          s
-        }, sheetStyles)
+
+
+      sheetStyles <- Filter(
+        function(s) s$sheet == self$sheet_names[[clonedSheet]],
+        self$styleObjects
+      )
+
+      self$styleObjects <- c(
+        self$styleObjects,
+        Map(
+          function(s) {
+            s$sheet <- sheetName
+            s
+          },
+          sheetStyles
+        )
       )
 
 
@@ -473,7 +598,8 @@ Workbook <- setRefClass(
       ## and in the worksheets[]$tableParts list. We also need to adjust the
       ## worksheets_rels and set the content type for the new table
 
-      tbls <- .self$tables[attr(.self$tables, "sheet") == clonedSheet]
+      tbls <- self$tables[attr(self$tables, "sheet") == clonedSheet]
+
       for (t in tbls) {
         # Extract table name, displayName and ID from the xml
         oldname <- regmatches(t, regexpr('(?<= name=")[^"]+', t, perl = TRUE))
@@ -483,69 +609,61 @@ Workbook <- setRefClass(
 
         # Find new, unused table names by appending _n, where n=1,2,...
         n <- 0
-        while (stri_join(oldname, "_", n) %in% attr(.self$tables, "tableName")) {
+        while (stri_join(oldname, "_", n) %in% attr(self$tables, "tableName")) {
           n <- n + 1
         }
+
         newname <- stri_join(oldname, "_", n)
         newdispname <- stri_join(olddispname, "_", n)
-        newid <- as.character(length(.self$tables) + 3L)
+        newid <- as.character(length(self$tables) + 3L)
 
         # Use the table definition from the cloned sheet and simply replace the names
         newt <- t
-        newt <-
-          gsub(
-            stri_join(" name=\"", oldname, "\""),
-            stri_join(" name=\"", newname, "\""),
-            newt
-          )
-        newt <-
-          gsub(
-            stri_join(" displayName=\"", olddispname, "\""),
-            stri_join(" displayName=\"", newdispname, "\""),
-            newt
-          )
-        newt <-
-          gsub(
-            stri_join("(<table [^<]* id=\")", oldid, "\""),
-            stri_join("\\1", newid, "\""),
-            newt
-          )
+        newt <- gsub(
+          stri_join(" name=\"", oldname, "\""),
+          stri_join(" name=\"", newname, "\""),
+          newt
+        )
+        newt <- gsub(
+          stri_join(" displayName=\"", olddispname, "\""),
+          stri_join(" displayName=\"", newdispname, "\""),
+          newt
+        )
+        newt <- gsub(
+          stri_join("(<table [^<]* id=\")", oldid, "\""),
+          stri_join("\\1", newid, "\""),
+          newt
+        )
 
-        oldtables <- .self$tables
-        .self$tables <- c(oldtables, newt)
-        names(.self$tables) <- c(names(oldtables), ref)
-        attr(.self$tables, "sheet") <-
-          c(attr(oldtables, "sheet"), newSheetIndex)
-        attr(.self$tables, "tableName") <-
-          c(attr(oldtables, "tableName"), newname)
+        oldtables <- self$tables
+        self$tables <- c(oldtables, newt)
+        names(self$tables) <- c(names(oldtables), ref)
+        attr(self$tables, "sheet") <- c(attr(oldtables, "sheet"), newSheetIndex)
+        attr(self$tables, "tableName") <- c(attr(oldtables, "tableName"), newname)
 
-        oldparts <- .self$worksheets[[newSheetIndex]]$tableParts
-        .self$worksheets[[newSheetIndex]]$tableParts <-
-          c(oldparts, sprintf('<tablePart r:id="rId%s"/>', newid))
-        attr(.self$worksheets[[newSheetIndex]]$tableParts, "tableName") <-
-          c(attr(oldparts, "tableName"), newname)
-        names(attr(.self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <-
-          c(names(attr(oldparts, "tableName")), ref)
+        oldparts <- self$worksheets[[newSheetIndex]]$tableParts
+        self$worksheets[[newSheetIndex]]$tableParts <- c(oldparts, sprintf('<tablePart r:id="rId%s"/>', newid))
+        attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName") <- c(attr(oldparts, "tableName"), newname)
+        names(attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <- c(names(attr(oldparts, "tableName")), ref)
 
-        .self$Content_Types <-
-          c(
-            .self$Content_Types,
-            sprintf(
-              '<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
-              newid
-            )
+        self$Content_Types <- c(
+          self$Content_Types,
+          sprintf(
+            '<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
+            newid
           )
-        .self$tables.xml.rels <- append(.self$tables.xml.rels, "")
+        )
 
-        .self$worksheets_rels[[newSheetIndex]] <-
-          c(
-            .self$worksheets_rels[[newSheetIndex]],
-            sprintf(
-              '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-              newid,
-              newid
-            )
+        self$tables.xml.rels <- c(self$tables.xml.rels, "")
+
+        self$worksheets_rels[[newSheetIndex]] <- c(
+          self$worksheets_rels[[newSheetIndex]],
+          sprintf(
+            '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
+            newid,
+            newid
           )
+        )
       }
 
       # TODO: The following items are currently NOT copied/duplicated for the cloned sheet:
@@ -553,107 +671,106 @@ Workbook <- setRefClass(
       #   - Pivot tables
 
       # invisible(newSheetIndex)
-      invisible(.self)
+      invisible(self)
     },
 
-    addChartSheet = function(sheetName,
-      tabColour = NULL,
-      zoom = 100) {
+    #' @description
+    #' Add a chart sheet to the workbook
+    #' @param sheetName sheetName
+    #' @param tabColour tabColour
+    #' @param zoom zoom
+    #' @return The `wbWorkbook` object, invisibly
+    addChartSheet = function(sheetName, tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
-      newSheetIndex <- length(.self$worksheets) + 1L
+      newSheetIndex <- length(self$worksheets) + 1L
 
       if (newSheetIndex > 1) {
         sheetId <-
           max(as.integer(regmatches(
-            .self$workbook$sheets,
-            regexpr('(?<=sheetId=")[0-9]+', .self$workbook$sheets, perl = TRUE)
+            self$workbook$sheets,
+            regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets, perl = TRUE)
           ))) + 1L
       } else {
         sheetId <- 1
       }
 
       ##  Add sheet to workbook.xml
-      .self$workbook$sheets <-
-        c(
-          .self$workbook$sheets,
-          sprintf(
-            '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-            sheetName,
-            sheetId,
-            newSheetIndex
-          )
+      self$workbook$sheets <- c(
+        self$workbook$sheets,
+        sprintf(
+          '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
+          sheetName,
+          sheetId,
+          newSheetIndex
         )
+      )
 
       ## append to worksheets list
-      .self$worksheets <-
-        append(
-          .self$worksheets,
-          ChartSheet$new(
-            tabSelected = newSheetIndex == 1,
-            tabColour = tabColour,
-            zoom = zoom
-          )
+      self$worksheets <- c(
+        self$worksheets,
+        ChartSheet$new(
+          tabSelected = newSheetIndex == 1,
+          tabColour = tabColour,
+          zoom = zoom
         )
-      .self$sheet_names <- c(.self$sheet_names, sheetName)
+      )
+
+      self$sheet_names <- c(self$sheet_names, sheetName)
 
       ## update content_tyes
-      .self$Content_Types <-
-        c(
-          .self$Content_Types,
-          sprintf(
-            '<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>',
-            newSheetIndex
-          )
+      self$Content_Types <- c(
+        self$Content_Types,
+        sprintf(
+          '<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>',
+          newSheetIndex
         )
+      )
 
       ## Update xl/rels
-      .self$workbook.xml.rels <- c(
-        .self$workbook.xml.rels,
+      self$workbook.xml.rels <- c(
+        self$workbook.xml.rels,
         sprintf(
           '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>',
           newSheetIndex
         )
       )
 
-
-
       ## add a drawing.xml for the worksheet
-      .self$Content_Types <-
-        c(
-          .self$Content_Types,
-          sprintf(
-            '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-            newSheetIndex
-          )
+      self$Content_Types <- c(
+        self$Content_Types,
+        sprintf(
+          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
+          newSheetIndex
         )
+      )
 
       ## create sheet.rels to simplify id assignment
-      .self$worksheets_rels[[newSheetIndex]] <-
-        genBaseSheetRels(newSheetIndex)
-      .self$drawings_rels[[newSheetIndex]] <- list()
-      .self$drawings[[newSheetIndex]] <- list()
-
-      .self$isChartSheet[[newSheetIndex]] <- TRUE
-
-      .self$rowHeights[[newSheetIndex]] <- list()
-      .self$colWidths[[newSheetIndex]] <- list()
-
-      .self$colOutlineLevels[[newSheetIndex]] <- list()
-      .self$outlineLevels[[newSheetIndex]] <- list()
-
-      .self$vml_rels[[newSheetIndex]] <- list()
-      .self$vml[[newSheetIndex]] <- list()
-
-      .self$sheetOrder <- c(.self$sheetOrder, newSheetIndex)
+      self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
+      self$drawings_rels[[newSheetIndex]]    <- list()
+      self$drawings[[newSheetIndex]]         <- list()
+      self$isChartSheet[[newSheetIndex]]     <- TRUE
+      self$rowHeights[[newSheetIndex]]       <- list()
+      self$colWidths[[newSheetIndex]]        <- list()
+      self$colOutlineLevels[[newSheetIndex]] <- list()
+      self$outlineLevels[[newSheetIndex]]    <- list()
+      self$vml_rels[[newSheetIndex]]         <- list()
+      self$vml[[newSheetIndex]]              <- list()
+      self$sheetOrder                        <- c(self$sheetOrder, newSheetIndex)
 
       # invisible(newSheetIndex)
-      invisible(.self)
+      invisible(self)
     },
 
     # TODO saveWorkbook can be shortened a lot by some formatting and by using a
     # function that creates all the temporary directories and subdirectries as a
     # named list
-    saveWorkbook = function(path = .self$path, overwrite = TRUE) {
+
+    #' @description
+    #' Save the workbook
+    #' @param path The path to save the workbook to
+    #' @param overwrite If `FALSE` will not overwrite when `path` is not empty
+    #' @return The `wbWorkbook` object invisibly
+    saveWorkbook = function(path = self$path, overwrite = TRUE) {
       assert_class(path, "character")
       assert_class(overwrite, "logical")
 
@@ -674,16 +791,16 @@ Workbook <- setRefClass(
         stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
       }
 
-      .self$preSaveCleanUp()
+      private$preSaveCleanUp()
 
-      nSheets <- length(.self$worksheets)
-      nThemes <- length(.self$theme)
-      nPivots <- length(.self$pivotDefinitions)
-      nSlicers <- length(.self$slicers)
-      nComments <- sum(lengths(.self$comments) > 0)
-      nThreadComments <- sum(lengths(.self$threadComments) > 0)
-      nPersons <- length(.self$persons)
-      nVML <- sum(lengths(.self$vml) > 0)
+      nSheets <- length(self$worksheets)
+      nThemes <- length(self$theme)
+      nPivots <- length(self$pivotDefinitions)
+      nSlicers <- length(self$slicers)
+      nComments <- sum(lengths(self$comments) > 0)
+      nThreadComments <- sum(lengths(self$threadComments) > 0)
+      nPersons <- length(self$persons)
+      nVML <- sum(lengths(self$vml) > 0)
 
       relsDir <- file.path(tmpDir, "_rels")
       dir.create(path = relsDir, recursive = TRUE)
@@ -703,7 +820,7 @@ Workbook <- setRefClass(
       xlTablesRelsDir <- file.path(xlTablesDir, "_rels")
       dir.create(path = xlTablesRelsDir, recursive = TRUE)
 
-      if (length(.self$media)) {
+      if (length(self$media)) {
         xlmediaDir <- file.path(tmpDir, "xl", "media")
         dir.create(path = xlmediaDir, recursive = TRUE)
       }
@@ -713,7 +830,7 @@ Workbook <- setRefClass(
       xlthemeDir <- file.path(tmpDir, "xl", "theme")
       dir.create(path = xlthemeDir, recursive = TRUE)
 
-      if (is.null(.self$theme)) {
+      if (is.null(self$theme)) {
         con <- file(file.path(xlthemeDir, "theme1.xml"), open = "wb")
         writeBin(charToRaw(genBaseTheme()), con)
         close(con)
@@ -722,7 +839,7 @@ Workbook <- setRefClass(
         lapply(seq_len(nThemes), function(i) {
           con <-
             file(file.path(xlthemeDir, stri_join("theme", i, ".xml")), open = "wb")
-          writeBin(charToRaw(pxml(.self$theme[[i]])), con)
+          writeBin(charToRaw(pxml(self$theme[[i]])), con)
           close(con)
         })
       }
@@ -743,9 +860,9 @@ Workbook <- setRefClass(
       dir.create(path = xldrawingsRelsDir, recursive = TRUE)
 
       ## charts
-      if (length(.self$charts)) {
+      if (length(self$charts)) {
         file.copy(
-          from = dirname(.self$charts[1]),
+          from = dirname(self$charts[1]),
           to = file.path(tmpDir, "xl"),
           recursive = TRUE
         )
@@ -759,16 +876,16 @@ Workbook <- setRefClass(
           if (length(comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
-            .self$Content_Types <- c(
-              .self$Content_Types,
+            self$Content_Types <- c(
+              self$Content_Types,
               sprintf(
                 '<Override PartName="/xl/%s" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
                 fn
               )
             )
 
-            .self$worksheets_rels[[i]] <- unique(c(
-              .self$worksheets_rels[[i]],
+            self$worksheets_rels[[i]] <- unique(c(
+              self$worksheets_rels[[i]],
               sprintf(
                 '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../%s"/>',
                 fn
@@ -776,13 +893,13 @@ Workbook <- setRefClass(
             ))
 
             writeCommentXML(
-              comment_list = .self$comments[[i]],
+              comment_list = self$comments[[i]],
               file_name = file.path(tmpDir, "xl", fn)
             )
           }
         }
 
-        .self$writeDrawingVML(xldrawingsDir)
+        private$writeDrawingVML(xldrawingsDir)
       }
 
       ## Threaded Comments xl/threadedComments/threadedComment.xml
@@ -791,8 +908,8 @@ Workbook <- setRefClass(
         dir.create(path = xlThreadComments, recursive = TRUE)
 
         for (i in seq_len(nSheets)) {
-          if (length(.self$threadComments[[i]])) {
-            fl <- .self$threadComments[[i]]
+          if (length(self$threadComments[[i]])) {
+            fl <- self$threadComments[[i]]
             file.copy(
               from = fl,
               to = file.path(xlThreadComments, basename(fl)),
@@ -800,8 +917,8 @@ Workbook <- setRefClass(
               copy.date = TRUE
             )
 
-            .self$worksheets_rels[[i]] <- unique(c(
-              .self$worksheets_rels[[i]],
+            self$worksheets_rels[[i]] <- unique(c(
+              self$worksheets_rels[[i]],
               sprintf(
                 '<Relationship Id="rIdthread" Type="http://schemas.microsoft.com/office/2017/10/relationships/threadedComment" Target="../threadedComments/%s"/>',
                 basename(fl)
@@ -816,7 +933,7 @@ Workbook <- setRefClass(
         personDir <- file.path(tmpDir, "xl", "persons")
         dir.create(path = personDir, recursive = TRUE)
         file.copy(
-          from = .self$persons,
+          from = self$persons,
           to = personDir,
           overwrite = TRUE
         )
@@ -825,7 +942,7 @@ Workbook <- setRefClass(
 
 
 
-      if (length(.self$embeddings)) {
+      if (length(self$embeddings)) {
         embeddingsDir <- file.path(tmpDir, "xl", "embeddings")
         dir.create(path = embeddingsDir, recursive = TRUE)
         for (fl in embeddings) {
@@ -856,36 +973,36 @@ Workbook <- setRefClass(
           file.path(tmpDir, "xl", "pivotCache", "_rels")
         dir.create(path = pivotCacheRelsDir, recursive = TRUE)
 
-        for (i in seq_along(.self$pivotTables)) {
+        for (i in seq_along(self$pivotTables)) {
           file.copy(
-            from = .self$pivotTables[i],
+            from = self$pivotTables[i],
             to = file.path(pivotTablesDir, sprintf("pivotTable%s.xml", i)),
             overwrite = TRUE,
             copy.date = TRUE
           )
         }
 
-        for (i in seq_along(.self$pivotDefinitions)) {
+        for (i in seq_along(self$pivotDefinitions)) {
           file.copy(
-            from = .self$pivotDefinitions[i],
+            from = self$pivotDefinitions[i],
             to = file.path(pivotCacheDir, sprintf("pivotCacheDefinition%s.xml", i)),
             overwrite = TRUE,
             copy.date = TRUE
           )
         }
 
-        for (i in seq_along(.self$pivotRecords)) {
+        for (i in seq_along(self$pivotRecords)) {
           file.copy(
-            from = .self$pivotRecords[i],
+            from = self$pivotRecords[i],
             to = file.path(pivotCacheDir, sprintf("pivotCacheRecords%s.xml", i)),
             overwrite = TRUE,
             copy.date = TRUE
           )
         }
 
-        for (i in seq_along(.self$pivotDefinitionsRels)) {
+        for (i in seq_along(self$pivotDefinitionsRels)) {
           file.copy(
-            from = .self$pivotDefinitionsRels[i],
+            from = self$pivotDefinitionsRels[i],
             to = file.path(
               pivotCacheRelsDir,
               sprintf("pivotCacheDefinition%s.xml.rels", i)
@@ -895,9 +1012,9 @@ Workbook <- setRefClass(
           )
         }
 
-        for (i in seq_along(.self$pivotTables.xml.rels)) {
+        for (i in seq_along(self$pivotTables.xml.rels)) {
           write_file(
-            body = .self$pivotTables.xml.rels[[i]],
+            body = self$pivotTables.xml.rels[[i]],
             fl = file.path(pivotTablesRelsDir, sprintf("pivotTable%s.xml.rels", i))
           )
         }
@@ -911,18 +1028,18 @@ Workbook <- setRefClass(
         slicerCachesDir <- file.path(tmpDir, "xl", "slicerCaches")
         dir.create(path = slicerCachesDir, recursive = TRUE)
 
-        for (i in seq_along(.self$slicers)) {
+        for (i in seq_along(self$slicers)) {
           # TODO consider nzchar()?
-          if (nchar(.self$slicers[i])) {
-            file.copy(from = .self$slicers[i], to = file.path(slicersDir, sprintf("slicer%s.xml", i)))
+          if (nchar(self$slicers[i])) {
+            file.copy(from = self$slicers[i], to = file.path(slicersDir, sprintf("slicer%s.xml", i)))
           }
         }
 
 
 
-        for (i in seq_along(.self$slicerCaches)) {
+        for (i in seq_along(self$slicerCaches)) {
           write_file(
-            body = .self$slicerCaches[[i]],
+            body = self$slicerCaches[[i]],
             fl = file.path(slicerCachesDir, sprintf("slicerCache%s.xml", i))
           )
         }
@@ -941,7 +1058,7 @@ Workbook <- setRefClass(
 
 
       ## write app.xml
-      if (length(.self$app) == 0) {
+      if (length(self$app) == 0) {
         write_file(
           head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
           body = "<Application>Microsoft Excel</Application>",
@@ -949,9 +1066,9 @@ Workbook <- setRefClass(
           fl = file.path(docPropsDir, "app.xml")
         )
       } else {
-         write_file(
+        write_file(
           head = '',
-          body = pxml(.self$app),
+          body = pxml(self$app),
           tail = '',
           fl = file.path(docPropsDir, "app.xml")
         )
@@ -960,7 +1077,7 @@ Workbook <- setRefClass(
       ## write core.xml
       write_file(
         head = "",
-        body = pxml(.self$core),
+        body = pxml(self$core),
         tail = "",
         fl = file.path(docPropsDir, "core.xml")
       )
@@ -968,7 +1085,7 @@ Workbook <- setRefClass(
       ## write workbook.xml.rels
       write_file(
         head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
-        body = pxml(.self$workbook.xml.rels),
+        body = pxml(self$workbook.xml.rels),
         tail = "</Relationships>",
         fl = file.path(xlrelsDir, "workbook.xml.rels")
       )
@@ -976,16 +1093,16 @@ Workbook <- setRefClass(
       ## write tables
 
       # TODO remove length() check since we have seq_along()
-      if (length(unlist(.self$tables, use.names = FALSE))) {
-        for (i in seq_along(unlist(.self$tables, use.names = FALSE))) {
-          if (!grepl("openxlsx_deleted", attr(.self$tables, "tableName")[i], fixed = TRUE)) {
+      if (length(unlist(self$tables, use.names = FALSE))) {
+        for (i in seq_along(unlist(self$tables, use.names = FALSE))) {
+          if (!grepl("openxlsx_deleted", attr(self$tables, "tableName")[i], fixed = TRUE)) {
             write_file(
-              body = pxml(unlist(.self$tables, use.names = FALSE)[[i]]),
+              body = pxml(unlist(self$tables, use.names = FALSE)[[i]]),
               fl = file.path(xlTablesDir, sprintf("table%s.xml", i))
             )
-            if (.self$tables.xml.rels[[i]] != "") {
+            if (self$tables.xml.rels[[i]] != "") {
               write_file(
-                body = .self$tables.xml.rels[[i]],
+                body = self$tables.xml.rels[[i]],
                 fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", i))
               )
             }
@@ -995,45 +1112,45 @@ Workbook <- setRefClass(
 
 
       ## write query tables
-      if (length(.self$queryTables)) {
+      if (length(self$queryTables)) {
         xlqueryTablesDir <- file.path(tmpDir, "xl", "queryTables")
         dir.create(path = xlqueryTablesDir, recursive = TRUE)
 
-        for (i in seq_along(.self$queryTables)) {
+        for (i in seq_along(self$queryTables)) {
           write_file(
-            body = .self$queryTables[[i]],
+            body = self$queryTables[[i]],
             fl = file.path(xlqueryTablesDir, sprintf("queryTable%s.xml", i))
           )
         }
       }
 
       ## connections
-      if (length(.self$connections)) {
-        write_file(body = .self$connections, fl = file.path(xlDir, "connections.xml"))
+      if (length(self$connections)) {
+        write_file(body = self$connections, fl = file.path(xlDir, "connections.xml"))
       }
 
       ## externalLinks
-      if (length(.self$externalLinks)) {
+      if (length(self$externalLinks)) {
         externalLinksDir <- file.path(tmpDir, "xl", "externalLinks")
         dir.create(path = externalLinksDir, recursive = TRUE)
 
-        for (i in seq_along(.self$externalLinks)) {
+        for (i in seq_along(self$externalLinks)) {
           write_file(
-            body = .self$externalLinks[[i]],
+            body = self$externalLinks[[i]],
             fl = file.path(externalLinksDir, sprintf("externalLink%s.xml", i))
           )
         }
       }
 
       ## externalLinks rels
-      if (length(.self$externalLinksRels)) {
+      if (length(self$externalLinksRels)) {
         externalLinksRelsDir <-
           file.path(tmpDir, "xl", "externalLinks", "_rels")
         dir.create(path = externalLinksRelsDir, recursive = TRUE)
 
-        for (i in seq_along(.self$externalLinksRels)) {
+        for (i in seq_along(self$externalLinksRels)) {
           write_file(
-            body = .self$externalLinksRels[[i]],
+            body = self$externalLinksRels[[i]],
             fl = file.path(
               externalLinksRelsDir,
               sprintf("externalLink%s.xml.rels", i)
@@ -1044,17 +1161,17 @@ Workbook <- setRefClass(
 
       ## media (copy file from origin to destination)
       # TODO replace with seq_along()
-      for (x in .self$media) {
-        file.copy(x, file.path(xlmediaDir, names(.self$media)[which(.self$media == x)]))
+      for (x in self$media) {
+        file.copy(x, file.path(xlmediaDir, names(self$media)[which(self$media == x)]))
       }
 
       ## VBA Macro
-      if (!is.null(.self$vbaProject)) {
-        file.copy(.self$vbaProject, xlDir)
+      if (!is.null(self$vbaProject)) {
+        file.copy(self$vbaProject, xlDir)
       }
 
       ## write worksheet, worksheet_rels, drawings, drawing_rels
-      .self$writeSheetDataXML(
+      private$writeSheetDataXML(
         xldrawingsDir,
         xldrawingsRelsDir,
         xlworksheetsDir,
@@ -1062,16 +1179,16 @@ Workbook <- setRefClass(
       )
 
       ## write sharedStrings.xml
-      ct <- .self$Content_Types
-      if (length(.self$sharedStrings)) {
+      ct <- self$Content_Types
+      if (length(self$sharedStrings)) {
         write_file(
           head = sprintf(
             '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="%s" uniqueCount="%s">',
-            length(.self$sharedStrings),
-            attr(.self$sharedStrings, "uniqueCount")
+            length(self$sharedStrings),
+            attr(self$sharedStrings, "uniqueCount")
           ),
           #body = stri_join(set_sst(attr(sharedStrings, "text")), collapse = "", sep = " "),
-          body = stri_join(.self$sharedStrings, collapse = "", sep = ""),
+          body = stri_join(self$sharedStrings, collapse = "", sep = ""),
           tail = "</sst>",
           fl = file.path(xlDir, "sharedStrings.xml")
         )
@@ -1097,54 +1214,54 @@ Workbook <- setRefClass(
       )
 
 
-      styleXML <- .self$styles
-      if (length(.self$styles$numFmts)) {
+      styleXML <- self$styles
+      if (length(self$styles$numFmts)) {
         styleXML$numFmts <-
           stri_join(
-            sprintf('<numFmts count="%s">', length(.self$styles$numFmts)),
-            pxml(.self$styles$numFmts),
+            sprintf('<numFmts count="%s">', length(self$styles$numFmts)),
+            pxml(self$styles$numFmts),
             "</numFmts>"
           )
       }
       styleXML$fonts <-
         stri_join(
-          sprintf('<fonts count="%s">', length(.self$styles$fonts)),
-          pxml(.self$styles$fonts),
+          sprintf('<fonts count="%s">', length(self$styles$fonts)),
+          pxml(self$styles$fonts),
           "</fonts>"
         )
       styleXML$fills <-
         stri_join(
-          sprintf('<fills count="%s">', length(.self$styles$fills)),
-          pxml(.self$styles$fills),
+          sprintf('<fills count="%s">', length(self$styles$fills)),
+          pxml(self$styles$fills),
           "</fills>"
         )
       styleXML$borders <-
         stri_join(
-          sprintf('<borders count="%s">', length(.self$styles$borders)),
-          pxml(.self$styles$borders),
+          sprintf('<borders count="%s">', length(self$styles$borders)),
+          pxml(self$styles$borders),
           "</borders>"
         )
       styleXML$cellStyleXfs <-
         c(
-          sprintf('<cellStyleXfs count="%s">', length(.self$styles$cellStyleXfs)),
-          pxml(.self$styles$cellStyleXfs),
+          sprintf('<cellStyleXfs count="%s">', length(self$styles$cellStyleXfs)),
+          pxml(self$styles$cellStyleXfs),
           "</cellStyleXfs>"
         )
       styleXML$cellXfs <-
         stri_join(
-          sprintf('<cellXfs count="%s">', length(.self$styles$cellXfs)),
-          paste0(.self$styles$cellXfs, collapse = ""),
+          sprintf('<cellXfs count="%s">', length(self$styles$cellXfs)),
+          paste0(self$styles$cellXfs, collapse = ""),
           "</cellXfs>"
         )
       styleXML$cellStyles <-
         stri_join(
-          sprintf('<cellStyles count="%s">', length(.self$styles$cellStyles)),
-          pxml(.self$styles$cellStyles),
+          sprintf('<cellStyles count="%s">', length(self$styles$cellStyles)),
+          pxml(self$styles$cellStyles),
           "</cellStyles>"
         )
       # styleXML$cellStyles <-
       #   stri_join(
-      #     pxml(.self$styles$tableStyles)
+      #     pxml(self$styles$tableStyles)
       #   )
       # TODO
       # tableStyles
@@ -1153,43 +1270,43 @@ Workbook <- setRefClass(
       # TODO replace ifelse() with just if () else
       styleXML$dxfs <-
         ifelse(
-          length(.self$styles$dxfs) == 0,
+          length(self$styles$dxfs) == 0,
           '<dxfs count="0"/>',
           stri_join(
-            sprintf('<dxfs count="%s">', length(.self$styles$dxfs)),
-            stri_join(unlist(.self$styles$dxfs), sep = " ", collapse = ""),
+            sprintf('<dxfs count="%s">', length(self$styles$dxfs)),
+            stri_join(unlist(self$styles$dxfs), sep = " ", collapse = ""),
             "</dxfs>"
           )
         )
 
       ## write styles.xml
-      #if(class(.self$styles_xml) == "uninitializedField") {
-        write_file(
-          head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">',
-          body = pxml(styleXML),
-          tail = "</styleSheet>",
-          fl = file.path(xlDir, "styles.xml")
-        )
+      #if(class(self$styles_xml) == "uninitializedField") {
+      write_file(
+        head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">',
+        body = pxml(styleXML),
+        tail = "</styleSheet>",
+        fl = file.path(xlDir, "styles.xml")
+      )
       #} else {
       #  write_file(
       #    head = '',
-      #    body = .self$styles_xml,
+      #    body = self$styles_xml,
       #    tail = '',
       #    fl = file.path(xlDir, "styles.xml")
       #  )
       #}
 
-      if (length(.self$calcChain)) {
+      if (length(self$calcChain)) {
         write_file(
-            head = '',
-            body = pxml(.self$calcChain),
-            tail = "",
-            fl = file.path(xlDir, "calcChain.xml")
+          head = '',
+          body = pxml(self$calcChain),
+          tail = "",
+          fl = file.path(xlDir, "calcChain.xml")
         )
       }
 
       ## write workbook.xml
-      workbookXML <- .self$workbook
+      workbookXML <- self$workbook
       workbookXML$sheets <-
         stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
       if (length(workbookXML$definedNames)) {
@@ -1207,15 +1324,15 @@ Workbook <- setRefClass(
         tail = "</workbook>",
         fl = file.path(xlDir, "workbook.xml")
       )
-      .self$workbook$sheets <-
-        .self$workbook$sheets[order(.self$sheetOrder)] ## Need to reset sheet order to allow multiple savings
+      self$workbook$sheets <-
+        self$workbook$sheets[order(self$sheetOrder)] ## Need to reset sheet order to allow multiple savings
 
       ## compress to xlsx
 
       tmpFile <- tempfile(
         tmpdir = tmpDir,
-        # TODO make .self$vbaProject be TRUE/FALSE
-        fileext = if (isTRUE(.self$vbaProject)) ".xlsm" else ".xlsx"
+        # TODO make self$vbaProject be TRUE/FALSE
+        fileext = if (isTRUE(self$vbaProject)) ".xlsm" else ".xlsx"
       )
 
       ## zip it
@@ -1237,58 +1354,73 @@ Workbook <- setRefClass(
       }
 
       # (re)assign file path (if successful)
-      .self$path <- path
-      invisible(.self)
+      self$path <- path
+      invisible(self)
     },
 
-    updateSharedStrings = function(uNewStr) {
-      ## Function will return named list of references to new strings
-      uStr <- uNewStr[which(!uNewStr %in% .self$sharedStrings)]
-      uCount <- attr(.self$sharedStrings, "uniqueCount")
-      .self$sharedStrings <- append(.self$sharedStrings, uStr)
-
-      attr(.self$sharedStrings, "uniqueCount") <- uCount + length(uStr)
-      invisible(.self)
-    },
-
-    # Doesn't make any assignments, could be pulled out
+    #' @description
+    #' Validate sheet
+    #' @param sheetName The sheet name to validate
+    #' @return The sheet name -- or the position?  This should be consistent
     validateSheet = function(sheetName) {
+      # TODO pull out:  Doesn't make any assignments, could be pulled out
+      # TODO use a consistent return value
       if (!is.numeric(sheetName)) {
-        if (is.null(.self$sheet_names)) {
+        if (is.null(self$sheet_names)) {
           stop("Workbook does not contain any worksheets.", call. = FALSE)
         }
       }
 
       if (is.numeric(sheetName)) {
-        if (sheetName > length(.self$sheet_names)) {
-          stop(sprintf("This Workbook only has %s sheets.", length(.self$sheet_names)),
+        if (sheetName > length(self$sheet_names)) {
+          stop(sprintf("This Workbook only has %s sheets.", length(self$sheet_names)),
             call. =
               FALSE
           )
         }
 
-        # TODO consider return(invisible(.self))
+        # TODO consider return(invisible(self))
         return(sheetName)
-      } else if (!sheetName %in% replaceXMLEntities(.self$sheet_names)) {
+      } else if (!sheetName %in% replaceXMLEntities(self$sheet_names)) {
         stop(sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheetName)), call. = FALSE)
       }
 
-      return(which(replaceXMLEntities(sheet_names) == sheetName))
+      return(which(replaceXMLEntities(self$sheet_names) == sheetName))
     },
 
     # TODO Does this need to be checked?  No sheet name can be NA right?
-    # res <- .self$sheet_names[ind]; stopifnot(!anyNA(ind))
+    # res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
 
     # Doesn't make any assignments, could be pulled out
+    #' @description
+    #' Get sheet name
+    #' @param sheetIndex Sheet name index
+    #' @return The sheet index
     getSheetName = function(sheetIndex) {
-      if (any(length(.self$sheet_names) < sheetIndex)) {
-        stop(sprintf("Workbook only contains %s sheet(s).", length(.self$sheet_names)))
+      if (any(length(self$sheet_names) < sheetIndex)) {
+        stop(sprintf("Workbook only contains %s sheet(s).", length(self$sheet_names)))
       }
 
-      .self$sheet_names[sheetIndex]
+      self$sheet_names[sheetIndex]
     },
 
-    buildTable = function(sheet,
+    #' @description
+    #' Build table
+    #' @param sheet sheet
+    #' @param colNames colNames
+    #' @param ref ref
+    #' @param showColNames showColNames
+    #' @param tableStyle tableStyle
+    #' @param tableName tableName
+    #' @param withFilter withFilter
+    #' @param totalsRowCount totalsRowCount
+    #' @param showFirstColumn showFirstColumn
+    #' @param showLastColumn showLastColumn
+    #' @param showRowStripes showRowStripes
+    #' @param showColumnStripes showColumnStripes
+    #' @return The `wbWorksheet` object, invisibly
+    buildTable = function(
+      sheet,
       colNames,
       ref,
       showColNames,
@@ -1299,20 +1431,21 @@ Workbook <- setRefClass(
       showFirstColumn = 0,
       showLastColumn = 0,
       showRowStripes = 1,
-      showColumnStripes = 0) {
+      showColumnStripes = 0
+    ) {
 
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
-      id <- as.character(length(.self$tables) + 3L)
-      sheet <- .self$validateSheet(sheet)
+      id <- as.character(length(self$tables) + 3L)
+      sheet <- self$validateSheet(sheet)
 
-      nms <- names(.self$tables)
-      tSheets <- attr(.self$tables, "sheet")
-      tNames <- attr(.self$tables, "tableName")
+      nms <- names(self$tables)
+      tSheets <- attr(self$tables, "sheet")
+      tNames <- attr(self$tables, "tableName")
 
 
       ### autofilter
       autofilter <- if (withFilter) {
-       xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = ref))
+        xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = ref))
       } else {
         NULL
       }
@@ -1323,17 +1456,19 @@ Workbook <- setRefClass(
         xml_node_create("tableColumn", xml_attributes = c(id = id, name = x))
       })
 
-      tableColumns <- xml_node_create(xml_name = "tableColumns",
-                                      xml_children = tableColumn,
-                                      xml_attributes = c(count = as.character(length(colNames))))
+      tableColumns <- xml_node_create(
+        xml_name = "tableColumns",
+        xml_children = tableColumn,
+        xml_attributes = c(count = as.character(length(colNames)))
+      )
 
 
       ### tableStyleInfo
       tablestyle_attr <- c(
-        name = tableStyle,
-        showFirstColumn = as.integer(showFirstColumn),
-        showLastColumn = as.integer(showLastColumn),
-        showRowStripes = as.integer(showRowStripes),
+        name              = tableStyle,
+        showFirstColumn   = as.integer(showFirstColumn),
+        showLastColumn    = as.integer(showLastColumn),
+        showRowStripes    = as.integer(showRowStripes),
         showColumnStripes = as.integer(showColumnStripes)
       )
 
@@ -1342,54 +1477,54 @@ Workbook <- setRefClass(
 
       ### full table
       table_attrs <- c(
-        xmlns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
-        `xmlns:mc` = "http://schemas.openxmlformats.org/markup-compatibility/2006",
-        id = id,
-        name = tableName,
-        displayName = tableName,
-        ref = ref,
+        xmlns          = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+        `xmlns:mc`     = "http://schemas.openxmlformats.org/markup-compatibility/2006",
+        id             = id,
+        name           = tableName,
+        displayName    = tableName,
+        ref            = ref,
         totalsRowCount = totalsRowCount,
-        totalsRowShown="0"
+        totalsRowShown = "0"
         #headerRowDxfId="1"
       )
 
-      .self$tables <- c(
-        .self$tables,
+      self$tables <- c(
+        self$tables,
         xml_node_create(xml_name = "table",
-                        xml_children = c(autofilter, tableColumns, tableStyleXML),
-                        xml_attributes = table_attrs)
+          xml_children = c(autofilter, tableColumns, tableStyleXML),
+          xml_attributes = table_attrs)
       )
 
-      names(.self$tables) <- c(nms, ref)
-      attr(.self$tables, "sheet") <- c(tSheets, sheet)
-      attr(.self$tables, "tableName") <- c(tNames, tableName)
+      names(self$tables) <- c(nms, ref)
+      attr(self$tables, "sheet") <- c(tSheets, sheet)
+      attr(self$tables, "tableName") <- c(tNames, tableName)
 
-      .self$worksheets[[sheet]]$tableParts <-
-        append(
-          .self$worksheets[[sheet]]$tableParts,
-          sprintf('<tablePart r:id="rId%s"/>', id)
-        )
-      attr(.self$worksheets[[sheet]]$tableParts, "tableName") <-
-        c(tNames[tSheets == sheet &
-            !grepl("openxlsx_deleted", tNames, fixed = TRUE)], tableName)
+      self$worksheets[[sheet]]$tableParts <- c(
+        self$worksheets[[sheet]]$tableParts,
+        sprintf('<tablePart r:id="rId%s"/>', id)
+      )
+      attr(self$worksheets[[sheet]]$tableParts, "tableName") <- c(
+        tNames[tSheets == sheet & !grepl("openxlsx_deleted", tNames, fixed = TRUE)],
+        tableName
+      )
 
 
 
       ## update Content_Types
-      .self$Content_Types <-
-        c(          .self$Content_Types,
-          sprintf(
-            '<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
-            id
-          )
+      self$Content_Types <- c(
+        self$Content_Types,
+        sprintf(
+          '<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
+          id
         )
+      )
 
       ## create a table.xml.rels
-      .self$tables.xml.rels <- append(.self$tables.xml.rels, "")
+      self$tables.xml.rels <- c(self$tables.xml.rels, "")
 
       ## update worksheets_rels
-      .self$worksheets_rels[[sheet]] <- c(
-        .self$worksheets_rels[[sheet]],
+      self$worksheets_rels[[sheet]] <- c(
+        self$worksheets_rels[[sheet]],
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
           id,
@@ -1397,380 +1532,20 @@ Workbook <- setRefClass(
         )
       )
 
-      invisible(.self)
+      invisible(self)
     },
 
-    writeDrawingVML = function(dir) {
-      for (i in seq_along(.self$comments)) {
-        id <- 1025
 
-        cd <- unlist(lapply(.self$comments[[i]], "[[", "clientData"))
-        nComments <- length(cd)
-
-        ## write head
-        if (nComments > 0 | length(.self$vml[[i]])) {
-          write(
-            x = stri_join(
-              '<xml xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
-            ),
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            sep = " "
-          )
-        }
-
-        # TODO use seq_along()
-        for (j in seq_len(nComments)) {
-          id <- id + 1L
-          write(
-            x = genBaseShapeVML(cd[j], id),
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            append = TRUE
-          )
-        }
-
-        if (length(.self$vml[[i]])) {
-          write(
-            x = .self$vml[[i]],
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            append = TRUE
-          )
-        }
-
-        # TODO nComments and .self$vml is already checked
-        if (nComments > 0 | length(.self$vml[[i]])) {
-          write(
-            x = "</xml>",
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            append = TRUE
-          )
-          .self$worksheets[[i]]$legacyDrawing <-
-            '<legacyDrawing r:id="rId2"/>'
-        }
-
-      }
-
-      for (i in seq_along(.self$drawings_vml)) {
-        write(
-          x = .self$drawings_vml[[i]],
-          file = file.path(dir, sprintf("vmlDrawing%s.vml", i))
-        )
-      }
-
-      invisible(.self)
-    },
-
-    updateStyles = function(style) {
-      # TODO assert_class(style, "Style")
-
-      ## Updates styles.xml
-      xfNode <- list(
-        numFmtId = 0,
-        fontId = 0,
-        fillId = 0,
-        borderId = 0,
-        xfId = 0
-      )
-
-
-      alignmentFlag <- FALSE
-
-      ## Font
-      if (!is.null(style$fontName) |
-          !is.null(style$fontSize) |
-          !is.null(style$fontColour) |
-          !is.null(style$fontDecoration) |
-          !is.null(style$fontFamily) |
-          !is.null(style$fontScheme)) {
-        fontNode <- .self$createFontNode(style)
-        fontId <- style$fontId
-
-        if (length(fontId) == 0) {
-          fontId <- style$fontId
-          .self$styles$fonts <- append(styles[["fonts"]], fontNode)
-        }
-
-        xfNode$fontId <- fontId
-        xfNode <- append(xfNode, list("applyFont" = "1"))
-      }
-
-
-      ## numFmt
-      if (!is.null(style$numFmt)) {
-        if (as.integer(style$numFmt$numFmtId)) {
-          numFmtId <- style$numFmt$numFmtId
-          if (as.integer(numFmtId) > 163L) {
-            tmp <- style$numFmt$formatCode
-
-            .self$styles$numFmts <- unique(c(
-              styles$numFmts,
-              sprintf(
-                '<numFmt numFmtId="%s" formatCode="%s"/>',
-                numFmtId,
-                tmp
-              )
-            ))
-          }
-
-          xfNode$numFmtId <- numFmtId
-          xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
-        }
-      }
-
-      ## Fill
-      if (!is.null(style$fill)) {
-        fillNode <- createFillNode(style)
-        if (!is.null(fillNode)) {
-          fillId <- which(.self$styles$fills == fillNode) - 1L
-
-          if (length(fillId) == 0) {
-            fillId <- length(styles$fills)
-            .self$styles$fills <- c(styles$fills, fillNode)
-          }
-          xfNode$fillId <- fillId
-          xfNode <- append(xfNode, list("applyFill" = "1"))
-        }
-      }
-
-      ## Border
-      if (any(!is.null(
-        c(
-          style$borderLeft,
-          style$borderRight,
-          style$borderTop,
-          style$borderBottom,
-          style$borderDiagonal
-        )
-      ))) {
-        borderNode <- createBorderNode(style)
-        borderId <- which(.self$styles$borders == borderNode) - 1L
-
-        if (length(borderId) == 0) {
-          borderId <- length(.self$styles$borders)
-          .self$styles$borders <- c(.self$styles$borders, borderNode)
-        }
-
-        xfNode$borderId <- borderId
-        xfNode <- append(xfNode, list("applyBorder" = "1"))
-      }
-
-
-      if(!is.null(style$xfId))
-        xfNode$xfId <- style$xfId
-
-      childNodes <- ""
-
-      ## Alignment
-      if (!is.null(style$halign) |
-          !is.null(style$valign) |
-          !is.null(style$wrapText) |
-          !is.null(style$textRotation) | !is.null(style$indent)) {
-        attrs <- list()
-        alignNode <- "<alignment"
-
-        if (!is.null(style$textRotation)) {
-          alignNode <-
-            stri_join(alignNode,
-              sprintf('textRotation="%s"', style$textRotation),
-              sep = " "
-            )
-        }
-
-        if (!is.null(style$halign)) {
-          alignNode <-
-            stri_join(alignNode, sprintf('horizontal="%s"', style$halign), sep = " ")
-        }
-
-        if (!is.null(style$valign)) {
-          alignNode <-
-            stri_join(alignNode, sprintf('vertical="%s"', style$valign), sep = " ")
-        }
-
-        if (!is.null(style$indent)) {
-          alignNode <-
-            stri_join(alignNode, sprintf('indent="%s"', style$indent), sep = " ")
-        }
-
-        if (!is.null(style$wrapText)) {
-          if (style$wrapText) {
-            alignNode <- stri_join(alignNode, 'wrapText="1"', sep = " ")
-          }
-        }
-
-
-        alignNode <- stri_join(alignNode, "/>")
-
-        alignmentFlag <- TRUE
-        xfNode <- append(xfNode, list("applyAlignment" = "1"))
-
-        childNodes <- stri_join(childNodes, alignNode)
-      }
-
-      if (!is.null(style$hidden) | !is.null(style$locked)) {
-        xfNode <- append(xfNode, list("applyProtection" = "1"))
-        protectionNode <- "<protection"
-
-        if (!is.null(style$hidden)) {
-          protectionNode <-
-            stri_join(protectionNode, sprintf('hidden="%s"', as.numeric(style$hidden)), sep = " ")
-        }
-        if (!is.null(style$locked)) {
-          protectionNode <-
-            stri_join(protectionNode, sprintf('locked="%s"', as.numeric(style$locked)), sep = " ")
-        }
-
-        protectionNode <- stri_join(protectionNode, "/>")
-        childNodes <- stri_join(childNodes, protectionNode)
-      }
-
-      if (length(childNodes)) {
-        xfNode <-
-          stri_join(
-            "<xf ",
-            stri_join(
-              stri_join(names(xfNode), '="', xfNode, '"'),
-              sep = " ",
-              collapse = " "
-            ),
-            ">",
-            childNodes,
-            "</xf>"
-          )
-      } else {
-        xfNode <-
-          stri_join("<xf ", stri_join(
-            stri_join(names(xfNode), '="', xfNode, '"'),
-            sep = " ",
-            collapse = " "
-          ), "/>")
-      }
-
-      styleId <- which(.self$styles$cellXfs == xfNode) - 1L
-      if (length(styleId) == 0) {
-        styleId <- length(.self$styles$cellXfs)
-        .self$styles$cellXfs <- c(.self$styles$cellXfs, xfNode)
-      }
-
-
-      # Seems to be fine to return .self
-      # return(as.integer(styleId))
-      invisible(.self)
-    },
-
-    updateCellStyles = function() {
-      flag <- TRUE
-      for (style in .self$cellStyleObjects) {
-        ## Updates styles.xml
-        xfNode <- list(
-          numFmtId = 0,
-          fontId = 0,
-          fillId = 0,
-          borderId = 0
-        )
-
-
-        alignmentFlag <- FALSE
-
-        ## Font
-        if (!is.null(style$fontName) |
-            !is.null(style$fontSize) |
-            !is.null(style$fontColour) |
-            !is.null(style$fontDecoration) |
-            !is.null(style$fontFamily) |
-            !is.null(style$fontScheme)) {
-          fontNode <- .self$createFontNode(style)
-          fontId <- which(.self$styles$font == fontNode) - 1L
-
-          if (length(fontId) == 0) {
-            fontId <- length(.self$styles$fonts)
-            .self$styles$fonts <- append(.self$styles[["fonts"]], fontNode)
-          }
-
-          xfNode$fontId <- fontId
-          xfNode <- append(xfNode, list("applyFont" = "1"))
-        }
-
-
-        ## numFmt
-        if (!is.null(style$numFmt)) {
-          if (as.integer(style$numFmt$numFmtId)) {
-            numFmtId <- style$numFmt$numFmtId
-            if (as.integer(numFmtId) > 163L) {
-              tmp <- style$numFmt$formatCode
-
-              .self$styles$numFmts <- unique(c(
-                .self$styles$numFmts,
-                sprintf(
-                  '<numFmt numFmtId="%s" formatCode="%s"/>',
-                  numFmtId,
-                  tmp
-                )
-              ))
-            }
-
-            xfNode$numFmtId <- numFmtId
-            xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
-          }
-        }
-
-        ## Fill
-        if (!is.null(style$fill)) {
-          fillNode <- createFillNode(style)
-          if (!is.null(fillNode)) {
-            fillId <- which(.self$styles$fills == fillNode) - 1L
-
-            if (length(fillId) == 0) {
-              fillId <- length(.self$styles$fills)
-              .self$styles$fills <- c(.self$styles$fills, fillNode)
-            }
-            xfNode$fillId <- fillId
-            xfNode <- append(xfNode, list("applyFill" = "1"))
-          }
-        }
-
-        ## Border
-        if (any(!is.null(
-          c(
-            style$borderLeft,
-            style$borderRight,
-            style$borderTop,
-            style$borderBottom,
-            style$borderDiagonal
-          )
-        ))) {
-          borderNode <- createBorderNode(style)
-          borderId <- which(.self$styles$borders == borderNode) - 1L
-
-          if (length(borderId) == 0) {
-            borderId <- length(.self$styles$borders)
-            .self$styles$borders <- c(.self$styles$borders, borderNode)
-          }
-
-          xfNode$borderId <- borderId
-          xfNode <- append(xfNode, list("applyBorder" = "1"))
-        }
-
-        xfNode <-
-          stri_join("<xf ", stri_join(
-            stri_join(names(xfNode), '="', xfNode, '"'),
-            sep = " ",
-            collapse = " "
-          ), "/>")
-
-        if (flag) {
-          .self$styles$cellStyleXfs <- xfNode
-          flag <- FALSE
-        } else {
-          .self$styles$cellStyleXfs <- c(.self$styles$cellStyleXfs, xfNode)
-        }
-      }
-
-      invisible(.self)
-    },
-
-    # Nothing is assigned to .self, so this is fine to not return .self
+    #' @description
+    #' Create a font node from a style
+    #' @param style style
+    #' @return The font node as xml?
     createFontNode = function(style) {
+      # Nothing is assigned to self, so this is fine to not return self
+      # TODO pull out from public methods
+
       # TODO assert_class(style, "Style")
-      baseFont <- .self$getBaseFont()
+      baseFont <- self$getBaseFont()
 
       fontNode <- "<font>"
 
@@ -1869,9 +1644,11 @@ Workbook <- setRefClass(
       stri_join(fontNode, "</font>")
     },
 
-    # TODO can this just be saved as an private element?
+    #' @description
+    #' Get the base font
+    #' @return A list of of the font
     getBaseFont = function() {
-      baseFont <- .self$styles$fonts[[1]]
+      baseFont <- self$styles$fonts[[1]]
 
       sz     <- as.list(xml_attribute(baseFont, "font", "sz")[[1]])
       colour <- as.list(xml_attribute(baseFont, "font", "color")[[1]])
@@ -1896,29 +1673,34 @@ Workbook <- setRefClass(
       )
     },
 
+    #' @description
+    #' Sets a sheet name
+    #' @param sheet Old sheet name
+    #' @param newSheetName New sheet name
+    #' @return The `wbWorkbook` object, invisibly
     setSheetName = function(sheet, newSheetName) {
       # TODO assert sheet class?
-      if (newSheetName %in% .self$sheet_names) {
+      if (newSheetName %in% self$sheet_names) {
         stop(sprintf("Sheet %s already exists!", newSheetName))
       }
 
-      sheet <- .self$validateSheet(sheet)
+      sheet <- self$validateSheet(sheet)
 
-      oldName <- .self$sheet_names[[sheet]]
-      .self$sheet_names[[sheet]] <- newSheetName
+      oldName <- self$sheet_names[[sheet]]
+      self$sheet_names[[sheet]] <- newSheetName
 
       ## Rename in workbook
       sheetId <-
         regmatches(
-          .self$workbook$sheets[[sheet]],
-          regexpr('(?<=sheetId=")[0-9]+', .self$workbook$sheets[[sheet]], perl = TRUE)
+          self$workbook$sheets[[sheet]],
+          regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets[[sheet]], perl = TRUE)
         )
       rId <-
         regmatches(
           workbook$sheets[[sheet]],
-          regexpr('(?<= r:id="rId)[0-9]+', .self$workbook$sheets[[sheet]], perl = TRUE)
+          regexpr('(?<= r:id="rId)[0-9]+', self$workbook$sheets[[sheet]], perl = TRUE)
         )
-      .self$workbook$sheets[[sheet]] <-
+      self$workbook$sheets[[sheet]] <-
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
           newSheetName,
@@ -1928,7 +1710,7 @@ Workbook <- setRefClass(
 
       ## rename styleObjects sheet component
       if (length(styleObjects)) {
-        .self$styleObjects <- lapply(styleObjects, function(x) {
+        self$styleObjects <- lapply(styleObjects, function(x) {
           if (x$sheet == oldName) {
             x$sheet <- newSheetName
           }
@@ -1938,305 +1720,134 @@ Workbook <- setRefClass(
       }
 
       ## rename defined names
-      if (length(.self$workbook$definedNames)) {
-        belongTo <- getDefinedNamesSheet(.self$workbook$definedNames)
+      if (length(self$workbook$definedNames)) {
+        belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
         toChange <- belongTo == oldName
         if (any(toChange)) {
           newSheetName <- sprintf("'%s'", newSheetName)
           tmp <-
-            gsub(oldName, newSheetName, .self$workbook$definedName[toChange], fixed = TRUE)
+            gsub(oldName, newSheetName, self$workbook$definedName[toChange], fixed = TRUE)
           tmp <- gsub("'+", "'", tmp)
-          .self$workbook$definedNames[toChange] <- tmp
+          self$workbook$definedNames[toChange] <- tmp
         }
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
-    writeSheetDataXML = function(xldrawingsDir,
-      xldrawingsRelsDir,
-      xlworksheetsDir,
-      xlworksheetsRelsDir) {
-      ## write worksheets
-
-      # TODO just seq_along()
-      nSheets <- length(.self$worksheets)
-
-      for (i in seq_len(nSheets)) {
-        ## Write drawing i (will always exist) skip those that are empty
-        if (!identical(.self$drawings[[i]], list())) {
-          write_file(
-            head = '',
-            body = pxml(.self$drawings[[i]]),
-            tail = '',
-            fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
-          )
-          if (!identical(.self$drawings_rels[[i]], list())) {
-            write_file(
-              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
-              body = pxml(.self$drawings_rels[[i]]),
-              tail = "</Relationships>",
-              fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
-            )
-          }
-        } else {
-          .self$worksheets[[i]]$drawing <- character()
-        }
-
-        ## vml drawing
-        if (length(.self$vml_rels[[i]])) {
-          file.copy(
-            from = .self$vml_rels[[i]],
-            to = file.path(
-              xldrawingsRelsDir,
-              stri_join("vmlDrawing", i, ".vml.rels")
-            )
-          )
-        }
-
-        # outlineLevelRow in SheetformatPr
-        if ((length(.self$outlineLevels[[i]])) && (!grepl("outlineLevelRow", .self$worksheets[[i]]$sheetFormatPr))) {
-          .self$worksheets[[i]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', .self$worksheets[[i]]$sheetFormatPr)
-        }
-
-        if (isChartSheet[i]) {
-          chartSheetDir <- file.path(dirname(xlworksheetsDir), "chartsheets")
-          chartSheetRelsDir <-
-            file.path(dirname(xlworksheetsDir), "chartsheets", "_rels")
-
-          if (!file.exists(chartSheetDir)) {
-            dir.create(chartSheetDir, recursive = TRUE)
-            dir.create(chartSheetRelsDir, recursive = TRUE)
-          }
-
-          write_file(
-            body = .self$worksheets[[i]]$get_prior_sheet_data(),
-            fl = file.path(chartSheetDir, stri_join("sheet", i, ".xml"))
-          )
-
-          if (length(.self$worksheets_rels[[i]])) {
-            write_file(
-              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
-              body = pxml(.self$worksheets_rels[[i]]),
-              tail = "</Relationships>",
-              fl = file.path(chartSheetRelsDir, sprintf("sheet%s.xml.rels", i))
-            )
-          }
-        } else {
-          ## Write worksheets
-          ws <- .self$worksheets[[i]]
-          hasHL <- length(ws$hyperlinks) > 0
-
-          ## reorder sheet data
-          ws$order_sheetdata()
-
-          prior <- ws$get_prior_sheet_data()
-          post <- ws$get_post_sheet_data()
-
-          # worksheets[[i]]$sheet_data$style_id <-
-          #   as.character(worksheets[[i]]$sheet_data$style_id)
-
-          cc <- ws$sheet_data$cc
-
-
-          if (!is.null(cc)) {
-            cc$r <- paste0(cc$c_r, cc$row_r)
-            # prepare data for output
-
-            # there can be files, where row_attr is incomplete because a row
-            # is lacking any attributes (presumably was added before saving)
-            # still row_attr is what we want!
-            cc_rows <- ws$sheet_data$row_attr$r
-            cc_out <- vector("list", length = length(cc_rows))
-            names(cc_out) <- cc_rows
-
-            for (cc_r in cc_rows) {
-              tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
-              nams <- cc[cc$row_r == cc_r, c("c_r")]
-              ltmp <- vector("list", nrow(tmp))
-              names(ltmp) <- nams
-
-              for (nr in seq_len(nrow(tmp))) {
-                ltmp[[nr]] <- as.list(tmp[nr, ])
-              }
-
-              cc_out[[cc_r]] <- ltmp
-            }
-
-            ws$sheet_data$cc_out <- cc_out
-          } else {
-            ws$sheet_data$row_attr <- NULL
-            ws$sheet_data$cc_out <- NULL
-          }
-
-          # row_attr <- ws$sheet_data$row_attr
-          # nam_at <- names(row_attr)
-          # wanted <- as.character(seq(min(as.numeric(nam_at)),
-          #                            max(as.numeric(nam_at))))
-          # empty_row_attr <- wanted[!wanted %in% nam_at]
-          # # add empty list
-          # if(!identical(empty_row_attr, character()))
-          #   row_attr[[empty_row_attr]] <- list()
-          # # restore order
-          # ws$sheet_data$row_attr <- row_attr[wanted]
-
-          # message(i, " \n")
-          write_worksheet_xml_2(
-            prior = prior,
-            post = post,
-            sheet_data = ws$sheet_data,
-            cols_attr = ws$cols_attr,
-            R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
-          )
-
-          # # why would I want to erase everything in here?
-          # worksheets[[i]]$sheet_data$style_id <- integer()
-
-
-          ## write worksheet rels
-          if (length(.self$worksheets_rels[[i]])) {
-            ws_rels <- .self$worksheets_rels[[i]]
-            if (hasHL) {
-              h_inds <- stri_join(seq_along(.self$worksheets[[i]]$hyperlinks), "h")
-              ws_rels <-
-                c(ws_rels, unlist(
-                  lapply(seq_along(h_inds), function(j) {
-                    .self$worksheets[[i]]$hyperlinks[[j]]$to_target_xml(h_inds[j])
-                  })
-                ))
-            }
-
-            ## Check if any tables were deleted - remove these from rels
-            if (length(.self$tables)) {
-              table_inds <- grep("tables/table[0-9].xml", ws_rels)
-
-              if (length(table_inds)) {
-                ids <-
-                  regmatches(
-                    ws_rels[table_inds],
-                    regexpr(
-                      '(?<=Relationship Id=")[0-9A-Za-z]+',
-                      ws_rels[table_inds],
-                      perl = TRUE
-                    )
-                  )
-                inds <-
-                  as.integer(gsub("[^0-9]", "", ids, perl = TRUE)) - 2L
-                table_nms <- attr(.self$tables, "tableName")[inds]
-                is_deleted <-
-                  grepl("openxlsx_deleted", table_nms, fixed = TRUE)
-                if (any(is_deleted)) {
-                  ws_rels <- ws_rels[-table_inds[is_deleted]]
-                }
-              }
-            }
-
-
-            # if (i < 3)
-            write_file(
-              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
-              body = pxml(ws_rels),
-              tail = "</Relationships>",
-              fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i))
-            )
-          }
-        } ## end of isChartSheet[i]
-      } ## end of loop through nSheets
-
-      invisible(.self)
-    },
-
-
+    #' @description
+    #' Sets a row height for a sheet
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @param heights heights
+    #' @return The `wbWorkbook` object, invisibly
     setRowHeights = function(sheet, rows, heights) {
-      sheet <- .self$validateSheet(sheet)
+      sheet <- self$validateSheet(sheet)
 
       ## remove any conflicting heights
       flag <- names(rowHeights[[sheet]]) %in% rows
       if (any(flag)) {
-        .self$rowHeights[[sheet]] <- .self$rowHeights[[sheet]][!flag]
+        self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][!flag]
       }
 
-      nms <- c(names(.self$rowHeights[[sheet]]), rows)
-      allRowHeights <- unlist(c(.self$rowHeights[[sheet]], heights))
+      nms <- c(names(self$rowHeights[[sheet]]), rows)
+      allRowHeights <- unlist(c(self$rowHeights[[sheet]], heights))
       names(allRowHeights) <- nms
 
       allRowHeights <-
         allRowHeights[order(as.integer(names(allRowHeights)))]
 
-      .self$rowHeights[[sheet]] <- allRowHeights
-      invisible(.self)
+      self$rowHeights[[sheet]] <- allRowHeights
+      invisible(self)
     },
 
+
+    #' @description
+    #' Group columns ?
+    #' @param sheet sheet
+    #' @return The `wbWorkbook` object, invisibly
     groupColumns = function(sheet) {
+      # TODO I feel like wb$groupColumns() should have more params?
       # TODO assert class sheet
-      sheet <- .self$validateSheet(sheet)
+      sheet <- self$validateSheet(sheet)
 
-      hidden <- attr(.self$colOutlineLevels[[sheet]], "hidden", exact = TRUE)
-      cols <- names(.self$colOutlineLevels[[sheet]])
+      hidden <- attr(self$colOutlineLevels[[sheet]], "hidden", exact = TRUE)
+      cols <- names(self$colOutlineLevels[[sheet]])
 
-      if (!grepl("outlineLevelCol", .self$worksheets[[sheet]]$sheetFormatPr)) {
-        .self$worksheets[[sheet]]$sheetFormatPr <- sub("/>", ' outlineLevelCol="1"/>', .self$worksheets[[sheet]]$sheetFormatPr)
+      if (!grepl("outlineLevelCol", self$worksheets[[sheet]]$sheetFormatPr)) {
+        self$worksheets[[sheet]]$sheetFormatPr <- sub("/>", ' outlineLevelCol="1"/>', self$worksheets[[sheet]]$sheetFormatPr)
       }
 
       # Check if column is already created (by `setColWidths()` or on import)
       # Note that columns are initiated by `setColWidths` first (see: order of execution in `preSaveCleanUp()`)
-      if (any(cols %in% names(.self$worksheets[[sheet]]$cols))) {
+      if (any(cols %in% names(self$worksheets[[sheet]]$cols))) {
 
-        for (i in intersect(cols, names(.self$worksheets[[sheet]]$cols))) {
-          outline_hidden <- attr(.self$colOutlineLevels[[sheet]], "hidden")[attr(.self$colOutlineLevels[[sheet]], "names") == i]
+        for (i in intersect(cols, names(self$worksheets[[sheet]]$cols))) {
+          outline_hidden <- attr(self$colOutlineLevels[[sheet]], "hidden")[attr(self$colOutlineLevels[[sheet]], "names") == i]
 
-          if (grepl("outlineLevel", .self$worksheets[[sheet]]$cols[[i]], perl = TRUE)) {
-            .self$worksheets[[sheet]]$cols[[i]] <- sub("((?<=hidden=\")(\\w+)\")", paste0(outline_hidden, "\""), .self$worksheets[[sheet]]$cols[[i]], perl = TRUE)
+          if (grepl("outlineLevel", self$worksheets[[sheet]]$cols[[i]], perl = TRUE)) {
+            self$worksheets[[sheet]]$cols[[i]] <- sub("((?<=hidden=\")(\\w+)\")", paste0(outline_hidden, "\""), self$worksheets[[sheet]]$cols[[i]], perl = TRUE)
           } else {
-            .self$worksheets[[sheet]]$cols[[i]] <- sub("((?<=hidden=\")(\\w+)\")", paste0(outline_hidden, "\" outlineLevel=\"1\""), .self$worksheets[[sheet]]$cols[[i]], perl = TRUE)
+            self$worksheets[[sheet]]$cols[[i]] <- sub("((?<=hidden=\")(\\w+)\")", paste0(outline_hidden, "\" outlineLevel=\"1\""), self$worksheets[[sheet]]$cols[[i]], perl = TRUE)
           }
         }
 
-        cols <- cols[!cols %in% names(.self$worksheets[[sheet]]$cols)]
-        hidden <- attr(.self$colOutlineLevels[[sheet]], "hidden")[attr(.self$colOutlineLevels[[sheet]], "names") %in% cols]
+        cols <- cols[!cols %in% names(self$worksheets[[sheet]]$cols)]
+        hidden <- attr(self$colOutlineLevels[[sheet]], "hidden")[attr(self$colOutlineLevels[[sheet]], "names") %in% cols]
       }
 
       if (length(cols)) {
         colNodes <- sprintf('<col min="%s" max="%s" outlineLevel="1" hidden="%s"/>', cols, cols, hidden)
         names(colNodes) <- cols
-        .self$worksheets[[sheet]]$cols <- append(.self$worksheets[[sheet]]$cols, colNodes)
+        self$worksheets[[sheet]]$cols <- append(self$worksheets[[sheet]]$cols, colNodes)
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
+    #' @description
+    #' Group rows
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @param hidden hidden
+    #' @param levels levels
+    #' @return The `wbWorkbook` object, invisibly
     groupRows = function(sheet, rows, hidden, levels) {
-      sheet <- .self$validateSheet(sheet)
+      sheet <- self$validateSheet(sheet)
 
 
-      flag <- names(.self$outlineLevels[[sheet]]) %in% rows
+      flag <- names(self$outlineLevels[[sheet]]) %in% rows
       if (any(flag)) {
-        .self$outlineLevels[[sheet]] <- .self$outlineLevels[[sheet]][!flag]
+        self$outlineLevels[[sheet]] <- self$outlineLevels[[sheet]][!flag]
       }
 
-      nms <- c(names(.self$outlineLevels[[sheet]]), rows)
+      nms <- c(names(self$outlineLevels[[sheet]]), rows)
 
-      allOutlineLevels <- unlist(c(.self$outlineLevels[[sheet]], levels))
+      allOutlineLevels <- unlist(c(self$outlineLevels[[sheet]], levels))
       names(allOutlineLevels) <- nms
 
-      existing_hidden <- attr(.self$outlineLevels[[sheet]], "hidden", exact = TRUE)
+      existing_hidden <- attr(self$outlineLevels[[sheet]], "hidden", exact = TRUE)
       all_hidden <- c(existing_hidden, as.character(as.integer(hidden)))
 
       allOutlineLevels <-
         allOutlineLevels[order(as.integer(names(allOutlineLevels)))]
 
-      .self$outlineLevels[[sheet]] <- allOutlineLevels
+      self$outlineLevels[[sheet]] <- allOutlineLevels
 
-      attr(.self$outlineLevels[[sheet]], "hidden") <- as.character(as.integer(all_hidden))
+      attr(self$outlineLevels[[sheet]], "hidden") <- as.character(as.integer(all_hidden))
 
 
-      if (!grepl("outlineLevelRow", .self$worksheets[[sheet]]$sheetFormatPr)) {
-        .self$worksheets[[sheet]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', .self$worksheets[[sheet]]$sheetFormatPr)
+      if (!grepl("outlineLevelRow", self$worksheets[[sheet]]$sheetFormatPr)) {
+        self$worksheets[[sheet]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', self$worksheets[[sheet]]$sheetFormatPr)
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
+    #' @description
+    #' Delete a worksheet
+    #' @param sheet The worksheet to delete
+    #' @return The `wbWorkbook` object, invisibly
     deleteWorksheet = function(sheet) {
       # To delete a worksheet
       # Remove colwidths element
@@ -2260,52 +1871,47 @@ Workbook <- setRefClass(
       # Remove queryTable references from workbook$definedNames to worksheet
       # remove tables
 
-      sheet <- .self$validateSheet(sheet)
-      sheetNames <- .self$sheet_names
+      sheet <- self$validateSheet(sheet)
+      sheetNames <- self$sheet_names
       nSheets <- length(unlist(sheetNames, use.names = FALSE))
       sheetName <- sheetNames[[sheet]]
 
-      .self$colWidths[[sheet]] <- NULL
-      .self$sheet_names <- .self$sheet_names[-sheet]
+      self$colWidths[[sheet]] <- NULL
+      self$sheet_names <- self$sheet_names[-sheet]
 
       ## remove last drawings(sheet).xml from Content_Types
       # TODO replace x[!grepl(x)] with grep(values = TRUE, invert = TRUE)
-      .self$Content_Types <-
-        .self$Content_Types[!grepl(sprintf("drawing%s.xml", nSheets), .self$Content_Types)]
+      self$Content_Types <- self$Content_Types[!grepl(sprintf("drawing%s.xml", nSheets), self$Content_Types)]
 
       ## remove highest sheet
-      .self$Content_Types <-
-        .self$Content_Types[!grepl(sprintf("sheet%s.xml", nSheets), .self$Content_Types)]
+      self$Content_Types <- self$Content_Types[!grepl(sprintf("sheet%s.xml", nSheets), self$Content_Types)]
 
-      .self$drawings[[sheet]] <- NULL
-      .self$drawings_rels[[sheet]] <- NULL
-
-      .self$vml[[sheet]] <- NULL
-      .self$vml_rels[[sheet]] <- NULL
-
-      .self$rowHeights[[sheet]] <- NULL
-      .self$colOutlineLevels[[sheet]] <- NULL
-      .self$outlineLevels[[sheet]] <- NULL
-      .self$comments[[sheet]] <- NULL
-      .self$threadComments[[sheet]] <- NULL
-      .self$isChartSheet <- .self$isChartSheet[-sheet]
+      self$drawings[[sheet]]         <- NULL
+      self$drawings_rels[[sheet]]    <- NULL
+      self$vml[[sheet]]              <- NULL
+      self$vml_rels[[sheet]]         <- NULL
+      self$rowHeights[[sheet]]       <- NULL
+      self$colOutlineLevels[[sheet]] <- NULL
+      self$outlineLevels[[sheet]]    <- NULL
+      self$comments[[sheet]]         <- NULL
+      self$threadComments[[sheet]]   <- NULL
+      self$isChartSheet              <- self$isChartSheet[-sheet]
 
       ## sheetOrder
       # TODO use match()?
-      toRemove <- which(.self$sheetOrder == sheet)
-      .self$sheetOrder[.self$sheetOrder > sheet] <-
-        .self$sheetOrder[.self$sheetOrder > sheet] - 1L
-      .self$sheetOrder <- .self$sheetOrder[-toRemove]
+      toRemove <- which(self$sheetOrder == sheet)
+      self$sheetOrder[self$sheetOrder > sheet] <- self$sheetOrder[self$sheetOrder > sheet] - 1L
+      self$sheetOrder <- self$sheetOrder[-toRemove]
 
 
       ## remove styleObjects
-      if (length(.self$styleObjects)) {
-        .self$styleObjects <-
-          .self$styleObjects[unlist(lapply(.self$styleObjects, "[[", "sheet"), use.names = FALSE) != sheetName]
+      if (length(self$styleObjects)) {
+        self$styleObjects <-
+          self$styleObjects[unlist(lapply(self$styleObjects, "[[", "sheet"), use.names = FALSE) != sheetName]
       }
 
       ## Need to remove reference from workbook.xml.rels to pivotCache
-      removeRels <- grep("pivotTables", .self$worksheets_rels[[sheet]], value = TRUE)
+      removeRels <- grep("pivotTables", self$worksheets_rels[[sheet]], value = TRUE)
       if (length(removeRels)) {
         ## sheet rels links to a pivotTable file, the corresponding pivotTable_rels file links to the cacheDefn which is listing in workbook.xml.rels
         ## remove reference to this file from the workbook.xml.rels
@@ -2314,47 +1920,45 @@ Workbook <- setRefClass(
             removeRels,
             gregexpr("(?<=pivotTable)[0-9]+(?=\\.xml)", removeRels, perl = TRUE)
           )))
-        toRemove <-
-          stri_join(
-            sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
-            sep = " ",
-            collapse = "|"
-          )
+        toRemove <- stri_join(
+          sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
+          sep = " ",
+          collapse = "|"
+        )
 
-        fileNo <- grep(toRemove, .self$pivotTables.xml.rels)
-        toRemove <-
-          stri_join(
-            sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
-            sep = " ",
-            collapse = "|"
-          )
+        fileNo <- grep(toRemove, self$pivotTables.xml.rels)
+        toRemove <- stri_join(
+          sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
+          sep = " ",
+          collapse = "|"
+        )
 
         ## remove reference to file from workbook.xml.res
         # TODO grepl() to grep()
-        .self$workbook.xml.rels <-
-          .self$workbook.xml.rels[!grepl(toRemove, .self$workbook.xml.rels)]
+        self$workbook.xml.rels <-
+          self$workbook.xml.rels[!grepl(toRemove, self$workbook.xml.rels)]
       }
 
       ## As above for slicers
       ## Need to remove reference from workbook.xml.rels to pivotCache
-      removeRels <- grepl("slicers", .self$worksheets_rels[[sheet]])
+      removeRels <- grepl("slicers", self$worksheets_rels[[sheet]])
       if (any(removeRels)) {
         # TODO !grepl() to grep()
-        .self$workbook.xml.rels <-
-          .self$workbook.xml.rels[!grepl(sprintf("(slicerCache%s\\.xml)", sheet), .self$workbook.xml.rels)]
+        self$workbook.xml.rels <-
+          self$workbook.xml.rels[!grepl(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels)]
       }
 
       ## wont't remove tables and then won't need to reassign table r:id's but will rename them!
-      .self$worksheets[[sheet]] <- NULL
-      .self$worksheets_rels[[sheet]] <- NULL
+      self$worksheets[[sheet]] <- NULL
+      self$worksheets_rels[[sheet]] <- NULL
 
-      if (length(.self$tables)) {
-        tableSheets <- attr(.self$tables, "sheet")
-        tableNames <- attr(.self$tables, "tableName")
+      if (length(self$tables)) {
+        tableSheets <- attr(self$tables, "sheet")
+        tableNames <- attr(self$tables, "tableName")
 
         inds <-
           tableSheets %in% sheet &
-          !grepl("openxlsx_deleted", attr(.self$tables, "tableName"), fixed = TRUE)
+          !grepl("openxlsx_deleted", attr(self$tables, "tableName"), fixed = TRUE)
         tableSheets[tableSheets > sheet] <-
           tableSheets[tableSheets > sheet] - 1L
 
@@ -2364,70 +1968,74 @@ Workbook <- setRefClass(
           tableNames[inds] <-
             stri_join(tableNames[inds], "_openxlsx_deleted")
         }
-        attr(.self$tables, "tableName") <- tableNames
-        attr(.self$tables, "sheet") <- tableSheets
+        attr(self$tables, "tableName") <- tableNames
+        attr(self$tables, "sheet") <- tableSheets
       }
 
 
       ## drawing will always be the first relationship
       if (nSheets > 1) {
         for (i in 1:(nSheets - 1L)) {
-          .self$worksheets_rels[[i]][1:3] <- genBaseSheetRels(i)
+          self$worksheets_rels[[i]][1:3] <- genBaseSheetRels(i)
         }
       } else {
-        .self$worksheets_rels <- list()
+        self$worksheets_rels <- list()
       }
 
 
       ## remove sheet
       sn <-
-        unlist(lapply(.self$workbook$sheets, function(x) {
+        unlist(lapply(self$workbook$sheets, function(x) {
           regmatches(
             x, regexpr('(?<= name=")[^"]+', x, perl = TRUE)
           )
         }))
-      .self$workbook$sheets <- .self$workbook$sheets[!sn %in% sheetName]
+      self$workbook$sheets <- self$workbook$sheets[!sn %in% sheetName]
 
       ## Reset rIds
       if (nSheets > 1) {
         for (i in (sheet + 1L):nSheets) {
-          .self$workbook$sheets <-
+          self$workbook$sheets <-
             gsub(stri_join("rId", i),
               stri_join("rId", i - 1L),
-              .self$workbook$sheets,
+              self$workbook$sheets,
               fixed = TRUE
             )
         }
       } else {
-        .self$workbook$sheets <- NULL
+        self$workbook$sheets <- NULL
       }
 
       ## Can remove highest sheet
-      .self$workbook.xml.rels <-
-        .self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), .self$workbook.xml.rels)]
+      self$workbook.xml.rels <-
+        self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
 
       ## definedNames
-      if (length(.self$workbook$definedNames)) {
-        belongTo <- getDefinedNamesSheet(.self$workbook$definedNames)
-        .self$workbook$definedNames <-
-          .self$workbook$definedNames[!belongTo %in% sheetName]
+      if (length(self$workbook$definedNames)) {
+        belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
+        self$workbook$definedNames <-
+          self$workbook$definedNames[!belongTo %in% sheetName]
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO possible changes to .self
+    #' @description
+    #' Add DXFS?
+    #' @param style style
+    #' @return The `wbWorkbook` object, invisibly
     addDXFS = function(style) {
+      # TODO possible changes to self
       # TODO assert_class(style, "Style")
       dxf <- "<dxf>"
-      dxf <- stri_join(dxf, .self$createFontNode(style))
+      dxf <- stri_join(dxf, self$createFontNode(style))
       # fillNode <- NULL
 
       if (!is.null(style$fill$fillFg) | !is.null(style$fill$fillBg)) {
         dxf <- stri_join(dxf, createFillNode(style))
       }
 
-      # TODO go with length()
+      # TODO go with length(); c() drops NULL elements
       if (any(!is.null(
         c(
           style$borderLeft,
@@ -2444,18 +2052,32 @@ Workbook <- setRefClass(
 
       if (dxf %in% styles$dxfs) {
         # return(which(styles$dxfs == dxf) - 1L)
-        return(invisible(.self))
+        return(invisible(self))
       }
 
       # dxfId <- length(styles$dxfs)
-      .self$styles$dxfs <- c(styles$dxfs, dxf)
+      self$styles$dxfs <- c(styles$dxfs, dxf)
 
       # return(dxfId)
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO rename: setDataValidation?
-    dataValidation = function(sheet,
+    #' @description
+    #' Set data validations for a sheet
+    #' @param sheet sheet
+    #' @param startRow startRow
+    #' @param endRow endRow
+    #' @param startCol startCol
+    #' @param endCol endCol
+    #' @param type type
+    #' @param operator operator
+    #' @param value value
+    #' @param allowBlank allowBlank
+    #' @param showInputMsg showInputMsg
+    #' @param showErrorMsg showErrorMsg
+    #' @return The `wbWorkbook` object, invisibly
+    dataValidation = function(
+      sheet,
       startRow,
       endRow,
       startCol,
@@ -2465,8 +2087,11 @@ Workbook <- setRefClass(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg) {
-      sheet <- .self$validateSheet(sheet)
+      showErrorMsg
+    ) {
+      # TODO rename: setDataValidation?
+      # TODO can this be moved to the worksheet class?
+      sheet <- self$validateSheet(sheet)
       sqref <-
         stri_join(getCellRefs(data.frame(
           "x" = c(startRow, endRow),
@@ -2492,11 +2117,11 @@ Workbook <- setRefClass(
       if (type == "date") {
         # TODO consider origin <- if () ... else ...
         origin <- 25569L
-        # TODO would it be faster to just search each .self$workbook instead of
+        # TODO would it be faster to just search each self$workbook instead of
         # trying to unlist and join everything?
         if (grepl(
           'date1904="1"|date1904="true"',
-          stri_join(unlist(.self$workbook), sep = " ", collapse = ""),
+          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
           ignore.case = TRUE
         )) {
           origin <- 24107L
@@ -2510,7 +2135,7 @@ Workbook <- setRefClass(
         origin <- 25569L
         if (grepl(
           'date1904="1"|date1904="true"',
-          stri_join(unlist(.self$workbook), sep = " ", collapse = ""),
+          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
           ignore.case = TRUE
         )) {
           origin <- 24107L
@@ -2530,18 +2155,29 @@ Workbook <- setRefClass(
         sapply(seq_along(value), function(i) {
           sprintf("<formula%s>%s</formula%s>", i, value[i], i)
         })
-      .self$worksheets[[sheet]]$dataValidations <-
+      self$worksheets[[sheet]]$dataValidations <-
         c(
-          .self$worksheets[[sheet]]$dataValidations,
+          self$worksheets[[sheet]]$dataValidations,
           stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
         )
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO consider some defaults to logicals
-    # TODO rename: setDataValidationList?
-    dataValidation_list = function(sheet,
+    #' @description
+    #' Set data validations for a sheet
+    #' @param sheet sheet
+    #' @param startRow startRow
+    #' @param endRow endRow
+    #' @param startCol startCol
+    #' @param endCol endCol
+    #' @param value value
+    #' @param allowBlank allowBlank
+    #' @param showInputMsg showInputMsg
+    #' @param showErrorMsg showErrorMsg
+    #' @return The `wbWorkbook` object, invisibly
+    dataValidation_list = function(
+      sheet,
       startRow,
       endRow,
       startCol,
@@ -2549,8 +2185,11 @@ Workbook <- setRefClass(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg) {
-      sheet <- .self$validateSheet(sheet)
+      showErrorMsg
+    ) {
+      # TODO consider some defaults to logicals
+      # TODO rename: setDataValidationList?
+      sheet <- self$validateSheet(sheet)
       sqref <-
         stri_join(getCellRefs(data.frame(
           "x" = c(startRow, endRow),
@@ -2575,15 +2214,27 @@ Workbook <- setRefClass(
       xmlData <-
         stri_join(data_val, formula, sqref, "</x14:dataValidation>")
 
-      .self$worksheets[[sheet]]$dataValidationsLst <-
-        c(.self$worksheets[[sheet]]$dataValidationsLst, xmlData)
+      self$worksheets[[sheet]]$dataValidationsLst <-
+        c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO consider defaults for logicals
-    # TODO rename: setConditionFormatting?  Or addConditionalFormatting
-    conditionalFormatting = function(sheet,
+    #' @description
+    #' Set conditional formatting for a sheet
+    #' @param sheet sheet
+    #' @param startRow startRow
+    #' @param endRow endRow
+    #' @param startCol startCol
+    #' @param endCol endCol
+    #' @param dxfId dxfId
+    #' @param formula formula
+    #' @param type type
+    #' @param values values
+    #' @param params params
+    #' @return The `wbWorkbook` object, invisibly
+    conditionalFormatting = function(
+      sheet,
       startRow,
       endRow,
       startCol,
@@ -2592,8 +2243,12 @@ Workbook <- setRefClass(
       formula,
       type,
       values,
-      params) {
-      sheet <- .self$validateSheet(sheet)
+      params
+    ) {
+      # TODO consider defaults for logicals
+      # TODO rename: setConditionFormatting?  Or addConditionalFormatting
+      # TODO can this be moved to the sheet data?
+      sheet <- self$validateSheet(sheet)
       sqref <-
         stri_join(getCellRefs(data.frame(
           "x" = c(startRow, endRow),
@@ -2603,14 +2258,14 @@ Workbook <- setRefClass(
 
 
       ## Increment priority of conditional formatting rule
-      if (length(.self$worksheets[[sheet]]$conditionalFormatting)) {
-        for (i in length(.self$worksheets[[sheet]]$conditionalFormatting):1) {
+      if (length(self$worksheets[[sheet]]$conditionalFormatting)) {
+        for (i in length(self$worksheets[[sheet]]$conditionalFormatting):1) {
           priority <-
             regmatches(
-              .self$worksheets[[sheet]]$conditionalFormatting[[i]],
+              self$worksheets[[sheet]]$conditionalFormatting[[i]],
               regexpr(
                 '(?<=priority=")[0-9]+',
-                .self$worksheets[[sheet]]$conditionalFormatting[[i]],
+                self$worksheets[[sheet]]$conditionalFormatting[[i]],
                 perl = TRUE
               )
             )
@@ -2620,16 +2275,16 @@ Workbook <- setRefClass(
           priority_new <- sprintf('priority="%s"', priority_new)
 
           ## now replace
-          .self$worksheets[[sheet]]$conditionalFormatting[[i]] <-
+          self$worksheets[[sheet]]$conditionalFormatting[[i]] <-
             gsub(priority_pattern,
               priority_new,
-              .self$worksheets[[sheet]]$conditionalFormatting[[i]],
+              self$worksheets[[sheet]]$conditionalFormatting[[i]],
               fixed = TRUE
             )
         }
       }
 
-      nms <- c(names(.self$worksheets[[sheet]]$conditionalFormatting), sqref)
+      nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
 
       if (type == "colorScale") {
         ## formula contains the colours
@@ -2703,7 +2358,7 @@ Workbook <- setRefClass(
         guid <-
           stri_join(
             "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(.self$worksheets[[sheet]]$extLst)
+            40000L + length(self$worksheets[[sheet]]$extLst)
           )
 
         showValue <- 1
@@ -2751,9 +2406,9 @@ Workbook <- setRefClass(
             )
         }
 
-        .self$worksheets[[sheet]]$extLst <-
+        self$worksheets[[sheet]]$extLst <-
           c(
-            .self$worksheets[[sheet]]$extLst,
+            self$worksheets[[sheet]]$extLst,
             gen_databar_extlst(
               guid = guid,
               sqref = sqref,
@@ -2852,18 +2507,32 @@ Workbook <- setRefClass(
       }
 
       # TODO replace append() with just c()
-      .self$worksheets[[sheet]]$conditionalFormatting <-
-        append(.self$worksheets[[sheet]]$conditionalFormatting, cfRule)
+      self$worksheets[[sheet]]$conditionalFormatting <-
+        append(self$worksheets[[sheet]]$conditionalFormatting, cfRule)
 
-      names(.self$worksheets[[sheet]]$conditionalFormatting) <- nms
+      names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO rename: setMergeCells?  Name "conflicts" with element
-    mergeCells = function(sheet, startRow, endRow, startCol, endCol) {
+    #' @description
+    #' Set cell merging for a sheet
+    #' @param sheet sheet
+    #' @param startRow startRow
+    #' @param endRow endRow
+    #' @param startCol startCol
+    #' @param endCol endCol
+    #' @return The `wbWorkbook` object, invisibly
+    mergeCells = function(
+      sheet,
+      startRow,
+      endRow,
+      startCol,
+      endCol
+    ) {
+      # TODO rename: setMergeCells?  Name "conflicts" with element
       # TODO assert_class() sheet?
-      sheet <- .self$validateSheet(sheetName = sheet)
+      sheet <- self$validateSheet(sheetName = sheet)
 
       sqref <-
         getCellRefs(data.frame(
@@ -2872,8 +2541,8 @@ Workbook <- setRefClass(
         ))
       exMerges <-
         regmatches(
-          .self$worksheets[[sheet]]$mergeCells,
-          regexpr("[A-Z0-9]+:[A-Z0-9]+", .self$worksheets[[sheet]]$mergeCells)
+          self$worksheets[[sheet]]$mergeCells,
+          regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
         )
 
       if (!is.null(exMerges)) {
@@ -2899,9 +2568,9 @@ Workbook <- setRefClass(
         }
       }
 
-      .self$worksheets[[sheet]]$mergeCells <-
+      self$worksheets[[sheet]]$mergeCells <-
         c(
-          .self$worksheets[[sheet]]$mergeCells,
+          self$worksheets[[sheet]]$mergeCells,
           sprintf(
             '<mergeCell ref="%s"/>',
             stri_join(sqref,
@@ -2911,12 +2580,25 @@ Workbook <- setRefClass(
           )
         )
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO rename: removeMergeCells
-    removeCellMerge = function(sheet, startRow, endRow, startCol, endCol) {
-      sheet <- .self$validateSheet(sheet)
+    #' @description
+    #' Removes cell merging for a sheet
+    #' @param sheet sheet
+    #' @param startRow startRow
+    #' @param endRow endRow
+    #' @param startCol startCol
+    #' @param endCol endCol
+    #' @return The `wbWorkbook` object, invisibly
+    removeCellMerge = function(
+      sheet,
+      startRow,
+      endRow,
+      startCol,
+      endCol
+    ) {
+      sheet <- self$validateSheet(sheet)
 
       sqref <-
         getCellRefs(data.frame(
@@ -2925,8 +2607,8 @@ Workbook <- setRefClass(
         ))
       exMerges <-
         regmatches(
-          .self$worksheets[[sheet]]$mergeCells,
-          regexpr("[A-Z0-9]+:[A-Z0-9]+", .self$worksheets[[sheet]]$mergeCells)
+          self$worksheets[[sheet]]$mergeCells,
+          regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
         )
 
       if (!is.null(exMerges)) {
@@ -2945,19 +2627,29 @@ Workbook <- setRefClass(
       }
 
       ## Remove intersection
-      .self$worksheets[[sheet]]$mergeCells <-
-        .self$worksheets[[sheet]]$mergeCells[!mergeIntersections]
+      self$worksheets[[sheet]]$mergeCells <-
+        self$worksheets[[sheet]]$mergeCells[!mergeIntersections]
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO renam to setFreezePanes?
-    freezePanes = function(sheet,
+    #' @description
+    #' Set freeze panes for a sheet
+    #' @param sheet sheet
+    #' @param firstActiveRow firstActiveRow
+    #' @param firstActiveCol firstActiveCol
+    #' @param firstRow firstRow
+    #' @param firstCol firstCol
+    #' @return The `wbWorkbook` object, invisibly
+    freezePanes = function(
+      sheet,
       firstActiveRow = NULL,
       firstActiveCol = NULL,
       firstRow = FALSE,
-      firstCol = FALSE) {
-      sheet <- .self$validateSheet(sheet)
+      firstCol = FALSE
+    ) {
+      # TODO rename to setFreezePanes?
+      sheet <- self$validateSheet(sheet)
       paneNode <- NULL
 
       if (firstRow) {
@@ -2973,7 +2665,7 @@ Workbook <- setRefClass(
         if (firstActiveRow == 1 & firstActiveCol == 1) {
           ## nothing to do
           # return(NULL)
-          return(invisible(.self))
+          return(invisible(self))
         }
 
         if (firstActiveRow > 1 & firstActiveCol == 1) {
@@ -3009,31 +2701,44 @@ Workbook <- setRefClass(
           )
       }
 
-      .self$worksheets[[sheet]]$freezePane <- paneNode
+      self$worksheets[[sheet]]$freezePane <- paneNode
 
-      invisible(.self)
+      invisible(self)
     },
 
-    insertImage = function(sheet,
+    #' @description
+    #' Insert an image into a sheet
+    #' @param sheet sheet
+    #' @param file file
+    #' @param startRow startRow
+    #' @param startCol startCol
+    #' @param width width
+    #' @param height height
+    #' @param rowOffset rowOffset
+    #' @param colOffset colOffset
+    #' @return The `wbWorkbook` object, invisibly
+    insertImage = function(
+      sheet,
       file,
       startRow,
       startCol,
       width,
       height,
       rowOffset = 0,
-      colOffset = 0) {
+      colOffset = 0
+    ) {
       ## within the sheet the drawing node's Id refernce an id in the sheetRels
       ## sheet rels reference the drawingi.xml file
       ## drawingi.xml refernece drawingRels
       ## drawing rels reference an image in the media folder
       ## worksheetRels(sheet(i)) references drawings(j)
 
-      sheet <- .self$validateSheet(sheet)
+      sheet <- self$validateSheet(sheet)
 
       # TODO this simply adds the required drawings to the Content_Types. Might want to look
       # into a way to handle such things.
-      .self$Content_Types <- unique(
-        c(.self$Content_Types,
+      self$Content_Types <- unique(
+        c(self$Content_Types,
           sprintf(
             "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
             sheet
@@ -3045,30 +2750,30 @@ Workbook <- setRefClass(
       imageType <- gsub("^\\.", "", imageType)
 
       drawing_len <- 0
-      if (length(.self$drawings_rels[[sheet]]))
-        drawing_len <- length(xml_node(.self$drawings_rels[[sheet]], "Relationship"))
+      if (length(self$drawings_rels[[sheet]]))
+        drawing_len <- length(xml_node(self$drawings_rels[[sheet]], "Relationship"))
 
       imageNo <- drawing_len + 1L
-      mediaNo <- length(.self$media) + 1L
+      mediaNo <- length(self$media) + 1L
 
       startCol <- convertFromExcelRef(startCol)
 
       ## update Content_Types
-      if (!any(grepl(stri_join("image/", imageType), .self$Content_Types))) {
-        .self$Content_Types <-
+      if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
+        self$Content_Types <-
           unique(c(
             sprintf(
               '<Default Extension="%s" ContentType="image/%s"/>',
               imageType,
               imageType
             ),
-            .self$Content_Types
+            self$Content_Types
           ))
       }
 
       ## drawings rels (Reference from drawings.xml to image file in media folder)
-      .self$drawings_rels[[sheet]] <- c(
-        .self$drawings_rels[[sheet]],
+      self$drawings_rels[[sheet]] <- c(
+        self$drawings_rels[[sheet]],
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
           imageNo,
@@ -3080,7 +2785,7 @@ Workbook <- setRefClass(
       ## write file path to media slot to copy across on save
       tmp <- file
       names(tmp) <- stri_join("image", mediaNo, ".", imageType)
-      .self$media <- append(.self$media, tmp)
+      self$media <- append(self$media, tmp)
 
       ## create drawing.xml
       anchor <-
@@ -3115,292 +2820,51 @@ Workbook <- setRefClass(
 
       # If no drawing is found, initiate one. If one is found, append a child to the exisiting node.
       # Might look into updating attributes as well.
-      if (length(.self$drawings[[sheet]]) == 0) {
+      if (length(self$drawings[[sheet]]) == 0) {
         xml_attr = c(
           "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
           "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
           "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         )
         drawingsXML <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
-        drawingsXML <- c(.self$drawings[[sheet]], drawingsXML)
+        drawingsXML <- c(self$drawings[[sheet]], drawingsXML)
       } else {
-        drawingsXML <- xml_add_child(.self$drawings[[sheet]], drawingsXML)
+        drawingsXML <- xml_add_child(self$drawings[[sheet]], drawingsXML)
       }
 
 
       ## append to workbook drawing
-      .self$drawings[[sheet]] <- drawingsXML
+      self$drawings[[sheet]] <- drawingsXML
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO consider name .self$workbook_validate() ?
-    preSaveCleanUp = function() {
-      ## Steps
-      # Order workbook.xml.rels:
-      #   sheets -> style -> theme -> sharedStrings -> persons -> tables -> calcChain
-      # Assign workbook.xml.rels children rIds, seq_along(workbook.xml.rels)
-      # Assign workbook$sheets rIds nSheets
-      #
-      ## drawings will always be r:id1 on worksheet
-      ## tables will always have r:id equal to table xml file number tables/table(i).xml
+    #' @description
+    #' Add a style to a sheet
+    #' @param sheet sheet
+    #' @param style style
+    #' @param rows rows
+    #' @param cols cols
+    #' @param stack stack
+    #' @return The `wbWorkbook` object, invisibly
+    addStyle = function(
+      sheet,
+      style,
+      rows,
+      cols,
+      stack
+    ) {
+      sheet <- self$sheet_names[[sheet]]
 
-      ## Every worksheet has a drawingXML as r:id 1
-      ## Tables from r:id 2
-      ## HyperLinks from nTables+3 to nTables+3+nHyperLinks-1
-      ## vmlDrawing to have rId
-
-      sheetRIds <-
-        as.integer(unlist(regmatches(
-          .self$workbook$sheets,
-          gregexpr('(?<=r:id="rId)[0-9]+', .self$workbook$sheets, perl = TRUE)
-        )))
-
-      nSheets <- length(sheetRIds)
-      nExtRefs <- length(.self$externalLinks)
-      nPivots <- length(.self$pivotDefinitions)
-
-      ## add a worksheet if none added
-      if (nSheets == 0) {
-        warning("Workbook does not contain any worksheets. A worksheet will be added.",
-          call. = FALSE
-        )
-        .self$addWorksheet("Sheet 1")
-        nSheets <- 1L
-      }
-
-      ## get index of each child element for ordering
-      # TODO replace which(grepl()) to grep()
-      sheetInds <- grep( "(worksheets|chartsheets)/sheet[0-9]+\\.xml", .self$workbook.xml.rels)
-      stylesInd <- grep("styles\\.xml", .self$workbook.xml.rels)
-      themeInd <- grep("theme/theme[0-9]+.xml", .self$workbook.xml.rels)
-      connectionsInd <- grep("connections.xml", .self$workbook.xml.rels)
-      extRefInds <- grep("externalLinks/externalLink[0-9]+.xml", .self$workbook.xml.rels)
-      sharedStringsInd <- grep("sharedStrings.xml", .self$workbook.xml.rels)
-      tableInds <- grep("table[0-9]+.xml", .self$workbook.xml.rels)
-      personInds <- grep("person.xml", .self$workbook.xml.rels)
-
-
-      ## Reordering of workbook.xml.rels
-      ## don't want to re-assign rIds for pivot tables or slicer caches
-      pivotNode <- grep("pivotCache/pivotCacheDefinition[0-9].xml", .self$workbook.xml.rels, value = TRUE)
-      slicerNode <- grep("slicerCache[0-9]+.xml", .self$workbook.xml.rels, value = TRUE)
-
-      ## Reorder children of workbook.xml.rels
-      .self$workbook.xml.rels <-
-        .self$workbook.xml.rels[c(
-          sheetInds,
-          extRefInds,
-          themeInd,
-          connectionsInd,
-          stylesInd,
-          sharedStringsInd,
-          tableInds,
-          personInds
-        )]
-
-      ## Re assign rIds to children of workbook.xml.rels
-      .self$workbook.xml.rels <-
-        unlist(lapply(seq_along(.self$workbook.xml.rels), function(i) {
-          gsub('(?<=Relationship Id="rId)[0-9]+',
-            i,
-            .self$workbook.xml.rels[[i]],
-            perl = TRUE
-          )
-        }))
-
-      .self$workbook.xml.rels <- c(.self$workbook.xml.rels, pivotNode, slicerNode)
-
-
-
-      if (!is.null(.self$vbaProject)) {
-        .self$workbook.xml.rels <-
-          c(
-            .self$workbook.xml.rels,
-            sprintf(
-              '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
-              1L + length(.self$workbook.xml.rels)
-            )
-          )
-      }
-
-      ## Reassign rId to workbook sheet elements, (order sheets by sheetId first)
-      .self$workbook$sheets <-
-        unlist(lapply(seq_along(.self$workbook$sheets), function(i) {
-          gsub('(?<= r:id="rId)[0-9]+', i, .self$workbook$sheets[[i]], perl = TRUE)
-        }))
-
-      ## re-order worksheets if need to
-      if (any(.self$sheetOrder != seq_len(nSheets))) {
-        .self$workbook$sheets <- .self$workbook$sheets[sheetOrder]
-      }
-
-
-
-      ## re-assign tabSelected
-      state <- rep.int("visible", nSheets)
-      # TODO grepl() to grep()
-      state[grepl("hidden", .self$workbook$sheets)] <- "hidden"
-      visible_sheet_index <- which(state %in% "visible")[[1]]
-
-      if (is.null(.self$workbook$bookViews))
-        .self$workbook$bookViews <-
-        sprintf(
-          '<bookViews><workbookView xWindow="0" yWindow="0" windowWidth="13125" windowHeight="6105" firstSheet="%s" activeTab="%s"/></bookViews>',
-          visible_sheet_index - 1L,
-          visible_sheet_index - 1L
-        )
-
-      .self$worksheets[[visible_sheet_index]]$sheetViews <-
-        sub(
-          '( tabSelected="0")|( tabSelected="false")',
-          ' tabSelected="1"',
-          .self$worksheets[[visible_sheet_index]]$sheetViews,
-          ignore.case = TRUE
-        )
-      if (nSheets > 1) {
-        for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
-          .self$worksheets[[i]]$sheetViews <-
-            sub(
-              ' tabSelected="(1|true|false|0)"',
-              ' tabSelected="0"',
-              .self$worksheets[[i]]$sheetViews,
-              ignore.case = TRUE
-            )
-        }
-      }
-
-
-
-
-
-      if (length(.self$workbook$definedNames)) {
-        # TODO consider .self$get_sheet_names() which orders the sheet names?
-        sheetNames <- .self$sheet_names[.self$sheetOrder]
-
-        belongTo <- getDefinedNamesSheet(.self$workbook$definedNames)
-
-        ## sheetNames is in re-ordered order (order it will be displayed)
-        newId <- match(belongTo, sheetNames) - 1L
-        oldId <-
-          as.numeric(regmatches(
-            .self$workbook$definedNames,
-            regexpr(
-              '(?<= localSheetId=")[0-9]+',
-              .self$workbook$definedNames,
-              perl = TRUE
-            )
-          ))
-
-        for (i in seq_along(.self$workbook$definedNames)) {
-          if (!is.na(newId[i])) {
-            .self$workbook$definedNames[[i]] <-
-              gsub(
-                sprintf('localSheetId=\"%s\"', oldId[i]),
-                sprintf('localSheetId=\"%s\"', newId[i]),
-                .self$workbook$definedNames[[i]],
-                fixed = TRUE
-              )
-          }
-        }
-      }
-
-
-
-
-      ## update workbook r:id to match reordered workbook.xml.rels externalLink element
-      if (length(extRefInds)) {
-        newInds <- as.integer(seq_along(extRefInds) + length(sheetInds))
-        .self$workbook$externalReferences <-
-          stri_join(
-            "<externalReferences>",
-            stri_join(
-              sprintf('<externalReference r:id=\"rId%s\"/>', newInds),
-              collapse = ""
-            ),
-            "</externalReferences>"
-          )
-      }
-
-      ## styles
-      numFmtIds <- 50000L
-      #for (i in which(!isChartSheet)) {
-      #  worksheets[[i]]$sheet_data$style_id <-
-      #    rep.int(x = NA_integer_, times = worksheets[[i]]$sheet_data$n_elements)
-      #}
-
-
-      for (x in .self$styleObjects) {
-        if (length(x$rows) & length(x$cols)) {
-          this.sty <- x$style$clone()
-
-          if (!is.null(this.sty$numFmt)) {
-            if (this.sty$numFmt$numFmtId == 9999) {
-              this.sty$numFmt$numFmtId <- numFmtIds
-              numFmtIds <- numFmtIds + 1L
-            }
-          }
-
-          ## convert sheet name to index
-          ## this creates the XML for styles.XML
-          .self$updateStyles(this.sty)
-        }
-      }
-
-
-      ## Make sure all rowHeights have rows, if not append them!
-      for (i in seq_along(.self$worksheets)) {
-        if (length(.self$rowHeights[[i]])) {
-          rh <- as.integer(names(.self$rowHeights[[i]]))
-          missing_rows <- rh[!rh %in% .self$worksheets[[i]]$sheet_data$rows]
-          n <- length(missing_rows)
-
-          if (n > 0) {
-            #worksheets[[i]]$sheet_data$style_id <-
-            #  c(
-            #    worksheets[[i]]$sheet_data$style_id,
-            #    rep.int(NA_integer_, times = n)
-            #  )
-
-            # TODO make into simple functions: sheetData$append("rows", x), etc
-            # TODO make into simple functions: sheetData$inc_data_count()
-            # TODO make into simple functions: sheetData$calc_n_elements()
-            # use method chaining
-            .self$worksheets[[i]]$sheet_data$rows <- c(.self$worksheets[[i]]$sheet_data$rows, missing_rows)
-            .self$worksheets[[i]]$sheet_data$cols <- c(.self$worksheets[[i]]$sheet_data$cols, rep.int(NA_integer_, times = n))
-            .self$worksheets[[i]]$sheet_data$t <- c(.self$worksheets[[i]]$sheet_data$t, rep(NA_integer_, times = n))
-            .self$worksheets[[i]]$sheet_data$v <- c(.self$worksheets[[i]]$sheet_data$v, rep(NA_character_, times = n))
-            .self$worksheets[[i]]$sheet_data$f <- c(.self$worksheets[[i]]$sheet_data$f, rep(NA_character_, times = n))
-            .self$worksheets[[i]]$sheet_data$data_count <- .self$worksheets[[i]]$sheet_data$data_count + 1L
-            .self$worksheets[[i]]$sheet_data$n_elements <- as.integer(length(.self$worksheets[[i]]$sheet_data$rows))
-          }
-        }
-
-        ## write colwidth and coloutline XML
-        if (length(.self$colWidths[[i]])) {
-          invisible(.self$setColWidths(i))
-        }
-
-        if (length(.self$colOutlineLevels[[i]])) {
-          invisible(.self$groupColumns(i))
-        }
-      }
-
-      invisible(.self)
-    },
-
-    addStyle = function(sheet, style, rows, cols, stack) {
-      sheet <- .self$sheet_names[[sheet]]
-
-      if (length(.self$styleObjects) == 0) {
-        .self$styleObjects <- list(list(
+      if (length(self$styleObjects) == 0) {
+        self$styleObjects <- list(list(
           style = style,
           sheet = sheet,
           rows = rows,
           cols = cols
         ))
       } else if (stack) {
-        nStyles <- length(.self$styleObjects)
+        nStyles <- length(self$styleObjects)
 
         ## ********** Assume all styleObjects cells have one a single worksheet **********
         ## Loop through existing styleObjects
@@ -3408,13 +2872,13 @@ Workbook <- setRefClass(
         newInds <- seq_along(rows)
         keepStyle <- rep(TRUE, nStyles)
         for (i in seq_len(nStyles)) {
-          if (sheet == .self$styleObjects[[i]]$sheet) {
+          if (sheet == self$styleObjects[[i]]$sheet) {
             ## Now check rows and cols intersect
             ## toRemove are the elements that the new style doesn't apply to, we remove these from the style object as it
             ## is copied, merged with the new style and given the new data points
 
             ex_row_cols <-
-              stri_join(.self$styleObjects[[i]]$rows, .self$styleObjects[[i]]$cols, sep = "-")
+              stri_join(self$styleObjects[[i]]$rows, self$styleObjects[[i]]$cols, sep = "-")
             new_row_cols <- stri_join(rows, cols, sep = "-")
 
 
@@ -3434,13 +2898,13 @@ Workbook <- setRefClass(
               ## columns from styleObjects[[i]]
               if (length(to_remove_from_this_style_object)) {
                 ## remove these from style object
-                .self$styleObjects[[i]]$rows <-
-                  .self$styleObjects[[i]]$rows[-to_remove_from_this_style_object]
-                .self$styleObjects[[i]]$cols <-
-                  .self$styleObjects[[i]]$cols[-to_remove_from_this_style_object]
+                self$styleObjects[[i]]$rows <-
+                  self$styleObjects[[i]]$rows[-to_remove_from_this_style_object]
+                self$styleObjects[[i]]$cols <-
+                  self$styleObjects[[i]]$cols[-to_remove_from_this_style_object]
 
-                if (length(.self$styleObjects[[i]]$rows) == 0 |
-                    length(.self$styleObjects[[i]]$cols) == 0) {
+                if (length(self$styleObjects[[i]]$rows) == 0 |
+                    length(self$styleObjects[[i]]$cols) == 0) {
                   keepStyle[i] <-
                     FALSE
                 } ## this style applies to no rows or columns anymore
@@ -3454,10 +2918,10 @@ Workbook <- setRefClass(
 
               ## Merge Style and append to styleObjects
               # TODO replace append() with c()
-              .self$styleObjects <-
-                append(.self$styleObjects, list(
+              self$styleObjects <-
+                append(self$styleObjects, list(
                   list(
-                    style = mergeStyle(.self$styleObjects[[i]]$style, newStyle = style),
+                    style = mergeStyle(self$styleObjects[[i]]$style, newStyle = style),
                     sheet = sheet,
                     rows = rows[mergeInds],
                     cols = cols[mergeInds]
@@ -3469,13 +2933,13 @@ Workbook <- setRefClass(
 
         ## remove any styles that no longer have any affect
         if (!all(keepStyle)) {
-          .self$styleObjects <- .self$styleObjects[keepStyle]
+          self$styleObjects <- self$styleObjects[keepStyle]
         }
 
         ## append style object for non-intersecting cells
         if (length(newInds)) {
           # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(list(
+          self$styleObjects <- append(self$styleObjects, list(list(
             style = style,
             sheet = sheet,
             rows = rows[newInds],
@@ -3485,7 +2949,7 @@ Workbook <- setRefClass(
       } else {
         ## else we are not stacking
         # TODO use c() not append()
-        .self$styleObjects <- append(.self$styleObjects, list(list(
+        self$styleObjects <- append(self$styleObjects, list(list(
           style = style,
           sheet = sheet,
           rows = rows,
@@ -3493,15 +2957,29 @@ Workbook <- setRefClass(
         )))
       } ## End if(length(styleObjects)) else if(stack) {}
 
-      invisible(.self)
+      invisible(self)
     },
 
-    createNamedRegion = function(ref1, ref2, name, sheet, localSheetId = NULL) {
+    #' @description
+    #' Create a named region in a sheet
+    #' @param ref1 ref1
+    #' @param ref2 ref2
+    #' @param name name
+    #' @param sheet sheet
+    #' @param localSheetId localSheetId
+    #' @return The `wbWorkbook` object, invisibly
+    createNamedRegion = function(
+      ref1,
+      ref2,
+      name,
+      sheet,
+      localSheetId = NULL
+    ) {
       name <- replaceIllegalCharacters(name)
 
       if (is.null(localSheetId)) {
-        .self$workbook$definedNames <- c(
-          .self$workbook$definedNames,
+        self$workbook$definedNames <- c(
+          self$workbook$definedNames,
           sprintf(
             '<definedName name="%s">\'%s\'!%s:%s</definedName>',
             name,
@@ -3511,8 +2989,8 @@ Workbook <- setRefClass(
           )
         )
       } else {
-        .self$workbook$definedNames <- c(
-          .self$workbook$definedNames,
+        self$workbook$definedNames <- c(
+          self$workbook$definedNames,
           sprintf(
             '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
             name,
@@ -3524,11 +3002,16 @@ Workbook <- setRefClass(
         )
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # returns the new tableName -- basically just lowercase
+    #' @description
+    #' Validate table name for a workbook
+    #' @param tableName Table name
+    #' @return A valid table name as a `character`
     validate_table_name = function(tableName) {
+      # TODO no assignments made -- pull out
+      # returns the new tableName -- basically just lowercase
       tableName <-
         tolower(tableName) ## Excel forces named regions to lowercase
 
@@ -3563,32 +3046,42 @@ Workbook <- setRefClass(
         stop("tableName cannot be the same as a cell reference")
       }
 
-      # only place where .self is needed
-      if (tableName %in% attr(.self$tables, "tableName")) {
+      # only place where self is needed
+      if (tableName %in% attr(self$tables, "tableName")) {
         stop(sprintf("Table with name '%s' already exists!", tableName))
       }
 
       return(tableName)
     },
 
-    check_overwrite_tables = function(sheet,
+    #' @description
+    #' Checks for overwrite columns
+    #' @param sheet sheet
+    #' @param new_rows new_rows
+    #' @param new_cols new_cols
+    #' @param error_msg error_msg
+    #' @param check_table_header_only check_table_header_only
+    check_overwrite_tables = function(
+      sheet,
       new_rows,
       new_cols,
       error_msg = "Cannot overwrite existing table with another table.",
-      check_table_header_only = FALSE) {
+      check_table_header_only = FALSE
+    ) {
+      # TODO pull out -- no assignemnts made
       ## check not overwriting another table
-      if (length(.self$tables)) {
-        tableSheets <- attr(.self$tables, "sheet")
-        sheetNo <- .self$validateSheet(sheet)
+      if (length(self$tables)) {
+        tableSheets <- attr(self$tables, "sheet")
+        sheetNo <- self$validateSheet(sheet)
 
         to_check <-
           which(tableSheets %in% sheetNo &
-              !grepl("openxlsx_deleted", attr(.self$tables, "tableName"), fixed = TRUE))
+              !grepl("openxlsx_deleted", attr(self$tables, "tableName"), fixed = TRUE))
 
         if (length(to_check)) {
           ## only look at tables on this sheet
 
-          exTable <- .self$tables[to_check]
+          exTable <- self$tables[to_check]
 
           rows <-
             lapply(names(exTable), function(rectCoords) {
@@ -3626,16 +3119,18 @@ Workbook <- setRefClass(
         } ## end if(sheet %in% tableSheets)
       } ## end (length(tables))
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO show() to print() with R6
-    show = function() {
-      exSheets <- .self$sheet_names
+    #' @description
+    #' Prints the `wbWorkbook` object
+    #' @return The `wbWorkbook` object, invisibly; called for its side-effects
+    print = function() {
+      exSheets <- self$sheet_names
       nSheets <- length(exSheets)
-      nImages <- length(.self$media)
-      nCharts <- length(.self$charts)
-      nStyles <- length(.self$styleObjects)
+      nImages <- length(self$media)
+      nCharts <- length(self$charts)
+      # nStyles <- length(self$styleObjects) # not used?
 
       exSheets <- replaceXMLEntities(exSheets)
       showText <- "A Workbook object.\n"
@@ -3648,15 +3143,15 @@ Workbook <- setRefClass(
         sheetTxt <- lapply(seq_len(nSheets), function(i) {
           tmpTxt <- sprintf('Sheet %s: "%s"\n', i, exSheets[[i]])
 
-          if (length(.self$rowHeights[[i]])) {
+          if (length(self$rowHeights[[i]])) {
             tmpTxt <-
               append(
                 tmpTxt,
                 c(
                   "\n\tCustom row heights (row: height)\n\t",
                   stri_join(
-                    sprintf("%s: %s", names(.self$rowHeights[[i]]), round(as.numeric(
-                      .self$rowHeights[[i]]
+                    sprintf("%s: %s", names(self$rowHeights[[i]]), round(as.numeric(
+                      self$rowHeights[[i]]
                     ), 2)),
                     collapse = ", ",
                     sep = " "
@@ -3665,14 +3160,14 @@ Workbook <- setRefClass(
               )
           }
 
-          if (length(.self$outlineLevels[[i]])) {
+          if (length(self$outlineLevels[[i]])) {
             tmpTxt <-
               append(
                 tmpTxt,
                 c(
                   "\n\tGrouped rows:\n\t",
                   stri_join(
-                    sprintf("%s", names(.self$outlineLevels[[i]])),
+                    sprintf("%s", names(self$outlineLevels[[i]])),
                     collapse = ", ",
                     sep = " "
                   )
@@ -3680,14 +3175,14 @@ Workbook <- setRefClass(
               )
           }
 
-          if (length(.self$colOutlineLevels[[i]])) {
+          if (length(self$colOutlineLevels[[i]])) {
             tmpTxt <-
               append(
                 tmpTxt,
                 c(
                   "\n\tGrouped columns:\n\t",
                   stri_join(
-                    sprintf("%s", names(.self$colOutlineLevels[[i]])),
+                    sprintf("%s", names(self$colOutlineLevels[[i]])),
                     collapse = ", ",
                     sep = " "
                   )
@@ -3695,9 +3190,9 @@ Workbook <- setRefClass(
               )
           }
 
-          if (length(.self$colWidths[[i]])) {
-            cols <- names(.self$colWidths[[i]])
-            widths <- unname(.self$colWidths[[i]])
+          if (length(self$colWidths[[i]])) {
+            cols <- names(self$colWidths[[i]])
+            widths <- unname(self$colWidths[[i]])
 
             # is width() a list or character vector?
             widths[widths != "auto"] <-
@@ -3731,7 +3226,7 @@ Workbook <- setRefClass(
           c(
             showText,
             "\nImages:\n",
-            sprintf('Image %s: "%s"\n', seq_len(nImages), .self$media)
+            sprintf('Image %s: "%s"\n', seq_len(nImages), self$media)
           )
       }
 
@@ -3740,7 +3235,7 @@ Workbook <- setRefClass(
           c(
             showText,
             "\nCharts:\n",
-            sprintf('Chart %s: "%s"\n', seq_len(nCharts), .self$charts)
+            sprintf('Chart %s: "%s"\n', seq_len(nCharts), self$charts)
           )
       }
 
@@ -3748,27 +3243,38 @@ Workbook <- setRefClass(
         showText <-
           c(showText, sprintf(
             "Worksheet write order: %s",
-            stri_join(.self$sheetOrder, sep = " ", collapse = ", ")
+            stri_join(self$sheetOrder, sep = " ", collapse = ", ")
           ))
       }
 
       cat(unlist(showText))
-      invisible(.self)
+      invisible(self)
     },
 
-
-    # TODO rename: addConditionalFormatCell
-    conditionalFormatCell = function(sheet,
+    #' @description
+    #' DEPRECATED
+    #' @param sheet sheet
+    #' @param startRow startRow
+    #' @param endRow endRow
+    #' @param startCol startCol
+    #' @param endCol endCol
+    #' @param dxfId dxfId
+    #' @param formula formula
+    #' @param type type
+    #' @return The `wbWorkbook` object, invisibly
+    conditionalFormatCell = function(
+      sheet,
       startRow,
       endRow,
       startCol,
       endCol,
       dxfId,
       formula,
-      type) {
+      type
+    ) {
       .Deprecated()
 
-      sheet <- .self$validateSheet(sheet)
+      sheet <- self$validateSheet(sheet)
       sqref <-
         stri_join(getCellRefs(data.frame(
           "x" = c(startRow, endRow),
@@ -3776,19 +3282,19 @@ Workbook <- setRefClass(
         )), collapse = ":")
 
       ## Increment priority of conditional formatting rule
-      if (length((.self$worksheets[[sheet]]$conditionalFormatting))) {
+      if (length((self$worksheets[[sheet]]$conditionalFormatting))) {
         # TODO use seq_along(); then rev()
-        for (i in length(.self$worksheets[[sheet]]$conditionalFormatting):1) {
-          .self$worksheets[[sheet]]$conditionalFormatting[[i]] <-
+        for (i in length(self$worksheets[[sheet]]$conditionalFormatting):1) {
+          self$worksheets[[sheet]]$conditionalFormatting[[i]] <-
             gsub('(?<=priority=")[0-9]+',
               i + 1L,
-              .self$worksheets[[sheet]]$conditionalFormatting[[i]],
+              self$worksheets[[sheet]]$conditionalFormatting[[i]],
               perl = TRUE
             )
         }
       }
 
-      nms <- c(names(.self$worksheets[[sheet]]$conditionalFormatting), sqref)
+      nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
 
       if (type == "expression") {
         cfRule <-
@@ -3809,7 +3315,7 @@ Workbook <- setRefClass(
         guid <-
           stri_join(
             "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(.self$worksheets[[sheet]]$extLst)
+            40000L + length(self$worksheets[[sheet]]$extLst)
           )
         cfRule <-
           sprintf(
@@ -3835,18 +3341,27 @@ Workbook <- setRefClass(
       }
 
       # TODO use c() instead of append()
-      .self$worksheets[[sheet]]$conditionalFormatting <-
-        append(.self$worksheets[[sheet]]$conditionalFormatting, cfRule)
+      self$worksheets[[sheet]]$conditionalFormatting <-
+        append(self$worksheets[[sheet]]$conditionalFormatting, cfRule)
 
-      names(.self$worksheets[[sheet]]$conditionalFormatting) <- nms
+      names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
 
-      invisible(.self)
+      invisible(self)
     },
 
-    protectWorkbook = function(protect = TRUE,
+    #' @description
+    #' Protect a workbook
+    #' @param protect protect
+    #' @param lockStructure lockStructure
+    #' @param lockWindows lockWindows
+    #' @param password password
+    #' @return The `wbWorkbook` object, invisibly
+    protectWorkbook = function(
+      protect = TRUE,
       lockStructure = FALSE,
       lockWindows = FALSE,
-      password = NULL) {
+      password = NULL
+    ) {
       attr <- c()
       if (!is.null(password)) {
         attr["workbookPassword"] <- hashPassword(password)
@@ -3859,7 +3374,7 @@ Workbook <- setRefClass(
       }
       # TODO: Shall we parse the existing protection settings and preserve all unchanged attributes?
       if (protect) {
-        .self$workbook$workbookProtection <-
+        self$workbook$workbookProtection <-
           sprintf(
             "<workbookProtection %s/>",
             stri_join(
@@ -3872,619 +3387,80 @@ Workbook <- setRefClass(
             )
           )
       } else {
-        .self$workbook$workbookProtection <- ""
+        self$workbook$workbookProtection <- ""
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
+    #' @description
+    #' Add a creator (author) to the workbook
+    #' @param Creator A name
+    #' @return The `wbWorkbook` object, invisibly
     addCreator = function(Creator = NULL) {
+      # TODO consider using "author" instead?
       if (!is.null(Creator)) {
-        current_creator <-
-          stri_match(core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
-        .self$core <-
-          stri_replace_all_fixed(
-            core,
-            pattern = current_creator,
-            replacement = stri_c(current_creator, Creator, sep = ";")
-          )
+        current_creator <- stri_match(self$core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
+        self$core <- stri_replace_all_fixed(
+          self$core,
+          pattern = current_creator,
+          replacement = stri_c(current_creator, Creator, sep = ";")
+        )
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # TODO should this be a field?
+    #' @description
+    #' Get the workbook creators
+    #' @return A character vector of the workbook creators
     getCreators = function() {
-      current_creator <-
-        stri_match(.self$core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
+      # TODO should this be a field?
+      current_creator <- stri_match(self$core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
 
-      current_creator_vec <- as.character(stri_split_fixed(
+      as.character(stri_split_fixed(
         str = current_creator,
         pattern = ";",
-        simplify = T
+        simplify = TRUE
       ))
-
-      return(current_creator_vec)
     },
 
-    # TODO rename to setLastModifiedBy() ?
+
+    #' @description
+    #' Change the last modified by
+    #' @param LastModifiedBy A new value
+    #' @return The `wbWorkbook` object, invisibly
     changeLastModifiedBy = function(LastModifiedBy = NULL) {
+      # TODO rename to setLastModifiedBy() ?
       if (!is.null(LastModifiedBy)) {
         current_LastModifiedBy <-
-          stri_match(.self$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
-        .self$core <-
+          stri_match(self$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
+        self$core <-
           stri_replace_all_fixed(
-            .self$core,
+            self$core,
             pattern = current_LastModifiedBy,
             replacement = LastModifiedBy
           )
       }
 
-      invisible(.self)
+      invisible(self)
     },
 
-    surroundingBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
-      sheet <- .self$sheet_names[[.self$validateSheet(sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        tmp <- genBaseColStyle(colClasses[[i]])
-
-        colStyle <- tmp$style
-        specialFormat <- tmp$specialFormat
-
-        ## create style objects
-        sTop <- colStyle$clone()
-        sMid <- colStyle$clone()
-        sBot <- colStyle$clone()
-
-        ## First column
-        if (i == 1) {
-          if (nRow == 1 & nCol == 1) {
-
-            ## All
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            sTop$borderBottom <- borderStyle
-            sTop$borderBottomColour <- borderColour
-
-            sTop$borderLeft <- borderStyle
-            sTop$borderLeftColour <- borderColour
-
-            sTop$borderRight <- borderStyle
-            sTop$borderRightColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol
-              )
-            ))
-          } else if (nCol == 1) {
-
-            ## Top
-            sTop$borderLeft <- borderStyle
-            sTop$borderLeftColour <- borderColour
-
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            sTop$borderRight <- borderStyle
-            sTop$borderRightColour <- borderColour
-
-            ## Middle
-            sMid$borderLeft <- borderStyle
-            sMid$borderLeftColour <- borderColour
-
-            sMid$borderRight <- borderStyle
-            sMid$borderRightColour <- borderColour
-
-            ## Bottom
-            sBot$borderBottom <- borderStyle
-            sBot$borderBottomColour <- borderColour
-
-            sBot$borderLeft <- borderStyle
-            sBot$borderLeftColour <- borderColour
-
-            sBot$borderRight <- borderStyle
-            sBot$borderRightColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol
-              )
-            ))
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sMid,
-                "sheet" = sheet,
-                "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                "cols" = rep.int(startCol, nRow - 2L)
-              )
-            ))
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sBot,
-                "sheet" = sheet,
-                "rows" = startRow + nRow - 1L,
-                "cols" = startCol
-              )
-            ))
-          } else if (nRow == 1) {
-
-            ## All
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            sTop$borderBottom <- borderStyle
-            sTop$borderBottomColour <- borderColour
-
-            sTop$borderLeft <- borderStyle
-            sTop$borderLeftColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol
-              )
-            ))
-          } else {
-
-            ## Top
-            sTop$borderLeft <- borderStyle
-            sTop$borderLeftColour <- borderColour
-
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            ## Middle
-            sMid$borderLeft <- borderStyle
-            sMid$borderLeftColour <- borderColour
-
-            ## Bottom
-            sBot$borderLeft <- borderStyle
-            sBot$borderLeftColour <- borderColour
-
-            sBot$borderBottom <- borderStyle
-            sBot$borderBottomColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol
-              )
-            ))
-
-            if (nRow > 2) {
-              # TODO use c() not append()
-              .self$styleObjects <- append(.self$styleObjects, list(
-                list(
-                  "style" = sMid,
-                  "sheet" = sheet,
-                  "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                  "cols" = rep.int(startCol, nRow - 2L)
-                )
-              ))
-            }
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sBot,
-                "sheet" = sheet,
-                "rows" = startRow + nRow - 1L,
-                "cols" = startCol
-              )
-            ))
-          }
-        } else if (i == nCol) {
-          if (nRow == 1) {
-
-            ## All
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            sTop$borderBottom <- borderStyle
-            sTop$borderBottomColour <- borderColour
-
-            sTop$borderRight <- borderStyle
-            sTop$borderRightColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol + nCol - 1L
-              )
-            ))
-          } else {
-
-            ## Top
-            sTop$borderRight <- borderStyle
-            sTop$borderRightColour <- borderColour
-
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            ## Middle
-            sMid$borderRight <- borderStyle
-            sMid$borderRightColour <- borderColour
-
-            ## Bottom
-            sBot$borderRight <- borderStyle
-            sBot$borderRightColour <- borderColour
-
-            sBot$borderBottom <- borderStyle
-            sBot$borderBottomColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol + nCol - 1L
-              )
-            ))
-
-            if (nRow > 2) {
-              # TODO use c() not append()
-              .self$styleObjects <- append(.self$styleObjects, list(
-                list(
-                  "style" = sMid,
-                  "sheet" = sheet,
-                  "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                  "cols" = rep.int(startCol + nCol - 1L, nRow - 2L)
-                )
-              ))
-            }
-
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sBot,
-                "sheet" = sheet,
-                "rows" = startRow + nRow - 1L,
-                "cols" = startCol + nCol - 1L
-              )
-            ))
-          }
-        } else { ## inside columns
-
-          if (nRow == 1) {
-
-            ## Top
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            ## Bottom
-            sTop$borderBottom <- borderStyle
-            sTop$borderBottomColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol + i - 1L
-              )
-            ))
-          } else {
-
-            ## Top
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            ## Bottom
-            sBot$borderBottom <- borderStyle
-            sBot$borderBottomColour <- borderColour
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sTop,
-                "sheet" = sheet,
-                "rows" = startRow,
-                "cols" = startCol + i - 1L
-              )
-            ))
-
-            ## Middle
-            if (specialFormat) {
-              # TODO use c() not append()
-              .self$styleObjects <- append(.self$styleObjects, list(
-                list(
-                  "style" = sMid,
-                  "sheet" = sheet,
-                  "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                  "cols" = rep.int(startCol + i - 1L, nRow - 2L)
-                )
-              ))
-            }
-
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sBot,
-                "sheet" = sheet,
-                "rows" = startRow + nRow - 1L,
-                "cols" = startCol + i - 1L
-              )
-            ))
-          }
-        } ## End of if(i == 1), i == NCol, else inside columns
-      } ## End of loop through columns
-
-
-      invisible(.self)
-    },
-
-    # TODO can nCol be defaulted to length(colClasses)?
-    # TODO rename to: setRowBorders?
-    rowBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
-      sheet <- .self$sheet_names[[.self$validateSheet(sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        # TODO use seq_along() with colClasses?
-        tmp <- genBaseColStyle(colClasses[[i]])
-        sTop <- tmp$style
-
-        ## First column
-        if (i == 1) {
-          if (nCol == 1) {
-
-            ## All borders (rows and surrounding)
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            sTop$borderBottom <- borderStyle
-            sTop$borderBottomColour <- borderColour
-
-            sTop$borderLeft <- borderStyle
-            sTop$borderLeftColour <- borderColour
-
-            sTop$borderRight <- borderStyle
-            sTop$borderRightColour <- borderColour
-          } else {
-
-            ## Top, Left, Bottom
-            sTop$borderTop <- borderStyle
-            sTop$borderTopColour <- borderColour
-
-            sTop$borderBottom <- borderStyle
-            sTop$borderBottomColour <- borderColour
-
-            sTop$borderLeft <- borderStyle
-            sTop$borderLeftColour <- borderColour
-          }
-        } else if (i == nCol) {
-
-          ## Top, Right, Bottom
-          sTop$borderTop <- borderStyle
-          sTop$borderTopColour <- borderColour
-
-          sTop$borderBottom <- borderStyle
-          sTop$borderBottomColour <- borderColour
-
-          sTop$borderRight <- borderStyle
-          sTop$borderRightColour <- borderColour
-        } else { ## inside columns
-
-          ## Top, Middle, Bottom
-          sTop$borderTop <- borderStyle
-          sTop$borderTopColour <- borderColour
-
-          sTop$borderBottom <- borderStyle
-          sTop$borderBottomColour <- borderColour
-        } ## End of if(i == 1), i == NCol, else inside columns
-
-        # TODO use c() not append()
-        .self$styleObjects <- append(.self$styleObjects, list(
-          list(
-            "style" = sTop,
-            "sheet" = sheet,
-            "rows" = (startRow):(startRow + nRow - 1L),
-            "cols" = rep(startCol + i - 1L, nRow)
-          )
-        ))
-      } ## End of loop through columns
-
-
-      invisible(.self)
-    },
-
-    # TODO can probably remove nCol?
-    # TODO rename to setColumnBorders
-    columnBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
-      sheet <- .self$sheet_names[[.self$validateSheet(sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        tmp <- genBaseColStyle(colClasses[[i]])
-        colStyle <- tmp$style
-        # TODO Is specialFormat used?
-        specialFormat <- tmp$specialFormat
-
-        ## create style objects
-        sTop <- colStyle$clone()
-        sMid <- colStyle$clone()
-        sBot <- colStyle$clone()
-
-        if (nRow == 1) {
-
-          ## Top
-          sTop$borderTop <- borderStyle
-          sTop$borderTopColour <- borderColour
-
-          sTop$borderBottom <- borderStyle
-          sTop$borderBottomColour <- borderColour
-
-          sTop$borderLeft <- borderStyle
-          sTop$borderLeftColour <- borderColour
-
-          sTop$borderRight <- borderStyle
-          sTop$borderRightColour <- borderColour
-
-          # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(
-            list(
-              "style" = sTop,
-              "sheet" = sheet,
-              "rows" = startRow,
-              "cols" = startCol + i - 1L
-            )
-          ))
-        } else {
-
-          ## Top
-          sTop$borderTop <- borderStyle
-          sTop$borderTopColour <- borderColour
-
-          sTop$borderLeft <- borderStyle
-          sTop$borderLeftColour <- borderColour
-
-          sTop$borderRight <- borderStyle
-          sTop$borderRightColour <- borderColour
-
-          ## Middle
-          sMid$borderLeft <- borderStyle
-          sMid$borderLeftColour <- borderColour
-
-          sMid$borderRight <- borderStyle
-          sMid$borderRightColour <- borderColour
-
-          ## Bottom
-          sBot$borderBottom <- borderStyle
-          sBot$borderBottomColour <- borderColour
-
-          sBot$borderLeft <- borderStyle
-          sBot$borderLeftColour <- borderColour
-
-          sBot$borderRight <- borderStyle
-          sBot$borderRightColour <- borderColour
-
-          colInd <- startCol + i - 1L
-
-          # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(
-            list(
-              "style" = sTop,
-              "sheet" = sheet,
-              "rows" = startRow,
-              "cols" = colInd
-            )
-          ))
-
-          if (nRow > 2) {
-            # TODO use c() not append()
-            .self$styleObjects <- append(.self$styleObjects, list(
-              list(
-                "style" = sMid,
-                "sheet" = sheet,
-                "rows" = (startRow + 1L):(startRow + nRow - 2L),
-                "cols" = rep(colInd, nRow - 2L)
-              )
-            ))
-          }
-
-
-          # TODO use c() not append()
-          .self$styleObjects <- append(.self$styleObjects, list(
-            list(
-              "style" = sBot,
-              "sheet" = sheet,
-              "rows" = startRow + nRow - 1L,
-              "cols" = colInd
-            )
-          ))
-        }
-      } ## End of loop through columns
-
-
-      invisible(.self)
-    },
-
-    # TODO safe to remove nCol?
-    # TODO is nCol just length(colClasses?)
-    # TODO rename to setAllBorders
-    allBorders = function(colClasses, sheet, startRow, startCol, nRow, nCol, borderColour, borderStyle, borderType) {
-      sheet <- .self$sheet_names[[.self$validateSheet(sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        tmp <- genBaseColStyle(colClasses[[i]])
-        sTop <- tmp$style
-
-        ## All borders
-        sTop$borderTop <- borderStyle
-        sTop$borderTopColour <- borderColour
-
-        sTop$borderBottom <- borderStyle
-        sTop$borderBottomColour <- borderColour
-
-        sTop$borderLeft <- borderStyle
-        sTop$borderLeftColour <- borderColour
-
-        sTop$borderRight <- borderStyle
-        sTop$borderRightColour <- borderColour
-
-        # TODO use c() not append()
-        .self$styleObjects <- append(.self$styleObjects, list(
-          list(
-            "style" = sTop,
-            "sheet" = sheet,
-            "rows" = (startRow):(startRow + nRow - 1L),
-            "cols" = rep(startCol + i - 1L, nRow)
-          )
-        ))
-      } ## End of loop through columns
-
-
-      invisible(.self)
-    },
-
-    # TODO does this actually change anything?
+    #' @description
+    #' setColWidths
+    #' @param sheet sheet
+    #' @return The `wbWorkbook` object, invisibly
     setColWidths = function(sheet) {
-      sheet <- .self$validateSheet(sheet)
+      # TODO does this actually change anything? I don't see any assignments...
+      sheet <- self$validateSheet(sheet)
 
-      widths <- .self$colWidths[[sheet]]
-      hidden <- attr(.self$colWidths[[sheet]], "hidden", exact = TRUE)
+      widths <- self$colWidths[[sheet]]
+      hidden <- attr(self$colWidths[[sheet]], "hidden", exact = TRUE)
       if (length(hidden) != length(widths)) {
         hidden <- rep("0", length(widths))
       }
 
-      cols <- names(.self$colWidths[[sheet]])
+      cols <- names(self$colWidths[[sheet]])
 
       autoColsInds <- widths %in% c("auto", "auto2")
       autoCols <- cols[autoColsInds]
@@ -4498,14 +3474,14 @@ Workbook <- setRefClass(
       if (length(autoCols)) {
 
         ## only run if data on worksheet
-        if (.self$worksheets[[sheet]]$sheet_data$n_elements == 0) {
+        if (self$worksheets[[sheet]]$sheet_data$n_elements == 0) {
           missingAuto <- autoCols
-        } else if (all(is.na(.self$worksheets[[sheet]]$sheet_data$v))) {
+        } else if (all(is.na(self$worksheets[[sheet]]$sheet_data$v))) {
           missingAuto <- autoCols
         } else {
 
           ## First thing - get base font max character width
-          baseFont <- .self$getBaseFont()
+          baseFont <- self$getBaseFont()
           baseFontName <- unlist(baseFont$name, use.names = FALSE)
           if (is.null(baseFontName)) {
             baseFontName <- "calibri"
@@ -4525,17 +3501,16 @@ Workbook <- setRefClass(
           }
 
           baseFontCharWidth <- openxlsxFontSizeLookupTable[[baseFontName]][baseFontSize - 7]
-          allCharWidths <- rep(baseFontCharWidth, .self$worksheets[[sheet]]$sheet_data$n_elements)
-          ######### ----------------------------------------------------------------
+          allCharWidths <- rep(baseFontCharWidth, self$worksheets[[sheet]]$sheet_data$n_elements)
 
           ## get char widths for each style object
-          if (length(.self$styleObjects) & any(!is.na(.self$worksheets[[sheet]]$sheet_data$style_id))) {
+          if (length(self$styleObjects) & any(!is.na(self$worksheets[[sheet]]$sheet_data$style_id))) {
             # TODO is thisSheetName used?
-            thisSheetName <- .self$sheet_names[sheet]
+            thisSheetName <- self$sheet_names[sheet]
 
             ## Calc font width for all styles on this worksheet
-            styleIds <- .self$worksheets[[sheet]]$sheet_data$style_id
-            styObSubet <- .self$styleObjects[sort(unique(styleIds))]
+            styleIds <- self$worksheets[[sheet]]$sheet_data$style_id
+            styObSubet <- self$styleObjects[sort(unique(styleIds))]
             stySubset <- lapply(styObSubet, "[[", "style")
 
             ## loop through stlye objects assignin a charWidth else baseFontCharWidth
@@ -4543,16 +3518,16 @@ Workbook <- setRefClass(
 
 
             ## Now assign all cells a character width
-            allCharWidths <- styleCharWidths[.self$worksheets[[sheet]]$sheet_data$style_id]
+            allCharWidths <- styleCharWidths[self$worksheets[[sheet]]$sheet_data$style_id]
             allCharWidths[is.na(allCharWidths)] <- baseFontCharWidth
           }
 
           ## Now check for columns that are auto2
           auto2Inds <- which(widths %in% "auto2")
-          if (length(auto2Inds) & length(.self$worksheets[[sheet]]$mergeCells)) {
+          if (length(auto2Inds) & length(self$worksheets[[sheet]]$mergeCells)) {
 
             ## get cell merges
-            merged_cells <- regmatches(.self$worksheets[[sheet]]$mergeCells, regexpr("[A-Z0-9]+:[A-Z0-9]+", worksheets[[sheet]]$mergeCells))
+            merged_cells <- regmatches(self$worksheets[[sheet]]$mergeCells, regexpr("[A-Z0-9]+:[A-Z0-9]+", worksheets[[sheet]]$mergeCells))
 
             comps <- lapply(merged_cells, function(rectCoords) unlist(strsplit(rectCoords, split = ":")))
             merge_cols <- lapply(comps, convertFromExcelRef)
@@ -4562,7 +3537,7 @@ Workbook <- setRefClass(
             merge_rows <- merge_rows[lengths(merge_cols) > 0]
             merge_cols <- merge_cols[lengths(merge_cols) > 0]
 
-            sd <- .self$worksheets[[sheet]]$sheet_data
+            sd <- self$worksheets[[sheet]]$sheet_data
 
             if (length(merge_cols)) {
               # TODO use seq_along()
@@ -4577,14 +3552,14 @@ Workbook <- setRefClass(
 
               ## only want the sheet data in here
               refs <- paste(all_merged_cells[[1]], all_merged_cells[[2]], sep = ",")
-              existing_cells <- paste(.self$worksheets[[sheet]]$sheet_data$rows, .self$worksheets[[sheet]]$sheet_data$cols, sep = ",")
-              keep <- which(!existing_cells %in% refs & !is.na(.self$worksheets[[sheet]]$sheet_data$v))
+              existing_cells <- paste(self$worksheets[[sheet]]$sheet_data$rows, self$worksheets[[sheet]]$sheet_data$cols, sep = ",")
+              keep <- which(!existing_cells %in% refs & !is.na(self$worksheets[[sheet]]$sheet_data$v))
 
               # TODO ad params to SheetData$new() to simplify this
               sd <- SheetData$new()
-              sd$cols <- .self$worksheets[[sheet]]$sheet_data$cols[keep]
-              sd$t <- .self$worksheets[[sheet]]$sheet_data$t[keep]
-              sd$v <- .self$worksheets[[sheet]]$sheet_data$v[keep]
+              sd$cols <- self$worksheets[[sheet]]$sheet_data$cols[keep]
+              sd$t <- self$worksheets[[sheet]]$sheet_data$t[keep]
+              sd$v <- self$worksheets[[sheet]]$sheet_data$v[keep]
               sd$n_elements <- length(sd$cols)
               allCharWidths <- allCharWidths[keep]
             } else {
@@ -4597,7 +3572,7 @@ Workbook <- setRefClass(
           ## Now that we have the max character width for the largest font on the page calculate the column widths
           calculatedWidths <- calc_column_widths(
             sheet_data = sd,
-            sharedStrings = unlist(.self$sharedStrings, use.names = FALSE),
+            sharedStrings = unlist(self$sharedStrings, use.names = FALSE),
             autoColumns = as.integer(autoCols),
             widths = allCharWidths,
             baseFontCharWidth = baseFontCharWidth,
@@ -4641,14 +3616,14 @@ Workbook <- setRefClass(
       #  worksheets[[sheet]]$cols <- append(worksheets[[sheet]]$cols, colNodes)
       #}
 
-      invisible(.self)
-    },
+      invisible(self)
+    }
 
 
     ##### should be revived (for the time beeing use writeData2() )
     # # TODO add default values?
     # writeData = function(df, sheet, startRow, startCol, colNames, colClasses, hlinkNames, keepNA, na.string, list_sep) {
-    #   sheet <- .self$validateSheet(sheet)
+    #   sheet <- self$validateSheet(sheet)
     #   nCols <- ncol(df)
     #   nRows <- nrow(df)
     #   df_nms <- names(df)
@@ -4656,8 +3631,7 @@ Workbook <- setRefClass(
     #   allColClasses <- unlist(colClasses)
     #   df <- as.list(df)
     #
-    #   ######################################################################
-    #   ## standardise all column types
+    ### standardise all column types ----
     #
     #
     #   ## pull out NaN values
@@ -4677,7 +3651,7 @@ Workbook <- setRefClass(
     #     dInds <- which(sapply(colClasses, function(x) "date" %in% x))
     #
     #     origin <- 25569L
-    #     if (grepl('date1904="1"|date1904="true"', stri_join(unlist(.self$workbook), collapse = ""), ignore.case = TRUE)) {
+    #     if (grepl('date1904="1"|date1904="true"', stri_join(unlist(self$workbook), collapse = ""), ignore.case = TRUE)) {
     #       origin <- 24107L
     #     }
     #
@@ -4776,9 +3750,7 @@ Workbook <- setRefClass(
     #   }
     #
     #
-    #   ## End standardise all column types
-    #   ######################################################################
-    #
+    ### End standardise all column types ----
     #
     #   ## cell types
     #   t <- build_cell_types_integer(classes = colClasses, n_rows = nRows)
@@ -4876,7 +3848,7 @@ Workbook <- setRefClass(
     #         Hyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
     #       })
     #
-    #       .self$worksheets[[sheet]]$hyperlinks <- append(worksheets[[sheet]]$hyperlinks, newhl)
+    #       self$worksheets[[sheet]]$hyperlinks <- append(worksheets[[sheet]]$hyperlinks, newhl)
     #     }
     #   }
     #
@@ -4890,12 +3862,12 @@ Workbook <- setRefClass(
     #
     #     uNewStr <- unique(newStrs)
     #
-    #     .self$updateSharedStrings(uNewStr)
+    #     self$updateSharedStrings(uNewStr)
     #     v[strFlag] <- match(newStrs, sharedStrings) - 1L
     #   }
     #
     #   # ## Create cell list of lists
-    #   .self$worksheets[[sheet]]$sheet_data$write(
+    #   self$worksheets[[sheet]]$sheet_data$write(
     #     rows_in = startRow:(startRow + nRows - 1L),
     #     cols_in = startCol:(startCol + nCols - 1L),
     #     t_in = t,
@@ -4906,13 +3878,1441 @@ Workbook <- setRefClass(
     #
     #
     #
-    #   invisible(.self)
+    #   invisible(self)
     # },
+  ),
 
+  ## private ----
+
+  # any funcitons that are not present elsewhere
+  private = list(
     ws = function(sheet) {
-      sheet_id <- .self$validateSheet(sheet)
-      .self$worksheets[[sheet_id]]
+      sheet_id <- self$validateSheet(sheet)
+      self$worksheets[[sheet_id]]
+    },
+
+    # this may ahve been removes
+    updateSharedStrings = function(uNewStr) {
+      ## Function will return named list of references to new strings
+      uStr <- uNewStr[which(!uNewStr %in% self$sharedStrings)]
+      uCount <- attr(self$sharedStrings, "uniqueCount")
+      self$sharedStrings <- append(self$sharedStrings, uStr)
+
+      attr(self$sharedStrings, "uniqueCount") <- uCount + length(uStr)
+      invisible(self)
+    },
+
+    writeDrawingVML = function(dir) {
+      for (i in seq_along(self$comments)) {
+        id <- 1025
+
+        cd <- unlist(lapply(self$comments[[i]], "[[", "clientData"))
+        nComments <- length(cd)
+
+        ## write head
+        if (nComments > 0 | length(self$vml[[i]])) {
+          write(
+            x = stri_join(
+              '<xml xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
+            ),
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            sep = " "
+          )
+        }
+
+        # TODO use seq_along()
+        for (j in seq_len(nComments)) {
+          id <- id + 1L
+          write(
+            x = genBaseShapeVML(cd[j], id),
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
+        }
+
+        if (length(self$vml[[i]])) {
+          write(
+            x = self$vml[[i]],
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
+        }
+
+        # TODO nComments and self$vml is already checked
+        if (nComments > 0 | length(self$vml[[i]])) {
+          write(
+            x = "</xml>",
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
+          self$worksheets[[i]]$legacyDrawing <-
+            '<legacyDrawing r:id="rId2"/>'
+        }
+
+      }
+
+      for (i in seq_along(self$drawings_vml)) {
+        write(
+          x = self$drawings_vml[[i]],
+          file = file.path(dir, sprintf("vmlDrawing%s.vml", i))
+        )
+      }
+
+      invisible(self)
+    },
+
+    updateStyles = function(style) {
+      # TODO assert_class(style, "Style")
+
+      ## Updates styles.xml
+      xfNode <- list(
+        numFmtId = 0,
+        fontId = 0,
+        fillId = 0,
+        borderId = 0,
+        xfId = 0
+      )
+
+
+      alignmentFlag <- FALSE
+
+      ## Font
+      if (!is.null(style$fontName) |
+          !is.null(style$fontSize) |
+          !is.null(style$fontColour) |
+          !is.null(style$fontDecoration) |
+          !is.null(style$fontFamily) |
+          !is.null(style$fontScheme)) {
+        fontNode <- self$createFontNode(style)
+        fontId <- style$fontId
+
+        if (length(fontId) == 0) {
+          fontId <- style$fontId
+          self$styles$fonts <- append(styles[["fonts"]], fontNode)
+        }
+
+        xfNode$fontId <- fontId
+        xfNode <- append(xfNode, list("applyFont" = "1"))
+      }
+
+
+      ## numFmt
+      if (!is.null(style$numFmt)) {
+        if (as.integer(style$numFmt$numFmtId)) {
+          numFmtId <- style$numFmt$numFmtId
+          if (as.integer(numFmtId) > 163L) {
+            tmp <- style$numFmt$formatCode
+
+            self$styles$numFmts <- unique(c(
+              styles$numFmts,
+              sprintf(
+                '<numFmt numFmtId="%s" formatCode="%s"/>',
+                numFmtId,
+                tmp
+              )
+            ))
+          }
+
+          xfNode$numFmtId <- numFmtId
+          xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
+        }
+      }
+
+      ## Fill
+      if (!is.null(style$fill)) {
+        fillNode <- createFillNode(style)
+        if (!is.null(fillNode)) {
+          fillId <- which(self$styles$fills == fillNode) - 1L
+
+          if (length(fillId) == 0) {
+            fillId <- length(styles$fills)
+            self$styles$fills <- c(styles$fills, fillNode)
+          }
+          xfNode$fillId <- fillId
+          xfNode <- append(xfNode, list("applyFill" = "1"))
+        }
+      }
+
+      ## Border
+      if (any(!is.null(
+        c(
+          style$borderLeft,
+          style$borderRight,
+          style$borderTop,
+          style$borderBottom,
+          style$borderDiagonal
+        )
+      ))) {
+        borderNode <- createBorderNode(style)
+        borderId <- which(self$styles$borders == borderNode) - 1L
+
+        if (length(borderId) == 0) {
+          borderId <- length(self$styles$borders)
+          self$styles$borders <- c(self$styles$borders, borderNode)
+        }
+
+        xfNode$borderId <- borderId
+        xfNode <- append(xfNode, list("applyBorder" = "1"))
+      }
+
+
+      if(!is.null(style$xfId))
+        xfNode$xfId <- style$xfId
+
+      childNodes <- ""
+
+      ## Alignment
+      if (!is.null(style$halign) |
+          !is.null(style$valign) |
+          !is.null(style$wrapText) |
+          !is.null(style$textRotation) | !is.null(style$indent)) {
+        attrs <- list()
+        alignNode <- "<alignment"
+
+        if (!is.null(style$textRotation)) {
+          alignNode <-
+            stri_join(alignNode,
+              sprintf('textRotation="%s"', style$textRotation),
+              sep = " "
+            )
+        }
+
+        if (!is.null(style$halign)) {
+          alignNode <-
+            stri_join(alignNode, sprintf('horizontal="%s"', style$halign), sep = " ")
+        }
+
+        if (!is.null(style$valign)) {
+          alignNode <-
+            stri_join(alignNode, sprintf('vertical="%s"', style$valign), sep = " ")
+        }
+
+        if (!is.null(style$indent)) {
+          alignNode <-
+            stri_join(alignNode, sprintf('indent="%s"', style$indent), sep = " ")
+        }
+
+        if (!is.null(style$wrapText)) {
+          if (style$wrapText) {
+            alignNode <- stri_join(alignNode, 'wrapText="1"', sep = " ")
+          }
+        }
+
+
+        alignNode <- stri_join(alignNode, "/>")
+
+        alignmentFlag <- TRUE
+        xfNode <- append(xfNode, list("applyAlignment" = "1"))
+
+        childNodes <- stri_join(childNodes, alignNode)
+      }
+
+      if (!is.null(style$hidden) | !is.null(style$locked)) {
+        xfNode <- append(xfNode, list("applyProtection" = "1"))
+        protectionNode <- "<protection"
+
+        if (!is.null(style$hidden)) {
+          protectionNode <-
+            stri_join(protectionNode, sprintf('hidden="%s"', as.numeric(style$hidden)), sep = " ")
+        }
+        if (!is.null(style$locked)) {
+          protectionNode <-
+            stri_join(protectionNode, sprintf('locked="%s"', as.numeric(style$locked)), sep = " ")
+        }
+
+        protectionNode <- stri_join(protectionNode, "/>")
+        childNodes <- stri_join(childNodes, protectionNode)
+      }
+
+      if (length(childNodes)) {
+        xfNode <-
+          stri_join(
+            "<xf ",
+            stri_join(
+              stri_join(names(xfNode), '="', xfNode, '"'),
+              sep = " ",
+              collapse = " "
+            ),
+            ">",
+            childNodes,
+            "</xf>"
+          )
+      } else {
+        xfNode <-
+          stri_join("<xf ", stri_join(
+            stri_join(names(xfNode), '="', xfNode, '"'),
+            sep = " ",
+            collapse = " "
+          ), "/>")
+      }
+
+      styleId <- which(self$styles$cellXfs == xfNode) - 1L
+      if (length(styleId) == 0) {
+        styleId <- length(self$styles$cellXfs)
+        self$styles$cellXfs <- c(self$styles$cellXfs, xfNode)
+      }
+
+
+      # Seems to be fine to return self
+      # return(as.integer(styleId))
+      invisible(self)
+    },
+
+    # TODO can wb$updateCellStyles() be removed?
+    updateCellStyles = function() {
+      flag <- TRUE
+      for (style in self$cellStyleObjects) {
+        ## Updates styles.xml
+        xfNode <- list(
+          numFmtId = 0,
+          fontId = 0,
+          fillId = 0,
+          borderId = 0
+        )
+
+
+        alignmentFlag <- FALSE
+
+        ## Font
+        if (!is.null(style$fontName) |
+            !is.null(style$fontSize) |
+            !is.null(style$fontColour) |
+            !is.null(style$fontDecoration) |
+            !is.null(style$fontFamily) |
+            !is.null(style$fontScheme)) {
+          fontNode <- self$createFontNode(style)
+          fontId <- which(self$styles$font == fontNode) - 1L
+
+          if (length(fontId) == 0) {
+            fontId <- length(self$styles$fonts)
+            self$styles$fonts <- append(self$styles[["fonts"]], fontNode)
+          }
+
+          xfNode$fontId <- fontId
+          xfNode <- append(xfNode, list("applyFont" = "1"))
+        }
+
+
+        ## numFmt
+        if (!is.null(style$numFmt)) {
+          if (as.integer(style$numFmt$numFmtId)) {
+            numFmtId <- style$numFmt$numFmtId
+            if (as.integer(numFmtId) > 163L) {
+              tmp <- style$numFmt$formatCode
+
+              self$styles$numFmts <- unique(c(
+                self$styles$numFmts,
+                sprintf(
+                  '<numFmt numFmtId="%s" formatCode="%s"/>',
+                  numFmtId,
+                  tmp
+                )
+              ))
+            }
+
+            xfNode$numFmtId <- numFmtId
+            xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
+          }
+        }
+
+        ## Fill
+        if (!is.null(style$fill)) {
+          fillNode <- createFillNode(style)
+          if (!is.null(fillNode)) {
+            fillId <- which(self$styles$fills == fillNode) - 1L
+
+            if (length(fillId) == 0) {
+              fillId <- length(self$styles$fills)
+              self$styles$fills <- c(self$styles$fills, fillNode)
+            }
+            xfNode$fillId <- fillId
+            xfNode <- append(xfNode, list("applyFill" = "1"))
+          }
+        }
+
+        ## Border
+        if (any(!is.null(
+          c(
+            style$borderLeft,
+            style$borderRight,
+            style$borderTop,
+            style$borderBottom,
+            style$borderDiagonal
+          )
+        ))) {
+          borderNode <- createBorderNode(style)
+          borderId <- which(self$styles$borders == borderNode) - 1L
+
+          if (length(borderId) == 0) {
+            borderId <- length(self$styles$borders)
+            self$styles$borders <- c(self$styles$borders, borderNode)
+          }
+
+          xfNode$borderId <- borderId
+          xfNode <- append(xfNode, list("applyBorder" = "1"))
+        }
+
+        xfNode <-
+          stri_join("<xf ", stri_join(
+            stri_join(names(xfNode), '="', xfNode, '"'),
+            sep = " ",
+            collapse = " "
+          ), "/>")
+
+        if (flag) {
+          self$styles$cellStyleXfs <- xfNode
+          flag <- FALSE
+        } else {
+          self$styles$cellStyleXfs <- c(self$styles$cellStyleXfs, xfNode)
+        }
+      }
+
+      invisible(self)
+    },
+
+    writeSheetDataXML = function(
+      xldrawingsDir,
+      xldrawingsRelsDir,
+      xlworksheetsDir,
+      xlworksheetsRelsDir
+    ) {
+      ## write worksheets
+
+      # TODO just seq_along()
+      nSheets <- length(self$worksheets)
+
+      for (i in seq_len(nSheets)) {
+        ## Write drawing i (will always exist) skip those that are empty
+        if (!identical(self$drawings[[i]], list())) {
+          write_file(
+            head = '',
+            body = pxml(self$drawings[[i]]),
+            tail = '',
+            fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
+          )
+          if (!identical(self$drawings_rels[[i]], list())) {
+            write_file(
+              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
+              body = pxml(self$drawings_rels[[i]]),
+              tail = "</Relationships>",
+              fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
+            )
+          }
+        } else {
+          self$worksheets[[i]]$drawing <- character()
+        }
+
+        ## vml drawing
+        if (length(self$vml_rels[[i]])) {
+          file.copy(
+            from = self$vml_rels[[i]],
+            to = file.path(
+              xldrawingsRelsDir,
+              stri_join("vmlDrawing", i, ".vml.rels")
+            )
+          )
+        }
+
+        # outlineLevelRow in SheetformatPr
+        if ((length(self$outlineLevels[[i]])) && (!grepl("outlineLevelRow", self$worksheets[[i]]$sheetFormatPr))) {
+          self$worksheets[[i]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', self$worksheets[[i]]$sheetFormatPr)
+        }
+
+        if (self$isChartSheet[i]) {
+          chartSheetDir <- file.path(dirname(xlworksheetsDir), "chartsheets")
+          chartSheetRelsDir <-
+            file.path(dirname(xlworksheetsDir), "chartsheets", "_rels")
+
+          if (!file.exists(chartSheetDir)) {
+            dir.create(chartSheetDir, recursive = TRUE)
+            dir.create(chartSheetRelsDir, recursive = TRUE)
+          }
+
+          write_file(
+            body = self$worksheets[[i]]$get_prior_sheet_data(),
+            fl = file.path(chartSheetDir, stri_join("sheet", i, ".xml"))
+          )
+
+          if (length(self$worksheets_rels[[i]])) {
+            write_file(
+              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
+              body = pxml(self$worksheets_rels[[i]]),
+              tail = "</Relationships>",
+              fl = file.path(chartSheetRelsDir, sprintf("sheet%s.xml.rels", i))
+            )
+          }
+        } else {
+          ## Write worksheets
+          ws <- self$worksheets[[i]]
+          hasHL <- length(ws$hyperlinks) > 0
+
+          ## reorder sheet data
+          ws$order_sheetdata()
+
+          prior <- ws$get_prior_sheet_data()
+          post <- ws$get_post_sheet_data()
+
+          # worksheets[[i]]$sheet_data$style_id <-
+          #   as.character(worksheets[[i]]$sheet_data$style_id)
+
+          cc <- ws$sheet_data$cc
+
+
+          if (!is.null(cc)) {
+            cc$r <- paste0(cc$c_r, cc$row_r)
+            # prepare data for output
+
+            # there can be files, where row_attr is incomplete because a row
+            # is lacking any attributes (presumably was added before saving)
+            # still row_attr is what we want!
+            cc_rows <- ws$sheet_data$row_attr$r
+            cc_out <- vector("list", length = length(cc_rows))
+            names(cc_out) <- cc_rows
+
+            for (cc_r in cc_rows) {
+              tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
+              nams <- cc[cc$row_r == cc_r, c("c_r")]
+              ltmp <- vector("list", nrow(tmp))
+              names(ltmp) <- nams
+
+              for (nr in seq_len(nrow(tmp))) {
+                ltmp[[nr]] <- as.list(tmp[nr, ])
+              }
+
+              cc_out[[cc_r]] <- ltmp
+            }
+
+            ws$sheet_data$cc_out <- cc_out
+          } else {
+            ws$sheet_data$row_attr <- NULL
+            ws$sheet_data$cc_out <- NULL
+          }
+
+          # row_attr <- ws$sheet_data$row_attr
+          # nam_at <- names(row_attr)
+          # wanted <- as.character(seq(min(as.numeric(nam_at)),
+          #                            max(as.numeric(nam_at))))
+          # empty_row_attr <- wanted[!wanted %in% nam_at]
+          # # add empty list
+          # if(!identical(empty_row_attr, character()))
+          #   row_attr[[empty_row_attr]] <- list()
+          # # restore order
+          # ws$sheet_data$row_attr <- row_attr[wanted]
+
+          # message(i, " \n")
+          write_worksheet_xml_2(
+            prior = prior,
+            post = post,
+            sheet_data = ws$sheet_data,
+            cols_attr = ws$cols_attr,
+            R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
+          )
+
+          # # why would I want to erase everything in here?
+          # worksheets[[i]]$sheet_data$style_id <- integer()
+
+
+          ## write worksheet rels
+          if (length(self$worksheets_rels[[i]])) {
+            ws_rels <- self$worksheets_rels[[i]]
+            if (hasHL) {
+              h_inds <- stri_join(seq_along(self$worksheets[[i]]$hyperlinks), "h")
+              ws_rels <-
+                c(ws_rels, unlist(
+                  lapply(seq_along(h_inds), function(j) {
+                    self$worksheets[[i]]$hyperlinks[[j]]$to_target_xml(h_inds[j])
+                  })
+                ))
+            }
+
+            ## Check if any tables were deleted - remove these from rels
+            if (length(self$tables)) {
+              table_inds <- grep("tables/table[0-9].xml", ws_rels)
+
+              if (length(table_inds)) {
+                ids <-
+                  regmatches(
+                    ws_rels[table_inds],
+                    regexpr(
+                      '(?<=Relationship Id=")[0-9A-Za-z]+',
+                      ws_rels[table_inds],
+                      perl = TRUE
+                    )
+                  )
+                inds <-
+                  as.integer(gsub("[^0-9]", "", ids, perl = TRUE)) - 2L
+                table_nms <- attr(self$tables, "tableName")[inds]
+                is_deleted <-
+                  grepl("openxlsx_deleted", table_nms, fixed = TRUE)
+                if (any(is_deleted)) {
+                  ws_rels <- ws_rels[-table_inds[is_deleted]]
+                }
+              }
+            }
+
+
+            # if (i < 3)
+            write_file(
+              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
+              body = pxml(ws_rels),
+              tail = "</Relationships>",
+              fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i))
+            )
+          }
+        } ## end of isChartSheet[i]
+      } ## end of loop through nSheets
+
+      invisible(self)
+    },
+
+    preSaveCleanUp = function() {
+      # TODO consider name self$workbook_validate() ?
+
+      ## Steps
+      # Order workbook.xml.rels:
+      #   sheets -> style -> theme -> sharedStrings -> persons -> tables -> calcChain
+      # Assign workbook.xml.rels children rIds, seq_along(workbook.xml.rels)
+      # Assign workbook$sheets rIds nSheets
+      #
+      ## drawings will always be r:id1 on worksheet
+      ## tables will always have r:id equal to table xml file number tables/table(i).xml
+
+      ## Every worksheet has a drawingXML as r:id 1
+      ## Tables from r:id 2
+      ## HyperLinks from nTables+3 to nTables+3+nHyperLinks-1
+      ## vmlDrawing to have rId
+
+      sheetRIds <-
+        as.integer(unlist(regmatches(
+          self$workbook$sheets,
+          gregexpr('(?<=r:id="rId)[0-9]+', self$workbook$sheets, perl = TRUE)
+        )))
+
+      nSheets <- length(sheetRIds)
+      nExtRefs <- length(self$externalLinks)
+      nPivots <- length(self$pivotDefinitions)
+
+      ## add a worksheet if none added
+      if (nSheets == 0) {
+        warning("Workbook does not contain any worksheets. A worksheet will be added.",
+          call. = FALSE
+        )
+        self$addWorksheet("Sheet 1")
+        nSheets <- 1L
+      }
+
+      ## get index of each child element for ordering
+      # TODO replace which(grepl()) to grep()
+      sheetInds <- grep( "(worksheets|chartsheets)/sheet[0-9]+\\.xml", self$workbook.xml.rels)
+      stylesInd <- grep("styles\\.xml", self$workbook.xml.rels)
+      themeInd <- grep("theme/theme[0-9]+.xml", self$workbook.xml.rels)
+      connectionsInd <- grep("connections.xml", self$workbook.xml.rels)
+      extRefInds <- grep("externalLinks/externalLink[0-9]+.xml", self$workbook.xml.rels)
+      sharedStringsInd <- grep("sharedStrings.xml", self$workbook.xml.rels)
+      tableInds <- grep("table[0-9]+.xml", self$workbook.xml.rels)
+      personInds <- grep("person.xml", self$workbook.xml.rels)
+
+
+      ## Reordering of workbook.xml.rels
+      ## don't want to re-assign rIds for pivot tables or slicer caches
+      pivotNode <- grep("pivotCache/pivotCacheDefinition[0-9].xml", self$workbook.xml.rels, value = TRUE)
+      slicerNode <- grep("slicerCache[0-9]+.xml", self$workbook.xml.rels, value = TRUE)
+
+      ## Reorder children of workbook.xml.rels
+      self$workbook.xml.rels <-
+        self$workbook.xml.rels[c(
+          sheetInds,
+          extRefInds,
+          themeInd,
+          connectionsInd,
+          stylesInd,
+          sharedStringsInd,
+          tableInds,
+          personInds
+        )]
+
+      ## Re assign rIds to children of workbook.xml.rels
+      self$workbook.xml.rels <-
+        unlist(lapply(seq_along(self$workbook.xml.rels), function(i) {
+          gsub('(?<=Relationship Id="rId)[0-9]+',
+            i,
+            self$workbook.xml.rels[[i]],
+            perl = TRUE
+          )
+        }))
+
+      self$workbook.xml.rels <- c(self$workbook.xml.rels, pivotNode, slicerNode)
+
+
+
+      if (!is.null(self$vbaProject)) {
+        self$workbook.xml.rels <-
+          c(
+            self$workbook.xml.rels,
+            sprintf(
+              '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
+              1L + length(self$workbook.xml.rels)
+            )
+          )
+      }
+
+      ## Reassign rId to workbook sheet elements, (order sheets by sheetId first)
+      self$workbook$sheets <-
+        unlist(lapply(seq_along(self$workbook$sheets), function(i) {
+          gsub('(?<= r:id="rId)[0-9]+', i, self$workbook$sheets[[i]], perl = TRUE)
+        }))
+
+      ## re-order worksheets if need to
+      if (any(self$sheetOrder != seq_len(nSheets))) {
+        self$workbook$sheets <- self$workbook$sheets[sheetOrder]
+      }
+
+
+
+      ## re-assign tabSelected
+      state <- rep.int("visible", nSheets)
+      # TODO grepl() to grep()
+      state[grepl("hidden", self$workbook$sheets)] <- "hidden"
+      visible_sheet_index <- which(state %in% "visible")[[1]]
+
+      if (is.null(self$workbook$bookViews))
+        self$workbook$bookViews <-
+        sprintf(
+          '<bookViews><workbookView xWindow="0" yWindow="0" windowWidth="13125" windowHeight="6105" firstSheet="%s" activeTab="%s"/></bookViews>',
+          visible_sheet_index - 1L,
+          visible_sheet_index - 1L
+        )
+
+      self$worksheets[[visible_sheet_index]]$sheetViews <-
+        sub(
+          '( tabSelected="0")|( tabSelected="false")',
+          ' tabSelected="1"',
+          self$worksheets[[visible_sheet_index]]$sheetViews,
+          ignore.case = TRUE
+        )
+      if (nSheets > 1) {
+        for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
+          self$worksheets[[i]]$sheetViews <-
+            sub(
+              ' tabSelected="(1|true|false|0)"',
+              ' tabSelected="0"',
+              self$worksheets[[i]]$sheetViews,
+              ignore.case = TRUE
+            )
+        }
+      }
+
+
+
+
+
+      if (length(self$workbook$definedNames)) {
+        # TODO consider self$get_sheet_names() which orders the sheet names?
+        sheetNames <- self$sheet_names[self$sheetOrder]
+
+        belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
+
+        ## sheetNames is in re-ordered order (order it will be displayed)
+        newId <- match(belongTo, sheetNames) - 1L
+        oldId <-
+          as.numeric(regmatches(
+            self$workbook$definedNames,
+            regexpr(
+              '(?<= localSheetId=")[0-9]+',
+              self$workbook$definedNames,
+              perl = TRUE
+            )
+          ))
+
+        for (i in seq_along(self$workbook$definedNames)) {
+          if (!is.na(newId[i])) {
+            self$workbook$definedNames[[i]] <-
+              gsub(
+                sprintf('localSheetId=\"%s\"', oldId[i]),
+                sprintf('localSheetId=\"%s\"', newId[i]),
+                self$workbook$definedNames[[i]],
+                fixed = TRUE
+              )
+          }
+        }
+      }
+
+
+
+
+      ## update workbook r:id to match reordered workbook.xml.rels externalLink element
+      if (length(extRefInds)) {
+        newInds <- as.integer(seq_along(extRefInds) + length(sheetInds))
+        self$workbook$externalReferences <-
+          stri_join(
+            "<externalReferences>",
+            stri_join(
+              sprintf('<externalReference r:id=\"rId%s\"/>', newInds),
+              collapse = ""
+            ),
+            "</externalReferences>"
+          )
+      }
+
+      ## styles
+      numFmtIds <- 50000L
+      #for (i in which(!self$isChartSheet)) {
+      #  worksheets[[i]]$sheet_data$style_id <-
+      #    rep.int(x = NA_integer_, times = worksheets[[i]]$sheet_data$n_elements)
+      #}
+
+
+      for (x in self$styleObjects) {
+        if (length(x$rows) & length(x$cols)) {
+          this.sty <- x$style$clone()
+
+          if (!is.null(this.sty$numFmt)) {
+            if (this.sty$numFmt$numFmtId == 9999) {
+              this.sty$numFmt$numFmtId <- numFmtIds
+              numFmtIds <- numFmtIds + 1L
+            }
+          }
+
+          ## convert sheet name to index
+          ## this creates the XML for styles.XML
+          private$updateStyles(this.sty)
+        }
+      }
+
+
+      ## Make sure all rowHeights have rows, if not append them!
+      for (i in seq_along(self$worksheets)) {
+        if (length(self$rowHeights[[i]])) {
+          rh <- as.integer(names(self$rowHeights[[i]]))
+          missing_rows <- rh[!rh %in% self$worksheets[[i]]$sheet_data$rows]
+          n <- length(missing_rows)
+
+          if (n > 0) {
+            #worksheets[[i]]$sheet_data$style_id <-
+            #  c(
+            #    worksheets[[i]]$sheet_data$style_id,
+            #    rep.int(NA_integer_, times = n)
+            #  )
+
+            # TODO make into simple functions: sheetData$append("rows", x), etc
+            # TODO make into simple functions: sheetData$inc_data_count()
+            # TODO make into simple functions: sheetData$calc_n_elements()
+            # use method chaining
+            self$worksheets[[i]]$sheet_data$rows <- c(self$worksheets[[i]]$sheet_data$rows, missing_rows)
+            self$worksheets[[i]]$sheet_data$cols <- c(self$worksheets[[i]]$sheet_data$cols, rep.int(NA_integer_, times = n))
+            self$worksheets[[i]]$sheet_data$t <- c(self$worksheets[[i]]$sheet_data$t, rep(NA_integer_, times = n))
+            self$worksheets[[i]]$sheet_data$v <- c(self$worksheets[[i]]$sheet_data$v, rep(NA_character_, times = n))
+            self$worksheets[[i]]$sheet_data$f <- c(self$worksheets[[i]]$sheet_data$f, rep(NA_character_, times = n))
+            self$worksheets[[i]]$sheet_data$data_count <- self$worksheets[[i]]$sheet_data$data_count + 1L
+            self$worksheets[[i]]$sheet_data$n_elements <- as.integer(length(self$worksheets[[i]]$sheet_data$rows))
+          }
+        }
+
+        ## write colwidth and coloutline XML
+        if (length(self$colWidths[[i]])) {
+          invisible(self$setColWidths(i))
+        }
+
+        if (length(self$colOutlineLevels[[i]])) {
+          invisible(self$groupColumns(i))
+        }
+      }
+
+      invisible(self)
+    },
+
+    surroundingBorders = function(
+      colClasses,
+      sheet, startRow,
+      startCol,
+      nRow,
+      nCol,
+      borderColour,
+      borderStyle,
+      borderType
+    ) {
+      # TODO remove -- I don't think this is used?
+
+      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      ## steps
+      # get column class
+      # get corresponding base style
+
+      for (i in seq_len(nCol)) {
+        tmp <- genBaseColStyle(colClasses[[i]])
+
+        colStyle <- tmp$style
+        specialFormat <- tmp$specialFormat
+
+        ## create style objects
+        sTop <- colStyle$clone()
+        sMid <- colStyle$clone()
+        sBot <- colStyle$clone()
+
+        ## First column
+        if (i == 1) {
+          if (nRow == 1 & nCol == 1) {
+
+            ## All
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            sTop$borderBottom <- borderStyle
+            sTop$borderBottomColour <- borderColour
+
+            sTop$borderLeft <- borderStyle
+            sTop$borderLeftColour <- borderColour
+
+            sTop$borderRight <- borderStyle
+            sTop$borderRightColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol
+              )
+            ))
+          } else if (nCol == 1) {
+
+            ## Top
+            sTop$borderLeft <- borderStyle
+            sTop$borderLeftColour <- borderColour
+
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            sTop$borderRight <- borderStyle
+            sTop$borderRightColour <- borderColour
+
+            ## Middle
+            sMid$borderLeft <- borderStyle
+            sMid$borderLeftColour <- borderColour
+
+            sMid$borderRight <- borderStyle
+            sMid$borderRightColour <- borderColour
+
+            ## Bottom
+            sBot$borderBottom <- borderStyle
+            sBot$borderBottomColour <- borderColour
+
+            sBot$borderLeft <- borderStyle
+            sBot$borderLeftColour <- borderColour
+
+            sBot$borderRight <- borderStyle
+            sBot$borderRightColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol
+              )
+            ))
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sMid,
+                "sheet" = sheet,
+                "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+                "cols" = rep.int(startCol, nRow - 2L)
+              )
+            ))
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sBot,
+                "sheet" = sheet,
+                "rows" = startRow + nRow - 1L,
+                "cols" = startCol
+              )
+            ))
+          } else if (nRow == 1) {
+
+            ## All
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            sTop$borderBottom <- borderStyle
+            sTop$borderBottomColour <- borderColour
+
+            sTop$borderLeft <- borderStyle
+            sTop$borderLeftColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol
+              )
+            ))
+          } else {
+
+            ## Top
+            sTop$borderLeft <- borderStyle
+            sTop$borderLeftColour <- borderColour
+
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            ## Middle
+            sMid$borderLeft <- borderStyle
+            sMid$borderLeftColour <- borderColour
+
+            ## Bottom
+            sBot$borderLeft <- borderStyle
+            sBot$borderLeftColour <- borderColour
+
+            sBot$borderBottom <- borderStyle
+            sBot$borderBottomColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol
+              )
+            ))
+
+            if (nRow > 2) {
+              # TODO use c() not append()
+              self$styleObjects <- append(self$styleObjects, list(
+                list(
+                  "style" = sMid,
+                  "sheet" = sheet,
+                  "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+                  "cols" = rep.int(startCol, nRow - 2L)
+                )
+              ))
+            }
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sBot,
+                "sheet" = sheet,
+                "rows" = startRow + nRow - 1L,
+                "cols" = startCol
+              )
+            ))
+          }
+        } else if (i == nCol) {
+          if (nRow == 1) {
+
+            ## All
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            sTop$borderBottom <- borderStyle
+            sTop$borderBottomColour <- borderColour
+
+            sTop$borderRight <- borderStyle
+            sTop$borderRightColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol + nCol - 1L
+              )
+            ))
+          } else {
+
+            ## Top
+            sTop$borderRight <- borderStyle
+            sTop$borderRightColour <- borderColour
+
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            ## Middle
+            sMid$borderRight <- borderStyle
+            sMid$borderRightColour <- borderColour
+
+            ## Bottom
+            sBot$borderRight <- borderStyle
+            sBot$borderRightColour <- borderColour
+
+            sBot$borderBottom <- borderStyle
+            sBot$borderBottomColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol + nCol - 1L
+              )
+            ))
+
+            if (nRow > 2) {
+              # TODO use c() not append()
+              self$styleObjects <- append(self$styleObjects, list(
+                list(
+                  "style" = sMid,
+                  "sheet" = sheet,
+                  "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+                  "cols" = rep.int(startCol + nCol - 1L, nRow - 2L)
+                )
+              ))
+            }
+
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sBot,
+                "sheet" = sheet,
+                "rows" = startRow + nRow - 1L,
+                "cols" = startCol + nCol - 1L
+              )
+            ))
+          }
+        } else { ## inside columns
+
+          if (nRow == 1) {
+
+            ## Top
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            ## Bottom
+            sTop$borderBottom <- borderStyle
+            sTop$borderBottomColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol + i - 1L
+              )
+            ))
+          } else {
+
+            ## Top
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            ## Bottom
+            sBot$borderBottom <- borderStyle
+            sBot$borderBottomColour <- borderColour
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sTop,
+                "sheet" = sheet,
+                "rows" = startRow,
+                "cols" = startCol + i - 1L
+              )
+            ))
+
+            ## Middle
+            if (specialFormat) {
+              # TODO use c() not append()
+              self$styleObjects <- append(self$styleObjects, list(
+                list(
+                  "style" = sMid,
+                  "sheet" = sheet,
+                  "rows" = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
+                  "cols" = rep.int(startCol + i - 1L, nRow - 2L)
+                )
+              ))
+            }
+
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sBot,
+                "sheet" = sheet,
+                "rows" = startRow + nRow - 1L,
+                "cols" = startCol + i - 1L
+              )
+            ))
+          }
+        } ## End of if(i == 1), i == NCol, else inside columns
+      } ## End of loop through columns
+
+
+      invisible(self)
+    },
+
+    rowBorders = function(
+      colClasses,
+      sheet,
+      startRow,
+      startCol,
+      nRow,
+      nCol,
+      borderColour,
+      borderStyle,
+      borderType
+    ) {
+      # TODO remove?  This isn't used
+      # TODO can nCol be defaulted to length(colClasses)?
+      # TODO rename to: setRowBorders?
+      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      ## steps
+      # get column class
+      # get corresponding base style
+
+      for (i in seq_len(nCol)) {
+        # TODO use seq_along() with colClasses?
+        tmp <- genBaseColStyle(colClasses[[i]])
+        sTop <- tmp$style
+
+        ## First column
+        if (i == 1) {
+          if (nCol == 1) {
+
+            ## All borders (rows and surrounding)
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            sTop$borderBottom <- borderStyle
+            sTop$borderBottomColour <- borderColour
+
+            sTop$borderLeft <- borderStyle
+            sTop$borderLeftColour <- borderColour
+
+            sTop$borderRight <- borderStyle
+            sTop$borderRightColour <- borderColour
+          } else {
+
+            ## Top, Left, Bottom
+            sTop$borderTop <- borderStyle
+            sTop$borderTopColour <- borderColour
+
+            sTop$borderBottom <- borderStyle
+            sTop$borderBottomColour <- borderColour
+
+            sTop$borderLeft <- borderStyle
+            sTop$borderLeftColour <- borderColour
+          }
+        } else if (i == nCol) {
+
+          ## Top, Right, Bottom
+          sTop$borderTop <- borderStyle
+          sTop$borderTopColour <- borderColour
+
+          sTop$borderBottom <- borderStyle
+          sTop$borderBottomColour <- borderColour
+
+          sTop$borderRight <- borderStyle
+          sTop$borderRightColour <- borderColour
+        } else { ## inside columns
+
+          ## Top, Middle, Bottom
+          sTop$borderTop <- borderStyle
+          sTop$borderTopColour <- borderColour
+
+          sTop$borderBottom <- borderStyle
+          sTop$borderBottomColour <- borderColour
+        } ## End of if(i == 1), i == NCol, else inside columns
+
+        # TODO use c() not append()
+        self$styleObjects <- append(self$styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = (startRow):(startRow + nRow - 1L),
+            "cols" = rep(startCol + i - 1L, nRow)
+          )
+        ))
+      } ## End of loop through columns
+
+
+      invisible(self)
+    },
+
+    columnBorders = function(
+      colClasses,
+      sheet,
+      startRow,
+      startCol,
+      nRow,
+      nCol,
+      borderColour,
+      borderStyle,
+      borderType
+    ) {
+      # TODO can probably remove nCol?
+      # TODO rename to setColumnBorders
+      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      ## steps
+      # get column class
+      # get corresponding base style
+
+      for (i in seq_len(nCol)) {
+        tmp <- genBaseColStyle(colClasses[[i]])
+        colStyle <- tmp$style
+        # TODO Is specialFormat used?
+        specialFormat <- tmp$specialFormat
+
+        ## create style objects
+        sTop <- colStyle$clone()
+        sMid <- colStyle$clone()
+        sBot <- colStyle$clone()
+
+        if (nRow == 1) {
+
+          ## Top
+          sTop$borderTop <- borderStyle
+          sTop$borderTopColour <- borderColour
+
+          sTop$borderBottom <- borderStyle
+          sTop$borderBottomColour <- borderColour
+
+          sTop$borderLeft <- borderStyle
+          sTop$borderLeftColour <- borderColour
+
+          sTop$borderRight <- borderStyle
+          sTop$borderRightColour <- borderColour
+
+          # TODO use c() not append()
+          self$styleObjects <- append(self$styleObjects, list(
+            list(
+              "style" = sTop,
+              "sheet" = sheet,
+              "rows" = startRow,
+              "cols" = startCol + i - 1L
+            )
+          ))
+        } else {
+
+          ## Top
+          sTop$borderTop <- borderStyle
+          sTop$borderTopColour <- borderColour
+
+          sTop$borderLeft <- borderStyle
+          sTop$borderLeftColour <- borderColour
+
+          sTop$borderRight <- borderStyle
+          sTop$borderRightColour <- borderColour
+
+          ## Middle
+          sMid$borderLeft <- borderStyle
+          sMid$borderLeftColour <- borderColour
+
+          sMid$borderRight <- borderStyle
+          sMid$borderRightColour <- borderColour
+
+          ## Bottom
+          sBot$borderBottom <- borderStyle
+          sBot$borderBottomColour <- borderColour
+
+          sBot$borderLeft <- borderStyle
+          sBot$borderLeftColour <- borderColour
+
+          sBot$borderRight <- borderStyle
+          sBot$borderRightColour <- borderColour
+
+          colInd <- startCol + i - 1L
+
+          # TODO use c() not append()
+          self$styleObjects <- append(self$styleObjects, list(
+            list(
+              "style" = sTop,
+              "sheet" = sheet,
+              "rows" = startRow,
+              "cols" = colInd
+            )
+          ))
+
+          if (nRow > 2) {
+            # TODO use c() not append()
+            self$styleObjects <- append(self$styleObjects, list(
+              list(
+                "style" = sMid,
+                "sheet" = sheet,
+                "rows" = (startRow + 1L):(startRow + nRow - 2L),
+                "cols" = rep(colInd, nRow - 2L)
+              )
+            ))
+          }
+
+
+          # TODO use c() not append()
+          self$styleObjects <- append(self$styleObjects, list(
+            list(
+              "style" = sBot,
+              "sheet" = sheet,
+              "rows" = startRow + nRow - 1L,
+              "cols" = colInd
+            )
+          ))
+        }
+      } ## End of loop through columns
+
+
+      invisible(self)
+    },
+
+    allBorders = function(
+      colClasses,
+      sheet,
+      startRow,
+      startCol,
+      nRow,
+      nCol,
+      borderColour,
+      borderStyle,
+      borderType
+    ) {
+      # TODO remove this?  I don't think it's used
+      # TODO safe to remove nCol?
+      # TODO is nCol just length(colClasses?)
+      # TODO rename to setAllBorders
+      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      ## steps
+      # get column class
+      # get corresponding base style
+
+      for (i in seq_len(nCol)) {
+        tmp <- genBaseColStyle(colClasses[[i]])
+        sTop <- tmp$style
+
+        ## All borders
+        sTop$borderTop <- borderStyle
+        sTop$borderTopColour <- borderColour
+
+        sTop$borderBottom <- borderStyle
+        sTop$borderBottomColour <- borderColour
+
+        sTop$borderLeft <- borderStyle
+        sTop$borderLeftColour <- borderColour
+
+        sTop$borderRight <- borderStyle
+        sTop$borderRightColour <- borderColour
+
+        # TODO use c() not append()
+        self$styleObjects <- append(self$styleObjects, list(
+          list(
+            "style" = sTop,
+            "sheet" = sheet,
+            "rows" = (startRow):(startRow + nRow - 1L),
+            "cols" = rep(startCol + i - 1L, nRow)
+          )
+        ))
+      } ## End of loop through columns
+
+
+      invisible(self)
     }
   )
-
 )

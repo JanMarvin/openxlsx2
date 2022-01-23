@@ -13,13 +13,13 @@ copyWorkbook(wb)
 Workbook
 }
 \description{
-Just a wrapper of wb$copy()
+Just a wrapper of wb$clone()
 }
 \examples{
 
 wb <- createWorkbook()
 wb2 <- wb ## does not create a copy
-wb3 <- copyWorkbook(wb) ## wrapper for wb$copy()
+wb3 <- copyWorkbook(wb) ## wrapper for wb$clone()
 
 addWorksheet(wb, "Sheet1") ## adds worksheet to both wb and wb2 but not wb3
 
