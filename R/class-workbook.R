@@ -3332,7 +3332,7 @@ Workbook <- setRefClass(
 
       for (x in .self$styleObjects) {
         if (length(x$rows) & length(x$cols)) {
-          this.sty <- x$style$copy()
+          this.sty <- x$style$clone()
 
           if (!is.null(this.sty$numFmt)) {
             if (this.sty$numFmt$numFmtId == 9999) {
@@ -3936,9 +3936,9 @@ Workbook <- setRefClass(
         specialFormat <- tmp$specialFormat
 
         ## create style objects
-        sTop <- colStyle$copy()
-        sMid <- colStyle$copy()
-        sBot <- colStyle$copy()
+        sTop <- colStyle$clone()
+        sMid <- colStyle$clone()
+        sBot <- colStyle$clone()
 
         ## First column
         if (i == 1) {
@@ -4335,9 +4335,9 @@ Workbook <- setRefClass(
         specialFormat <- tmp$specialFormat
 
         ## create style objects
-        sTop <- colStyle$copy()
-        sMid <- colStyle$copy()
-        sBot <- colStyle$copy()
+        sTop <- colStyle$clone()
+        sMid <- colStyle$clone()
+        sBot <- colStyle$clone()
 
         if (nRow == 1) {
 

@@ -393,7 +393,7 @@ mergeStyle <- function(oldStyle, newStyle) {
   assert_style(newStyle)
 
   ## This function is used to merge an existing cell style with a new style to create a stacked style.
-  res <- oldStyle$copy()
+  res <- oldStyle$clone()
 
   for (i in merge_style_fields()) {
     res[[i]] <- newStyle[[i]] %||% oldStyle[[i]]
