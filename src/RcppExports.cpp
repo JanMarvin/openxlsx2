@@ -551,42 +551,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// set_sst
-Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings);
-RcppExport SEXP _openxlsx2_set_sst(SEXP sharedStringsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type sharedStrings(sharedStringsSEXP);
-    rcpp_result_gen = Rcpp::wrap(set_sst(sharedStrings));
-    return rcpp_result_gen;
-END_RCPP
-}
-// list_to_attr
-std::string list_to_attr(Rcpp::List attributes, std::string node);
-RcppExport SEXP _openxlsx2_list_to_attr(SEXP attributesSEXP, SEXP nodeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type attributes(attributesSEXP);
-    Rcpp::traits::input_parameter< std::string >::type node(nodeSEXP);
-    rcpp_result_gen = Rcpp::wrap(list_to_attr(attributes, node));
-    return rcpp_result_gen;
-END_RCPP
-}
-// list_to_attr_full
-std::string list_to_attr_full(Rcpp::List attributes, std::string node, std::string child);
-RcppExport SEXP _openxlsx2_list_to_attr_full(SEXP attributesSEXP, SEXP nodeSEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type attributes(attributesSEXP);
-    Rcpp::traits::input_parameter< std::string >::type node(nodeSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(list_to_attr_full(attributes, node, child));
-    return rcpp_result_gen;
-END_RCPP
-}
 // read_xf
 Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf);
 RcppExport SEXP _openxlsx2_read_xf(SEXP xml_doc_xfSEXP) {
@@ -808,6 +772,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// set_sst
+Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings);
+RcppExport SEXP _openxlsx2_set_sst(SEXP sharedStringsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type sharedStrings(sharedStringsSEXP);
+    rcpp_result_gen = Rcpp::wrap(set_sst(sharedStrings));
+    return rcpp_result_gen;
+END_RCPP
+}
 // set_row
 std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx);
 RcppExport SEXP _openxlsx2_set_row(SEXP row_attrSEXP, SEXP cellsSEXP, SEXP row_idxSEXP) {
@@ -879,9 +854,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 4},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
     {"_openxlsx2_xml_append_child", (DL_FUNC) &_openxlsx2_xml_append_child, 4},
-    {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
-    {"_openxlsx2_list_to_attr", (DL_FUNC) &_openxlsx2_list_to_attr, 2},
-    {"_openxlsx2_list_to_attr_full", (DL_FUNC) &_openxlsx2_list_to_attr_full, 3},
     {"_openxlsx2_read_xf", (DL_FUNC) &_openxlsx2_read_xf, 1},
     {"_openxlsx2_write_xf", (DL_FUNC) &_openxlsx2_write_xf, 1},
     {"_openxlsx2_read_font", (DL_FUNC) &_openxlsx2_read_font, 1},
@@ -902,6 +874,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_build_cell_types_integer", (DL_FUNC) &_openxlsx2_build_cell_types_integer, 2},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
+    {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 3},
     {"_openxlsx2_write_worksheet_xml_2", (DL_FUNC) &_openxlsx2_write_worksheet_xml_2, 5},
     {NULL, NULL, 0}

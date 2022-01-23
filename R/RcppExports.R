@@ -228,18 +228,6 @@ xml_append_child <- function(node, child, pointer, escapes) {
     .Call(`_openxlsx2_xml_append_child`, node, child, pointer, escapes)
 }
 
-set_sst <- function(sharedStrings) {
-    .Call(`_openxlsx2_set_sst`, sharedStrings)
-}
-
-list_to_attr <- function(attributes, node) {
-    .Call(`_openxlsx2_list_to_attr`, attributes, node)
-}
-
-list_to_attr_full <- function(attributes, node, child) {
-    .Call(`_openxlsx2_list_to_attr_full`, attributes, node, child)
-}
-
 read_xf <- function(xml_doc_xf) {
     .Call(`_openxlsx2_read_xf`, xml_doc_xf)
 }
@@ -318,6 +306,10 @@ build_cell_types_integer <- function(classes, n_rows) {
 
 build_cell_merges <- function(comps) {
     .Call(`_openxlsx2_build_cell_merges`, comps)
+}
+
+set_sst <- function(sharedStrings) {
+    .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
 set_row <- function(row_attr, cells, row_idx) {

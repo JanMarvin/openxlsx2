@@ -1,6 +1,27 @@
 #include "openxlsx2.h"
 
 
+// [[Rcpp::export]]
+Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
+
+  Rcpp::CharacterVector sst(sharedStrings.length());
+
+    for (auto i = 0; i < sharedStrings.length(); ++i) {
+      pugi::xml_document si;
+      std::string sharedString = Rcpp::as<std::string>(sharedStrings[i]);
+
+      si.append_child("si").append_child("t").append_child(pugi::node_pcdata).set_value(sharedString.c_str());
+
+      std::ostringstream oss;
+      si.print(oss, " ", pugi::format_raw);
+
+      sst[i] = oss.str();
+    }
+
+    return sst;
+}
+
+
 // creates an xml row
 // data in xml is ordered row wise. therefore we need the row attributes and
 // the colum data used in this row. This function uses both to create a single
