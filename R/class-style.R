@@ -1,42 +1,107 @@
 
 # class -------------------------------------------------------------------
 
-Style <- setRefClass(
-  "Style",
-  fields = c(
-    "fontId",
-    "fontName",
-    "fontColour",
-    "fontSize",
-    "fontFamily",
-    "fontScheme",
-    "fontDecoration",
-    "borderTop",
-    "borderLeft",
-    "borderRight",
-    "borderBottom",
-    "borderTopColour",
-    "borderLeftColour",
-    "borderRightColour",
-    "borderBottomColour",
-    "borderDiagonal",
-    "borderDiagonalColour",
-    "borderDiagonalUp",
-    "borderDiagonalDown",
-    "halign",
-    "valign",
-    "indent",
-    "textRotation",
-    "numFmt",
-    "fill",
-    "wrapText",
-    "locked",
-    "hidden",
-    "xfId",
-    "styleShow"
-  ),
-  methods = list(
+#' R6 class for a Workbook Style
+#'
+#' A style
+#'
+#' @export
+Style <- R6::R6Class(
+  "wbStyle",
+  public = list(
+    # TODO consider what could just be a private field?
+
+    # TODO can this just be a fontspecs() object?  with these values?
+
+    #' @field fontId fontID
+    fontId = NULL,
+    #' @field fontName fontName
+    fontName = NULL,
+    #' @field fontColour fontColour
+    fontColour = NULL,
+    #' @field fontSize fontSize
+    fontSize = NULL,
+    #' @field fontFamily fontFamily
+    fontFamily = NULL,
+    #' @field fontScheme fontScheme
+    fontScheme = NULL,
+    #' @field fontDecoration fontDecoration
+    fontDecoration = NULL,
+
+    # TODO use border_specs() instead?
+
+    #' @field borderTop borderTop
+    borderTop = NULL,
+    #' @field borderLeft borderLeft
+    borderLeft = NULL,
+    #' @field borderRight borderRight
+    borderRight = NULL,
+    #' @field borderBottom borderBottom
+    borderBottom = NULL,
+    #' @field borderTopColour borderTopColour
+    borderTopColour = NULL,
+    #' @field borderLeftColour borderLeftColour
+    borderLeftColour = NULL,
+    #' @field borderRightColour borderRightColour
+    borderRightColour = NULL,
+    #' @field borderBottomColour borderBottomColour
+    borderBottomColour = NULL,
+    #' @field borderDiagonal borderDiagonal
+    borderDiagonal = NULL,
+    #' @field borderDiagonalColour borderDiagonalColour
+    borderDiagonalColour = NULL,
+    #' @field borderDiagonalUp borderDiagonalUp
+    borderDiagonalUp = NULL,
+    #' @field borderDiagonalDown borderDiagonalDown
+    borderDiagonalDown = NULL,
+
+
+    #' @field halign Horizontal alignment
+    halign = NULL,
+    #' @field valign Vertical alignment
+    valign = NULL,
+    #' @field indent Indentation
+    indent = NULL,
+    #' @field textRotation The degree of text rotation
+    textRotation = NULL,
+    #' @field numFmt Number format id
+    numFmt = NULL,
+    #' @field fill fill
+    fill = NULL,
+    #' @field wrapText wrapText
+    wrapText = NULL,
+    #' @field locked locked
+    locked = NULL,
+    #' @field hidden hidden
+    hidden = NULL,
+    #' @field xfId xfId
+    xfId = NULL,
+    #' @field styleShow styleShow
+    styleShow = NULL,
+
+    #' @description
+    #' Creates a new `wbStyle` object
+    #' @param fontName fontName
+    #' @param fontSize fontSize
+    #' @param fontColour fontColour
+    #' @param numFmt Number format id
+    #' @param border Border
+    #' @param borderColour border colour
+    #' @param borderStyle border style
+    #' @param bgFill Background fill
+    #' @param fgFill Foreground fill
+    #' @param halign Horizontal alignment
+    #' @param valign Vertical alignment
+    #' @param textDecoration text decorations
+    #' @param wrapText If `TRUE` will wrap text
+    #' @param textRotation The degree of text rotation
+    #' @param indent indent
+    #' @param locked locked
+    #' @param hidden hidden
+    #' @return a `wbStyle` object
     initialize = function(
+
+      # TODO wb_font_spec() would be better
       fontName       = NULL,
       fontSize       = NULL,
       fontColour     = "none",
@@ -44,6 +109,7 @@ Style <- setRefClass(
       # numberFormat   = c("GENERAL", "NUMBER", "CURRENCY", "ACCOUNTING", "DATE", "LONGDATE", "TIME", "PERCENTAGE", "SCIENTIFIC", "TEXT", "3", "4", "COMMA"),
       # customFormat   = NULL, # this could be used to overwrite number format, and allow for easier match.arg()
       # if any border == none, sets to NULL
+      # TODO wb_border_spec() would be better
       border         = c("none", "top", "bottom", "left", "right", "all"),
       borderColour   = getOption("openxlsx.borderColour", "black"),
       # should borderStyle default to "none"?
@@ -73,66 +139,211 @@ Style <- setRefClass(
 
 
       # fonts ----
-      .self$fontName   <- value_list(fontName)
-      .self$fontSize   <- value_list(validate_font_size(fontSize))
-      .self$fontColour <- colour_list(validFontColour)
+      self$fontName   <- value_list(fontName)
+      self$fontSize   <- value_list(validate_font_size(fontSize))
+      self$fontColour <- colour_list(validFontColour)
 
-      .self$halign         <- match.arg(halign)
-      .self$valign         <- match.arg(valign)
-      text_style           <- match.arg(textDecoration, several.ok = TRUE)
-      .self$fontDecoration <- validate_text_style(text_style)
-      .self$numFmt         <- validate_number_format(numFmt)
+      self$halign         <- match.arg(halign)
+      self$valign         <- match.arg(valign)
+      text_style          <- match.arg(textDecoration, several.ok = TRUE)
+      self$fontDecoration <- validate_text_style(text_style)
+      self$numFmt         <- validate_number_format(numFmt)
 
 
       # fill ----
-      .self$fill <- c(
+      self$fill <- c(
         if (!is.null(bgFill)) list(fillBg = list(rgb = bgFill)),
         if (!is.null(fgFill)) list(fillFg = list(rgb = fgFill))
       )
 
       # text rotation ----
-      .self$textRotation <- validate_text_rotation(textRotation)
+      self$textRotation <- validate_text_rotation(textRotation)
 
       # borders ----
-      .self$set_borders(
+      private$set_borders(
         match.arg(border, several.ok = TRUE),
         colour = borderColour,
         style = borderStyle
       )
 
       # others ----
-      .self$indent   <- isTRUE(indent)
-      .self$locked   <- isTRUE(locked)
-      .self$hidden   <- isTRUE(hidden)
-      .self$wrapText <- isTRUE(wrapText)
+      self$indent   <- isTRUE(indent)
+      self$locked   <- isTRUE(locked)
+      self$hidden   <- isTRUE(hidden)
+      self$wrapText <- isTRUE(wrapText)
 
       # auto set ----
       # when are these set?
-      .self$fontId               <- NULL
-      .self$fontFamily           <- NULL
-      .self$fontScheme           <- NULL
-      .self$borderDiagonal       <- NULL
-      .self$borderDiagonalColour <- NULL
-      .self$borderDiagonalUp     <- FALSE
-      .self$borderDiagonalDown   <- FALSE
-      .self$xfId                 <- NULL
+      self$fontId               <- NULL
+      self$fontFamily           <- NULL
+      self$fontScheme           <- NULL
+      self$borderDiagonal       <- NULL
+      self$borderDiagonalColour <- NULL
+      self$borderDiagonalUp     <- FALSE
+      self$borderDiagonalDown   <- FALSE
+      self$xfId                 <- NULL
 
-      invisible(.self)
+      invisible(self)
     },
 
-    # set to private function
+    # TODO as.list() to to_list() ?
+    #' @description
+    #' Convert the `wbStyle` object to a list
+    #' @param include_null if `TRUE` will include values that contain `NULL`,
+    #'   otherwise they are ommited from the list
+    #' @return A `list` of fields
+    as.list = function(include_null = FALSE) {
+      # R6:::as.list.R6() exists...  would this be easier
+      ls <- list(
+        fontId         = self$fontId,
+        fontName       = self$fontName,
+        fontColour     = self$fontColour,
+        fontSize       = self$fontSize,
+        fontFamily     = self$fontFamily,
+        fontScheme     = self$fontScheme,
+        fontDecoration = self$fontDecoration,
+
+        borderTop          = self$borderTop,
+        borderLeft         = self$borderLeft,
+        borderRight        = self$borderRight,
+        borderBottom       = self$borderBottom,
+        borderTopColour    = self$borderTopColour,
+        borderLeftColour   = self$borderLeftColour,
+        borderRightColour  = self$borderRightColour,
+        borderBottomColour = self$borderBottomColour,
+
+        halign       = self$halign,
+        valign       = self$valign,
+        indent       = self$indent,
+        textRotation = self$textRotation,
+        numFmt       = self$numFmt,
+        fillFg       = self$fill$fillFg,
+        fillBg       = self$fill$fillBg,
+        wrapText     = self$wrapText,
+        locked       = self$locked,
+        hidden       = self$hidden,
+        xfId         = self$xfId
+      )
+
+      if (include_null) {
+        ls
+      } else {
+        ls[lengths(ls) > 0]
+      }
+    },
+
+    #' @description
+    #' Print the `wbStyle object`
+    #' @param ... Not implemented
+    #' @return the `wbStyle` object, invisibly; called for its side effects
+    print = function(...) {
+      .numFmtMapping <- c(
+        GENERAL    =   0,
+        NUMBER     =   2,
+        CURRENCY   = 164,
+        ACCOUNTING =  44,
+        DATE       =  14,
+        TIME       = 167,
+        PERCENTAGE =  10,
+        SCIENTIFIC =  11,
+        TEXT       =  49
+      )
+
+      numFmtStr <- if (!is.null(self$numFmt)) {
+        if (as.integer(self$numFmt$numFmtId) %in% .numFmtMapping) {
+          names(.numFmtMapping)[.numFmtMapping == as.integer(self$numFmt$numFmtId)]
+        } else {
+          sprintf('"%s"', self$numFmt$formatCode)
+        }
+      } else {
+        "GENERAL"
+      }
+
+      # if all are NULL
+      borders <- c(
+        sprintf("Top: %s",    self$borderTop),
+        sprintf("Bottom: %s", self$borderBottom),
+        sprintf("Left: %s",   self$borderLeft),
+        sprintf("Right: %s",  self$borderRight)
+      )
+
+      borderColours <- c(self$borderTopColour, self$borderBottomColour, self$borderLeftColour, self$borderRightColour)
+      borderColours <- gsub("^FF", "#", borderColours)
+
+      # make as private
+      self$styleShow  <- c(
+        "A custom cell style. \n\n",
+        # numFmt
+        sprintf("Cell formatting: %s \n", numFmtStr),
+        # Font name
+        sprintf("Font name: %s \n", self$fontName[[1]]),
+        # Font size
+        sprintf("Font size: %s \n", self$fontSize[[1]]),
+        # Font colour
+        sprintf("Font colour: %s \n", gsub("^FF", "#", self$fontColour[[1]])),
+        # Font decoration
+        if (length(self$fontDecoration)) {
+          sprintf("Font decoration: %s \n", paste(self$fontDecoration, collapse = ", "))
+        },
+
+        # Cell borders
+        if (length(borders)) {
+          c(
+            sprintf("Cell borders: %s \n", paste(borders, collapse = ", ")),
+            sprintf("Cell border colours: %s \n", paste(borderColours, collapse = ", "))
+          )
+        },
+
+        # sprtinf("this %s", NULL) returns character()
+        # Cell horizontal alignment
+        sprintf("Cell horzizontal align: %s \n", self$halign),
+        # Cell vertical alignment
+        sprintf("Cell vertical align: %s \n", self$valign),
+        # Cell indent
+        sprintf("Cell indent: %s \n", self$indent),
+        # Cell text rotation
+        sprintf("Cell text rotation: %s \n", self$textRotation),
+        # Cell fill colour
+        if (length(self$fill$fillFg)) {
+          sprintf(
+            "Cell fill foreground: %s \n",
+            paste(paste0(names(self$fill$fillFg), ": ", sub("^FF", "#", self$fill$fillFg)), collapse = ", ")
+          )
+        },
+        # Cell background  fill
+        if (length(self$fill$fillBg)) {
+          sprintf(
+            "Cell fill background: %s \n",
+            paste(paste0(names(self$fill$fillBg), ": ", sub("^FF", "#", self$fill$fillBg)), collapse = ", ")
+          )
+        },
+        # locked
+        sprintf("Cell protection: %s \n", self$locked),
+        # hidden
+        sprintf("Cell formula hidden: %s \n", self$hidden),
+        # wrapText
+        sprintf("Cell wrap text: %s", self$wrapText),
+        "\n\n"
+      )
+
+      # if (print) cat(self$styleShow)
+      invisible(self)
+    }
+  ),
+
+  private = list(
     set_borders = function(border, colour, style) {
       if (any(border == "none")) {
         # default will override
-        .self$borderLeft         <- NULL
-        .self$borderLeftColour   <- NULL
-        .self$borderRight        <- NULL
-        .self$borderRightColour  <- NULL
-        .self$borderTop          <- NULL
-        .self$borderTopColour    <- NULL
-        .self$borderBottom       <- NULL
-        .self$borderBottomColour <- NULL
-        return(invisible(.self))
+        self$borderLeft         <- NULL
+        self$borderLeftColour   <- NULL
+        self$borderRight        <- NULL
+        self$borderRightColour  <- NULL
+        self$borderTop          <- NULL
+        self$borderTopColour    <- NULL
+        self$borderBottom       <- NULL
+        self$borderBottomColour <- NULL
+        return(invisible(self))
       }
 
       if (identical(border, "all")) {
@@ -158,151 +369,17 @@ Style <- setRefClass(
       names(style)  <- names(pos)
 
       # These are fine to be set to NULL
-      .self$borderLeft   <- na_to_null(style["left"])
-      .self$borderRight  <- na_to_null(style["right"])
-      .self$borderTop    <- na_to_null(style["top"])
-      .self$borderBottom <- na_to_null(style["bottom"])
+      self$borderLeft   <- na_to_null(style["left"])
+      self$borderRight  <- na_to_null(style["right"])
+      self$borderTop    <- na_to_null(style["top"])
+      self$borderBottom <- na_to_null(style["bottom"])
 
-      .self$borderLeftColour   <- colour_list(colour["left"])
-      .self$borderRightColour  <- colour_list(colour["right"])
-      .self$borderTopColour    <- colour_list(colour["top"])
-      .self$borderBottomColour <- colour_list(colour["bottom"])
+      self$borderLeftColour   <- colour_list(colour["left"])
+      self$borderRightColour  <- colour_list(colour["right"])
+      self$borderTopColour    <- colour_list(colour["top"])
+      self$borderBottomColour <- colour_list(colour["bottom"])
 
-      invisible(.self)
-    },
-
-    show = function(print = TRUE) {
-      .numFmtMapping <- c(
-        GENERAL    =   0,
-        NUMBER     =   2,
-        CURRENCY   = 164,
-        ACCOUNTING =  44,
-        DATE       =  14,
-        TIME       = 167,
-        PERCENTAGE =  10,
-        SCIENTIFIC =  11,
-        TEXT       =  49
-      )
-
-      numFmtStr <- if (!is.null(.self$numFmt)) {
-        if (as.integer(.self$numFmt$numFmtId) %in% .numFmtMapping) {
-          names(.numFmtMapping)[.numFmtMapping == as.integer(.self$numFmt$numFmtId)]
-        } else {
-          sprintf('"%s"', .self$numFmt$formatCode)
-        }
-      } else {
-        "GENERAL"
-      }
-
-      # if all are NULL
-      borders <- c(
-        sprintf("Top: %s",    .self$borderTop),
-        sprintf("Bottom: %s", .self$borderBottom),
-        sprintf("Left: %s",   .self$borderLeft),
-        sprintf("Right: %s",  .self$borderRight)
-      )
-
-      borderColours <- c(.self$borderTopColour, .self$borderBottomColour, .self$borderLeftColour, .self$borderRightColour)
-      borderColours <- gsub("^FF", "#", borderColours)
-
-      # make as private
-      .self$styleShow  <- c(
-        "A custom cell style. \n\n",
-        # numFmt
-        sprintf("Cell formatting: %s \n", numFmtStr),
-        # Font name
-        sprintf("Font name: %s \n", .self$fontName[[1]]),
-        # Font size
-        sprintf("Font size: %s \n", .self$fontSize[[1]]),
-        # Font colour
-        sprintf("Font colour: %s \n", gsub("^FF", "#", .self$fontColour[[1]])),
-        # Font decoration
-        if (length(.self$fontDecoration)) {
-          sprintf("Font decoration: %s \n", paste(.self$fontDecoration, collapse = ", "))
-        },
-
-        # Cell borders
-        if (length(borders)) {
-          c(
-            sprintf("Cell borders: %s \n", paste(borders, collapse = ", ")),
-            sprintf("Cell border colours: %s \n", paste(borderColours, collapse = ", "))
-          )
-        },
-
-        # sprtinf("this %s", NULL) returns character()
-        # Cell horizontal alignment
-        sprintf("Cell horzizontal align: %s \n", .self$halign),
-        # Cell vertical alignment
-        sprintf("Cell vertical align: %s \n", .self$valign),
-        # Cell indent
-        sprintf("Cell indent: %s \n", .self$indent),
-        # Cell text rotation
-        sprintf("Cell text rotation: %s \n", .self$textRotation),
-        # Cell fill colour
-        if (length(.self$fill$fillFg)) {
-          sprintf(
-            "Cell fill foreground: %s \n",
-            paste(paste0(names(.self$fill$fillFg), ": ", sub("^FF", "#", .self$fill$fillFg)), collapse = ", ")
-          )
-        },
-        # Cell background  fill
-        if (length(.self$fill$fillBg)) {
-          sprintf(
-            "Cell fill background: %s \n",
-            paste(paste0(names(.self$fill$fillBg), ": ", sub("^FF", "#", .self$fill$fillBg)), collapse = ", ")
-          )
-        },
-        # locked
-        sprintf("Cell protection: %s \n", .self$locked),
-        # hidden
-        sprintf("Cell formula hidden: %s \n", .self$hidden),
-        # wrapText
-        sprintf("Cell wrap text: %s", .self$wrapText),
-        "\n\n"
-      )
-
-      if (print) cat(.self$styleShow)
-      invisible(.self)
-    },
-
-    # TODO as.list() to to_list() ?
-    as.list = function(include_null = FALSE) {
-      ls <- list(
-        fontId         = .self$fontId,
-        fontName       = .self$fontName,
-        fontColour     = .self$fontColour,
-        fontSize       = .self$fontSize,
-        fontFamily     = .self$fontFamily,
-        fontScheme     = .self$fontScheme,
-        fontDecoration = .self$fontDecoration,
-
-        borderTop          = .self$borderTop,
-        borderLeft         = .self$borderLeft,
-        borderRight        = .self$borderRight,
-        borderBottom       = .self$borderBottom,
-        borderTopColour    = .self$borderTopColour,
-        borderLeftColour   = .self$borderLeftColour,
-        borderRightColour  = .self$borderRightColour,
-        borderBottomColour = .self$borderBottomColour,
-
-        halign       = .self$halign,
-        valign       = .self$valign,
-        indent       = .self$indent,
-        textRotation = .self$textRotation,
-        numFmt       = .self$numFmt,
-        fillFg       = .self$fill$fillFg,
-        fillBg       = .self$fill$fillBg,
-        wrapText     = .self$wrapText,
-        locked       = .self$locked,
-        hidden       = .self$hidden,
-        xfId         = .self$xfId
-      )
-
-      if (include_null) {
-        ls
-      } else {
-        ls[lengths(ls) > 0]
-      }
+      invisible(self)
     }
   )
 )

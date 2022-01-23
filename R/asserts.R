@@ -31,7 +31,7 @@ assert_chart_sheet <- function(x) assert_class(x, c("wbChartSheet", "R6"), all =
 assert_comment     <- function(x) assert_class(x, c("wbComment",    "R6"), all = TRUE)
 assert_hyperlink   <- function(x) assert_class(x, c("wbHyperlink",  "R6"), all = TRUE)
 assert_sheet_data  <- function(x) assert_class(x, c("wbSheetData",  "R6"), all = TRUE)
-assert_style       <- function(x) assert_class(x, "Style",      package = "openxlsx2")
+assert_style       <- function(x) assert_class(x, c("wbStyle",      "R6"), all = TRUE)
 assert_workbook    <- function(x) assert_class(x, "Workbook",   package = "openxlsx2")
 assert_worksheet   <- function(x) assert_class(x, "Worksheet",  package = "openxlsx2")
 
