@@ -48,6 +48,23 @@ Creates a new \code{wbComment} object
 \if{html}{\out{<div class="r">}}\preformatted{Comment$new(text, author, style, visible = TRUE, width = 2, height = 4)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{text}}{Comment text}
+
+\item{\code{author}}{The comment author}
+
+\item{\code{style}}{A style (class \code{wbStyle}) for the comment (?)}
+
+\item{\code{visible}}{\code{logical}, if \code{FALSE} is not visible}
+
+\item{\code{width}}{Width of the comment in ... units}
+
+\item{\code{height}}{Height of comment in ... units}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 a \code{wbComment} object
 }
