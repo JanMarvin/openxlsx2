@@ -38,7 +38,7 @@ openXL <- function(file = NULL) {
   if (is.null(file)) stop("A file has to be specified.")
 
   ## workbook handling
-  if (inherits(file, "Workbook")) {
+  if (inherits(file, "wbWorkbook")) {
     file <- file$saveWorkbook(path = file.path(tempdir(), "temp_xlsx.xlsx"))$path
   }
 
