@@ -1812,36 +1812,40 @@ wbWorkbook <- R6::R6Class(
     #' Group rows
     #' @param sheet sheet
     #' @param rows rows
-    #' @param hidden hidden
+    #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    groupRows = function(sheet, rows, hidden, levels) {
+    groupRows = function(sheet, rows, collapsed, levels) {
+
       sheet <- self$validateSheet(sheet)
+      
+      # fetch the row_attr data.frame
+      row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 
 
-      flag <- names(self$outlineLevels[[sheet]]) %in% rows
-      if (any(flag)) {
-        self$outlineLevels[[sheet]] <- self$outlineLevels[[sheet]][!flag]
+      rows <- rev(rows)
+
+      # get the selection based on the row_attr frame.
+
+      # the first n -1 rows get outlineLevel
+      select <- row_attr$r %in% as.character(rows[-1])
+      if (length(select)) {
+        row_attr$outlineLevel[select] <- as.character(levels)
+        row_attr$collapsed[select] <- as.character(as.integer(collapsed))
+        row_attr$hidden[select] <- as.character(as.integer(collapsed))
+        self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
       }
 
-      nms <- c(names(self$outlineLevels[[sheet]]), rows)
+      # the n-th row gets only collapsed
+      select <- row_attr$r %in% as.character(rows[1])
+      if (length(select)) {
+        row_attr$collapsed[select] <- as.character(as.integer(collapsed))
+        self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
+      }
 
-      allOutlineLevels <- unlist(c(self$outlineLevels[[sheet]], levels))
-      names(allOutlineLevels) <- nms
-
-      existing_hidden <- attr(self$outlineLevels[[sheet]], "hidden", exact = TRUE)
-      all_hidden <- c(existing_hidden, as.character(as.integer(hidden)))
-
-      allOutlineLevels <-
-        allOutlineLevels[order(as.integer(names(allOutlineLevels)))]
-
-      self$outlineLevels[[sheet]] <- allOutlineLevels
-
-      attr(self$outlineLevels[[sheet]], "hidden") <- as.character(as.integer(all_hidden))
-
-
-      if (!grepl("outlineLevelRow", self$worksheets[[sheet]]$sheetFormatPr)) {
-        self$worksheets[[sheet]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', self$worksheets[[sheet]]$sheetFormatPr)
+      # check if there are valid outlineLevel in row_attr and assign outlineLevelRow the max outlineLevel (thats in the documentation)
+      if (any(row_attr$outlineLevel != "")) {
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
       }
 
       invisible(self)

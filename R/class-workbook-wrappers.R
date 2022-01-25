@@ -2748,29 +2748,44 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to group
-#' @param hidden Logical vector. If TRUE the grouped columns are hidden. Defaults to FALSE
+#' @param collapsed Logical vector. If TRUE the grouped columns are collapsed. Defaults to FALSE
 #' @seealso [ungroupRows()] to ungroup rows. [groupColumns()] for grouping columns.
+#' @examples 
+#' 
+#' # create matrix
+#' t1 <- AirPassengers
+#' t2 <- do.call(cbind, split(t1, cycle(t1)))
+#' dimnames(t2) <- dimnames(.preformat.ts(t1))
+#' 
+#' wb <- createWorkbook()
+#' addWorksheet(wb, "AirPass")
+#' 
+#' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
+#' groupRows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
+#' groupRows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
+#' groupRows(wb, "AirPass", 9:13)                  # group years 1956-1960
+#' 
 #' @export
-
-groupRows <- function(wb, sheet, rows, hidden = FALSE) {
+groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
 
-  if (length(hidden) > length(rows)) {
-    stop("Hidden argument is of greater length than number of rows.")
+  if (length(collapsed) > length(rows)) {
+    stop("Collapses argument is of greater length than number of rows.")
   }
 
-  if (!is.logical(hidden)) {
-    stop("Hidden should be a logical value (TRUE/FALSE).")
+  if (!is.logical(collapsed)) {
+    stop("Collapses should be a logical value (TRUE/FALSE).")
   }
 
   if (any(rows) < 1L) {
     stop("Invalid rows entered (<= 0).")
   }
 
-  hidden <- rep(as.character(as.integer(hidden)), length.out = length(rows))
+  collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
 
+  # TODO what does this option do?
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
@@ -2778,13 +2793,13 @@ groupRows <- function(wb, sheet, rows, hidden = FALSE) {
   levels <- rep("1", length(rows))
 
   # Remove duplicates
-  hidden <- hidden[!duplicated(rows)]
+  collapsed <- collapsed[!duplicated(rows)]
   levels <- levels[!duplicated(rows)]
   rows <- rows[!duplicated(rows)]
 
   names(levels) <- rows
 
-  wb$groupRows(sheet = sheet, rows = rows, hidden = hidden, levels = levels)
+  wb$groupRows(sheet = sheet, rows = rows, collapsed = collapsed, levels = levels)
 }
 
 #' @name ungroupRows
@@ -2798,26 +2813,36 @@ groupRows <- function(wb, sheet, rows, hidden = FALSE) {
 #' @export
 
 ungroupRows <- function(wb, sheet, rows) {
+  # TODO: what are these options supposed to do?
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-
-
   sheet <- wb$validateSheet(sheet)
 
+  # check if any rows are selected
   if (any(rows) < 1L) {
     stop("Invalid rows entered (<= 0).")
   }
 
-  customRows <- as.integer(names(wb$outlineLevels[[sheet]]))
-  removeInds <- which(customRows %in% rows)
-  if (length(removeInds)) {
-    wb$outlineLevels[[sheet]] <- wb$outlineLevels[[sheet]][-removeInds]
+  # fetch the row_attr data.frame
+  row_attr <- wb$worksheets[[sheet]]$sheet_data$row_attr
+
+  # get the selection based on the row_attr frame.
+  select <- row_attr$r %in% as.character(rows)
+  if (length(select)) {
+    row_attr$outlineLevel[select] <- ""
+    row_attr$collapsed[select] <- ""
+    # TODO only if unhide = TRUE
+    row_attr$hidden[select] <- ""
+    wb$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
   }
 
-  if (length(wb$outlineLevels[[sheet]]) == 0) {
-    wb$worksheets[[sheet]]$sheetFormatPr <- sub(' outlineLevelRow="1"', "", wb$worksheets[[sheet]]$sheetFormatPr)
+  # If all outlineLevels are missing: remove the outlineLevelRow attribute. Assigning "" will remove the attribute
+  if (all(row_attr$outlineLevel == "")) {
+    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = ""))
+  } else {
+    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
   }
 }
 

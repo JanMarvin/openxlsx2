@@ -4,7 +4,7 @@
 \alias{groupRows}
 \title{Group Rows}
 \usage{
-groupRows(wb, sheet, rows, hidden = FALSE)
+groupRows(wb, sheet, rows, collapsed = FALSE)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -13,10 +13,26 @@ groupRows(wb, sheet, rows, hidden = FALSE)
 
 \item{rows}{Indices of rows to group}
 
-\item{hidden}{Logical vector. If TRUE the grouped columns are hidden. Defaults to FALSE}
+\item{collapsed}{Logical vector. If TRUE the grouped columns are collapsed. Defaults to FALSE}
 }
 \description{
 Group a selection of rows
+}
+\examples{
+
+# create matrix
+t1 <- AirPassengers
+t2 <- do.call(cbind, split(t1, cycle(t1)))
+dimnames(t2) <- dimnames(.preformat.ts(t1))
+
+wb <- createWorkbook()
+addWorksheet(wb, "AirPass")
+
+# groups will always end on/show the last row. in the example 1950, 1955, and 1960
+groupRows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
+groupRows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
+groupRows(wb, "AirPass", 9:13)                  # group years 1956-1960
+
 }
 \seealso{
 \code{\link[=ungroupRows]{ungroupRows()}} to ungroup rows. \code{\link[=groupColumns]{groupColumns()}} for grouping columns.
