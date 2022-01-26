@@ -927,10 +927,6 @@ writeData2 <-function(wb, sheet, data,
   sheetno <- wb$validateSheet(sheet)
   # message("sheet no: ", sheetno)
 
-
-
-
-
   # create a data frame
   if (!is_data_frame)
     data <- as.data.frame(t(data))
@@ -958,25 +954,23 @@ writeData2 <-function(wb, sheet, data,
 
     rows_attr <- cols_attr <- cc_tmp <- vector("list", data_nrow)
 
-    # create <cols ...>
-    cols_attr <- empty_cols_attr(n = data_nrow)
-    cols_attr$collapsed <- "false"
-    cols_attr$customWidth <- "true"
-    cols_attr$hidden <- "false"
-    cols_attr$outlineLevel <- "0"
-    cols_attr$max <- "121"
-    cols_attr$min <- "1"
-    cols_attr$style <- "0"
-    cols_attr$width <- "9.14"
-
-    wb$worksheets[[sheetno]]$cols_attr <- df_to_col(cols_attr)
+    # # create <cols ...>
+    # cols_attr <- empty_cols_attr(n = data_nrow)
+    # cols_attr$collapsed <- ""
+    # cols_attr$customWidth <- ""
+    # cols_attr$hidden <- ""
+    # cols_attr$outlineLevel <- ""
+    # cols_attr$max <- ""
+    # cols_attr$min <- ""
+    # cols_attr$style <- ""
+    # cols_attr$width <- ""
+    #
+    # wb$worksheets[[sheetno]]$cols_attr <- df_to_col(cols_attr)
 
     # create <rows ...>
     want_rows <- startRow:endRow
     rows_attr <- empty_row_attr(n = length(want_rows))
     rows_attr$r <- rownames(rtyp)
-    rows_attr$spans <- paste0("1:", data_ncol)
-    rows_attr$`x14ac:dyDescent` <- "0.25"
 
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
@@ -1103,6 +1097,73 @@ cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TR
   if (merged_cells)
     wb$worksheets[[sheet_id]]$mergeCells <- character(0)
 
+}
+
+unfold_cols <- function (cols_attr, cols) {
+
+  # always begin at 1, even if 1 is not in the dataset. fold_cols requires this
+  key <- seq(1, max(cols))
+
+  # merge against this data frame
+  tmp_col_df <- data.frame(
+    key = key,
+    stringsAsFactors = FALSE
+  )
+
+  tmp <- cols_attr
+  tmp$min <- as.numeric(tmp$min)
+  tmp$max <- as.numeric(tmp$max)
+
+  out <- NULL
+  for (i in seq_len(nrow(tmp))){
+    z <- tmp[i,]
+    for (j in seq(z$min, z$max)){
+      z$key <- j
+      out <- rbind(out, z)
+    }
+  }
+
+  # merge and convert to character, remove key
+  tmp_col_df <- merge(x = tmp_col_df, y = out, by = "key", all.x = TRUE)
+  tmp_col_df$min <- as.character(tmp_col_df$key)
+  tmp_col_df$max <- as.character(tmp_col_df$key)
+  tmp_col_df[is.na(tmp_col_df)] <- ""
+  tmp_col_df$key <- NULL
+
+  tmp_col_df
+}
+
+
+fold_cols <- function(s_col) {
+
+  # remove min and max columns
+  tmp <- s_col[-which(names(s_col) %in% c("min", "max"))]
+  tmp$string <- apply(tmp,
+                      1,
+                      paste, collapse = "")
+
+  # run length
+  out <- with(
+    rle(tmp$string),
+    data.frame(
+      string = values,
+      min = cumsum(lengths) - lengths + 1,
+      max = cumsum(lengths))
+  )
+
+  # remove duplicates pre merge
+  tmp <- unique(tmp)
+
+  # merge with string variable, drop empty string and clean up
+  out <- merge(out, tmp, by = "string", all.x = TRUE)
+  out <- out[out$string != "",]
+  out$string <- NULL
+
+  # order and return
+  out <- out[order(out$min),]
+  out$min <- as.character(out$min)
+  out$max <- as.character(out$max)
+  out
 }
 
 
