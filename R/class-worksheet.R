@@ -413,7 +413,93 @@ wbWorksheet <- R6::R6Class(
       }
 
       invisible(self)
+    },
+
+    #' @description
+    #' unfold `<cols ..>` node to dataframe. `<cols><col ..>` are compressed.
+    #' Only columuns with attributes are written to the file. This function
+    #' unfolds them so that each cell beginning with the "A" to the last one
+    #' found in cc gets a value.
+    #' TODO might extend this to match either largest cc or largest col. Could
+    #' be that "Z" is formatted, but the last value is written to "Y".
+    #' TODO might replace the xml nodes with the data frame?
+    #' @return The column data frame
+    unfold_cols = function () {
+
+      cols_attr <- col_to_df(read_xml(self$cols_attr))
+      cols <- col2int(unique(self$sheet_data$cc$c_r))
+
+      # always begin at 1, even if 1 is not in the dataset. fold_cols requires this
+      key <- seq(1, max(cols))
+
+      # merge against this data frame
+      tmp_col_df <- data.frame(
+        key = key,
+        stringsAsFactors = FALSE
+      )
+
+      tmp <- cols_attr
+      tmp$min <- as.numeric(tmp$min)
+      tmp$max <- as.numeric(tmp$max)
+
+      out <- NULL
+      for (i in seq_len(nrow(tmp))){
+        z <- tmp[i,]
+        for (j in seq(z$min, z$max)){
+          z$key <- j
+          out <- rbind(out, z)
+        }
+      }
+
+      # merge and convert to character, remove key
+      tmp_col_df <- merge(x = tmp_col_df, y = out, by = "key", all.x = TRUE)
+      tmp_col_df$min <- as.character(tmp_col_df$key)
+      tmp_col_df$max <- as.character(tmp_col_df$key)
+      tmp_col_df[is.na(tmp_col_df)] <- ""
+      tmp_col_df$key <- NULL
+
+      tmp_col_df
+    },
+
+    #' @description
+    #' fold the column dataframe back into a node.
+    #' @param col_df the colum data frame
+    #' @return The `wbWorksheetObject`, invisibly
+    fold_cols = function(col_df) {
+
+      # remove min and max columns
+      tmp <- col_df[-which(names(col_df) %in% c("min", "max"))]
+      tmp$string <- apply(tmp,
+                          1,
+                          paste, collapse = "")
+
+      # run length
+      out <- with(
+        rle(tmp$string),
+        data.frame(
+          string = values,
+          min = cumsum(lengths) - lengths + 1,
+          max = cumsum(lengths))
+      )
+
+      # remove duplicates pre merge
+      tmp <- unique(tmp)
+
+      # merge with string variable, drop empty string and clean up
+      out <- merge(out, tmp, by = "string", all.x = TRUE)
+      out <- out[out$string != "",]
+      out$string <- NULL
+
+      # order and return
+      out <- out[order(out$min),]
+      out$min <- as.character(out$min)
+      out$max <- as.character(out$max)
+
+      self$cols_attr <- df_to_col(out)
+
+      invisible(self)
     }
+
   ),
 
   ## private ----
@@ -424,6 +510,8 @@ wbWorksheet <- R6::R6Class(
     sheetData             = NULL
   )
 )
+
+
 
 wb_worksheet <- function() {
   wbWorksheet$new()

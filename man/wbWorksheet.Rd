@@ -105,6 +105,8 @@ A Worksheet
 \item \href{#method-get_prior_sheet_data}{\code{wbWorksheet$get_prior_sheet_data()}}
 \item \href{#method-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
 \item \href{#method-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
+\item \href{#method-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
+\item \href{#method-fold_cols}{\code{wbWorksheet$fold_cols()}}
 \item \href{#method-clone}{\code{wbWorksheet$clone()}}
 }
 }
@@ -204,6 +206,45 @@ order sheet data
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$order_sheetdata()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-unfold_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-unfold_cols}{}}}
+\subsection{Method \code{unfold_cols()}}{
+unfold \verb{<cols ..>} node to dataframe. \verb{<cols><col ..>} are compressed.
+Only columuns with attributes are written to the file. This function
+unfolds them so that each cell beginning with the "A" to the last one
+found in cc gets a value.
+TODO might extend this to match either largest cc or largest col. Could
+be that "Z" is formatted, but the last value is written to "Y".
+TODO might replace the xml nodes with the data frame?
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$unfold_cols()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+The column data frame
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-fold_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-fold_cols}{}}}
+\subsection{Method \code{fold_cols()}}{
+fold the column dataframe back into a node.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$fold_cols(col_df)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{col_df}}{the colum data frame}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
 }
