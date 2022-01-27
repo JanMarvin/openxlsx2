@@ -1822,26 +1822,25 @@ wbWorkbook <- R6::R6Class(
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 
-
-      rows <- rev(rows)
+      rows_rev <- rev(rows)
 
       # get the selection based on the row_attr frame.
 
       # the first n -1 rows get outlineLevel
-      select <- row_attr$r %in% as.character(rows[-1])
+      select <- row_attr$r %in% as.character(rows_rev[-1])
       if (length(select)) {
-        row_attr$outlineLevel[select] <- as.character(levels)
-        row_attr$collapsed[select] <- as.character(as.integer(collapsed))
-        row_attr$hidden[select] <- as.character(as.integer(collapsed))
-        self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
+        row_attr$outlineLevel[select] <- as.character(levels[-1])
+        row_attr$collapsed[select] <- as.character(as.integer(collapsed[-1]))
+        row_attr$hidden[select] <- as.character(as.integer(collapsed[-1]))
       }
 
       # the n-th row gets only collapsed
-      select <- row_attr$r %in% as.character(rows[1])
+      select <- row_attr$r %in% as.character(rows_rev[1])
       if (length(select)) {
-        row_attr$collapsed[select] <- as.character(as.integer(collapsed))
-        self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
+        row_attr$collapsed[select] <- as.character(as.integer(collapsed[1]))
       }
+      
+      self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
 
       # check if there are valid outlineLevel in row_attr and assign outlineLevelRow the max outlineLevel (thats in the documentation)
       if (any(row_attr$outlineLevel != "")) {

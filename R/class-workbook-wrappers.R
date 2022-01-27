@@ -2759,6 +2759,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' 
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "AirPass")
+#' writeData(wb, "AirPass", t2)
 #' 
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
 #' groupRows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
@@ -2796,8 +2797,6 @@ groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
   collapsed <- collapsed[!duplicated(rows)]
   levels <- levels[!duplicated(rows)]
   rows <- rows[!duplicated(rows)]
-
-  names(levels) <- rows
 
   wb$groupRows(sheet = sheet, rows = rows, collapsed = collapsed, levels = levels)
 }
