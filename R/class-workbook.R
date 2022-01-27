@@ -27,9 +27,6 @@ wbWorkbook <- R6::R6Class(
     #' @field isChartSheet isChartSheet
     isChartSheet = logical(),
 
-    #' @field colOutlineLevels colOutlineLevels
-    colOutlineLevels = NULL,
-
     #' @field colWidths colWidths
     colWidths = NULL,
 
@@ -173,8 +170,6 @@ wbWorkbook <- R6::R6Class(
       self$isChartSheet <- logical()
 
       self$colWidths <- list()
-      self$colOutlineLevels <- list()
-      attr(self$colOutlineLevels, "hidden") <- NULL
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
       self$core <-
@@ -404,7 +399,6 @@ wbWorkbook <- R6::R6Class(
       self$threadComments[[newSheetIndex]]   <- list()
       self$rowHeights[[newSheetIndex]]       <- list()
       self$colWidths[[newSheetIndex]]        <- list()
-      self$colOutlineLevels[[newSheetIndex]] <- list()
       self$sheetOrder                        <- c(self$sheetOrder, as.integer(newSheetIndex))
       self$sheet_names                       <- c(self$sheet_names, sheetName)
 
@@ -553,8 +547,6 @@ wbWorkbook <- R6::R6Class(
 
       self$rowHeights[[newSheetIndex]] <- self$rowHeights[[clonedSheet]]
       self$colWidths[[newSheetIndex]] <- self$colWidths[[clonedSheet]]
-
-      self$colOutlineLevels[[newSheetIndex]] <- self$colOutlineLevels[[clonedSheet]]
 
       self$sheetOrder <- c(self$sheetOrder, as.integer(newSheetIndex))
       self$sheet_names <- c(self$sheet_names, sheetName)
@@ -744,7 +736,6 @@ wbWorkbook <- R6::R6Class(
       self$isChartSheet[[newSheetIndex]]     <- TRUE
       self$rowHeights[[newSheetIndex]]       <- list()
       self$colWidths[[newSheetIndex]]        <- list()
-      self$colOutlineLevels[[newSheetIndex]] <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$sheetOrder                        <- c(self$sheetOrder, newSheetIndex)
@@ -1902,7 +1893,6 @@ wbWorkbook <- R6::R6Class(
       self$vml[[sheet]]              <- NULL
       self$vml_rels[[sheet]]         <- NULL
       self$rowHeights[[sheet]]       <- NULL
-      self$colOutlineLevels[[sheet]] <- NULL
       self$comments[[sheet]]         <- NULL
       self$threadComments[[sheet]]   <- NULL
       self$isChartSheet              <- self$isChartSheet[-sheet]
@@ -3164,21 +3154,6 @@ wbWorkbook <- R6::R6Class(
                     sprintf("%s: %s", names(self$rowHeights[[i]]), round(as.numeric(
                       self$rowHeights[[i]]
                     ), 2)),
-                    collapse = ", ",
-                    sep = " "
-                  )
-                )
-              )
-          }
-
-          if (length(self$colOutlineLevels[[i]])) {
-            tmpTxt <-
-              append(
-                tmpTxt,
-                c(
-                  "\n\tGrouped columns:\n\t",
-                  stri_join(
-                    sprintf("%s", names(self$colOutlineLevels[[i]])),
                     collapse = ", ",
                     sep = " "
                   )
@@ -4528,10 +4503,6 @@ wbWorkbook <- R6::R6Class(
         ## write colwidth and coloutline XML
         if (length(self$colWidths[[i]])) {
           invisible(self$setColWidths(i))
-        }
-
-        if (length(self$colOutlineLevels[[i]])) {
-          invisible(self$groupColumns(i))
         }
       }
 

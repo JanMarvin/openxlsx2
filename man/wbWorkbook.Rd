@@ -22,8 +22,6 @@ A Workbook
 
 \item{\code{isChartSheet}}{isChartSheet}
 
-\item{\code{colOutlineLevels}}{colOutlineLevels}
-
 \item{\code{colWidths}}{colWidths}
 
 \item{\code{connections}}{connections}
@@ -147,7 +145,6 @@ A Workbook
 \item \href{#method-addCreator}{\code{wbWorkbook$addCreator()}}
 \item \href{#method-getCreators}{\code{wbWorkbook$getCreators()}}
 \item \href{#method-changeLastModifiedBy}{\code{wbWorkbook$changeLastModifiedBy()}}
-\item \href{#method-setColWidths}{\code{wbWorkbook$setColWidths()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1115,26 +1112,6 @@ Change the last modified by
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{LastModifiedBy}}{A new value}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setColWidths"></a>}}
-\if{latex}{\out{\hypertarget{method-setColWidths}{}}}
-\subsection{Method \code{setColWidths()}}{
-setColWidths
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setColWidths(sheet)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
 }
 \if{html}{\out{</div>}}
 }
