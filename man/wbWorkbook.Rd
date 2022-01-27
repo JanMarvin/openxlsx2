@@ -127,7 +127,8 @@ A Workbook
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
-\item \href{#method-groupColumns}{\code{wbWorkbook$groupColumns()}}
+\item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
+\item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
 \item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
 \item \href{#method-deleteWorksheet}{\code{wbWorkbook$deleteWorksheet()}}
 \item \href{#method-addDXFS}{\code{wbWorkbook$addDXFS()}}
@@ -482,21 +483,47 @@ Sets a row height for a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+description
+creates column object for worksheet
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-groupColumns"></a>}}
-\if{latex}{\out{\hypertarget{method-groupColumns}{}}}
-\subsection{Method \code{groupColumns()}}{
-Group columns ?
+\if{html}{\out{<a id="method-createCols"></a>}}
+\if{latex}{\out{\hypertarget{method-createCols}{}}}
+\subsection{Method \code{createCols()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupColumns(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{n}}{n}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-groupCols"></a>}}
+\if{latex}{\out{\hypertarget{method-groupCols}{}}}
+\subsection{Method \code{groupCols()}}{
+Group cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupCols(sheet, cols, collapsed, levels)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{collapsed}}{collapsed}
+
+\item{\code{levels}}{levels}
 }
 \if{html}{\out{</div>}}
 }

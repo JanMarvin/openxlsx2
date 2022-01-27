@@ -2593,179 +2593,118 @@ removeTable <- function(wb, sheet, table) {
   invisible(0)
 }
 
-#' @name groupColumns
-#' @title Group columns
-#' @description Group a selection of columns
+#' @rdname grouping
 #' @param wb A workbook object.
 #' @param sheet A name or index of a worksheet.
 #' @param cols Indices of cols to group.
-#' @param hidden Logical vector. If TRUE the grouped columns are hidden. Defaults to FALSE.
+#' @param collapsed Logical vector. If TRUE the grouped columns are hidden. Defaults to FALSE.
 #' @details Group columns together, with the option to hide them.
-#'
-#' NOTE: [setColWidths()] has a conflicting `hidden` parameter; changing one will update the other.
-#' @seealso [ungroupColumns()] to ungroup columns. [groupRows()] for grouping rows.
 #' @export
-#'
-groupColumns <- function(wb, sheet, cols, hidden = FALSE) {
+groupColumns <- function(wb, sheet, cols, collapsed = FALSE) {
+  
+  assert_workbook(wb)
+
+  sheet <- wb$validateSheet(sheet)
+
+  if (length(collapsed) > length(cols)) {
+    stop("Collapses argument is of greater length than number of cols.")
+  }
+
+  if (!is.logical(collapsed)) {
+    stop("Collapses should be a logical value (TRUE/FALSE).")
+  }
+
+  if (any(cols) < 1L) {
+    stop("Invalid rows entered (<= 0).")
+  }
+
+  collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
+
+  # TODO what does this option do?
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  assert_workbook(wb)
-  sheet <- wb$validateSheet(sheet)
-
-  if (any(cols) < 1L) {
-    stop("Invalid columns selected (<= 0).")
-  }
-
-  if (!is.logical(hidden)) {
-    stop("Hidden should be a logical value (TRUE/FALSE).")
-  }
-
-  if (length(hidden) > length(cols)) {
-    stop("Hidden argument is of greater length than number of cols.")
-  }
-
   levels <- rep("1", length(cols))
-  hidden <- rep(hidden, length.out = length(cols))
 
-  hidden <- hidden[!duplicated(cols)]
+  # Remove duplicates
+  collapsed <- collapsed[!duplicated(cols)]
   levels <- levels[!duplicated(cols)]
   cols <- cols[!duplicated(cols)]
-  cols <- convertFromExcelRef(cols)
 
-  if (length(wb$colWidths[[sheet]])) {
-    existing_cols <- names(wb$colWidths[[sheet]])
-    existing_hidden <- attr(wb$colWidths[[sheet]], "hidden", exact = TRUE)
-
-    if (any(existing_cols %in% cols)) {
-      for (i in intersect(existing_cols, cols)) {
-        width_hidden <- attr(wb$colWidths[[sheet]], "hidden")[attr(wb$colWidths[[sheet]], "names") == i]
-        outline_hidden <- as.character(as.integer(hidden))[cols == i]
-
-        if (width_hidden != outline_hidden) {
-          attr(wb$colWidths[[sheet]], "hidden")[attr(wb$colWidths[[sheet]], "names") == i] <- outline_hidden
-        }
-      }
-
-      # cols <- cols[!cols %in% existing_cols]
-      # hidden <- attr(wb$colOutlineLevels[[sheet]], "hidden")[attr(wb$colOutlineLevels[[sheet]], "name") %in% cols]
-
-      # wb$colOutlineLevels[[sheet]] <- cols
-      # attr(wb$colOutlineLevels[[sheet]], "hidden") <- as.character(as.integer(hidden))
-    }
-  }
-
-  if (length(wb$colOutlineLevels[[sheet]])) {
-    existing_cols <- names(wb$colOutlineLevels[[sheet]])
-    existing_levels <- unname(wb$colOutlineLevels[[sheet]])
-    existing_hidden <- attr(wb$colOutlineLevels[[sheet]], "hidden")
-
-    # check if column is already grouped
-    flag <- existing_cols %in% cols
-    if (any(flag)) {
-      existing_cols <- existing_cols[!flag]
-      existing_levels <- existing_levels[!flag]
-      existing_hidden <- existing_hidden[!flag]
-    }
-
-    all_names <- c(existing_cols, cols)
-    all_levels <- c(existing_levels, levels)
-    all_hidden <- c(existing_hidden, as.character(as.integer(hidden)))
-
-    ord <- order(as.integer(all_names))
-    all_names <- all_names[ord]
-    all_levels <- all_levels[ord]
-    all_hidden <- all_hidden[ord]
-
-
-    names(all_levels) <- all_names
-    wb$colOutlineLevels[[sheet]] <- all_levels
-    levels <- all_levels
-    attr(wb$colOutlineLevels[[sheet]], "hidden") <- as.character(as.integer(all_hidden))
-    hidden <- all_hidden
-  } else {
-    names(levels) <- cols
-    wb$colOutlineLevels[[sheet]] <- levels
-    attr(wb$colOutlineLevels[[sheet]], "hidden") <- as.character(as.integer(hidden))
-  }
-
-  invisible(0)
+  wb$groupCols(sheet = sheet, cols = cols, collapsed = collapsed, levels = levels)
 }
 
-#' @name ungroupColumns
-#' @title Ungroup Columns
-#' @description Ungroup a selection of columns
+#' @rdname grouping
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of columns to ungroup
 #' @details If column was previously hidden, it will now be shown
-#' @seealso [ungroupRows()] To ungroup rows
 #' @export
-
 ungroupColumns <- function(wb, sheet, cols) {
-  assert_workbook(wb)
-
-  sheet <- wb$validateSheet(sheet)
-
-  if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
-  }
-
-  if (any(cols) < 1L) {
-    stop("Invalid columns selected (<= 0).")
-  }
-
+  # TODO: what are these options supposed to do?
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  customCols <- as.integer(names(wb$colOutlineLevels[[sheet]]))
-  removeInds <- which(customCols %in% cols)
+  sheet <- wb$validateSheet(sheet)
 
-  # Check if any selected columns are already grouped
-  if (length(removeInds)) {
-    remainingCols <- customCols[-removeInds]
-    if (length(remainingCols) == 0) {
-      wb$colOutlineLevels[[sheet]] <- list()
-      wb$worksheets[[sheet]]$sheetFormatPr <- sub(' outlineLevelCol="1"', "", wb$worksheets[[sheet]]$sheetFormatPr)
-    } else {
-      rem_widths <- wb$colOutlineLevels[[sheet]][-removeInds]
-      names(rem_widths) <- as.character(remainingCols)
-      wb$colOutlineLevels[[sheet]] <- rem_widths
-    }
+  # check if any rows are selected
+  if (any(cols) < 1L) {
+    stop("Invalid cols entered (<= 0).")
   }
 
-  if (length(wb$colWidths[[sheet]])) {
-    if (any(cols %in% names(wb$colWidths[[sheet]]))) {
-      attr(wb$colWidths[[sheet]], "hidden")[attr(wb$colWidths[[sheet]], "names") %in% cols] <- "0"
-    }
+  # fetch the cols_attr data.frame
+  col_attr <- wb$worksheets[[sheet]]$unfold_cols()
+
+  # get the selection based on the col_attr frame.
+  select <- col_attr$min %in% as.character(cols)
+  if (length(select)) {
+    col_attr$outlineLevel[select] <- ""
+    col_attr$collapsed[select] <- ""
+    # TODO only if unhide = TRUE
+    col_attr$hidden[select] <- ""
+    wb$worksheets[[sheet]]$fold_cols(col_attr)
+  }
+
+  # If all outlineLevels are missing: remove the outlineLevelCol attribute. Assigning "" will remove the attribute
+  if (all(col_attr$outlineLevel == "")) {
+    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = ""))
+  } else {
+    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
   }
 }
-#' @name groupRows
-#' @title Group Rows
-#' @description Group a selection of rows
+
+#' @name grouping
+#' @title Group Rows and Columns
+#' @description Group a selection of rows or cols
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to group
 #' @param collapsed Logical vector. If TRUE the grouped columns are collapsed. Defaults to FALSE
-#' @seealso [ungroupRows()] to ungroup rows. [groupColumns()] for grouping columns.
 #' @examples 
-#' 
+#'
 #' # create matrix
 #' t1 <- AirPassengers
 #' t2 <- do.call(cbind, split(t1, cycle(t1)))
 #' dimnames(t2) <- dimnames(.preformat.ts(t1))
-#' 
+#'
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "AirPass")
-#' writeData(wb, "AirPass", t2)
-#' 
+#' writeData(wb, "AirPass", t2, rowNames = TRUE)
+#'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
 #' groupRows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
 #' groupRows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
 #' groupRows(wb, "AirPass", 9:13)                  # group years 1956-1960
-#' 
+#'
+#' wb$createCols("AirPass", 13)
+#'
+#' groupColumns(wb, "AirPass", 2:4, collapsed = TRUE)
+#' groupColumns(wb, "AirPass", 5:7, collapsed = TRUE)
+#' groupColumns(wb, "AirPass", 8:10, collapsed = TRUE)
+#' groupColumns(wb, "AirPass", 11:13)
+#'
 #' @export
 groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
   assert_workbook(wb)
@@ -2801,16 +2740,12 @@ groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
   wb$groupRows(sheet = sheet, rows = rows, collapsed = collapsed, levels = levels)
 }
 
-#' @name ungroupRows
-#' @title Ungroup Rows
-#' @description Ungroup a selection of rows
+#' @rdname grouping
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to ungroup
 #' @details If row was previously hidden, it will now be shown
-#' @seealso [ungroupColumns()]
 #' @export
-
 ungroupRows <- function(wb, sheet, rows) {
   # TODO: what are these options supposed to do?
   od <- getOption("OutDec")
@@ -2844,9 +2779,6 @@ ungroupRows <- function(wb, sheet, rows) {
     self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
   }
 }
-
-
-
 
 #' @name addCreator
 #' @title Add another author to the meta data of the file.
