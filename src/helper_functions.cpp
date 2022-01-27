@@ -1,103 +1,5 @@
-
 #include "openxlsx2.h"
 
-
-
-
-
-
-// [[Rcpp::export]]
-SEXP calc_column_widths(Rcpp::Environment sheet_data
-                          , std::vector<std::string> sharedStrings
-                          , Rcpp::IntegerVector autoColumns
-                          , Rcpp::NumericVector widths
-                          , float baseFontCharWidth
-                          , float minW
-                          , float maxW){
-
-
-  int n = sheet_data["n_elements"];
-  Rcpp::IntegerVector cell_types = sheet_data["t"];
-  Rcpp::StringVector cell_values(sheet_data["v"]);
-  Rcpp::IntegerVector cell_cols = sheet_data["cols"];
-
-  Rcpp::NumericVector cell_n_character(n);
-  Rcpp::CharacterVector r(n);
-  int nLen;
-
-  std::string tmp;
-
-  // get widths of all values
-  for(int i = 0; i < n; i++){
-
-    if(cell_types[i] == 1){ // "s"
-      cell_n_character[i] = sharedStrings[atoi(cell_values[i])].length() - 37; //-37 for shared string tags around text
-    }else{
-      tmp = cell_values[i];
-      nLen = tmp.length();
-      cell_n_character[i] = std::min(nLen, 11); // For numerics - max width is 11
-    }
-
-  }
-
-
-  // get column for each value
-
-  // reducing to only the columns that are auto
-  Rcpp::LogicalVector notNA = !is_na(match(cell_cols, autoColumns));
-  cell_cols = cell_cols[notNA];
-  cell_n_character = cell_n_character[notNA];
-  widths = widths[notNA];
-  Rcpp::IntegerVector unique_cell_cols = sort_unique(cell_cols);
-
-  size_t k = unique_cell_cols.size();
-  Rcpp::NumericVector column_widths(k);
-
-
-  // for each unique column, get all widths for that column and take max
-  for(size_t i = 0; i < k; i++){
-    Rcpp::NumericVector wTmp = cell_n_character[cell_cols == unique_cell_cols[i]];
-    Rcpp::NumericVector thisColWidths = widths[cell_cols == unique_cell_cols[i]];
-    column_widths[i] = max(wTmp * thisColWidths / baseFontCharWidth);
-  }
-
-  column_widths[column_widths < minW] = minW;
-  column_widths[column_widths > maxW] = maxW;
-
-  // assign column names
-  column_widths.attr("names") = unique_cell_cols;
-
-  return(wrap(column_widths));
-
-}
-
-
-
-
-
-// [[Rcpp::export]]
-SEXP convert_to_excel_ref(Rcpp::IntegerVector cols, std::vector<std::string> LETTERS){
-
-  int n = cols.size();
-  Rcpp::CharacterVector res(n);
-
-  int x;
-  int modulo;
-  for(int i = 0; i < n; i++){
-    x = cols[i];
-    std::string columnName;
-
-    while(x > 0){
-      modulo = (x - 1) % 26;
-      columnName = LETTERS[modulo] + columnName;
-      x = (x - modulo) / 26;
-    }
-    res[i] = columnName;
-  }
-
-  return res ;
-
-}
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector convert_from_excel_ref( Rcpp::CharacterVector x ){
@@ -134,8 +36,29 @@ Rcpp::IntegerVector convert_from_excel_ref( Rcpp::CharacterVector x ){
 
 }
 
+// [[Rcpp::export]]
+SEXP convert_to_excel_ref(Rcpp::IntegerVector cols, std::vector<std::string> LETTERS){
 
+  int n = cols.size();
+  Rcpp::CharacterVector res(n);
 
+  int x;
+  int modulo;
+  for(int i = 0; i < n; i++){
+    x = cols[i];
+    std::string columnName;
+
+    while(x > 0){
+      modulo = (x - 1) % 26;
+      columnName = LETTERS[modulo] + columnName;
+      x = (x - modulo) / 26;
+    }
+    res[i] = columnName;
+  }
+
+  return res ;
+
+}
 
 
 // [[Rcpp::export]]
@@ -170,10 +93,11 @@ SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector
       c++;
     }
 
-  r.attr("names") = names;
+    r.attr("names") = names;
   return wrap(r) ;
 
 }
+
 
 // [[Rcpp::export]]
 std::vector<std::string> get_letters(){

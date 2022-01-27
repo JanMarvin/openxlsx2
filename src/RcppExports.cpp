@@ -11,20 +11,14 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// calc_column_widths
-SEXP calc_column_widths(Rcpp::Environment sheet_data, std::vector<std::string> sharedStrings, Rcpp::IntegerVector autoColumns, Rcpp::NumericVector widths, float baseFontCharWidth, float minW, float maxW);
-RcppExport SEXP _openxlsx2_calc_column_widths(SEXP sheet_dataSEXP, SEXP sharedStringsSEXP, SEXP autoColumnsSEXP, SEXP widthsSEXP, SEXP baseFontCharWidthSEXP, SEXP minWSEXP, SEXP maxWSEXP) {
+// convert_from_excel_ref
+Rcpp::IntegerVector convert_from_excel_ref(Rcpp::CharacterVector x);
+RcppExport SEXP _openxlsx2_convert_from_excel_ref(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type sharedStrings(sharedStringsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type autoColumns(autoColumnsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type widths(widthsSEXP);
-    Rcpp::traits::input_parameter< float >::type baseFontCharWidth(baseFontCharWidthSEXP);
-    Rcpp::traits::input_parameter< float >::type minW(minWSEXP);
-    Rcpp::traits::input_parameter< float >::type maxW(maxWSEXP);
-    rcpp_result_gen = Rcpp::wrap(calc_column_widths(sheet_data, sharedStrings, autoColumns, widths, baseFontCharWidth, minW, maxW));
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(convert_from_excel_ref(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -37,17 +31,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type cols(colsSEXP);
     Rcpp::traits::input_parameter< std::vector<std::string> >::type LETTERS(LETTERSSEXP);
     rcpp_result_gen = Rcpp::wrap(convert_to_excel_ref(cols, LETTERS));
-    return rcpp_result_gen;
-END_RCPP
-}
-// convert_from_excel_ref
-Rcpp::IntegerVector convert_from_excel_ref(Rcpp::CharacterVector x);
-RcppExport SEXP _openxlsx2_convert_from_excel_ref(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(convert_from_excel_ref(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -813,9 +796,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_openxlsx2_calc_column_widths", (DL_FUNC) &_openxlsx2_calc_column_widths, 7},
-    {"_openxlsx2_convert_to_excel_ref", (DL_FUNC) &_openxlsx2_convert_to_excel_ref, 2},
     {"_openxlsx2_convert_from_excel_ref", (DL_FUNC) &_openxlsx2_convert_from_excel_ref, 1},
+    {"_openxlsx2_convert_to_excel_ref", (DL_FUNC) &_openxlsx2_convert_to_excel_ref, 2},
     {"_openxlsx2_convert_to_excel_ref_expand", (DL_FUNC) &_openxlsx2_convert_to_excel_ref_expand, 3},
     {"_openxlsx2_get_letters", (DL_FUNC) &_openxlsx2_get_letters, 0},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
