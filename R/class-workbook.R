@@ -69,9 +69,6 @@ wbWorkbook <- R6::R6Class(
     #' @field media media
     media = NULL,
 
-    #' @field outlineLevels outlineLevels
-    outlineLevels = NULL,
-
     #' @field persons persons
     persons = NULL,
 
@@ -213,8 +210,6 @@ wbWorkbook <- R6::R6Class(
 
       self$queryTables <- NULL
       self$rowHeights <- list()
-      self$outlineLevels <- list()
-      attr(self$outlineLevels, "hidden") <- NULL
 
       self$slicers <- NULL
       self$slicerCaches <- NULL
@@ -410,7 +405,6 @@ wbWorkbook <- R6::R6Class(
       self$rowHeights[[newSheetIndex]]       <- list()
       self$colWidths[[newSheetIndex]]        <- list()
       self$colOutlineLevels[[newSheetIndex]] <- list()
-      self$outlineLevels[[newSheetIndex]]    <- list()
       self$sheetOrder                        <- c(self$sheetOrder, as.integer(newSheetIndex))
       self$sheet_names                       <- c(self$sheet_names, sheetName)
 
@@ -561,7 +555,6 @@ wbWorkbook <- R6::R6Class(
       self$colWidths[[newSheetIndex]] <- self$colWidths[[clonedSheet]]
 
       self$colOutlineLevels[[newSheetIndex]] <- self$colOutlineLevels[[clonedSheet]]
-      self$outlineLevels[[newSheetIndex]] <- self$outlineLevels[[clonedSheet]]
 
       self$sheetOrder <- c(self$sheetOrder, as.integer(newSheetIndex))
       self$sheet_names <- c(self$sheet_names, sheetName)
@@ -752,7 +745,6 @@ wbWorkbook <- R6::R6Class(
       self$rowHeights[[newSheetIndex]]       <- list()
       self$colWidths[[newSheetIndex]]        <- list()
       self$colOutlineLevels[[newSheetIndex]] <- list()
-      self$outlineLevels[[newSheetIndex]]    <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$sheetOrder                        <- c(self$sheetOrder, newSheetIndex)
@@ -1911,7 +1903,6 @@ wbWorkbook <- R6::R6Class(
       self$vml_rels[[sheet]]         <- NULL
       self$rowHeights[[sheet]]       <- NULL
       self$colOutlineLevels[[sheet]] <- NULL
-      self$outlineLevels[[sheet]]    <- NULL
       self$comments[[sheet]]         <- NULL
       self$threadComments[[sheet]]   <- NULL
       self$isChartSheet              <- self$isChartSheet[-sheet]
@@ -3180,21 +3171,6 @@ wbWorkbook <- R6::R6Class(
               )
           }
 
-          if (length(self$outlineLevels[[i]])) {
-            tmpTxt <-
-              append(
-                tmpTxt,
-                c(
-                  "\n\tGrouped rows:\n\t",
-                  stri_join(
-                    sprintf("%s", names(self$outlineLevels[[i]])),
-                    collapse = ", ",
-                    sep = " "
-                  )
-                )
-              )
-          }
-
           if (length(self$colOutlineLevels[[i]])) {
             tmpTxt <-
               append(
@@ -4331,11 +4307,6 @@ wbWorkbook <- R6::R6Class(
               stri_join("vmlDrawing", i, ".vml.rels")
             )
           )
-        }
-
-        # outlineLevelRow in SheetformatPr
-        if ((length(self$outlineLevels[[i]])) && (!grepl("outlineLevelRow", self$worksheets[[i]]$sheetFormatPr))) {
-          self$worksheets[[i]]$sheetFormatPr <- gsub("/>", ' outlineLevelRow="1"/>', self$worksheets[[i]]$sheetFormatPr)
         }
 
         if (self$isChartSheet[i]) {

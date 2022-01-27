@@ -50,8 +50,6 @@ A Workbook
 
 \item{\code{media}}{media}
 
-\item{\code{outlineLevels}}{outlineLevels}
-
 \item{\code{persons}}{persons}
 
 \item{\code{pivotTables}}{pivotTables}
