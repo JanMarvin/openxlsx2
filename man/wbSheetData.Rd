@@ -18,20 +18,6 @@ A hyperlink
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{rows}}{rows}
-
-\item{\code{cols}}{cols}
-
-\item{\code{s}}{s}
-
-\item{\code{r}}{r}
-
-\item{\code{t}}{t}
-
-\item{\code{v}}{v}
-
-\item{\code{f}}{f}
-
 \item{\code{row_attr}}{row_attr}
 
 \item{\code{cc}}{cc}
@@ -50,8 +36,6 @@ A hyperlink
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{wbSheetData$new()}}
-\item \href{#method-delete}{\code{wbSheetData$delete()}}
-\item \href{#method-write}{\code{wbSheetData$write()}}
 \item \href{#method-clone}{\code{wbSheetData$clone()}}
 }
 }
@@ -66,54 +50,6 @@ Creates a new \code{wbSheetData} object
 
 \subsection{Returns}{
 a \code{wbSheetData} object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-delete"></a>}}
-\if{latex}{\out{\hypertarget{method-delete}{}}}
-\subsection{Method \code{delete()}}{
-Delete data
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbSheetData$delete(rows_in, cols_in, grid_expand)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{rows_in, cols_in}}{The row and columns to delete}
-
-\item{\code{grid_expand}}{If \code{TRUE} will expand the selection of \code{rows_in}, and
-\code{cols_in} to the full set, not just the exact positions (similar to
-using \verb{[expand.grid()]})}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbSheetData} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-write"></a>}}
-\if{latex}{\out{\hypertarget{method-write}{}}}
-\subsection{Method \code{write()}}{
-Write data
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbSheetData$write(rows_in, cols_in, t_in, v_in, f_in, any_functions = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{rows_in, cols_in}}{The row and columns to delete}
-
-\item{\code{t_in, v_in, f_in}}{specifications ???}
-
-\item{\code{any_functions}}{Logical ???}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbSheetData} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}

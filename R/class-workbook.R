@@ -4138,9 +4138,6 @@ wbWorkbook <- R6::R6Class(
           ws <- self$worksheets[[i]]
           hasHL <- length(ws$hyperlinks) > 0
 
-          ## reorder sheet data
-          ws$order_sheetdata()
-
           prior <- ws$get_prior_sheet_data()
           post <- ws$get_post_sheet_data()
 
@@ -4468,41 +4465,6 @@ wbWorkbook <- R6::R6Class(
           ## convert sheet name to index
           ## this creates the XML for styles.XML
           private$updateStyles(this.sty)
-        }
-      }
-
-
-      ## Make sure all rowHeights have rows, if not append them!
-      for (i in seq_along(self$worksheets)) {
-        if (length(self$rowHeights[[i]])) {
-          rh <- as.integer(names(self$rowHeights[[i]]))
-          missing_rows <- rh[!rh %in% self$worksheets[[i]]$sheet_data$rows]
-          n <- length(missing_rows)
-
-          if (n > 0) {
-            #worksheets[[i]]$sheet_data$style_id <-
-            #  c(
-            #    worksheets[[i]]$sheet_data$style_id,
-            #    rep.int(NA_integer_, times = n)
-            #  )
-
-            # TODO make into simple functions: sheetData$append("rows", x), etc
-            # TODO make into simple functions: sheetData$inc_data_count()
-            # TODO make into simple functions: sheetData$calc_n_elements()
-            # use method chaining
-            self$worksheets[[i]]$sheet_data$rows <- c(self$worksheets[[i]]$sheet_data$rows, missing_rows)
-            self$worksheets[[i]]$sheet_data$cols <- c(self$worksheets[[i]]$sheet_data$cols, rep.int(NA_integer_, times = n))
-            self$worksheets[[i]]$sheet_data$t <- c(self$worksheets[[i]]$sheet_data$t, rep(NA_integer_, times = n))
-            self$worksheets[[i]]$sheet_data$v <- c(self$worksheets[[i]]$sheet_data$v, rep(NA_character_, times = n))
-            self$worksheets[[i]]$sheet_data$f <- c(self$worksheets[[i]]$sheet_data$f, rep(NA_character_, times = n))
-            self$worksheets[[i]]$sheet_data$data_count <- self$worksheets[[i]]$sheet_data$data_count + 1L
-            self$worksheets[[i]]$sheet_data$n_elements <- as.integer(length(self$worksheets[[i]]$sheet_data$rows))
-          }
-        }
-
-        ## write colwidth and coloutline XML
-        if (length(self$colWidths[[i]])) {
-          invisible(self$setColWidths(i))
         }
       }
 

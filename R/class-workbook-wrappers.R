@@ -1097,37 +1097,6 @@ removeWorksheet <- function(wb, sheet) {
   invisible(0)
 }
 
-#' @name deleteData
-#' @title Delete cell data
-#' @description Delete contents and styling from a cell.
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param rows Rows to delete data from.
-#' @param cols columns to delete data from.
-#' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
-#' will be removed.
-#' @export
-#' @examples
-#' ## write some data
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Worksheet 1")
-#' x <- data.frame(matrix(runif(200), ncol = 10))
-#' writeData(wb, sheet = 1, x = x, startCol = 2, startRow = 3, colNames = FALSE)
-#'
-#' ## delete some data
-#' deleteData(wb, sheet = 1, cols = 3:5, rows = 5:7, gridExpand = TRUE)
-#' deleteData(wb, sheet = 1, cols = 7:9, rows = 5:7, gridExpand = TRUE)
-#' deleteData(wb, sheet = 1, cols = LETTERS, rows = 18, gridExpand = TRUE)
-#' \dontrun{
-#' saveWorkbook(wb, "deleteDataExample.xlsx", overwrite = TRUE)
-#' }
-deleteData <- function(wb, sheet, cols, rows, gridExpand = FALSE) {
-  assert_workbook(wb)
-  sheet <- wb$validateSheet(sheet)
-  wb$worksheets[[sheet]]$sheet_data$delete(rows_in = rows, cols_in = cols, grid_expand = gridExpand)
-  invisible(0)
-}
-
 #' @name modifyBaseFont
 #' @title Modify the default font
 #' @description Modify the default font for this workbook
@@ -2559,7 +2528,8 @@ removeTable <- function(wb, sheet, table) {
   cols <- seq(from = cols[1], to = cols[2], by = 1)
 
   ## now delete data
-  deleteData(wb = wb, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
+  # FIXME: requires deleteData
+  # deleteData(wb = wb, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
 
   invisible(0)
 }
