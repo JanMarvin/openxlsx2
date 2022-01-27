@@ -787,10 +787,10 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 
   assert_workbook(wb)
 
-  widths <- tolower(widths) ## possibly "auto"
-  if (ignoreMergedCells) {
-    widths[widths == "auto"] <- "auto2"
-  }
+  # widths <- tolower(widths) ## possibly "auto"
+  # if (ignoreMergedCells) {
+  #   widths[widths == "auto"] <- "auto2"
+  # }
 
   # should do nothing if the cols' length is zero
   if (length(cols) == 0L) return(invisible(0))
@@ -811,64 +811,35 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
     hidden <- rep(hidden, length.out = length(cols))
   }
 
+  # TODO add bestFit option?
+  bestFit <- rep("", length.out = length(cols))
+  customWidth <- rep("1", length.out = length(cols))
+
   ## Remove duplicates
   widths <- widths[!duplicated(cols)]
   hidden <- hidden[!duplicated(cols)]
   cols <- cols[!duplicated(cols)]
-  cols <- convertFromExcelRef(cols)
 
-  if (length(wb$colWidths[[sheet]])) {
-    existing_cols <- names(wb$colWidths[[sheet]])
-    existing_widths <- unname(wb$colWidths[[sheet]])
-    existing_hidden <- attr(wb$colWidths[[sheet]], "hidden")
+  col_df <- wb$worksheets[[sheet]]$unfold_cols()
 
-    ## check for existing custom widths
-    flag <- existing_cols %in% cols
-    if (any(flag)) {
-      existing_cols <- existing_cols[!flag]
-      existing_widths <- existing_widths[!flag]
-      existing_hidden <- existing_hidden[!flag]
-    }
-
-    all_names <- c(existing_cols, cols)
-    all_widths <- c(existing_widths, widths)
-    all_hidden <- c(existing_hidden, as.character(as.integer(hidden)))
-
-    ord <- order(as.integer(all_names))
-    all_names <- all_names[ord]
-    all_widths <- all_widths[ord]
-    all_hidden <- all_hidden[ord]
-
-
-    names(all_widths) <- all_names
-    wb$colWidths[[sheet]] <- all_widths
-    attr(wb$colWidths[[sheet]], "hidden") <- all_hidden
-  } else {
-    names(widths) <- cols
-    wb$colWidths[[sheet]] <- widths
-    attr(wb$colWidths[[sheet]], "hidden") <- as.character(as.integer(hidden))
+  if (any(widths == "auto")) {
+    bestFit <- rep("1", length(widths))
+    widths <- rep("5", length(widths))
+    customWidth <- rep("1", length(widths))
   }
 
-  # Check if any conflicting column outline levels
-  if (length(wb$colOutlineLevels[[sheet]])) {
-    existing_cols <- names(wb$colOutlineLevels[[sheet]])
+  # create empty rows
+  if (NROW(col_df) == 0)
+    col_df <- col_to_df(read_xml(wb$createCols(sheet, max(cols))))
 
-    if (any(existing_cols %in% cols)) {
-      for (i in intersect(existing_cols, cols)) {
-        width_hidden <- attr(wb$colWidths[[sheet]], "hidden")[attr(wb$colWidths[[sheet]], "names") == i]
-        outline_hidden <- attr(wb$colOutlineLevels[[sheet]], "hidden")[attr(wb$colOutlineLevels[[sheet]], "names") == i]
+  select <- col_df$min %in% as.character(cols)
+  col_df$width[select] <- widths
+  col_df$hidden[select] <- tolower(hidden)
+  col_df$bestFit[select] <- bestFit
+  col_df$customWidth[select] <- customWidth
 
-        if (outline_hidden != width_hidden) {
-          attr(wb$colOutlineLevels[[sheet]], "hidden")[attr(wb$colOutlineLevels[[sheet]], "names") == i] <- width_hidden
-        }
-      }
+  wb$worksheets[[sheet]]$fold_cols(col_df)
 
-      cols <- cols[!cols %in% existing_cols]
-      hidden <- attr(wb$colWidths[[sheet]], "hidden")[attr(wb$colWidths[[sheet]], "names") %in% cols]
-    }
-  }
-
-  invisible(0)
 }
 
 #' @name removeColWidths
@@ -2601,7 +2572,7 @@ removeTable <- function(wb, sheet, table) {
 #' @details Group columns together, with the option to hide them.
 #' @export
 groupColumns <- function(wb, sheet, cols, collapsed = FALSE) {
-  
+
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
@@ -2682,7 +2653,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to group
 #' @param collapsed Logical vector. If TRUE the grouped columns are collapsed. Defaults to FALSE
-#' @examples 
+#' @examples
 #'
 #' # create matrix
 #' t1 <- AirPassengers
