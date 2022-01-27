@@ -424,13 +424,20 @@ wbWorksheet <- R6::R6Class(
     #' be that "Z" is formatted, but the last value is written to "Y".
     #' TODO might replace the xml nodes with the data frame?
     #' @return The column data frame
-    unfold_cols = function () {
+    unfold_cols = function() {
 
-      cols_attr <- col_to_df(read_xml(self$cols_attr))
-      cols <- col2int(unique(self$sheet_data$cc$c_r))
+      # avoid error and return empty data frame
+      if (length(self$cols_attr) == 0)
+        return (empty_cols_attr())
+
+      col_df <- col_to_df(read_xml(self$cols_attr))
+      col_df$min <- as.numeric(col_df$min)
+      col_df$max <- as.numeric(col_df$max)
+
+      max_col <- max(col_df$max)
 
       # always begin at 1, even if 1 is not in the dataset. fold_cols requires this
-      key <- seq(1, max(cols))
+      key <- seq(1, max_col)
 
       # merge against this data frame
       tmp_col_df <- data.frame(
@@ -438,13 +445,9 @@ wbWorksheet <- R6::R6Class(
         stringsAsFactors = FALSE
       )
 
-      tmp <- cols_attr
-      tmp$min <- as.numeric(tmp$min)
-      tmp$max <- as.numeric(tmp$max)
-
       out <- NULL
-      for (i in seq_len(nrow(tmp))){
-        z <- tmp[i,]
+      for (i in seq_len(nrow(col_df))){
+        z <- col_df[i,]
         for (j in seq(z$min, z$max)){
           z$key <- j
           out <- rbind(out, z)
@@ -452,13 +455,13 @@ wbWorksheet <- R6::R6Class(
       }
 
       # merge and convert to character, remove key
-      tmp_col_df <- merge(x = tmp_col_df, y = out, by = "key", all.x = TRUE)
-      tmp_col_df$min <- as.character(tmp_col_df$key)
-      tmp_col_df$max <- as.character(tmp_col_df$key)
-      tmp_col_df[is.na(tmp_col_df)] <- ""
-      tmp_col_df$key <- NULL
+      col_df <- merge(x = tmp_col_df, y = out, by = "key", all.x = TRUE)
+      col_df$min <- as.character(col_df$key)
+      col_df$max <- as.character(col_df$key)
+      col_df[is.na(col_df)] <- ""
+      col_df$key <- NULL
 
-      tmp_col_df
+      col_df
     },
 
     #' @description
@@ -467,15 +470,13 @@ wbWorksheet <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     fold_cols = function(col_df) {
 
-      # remove min and max columns
-      tmp <- col_df[-which(names(col_df) %in% c("min", "max"))]
-      tmp$string <- apply(tmp,
-                          1,
-                          paste, collapse = "")
+      # remove min and max columns and create merge identifier: string
+      col_df <- col_df[-which(names(col_df) %in% c("min", "max"))]
+      col_df$string <- apply(col_df, 1, paste, collapse = "")
 
       # run length
       out <- with(
-        rle(tmp$string),
+        rle(col_df$string),
         data.frame(
           string = values,
           min = cumsum(lengths) - lengths + 1,
@@ -483,19 +484,20 @@ wbWorksheet <- R6::R6Class(
       )
 
       # remove duplicates pre merge
-      tmp <- unique(tmp)
+      col_df <- unique(col_df)
 
       # merge with string variable, drop empty string and clean up
-      out <- merge(out, tmp, by = "string", all.x = TRUE)
-      out <- out[out$string != "",]
-      out$string <- NULL
+      col_df <- merge(out, col_df, by = "string", all.x = TRUE)
+      col_df <- col_df[col_df$string != "",]
+      col_df$string <- NULL
 
       # order and return
-      out <- out[order(out$min),]
-      out$min <- as.character(out$min)
-      out$max <- as.character(out$max)
+      col_df <- col_df[order(col_df$min),]
+      col_df$min <- as.character(col_df$min)
+      col_df$max <- as.character(col_df$max)
 
-      self$cols_attr <- df_to_col(out)
+      # assign as xml-nodes
+      self$cols_attr <- df_to_col(col_df)
 
       invisible(self)
     }
