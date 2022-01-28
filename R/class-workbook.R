@@ -2019,12 +2019,13 @@ wbWorkbook <- R6::R6Class(
       self$workbook.xml.rels <-
         self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
 
-      ## definedNames
-      if (length(self$workbook$definedNames)) {
-        belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
-        self$workbook$definedNames <-
-          self$workbook$definedNames[!belongTo %in% sheetName]
-      }
+      ## FIXME not sure about this
+      # ## definedNames
+      # if (length(self$workbook$definedNames)) {
+      #   belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
+      #   self$workbook$definedNames <-
+      #     self$workbook$definedNames[!belongTo %in% sheetName]
+      # }
 
       invisible(self)
     },
