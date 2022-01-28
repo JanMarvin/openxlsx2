@@ -497,7 +497,7 @@ wbWorksheet <- R6::R6Class(
       col_df$max <- as.character(col_df$max)
 
       # assign as xml-nodes
-      self$cols_attr <- df_to_col(col_df)
+      self$cols_attr <- df_to_xml("col", col_df)
 
       invisible(self)
     }

@@ -28,8 +28,8 @@ col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
 
-df_to_col <- function(df_col) {
-    .Call(`_openxlsx2_df_to_col`, df_col)
+df_to_xml <- function(name, df_col) {
+    .Call(`_openxlsx2_df_to_xml`, name, df_col)
 }
 
 loadvals <- function(sheet_data, doc) {

@@ -65,8 +65,9 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   return df;
 }
 
+
 // [[Rcpp::export]]
-Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col) {
+Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 
   auto n = df_col.nrow();
   Rcpp::CharacterVector z(n);
@@ -75,7 +76,7 @@ Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col) {
     pugi::xml_document doc;
     Rcpp::CharacterVector attrnams = df_col.names();
 
-    pugi::xml_node col = doc.append_child("col");
+    pugi::xml_node col = doc.append_child(name.c_str());
 
     for (auto j = 0; j < df_col.ncol(); ++j) {
       Rcpp::CharacterVector cv_s = "";

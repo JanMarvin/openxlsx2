@@ -965,7 +965,7 @@ writeData2 <-function(wb, sheet, data,
     # cols_attr$style <- ""
     # cols_attr$width <- ""
     #
-    # wb$worksheets[[sheetno]]$cols_attr <- df_to_col(cols_attr)
+    # wb$worksheets[[sheetno]]$cols_attr <- df_to_xml("col", cols_attr)
 
     # create <rows ...>
     want_rows <- startRow:endRow
