@@ -189,7 +189,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     is_chart_sheet <- sheetrId %in% chartSheetRIds
     if (is.null(sheets$state)) sheets$state <- "visible"
-    is_visible <- sheets$state == "visible"
+    is_visible <- sheets$state %in% c("", "true", "visible")
 
     ## add worksheets to wb
     j <- 1
