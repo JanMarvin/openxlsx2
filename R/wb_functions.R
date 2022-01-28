@@ -241,7 +241,11 @@ wb_to_df <- function(
 
     dn <- wb$workbook$definedNames
     wo <- xml_value(dn, "definedName")
+    # remove dollar sign: $A$1:$B$2
     wo <- gsub("\\$", "", wo)
+    wo <- unlist(sapply(wo, strsplit, "!"))
+    # remove ' from 'Sheet 1'
+    wo <- gsub("'", "", wo)
     wo <- unlist(sapply(wo, strsplit, "!"))
 
     nr <- as.data.frame(
@@ -254,7 +258,11 @@ wb_to_df <- function(
     dn_attr <- rbindlist(xml_attribute(dn, "definedName"))
 
     nr$name <- dn_attr$name
-    nr$local <- ifelse(dn_attr$localSheetId == "", 0, 1)
+    if (!is.null(dn_attr$localSheetId)) {
+      nr$local <- ifelse(dn_attr$localSheetId == "", 0, 1)
+    } else {
+      nr$local <- 0
+    }
     nr$sheet <- which(wb$sheet_names %in% nr$sheet)
 
     nr <- nr[order(nr$local, nr$name, nr$sheet),]
