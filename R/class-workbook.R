@@ -1875,27 +1875,54 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- self$validateSheet(sheet)
       sheetNames <- self$sheet_names
-      nSheets <- length(unlist(sheetNames, use.names = FALSE))
+      nSheets <- length(sheetNames)
       sheetName <- sheetNames[[sheet]]
 
-      self$colWidths[[sheet]] <- NULL
       self$sheet_names <- self$sheet_names[-sheet]
 
+      xml_rels <- rbindlist(
+         xml_attribute(self$worksheets_rels[[sheet]], "Relationship")
+      )
+
+      xml_rels$id <- gsub("\\D+", "", xml_rels$Id)
+      xml_rels$type <- basename(xml_rels$Type)
+      xml_rels$target <- basename(xml_rels$Target)
+      xml_rels$target[xml_rels$type == "hyperlink"] <- ""
+      xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+
+      comment_id <- xml_rels$target_ind[xml_rels$type == "comments"]
+      drawing_id <- xml_rels$target_ind[xml_rels$type == "drawing"]
+      pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
+      table_id <- xml_rels$target_ind[xml_rels$type == "table"]
+      thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
+      vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
+
+      # NULL the sheets
+      if (length(comment_id)) self$comments[[comment_id]]               <- NULL
+      if (length(drawing_id)) self$drawings[[drawing_id]]               <- NULL
+      if (length(drawing_id)) self$drawings_rels[[drawing_id]]          <- NULL
+      if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
+      if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]              <- NULL
+      if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]         <- NULL
+
+      self$isChartSheet <- self$isChartSheet[-sheet]
+
+      #### Modify Content_Types
       ## remove last drawings(sheet).xml from Content_Types
       # TODO replace x[!grepl(x)] with grep(values = TRUE, invert = TRUE)
-      self$Content_Types <- self$Content_Types[!grepl(sprintf("drawing%s.xml", nSheets), self$Content_Types)]
+      drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
+      self$Content_Types <- self$Content_Types[!grepl(drawing_name, self$Content_Types)]
 
       ## remove highest sheet
       self$Content_Types <- self$Content_Types[!grepl(sprintf("sheet%s.xml", nSheets), self$Content_Types)]
 
-      self$drawings[[sheet]]         <- NULL
-      self$drawings_rels[[sheet]]    <- NULL
-      self$vml[[sheet]]              <- NULL
-      self$vml_rels[[sheet]]         <- NULL
-      self$rowHeights[[sheet]]       <- NULL
-      self$comments[[sheet]]         <- NULL
-      self$threadComments[[sheet]]   <- NULL
-      self$isChartSheet              <- self$isChartSheet[-sheet]
+      # The names for the other drawings have changed
+      de <- xml_node(read_xml(self$Content_Types), "Default")
+      ct <- rbindlist(xml_attribute(read_xml(self$Content_Types), "Override"))
+      ct[grepl("drawing", ct$PartName), "PartName"] <- sprintf("/xl/drawings/drawing%s.xml", seq_along(self$drawings))
+      ct <- df_to_xml("Override", ct[c("PartName", "ContentType")])
+      self$Content_Types <- c(de, ct)
+
 
       ## sheetOrder
       # TODO use match()?
@@ -1903,13 +1930,7 @@ wbWorkbook <- R6::R6Class(
       self$sheetOrder[self$sheetOrder > sheet] <- self$sheetOrder[self$sheetOrder > sheet] - 1L
       self$sheetOrder <- self$sheetOrder[-toRemove]
 
-
-      ## remove styleObjects
-      if (length(self$styleObjects)) {
-        self$styleObjects <-
-          self$styleObjects[unlist(lapply(self$styleObjects, "[[", "sheet"), use.names = FALSE) != sheetName]
-      }
-
+      # TODO regexpr should be replaced
       ## Need to remove reference from workbook.xml.rels to pivotCache
       removeRels <- grep("pivotTables", self$worksheets_rels[[sheet]], value = TRUE)
       if (length(removeRels)) {
@@ -1953,36 +1974,23 @@ wbWorkbook <- R6::R6Class(
       self$worksheets_rels[[sheet]] <- NULL
 
       if (length(self$tables)) {
-        tableSheets <- attr(self$tables, "sheet")
-        tableNames <- attr(self$tables, "tableName")
-
-        inds <-
-          tableSheets %in% sheet &
-          !grepl("openxlsx_deleted", attr(self$tables, "tableName"), fixed = TRUE)
-        tableSheets[tableSheets > sheet] <-
-          tableSheets[tableSheets > sheet] - 1L
-
-        ## Need to flag a table as deleted
-        if (any(inds)) {
-          tableSheets[inds] <- 0
-          tableNames[inds] <-
-            stri_join(tableNames[inds], "_openxlsx_deleted")
-        }
-        attr(self$tables, "tableName") <- tableNames
-        attr(self$tables, "sheet") <- tableSheets
+        self$tables[table_id] <- ""
       }
-
 
       ## drawing will always be the first relationship
       if (nSheets > 1) {
         for (i in seq_len(nSheets - 1L)) {
           # did this get updated from length of 3 to 2?
-          self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
+          #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
+          rel <- rbindlist(xml_attribute(self$worksheets_rels[[i]], "Relationship"))
+          if (any(basename(rel$Type) == "drawing")) {
+            rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+          }
+          self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel)
         }
       } else {
         self$worksheets_rels <- list()
       }
-
 
       ## remove sheet
       sn <-
