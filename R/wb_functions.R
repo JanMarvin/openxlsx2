@@ -184,7 +184,7 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #'
 #'   ###########################################################################
 #'   # inlinestr
-#'   xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
+#'   xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
 #'   wb2 <- loadWorkbook(xlsxFile)
 #'
 #'   # read dataset with inlinestr

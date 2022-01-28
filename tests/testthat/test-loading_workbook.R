@@ -790,7 +790,7 @@ test_that("read nodes", {
 
   # read single node
   test <- "<xf numFmtId=\"0\" fontId=\"4\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/></xf>"
-  that <- openxlsx:::getChildlessNode(test, "xf")
+  that <- xml_node(test, "xf")
   expect_equal(test, that)
 
   # real life example <foo/> and <foo>...</foo> mixed

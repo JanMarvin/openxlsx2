@@ -856,7 +856,7 @@ wbWorkbook <- R6::R6Class(
       if (nComments > 0 | nVML > 0) {
         # TODO use seq_len() or seq_along()?
         for (i in seq_len(nSheets)) {
-          if (length(comments[[i]])) {
+          if (length(self$comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
             self$Content_Types <- c(
@@ -1767,7 +1767,7 @@ wbWorkbook <- R6::R6Class(
     groupCols = function(sheet, cols, collapsed, levels) {
 
       sheet <- self$validateSheet(sheet)
-      
+
       # fetch the row_attr data.frame
       col_attr <- self$worksheets[[sheet]]$unfold_cols()
 
@@ -1814,7 +1814,7 @@ wbWorkbook <- R6::R6Class(
     groupRows = function(sheet, rows, collapsed, levels) {
 
       sheet <- self$validateSheet(sheet)
-      
+
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 
@@ -1835,7 +1835,7 @@ wbWorkbook <- R6::R6Class(
       if (length(select)) {
         row_attr$collapsed[select] <- as.character(as.integer(collapsed[1]))
       }
-      
+
       self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
 
       # check if there are valid outlineLevel in row_attr and assign outlineLevelRow the max outlineLevel (thats in the documentation)
@@ -1884,16 +1884,15 @@ wbWorkbook <- R6::R6Class(
          xml_attribute(self$worksheets_rels[[sheet]], "Relationship")
       )
 
-      xml_rels$id <- gsub("\\D+", "", xml_rels$Id)
-      xml_rels$type <- basename(xml_rels$Type)
+      xml_rels$type   <- basename(xml_rels$Type)
       xml_rels$target <- basename(xml_rels$Target)
       xml_rels$target[xml_rels$type == "hyperlink"] <- ""
       xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
 
-      comment_id <- xml_rels$target_ind[xml_rels$type == "comments"]
-      drawing_id <- xml_rels$target_ind[xml_rels$type == "drawing"]
+      comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
+      drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
       pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
-      table_id <- xml_rels$target_ind[xml_rels$type == "table"]
+      table_id      <- xml_rels$target_ind[xml_rels$type == "table"]
       thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
       vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
 
@@ -1976,14 +1975,14 @@ wbWorkbook <- R6::R6Class(
       # tableName is a character Vector with an attached name Vector.
       if (length(self$tables)) {
         self$tables[table_id] <- ""
-        
+
         tab_sheet <- attr(self$tables, "sheet")
         tab_sheet[table_id] <- 0
         attr(self$tables, "sheet") <- tab_sheet
 
         tab_name <- attr(self$tables, "tableName")
         tab_name[table_id] <- "_openxlsx_deleted"
-        attr(self$tables, "tableName") <- tab_name        
+        attr(self$tables, "tableName") <- tab_name
       }
 
       ## drawing will always be the first relationship
