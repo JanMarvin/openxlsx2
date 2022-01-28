@@ -1973,8 +1973,17 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]] <- NULL
       self$worksheets_rels[[sheet]] <- NULL
 
+      # tableName is a character Vector with an attached name Vector.
       if (length(self$tables)) {
         self$tables[table_id] <- ""
+        
+        tab_sheet <- attr(self$tables, "sheet")
+        tab_sheet[table_id] <- 0
+        attr(self$tables, "sheet") <- tab_sheet
+
+        tab_name <- attr(self$tables, "tableName")
+        tab_name[table_id] <- "_openxlsx_deleted"
+        attr(self$tables, "tableName") <- tab_name        
       }
 
       ## drawing will always be the first relationship
