@@ -18,7 +18,7 @@ makeHyperlinkString(sheet, row = 1, col = 1, text = NULL, file = NULL)
 \item{file}{Excel file name to point to. If NULL hyperlink is internal.}
 }
 \description{
-Wrapper to create internal hyperlink string to pass to writeFormula()
+Wrapper to create internal hyperlink string to pass to writeFormula(). Either link to external urls or local files or straight to cells of local Excel sheets.
 }
 \examples{
 
@@ -63,7 +63,7 @@ writeFormula(wb, "Sheet1",
   startRow = 4,
   x = makeHyperlinkString(
     sheet = "testing", row = 3, col = 10,
-    file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+    file = system.file("extdata", "loadExample.xlsx", package = "openxlsx")
   )
 )
 
@@ -72,7 +72,7 @@ writeFormula(wb, "Sheet1",
   startRow = 3,
   x = makeHyperlinkString(
     sheet = "testing", row = 3, col = 10,
-    file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"),
+    file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"),
     text = "Link to File."
   )
 )
@@ -82,6 +82,11 @@ writeFormula(wb, "Sheet1",
   startRow = 10, startCol = 1,
   x = '=HYPERLINK(\\\\"[C:/Users]\\\\", \\\\"Link to an external file\\\\")'
 )
+
+## Link to internal file
+x = makeHyperlinkString(text = "test.png", file = "D:/somepath/somepicture.png")
+writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
+
 \dontrun{
 saveWorkbook(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 }
