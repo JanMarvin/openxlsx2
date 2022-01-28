@@ -4,7 +4,7 @@
 
 #' @name makeHyperlinkString
 #' @title create Excel hyperlink string
-#' @description Wrapper to create internal hyperlink string to pass to writeFormula()
+#' @description Wrapper to create internal hyperlink string to pass to writeFormula(). Either link to external urls or local files or straight to cells of local Excel sheets.
 #' @param sheet Name of a worksheet
 #' @param row integer row number for hyperlink to link to
 #' @param col column number of letter for hyperlink to link to
@@ -55,7 +55,7 @@
 #'   startRow = 4,
 #'   x = makeHyperlinkString(
 #'     sheet = "testing", row = 3, col = 10,
-#'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+#'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx")
 #'   )
 #' )
 #'
@@ -64,7 +64,7 @@
 #'   startRow = 3,
 #'   x = makeHyperlinkString(
 #'     sheet = "testing", row = 3, col = 10,
-#'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"),
+#'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx"),
 #'     text = "Link to File."
 #'   )
 #' )
@@ -74,29 +74,38 @@
 #'   startRow = 10, startCol = 1,
 #'   x = '=HYPERLINK(\\"[C:/Users]\\", \\"Link to an external file\\")'
 #' )
+#' 
+#' ## Link to internal file
+#' x = makeHyperlinkString(text = "test.png", file = "D:/somepath/somepicture.png")
+#' writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
+#'
 #' \dontrun{
 #' saveWorkbook(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 #' }
 #'
 makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  # op <- get_set_options()
+  # on.exit(options(op), add = TRUE)
+  
+  if (missing(sheet)) {
+    if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
 
-
-  cell <- paste0(int2col(col), row)
-  if (!is.null(file)) {
-    dest <- sprintf("[%s]'%s'!%s", file, sheet, cell)
+    str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", file, text)
   } else {
-    dest <- sprintf("#'%s'!%s", sheet, cell)
+    cell <- paste0(int2col(col), row)
+    if (!is.null(file)) {
+      dest <- sprintf("[%s]'%s'!%s", file, sheet, cell)
+    } else {
+      dest <- sprintf("#'%s'!%s", sheet, cell)
+    }
+    
+    if (is.null(text)) {
+      str <- sprintf("=HYPERLINK(\"%s\")", dest)
+    } else {
+      str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", dest, text)
+    }
   }
-
-  if (is.null(text)) {
-    str <- sprintf("=HYPERLINK(\"%s\")", dest)
-  } else {
-    str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", dest, text)
-  }
-
+  
   return(str)
 }
 
