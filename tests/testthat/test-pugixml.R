@@ -110,3 +110,11 @@ test_that("xml_append_child", {
   # xml_append_child(xml_node, xml_child, pointer = TRUE, escapes = TRUE)
 
 })
+
+
+test_that("set_sst", {
+
+  exp <- "<si><t>a</t></si>"
+  expect_equal(exp, set_sst("a"))
+
+})

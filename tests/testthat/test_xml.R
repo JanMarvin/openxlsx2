@@ -45,9 +45,27 @@ test_that("xml_node", {
   exp <- "<b/>"
   expect_equal(exp, xml_node("<a><b/></a>", "a", "b"))
 
+
+  xml_str <- "<a><b><c><d><e/></d></c></b></a>"
+  xml <- read_xml(xml_str)
+
+  exp <- xml_str
+  expect_equal(exp, xml_node(xml, "a"))
+
+  exp <- "<b><c><d><e/></d></c></b>"
+  expect_equal(exp, xml_node(xml, "a", "b"))
+
+  exp <- "<c><d><e/></d></c>"
+  expect_equal(exp, xml_node(xml, "a", "b", "c"))
+  # bit cheating, this test returns the same, but not the actual feature of "*"
+  expect_equal(exp, xml_node(xml, "a", "*","c"))
+
+  exp <- list(c("<d><e/></d>"))
+  expect_equal(exp, xml_node(xml, "a", "b", "c", "d"))
+
 })
 
-test_that("xml_attribute", {
+test_that("xml_attr", {
 
   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
   exp <- list(c(a = "1", b = "2"))
@@ -79,6 +97,26 @@ test_that("xml_attribute", {
   exp <- list(c(a = "1", b = "2"))
   expect_equal(exp, xml_attr("<b><a a=\"1\" b=\"2\"/></b>", "b", "a"))
 
+
+
+  exp <- list(c(a="1"))
+
+  xml_str <- "<a a=\"1\"/>"
+  xml <- read_xml(xml_str)
+  expect_equal(exp, xml_attr(xml, "a"))
+
+  xml_str <- "<b><a a=\"1\"/></b>"
+  xml <- read_xml(xml_str)
+  expect_equal(exp, xml_attr(xml, "b", "a"))
+
+  xml_str <- "<c><b><a a=\"1\"/></b></c>"
+  xml <- read_xml(xml_str)
+  expect_equal(exp, xml_attr(xml, "c", "b", "a"))
+
+  xml_str <- "<d><c><b><a a=\"1\"/></b></c></d>"
+  xml <- read_xml(xml_str)
+  expect_equal(list(list(as.list(unlist(exp)))), xml_attr(xml, "d", "c", "b", "a"))
+
 })
 
 test_that("xml_value", {
@@ -94,6 +132,25 @@ test_that("xml_value", {
   x <- read_xml("<a><b r=\"1\">2</b><b r=\"2\">3</b></a>")
   exp <- c("2", "3")
   expect_equal(exp, xml_value(x, "a", "b"))
+
+
+  exp <- "1"
+
+  xml_str <- "<a>1</a>"
+  xml <- read_xml(xml_str)
+  expect_equal(exp, xml_value(xml, "a"))
+
+  xml_str <- "<a><b>1</b></a>"
+  xml <- read_xml(xml_str)
+  expect_equal(exp, xml_value(xml, "a", "b"))
+
+  xml_str <- "<a><b><c>1</c></b></a>"
+  xml <- read_xml(xml_str)
+  expect_equal(exp, xml_value(xml, "a", "b", "c"))
+
+  xml_str <- "<a><b><c><d>1</d></c></b></a>"
+  xml <- read_xml(xml_str)
+  expect_equal(list(exp), xml_value(xml, "a", "b", "c", "d"))
 
 })
 
@@ -119,7 +176,7 @@ test_that("as_xml", {
 
 })
 
-test_that("xml_attr_mod", {
+test_that("xml_add_child", {
 
   xml_node <- "<node><child1/><child2/></node>"
   xml_child <- "<new_child/>"
@@ -127,6 +184,9 @@ test_that("xml_attr_mod", {
   exp <- "<node><child1/><child2/><new_child/></node>"
 
   expect_equal(exp, xml_add_child(xml_node, xml_child))
+
+  expect_error(xml_add_child(xml_node))
+  expect_error(xml_add_child(xml_child = xml_child))
 
 })
 
