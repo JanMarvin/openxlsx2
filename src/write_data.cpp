@@ -1,45 +1,4 @@
-
 #include "openxlsx2.h"
-
-
-
-// [[Rcpp::export]]  
-Rcpp::IntegerVector build_cell_types_integer(Rcpp::CharacterVector classes, int n_rows){
-  
-  // 0: "n"
-  // 1: "s"
-  // 2: "b"
-  // 9: "h"
-  // 4: TBC
-  // 5: TBC
-  
-  size_t n_cols = classes.size();
-  Rcpp::IntegerVector col_t(n_cols);
-  
-  for(size_t i = 0; i < n_cols; i++){
-    
-    if((classes[i] == "numeric") | (classes[i] == "integer") | (classes[i] == "raw") ){
-      col_t[i] = 0; 
-    }else if(classes[i] == "character"){
-      col_t[i] = 1; 
-    }else if(classes[i] == "logical"){
-      col_t[i] = 2;
-    }else if(classes[i] == "hyperlink"){
-      col_t[i] = 9;
-    }else if(classes[i] == "openxlsx_formula"){
-      col_t[i] = NA_INTEGER;
-    }else{
-      col_t[i] = 1;
-    }
-    
-  }
-  
-  Rcpp::IntegerVector cell_types = rep(col_t, n_rows); 
-  
-  return cell_types;
-  
-  
-}
 
 // [[Rcpp::export]]
 Rcpp::List build_cell_merges(Rcpp::List comps){

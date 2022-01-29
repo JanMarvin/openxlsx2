@@ -296,10 +296,6 @@ write_colors <- function(df_colors) {
     .Call(`_openxlsx2_write_colors`, df_colors)
 }
 
-build_cell_types_integer <- function(classes, n_rows) {
-    .Call(`_openxlsx2_build_cell_types_integer`, classes, n_rows)
-}
-
 build_cell_merges <- function(comps) {
     .Call(`_openxlsx2_build_cell_merges`, comps)
 }

@@ -733,18 +733,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// build_cell_types_integer
-Rcpp::IntegerVector build_cell_types_integer(Rcpp::CharacterVector classes, int n_rows);
-RcppExport SEXP _openxlsx2_build_cell_types_integer(SEXP classesSEXP, SEXP n_rowsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type classes(classesSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rows(n_rowsSEXP);
-    rcpp_result_gen = Rcpp::wrap(build_cell_types_integer(classes, n_rows));
-    return rcpp_result_gen;
-END_RCPP
-}
 // build_cell_merges
 Rcpp::List build_cell_merges(Rcpp::List comps);
 RcppExport SEXP _openxlsx2_build_cell_merges(SEXP compsSEXP) {
@@ -855,7 +843,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_dxf", (DL_FUNC) &_openxlsx2_write_dxf, 1},
     {"_openxlsx2_read_colors", (DL_FUNC) &_openxlsx2_read_colors, 1},
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
-    {"_openxlsx2_build_cell_types_integer", (DL_FUNC) &_openxlsx2_build_cell_types_integer, 2},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 3},
