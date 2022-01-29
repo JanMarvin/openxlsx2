@@ -243,8 +243,8 @@ SEXP getXMLXPtr2val(XPtrXML doc, std::string level1, std::string child) {
   {
     std::vector<std::string> y;
 
-    pugi::xml_node col = worksheet.child(child.c_str());
-    x.push_back(col.child_value() );
+    for(auto col : worksheet.children(child.c_str()))
+      x.push_back(col.child_value() );
 
   }
 
@@ -261,9 +261,8 @@ SEXP getXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::st
   {
     std::vector<std::string> y;
 
-    pugi::xml_node col = worksheet.child(child.c_str());
-
-    x.push_back(col.child_value() );
+    for(auto col : worksheet.children(child.c_str()))
+      x.push_back(col.child_value() );
   }
 
   return  Rcpp::wrap(x);
@@ -279,7 +278,7 @@ SEXP getXMLXPtr4val(XPtrXML doc, std::string level1, std::string level2, std::st
   {
     std::vector<std::string> y;
 
-    for (auto col : worksheet.child(child.c_str()))
+    for (auto col : worksheet.children(child.c_str()))
     {
       y.push_back(col.child_value() );
     }

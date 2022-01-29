@@ -1,6 +1,5 @@
-
-
 #' read xml file
+#' @name read_xml
 #' @param xml something to read character string or file
 #' @param declaration should the declaration be imported
 #' @param escapes bool if characters like "&" should be escaped. The default is
@@ -61,6 +60,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
 
 
 #' xml_node
+#' @name pugixml
 #' @param xml something xml
 #' @param level1 to please check
 #' @param level2 to please check
@@ -103,14 +103,9 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 }
 
 #' xml_value
-#' @param xml something xml
-#' @param level1 to please check
-#' @param level2 to please check
-#' @param level3 to please check
-#' @param level4 to please check
-#' @param level5 to please check
-#' @param level6 to please check
-#' @examples#'
+#' @rdname pugixml
+#' @description returns xml values as character
+#' @examples
 #'   x <- read_xml("<a>1</a>")
 #'   xml_value(x, "a")
 #'
@@ -140,14 +135,7 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
   z
 }
 
-#' xml_attribute
-#' @param xml something xml
-#' @param level1 to please check
-#' @param level2 to please check
-#' @param level3 to please check
-#' @param level4 to please check
-#' @param level5 to please check
-#' @param level6 to please check
+#' @rdname pugixml
 #' @examples
 #'
 #'   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
@@ -243,6 +231,7 @@ as_xml <- function(x) {
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escape, assuming that xml to export is already valid.
 #' @export
+# TODO needs a unit test
 write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   xml_content <- paste0(head, body, tail, collapse = "")
   write_xml_file(xml_content = xml_content, fl = fl, escapes = escapes)
