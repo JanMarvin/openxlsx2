@@ -1,6 +1,5 @@
 #' @name writeData
 #' @title Write an object to a worksheet
-#' @author Alexander Walker
 #' @import stringi
 #' @description Write an object to worksheet with optional styling.
 #' @param wb A Workbook object containing a worksheet.
@@ -151,7 +150,7 @@
 #'
 #' ###########################################################################
 #' # update cell range and add mtcars
-#' xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
+#' xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
 #' wb2 <- loadWorkbook(xlsxFile)
 #'
 #' # read dataset with inlinestr
@@ -226,7 +225,7 @@ writeData <- function(wb,
   startRow <- as.integer(startRow)
 
   assert_workbook(wb)
-  assert_class(headerStyle, "Style", or_null = TRUE)
+  if (!is.null(headerStyle)) assert_style(headerStyle)
   assert_class(colNames, "logical")
   assert_class(rowNames, "logical")
 
@@ -242,6 +241,7 @@ writeData <- function(wb,
   ## special case - vector of hyperlinks
   hlinkNames <- NULL
   if (inherits(x, "hyperlink")) {
+    # consider wbHyperlink?
     hlinkNames <- names(x)
     colNames <- FALSE
   }
@@ -322,7 +322,7 @@ writeData <- function(wb,
 
     wb$worksheets[[sheetX]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
-    l <- convert_to_excel_ref(cols = unlist(coords[, 2]), LETTERS = LETTERS)
+    l <- int2col(unlist(coords[, 2]))
     dfn <- sprintf("'%s'!%s", names(wb)[sheetX], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
     dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheetX - 1L, dfn)
@@ -350,7 +350,6 @@ writeData <- function(wb,
 
 #' @name writeFormula
 #' @title Write a character vector as an Excel Formula
-#' @author Alexander Walker
 #' @description Write a a character vector containing Excel formula to a worksheet.
 #' @details Currently only the english version of functions are supported. Please don't use the local translation.
 #' The examples below show a small list of possible formulas:

@@ -17,7 +17,7 @@ int2col <- function(x) {
     stop("x must be numeric.")
   }
 
-  convert_to_excel_ref(cols = x, LETTERS = LETTERS)
+  sapply(x, int_to_col)
 }
 
 #' @name col2int
@@ -36,7 +36,7 @@ col2int <- function(x) {
       stop("x must be a valid character")
   }
 
-  as.integer(sapply(x, cell_ref_to_col))
+  col_to_int(x)
 }
 
 
@@ -81,7 +81,6 @@ convertFromExcelRef <- function(col) {
 #' @name getCellRefs
 #' @title Return excel cell coordinates from (x,y) coordinates
 #' @description Return excel cell coordinates from (x,y) coordinates
-#' @author Philipp Schauberger, Alexander Walker
 #' @param cellCoords A data.frame with two columns coordinate pairs.
 #' @return Excel alphanumeric cell reference
 #' @examples
@@ -102,7 +101,7 @@ getCellRefs <- function(cellCoords) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  l <- convert_to_excel_ref(cols = unlist(cellCoords[, 2]), LETTERS = LETTERS)
+  l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])
 }
 

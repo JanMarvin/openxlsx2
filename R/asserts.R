@@ -26,15 +26,17 @@ assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL,
 }
 
 
-# With R6 use assert_class(x, c("class", "R6"), all = TRUE)
-assert_chart_sheet <- function(x) assert_class(x, "ChartSheet", package = "openxlsx2")
-assert_comment     <- function(x) assert_class(x, "Comment",    package = "openxlsx2")
-assert_hyperlink   <- function(x) assert_class(x, "Hyperlink",  package = "openxlsx2")
-assert_sheet_data  <- function(x) assert_class(x, "SheetData",  package = "openxlsx2")
-assert_style       <- function(x) assert_class(x, "Style",      package = "openxlsx2")
-assert_workbook    <- function(x) assert_class(x, "Workbook",   package = "openxlsx2")
-assert_worksheet   <- function(x) assert_class(x, "Worksheet",  package = "openxlsx2")
+assert_chart_sheet <- function(x) assert_class(x, c("wbChartSheet", "R6"), all = TRUE)
+assert_comment     <- function(x) assert_class(x, c("wbComment",    "R6"), all = TRUE)
+assert_hyperlink   <- function(x) assert_class(x, c("wbHyperlink",  "R6"), all = TRUE)
+assert_sheet_data  <- function(x) assert_class(x, c("wbSheetData",  "R6"), all = TRUE)
+assert_style       <- function(x) assert_class(x, c("wbStyle",      "R6"), all = TRUE)
+assert_workbook    <- function(x) assert_class(x, c("wbWorkbook",   "R6"), all = TRUE)
+assert_worksheet   <- function(x) assert_class(x, c("wbWorksheet",  "R6"), all = TRUE)
 
+is_wb_style <- function(x) {
+  inherits(x, "wbStyle") & inherits(x, "R6")
+}
 
 match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.frame()) {
   sx <- as.character(substitute(x, envir))

@@ -42,6 +42,3 @@ Default style given by: createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
 \seealso{
 \code{\link[=createStyle]{createStyle()}}
 }
-\author{
-Alexander Walker
-}

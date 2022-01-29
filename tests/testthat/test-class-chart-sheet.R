@@ -1,4 +1,4 @@
 
-test_that("class ChartSheet works", {
-  expect_s4_class(new_chart_sheet(), "ChartSheet")
+test_that("class wbChartSheet works", {
+  expect_null(assert_chart_sheet(wb_chart_sheet()))
 })

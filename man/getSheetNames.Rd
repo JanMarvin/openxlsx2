@@ -18,6 +18,3 @@ Returns the worksheet names within an xlsx file
 \examples{
 getSheetNames(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 }
-\author{
-Alexander Walker
-}

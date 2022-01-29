@@ -72,17 +72,6 @@ test_that("Reading NAs and NaN values", {
 
   saveWorkbook(wb, file = fileName, overwrite = TRUE)
 
-  ## from file
-  expected_df <- structure(list(
-    X = c(NA_real_, NA_real_, NA_real_),
-    Y = c("a", "b", "c"),
-    Z = c(NA, 99, NA),
-    Z2 = c(1, NA, NA)
-  ),
-    .Names = c("X", "Y", "Z", "Z2"),
-    row.names = c(NA, 3L), class = "data.frame"
-  )
-
   expect_equal(expect_warning(read.xlsx(fileName)), a, check.attributes=FALSE)
   unlink(fileName, recursive = TRUE, force = TRUE)
 })

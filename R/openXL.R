@@ -1,6 +1,5 @@
 #' @name openXL
 #' @title Open a Microsoft Excel file (xls/xlsx) or an openxlsx Workbook
-#' @author Luca Braglia
 #' @description This function tries to open a Microsoft Excel
 #' (xls/xlsx) file or an openxlsx Workbook with the proper
 #' application, in a portable manner.
@@ -39,7 +38,7 @@ openXL <- function(file = NULL) {
   if (is.null(file)) stop("A file has to be specified.")
 
   ## workbook handling
-  if (inherits(file, "Workbook")) {
+  if (inherits(file, "wbWorkbook")) {
     file <- file$saveWorkbook(path = file.path(tempdir(), "temp_xlsx.xlsx"))$path
   }
 

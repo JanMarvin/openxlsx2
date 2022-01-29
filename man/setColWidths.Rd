@@ -66,6 +66,3 @@ saveWorkbook(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 \seealso{
 \code{\link[=removeColWidths]{removeColWidths()}}
 }
-\author{
-Alexander Walker
-}

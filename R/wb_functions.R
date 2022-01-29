@@ -8,40 +8,40 @@
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
 
-  if(!grepl(":", dims))
+  if (!grepl(":", dims)) {
     dims <- paste0(dims, ":", dims)
+  }
 
-  dimensions <- strsplit(dims, ":")
-  rows <- as.numeric(gsub("[[:upper:]]","", dimensions[[1]]))
-  cols <- gsub("[[:digit:]]","", dimensions[[1]])
+  if (identical(dims, "Inf:-Inf")) {
+    # This should probably be fixed elsewhere?
+    cols <- NA
+    rows <- NA
+  } else {
+    dimensions <- strsplit(dims, ":")[[1]]
 
-  # cols
-  col_min <- col2int(cols[1])
-  col_max <- col2int(cols[2])
+    rows <- as.numeric(gsub("[[:upper:]]","", dimensions))
+    rows <- seq.int(rows[1], rows[2])
 
-  cols <- seq(col_min, col_max)
-  cols <- int2col(cols)
+    # TODO seq.wb_columns?  make a wb_cols vector?
+    cols <- gsub("[[:digit:]]","", dimensions)
+    cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
+  }
 
-  # rows
-  rows_min <- rows[1]
-  rows_max <- rows[2]
-
-  rows <- seq(rows_min, rows_max)
-
-  data <- NA_character_
   if (fill) {
     data <- expand.grid(cols, rows, stringsAsFactors = FALSE)
-    data <- paste0(data$Var1, data$Var2)
+    data <- paste0(data[[1L]], data[[2L]])
+  } else {
+    data <- NA_character_
   }
 
   # matrix as.data.frame
-  mm <- matrix(data = data,
-    nrow = length(rows),
-    ncol = length(cols),
-    dimnames = list(rows, cols), byrow = TRUE)
-
-  z <- as.data.frame(mm)
-  z
+  as.data.frame(matrix(
+    data     = data,
+    nrow     = max(length(rows), 1L),
+    ncol     = max(length(cols), 1L),
+    dimnames = list(rows, cols),
+    byrow    = TRUE
+  ))
 }
 
 #' function to estimate the column type.
@@ -184,7 +184,7 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #'
 #'   ###########################################################################
 #'   # inlinestr
-#'   xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
+#'   xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
 #'   wb2 <- loadWorkbook(xlsxFile)
 #'
 #'   # read dataset with inlinestr
@@ -203,24 +203,31 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #'   wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
 #'
 #' @export
-wb_to_df <- function(xlsxFile,
+wb_to_df <- function(
+  xlsxFile,
   sheet,
-  startRow = 1,
-  colNames = TRUE,
-  rowNames = FALSE,
-  detectDates = TRUE,
+  startRow      = 1,
+  colNames      = TRUE,
+  rowNames      = FALSE,
+  detectDates   = TRUE,
   skipEmptyCols = FALSE,
   skipEmptyRows = FALSE,
-  rows = NULL,
-  cols = NULL,
-  na.strings = "#N/A",
+  rows          = NULL,
+  cols          = NULL,
+  na.strings    = "#N/A",
   dims,
-  showFormula = FALSE,
-  convert = TRUE,
+  showFormula   = FALSE,
+  convert       = TRUE,
   types,
-  definedName) {
+  definedName
+) {
 
-  if (is.character(xlsxFile)){
+  .mc <- match.call()
+
+  if (is.character(xlsxFile)) {
+    # TODO this should instead check for the Workbook class?  Maybe also check
+    # if the file exists?
+
     # if using it this way, it might be benefitial to only load the sheet we
     # want to read instead of every sheet of the entire xlsx file WHEN we do
     # not even see it
@@ -234,7 +241,11 @@ wb_to_df <- function(xlsxFile,
 
     dn <- wb$workbook$definedNames
     wo <- xml_value(dn, "definedName")
+    # remove dollar sign: $A$1:$B$2
     wo <- gsub("\\$", "", wo)
+    wo <- unlist(sapply(wo, strsplit, "!"))
+    # remove ' from 'Sheet 1'
+    wo <- gsub("'", "", wo)
     wo <- unlist(sapply(wo, strsplit, "!"))
 
     nr <- as.data.frame(
@@ -244,10 +255,14 @@ wb_to_df <- function(xlsxFile,
         dimnames = list(seq_len(length(dn)),
           c("sheet", "dims") ))
     )
-    dn_attr <- rbindlist(xml_attribute(dn, "definedName"))
+    dn_attr <- rbindlist(xml_attr(dn, "definedName"))
 
     nr$name <- dn_attr$name
-    nr$local <- ifelse(dn_attr$localSheetId == "", 0, 1)
+    if (!is.null(dn_attr$localSheetId)) {
+      nr$local <- ifelse(dn_attr$localSheetId == "", 0, 1)
+    } else {
+      nr$local <- 0
+    }
     nr$sheet <- which(wb$sheet_names %in% nr$sheet)
 
     nr <- nr[order(nr$local, nr$name, nr$sheet),]
@@ -260,24 +275,28 @@ wb_to_df <- function(xlsxFile,
       sel <- nr[nr$name == definedName & nr$sheet == sheet, ]
       if (NROW(sel) == 0) {
         stop("no such definedName on selected sheet")
-      } else {
-        dims <- sel$dims
       }
+      dims <- sel$dims
     } else {
       stop("no such definedName")
     }
   }
 
-  if (missing(sheet)) sheet <- 1
+  if (missing(sheet)) {
+    # TODO default sheet as 1
+    sheet <- 1
+  }
 
-  if (is.character(sheet))
+  if (is.character(sheet)) {
     sheet <- wb$validateSheet(sheet)
+  }
 
   # the sheet has no data
-  if (class(wb$worksheets[[sheet]]$sheet_data$cc) == "uninitializedField") {
+  if (is.null(wb$worksheets[[sheet]]$sheet_data$cc)) {
     # TODO do we need more checks or do we need to initialize a new cc object?
+    # TODO would this also apply of nrow(cc) == 0?
     message("sheet found, but contains no data")
-    return (NULL);
+    return(NULL)
   }
 
   # # Should be available, but is optional according to openxml-2.8.1. Still some
@@ -315,10 +334,10 @@ wb_to_df <- function(xlsxFile,
   z  <- dims_to_dataframe(dims)
   tt <- dims_to_dataframe(dims)
 
+
   # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
   # names(tt) <- names(z)
   # rownames(tt) <- c("b", "s", "d", "n")
-
 
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
@@ -344,10 +363,12 @@ wb_to_df <- function(xlsxFile,
     tt <- tt[keep_cols]
   }
 
-  keep_row <- keep_rows[keep_rows %in% rnams]
+  keep_rows <- keep_rows[keep_rows %in% rnams]
 
   # reduce data to selected cases only
-  cc <- cc[cc$row_r %in% keep_row & cc$c_r %in% keep_cols, ]
+  cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
+
+  # if (!nrow(cc)) browser()
 
   cc$val <- NA
   cc$typ <- NA
@@ -450,9 +471,9 @@ wb_to_df <- function(xlsxFile,
     if (any(sel)) {
       nums <- names( which(types[sel] == 1) )
       dtes <- names( which(types[sel] == 2) )
-
-      # TODO convert NA to NA_character_ to avoid warnings or suppressWarnings
-      z[nums] <- lapply(z[nums], as.numeric)
+      # convert "#NUM!" to "NaN" -- then converts to NaN
+      # maybe consider this an option to instead return NA?
+      z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       z[dtes] <- lapply(z[dtes], as.Date)
     } else {
       warning("could not convert. All missing in row used for variable names")
@@ -680,6 +701,158 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 }
 
 
+numfmt_class <- function(data) {
+  dc <- as.data.frame(Map(class, data))
+
+  # check all columns for the required types
+  if (nrow(dc) >= 1) {
+
+    # returns logical vector of length ncol(data)
+    is_class <- function(dc, cl) apply(dc, 2, function(x)(any(x == cl)))
+
+    # check the class. all have the basic R classes, some have additional
+    # openxml builtin formats
+    is_fact <- is_class(dc, "factor")
+    is_date <- is_class(dc, "Date")
+    is_posi <- is_class(dc, "POSIXct")
+    is_logi <- is_class(dc, "logical")
+    is_char <- is_class(dc, "character")
+    is_inte <- is_class(dc, "integer")
+    is_numb <- is_class(dc, "numeric")
+    is_hype <- is_class(dc, "hyperlink")
+    is_curr <- is_class(dc, "currency")
+    is_acco <- is_class(dc, "accounting")
+    is_perc <- is_class(dc, "percentage")
+    is_scie <- is_class(dc, "scientific")
+    is_comm <- is_class(dc, "comma")
+    # formulas get no special output class here. They are characters, but are
+    # assigned to <f ...>
+    is_form <- is_class(dc, "formula")
+
+    # prepare output
+    out_class <- dc[1, , drop = FALSE]
+    out_class[1,] <- "character"
+
+    # assign the final output
+    out_class[is_fact] <- "factor"
+    out_class[is_date] <- "date"
+    out_class[is_posi] <- "posix"
+    out_class[is_logi] <- "logical"
+    out_class[is_char] <- "character" # superfluous
+    out_class[is_inte] <- "integer"
+    out_class[is_numb] <- "numeric"
+    out_class[is_hype] <- "hyperlink"
+    out_class[is_curr] <- "currency"
+    out_class[is_acco] <- "accounting"
+    out_class[is_perc] <- "percentage"
+    out_class[is_scie] <- "scientific"
+    out_class[is_comm] <- "comma"
+    out_class[is_form] <- "formula"
+  }
+
+  out_class
+}
+
+
+short_dtecell <- function(x,y, short_dtefmt){
+  c(v   = as.character(x),
+    typ = "n",
+    r   = y,
+    c_s = as.character(short_dtefmt),
+    c_t = "_openxlsx_NA_",
+    is  =  "_openxlsx_NA_",
+    f   =  "_openxlsx_NA_")
+}
+
+long_dtecell <- function(x,y, long_dtefmt){
+  c(v   = as.character(x),
+    typ = "n",
+    r   = y,
+    c_s = as.character(long_dtefmt),
+    c_t = "_openxlsx_NA_",
+    is  =  "_openxlsx_NA_",
+    f   =  "_openxlsx_NA_")
+}
+
+numcell <- function(x,y, numfmt = "_openxlsx_NA_"){
+  c(v   = as.character(x),
+    typ = "n",
+    r   = y,
+    c_s = as.character(numfmt),
+    c_t = "_openxlsx_NA_",
+    is  =  "_openxlsx_NA_",
+    f   =  "_openxlsx_NA_")
+}
+
+boolcell <- function(x,y){
+  c(v   = as.character(as.integer(as.logical(x))),
+    typ = "n",
+    r   = y,
+    c_s = "_openxlsx_NA_",
+    c_t = "b",
+    is  =  "_openxlsx_NA_",
+    f   =  "_openxlsx_NA_")
+}
+
+chrcell <- function(x,y){
+  c(v   = "_openxlsx_NA_",
+    typ = "c",
+    r   = y,
+    c_s = "_openxlsx_NA_",
+    c_t = "inlineStr",
+    is  = paste0("<is><t>", as.character(x), "</t></is>"),
+    f   =  "_openxlsx_NA_")
+}
+
+fmlcell <- function(x,y){
+  c(v   = "_openxlsx_NA_",
+    typ = "c",
+    r   = y,
+    c_s = "_openxlsx_NA_",
+    c_t = "str",
+    is  =  "_openxlsx_NA_",
+    f   = as.character(x))
+}
+
+cell <- function(x, y, data_class, special_fmts) {
+  z <- NULL
+  if (data_class %in% c("date"))
+    z <- short_dtecell(x,y, special_fmts$short_date)
+  if (data_class %in% c("posix"))
+    z <- long_dtecell(x,y, special_fmts$long_date)
+  if (data_class %in% c("logical"))
+    z <- boolcell(x,y)
+  if (data_class %in% c("numeric", "integer"))
+    z <- numcell(x,y)
+  if (data_class %in% c("character", "factor", "hyperlink", "currency"))
+    z <- chrcell(x,y)
+  if (data_class %in% c("formula"))
+    z <- fmlcell(x,y)
+  if (data_class %in% c("accounting"))
+    z <- numcell(x,y, special_fmts$accounting)
+  if (data_class %in% c("percentage"))
+    z <- numcell(x,y, special_fmts$percentage)
+  if (data_class %in% c("scientific"))
+    z <- numcell(x,y, special_fmts$scientific)
+  if (data_class %in% c("comma"))
+    z <- numcell(x,y, special_fmts$comma)
+
+  z
+}
+
+nmfmt_df <- function(x) {
+  data.frame(
+    numFmtId = as.character(x),
+    fontId = "0",
+    fillId = "0",
+    borderId = "0",
+    xfId = "0",
+    applyNumberFormat = "1",
+    stringsAsFactors = FALSE
+  )
+}
+
+
 #' dummy function to write data
 #' @param wb workbook
 #' @param sheet sheet
@@ -714,17 +887,20 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 #'
 #' @export
 writeData2 <-function(wb, sheet, data,
-  colNames = TRUE, rowNames = FALSE,
-  startRow = 1, startCol = 1,
-  removeCellStyle = FALSE) {
+                      colNames = TRUE, rowNames = FALSE,
+                      startRow = 1, startCol = 1,
+                      removeCellStyle = FALSE) {
 
 
   is_data_frame <- FALSE
-  data_class <- sapply(data, class)
+  #### prepare the correct data formats for openxml
+  data_class <- as.data.frame(Map(class, data))
+  dc <- numfmt_class(data)
 
   # convert factor to character
   if (any(data_class == "factor")) {
-    fcts <- which(data_class == "factor")
+    is_factor <- apply(data_class, 2, function(x)(any(x == "factor")))
+    fcts <- names(data_class[is_factor])
     data[fcts] <- lapply(data[fcts], as.character)
   }
 
@@ -747,17 +923,17 @@ writeData2 <-function(wb, sheet, data,
       nam <- names(data)
       data <- cbind(rownames(data), data)
       names(data) <- c("", nam)
-      data_class <- c("character", data_class)
+      data_class <- cbind(c("_rowNames_" = "character"), data_class)
+      names(data_class) <- names(data)
+      dc <- cbind(c("_rowNames_" = "character"), dc)
+      names(dc) <- names(data)
+
     }
   }
 
 
   sheetno <- wb$validateSheet(sheet)
   # message("sheet no: ", sheetno)
-
-
-
-
 
   # create a data frame
   if (!is_data_frame)
@@ -774,7 +950,7 @@ writeData2 <-function(wb, sheet, data,
     ":",
     int2col(endCol), endRow)
 
-  if (class(wb$worksheets[[sheetno]]$sheet_data$cc) == "uninitializedField") {
+  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
 
 
     sheet_data <- list()
@@ -786,90 +962,73 @@ writeData2 <-function(wb, sheet, data,
 
     rows_attr <- cols_attr <- cc_tmp <- vector("list", data_nrow)
 
-    # create <cols ...>
-    cols_attr <- empty_cols_attr(n = data_nrow)
-    cols_attr$collapsed <- "false"
-    cols_attr$customWidth <- "true"
-    cols_attr$hidden <- "false"
-    cols_attr$outlineLevel <- "0"
-    cols_attr$max <- "121"
-    cols_attr$min <- "1"
-    cols_attr$style <- "0"
-    cols_attr$width <- "9.14"
-
-    wb$worksheets[[sheetno]]$cols_attr <- df_to_col(cols_attr)
+    # # create <cols ...>
+    # cols_attr <- empty_cols_attr(n = data_nrow)
+    # cols_attr$collapsed <- ""
+    # cols_attr$customWidth <- ""
+    # cols_attr$hidden <- ""
+    # cols_attr$outlineLevel <- ""
+    # cols_attr$max <- ""
+    # cols_attr$min <- ""
+    # cols_attr$style <- ""
+    # cols_attr$width <- ""
+    #
+    # wb$worksheets[[sheetno]]$cols_attr <- df_to_xml("col", cols_attr)
 
     # create <rows ...>
     want_rows <- startRow:endRow
     rows_attr <- empty_row_attr(n = length(want_rows))
     rows_attr$r <- rownames(rtyp)
-    rows_attr$spans <- paste0("1:", data_ncol)
-    rows_attr$`x14ac:dyDescent` <- "0.25"
 
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
     # original cc dataframe
+    # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
     nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")
     cc <- as.data.frame(
       matrix(data = "_openxlsx_NA_",
-        nrow = nrow(data) * ncol(data),
-        ncol = length(nams))
+             nrow = nrow(data) * ncol(data),
+             ncol = length(nams))
     )
     names(cc) <- nams
 
-    dtecell <- function(x,y){
-      c(v   = as.character(x),
-        typ = "n",
-        r   = y,
-        c_s = as.character(length(wb$styles$cellXfs)),
-        c_t = "_openxlsx_NA_",
-        is  =  "_openxlsx_NA_",
-        f   =  "_openxlsx_NA_")
+    # update a few styles informations
+    wb$styles$numFmts <- character()
+
+    ## create a cell style format for specific types at the end of the existing
+    # styles. gets the reference an passes it on.
+    short_date_fmt <- long_date_fmt <- accounting_fmt <- percentage_fmt <-
+      comma_fmt <- scientific_fmt <- NULL
+    if (any(dc == "date")) short_date_fmt <- write_xf(nmfmt_df(14))
+    if (any(dc == "posix")) long_date_fmt  <- write_xf(nmfmt_df(22))
+    if (any(dc == "accounting")) accounting_fmt <- write_xf(nmfmt_df(4))
+    if (any(dc == "percentage")) percentage_fmt <- write_xf(nmfmt_df(10))
+    if (any(dc == "scientific")) scientific_fmt <- write_xf(nmfmt_df(48))
+    if (any(dc == "comma")) comma_fmt      <- write_xf(nmfmt_df(3))
+
+    wb$styles$cellXfs <- c(wb$styles$cellXfs,
+                           short_date_fmt, long_date_fmt,
+                           accounting_fmt,
+                           percentage_fmt,
+                           comma_fmt,
+                           scientific_fmt)
+
+    # get the last style id
+    style_id <- function(cellfmt) {
+      style_id <- which(wb$styles$cellXfs == cellfmt)
+      # get the last id, the one we have just written. return them as
+      # 0-index and minimum value of 0
+      ifelse(length(style_id), max(max(style_id)-1,0) , 0)
     }
 
-    numcell <- function(x,y){
-      c(v   = as.character(x),
-        typ = "n",
-        r   = y,
-        c_s = "_openxlsx_NA_",
-        c_t = "_openxlsx_NA_",
-        is  =  "_openxlsx_NA_",
-        f   =  "_openxlsx_NA_")
-    }
-
-    chrcell <- function(x,y){
-      c(v   = "_openxlsx_NA_",
-        typ = "c",
-        r   = y,
-        c_s = "_openxlsx_NA_",
-        c_t = "inlineStr",
-        is  = paste0("<is><t>", as.character(x), "</t></is>"),
-        f   =  "_openxlsx_NA_")
-    }
-
-    fmlcell <- function(x,y){
-      c(v   = "_openxlsx_NA_",
-        typ = "c",
-        r   = y,
-        c_s = "_openxlsx_NA_",
-        c_t = "str",
-        is  =  "_openxlsx_NA_",
-        f   = as.character(x))
-    }
-
-    cell <- function(x, y, data_class) {
-      z <- NULL
-      if (data_class %in% c("Date"))
-        z <- dtecell(x,y)
-      if (data_class %in% c("numeric", "integer"))
-        z <- numcell(x,y)
-      if (data_class %in% c("character", "factor", "hyperlink"))
-        z <- chrcell(x,y)
-      if (data_class %in% list(c("character", "formula")))
-        z <- fmlcell(x,y)
-
-      z
-    }
+    special_fmts <- data.frame(
+      short_date = style_id(short_date_fmt),
+      long_date = style_id(long_date_fmt),
+      accounting = style_id(accounting_fmt),
+      percentage = style_id(percentage_fmt),
+      scientific = style_id(scientific_fmt),
+      comma = style_id(comma_fmt)
+    )
 
     for (i in seq_len(NROW(data))) {
 
@@ -877,9 +1036,10 @@ writeData2 <-function(wb, sheet, data,
       col <- data.frame(matrix(data = "_openxlsx_NA_", nrow = ncol(data), ncol = length(col_nams)))
       names(col) <- col_nams
       for (j in seq_along(data)) {
-        dc <- ifelse(colNames && i == 1, "character", data_class[j])
         val <- data[i, j]
-        col[j,] <- cell(val, rtyp[i, j], dc)
+        # if first row and colnames write character else whatever typ is found
+        dc_j <- ifelse((colNames & (i == 1)), "character", dc[1, j])
+        col[j,] <- cell(val, rtyp[i, j], dc_j, special_fmts)
       }
       col$row_r <- rownames(rtyp)[i]
       col$c_r   <- colnames(rtyp)
@@ -898,25 +1058,6 @@ writeData2 <-function(wb, sheet, data,
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
-    # update a few styles informations
-    wb$styles$numFmts <- character()
-
-    ## create a cell style format for dates at the end of the existing styles.
-    ## This uses the builtin style 14: yyyy-mm-dd
-    if (any(data_class == "Date")) {
-      # "<xf />"
-      # Date format
-      df_cellXfs <- data.frame(
-        numFmtId = c("14"),
-        fontId = c("0"),
-        fillId = c("0"),
-        borderId = c("0"),
-        xfId = c("0"),
-        applyNumberFormat = c("1"),
-        stringsAsFactors = FALSE
-      )
-      wb$styles$cellXfs <- c(wb$styles$cellXfs, write_xf(df_cellXfs))
-    }
 
     wb$styles$dxfs <- character()
 
@@ -965,6 +1106,7 @@ cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TR
     wb$worksheets[[sheet_id]]$mergeCells <- character(0)
 
 }
+
 
 
 #' little worksheet helper

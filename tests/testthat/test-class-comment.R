@@ -1,4 +1,4 @@
 
-test_that("class Comment works", {
-  expect_s4_class(new_comment(), "Comment")
+test_that("class wbComment works", {
+  expect_null(assert_comment(wb_comment()))
 })

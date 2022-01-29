@@ -1,11 +1,9 @@
 
-#' @name names
-#' @title get or set worksheet names
-#' @description get or set worksheet names
-#' @aliases names.Workbook
+#' get or set worksheet names
+#' get or set worksheet names
+#'
+#' @param x A `wbWorkbook` object
 #' @export
-#' @method names Workbook
-#' @param x A `Workbook` object
 #' @examples
 #'
 #' wb <- createWorkbook()
@@ -17,15 +15,14 @@
 #' names(wb)[[2]] <- "S2a"
 #' names(wb)
 #' names(wb) <- paste("Sheet", 1:3)
-names.Workbook <- function(x) {
-  nms <- x$sheet_names
-  nms <- replaceXMLEntities(nms)
+names.wbWorkbook <- function(x) {
+  replaceXMLEntities(x$sheet_names)
 }
 
-#' @rdname names
-#' @param value a character vector the same length as wb
+#' @rdname names.wbWorkbook
+#' @param value a character vector the same length as `x`
 #' @export
-`names<-.Workbook` <- function(x, value) {
+`names<-.wbWorkbook` <- function(x, value) {
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)

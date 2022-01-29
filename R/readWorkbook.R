@@ -25,7 +25,6 @@
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
-#' @author Alexander Walker
 #' @return data.frame
 #' @export
 #' @examples
@@ -65,47 +64,49 @@
 #' }
 #'
 #' @export
-read.xlsx <- function(xlsxFile,
+read.xlsx <- function(
+  xlsxFile,
   sheet,
-  startRow = 1,
-  colNames = TRUE,
-  rowNames = FALSE,
-  detectDates = FALSE,
-  skipEmptyRows = TRUE,
-  skipEmptyCols = TRUE,
-  rows = NULL,
-  cols = NULL,
+  startRow        = 1,
+  colNames        = TRUE,
+  rowNames        = FALSE,
+  detectDates     = FALSE,
+  skipEmptyRows   = TRUE,
+  skipEmptyCols   = TRUE,
+  rows            = NULL,
+  cols            = NULL,
   namedRegion,
-  na.strings = "NA",
-  check.names = FALSE,
-  sep.names = ".",
-  fillMergedCells = FALSE) {
+  na.strings      = "NA",
+  check.names     = FALSE,
+  sep.names       = ".",
+  fillMergedCells = FALSE
+) {
 
-  if (missing(sheet))
+  # TODO just default sheet to 1
+  if (missing(sheet)) {
     sheet <- 1
+  }
 
-  if (class(xlsxFile) == "Workbook"){
+  # TODO is.Workbook() would be better
+  if (inherits(xlsxFile, c("Workbook", "wbWorkbook"))) {
     wb <- xlsxFile
   } else {
     wb <- loadWorkbook(xlsxFile = xlsxFile)
   }
 
-  z <- wb_to_df(
+  wb_to_df(
     wb,
-    sheet = sheet,
-    startRow = startRow,
-    colNames = colNames,
-    rowNames = rowNames,
-    detectDates = detectDates,
+    sheet         = sheet,
+    startRow      = startRow,
+    colNames      = colNames,
+    rowNames      = rowNames,
+    detectDates   = detectDates,
     skipEmptyRows = skipEmptyRows,
-    rows = rows,
-    cols = cols,
-    definedName = namedRegion,
-    na.strings = na.strings)
-
-
-  return(z)
-
+    rows          = rows,
+    cols          = cols,
+    definedName   = namedRegion,
+    na.strings    = na.strings
+  )
 }
 
 
@@ -114,7 +115,6 @@ read.xlsx <- function(xlsxFile,
 #' @description Read data from an Excel file or Workbook object into a data.frame
 #' @inheritParams read.xlsx
 #' @details Creates a data.frame of all data in worksheet.
-#' @author Alexander Walker
 #' @return data.frame
 #' @seealso [getNamedRegions()]
 #' @seealso [read.xlsx()]
@@ -125,40 +125,40 @@ read.xlsx <- function(xlsxFile,
 #'
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' df1 <- readWorkbook(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
-readWorkbook <- function(xlsxFile,
-  sheet = 1,
-  startRow = 1,
-  colNames = TRUE,
-  rowNames = FALSE,
-  detectDates = FALSE,
+readWorkbook <- function(
+  xlsxFile,
+  sheet         = 1,
+  startRow      = 1,
+  colNames      = TRUE,
+  rowNames      = FALSE,
+  detectDates   = FALSE,
   skipEmptyRows = TRUE,
   skipEmptyCols = TRUE,
-  rows = NULL,
-  cols = NULL,
+  rows          = NULL,
+  cols          = NULL,
   namedRegion,
-  na.strings = "NA") {
-  z <- wb_to_df(
-    xlsxFile = xlsxFile,
-    sheet = sheet,
-    startRow = startRow,
-    colNames = colNames,
-    rowNames = rowNames,
-    detectDates = detectDates,
+  na.strings    = "NA"
+) {
+  wb_to_df(
+    xlsxFile      = xlsxFile,
+    sheet         = sheet,
+    startRow      = startRow,
+    colNames      = colNames,
+    rowNames      = rowNames,
+    detectDates   = detectDates,
     skipEmptyRows = skipEmptyRows,
     skipEmptyCols = skipEmptyCols,
-    rows = rows,
-    cols = cols,
-    definedName = namedRegion,
-    na.strings = na.strings
+    rows          = rows,
+    cols          = cols,
+    definedName   = namedRegion,
+    na.strings    = na.strings
   )
 
-  return(z)
 }
 
 #' @name getSheetNames
 #' @title Get names of worksheets
 #' @description Returns the worksheet names within an xlsx file
-#' @author Alexander Walker
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples
@@ -182,7 +182,7 @@ getSheetNames <- function(file) {
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- read_xml(workbook)
   sheets <- xml_node(workbook, "workbook", "sheets", "sheet")
-  sheets <- xml_attribute(sheets, "sheet")
+  sheets <- xml_attr(sheets, "sheet")
   sheets <- rbindlist(sheets)
 
   ## Some veryHidden sheets do not have a sheet content and their rId is empty.

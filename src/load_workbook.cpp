@@ -65,8 +65,9 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   return df;
 }
 
+
 // [[Rcpp::export]]
-Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col) {
+Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 
   auto n = df_col.nrow();
   Rcpp::CharacterVector z(n);
@@ -75,7 +76,7 @@ Rcpp::CharacterVector df_to_col(Rcpp::DataFrame df_col) {
     pugi::xml_document doc;
     Rcpp::CharacterVector attrnams = df_col.names();
 
-    pugi::xml_node col = doc.append_child("col");
+    pugi::xml_node col = doc.append_child(name.c_str());
 
     for (auto j = 0; j < df_col.ncol(); ++j) {
       Rcpp::CharacterVector cv_s = "";
@@ -182,7 +183,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 //' @import Rcpp
 // this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
-void loadvals(Rcpp::Reference wb, XPtrXML doc) {
+void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
@@ -271,9 +272,7 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
       // some files have no colnames. in this case we need to add c_r and row_r
       // if the file provides dimensions, they could be fixed later
       if (!has_colname) {
-        Rcpp::IntegerVector itr_vec(1);
-        itr_vec[0] = itr_cols +1;
-        std::string tmp_colname= Rcpp::as<std::string>(int_2_cell_ref(itr_vec));
+        std::string tmp_colname= int_to_col(itr_cols);
         single_xml_col.c_r = tmp_colname;
         single_xml_col.row_r = std::to_string(itr_rows + 1);
       }
@@ -330,10 +329,10 @@ void loadvals(Rcpp::Reference wb, XPtrXML doc) {
     ++itr_rows;
   }
 
-  wb.field("row_attr") = row_attributes;
-  wb.field("cc")  = Rcpp::wrap(xml_cols);
-
+  sheet_data["row_attr"] = row_attributes;
+  sheet_data["cc"] = Rcpp::wrap(xml_cols);
 }
+
 
 // converts sharedstrings xml tree to R-Character Vector
 // [[Rcpp::export]]
@@ -370,6 +369,7 @@ SEXP si_to_txt(XPtrXML doc) {
 
   return res;
 }
+
 
 // converts inlineStr xml tree to R-Character Vector
 // [[Rcpp::export]]
@@ -421,6 +421,7 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
   return res;
 }
 
+
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
@@ -437,60 +438,3 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
     Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
   }
 }
-
-
-// [[Rcpp::export]]
-int cell_ref_to_col( std::string x ){
-
-  // This function converts the Excel column letter to an integer
-  char A = 'A';
-  int a_value = (int)A - 1;
-  int sum = 0;
-
-  // remove digits from string
-  x.erase(std::remove_if(x.begin()+1, x.end(), ::isdigit),x.end());
-  int k = x.length();
-
-  for (int j = 0; j < k; j++){
-    sum *= 26;
-    sum += (x[j] - a_value);
-  }
-
-  return sum;
-
-}
-
-
-// [[Rcpp::export]]
-Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector cols){
-
-  std::vector<std::string> LETTERS = get_letters();
-
-  int n = cols.size();
-  Rcpp::CharacterVector res(n);
-  std::fill(res.begin(), res.end(), NA_STRING);
-
-  int x;
-  int modulo;
-
-
-  for(int i = 0; i < n; i++){
-
-    if(!Rcpp::IntegerVector::is_na(cols[i])){
-
-      std::string columnName;
-      x = cols[i];
-      while(x > 0){
-        modulo = (x - 1) % 26;
-        columnName = LETTERS[modulo] + columnName;
-        x = (x - modulo) / 26;
-      }
-      res[i] = columnName;
-    }
-
-  }
-
-  return res ;
-
-}
-

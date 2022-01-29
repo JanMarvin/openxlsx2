@@ -32,6 +32,3 @@ cloneWorksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
 saveWorkbook(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 }
 }
-\author{
-Reinhold Kainhofer
-}

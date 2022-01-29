@@ -80,7 +80,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
       std::string cld_name = cld.name();
 
       // check known names
-      if (cld_name ==  "alignment" | cld_name == "extLst" | cld_name == "protection") {
+      if (cld_name ==  "alignment" || cld_name == "extLst" || cld_name == "protection") {
 
         for (auto attrs : cld.attributes()) {
           Rcpp::CharacterVector attr_name = attrs.name();

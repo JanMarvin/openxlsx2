@@ -3,7 +3,6 @@
 #' @name write.xlsx
 #' @title write data to an xlsx file
 #' @description write a data.frame or list of data.frames to an xlsx file
-#' @author Alexander Walker
 #' @param x object or a list of objects that can be handled by [writeData()] to write to file
 #' @param file xlsx file name
 #' @param asTable write using writeDataTable as opposed to writeData

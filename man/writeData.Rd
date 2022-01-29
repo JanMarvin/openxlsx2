@@ -198,7 +198,7 @@ writeData(wb, sheet = "Formula", x = df)
 
 ###########################################################################
 # update cell range and add mtcars
-xlsxFile <- system.file("extdata", "inlinestr.xlsx", package = "openxlsx2")
+xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
 wb2 <- loadWorkbook(xlsxFile)
 
 # read dataset with inlinestr
@@ -221,7 +221,4 @@ saveWorkbook(wb, "writeDataExample.xlsx", overwrite = TRUE)
 }
 \seealso{
 \code{\link[=writeDataTable]{writeDataTable()}}
-}
-\author{
-Alexander Walker
 }

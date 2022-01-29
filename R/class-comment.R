@@ -1,39 +1,67 @@
 
-Comment <- setRefClass(
-  "Comment",
-  fields = c(
-    "text" = "character",
-    "author" = "character",
-    "style" = "ANY", # Not defined yet, should be Style.
-    "visible" = "logical",
-    "width" = "numeric",
-    "height" = "numeric"
-  ),
+#' R6 class for a Workbook Comments
+#'
+#' A comment
+#'
+#' @export
+wbComment <- R6::R6Class(
+  "wbComment",
 
-  methods = list(
+  public = list(
+    #' @field text Comment text
+    text = character(),
+
+    #' @field author The comment author
+    author = character(),
+
+    #' @field style A style (class `wbStyle`) for the comment (?)
+    style = NULL,
+
+    #' @field visible `logical`, if `FALSE` is not visible
+    visible = TRUE,
+
+    # TODO what unit is width/height?
+    #' @field width Width of the comment in ... units
+    width = 2,
+
+    #' @field height Height of comment in ... units
+    height = 4,
+
+    #' @description
+    #' Creates a new `wbComment` object
+    #' @param text Comment text
+    #' @param author The comment author
+    #' @param style A style (class `wbStyle`) for the comment (?)
+    #' @param visible `logical`, if `FALSE` is not visible
+    #' @param width Width of the comment in ... units
+    #' @param height Height of comment in ... units
+    #' @return a `wbComment` object
     initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
       # TODO this needs the validations that the comment wrappers have
-      .self$text <- text
-      .self$author <- author
-      .self$style <- style
-      .self$visible <- visible
-      .self$width <- width
-      .self$height <- height
-      invisible(.self)
+      self$text <- text
+      self$author <- author
+      self$style <- style
+      self$visible <- visible
+      self$width <- width
+      self$height <- height
+      invisible(self)
     },
-    # TODO R6 show() to print()
-    show = function() {
+
+    #' @description
+    #' Prints the object
+    #' @returns The `wbComment` object, invisibly; called for its side effects
+    print = function() {
       showText <- c(
-        sprintf("Author: %s\n", .self$author),
-        sprintf("Text:\n %s\n\n", paste(.self$text, collapse = ""))
+        sprintf("Author: %s\n", self$author),
+        sprintf("Text:\n %s\n\n", paste(self$text, collapse = ""))
       )
 
-
       # TODO style should probably always be a list?
-      s <- if (inherits(.self$style, "list")) {
-        .self$style
+      # TODO would style be a style object?
+      s <- if (inherits(self$style, "list")) {
+        self$style
       }  else  {
-        list(.self$style)
+        list(self$style)
       }
 
       styleShow <- "Style:\n"
@@ -52,13 +80,17 @@ Comment <- setRefClass(
       }
 
       cat(showText, styleShow, sep = "")
-      invisible(.self)
+      invisible(self)
     }
   )
 )
 
 
 # wrappers ----------------------------------------------------------------
+
+# TODO createComment() should leverage wbwbComment$new() more
+# TODO writeComment() should leverage wbWorkbook$addComment() more
+# TODO removeComment() should leverage wbWorkbook$removeComment() more
 
 #' @name createComment
 #' @title create a Comment object
@@ -95,8 +127,8 @@ createComment <- function(comment,
   width = 2,
   height = 4) {
 
-  # TODO move this to Comment$new(); this could then be replaced with
-  # new_comment()
+  # TODO move this to wbComment$new(); this could then be replaced with
+  # wb_comment()
 
   assert_class(author, "character")
   assert_class(comment, "character")
@@ -120,7 +152,7 @@ createComment <- function(comment,
   comment <- replaceIllegalCharacters(comment)
 
 
-  invisible(Comment$new(text = comment, author = author, style = style, visible = visible, width = width[1], height = height[1]))
+  invisible(wbComment$new(text = comment, author = author, style = style, visible = visible, width = width[1], height = height[1]))
 }
 
 
@@ -156,15 +188,17 @@ createComment <- function(comment,
 #' saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
 #' }
 writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
-  # TODO add as method: Workbook$addComment(); add param for replace?
+  # TODO add as method: wbWorkbook$addComment(); add param for replace?
   assert_workbook(wb)
   assert_comment(comment)
 
-  if (length(comment$style) == 1) {
-    rPr <- wb$createFontNode(comment$style)
-  } else {
-    rPr <- sapply(comment$style, function(x) wb$createFontNode(x))
-  }
+  # if (length(comment$style) == 1) {
+  #   rPr <- wb$createFontNode(comment$style)
+  # } else {
+  #   rPr <- sapply(comment$style, function(x) wb$createFontNode(x))
+  # }
+  assert_comment(comment)
+  rPr <- wb$createFontNode(comment$style)
 
   rPr <- gsub("font>", "rPr>", rPr)
   sheet <- wb$validateSheet(sheet)
@@ -182,7 +216,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
     col <- convertFromExcelRef(col)
   }
 
-  ref <- paste0(convert_to_excel_ref(cols = col, LETTERS = LETTERS), row)
+  ref <- paste0(int2col(col), row)
 
   comment_list <- list(
     "ref" = ref,
@@ -212,7 +246,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 #' @seealso [createComment()]
 #' @seealso [writeComment()]
 removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
-  # TODO add as method; Workbook$removeComment()
+  # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
@@ -230,12 +264,12 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
     stop("Length of rows and cols must be equal.")
   }
 
-  comb <- paste0(convert_to_excel_ref(cols = cols, LETTERS = LETTERS), rows)
+  comb <- paste0(int2col(cols), rows)
   toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
 
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
 }
 
-new_comment <- function(text = character(), author = character(), style = new_style()) {
-  Comment$new(text = text, author = author, style = style)
+wb_comment <- function(text = character(), author = character(), style = wb_style()) {
+  wbComment$new(text = text, author = author, style = style)
 }

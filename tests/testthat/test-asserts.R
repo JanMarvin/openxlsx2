@@ -9,13 +9,13 @@ test_that("assert_class() works", {
 })
 
 test_that("class assertions work", {
-  expect_null(assert_chart_sheet(new_chart_sheet()))
-  expect_null(assert_comment(    new_comment()))
-  expect_null(assert_hyperlink(  new_hyperlink()))
-  expect_null(assert_sheet_data( new_sheet_data()))
-  expect_null(assert_style(      new_style()))
-  expect_null(assert_workbook(   new_workbook()))
-  expect_null(assert_worksheet(  new_worksheet()))
+  expect_null(assert_chart_sheet(wb_chart_sheet()))
+  expect_null(assert_comment(    wb_comment()))
+  expect_null(assert_hyperlink(  wb_hyperlink()))
+  expect_null(assert_sheet_data( wb_sheet_data()))
+  expect_null(assert_style(      wb_style()))
+  expect_null(assert_workbook(   wb_workbook()))
+  expect_null(assert_worksheet(  wb_worksheet()))
 })
 
 test_that("match_oneof() works", {

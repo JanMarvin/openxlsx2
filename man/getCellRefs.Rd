@@ -21,6 +21,3 @@ getCellRefs(data.frame(1, 2))
 getCellRefs(data.frame(1:3, 2:4))
 # "B1" "C2" "D3"
 }
-\author{
-Philipp Schauberger, Alexander Walker
-}

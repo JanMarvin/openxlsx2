@@ -1,6 +1,5 @@
-
-
 #' read xml file
+#' @name read_xml
 #' @param xml something to read character string or file
 #' @param declaration should the declaration be imported
 #' @param escapes bool if characters like "&" should be escaped. The default is
@@ -61,13 +60,12 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
 
 
 #' xml_node
+#' @name pugixml
 #' @param xml something xml
 #' @param level1 to please check
 #' @param level2 to please check
 #' @param level3 to please check
 #' @param level4 to please check
-#' @param level5 to please check
-#' @param level6 to please check
 #' @details This function returns XML nodes as used in openxlsx2. In theory they
 #' could be returned as pointers as well, but this has not yet been implemented.
 #' @examples
@@ -77,9 +75,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
 #'   # return b. requires the path to the node
 #'   xml_node(x, "a", "b")
 #' @export
-xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, level5 = NULL, level6 = NULL) {
+xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL) {
 
-  lvl <- c(level1, level2, level3, level4, level5, level6)
+  lvl <- c(level1, level2, level3, level4)
   lvl <- lvl[!is.null(lvl)]
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
@@ -96,30 +94,24 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
     if (length(lvl) == 3) z <- getXMLXPtr3(xml, level1, level2, level3)
     if (length(lvl) == 3) if (level2 == "*") z <- unkgetXMLXPtr3(xml, level1, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4(xml, level1, level2, level3, level4)
-    if (length(lvl) == 5) z <- getXMLXPtr5(xml, level1, level2, level3, level4, level5)
   }
 
   z
 }
 
 #' xml_value
-#' @param xml something xml
-#' @param level1 to please check
-#' @param level2 to please check
-#' @param level3 to please check
-#' @param level4 to please check
-#' @param level5 to please check
-#' @param level6 to please check
-#' @examples#'
+#' @rdname pugixml
+#' @description returns xml values as character
+#' @examples
 #'   x <- read_xml("<a>1</a>")
 #'   xml_value(x, "a")
 #'
 #'   x <- read_xml("<a><b r=\"1\">2</b></a>")
 #'   xml_value(x, "a", "b")
 #' @export
-xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, level5 = NULL, level6 = NULL) {
+xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL) {
 
-  lvl <- c(level1, level2, level3, level4, level5, level6)
+  lvl <- c(level1, level2, level3, level4)
   lvl <- lvl[!is.null(lvl)]
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
@@ -134,36 +126,28 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
     if (length(lvl) == 2) z <- getXMLXPtr2val(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3val(xml, level1, level2, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4val(xml, level1, level2, level3, level4)
-    if (length(lvl) == 5) z <- getXMLXPtr5val(xml, level1, level2, level3, level4, level5)
   }
 
   z
 }
 
-#' xml_attribute
-#' @param xml something xml
-#' @param level1 to please check
-#' @param level2 to please check
-#' @param level3 to please check
-#' @param level4 to please check
-#' @param level5 to please check
-#' @param level6 to please check
+#' @rdname pugixml
 #' @examples
 #'
 #'   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
-#'   xml_attribute(x, "a")
+#'   xml_attr(x, "a")
 #'
 #'   x <- read_xml("<a><b r=\"1\">2</b></a>")
-#'   xml_attribute(x, "a", "b")
+#'   xml_attr(x, "a", "b")
 #'   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
-#'   xml_attribute(x, "a")
+#'   xml_attr(x, "a")
 #'
 #'   x <- read_xml("<b><a a=\"1\" b=\"2\"/></b>")
-#'   xml_attribute(x, "b", "a")
+#'   xml_attr(x, "b", "a")
 #' @export
-xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, level5 = NULL, level6 = NULL) {
+xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL) {
 
-  lvl <- c(level1, level2, level3, level4, level5, level6)
+  lvl <- c(level1, level2, level3, level4)
   lvl <- lvl[!is.null(lvl)]
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
@@ -178,7 +162,6 @@ xml_attribute <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, leve
     if (length(lvl) == 2) z <- getXMLXPtr2attr(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3attr(xml, level1, level2, level3)
     if (length(lvl) == 4) z <- getXMLXPtr4attr(xml, level1, level2, level3, level4)
-    if (length(lvl) == 5) z <- getXMLXPtr5attr(xml, level1, level2, level3, level4, level5)
   }
 
   z
@@ -243,6 +226,7 @@ as_xml <- function(x) {
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escape, assuming that xml to export is already valid.
 #' @export
+# TODO needs a unit test
 write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   xml_content <- paste0(head, body, tail, collapse = "")
   write_xml_file(xml_content = xml_content, fl = fl, escapes = escapes)

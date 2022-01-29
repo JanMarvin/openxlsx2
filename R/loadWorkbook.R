@@ -3,7 +3,6 @@
 
 #' @name loadWorkbook
 #' @title Load an existing .xlsx file
-#' @author Alexander Walker
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param xlsxFile alias for file
 #' @param isUnzipped Set to TRUE if the xlsx file is already unzipped
@@ -164,13 +163,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   if (length(workbookXML)) {
 
     # escape
-    workbook_xml <- read_xml(workbookXML, escapes = TRUE)
+    workbook_xml <- read_xml(workbookXML)
 
     wb$workbook$fileVersion <- xml_node(workbook_xml, "workbook", "fileVersion")
     wb$workbook$alternateContent <- xml_node(workbook_xml, "workbook", "mc:AlternateContent")
     wb$workbook$bookViews <- xml_node(workbook_xml, "workbook", "bookViews")
 
-    sheets <- xml_attribute(workbook_xml, "workbook", "sheets", "sheet")
+    sheets <- xml_attr(workbook_xml, "workbook", "sheets", "sheet")
     sheets <- rbindlist(sheets)
 
     ## Some veryHidden sheets do not have a sheet content and their rId is empty.
@@ -190,7 +189,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     is_chart_sheet <- sheetrId %in% chartSheetRIds
     if (is.null(sheets$state)) sheets$state <- "visible"
-    is_visible <- sheets$state == "visible"
+    is_visible <- sheets$state %in% c("", "true", "visible")
 
     ## add worksheets to wb
     j <- 1
@@ -214,7 +213,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
         wb$addChartSheet(sheetName = sheetNames[i], tabColour = tabColour, zoom = as.numeric(zoom))
       } else {
         content_type <- read_xml(ContentTypesXML)
-        override <- xml_attribute(content_type, "Types", "Override")
+        override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
@@ -324,7 +323,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   if (length(sharedStringsXML)) {
 
     sst <- read_xml(sharedStringsXML)
-    uniqueCount <- getXMLXPtr1attr_one(sst, "sst", "uniqueCount")
+    sst_attr <- xml_attr(sst, "sst")
+    uniqueCount <- as.character(sst_attr[[1]]["uniqueCount"])
     vals <- xml_node(sst, "sst", "si")
     text <- si_to_txt(sst)
 
@@ -597,7 +597,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     # need to expand the names. multiple conditions can be combined in one conditionalFormatting
     cfs <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
     if (length(cfs)) {
-      nms <- unlist(xml_attribute(cfs, "conditionalFormatting"))
+      nms <- unlist(xml_attr(cfs, "conditionalFormatting"))
       cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
       names(cf) <- nms
       conditionalFormatting <- unlist(cf)
@@ -950,7 +950,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       names(com_rId) <- commentsrelXML
       for (com_rel in commentsrelXML) {
         rel_xml <- read_xml(com_rel)
-        attrs <- xml_attribute(rel_xml, "Relationships", "Relationship")
+        attrs <- xml_attr(rel_xml, "Relationships", "Relationship")
         rel <- rbindlist(attrs)
         com_rId[[com_rel]] <- rel
       }

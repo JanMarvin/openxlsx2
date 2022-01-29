@@ -1,8 +1,8 @@
 
 test_that("Class Style works", {
-  expect_error(new_style(), NA)
+  expect_error(wb_style(), NA)
   expect_error(createStyle(), NA)
-  expect_s4_class(new_style(), "Style")
+  expect_null(assert_style(wb_style()))
 })
 
 test_that("validate_text_style() works", {
