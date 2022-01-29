@@ -425,11 +425,11 @@ pxml <- function(x) {
 
 buildFontList <- function(fonts) {
 
-  sz     <- xml_attribute(fonts, "font", "sz")
-  colour <- xml_attribute(fonts, "font", "color")
-  name   <- xml_attribute(fonts, "font", "name")
-  family <- xml_attribute(fonts, "font", "family")
-  scheme <- xml_attribute(fonts, "font", "scheme")
+  sz     <- xml_attr(fonts, "font", "sz")
+  colour <- xml_attr(fonts, "font", "color")
+  name   <- xml_attr(fonts, "font", "name")
+  family <- xml_attr(fonts, "font", "family")
+  scheme <- xml_attr(fonts, "font", "scheme")
 
   italic <- lapply(fonts, function(x)xml_node(x, "font", "i"))
   bold <- lapply(fonts, function(x)xml_node(x, "font", "b"))

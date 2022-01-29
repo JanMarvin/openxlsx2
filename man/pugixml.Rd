@@ -4,38 +4,14 @@
 \alias{pugixml}
 \alias{xml_node}
 \alias{xml_value}
-\alias{xml_attribute}
+\alias{xml_attr}
 \title{xml_node}
 \usage{
-xml_node(
-  xml,
-  level1 = NULL,
-  level2 = NULL,
-  level3 = NULL,
-  level4 = NULL,
-  level5 = NULL,
-  level6 = NULL
-)
+xml_node(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL)
 
-xml_value(
-  xml,
-  level1 = NULL,
-  level2 = NULL,
-  level3 = NULL,
-  level4 = NULL,
-  level5 = NULL,
-  level6 = NULL
-)
+xml_value(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL)
 
-xml_attribute(
-  xml,
-  level1 = NULL,
-  level2 = NULL,
-  level3 = NULL,
-  level4 = NULL,
-  level5 = NULL,
-  level6 = NULL
-)
+xml_attr(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL)
 }
 \arguments{
 \item{xml}{something xml}
@@ -47,15 +23,9 @@ xml_attribute(
 \item{level3}{to please check}
 
 \item{level4}{to please check}
-
-\item{level5}{to please check}
-
-\item{level6}{to please check}
 }
 \description{
-xml_node
-
-xml_value
+returns xml values as character
 }
 \details{
 This function returns XML nodes as used in openxlsx2. In theory they
@@ -74,13 +44,13 @@ could be returned as pointers as well, but this has not yet been implemented.
   xml_value(x, "a", "b")
 
   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
-  xml_attribute(x, "a")
+  xml_attr(x, "a")
 
   x <- read_xml("<a><b r=\"1\">2</b></a>")
-  xml_attribute(x, "a", "b")
+  xml_attr(x, "a", "b")
   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
-  xml_attribute(x, "a")
+  xml_attr(x, "a")
 
   x <- read_xml("<b><a a=\"1\" b=\"2\"/></b>")
-  xml_attribute(x, "b", "a")
+  xml_attr(x, "b", "a")
 }

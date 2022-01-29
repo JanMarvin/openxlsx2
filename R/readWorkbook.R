@@ -182,7 +182,7 @@ getSheetNames <- function(file) {
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- read_xml(workbook)
   sheets <- xml_node(workbook, "workbook", "sheets", "sheet")
-  sheets <- xml_attribute(sheets, "sheet")
+  sheets <- xml_attr(sheets, "sheet")
   sheets <- rbindlist(sheets)
 
   ## Some veryHidden sheets do not have a sheet content and their rId is empty.

@@ -1636,9 +1636,9 @@ wbWorkbook <- R6::R6Class(
     getBaseFont = function() {
       baseFont <- self$styles$fonts[[1]]
 
-      sz     <- as.list(xml_attribute(baseFont, "font", "sz")[[1]])
-      colour <- as.list(xml_attribute(baseFont, "font", "color")[[1]])
-      name   <- as.list(xml_attribute(baseFont, "font", "name")[[1]])
+      sz     <- as.list(xml_attr(baseFont, "font", "sz")[[1]])
+      colour <- as.list(xml_attr(baseFont, "font", "color")[[1]])
+      name   <- as.list(xml_attr(baseFont, "font", "name")[[1]])
 
       if (length(sz[[1]]) == 0) {
         sz <- list("val" = "10")
@@ -1881,7 +1881,7 @@ wbWorkbook <- R6::R6Class(
       self$sheet_names <- self$sheet_names[-sheet]
 
       xml_rels <- rbindlist(
-         xml_attribute(self$worksheets_rels[[sheet]], "Relationship")
+         xml_attr(self$worksheets_rels[[sheet]], "Relationship")
       )
 
       xml_rels$type   <- basename(xml_rels$Type)
@@ -1917,7 +1917,7 @@ wbWorkbook <- R6::R6Class(
 
       # The names for the other drawings have changed
       de <- xml_node(read_xml(self$Content_Types), "Default")
-      ct <- rbindlist(xml_attribute(read_xml(self$Content_Types), "Override"))
+      ct <- rbindlist(xml_attr(read_xml(self$Content_Types), "Override"))
       ct[grepl("drawing", ct$PartName), "PartName"] <- sprintf("/xl/drawings/drawing%s.xml", seq_along(self$drawings))
       ct <- df_to_xml("Override", ct[c("PartName", "ContentType")])
       self$Content_Types <- c(de, ct)
@@ -1994,7 +1994,7 @@ wbWorkbook <- R6::R6Class(
         for (i in seq_len(nSheets - 1L)) {
           # did this get updated from length of 3 to 2?
           #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
-          rel <- rbindlist(xml_attribute(self$worksheets_rels[[i]], "Relationship"))
+          rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
           if (any(basename(rel$Type) == "drawing")) {
             rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
           }

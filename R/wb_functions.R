@@ -255,7 +255,7 @@ wb_to_df <- function(
         dimnames = list(seq_len(length(dn)),
           c("sheet", "dims") ))
     )
-    dn_attr <- rbindlist(xml_attribute(dn, "definedName"))
+    dn_attr <- rbindlist(xml_attr(dn, "definedName"))
 
     nr$name <- dn_attr$name
     if (!is.null(dn_attr$localSheetId)) {

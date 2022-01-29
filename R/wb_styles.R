@@ -322,7 +322,7 @@ merge_numFmts <- function(wb, new_numfmts) {
 #' \dontrun{
 #' font <- create_font()
 #' # openxml has the alpha value leading
-#' hex8 <- unlist(xml_attribute(read_xml(font), "font", "color"))
+#' hex8 <- unlist(xml_attr(read_xml(font), "font", "color"))
 #' hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1,2))
 #'
 #' # write test color
