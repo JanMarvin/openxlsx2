@@ -439,27 +439,6 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
 }
 
 
-// [[Rcpp::export]]
-int cell_ref_to_col( std::string x ){
-
-  // This function converts the Excel column letter to an integer
-  char A = 'A';
-  int a_value = (int)A - 1;
-  int sum = 0;
-
-  // remove digits from string
-  x.erase(std::remove_if(x.begin()+1, x.end(), ::isdigit),x.end());
-  int k = x.length();
-
-  for (int j = 0; j < k; j++){
-    sum *= 26;
-    sum += (x[j] - a_value);
-  }
-
-  return sum;
-
-}
-
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector cols){

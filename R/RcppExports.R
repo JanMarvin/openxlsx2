@@ -48,10 +48,6 @@ long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
-cell_ref_to_col <- function(x) {
-    .Call(`_openxlsx2_cell_ref_to_col`, x)
-}
-
 int_2_cell_ref <- function(cols) {
     .Call(`_openxlsx2_int_2_cell_ref`, cols)
 }

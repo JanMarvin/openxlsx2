@@ -36,7 +36,7 @@ col2int <- function(x) {
       stop("x must be a valid character")
   }
 
-  as.integer(sapply(x, cell_ref_to_col))
+  convert_from_excel_ref(x)
 }
 
 
