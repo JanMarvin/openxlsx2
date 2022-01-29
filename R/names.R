@@ -23,9 +23,8 @@ names.wbWorkbook <- function(x) {
 #' @param value a character vector the same length as `x`
 #' @export
 `names<-.wbWorkbook` <- function(x, value) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (any(duplicated(tolower(value)))) {
     stop("Worksheet names must be unique.")

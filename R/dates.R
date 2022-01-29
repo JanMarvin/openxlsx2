@@ -39,9 +39,8 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
 #' convertToDateTime(x, tz = "Australia/Perth")
 #' convertToDateTime(x, tz = "UTC")
 convertToDateTime <- function(x, origin = "1900-01-01", ...) {
-  sci_pen <- getOption("scipen")
-  options("scipen" = 10000)
-  on.exit(options("scipen" = sci_pen), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   x <- as.numeric(x)
   date <- convertToDate(x, origin)
@@ -87,7 +86,7 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' }
 #' @export
 getDateOrigin <- function(xlsxFile) {
-  # TODO: allow using a workbook? 
+  # TODO: allow using a workbook?
   xlsxFile <- getFile(xlsxFile)
   if (!file.exists(xlsxFile)) {
     stop("File does not exist.")

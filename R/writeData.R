@@ -189,21 +189,8 @@ writeData <- function(wb,
   name = NULL,
   sep = ", ",
   removeCellStyle = TRUE) {
-
-  ## increase scipen to avoid writing in scientific
-  exSciPen <- getOption("scipen")
-  od <- getOption("OutDec")
-  exDigits <- getOption("digits")
-
-  options("scipen" = 200)
-  options("OutDec" = ".")
-  options("digits" = 22)
-
-  on.exit(options("scipen" = exSciPen), add = TRUE)
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-  on.exit(options("digits" = exDigits), add = TRUE)
-
-
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (is.null(x)) {
     return(invisible(0))

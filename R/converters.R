@@ -9,9 +9,8 @@
 #' @examples
 #' int2col(1:10)
 int2col <- function(x) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (!is.numeric(x)) {
     stop("x must be numeric.")
@@ -54,15 +53,8 @@ col2int <- function(x) {
 #' ## numbers will be removed
 #' convertFromExcelRef("R22")
 convertFromExcelRef <- function(col) {
-
-  ## increase scipen to avoid writing in scientific
-  exSciPen <- getOption("scipen")
-  od <- getOption("OutDec")
-  options("scipen" = 10000)
-  options("OutDec" = ".")
-
-  on.exit(options("scipen" = exSciPen), add = TRUE)
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   col <- toupper(col)
   charFlag <- grepl("[A-Z]", col)
@@ -96,10 +88,8 @@ getCellRefs <- function(cellCoords) {
   if (!all(vapply(cellCoords, is_integer_ish, NA))) {
     stop("cellCoords must only contain integers", call. = FALSE)
   }
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])

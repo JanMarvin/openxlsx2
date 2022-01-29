@@ -48,3 +48,16 @@ na_to_null <- function(x) {
 temp_xlsx <- function(name = "temp_xlsx") {
   tempfile(pattern = paste0(name, "_"), fileext = ".xlsx")
 }
+
+
+openxlsx_options <- function() {
+  # op <- openxlsx_options()
+  # on.exit(options(op), add = TRUE)
+  options(
+    # increase scipen to avoid writing in scientific
+    scipen = 200,
+    OutDec = ".",
+    digits = 22
+  )
+}
+

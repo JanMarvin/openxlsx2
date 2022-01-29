@@ -293,9 +293,8 @@ conditionalFormatting <-
     style = NULL,
     type = "expression",
     ...) {
-    od <- getOption("OutDec")
-    options("OutDec" = ".")
-    on.exit(expr = options("OutDec" = od), add = TRUE)
+    op <- openxlsx_options()
+    on.exit(options(op), add = TRUE)
 
     type <- tolower(type)
     params <- list(...)

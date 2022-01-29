@@ -31,9 +31,8 @@
 #' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #' # openXL(wb)
 openXL <- function(file = NULL) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (is.null(file)) stop("A file has to be specified.")
 
