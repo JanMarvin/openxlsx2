@@ -170,54 +170,6 @@ SEXP getXMLXPtr4(XPtrXML doc, std::string level1, std::string level2, std::strin
   return  Rcpp::wrap(x);
 }
 
-// nested list below level 3. eg:
-// <level1>
-//  <level2>
-//    <level3>
-//      <level4 />
-//        <child>
-//        x
-//        </child>
-//        <child>
-//        y
-//        </child>
-//      <level4 />
-//    </level3>
-//    <level3>
-//      <level4 />
-//    </level3>
-//  </level2>
-//</level1>
-// [[Rcpp::export]]
-SEXP getXMLXPtr5(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string level4, std::string child) {
-
-  std::vector<std::vector<std::vector<std::string>>> x;
-  unsigned int  pugi_format_flags = pugi_format(doc);
-
-  for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(level3.c_str()))
-  {
-    std::vector<std::vector<std::string>> y;
-
-    for (auto col : worksheet.children(level4.c_str()))
-    {
-      std::vector<std::string> z;
-
-      for (auto val : col.children(child.c_str()))
-      {
-        std::ostringstream oss;
-        val.print(oss, " ", pugi_format_flags);
-        z.push_back(oss.str());
-      }
-
-      y.push_back(z);
-    }
-
-    x.push_back(y);
-  }
-
-  return  Rcpp::wrap(x);
-}
-
 // [[Rcpp::export]]
 SEXP getXMLXPtr1val(XPtrXML doc, std::string child) {
 

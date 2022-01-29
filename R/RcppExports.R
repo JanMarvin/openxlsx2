@@ -84,10 +84,6 @@ getXMLXPtr4 <- function(doc, level1, level2, level3, child) {
     .Call(`_openxlsx2_getXMLXPtr4`, doc, level1, level2, level3, child)
 }
 
-getXMLXPtr5 <- function(doc, level1, level2, level3, level4, child) {
-    .Call(`_openxlsx2_getXMLXPtr5`, doc, level1, level2, level3, level4, child)
-}
-
 getXMLXPtr1val <- function(doc, child) {
     .Call(`_openxlsx2_getXMLXPtr1val`, doc, child)
 }

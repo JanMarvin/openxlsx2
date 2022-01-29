@@ -22,6 +22,10 @@ test_that("read_xml", {
   exp <- "<?xml test=\"yay\"?><a>A &amp; B</a>"
   expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE))
 
+  xml <- "<a>"
+  expect_error(readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE))
+  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE))
+
 })
 
 
