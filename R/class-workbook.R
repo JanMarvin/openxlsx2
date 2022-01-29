@@ -1974,14 +1974,18 @@ wbWorkbook <- R6::R6Class(
 
       # tableName is a character Vector with an attached name Vector.
       if (length(self$tables)) {
+        nams <- names(self$tables[table_id])
         self$tables[table_id] <- ""
+        nams[table_id] <- ""
+        names(self$tables) <- nams
 
         tab_sheet <- attr(self$tables, "sheet")
         tab_sheet[table_id] <- 0
+        tab_sheet[tab_sheet > sheet] <- tab_sheet[tab_sheet > sheet] - 1L
         attr(self$tables, "sheet") <- tab_sheet
 
         tab_name <- attr(self$tables, "tableName")
-        tab_name[table_id] <- "_openxlsx_deleted"
+        tab_name[table_id] <- paste0(tab_name[table_id], "_openxlsx_deleted")
         attr(self$tables, "tableName") <- tab_name
       }
 
