@@ -216,7 +216,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
     col <- convertFromExcelRef(col)
   }
 
-  ref <- paste0(convert_to_excel_ref(cols = col, LETTERS = LETTERS), row)
+  ref <- paste0(int2col(col), row)
 
   comment_list <- list(
     "ref" = ref,
@@ -264,7 +264,7 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
     stop("Length of rows and cols must be equal.")
   }
 
-  comb <- paste0(convert_to_excel_ref(cols = cols, LETTERS = LETTERS), rows)
+  comb <- paste0(int2col(cols), rows)
   toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
 
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]

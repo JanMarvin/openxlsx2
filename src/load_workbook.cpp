@@ -272,9 +272,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // some files have no colnames. in this case we need to add c_r and row_r
       // if the file provides dimensions, they could be fixed later
       if (!has_colname) {
-        Rcpp::IntegerVector itr_vec(1);
-        itr_vec[0] = itr_cols +1;
-        std::string tmp_colname= Rcpp::as<std::string>(int_2_cell_ref(itr_vec));
+        std::string tmp_colname= int_to_col(itr_cols);
         single_xml_col.c_r = tmp_colname;
         single_xml_col.row_r = std::to_string(itr_rows + 1);
       }
@@ -335,6 +333,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   sheet_data["cc"] = Rcpp::wrap(xml_cols);
 }
 
+
 // converts sharedstrings xml tree to R-Character Vector
 // [[Rcpp::export]]
 SEXP si_to_txt(XPtrXML doc) {
@@ -370,6 +369,7 @@ SEXP si_to_txt(XPtrXML doc) {
 
   return res;
 }
+
 
 // converts inlineStr xml tree to R-Character Vector
 // [[Rcpp::export]]
@@ -421,6 +421,7 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
   return res;
 }
 
+
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
@@ -437,39 +438,3 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
     Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
   }
 }
-
-
-
-// [[Rcpp::export]]
-Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector cols){
-
-  std::vector<std::string> LETTERS = get_letters();
-
-  int n = cols.size();
-  Rcpp::CharacterVector res(n);
-  std::fill(res.begin(), res.end(), NA_STRING);
-
-  int x;
-  int modulo;
-
-
-  for(int i = 0; i < n; i++){
-
-    if(!Rcpp::IntegerVector::is_na(cols[i])){
-
-      std::string columnName;
-      x = cols[i];
-      while(x > 0){
-        modulo = (x - 1) % 26;
-        columnName = LETTERS[modulo] + columnName;
-        x = (x - modulo) / 26;
-      }
-      res[i] = columnName;
-    }
-
-  }
-
-  return res ;
-
-}
-

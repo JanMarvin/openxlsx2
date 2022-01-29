@@ -253,8 +253,8 @@ writeDataTable <- function(wb, sheet, x,
     names(x) <- colNames
   }
 
-  ref1 <- paste0(convert_to_excel_ref(cols = startCol, LETTERS = LETTERS), startRow)
-  ref2 <- paste0(convert_to_excel_ref(cols = startCol + ncol(x) - 1, LETTERS = LETTERS), startRow + nrow(x))
+  ref1 <- paste0(int2col(startCol), startRow)
+  ref2 <- paste0(int2col(startCol + ncol(x) - 1), startRow + nrow(x))
   ref <- paste(ref1, ref2, sep = ":")
 
   ## check not overwriting another table

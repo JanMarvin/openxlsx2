@@ -3614,7 +3614,7 @@ wbWorkbook <- R6::R6Class(
     #   ## Formulas
     #   f_in <- rep.int(NA_character_, length(t))
     #   any_functions <- FALSE
-    #   ref_cell <- paste0(int_2_cell_ref(startCol), startRow)
+    #   ref_cell <- paste0(int_to_col(startCol), startRow)
     #
     #   if (any(c("openxlsx_formula", "openxlsx_array_formula") %in% colClasses)) {
     #

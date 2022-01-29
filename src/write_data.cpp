@@ -7,7 +7,7 @@ Rcpp::List build_cell_merges(Rcpp::List comps){
   Rcpp::List res(nMerges);
   
   for(size_t i =0; i < nMerges; i++){
-    Rcpp::IntegerVector col = convert_from_excel_ref(comps[i]);  
+    Rcpp::IntegerVector col = col_to_int(comps[i]);  
     Rcpp::CharacterVector comp = comps[i];
     Rcpp::IntegerVector row(2);  
     

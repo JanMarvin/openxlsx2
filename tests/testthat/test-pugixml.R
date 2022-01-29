@@ -118,3 +118,24 @@ test_that("set_sst", {
   expect_equal(exp, set_sst("a"))
 
 })
+
+test_that("col2int and int2col", {
+
+  test <- "B"
+  x <- col2int(test)
+  that <- int2col(x)
+
+  expect_equal(test, that)
+
+  test <- "AABWAWD"
+  x <- col2int(test)
+  that <- int2col(x)
+
+  expect_equal(test, that)
+
+  x <- col_to_int(test)
+  that <- int_to_col(x)
+
+  expect_equal(test, that)
+
+})

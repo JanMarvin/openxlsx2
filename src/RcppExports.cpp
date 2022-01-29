@@ -11,49 +11,25 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// convert_from_excel_ref
-Rcpp::IntegerVector convert_from_excel_ref(Rcpp::CharacterVector x);
-RcppExport SEXP _openxlsx2_convert_from_excel_ref(SEXP xSEXP) {
+// int_to_col
+std::string int_to_col(uint32_t cell);
+RcppExport SEXP _openxlsx2_int_to_col(SEXP cellSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< uint32_t >::type cell(cellSEXP);
+    rcpp_result_gen = Rcpp::wrap(int_to_col(cell));
+    return rcpp_result_gen;
+END_RCPP
+}
+// col_to_int
+Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x);
+RcppExport SEXP _openxlsx2_col_to_int(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(convert_from_excel_ref(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// convert_to_excel_ref
-SEXP convert_to_excel_ref(Rcpp::IntegerVector cols, std::vector<std::string> LETTERS);
-RcppExport SEXP _openxlsx2_convert_to_excel_ref(SEXP colsSEXP, SEXP LETTERSSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type cols(colsSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type LETTERS(LETTERSSEXP);
-    rcpp_result_gen = Rcpp::wrap(convert_to_excel_ref(cols, LETTERS));
-    return rcpp_result_gen;
-END_RCPP
-}
-// convert_to_excel_ref_expand
-SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector<std::string>& LETTERS, const std::vector<std::string>& rows);
-RcppExport SEXP _openxlsx2_convert_to_excel_ref_expand(SEXP colsSEXP, SEXP LETTERSSEXP, SEXP rowsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<int>& >::type cols(colsSEXP);
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type LETTERS(LETTERSSEXP);
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type rows(rowsSEXP);
-    rcpp_result_gen = Rcpp::wrap(convert_to_excel_ref_expand(cols, LETTERS, rows));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_letters
-std::vector<std::string> get_letters();
-RcppExport SEXP _openxlsx2_get_letters() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(get_letters());
+    rcpp_result_gen = Rcpp::wrap(col_to_int(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -134,17 +110,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
     long_to_wide(z, tt, zz);
     return R_NilValue;
-END_RCPP
-}
-// int_2_cell_ref
-Rcpp::CharacterVector int_2_cell_ref(Rcpp::IntegerVector cols);
-RcppExport SEXP _openxlsx2_int_2_cell_ref(SEXP colsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type cols(colsSEXP);
-    rcpp_result_gen = Rcpp::wrap(int_2_cell_ref(cols));
-    return rcpp_result_gen;
 END_RCPP
 }
 // readXMLPtr
@@ -668,10 +633,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_openxlsx2_convert_from_excel_ref", (DL_FUNC) &_openxlsx2_convert_from_excel_ref, 1},
-    {"_openxlsx2_convert_to_excel_ref", (DL_FUNC) &_openxlsx2_convert_to_excel_ref, 2},
-    {"_openxlsx2_convert_to_excel_ref_expand", (DL_FUNC) &_openxlsx2_convert_to_excel_ref_expand, 3},
-    {"_openxlsx2_get_letters", (DL_FUNC) &_openxlsx2_get_letters, 0},
+    {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},
+    {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
@@ -679,7 +642,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
-    {"_openxlsx2_int_2_cell_ref", (DL_FUNC) &_openxlsx2_int_2_cell_ref, 1},
     {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 4},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 4},
     {"_openxlsx2_getXMLXPtr1", (DL_FUNC) &_openxlsx2_getXMLXPtr1, 2},

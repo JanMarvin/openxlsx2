@@ -776,7 +776,7 @@ mergeCell2mapping <- function(x) {
   ## for each we grid.expand
   refs <- do.call("rbind", lapply(seq_along(rows), function(i) {
     tmp <- expand.grid("cols" = cols[[i]], "rows" = rows[[i]])
-    tmp$ref <- paste0(convert_to_excel_ref(cols = tmp$cols, LETTERS = LETTERS), tmp$rows)
+    tmp$ref <- paste0(int2col(tmp$cols), tmp$rows)
     tmp$anchor_cell <- tmp$ref[1]
     return(tmp[, c("anchor_cell", "ref", "rows")])
   }))

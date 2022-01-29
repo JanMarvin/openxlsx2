@@ -1516,7 +1516,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
       stop("printTitleCols must be numeric.")
     }
 
-    cols <- convert_to_excel_ref(cols = range(printTitleCols), LETTERS = LETTERS)
+    cols <- int2col(range(printTitleCols))
     wb$createNamedRegion(
       ref1 = paste0("$", cols[1]),
       ref2 = paste0("$", cols[2]),
@@ -1533,7 +1533,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
       stop("printTitleCols must be numeric.")
     }
 
-    cols <- convert_to_excel_ref(cols = range(printTitleCols), LETTERS = LETTERS)
+    cols <- int2col(range(printTitleCols))
     rows <- range(printTitleRows)
 
     cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
@@ -1875,8 +1875,8 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
   startRow <- min(rows)
   endRow <- max(rows)
 
-  ref1 <- paste0("$", convert_to_excel_ref(cols = startCol, LETTERS = LETTERS), "$", startRow)
-  ref2 <- paste0("$", convert_to_excel_ref(cols = endCol, LETTERS = LETTERS), "$", endRow)
+  ref1 <- paste0("$", int2col(startCol), "$", startRow)
+  ref2 <- paste0("$", int2col(endCol), "$", endRow)
 
   invisible(
     wb$createNamedRegion(ref1 = ref1, ref2 = ref2, name = name, sheet = wb$sheet_names[sheet])

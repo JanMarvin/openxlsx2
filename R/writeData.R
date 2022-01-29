@@ -322,7 +322,7 @@ writeData <- function(wb,
 
     wb$worksheets[[sheetX]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
-    l <- convert_to_excel_ref(cols = unlist(coords[, 2]), LETTERS = LETTERS)
+    l <- int2col(unlist(coords[, 2]))
     dfn <- sprintf("'%s'!%s", names(wb)[sheetX], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
     dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheetX - 1L, dfn)

@@ -175,7 +175,7 @@ SEXP write_worksheet_xml_2( std::string prior,
 
 
   // sheet_data will be in order, just need to check for row_heights
-  // CharacterVector cell_col = int_2_cell_ref(sheet_data.field("cols"));
+  // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
   Rcpp::List cc = sheet_data["cc_out"];
 

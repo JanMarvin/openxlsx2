@@ -402,8 +402,8 @@ wbWorksheet <- R6::R6Class(
 
         self$sheet_data$data_count <- 1L
 
-        dm1 <- paste0(int_2_cell_ref(cols = self$sheet_data$cols[1]), self$sheet_data$rows[1])
-        dm2 <- paste0(int_2_cell_ref(cols = self$sheet_data$cols[self$sheet_data$n_elements]), self$sheet_data$rows[sheet_data$n_elements])
+        dm1 <- paste0(int_to_col(self$sheet_data$cols[1]), self$sheet_data$rows[1])
+        dm2 <- paste0(int_to_col(self$sheet_data$cols[self$sheet_data$n_elements]), self$sheet_data$rows[sheet_data$n_elements])
 
         if (length(dm1) == 1 & length(dm2) != 1) {
           if (!is.na(dm1) & !is.na(dm2) & dm1 != "NA" & dm2 != "NA") {

@@ -2,7 +2,22 @@
 
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector convert_from_excel_ref( Rcpp::CharacterVector x ){
+std::string int_to_col(uint32_t cell) {
+  std::string col_name = "";
+
+  while (cell > 0)
+  {
+    auto modulo = (cell - 1) % 26;
+    col_name = (char)('A' + modulo) + col_name;
+    cell = (cell - modulo) / 26;
+  }
+
+  return col_name;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
 
   // This function converts the Excel column letter to an integer
 
@@ -35,106 +50,6 @@ Rcpp::IntegerVector convert_from_excel_ref( Rcpp::CharacterVector x ){
   return colNums;
 
 }
-
-// [[Rcpp::export]]
-SEXP convert_to_excel_ref(Rcpp::IntegerVector cols, std::vector<std::string> LETTERS){
-
-  int n = cols.size();
-  Rcpp::CharacterVector res(n);
-
-  int x;
-  int modulo;
-  for(int i = 0; i < n; i++){
-    x = cols[i];
-    std::string columnName;
-
-    while(x > 0){
-      modulo = (x - 1) % 26;
-      columnName = LETTERS[modulo] + columnName;
-      x = (x - modulo) / 26;
-    }
-    res[i] = columnName;
-  }
-
-  return res ;
-
-}
-
-
-// [[Rcpp::export]]
-SEXP convert_to_excel_ref_expand(const std::vector<int>& cols, const std::vector<std::string>& LETTERS, const std::vector<std::string>& rows){
-
-  int n = cols.size();
-  int nRows = rows.size();
-  std::vector<std::string> res(n);
-
-  //Convert col number to excel col letters
-  size_t x;
-  size_t modulo;
-  for(int i = 0; i < n; i++){
-    x = cols[i];
-    std::string columnName;
-
-    while(x > 0){
-      modulo = (x - 1) % 26;
-      columnName = LETTERS[modulo] + columnName;
-      x = (x - modulo) / 26;
-    }
-    res[i] = columnName;
-  }
-
-  Rcpp::CharacterVector r(n*nRows);
-  Rcpp::CharacterVector names(n*nRows);
-  size_t c = 0;
-  for(int i=0; i < nRows; i++)
-    for(int j=0; j < n; j++){
-      r[c] = res[j] + rows[i];
-      names[c] = rows[i];
-      c++;
-    }
-
-    r.attr("names") = names;
-  return wrap(r) ;
-
-}
-
-
-// [[Rcpp::export]]
-std::vector<std::string> get_letters(){
-
-  std::vector<std::string> LETTERS(26);
-
-  LETTERS[0] = "A";
-  LETTERS[1] = "B";
-  LETTERS[2] = "C";
-  LETTERS[3] = "D";
-  LETTERS[4] = "E";
-  LETTERS[5] = "F";
-  LETTERS[6] = "G";
-  LETTERS[7] = "H";
-  LETTERS[8] = "I";
-  LETTERS[9] = "J";
-  LETTERS[10] = "K";
-  LETTERS[11] = "L";
-  LETTERS[12] = "M";
-  LETTERS[13] = "N";
-  LETTERS[14] = "O";
-  LETTERS[15] = "P";
-  LETTERS[16] = "Q";
-  LETTERS[17] = "R";
-  LETTERS[18] = "S";
-  LETTERS[19] = "T";
-  LETTERS[20] = "U";
-  LETTERS[21] = "V";
-  LETTERS[22] = "W";
-  LETTERS[23] = "X";
-  LETTERS[24] = "Y";
-  LETTERS[25] = "Z";
-
-  return(LETTERS);
-
-}
-
 
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
