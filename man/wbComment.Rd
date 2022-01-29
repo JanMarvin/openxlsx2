@@ -45,7 +45,14 @@ A comment
 \subsection{Method \code{new()}}{
 Creates a new \code{wbComment} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbComment$new(text, author, style, visible = TRUE, width = 2, height = 4)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbComment$new(
+  text,
+  author = get_creator(),
+  style,
+  visible = TRUE,
+  width = 2,
+  height = 4
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

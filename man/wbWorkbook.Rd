@@ -154,13 +154,21 @@ A Workbook
 \subsection{Method \code{new()}}{
 Creates a new \code{wbWorkbook} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(creator = "", title = NULL, subject = NULL, category = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(
+  creator = get_creator(),
+  title = NULL,
+  subject = NULL,
+  category = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{creator}
+\item{\code{creator}}{Workbook creator.  Default uses internal \code{get_creator()}
+which searches for an option \code{openxlsx.creator} or environmental
+variables \code{USER} and \code{USERNAME}, in this order.  If none are found,
+\code{""} is used instead.}
 
 \item{\code{title}}{title}
 
@@ -182,21 +190,21 @@ Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addWorksheet(
   sheetName,
-  showGridLines = TRUE,
-  tabColour = NULL,
+  showGridLines = getOption("openxlsx.gridLines"),
+  tabColour = getOption("openxlsx.tabColour"),
   zoom = 100,
-  oddHeader = NULL,
-  oddFooter = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
+  oddHeader = getOption("openxlsx.oddHeader", getOption("openxlsx.header")),
+  oddFooter = getOption("openxlsx.oddFooter", getOption("openxlsx.footer")),
+  evenHeader = getOption("openxlsx.evenHeader", getOption("openxlsx.header")),
+  evenFooter = getOption("openxlsx.evenFooter", getOption("openxlsx.footer")),
+  firstHeader = getOption("openxlsx.firstHeader", getOption("openxlsx.header")),
+  firstFooter = getOption("openxlsx.firstFooter", getOption("openxlsx.footer")),
   visible = TRUE,
   hasDrawing = FALSE,
-  paperSize = 9,
-  orientation = "portrait",
-  hdpi = 300,
-  vdpi = 300
+  paperSize = getOption("openxlsx.paperSize"),
+  orientation = getOption("openxlsx.orientation"),
+  vdpi = getOption("openxlsx.vdpi", getOption("openxlsx.dpi")),
+  hdpi = getOption("openxlsx.hdpi", getOption("openxlsx.dpi"))
 )}\if{html}{\out{</div>}}
 }
 
@@ -231,9 +239,9 @@ Add worksheet to the \code{wbWorkbook} object
 
 \item{\code{orientation}}{orientation}
 
-\item{\code{hdpi}}{hdpi}
-
 \item{\code{vdpi}}{vdpi}
+
+\item{\code{hdpi}}{hdpi}
 }
 \if{html}{\out{</div>}}
 }
@@ -266,7 +274,11 @@ Clone a workbooksheet
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheetName, tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(
+  sheetName,
+  tabColour = getOption("openxlsx.tabColour"),
+  zoom = 100
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

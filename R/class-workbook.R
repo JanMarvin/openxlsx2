@@ -155,13 +155,16 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorkbook` object
-    #' @param creator creator
+    #' @param creator Workbook creator.  Default uses internal `get_creator()`
+    #'   which searches for an option `openxlsx.creator` or environmental
+    #'   variables `USER` and `USERNAME`, in this order.  If none are found,
+    #'   `""` is used instead.
     #' @param title title
     #' @param subject subject
     #' @param category category
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator = "",
+      creator = get_creator(),
       title = NULL,
       subject = NULL,
       category = NULL
@@ -270,21 +273,22 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     addWorksheet = function(
       sheetName,
-      showGridLines = TRUE,
-      tabColour = NULL,
-      zoom = 100,
-      oddHeader = NULL,
-      oddFooter = NULL,
-      evenHeader = NULL,
-      evenFooter = NULL,
-      firstHeader = NULL,
-      firstFooter = NULL,
-      visible = TRUE,
-      hasDrawing = FALSE,
-      paperSize = 9,
-      orientation = "portrait",
-      hdpi = 300,
-      vdpi = 300
+      # TODO rename to gridLines?
+      showGridLines = getOption("openxlsx.gridLines"),
+      tabColour     = getOption("openxlsx.tabColour"),
+      zoom          = 100,
+      oddHeader     = getOption("openxlsx.oddHeader",   getOption("openxlsx.header")),
+      oddFooter     = getOption("openxlsx.oddFooter",   getOption("openxlsx.footer")),
+      evenHeader    = getOption("openxlsx.evenHeader",  getOption("openxlsx.header")),
+      evenFooter    = getOption("openxlsx.evenFooter",  getOption("openxlsx.footer")),
+      firstHeader   = getOption("openxlsx.firstHeader", getOption("openxlsx.header")),
+      firstFooter   = getOption("openxlsx.firstFooter", getOption("openxlsx.footer")),
+      visible       = TRUE,
+      hasDrawing    = FALSE,
+      paperSize     = getOption("openxlsx.paperSize"),
+      orientation   = getOption("openxlsx.orientation"),
+      vdpi          = getOption("openxlsx.vdpi", getOption("openxlsx.dpi")),
+      hdpi          = getOption("openxlsx.hdpi", getOption("openxlsx.dpi"))
     ) {
       if (!missing(sheetName)) {
         if (grepl(pattern = ":", x = sheetName)) {
@@ -665,7 +669,11 @@ wbWorkbook <- R6::R6Class(
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheetName, tabColour = NULL, zoom = 100) {
+    addChartSheet = function(
+      sheetName,
+      tabColour = getOption("openxlsx.tabColour"),
+      zoom = 100
+    ) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
 
@@ -1323,7 +1331,7 @@ wbWorkbook <- R6::R6Class(
         zipfile = tmpFile,
         files = list.files(tmpDir, full.names = FALSE),
         recurse = TRUE,
-        compression_level = getOption("openxlsx.compresssionevel", 6),
+        compression_level = getOption("openxlsx.compressionLevel"),
         include_directories = FALSE,
         # change the working directory for this
         root = tmpDir,
@@ -5087,3 +5095,10 @@ wbWorkbook <- R6::R6Class(
     }
   )
 )
+
+
+# helpers -----------------------------------------------------------------
+
+get_creator <- function() {
+  getOption("openxlsx.creator", Sys.getenv("USER", Sys.getenv("USERNAME")))
+}

@@ -117,20 +117,20 @@ A Worksheet
 Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
-  showGridLines = TRUE,
+  showGridLines = getOption("openxlsx.showGridLines"),
   tabSelected = FALSE,
-  tabColour = NULL,
+  tabColour = getOption("openxlsx.tabColour"),
   zoom = 100,
-  oddHeader = NULL,
-  oddFooter = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
-  paperSize = 9,
-  orientation = "portrait",
-  hdpi = 300,
-  vdpi = 300
+  oddHeader = getOption("openxlsx.oddHeader", getOption("openxlsx.header")),
+  oddFooter = getOption("openxlsx.oddFooter", getOption("openxlsx.footer")),
+  evenHeader = getOption("openxlsx.evenHeader", getOption("openxlsx.header")),
+  evenFooter = getOption("openxlsx.evenFooter", getOption("openxlsx.footer")),
+  firstHeader = getOption("openxlsx.firstHeader", getOption("openxlsx.header")),
+  firstFooter = getOption("openxlsx.firstFooter", getOption("openxlsx.footer")),
+  paperSize = getOption("openxlsx.paperSize"),
+  orientation = getOption("openxlsx.orientation"),
+  hdpi = getOption("openxlsx.hdpi", getOption("opnexlsx.dpi")),
+  vdpi = getOption("openxlsx.vdpi", getOption("opnexlsx.dpi"))
 )}\if{html}{\out{</div>}}
 }
 

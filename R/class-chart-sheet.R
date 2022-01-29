@@ -33,7 +33,7 @@ wbChartSheet <- R6::R6Class(
     #' @return The `wbChartSheet` object
     initialize = function(
       tabSelected = FALSE,
-      tabColour = character(),
+      tabColour = getOption("openxlsx.tabColour"),
       zoom = 100
     ) {
       if (length(tabColour)) {

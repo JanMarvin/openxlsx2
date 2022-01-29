@@ -7,21 +7,21 @@
 addWorksheet(
   wb,
   sheetName,
-  gridLines = TRUE,
-  tabColour = NULL,
+  gridLines = getOption("openxlsx.gridLines"),
+  tabColour = getOption("openxlsx.tabColour"),
   zoom = 100,
-  header = NULL,
-  footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
+  header = getOption("openxlsx.header"),
+  footer = getOption("openxlsx.footer"),
+  evenHeader = getOption("openxlsx.evenHeader"),
+  evenFooter = getOption("openxlsx.evenFooter"),
+  firstHeader = getOption("openxlsx.firstHeader"),
+  firstFooter = getOption("openxlsx.firstFooter"),
   visible = TRUE,
   hasDrawing = FALSE,
-  paperSize = getOption("openxlsx.paperSize", default = 9),
-  orientation = getOption("openxlsx.orientation", default = "portrait"),
-  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
-  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))
+  paperSize = getOption("openxlsx.paperSize"),
+  orientation = getOption("openxlsx.orientation"),
+  vdpi = getOption("openxlsx.vdpi", getOption("openxlsx.dpi")),
+  hdpi = getOption("openxlsx.hdpi", getOption("openxlsx.dpi"))
 )
 }
 \arguments{

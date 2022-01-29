@@ -43,7 +43,11 @@ A chart sheet
 \subsection{Method \code{new()}}{
 Create a new workbook chart sheet object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbChartSheet$new(tabSelected = FALSE, tabColour = character(), zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbChartSheet$new(
+  tabSelected = FALSE,
+  tabColour = getOption("openxlsx.tabColour"),
+  zoom = 100
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

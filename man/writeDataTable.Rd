@@ -13,18 +13,18 @@ writeDataTable(
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
-  tableStyle = "TableStyleLight9",
+  tableStyle = getOption("openxlsx.tableStyle"),
   tableName = NULL,
-  headerStyle = NULL,
-  withFilter = TRUE,
-  keepNA = FALSE,
-  na.string = NULL,
+  headerStyle = getOption("openxlsx.headerStyle"),
+  withFilter = getOption("openxlsx.withFilter", TRUE),
+  keepNA = getOption("openxlsx.keepNA"),
+  na.string = getOption("openxlsx.na"),
   sep = ", ",
   stack = FALSE,
-  firstColumn = FALSE,
-  lastColumn = FALSE,
-  bandedRows = TRUE,
-  bandedCols = FALSE
+  firstColumn = getOption("openxlsx.firstColumn"),
+  lastColumn = getOption("openxlsx.lastColumn"),
+  bandedRows = getOption("openxlsx.bandedRows"),
+  bandedCols = getOption("openxlsx.bandedCols")
 )
 }
 \arguments{

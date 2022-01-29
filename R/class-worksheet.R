@@ -156,20 +156,20 @@ wbWorksheet <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return a `wbWorksheet` object
     initialize = function(
-      showGridLines = TRUE,
+      showGridLines = getOption("openxlsx.showGridLines"),
       tabSelected   = FALSE,
-      tabColour     = NULL,
+      tabColour     = getOption("openxlsx.tabColour"),
       zoom          = 100,
-      oddHeader     = NULL,
-      oddFooter     = NULL,
-      evenHeader    = NULL,
-      evenFooter    = NULL,
-      firstHeader   = NULL,
-      firstFooter   = NULL,
-      paperSize     = 9,
-      orientation   = "portrait",
-      hdpi          = 300,
-      vdpi          = 300
+      oddHeader     = getOption("openxlsx.oddHeader",   getOption("openxlsx.header")),
+      oddFooter     = getOption("openxlsx.oddFooter",   getOption("openxlsx.footer")),
+      evenHeader    = getOption("openxlsx.evenHeader",  getOption("openxlsx.header")),
+      evenFooter    = getOption("openxlsx.evenFooter",  getOption("openxlsx.footer")),
+      firstHeader   = getOption("openxlsx.firstHeader", getOption("openxlsx.header")),
+      firstFooter   = getOption("openxlsx.firstFooter", getOption("openxlsx.footer")),
+      paperSize     = getOption("openxlsx.paperSize"),
+      orientation   = getOption("openxlsx.orientation"),
+      hdpi          = getOption("openxlsx.hdpi", getOption("opnexlsx.dpi")),
+      vdpi          = getOption("openxlsx.vdpi", getOption("opnexlsx.dpi"))
     ) {
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)

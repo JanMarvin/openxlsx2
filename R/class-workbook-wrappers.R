@@ -294,22 +294,25 @@ sheets <- function(wb) {
 #' \dontrun{
 #' saveWorkbook(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
 #' }
-addWorksheet <- function(wb, sheetName,
-  gridLines = TRUE,
-  tabColour = NULL,
-  zoom = 100,
-  header = NULL,
-  footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
-  visible = TRUE,
-  hasDrawing = FALSE,
-  paperSize = getOption("openxlsx.paperSize", default = 9),
-  orientation = getOption("openxlsx.orientation", default = "portrait"),
-  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
-  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))) {
+addWorksheet <- function(
+  wb,
+  sheetName,
+  gridLines   = getOption("openxlsx.gridLines"),
+  tabColour   = getOption("openxlsx.tabColour"),
+  zoom        = 100,
+  header      = getOption("openxlsx.header"),
+  footer      = getOption("openxlsx.footer"),
+  evenHeader  = getOption("openxlsx.evenHeader"),
+  evenFooter  = getOption("openxlsx.evenFooter"),
+  firstHeader = getOption("openxlsx.firstHeader"),
+  firstFooter = getOption("openxlsx.firstFooter"),
+  visible     = TRUE,
+  hasDrawing  = FALSE,
+  paperSize   = getOption("openxlsx.paperSize"),
+  orientation = getOption("openxlsx.orientation"),
+  vdpi        = getOption("openxlsx.vdpi", getOption("openxlsx.dpi")),
+  hdpi        = getOption("openxlsx.hdpi", getOption("openxlsx.dpi"))
+) {
   od <- getOption("OutDec")
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)

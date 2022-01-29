@@ -105,15 +105,15 @@ wbStyle <- R6::R6Class(
       fontName       = NULL,
       fontSize       = NULL,
       fontColour     = "none",
-      numFmt         = "GENERAL",
+      numFmt         = getOption("openxlsx.numFmt"),
       # numberFormat   = c("GENERAL", "NUMBER", "CURRENCY", "ACCOUNTING", "DATE", "LONGDATE", "TIME", "PERCENTAGE", "SCIENTIFIC", "TEXT", "3", "4", "COMMA"),
       # customFormat   = NULL, # this could be used to overwrite number format, and allow for easier match.arg()
       # if any border == none, sets to NULL
       # TODO wb_border_spec() would be better
-      border         = c("none", "top", "bottom", "left", "right", "all"),
-      borderColour   = getOption("openxlsx.borderColour", "black"),
+      border         = getOption("openxlsx.border"),
+      borderColour   = getOption("openxlsx.borderColour"),
       # should borderStyle default to "none"?
-      borderStyle    = getOption("openxlsx.borderStyle", "thin"),
+      borderStyle    = getOption("openxlsx.borderStyle"),
       bgFill         = "none",
       fgFill         = "none",
       halign         = c("left", "right", "center"),
@@ -160,11 +160,7 @@ wbStyle <- R6::R6Class(
       self$textRotation <- validate_text_rotation(textRotation)
 
       # borders ----
-      private$set_borders(
-        match.arg(border, several.ok = TRUE),
-        colour = borderColour,
-        style = borderStyle
-      )
+      private$set_borders(border, colour = borderColour, style = borderStyle)
 
       # others ----
       self$indent   <- isTRUE(indent)
@@ -183,7 +179,7 @@ wbStyle <- R6::R6Class(
       self$borderDiagonalDown   <- FALSE
       self$xfId                 <- NULL
 
-      invisible(self)
+      self
     },
 
     # TODO as.list() to to_list() ?
@@ -333,6 +329,8 @@ wbStyle <- R6::R6Class(
 
   private = list(
     set_borders = function(border, colour, style) {
+      border <- match.arg(border, c("none", "top", "bottom", "left", "right", "all"), several.ok = TRUE)
+
       if (any(border == "none")) {
         # default will override
         self$borderLeft         <- NULL

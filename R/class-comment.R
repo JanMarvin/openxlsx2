@@ -36,7 +36,14 @@ wbComment <- R6::R6Class(
     #' @param width Width of the comment in ... units
     #' @param height Height of comment in ... units
     #' @return a `wbComment` object
-    initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
+    initialize = function(
+      text,
+      author = get_creator(),
+      style,
+      visible = TRUE,
+      width = 2,
+      height = 4
+    ) {
       # TODO this needs the validations that the comment wrappers have
       self$text <- text
       self$author <- author
@@ -270,6 +277,10 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
 }
 
-wb_comment <- function(text = character(), author = character(), style = wb_style()) {
+wb_comment <- function(
+  text = character(),
+  author = get_creator(),
+  style = wb_style()
+) {
   wbComment$new(text = text, author = author, style = style)
 }

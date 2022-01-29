@@ -78,7 +78,7 @@
 #' class(df$hLink) <- "hyperlink"
 #' class(df$Percentage) <- c(class(df$Percentage), "percentage")
 #' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
-#' 
+#'
 #' writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 #'
 #' #####################################################################################
@@ -136,24 +136,29 @@
 #' saveWorkbook(wb, file = "tableStylesGallery.xlsx", overwrite = TRUE)
 #' }
 #'
-writeDataTable <- function(wb, sheet, x,
-  startCol = 1,
-  startRow = 1,
-  xy = NULL,
-  colNames = TRUE,
-  rowNames = FALSE,
-  tableStyle = "TableStyleLight9",
-  tableName = NULL,
-  headerStyle = NULL,
-  withFilter = TRUE,
-  keepNA = FALSE,
-  na.string = NULL,
-  sep = ", ",
-  stack = FALSE,
-  firstColumn = FALSE,
-  lastColumn = FALSE,
-  bandedRows = TRUE,
-  bandedCols = FALSE) {
+writeDataTable <- function(
+  wb,
+  sheet,
+  x,
+  startCol    = 1,
+  startRow    = 1,
+  xy          = NULL,
+  colNames    = TRUE,
+  rowNames    = FALSE,
+  tableStyle  = getOption("openxlsx.tableStyle"),
+  tableName   = NULL,
+  headerStyle = getOption("openxlsx.headerStyle"),
+  withFilter  = getOption("openxlsx.withFilter", TRUE),
+  keepNA      = getOption("openxlsx.keepNA"),
+  # change name -- just na?
+  na.string   = getOption("openxlsx.na"),
+  sep         = ", ",
+  stack       = FALSE,
+  firstColumn = getOption("openxlsx.firstColumn"),
+  lastColumn  = getOption("openxlsx.lastColumn"),
+  bandedRows  = getOption("openxlsx.bandedRows"),
+  bandedCols  = getOption("openxlsx.bandedCols")
+) {
   if (!is.null(xy)) {
     if (length(xy) != 2) {
       stop("xy parameter must have length 2")

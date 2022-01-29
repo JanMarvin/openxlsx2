@@ -170,25 +170,27 @@
 #' \dontrun{
 #' saveWorkbook(wb, "writeDataExample.xlsx", overwrite = TRUE)
 #' }
-writeData <- function(wb,
+writeData <- function(
+  wb,
   sheet,
   x,
-  startCol = 1,
-  startRow = 1,
-  array = FALSE,
-  xy = NULL,
-  colNames = TRUE,
-  rowNames = FALSE,
-  headerStyle = NULL,
-  borders = c("none", "surrounding", "rows", "columns", "all"),
-  borderColour = getOption("openxlsx.borderColour", "black"),
-  borderStyle = getOption("openxlsx.borderStyle", "thin"),
-  withFilter = FALSE,
-  keepNA = FALSE,
-  na.string = NULL,
-  name = NULL,
-  sep = ", ",
-  removeCellStyle = TRUE) {
+  startCol        = 1,
+  startRow        = 1,
+  array           = FALSE,
+  xy              = NULL,
+  colNames        = TRUE,
+  rowNames        = FALSE,
+  headerStyle     = getOption("openxlsx.headerStyle"),
+  borders         = getOption("openxlsx.borders"),
+  borderColour    = getOption("openxlsx.borderColour"),
+  borderStyle     = getOption("openxlsx.borderStyle"),
+  withFilter      = getOption("openxlsx.withFilter", FALSE),
+  keepNA          = getOption("openxlsx.keepNA"),
+  na.string       = getOption("openxlsx.na"),
+  name            = NULL,
+  sep             = ", ",
+  removeCellStyle = TRUE
+) {
 
   ## increase scipen to avoid writing in scientific
   exSciPen <- getOption("scipen")
@@ -231,8 +233,7 @@ writeData <- function(wb,
 
   if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
-  borders <- match.arg(borders)
-  if (length(borders) != 1) stop("borders argument must be length 1.")
+  borders <- match.arg(borders, c("none", "surrounding", "rows", "columns", "all"))
 
   ## borderColours validation
   borderColour <- validateColour(borderColour, "Invalid border colour")
