@@ -329,7 +329,7 @@ conditionalFormatting <-
 
     ## rows and cols
     if (!is.numeric(cols)) {
-      cols <- convertFromExcelRef(cols)
+      cols <- col2int(cols)
     }
     rows <- as.integer(rows)
 

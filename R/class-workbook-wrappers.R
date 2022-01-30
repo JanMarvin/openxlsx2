@@ -145,7 +145,7 @@ mergeCells <- function(wb, sheet, cols, rows) {
   assert_workbook(wb)
 
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
 
   wb$mergeCells(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
@@ -168,7 +168,7 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 
   assert_workbook(wb)
 
-  cols <- convertFromExcelRef(cols)
+  cols <- col2int(cols)
   rows <- as.integer(rows)
 
   wb$removeCellMerge(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
@@ -586,7 +586,7 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
     return(invisible(0))
   }
 
-  cols <- convertFromExcelRef(cols)
+  cols <- col2int(cols)
   rows <- as.integer(rows)
 
   ## rows and cols need to be the same length
@@ -664,17 +664,16 @@ freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, 
     invisible(wb$freezePanes(sheet, firstActiveRow = 2L, firstActiveCol = 2L))
   } else { ## else both firstRow and firstCol are FALSE
 
+    if (is.null(firstActiveRow)) firstActiveRow <- 1L
+    if (is.null(firstActiveCol)) firstActiveCol <- 1L
+
     ## Convert to numeric if column letter given
-    if (!is.null(firstActiveRow)) {
-      firstActiveRow <- convertFromExcelRef(firstActiveRow)
-    } else {
-      firstActiveRow <- 1L
+    if (is.character(firstActiveRow)) {
+      firstActiveRow <- col2int(firstActiveRow)
     }
 
-    if (!is.null(firstActiveCol)) {
-      firstActiveCol <- convertFromExcelRef(firstActiveCol)
-    } else {
-      firstActiveCol <- 1L
+    if (is.character(firstActiveCol)) {
+      firstActiveCol <- col2int(firstActiveCol)
     }
 
     invisible(wb$freezePanes(sheet, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol, firstRow = firstRow, firstCol = firstCol))
@@ -864,7 +863,7 @@ removeColWidths <- function(wb, sheet, cols) {
   sheet <- wb$validateSheet(sheet)
 
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
 
   od <- getOption("OutDec")
@@ -1927,7 +1926,7 @@ addFilter <- function(wb, sheet, rows, cols) {
   }
 
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
 
   wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
@@ -2048,7 +2047,7 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 
   ## rows and cols
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
   rows <- as.integer(rows)
 
@@ -2323,7 +2322,7 @@ conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, 
 
   ## rows and cols
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
   rows <- as.integer(rows)
 
@@ -2524,7 +2523,7 @@ removeTable <- function(wb, sheet, table) {
   rows <- as.integer(gsub("[A-Z]", "", refs))
   rows <- seq(from = rows[1], to = rows[2], by = 1)
 
-  cols <- convertFromExcelRef(refs)
+  cols <- col2int(refs)
   cols <- seq(from = cols[1], to = cols[2], by = 1)
 
   ## now delete data
@@ -2821,7 +2820,7 @@ insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, st
     stop("Invalid units.\nunits must be one of: cm, in, px")
   }
 
-  startCol <- convertFromExcelRef(startCol)
+  startCol <- col2int(startCol)
   startRow <- as.integer(startRow)
 
   ## convert to inches

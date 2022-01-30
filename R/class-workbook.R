@@ -2778,7 +2778,7 @@ wbWorkbook <- R6::R6Class(
       imageNo <- drawing_len + 1L
       mediaNo <- length(self$media) + 1L
 
-      startCol <- convertFromExcelRef(startCol)
+      startCol <- col2int(startCol)
 
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
@@ -3113,7 +3113,7 @@ wbWorkbook <- R6::R6Class(
             })
           cols <-
             lapply(names(exTable), function(rectCoords) {
-              convertFromExcelRef(unlist(regmatches(
+              col2int(unlist(regmatches(
                 rectCoords, gregexpr("[A-Z]+", rectCoords)
               )))
             })

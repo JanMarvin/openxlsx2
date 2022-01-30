@@ -769,7 +769,7 @@ mergeCell2mapping <- function(x) {
   })
 
   cols <- lapply(refs, function(r) {
-    r <- convertFromExcelRef(r)
+    r <- col2int(r)
     seq(from = r[1], to = r[2], by = 1)
   })
 

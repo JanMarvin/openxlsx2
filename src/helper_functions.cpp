@@ -35,6 +35,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
 
     // remove digits from string
     a.erase(std::remove_if(a.begin()+1, a.end(), ::isdigit), a.end());
+    transform(a.begin(), a.end(), a.begin(), ::toupper);
 
     int sum = 0;
     k = a.length();

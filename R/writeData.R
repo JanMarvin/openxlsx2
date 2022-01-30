@@ -220,7 +220,7 @@ writeData <- function(wb,
 
   ## convert startRow and startCol
   if (!is.numeric(startCol)) {
-    startCol <- convertFromExcelRef(startCol)
+    startCol <- col2int(startCol)
   }
   startRow <- as.integer(startRow)
 
