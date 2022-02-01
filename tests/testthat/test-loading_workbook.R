@@ -847,7 +847,7 @@ test_that("sheet visibility", {
 
   # after load
   wb <- loadWorkbook(fl)
-  wb_sheets <- sheets(wb)
+  wb_sheets <- names(wb)
   wb_vis <- sheetVisibility(wb)
 
   # save
@@ -855,7 +855,7 @@ test_that("sheet visibility", {
 
   # re-import
   wb2 <- loadWorkbook(tmp_dir)
-  wb2_sheets <- sheets(wb)
+  wb2_sheets <- names(wb)
   wb2_vis <- sheetVisibility(wb)
 
   expect_equal(exp_sheets, wb_sheets)

@@ -175,46 +175,6 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 }
 
 
-#' @name sheets
-#' @title Returns names of worksheets.
-#' @description DEPRECATED. Use names().
-#' @param wb A workbook object
-#' @return Name of worksheet(s) for a given index
-#' @seealso [names()] to rename a worksheet in a Workbook
-#' @details DEPRECATED. Use [names()]
-#' @export
-#' @examples
-#'
-#' ## Create a new workbook
-#' wb <- createWorkbook()
-#'
-#' ## Add some worksheets
-#' addWorksheet(wb, "Worksheet Name")
-#' addWorksheet(wb, "This is worksheet 2")
-#' addWorksheet(wb, "The third worksheet")
-#'
-#' ## Return names of sheets, can not be used for assignment.
-#' names(wb)
-#' # openXL(wb)
-#'
-#' names(wb) <- c("A", "B", "C")
-#' names(wb)
-#' # openXL(wb)
-sheets <- function(wb) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  assert_workbook(wb)
-
-  nms <- wb$sheet_names
-  nms <- replaceXMLEntities(nms)
-
-  return(nms)
-}
-
-
-
 #' @name addWorksheet
 #' @title Add a worksheet to a workbook
 #' @description Add a worksheet to a Workbook object
@@ -469,48 +429,6 @@ wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
 
   # TODO use old_sheet, new_sheet
   wb$clone()$cloneWorksheet(sheetName = old, clonedSheet = new)
-}
-
-
-#' @name renameWorksheet
-#' @title Rename a worksheet
-#' @description Rename a worksheet
-#' @param wb A Workbook object containing a worksheet
-#' @param sheet The name or index of the worksheet to rename
-#' @param newName The new name of the worksheet. No longer than 31 chars.
-#' @details DEPRECATED. Use [names()]
-#' @export
-#' @examples
-#'
-#' ## Create a new workbook
-#' wb <- createWorkbook("CREATOR")
-#'
-#' ## Add 3 worksheets
-#' addWorksheet(wb, "Worksheet Name")
-#' addWorksheet(wb, "This is worksheet 2")
-#' addWorksheet(wb, "Not the best name")
-#'
-#' #' ## rename all worksheets
-#' names(wb) <- c("A", "B", "C")
-#'
-#'
-#' ## Rename worksheet 1 & 3
-#' renameWorksheet(wb, 1, "New name for sheet 1")
-#' names(wb)[[1]] <- "New name for sheet 1"
-#' names(wb)[[3]] <- "A better name"
-#'
-#' ## Save workbook
-#' \dontrun{
-#' saveWorkbook(wb, "renameWorksheetExample.xlsx", overwrite = TRUE)
-#' }
-renameWorksheet <- function(wb, sheet, newName) {
-  assert_workbook(wb)
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  invisible(wb$setSheetName(sheet, newName))
 }
 
 
@@ -2285,97 +2203,6 @@ pageBreak <- function(wb, sheet, i, type = "row") {
   # wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
 
   invisible(wb)
-}
-
-
-
-#' @name conditionalFormat
-#' @title Add conditional formatting to cells
-#' @description DEPRECATED! USE [conditionalFormatting()]
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols Columns to apply conditional formatting to
-#' @param rows Rows to apply conditional formatting to
-#' @param rule The condition under which to apply the formatting or a vector of colours. See examples.
-#' @param style A style to apply to those cells that satisfy the rule. A Style object returned from createStyle()
-#' @details DEPRECATED! USE [conditionalFormatting()]
-#'
-#' Valid operators are "<", "<=", ">", ">=", "==", "!=". See Examples.
-#' Default style given by: createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-#' @param type Either 'expression', 'colorscale' or 'databar'. If 'expression' the formatting is determined
-#' by a formula.  If colorScale cells are coloured based on cell value. See examples.
-#' @seealso [createStyle()]
-#' @export
-conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, type = "expression") {
-  warning("conditionalFormat() has been deprecated. Use conditionalFormatting().")
-  ## Rule always applies to top left of sqref, $ determine which cells the rule depends on
-  ## Rule for "databar" and colourscale are colours of length 2/3 or 1 respectively.
-
-  type <- tolower(type)
-  if (tolower(type) %in% c("colorscale", "colourscale")) {
-    type <- "colorScale"
-  } else if (type == "databar") {
-    type <- "dataBar"
-  } else if (type != "expression") {
-    stop("Invalid type argument.  Type must be 'expression', 'colourScale' or 'databar'")
-  }
-
-  ## rows and cols
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-  rows <- as.integer(rows)
-
-  ## check valid rule
-  if (type == "colorScale") {
-    if (!length(rule) %in% 2:3) {
-      stop("rule must be a vector containing 2 or 3 colours if type is 'colorScale'")
-    }
-
-    rule <- validateColour(rule, errorMsg = "Invalid colour specified in rule.")
-    dxfId <- NULL
-  } else if (type == "dataBar") {
-
-    ## If rule is NULL use default colour
-    if (is.null(rule)) {
-      rule <- "FF638EC6"
-    } else {
-      rule <- validateColour(rule, errorMsg = "Invalid colour specified in rule.")
-    }
-
-    dxfId <- NULL
-  } else { ## else type == "expression"
-
-    rule <- toupper(gsub(" ", "", rule))
-    rule <- replaceIllegalCharacters(rule)
-    rule <- gsub("!=", "&lt;&gt;", rule)
-    rule <- gsub("==", "=", rule)
-
-    if (!grepl("[A-Z]", substr(rule, 1, 2))) {
-
-      ## formula looks like "operatorX" , attach top left cell to rule
-      rule <- paste0(getCellRefs(data.frame("x" = min(rows), "y" = min(cols))), rule)
-    } ## else, there is a letter in the formula and apply as is
-
-    if (is.null(style)) {
-      style <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-    }
-
-    dxfId <- wb$addDXFS(style)$styles$dxfs
-  }
-
-
-  invisible(wb$conditionalFormatCell(sheet,
-    startRow = min(rows),
-    endRow = max(rows),
-    startCol = min(cols),
-    endCol = max(cols),
-    dxfId,
-    formula = rule,
-    type = type
-  ))
-
-  invisible(0)
 }
 
 
