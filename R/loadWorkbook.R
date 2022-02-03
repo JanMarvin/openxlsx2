@@ -814,23 +814,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       ## If it's an external hyperlink it will have a target in the sheet_rels
       if (length(hlinksInds)) {
         for (i in hlinksInds) {
-          ids <- unapply(
-            hlinks[[i]],
-            function(x) {
-              regmatches(x, gregexpr('(?<=Id=").*?"', x, perl = TRUE))[[1]]
-            }
-          )
+          ids <- apply_reg_match(hlinks[[i]], '(?<=Id=").*?"')
           ids <- gsub('"$', "", ids)
 
-          targets <- unapply(
-            hlinks[[i]],
-            function(x)  {
-              regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
-            }
-          )
+          targets <- apply_reg_match(hlinks[[i]], '(?<=Target=").*?"')
           targets <- gsub('"$', "", targets)
 
-          ids2 <- lapply(wb$worksheets[[i]]$hyperlinks, function(x) regmatches(x, gregexpr('(?<=r:id=").*?"', x, perl = TRUE))[[1]])
+          ids2 <- lapply(wb$worksheets[[i]]$hyperlinks, reg_match, pat = '(?<=r:id=").*?"')
           ids2[lengths(ids2) == 0] <- NA
           ids2 <- gsub('"$', "", unlist(ids2))
 
@@ -841,10 +831,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     }
 
 
-
     ## Drawings ------------------------------------------------------------------------------------
-
-
 
     ## xml is in the order of the sheets, drawIngs is toes to sheet position of hasDrawing
     ## Not every sheet has a drawing.xml
@@ -884,12 +871,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     if (any(hasDrawing)) {
       for (i in seq_along(xml)) {
         if (hasDrawing[i]) {
-          target <- unapply(
-            drawXMLrelationship[[i]],
-            function(x) {
-              regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
-            }
-          )
+          target <- apply_reg_match(drawXMLrelationship[[i]], '(?<=Target=").*?"')
           target <- basename(gsub('"$', "", target))
 
           ## sheet_i has which(hasDrawing)[[i]]
@@ -930,12 +912,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       if (any(hasDrawing)) {
         for (i in seq_along(xml)) {
           if (hasDrawing[i]) {
-            target <- unapply(
-              drawXMLrelationship[[i]],
-              function(x) {
-                regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
-              }
-            )
+            target <- apply_reg_match(drawXMLrelationship[[i]], '(?<=Target=").*?"')
             target <- basename(gsub('"$', "", target))
             ind <- grepl(target, vmlDrawingXML)
 
@@ -983,12 +960,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
       for (i in seq_along(xml)) {
         if (hasComment[i]) {
-          target <- unapply(
-            drawXMLrelationship[[i]],
-            function(x) {
-              regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
-              }
-          )
+          target <- apply_reg_match(drawXMLrelationship[[i]], '(?<=Target=").*?"')
           target <- basename(gsub('"$', "", target))
           ind <- grepl(target, vmlDrawingXML)
 
@@ -1000,12 +972,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             cd <- paste0(cd, ">")
 
             ## now loada comment
-            target <- unapply(
-              commentXMLrelationship[[i]],
-              function(x) {
-                regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
-              }
-            )
+            target <- apply_reg_match(commentXMLrelationship[[i]], '(?<=Target=").*?"')
             target <- basename(gsub('"$', "", target))
 
             txt <- read_xml(grep(target, commentsXML, value = TRUE))
@@ -1050,12 +1017,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       if(any(hasThreadComments)) {
         for (i in seq_along(xml)) {
           if (hasThreadComments[i]) {
-            target <- unapply(
-              threadCommentsXMLrelationship[[i]],
-              function(x) {
-                regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
-              }
-            )
+            target <- apply_reg_match(threadCommentsXMLrelationship[[i]], '(?<=Target=").*?"')
             target <- basename(gsub('"$', "", target))
 
             wb$threadComments[[i]] <- grep(target, threadCommentsXML, value = TRUE)

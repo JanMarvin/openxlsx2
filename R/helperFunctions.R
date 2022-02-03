@@ -110,13 +110,9 @@ makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NUL
 }
 
 
-getRId <- function(x) {
-  regmatches(x, gregexpr('(?<= r:id=")[0-9A-Za-z]+', x, perl = TRUE))
-}
+getRId <- function(x) reg_match0(x, '(?<= r:id=")[0-9A-Za-z]+')
 
-getId <- function(x) {
-  regmatches(x, gregexpr('(?<= Id=")[0-9A-Za-z]+', x, perl = TRUE))
-}
+getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
 
 
@@ -529,8 +525,8 @@ nodeAttributes <- function(x) {
     return("")
   }
 
-  attrs <- regmatches(x, gregexpr(' [a-zA-Z]+="[^"]*', x, perl = TRUE))
-  tags <- regmatches(x, gregexpr("<[a-zA-Z]+ ", x, perl = TRUE))
+  attrs <- reg_match0(x, ' [a-zA-Z]+="[^"]*')
+  tags <- reg_match0(x, "<[a-zA-Z]+ ")
   tags <- lapply(tags, gsub, pattern = "<| ", replacement = "")
   attrs <- lapply(attrs, gsub, pattern = '"', replacement = "")
 
