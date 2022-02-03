@@ -196,7 +196,7 @@ print.pugi_xml <- function(x, raw = FALSE, ...) {
 #' @param x input as xml
 #' @examples
 #' \dontrun{
-#' tmp_xlsx <- tempdir()
+#' tmp_xlsx <- tempfile()
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' unzip(xlsxFile, exdir = tmp_xlsx)
 #'

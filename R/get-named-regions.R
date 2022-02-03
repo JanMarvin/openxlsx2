@@ -49,33 +49,32 @@ getNamedRegions.default <- function(x) {
     stop(sprintf("File '%s' does not exist.", x))
   }
 
-  xmlDir <- file.path(tempdir(), "named_regions_tmp")
+  xmlDir <- tempfile("named_regions_tmp")
+  # don't unlink on exit
+  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
+
   xmlFiles <- unzip(x, exdir = xmlDir)
 
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- read_xml(workbook)
 
   dn <- xml_node(xml = workbook, "workbook", "definedNames", "definedName")
+
   if (length(dn) == 0) {
     return(NULL)
   }
 
-  dn_names <- get_named_regions_from_string(dn = dn)
-
-  unlink(xmlDir, recursive = TRUE, force = TRUE)
-
-  return(dn_names)
+  get_named_regions_from_string(dn = dn)
 }
 
 
 #' @export
 getNamedRegions.wbWorkbook <- function(x) {
   dn <- x$workbook$definedNames
+
   if (length(dn) == 0) {
     return(NULL)
   }
 
-  dn_names <- get_named_regions_from_string(dn = dn)
-
-  return(dn_names)
+  get_named_regions_from_string(dn = dn)
 }

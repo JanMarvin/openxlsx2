@@ -38,7 +38,7 @@ openXL <- function(file = NULL) {
 
   ## workbook handling
   if (inherits(file, "wbWorkbook")) {
-    file <- file$saveWorkbook(path = file.path(tempdir(), "temp_xlsx.xlsx"))$path
+    file <- file$saveWorkbook(path = tempfile("temp_xlsx.xlsx"))$path
   }
 
   if (!file.exists(file)) stop("Non existent file or wrong path.")

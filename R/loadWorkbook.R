@@ -43,7 +43,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     }
 
     ## create temp dir
-    xmlDir <- file.path(tempdir(), paste0(tempfile(tmpdir = ""), "_openxlsx_loadWorkbook"))
+    xmlDir <- tempfile("_openxlsx_loadWorkbook")
+    # do not unlink after loading
+    # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
     ## Unzip files to temp directory
     xmlFiles <- unzip(file, exdir = xmlDir)
