@@ -1565,23 +1565,25 @@ wbWorkbook <- R6::R6Class(
           fontNode <- stri_join(fontNode, sprintf(
             "<color %s/>",
             stri_join(
-              sapply(seq_along(style$fontColour), function(i) {
-                sprintf('%s="%s"', names(style$fontColour)[i], style$fontColour[i])
-              }),
+              sapply(
+                seq_along(style$fontColour),
+                function(i) {
+                  sprintf('%s="%s"', names(style$fontColour)[i], style$fontColour[i])
+                }
+              ),
               sep = " ",
               collapse = " "
             )
           ))
         } else {
-          fontNode <-
-            stri_join(
-              fontNode,
-              sprintf(
-                '<color %s="%s"/>',
-                names(style$fontColour),
-                style$fontColour
-              )
+          fontNode <- stri_join(
+            fontNode,
+            sprintf(
+              '<color %s="%s"/>',
+              names(style$fontColour),
+              style$fontColour
             )
+          )
         }
       }
 
@@ -2178,15 +2180,17 @@ wbWorkbook <- R6::R6Class(
         value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
       }
 
-      form <-
-        sapply(seq_along(value), function(i) {
+      form <- sapply(
+        seq_along(value),
+        function(i) {
           sprintf("<formula%s>%s</formula%s>", i, value[i], i)
-        })
-      self$worksheets[[sheet]]$dataValidations <-
-        c(
-          self$worksheets[[sheet]]$dataValidations,
-          stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
-        )
+        }
+      )
+
+      self$worksheets[[sheet]]$dataValidations <- c(
+        self$worksheets[[sheet]]$dataValidations,
+        stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
+      )
 
       invisible(self)
     },
@@ -2581,10 +2585,7 @@ wbWorkbook <- R6::R6Class(
         newMerge <- unlist(build_cell_merges(comps = list(sqref)))
 
         ## Error if merge intersects
-        mergeIntersections <-
-          sapply(exMergedCells, function(x) {
-            any(x %in% newMerge)
-          })
+        mergeIntersections <- vapply(exMergedCells, function(x) any(x %in% newMerge), NA)
         if (any(mergeIntersections)) {
           stop(
             sprintf(
@@ -2647,10 +2648,7 @@ wbWorkbook <- R6::R6Class(
         newMerge <- unlist(build_cell_merges(comps = list(sqref)))
 
         ## Error if merge intersects
-        mergeIntersections <-
-          sapply(exMergedCells, function(x) {
-            any(x %in% newMerge)
-          })
+        mergeIntersections <- vapply(exMergedCells, function(x) any(x %in% newMerge), NA)
       }
 
       ## Remove intersection

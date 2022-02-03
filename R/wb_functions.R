@@ -55,11 +55,11 @@ guess_col_type <- function(tt) {
   names(types) <- names(tt)
 
   # but some values are numeric
-  col_num <- sapply(tt, function(x) all(x[is.na(x) == FALSE] == "n"))
+  col_num <- vapply(tt, function(x) all(x[is.na(x) == FALSE] == "n"), NA)
   types[names(col_num[col_num == TRUE])] <- 1
 
   # or even date
-  col_dte <- sapply(tt[!col_num], function(x) all(x[is.na(x) == FALSE] == "d"))
+  col_dte <- vapply(tt[!col_num], function(x) all(x[is.na(x) == FALSE] == "d"), NA)
   types[names(col_dte[col_dte == TRUE])] <- 2
 
   types
@@ -243,10 +243,10 @@ wb_to_df <- function(
     wo <- xml_value(dn, "definedName")
     # remove dollar sign: $A$1:$B$2
     wo <- gsub("\\$", "", wo)
-    wo <- unlist(sapply(wo, strsplit, "!"))
+    wo <- unapply(wo, strsplit, "!")
     # remove ' from 'Sheet 1'
     wo <- gsub("'", "", wo)
-    wo <- unlist(sapply(wo, strsplit, "!"))
+    wo <- unapply(wo, strsplit, "!")
 
     nr <- as.data.frame(
       matrix(wo,
@@ -495,7 +495,7 @@ wb_to_df <- function(
 
   if (skipEmptyCols) {
 
-    empty <- sapply(z, function(x) all(is.na(x)))
+    empty <- vapply(z, function(x) all(is.na(x)), NA)
 
     if (any(empty)) {
       sel <- which(names(empty) %in% names(empty[empty == TRUE]))
@@ -569,8 +569,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     sheet_id <- sheet
   }
 
-  if (missing(data_class))
+  if (missing(data_class)) {
+    # TODO consider using inherit() for class chekcing
     data_class <- sapply(x, class)
+  }
+
 
   # if(identical(sheet_id, integer()))
   #   stop("sheet not in workbook")

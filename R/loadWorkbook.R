@@ -806,7 +806,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     ## might we have some external hyperlinks
     # TODO use lengths()
-    if (any(sapply(wb$worksheets[!is_chart_sheet], function(x) length(x$hyperlinks)) > 0)) {
+    if (any(vapply(wb$worksheets[!is_chart_sheet], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
 
       ## Do we have external hyperlinks
       hlinks <- lapply(xml, function(x) x[grepl("hyperlink", x) & grepl("External", x)])
@@ -1030,7 +1030,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       wb$Content_Types <- c(
         wb$Content_Types,
         sprintf('<Override PartName="/xl/threadedComments/%s" ContentType="application/vnd.ms-excel.threadedcomments+xml"/>',
-          sapply(threadCommentsXML, basename))
+          vapply(threadCommentsXML, basename, NA_character_))
       )
     }
 

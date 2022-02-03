@@ -313,7 +313,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       assert_style(params$headerStyle)
       headerStyle <- params$headerStyle
     } else {
-      if (all(sapply(params$headerStyle, inherits, "Style"))) {
+      if (all(vapply(params$headerStyle, is_wb_style, NA))) {
         headerStyle <- params$headerStyle
       } else {
         stop("headerStyle must be a style object.")

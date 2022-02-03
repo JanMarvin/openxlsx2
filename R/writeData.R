@@ -274,7 +274,7 @@ writeData <- function(wb,
 
   colClasses <- lapply(x, function(x) tolower(class(x)))
   colClasss2 <- colClasses
-  colClasss2[sapply(colClasses, function(x) "formula" %in% x) & sapply(colClasses, function(x) "hyperlink" %in% x)] <- "formula"
+  colClasss2[vapply(colClasses, function(x) "formula" %in% x, NA) & vapply(colClasses, function(x) "hyperlink" %in% x, NA)] <- "formula"
 
   if (is.numeric(sheet)) {
     sheetX <- wb$validateSheet(sheet)

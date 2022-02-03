@@ -116,7 +116,7 @@ getDateOrigin <- function(xlsxFile) {
 #' @param date1904 take different origin
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
-  isPOSIXlt <- function(data) sapply(lapply(data, class), FUN = function(x) any(x == "POSIXlt"))
+  isPOSIXlt <- function(data) vapply(data, inherits, NA, "POSIXlt")
   to_convert <- isPOSIXlt(df)
 
   if (any(to_convert)) {
@@ -127,7 +127,7 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
   df_class <- sapply(df, class)
   ## convert any Dates to integers and create date style object
   if (any(df_class %in%  c("Date", "POSIXct"))) {
-    dInds <- which(sapply(df_class, function(x) "Date" %in% x))
+    dInds <- which(vapply(df_class, function(x) "Date" %in% x, NA))
 
     origin <- 25569L
     if (date1904) origin <- 24107L
@@ -140,7 +140,7 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
       }
     }
 
-    pInds <- which(sapply(df_class, function(x) any(c("POSIXct") %in% x)))
+    pInds <- which(vapply(df_class, function(x) any(c("POSIXct") %in% x, NA)))
     if (length(pInds) > 0 & nrow(df) > 0) {
       parseOffset <- function(tz) {
         suppressWarnings(

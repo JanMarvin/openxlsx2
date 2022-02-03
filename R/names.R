@@ -43,7 +43,7 @@ names.wbWorkbook <- function(x) {
 
   if (any(nchar(value) > 31)) {
     warning("Worksheet names must less than 32 characters. Truncating names...")
-    value[nchar(value) > 31] <- sapply(value[nchar(value) > 31], substr, start = 1, stop = 31)
+    value[nchar(value) > 31] <- vapply(value[nchar(value) > 31], substr, NA_character_, start = 1, stop = 31)
   }
 
   for (i in inds) {
