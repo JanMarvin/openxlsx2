@@ -356,7 +356,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     pivot_content_type <- NULL
 
     if (length(pivotTableRelsXML)) {
-      wb$pivotTables.xml.rels <- unlist(lapply(pivotTableRelsXML, read_xml, pointer = FALSE))
+      wb$pivotTables.xml.rels <- unapply(pivotTableRelsXML, read_xml, pointer = FALSE)
     }
 
 
@@ -601,7 +601,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
       names(cf) <- nms
       conditionalFormatting <- unlist(cf)
-      names(conditionalFormatting) <- unlist(lapply(nms, function(x) rep(x, length(cf[[x]]))))
+      names(conditionalFormatting) <- unapply(nms, function(x) rep(x, length(cf[[x]])))
 
       wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
     }
@@ -749,7 +749,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
     if (length(tablesXML)) {
       tables <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=table)[0-9]+(?=\\.xml)", x, perl = TRUE))))
-      tableSheets <- unlist(lapply(seq_along(sheetrId), function(i) rep(i, length(tables[[i]]))))
+      tableSheets <- unapply(seq_along(sheetrId), function(i) rep(i, length(tables[[i]])))
 
       if (length(unlist(tables))) {
         ## get the tables that belong to each worksheet and create a worksheets_rels for each
@@ -814,10 +814,20 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       ## If it's an external hyperlink it will have a target in the sheet_rels
       if (length(hlinksInds)) {
         for (i in hlinksInds) {
-          ids <- unlist(lapply(hlinks[[i]], function(x) regmatches(x, gregexpr('(?<=Id=").*?"', x, perl = TRUE))[[1]]))
+          ids <- unapply(
+            hlinks[[i]],
+            function(x) {
+              regmatches(x, gregexpr('(?<=Id=").*?"', x, perl = TRUE))[[1]]
+            }
+          )
           ids <- gsub('"$', "", ids)
 
-          targets <- unlist(lapply(hlinks[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
+          targets <- unapply(
+            hlinks[[i]],
+            function(x)  {
+              regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
+            }
+          )
           targets <- gsub('"$', "", targets)
 
           ids2 <- lapply(wb$worksheets[[i]]$hyperlinks, function(x) regmatches(x, gregexpr('(?<=r:id=").*?"', x, perl = TRUE))[[1]])
@@ -874,7 +884,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     if (any(hasDrawing)) {
       for (i in seq_along(xml)) {
         if (hasDrawing[i]) {
-          target <- unlist(lapply(drawXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
+          target <- unapply(
+            drawXMLrelationship[[i]],
+            function(x) {
+              regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
+            }
+          )
           target <- basename(gsub('"$', "", target))
 
           ## sheet_i has which(hasDrawing)[[i]]
@@ -915,7 +930,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       if (any(hasDrawing)) {
         for (i in seq_along(xml)) {
           if (hasDrawing[i]) {
-            target <- unlist(lapply(drawXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
+            target <- unapply(
+              drawXMLrelationship[[i]],
+              function(x) {
+                regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
+              }
+            )
             target <- basename(gsub('"$', "", target))
             ind <- grepl(target, vmlDrawingXML)
 
@@ -963,7 +983,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
       for (i in seq_along(xml)) {
         if (hasComment[i]) {
-          target <- unlist(lapply(drawXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
+          target <- unapply(
+            drawXMLrelationship[[i]],
+            function(x) {
+              regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
+              }
+          )
           target <- basename(gsub('"$', "", target))
           ind <- grepl(target, vmlDrawingXML)
 
@@ -975,7 +1000,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
             cd <- paste0(cd, ">")
 
             ## now loada comment
-            target <- unlist(lapply(commentXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
+            target <- unapply(
+              commentXMLrelationship[[i]],
+              function(x) {
+                regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
+              }
+            )
             target <- basename(gsub('"$', "", target))
 
             txt <- read_xml(grep(target, commentsXML, value = TRUE))
@@ -1020,7 +1050,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       if(any(hasThreadComments)) {
         for (i in seq_along(xml)) {
           if (hasThreadComments[i]) {
-            target <- unlist(lapply(threadCommentsXMLrelationship[[i]], function(x) regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]))
+            target <- unapply(
+              threadCommentsXMLrelationship[[i]],
+              function(x) {
+                regmatches(x, gregexpr('(?<=Target=").*?"', x, perl = TRUE))[[1]]
+              }
+            )
             target <- basename(gsub('"$', "", target))
 
             wb$threadComments[[i]] <- grep(target, threadCommentsXML, value = TRUE)
@@ -1142,7 +1177,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
   ## queryTables
   if (length(queryTablesXML) > 0) {
     ids <- as.numeric(regmatches(queryTablesXML, regexpr("[0-9]+(?=\\.xml)", queryTablesXML, perl = TRUE)))
-    wb$queryTables <- unlist(lapply(queryTablesXML[order(ids)], read_xml, pointer = FALSE))
+    wb$queryTables <- unapply(queryTablesXML[order(ids)], read_xml, pointer = FALSE)
     wb$Content_Types <- c(
       wb$Content_Types,
       sprintf('<Override PartName="/xl/queryTables/queryTable%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.queryTable+xml"/>', seq_along(queryTablesXML))

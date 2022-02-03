@@ -61,3 +61,7 @@ openxlsx_options <- function() {
   )
 }
 
+unapply <- function(x, FUN, ..., .recurse = TRUE, .names = FALSE) {
+  FUN <- match.fun(FUN)
+  unlist(lapply(X = x, FUN = FUN, ...), recursive = .recurse, use.names = .names)
+}

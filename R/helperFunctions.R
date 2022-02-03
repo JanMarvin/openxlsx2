@@ -74,7 +74,7 @@
 #'   startRow = 10, startCol = 1,
 #'   x = '=HYPERLINK(\\"[C:/Users]\\", \\"Link to an external file\\")'
 #' )
-#' 
+#'
 #' ## Link to internal file
 #' x = makeHyperlinkString(text = "test.png", file = "D:/somepath/somepicture.png")
 #' writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
@@ -86,7 +86,7 @@
 makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   # op <- get_set_options()
   # on.exit(options(op), add = TRUE)
-  
+
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
 
@@ -98,14 +98,14 @@ makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NUL
     } else {
       dest <- sprintf("#'%s'!%s", sheet, cell)
     }
-    
+
     if (is.null(text)) {
       str <- sprintf("=HYPERLINK(\"%s\")", dest)
     } else {
       str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", dest, text)
     }
   }
-  
+
   return(str)
 }
 
@@ -561,11 +561,14 @@ buildBorder <- function(x) {
 
   ## gets all borders that have children
   directions <- c("left", "right", "top", "bottom", "diagonal")
-  x <- unlist(lapply(directions, function(z) {
-    y <- xml_node(x, "border", z)
-    sel <- length(xml_node(y, z, "color"))
-    if (sel) y
-  }))
+  x <- unapply(
+    directions,
+    function(z) {
+      y <- xml_node(x, "border", z)
+      sel <- length(xml_node(y, z, "color"))
+      if (sel) y
+    }
+  )
   if (length(x) == 0) {
     return(NULL)
   }

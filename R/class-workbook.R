@@ -2011,11 +2011,11 @@ wbWorkbook <- R6::R6Class(
 
       ## remove sheet
       sn <-
-        unlist(lapply(self$workbook$sheets, function(x) {
+        unapply(self$workbook$sheets, function(x) {
           regmatches(
             x, regexpr('(?<= name=")[^"]+', x, perl = TRUE)
           )
-        }))
+        })
       self$workbook$sheets <- self$workbook$sheets[!sn %in% sheetName]
 
       ## Reset rIds
@@ -2773,6 +2773,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
+      # TODO tools::file_ext() ...
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
@@ -3729,7 +3730,7 @@ wbWorkbook <- R6::R6Class(
       for (i in seq_along(self$comments)) {
         id <- 1025
 
-        cd <- unlist(lapply(self$comments[[i]], "[[", "clientData"))
+        cd <- unapply(self$comments[[i]], "[[", "clientData")
         nComments <- length(cd)
 
         ## write head
@@ -4347,13 +4348,16 @@ wbWorkbook <- R6::R6Class(
 
       ## Re assign rIds to children of workbook.xml.rels
       self$workbook.xml.rels <-
-        unlist(lapply(seq_along(self$workbook.xml.rels), function(i) {
-          gsub('(?<=Relationship Id="rId)[0-9]+',
-            i,
-            self$workbook.xml.rels[[i]],
-            perl = TRUE
-          )
-        }))
+        unapply(
+          seq_along(self$workbook.xml.rels),
+          function(i) {
+            gsub('(?<=Relationship Id="rId)[0-9]+',
+              i,
+              self$workbook.xml.rels[[i]],
+              perl = TRUE
+            )
+          }
+        )
 
       self$workbook.xml.rels <- c(self$workbook.xml.rels, pivotNode, slicerNode)
 
@@ -4372,9 +4376,12 @@ wbWorkbook <- R6::R6Class(
 
       ## Reassign rId to workbook sheet elements, (order sheets by sheetId first)
       self$workbook$sheets <-
-        unlist(lapply(seq_along(self$workbook$sheets), function(i) {
-          gsub('(?<= r:id="rId)[0-9]+', i, self$workbook$sheets[[i]], perl = TRUE)
-        }))
+        unapply(
+          seq_along(self$workbook$sheets),
+          function(i) {
+            gsub('(?<= r:id="rId)[0-9]+', i, self$workbook$sheets[[i]], perl = TRUE)
+          }
+        )
 
       ## re-order worksheets if need to
       if (any(self$sheetOrder != seq_len(nSheets))) {
