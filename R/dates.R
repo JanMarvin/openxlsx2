@@ -127,7 +127,7 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
   df_class <- sapply(df, class)
   ## convert any Dates to integers and create date style object
   if (any(df_class %in%  c("Date", "POSIXct"))) {
-    dInds <- which(vapply(df_class, function(x) "Date" %in% x, NA))
+    dInds <- wapply(df_class, function(x) "Date" %in% x)
 
     origin <- 25569L
     if (date1904) origin <- 24107L
@@ -140,7 +140,7 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
       }
     }
 
-    pInds <- which(vapply(df_class, function(x) any(c("POSIXct") %in% x, NA)))
+    pInds <- wapply(df_class, function(x) any(c("POSIXct") %in% x))
     if (length(pInds) > 0 & nrow(df) > 0) {
       parseOffset <- function(tz) {
         suppressWarnings(

@@ -130,7 +130,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
   if ("hyperlink" %in% allColClasses) {
 
     ## style hyperlinks
-    inds <- which(vapply(colClasses, function(x) "hyperlink" %in% x, NA))
+    inds <- wapply(colClasses, function(x) "hyperlink" %in% x)
 
     hyperlinkstyle <- createStyle(textDecoration = "underline")
     hyperlinkstyle$fontColour <- list("theme" = "10")
@@ -147,7 +147,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
   if ("date" %in% allColClasses) {
 
     ## style dates
-    inds <- which(vapply(colClasses, function(x) "date" %in% x, NA))
+    inds <- wapply(colClasses, function(x) "date" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "date"),
@@ -162,7 +162,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
   if (any(c("posixlt", "posixct", "posixt") %in% allColClasses)) {
 
     ## style POSIX
-    inds <- which(vapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x), NA))
+    inds <- wapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x))
 
     styleElements <- list(
       "style" = createStyle(numFmt = "LONGDATE"),
@@ -177,7 +177,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
 
   ## style currency as CURRENCY
   if ("currency" %in% allColClasses) {
-    inds <- which(vapply(colClasses, function(x) "currency" %in% x, NA))
+    inds <- wapply(colClasses, function(x) "currency" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "CURRENCY"),
@@ -191,7 +191,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
 
   ## style accounting as ACCOUNTING
   if ("accounting" %in% allColClasses) {
-    inds <- which(vapply(colClasses, function(x) "accounting" %in% x, NA))
+    inds <- wapply(colClasses, function(x) "accounting" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "ACCOUNTING"),
@@ -205,7 +205,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
 
   ## style percentages
   if ("percentage" %in% allColClasses) {
-    inds <- which(vapply(colClasses, function(x) "percentage" %in% x, NA))
+    inds <- wapply(colClasses, function(x) "percentage" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "percentage"),
@@ -219,7 +219,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
 
   ## style big mark
   if ("scientific" %in% allColClasses) {
-    inds <- which(vapply(colClasses, function(x) "scientific" %in% x, NA))
+    inds <- wapply(colClasses, function(x) "scientific" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "scientific"),
@@ -233,7 +233,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
 
   ## style big mark
   if ("3" %in% allColClasses | "comma" %in% allColClasses) {
-    inds <- which(vapply(colClasses, function(x) "3" %in% tolower(x) | "comma" %in% tolower(x), NA))
+    inds <- wapply(colClasses, function(x) "3" %in% tolower(x) | "comma" %in% tolower(x))
 
     styleElements <- list(
       "style" = createStyle(numFmt = "3"),
@@ -247,7 +247,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
 
   ## numeric sigfigs (Col must be numeric and numFmt options must only have 0s and \\.)
   if ("numeric" %in% allColClasses & !grepl("[^0\\.,#\\$\\* %]", getOption("openxlsx.numFmt", "GENERAL"))) {
-    inds <- which(vapply(colClasses, function(x) "numeric" %in% tolower(x), NA))
+    inds <- wapply(colClasses, function(x) "numeric" %in% tolower(x))
 
     styleElements <- list(
       "style" = createStyle(numFmt = getOption("openxlsx.numFmt", "0")),
