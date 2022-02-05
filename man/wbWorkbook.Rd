@@ -116,10 +116,8 @@ A Workbook
 \item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
 \item \href{#method-saveWorkbook}{\code{wbWorkbook$saveWorkbook()}}
-\item \href{#method-validateSheet}{\code{wbWorkbook$validateSheet()}}
 \item \href{#method-getSheetName}{\code{wbWorkbook$getSheetName()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
-\item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
@@ -137,8 +135,6 @@ A Workbook
 \item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
 \item \href{#method-addStyle}{\code{wbWorkbook$addStyle()}}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
-\item \href{#method-validate_table_name}{\code{wbWorkbook$validate_table_name()}}
-\item \href{#method-check_overwrite_tables}{\code{wbWorkbook$check_overwrite_tables()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
 \item \href{#method-addCreator}{\code{wbWorkbook$addCreator()}}
@@ -306,26 +302,6 @@ The \code{wbWorkbook} object invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validateSheet"></a>}}
-\if{latex}{\out{\hypertarget{method-validateSheet}{}}}
-\subsection{Method \code{validateSheet()}}{
-Validate sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validateSheet(sheetName)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheetName}}{The sheet name to validate}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The sheet name -- or the position?  This should be consistent
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getSheetName"></a>}}
 \if{latex}{\out{\hypertarget{method-getSheetName}{}}}
 \subsection{Method \code{getSheetName()}}{
@@ -398,26 +374,6 @@ Build table
 }
 \subsection{Returns}{
 The \code{wbWorksheet} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-createFontNode"></a>}}
-\if{latex}{\out{\hypertarget{method-createFontNode}{}}}
-\subsection{Method \code{createFontNode()}}{
-Create a font node from a style
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createFontNode(style)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{style}}{style}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The font node as xml?
 }
 }
 \if{html}{\out{<hr>}}
@@ -925,57 +881,6 @@ Create a named region in a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate_table_name"></a>}}
-\if{latex}{\out{\hypertarget{method-validate_table_name}{}}}
-\subsection{Method \code{validate_table_name()}}{
-Validate table name for a workbook
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validate_table_name(tableName)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{tableName}}{Table name}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A valid table name as a \code{character}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-check_overwrite_tables"></a>}}
-\if{latex}{\out{\hypertarget{method-check_overwrite_tables}{}}}
-\subsection{Method \code{check_overwrite_tables()}}{
-Checks for overwrite columns
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$check_overwrite_tables(
-  sheet,
-  new_rows,
-  new_cols,
-  error_msg = "Cannot overwrite existing table with another table.",
-  check_table_header_only = FALSE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{new_rows}}{new_rows}
-
-\item{\code{new_cols}}{new_cols}
-
-\item{\code{error_msg}}{error_msg}
-
-\item{\code{check_table_header_only}}{check_table_header_only}
-}
-\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
