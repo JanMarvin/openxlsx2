@@ -23,9 +23,8 @@ names.wbWorkbook <- function(x) {
 #' @param value a character vector the same length as `x`
 #' @export
 `names<-.wbWorkbook` <- function(x, value) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (any(duplicated(tolower(value)))) {
     stop("Worksheet names must be unique.")
@@ -44,7 +43,7 @@ names.wbWorkbook <- function(x) {
 
   if (any(nchar(value) > 31)) {
     warning("Worksheet names must less than 32 characters. Truncating names...")
-    value[nchar(value) > 31] <- sapply(value[nchar(value) > 31], substr, start = 1, stop = 31)
+    value[nchar(value) > 31] <- vapply(value[nchar(value) > 31], substr, NA_character_, start = 1, stop = 31)
   }
 
   for (i in inds) {

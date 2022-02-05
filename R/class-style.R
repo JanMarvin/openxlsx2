@@ -581,12 +581,8 @@ createStyle <- function(
   locked         = FALSE,
   hidden         = FALSE
 ) {
-
-  # TODO simplify options() setting
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   wbStyle$new(
     fontName       = fontName,

@@ -189,21 +189,8 @@ writeData <- function(wb,
   name = NULL,
   sep = ", ",
   removeCellStyle = TRUE) {
-
-  ## increase scipen to avoid writing in scientific
-  exSciPen <- getOption("scipen")
-  od <- getOption("OutDec")
-  exDigits <- getOption("digits")
-
-  options("scipen" = 200)
-  options("OutDec" = ".")
-  options("digits" = 22)
-
-  on.exit(options("scipen" = exSciPen), add = TRUE)
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-  on.exit(options("digits" = exDigits), add = TRUE)
-
-
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (is.null(x)) {
     return(invisible(0))
@@ -249,7 +236,7 @@ writeData <- function(wb,
   ## special case - formula
   if (inherits(x, "formula")) {
     x <- data.frame("X" = x, stringsAsFactors = FALSE)
-    class(x[[1]]) <- ifelse(array, "array_formula", "formula")
+    class(x[[1]]) <- if (array) "array_formula" else "formula"
     colNames <- FALSE
   }
 
@@ -287,7 +274,7 @@ writeData <- function(wb,
 
   colClasses <- lapply(x, function(x) tolower(class(x)))
   colClasss2 <- colClasses
-  colClasss2[sapply(colClasses, function(x) "formula" %in% x) & sapply(colClasses, function(x) "hyperlink" %in% x)] <- "formula"
+  colClasss2[vapply(colClasses, function(x) "formula" %in% x, NA) & vapply(colClasses, function(x) "hyperlink" %in% x, NA)] <- "formula"
 
   if (is.numeric(sheet)) {
     sheetX <- wb$validateSheet(sheet)
@@ -442,7 +429,7 @@ writeFormula <- function(wb,
   xy = NULL) {
   assert_class(x, "character")
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
-  class(dfx$X) <- c("character", ifelse(array, "array_formula", "formula"))
+  class(dfx$X) <- c("character", if (array) "array_formula" else "formula")
 
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")

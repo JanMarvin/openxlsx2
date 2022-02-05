@@ -9,9 +9,8 @@
 #' @examples
 #' int2col(1:10)
 int2col <- function(x) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (!is.numeric(x)) {
     stop("x must be numeric.")
@@ -61,10 +60,8 @@ getCellRefs <- function(cellCoords) {
   if (!all(vapply(cellCoords, is_integer_ish, NA))) {
     stop("cellCoords must only contain integers", call. = FALSE)
   }
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])
@@ -96,4 +93,3 @@ pixels2ExcelColWidth <- function(pixels) {
 
   pixels
 }
-

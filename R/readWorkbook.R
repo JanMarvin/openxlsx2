@@ -174,10 +174,10 @@ getSheetNames <- function(file) {
   }
 
   ## create temp dir and unzip
-  xmlDir <- file.path(tempdir(), "_excelXMLRead")
+  xmlDir <- tempfile("_excelXMLRead")
+  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
   xmlFiles <- unzip(file, exdir = xmlDir)
 
-  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- read_xml(workbook)

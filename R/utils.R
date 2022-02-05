@@ -48,3 +48,31 @@ na_to_null <- function(x) {
 temp_xlsx <- function(name = "temp_xlsx") {
   tempfile(pattern = paste0(name, "_"), fileext = ".xlsx")
 }
+
+
+openxlsx_options <- function() {
+  # op <- openxlsx_options()
+  # on.exit(options(op), add = TRUE)
+  options(
+    # increase scipen to avoid writing in scientific
+    scipen = 200,
+    OutDec = ".",
+    digits = 22
+  )
+}
+
+unapply <- function(x, FUN, ..., .recurse = TRUE, .names = FALSE) {
+  FUN <- match.fun(FUN)
+  unlist(lapply(X = x, FUN = FUN, ...), recursive = .recurse, use.names = .names)
+}
+
+reg_match0 <- function(x, pat) regmatches(x, gregexpr(pat, x, perl = TRUE))
+reg_match  <- function(x, pat) regmatches(x, gregexpr(pat, x, perl = TRUE))[[1]]
+
+apply_reg_match  <- function(x, pat) unapply(x, reg_match,  pat = pat)
+apply_reg_match0 <- function(x, pat) unapply(x, reg_match0, pat = pat)
+
+wapply <- function(x, FUN, ...) {
+  FUN <- match.fun(FUN)
+  which(vapply(x, FUN, FUN.VALUE = NA, ...))
+}

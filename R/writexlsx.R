@@ -181,7 +181,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     stop("asTable must be a logical.")
   }
 
-  creator <- ifelse("creator" %in% names(params), params$creator, "")
+  creator <- if ("creator" %in% names(params)) params$creator else ""
   title <- params$title ### will return NULL of not exist
   subject <- params$subject ### will return NULL of not exist
   category <- params$category ### will return NULL of not exist
@@ -313,7 +313,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       assert_style(params$headerStyle)
       headerStyle <- params$headerStyle
     } else {
-      if (all(sapply(params$headerStyle, inherits, "Style"))) {
+      if (all(vapply(params$headerStyle, is_wb_style, NA))) {
         headerStyle <- params$headerStyle
       } else {
         stop("headerStyle must be a style object.")

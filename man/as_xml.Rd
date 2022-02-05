@@ -21,7 +21,7 @@ as characters (at some point in time we have to convert the xml to R)
 }
 \examples{
 \dontrun{
-tmp_xlsx <- tempdir()
+tmp_xlsx <- tempfile()
 xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 unzip(xlsxFile, exdir = tmp_xlsx)
 
