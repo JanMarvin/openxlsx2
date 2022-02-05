@@ -11,8 +11,8 @@
 cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
 
   # check if sheets exist in wb
-  id_org <- wb$validateSheet(from_sheet)
-  id_new <- wb$validateSheet(to_sheet)
+  id_org <- wb_validate_sheet(wb, from_sheet)
+  id_new <- wb_validate_sheet(wb, to_sheet)
 
   org_style <- wb$worksheets[[id_org]]$sheet_data$cc
   wb_style <- wb$worksheets[[id_new]]$sheet_data$cc
@@ -133,7 +133,7 @@ import_styles <- function(x) {
 #' @export
 styles_on_sheet <- function(wb, sheet) {
 
-  sheet_id <- wb$validateSheet(sheet)
+  sheet_id <- wb_validate_sheet(wb, sheet)
 
   z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
 
@@ -697,7 +697,7 @@ merge_cellXfs <- function(wb, new_cellxfs) {
 #' @export
 get_cell_style <- function(wb, sheet, cell) {
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc
@@ -745,7 +745,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #' @export
 set_cell_style <- function(wb, sheet, cell, value) {
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc

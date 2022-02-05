@@ -288,7 +288,7 @@ wb_to_df <- function(
   }
 
   if (is.character(sheet)) {
-    sheet <- wb$validateSheet(sheet)
+    sheet <- wb_validate_sheet(wb, sheet)
   }
 
   # the sheet has no data
@@ -932,7 +932,7 @@ writeData2 <-function(wb, sheet, data,
   }
 
 
-  sheetno <- wb$validateSheet(sheet)
+  sheetno <- wb_validate_sheet(wb, sheet)
   # message("sheet no: ", sheetno)
 
   # create a data frame
@@ -1085,7 +1085,7 @@ writeData2 <-function(wb, sheet, data,
 #' @export
 cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
 
-  sheet_id <- wb$validateSheet(sheet)
+  sheet_id <- wb_validate_sheet(wb, sheet)
 
   cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
 

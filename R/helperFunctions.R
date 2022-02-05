@@ -123,7 +123,7 @@ getId <- function(x) {
 ## creates style object based on column classes
 ## Used in writeData for styling when no borders and writeData table for all column-class based styling
 classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasses, stack = TRUE) {
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
   allColClasses <- unlist(colClasses, use.names = FALSE)
   rowInds <- (1 + startRow + colNames - 1L):(nRow + startRow + colNames - 1L)
   startCol <- startCol - 1L

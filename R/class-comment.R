@@ -201,7 +201,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
   rPr <- wb$createFontNode(comment$style)
 
   rPr <- gsub("font>", "rPr>", rPr)
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   ## All input conversions/validations
   if (!is.null(xy)) {
@@ -249,7 +249,7 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
   # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
   cols <- col2int(cols)
   rows <- as.integer(rows)
 

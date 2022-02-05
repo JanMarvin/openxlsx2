@@ -418,7 +418,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheetName sheetName
     #' @param clonedSheet clonedSheet
     cloneWorksheet = function(sheetName, clonedSheet) {
-      clonedSheet <- self$validateSheet(clonedSheet)
+      clonedSheet <- wb_validate_sheet(self, clonedSheet)
       if (!missing(sheetName)) {
         if (grepl(pattern = ":", x = sheetName)) {
           stop("colon not allowed in sheet names in Excel")
@@ -1341,36 +1341,6 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' Validate sheet
-    #' @param sheetName The sheet name to validate
-    #' @return The sheet name -- or the position?  This should be consistent
-    validateSheet = function(sheetName) {
-      # TODO pull out:  Doesn't make any assignments, could be pulled out
-      # TODO use a consistent return value
-      if (!is.numeric(sheetName)) {
-        if (is.null(self$sheet_names)) {
-          stop("Workbook does not contain any worksheets.", call. = FALSE)
-        }
-      }
-
-      if (is.numeric(sheetName)) {
-        if (sheetName > length(self$sheet_names)) {
-          stop(sprintf("This Workbook only has %s sheets.", length(self$sheet_names)),
-            call. =
-              FALSE
-          )
-        }
-
-        # TODO consider return(invisible(self))
-        return(sheetName)
-      } else if (!sheetName %in% replaceXMLEntities(self$sheet_names)) {
-        stop(sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheetName)), call. = FALSE)
-      }
-
-      return(which(replaceXMLEntities(self$sheet_names) == sheetName))
-    },
-
     # TODO Does this need to be checked?  No sheet name can be NA right?
     # res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
 
@@ -1419,7 +1389,7 @@ wbWorkbook <- R6::R6Class(
 
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
       id <- as.character(length(self$tables) + 1) # otherwise will start at 0 for table 1 length indicates the last known
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
       rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) +1
 
       nms <- names(self$tables)
@@ -1670,7 +1640,7 @@ wbWorkbook <- R6::R6Class(
         stop(sprintf("Sheet %s already exists!", newSheetName))
       }
 
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
 
       oldName <- self$sheet_names[[sheet]]
       self$sheet_names[[sheet]] <- newSheetName
@@ -1728,7 +1698,7 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
     setRowHeights = function(sheet, rows, heights) {
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
 
       ## remove any conflicting heights
       flag <- names(self$rowHeights[[sheet]]) %in% rows
@@ -1753,7 +1723,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param n n
     createCols = function(sheet, n) {
-       sheet <- self$validateSheet(sheet)
+       sheet <- wb_validate_sheet(self, sheet)
        self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n))
     },
 
@@ -1766,7 +1736,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     groupCols = function(sheet, cols, collapsed, levels) {
 
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
 
       # fetch the row_attr data.frame
       col_attr <- self$worksheets[[sheet]]$unfold_cols()
@@ -1813,7 +1783,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     groupRows = function(sheet, rows, collapsed, levels) {
 
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
 
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
@@ -1873,7 +1843,7 @@ wbWorkbook <- R6::R6Class(
       # Remove queryTable references from workbook$definedNames to worksheet
       # remove tables
 
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
       sheetNames <- self$sheet_names
       nSheets <- length(sheetNames)
       sheetName <- sheetNames[[sheet]]
@@ -2113,7 +2083,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO rename: setDataValidation?
       # TODO can this be moved to the worksheet class?
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
       sqref <-
         stri_join(getCellRefs(data.frame(
           "x" = c(startRow, endRow),
@@ -2211,7 +2181,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO consider some defaults to logicals
       # TODO rename: setDataValidationList?
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
       sqref <-
         stri_join(getCellRefs(data.frame(
           "x" = c(startRow, endRow),
@@ -2270,7 +2240,7 @@ wbWorkbook <- R6::R6Class(
       # TODO consider defaults for logicals
       # TODO rename: setConditionFormatting?  Or addConditionalFormatting
       # TODO can this be moved to the sheet data?
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
       sqref <-
         stri_join(getCellRefs(data.frame(
           "x" = c(startRow, endRow),
@@ -2554,7 +2524,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO rename: setMergeCells?  Name "conflicts" with element
       # TODO assert_class() sheet?
-      sheet <- self$validateSheet(sheetName = sheet)
+      sheet <- wb_validate_sheet(self, sheetName = sheet)
 
       sqref <-
         getCellRefs(data.frame(
@@ -2620,7 +2590,7 @@ wbWorkbook <- R6::R6Class(
       startCol,
       endCol
     ) {
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
 
       sqref <-
         getCellRefs(data.frame(
@@ -2671,7 +2641,7 @@ wbWorkbook <- R6::R6Class(
       firstCol = FALSE
     ) {
       # TODO rename to setFreezePanes?
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
       paneNode <- NULL
 
       if (firstRow) {
@@ -2755,7 +2725,7 @@ wbWorkbook <- R6::R6Class(
       ## drawing rels reference an image in the media folder
       ## worksheetRels(sheet(i)) references drawings(j)
 
-      sheet <- self$validateSheet(sheet)
+      sheet <- wb_validate_sheet(self, sheet)
 
       # TODO this simply adds the required drawings to the Content_Types. Might want to look
       # into a way to handle such things.
@@ -3094,7 +3064,7 @@ wbWorkbook <- R6::R6Class(
       ## check not overwriting another table
       if (length(self$tables)) {
         tableSheets <- attr(self$tables, "sheet")
-        sheetNo <- self$validateSheet(sheet)
+        sheetNo <- wb_validate_sheet(self, sheet)
 
         to_check <-
           which(tableSheets %in% sheetNo &
@@ -3243,7 +3213,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    
+
     #' @description
     #' Protect a workbook
     #' @param protect protect
@@ -3344,7 +3314,7 @@ wbWorkbook <- R6::R6Class(
     ##### should be revived (for the time beeing use writeData2() )
     # # TODO add default values?
     # writeData = function(df, sheet, startRow, startCol, colNames, colClasses, hlinkNames, keepNA, na.string, list_sep) {
-    #   sheet <- self$validateSheet(sheet)
+    #   sheet <- wb_validate_sheet(self, sheet)
     #   nCols <- ncol(df)
     #   nRows <- nrow(df)
     #   df_nms <- names(df)
@@ -3608,7 +3578,7 @@ wbWorkbook <- R6::R6Class(
   # any funcitons that are not present elsewhere
   private = list(
     ws = function(sheet) {
-      sheet_id <- self$validateSheet(sheet)
+      sheet_id <- wb_validate_sheet(self, sheet)
       self$worksheets[[sheet_id]]
     },
 
@@ -4407,7 +4377,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO remove -- I don't think this is used?
 
-      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
       ## steps
       # get column class
       # get corresponding base style
@@ -4740,7 +4710,7 @@ wbWorkbook <- R6::R6Class(
       # TODO remove?  This isn't used
       # TODO can nCol be defaulted to length(colClasses)?
       # TODO rename to: setRowBorders?
-      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
       ## steps
       # get column class
       # get corresponding base style
@@ -4827,7 +4797,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO can probably remove nCol?
       # TODO rename to setColumnBorders
-      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
       ## steps
       # get column class
       # get corresponding base style
@@ -4952,7 +4922,7 @@ wbWorkbook <- R6::R6Class(
       # TODO safe to remove nCol?
       # TODO is nCol just length(colClasses?)
       # TODO rename to setAllBorders
-      sheet <- self$sheet_names[[self$validateSheet(sheet)]]
+      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
       ## steps
       # get column class
       # get corresponding base style

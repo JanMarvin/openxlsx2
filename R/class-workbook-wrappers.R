@@ -491,7 +491,7 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
       style$numFmt$numFmtId <- maxnumFmtId + 1
     }
   }
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   assert_workbook(wb)
   assert_style(style)
@@ -626,7 +626,7 @@ freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, 
 #' saveWorkbook(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
 #' }
 setRowHeights <- function(wb, sheet, rows, heights) {
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (length(rows) > length(heights)) {
     heights <- rep(heights, length.out = length(rows))
@@ -700,7 +700,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   assert_workbook(wb)
 
@@ -778,7 +778,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' saveWorkbook(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
 #' }
 removeColWidths <- function(wb, sheet, cols) {
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (!is.numeric(cols)) {
     cols <- col2int(cols)
@@ -826,7 +826,7 @@ removeRowHeights <- function(wb, sheet, rows) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   customRows <- as.integer(names(wb$rowHeights[[sheet]]))
   removeInds <- which(customRows %in% rows)
@@ -1149,7 +1149,7 @@ setHeaderFooter <- function(wb, sheet,
   firstFooter = NULL) {
 
   assert_workbook(wb)
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (!is.null(header) & length(header) != 3) {
     stop("header must have length 3 where elements correspond to positions: left, center, right.")
@@ -1334,7 +1334,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
   xml <- wb$worksheets[[sheet]]$pageSetup
 
   if (!is.null(orientation)) {
@@ -1515,7 +1515,7 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
   xml <- wb$worksheets[[sheet]]$sheetProtection
 
   props <- c()
@@ -1628,7 +1628,7 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (!is.logical(showGridLines)) stop("showGridLines must be a logical")
 
@@ -1758,7 +1758,7 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   assert_workbook(wb)
 
@@ -1837,7 +1837,7 @@ addFilter <- function(wb, sheet, rows, cols) {
 
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (length(rows) != 1) {
     stop("row must be a numeric of length 1.")
@@ -1883,7 +1883,7 @@ removeFilter <- function(wb, sheet) {
   assert_workbook(wb)
 
   for (s in sheet) {
-    s <- wb$validateSheet(s)
+    s <- wb_validate_sheet(wb, s)
     wb$worksheets[[s]]$autoFilter <- character()
   }
 
@@ -2175,7 +2175,7 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   type <- tolower(type)[1]
   if (!type %in% c("row", "column")) {
@@ -2255,7 +2255,7 @@ getTables <- function(wb, sheet) {
     return(character())
   }
 
-  sheet <- wb$validateSheet(sheetName = sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   table_sheets <- attr(wb$tables, "sheet")
   tables <- attr(wb$tables, "tableName")
@@ -2319,7 +2319,7 @@ removeTable <- function(wb, sheet, table) {
   }
 
   ## delete table object and all data in it
-  sheet <- wb$validateSheet(sheetName = sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (!table %in% attr(wb$tables, "tableName")) {
     stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
@@ -2371,7 +2371,7 @@ groupColumns <- function(wb, sheet, cols, collapsed = FALSE) {
 
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (length(collapsed) > length(cols)) {
     stop("Collapses argument is of greater length than number of cols.")
@@ -2414,7 +2414,7 @@ ungroupColumns <- function(wb, sheet, cols) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   # check if any rows are selected
   if (any(cols) < 1L) {
@@ -2476,7 +2476,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (length(collapsed) > length(rows)) {
     stop("Collapses argument is of greater length than number of rows.")
@@ -2519,7 +2519,7 @@ ungroupRows <- function(wb, sheet, rows) {
   options("OutDec" = ".")
   on.exit(expr = options("OutDec" = od), add = TRUE)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   # check if any rows are selected
   if (any(rows) < 1L) {

@@ -290,9 +290,9 @@ writeData <- function(wb,
   colClasss2[sapply(colClasses, function(x) "formula" %in% x) & sapply(colClasses, function(x) "hyperlink" %in% x)] <- "formula"
 
   if (is.numeric(sheet)) {
-    sheetX <- wb$validateSheet(sheet)
+    sheetX <- wb_validate_sheet(wb, sheet)
   } else {
-    sheetX <- wb$validateSheet(replaceXMLEntities(sheet))
+    sheetX <- wb_validate_sheet(wb, replaceXMLEntities(sheet))
     sheet <- replaceXMLEntities(sheet)
   }
 
