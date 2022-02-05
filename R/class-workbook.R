@@ -2891,54 +2891,6 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' Validate table name for a workbook
-    #' @param tableName Table name
-    #' @return A valid table name as a `character`
-    validate_table_name = function(tableName) {
-      # TODO no assignments made -- pull out
-      # returns the new tableName -- basically just lowercase
-      tableName <-
-        tolower(tableName) ## Excel forces named regions to lowercase
-
-      # TODO set these to warnings? trim and peplace bad characters with
-
-      # TODO add a strict = getOption("openxlsx.tableName.strict", FALSE)
-      # param to force these to allow to stopping
-      if (nchar(tableName) > 255) {
-        stop("tableName must be less than 255 characters.")
-      }
-
-      if (grepl("$", tableName, fixed = TRUE)) {
-        stop("'$' character cannot exist in a tableName")
-      }
-
-      if (grepl(" ", tableName, fixed = TRUE)) {
-        stop("spaces cannot exist in a table name")
-      }
-
-      # if(!grepl("^[A-Za-z_]", tableName, perl = TRUE))
-      #   stop("tableName must begin with a letter or an underscore")
-
-      if (grepl("R[0-9]+C[0-9]+",
-        tableName,
-        perl = TRUE,
-        ignore.case = TRUE
-      )) {
-        stop("tableName cannot be the same as a cell reference, such as R1C1")
-      }
-
-      if (grepl("^[A-Z]{1,3}[0-9]+$", tableName, ignore.case = TRUE)) {
-        stop("tableName cannot be the same as a cell reference")
-      }
-
-      # only place where self is needed
-      if (tableName %in% attr(self$tables, "tableName")) {
-        stop(sprintf("Table with name '%s' already exists!", tableName))
-      }
-
-      return(tableName)
-    },
 
     #' @description
     #' Checks for overwrite columns

@@ -78,7 +78,7 @@
 #' class(df$hLink) <- "hyperlink"
 #' class(df$Percentage) <- c(class(df$Percentage), "percentage")
 #' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
-#' 
+#'
 #' writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 #'
 #' #####################################################################################
@@ -182,7 +182,7 @@ writeDataTable <- function(wb, sheet, x,
   if (is.null(tableName)) {
     tableName <- paste0("Table", as.character(length(wb$tables) + 1L))
   } else {
-    tableName <- wb$validate_table_name(tableName)
+    tableName <- wb_validate_table_name(wb, tableName)
   }
 
 
