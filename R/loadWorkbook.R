@@ -21,7 +21,7 @@
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "loadExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 #' }
 #'
 loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {

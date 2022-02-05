@@ -47,7 +47,7 @@ mergeCells(wb, 2, cols = 1, rows = 1:10) # Now this works
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "mergeCellsExample.xlsx", overwrite = TRUE)
+wb_save(wb, "mergeCellsExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

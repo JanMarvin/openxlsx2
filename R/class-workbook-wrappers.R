@@ -10,7 +10,7 @@
 #'   These must be `NULL` or single length `character` vectors
 #' @return A `wbWorkbook` object
 #'
-#' @seealso [loadWorkbook()], [saveWorkbook()]
+#' @seealso [loadWorkbook()], [wb_save()]
 #'
 #' @examples
 #' ## Create a new workbook
@@ -18,7 +18,7 @@
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
-#' saveWorkbook(wb, file = temp_xlsx(), overwrite = TRUE)
+#' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
 #'
 #' ## Set Workbook properties
@@ -44,18 +44,16 @@ wb_workbook <- function(
 }
 
 
-#' @name saveWorkbook
-#' @title save Workbook to file
-#' @description save a Workbook object to file
-#' @param wb A Workbook object to write to file
-#' @param file A character string naming an xlsx file
+#' Save Workbook to file
+#'
+#' @param wb A `wbWorkbook` object to write to file
+#' @param path A path to save the workbook to
 #' @param overwrite If `TRUE`, overwrite any existing file.
-#' @seealso [wb_workbook()]
-#' @seealso [addWorksheet()]
-#' @seealso [loadWorkbook()]
-#' @seealso [writeData()]
-#' @seealso [writeDataTable()]
+#' @seealso [wb_workbook()], [addWorksheet()], [loadWorkbook()], [writeData()].
+#'   [writeDataTable()]
+#'
 #' @export
+#'
 #' @examples
 #' ## Create a new workbook and add a worksheet
 #' wb <- wb_workbook("Creator of workbook")
@@ -63,28 +61,11 @@ wb_workbook <- function(
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
-#' saveWorkbook(wb, file = "saveWorkbookExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
-saveWorkbook <- function(wb, file, overwrite = FALSE) {
-
-  # TODO set options in saveWorkbook
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  ## increase scipen to avoid writing in scientific
-  sci_pen <- getOption("scipen")
-  options("scipen" = 10000)
-  on.exit(options("scipen" = sci_pen), add = TRUE)
-
-  # TODO move this to separate function
-  wb_save_workbook(wb = wb, path = file, overwrite = overwrite)
-}
-
-# TODO export wb_save_workbook rather than saveWorkbook
-wb_save_workbook <- function(wb, path, overwrite = FALSE) {
-  wb$clone()$saveWorkbook(path = path, overwrite = overwrite)$path
+wb_save <- function(wb, path, overwrite = FALSE) {
+  assert_workbook(wb)
+  wb$clone()$save(path = path, overwrite = overwrite)$path
 }
 
 
@@ -124,7 +105,7 @@ wb_save_workbook <- function(wb, path, overwrite = FALSE) {
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "mergeCellsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "mergeCellsExample.xlsx", overwrite = TRUE)
 #' }
 mergeCells <- function(wb, sheet, cols, rows) {
   od <- getOption("OutDec")
@@ -241,7 +222,7 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 addWorksheet <- function(wb, sheetName,
   gridLines = TRUE,
@@ -376,7 +357,7 @@ addWorksheet <- function(wb, sheetName,
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 cloneWorksheet <- function(wb, sheetName, clonedSheet) {
   assert_workbook(wb)
@@ -460,7 +441,7 @@ wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
 #' addStyle(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
 #' setColWidths(wb, 1, cols = 1, widths = 21) ## set column width for row names column
 #' \dontrun{
-#' saveWorkbook(wb, "addStyleExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "addStyleExample.xlsx", overwrite = TRUE)
 #' }
 addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = FALSE) {
   od <- getOption("OutDec")
@@ -543,7 +524,7 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "freezePaneExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 #' }
 freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
   # TODO should freezePane() be a workbookWorksheet method?
@@ -612,7 +593,7 @@ freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, 
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
 #' }
 setRowHeights <- function(wb, sheet, rows, heights) {
   sheet <- wb_validate_sheet(wb, sheet)
@@ -681,7 +662,7 @@ setRowHeights <- function(wb, sheet, rows, heights) {
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
 setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols)), ignoreMergedCells = FALSE) {
@@ -764,7 +745,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' ## remove column widths in columns 1 to 20
 #' removeColWidths(wb, 1, cols = 1:20)
 #' \dontrun{
-#' saveWorkbook(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
 #' }
 removeColWidths <- function(wb, sheet, cols) {
   sheet <- wb_validate_sheet(wb, sheet)
@@ -808,7 +789,7 @@ removeColWidths <- function(wb, sheet, cols) {
 #' ## remove any custom row heights in rows 1 to 10
 #' removeRowHeights(wb, 1, rows = 1:10)
 #' \dontrun{
-#' saveWorkbook(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
 #' }
 removeRowHeights <- function(wb, sheet, rows) {
   od <- getOption("OutDec")
@@ -869,7 +850,7 @@ removeRowHeights <- function(wb, sheet, rows) {
 #' insertPlot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
 #' ## Save workbook
-#' saveWorkbook(wb, "insertPlotExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "insertPlotExample.xlsx", overwrite = TRUE)
 #' }
 insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
   startRow = 1, startCol = 1, fileType = "png", units = "in", dpi = 300) {
@@ -948,7 +929,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' replaceStyle(wb, 2, newStyle = newStyle)
 #'
 #' ## Save workbook
-#' saveWorkbook(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
 #' }
 replaceStyle <- function(wb, index, newStyle) {
   return(NULL)
@@ -988,7 +969,7 @@ getStyles <- function(wb) {
 #'
 #' ## save the modified workbook
 #' \dontrun{
-#' saveWorkbook(wb, "removeWorksheetExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "removeWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 removeWorksheet <- function(wb, sheet) {
   # TODO this should just be wbWorkbook$remove_worksheet(...)
@@ -1023,7 +1004,7 @@ removeWorksheet <- function(wb, sheet) {
 #' writeData(wb, "S1", iris)
 #' writeDataTable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
 #' \dontrun{
-#' saveWorkbook(wb, "modifyBaseFontExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "modifyBaseFontExample.xlsx", overwrite = TRUE)
 #' }
 modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
   od <- getOption("OutDec")
@@ -1127,7 +1108,7 @@ getBaseFont <- function(wb) {
 #'   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 #' )
 #' \dontrun{
-#' saveWorkbook(wb, "setHeaderFooterExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "setHeaderFooterExample.xlsx", overwrite = TRUE)
 #' }
 setHeaderFooter <- function(wb, sheet,
   header = NULL,
@@ -1309,7 +1290,7 @@ setHeaderFooter <- function(wb, sheet,
 #' pageSetup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
 #' pageSetup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 #' \dontrun{
-#' saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
 #' }
 pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
   left = 0.7, right = 0.7, top = 0.75, bottom = 0.75,
@@ -1492,7 +1473,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 #' # Remove the protection
 #' protectWorksheet(wb, "S1", protect = FALSE)
 #' \dontrun{
-#' saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
 #' }
 protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
   lockSelectingLockedCells = NULL, lockSelectingUnlockedCells = NULL,
@@ -1583,12 +1564,12 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' addWorksheet(wb, "S1")
 #' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 #' \dontrun{
-#' saveWorkbook(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
+#' wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
 #' }
 #' # Remove the protection
 #' protectWorkbook(wb, protect = FALSE)
 #' \dontrun{
-#' saveWorkbook(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
+#' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
 protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE) {
   assert_workbook(wb)
@@ -1608,7 +1589,7 @@ protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure =
 #' showGridLines(wb, 1, showGridLines = FALSE)
 #' showGridLines(wb, "testing", showGridLines = FALSE)
 #' \dontrun{
-#' saveWorkbook(wb, "showGridLinesExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "showGridLinesExample.xlsx", overwrite = TRUE)
 #' }
 showGridLines <- function(wb, sheet, showGridLines = FALSE) {
   od <- getOption("OutDec")
@@ -1659,11 +1640,11 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 #' worksheetOrder(wb)
 #' names(wb) ## ordering within workbook is not changed
 #' \dontrun{
-#' saveWorkbook(wb, "worksheetOrderExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "worksheetOrderExample.xlsx", overwrite = TRUE)
 #' }
 #' worksheetOrder(wb) <- c(3, 2, 1)
 #' \dontrun{
-#' saveWorkbook(wb, "worksheetOrderExample2.xlsx", overwrite = TRUE)
+#' wb_save(wb, "worksheetOrderExample2.xlsx", overwrite = TRUE)
 #' }
 worksheetOrder <- function(wb) {
   assert_workbook(wb)
@@ -1729,7 +1710,7 @@ worksheetOrder <- function(wb) {
 #'
 #' out_file <- tempfile(fileext = ".xlsx")
 #' \dontrun{
-#' saveWorkbook(wb, out_file, overwrite = TRUE)
+#' wb_save(wb, out_file, overwrite = TRUE)
 #'
 #' ## see named regions
 #' getNamedRegions(wb) ## From Workbook object
@@ -1817,7 +1798,7 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
 #' ## Similarly
 #' writeDataTable(wb, 3, iris)
 #' \dontrun{
-#' saveWorkbook(wb, file = "addFilterExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "addFilterExample.xlsx", overwrite = TRUE)
 #' }
 addFilter <- function(wb, sheet, rows, cols) {
   od <- getOption("OutDec")
@@ -1866,7 +1847,7 @@ addFilter <- function(wb, sheet, rows, cols) {
 #' removeFilter(wb, 1:2) ## remove filters
 #' removeFilter(wb, 3) ## Does not affect tables!
 #' \dontrun{
-#' saveWorkbook(wb, file = "removeFilterExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "removeFilterExample.xlsx", overwrite = TRUE)
 #' }
 removeFilter <- function(wb, sheet) {
   assert_workbook(wb)
@@ -1929,7 +1910,7 @@ removeFilter <- function(wb, sheet) {
 #'   col = 2, rows = 2:12, type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
-#' saveWorkbook(wb, "dataValidationExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "dataValidationExample.xlsx", overwrite = TRUE)
 #'
 #'
 #' ######################################################################
@@ -2154,7 +2135,7 @@ sheetVisibility <- function(wb) {
 #' pageBreak(wb, sheet = 1, i = 20, type = "row")
 #' pageBreak(wb, sheet = 1, i = 2, type = "column")
 #' \dontrun{
-#' saveWorkbook(wb, "pageBreakExample.xlsx", TRUE)
+#' wb_save(wb, "pageBreakExample.xlsx", TRUE)
 #' }
 #' ## In Excel: View tab -> Page Break Preview
 pageBreak <- function(wb, sheet, i, type = "row") {
@@ -2292,7 +2273,7 @@ getTables <- function(wb, sheet) {
 #' removeTable(wb = wb, sheet = 1, table = "iris")
 #' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' \dontrun{
-#' saveWorkbook(wb = wb, file = "removeTableExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "removeTableExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #' @export
@@ -2615,7 +2596,7 @@ getCreators <- function(wb) {
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "insertImageExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "insertImageExample.xlsx", overwrite = TRUE)
 #' }
 insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
   od <- getOption("OutDec")

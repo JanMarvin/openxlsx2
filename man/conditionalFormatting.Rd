@@ -266,7 +266,7 @@ conditionalFormatting(wb, "logical operators",
   rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 )
 \dontrun{
-saveWorkbook(wb, "conditionalFormattingExample.xlsx", TRUE)
+wb_save(wb, "conditionalFormattingExample.xlsx", TRUE)
 }
 
 
@@ -301,7 +301,7 @@ conditionalFormatting(wb, "databar",
   type = "databar", style = c("#a6a6a6", "#a6a6a6"), showValue = FALSE, gradient = FALSE
 )
 \dontrun{
-saveWorkbook(wb, file = "databarExample.xlsx", overwrite = TRUE)
+wb_save(wb, file = "databarExample.xlsx", overwrite = TRUE)
 }
 
 }

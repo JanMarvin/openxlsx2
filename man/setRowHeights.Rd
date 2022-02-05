@@ -33,7 +33,7 @@ setRowHeights(wb, 1, rows = 1, heights = 40)
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
+wb_save(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

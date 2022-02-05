@@ -881,7 +881,7 @@ nmfmt_df <- function(x) {
 #'
 #' \dontrun{
 #' file <- tempfile(fileext = ".xlsx")
-#' saveWorkbook(wb, file = file, overwrite = TRUE)
+#' wb_save(wb, path = file, overwrite = TRUE)
 #' file.remove(file)
 #' }
 #'
@@ -1117,13 +1117,6 @@ wb_ws <- function(wb, sheet) {
   wb$ws(sheet)
 }
 
-#' little worksheet saver
-#' @param wb a workbook
-#' @param file a file
-#' @export
-wb_save <- function(wb, file) {
-  saveWorkbook(wb = wb, file = file, overwrite = TRUE)
-}
 
 #' little worksheet opener
 #' @param wb a workbook

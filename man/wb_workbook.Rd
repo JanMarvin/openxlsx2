@@ -29,7 +29,7 @@ wb <- wb_workbook()
 
 ## Save workbook to working directory
 \dontrun{
-saveWorkbook(wb, file = temp_xlsx(), overwrite = TRUE)
+wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
 }
 
 ## Set Workbook properties
@@ -41,5 +41,5 @@ wb <- wb_workbook(
 )
 }
 \seealso{
-\code{\link[=loadWorkbook]{loadWorkbook()}}, \code{\link[=saveWorkbook]{saveWorkbook()}}
+\code{\link[=loadWorkbook]{loadWorkbook()}}, \code{\link[=wb_save]{wb_save()}}
 }

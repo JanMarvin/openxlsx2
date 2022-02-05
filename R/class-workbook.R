@@ -750,7 +750,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    # TODO saveWorkbook can be shortened a lot by some formatting and by using a
+    # TODO wb_save can be shortened a lot by some formatting and by using a
     # function that creates all the temporary directories and subdirectries as a
     # named list
 
@@ -759,7 +759,7 @@ wbWorkbook <- R6::R6Class(
     #' @param path The path to save the workbook to
     #' @param overwrite If `FALSE` will not overwrite when `path` is not empty
     #' @return The `wbWorkbook` object invisibly
-    saveWorkbook = function(path = self$path, overwrite = TRUE) {
+    save = function(path = self$path, overwrite = TRUE) {
       assert_class(path, "character")
       assert_class(overwrite, "logical")
 

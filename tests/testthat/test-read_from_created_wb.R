@@ -70,7 +70,7 @@ test_that("Reading NAs and NaN values", {
   addWorksheet(wb, "Sheet 3")
   writeData(wb, 3, a, keepNA = TRUE, na.string = na.string)
 
-  saveWorkbook(wb, file = fileName, overwrite = TRUE)
+  wb_save(wb, path = fileName, overwrite = TRUE)
 
   expect_equal(expect_warning(read.xlsx(fileName)), a, check.attributes=FALSE)
   unlink(fileName, recursive = TRUE, force = TRUE)

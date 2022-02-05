@@ -69,7 +69,7 @@ print(p2)
 insertPlot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 
 ## Save workbook
-saveWorkbook(wb, "insertPlotExample.xlsx", overwrite = TRUE)
+wb_save(wb, "insertPlotExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

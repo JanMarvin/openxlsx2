@@ -139,7 +139,7 @@ writeDataTable(wb,
 ## Save workbook
 ## Open in excel without saving file: openXL(wb)
 \dontrun{
-saveWorkbook(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
+wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 }
 
 
@@ -177,7 +177,7 @@ for (i in 1:11) {
 
 ## openXL(wb)
 \dontrun{
-saveWorkbook(wb, file = "tableStylesGallery.xlsx", overwrite = TRUE)
+wb_save(wb, file = "tableStylesGallery.xlsx", overwrite = TRUE)
 }
 
 }

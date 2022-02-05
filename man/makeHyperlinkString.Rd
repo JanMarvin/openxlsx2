@@ -88,7 +88,7 @@ x = makeHyperlinkString(text = "test.png", file = "D:/somepath/somepicture.png")
 writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
 
 \dontrun{
-saveWorkbook(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
+wb_save(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 }
 
 }

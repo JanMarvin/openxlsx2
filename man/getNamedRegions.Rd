@@ -33,7 +33,7 @@ createNamedRegion(
 writeData(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
 \dontrun{
 out_file <- tempfile(fileext = ".xlsx")
-saveWorkbook(wb, out_file, overwrite = TRUE)
+wb_save(wb, out_file, overwrite = TRUE)
 
 ## see named regions
 getNamedRegions(wb) ## From Workbook object

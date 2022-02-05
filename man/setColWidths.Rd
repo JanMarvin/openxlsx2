@@ -59,7 +59,7 @@ setColWidths(wb, sheet = 2, cols = 1:5, widths = "auto")
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
+wb_save(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 }
 
 }

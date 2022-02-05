@@ -1,15 +1,15 @@
 
-test_that("test return values for saveWorkbook", {
+test_that("test return values for wb_save", {
 
   tempFile <- temp_xlsx()
   wb <- wb_workbook()
   addWorksheet(wb, "name")
-  expect_equal(tempFile, saveWorkbook(wb, tempFile))
+  expect_equal(tempFile, wb_save(wb, tempFile))
 
-  expect_error( saveWorkbook(wb, tempFile))
+  expect_error( wb_save(wb, tempFile))
 
 
-  expect_equal(tempFile, saveWorkbook(wb, tempFile, overwrite = TRUE))
+  expect_equal(tempFile, wb_save(wb, tempFile, overwrite = TRUE))
   unlink(tempFile, recursive = TRUE, force = TRUE)
 
 })
@@ -52,7 +52,7 @@ test_that("creating hyperlinks", {
 
   # write file without errors
   writeFormula(wb, sheet, x = linkString, startCol = 1, startRow = 1)
-  expect_silent(saveWorkbook(wb, tempFile, overwrite = TRUE))
+  expect_silent(wb_save(wb, tempFile, overwrite = TRUE))
 
   # TODO: add a check that the written xlsx file contains linkString
 

@@ -42,7 +42,7 @@ getTables(wb, sheet = 1)
 removeTable(wb = wb, sheet = 1, table = "iris")
 writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 \dontrun{
-saveWorkbook(wb = wb, file = "removeTableExample.xlsx", overwrite = TRUE)
+wb_save(wb = wb, file = "removeTableExample.xlsx", overwrite = TRUE)
 }
 
 }

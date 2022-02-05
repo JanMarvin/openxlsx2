@@ -208,7 +208,7 @@ writeData(wb2, 1, mtcars, startCol = 4, startRow = 4)
 wb_to_df(wb2)
 \dontrun{
 file <- tempfile(fileext = ".xlsx")
-saveWorkbook(wb2, file, overwrite = TRUE)
+wb_save(wb2, file, overwrite = TRUE)
 file.remove(file)
 }
 
@@ -216,7 +216,7 @@ file.remove(file)
 ## Save workbook
 ## Open in excel without saving file: openXL(wb)
 \dontrun{
-saveWorkbook(wb, "writeDataExample.xlsx", overwrite = TRUE)
+wb_save(wb, "writeDataExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

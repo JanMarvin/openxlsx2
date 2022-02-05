@@ -90,7 +90,7 @@ writeData(wb, sheet = 2, x = v2, startCol = 10, startRow = 2)
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
+wb_save(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
 }
 
 
@@ -103,7 +103,7 @@ writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
+wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 }
 
 }

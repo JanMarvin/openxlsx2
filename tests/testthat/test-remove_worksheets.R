@@ -31,7 +31,7 @@ test_that("Deleting worksheets", {
   genWS(wb, "Sheet 2")
   expect_equal(names(wb), c("Sheet 3", "Sheet 1", "Sheet 2"))
 
-  saveWorkbook(wb, tempFile, overwrite = TRUE)
+  wb_save(wb, tempFile, overwrite = TRUE)
 
   ## re-load & re-order worksheets
 

@@ -31,11 +31,11 @@ wb <- wb_workbook()
 addWorksheet(wb, "S1")
 protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 \dontrun{
-saveWorkbook(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
+wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
 }
 # Remove the protection
 protectWorkbook(wb, protect = FALSE)
 \dontrun{
-saveWorkbook(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
+wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 }
 }

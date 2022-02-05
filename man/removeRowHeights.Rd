@@ -23,7 +23,7 @@ wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "
 ## remove any custom row heights in rows 1 to 10
 removeRowHeights(wb, 1, rows = 1:10)
 \dontrun{
-saveWorkbook(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
+wb_save(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

@@ -157,6 +157,6 @@ writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = 
 pageSetup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
 pageSetup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 \dontrun{
-saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
 }
 }

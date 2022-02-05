@@ -55,7 +55,7 @@ insertImage(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", u
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "insertImageExample.xlsx", overwrite = TRUE)
+wb_save(wb, "insertImageExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

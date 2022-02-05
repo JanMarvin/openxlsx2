@@ -90,7 +90,7 @@ setHeaderFooter(wb,
   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
 \dontrun{
-saveWorkbook(wb, "setHeaderFooterExample.xlsx", overwrite = TRUE)
+wb_save(wb, "setHeaderFooterExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

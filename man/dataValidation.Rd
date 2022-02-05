@@ -77,7 +77,7 @@ dataValidation(wb, 2,
   col = 2, rows = 2:12, type = "time",
   operator = "between", value = df$t[c(4, 8)]
 )
-saveWorkbook(wb, "dataValidationExample.xlsx", overwrite = TRUE)
+wb_save(wb, "dataValidationExample.xlsx", overwrite = TRUE)
 
 
 ######################################################################

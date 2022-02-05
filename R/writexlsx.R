@@ -12,7 +12,7 @@
 #'   \item{addWorksheet}
 #'   \item{writeData}
 #'   \item{freezePane}
-#'   \item{saveWorkbook}
+#'   \item{wb_save}
 #' }
 #'
 #' see details.
@@ -64,7 +64,7 @@
 #' }
 #'
 #'
-#' **saveWorkbook Parameters**
+#' **wb_save Parameters**
 #' \itemize{
 #'   \item{**overwrite**}{ Overwrite existing file (Defaults to TRUE as with write.table)}
 #' }
@@ -174,7 +174,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## firstCol = FALSE
 
 
-  #---saveWorkbook---#
+  #---wb_save---#
   #   overwrite = TRUE
 
   if (!is.logical(asTable)) {
@@ -612,10 +612,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     }
   }
 
-
-
-
-  saveWorkbook(wb = wb, file = file, overwrite = overwrite)
-
+  wb_save(wb, path = file, overwrite = overwrite)
   invisible(wb)
 }

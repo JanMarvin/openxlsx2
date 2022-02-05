@@ -53,7 +53,7 @@ writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
 \dontrun{
 file <- tempfile(fileext = ".xlsx")
-saveWorkbook(wb, file = file, overwrite = TRUE)
+wb_save(wb, file = file, overwrite = TRUE)
 file.remove(file)
 }
 

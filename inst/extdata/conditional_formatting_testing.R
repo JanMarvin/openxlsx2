@@ -65,7 +65,7 @@ writeData(wb, "databar", -5:5)
 conditionalFormatting(wb, "databar", cols = 1, rows = 1:12, type = "databar") ## Default colours
 
 fl <- tempfile(fileext = ".xlsx")
-saveWorkbook(wb, file = fl, overwrite = TRUE)
+wb_save(wb, path = fl, overwrite = TRUE)
 
 openXL(wb)
 

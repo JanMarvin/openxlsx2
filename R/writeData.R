@@ -160,7 +160,7 @@
 #' wb_to_df(wb2)
 #' \dontrun{
 #' file <- tempfile(fileext = ".xlsx")
-#' saveWorkbook(wb2, file, overwrite = TRUE)
+#' wb_save(wb2, file, overwrite = TRUE)
 #' file.remove(file)
 #' }
 #'
@@ -168,7 +168,7 @@
 #' ## Save workbook
 #' ## Open in excel without saving file: openXL(wb)
 #' \dontrun{
-#' saveWorkbook(wb, "writeDataExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "writeDataExample.xlsx", overwrite = TRUE)
 #' }
 writeData <- function(wb,
   sheet,
@@ -418,7 +418,7 @@ writeData <- function(wb,
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #'
@@ -431,7 +431,7 @@ writeData <- function(wb,
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 #' }
 #'
 writeFormula <- function(wb,

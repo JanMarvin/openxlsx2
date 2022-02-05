@@ -123,7 +123,7 @@ A Workbook
 \item \href{#method-addWorksheet}{\code{wbWorkbook$addWorksheet()}}
 \item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
-\item \href{#method-saveWorkbook}{\code{wbWorkbook$saveWorkbook()}}
+\item \href{#method-save}{\code{wbWorkbook$save()}}
 \item \href{#method-getSheetName}{\code{wbWorkbook$getSheetName()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
@@ -288,12 +288,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-saveWorkbook"></a>}}
-\if{latex}{\out{\hypertarget{method-saveWorkbook}{}}}
-\subsection{Method \code{saveWorkbook()}}{
+\if{html}{\out{<a id="method-save"></a>}}
+\if{latex}{\out{\hypertarget{method-save}{}}}
+\subsection{Method \code{save()}}{
 Save the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$saveWorkbook(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

@@ -47,6 +47,6 @@ freezePane(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "freezePaneExample.xlsx", overwrite = TRUE)
+wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 }
 }

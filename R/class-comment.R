@@ -118,7 +118,7 @@ wbComment <- R6::R6Class(
 #'
 #' writeComment(wb, 1, col = 6, row = 3, comment = c2)
 #' \dontrun{
-#' saveWorkbook(wb, file = "createCommentExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "createCommentExample.xlsx", overwrite = TRUE)
 #' }
 createComment <- function(comment,
   author = Sys.getenv("USERNAME"),
@@ -185,7 +185,7 @@ createComment <- function(comment,
 #'
 #' writeComment(wb, 1, col = 6, row = 3, comment = c2)
 #' \dontrun{
-#' saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "writeCommentExample.xlsx", overwrite = TRUE)
 #' }
 writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
   # TODO add as method: wbWorkbook$addComment(); add param for replace?

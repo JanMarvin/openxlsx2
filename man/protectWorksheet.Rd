@@ -82,6 +82,6 @@ protectWorksheet(wb, "S1",
 # Remove the protection
 protectWorksheet(wb, "S1", protect = FALSE)
 \dontrun{
-saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
 }
 }

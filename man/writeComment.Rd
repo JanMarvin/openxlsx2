@@ -39,7 +39,7 @@ c2
 
 writeComment(wb, 1, col = 6, row = 3, comment = c2)
 \dontrun{
-saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
+wb_save(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

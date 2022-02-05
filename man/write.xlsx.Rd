@@ -19,7 +19,7 @@ write.xlsx(x, file, asTable = FALSE, ...)
 \item{addWorksheet}
 \item{writeData}
 \item{freezePane}
-\item{saveWorkbook}
+\item{wb_save}
 }
 
 see details.}
@@ -78,7 +78,7 @@ between each column.  If "\code{all}" all cell borders are drawn.}
 \item{\strong{colWidths}} {May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)}
 }
 
-\strong{saveWorkbook Parameters}
+\strong{wb_save Parameters}
 \itemize{
 \item{\strong{overwrite}}{ Overwrite existing file (Defaults to TRUE as with write.table)}
 }

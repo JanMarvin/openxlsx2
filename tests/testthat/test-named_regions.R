@@ -23,7 +23,7 @@ test_that("Maintaining Named Regions on Load", {
 
   ## save file for testing
   out_file <- temp_xlsx()
-  saveWorkbook(wb, out_file, overwrite = TRUE)
+  wb_save(wb, out_file, overwrite = TRUE)
 
   expect_equal(object = getNamedRegions(wb), expected = getNamedRegions(out_file))
 
