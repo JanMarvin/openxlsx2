@@ -181,7 +181,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     stop("asTable must be a logical.")
   }
 
-  creator <- ifelse("creator" %in% names(params), params$creator, "")
+  creator <- if ("creator" %in% names(params)) params$creator else ""
   title <- params$title ### will return NULL of not exist
   subject <- params$subject ### will return NULL of not exist
   category <- params$category ### will return NULL of not exist

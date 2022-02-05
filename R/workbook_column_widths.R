@@ -18,7 +18,11 @@ get_style_max_char_width <- function(thisStyle) {
     fS <- 11
   } else {
     fS <- as.numeric(fS)
-    fS <- ifelse(fS < 8, 8, ifelse(fS > 36, 36, fS))
+    if (fS < 8) {
+      fS <- 8
+    } else if (fS > 36) {
+      fS <- 36
+    }
   }
 
   if ("BOLD" %in% thisStyle$fontDecoration) {

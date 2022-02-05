@@ -1255,17 +1255,16 @@ wbWorkbook <- R6::R6Class(
       # tableStyles
       # extLst
 
-      # TODO replace ifelse() with just if () else
       styleXML$dxfs <-
-        ifelse(
-          length(self$styles$dxfs) == 0,
-          '<dxfs count="0"/>',
+        if (length(self$styles$dxfs)) {
           stri_join(
             sprintf('<dxfs count="%s">', length(self$styles$dxfs)),
             stri_join(unlist(self$styles$dxfs), sep = " ", collapse = ""),
             "</dxfs>"
           )
-        )
+        } else {
+          '<dxfs count="0"/>'
+        }
 
       ## write styles.xml
       #if(class(self$styles_xml) == "uninitializedField") {
@@ -2172,7 +2171,11 @@ wbWorkbook <- R6::R6Class(
 
         t <- format(value[1], "%z")
         offSet <-
-          suppressWarnings(ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60) / 24)
+          suppressWarnings(
+            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
+              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
+              ) / 24
+          )
         if (is.na(offSet)) {
           offSet[i] <- 0
         }

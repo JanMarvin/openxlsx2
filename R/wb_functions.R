@@ -259,7 +259,7 @@ wb_to_df <- function(
 
     nr$name <- dn_attr$name
     if (!is.null(dn_attr$localSheetId)) {
-      nr$local <- ifelse(dn_attr$localSheetId == "", 0, 1)
+      nr$local <- as.integer(dn_attr$localSheetId != "")
     } else {
       nr$local <- 0
     }
@@ -663,11 +663,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
       m <- 0
 
       for (col in cols) {
-        i <- i+1
-        m <- m+1
+        i <- i + 1
+        m <- m + 1
 
         # check if is data frame or matrix
-        value <- ifelse(is.null(dim(x)), x[i], x[n, m])
+        value <- if (is.null(dim(x))) x[i] else x[n, m]
 
         sel <- cc$row_r == row & cc$c_r == col
         c_s <- NULL
@@ -1021,7 +1021,7 @@ writeData2 <-function(wb, sheet, data,
       style_id <- which(wb$styles$cellXfs == cellfmt)
       # get the last id, the one we have just written. return them as
       # 0-index and minimum value of 0
-      ifelse(length(style_id), max(max(style_id)-1,0) , 0)
+      if (length(style_id)) max(style_id - 1, 0) else 0
     }
 
     special_fmts <- data.frame(
@@ -1041,7 +1041,7 @@ writeData2 <-function(wb, sheet, data,
       for (j in seq_along(data)) {
         val <- data[i, j]
         # if first row and colnames write character else whatever typ is found
-        dc_j <- ifelse((colNames & (i == 1)), "character", dc[1, j])
+        dc_j <- if (colNames & (i == 1))  "character" else dc[1, j]
         col[j,] <- cell(val, rtyp[i, j], dc_j, special_fmts)
       }
       col$row_r <- rownames(rtyp)[i]

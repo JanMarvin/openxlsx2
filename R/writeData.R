@@ -236,7 +236,7 @@ writeData <- function(wb,
   ## special case - formula
   if (inherits(x, "formula")) {
     x <- data.frame("X" = x, stringsAsFactors = FALSE)
-    class(x[[1]]) <- ifelse(array, "array_formula", "formula")
+    class(x[[1]]) <- if (array) "array_formula" else "formula"
     colNames <- FALSE
   }
 
@@ -429,7 +429,7 @@ writeFormula <- function(wb,
   xy = NULL) {
   assert_class(x, "character")
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
-  class(dfx$X) <- c("character", ifelse(array, "array_formula", "formula"))
+  class(dfx$X) <- c("character", if (array) "array_formula" else "formula")
 
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")

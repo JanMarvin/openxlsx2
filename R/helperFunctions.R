@@ -500,19 +500,13 @@ get_named_regions_from_string <- function(dn) {
   dn_pos <- gsub("[$']", "", dn_pos)
 
   has_bang <- grepl("!", dn_pos, fixed = TRUE)
-  dn_sheets <- ifelse(has_bang,
-    gsub("^(.*)!.*$", "\\1", dn_pos),
-    ""
-  )
-  dn_coords <- ifelse(has_bang,
-    gsub("^.*!(.*)$", "\\1", dn_pos),
-    ""
-  )
+  dn_sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
+  dn_coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
 
   attr(dn_names, "sheet") <- dn_sheets
   attr(dn_names, "position") <- dn_coords
 
-  return(dn_names)
+  dn_names
 }
 
 

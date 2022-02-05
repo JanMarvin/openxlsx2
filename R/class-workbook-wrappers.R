@@ -31,16 +31,18 @@ wb_workbook <- function() {
 #'   subject = "this & that",
 #'   category = "something"
 #' )
-createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.getenv("USERNAME"), Sys.getenv("USER")),
+createWorkbook <- function(
+  creator = Sys.getenv("USERNAME", Sys.getenv("USER")),
   title = NULL,
   subject = NULL,
-  category = NULL) {
+  category = NULL
+) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
   ## check all inputs are valid
   if (length(creator) > 1) creator <- creator[[1]]
-  if (length(creator) == 0) creator <- ""
+  if (!length(creator)) creator <- ""
   if (!inherits(creator, "character")) creator <- ""
 
   if (length(title) > 1) title <- title[[1]]
@@ -1398,6 +1400,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
     orientation <- tolower(orientation)
     if (!orientation %in% c("portrait", "landscape")) stop("Invalid page orientation.")
   } else {
+    # if length(xml) == 1 then use if () {} else {}
     orientation <- ifelse(grepl("landscape", xml), "landscape", "portrait") ## get existing
   }
 
