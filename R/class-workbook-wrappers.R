@@ -48,7 +48,7 @@ wb_workbook <- function(
 #'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param path A path to save the workbook to
-#' @param overwrite If `TRUE`, overwrite any existing file.
+#' @param overwrite If `FALSE`, will not overwrite when `path` exists
 #' @seealso [wb_workbook()], [wb_add_worksheet()], [loadWorkbook()], [writeData()].
 #'   [writeDataTable()]
 #'
@@ -63,7 +63,7 @@ wb_workbook <- function(
 #' \dontrun{
 #' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
-wb_save <- function(wb, path, overwrite = FALSE) {
+wb_save <- function(wb, path, overwrite = TRUE) {
   assert_workbook(wb)
   wb$clone()$save(path = path, overwrite = overwrite)$path
 }

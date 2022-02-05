@@ -4,14 +4,14 @@
 \alias{wb_save}
 \title{Save Workbook to file}
 \usage{
-wb_save(wb, path, overwrite = FALSE)
+wb_save(wb, path, overwrite = TRUE)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
 
 \item{path}{A path to save the workbook to}
 
-\item{overwrite}{If \code{TRUE}, overwrite any existing file.}
+\item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
 }
 \description{
 Save Workbook to file

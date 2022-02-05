@@ -301,7 +301,7 @@ Save the workbook
 \describe{
 \item{\code{path}}{The path to save the workbook to}
 
-\item{\code{overwrite}}{If \code{FALSE} will not overwrite when \code{path} is not empty}
+\item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{path} exists}
 }
 \if{html}{\out{</div>}}
 }

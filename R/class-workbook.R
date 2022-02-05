@@ -844,7 +844,7 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Save the workbook
     #' @param path The path to save the workbook to
-    #' @param overwrite If `FALSE` will not overwrite when `path` is not empty
+    #' @param overwrite If `FALSE`, will not overwrite when `path` exists
     #' @return The `wbWorkbook` object invisibly
     save = function(path = self$path, overwrite = TRUE) {
       assert_class(path, "character")
