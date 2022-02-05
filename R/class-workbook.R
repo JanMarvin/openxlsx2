@@ -1495,112 +1495,6 @@ wbWorkbook <- R6::R6Class(
 
 
     #' @description
-    #' Create a font node from a style
-    #' @param style style
-    #' @return The font node as xml?
-    createFontNode = function(style) {
-      # Nothing is assigned to self, so this is fine to not return self
-      # TODO pull out from public methods
-      # assert_style(style)
-      baseFont <- self$getBaseFont()
-
-      # TODO implement paste_c()
-      fontNode <- "<font>"
-
-      ## size
-      if (is.null(style$fontSize[[1]])) {
-        fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size))
-      } else {
-        fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize))
-      }
-
-      ## colour
-      if (is.null(style$fontColour[[1]])) {
-        fontNode <-
-          stri_join(
-            fontNode,
-            sprintf(
-              '<color %s="%s"/>',
-              names(baseFont$colour),
-              baseFont$colour
-            )
-          )
-      } else {
-        if (length(style$fontColour) > 1) {
-          fontNode <- stri_join(fontNode, sprintf(
-            "<color %s/>",
-            stri_join(
-              sapply(seq_along(style$fontColour), function(i) {
-                sprintf('%s="%s"', names(style$fontColour)[i], style$fontColour[i])
-              }),
-              sep = " ",
-              collapse = " "
-            )
-          ))
-        } else {
-          fontNode <-
-            stri_join(
-              fontNode,
-              sprintf(
-                '<color %s="%s"/>',
-                names(style$fontColour),
-                style$fontColour
-              )
-            )
-        }
-      }
-
-
-      ## name
-      if (is.null(style$fontName[[1]])) {
-        fontNode <-
-          stri_join(
-            fontNode,
-            sprintf('<name %s="%s"/>', names(baseFont$name), baseFont$name)
-          )
-      } else {
-        fontNode <-
-          stri_join(
-            fontNode,
-            sprintf('<name %s="%s"/>', names(style$fontName), style$fontName)
-          )
-      }
-
-      ### Create new font and return Id
-      if (!is.null(style$fontFamily)) {
-        fontNode <-
-          stri_join(fontNode, sprintf('<family val = "%s"/>', style$fontFamily))
-      }
-
-      if (!is.null(style$fontScheme)) {
-        fontNode <-
-          stri_join(fontNode, sprintf('<scheme val = "%s"/>', style$fontScheme))
-      }
-
-      if ("BOLD" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, "<b/>")
-      }
-
-      if ("ITALIC" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, "<i/>")
-      }
-
-      if ("UNDERLINE" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, '<u val="single"/>')
-      }
-
-      if ("UNDERLINE2" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, '<u val="double"/>')
-      }
-
-      if ("STRIKEOUT" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, "<strike/>")
-      }
-
-      stri_join(fontNode, "</font>")
-    },
-
-    #' @description
     #' Get the base font
     #' @return A list of of the font
     getBaseFont = function() {
@@ -2020,7 +1914,7 @@ wbWorkbook <- R6::R6Class(
       # TODO possible changes to self
       # TODO assert_class(style, "Style")
       dxf <- "<dxf>"
-      dxf <- stri_join(dxf, self$createFontNode(style))
+      dxf <- stri_join(dxf, wb_create_font_node(self, style))
       # fillNode <- NULL
 
       if (!is.null(style$fill$fillFg) | !is.null(style$fill$fillBg)) {
@@ -3674,7 +3568,7 @@ wbWorkbook <- R6::R6Class(
           !is.null(style$fontDecoration) |
           !is.null(style$fontFamily) |
           !is.null(style$fontScheme)) {
-        fontNode <- self$createFontNode(style)
+        fontNode <-wb_create_font_node(self, style)
         fontId <- style$fontId
 
         if (length(fontId) == 0) {
@@ -3871,7 +3765,7 @@ wbWorkbook <- R6::R6Class(
             !is.null(style$fontDecoration) |
             !is.null(style$fontFamily) |
             !is.null(style$fontScheme)) {
-          fontNode <- self$createFontNode(style)
+          fontNode <- wb_create_font_node(self, style)
           fontId <- which(self$styles$font == fontNode) - 1L
 
           if (length(fontId) == 0) {
