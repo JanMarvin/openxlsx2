@@ -48,6 +48,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
   if (!isfile)
     xml <- paste0(xml, collapse = "")
 
+  if (identical(xml, ""))
+    xml <- "<NA_character_ />"
+
   if (pointer) {
     z <- readXMLPtr(xml, isfile, escapes, declaration)
   }
