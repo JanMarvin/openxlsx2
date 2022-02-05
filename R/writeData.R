@@ -304,7 +304,8 @@ writeData <- function(wb,
 
 
   ## Check not overwriting existing table headers
-  wb$check_overwrite_tables(
+  wb_check_overwrite_tables(
+    wb,
     sheet = sheet,
     new_rows = c(startRow, startRow + nRow - 1L + colNames),
     new_cols = c(startCol, startCol + nCol - 1L),

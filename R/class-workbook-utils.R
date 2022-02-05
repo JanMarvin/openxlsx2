@@ -177,3 +177,72 @@ wb_validate_table_name <- function(wb, tableName) {
 
   tableName
 }
+
+#' Checks for overwrite columns
+#'
+#' @param wb workbook
+#' @param sheet sheet
+#' @param new_rows new_rows
+#' @param new_cols new_cols
+#' @param error_msg error_msg
+#' @param check_table_header_only check_table_header_only
+#' @noRd
+wb_check_overwrite_tables <- function(
+  wb,
+  sheet,
+  new_rows,
+  new_cols,
+  # why does error_msg need to be a param?
+  error_msg = "Cannot overwrite existing table with another table.",
+  check_table_header_only = FALSE
+) {
+  # TODO pull out -- no assignemnts made
+  ## check not overwriting another table
+  if (length(wb$tables)) {
+    tableSheets <- attr(wb$tables, "sheet")
+    sheetNo <- wb_validate_sheet(wb, sheet)
+
+    to_check <-
+      which(tableSheets %in% sheetNo &
+          !grepl("openxlsx_deleted", attr(wb$tables, "tableName"), fixed = TRUE))
+
+    if (length(to_check)) {
+      ## only look at tables on this sheet
+
+      exTable <- wb$tables[to_check]
+
+      rows <- lapply(
+        names(exTable),
+        function(rectCoords) {
+          as.numeric(unlist(regmatches(rectCoords, gregexpr("[0-9]+", rectCoords))))
+        }
+      )
+      cols <- lapply(
+        names(exTable),
+        function(rectCoords) {
+          col2int(unlist(regmatches(rectCoords, gregexpr("[A-Z]+", rectCoords))))
+        }
+      )
+
+      if (check_table_header_only) {
+        rows <- lapply(rows, function(x) c(x[1], x[1]))
+      }
+
+
+      ## loop through existing tables checking if any over lap with new table
+      for (i in seq_along(exTable)) {
+        existing_cols <- cols[[i]]
+        existing_rows <- rows[[i]]
+
+        if ((min(new_cols) <= max(existing_cols)) &
+            (max(new_cols) >= min(existing_cols)) &
+            (min(new_rows) <= max(existing_rows)) &
+            (max(new_rows) >= min(existing_rows))) {
+          stop(error_msg)
+        }
+      }
+    } ## end if(sheet %in% tableSheets)
+  } ## end (length(tables))
+
+  invisible(wb)
+}

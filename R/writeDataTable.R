@@ -258,10 +258,12 @@ writeDataTable <- function(wb, sheet, x,
   ref <- paste(ref1, ref2, sep = ":")
 
   ## check not overwriting another table
-  wb$check_overwrite_tables(
+  wb_check_overwrite_tables(
+    wb,
     sheet = sheet,
-    new_rows = c(startRow, startRow + nrow(x) - 1L + 1L) ## + header
-    , new_cols = c(startCol, startCol + ncol(x) - 1L)
+    # header
+    new_rows = c(startRow, startRow + nrow(x) - 1L + 1L),
+    new_cols = c(startCol, startCol + ncol(x) - 1L)
   )
 
 
