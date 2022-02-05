@@ -5,8 +5,7 @@
 \title{Create a new Workbook object}
 \usage{
 createWorkbook(
-  creator = ifelse(.Platform$OS.type == "windows", Sys.getenv("USERNAME"),
-    Sys.getenv("USER")),
+  creator = Sys.getenv("USERNAME", Sys.getenv("USER")),
   title = NULL,
   subject = NULL,
   category = NULL
