@@ -74,5 +74,5 @@ apply_reg_match0 <- function(x, pat) unapply(x, reg_match0, pat = pat)
 
 wapply <- function(x, FUN, ...) {
   FUN <- match.fun(FUN)
-  which(vapply(x, FUN, ...))
+  which(vapply(x, FUN, FUN.VALUE = NA, ...))
 }
