@@ -68,6 +68,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
 #' @param level4 to please check
 #' @details This function returns XML nodes as used in openxlsx2. In theory they
 #' could be returned as pointers as well, but this has not yet been implemented.
+#' If no level is provided, the nodes on level1 are returned
 #' @examples
 #'   x <- read_xml("<a><b/></a>")
 #'   # return a
@@ -78,9 +79,11 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
 xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL) {
 
   lvl <- c(level1, level2, level3, level4)
-  lvl <- lvl[!is.null(lvl)]
-  if (!all(is.character(lvl)))
-    stop("levels must be character vectors")
+  if (!all(is.null(lvl))) {
+    lvl <- lvl[!is.null(lvl)]
+    if (!all(is.character(lvl)))
+      stop("levels must be character vectors")
+  }
 
   z <- NULL
 
@@ -89,6 +92,7 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 
 
   if (class(xml) == "pugi_xml") {
+    if (length(lvl) == 0) z <- getXMLXPtr0(xml)
     if (length(lvl) == 1) z <- getXMLXPtr1(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3(xml, level1, level2, level3)
@@ -97,6 +101,14 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
   }
 
   z
+}
+
+#' @rdname pugixml
+#' @examples
+#' xml_node_name("<a/>")
+xml_node_name <- function(xml) {
+  if(class(xml) != "pugi_xml") xml <- read_xml(xml)
+  z <- getXMLXPtrName(xml)
 }
 
 #' xml_value

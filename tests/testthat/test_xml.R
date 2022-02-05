@@ -34,6 +34,8 @@ test_that("xml_node", {
   xml <- "<a><b/></a>"
   x <- read_xml(xml, pointer = FALSE)
 
+  expect_equal("a", xml_node_name(x))
+  expect_equal(xml, xml_node(x))
   expect_equal(xml, xml_node(x, "a"))
 
   exp <- "<b/>"

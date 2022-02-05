@@ -66,6 +66,36 @@ unsigned int pugi_format(XPtrXML doc){
 }
 
 // [[Rcpp::export]]
+SEXP getXMLXPtrName(XPtrXML doc) {
+
+  std::vector<std::string> res;
+  unsigned int  pugi_format_flags = pugi_format(doc);
+
+  for (auto worksheet : doc->children())
+  {
+    res.push_back(worksheet.name());
+  }
+
+  return  Rcpp::wrap(res);
+}
+
+// [[Rcpp::export]]
+SEXP getXMLXPtr0(XPtrXML doc) {
+
+  std::vector<std::string> res;
+  unsigned int  pugi_format_flags = pugi_format(doc);
+
+  for (auto worksheet : doc->children())
+  {
+    std::ostringstream oss;
+    worksheet.print(oss, " ", pugi_format_flags);
+    res.push_back(oss.str());
+  }
+
+  return  Rcpp::wrap(res);
+}
+
+// [[Rcpp::export]]
 SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
 
   std::vector<std::string> res;
@@ -241,7 +271,6 @@ SEXP getXMLXPtr4val(XPtrXML doc, std::string level1, std::string level2, std::st
   return  Rcpp::wrap(x);
 }
 
-
 // [[Rcpp::export]]
 SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
 
@@ -343,7 +372,6 @@ SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::s
 
   return z;
 }
-
 
 // nested list below level 3. eg:
 // <worksheet>
