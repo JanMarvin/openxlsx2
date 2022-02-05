@@ -24,7 +24,7 @@ with Arial. Base font is black, size 11, Calibri.
 }
 \examples{
 ## create a workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "S1")
 ## modify base font to size 10 Arial Narrow in red
 modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")

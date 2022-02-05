@@ -23,7 +23,7 @@ shuffles the order when writing to file.
 }
 \examples{
 ## setup a workbook with 3 worksheets
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb = wb, sheetName = "Sheet 1", gridLines = FALSE)
 writeDataTable(wb = wb, sheet = 1, x = iris)
 

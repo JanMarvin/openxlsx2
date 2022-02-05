@@ -40,7 +40,7 @@ Insert an image into a worksheet
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook("Ayanami")
+wb <- wb_workbook("Ayanami")
 
 ## Add some worksheets
 addWorksheet(wb, "Sheet 1")

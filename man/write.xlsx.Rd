@@ -15,7 +15,7 @@ write.xlsx(x, file, asTable = FALSE, ...)
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
-\item{createWorkbook}
+\item{wb_workbook}
 \item{addWorksheet}
 \item{writeData}
 \item{freezePane}
@@ -33,7 +33,7 @@ write a data.frame or list of data.frames to an xlsx file
 \details{
 Optional parameters are:
 
-\strong{createWorkbook Parameters}
+\strong{wb_workbook Parameters}
 \itemize{
 \item{\strong{creator}}{ A string specifying the workbook author}
 }

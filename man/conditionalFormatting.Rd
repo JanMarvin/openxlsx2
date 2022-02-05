@@ -108,7 +108,7 @@ If type == "bottomN"
 }
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "cellIs")
 addWorksheet(wb, "Moving Row")
 addWorksheet(wb, "Moving Col")
@@ -273,7 +273,7 @@ saveWorkbook(wb, "conditionalFormattingExample.xlsx", TRUE)
 #########################################################################
 ## Databar Example
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "databar")
 
 ## Databars

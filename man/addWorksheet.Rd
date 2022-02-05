@@ -79,7 +79,7 @@ Headers and footers can contain special tags
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook("Fred")
+wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
 addWorksheet(wb, "Sheet 1")

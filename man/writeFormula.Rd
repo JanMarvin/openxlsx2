@@ -50,7 +50,7 @@ The examples below show a small list of possible formulas:
 
 ## There are 3 ways to write a formula
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 writeData(wb, "Sheet 1", x = iris)
 
@@ -96,7 +96,7 @@ saveWorkbook(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
 
 ## 4. - Writing internal hyperlinks
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet1")
 addWorksheet(wb, "Sheet2")
 writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')

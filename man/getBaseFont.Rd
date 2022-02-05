@@ -16,7 +16,7 @@ Returns the base font used in the workbook.
 }
 \examples{
 ## create a workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 getBaseFont(wb)
 
 ## modify base font to size 10 Arial Narrow in red

@@ -6,7 +6,7 @@
 #' @export
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "S1")
 #' addWorksheet(wb, "S2")
 #' addWorksheet(wb, "S3")

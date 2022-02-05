@@ -715,7 +715,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #' @param cell a cell
 #' @param value a value to assign
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "test")
 #'
 #' mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)

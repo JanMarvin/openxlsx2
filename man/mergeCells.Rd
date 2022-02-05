@@ -23,7 +23,7 @@ As merged region must be rectangular, only min and max of cols and rows are used
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 ## Add a worksheet
 addWorksheet(wb, "Sheet 1")

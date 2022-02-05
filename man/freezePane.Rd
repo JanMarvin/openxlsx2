@@ -31,7 +31,7 @@ Freeze a worksheet pane
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook("Kenshin")
+wb <- wb_workbook("Kenshin")
 
 ## Add some worksheets
 addWorksheet(wb, "Sheet 1")

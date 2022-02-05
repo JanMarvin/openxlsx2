@@ -16,6 +16,6 @@ Just a wrapper of wb$changeLastModifiedBy()
 }
 \examples{
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 setLastModifiedBy(wb, "test")
 }

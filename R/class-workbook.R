@@ -153,6 +153,18 @@ wbWorkbook <- R6::R6Class(
     #' @field styleObjectsList styleObjectsList
     styleObjectsList = list(),
 
+    #' @field creator creator
+    creator = character(),
+
+    #' @field title title
+    title = NULL,
+
+    #' @field subject subject
+    subject = NULL,
+
+    #' @field category category
+    category = NULL,
+
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator creator
@@ -161,86 +173,80 @@ wbWorkbook <- R6::R6Class(
     #' @param category category
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator = "",
-      title = NULL,
-      subject = NULL,
+      creator  = NULL,
+      title    = NULL,
+      subject  = NULL,
       category = NULL
     ) {
-      self$charts <- list()
-      self$isChartSheet <- logical()
 
-      self$colWidths <- list()
-      self$connections <- NULL
-      self$Content_Types <- genBaseContent_Type()
-      self$core <-
-        genBaseCore(
-          creator = creator,
-          title = title,
-          subject = subject,
-          category = category
-        )
-      self$comments <- list()
-      self$threadComments <- list()
+      self$creator <-
+        creator %||%
+        getOption("openxlsx.creator") %||%
+        # USERNAME may only be present for windows
+        Sys.getenv("USERNAME", Sys.getenv("USER"))
+
+      assert_class(title,    "character", or_null = TRUE)
+      assert_class(subject,  "character", or_null = TRUE)
+      assert_class(category, "character", or_null = TRUE)
+
+      stopifnot(
+        length(self$creator) <= 1,
+        length(title) <= 1,
+        length(category) <= 1
+      )
 
 
-      self$drawings <- list()
-      self$drawings_rels <- list()
-      self$drawings_vml <- list()
+      # can this be moved later?
+      self$core <- genBaseCore(
+        creator  = self$creator,
+        title    = title,
+        subject  = subject,
+        category = category
+      )
 
-      self$embeddings <- NULL
-      self$externalLinks <- NULL
-      self$externalLinksRels <- NULL
-
-      self$headFoot <- NULL
-
-      self$media <- list()
-
-      self$persons <- NULL
-
-      self$pivotTables <- NULL
+      self$title                <- title
+      self$subject              <- subject
+      self$category             <- category
+      self$charts               <- list()
+      self$isChartSheet         <- logical()
+      self$colWidths            <- list()
+      self$connections          <- NULL
+      self$Content_Types        <- genBaseContent_Type()
+      self$comments             <- list()
+      self$threadComments       <- list()
+      self$drawings             <- list()
+      self$drawings_rels        <- list()
+      self$drawings_vml         <- list()
+      self$embeddings           <- NULL
+      self$externalLinks        <- NULL
+      self$externalLinksRels    <- NULL
+      self$headFoot             <- NULL
+      self$media                <- list()
+      self$persons              <- NULL
+      self$pivotTables          <- NULL
       self$pivotTables.xml.rels <- NULL
-      self$pivotDefinitions <- NULL
-      self$pivotRecords <- NULL
+      self$pivotDefinitions     <- NULL
+      self$pivotRecords         <- NULL
       self$pivotDefinitionsRels <- NULL
-
-      self$queryTables <- NULL
-      self$rowHeights <- list()
-
-      self$slicers <- NULL
-      self$slicerCaches <- NULL
-
-      self$sheet_names <- character()
-      self$sheetOrder <- integer()
-
-      self$sharedStrings <- list()
-      attr(self$sharedStrings, "uniqueCount") <- 0
-
-      self$styles <- genBaseStyleSheet()
-      self$styleObjects <- list()
-
-
-      self$tables <- NULL
-      self$tables.xml.rels <- NULL
-      self$theme <- NULL
-
-
-      self$vbaProject <- NULL
-      self$vml <- list()
-      self$vml_rels <- list()
-
-
-
-      self$workbook <- genBaseWorkbook()
-      self$workbook.xml.rels <- genBaseWorkbook.xml.rels()
-
-      self$worksheets <- list()
-      self$worksheets_rels <- list()
-
-      if (length(self$path)) {
-        self$path <- path
-      } else {
-        self$path <- NULL
-      }
+      self$queryTables          <- NULL
+      self$rowHeights           <- list()
+      self$slicers              <- NULL
+      self$slicerCaches         <- NULL
+      self$sheet_names          <- character()
+      self$sheetOrder           <- integer()
+      self$sharedStrings        <- structure(list(), uniqueCount = 0L)
+      self$styles               <- genBaseStyleSheet()
+      self$styleObjects         <- list()
+      self$tables               <- NULL
+      self$tables.xml.rels      <- NULL
+      self$theme                <- NULL
+      self$vbaProject           <- NULL
+      self$vml                  <- list()
+      self$vml_rels             <- list()
+      self$workbook             <- genBaseWorkbook()
+      self$workbook.xml.rels    <- genBaseWorkbook.xml.rels()
+      self$worksheets           <- list()
+      self$worksheets_rels      <- list()
 
       # FIXME styleObjectsList() may be getting removed [11]
       self$styleObjectsList <- list()

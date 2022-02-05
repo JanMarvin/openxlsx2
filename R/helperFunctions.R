@@ -15,7 +15,7 @@
 #' @examples
 #'
 #' ## Writing internal hyperlinks
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet1")
 #' addWorksheet(wb, "Sheet2")
 #' addWorksheet(wb, "Sheet 3")

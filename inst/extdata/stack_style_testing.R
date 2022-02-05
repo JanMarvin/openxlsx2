@@ -4,7 +4,7 @@
 require('openxlsx')
 
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 writeData(wb, 1, head(iris))
 
@@ -77,7 +77,7 @@ openXL(wb)
 
 ## TEST NUMBER 2 - BUG REPORT #203
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 writeData(wb, 1, head(iris))
 

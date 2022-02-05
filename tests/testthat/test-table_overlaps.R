@@ -4,7 +4,7 @@ test_that("writeDataTable over tables", {
   overwrite_table_error <- "Cannot overwrite existing table with another table"
   df1 <- data.frame("X" = 1:10)
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet1")
 
   ## table covers rows 4->10 and cols 4->8
@@ -58,7 +58,7 @@ test_that("writeData over tables", {
   overwrite_table_error <- "Cannot overwrite table headers. Avoid writing over the header row"
   df1 <- data.frame("X" = 1:10)
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet1")
 
   ## table covers rows 4->10 and cols 4->8

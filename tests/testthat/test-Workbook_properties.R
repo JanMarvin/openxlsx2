@@ -3,7 +3,7 @@
 test_that("Workbook properties", {
 
   ## check creator
-  wb <- createWorkbook(creator = "Alex", title = "title here", subject = "this & that", category = "some category")
+  wb <- wb_workbook(creator = "Alex", title = "title here", subject = "this & that", category = "some category")
 
   expect_true(grepl("<dc:creator>Alex</dc:creator>", wb$core))
   expect_true(grepl("<dc:title>title here</dc:title>", wb$core))
@@ -29,7 +29,7 @@ test_that("Workbook properties", {
   expect_equal(object = wb_loaded$core, expected = paste0(wb$core, collapse = ""))
 
 
-  wb <- createWorkbook(creator = "Philipp", title = "title here", subject = "this & that", category = "some category")
+  wb <- wb_workbook(creator = "Philipp", title = "title here", subject = "this & that", category = "some category")
   addCreator(wb, "test")
   expect_true(grepl("<dc:creator>Philipp;test</dc:creator>", wb$core))
 

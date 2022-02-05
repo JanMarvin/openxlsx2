@@ -1,7 +1,7 @@
 
 
 test_that("Freeze Panes", {
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   freezePane(wb, 1, firstActiveRow = 3, firstActiveCol = 3)
 
@@ -11,7 +11,7 @@ test_that("Freeze Panes", {
 
 
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   freezePane(wb, 1, firstActiveRow = 1, firstActiveCol = 3)
 
@@ -21,7 +21,7 @@ test_that("Freeze Panes", {
 
 
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   freezePane(wb, 1, firstActiveRow = 2, firstActiveCol = 1)
 
@@ -31,7 +31,7 @@ test_that("Freeze Panes", {
 
 
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   freezePane(wb, 1, firstActiveRow = 2, firstActiveCol = 4)
 
@@ -41,7 +41,7 @@ test_that("Freeze Panes", {
 
 
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   freezePane(wb, 1, firstCol = TRUE)
 
@@ -51,7 +51,7 @@ test_that("Freeze Panes", {
 
 
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   freezePane(wb, 1, firstRow = TRUE)
 
@@ -61,7 +61,7 @@ test_that("Freeze Panes", {
 
 
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   freezePane(wb, 1, firstRow = TRUE, firstCol = TRUE)
 
@@ -69,7 +69,7 @@ test_that("Freeze Panes", {
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
 
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   addWorksheet(wb, "Sheet 2")
   addWorksheet(wb, "Sheet 3")

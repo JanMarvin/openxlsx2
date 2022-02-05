@@ -25,7 +25,7 @@ Region is given by: min(cols):max(cols) X min(rows):max(rows)
 }
 \examples{
 ## create named regions
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 
 ## specify region

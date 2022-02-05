@@ -20,7 +20,7 @@ Set worksheet row heights
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 ## Add a worksheet
 addWorksheet(wb, "Sheet 1")

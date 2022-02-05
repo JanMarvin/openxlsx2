@@ -16,6 +16,6 @@ Just a wrapper of wb$addCreator()
 }
 \examples{
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addCreator(wb, "test")
 }

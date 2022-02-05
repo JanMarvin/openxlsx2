@@ -67,7 +67,7 @@
 #'
 #' #####################################################################################
 #' ## Create Workbook object and add worksheets
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add worksheets
 #' addWorksheet(wb, "Cars")
@@ -378,7 +378,7 @@ writeData <- function(wb,
 #'
 #' ## There are 3 ways to write a formula
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet 1")
 #' writeData(wb, "Sheet 1", x = iris)
 #'
@@ -424,7 +424,7 @@ writeData <- function(wb,
 #'
 #' ## 4. - Writing internal hyperlinks
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet1")
 #' addWorksheet(wb, "Sheet2")
 #' writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')

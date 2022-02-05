@@ -8,7 +8,7 @@
 #' @param asTable write using writeDataTable as opposed to writeData
 #' @param ... optional parameters to pass to functions:
 #' \itemize{
-#'   \item{createWorkbook}
+#'   \item{wb_workbook}
 #'   \item{addWorksheet}
 #'   \item{writeData}
 #'   \item{freezePane}
@@ -18,7 +18,7 @@
 #' see details.
 #' @details Optional parameters are:
 #'
-#' **createWorkbook Parameters**
+#' **wb_workbook Parameters**
 #' \itemize{
 #'   \item{**creator**}{ A string specifying the workbook author}
 #' }
@@ -128,7 +128,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   ## Possible parameters
 
-  #---createWorkbook---#
+  #---wb_workbook---#
   ## creator
 
   #---addWorksheet---#
@@ -368,7 +368,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
 
   ## create new Workbook object
-  wb <- createWorkbook(creator = creator, title = title, subject = subject, category = category)
+  wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
 
 
   ## If a list is supplied write to individual worksheets using names if available

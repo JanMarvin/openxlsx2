@@ -2,7 +2,7 @@
 test_that("test return values for saveWorkbook", {
 
   tempFile <- temp_xlsx()
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "name")
   expect_equal(tempFile, saveWorkbook(wb, tempFile))
 
@@ -35,7 +35,7 @@ test_that("creating hyperlinks", {
 
   # prepare a file
   tempFile <- temp_xlsx()
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   sheet <- "test"
   addWorksheet(wb, sheet)
   img <- "D:/somepath/somepicture.png"

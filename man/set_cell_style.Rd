@@ -19,7 +19,7 @@ set_cell_style(wb, sheet, cell, value)
 helper set_cell_style
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "test")
 
 mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)

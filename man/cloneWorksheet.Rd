@@ -21,7 +21,7 @@ Clone a worksheet to a Workbook object
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook("Fred")
+wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
 addWorksheet(wb, "Sheet 1")

@@ -865,7 +865,7 @@ nmfmt_df <- function(x) {
 #'
 #' @examples
 #' # create a workbook and add some sheets
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' addWorksheet(wb, "sheet1")
 #' writeData2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)

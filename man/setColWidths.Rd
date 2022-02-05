@@ -43,7 +43,7 @@ NOTE: The \code{hidden} parameter may conflict with the one set in \code{groupCo
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 ## Add a worksheet
 addWorksheet(wb, "Sheet 1")

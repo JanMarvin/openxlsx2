@@ -11,7 +11,7 @@ test_that("Deleting worksheets", {
     writeDataTable(wb, sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), colNames = FALSE)
   }
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   genWS(wb, "Sheet 1")
   genWS(wb, "Sheet 2")
   genWS(wb, "Sheet 3")

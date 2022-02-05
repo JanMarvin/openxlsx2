@@ -4,7 +4,7 @@ test_that("Worksheet names", {
 
   ### test for names without special character
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   sheetname <- "test"
   addWorksheet(wb, sheetname)
 
@@ -12,7 +12,7 @@ test_that("Worksheet names", {
 
   ### test for names with &
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   sheetname <- "S&P 500"
   addWorksheet(wb, sheetname)
 
@@ -20,7 +20,7 @@ test_that("Worksheet names", {
   expect_equal("S&amp;P 500",wb$sheet_names)
   ### test for names with <
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   sheetname <- "<24 h"
   addWorksheet(wb, sheetname)
 
@@ -28,7 +28,7 @@ test_that("Worksheet names", {
   expect_equal("&lt;24 h",wb$sheet_names)
   ### test for names with >
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   sheetname <- ">24 h"
   addWorksheet(wb, sheetname)
 
@@ -37,7 +37,7 @@ test_that("Worksheet names", {
 
   ### test for names with "
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   sheetname <- 'test "A"'
   addWorksheet(wb, sheetname)
 

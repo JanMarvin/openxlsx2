@@ -2,7 +2,7 @@
 
 
 test_that("Validate Table Names", {
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
 
   ## case
@@ -32,7 +32,7 @@ test_that("Validate Table Names", {
 
 
 test_that("Existing Table Names", {
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
 
   ## Existing names - case in-sensitive

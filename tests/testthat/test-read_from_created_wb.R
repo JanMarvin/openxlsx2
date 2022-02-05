@@ -2,7 +2,7 @@
 test_that("Reading from new workbook", {
   curr_wd <- getwd()
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   for (i in 1:4) {
     addWorksheet(wb, sprintf("Sheet %s", i))
   }
@@ -60,7 +60,7 @@ test_that("Reading NAs and NaN values", {
   is_nan_after <- sapply(c, is.nan)
   c[is_nan & !is_nan_after] <- NA
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   addWorksheet(wb, "Sheet 1")
   writeData(wb, 1, a, keepNA = FALSE)
 

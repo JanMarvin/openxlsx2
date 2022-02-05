@@ -15,7 +15,7 @@ removeFilter(wb, sheet)
 Removes filters from addFilter() and writeData()
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 addWorksheet(wb, "Sheet 2")
 addWorksheet(wb, "Sheet 3")

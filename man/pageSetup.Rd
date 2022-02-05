@@ -134,7 +134,7 @@ paperSize is an integer corresponding to:
 }
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "S1")
 addWorksheet(wb, "S2")
 writeDataTable(wb, 1, x = iris[1:30, ])

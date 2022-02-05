@@ -1,57 +1,46 @@
 
-wb_workbook <- function() {
-  wbWorkbook$new()
-}
-
-#' @name createWorkbook
-#' @title Create a new Workbook object
-#' @description Create a new Workbook object
-#' @param creator Creator of the workbook (your name). Defaults to login username
-#' @param title Workbook properties title
-#' @param subject Workbook properties subject
-#' @param category Workbook properties category
-#' @return Workbook object
-#' @export
-#' @seealso [loadWorkbook()]
-#' @seealso [saveWorkbook()]
-#' @import methods
+#' Create a new Workbook object
+#'
+#' @details When `creator` is not set, a search is made for a non-`NULL` option
+#'   in `openxlsx.creator`.  If none is found, the environment variables
+#'   `USERNAME` and `USER` are searched, in that order.
+#'
+#' @param creator Creator of the workbook (see detaisl)
+#' @param title,subject,category Title, subject, and category of the workmust.
+#'   These must be `NULL` or single length `character` vectors
+#' @return A `wbWorkbook` object
+#'
+#' @seealso [loadWorkbook()], [saveWorkbook()]
+#'
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
-#' saveWorkbook(wb, file = "createWorkbookExample.xlsx", overwrite = TRUE)
+#' saveWorkbook(wb, file = temp_xlsx(), overwrite = TRUE)
 #' }
 #'
 #' ## Set Workbook properties
-#' wb <- createWorkbook(
+#' wb <- wb_workbook(
 #'   creator = "Me",
-#'   title = "title here",
-#'   subject = "this & that",
-#'   category = "something"
+#'   title = "Expense Report",
+#'   subject = "Expense Report - 2022 Q1",
+#'   category = "sales"
 #' )
-createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.getenv("USERNAME"), Sys.getenv("USER")),
-  title = NULL,
-  subject = NULL,
-  category = NULL) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  ## check all inputs are valid
-  if (length(creator) > 1) creator <- creator[[1]]
-  if (length(creator) == 0) creator <- ""
-  if (!inherits(creator, "character")) creator <- ""
-
-  if (length(title) > 1) title <- title[[1]]
-  if (length(subject) > 1) subject <- subject[[1]]
-  if (length(category) > 1) category <- category[[1]]
-
-  assert_class(title, "character", or_null = TRUE)
-  assert_class(subject, "character", or_null = TRUE)
-  assert_class(category, "character", or_null = TRUE)
-  wbWorkbook$new(creator = creator, title = title, subject = subject, category = category)
+#' @export
+wb_workbook <- function(
+  creator  = NULL,
+  title    = NULL,
+  subject  = NULL,
+  category = NULL
+) {
+  wbWorkbook$new(
+    creator  = creator,
+    title    = title,
+    subject  = subject,
+    category = category
+  )
 }
 
 
@@ -61,7 +50,7 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
 #' @param wb A Workbook object to write to file
 #' @param file A character string naming an xlsx file
 #' @param overwrite If `TRUE`, overwrite any existing file.
-#' @seealso [createWorkbook()]
+#' @seealso [wb_workbook()]
 #' @seealso [addWorksheet()]
 #' @seealso [loadWorkbook()]
 #' @seealso [writeData()]
@@ -69,7 +58,7 @@ createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.
 #' @export
 #' @examples
 #' ## Create a new workbook and add a worksheet
-#' wb <- createWorkbook("Creator of workbook")
+#' wb <- wb_workbook("Creator of workbook")
 #' addWorksheet(wb, sheetName = "My first worksheet")
 #'
 #' ## Save workbook to working directory
@@ -111,7 +100,7 @@ wb_save_workbook <- function(wb, path, overwrite = FALSE) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
 #' addWorksheet(wb, "Sheet 1")
@@ -209,7 +198,7 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook("Fred")
+#' wb <- wb_workbook("Fred")
 #'
 #' ## Add 3 worksheets
 #' addWorksheet(wb, "Sheet 1")
@@ -379,7 +368,7 @@ addWorksheet <- function(wb, sheetName,
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook("Fred")
+#' wb <- wb_workbook("Fred")
 #'
 #' ## Add 3 worksheets
 #' addWorksheet(wb, "Sheet 1")
@@ -450,7 +439,7 @@ wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
 #' ## See package vignette for more examples.
 #'
 #' ## Create a new workbook
-#' wb <- createWorkbook("My name here")
+#' wb <- wb_workbook("My name here")
 #'
 #' ## Add a worksheets
 #' addWorksheet(wb, "Expenditure", gridLines = FALSE)
@@ -538,7 +527,7 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook("Kenshin")
+#' wb <- wb_workbook("Kenshin")
 #'
 #' ## Add some worksheets
 #' addWorksheet(wb, "Sheet 1")
@@ -610,7 +599,7 @@ freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, 
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
 #' addWorksheet(wb, "Sheet 1")
@@ -676,7 +665,7 @@ setRowHeights <- function(wb, sheet, rows, heights) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
 #' addWorksheet(wb, "Sheet 1")
@@ -856,7 +845,7 @@ removeRowHeights <- function(wb, sheet, rows) {
 #' @examples
 #' \dontrun{
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
 #' addWorksheet(wb, "Sheet 1", gridLines = FALSE)
@@ -1026,7 +1015,7 @@ removeWorksheet <- function(wb, sheet) {
 #' @export
 #' @examples
 #' ## create a workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "S1")
 #' ## modify base font to size 10 Arial Narrow in red
 #' modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
@@ -1058,7 +1047,7 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
 #' @export
 #' @examples
 #' ## create a workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' getBaseFont(wb)
 #'
 #' ## modify base font to size 10 Arial Narrow in red
@@ -1096,7 +1085,7 @@ getBaseFont <- function(wb) {
 #' @export
 #' @seealso [addWorksheet()] to set headers and footers when adding a worksheet
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' addWorksheet(wb, "S1")
 #' addWorksheet(wb, "S2")
@@ -1297,7 +1286,7 @@ setHeaderFooter <- function(wb, sheet,
 #' \item{**68**}{ A3 extra transverse paper (322 mm by 445 mm)}
 #' }
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "S1")
 #' addWorksheet(wb, "S2")
 #' writeDataTable(wb, 1, x = iris[1:30, ])
@@ -1490,7 +1479,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 #' @param lockScenarios Whether scenarios are locked
 #' @export
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "S1")
 #' writeDataTable(wb, 1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
@@ -1590,7 +1579,7 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' @param lockWindows Whether the window position of the spreadsheet should be locked
 #' @export
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "S1")
 #' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 #' \dontrun{
@@ -1653,7 +1642,7 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 #' @export
 #' @examples
 #' ## setup a workbook with 3 worksheets
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb = wb, sheetName = "Sheet 1", gridLines = FALSE)
 #' writeDataTable(wb = wb, sheet = 1, x = iris)
 #'
@@ -1721,7 +1710,7 @@ worksheetOrder <- function(wb) {
 #' @seealso [getNamedRegions()]
 #' @examples
 #' ## create named regions
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet 1")
 #'
 #' ## specify region
@@ -1814,7 +1803,7 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
 #' @export
 #' @seealso [addFilter()]
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet 1")
 #' addWorksheet(wb, "Sheet 2")
 #' addWorksheet(wb, "Sheet 3")
@@ -1859,7 +1848,7 @@ addFilter <- function(wb, sheet, rows, cols) {
 #' @param sheet A vector of names or indices of worksheets
 #' @export
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet 1")
 #' addWorksheet(wb, "Sheet 2")
 #' addWorksheet(wb, "Sheet 3")
@@ -1907,7 +1896,7 @@ removeFilter <- function(wb, sheet) {
 #' @export
 #' @examples
 #' \dontrun{
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet 1")
 #' addWorksheet(wb, "Sheet 2")
 #'
@@ -1947,7 +1936,7 @@ removeFilter <- function(wb, sheet) {
 #' ## If type == 'list'
 #' # operator argument is ignored.
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet 1")
 #' addWorksheet(wb, "Sheet 2")
 #'
@@ -2083,7 +2072,7 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 #' @return  Vector of "hidden", "visible", "veryHidden"
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, sheetName = "S1", visible = FALSE)
 #' addWorksheet(wb, sheetName = "S2", visible = TRUE)
 #' addWorksheet(wb, sheetName = "S3", visible = FALSE)
@@ -2157,7 +2146,7 @@ sheetVisibility <- function(wb) {
 #' @export
 #' @seealso [addWorksheet()]
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "Sheet 1")
 #' writeData(wb, sheet = 1, x = iris)
 #'
@@ -2213,7 +2202,7 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 #' @return Workbook
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' wb2 <- wb ## does not create a copy
 #' wb3 <- copyWorkbook(wb) ## wrapper for wb$clone()
 #'
@@ -2237,7 +2226,7 @@ copyWorkbook <- function(wb) {
 #' @return character vector of table names on the specified sheet
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, sheetName = "Sheet 1")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris)
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
@@ -2282,7 +2271,7 @@ getTables <- function(wb, sheet) {
 #' @return character vector of table names on the specified sheet
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, sheetName = "Sheet 1")
 #' addWorksheet(wb, sheetName = "Sheet 2")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
@@ -2456,7 +2445,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' t2 <- do.call(cbind, split(t1, cycle(t1)))
 #' dimnames(t2) <- dimnames(.preformat.ts(t1))
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "AirPass")
 #' writeData(wb, "AirPass", t2, rowNames = TRUE)
 #'
@@ -2554,7 +2543,7 @@ ungroupRows <- function(wb, sheet, rows) {
 #' @param Creator A string object with the name of the creator
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addCreator(wb, "test")
 #' @export
 addCreator <- function(wb, Creator) {
@@ -2569,7 +2558,7 @@ addCreator <- function(wb, Creator) {
 #' @param LastModifiedBy A string object with the name of the LastModifiedBy-User
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' setLastModifiedBy(wb, "test")
 #' @export
 setLastModifiedBy <- function(wb, LastModifiedBy) {
@@ -2586,7 +2575,7 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #' @return vector of creators
 #' @examples
 #'
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' getCreators(wb)
 #' @export
 getCreators <- function(wb) {
@@ -2611,7 +2600,7 @@ getCreators <- function(wb) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook("Ayanami")
+#' wb <- wb_workbook("Ayanami")
 #'
 #' ## Add some worksheets
 #' addWorksheet(wb, "Sheet 1")

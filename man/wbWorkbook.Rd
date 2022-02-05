@@ -105,6 +105,14 @@ A Workbook
 \item{\code{path}}{path}
 
 \item{\code{styleObjectsList}}{styleObjectsList}
+
+\item{\code{creator}}{creator}
+
+\item{\code{title}}{title}
+
+\item{\code{subject}}{subject}
+
+\item{\code{category}}{category}
 }
 \if{html}{\out{</div>}}
 }
@@ -149,7 +157,7 @@ A Workbook
 \subsection{Method \code{new()}}{
 Creates a new \code{wbWorkbook} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(creator = "", title = NULL, subject = NULL, category = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(creator = NULL, title = NULL, subject = NULL, category = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

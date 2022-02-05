@@ -21,7 +21,7 @@ List Excel tables in a workbook
 }
 \examples{
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, sheetName = "Sheet 1")
 addWorksheet(wb, sheetName = "Sheet 2")
 writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")

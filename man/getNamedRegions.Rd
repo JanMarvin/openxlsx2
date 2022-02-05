@@ -15,7 +15,7 @@ Workbook object
 }
 \examples{
 ## create named regions
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 
 ## specify region

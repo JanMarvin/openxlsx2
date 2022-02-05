@@ -48,7 +48,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     ## Unzip files to temp directory
     xmlFiles <- unzip(file, exdir = xmlDir)
   }
-  wb <- createWorkbook()
+  wb <- wb_workbook()
 
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {

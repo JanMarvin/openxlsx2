@@ -24,7 +24,7 @@ Get and set worksheet visible state
 }
 \examples{
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, sheetName = "S1", visible = FALSE)
 addWorksheet(wb, sheetName = "S2", visible = TRUE)
 addWorksheet(wb, sheetName = "S3", visible = FALSE)

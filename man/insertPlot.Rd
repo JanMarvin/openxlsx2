@@ -45,7 +45,7 @@ This file is then written to the workbook using insertImage.
 \examples{
 \dontrun{
 ## Create a new workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 ## Add a worksheet
 addWorksheet(wb, "Sheet 1", gridLines = FALSE)

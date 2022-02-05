@@ -44,7 +44,7 @@ Add Excel data validation to cells
 }
 \examples{
 \dontrun{
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 addWorksheet(wb, "Sheet 2")
 
@@ -84,7 +84,7 @@ saveWorkbook(wb, "dataValidationExample.xlsx", overwrite = TRUE)
 ## If type == 'list'
 # operator argument is ignored.
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 addWorksheet(wb, "Sheet 2")
 

@@ -44,7 +44,7 @@ t1 <- AirPassengers
 t2 <- do.call(cbind, split(t1, cycle(t1)))
 dimnames(t2) <- dimnames(.preformat.ts(t1))
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "AirPass")
 writeData(wb, "AirPass", t2, rowNames = TRUE)
 

@@ -115,7 +115,7 @@ options("openxlsx.borderColour" = "#4F81BD")
 
 #####################################################################################
 ## Create Workbook object and add worksheets
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 ## Add worksheets
 addWorksheet(wb, "Cars")

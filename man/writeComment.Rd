@@ -25,7 +25,7 @@ writeComment(wb, sheet, col, row, comment, xy = NULL)
 Write a Comment object to a worksheet
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 
 c1 <- createComment(comment = "this is comment")

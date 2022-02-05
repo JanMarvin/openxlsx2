@@ -1,5 +1,5 @@
 test_that("getBaseFont works", {
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   expect_equal(
     getBaseFont(wb),
     list(

@@ -18,7 +18,7 @@ save a Workbook object to file
 }
 \examples{
 ## Create a new workbook and add a worksheet
-wb <- createWorkbook("Creator of workbook")
+wb <- wb_workbook("Creator of workbook")
 addWorksheet(wb, sheetName = "My first worksheet")
 
 ## Save workbook to working directory
@@ -27,7 +27,7 @@ saveWorkbook(wb, file = "saveWorkbookExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
-\code{\link[=createWorkbook]{createWorkbook()}}
+\code{\link[=wb_workbook]{wb_workbook()}}
 
 \code{\link[=addWorksheet]{addWorksheet()}}
 

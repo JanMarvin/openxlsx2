@@ -18,6 +18,6 @@ Get the names of the
 }
 \examples{
 
-wb <- createWorkbook()
+wb <- wb_workbook()
 getCreators(wb)
 }

@@ -24,7 +24,7 @@ writeDataTable automatically adds filters to first row of a table.
 NOTE Can only have a single filter per worksheet unless using tables.
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 addWorksheet(wb, "Sheet 1")
 addWorksheet(wb, "Sheet 2")
 addWorksheet(wb, "Sheet 3")

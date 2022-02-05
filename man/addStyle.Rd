@@ -29,7 +29,7 @@ Function adds a style to a specified set of cells.
 ## See package vignette for more examples.
 
 ## Create a new workbook
-wb <- createWorkbook("My name here")
+wb <- wb_workbook("My name here")
 
 ## Add a worksheets
 addWorksheet(wb, "Expenditure", gridLines = FALSE)

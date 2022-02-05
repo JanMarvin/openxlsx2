@@ -48,7 +48,7 @@ Headers and footers can contain special tags
 }
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 addWorksheet(wb, "S1")
 addWorksheet(wb, "S2")

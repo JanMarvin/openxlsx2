@@ -45,7 +45,7 @@
 #'
 #' #####################################################################################
 #' ## Create Workbook object and add worksheets
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' addWorksheet(wb, "S1")
 #' addWorksheet(wb, "S2")
 #' addWorksheet(wb, "S3")
@@ -105,7 +105,7 @@
 #' #####################################################################################
 #' ## Pre-defined table styles gallery
 #'
-#' wb <- createWorkbook(paste0("tableStylesGallery.xlsx"))
+#' wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
 #' addWorksheet(wb, "Style Samples")
 #' for (i in 1:21) {
 #'   style <- paste0("TableStyleLight", i)
