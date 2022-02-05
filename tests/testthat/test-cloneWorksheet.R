@@ -9,7 +9,7 @@ test_that("clone Worksheet with data", {
   file_name <- system.file("extdata", "cloneWorksheetExample.xlsx", package = "openxlsx2")
   refwb <- loadWorkbook(file = file_name)
 
-  expect_equal(sheets(wb), sheets(refwb))
+  expect_equal(names(wb), names(refwb))
   expect_equal(worksheetOrder(wb), worksheetOrder(refwb))
 })
 
@@ -23,6 +23,6 @@ test_that("clone empty Worksheet", {
   file_name <- system.file("extdata", "cloneEmptyWorksheetExample.xlsx", package = "openxlsx2")
   refwb <- loadWorkbook(file = file_name)
 
-  expect_equal(sheets(wb), sheets(refwb))
+  expect_equal(names(wb), names(refwb))
   expect_equal(worksheetOrder(wb), worksheetOrder(refwb))
 })

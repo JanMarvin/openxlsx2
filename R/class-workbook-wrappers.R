@@ -136,7 +136,7 @@ mergeCells <- function(wb, sheet, cols, rows) {
   on.exit(options(op), add = TRUE)
 
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
 
   wb$mergeCells(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
@@ -155,53 +155,11 @@ mergeCells <- function(wb, sheet, cols, rows) {
 removeCellMerge <- function(wb, sheet, cols, rows) {
   assert_workbook(wb)
 
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  cols <- convertFromExcelRef(cols)
+  cols <- col2int(cols)
   rows <- as.integer(rows)
 
   wb$removeCellMerge(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
 }
-
-
-#' @name sheets
-#' @title Returns names of worksheets.
-#' @description DEPRECATED. Use names().
-#' @param wb A workbook object
-#' @return Name of worksheet(s) for a given index
-#' @seealso [names()] to rename a worksheet in a Workbook
-#' @details DEPRECATED. Use [names()]
-#' @export
-#' @examples
-#'
-#' ## Create a new workbook
-#' wb <- createWorkbook()
-#'
-#' ## Add some worksheets
-#' addWorksheet(wb, "Worksheet Name")
-#' addWorksheet(wb, "This is worksheet 2")
-#' addWorksheet(wb, "The third worksheet")
-#'
-#' ## Return names of sheets, can not be used for assignment.
-#' names(wb)
-#' # openXL(wb)
-#'
-#' names(wb) <- c("A", "B", "C")
-#' names(wb)
-#' # openXL(wb)
-sheets <- function(wb) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  assert_workbook(wb)
-
-  nms <- wb$sheet_names
-  nms <- replaceXMLEntities(nms)
-
-  return(nms)
-}
-
 
 
 #' @name addWorksheet
@@ -460,47 +418,6 @@ wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
 }
 
 
-#' @name renameWorksheet
-#' @title Rename a worksheet
-#' @description Rename a worksheet
-#' @param wb A Workbook object containing a worksheet
-#' @param sheet The name or index of the worksheet to rename
-#' @param newName The new name of the worksheet. No longer than 31 chars.
-#' @details DEPRECATED. Use [names()]
-#' @export
-#' @examples
-#'
-#' ## Create a new workbook
-#' wb <- createWorkbook("CREATOR")
-#'
-#' ## Add 3 worksheets
-#' addWorksheet(wb, "Worksheet Name")
-#' addWorksheet(wb, "This is worksheet 2")
-#' addWorksheet(wb, "Not the best name")
-#'
-#' #' ## rename all worksheets
-#' names(wb) <- c("A", "B", "C")
-#'
-#'
-#' ## Rename worksheet 1 & 3
-#' renameWorksheet(wb, 1, "New name for sheet 1")
-#' names(wb)[[1]] <- "New name for sheet 1"
-#' names(wb)[[3]] <- "A better name"
-#'
-#' ## Save workbook
-#' \dontrun{
-#' saveWorkbook(wb, "renameWorksheetExample.xlsx", overwrite = TRUE)
-#' }
-renameWorksheet <- function(wb, sheet, newName) {
-  assert_workbook(wb)
-
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  invisible(wb$setSheetName(sheet, newName))
-}
-
-
 #' @name addStyle
 #' @title Add a style to a set of cells
 #' @description Function adds a style to a specified set of cells.
@@ -573,7 +490,7 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
     return(invisible(0))
   }
 
-  cols <- convertFromExcelRef(cols)
+  cols <- col2int(cols)
   rows <- as.integer(rows)
 
   ## rows and cols need to be the same length
@@ -650,17 +567,16 @@ freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, 
     invisible(wb$freezePanes(sheet, firstActiveRow = 2L, firstActiveCol = 2L))
   } else { ## else both firstRow and firstCol are FALSE
 
+    if (is.null(firstActiveRow)) firstActiveRow <- 1L
+    if (is.null(firstActiveCol)) firstActiveCol <- 1L
+
     ## Convert to numeric if column letter given
-    if (!is.null(firstActiveRow)) {
-      firstActiveRow <- convertFromExcelRef(firstActiveRow)
-    } else {
-      firstActiveRow <- 1L
+    if (is.character(firstActiveRow)) {
+      firstActiveRow <- col2int(firstActiveRow)
     }
 
-    if (!is.null(firstActiveCol)) {
-      firstActiveCol <- convertFromExcelRef(firstActiveCol)
-    } else {
-      firstActiveCol <- 1L
+    if (is.character(firstActiveCol)) {
+      firstActiveCol <- col2int(firstActiveCol)
     }
 
     invisible(wb$freezePanes(sheet, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol, firstRow = firstRow, firstCol = firstCol))
@@ -849,7 +765,7 @@ removeColWidths <- function(wb, sheet, cols) {
   on.exit(options(op), add = TRUE)
 
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
 
   customCols <- as.integer(names(wb$colWidths[[sheet]]))
@@ -1901,7 +1817,7 @@ addFilter <- function(wb, sheet, rows, cols) {
   }
 
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
 
   wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
@@ -2021,7 +1937,7 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 
   ## rows and cols
   if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
+    cols <- col2int(cols)
   }
   rows <- as.integer(rows)
 
@@ -2260,97 +2176,6 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 }
 
 
-
-#' @name conditionalFormat
-#' @title Add conditional formatting to cells
-#' @description DEPRECATED! USE [conditionalFormatting()]
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols Columns to apply conditional formatting to
-#' @param rows Rows to apply conditional formatting to
-#' @param rule The condition under which to apply the formatting or a vector of colours. See examples.
-#' @param style A style to apply to those cells that satisfy the rule. A Style object returned from createStyle()
-#' @details DEPRECATED! USE [conditionalFormatting()]
-#'
-#' Valid operators are "<", "<=", ">", ">=", "==", "!=". See Examples.
-#' Default style given by: createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-#' @param type Either 'expression', 'colorscale' or 'databar'. If 'expression' the formatting is determined
-#' by a formula.  If colorScale cells are coloured based on cell value. See examples.
-#' @seealso [createStyle()]
-#' @export
-conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, type = "expression") {
-  warning("conditionalFormat() has been deprecated. Use conditionalFormatting().")
-  ## Rule always applies to top left of sqref, $ determine which cells the rule depends on
-  ## Rule for "databar" and colourscale are colours of length 2/3 or 1 respectively.
-
-  type <- tolower(type)
-  if (tolower(type) %in% c("colorscale", "colourscale")) {
-    type <- "colorScale"
-  } else if (type == "databar") {
-    type <- "dataBar"
-  } else if (type != "expression") {
-    stop("Invalid type argument.  Type must be 'expression', 'colourScale' or 'databar'")
-  }
-
-  ## rows and cols
-  if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
-  }
-  rows <- as.integer(rows)
-
-  ## check valid rule
-  if (type == "colorScale") {
-    if (!length(rule) %in% 2:3) {
-      stop("rule must be a vector containing 2 or 3 colours if type is 'colorScale'")
-    }
-
-    rule <- validateColour(rule, errorMsg = "Invalid colour specified in rule.")
-    dxfId <- NULL
-  } else if (type == "dataBar") {
-
-    ## If rule is NULL use default colour
-    if (is.null(rule)) {
-      rule <- "FF638EC6"
-    } else {
-      rule <- validateColour(rule, errorMsg = "Invalid colour specified in rule.")
-    }
-
-    dxfId <- NULL
-  } else { ## else type == "expression"
-
-    rule <- toupper(gsub(" ", "", rule))
-    rule <- replaceIllegalCharacters(rule)
-    rule <- gsub("!=", "&lt;&gt;", rule)
-    rule <- gsub("==", "=", rule)
-
-    if (!grepl("[A-Z]", substr(rule, 1, 2))) {
-
-      ## formula looks like "operatorX" , attach top left cell to rule
-      rule <- paste0(getCellRefs(data.frame("x" = min(rows), "y" = min(cols))), rule)
-    } ## else, there is a letter in the formula and apply as is
-
-    if (is.null(style)) {
-      style <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-    }
-
-    dxfId <- wb$addDXFS(style)$styles$dxfs
-  }
-
-
-  invisible(wb$conditionalFormatCell(sheet,
-    startRow = min(rows),
-    endRow = max(rows),
-    startCol = min(cols),
-    endCol = max(cols),
-    dxfId,
-    formula = rule,
-    type = type
-  ))
-
-  invisible(0)
-}
-
-
 #' @name copyWorkbook
 #' @title Copy a Workbook object.
 #' @description Just a wrapper of wb$clone()
@@ -2495,7 +2320,7 @@ removeTable <- function(wb, sheet, table) {
   rows <- as.integer(gsub("[A-Z]", "", refs))
   rows <- seq(from = rows[1], to = rows[2], by = 1)
 
-  cols <- convertFromExcelRef(refs)
+  cols <- col2int(refs)
   cols <- seq(from = cols[1], to = cols[2], by = 1)
 
   ## now delete data
@@ -2783,7 +2608,7 @@ insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, st
     stop("Invalid units.\nunits must be one of: cm, in, px")
   }
 
-  startCol <- convertFromExcelRef(startCol)
+  startCol <- col2int(startCol)
   startRow <- as.integer(startRow)
 
   ## convert to inches

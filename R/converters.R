@@ -28,6 +28,9 @@ int2col <- function(x) {
 #' col2int(LETTERS)
 col2int <- function(x) {
 
+  if (is.numeric(x) | is.integer(x) | is.factor(x) | suppressWarnings(isTRUE(as.character(as.numeric(x)) == x)))
+    return(as.numeric(x))
+
   if (!is.character(x)) {
     stop("x must be character")
 
@@ -36,42 +39,6 @@ col2int <- function(x) {
   }
 
   col_to_int(x)
-}
-
-
-# refs --------------------------------------------------------------------
-
-#' @name convertFromExcelRef
-#' @title Convert excel column name to integer index
-#' @description Convert excel column name to integer index e.g. "J" to 10
-#' @param col An excel column reference
-#' @export
-#' @examples
-#' convertFromExcelRef("DOG")
-#' convertFromExcelRef("COW")
-#'
-#' ## numbers will be removed
-#' convertFromExcelRef("R22")
-convertFromExcelRef <- function(col) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  col <- toupper(col)
-  charFlag <- grepl("[A-Z]", col)
-  if (any(charFlag)) {
-    col[charFlag] <- gsub("[0-9]", "", col[charFlag])
-    d <- lapply(strsplit(col[charFlag], split = ""), function(x) match(rev(x), LETTERS))
-    col[charFlag] <- unapply(
-      seq_along(d),
-      function(i) {
-        sum(d[[i]] * (26^(0:(length(d[[i]]) - 1L))))
-      }
-    )
-  }
-
-  col[!charFlag] <- as.integer(col[!charFlag])
-
-  return(as.integer(col))
 }
 
 
@@ -126,4 +93,3 @@ pixels2ExcelColWidth <- function(pixels) {
 
   pixels
 }
-

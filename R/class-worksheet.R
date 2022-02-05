@@ -534,7 +534,7 @@ empty_cols_attr <- function(n = 0) {
   if (n > 0) {
     z$min <- seq_len(n)
     z$max <- seq_len(n)
-    z$width <- "10.71" # default width in ms365
+    z$width <- "8.43" # default width in ms365
   }
 
   z

@@ -213,7 +213,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
   }
 
   if (!is.numeric(col)) {
-    col <- convertFromExcelRef(col)
+    col <- col2int(col)
   }
 
   ref <- paste0(int2col(col), row)
@@ -250,7 +250,7 @@ removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
-  cols <- convertFromExcelRef(cols)
+  cols <- col2int(cols)
   rows <- as.integer(rows)
 
   ## rows and cols need to be the same length

@@ -2785,7 +2785,7 @@ wbWorkbook <- R6::R6Class(
       imageNo <- drawing_len + 1L
       mediaNo <- length(self$media) + 1L
 
-      startCol <- convertFromExcelRef(startCol)
+      startCol <- col2int(startCol)
 
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
@@ -3120,7 +3120,7 @@ wbWorkbook <- R6::R6Class(
             })
           cols <-
             lapply(names(exTable), function(rectCoords) {
-              convertFromExcelRef(unlist(regmatches(
+              col2int(unlist(regmatches(
                 rectCoords, gregexpr("[A-Z]+", rectCoords)
               )))
             })
@@ -3250,104 +3250,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' DEPRECATED
-    #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
-    #' @param dxfId dxfId
-    #' @param formula formula
-    #' @param type type
-    #' @return The `wbWorkbook` object, invisibly
-    conditionalFormatCell = function(
-      sheet,
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      dxfId,
-      formula,
-      type
-    ) {
-      .Deprecated()
-
-      sheet <- self$validateSheet(sheet)
-      sqref <-
-        stri_join(getCellRefs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )), collapse = ":")
-
-      ## Increment priority of conditional formatting rule
-      if (length((self$worksheets[[sheet]]$conditionalFormatting))) {
-        # TODO use seq_along(); then rev()
-        for (i in length(self$worksheets[[sheet]]$conditionalFormatting):1) {
-          self$worksheets[[sheet]]$conditionalFormatting[[i]] <-
-            gsub('(?<=priority=")[0-9]+',
-              i + 1L,
-              self$worksheets[[sheet]]$conditionalFormatting[[i]],
-              perl = TRUE
-            )
-        }
-      }
-
-      nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
-
-      if (type == "expression") {
-        cfRule <-
-          sprintf(
-            '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
-            dxfId,
-            formula
-          )
-      } else if (type == "dataBar") {
-        if (length(formula) == 2) {
-          negColour <- formula[[1]]
-          posColour <- formula[[2]]
-        } else {
-          posColour <- formula
-          negColour <- "FFFF0000"
-        }
-
-        guid <-
-          stri_join(
-            "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(self$worksheets[[sheet]]$extLst)
-          )
-        cfRule <-
-          sprintf(
-            '<cfRule type="dataBar" priority="1"><dataBar><cfvo type="min"/><cfvo type="max"/><color rgb="%s"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{%s}</x14:id></ext></extLst></cfRule>',
-            posColour,
-            guid
-          )
-      } else if (length(formula) == 2L) {
-        cfRule <-
-          sprintf(
-            '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="min"/><cfvo type="max"/><color rgb="%s"/><color rgb="%s"/></colorScale></cfRule>',
-            formula[[1]],
-            formula[[2]]
-          )
-      } else {
-        cfRule <-
-          sprintf(
-            '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/><color rgb="%s"/><color rgb="%s"/><color rgb="%s"/></colorScale></cfRule>',
-            formula[[1]],
-            formula[[2]],
-            formula[[3]]
-          )
-      }
-
-      # TODO use c() instead of append()
-      self$worksheets[[sheet]]$conditionalFormatting <-
-        append(self$worksheets[[sheet]]$conditionalFormatting, cfRule)
-
-      names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
-
-      invisible(self)
-    },
-
+    
     #' @description
     #' Protect a workbook
     #' @param protect protect

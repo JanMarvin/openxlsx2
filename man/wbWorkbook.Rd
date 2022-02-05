@@ -140,7 +140,6 @@ A Workbook
 \item \href{#method-validate_table_name}{\code{wbWorkbook$validate_table_name()}}
 \item \href{#method-check_overwrite_tables}{\code{wbWorkbook$check_overwrite_tables()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
-\item \href{#method-conditionalFormatCell}{\code{wbWorkbook$conditionalFormatCell()}}
 \item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
 \item \href{#method-addCreator}{\code{wbWorkbook$addCreator()}}
 \item \href{#method-getCreators}{\code{wbWorkbook$getCreators()}}
@@ -990,49 +989,6 @@ Prints the \code{wbWorkbook} object
 
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly; called for its side-effects
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-conditionalFormatCell"></a>}}
-\if{latex}{\out{\hypertarget{method-conditionalFormatCell}{}}}
-\subsection{Method \code{conditionalFormatCell()}}{
-DEPRECATED
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditionalFormatCell(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  dxfId,
-  formula,
-  type
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{dxfId}}{dxfId}
-
-\item{\code{formula}}{formula}
-
-\item{\code{type}}{type}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
