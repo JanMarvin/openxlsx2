@@ -137,7 +137,7 @@ A Workbook
 \item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
 \item \href{#method-dataValidation_list}{\code{wbWorkbook$dataValidation_list()}}
 \item \href{#method-conditionalFormatting}{\code{wbWorkbook$conditionalFormatting()}}
-\item \href{#method-mergeCells}{\code{wbWorkbook$mergeCells()}}
+\item \href{#method-addCellMerge}{\code{wbWorkbook$addCellMerge()}}
 \item \href{#method-removeCellMerge}{\code{wbWorkbook$removeCellMerge()}}
 \item \href{#method-freezePanes}{\code{wbWorkbook$freezePanes()}}
 \item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
@@ -703,12 +703,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mergeCells"></a>}}
-\if{latex}{\out{\hypertarget{method-mergeCells}{}}}
-\subsection{Method \code{mergeCells()}}{
+\if{html}{\out{<a id="method-addCellMerge"></a>}}
+\if{latex}{\out{\hypertarget{method-addCellMerge}{}}}
+\subsection{Method \code{addCellMerge()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$mergeCells(sheet, startRow, endRow, startCol, endCol)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCellMerge(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -716,13 +716,7 @@ Set cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows, cols}}{Row and column specifications.}
 }
 \if{html}{\out{</div>}}
 }
@@ -736,7 +730,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{removeCellMerge()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, startRow, endRow, startCol, endCol)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, rows, cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -744,13 +738,7 @@ Removes cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows, cols}}{Row and column specifications.}
 }
 \if{html}{\out{</div>}}
 }

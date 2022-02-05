@@ -39,7 +39,7 @@ wb_validate_sheet <- function(wb, sheetName) {
 #' @return The font node as xml?
 #' @noRd
 wb_create_font_node <- function(wb, style) {
-  assert_style(wb)
+  assert_workbook(wb)
   # assert_style(style)
 
   baseFont <- wb$getBaseFont()

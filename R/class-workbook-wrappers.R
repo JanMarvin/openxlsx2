@@ -69,79 +69,62 @@ wb_save <- function(wb, path, overwrite = FALSE) {
 }
 
 
-#' @name mergeCells
-#' @title Merge cells within a worksheet
-#' @description Merge cells within a worksheet
+#' Worksheet cell merging
+#'
+#' Merge cells within a worksheet
+#'
+#' @details As merged region must be rectangular, only min and max of cols and
+#'   rows are used.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param cols Columns to merge
-#' @param rows corresponding rows to merge
-#' @details As merged region must be rectangular, only min and max of cols and rows are used.
-#' @seealso [removeCellMerge()]
-#' @export
+#' @param cols,rows Column and row specifications to merge on.  Note: `min()` and
+#'   `max()` of each vector are provided for specs.  Skipping rows or columns is
+#'   not recognized.
 #' @examples
-#' ## Create a new workbook
+#' # Create a new workbook
 #' wb <- wb_workbook()
 #'
-#' ## Add a worksheet
-#' wb_add_worksheet(wb, "Sheet 1")
-#' wb_add_worksheet(wb, "Sheet 2")
+#' # Add a worksheets
+#' wb <- wb_add_worksheet(wb, "Sheet 1")
+#' wb <- wb_add_worksheet(wb, "Sheet 2")
 #'
-#' ## Merge cells: Row 2 column C to F (3:6)
-#' mergeCells(wb, "Sheet 1", cols = 2, rows = 3:6)
+#' # Merge cells: Row 2 column C to F (3:6)
+#' wb <- wb_merge_cells(wb, "Sheet 1", cols = 2, rows = 3:6)
 #'
-#' ## Merge cells:Rows 10 to 20 columns A to J (1:10)
-#' mergeCells(wb, 1, cols = 1:10, rows = 10:20)
+#' # Merge cells:Rows 10 to 20 columns A to J (1:10)
+#' wb <- wb_merge_cells(wb, 1, cols = 1:10, rows = 10:20)
 #'
-#' ## Intersecting merges
-#' mergeCells(wb, 2, cols = 1:10, rows = 1)
-#' mergeCells(wb, 2, cols = 5:10, rows = 2)
-#' mergeCells(wb, 2, cols = c(1, 10), rows = 12) ## equivalent to 1:10 as only min/max are used
-#' # mergeCells(wb, 2, cols = 1, rows = c(1,10)) # Throws error because intersects existing merge
+#' # Intersecting merges
+#' wb <- wb_merge_cells(wb, 2, cols = 1:10, rows = 1)
+#' wb <- wb_merge_cells(wb, 2, cols = 5:10, rows = 2)
+#' wb <- wb_merge_cells(wb, 2, cols = c(1, 10), rows = 12) # equivalent to 1:10 as only min/max are used
+#' try(wb_merge_cells(wb, 2, cols = 1, rows = c(1,10)))    # intersects existing merge
 #'
-#' ## remove merged cells
-#' removeCellMerge(wb, 2, cols = 1, rows = 1) # removes any intersecting merges
-#' mergeCells(wb, 2, cols = 1, rows = 1:10) # Now this works
+#' # remove merged cells
+#' wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
+#' wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
 #'
-#' ## Save workbook
+#' # Save workbook
 #' \dontrun{
-#' wb_save(wb, "mergeCellsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, temp_xlsx(), overwrite = TRUE)
 #' }
-mergeCells <- function(wb, sheet, cols, rows) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+#'
+#' @name ws_cell_merge
+NULL
 
+#' @export
+#' @rdname ws_cell_merge
+wb_merge_cells <- function(wb, sheet, cols, rows) {
   assert_workbook(wb)
-
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-
-  wb$mergeCells(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
+  wb$clone()$addCellMerge(sheet, rows = rows, cols = cols)
 }
 
-#' @name removeCellMerge
-#' @title Create a new Workbook object
-#' @description Unmerges any merged cells that intersect
-#' with the region specified by, min(cols):max(cols) X min(rows):max(rows)
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols vector of column indices
-#' @param rows vector of row indices
 #' @export
-#' @seealso [mergeCells()]
-removeCellMerge <- function(wb, sheet, cols, rows) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+#' @rdname ws_cell_merge
+wb_unmerge_cells <- function(wb, sheet, cols, rows) {
   assert_workbook(wb)
-
-  cols <- col2int(cols)
-  rows <- as.integer(rows)
-
-  wb$removeCellMerge(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
+  wb$clone()$removeCellMerge(sheet, rows = rows, cols = cols)
 }
 
 

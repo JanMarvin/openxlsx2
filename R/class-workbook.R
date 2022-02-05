@@ -2497,67 +2497,53 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Set cell merging for a sheet
     #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
+    #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    mergeCells = function(
-      sheet,
-      startRow,
-      endRow,
-      startCol,
-      endCol
-    ) {
-      # TODO rename: setMergeCells?  Name "conflicts" with element
-      # TODO assert_class() sheet?
-      sheet <- wb_validate_sheet(self, sheetName = sheet)
+    addCellMerge = function(sheet, rows = NULL, cols = NULL) {
+      sheet <- wb_validate_sheet(self, sheet)
 
-      sqref <-
-        getCellRefs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        ))
-      exMerges <-
-        regmatches(
-          self$worksheets[[sheet]]$mergeCells,
-          regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
+      rows <- range(as.integer(rows))
+      cols <- range(as.integer(cols))
+
+      # sqref <- getCellRefs(data.frame(x = rows, y = cols))
+      sqref <- paste0(int2col(cols), rows)
+
+      # TODO If the cell merge specs were saved as a data.frame or matrix
+      # this would be quicker to check
+      current <- regmatches(
+        self$worksheets[[sheet]]$mergeCells,
+        regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
+      )
+
+      if (!is.null(current)) {
+        comps <- lapply(
+          current,
+          function(rectCoords) {
+            unlist(strsplit(rectCoords, split = ":"))
+          }
         )
 
-      if (!is.null(exMerges)) {
-        comps <-
-          lapply(exMerges, function(rectCoords) {
-            unlist(strsplit(rectCoords, split = ":"))
-          })
-        exMergedCells <- build_cell_merges(comps = comps)
-        newMerge <- unlist(build_cell_merges(comps = list(sqref)))
+        current_cells <- build_cell_merges(comps = comps)
+        new_merge <- unlist(build_cell_merges(comps = list(sqref))) # used below in vapply()
+        intersects <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
 
-        ## Error if merge intersects
-        mergeIntersections <-
-          sapply(exMergedCells, function(x) {
-            any(x %in% newMerge)
-          })
-        if (any(mergeIntersections)) {
-          stop(
-            sprintf(
-              "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
-              stri_join(exMerges[mergeIntersections], collapse = "\n\t\t")
-            )
+        # Error if merge intersects
+        if (any(intersects)) {
+          msg <- sprintf(
+            "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
+            stri_join(current[intersects], collapse = "\n\t\t")
           )
+          stop(msg, call. = FALSE)
         }
       }
 
-      self$worksheets[[sheet]]$mergeCells <-
-        c(
-          self$worksheets[[sheet]]$mergeCells,
-          sprintf(
-            '<mergeCell ref="%s"/>',
-            stri_join(sqref,
-              collapse = ":", sep =
-                " "
-            )
-          )
-        )
+      self$worksheets[[sheet]]$mergeCells <- c(
+        self$worksheets[[sheet]]$mergeCells,
+        # TODO does this have to be xml?  Can we just save the data.frame or
+        # matrix and then check that?  This would also simplify removing the
+        # merge specifications
+        sprintf('<mergeCell ref="%s"/>', stri_join(sqref, collapse = ":", sep = " " ))
+      )
 
       invisible(self)
     },
@@ -2565,49 +2551,29 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Removes cell merging for a sheet
     #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
+    #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    removeCellMerge = function(
-      sheet,
-      startRow,
-      endRow,
-      startCol,
-      endCol
-    ) {
+    removeCellMerge = function(sheet, rows, cols) {
       sheet <- wb_validate_sheet(self, sheet)
+      rows <- range(as.integer(rows))
+      cols <- range(as.integer(cols))
+      # sqref <- getCellRefs(data.frame(x = rows, y = cols))
+      sqref <- paste0(int2col(cols), rows)
 
-      sqref <-
-        getCellRefs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        ))
-      exMerges <-
-        regmatches(
-          self$worksheets[[sheet]]$mergeCells,
-          regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
-        )
+      current <- regmatches(
+        self$worksheets[[sheet]]$mergeCells,
+        regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
+      )
 
-      if (!is.null(exMerges)) {
-        comps <-
-          lapply(exMerges, function(x) {
-            unlist(strsplit(x, split = ":"))
-          })
-        exMergedCells <- build_cell_merges(comps = comps)
-        newMerge <- unlist(build_cell_merges(comps = list(sqref)))
+      if (!is.null(current)) {
+        comps <- lapply(current, function(x) unlist(strsplit(x, split = ":")))
+        current_cells <- build_cell_merges(comps = comps)
+        new <- unlist(build_cell_merges(comps = list(sqref))) # used right below
+        mergeIntersections <- vapply(current_cells, function(x) any(x %in% new), NA)
 
-        ## Error if merge intersects
-        mergeIntersections <-
-          sapply(exMergedCells, function(x) {
-            any(x %in% newMerge)
-          })
+        # Remove intersection
+        self$worksheets[[sheet]]$mergeCells <- self$worksheets[[sheet]]$mergeCells[!mergeIntersections]
       }
-
-      ## Remove intersection
-      self$worksheets[[sheet]]$mergeCells <-
-        self$worksheets[[sheet]]$mergeCells[!mergeIntersections]
 
       invisible(self)
     },
