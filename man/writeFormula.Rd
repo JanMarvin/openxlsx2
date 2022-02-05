@@ -51,7 +51,7 @@ The examples below show a small list of possible formulas:
 ## There are 3 ways to write a formula
 
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 1")
 writeData(wb, "Sheet 1", x = iris)
 
 ## SEE int2col() to convert int to Excel column label
@@ -76,7 +76,7 @@ df <- data.frame(
 class(df$z) <- c(class(df$z), "formula")
 class(df$z2) <- c(class(df$z2), "formula")
 
-addWorksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 2")
 writeData(wb, sheet = 2, x = df)
 
 
@@ -97,8 +97,8 @@ wb_save(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
 ## 4. - Writing internal hyperlinks
 
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet1")
-addWorksheet(wb, "Sheet2")
+wb_add_worksheet(wb, "Sheet1")
+wb_add_worksheet(wb, "Sheet2")
 writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 
 ## Save workbook

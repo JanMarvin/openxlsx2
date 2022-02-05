@@ -34,7 +34,7 @@ example(writeData)
 # (not yet saved) Workbook example
 wb <- wb_workbook()
 x <- mtcars[1:6, ]
-addWorksheet(wb, "Cars")
+wb_add_worksheet(wb, "Cars")
 writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 # openXL(wb)
 }

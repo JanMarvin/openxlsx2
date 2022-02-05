@@ -19,14 +19,14 @@ Save Workbook to file
 \examples{
 ## Create a new workbook and add a worksheet
 wb <- wb_workbook("Creator of workbook")
-addWorksheet(wb, sheetName = "My first worksheet")
+wb_add_worksheet(wb, sheetName = "My first worksheet")
 
 ## Save workbook to working directory
 \dontrun{
-wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
+wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 }
 }
 \seealso{
-\code{\link[=wb_workbook]{wb_workbook()}}, \code{\link[=addWorksheet]{addWorksheet()}}, \code{\link[=loadWorkbook]{loadWorkbook()}}, \code{\link[=writeData]{writeData()}}.
+\code{\link[=wb_workbook]{wb_workbook()}}, \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=loadWorkbook]{loadWorkbook()}}, \code{\link[=writeData]{writeData()}}.
 \code{\link[=writeDataTable]{writeDataTable()}}
 }

@@ -5,7 +5,7 @@ require('openxlsx')
 
 
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 1")
 writeData(wb, 1, head(iris))
 
 ## What we expect
@@ -44,13 +44,13 @@ wb$addStyle
 
 
 ## Now not stacking
-addWorksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 2")
 writeData(wb, 2, matrix("abc", nrow = 4, ncol = 5))
 addStyle(wb, 2, createStyle(halign = "center", border = "all"), 1:5, 1:5, gridExpand = TRUE)
 addStyle(wb, 2, createStyle(textDecoration = "bold", fgFill = "salmon"), 2:4, 2:4,gridExpand = F, stack = TRUE)
 
 ## STACk == TRUE
-addWorksheet(wb, "Sheet 3")
+wb_add_worksheet(wb, "Sheet 3")
 writeData(wb, 3, matrix("abc", nrow = 4, ncol = 5))
 addStyle(wb, 3, createStyle(halign = "center", border = "all"), 1:5, 1:5, gridExpand = TRUE)
 addStyle(wb, 3, createStyle(textDecoration = "bold", fgFill = "salmon"), 2:4, 2:4,gridExpand = F, stack = TRUE)
@@ -78,7 +78,7 @@ openXL(wb)
 ## TEST NUMBER 2 - BUG REPORT #203
 
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 1")
 writeData(wb, 1, head(iris))
 
 
@@ -108,13 +108,13 @@ addStyle(wb, sheet = 1, style = createStyle(border = "bottom", borderColour = "r
 
 
 ## Now not stacking
-addWorksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 2")
 writeData(wb, 2, matrix("abc", nrow = 4, ncol = 5))
 addStyle(wb, 2, createStyle(halign = "center", border = "all"), 1:5, 1:5, gridExpand = TRUE)
 addStyle(wb, 2, createStyle(textDecoration = "bold", fgFill = "salmon"), 2:4, 2:4,gridExpand = F, stack = TRUE)
 
 ## STACk == TRUE
-addWorksheet(wb, "Sheet 3")
+wb_add_worksheet(wb, "Sheet 3")
 writeData(wb, 3, matrix("abc", nrow = 4, ncol = 5))
 addStyle(wb, 3, createStyle(halign = "center", border = "all"), 1:5, 1:5, gridExpand = TRUE)
 addStyle(wb, 3, createStyle(textDecoration = "bold", fgFill = "salmon"), 2:4, 2:4,gridExpand = F, stack = TRUE)

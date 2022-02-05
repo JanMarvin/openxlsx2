@@ -70,8 +70,8 @@
 #' wb <- wb_workbook()
 #'
 #' ## Add worksheets
-#' addWorksheet(wb, "Cars")
-#' addWorksheet(wb, "Formula")
+#' wb_add_worksheet(wb, "Cars")
+#' wb_add_worksheet(wb, "Formula")
 #'
 #'
 #' x <- mtcars[1:6, ]
@@ -379,7 +379,7 @@ writeData <- function(wb,
 #' ## There are 3 ways to write a formula
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 1")
 #' writeData(wb, "Sheet 1", x = iris)
 #'
 #' ## SEE int2col() to convert int to Excel column label
@@ -404,7 +404,7 @@ writeData <- function(wb,
 #' class(df$z) <- c(class(df$z), "formula")
 #' class(df$z2) <- c(class(df$z2), "formula")
 #'
-#' addWorksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 2")
 #' writeData(wb, sheet = 2, x = df)
 #'
 #'
@@ -425,8 +425,8 @@ writeData <- function(wb,
 #' ## 4. - Writing internal hyperlinks
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet1")
-#' addWorksheet(wb, "Sheet2")
+#' wb_add_worksheet(wb, "Sheet1")
+#' wb_add_worksheet(wb, "Sheet2")
 #' writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
 #' ## Save workbook

@@ -17,7 +17,7 @@
 #' names(wb) # list worksheets
 #' wb ## view object
 #' ## Add a worksheet
-#' addWorksheet(wb, "A new worksheet")
+#' wb_add_worksheet(wb, "A new worksheet")
 #'
 #' ## Save workbook
 #' \dontrun{

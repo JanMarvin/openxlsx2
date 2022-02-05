@@ -26,8 +26,8 @@ As merged region must be rectangular, only min and max of cols and rows are used
 wb <- wb_workbook()
 
 ## Add a worksheet
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 2")
 
 ## Merge cells: Row 2 column C to F (3:6)
 mergeCells(wb, "Sheet 1", cols = 2, rows = 3:6)

@@ -1,9 +1,6 @@
 
-
-
 test_that("Validate Table Names", {
-  wb <- wb_workbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_add_worksheet(wb_workbook(), "Sheet 1")
 
   ## case
   expect_equal(wb_validate_table_name(wb, "test"), "test")
@@ -29,14 +26,10 @@ test_that("Validate Table Names", {
 
 
 
-
-
 test_that("Existing Table Names", {
-  wb <- wb_workbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_add_worksheet(wb_workbook(), "Sheet 1")
 
   ## Existing names - case in-sensitive
-
   writeDataTable(wb, sheet = 1, x = head(iris), tableName = "Table1")
   expect_error(wb_validate_table_name(wb, "Table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
   expect_error(writeDataTable(wb, sheet = 1, x = head(iris), tableName = "Table1", startCol = 10), regexp = "table with name 'table1' already exists", fixed = TRUE)

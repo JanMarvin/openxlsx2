@@ -8,11 +8,11 @@
 #' @param asTable write using writeDataTable as opposed to writeData
 #' @param ... optional parameters to pass to functions:
 #' \itemize{
-#'   \item{wb_workbook}
-#'   \item{addWorksheet}
-#'   \item{writeData}
-#'   \item{freezePane}
-#'   \item{wb_save}
+#'   \item{[wb_workbook()]}
+#'   \item{[wb_add_worksheet()]}
+#'   \item{[writeData()]}
+#'   \item{[freezePane]}
+#'   \item{[wb_save()]}
 #' }
 #'
 #' see details.
@@ -23,7 +23,7 @@
 #'   \item{**creator**}{ A string specifying the workbook author}
 #' }
 #'
-#' **addWorksheet Parameters**
+#' **wb_add_worksheet() Parameters**
 #' \itemize{
 #'   \item{**sheetName**}{ Name of the worksheet}
 #'   \item{**gridLines**}{ A logical. If `FALSE`, the worksheet grid lines will be hidden.}
@@ -72,9 +72,7 @@
 #'
 #' columns of x with class Date or POSIXt are automatically
 #' styled as dates and datetimes respectively.
-#' @seealso [addWorksheet()]
-#' @seealso [writeData()]
-#' @seealso [createStyle()] for style parameters
+#' @seealso [wb_add_worksheet()], [writeData()], [createStyle()] for style parameters
 #' @return A workbook object
 #' @examples
 #'
@@ -214,7 +212,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     }
   }
 
-  ## AddWorksheet
+  ## wb_add_worksheet()
   gridLines <- TRUE
   if ("gridLines" %in% names(params)) {
     if (all(is.logical(params$gridLines))) {

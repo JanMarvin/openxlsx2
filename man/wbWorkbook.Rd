@@ -194,10 +194,10 @@ Add worksheet to the \code{wbWorkbook} object
   evenFooter = NULL,
   firstHeader = NULL,
   firstFooter = NULL,
-  visible = TRUE,
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
   paperSize = 9,
-  orientation = "portrait",
+  orientation = c("portrait", "landscape"),
   hdpi = 300,
   vdpi = 300
 )}\if{html}{\out{</div>}}

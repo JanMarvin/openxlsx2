@@ -16,9 +16,9 @@ Removes filters from addFilter() and writeData()
 }
 \examples{
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
-addWorksheet(wb, "Sheet 3")
+wb_add_worksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 3")
 
 writeData(wb, 1, iris)
 addFilter(wb, 1, row = 1, cols = seq_along(iris))
@@ -33,6 +33,6 @@ writeDataTable(wb, 3, iris)
 removeFilter(wb, 1:2) ## remove filters
 removeFilter(wb, 3) ## Does not affect tables!
 \dontrun{
-wb_save(wb, file = "removeFilterExample.xlsx", overwrite = TRUE)
+wb_save(wb, path = "removeFilterExample.xlsx", overwrite = TRUE)
 }
 }

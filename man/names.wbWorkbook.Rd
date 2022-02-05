@@ -22,9 +22,9 @@ get or set worksheet names
 \examples{
 
 wb <- wb_workbook()
-addWorksheet(wb, "S1")
-addWorksheet(wb, "S2")
-addWorksheet(wb, "S3")
+wb_add_worksheet(wb, "S1")
+wb_add_worksheet(wb, "S2")
+wb_add_worksheet(wb, "S3")
 
 names(wb)
 names(wb)[[2]] <- "S2a"

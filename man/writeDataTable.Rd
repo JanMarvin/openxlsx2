@@ -90,9 +90,9 @@ hyperlinks, percentages respectively.
 #####################################################################################
 ## Create Workbook object and add worksheets
 wb <- wb_workbook()
-addWorksheet(wb, "S1")
-addWorksheet(wb, "S2")
-addWorksheet(wb, "S3")
+wb_add_worksheet(wb, "S1")
+wb_add_worksheet(wb, "S2")
+wb_add_worksheet(wb, "S3")
 
 
 #####################################################################################
@@ -150,7 +150,7 @@ wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 ## Pre-defined table styles gallery
 
 wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
-addWorksheet(wb, "Style Samples")
+wb_add_worksheet(wb, "Style Samples")
 for (i in 1:21) {
   style <- paste0("TableStyleLight", i)
   writeDataTable(wb,
@@ -177,16 +177,10 @@ for (i in 1:11) {
 
 ## openXL(wb)
 \dontrun{
-wb_save(wb, file = "tableStylesGallery.xlsx", overwrite = TRUE)
+wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 }
 
 }
 \seealso{
-\code{\link[=addWorksheet]{addWorksheet()}}
-
-\code{\link[=writeData]{writeData()}}
-
-\code{\link[=removeTable]{removeTable()}}
-
-\code{\link[=getTables]{getTables()}}
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}, \code{\link[=removeTable]{removeTable()}}, \code{\link[=getTables]{getTables()}}
 }

@@ -45,8 +45,8 @@ Add Excel data validation to cells
 \examples{
 \dontrun{
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 2")
 
 writeDataTable(wb, 1, x = iris[1:30, ])
 
@@ -85,8 +85,8 @@ wb_save(wb, "dataValidationExample.xlsx", overwrite = TRUE)
 # operator argument is ignored.
 
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 2")
 
 writeDataTable(wb, sheet = 1, x = iris[1:30, ])
 writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))

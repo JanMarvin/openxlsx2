@@ -45,7 +45,7 @@ t2 <- do.call(cbind, split(t1, cycle(t1)))
 dimnames(t2) <- dimnames(.preformat.ts(t1))
 
 wb <- wb_workbook()
-addWorksheet(wb, "AirPass")
+wb_add_worksheet(wb, "AirPass")
 writeData(wb, "AirPass", t2, rowNames = TRUE)
 
 # groups will always end on/show the last row. in the example 1950, 1955, and 1960

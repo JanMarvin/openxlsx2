@@ -118,8 +118,8 @@ options("openxlsx.borderColour" = "#4F81BD")
 wb <- wb_workbook()
 
 ## Add worksheets
-addWorksheet(wb, "Cars")
-addWorksheet(wb, "Formula")
+wb_add_worksheet(wb, "Cars")
+wb_add_worksheet(wb, "Formula")
 
 
 x <- mtcars[1:6, ]

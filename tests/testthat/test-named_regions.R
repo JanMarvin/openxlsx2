@@ -2,8 +2,8 @@
 test_that("Maintaining Named Regions on Load", {
   ## create named regions
   wb <- wb_workbook()
-  addWorksheet(wb, "Sheet 1")
-  addWorksheet(wb, "Sheet 2")
+  wb_add_worksheet(wb, "Sheet 1")
+  wb_add_worksheet(wb, "Sheet 2")
 
   ## specify region
   writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)

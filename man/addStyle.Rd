@@ -32,7 +32,7 @@ Function adds a style to a specified set of cells.
 wb <- wb_workbook("My name here")
 
 ## Add a worksheets
-addWorksheet(wb, "Expenditure", gridLines = FALSE)
+wb_add_worksheet(wb, "Expenditure", gridLines = FALSE)
 
 ## write data to worksheet 1
 writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)

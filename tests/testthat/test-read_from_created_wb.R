@@ -4,7 +4,7 @@ test_that("Reading from new workbook", {
 
   wb <- wb_workbook()
   for (i in 1:4) {
-    addWorksheet(wb, sprintf("Sheet %s", i))
+    wb_add_worksheet(wb, sprintf("Sheet %s", i))
   }
 
 
@@ -61,17 +61,18 @@ test_that("Reading NAs and NaN values", {
   c[is_nan & !is_nan_after] <- NA
 
   wb <- wb_workbook()
-  addWorksheet(wb, "Sheet 1")
+
+  wb <- wb_add_worksheet(wb, "Sheet 1")
   writeData(wb, 1, a, keepNA = FALSE)
 
-  addWorksheet(wb, "Sheet 2")
+  wb <- wb_add_worksheet(wb, "Sheet 2")
   writeData(wb, 2, a, keepNA = TRUE)
 
-  addWorksheet(wb, "Sheet 3")
+  wb <- wb_add_worksheet(wb, "Sheet 3")
   writeData(wb, 3, a, keepNA = TRUE, na.string = na.string)
 
   wb_save(wb, path = fileName, overwrite = TRUE)
 
-  expect_equal(expect_warning(read.xlsx(fileName)), a, check.attributes=FALSE)
+  expect_equal(expect_warning(read.xlsx(fileName)), a, check.attributes = FALSE)
   unlink(fileName, recursive = TRUE, force = TRUE)
 })

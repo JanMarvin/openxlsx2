@@ -277,24 +277,115 @@ wbWorkbook <- R6::R6Class(
     addWorksheet = function(
       sheetName,
       showGridLines = TRUE,
-      tabColour = NULL,
-      zoom = 100,
-      oddHeader = NULL,
-      oddFooter = NULL,
-      evenHeader = NULL,
-      evenFooter = NULL,
-      firstHeader = NULL,
-      firstFooter = NULL,
-      visible = TRUE,
-      hasDrawing = FALSE,
-      paperSize = 9,
-      orientation = "portrait",
-      hdpi = 300,
-      vdpi = 300
+      tabColour     = NULL,
+      zoom          = 100,
+      oddHeader     = NULL,
+      oddFooter     = NULL,
+      evenHeader    = NULL,
+      evenFooter    = NULL,
+      firstHeader   = NULL,
+      firstFooter   = NULL,
+      visible       = c("true", "false", "hidden", "visible", "veryhidden"),
+      hasDrawing    = FALSE,
+      paperSize     = 9,
+      orientation   = c("portrait", "landscape"),
+      hdpi          = 300,
+      vdpi          = 300
     ) {
+
+
+      visible <- tolower(as.character(visible))
+      visible <- match.arg(visible)
+      orientation <- match.arg(orientation)
+
+      # set up so that a single error can be reported on fail
+      fail <- FALSE
+      msg <- NULL
+
+      sheetName <- as.character(sheetName)
+
+      if (tolower(sheetName) %in% tolower(self$sheet_names)) {
+        fail <- TRUE
+        msg <- c(
+          msg,
+          sprintf("A worksheet by the name \"%s\" already exists.", sheetName),
+          "Sheet names must be unique case-insensitive.",
+        )
+      }
+
+      if (!is.logical(showGridLines) | length(showGridLines) > 1) {
+        fail <- TRUE
+        msg <- c(msg, "showGridLines must be a logical of length 1.")
+      }
+
+      if (nchar(sheetName) > 31) {
+        fail <- TRUE
+        msg <- c(
+          msg,
+          sprintf("sheetName \"sheetName\" too long.", sheetName),
+          "Max length is 31 characters."
+        )
+      }
+
+      if (!is.null(tabColour)) {
+        tabColour <- validateColour(tabColour, "Invalid tabColour in addWorksheet.")
+      }
+
+      if (!is.numeric(zoom)) {
+        fail <- TRUE
+        msg <- c(msg, "zoom must be numeric")
+      }
+
+      if (!is.null(oddHeader) & length(oddHeader) != 3) {
+        fail <- TRUE
+        msg <- c(msg, "header must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(oddFooter) & length(oddFooter) != 3) {
+        fail <- TRUE
+        msg <- c(msg, "footer must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(evenHeader) & length(evenHeader) != 3) {
+        fail <- TRUE
+        msg <- c(msg, "evenHeader must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(evenFooter) & length(evenFooter) != 3) {
+        fail <- TRUE
+        msg <- c(msg, "evenFooter must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(firstHeader) & length(firstHeader) != 3) {
+        fail <- TRUE
+        msg <- c(msg, "firstHeader must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(firstFooter) & length(firstFooter) != 3) {
+        fail <- TRUE
+        msg <- c(msg, "firstFooter must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      vdpi <- as.integer(vdpi)
+      hdpi <- as.integer(hdpi)
+
+      if (is.na(vdpi)) {
+        fail <- TRUE
+        msg <- c(msg, "vdpi must be numeric")
+      }
+
+      if (is.na(hdpi)) {
+        fail <- TRUE
+        msg <- c(msg, "hdpi must be numeric")
+      }
+
+      ## Invalid XML characters
+      sheetName <- replaceIllegalCharacters(sheetName)
+
       if (!missing(sheetName)) {
-        if (grepl(pattern = ":", x = sheetName)) {
-          stop("colon not allowed in sheet names in Excel")
+        if (grepl(":", sheetName)) {
+          fail <- TRUE
+          msg <- c(msg, "colon not allowed in sheet names in Excel")
         }
       }
       newSheetIndex <- length(self$worksheets) + 1L
@@ -309,55 +400,53 @@ wbWorkbook <- R6::R6Class(
         sheetId <- 1
       }
 
+      # check for errors ----
 
-      visible <- tolower(visible)
-      if (visible == "true") {
-        visible <- "visible"
+      if (fail) {
+        stop(msg, call. = FALSE)
       }
 
-      if (visible == "false") {
-        visible <- "hidden"
-      }
-
-      if (visible == "veryhidden") {
-        visible <- "veryHidden"
-      }
+      visible <- switch(
+        visible,
+        true = "visible",
+        false = "hidden",
+        veryhidden = "veryHidden",
+        visible
+      )
 
 
       ##  Add sheet to workbook.xml
-      self$workbook$sheets <-
-        c(
-          self$workbook$sheets,
-          sprintf(
-            '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-            sheetName,
-            sheetId,
-            visible,
-            newSheetIndex
-          )
+      self$workbook$sheets <- c(
+        self$workbook$sheets,
+        sprintf(
+          '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
+          sheetName,
+          sheetId,
+          visible,
+          newSheetIndex
         )
+      )
 
       ## append to worksheets list
-      self$worksheets <-
-        append(
-          self$worksheets,
-          wbWorksheet$new(
-            showGridLines = showGridLines,
-            tabSelected   = newSheetIndex == 1,
-            tabColour     = tabColour,
-            zoom          = zoom,
-            oddHeader     = oddHeader,
-            oddFooter     = oddFooter,
-            evenHeader    = evenHeader,
-            evenFooter    = evenFooter,
-            firstHeader   = firstHeader,
-            firstFooter   = firstFooter,
-            paperSize     = paperSize,
-            orientation   = orientation,
-            hdpi          = hdpi,
-            vdpi          = vdpi
-          )
+      self$worksheets <- c(
+        self$worksheets,
+        wbWorksheet$new(
+          showGridLines = showGridLines,
+          tabSelected   = newSheetIndex == 1,
+          tabColour     = tabColour,
+          zoom          = zoom,
+          oddHeader     = oddHeader,
+          oddFooter     = oddFooter,
+          evenHeader    = evenHeader,
+          evenFooter    = evenFooter,
+          firstHeader   = firstHeader,
+          firstFooter   = firstFooter,
+          paperSize     = paperSize,
+          orientation   = orientation,
+          hdpi          = hdpi,
+          vdpi          = vdpi
         )
+      )
 
 
       ## update content_tyes
@@ -412,12 +501,10 @@ wbWorkbook <- R6::R6Class(
       empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
       self$styles$cellXfs <- write_xf(empty_cellXfs)
 
-      # Jordan is a little worried this may change something
-      # invisible(newSheetIndex)
       invisible(self)
     },
 
-    # TODO should this be as simple as: wb$addWorksheet(wb$worksheets[[1]]$clone()) ?
+    # TODO should this be as simple as: wb$wb_add_worksheet(wb$worksheets[[1]]$clone()) ?
 
     #' @description
     #' Clone a workbooksheet

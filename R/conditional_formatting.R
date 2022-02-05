@@ -89,21 +89,21 @@
 #' @export
 #' @examples
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "cellIs")
-#' addWorksheet(wb, "Moving Row")
-#' addWorksheet(wb, "Moving Col")
-#' addWorksheet(wb, "Dependent on")
-#' addWorksheet(wb, "Duplicates")
-#' addWorksheet(wb, "containsText")
-#' addWorksheet(wb, "notcontainsText")
-#' addWorksheet(wb, "beginsWith")
-#' addWorksheet(wb, "endsWith")
-#' addWorksheet(wb, "colourScale", zoom = 30)
-#' addWorksheet(wb, "databar")
-#' addWorksheet(wb, "between")
-#' addWorksheet(wb, "topN")
-#' addWorksheet(wb, "bottomN")
-#' addWorksheet(wb, "logical operators")
+#' wb_add_worksheet(wb, "cellIs")
+#' wb_add_worksheet(wb, "Moving Row")
+#' wb_add_worksheet(wb, "Moving Col")
+#' wb_add_worksheet(wb, "Dependent on")
+#' wb_add_worksheet(wb, "Duplicates")
+#' wb_add_worksheet(wb, "containsText")
+#' wb_add_worksheet(wb, "notcontainsText")
+#' wb_add_worksheet(wb, "beginsWith")
+#' wb_add_worksheet(wb, "endsWith")
+#' wb_add_worksheet(wb, "colourScale", zoom = 30)
+#' wb_add_worksheet(wb, "databar")
+#' wb_add_worksheet(wb, "between")
+#' wb_add_worksheet(wb, "topN")
+#' wb_add_worksheet(wb, "bottomN")
+#' wb_add_worksheet(wb, "logical operators")
 #'
 #' negStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
 #' posStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
@@ -254,7 +254,7 @@
 #' ## Databar Example
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "databar")
+#' wb_add_worksheet(wb, "databar")
 #'
 #' ## Databars
 #' writeData(wb, "databar", -5:5, startCol = 1)

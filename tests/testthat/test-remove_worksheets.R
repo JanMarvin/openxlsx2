@@ -7,7 +7,7 @@ context("Removing worksheets.")
 test_that("Deleting worksheets", {
   tempFile <- temp_xlsx()
   genWS <- function(wb, sheetName) {
-    addWorksheet(wb, sheetName)
+    wb <- wb_add_worksheet(wb, sheetName)
     writeDataTable(wb, sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), colNames = FALSE)
   }
 

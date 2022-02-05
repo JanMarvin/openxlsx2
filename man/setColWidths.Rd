@@ -46,14 +46,14 @@ NOTE: The \code{hidden} parameter may conflict with the one set in \code{groupCo
 wb <- wb_workbook()
 
 ## Add a worksheet
-addWorksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 1")
 
 
 ## set col widths
 setColWidths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
-addWorksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 2")
 writeData(wb, sheet = 2, x = iris)
 setColWidths(wb, sheet = 2, cols = 1:5, widths = "auto")
 

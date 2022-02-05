@@ -43,9 +43,9 @@ Insert an image into a worksheet
 wb <- wb_workbook("Ayanami")
 
 ## Add some worksheets
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
-addWorksheet(wb, "Sheet 3")
+wb_add_worksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 3")
 
 ## Insert images
 img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")

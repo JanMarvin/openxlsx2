@@ -49,7 +49,7 @@ wb_workbook <- function(
 #' @param wb A `wbWorkbook` object to write to file
 #' @param path A path to save the workbook to
 #' @param overwrite If `TRUE`, overwrite any existing file.
-#' @seealso [wb_workbook()], [addWorksheet()], [loadWorkbook()], [writeData()].
+#' @seealso [wb_workbook()], [wb_add_worksheet()], [loadWorkbook()], [writeData()].
 #'   [writeDataTable()]
 #'
 #' @export
@@ -57,7 +57,7 @@ wb_workbook <- function(
 #' @examples
 #' ## Create a new workbook and add a worksheet
 #' wb <- wb_workbook("Creator of workbook")
-#' addWorksheet(wb, sheetName = "My first worksheet")
+#' wb_add_worksheet(wb, sheetName = "My first worksheet")
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
@@ -84,8 +84,8 @@ wb_save <- function(wb, path, overwrite = FALSE) {
 #' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2")
 #'
 #' ## Merge cells: Row 2 column C to F (3:6)
 #' mergeCells(wb, "Sheet 1", cols = 2, rows = 3:6)
@@ -145,36 +145,35 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 }
 
 
-#' @name addWorksheet
-#' @title Add a worksheet to a workbook
-#' @description Add a worksheet to a Workbook object
+#' Add a worksheet to a workbook
+#'
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheetName A name for the new worksheet
-#' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be hidden.
-#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to colours()) or a valid hex colour beginning with "#"
-#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a percentage.
-#' @param header document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
-#' @param footer document footer. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
-#' @param evenHeader document header for even pages.
-#' @param evenFooter document footer for even pages.
-#' @param firstHeader document header for first page only.
-#' @param firstFooter document footer for first page only.
+#' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
+#'   hidden.
+#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
+#'   colours()) or a valid hex colour beginning with "#"
+#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
+#'   percentage.
+#' @param header,oddHeader,evenHeader,firstHeader,footer,oddFooter,evenFooter,firstFooter
+#'   Character vector of length 3 corresponding to positions left, center,
+#'   right.  `header` and `footer` are used to default additional arguments.
+#'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
+#'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
 #' @param hasDrawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paperSize An integer corresponding to a paper size. See ?pageSetup for details.
+#' @param paperSize An integer corresponding to a paper size. See ?pageSetup for
+#'   details.
 #' @param orientation One of "portrait" or "landscape"
-#' @param hdpi Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or options("openxlsx.hdpi" = X)
-#' @param vdpi Vertical DPI. Can be set with options("openxlsx.dpi" = X) or options("openxlsx.vdpi" = X)
-#' @details Headers and footers can contain special tags
-#' \itemize{
-#'   \item{**&\[Page\]**}{ Page number}
-#'   \item{**&\[Pages\]**}{ Number of pages}
-#'   \item{**&\[Date\]**}{ Current date}
-#'   \item{**&\[Time\]**}{ Current time}
-#'   \item{**&\[Path\]**}{ File path}
-#'   \item{**&\[File\]**}{ File name}
-#'   \item{**&\[Tab\]**}{ Worksheet name}
-#' }
+#' @param hdpi Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or
+#'   options("openxlsx.hdpi" = X)
+#' @param vdpi Vertical DPI. Can be set with options("openxlsx.dpi" = X) or
+#'   options("openxlsx.vdpi" = X)
+#' @details Headers and footers can contain special tags \itemize{
+#'   \item{**&\[Page\]**}{ Page number} \item{**&\[Pages\]**}{ Number of pages}
+#'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
+#'   \item{**&\[Path\]**}{ File path} \item{**&\[File\]**}{ File name}
+#'   \item{**&\[Tab\]**}{ Worksheet name} }
 #' @return XML tree
 #' @export
 #' @examples
@@ -182,13 +181,13 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 #' wb <- wb_workbook("Fred")
 #'
 #' ## Add 3 worksheets
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2", gridLines = FALSE)
-#' addWorksheet(wb, "Sheet 3", tabColour = "red")
-#' addWorksheet(wb, "Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2", gridLines = FALSE)
+#' wb_add_worksheet(wb, "Sheet 3", tabColour = "red")
+#' wb_add_worksheet(wb, "Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
 #'
 #' ## Headers and Footers
-#' addWorksheet(wb, "Sheet 5",
+#' wb_add_worksheet(wb, "Sheet 5",
 #'   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
 #'   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
 #'   evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
@@ -197,19 +196,19 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 #'   firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
 #' )
 #'
-#' addWorksheet(wb, "Sheet 6",
+#' wb_add_worksheet(wb, "Sheet 6",
 #'   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
 #'   footer = c("&[Path]&[File]", NA, "&[Tab]"),
 #'   firstHeader = c(NA, "Center Header of First Page", NA),
 #'   firstFooter = c(NA, "Center Footer of First Page", NA)
 #' )
 #'
-#' addWorksheet(wb, "Sheet 7",
+#' wb_add_worksheet(wb, "Sheet 7",
 #'   header = c("ALL HEAD LEFT 2", "ALL HEAD CENTER 2", "ALL HEAD RIGHT 2"),
 #'   footer = c("ALL FOOT RIGHT 2", "ALL FOOT CENTER 2", "ALL FOOT RIGHT 2")
 #' )
 #'
-#' addWorksheet(wb, "Sheet 8",
+#' wb_add_worksheet(wb, "Sheet 8",
 #'   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
 #'   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 #' )
@@ -222,120 +221,47 @@ removeCellMerge <- function(wb, sheet, cols, rows) {
 #'
 #' ## Save workbook
 #' \dontrun{
-#' wb_save(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, temp_xlsx(), overwrite = TRUE)
 #' }
-addWorksheet <- function(wb, sheetName,
-  gridLines = TRUE,
-  tabColour = NULL,
-  zoom = 100,
-  header = NULL,
-  footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
-  visible = TRUE,
-  hasDrawing = FALSE,
-  paperSize = getOption("openxlsx.paperSize", default = 9),
+wb_add_worksheet <- function(
+  wb,
+  sheetName,
+  gridLines   = TRUE,
+  tabColour   = NULL,
+  zoom        = 100,
+  header      = NULL,
+  footer      = NULL,
+  oddHeader   = header,
+  oddFooter   = footer,
+  evenHeader  = header,
+  evenFooter  = footer,
+  firstHeader = header,
+  firstFooter = footer,
+  visible     = TRUE,
+  hasDrawing  = FALSE,
+  paperSize   = getOption("openxlsx.paperSize", default = 9),
   orientation = getOption("openxlsx.orientation", default = "portrait"),
-  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
-  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+  vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
+  hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))
+) {
   assert_workbook(wb)
-
-  if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
-    stop(paste0("A worksheet by the name '", sheetName, "' already exists! Sheet names must be unique case-insensitive."))
-  }
-
-  if (!is.logical(gridLines) | length(gridLines) > 1) {
-    stop("gridLines must be a logical of length 1.")
-  }
-
-  if (nchar(sheetName) > 31) {
-    stop(paste0("sheetName '", sheetName, "' too long! Max length is 31 characters."))
-  }
-
-  if (!is.null(tabColour)) {
-    tabColour <- validateColour(tabColour, "Invalid tabColour in addWorksheet.")
-  }
-
-  if (!is.numeric(zoom)) {
-    stop("zoom must be numeric")
-  }
-
-  if (!is.character(sheetName)) {
-    sheetName <- as.character(sheetName)
-  }
-
-  if (!is.null(header) & length(header) != 3) {
-    stop("header must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(footer) & length(footer) != 3) {
-    stop("footer must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenHeader) & length(evenHeader) != 3) {
-    stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenFooter) & length(evenFooter) != 3) {
-    stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstHeader) & length(firstHeader) != 3) {
-    stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstFooter) & length(firstFooter) != 3) {
-    stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  visible <- tolower(visible[1])
-  if (!visible %in% c("true", "false", "hidden", "visible", "veryhidden")) {
-    stop("visible must be one of: TRUE, FALSE, 'hidden', 'visible', 'veryHidden'")
-  }
-
-  orientation <- tolower(orientation)
-  if (!orientation %in% c("portrait", "landscape")) {
-    stop("orientation must be 'portrait' or 'landscape'.")
-  }
-
-  vdpi <- as.integer(vdpi)
-  if (is.na(vdpi)) {
-    stop("vdpi must be numeric")
-  }
-
-  hdpi <- as.integer(hdpi)
-  if (is.na(hdpi)) {
-    stop("hdpi must be numeric")
-  }
-
-
-
-  ## Invalid XML characters
-  sheetName <- replaceIllegalCharacters(sheetName)
-
-  invisible(wb$addWorksheet(
-    sheetName = sheetName,
+  wb$addWorksheet(
+    sheetName     = sheetName,
     showGridLines = gridLines,
-    tabColour = tabColour,
-    zoom = zoom[1],
-    oddHeader = headerFooterSub(header),
-    oddFooter = headerFooterSub(footer),
-    evenHeader = headerFooterSub(evenHeader),
-    evenFooter = headerFooterSub(evenFooter),
-    firstHeader = headerFooterSub(firstHeader),
-    firstFooter = headerFooterSub(firstFooter),
-    visible = visible,
-    paperSize = paperSize,
-    orientation = orientation,
-    vdpi = vdpi,
-    hdpi = hdpi
-  ))
+    tabColour     = tabColour,
+    zoom          = zoom,
+    oddHeader     = headerFooterSub(oddHeader),
+    oddFooter     = headerFooterSub(oddFooter),
+    evenHeader    = headerFooterSub(evenHeader),
+    evenFooter    = headerFooterSub(evenFooter),
+    firstHeader   = headerFooterSub(firstHeader),
+    firstFooter   = headerFooterSub(firstFooter),
+    visible       = visible,
+    paperSize     = paperSize,
+    orientation   = orientation,
+    vdpi          = vdpi,
+    hdpi          = hdpi
+  )
 }
 
 
@@ -352,7 +278,7 @@ addWorksheet <- function(wb, sheetName,
 #' wb <- wb_workbook("Fred")
 #'
 #' ## Add 3 worksheets
-#' addWorksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 1")
 #' cloneWorksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
 #'
 #' ## Save workbook
@@ -423,7 +349,7 @@ wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
 #' wb <- wb_workbook("My name here")
 #'
 #' ## Add a worksheets
-#' addWorksheet(wb, "Expenditure", gridLines = FALSE)
+#' wb_add_worksheet(wb, "Expenditure", gridLines = FALSE)
 #'
 #' ## write data to worksheet 1
 #' writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
@@ -511,10 +437,10 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
 #' wb <- wb_workbook("Kenshin")
 #'
 #' ## Add some worksheets
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
-#' addWorksheet(wb, "Sheet 4")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 3")
+#' wb_add_worksheet(wb, "Sheet 4")
 #'
 #' ## Freeze Panes
 #' freezePane(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
@@ -583,7 +509,7 @@ freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, 
 #' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 1")
 #'
 #' ## set row heights
 #' setRowHeights(wb, 1, rows = c(1, 4, 22, 2, 19), heights = c(24, 28, 32, 42, 33))
@@ -649,14 +575,14 @@ setRowHeights <- function(wb, sheet, rows, heights) {
 #' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 1")
 #'
 #'
 #' ## set col widths
 #' setColWidths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 #'
 #' ## auto columns
-#' addWorksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 2")
 #' writeData(wb, sheet = 2, x = iris)
 #' setColWidths(wb, sheet = 2, cols = 1:5, widths = "auto")
 #'
@@ -829,7 +755,7 @@ removeRowHeights <- function(wb, sheet, rows) {
 #' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1", gridLines = FALSE)
+#' wb_add_worksheet(wb, "Sheet 1", gridLines = FALSE)
 #'
 #' ## create plot objects
 #' require(ggplot2)
@@ -997,7 +923,7 @@ removeWorksheet <- function(wb, sheet) {
 #' @examples
 #' ## create a workbook
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "S1")
+#' wb_add_worksheet(wb, "S1")
 #' ## modify base font to size 10 Arial Narrow in red
 #' modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
@@ -1064,14 +990,14 @@ getBaseFont <- function(wb) {
 #'   \item{**&\[Tab\]**}{ Worksheet name}
 #' }
 #' @export
-#' @seealso [addWorksheet()] to set headers and footers when adding a worksheet
+#' @seealso [wb_add_worksheet()] to set headers and footers when adding a worksheet
 #' @examples
 #' wb <- wb_workbook()
 #'
-#' addWorksheet(wb, "S1")
-#' addWorksheet(wb, "S2")
-#' addWorksheet(wb, "S3")
-#' addWorksheet(wb, "S4")
+#' wb_add_worksheet(wb, "S1")
+#' wb_add_worksheet(wb, "S2")
+#' wb_add_worksheet(wb, "S3")
+#' wb_add_worksheet(wb, "S4")
 #'
 #' writeData(wb, 1, 1:400)
 #' writeData(wb, 2, 1:400)
@@ -1268,8 +1194,8 @@ setHeaderFooter <- function(wb, sheet,
 #' }
 #' @examples
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "S1")
-#' addWorksheet(wb, "S2")
+#' wb_add_worksheet(wb, "S1")
+#' wb_add_worksheet(wb, "S2")
 #' writeDataTable(wb, 1, x = iris[1:30, ])
 #' writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 #'
@@ -1281,8 +1207,8 @@ setHeaderFooter <- function(wb, sheet,
 #'
 #'
 #' ## print titles
-#' addWorksheet(wb, "print_title_rows")
-#' addWorksheet(wb, "print_title_cols")
+#' wb_add_worksheet(wb, "print_title_rows")
+#' wb_add_worksheet(wb, "print_title_cols")
 #'
 #' writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
 #' writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
@@ -1461,7 +1387,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 #' @export
 #' @examples
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "S1")
+#' wb_add_worksheet(wb, "S1")
 #' writeDataTable(wb, 1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
 #' protectWorksheet(wb, "S1",
@@ -1561,7 +1487,7 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' @export
 #' @examples
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "S1")
+#' wb_add_worksheet(wb, "S1")
 #' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 #' \dontrun{
 #' wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
@@ -1624,13 +1550,13 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 #' @examples
 #' ## setup a workbook with 3 worksheets
 #' wb <- wb_workbook()
-#' addWorksheet(wb = wb, sheetName = "Sheet 1", gridLines = FALSE)
+#' wb_add_worksheet(wb, sheetName = "Sheet 1", gridLines = FALSE)
 #' writeDataTable(wb = wb, sheet = 1, x = iris)
 #'
-#' addWorksheet(wb = wb, sheetName = "mtcars (Sheet 2)", gridLines = FALSE)
+#' wb_add_worksheet(wb, sheetName = "mtcars (Sheet 2)", gridLines = FALSE)
 #' writeData(wb = wb, sheet = 2, x = mtcars)
 #'
-#' addWorksheet(wb = wb, sheetName = "Sheet 3", gridLines = FALSE)
+#' wb_add_worksheet(wb, sheetName = "Sheet 3", gridLines = FALSE)
 #' writeData(wb = wb, sheet = 3, x = Formaldehyde)
 #'
 #' worksheetOrder(wb)
@@ -1692,7 +1618,7 @@ worksheetOrder <- function(wb) {
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 1")
 #'
 #' ## specify region
 #' writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
@@ -1785,9 +1711,9 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
 #' @seealso [addFilter()]
 #' @examples
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 3")
 #'
 #' writeData(wb, 1, iris)
 #' addFilter(wb, 1, row = 1, cols = seq_along(iris))
@@ -1830,9 +1756,9 @@ addFilter <- function(wb, sheet, rows, cols) {
 #' @export
 #' @examples
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 3")
 #'
 #' writeData(wb, 1, iris)
 #' addFilter(wb, 1, row = 1, cols = seq_along(iris))
@@ -1878,8 +1804,8 @@ removeFilter <- function(wb, sheet) {
 #' @examples
 #' \dontrun{
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2")
 #'
 #' writeDataTable(wb, 1, x = iris[1:30, ])
 #'
@@ -1918,8 +1844,8 @@ removeFilter <- function(wb, sheet) {
 #' # operator argument is ignored.
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2")
 #'
 #' writeDataTable(wb, sheet = 1, x = iris[1:30, ])
 #' writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
@@ -2054,9 +1980,9 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, sheetName = "S1", visible = FALSE)
-#' addWorksheet(wb, sheetName = "S2", visible = TRUE)
-#' addWorksheet(wb, sheetName = "S3", visible = FALSE)
+#' wb_add_worksheet(wb, sheetName = "S1", visible = FALSE)
+#' wb_add_worksheet(wb, sheetName = "S2", visible = TRUE)
+#' wb_add_worksheet(wb, sheetName = "S3", visible = FALSE)
 #'
 #' sheetVisibility(wb)
 #' sheetVisibility(wb)[1] <- TRUE ## show sheet 1
@@ -2125,10 +2051,10 @@ sheetVisibility <- function(wb) {
 #' @param i row or column number to insert page break.
 #' @param type One of "row" or "column" for a row break or column break.
 #' @export
-#' @seealso [addWorksheet()]
+#' @seealso [wb_add_worksheet()]
 #' @examples
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 1")
 #' writeData(wb, sheet = 1, x = iris)
 #'
 #' pageBreak(wb, sheet = 1, i = 10, type = "row")
@@ -2187,7 +2113,7 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 #' wb2 <- wb ## does not create a copy
 #' wb3 <- copyWorkbook(wb) ## wrapper for wb$clone()
 #'
-#' addWorksheet(wb, "Sheet1") ## adds worksheet to both wb and wb2 but not wb3
+#' wb_add_worksheet(wb, "Sheet1") ## adds worksheet to both wb and wb2 but not wb3
 #'
 #' names(wb)
 #' names(wb2)
@@ -2208,7 +2134,7 @@ copyWorkbook <- function(wb) {
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, sheetName = "Sheet 1")
+#' wb_add_worksheet(wb, sheetName = "Sheet 1")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris)
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
@@ -2253,8 +2179,8 @@ getTables <- function(wb, sheet) {
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, sheetName = "Sheet 1")
-#' addWorksheet(wb, sheetName = "Sheet 2")
+#' wb_add_worksheet(wb, sheetName = "Sheet 1")
+#' wb_add_worksheet(wb, sheetName = "Sheet 2")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
@@ -2427,7 +2353,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' dimnames(t2) <- dimnames(.preformat.ts(t1))
 #'
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "AirPass")
+#' wb_add_worksheet(wb, "AirPass")
 #' writeData(wb, "AirPass", t2, rowNames = TRUE)
 #'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
@@ -2584,9 +2510,9 @@ getCreators <- function(wb) {
 #' wb <- wb_workbook("Ayanami")
 #'
 #' ## Add some worksheets
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb_add_worksheet(wb, "Sheet 1")
+#' wb_add_worksheet(wb, "Sheet 2")
+#' wb_add_worksheet(wb, "Sheet 3")
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")

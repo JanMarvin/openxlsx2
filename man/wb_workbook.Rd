@@ -29,7 +29,7 @@ wb <- wb_workbook()
 
 ## Save workbook to working directory
 \dontrun{
-wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
+wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 }
 
 ## Set Workbook properties

@@ -34,10 +34,7 @@
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.
-#' @seealso [addWorksheet()]
-#' @seealso [writeData()]
-#' @seealso [removeTable()]
-#' @seealso [getTables()]
+#' @seealso [wb_add_worksheet()], [writeData()], [removeTable()], [getTables()]
 #' @importFrom stats na.omit
 #' @export
 #' @examples
@@ -46,9 +43,9 @@
 #' #####################################################################################
 #' ## Create Workbook object and add worksheets
 #' wb <- wb_workbook()
-#' addWorksheet(wb, "S1")
-#' addWorksheet(wb, "S2")
-#' addWorksheet(wb, "S3")
+#' wb_add_worksheet(wb, "S1")
+#' wb_add_worksheet(wb, "S2")
+#' wb_add_worksheet(wb, "S3")
 #'
 #'
 #' #####################################################################################
@@ -106,7 +103,7 @@
 #' ## Pre-defined table styles gallery
 #'
 #' wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
-#' addWorksheet(wb, "Style Samples")
+#' wb_add_worksheet(wb, "Style Samples")
 #' for (i in 1:21) {
 #'   style <- paste0("TableStyleLight", i)
 #'   writeDataTable(wb,

@@ -26,7 +26,7 @@ Write a Comment object to a worksheet
 }
 \examples{
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 1")
 
 c1 <- createComment(comment = "this is comment")
 writeComment(wb, 1, col = "B", row = 10, comment = c1)
@@ -39,7 +39,7 @@ c2
 
 writeComment(wb, 1, col = 6, row = 3, comment = c2)
 \dontrun{
-wb_save(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
+wb_save(wb, path = "writeCommentExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

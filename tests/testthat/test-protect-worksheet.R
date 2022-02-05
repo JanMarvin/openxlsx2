@@ -2,8 +2,8 @@
 
 test_that("Protection", {
   wb <- wb_workbook()
-  addWorksheet(wb, "s1")
-  addWorksheet(wb, "s2")
+  wb_add_worksheet(wb, "s1")
+  wb_add_worksheet(wb, "s2")
 
 
   protectWorksheet(wb, sheet = "s1", protect = TRUE, password = "abcdefghij", lockSelectingLockedCells = FALSE, lockSelectingUnlockedCells = FALSE, lockFormattingCells = TRUE, lockFormattingColumns = TRUE, lockPivotTables = TRUE)

@@ -15,11 +15,11 @@ write.xlsx(x, file, asTable = FALSE, ...)
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
-\item{wb_workbook}
-\item{addWorksheet}
-\item{writeData}
-\item{freezePane}
-\item{wb_save}
+\item{\code{\link[=wb_workbook]{wb_workbook()}}}
+\item{\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}}
+\item{\code{\link[=writeData]{writeData()}}}
+\item{\link{freezePane}}
+\item{\code{\link[=wb_save]{wb_save()}}}
 }
 
 see details.}
@@ -38,7 +38,7 @@ Optional parameters are:
 \item{\strong{creator}}{ A string specifying the workbook author}
 }
 
-\strong{addWorksheet Parameters}
+\strong{wb_add_worksheet() Parameters}
 \itemize{
 \item{\strong{sheetName}}{ Name of the worksheet}
 \item{\strong{gridLines}}{ A logical. If \code{FALSE}, the worksheet grid lines will be hidden.}
@@ -130,9 +130,5 @@ write.xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5,
 
 }
 \seealso{
-\code{\link[=addWorksheet]{addWorksheet()}}
-
-\code{\link[=writeData]{writeData()}}
-
-\code{\link[=createStyle]{createStyle()}} for style parameters
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}, \code{\link[=createStyle]{createStyle()}} for style parameters
 }

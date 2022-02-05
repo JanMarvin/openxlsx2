@@ -24,9 +24,9 @@ Wrapper to create internal hyperlink string to pass to writeFormula(). Either li
 
 ## Writing internal hyperlinks
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet1")
-addWorksheet(wb, "Sheet2")
-addWorksheet(wb, "Sheet 3")
+wb_add_worksheet(wb, "Sheet1")
+wb_add_worksheet(wb, "Sheet2")
+wb_add_worksheet(wb, "Sheet 3")
 writeData(wb, sheet = 3, x = iris)
 
 ## External Hyperlink

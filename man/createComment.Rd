@@ -31,7 +31,7 @@ Create a cell Comment object to pass to writeComment()
 }
 \examples{
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 1")
 
 c1 <- createComment(comment = "this is comment")
 writeComment(wb, 1, col = "B", row = 10, comment = c1)
@@ -44,7 +44,7 @@ c2
 
 writeComment(wb, 1, col = 6, row = 3, comment = c2)
 \dontrun{
-wb_save(wb, file = "createCommentExample.xlsx", overwrite = TRUE)
+wb_save(wb, path = "createCommentExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

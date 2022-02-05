@@ -2,8 +2,8 @@
 
 test_that("Page setup", {
   wb <- wb_workbook()
-  addWorksheet(wb, "s1")
-  addWorksheet(wb, "s2")
+  wb_add_worksheet(wb, "s1")
+  wb_add_worksheet(wb, "s2")
 
 
   pageSetup(wb,

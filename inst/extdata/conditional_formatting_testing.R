@@ -2,14 +2,14 @@
 
 
 wb <- wb_workbook()
-addWorksheet(wb, "cellIs")
-addWorksheet(wb, "Moving Row")
-addWorksheet(wb, "Moving Col")
-addWorksheet(wb, "Dependent on 1")
-addWorksheet(wb, "Duplicates")
-addWorksheet(wb, "containsText")
-addWorksheet(wb, "colourScale", zoom = 30)
-addWorksheet(wb, "databar")
+wb_add_worksheet(wb, "cellIs")
+wb_add_worksheet(wb, "Moving Row")
+wb_add_worksheet(wb, "Moving Col")
+wb_add_worksheet(wb, "Dependent on 1")
+wb_add_worksheet(wb, "Duplicates")
+wb_add_worksheet(wb, "containsText")
+wb_add_worksheet(wb, "colourScale", zoom = 30)
+wb_add_worksheet(wb, "databar")
 
 negStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
 posStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")

@@ -25,9 +25,9 @@ NOTE Can only have a single filter per worksheet unless using tables.
 }
 \examples{
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
-addWorksheet(wb, "Sheet 3")
+wb_add_worksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 2")
+wb_add_worksheet(wb, "Sheet 3")
 
 writeData(wb, 1, iris)
 addFilter(wb, 1, row = 1, cols = seq_along(iris))
@@ -38,7 +38,7 @@ writeData(wb, 2, x = iris, withFilter = TRUE)
 ## Similarly
 writeDataTable(wb, 3, iris)
 \dontrun{
-wb_save(wb, file = "addFilterExample.xlsx", overwrite = TRUE)
+wb_save(wb, path = "addFilterExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

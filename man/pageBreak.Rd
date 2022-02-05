@@ -20,7 +20,7 @@ insert page breaks into a worksheet
 }
 \examples{
 wb <- wb_workbook()
-addWorksheet(wb, "Sheet 1")
+wb_add_worksheet(wb, "Sheet 1")
 writeData(wb, sheet = 1, x = iris)
 
 pageBreak(wb, sheet = 1, i = 10, type = "row")
@@ -32,5 +32,5 @@ wb_save(wb, "pageBreakExample.xlsx", TRUE)
 ## In Excel: View tab -> Page Break Preview
 }
 \seealso{
-\code{\link[=addWorksheet]{addWorksheet()}}
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
 }
