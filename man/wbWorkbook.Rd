@@ -113,6 +113,10 @@ A Workbook
 \item{\code{subject}}{subject}
 
 \item{\code{category}}{category}
+
+\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+created.  Defaults to the current \code{Sys.time()} when the workbook object
+is created, not when the Excel files are saved.}
 }
 \if{html}{\out{</div>}}
 }
@@ -158,7 +162,13 @@ A Workbook
 \subsection{Method \code{new()}}{
 Creates a new \code{wbWorkbook} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(creator = NULL, title = NULL, subject = NULL, category = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(
+  creator = NULL,
+  title = NULL,
+  subject = NULL,
+  category = NULL,
+  datetimeCreated = Sys.time()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -171,6 +181,10 @@ Creates a new \code{wbWorkbook} object
 \item{\code{subject}}{subject}
 
 \item{\code{category}}{category}
+
+\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+created.  Defaults to the current \code{Sys.time()} when the workbook object
+is created, not when the Excel files are saved.}
 }
 \if{html}{\out{</div>}}
 }

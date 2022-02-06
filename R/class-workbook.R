@@ -167,18 +167,27 @@ wbWorkbook <- R6::R6Class(
     #' @field category category
     category = NULL,
 
+    #' @field datetimeCreated The datetime (as `POSIXt`) the workbook is
+    #'   created.  Defaults to the current `Sys.time()` when the workbook object
+    #'   is created, not when the Excel files are saved.
+    datetimeCreated = Sys.time(),
+
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator creator
     #' @param title title
     #' @param subject subject
     #' @param category category
+    #' @param datetimeCreated The datetime (as `POSIXt`) the workbook is
+    #'   created.  Defaults to the current `Sys.time()` when the workbook object
+    #'   is created, not when the Excel files are saved.
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator  = NULL,
-      title    = NULL,
-      subject  = NULL,
-      category = NULL
+      creator         = NULL,
+      title           = NULL,
+      subject         = NULL,
+      category        = NULL,
+      datetimeCreated = Sys.time()
     ) {
 
       self$creator <-
@@ -187,19 +196,22 @@ wbWorkbook <- R6::R6Class(
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
-      assert_class(title,    "character", or_null = TRUE)
-      assert_class(subject,  "character", or_null = TRUE)
-      assert_class(category, "character", or_null = TRUE)
+      assert_class(title,           "character", or_null = TRUE)
+      assert_class(subject,         "character", or_null = TRUE)
+      assert_class(category,        "character", or_null = TRUE)
+      assert_class(datetimeCreated, "POSIXt")
 
       stopifnot(
-        length(self$creator) <= 1,
-        length(title) <= 1,
-        length(category) <= 1
+        length(self$creator) <= 1L,
+        length(title) <= 1L,
+        length(category) <= 1L,
+        length(datetimeCreated) == 1L
       )
 
-      self$title <- title
-      self$subject <- subject
-      self$category <- category
+      self$title           <- title
+      self$subject         <- subject
+      self$category        <- category
+      self$datetimeCreated <- datetimeCreated
       private$generate_base_core()
       self
     },
@@ -3487,7 +3499,7 @@ wbWorkbook <- R6::R6Class(
       self$core <- '<coreProperties xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
       self$core <- stri_c(self$core, sprintf("<dc:creator>%s</dc:creator>", self$creator))
       self$core <- stri_c(self$core, sprintf("<cp:lastModifiedBy>%s</cp:lastModifiedBy>", self$creator))
-      self$core <- stri_c(self$core, sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")))
+      self$core <- stri_c(self$core, sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(self$datetimeCreated, "%Y-%m-%dT%H:%M:%SZ")))
 
       if (!is.null(self$title)) {
         self$core <- stri_c(self$core, sprintf("<dc:title>%s</dc:title>", replaceIllegalCharacters(self$title)))
