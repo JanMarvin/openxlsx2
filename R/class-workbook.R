@@ -22,19 +22,19 @@ wbWorkbook <- R6::R6Class(
     calcChain = character(),
 
     #' @field charts charts
-    charts = NULL,
+    charts = list(),
 
     #' @field isChartSheet isChartSheet
     isChartSheet = logical(),
 
     #' @field colWidths colWidths
-    colWidths = NULL,
+    colWidths = list(),
 
     #' @field connections connections
     connections = NULL,
 
     #' @field Content_Types Content_Types
-    Content_Types = character(),
+    Content_Types = genBaseContent_Type(),
 
     #' @field app app
     app = character(),
@@ -97,13 +97,13 @@ wbWorkbook <- R6::R6Class(
     slicerCaches = NULL,
 
     #' @field sharedStrings sharedStrings
-    sharedStrings = NULL,
+    sharedStrings = structure(list(), uniqueCount = 0L),
 
     #' @field styleObjects styleObjects
-    styleObjects = NULL,
+    styleObjects = list(),
 
     #' @field styles styles
-    styles = NULL,
+    styles = genBaseStyleSheet(),
 
     #' @field styles_xml styles_xml
     styles_xml = NULL,
@@ -121,34 +121,36 @@ wbWorkbook <- R6::R6Class(
     vbaProject = NULL,
 
     #' @field vml vml
-    vml = NULL,
+    vml = list(),
 
     #' @field vml_rels vml_rels
-    vml_rels = NULL,
+    vml_rels = list(),
 
     #' @field comments comments
-    comments = NULL,
+    comments = list(),
 
     #' @field threadComments threadComments
     threadComments = NULL,
 
     #' @field workbook workbook
-    workbook = NULL,
+    workbook = genBaseWorkbook(),
 
     #' @field workbook.xml.rels workbook.xml.rels
-    workbook.xml.rels = NULL,
+    workbook.xml.rels = genBaseWorkbook.xml.rels(),
 
     #' @field worksheets worksheets
-    worksheets = NULL,
+    worksheets = list(),
 
     #' @field worksheets_rels worksheets_rels
-    worksheets_rels = NULL,
+    worksheets_rels = list(),
 
     #' @field sheetOrder sheetOrder
     sheetOrder = integer(),
 
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
+
+    # FIXME styleObjectsList() may be getting removed [11]
 
     #' @field styleObjectsList styleObjectsList
     styleObjectsList = list(),
@@ -204,53 +206,9 @@ wbWorkbook <- R6::R6Class(
         category = category
       )
 
-      self$title                <- title
-      self$subject              <- subject
-      self$category             <- category
-      self$charts               <- list()
-      self$isChartSheet         <- logical()
-      self$colWidths            <- list()
-      self$connections          <- NULL
-      self$Content_Types        <- genBaseContent_Type()
-      self$comments             <- list()
-      self$threadComments       <- list()
-      self$drawings             <- list()
-      self$drawings_rels        <- list()
-      self$drawings_vml         <- list()
-      self$embeddings           <- NULL
-      self$externalLinks        <- NULL
-      self$externalLinksRels    <- NULL
-      self$headFoot             <- NULL
-      self$media                <- list()
-      self$persons              <- NULL
-      self$pivotTables          <- NULL
-      self$pivotTables.xml.rels <- NULL
-      self$pivotDefinitions     <- NULL
-      self$pivotRecords         <- NULL
-      self$pivotDefinitionsRels <- NULL
-      self$queryTables          <- NULL
-      self$rowHeights           <- list()
-      self$slicers              <- NULL
-      self$slicerCaches         <- NULL
-      self$sheet_names          <- character()
-      self$sheetOrder           <- integer()
-      self$sharedStrings        <- structure(list(), uniqueCount = 0L)
-      self$styles               <- genBaseStyleSheet()
-      self$styleObjects         <- list()
-      self$tables               <- NULL
-      self$tables.xml.rels      <- NULL
-      self$theme                <- NULL
-      self$vbaProject           <- NULL
-      self$vml                  <- list()
-      self$vml_rels             <- list()
-      self$workbook             <- genBaseWorkbook()
-      self$workbook.xml.rels    <- genBaseWorkbook.xml.rels()
-      self$worksheets           <- list()
-      self$worksheets_rels      <- list()
-
-      # FIXME styleObjectsList() may be getting removed [11]
-      self$styleObjectsList <- list()
-
+      self$title <- title
+      self$subject <- subject
+      self$category <- category
       self
     },
 
