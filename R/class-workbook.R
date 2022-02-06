@@ -197,18 +197,10 @@ wbWorkbook <- R6::R6Class(
         length(category) <= 1
       )
 
-
-      # can this be moved later?
-      self$core <- genBaseCore(
-        creator  = self$creator,
-        title    = title,
-        subject  = subject,
-        category = category
-      )
-
       self$title <- title
       self$subject <- subject
       self$category <- category
+      private$generate_base_core()
       self
     },
 
@@ -3491,6 +3483,28 @@ wbWorkbook <- R6::R6Class(
 
   # any funcitons that are not present elsewhere
   private = list(
+    generate_base_core = function() {
+      self$core <- '<coreProperties xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+      self$core <- stri_c(self$core, sprintf("<dc:creator>%s</dc:creator>", self$creator))
+      self$core <- stri_c(self$core, sprintf("<cp:lastModifiedBy>%s</cp:lastModifiedBy>", self$creator))
+      self$core <- stri_c(self$core, sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")))
+
+      if (!is.null(self$title)) {
+        self$core <- stri_c(self$core, sprintf("<dc:title>%s</dc:title>", replaceIllegalCharacters(self$title)))
+      }
+
+      if (!is.null(self$subject)) {
+        self$core <- stri_c(self$core, sprintf("<dc:subject>%s</dc:subject>", replaceIllegalCharacters(self$subject)))
+      }
+
+      if (!is.null(self$category)) {
+        self$core <- stri_c(self$core, sprintf("<cp:category>%s</cp:category>", replaceIllegalCharacters(self$category)))
+      }
+
+      self$core <- stri_c(self$core, "</coreProperties>")
+      invisible(self)
+    },
+
     ws = function(sheet) {
       sheet_id <- wb_validate_sheet(self, sheet)
       self$worksheets[[sheet_id]]
