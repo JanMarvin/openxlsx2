@@ -76,3 +76,8 @@ wapply <- function(x, FUN, ...) {
   FUN <- match.fun(FUN)
   which(vapply(x, FUN, FUN.VALUE = NA, ...))
 }
+
+has_chr <- function(x, na = FALSE) {
+  # na controls if NA is returned as TRUE or FALSE
+  vapply(nzchar(x, keepNA = !na), isTRUE, NA)
+}

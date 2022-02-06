@@ -42,12 +42,21 @@ test_that("Workbook properties", {
     category = "some category"
   )
 
-  addCreator(wb, "test")
+  wb <- wb_add_creator(wb, "test")
   expect_match(wb$core, "<dc:creator>Philipp;test</dc:creator>")
 
-  expect_identical(getCreators(wb), c("Philipp", "test"))
+
+  res <- wb_get_creator(wb)
+  exp <- c("Philipp", "test")
+  expect_identical(res, exp)
+
   setLastModifiedBy(wb, "Philipp 2")
   expect_match(wb$core, "<cp:lastModifiedBy>Philipp 2</cp:lastModifiedBy>")
+
+  creators <- c("person", "place", "thing")
+  wb <- wb_workbook(creator = creators)
+  res <- wb_get_creator(wb)
+  expect_identical(res, creators)
 
   file.remove(temp_file)
 })

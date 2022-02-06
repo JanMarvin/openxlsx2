@@ -124,6 +124,7 @@ is created, not when the Excel files are saved.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{wbWorkbook$new()}}
+\item \href{#method-append}{\code{wbWorkbook$append()}}
 \item \href{#method-addWorksheet}{\code{wbWorkbook$addWorksheet()}}
 \item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
@@ -150,8 +151,9 @@ is created, not when the Excel files are saved.}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
+\item \href{#method-setCreator}{\code{wbWorkbook$setCreator()}}
 \item \href{#method-addCreator}{\code{wbWorkbook$addCreator()}}
-\item \href{#method-getCreators}{\code{wbWorkbook$getCreators()}}
+\item \href{#method-removeCreator}{\code{wbWorkbook$removeCreator()}}
 \item \href{#method-changeLastModifiedBy}{\code{wbWorkbook$changeLastModifiedBy()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
@@ -174,7 +176,7 @@ Creates a new \code{wbWorkbook} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{creator}
+\item{\code{creator}}{A character vector of creators}
 
 \item{\code{title}}{title}
 
@@ -190,6 +192,25 @@ is created, not when the Excel files are saved.}
 }
 \subsection{Returns}{
 a \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-append"></a>}}
+\if{latex}{\out{\hypertarget{method-append}{}}}
+\subsection{Method \code{append()}}{
+Append a field. This method is intended for internal use
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$append(field, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{field}}{A valid field name}
+
+\item{\code{value}}{A value for the field}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -959,36 +980,57 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addCreator"></a>}}
-\if{latex}{\out{\hypertarget{method-addCreator}{}}}
-\subsection{Method \code{addCreator()}}{
-Add a creator (author) to the workbook
+\if{html}{\out{<a id="method-setCreator"></a>}}
+\if{latex}{\out{\hypertarget{method-setCreator}{}}}
+\subsection{Method \code{setCreator()}}{
+Set creators
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreator(Creator = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setCreator(creator)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{Creator}}{A name}
+\item{\code{creator}}{A character vector of creators to set.  Duplicates are
+ignored.}
 }
 \if{html}{\out{</div>}}
 }
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addCreator"></a>}}
+\if{latex}{\out{\hypertarget{method-addCreator}{}}}
+\subsection{Method \code{addCreator()}}{
+Add creators
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreator(creator)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creator}}{A character vector of creators to add.  Duplicates are
+ignored.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCreators"></a>}}
-\if{latex}{\out{\hypertarget{method-getCreators}{}}}
-\subsection{Method \code{getCreators()}}{
-Get the workbook creators
+\if{html}{\out{<a id="method-removeCreator"></a>}}
+\if{latex}{\out{\hypertarget{method-removeCreator}{}}}
+\subsection{Method \code{removeCreator()}}{
+Remove creators
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getCreators()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCreator(creator)}\if{html}{\out{</div>}}
 }
 
-\subsection{Returns}{
-A character vector of the workbook creators
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creator}}{A character vector of creators to remove.  All duplicated
+are removed.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

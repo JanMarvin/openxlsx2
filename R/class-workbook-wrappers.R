@@ -2399,20 +2399,65 @@ ungroupRows <- function(wb, sheet, rows) {
   }
 }
 
-#' @name addCreator
-#' @title Add another author to the meta data of the file.
-#' @description Just a wrapper of wb$addCreator()
-#' @param wb A workbook object
-#' @param Creator A string object with the name of the creator
+
+# creators ----------------------------------------------------------------
+
+#' Workbook creators
+#'
+#' Modify and get workbook creators
+#'
+#' @param wb A `wbWorkbook` object
 #' @examples
 #'
+#' # workbook made with default creator (see [wbWorkbook])
 #' wb <- wb_workbook()
-#' addCreator(wb, "test")
+#' wb_get_creator(wb)
+#'
+#' # add a new creator (assuming "test" isn't your default creator)
+#' wb <- wb_add_creator(wb, "test")
+#' wb_get_creator(wb)
+#'
+#' # remove the creator (should be the same as before)
+#' wb <- wb_remove_creator(wb, "test")
+#' wb_get_creator(wb)
+#'
+#' @return
+#' * `wb_set_creator()`, `wb_add_creator()`, and `wb_remove_creator()` return the `wbWorkbook` object
+#' * `wb_get_creator()` returns a `character` vector of creators
+#'
+#' @name wb_creators
+#' @family workbook_wrappers
+NULL
+
+#' @rdname wb_creators
 #' @export
-addCreator <- function(wb, Creator) {
+#' @param creator A character vector of names
+wb_add_creator <- function(wb, creator) {
   assert_workbook(wb)
-  wb$addCreator(Creator)
+  wb$clone()$addCreator(creator)
 }
+
+#' @rdname wb_creators
+#' @export
+wb_set_creator <- function(wb, creator) {
+  assert_workbook(wb)
+  wb$clone()$setCreator(creator)
+}
+
+#' @rdname wb_creators
+#' @export
+wb_remove_creator <- function(wb, creator) {
+  assert_workbook(wb)
+  wb$clone()$removeCreator(creator)
+}
+
+#' @rdname wb_creators
+#' @export
+wb_get_creator <- function(wb) {
+  assert_workbook(wb)
+  wb$creator
+}
+
 
 #' @name setLastModifiedBy
 #' @title Add another author to the meta data of the file.
@@ -2427,23 +2472,6 @@ addCreator <- function(wb, Creator) {
 setLastModifiedBy <- function(wb, LastModifiedBy) {
   assert_workbook(wb)
   wb$changeLastModifiedBy(LastModifiedBy)
-}
-
-
-#' @name getCreators
-#' @title Add another author to the meta data of the file.
-#' @description Just a wrapper of wb$getCreators()
-#' Get the names of the
-#' @param wb A workbook object
-#' @return vector of creators
-#' @examples
-#'
-#' wb <- wb_workbook()
-#' getCreators(wb)
-#' @export
-getCreators <- function(wb) {
-  assert_workbook(wb)
-  wb$getCreators()
 }
 
 #' @name insertImage

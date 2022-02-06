@@ -174,7 +174,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorkbook` object
-    #' @param creator creator
+    #' @param creator A character vector of creators
     #' @param title title
     #' @param subject subject
     #' @param category category
@@ -196,13 +196,13 @@ wbWorkbook <- R6::R6Class(
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
+      assert_class(self$creator,    "character")
       assert_class(title,           "character", or_null = TRUE)
       assert_class(subject,         "character", or_null = TRUE)
       assert_class(category,        "character", or_null = TRUE)
       assert_class(datetimeCreated, "POSIXt")
 
       stopifnot(
-        length(self$creator) <= 1L,
         length(title) <= 1L,
         length(category) <= 1L,
         length(datetimeCreated) == 1L
@@ -213,6 +213,15 @@ wbWorkbook <- R6::R6Class(
       self$category        <- category
       self$datetimeCreated <- datetimeCreated
       private$generate_base_core()
+      self
+    },
+
+    #' @description
+    #' Append a field. This method is intended for internal use
+    #' @param field A valid field name
+    #' @param value A value for the field
+    append = function(field, value) {
+      self[[field]] <- c(self[[field]], value)
       self
     },
 
@@ -3176,36 +3185,30 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' Add a creator (author) to the workbook
-    #' @param Creator A name
-    #' @return The `wbWorkbook` object, invisibly
-    addCreator = function(Creator = NULL) {
-      # TODO consider using "author" instead?
-      if (!is.null(Creator)) {
-        current_creator <- stri_match(self$core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
-        self$core <- stri_replace_all_fixed(
-          self$core,
-          pattern = current_creator,
-          replacement = stri_c(current_creator, Creator, sep = ";")
-        )
-      }
 
-      invisible(self)
+    # creators ----------------------------------------------------------------
+
+    #' @description Set creators
+    #' @param creator A character vector of creators to set.  Duplicates are
+    #'   ignored.
+    setCreator = function(creator) {
+      private$modify_creators("set", creator)
     },
 
-    #' @description
-    #' Get the workbook creators
-    #' @return A character vector of the workbook creators
-    getCreators = function() {
-      # TODO should this be a field?
-      current_creator <- stri_match(self$core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
 
-      as.character(stri_split_fixed(
-        str = current_creator,
-        pattern = ";",
-        simplify = TRUE
-      ))
+    #' @description Add creators
+    #' @param creator A character vector of creators to add.  Duplicates are
+    #'   ignored.
+    addCreator = function(creator) {
+      private$modify_creators("add", creator)
+    },
+
+
+    #' @description Remove creators
+    #' @param creator A character vector of creators to remove.  All duplicated
+    #'   are removed.
+    removeCreator = function(creator) {
+      private$modify_creators("remove", creator)
     },
 
 
@@ -3497,6 +3500,7 @@ wbWorkbook <- R6::R6Class(
   # functions that are used to make assignments
   private = list(
     generate_base_core = function() {
+
       self$core <-
         paste_c(
           # base
@@ -3509,8 +3513,8 @@ wbWorkbook <- R6::R6Class(
           ),
 
           # non-optional
-          sprintf("<dc:creator>%s</dc:creator>",                                     self$creator),
-          sprintf("<cp:lastModifiedBy>%s</cp:lastModifiedBy>",                       self$creator),
+          sprintf("<dc:creator>%s</dc:creator>",                                     paste(self$creator, collapse = ";")),
+          sprintf("<cp:lastModifiedBy>%s</cp:lastModifiedBy>",                       paste(self$creator, collapse = ";")),
           sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(self$datetimeCreated, "%Y-%m-%dT%H:%M:%SZ")),
 
           # optional
@@ -3525,6 +3529,27 @@ wbWorkbook <- R6::R6Class(
         )
 
       invisible(self)
+    },
+
+    modify_creators = function(method = c("add", "set", "remove"), value) {
+      method <- match.arg(method)
+      assert_class(value, "character")
+
+      if (any(!has_chr(value))) {
+        stop("all creators must contain characters without NAs", call. = FALSE)
+      }
+
+      value <- switch(
+        method,
+        add    = unique(c(self$creator, value)),
+        set    = unique(value),
+        remove = setdiff(self$creator, value)
+      )
+
+      self$creator <- value
+      # core is made on initialization
+      private$generate_base_core()
+      self
     },
 
     ws = function(sheet) {
