@@ -17,7 +17,7 @@ xml_attr_mod(xml_content, xml_attributes, escapes = FALSE, declaration = FALSE)
 }
 \description{
 Needs xml node and named character vector as input. Modifies
-the argutments of each first child found in the xml node and adds or updates
+the arguments of each first child found in the xml node and adds or updates
 the attribute vector.
 }
 \details{

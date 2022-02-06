@@ -185,7 +185,7 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 
 #' print pugi_xml
 #' @method print pugi_xml
-#' @param x somthing to print
+#' @param x something to print
 #' @param raw print as raw text
 #' @param ... to please check
 #' @examples
@@ -204,10 +204,10 @@ print.pugi_xml <- function(x, raw = FALSE, ...) {
 
 #' loads character string to pugixml and returns an externalptr
 #' @details
-#' might be usefull for larger documents where single nodes are shortened
+#' might be useful for larger documents where single nodes are shortened
 #' and otherwise the full tree has to be reimported. unsure where we have
 #' such a case.
-#' is usefull, for printing nodes from a larger tree, that have been exported
+#' is useful, for printing nodes from a larger tree, that have been exported
 #' as characters (at some point in time we have to convert the xml to R)
 #' @param x input as xml
 #' @examples

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{temp_xlsx}
 \alias{temp_xlsx}
-\title{helper function to create tempory directory for testing purpose}
+\title{helper function to create temporary directory for testing purpose}
 \usage{
 temp_xlsx(name = "temp_xlsx")
 }
@@ -10,5 +10,5 @@ temp_xlsx(name = "temp_xlsx")
 \item{name}{for the temp file}
 }
 \description{
-helper function to create tempory directory for testing purpose
+helper function to create temporary directory for testing purpose
 }

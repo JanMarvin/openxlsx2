@@ -417,7 +417,7 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' unfold `<cols ..>` node to dataframe. `<cols><col ..>` are compressed.
-    #' Only columuns with attributes are written to the file. This function
+    #' Only columns with attributes are written to the file. This function
     #' unfolds them so that each cell beginning with the "A" to the last one
     #' found in cc gets a value.
     #' TODO might extend this to match either largest cc or largest col. Could
@@ -466,7 +466,7 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' fold the column dataframe back into a node.
-    #' @param col_df the colum data frame
+    #' @param col_df the column data frame
     #' @return The `wbWorksheetObject`, invisibly
     fold_cols = function(col_df) {
 

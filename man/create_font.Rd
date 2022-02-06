@@ -29,7 +29,7 @@ create_font(
 
 \item{color}{rgb color: default "FF000000"}
 
-\item{condense}{condese}
+\item{condense}{condense}
 
 \item{extend}{extend}
 

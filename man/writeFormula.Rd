@@ -35,7 +35,7 @@ writeFormula(
 Write a a character vector containing Excel formula to a worksheet.
 }
 \details{
-Currently only the english version of functions are supported. Please don't use the local translation.
+Currently only the English version of functions are supported. Please don't use the local translation.
 The examples below show a small list of possible formulas:
 \itemize{
 \item{SUM(B2:B4)}

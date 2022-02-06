@@ -168,7 +168,7 @@ Convert the \code{wbStyle} object to a list
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{include_null}}{if \code{TRUE} will include values that contain \code{NULL},
-otherwise they are ommited from the list}
+otherwise they are omitted from the list}
 }
 \if{html}{\out{</div>}}
 }

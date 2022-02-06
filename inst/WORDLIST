@@ -163,6 +163,7 @@ pugixml
 queryTables
 recognise
 reimported
+rels
 rgb
 rowBreaks
 rowHeights
@@ -170,6 +171,7 @@ rowNames
 rowOffset
 sapply
 saveWorkbook
+sep
 sharedStrings
 sheetCalcPr
 sheetFormatPr
@@ -192,7 +194,6 @@ slantDashDot
 slicerCaches
 smartTags
 sortState
-ss
 startCol
 startRow
 startcol

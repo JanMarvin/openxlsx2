@@ -306,7 +306,7 @@ merge_numFmts <- function(wb, new_numfmts) {
 #' @param b bold
 #' @param charset charset
 #' @param color rgb color: default "FF000000"
-#' @param condense condese
+#' @param condense condense
 #' @param extend extend
 #' @param family font family: default "2"
 #' @param i italic
@@ -536,7 +536,7 @@ merge_fills <- function(wb, new_fills) {
 #' @param borderId dummy
 #' @param fillId dummy
 #' @param fontId dummy
-#' @param numFmtId a numFmt ID for a builin style
+#' @param numFmtId a numFmt ID for a builtin style
 #' @param pivotButton dummy
 #' @param quotePrefix dummy
 #' @param xfId dummy

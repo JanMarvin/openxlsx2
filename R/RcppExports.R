@@ -119,7 +119,7 @@ write_xml_file <- function(xml_content, fl, escapes) {
 #' adds or updates attribute(s) in existing xml node
 #'
 #' @description Needs xml node and named character vector as input. Modifies
-#' the argutments of each first child found in the xml node and adds or updates
+#' the arguments of each first child found in the xml node and adds or updates
 #' the attribute vector.
 #' @details If a named attribute in `xml_attributes` is "" remove the attribute
 #' from the node.
