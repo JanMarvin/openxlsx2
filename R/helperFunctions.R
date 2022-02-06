@@ -74,7 +74,7 @@
 #'   startRow = 10, startCol = 1,
 #'   x = '=HYPERLINK(\\"[C:/Users]\\", \\"Link to an external file\\")'
 #' )
-#' 
+#'
 #' ## Link to internal file
 #' x = makeHyperlinkString(text = "test.png", file = "D:/somepath/somepicture.png")
 #' writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
@@ -86,7 +86,7 @@
 makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   # op <- get_set_options()
   # on.exit(options(op), add = TRUE)
-  
+
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
 
@@ -98,25 +98,21 @@ makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NUL
     } else {
       dest <- sprintf("#'%s'!%s", sheet, cell)
     }
-    
+
     if (is.null(text)) {
       str <- sprintf("=HYPERLINK(\"%s\")", dest)
     } else {
       str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", dest, text)
     }
   }
-  
+
   return(str)
 }
 
 
-getRId <- function(x) {
-  regmatches(x, gregexpr('(?<= r:id=")[0-9A-Za-z]+', x, perl = TRUE))
-}
+getRId <- function(x) reg_match0(x, '(?<= r:id=")[0-9A-Za-z]+')
 
-getId <- function(x) {
-  regmatches(x, gregexpr('(?<= Id=")[0-9A-Za-z]+', x, perl = TRUE))
-}
+getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
 
 
@@ -134,7 +130,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
   if ("hyperlink" %in% allColClasses) {
 
     ## style hyperlinks
-    inds <- which(sapply(colClasses, function(x) "hyperlink" %in% x))
+    inds <- wapply(colClasses, function(x) "hyperlink" %in% x)
 
     hyperlinkstyle <- createStyle(textDecoration = "underline")
     hyperlinkstyle$fontColour <- list("theme" = "10")
@@ -145,13 +141,13 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   if ("date" %in% allColClasses) {
 
     ## style dates
-    inds <- which(sapply(colClasses, function(x) "date" %in% x))
+    inds <- wapply(colClasses, function(x) "date" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "date"),
@@ -160,13 +156,13 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   if (any(c("posixlt", "posixct", "posixt") %in% allColClasses)) {
 
     ## style POSIX
-    inds <- which(sapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x)))
+    inds <- wapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x))
 
     styleElements <- list(
       "style" = createStyle(numFmt = "LONGDATE"),
@@ -175,13 +171,13 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
 
   ## style currency as CURRENCY
   if ("currency" %in% allColClasses) {
-    inds <- which(sapply(colClasses, function(x) "currency" %in% x))
+    inds <- wapply(colClasses, function(x) "currency" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "CURRENCY"),
@@ -190,12 +186,12 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style accounting as ACCOUNTING
   if ("accounting" %in% allColClasses) {
-    inds <- which(sapply(colClasses, function(x) "accounting" %in% x))
+    inds <- wapply(colClasses, function(x) "accounting" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "ACCOUNTING"),
@@ -204,12 +200,12 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style percentages
   if ("percentage" %in% allColClasses) {
-    inds <- which(sapply(colClasses, function(x) "percentage" %in% x))
+    inds <- wapply(colClasses, function(x) "percentage" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "percentage"),
@@ -218,12 +214,12 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style big mark
   if ("scientific" %in% allColClasses) {
-    inds <- which(sapply(colClasses, function(x) "scientific" %in% x))
+    inds <- wapply(colClasses, function(x) "scientific" %in% x)
 
     styleElements <- list(
       "style" = createStyle(numFmt = "scientific"),
@@ -232,12 +228,12 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## style big mark
   if ("3" %in% allColClasses | "comma" %in% allColClasses) {
-    inds <- which(sapply(colClasses, function(x) "3" %in% tolower(x) | "comma" %in% tolower(x)))
+    inds <- wapply(colClasses, function(x) "3" %in% tolower(x) | "comma" %in% tolower(x))
 
     styleElements <- list(
       "style" = createStyle(numFmt = "3"),
@@ -246,12 +242,12 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
   ## numeric sigfigs (Col must be numeric and numFmt options must only have 0s and \\.)
   if ("numeric" %in% allColClasses & !grepl("[^0\\.,#\\$\\* %]", getOption("openxlsx.numFmt", "GENERAL"))) {
-    inds <- which(sapply(colClasses, function(x) "numeric" %in% tolower(x)))
+    inds <- wapply(colClasses, function(x) "numeric" %in% tolower(x))
 
     styleElements <- list(
       "style" = createStyle(numFmt = getOption("openxlsx.numFmt", "0")),
@@ -260,7 +256,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
       "cols" = rep(inds + startCol, each = length(rowInds))
     )
 
-    newStylesElements <- append(newStylesElements, list(styleElements))
+    newStylesElements <- c(newStylesElements, list(styleElements))
   }
 
 
@@ -275,7 +271,7 @@ classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasse
         )
       }
     } else {
-      wb$styleObjects <- append(wb$styleObjects, newStylesElements)
+      wb$styleObjects <- c(wb$styleObjects, newStylesElements)
     }
   }
 
@@ -504,19 +500,13 @@ get_named_regions_from_string <- function(dn) {
   dn_pos <- gsub("[$']", "", dn_pos)
 
   has_bang <- grepl("!", dn_pos, fixed = TRUE)
-  dn_sheets <- ifelse(has_bang,
-    gsub("^(.*)!.*$", "\\1", dn_pos),
-    ""
-  )
-  dn_coords <- ifelse(has_bang,
-    gsub("^.*!(.*)$", "\\1", dn_pos),
-    ""
-  )
+  dn_sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
+  dn_coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
 
   attr(dn_names, "sheet") <- dn_sheets
   attr(dn_names, "position") <- dn_coords
 
-  return(dn_names)
+  dn_names
 }
 
 
@@ -529,8 +519,8 @@ nodeAttributes <- function(x) {
     return("")
   }
 
-  attrs <- regmatches(x, gregexpr(' [a-zA-Z]+="[^"]*', x, perl = TRUE))
-  tags <- regmatches(x, gregexpr("<[a-zA-Z]+ ", x, perl = TRUE))
+  attrs <- reg_match0(x, ' [a-zA-Z]+="[^"]*')
+  tags <- reg_match0(x, "<[a-zA-Z]+ ")
   tags <- lapply(tags, gsub, pattern = "<| ", replacement = "")
   attrs <- lapply(attrs, gsub, pattern = '"', replacement = "")
 
@@ -561,11 +551,14 @@ buildBorder <- function(x) {
 
   ## gets all borders that have children
   directions <- c("left", "right", "top", "bottom", "diagonal")
-  x <- unlist(lapply(directions, function(z) {
-    y <- xml_node(x, "border", z)
-    sel <- length(xml_node(y, z, "color"))
-    if (sel) y
-  }))
+  x <- unapply(
+    directions,
+    function(z) {
+      y <- xml_node(x, "border", z)
+      sel <- length(xml_node(y, z, "color"))
+      if (sel) y
+    }
+  )
   if (length(x) == 0) {
     return(NULL)
   }
@@ -612,17 +605,20 @@ buildBorder <- function(x) {
   }
 
   attrs <- strsplit(attrs, split = "=")
-  cols <- sapply(attrs, function(attr) {
-    if (length(attr) == 2) {
-      y <- list(gsub('"', "", attr[2]))
-      names(y) <- gsub(" ", "", attr[[1]])
-    } else {
-      tmp <- paste(attr[-1], collapse = "=")
-      y <- gsub('^"|"$', "", tmp)
-      names(y) <- gsub(" ", "", attr[[1]])
+  cols <- sapply(
+    attrs,
+    function(attr) {
+      if (length(attr) == 2) {
+        y <- list(gsub('"', "", attr[2]))
+        names(y) <- gsub(" ", "", attr[[1]])
+      } else {
+        tmp <- paste(attr[-1], collapse = "=")
+        y <- gsub('^"|"$', "", tmp)
+        names(y) <- gsub(" ", "", attr[[1]])
+      }
+      y
     }
-    return(y)
-  })
+  )
 
   ## sideBorder & cols
   if ("LEFT" %in% sideBorder) {

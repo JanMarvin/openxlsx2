@@ -21,7 +21,7 @@ update_cell(
 
 \item{sheet}{the sheet you want to update}
 
-\item{cell}{the cell you want to update in Excel conotation e.g. "A1"}
+\item{cell}{the cell you want to update in Excel connotation e.g. "A1"}
 
 \item{data_class}{optional data class object}
 

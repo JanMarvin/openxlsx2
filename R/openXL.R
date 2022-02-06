@@ -10,7 +10,7 @@
 #' In Linux it searches (via `which`) for available xls/xlsx
 #' reader applications (unless `options('openxlsx.excelApp')`
 #' is set to the app bin path), and if it finds anything, sets
-#' `options('openxlsx.excelApp')` to the program choosen by
+#' `options('openxlsx.excelApp')` to the program chosen by
 #' the user via a menu (if many are present, otherwise it will
 #' set the only available). Currently searched for apps are
 #' Libreoffice/Openoffice (`soffice` bin), Gnumeric
@@ -31,15 +31,14 @@
 #' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #' # openXL(wb)
 openXL <- function(file = NULL) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   if (is.null(file)) stop("A file has to be specified.")
 
   ## workbook handling
   if (inherits(file, "wbWorkbook")) {
-    file <- file$wb_save(path = file.path(tempdir(), "temp_xlsx.xlsx"))$path
+    file <- file$save(path = temp_xlsx())$path
   }
 
   if (!file.exists(file)) stop("Non existent file or wrong path.")

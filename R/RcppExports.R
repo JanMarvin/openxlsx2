@@ -48,6 +48,14 @@ readXML <- function(path, isfile, escapes, declaration) {
     .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration)
 }
 
+getXMLXPtrName <- function(doc) {
+    .Call(`_openxlsx2_getXMLXPtrName`, doc)
+}
+
+getXMLXPtr0 <- function(doc) {
+    .Call(`_openxlsx2_getXMLXPtr0`, doc)
+}
+
 getXMLXPtr1 <- function(doc, child) {
     .Call(`_openxlsx2_getXMLXPtr1`, doc, child)
 }
@@ -111,7 +119,7 @@ write_xml_file <- function(xml_content, fl, escapes) {
 #' adds or updates attribute(s) in existing xml node
 #'
 #' @description Needs xml node and named character vector as input. Modifies
-#' the argutments of each first child found in the xml node and adds or updates
+#' the arguments of each first child found in the xml node and adds or updates
 #' the attribute vector.
 #' @details If a named attribute in `xml_attributes` is "" remove the attribute
 #' from the node.

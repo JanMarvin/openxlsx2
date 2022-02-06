@@ -15,12 +15,13 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
   x <- as.numeric(x)
   notNa <- !is.na(x)
   earlyDate <- x < 60
+
   if (origin == "1900-01-01") {
     x[notNa] <- x[notNa] - 2
     x[earlyDate & notNa] <- x[earlyDate & notNa] + 1
   }
 
-  return(as.Date(x, origin = origin, ...))
+  as.Date(x, origin = origin, ...)
 }
 
 
@@ -39,9 +40,8 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
 #' convertToDateTime(x, tz = "Australia/Perth")
 #' convertToDateTime(x, tz = "UTC")
 convertToDateTime <- function(x, origin = "1900-01-01", ...) {
-  sci_pen <- getOption("scipen")
-  options("scipen" = 10000)
-  on.exit(options("scipen" = sci_pen), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   x <- as.numeric(x)
   date <- convertToDate(x, origin)
@@ -59,9 +59,7 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
   date_time <- rep(NA, length(x))
   date_time[notNA] <- as.POSIXct(paste(date[notNA], y[notNA]), ...)
 
-  date_time <- .POSIXct(date_time)
-
-  return(date_time)
+  .POSIXct(date_time)
 }
 
 
@@ -87,8 +85,9 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' }
 #' @export
 getDateOrigin <- function(xlsxFile) {
-  # TODO: allow using a workbook? 
+  # TODO: allow using a workbook?
   xlsxFile <- getFile(xlsxFile)
+
   if (!file.exists(xlsxFile)) {
     stop("File does not exist.")
   }
@@ -98,21 +97,18 @@ getDateOrigin <- function(xlsxFile) {
   }
 
   ## create temp dir and unzip
-  xmlDir <- file.path(tempdir(), "_excelXMLRead")
-  xmlFiles <- unzip(xlsxFile, exdir = xmlDir)
-
+  xmlDir <- tempfile("_excelXMLRead")
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
+  xmlFiles <- unzip(xlsxFile, exdir = xmlDir)
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- read_xml(workbook, pointer = FALSE)
 
   if (grepl('date1904="1"|date1904="true"', workbook, ignore.case = TRUE)) {
-    origin <- "1904-01-01"
-  } else {
-    origin <- "1900-01-01"
+    return("1904-01-01")
   }
 
-  return(origin)
+  "1900-01-01"
 }
 
 #' convert back to ExcelDate
@@ -120,9 +116,7 @@ getDateOrigin <- function(xlsxFile) {
 #' @param date1904 take different origin
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
-
-
-  isPOSIXlt <- function(data) sapply(lapply(data, class), FUN = function(x) any(x == "POSIXlt"))
+  isPOSIXlt <- function(data) vapply(data, inherits, NA, "POSIXlt")
   to_convert <- isPOSIXlt(df)
 
   if (any(to_convert)) {
@@ -133,20 +127,20 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
   df_class <- sapply(df, class)
   ## convert any Dates to integers and create date style object
   if (any(df_class %in%  c("Date", "POSIXct"))) {
-    dInds <- which(sapply(df_class, function(x) "Date" %in% x))
+    dInds <- wapply(df_class, function(x) "Date" %in% x)
 
     origin <- 25569L
     if (date1904) origin <- 24107L
 
     for (i in dInds) {
       df[[i]] <- as.integer(df[[i]]) + origin
-      if (origin == 25569L){
+      if (origin == 25569L) {
         earlyDate <- which(df[[i]] < 60)
         df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
       }
     }
 
-    pInds <- which(sapply(df_class, function(x) any(c("POSIXct") %in% x)))
+    pInds <- wapply(df_class, function(x) any(c("POSIXct") %in% x))
     if (length(pInds) > 0 & nrow(df) > 0) {
       parseOffset <- function(tz) {
         suppressWarnings(
@@ -165,5 +159,5 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
     }
   }
 
-  return(df)
+  df
 }

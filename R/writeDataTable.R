@@ -181,20 +181,8 @@ writeDataTable <- function(wb, sheet, x,
   } else {
     tableName <- wb_validate_table_name(wb, tableName)
   }
-
-
-  ## increase scipen to avoid writing in scientific
-  exSciPen <- getOption("scipen")
-  od <- getOption("OutDec")
-  exDigits <- getOption("digits")
-
-  options("scipen" = 200)
-  options("OutDec" = ".")
-  options("digits" = 22)
-
-  on.exit(options("scipen" = exSciPen), add = TRUE)
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-  on.exit(options("digits" = exDigits), add = TRUE)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   ## convert startRow and startCol
   if (!is.numeric(startCol)) {

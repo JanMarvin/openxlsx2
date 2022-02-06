@@ -16,6 +16,8 @@ test_that("read_xml", {
 
   # Errors if the import was unsuccessful
   expect_error(z <- read_xml("<a><b/>"))
+  # characters() are imported to <NA_character/> to avoid errors
+  expect_equal("<NA_character_/>", read_xml(character(), pointer = FALSE))
 
   xml <- '<?xml test="yay"?><a>A & B</a>'
   # difference in escapes
@@ -34,6 +36,8 @@ test_that("xml_node", {
   xml <- "<a><b/></a>"
   x <- read_xml(xml, pointer = FALSE)
 
+  expect_equal("a", xml_node_name(x))
+  expect_equal(xml, xml_node(x))
   expect_equal(xml, xml_node(x, "a"))
 
   exp <- "<b/>"

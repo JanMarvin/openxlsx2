@@ -24,7 +24,7 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 
 // creates an xml row
 // data in xml is ordered row wise. therefore we need the row attributes and
-// the colum data used in this row. This function uses both to create a single
+// the column data used in this row. This function uses both to create a single
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
 //

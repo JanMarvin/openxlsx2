@@ -190,7 +190,7 @@ wbStyle <- R6::R6Class(
     #' @description
     #' Convert the `wbStyle` object to a list
     #' @param include_null if `TRUE` will include values that contain `NULL`,
-    #'   otherwise they are ommited from the list
+    #'   otherwise they are omitted from the list
     #' @return A `list` of fields
     as.list = function(include_null = FALSE) {
       # R6:::as.list.R6() exists...  would this be easier
@@ -581,12 +581,8 @@ createStyle <- function(
   locked         = FALSE,
   hidden         = FALSE
 ) {
-
-  # TODO simplify options() setting
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
 
   wbStyle$new(
     fontName       = fontName,

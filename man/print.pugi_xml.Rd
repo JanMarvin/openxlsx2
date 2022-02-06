@@ -7,7 +7,7 @@
 \method{print}{pugi_xml}(x, raw = FALSE, ...)
 }
 \arguments{
-\item{x}{somthing to print}
+\item{x}{something to print}
 
 \item{raw}{print as raw text}
 

@@ -17,4 +17,4 @@ system.file("AUTHORS", package = "openxlsx2")
 If you feel like you should be included on this list, please let us know.
 
 ### License
-This package is licsensed under the MIT licsense and is based on `openxlsx` (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2021) and `pugixml` (by Arseny Kapoulkine; COPYRIGHT 2006-2021). Both released under the MIT license.
+This package is licensed under the MIT license and is based on `openxlsx` (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2021) and `pugixml` (by Arseny Kapoulkine; COPYRIGHT 2006-2021). Both released under the MIT license.

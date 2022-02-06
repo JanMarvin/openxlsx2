@@ -55,11 +55,11 @@ guess_col_type <- function(tt) {
   names(types) <- names(tt)
 
   # but some values are numeric
-  col_num <- sapply(tt, function(x) all(x[is.na(x) == FALSE] == "n"))
+  col_num <- vapply(tt, function(x) all(x[is.na(x) == FALSE] == "n"), NA)
   types[names(col_num[col_num == TRUE])] <- 1
 
   # or even date
-  col_dte <- sapply(tt[!col_num], function(x) all(x[is.na(x) == FALSE] == "d"))
+  col_dte <- vapply(tt[!col_num], function(x) all(x[is.na(x) == FALSE] == "d"), NA)
   types[names(col_dte[col_dte == TRUE])] <- 2
 
   types
@@ -243,10 +243,10 @@ wb_to_df <- function(
     wo <- xml_value(dn, "definedName")
     # remove dollar sign: $A$1:$B$2
     wo <- gsub("\\$", "", wo)
-    wo <- unlist(sapply(wo, strsplit, "!"))
+    wo <- unapply(wo, strsplit, "!")
     # remove ' from 'Sheet 1'
     wo <- gsub("'", "", wo)
-    wo <- unlist(sapply(wo, strsplit, "!"))
+    wo <- unapply(wo, strsplit, "!")
 
     nr <- as.data.frame(
       matrix(wo,
@@ -259,7 +259,7 @@ wb_to_df <- function(
 
     nr$name <- dn_attr$name
     if (!is.null(dn_attr$localSheetId)) {
-      nr$local <- ifelse(dn_attr$localSheetId == "", 0, 1)
+      nr$local <- as.integer(dn_attr$localSheetId != "")
     } else {
       nr$local <- 0
     }
@@ -495,7 +495,7 @@ wb_to_df <- function(
 
   if (skipEmptyCols) {
 
-    empty <- sapply(z, function(x) all(is.na(x)))
+    empty <- vapply(z, function(x) all(is.na(x)), NA)
 
     if (any(empty)) {
       sel <- which(names(empty) %in% names(empty[empty == TRUE]))
@@ -520,7 +520,7 @@ wb_to_df <- function(
 #' @param x value you want to insert
 #' @param wb the workbook you want to update
 #' @param sheet the sheet you want to update
-#' @param cell the cell you want to update in Excel conotation e.g. "A1"
+#' @param cell the cell you want to update in Excel connotation e.g. "A1"
 #' @param data_class optional data class object
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
@@ -569,8 +569,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     sheet_id <- sheet
   }
 
-  if (missing(data_class))
+  if (missing(data_class)) {
+    # TODO consider using inherit() for class chekcing
     data_class <- sapply(x, class)
+  }
+
 
   # if(identical(sheet_id, integer()))
   #   stop("sheet not in workbook")
@@ -660,11 +663,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
       m <- 0
 
       for (col in cols) {
-        i <- i+1
-        m <- m+1
+        i <- i + 1
+        m <- m + 1
 
         # check if is data frame or matrix
-        value <- ifelse(is.null(dim(x)), x[i], x[n, m])
+        value <- if (is.null(dim(x))) x[i] else x[n, m]
 
         sel <- cc$row_r == row & cc$c_r == col
         c_s <- NULL
@@ -1018,7 +1021,7 @@ writeData2 <-function(wb, sheet, data,
       style_id <- which(wb$styles$cellXfs == cellfmt)
       # get the last id, the one we have just written. return them as
       # 0-index and minimum value of 0
-      ifelse(length(style_id), max(max(style_id)-1,0) , 0)
+      if (length(style_id)) max(style_id - 1, 0) else 0
     }
 
     special_fmts <- data.frame(
@@ -1038,7 +1041,7 @@ writeData2 <-function(wb, sheet, data,
       for (j in seq_along(data)) {
         val <- data[i, j]
         # if first row and colnames write character else whatever typ is found
-        dc_j <- ifelse((colNames & (i == 1)), "character", dc[1, j])
+        dc_j <- if (colNames & (i == 1))  "character" else dc[1, j]
         col[j,] <- cell(val, rtyp[i, j], dc_j, special_fmts)
       }
       col$row_r <- rownames(rtyp)[i]
