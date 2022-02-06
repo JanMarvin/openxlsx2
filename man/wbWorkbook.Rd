@@ -126,6 +126,7 @@ A Workbook
 \item \href{#method-save}{\code{wbWorkbook$save()}}
 \item \href{#method-getSheetName}{\code{wbWorkbook$getSheetName()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
+\item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
@@ -382,6 +383,26 @@ Build table
 }
 \subsection{Returns}{
 The \code{wbWorksheet} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-createFontNode"></a>}}
+\if{latex}{\out{\hypertarget{method-createFontNode}{}}}
+\subsection{Method \code{createFontNode()}}{
+Create a font node from a style
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createFontNode(style)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{style}}{style}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The font node as xml?
 }
 }
 \if{html}{\out{<hr>}}
