@@ -2,29 +2,29 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_creators}
 \alias{wb_creators}
-\alias{wb_add_creator}
-\alias{wb_set_creator}
-\alias{wb_remove_creator}
-\alias{wb_get_creator}
+\alias{wb_add_creators}
+\alias{wb_set_creators}
+\alias{wb_remove_creators}
+\alias{wb_get_creators}
 \title{Workbook creators}
 \usage{
-wb_add_creator(wb, creator)
+wb_add_creators(wb, creators)
 
-wb_set_creator(wb, creator)
+wb_set_creators(wb, creators)
 
-wb_remove_creator(wb, creator)
+wb_remove_creators(wb, creators)
 
-wb_get_creator(wb)
+wb_get_creators(wb)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object}
 
-\item{creator}{A character vector of names}
+\item{creators}{A character vector of names}
 }
 \value{
 \itemize{
-\item \code{wb_set_creator()}, \code{wb_add_creator()}, and \code{wb_remove_creator()} return the \code{wbWorkbook} object
-\item \code{wb_get_creator()} returns a \code{character} vector of creators
+\item \code{wb_set_creators()}, \code{wb_add_creators()}, and \code{wb_remove_creators()} return the \code{wbWorkbook} object
+\item \code{wb_get_creators()} returns a \code{character} vector of creators
 }
 }
 \description{
@@ -34,15 +34,15 @@ Modify and get workbook creators
 
 # workbook made with default creator (see [wbWorkbook])
 wb <- wb_workbook()
-wb_get_creator(wb)
+wb_get_creators(wb)
 
 # add a new creator (assuming "test" isn't your default creator)
-wb <- wb_add_creator(wb, "test")
-wb_get_creator(wb)
+wb <- wb_add_creators(wb, "test")
+wb_get_creators(wb)
 
-# remove the creator
-wb <- wb_remove_creator(wb, "test")
-wb_get_creator(wb)
+# remove the creator (should be the same as before)
+wb <- wb_remove_creators(wb, "test")
+wb_get_creators(wb)
 
 }
 \concept{workbook_wrappers}

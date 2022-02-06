@@ -2411,19 +2411,19 @@ ungroupRows <- function(wb, sheet, rows) {
 #'
 #' # workbook made with default creator (see [wbWorkbook])
 #' wb <- wb_workbook()
-#' wb_get_creator(wb)
+#' wb_get_creators(wb)
 #'
 #' # add a new creator (assuming "test" isn't your default creator)
-#' wb <- wb_add_creator(wb, "test")
-#' wb_get_creator(wb)
+#' wb <- wb_add_creators(wb, "test")
+#' wb_get_creators(wb)
 #'
 #' # remove the creator (should be the same as before)
-#' wb <- wb_remove_creator(wb, "test")
-#' wb_get_creator(wb)
+#' wb <- wb_remove_creators(wb, "test")
+#' wb_get_creators(wb)
 #'
 #' @return
-#' * `wb_set_creator()`, `wb_add_creator()`, and `wb_remove_creator()` return the `wbWorkbook` object
-#' * `wb_get_creator()` returns a `character` vector of creators
+#' * `wb_set_creators()`, `wb_add_creators()`, and `wb_remove_creators()` return the `wbWorkbook` object
+#' * `wb_get_creators()` returns a `character` vector of creators
 #'
 #' @name wb_creators
 #' @family workbook_wrappers
@@ -2431,31 +2431,31 @@ NULL
 
 #' @rdname wb_creators
 #' @export
-#' @param creator A character vector of names
-wb_add_creator <- function(wb, creator) {
+#' @param creators A character vector of names
+wb_add_creators <- function(wb, creators) {
   assert_workbook(wb)
-  wb$clone()$addCreator(creator)
+  wb$clone()$addCreators(creators)
 }
 
 #' @rdname wb_creators
 #' @export
-wb_set_creator <- function(wb, creator) {
+wb_set_creators <- function(wb, creators) {
   assert_workbook(wb)
-  wb$clone()$setCreator(creator)
+  wb$clone()$setCreators(creators)
 }
 
 #' @rdname wb_creators
 #' @export
-wb_remove_creator <- function(wb, creator) {
+wb_remove_creators <- function(wb, creators) {
   assert_workbook(wb)
-  wb$clone()$removeCreator(creator)
+  wb$clone()$removeCreators(creators)
 }
 
 #' @rdname wb_creators
 #' @export
-wb_get_creator <- function(wb) {
+wb_get_creators <- function(wb) {
   assert_workbook(wb)
-  wb$creator
+  wb[["creators"]]
 }
 
 

@@ -155,8 +155,8 @@ wbWorkbook <- R6::R6Class(
     #' @field styleObjectsList styleObjectsList
     styleObjectsList = list(),
 
-    #' @field creator creator
-    creator = character(),
+    #' @field creators A character vector of creators
+    creators = character(),
 
     #' @field title title
     title = NULL,
@@ -174,7 +174,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorkbook` object
-    #' @param creator A character vector of creators
+    #' @param creators A character vector of creators.  Duplicated are ignored.
     #' @param title title
     #' @param subject subject
     #' @param category category
@@ -183,20 +183,20 @@ wbWorkbook <- R6::R6Class(
     #'   is created, not when the Excel files are saved.
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator         = NULL,
+      creators        = NULL,
       title           = NULL,
       subject         = NULL,
       category        = NULL,
       datetimeCreated = Sys.time()
     ) {
 
-      self$creator <-
-        creator %||%
-        getOption("openxlsx.creator") %||%
+      self$creators <-
+        creators %||%
+        getOption("openxlsx.creators") %||%
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
-      assert_class(self$creator,    "character")
+      assert_class(self$creators,   "character")
       assert_class(title,           "character", or_null = TRUE)
       assert_class(subject,         "character", or_null = TRUE)
       assert_class(category,        "character", or_null = TRUE)
@@ -3188,27 +3188,27 @@ wbWorkbook <- R6::R6Class(
 
     # creators ----------------------------------------------------------------
 
-    #' @description Set creators
-    #' @param creator A character vector of creators to set.  Duplicates are
+    #' @description Set creator(s)
+    #' @param creators A character vector of creators to set.  Duplicates are
     #'   ignored.
-    setCreator = function(creator) {
-      private$modify_creators("set", creator)
+    setCreators = function(creators) {
+      private$modify_creators("set", creators)
     },
 
 
-    #' @description Add creators
-    #' @param creator A character vector of creators to add.  Duplicates are
+    #' @description Add creator(s)
+    #' @param creators A character vector of creators to add.  Duplicates are
     #'   ignored.
-    addCreator = function(creator) {
-      private$modify_creators("add", creator)
+    addCreators = function(creators) {
+      private$modify_creators("add", creators)
     },
 
 
-    #' @description Remove creators
-    #' @param creator A character vector of creators to remove.  All duplicated
+    #' @description Remove creator(s)
+    #' @param creators A character vector of creators to remove.  All duplicated
     #'   are removed.
-    removeCreator = function(creator) {
-      private$modify_creators("remove", creator)
+    removeCreators = function(creators) {
+      private$modify_creators("remove", creators)
     },
 
 
@@ -3541,12 +3541,12 @@ wbWorkbook <- R6::R6Class(
 
       value <- switch(
         method,
-        add    = unique(c(self$creator, value)),
+        add    = unique(c(self$creators, value)),
         set    = unique(value),
-        remove = setdiff(self$creator, value)
+        remove = setdiff(self$creators, value)
       )
 
-      self$creator <- value
+      self$creators <- value
       # core is made on initialization
       private$generate_base_core()
       self

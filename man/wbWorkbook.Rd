@@ -106,7 +106,7 @@ A Workbook
 
 \item{\code{styleObjectsList}}{styleObjectsList}
 
-\item{\code{creator}}{creator}
+\item{\code{creators}}{A character vector of creators}
 
 \item{\code{title}}{title}
 
@@ -151,9 +151,9 @@ is created, not when the Excel files are saved.}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
-\item \href{#method-setCreator}{\code{wbWorkbook$setCreator()}}
-\item \href{#method-addCreator}{\code{wbWorkbook$addCreator()}}
-\item \href{#method-removeCreator}{\code{wbWorkbook$removeCreator()}}
+\item \href{#method-setCreators}{\code{wbWorkbook$setCreators()}}
+\item \href{#method-addCreators}{\code{wbWorkbook$addCreators()}}
+\item \href{#method-removeCreators}{\code{wbWorkbook$removeCreators()}}
 \item \href{#method-changeLastModifiedBy}{\code{wbWorkbook$changeLastModifiedBy()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
@@ -165,7 +165,7 @@ is created, not when the Excel files are saved.}
 Creates a new \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(
-  creator = NULL,
+  creators = NULL,
   title = NULL,
   subject = NULL,
   category = NULL,
@@ -176,7 +176,7 @@ Creates a new \code{wbWorkbook} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{A character vector of creators}
+\item{\code{creators}}{A character vector of creators.  Duplicated are ignored.}
 
 \item{\code{title}}{title}
 
@@ -980,54 +980,54 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setCreator"></a>}}
-\if{latex}{\out{\hypertarget{method-setCreator}{}}}
-\subsection{Method \code{setCreator()}}{
-Set creators
+\if{html}{\out{<a id="method-setCreators"></a>}}
+\if{latex}{\out{\hypertarget{method-setCreators}{}}}
+\subsection{Method \code{setCreators()}}{
+Set creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setCreator(creator)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setCreators(creators)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{A character vector of creators to set.  Duplicates are
+\item{\code{creators}}{A character vector of creators to set.  Duplicates are
 ignored.}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addCreator"></a>}}
-\if{latex}{\out{\hypertarget{method-addCreator}{}}}
-\subsection{Method \code{addCreator()}}{
-Add creators
+\if{html}{\out{<a id="method-addCreators"></a>}}
+\if{latex}{\out{\hypertarget{method-addCreators}{}}}
+\subsection{Method \code{addCreators()}}{
+Add creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreator(creator)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreators(creators)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{A character vector of creators to add.  Duplicates are
+\item{\code{creators}}{A character vector of creators to add.  Duplicates are
 ignored.}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeCreator"></a>}}
-\if{latex}{\out{\hypertarget{method-removeCreator}{}}}
-\subsection{Method \code{removeCreator()}}{
-Remove creators
+\if{html}{\out{<a id="method-removeCreators"></a>}}
+\if{latex}{\out{\hypertarget{method-removeCreators}{}}}
+\subsection{Method \code{removeCreators()}}{
+Remove creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCreator(creator)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCreators(creators)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{A character vector of creators to remove.  All duplicated
+\item{\code{creators}}{A character vector of creators to remove.  All duplicated
 are removed.}
 }
 \if{html}{\out{</div>}}
