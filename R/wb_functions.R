@@ -119,8 +119,8 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
 #' @param colNames If TRUE, the first row of data will be used as column names.
 #' @param rowNames If TRUE, the first col of data will be used as row names.
-#' @param dims Character string of type "A1:B2" as optional dimentions to be imported.
-#' @param detectDates If TRUE, attempt to recognise dates and perform conversion.
+#' @param dims Character string of type "A1:B2" as optional dimensions to be imported.
+#' @param detectDates If TRUE, attempt to recognize dates and perform conversion.
 #' @param showFormula If TRUE, the underlying Excel formulas are shown.
 #' @param convert If TRUE, a conversion to dates and numerics is attempted.
 #' @param skipEmptyCols If TRUE, empty columns are skipped.
@@ -131,6 +131,7 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #' @param definedName Character string with a definedName. If no sheet is selected, the first appearance will be selected.
 #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+#' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @examples
 #'
 #'   ###########################################################################
@@ -206,18 +207,19 @@ style_is_date <- function(cellXfs, numfmt_date) {
 wb_to_df <- function(
   xlsxFile,
   sheet,
-  startRow      = 1,
-  colNames      = TRUE,
-  rowNames      = FALSE,
-  detectDates   = TRUE,
-  skipEmptyCols = FALSE,
-  skipEmptyRows = FALSE,
-  rows          = NULL,
-  cols          = NULL,
-  na.strings    = "#N/A",
+  startRow        = 1,
+  colNames        = TRUE,
+  rowNames        = FALSE,
+  detectDates     = TRUE,
+  skipEmptyCols   = FALSE,
+  skipEmptyRows   = FALSE,
+  rows            = NULL,
+  cols            = NULL,
+  na.strings      = "#N/A",
+  fillMergedCells = FALSE,
   dims,
-  showFormula   = FALSE,
-  convert       = TRUE,
+  showFormula     = FALSE,
+  convert         = TRUE,
   types,
   definedName
 ) {
@@ -335,6 +337,8 @@ wb_to_df <- function(
   tt <- dims_to_dataframe(dims)
 
 
+
+
   # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
   # names(tt) <- names(z)
   # rownames(tt) <- c("b", "s", "d", "n")
@@ -431,6 +435,29 @@ wb_to_df <- function(
   # prepare colnames object
   xlsx_cols_names <- colnames(z)
   names(xlsx_cols_names) <- xlsx_cols_names
+
+  # backward compatible option. get the mergedCells dimension and fill it with
+  # the value of the first cell in the range. do the same for tt.
+  if (fillMergedCells) {
+    mc <- wb$worksheets[[sheet]]$mergeCells
+    if (length(mc)) {
+
+      mc <- unlist(xml_attr(mc, "mergeCell"))
+
+      for (i in seq_along(mc)){
+        dms <- dims_to_dataframe(mc[i])
+
+        z[rownames(z) %in% rownames(dms),
+          colnames(z) %in% colnames(dms)] <- z[rownames(z) %in% rownames(dms[1, 1, drop = FALSE]),
+                                               colnames(z) %in% colnames(dms[1, 1, drop = FALSE])]
+        tt[rownames(tt) %in% rownames(dms),
+           colnames(tt) %in% colnames(dms)] <- tt[rownames(tt) %in% rownames(dms[1, 1, drop = FALSE]),
+                                                  colnames(tt) %in% colnames(dms[1, 1, drop = FALSE])]
+      }
+
+    }
+
+  }
 
   # if colNames, then change tt too
   if (colNames) {

@@ -18,8 +18,8 @@
 #' are checked to ensure that they are syntactically valid variable names
 #' @param sep.names (unimplemented) One character which substitutes blanks in column names. By default, "."
 #' @param namedRegion A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.
-#' @param na.strings (unimplemented) A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
-#' @param fillMergedCells (unimplemented) If TRUE, the value in a merged cell is given to all cells within the merge.
+#' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+#' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If `TRUE`, empty columns are skipped.
 #' @seealso [getNamedRegions()]
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
@@ -96,16 +96,17 @@ read.xlsx <- function(
 
   wb_to_df(
     wb,
-    sheet         = sheet,
-    startRow      = startRow,
-    colNames      = colNames,
-    rowNames      = rowNames,
-    detectDates   = detectDates,
-    skipEmptyRows = skipEmptyRows,
-    rows          = rows,
-    cols          = cols,
-    definedName   = namedRegion,
-    na.strings    = na.strings
+    sheet           = sheet,
+    startRow        = startRow,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    detectDates     = detectDates,
+    skipEmptyRows   = skipEmptyRows,
+    rows            = rows,
+    cols            = cols,
+    definedName     = namedRegion,
+    na.strings      = na.strings,
+    fillMergedCells = fillMergedCells
   )
 }
 

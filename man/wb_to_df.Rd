@@ -16,6 +16,7 @@ wb_to_df(
   rows = NULL,
   cols = NULL,
   na.strings = "#N/A",
+  fillMergedCells = FALSE,
   dims,
   showFormula = FALSE,
   convert = TRUE,
@@ -34,7 +35,7 @@ wb_to_df(
 
 \item{rowNames}{If TRUE, the first col of data will be used as row names.}
 
-\item{detectDates}{If TRUE, attempt to recognise dates and perform conversion.}
+\item{detectDates}{If TRUE, attempt to recognize dates and perform conversion.}
 
 \item{skipEmptyCols}{If TRUE, empty columns are skipped.}
 
@@ -46,7 +47,9 @@ wb_to_df(
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 
-\item{dims}{Character string of type "A1:B2" as optional dimentions to be imported.}
+\item{fillMergedCells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+
+\item{dims}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
 \item{showFormula}{If TRUE, the underlying Excel formulas are shown.}
 
