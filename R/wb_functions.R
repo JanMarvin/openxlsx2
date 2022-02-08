@@ -520,7 +520,7 @@ wb_to_df <- function(
 #' @param x value you want to insert
 #' @param wb the workbook you want to update
 #' @param sheet the sheet you want to update
-#' @param cell the cell you want to update in Excel conotation e.g. "A1"
+#' @param cell the cell you want to update in Excel connotation e.g. "A1"
 #' @param data_class optional data class object
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?

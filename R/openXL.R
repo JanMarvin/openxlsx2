@@ -10,7 +10,7 @@
 #' In Linux it searches (via `which`) for available xls/xlsx
 #' reader applications (unless `options('openxlsx.excelApp')`
 #' is set to the app bin path), and if it finds anything, sets
-#' `options('openxlsx.excelApp')` to the program choosen by
+#' `options('openxlsx.excelApp')` to the program chosen by
 #' the user via a menu (if many are present, otherwise it will
 #' set the only available). Currently searched for apps are
 #' Libreoffice/Openoffice (`soffice` bin), Gnumeric

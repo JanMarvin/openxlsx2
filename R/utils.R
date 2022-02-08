@@ -42,7 +42,7 @@ na_to_null <- function(x) {
 
 
 
-#' helper function to create tempory directory for testing purpose
+#' helper function to create temporary directory for testing purpose
 #' @param name for the temp file
 #' @export
 temp_xlsx <- function(name = "temp_xlsx") {

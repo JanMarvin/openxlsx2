@@ -33,7 +33,7 @@ create_cell_style(
 
 \item{fontId}{dummy}
 
-\item{numFmtId}{a numFmt ID for a builin style}
+\item{numFmtId}{a numFmt ID for a builtin style}
 
 \item{pivotButton}{dummy}
 

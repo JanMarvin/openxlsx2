@@ -215,7 +215,7 @@ The \code{wbWorksheetObject}, invisibly
 \if{latex}{\out{\hypertarget{method-unfold_cols}{}}}
 \subsection{Method \code{unfold_cols()}}{
 unfold \verb{<cols ..>} node to dataframe. \verb{<cols><col ..>} are compressed.
-Only columuns with attributes are written to the file. This function
+Only columns with attributes are written to the file. This function
 unfolds them so that each cell beginning with the "A" to the last one
 found in cc gets a value.
 TODO might extend this to match either largest cc or largest col. Could
@@ -241,7 +241,7 @@ fold the column dataframe back into a node.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{col_df}}{the colum data frame}
+\item{\code{col_df}}{the column data frame}
 }
 \if{html}{\out{</div>}}
 }

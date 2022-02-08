@@ -272,6 +272,141 @@ SEXP getXMLXPtr4val(XPtrXML doc, std::string level1, std::string level2, std::st
 }
 
 // [[Rcpp::export]]
+SEXP setXMLXPtr1val(XPtrXML doc, std::string child, std::string value, bool no_escapes, bool raw) {
+
+  pugi::xml_document value_node;
+  pugi::xml_parse_result result;
+
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (!no_escapes) pugi_parse_flags |= pugi::parse_escapes;
+
+  unsigned int pugi_format_flags = pugi::format_indent;
+  if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
+  if (raw)  pugi_format_flags |= pugi::format_raw;
+
+  for (auto cld : doc->children(child.c_str()))
+  {
+    // remove all values and children
+    cld.first_child().set_value("");
+    cld.remove_children();
+    // check if result is a valid xml_node, else append as is
+    result = value_node.load_string(value.c_str(), pugi_parse_flags);
+    if (result) {
+      cld.prepend_copy(value_node.first_child());
+    } else {
+      cld.prepend_child(pugi::node_pcdata).set_value(value.c_str());
+    }
+  }
+
+  std::ostringstream oss;
+  doc->print(oss, " ", pugi_format_flags);
+
+  return Rcpp::wrap(oss.str());
+}
+
+// [[Rcpp::export]]
+SEXP setXMLXPtr2val(XPtrXML doc, std::string level1, std::string child, std::string value, bool no_escapes, bool raw) {
+
+  pugi::xml_document value_node;
+  pugi::xml_parse_result result;
+
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (!no_escapes) pugi_parse_flags |= pugi::parse_escapes;
+
+  unsigned int pugi_format_flags = pugi::format_indent;
+  if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
+  if (raw)  pugi_format_flags |= pugi::format_raw;
+
+  for (auto cld : doc->child(level1.c_str()).children(child.c_str()))
+  {
+    cld.first_child().set_value("");
+    cld.remove_children();
+    // check if result is a valid xml_node, else append as is
+    result = value_node.load_string(value.c_str(), pugi_parse_flags);
+    if (result) {
+      cld.prepend_copy(value_node.first_child());
+    } else {
+      cld.prepend_child(pugi::node_pcdata).set_value(value.c_str());
+    }
+  }
+
+  std::ostringstream oss;
+  doc->print(oss, " ", pugi_format_flags);
+
+  return Rcpp::wrap(oss.str());
+}
+
+// [[Rcpp::export]]
+SEXP setXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::string child, std::string value, bool no_escapes, bool raw) {
+
+  pugi::xml_document value_node;
+  pugi::xml_parse_result result;
+
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (!no_escapes) pugi_parse_flags |= pugi::parse_escapes;
+
+  unsigned int pugi_format_flags = pugi::format_indent;
+  if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
+  if (raw)  pugi_format_flags |= pugi::format_raw;
+
+  for (auto cld : doc->child(level1.c_str()).children(level2.c_str()))
+  {
+    for (auto col : cld.children(child.c_str()))
+    {
+      col.first_child().set_value("");
+      col.remove_children();
+      // check if result is a valid xml_node, else append as is
+      result = value_node.load_string(value.c_str(), pugi_parse_flags);
+      if (result) {
+        col.prepend_copy(value_node.first_child());
+      } else {
+        col.prepend_child(pugi::node_pcdata).set_value(value.c_str());
+      }
+    }
+  }
+
+  std::ostringstream oss;
+  doc->print(oss, " ", pugi_format_flags);
+
+  return Rcpp::wrap(oss.str());
+}
+
+// [[Rcpp::export]]
+SEXP setXMLXPtr4val(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child, std::string value, bool no_escapes, bool raw) {
+
+  pugi::xml_document value_node;
+  pugi::xml_parse_result result;
+
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  if (!no_escapes) pugi_parse_flags |= pugi::parse_escapes;
+
+  unsigned int pugi_format_flags = pugi::format_indent;
+  if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
+  if (raw)  pugi_format_flags |= pugi::format_raw;
+
+  for (auto cld : doc->child(level1.c_str()).child(level2.c_str()).children(level3.c_str()))
+  {
+    for (auto col : cld.children(child.c_str()))
+    {
+      col.first_child().set_value("");
+      col.remove_children();
+      // check if result is a valid xml_node, else append as is
+      result = value_node.load_string(value.c_str(), pugi_parse_flags);
+      if (result) {
+        col.prepend_copy(value_node.first_child());
+      } else {
+        col.prepend_child(pugi::node_pcdata).set_value(value.c_str());
+      }
+    }
+  }
+
+  std::ostringstream oss;
+  doc->print(oss, " ", pugi_format_flags);
+
+  return Rcpp::wrap(oss.str());
+}
+
+// [[Rcpp::export]]
 SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
 
   auto children = doc->children(child.c_str());
@@ -434,12 +569,12 @@ Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, 
 std::string printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_flags = pugi::format_indent;
-  if (no_escapes) pugi_flags |= pugi::format_no_escapes;
-  if (raw)  pugi_flags |= pugi::format_raw;
+  unsigned int pugi_format_flags = pugi::format_indent;
+  if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
+  if (raw)  pugi_format_flags |= pugi::format_raw;
 
   std::ostringstream oss;
-  doc->print(oss, " ", pugi_flags);
+  doc->print(oss, " ", pugi_format_flags);
 
   return  oss.str();
 }
@@ -477,7 +612,7 @@ void write_xml_file(std::string xml_content, std::string fl, bool escapes) {
 //' adds or updates attribute(s) in existing xml node
 //'
 //' @description Needs xml node and named character vector as input. Modifies
-//' the argutments of each first child found in the xml node and adds or updates
+//' the arguments of each first child found in the xml node and adds or updates
 //' the attribute vector.
 //' @details If a named attribute in `xml_attributes` is "" remove the attribute
 //' from the node.
