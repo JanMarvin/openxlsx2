@@ -274,7 +274,7 @@ wb_to_df <- function(
       sheet <- sel$sheet
       dims  <- sel$dims
     } else if (definedName %in% nr$name) {
-      sel <- nr[nr$name == definedName & nr$sheet == sheet, ]
+      sel <- nr[nr$name == definedName & nr$sheet == wb$validateSheet(sheet), ]
       if (NROW(sel) == 0) {
         stop("no such definedName on selected sheet")
       }
@@ -987,7 +987,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   # TODO The check for existing names is in writeData()
   if (!is.null(name)) {
 
-    sheet_name <- wb$sheet_names[[sheet]]
+    sheet_name <- wb$sheet_names[[sheetno]]
     if (grepl(" ", sheet_name)) sheet_name <- shQuote(sheet_name)
 
     sheet_dim <- paste0(sheet_name, "!", dims)
@@ -1124,6 +1124,32 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 }
 
 
+
+#' @rdname cleanup
+#' @param wb workbook
+#' @param sheet sheet to clean
+#' @param cols numeric column vector
+#' @param rows numeric row vector
+#' @param gridExpand does nothing
+#' @export
+deleteData <- function(wb, sheet, cols, rows, gridExpand) {
+
+  sheet_id <- wb$validateSheet(sheet)
+
+  cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
+
+  if (is.numeric(cols)) {
+    sel <- cc$row_r %in% as.character(rows) & cc$c_r %in% int2col(cols)
+  } else {
+    sel <- cc$row_r %in% as.character(rows) & cc$c_r %in% cols
+  }
+
+  cc[sel, ] <- "_openxlsx_NA_"
+
+  wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
+
+}
+
 #' clean sheet (remove all values)
 #'
 #' @param wb workbook
@@ -1132,6 +1158,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 #' @param characters remove all characters
 #' @param styles remove all styles
 #' @param merged_cells remove all merged_cells
+#' @name cleanup
 #' @export
 cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
 

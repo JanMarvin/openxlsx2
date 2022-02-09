@@ -101,6 +101,7 @@ read.xlsx <- function(
     rowNames        = rowNames,
     detectDates     = detectDates,
     skipEmptyRows   = skipEmptyRows,
+    skipEmptyCols   = skipEmptyCols,
     rows            = rows,
     cols            = cols,
     definedName     = namedRegion,
