@@ -337,10 +337,10 @@ test_that("Matching Substrings breaks reading named regions", {
 
 test_that("Read namedRegion from specific sheet", {
 
-  filename <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx")
+  filename <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 
   namedR <- "MyRange"
-  sheets <- openxlsx::getSheetNames(filename)
+  sheets <- getSheetNames(filename)
 
   # read the correct sheets
   expect_equivalent(data.frame(X1 = "S1A1", X2 = "S1B1", stringsAsFactors = FALSE), read.xlsx(filename, sheet = "Sheet1", namedRegion = namedR, rowNames = FALSE, colNames = FALSE))
