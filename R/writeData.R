@@ -328,7 +328,7 @@ writeData <- function(wb,
     rownames(x) <- seq_len(NROW(x))
 
   # actual driver, the rest should not create data used for writing
-  wb <- writeData2(wb = wb, sheet = sheet, data = x, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
+  wb <- writeData2(wb = wb, sheet = sheet, data = x, name = name, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
 
   invisible(0)
 }

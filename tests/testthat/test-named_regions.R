@@ -31,21 +31,22 @@ test_that("Maintaining Named Regions on Load", {
   df2 <- read.xlsx(out_file, namedRegion = "iris")
   expect_equal(df1, df2)
 
-  ## TODO does not work, writeData does not create a namedRegion atm
-  # df1 <- read.xlsx(wb, namedRegion = "region1")
-  # expect_s3_class(df1, "data.frame")
-  # expect_equal(nrow(df1), 0)
-  # expect_equal(ncol(df1), 1)
-  #
-  # df1 <- read.xlsx(wb, namedRegion = "region1", colNames = FALSE)
-  # expect_s3_class(df1, "data.frame")
-  # expect_equal(nrow(df1), 1)
-  # expect_equal(ncol(df1), 1)
-  #
-  # df1 <- read.xlsx(wb, namedRegion = "region1", rowNames = TRUE)
-  # expect_s3_class(df1, "data.frame")
-  # expect_equal(nrow(df1), 0)
-  # expect_equal(ncol(df1), 0)
+  df1 <- read.xlsx(wb, namedRegion = "region1")
+  expect_s3_class(df1, "data.frame")
+  expect_equal(nrow(df1), 0)
+  expect_equal(ncol(df1), 1)
+
+  df1 <- read.xlsx(wb, namedRegion = "region1", colNames = FALSE)
+  expect_s3_class(df1, "data.frame")
+  expect_equal(nrow(df1), 1)
+  expect_equal(ncol(df1), 1)
+
+  # nonsense
+  # df1 is a single value and this single value is now used as rowName
+  expect_warning(df1 <- read.xlsx(wb, namedRegion = "region1", rowNames = TRUE))
+  expect_s3_class(df1, "data.frame")
+  expect_equal(nrow(df1), 0)
+  expect_equal(ncol(df1), 0)
 })
 
 test_that("Correctly Loading Named Regions Created in Excel", {

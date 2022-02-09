@@ -82,17 +82,16 @@ read.xlsx <- function(
   fillMergedCells = FALSE
 ) {
 
-  # TODO just default sheet to 1
-  if (missing(sheet)) {
-    sheet <- 1
-  }
-
   # TODO is.Workbook() would be better
   if (inherits(xlsxFile, c("Workbook", "wbWorkbook"))) {
     wb <- xlsxFile
   } else {
     wb <- loadWorkbook(xlsxFile = xlsxFile)
   }
+
+  # keep sheet missing // read.xlsx is the function to replace.
+  # dont mess with wb_to_df
+  if (missing(sheet)) substitute()
 
   wb_to_df(
     wb,

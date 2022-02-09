@@ -265,7 +265,7 @@ wb_to_df <- function(
     } else {
       nr$local <- 0
     }
-    nr$sheet <- which(wb$sheet_names %in% nr$sheet)
+    nr$sheet <- sapply(nr$sheet, function(x)wb$validateSheet(x))
 
     nr <- nr[order(nr$local, nr$name, nr$sheet),]
 
@@ -516,8 +516,8 @@ wb_to_df <- function(
   if (skipEmptyRows) {
     empty <- apply(z, 1, function(x) all(is.na(x)), simplify = TRUE)
 
-    z  <- z[!empty, ]
-    tt <- tt[!empty,]
+    z  <- z[!empty, , drop = FALSE]
+    tt <- tt[!empty, , drop = FALSE]
   }
 
   if (skipEmptyCols) {
@@ -887,6 +887,7 @@ nmfmt_df <- function(x) {
 #' @param wb workbook
 #' @param sheet sheet
 #' @param data data to export
+#' @param name If not NULL, a named region is defined.
 #' @param colNames include colnames?
 #' @param rowNames include rownames?
 #' @param startRow row to place it
@@ -916,7 +917,7 @@ nmfmt_df <- function(x) {
 #' }
 #'
 #' @export
-writeData2 <-function(wb, sheet, data,
+writeData2 <-function(wb, sheet, data, name = NULL,
                       colNames = TRUE, rowNames = FALSE,
                       startRow = 1, startCol = 1,
                       removeCellStyle = FALSE) {
@@ -980,6 +981,25 @@ writeData2 <-function(wb, sheet, data,
     ":",
     int2col(endCol), endRow)
 
+
+  # TODO writing defined name should handle global and local: localSheetId
+  # this requires access to wb$workbook.
+  # TODO The check for existing names is in writeData()
+  if (!is.null(name)) {
+
+    sheet_name <- wb$sheet_names[[sheet]]
+    if (grepl(" ", sheet_name)) sheet_name <- shQuote(sheet_name)
+
+    sheet_dim <- paste0(sheet_name, "!", dims)
+
+    def_name <- xml_node_create("definedName",
+                                xml_children = sheet_dim,
+                                xml_attributes = c(name = name))
+
+    wb$workbook$definedNames <- c(wb$workbook$definedNames, def_name)
+  }
+
+  # from here on only wb$worksheets is required
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
 
 
