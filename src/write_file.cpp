@@ -59,16 +59,10 @@ std::string set_row(Rcpp::DataFrame row_attr, std::vector<xml_col> cells, size_t
     pugi::xml_node cell = row.append_child("c");
 
     xml_col cll = cells[i];
-
     std::vector<std::string> cell_val_names;
-
 
     // Every cell consists of a typ and a val list. Certain functions have an
     // additional attr list.
-    // std::string c_typ = cells.c_t;
-    // std::string c_sty = cells.c_s;
-    // std::string c_rnm = cells.row_r;
-    // std::string c_val = cells.v.;
 
     // append attributes <c r="A1" ...>
     cell.append_attribute("r") = cll.row_r.c_str();
@@ -82,16 +76,9 @@ std::string set_row(Rcpp::DataFrame row_attr, std::vector<xml_col> cells, size_t
 
     // append nodes <c r="A1" ...><v>...</v></c>
 
-    // Rcpp::Rcout << c_val << std::endl;
     bool f_si = false;
 
     // <f> ... </f>
-
-    // std::string fml = Rcpp::as<std::string>(cll["f"]);
-    // std::string fml_type = Rcpp::as<std::string>(cll["f_t"]);
-    // std::string fml_si = Rcpp::as<std::string>(cll["f_si"]);
-    // std::string fml_ref = Rcpp::as<std::string>(cll["f_ref"]);
-
     // f node: formula to be evaluated
     if (cll.f.compare(rnastring.c_str()) != 0 ||
         cll.f_t.compare(rnastring.c_str()) != 0 ||
@@ -121,7 +108,6 @@ std::string set_row(Rcpp::DataFrame row_attr, std::vector<xml_col> cells, size_t
       }
     }
 
-
     // <is><t> ... </t></is>
     if(cll.c_t.compare("inlineStr") == 0) {
       if (cll.is.compare(rnastring.c_str()) != 0) {
@@ -138,8 +124,6 @@ std::string set_row(Rcpp::DataFrame row_attr, std::vector<xml_col> cells, size_t
 
   std::ostringstream oss;
   doc.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
-  // doc.print(oss);
-
   return oss.str();
 }
 
@@ -176,7 +160,8 @@ SEXP write_worksheet_xml_2( std::string prior,
 
     xmlFile << "<sheetData>";
 
-    // we cannot access rows directly. Have to extract the columns and use these
+    // we cannot access rows directly in the dataframe.
+    // Have to extract the columns and use these
     Rcpp::CharacterVector cc_row_r = cc["row_r"]; // 1
     Rcpp::CharacterVector cc_r     = cc["r"];     // A1
     Rcpp::CharacterVector cc_v     = cc["v"];
@@ -192,16 +177,13 @@ SEXP write_worksheet_xml_2( std::string prior,
 
     for (auto i = 0; i < row_attr.nrow(); ++i) {
 
+      // which: match and all cc$row_r in row_attr$r
       Rcpp::CharacterVector row_attr_r_i = Rcpp::as<Rcpp::CharacterVector>(row_attr_r[i]);
-
-      // which
       Rcpp::IntegerVector sel_int = match(cc_row_r, row_attr_r_i);
-      // Rcpp::IntegerVector sel = Rcpp::seq(0, sel_int.size() - 1);
-      // sel = sel[!Rcpp::is_na(sel_int)];
       Rcpp::LogicalVector sel = !Rcpp::is_na(sel_int);
 
-      Rcpp::CharacterVector cc_i_row_r = cc_row_r[sel]; // 1
-      Rcpp::CharacterVector cc_i_r     = cc_r[sel];     // A1
+      // extract selection for each row.
+      Rcpp::CharacterVector cc_i_r     = cc_r[sel];
       Rcpp::CharacterVector cc_i_v     = cc_v[sel];
       Rcpp::CharacterVector cc_i_c_t   = cc_c_t[sel];
       Rcpp::CharacterVector cc_i_c_s   = cc_c_s[sel];
@@ -211,6 +193,9 @@ SEXP write_worksheet_xml_2( std::string prior,
       Rcpp::CharacterVector cc_i_f_si  = cc_f_si[sel];
       Rcpp::CharacterVector cc_i_is    = cc_is[sel];
 
+      // push the column into the struct used for extraction. Creates a single
+      // object, easier to handle and identical structure to the one we use to
+      // read from.
       std::vector<xml_col> cell(cc_i_r.size());
       for (auto j = 0; j < cc_i_r.size(); ++ j) {
         cell[j].row_r = cc_i_r[j];
@@ -224,6 +209,7 @@ SEXP write_worksheet_xml_2( std::string prior,
         cell[j].is    = cc_i_is[j];
       }
 
+      // create row
       xmlFile << set_row(row_attr, cell, i);
 
     }
