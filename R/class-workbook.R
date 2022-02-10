@@ -4085,6 +4085,10 @@ wbWorkbook <- R6::R6Class(
             # there can be files, where row_attr is incomplete because a row
             # is lacking any attributes (presumably was added before saving)
             # still row_attr is what we want!
+
+            rows_attr <- ws$sheet_data$row_attr
+            ws$sheet_data$row_attr <- rows_attr[with(rows_attr, order(as.numeric(r))),]
+
             cc_rows <- ws$sheet_data$row_attr$r
             cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
 
