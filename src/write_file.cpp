@@ -188,14 +188,17 @@ SEXP write_worksheet_xml_2( std::string prior,
     Rcpp::CharacterVector cc_f_si  = cc["f_si"];
     Rcpp::CharacterVector cc_is    = cc["is"];
 
-    for (int i = 0; i < row_attr.nrow(); ++i) {
+    Rcpp::CharacterVector row_attr_r = row_attr["r"];
 
-      Rcpp::CharacterVector ii = std::to_string(i + 1);
+    for (auto i = 0; i < row_attr.nrow(); ++i) {
+
+      Rcpp::CharacterVector row_attr_r_i = Rcpp::as<Rcpp::CharacterVector>(row_attr_r[i]);
+
       // which
-      Rcpp::IntegerVector sel_int = match(cc_row_r, ii);
-      Rcpp::IntegerVector sel = Rcpp::seq(0, sel_int.size() - 1);
-      sel = sel[!Rcpp::is_na(sel_int)];
-      // Rcpp::LogicalVector sel = !Rcpp::is_na(sel_int);
+      Rcpp::IntegerVector sel_int = match(cc_row_r, row_attr_r_i);
+      // Rcpp::IntegerVector sel = Rcpp::seq(0, sel_int.size() - 1);
+      // sel = sel[!Rcpp::is_na(sel_int)];
+      Rcpp::LogicalVector sel = !Rcpp::is_na(sel_int);
 
       Rcpp::CharacterVector cc_i_row_r = cc_row_r[sel]; // 1
       Rcpp::CharacterVector cc_i_r     = cc_r[sel];     // A1
@@ -208,13 +211,8 @@ SEXP write_worksheet_xml_2( std::string prior,
       Rcpp::CharacterVector cc_i_f_si  = cc_f_si[sel];
       Rcpp::CharacterVector cc_i_is    = cc_is[sel];
 
-      // Rf_PrintValue(sel);
-      // Rf_PrintValue(cc_i_row_r);
-
       std::vector<xml_col> cell(cc_i_r.size());
       for (auto j = 0; j < cc_i_r.size(); ++ j) {
-        // Rcpp::Rcout << j << std::endl;
-
         cell[j].row_r = cc_i_r[j];
         cell[j].v     = cc_i_v[j];
         cell[j].c_t   = cc_i_c_t[j];
