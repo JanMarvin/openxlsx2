@@ -284,10 +284,6 @@ set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
-set_row <- function(row_attr, cells, row_idx) {
-    .Call(`_openxlsx2_set_row`, row_attr, cells, row_idx)
-}
-
 write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
     .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, R_fileName)
 }
