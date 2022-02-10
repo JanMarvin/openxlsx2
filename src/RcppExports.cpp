@@ -691,19 +691,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// set_row
-std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx);
-RcppExport SEXP _openxlsx2_set_row(SEXP row_attrSEXP, SEXP cellsSEXP, SEXP row_idxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type row_attr(row_attrSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type cells(cellsSEXP);
-    Rcpp::traits::input_parameter< size_t >::type row_idx(row_idxSEXP);
-    rcpp_result_gen = Rcpp::wrap(set_row(row_attr, cells, row_idx));
-    return rcpp_result_gen;
-END_RCPP
-}
 // write_worksheet_xml_2
 SEXP write_worksheet_xml_2(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName);
 RcppExport SEXP _openxlsx2_write_worksheet_xml_2(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP) {
@@ -776,7 +763,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
-    {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 3},
     {"_openxlsx2_write_worksheet_xml_2", (DL_FUNC) &_openxlsx2_write_worksheet_xml_2, 5},
     {NULL, NULL, 0}
 };

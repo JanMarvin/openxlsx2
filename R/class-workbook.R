@@ -3250,7 +3250,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    
+
     #' @description
     #' Protect a workbook
     #' @param protect protect
@@ -4086,23 +4086,9 @@ wbWorkbook <- R6::R6Class(
             # is lacking any attributes (presumably was added before saving)
             # still row_attr is what we want!
             cc_rows <- ws$sheet_data$row_attr$r
-            cc_out <- vector("list", length = length(cc_rows))
-            names(cc_out) <- cc_rows
+            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
 
-            for (cc_r in cc_rows) {
-              tmp <- cc[cc$row_r == cc_r, c("r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_si", "is")]
-              nams <- cc[cc$row_r == cc_r, c("c_r")]
-              ltmp <- vector("list", nrow(tmp))
-              names(ltmp) <- nams
-
-              for (nr in seq_len(nrow(tmp))) {
-                ltmp[[nr]] <- as.list(tmp[nr, ])
-              }
-
-              cc_out[[cc_r]] <- ltmp
-            }
-
-            ws$sheet_data$cc_out <- cc_out
+            ws$sheet_data$cc_out <- cc_out[with(cc_out, order(as.integer(row_r), col2int(c_r))),]
           } else {
             ws$sheet_data$row_attr <- NULL
             ws$sheet_data$cc_out <- NULL
