@@ -150,8 +150,8 @@ SEXP write_worksheet_xml_2( std::string prior,
 
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
-  Rcpp::DataFrame row_attr = sheet_data["row_attr"];
-  Rcpp::DataFrame cc = sheet_data["cc_out"];
+  Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
+  Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc_out"]);
 
   // TODO prev. this was Rf_isNull() no we have a zero col, zero row dataframe?
   if ((row_attr.nrow() == 0) || (cc.nrow() == 0)) {
