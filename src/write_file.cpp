@@ -94,6 +94,9 @@ std::string set_row(Rcpp::DataFrame row_attr, std::vector<xml_col> cells, size_t
         f.append_attribute("si") = cll.f_si.c_str();
         f_si = true;
       }
+      if (cll.f_ca.compare(rnastring.c_str()) != 0) {
+        f.append_attribute("ca") = cll.f_ca.c_str();
+      }
 
       f.append_child(pugi::node_pcdata).set_value(cll.f.c_str());
     }
