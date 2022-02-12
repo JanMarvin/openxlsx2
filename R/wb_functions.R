@@ -700,7 +700,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         c_s <- NULL
         if (removeCellStyle) c_s <- "c_s"
 
-        cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
+        cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
@@ -1034,7 +1034,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     # original cc dataframe
     # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
-    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_si", "is")
+    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")
     cc <- as.data.frame(
       matrix(data = "_openxlsx_NA_",
              nrow = nrow(data) * ncol(data),
@@ -1168,11 +1168,11 @@ cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TR
 
   if (numbers)
     cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
-       c("c_t", "v", "f", "f_t", "f_ref", "f_si", "is")] <- "_openxlsx_NA_"
+       c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
   if (characters)
     cc[cc$c_t %in% c("inlineStr", "s"),
-       c("v", "f", "f_t", "f_ref", "f_si", "is")] <- ""
+       c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
   if (styles)
     cc[c("c_s")] <- "_openxlsx_NA_"
