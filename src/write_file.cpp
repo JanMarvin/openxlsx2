@@ -90,12 +90,12 @@ std::string set_row(Rcpp::DataFrame row_attr, std::vector<xml_col> cells, size_t
       if (cll.f_ref.compare(rnastring.c_str()) != 0) {
         f.append_attribute("ref") = cll.f_ref.c_str();
       }
+      if (cll.f_ca.compare(rnastring.c_str()) != 0) {
+        f.append_attribute("ca") = cll.f_ca.c_str();
+      }
       if (cll.f_si.compare(rnastring.c_str()) != 0) {
         f.append_attribute("si") = cll.f_si.c_str();
         f_si = true;
-      }
-      if (cll.f_ca.compare(rnastring.c_str()) != 0) {
-        f.append_attribute("ca") = cll.f_ca.c_str();
       }
 
       f.append_child(pugi::node_pcdata).set_value(cll.f.c_str());
@@ -173,6 +173,7 @@ SEXP write_worksheet_xml_2( std::string prior,
     Rcpp::CharacterVector cc_f     = cc["f"];
     Rcpp::CharacterVector cc_f_t   = cc["f_t"];
     Rcpp::CharacterVector cc_f_ref = cc["f_ref"];
+    Rcpp::CharacterVector cc_f_ca  = cc["f_ca"];
     Rcpp::CharacterVector cc_f_si  = cc["f_si"];
     Rcpp::CharacterVector cc_is    = cc["is"];
 
@@ -193,6 +194,7 @@ SEXP write_worksheet_xml_2( std::string prior,
       Rcpp::CharacterVector cc_i_f     = cc_f[sel];
       Rcpp::CharacterVector cc_i_r_t   = cc_f_t[sel];
       Rcpp::CharacterVector cc_i_f_ref = cc_f_ref[sel];
+      Rcpp::CharacterVector cc_i_f_ca  = cc_f_ca[sel];
       Rcpp::CharacterVector cc_i_f_si  = cc_f_si[sel];
       Rcpp::CharacterVector cc_i_is    = cc_is[sel];
 
@@ -208,6 +210,7 @@ SEXP write_worksheet_xml_2( std::string prior,
         cell[j].f     = cc_i_f[j];
         cell[j].f_t   = cc_i_r_t[j];
         cell[j].f_ref = cc_i_f_ref[j];
+        cell[j].f_ca  = cc_i_f_ca[j];
         cell[j].f_si  = cc_i_f_si[j];
         cell[j].is    = cc_i_is[j];
       }
