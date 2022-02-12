@@ -2,7 +2,8 @@
 #'
 #' @examples
 #'
-#' wb <- loadWorkbook("inst/extdata/oxlsx2_sheet.xlsx")
+#' xlsxFile <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+#' wb <- loadWorkbook(xlsxFile)
 #'
 #' ## start style mgr
 #' style <- style_mgr$new(wb)
