@@ -664,6 +664,10 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     }
   }
 
+  # update cc
+  # TODO this was not supposed to happen, caused by delete? clean?
+  cc <- cc[cc$row_r != "_openxlsx_NA_" & cc$c_r != "_openxlsx_NA_",]
+
   # update dimensions
   cc$row <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$rw
@@ -671,8 +675,8 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   all_rows <- unique(cc$row_r)
   all_cols <- unique(cc$c_r)
 
-  min_cell <- trimws(paste0(min(all_cols), min(all_rows)))
-  max_cell <- trimws(paste0(max(all_cols), max(all_rows)))
+  min_cell <- trimws(paste0(min(all_cols, na.rm = TRUE), min(all_rows, na.rm = TRUE)))
+  max_cell <- trimws(paste0(max(all_cols, na.rm = TRUE), max(all_rows, na.rm = TRUE)))
 
   # i know, i know, i'm lazy
   wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
