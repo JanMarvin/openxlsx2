@@ -672,11 +672,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   cc$row <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$rw
 
-  all_rows <- unique(cc$row_r)
-  all_cols <- unique(cc$c_r)
+  all_rows <- as.numeric(unique(cc$row_r))
+  all_cols <- col2int(unique(cc$c_r))
 
-  min_cell <- trimws(paste0(min(all_cols, na.rm = TRUE), min(all_rows, na.rm = TRUE)))
-  max_cell <- trimws(paste0(max(all_cols, na.rm = TRUE), max(all_rows, na.rm = TRUE)))
+  min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
+  max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
 
   # i know, i know, i'm lazy
   wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
