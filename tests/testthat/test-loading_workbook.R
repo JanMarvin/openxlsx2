@@ -865,3 +865,39 @@ test_that("sheet visibility", {
   expect_equal(exp_vis, wb2_vis)
 
 })
+
+
+test_that("additional wb tests", {
+
+  # no data on sheet
+  wb <- createWorkbook()
+  addWorksheet(wb, "Sheet 1")
+
+  expect_equal(NULL, wb_to_df(wb, sheet = "Sheet 1"))
+
+  # wb_to_df
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  wb1 <- loadWorkbook(xlsxFile)
+
+  # showFormula
+  exp <- data.frame(Var7 = "1/0", row.names = "2")
+  got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 8)
+  expect_equivalent(exp, got)
+  expect_equal(names(exp), names(got))
+
+  # detectDates
+  exp <- data.frame(Var5 = as.Date("2015-02-07"), row.names = "2")
+  got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 6)
+  expect_equivalent(exp, got)
+  expect_equal(names(exp), names(got))
+
+  # types
+  # Var1 is requested as character
+  exp <- data.frame(Var1 = c("TRUE", "TRUE", "TRUE", "FALSE"),
+                    Var3 = c(1.00, NaN, 1.34, NA))
+  got <- wb_to_df(wb1, cols = c(1, 4),
+                  types = c("Var1" = 0, "Var3" = 1))[seq_len(4),]
+  expect_equivalent(exp, got)
+  expect_equal(names(exp), names(got))
+
+})
