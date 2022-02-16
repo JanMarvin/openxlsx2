@@ -950,11 +950,11 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     is_data_frame <- TRUE
 
     # add colnames
-    if (colNames == TRUE)
+    if (colNames)
       data <- rbind(colnames(data), data)
 
     # add rownames
-    if (rowNames == TRUE) {
+    if (rowNames) {
       nam <- names(data)
       data <- cbind(rownames(data), data)
       names(data) <- c("", nam)
