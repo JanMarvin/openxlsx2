@@ -754,26 +754,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       tableSheets <- unapply(seq_along(sheetrId), function(i) rep(i, length(tables[[i]])))
 
       if (length(unlist(tables))) {
-        ## get the tables that belong to each worksheet and create a worksheets_rels for each
-        tCount <- 2L ## table r:Ids start at 3
-        for (i in seq_along(tables)) {
-          if (length(tables[[i]])) {
-            k <- seq_along(tables[[i]]) + tCount
-            # wb$worksheets_rels[[i]] <- unlist(c(
-            #   wb$worksheets_rels[[i]],
-            #   sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>', k, k)
-            # ))
-
-
-            #wb$worksheets[[i]]$tableParts <- sprintf("<tablePart r:id=\"rId%s\"/>", k)
-            tCount <- tCount + length(k)
-          }
-        }
 
         ## sort the tables into the order they appear in the xml and tables variables
         names(tablesXML) <- basename(tablesXML)
         tablesXML <- tablesXML[sprintf("table%s.xml", unlist(tables))]
-
         ## tables are now in correct order so we can read them in as they are
         wb$tables <- sapply(tablesXML, read_xml, pointer = FALSE)
 
