@@ -706,19 +706,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// write_worksheet_xml_2
-SEXP write_worksheet_xml_2(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName);
-RcppExport SEXP _openxlsx2_write_worksheet_xml_2(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP) {
+// write_worksheet
+void write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName);
+RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type prior(priorSEXP);
     Rcpp::traits::input_parameter< std::string >::type post(postSEXP);
     Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cols_attr(cols_attrSEXP);
     Rcpp::traits::input_parameter< std::string >::type R_fileName(R_fileNameSEXP);
-    rcpp_result_gen = Rcpp::wrap(write_worksheet_xml_2(prior, post, sheet_data, cols_attr, R_fileName));
-    return rcpp_result_gen;
+    write_worksheet(prior, post, sheet_data, cols_attr, R_fileName);
+    return R_NilValue;
 END_RCPP
 }
 
@@ -779,7 +778,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
-    {"_openxlsx2_write_worksheet_xml_2", (DL_FUNC) &_openxlsx2_write_worksheet_xml_2, 5},
+    {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 5},
     {NULL, NULL, 0}
 };
 

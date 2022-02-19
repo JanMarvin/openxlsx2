@@ -612,7 +612,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # workbooks contain only entries for values currently present.
   # if A1 is filled, B1 is not filled and C1 is filled the sheet will only
   # contain fields A1 and C1.
-  cc$row <- paste0(cc$c_r, cc$row_r)
+  cc$r <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$rw
   rows_in_wb <- row_attr$r
 
@@ -669,7 +669,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   cc <- cc[cc$row_r != "_openxlsx_NA_" & cc$c_r != "_openxlsx_NA_",]
 
   # update dimensions
-  cc$row <- paste0(cc$c_r, cc$row_r)
+  cc$r <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$rw
 
   all_rows <- as.numeric(unique(cc$row_r))
@@ -721,10 +721,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
   # order cc
-  cc$ordered_rows <- col2int(cc$c_r)
-  cc$ordered_cols <- as.numeric(cc$row_r)
-
-  cc <- cc[order(cc$ordered_rows, cc$ordered_cols),]
+  cc <- cc[with(cc, order(as.integer(row_r), col2int(c_r))), ]
   cc$ordered_cols <- NULL
   cc$ordered_rows <- NULL
 

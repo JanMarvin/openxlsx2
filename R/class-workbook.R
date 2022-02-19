@@ -4144,8 +4144,7 @@ wbWorkbook <- R6::R6Class(
           # # restore order
           # ws$sheet_data$row_attr <- row_attr[wanted]
 
-          # message(i, " \n")
-          write_worksheet_xml_2(
+          write_worksheet(
             prior = prior,
             post = post,
             sheet_data = ws$sheet_data,

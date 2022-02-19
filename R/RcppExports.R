@@ -288,7 +288,7 @@ set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
-write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
-    .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, R_fileName)
+write_worksheet <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
+    invisible(.Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data, cols_attr, R_fileName))
 }
 
