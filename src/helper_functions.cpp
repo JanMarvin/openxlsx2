@@ -198,6 +198,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
+      // TODO change only if not "_openxlsx_NA_"
       Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
       Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
       Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos] = cell.v;
