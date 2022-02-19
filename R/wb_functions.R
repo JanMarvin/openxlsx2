@@ -788,88 +788,20 @@ numfmt_class <- function(data) {
 }
 
 
-short_dtecell <- function(x,y, short_dtefmt){
-  c(v   = as.character(x),
-    typ = "n",
-    r   = y,
-    c_s = as.character(short_dtefmt),
-    c_t = "_openxlsx_NA_",
-    is  =  "_openxlsx_NA_",
-    f   =  "_openxlsx_NA_")
-}
+celltyp <- function(data_class) {
 
-long_dtecell <- function(x,y, long_dtefmt){
-  c(v   = as.character(x),
-    typ = "n",
-    r   = y,
-    c_s = as.character(long_dtefmt),
-    c_t = "_openxlsx_NA_",
-    is  =  "_openxlsx_NA_",
-    f   =  "_openxlsx_NA_")
-}
+  z <- vector("integer", length = length(data_class))
 
-numcell <- function(x,y, numfmt = "_openxlsx_NA_"){
-  c(v   = as.character(x),
-    typ = "n",
-    r   = y,
-    c_s = as.character(numfmt),
-    c_t = "_openxlsx_NA_",
-    is  =  "_openxlsx_NA_",
-    f   =  "_openxlsx_NA_")
-}
-
-boolcell <- function(x,y){
-  c(v   = as.character(as.integer(as.logical(x))),
-    typ = "n",
-    r   = y,
-    c_s = "_openxlsx_NA_",
-    c_t = "b",
-    is  =  "_openxlsx_NA_",
-    f   =  "_openxlsx_NA_")
-}
-
-chrcell <- function(x,y){
-  c(v   = "_openxlsx_NA_",
-    typ = "c",
-    r   = y,
-    c_s = "_openxlsx_NA_",
-    c_t = "inlineStr",
-    is  = paste0("<is><t>", as.character(x), "</t></is>"),
-    f   =  "_openxlsx_NA_")
-}
-
-fmlcell <- function(x,y){
-  c(v   = "_openxlsx_NA_",
-    typ = "c",
-    r   = y,
-    c_s = "_openxlsx_NA_",
-    c_t = "str",
-    is  =  "_openxlsx_NA_",
-    f   = as.character(x))
-}
-
-cell <- function(x, y, data_class, special_fmts) {
-  z <- NULL
-  if (data_class %in% c("date"))
-    z <- short_dtecell(x,y, special_fmts$short_date)
-  if (data_class %in% c("posix"))
-    z <- long_dtecell(x,y, special_fmts$long_date)
-  if (data_class %in% c("logical"))
-    z <- boolcell(x,y)
-  if (data_class %in% c("numeric", "integer"))
-    z <- numcell(x,y)
-  if (data_class %in% c("character", "factor", "hyperlink", "currency"))
-    z <- chrcell(x,y)
-  if (data_class %in% c("formula"))
-    z <- fmlcell(x,y)
-  if (data_class %in% c("accounting"))
-    z <- numcell(x,y, special_fmts$accounting)
-  if (data_class %in% c("percentage"))
-    z <- numcell(x,y, special_fmts$percentage)
-  if (data_class %in% c("scientific"))
-    z <- numcell(x,y, special_fmts$scientific)
-  if (data_class %in% c("comma"))
-    z <- numcell(x,y, special_fmts$comma)
+  z[data_class %in% c("date")] <- 0
+  z[data_class %in% c("posix")] <- 1
+  z[data_class %in% c("numeric", "integer")] <- 2
+  z[data_class %in% c("logical")] <- 3
+  z[data_class %in% c("character", "factor", "hyperlink", "currency")] <- 4
+  z[data_class %in% c("formula")] <- 5
+  z[data_class %in% c("accounting")] <- 6
+  z[data_class %in% c("percentage")] <- 7
+  z[data_class %in% c("scientific")] <- 8
+  z[data_class %in% c("comma")] <- 9
 
   z
 }
@@ -966,7 +898,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     }
   }
 
-
   sheetno <- wb$validateSheet(sheet)
   # message("sheet no: ", sheetno)
 
@@ -984,7 +915,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   dims <- paste0(int2col(startCol), startRow,
     ":",
     int2col(endCol), endRow)
-
 
   # TODO writing defined name should handle global and local: localSheetId
   # this requires access to wb$workbook.
@@ -1016,19 +946,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     rows_attr <- cols_attr <- cc_tmp <- vector("list", data_nrow)
 
-    # # create <cols ...>
-    # cols_attr <- empty_cols_attr(n = data_nrow)
-    # cols_attr$collapsed <- ""
-    # cols_attr$customWidth <- ""
-    # cols_attr$hidden <- ""
-    # cols_attr$outlineLevel <- ""
-    # cols_attr$max <- ""
-    # cols_attr$min <- ""
-    # cols_attr$style <- ""
-    # cols_attr$width <- ""
-    #
-    # wb$worksheets[[sheetno]]$cols_attr <- df_to_xml("col", cols_attr)
-
     # create <rows ...>
     want_rows <- startRow:endRow
     rows_attr <- empty_row_attr(n = length(want_rows))
@@ -1038,7 +955,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     # original cc dataframe
     # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
-    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")
+    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ", "r")
     cc <- as.data.frame(
       matrix(data = "_openxlsx_NA_",
              nrow = nrow(data) * ncol(data),
@@ -1084,49 +1001,34 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       comma = style_id(comma_fmt)
     )
 
-    for (i in seq_len(NROW(data))) {
+    sel <- which(dc == "logical")
+    for (i in sel) {
+      if (colNames)
+        data[-1, i] <- as.integer(as.logical(data[-1, i]))
+      else 
+        data[i] <- as.integer(as.logical(data[i]))
+    }    
 
-      col_nams <- c("v", "typ", "r", "c_s", "c_t", "is", "f")
-      col <- data.frame(matrix(data = "_openxlsx_NA_", nrow = ncol(data), ncol = length(col_nams)))
-      names(col) <- col_nams
-      for (j in seq_along(data)) {
-        val <- data[i, j]
-        # if first row and colnames write character else whatever typ is found
-        dc_j <- if (colNames & (i == 1))  "character" else dc[1, j]
-        col[j,] <- cell(val, rtyp[i, j], dc_j, special_fmts)
-      }
-      col$row_r <- rownames(rtyp)[i]
-      col$c_r   <- colnames(rtyp)
+    wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
 
-      cc_tmp[[i]] <- col
-    }
-
-    cc_tmp <- do.call("rbind", cc_tmp)
-
-    cc <- merge(cc[!names(cc) %in% names(cc_tmp)],
-      cc_tmp,
-      by = "row.names")
-
-    cc <- cc[order(as.numeric(cc$Row.names)),-1]
-    cc <- cc[c(nams, "typ", "r")]
+    cc$c_s[cc$typ == "0"] <- special_fmts$short_date
+    cc$c_s[cc$typ == "1"] <- special_fmts$long_date
+    cc$c_s[cc$typ == "6"] <- special_fmts$accounting
+    cc$c_s[cc$typ == "7"] <- special_fmts$percentage
+    cc$c_s[cc$typ == "8"] <- special_fmts$scientific
+    cc$c_s[cc$typ == "9"] <- special_fmts$comma
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
-
     wb$styles$dxfs <- character()
-
-    # now the cc dataframe is similar to an imported cc dataframe. to save the
-    # file, we now need to split it up and store it in a list of lists.
 
   } else {
     # update cell(s)
     wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames, removeCellStyle)
   }
 
-
   wb
 }
-
 
 
 #' @rdname cleanup

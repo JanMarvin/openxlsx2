@@ -99,3 +99,117 @@ SEXP rbindlist(Rcpp::List x) {
 
   return df;
 }
+
+// similar to dcast converts cc dataframe to z dataframe
+// [[Rcpp::export]]
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
+
+  auto n = zz.nrow();
+
+  Rcpp::IntegerVector rows = zz["rows"];
+  Rcpp::IntegerVector cols = zz["cols"];
+  Rcpp::CharacterVector vals = zz["val"];
+  Rcpp::CharacterVector typs = zz["typ"];
+
+  for (auto i = 0; i < n; ++i) {
+    Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
+    Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
+  }
+}
+
+// similar to dcast converts cc dataframe to z dataframe
+// [[Rcpp::export]]
+void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
+                  bool ColNames, int32_t start_col, int32_t start_row) {
+
+  auto n = z.nrow();
+  auto m = z.ncol();
+
+  auto startcol = start_col;
+  for (auto i = 0; i < m; ++i) {
+
+    auto startrow = start_row;
+    for (auto j = 0; j < n; ++j) {
+
+      int8_t vtyp = vtyps[i];
+      // if colname is provided, the first row is always a character
+      if (ColNames & (j == 0)) vtyp = character;
+
+      std::string vals = Rcpp::as<std::string>(Rcpp::as<Rcpp::CharacterVector>(z[i])[j]);
+      std::string row = std::to_string(startrow);
+      std::string col = int_to_col(startcol);
+
+      auto pos = (j * m) + i;
+
+      // create struct
+      celltyp cell;
+
+      switch(vtyp)
+      {
+      case short_date:
+        cell.v   = vals;
+        cell.c_s = "_openxlsx_NA_";
+        cell.c_t = "_openxlsx_NA_";
+        cell.is  = "_openxlsx_NA_";
+        cell.f   = "_openxlsx_NA_";
+        break;
+      case long_date:
+        cell.v   = vals;
+        cell.c_s = "_openxlsx_NA_";
+        cell.c_t = "_openxlsx_NA_";
+        cell.is  = "_openxlsx_NA_";
+        cell.f   = "_openxlsx_NA_";
+        break;
+      case accounting:
+      case percentage:
+      case scientific:
+      case comma:
+      case numeric:
+        cell.v   = vals;
+        cell.typ = vtyp;
+        cell.c_s = "_openxlsx_NA_";
+        cell.c_t = "_openxlsx_NA_";
+        cell.is  = "_openxlsx_NA_";
+        cell.f   = "_openxlsx_NA_";
+        break;
+      case boolean:
+        cell.v   = vals;
+        cell.c_s = "_openxlsx_NA_";
+        cell.c_t = "b";
+        cell.is  = "_openxlsx_NA_";
+        cell.f   = "_openxlsx_NA_";
+        break;
+      case character:
+        cell.v   = "_openxlsx_NA_";
+        cell.c_s = "_openxlsx_NA_";
+        cell.c_t = "inlineStr";
+        cell.is  = "<is><t>" + vals + "</t></is>";
+        cell.f   = "_openxlsx_NA_";
+        break;
+      case formula:
+        cell.v   = "_openxlsx_NA_";
+        cell.c_s = "_openxlsx_NA_";
+        cell.c_t = "str";
+        cell.is  = "_openxlsx_NA_";
+        cell.f   = vals;
+        break;
+      }
+
+      cell.typ = std::to_string(vtyp);
+      cell.r =  col + row;
+
+      Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
+      Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
+      Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos] = cell.v;
+      Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
+      Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
+      Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos] = cell.is;
+      Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos] = cell.f;
+      Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
+      Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos] = cell.r;
+
+      ++startrow;
+    }
+    ++startcol;
+  }
+}

@@ -21,6 +21,30 @@ typedef struct {
   std::string is;
 } xml_col;
 
+
+typedef struct {
+  std::string v;
+  std::string c_s;
+  std::string c_t;
+  std::string is;
+  std::string f;
+  std::string typ;
+  std::string r;
+} celltyp;
+
+
+// enum?
+#define short_date 0
+#define long_date 1
+#define numeric 2
+#define boolean 3
+#define character 4
+#define formula 5
+#define accounting 6
+#define percentage 7
+#define scientific 8
+#define comma 9
+
 #include <Rcpp.h>
 
 // custom wrap function

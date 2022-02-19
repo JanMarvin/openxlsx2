@@ -13,6 +13,14 @@ rbindlist <- function(x) {
     .Call(`_openxlsx2_rbindlist`, x)
 }
 
+long_to_wide <- function(z, tt, zz) {
+    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
+}
+
+wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row) {
+    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row))
+}
+
 #' @import Rcpp
 NULL
 
@@ -34,10 +42,6 @@ si_to_txt <- function(doc) {
 
 is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
-}
-
-long_to_wide <- function(z, tt, zz) {
-    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
 readXMLPtr <- function(path, isfile, escapes, declaration) {

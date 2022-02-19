@@ -435,21 +435,3 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
 
   return res;
 }
-
-
-// similar to dcast converts cc dataframe to z dataframe
-// [[Rcpp::export]]
-void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
-
-  auto n = zz.nrow();
-
-  Rcpp::IntegerVector rows = zz["rows"];
-  Rcpp::IntegerVector cols = zz["cols"];
-  Rcpp::CharacterVector vals = zz["val"];
-  Rcpp::CharacterVector typs = zz["typ"];
-
-  for (auto i = 0; i < n; ++i) {
-    Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
-    Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
-  }
-}

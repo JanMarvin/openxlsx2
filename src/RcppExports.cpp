@@ -44,6 +44,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// long_to_wide
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz);
+RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP zzSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type tt(ttSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
+    long_to_wide(z, tt, zz);
+    return R_NilValue;
+END_RCPP
+}
+// wide_to_long
+void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row);
+RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type vtyps(vtypsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
+    Rcpp::traits::input_parameter< bool >::type ColNames(ColNamesSEXP);
+    Rcpp::traits::input_parameter< int32_t >::type start_col(start_colSEXP);
+    Rcpp::traits::input_parameter< int32_t >::type start_row(start_rowSEXP);
+    wide_to_long(z, vtyps, zz, ColNames, start_col, start_row);
+    return R_NilValue;
+END_RCPP
+}
 // col_to_df
 Rcpp::DataFrame col_to_df(XPtrXML doc);
 RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
@@ -98,18 +125,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type is_vec(is_vecSEXP);
     rcpp_result_gen = Rcpp::wrap(is_to_txt(is_vec));
     return rcpp_result_gen;
-END_RCPP
-}
-// long_to_wide
-void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz);
-RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP zzSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type tt(ttSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
-    long_to_wide(z, tt, zz);
-    return R_NilValue;
 END_RCPP
 }
 // readXMLPtr
@@ -711,12 +726,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
+    {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
+    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 6},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
-    {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 4},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 4},
     {"_openxlsx2_getXMLXPtrName", (DL_FUNC) &_openxlsx2_getXMLXPtrName, 1},
