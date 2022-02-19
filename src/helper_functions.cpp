@@ -147,26 +147,13 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       switch(vtyp)
       {
       case short_date:
-        cell.v   = vals;
-        cell.c_s = "_openxlsx_NA_";
-        cell.c_t = "_openxlsx_NA_";
-        cell.is  = "_openxlsx_NA_";
-        cell.f   = "_openxlsx_NA_";
-        break;
       case long_date:
-        cell.v   = vals;
-        cell.c_s = "_openxlsx_NA_";
-        cell.c_t = "_openxlsx_NA_";
-        cell.is  = "_openxlsx_NA_";
-        cell.f   = "_openxlsx_NA_";
-        break;
       case accounting:
       case percentage:
       case scientific:
       case comma:
       case numeric:
         cell.v   = vals;
-        cell.typ = vtyp;
         cell.c_s = "_openxlsx_NA_";
         cell.c_t = "_openxlsx_NA_";
         cell.is  = "_openxlsx_NA_";

@@ -32,18 +32,18 @@ typedef struct {
   std::string r;
 } celltyp;
 
-
-// enum?
-#define short_date 0
-#define long_date 1
-#define numeric 2
-#define boolean 3
-#define character 4
-#define formula 5
-#define accounting 6
-#define percentage 7
-#define scientific 8
-#define comma 9
+enum celltype {
+  short_date = 0,
+  long_date  = 1,
+  numeric    = 2,
+  boolean    = 3,
+  character  = 4,
+  formula    = 5,
+  accounting = 6,
+  percentage = 7,
+  scientific = 8,
+  comma      = 9
+};
 
 #include <Rcpp.h>
 
