@@ -2,15 +2,13 @@
 ^\.Rproj\.user$
 cran-comments.md
 ^revdep$
-^.*\.github\*
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^\.travis\.yml$
 ^\.github$
-^azure-pipelines\.yml$
+^\.vscode$
 ^\.pre-commit-config\.yaml$
 ^img$
 ^\.lintr$
