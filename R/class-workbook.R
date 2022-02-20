@@ -951,45 +951,9 @@ wbWorkbook <- R6::R6Class(
         pivotCacheDir      <- dir_create(tmpDir, "xl", "pivotCache")
         pivotCacheRelsDir  <- dir_create(tmpDir, "xl", "pivotCache", "_rels")
 
-
-        for (i in seq_along(self$pivotTables)) {
-          file.copy(
-            from = self$pivotTables[i],
-            to = file.path(pivotTablesDir, sprintf("pivotTable%s.xml", i)),
-            overwrite = TRUE,
-            copy.date = TRUE
-          )
-        }
-
-        for (i in seq_along(self$pivotDefinitions)) {
-          file.copy(
-            from = self$pivotDefinitions[i],
-            to = file.path(pivotCacheDir, sprintf("pivotCacheDefinition%s.xml", i)),
-            overwrite = TRUE,
-            copy.date = TRUE
-          )
-        }
-
-        for (i in seq_along(self$pivotRecords)) {
-          file.copy(
-            from = self$pivotRecords[i],
-            to = file.path(pivotCacheDir, sprintf("pivotCacheRecords%s.xml", i)),
-            overwrite = TRUE,
-            copy.date = TRUE
-          )
-        }
-
-        for (i in seq_along(self$pivotDefinitionsRels)) {
-          file.copy(
-            from = self$pivotDefinitionsRels[i],
-            to = file.path(
-              pivotCacheRelsDir,
-              sprintf("pivotCacheDefinition%s.xml.rels", i)
-            ),
-            overwrite = TRUE,
-            copy.date = TRUE
-          )
-        }
+        file_copy_wb_save(self$pivotTables,          "pivotTable%i.xml",                pivotTablesDir)
+        file_copy_wb_save(self$pivotDefinitions,     "pivotCacheDefinition%i.xml",      pivotCacheDir)
+        file_copy_wb_save(self$pivotRecords,         "pivotCacheRecords%i.xml",         pivotCacheDir)
 
         for (i in seq_along(self$pivotTables.xml.rels)) {
           write_file(
@@ -4824,3 +4788,25 @@ wbWorkbook <- R6::R6Class(
     }
   )
 )
+
+
+# helpers -----------------------------------------------------------------
+
+
+file_copy_wb_save <- function(from, pattern, dir) {
+  # specifically used within wbWoorkbook$save()
+
+  stopifnot(
+    dir.exists(dir),
+    is.character(pattern),
+    length(pattern) == 1L
+  )
+
+  if (length(from)) {
+    file.copy(
+      from = from,
+      to = file.path(dir, sprintf(pattern, seq_along(from))),
+      overwrite = TRUE,
+      copy.date = TRUE
+    )
+  }

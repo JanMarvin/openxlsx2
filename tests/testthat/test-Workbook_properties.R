@@ -49,7 +49,7 @@ test_that("Workbook properties", {
   exp <- c("Philipp", "test")
   expect_identical(res, exp)
 
-  res <- wb_get_creators(wb_remove_creator(wb, "test"))
+  res <- wb_get_creators(wb_remove_creators(wb, "test"))
   expect_identical(res, "Philipp")
 
 
