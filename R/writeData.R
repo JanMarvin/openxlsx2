@@ -272,10 +272,6 @@ writeData <- function(wb,
     return(invisible(0))
   }
 
-  colClasses <- lapply(x, function(x) tolower(class(x)))
-  colClasss2 <- colClasses
-  colClasss2[vapply(colClasses, function(x) "formula" %in% x, NA) & vapply(colClasses, function(x) "hyperlink" %in% x, NA)] <- "formula"
-
   if (is.numeric(sheet)) {
     sheetX <- wb$validateSheet(sheet)
   } else {
@@ -323,9 +319,6 @@ writeData <- function(wb,
       wb$workbook$definedNames <- dn
     }
   }
-
-  if (is.data.frame(x))
-    rownames(x) <- seq_len(NROW(x))
 
   # actual driver, the rest should not create data used for writing
   wb <- writeData2(wb = wb, sheet = sheet, data = x, name = name, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
