@@ -44,6 +44,12 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   ))
 }
 
+# # similar to all, simply check if most of the values match the condition
+# # in guess_col_type not all bools may be "b" some are "s" (missings)
+# most <- function(x){
+#   as.logical(names(sort(table(x), decreasing = TRUE)[1]))
+# }
+
 #' function to estimate the column type.
 #' 0 = character, 1 = numeric, 2 = date.
 #' @param tt dataframe produced by wb_to_df()
@@ -61,6 +67,10 @@ guess_col_type <- function(tt) {
   # or even date
   col_dte <- vapply(tt[!col_num], function(x) all(x[is.na(x) == FALSE] == "d"), NA)
   types[names(col_dte[col_dte == TRUE])] <- 2
+
+  # there are bools as well
+  col_dte <- vapply(tt[!col_num], function(x) any(x[is.na(x) == FALSE] == "b"), NA)
+  types[names(col_dte[col_dte == TRUE])] <- 3
 
   types
 }
@@ -401,7 +411,7 @@ wb_to_df <- function(
   # convert missings
   if (!is.na(na.strings) | !missing(na.strings)) {
     sel <- cc$val %in% na.strings
-    cc$val[sel] <- NA
+    cc$val[sel] <- "NA"
     cc$typ[sel] <- NA
   }
   # dates
@@ -498,10 +508,12 @@ wb_to_df <- function(
     if (any(sel)) {
       nums <- names( which(types[sel] == 1) )
       dtes <- names( which(types[sel] == 2) )
+      logs <- names( which(types[sel] == 3) )
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       z[dtes] <- lapply(z[dtes], as.Date)
+      z[logs] <- lapply(z[logs], as.logical)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }
@@ -1000,13 +1012,20 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     sel <- which(dc == "logical")
     for (i in sel) {
-      if (colNames)
-        data[-1, i] <- as.integer(as.logical(data[-1, i]))
-      else
-        data[i] <- as.integer(as.logical(data[i]))
+      if (colNames) {
+        tmp <- as.integer(as.logical(data[-1, i]))
+        tmp[is.na(tmp)] <- "#N/A"
+        data[-1, i] <- tmp
+      } else {
+        tmp <- as.integer(as.logical(data[i]))
+        tmp[is.na(tmp)] <- "#N/A"
+        data[i] <- tmp
+      }
     }
 
     wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
+    # if any v is missing, set typ to 'e'
+    cc$c_t[cc$v == "#N/A"] <- "e"
 
     cc$c_s[cc$typ == "0"] <- special_fmts$short_date
     cc$c_s[cc$typ == "1"] <- special_fmts$long_date
