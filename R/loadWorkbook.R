@@ -1,11 +1,10 @@
-
-
-
 #' @name loadWorkbook
 #' @title Load an existing .xlsx file
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param xlsxFile alias for file
 #' @param isUnzipped Set to TRUE if the xlsx file is already unzipped
+#' @param sheet optional sheet parameter. if this is applied, only the selected
+#'  sheet will be loaded.
 #' @description  loadWorkbook returns a workbook object conserving styles and
 #' formatting of the original .xlsx file.
 #' @return Workbook object.
@@ -24,7 +23,7 @@
 #' saveWorkbook(wb, "loadExample.xlsx", overwrite = TRUE)
 #' }
 #'
-loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
+loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   # TODO  default of isUnzipped to tools::file_ext(file) == "zip" ?
   ## If this is a unzipped workbook, skip the temp dir stuff
   if (isUnzipped) {
@@ -545,7 +544,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
 
   # TODO this loop should live in loadworksheets
-  for (i in seq_len(nSheets)) {
+  import_sheets <- seq_len(nSheets)
+  if (!missing(sheet)) {
+    import_sheets <- wb$validateSheet(sheet)
+  }
+
+  for (i in import_sheets) {
     worksheet_xml <- read_xml(worksheetsXML[i])
 
     wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")

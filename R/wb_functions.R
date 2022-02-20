@@ -230,10 +230,10 @@ wb_to_df <- function(
     # TODO this should instead check for the Workbook class?  Maybe also check
     # if the file exists?
 
-    # if using it this way, it might be benefitial to only load the sheet we
-    # want to read instead of every sheet of the entire xlsx file WHEN we do
-    # not even see it
-    wb <- loadWorkbook(xlsxFile)
+    # passes missing further on
+    if (missing(sheet)) substitute()
+
+    wb <- loadWorkbook(xlsxFile, sheet = sheet)
   } else {
     wb <- xlsxFile
   }
@@ -1002,9 +1002,9 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     for (i in sel) {
       if (colNames)
         data[-1, i] <- as.integer(as.logical(data[-1, i]))
-      else 
+      else
         data[i] <- as.integer(as.logical(data[i]))
-    }    
+    }
 
     wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
 
