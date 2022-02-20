@@ -528,8 +528,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
-      self$worksheets_rels[[newSheetIndex]] <-
-        genBaseSheetRels(newSheetIndex)
+      self$worksheets_rels[[newSheetIndex]] <- genBaseSheetRels(newSheetIndex)
       self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[clonedSheet]]
 
       # give each chart its own filename (images can re-use the same file, but charts can't)
@@ -585,17 +584,18 @@ wbWorkbook <- R6::R6Class(
         )
       # The IDs in the drawings array are sheet-specific, so within the new cloned sheet
       # the same IDs can be used => no need to modify drawings
-      self$drawings[[newSheetIndex]] <- self$drawings[[clonedSheet]]
+      # TODO could these just be self$append()?
+      self$drawings[[newSheetIndex]]       <- self$drawings[[clonedSheet]]
 
-      self$vml_rels[[newSheetIndex]] <- self$vml_rels[[clonedSheet]]
-      self$vml[[newSheetIndex]] <- self$vml[[clonedSheet]]
+      self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[clonedSheet]]
+      self$vml[[newSheetIndex]]            <- self$vml[[clonedSheet]]
 
-      self$isChartSheet[[newSheetIndex]] <- self$isChartSheet[[clonedSheet]]
-      self$comments[[newSheetIndex]] <- self$comments[[clonedSheet]]
+      self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[clonedSheet]]
+      self$comments[[newSheetIndex]]       <- self$comments[[clonedSheet]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[clonedSheet]]
 
-      self$rowHeights[[newSheetIndex]] <- self$rowHeights[[clonedSheet]]
-      self$colWidths[[newSheetIndex]] <- self$colWidths[[clonedSheet]]
+      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[clonedSheet]]
+      self$colWidths[[newSheetIndex]]      <- self$colWidths[[clonedSheet]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheetName)
@@ -669,14 +669,14 @@ wbWorkbook <- R6::R6Class(
         )
 
         oldtables <- self$tables
-        names(self$tables) <- c(names(oldtables), ref)
-        attr(self$tables, "sheet") <- c(attr(oldtables, "sheet"), newSheetIndex)
         self$append("tables", newt)
+        names(self$tables)             <- c(names(oldtables), ref)
+        attr(self$tables, "sheet")     <- c(attr(oldtables, "sheet"), newSheetIndex)
         attr(self$tables, "tableName") <- c(attr(oldtables, "tableName"), newname)
 
-        oldparts <- self$worksheets[[newSheetIndex]]$tableParts
-        self$worksheets[[newSheetIndex]]$tableParts <- c(oldparts, sprintf('<tablePart r:id="rId%s"/>', newid))
-        attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName") <- c(attr(oldparts, "tableName"), newname)
+        oldparts                                                              <- self$worksheets[[newSheetIndex]]$tableParts
+        self$worksheets[[newSheetIndex]]$tableParts                           <- c(oldparts, sprintf('<tablePart r:id="rId%s"/>', newid))
+        attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")        <- c(attr(oldparts, "tableName"), newname)
         names(attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <- c(names(attr(oldparts, "tableName")), ref)
 
         self$append("Content_Types",
@@ -768,6 +768,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
+      # TODO can these be self$append()?
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
       self$drawings_rels[[newSheetIndex]]    <- list()
@@ -815,16 +816,17 @@ wbWorkbook <- R6::R6Class(
 
       private$preSaveCleanUp()
 
-      nSheets <- length(self$worksheets)
-      nThemes <- length(self$theme)
-      nPivots <- length(self$pivotDefinitions)
-      nSlicers <- length(self$slicers)
-      nComments <- sum(lengths(self$comments) > 0)
+      nSheets         <- length(self$worksheets)
+      nThemes         <- length(self$theme)
+      nPivots         <- length(self$pivotDefinitions)
+      nSlicers        <- length(self$slicers)
+      nComments       <- sum(lengths(self$comments) > 0)
       nThreadComments <- sum(lengths(self$threadComments) > 0)
-      nPersons <- length(self$persons)
-      nVML <- sum(lengths(self$vml) > 0)
+      nPersons        <- length(self$persons)
+      nVML            <- sum(lengths(self$vml) > 0)
 
-
+      relsDir         <- dir_create(tmpDir, "_rels")
+      docPropsDir     <- dir_create(tmpDir, "docProps")
       xlDir           <- dir_create(tmpDir, "xl")
       xlrelsDir       <- dir_create(tmpDir, "xl", "_rels")
       xlTablesDir     <- dir_create(tmpDir, "xl", "tables")
@@ -844,8 +846,7 @@ wbWorkbook <- R6::R6Class(
       } else {
         # TODO replace with seq_len() or seq_along()
         lapply(seq_len(nThemes), function(i) {
-          con <-
-            file(file.path(xlthemeDir, stri_join("theme", i, ".xml")), open = "wb")
+          con <- file(file.path(xlthemeDir, stri_join("theme", i, ".xml")), open = "wb")
           writeBin(charToRaw(pxml(self$theme[[i]])), con)
           close(con)
         })
@@ -901,7 +902,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Threaded Comments xl/threadedComments/threadedComment.xml
-      if (nThreadComments > 0){
+      if (nThreadComments > 0) {
         xlThreadComments <- dir_create(tmpDir, "xl", "threadedComments")
 
         for (i in seq_len(nSheets)) {
@@ -926,14 +927,9 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## xl/persons/person.xml
-      if (nPersons > 0){
-        file.copy(
-          from = self$persons,
-          to = personDir,
-          overwrite = TRUE
-        )
-
+      if (nPersons) {
         personDir <- dir_create(tmpDir, "xl", "persons")
+        file.copy(self$persons, personDir, overwrite = TRUE)
       }
 
 
@@ -941,11 +937,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$embeddings)) {
         embeddingsDir <- dir_create(tmpDir, "xl", "embeddings")
         for (fl in embeddings) {
-          file.copy(
-            from = fl,
-            to = embeddingsDir,
-            overwrite = TRUE
-          )
+          file.copy(fl, embeddingsDir, overwrite = TRUE)
         }
       }
 
@@ -1008,19 +1000,14 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## slicers
-      if (nSlicers > 0) {
+      if (nSlicers) {
         slicersDir      <- dir_create(tmpDir, "xl", "slicers")
         slicerCachesDir <- dir_create(tmpDir, "xl", "slicerCaches")
 
-
-        for (i in seq_along(self$slicers)) {
-          # TODO consider nzchar()?
-          if (nchar(self$slicers[i])) {
-            file.copy(from = self$slicers[i], to = file.path(slicersDir, sprintf("slicer%s.xml", i)))
-          }
+        # for (i in which(nchar(self$slicers > 1))) {
+        for (i in which(nzchar(self$slicers))) {
+          file.copy(self$slicers[i], file.path(slicersDir, sprintf("slicer%s.xml", i)), overwrite = TRUE, copy.date = TRUE)
         }
-
-
 
         for (i in seq_along(self$slicerCaches)) {
           write_file(
@@ -1161,6 +1148,7 @@ wbWorkbook <- R6::R6Class(
 
       ## write sharedStrings.xml
       ct <- self$Content_Types
+
       if (length(self$sharedStrings)) {
         write_file(
           head = sprintf(
@@ -1179,11 +1167,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (nComments > 0) {
-        ct <-
-          c(
-            ct,
-            '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>'
-          )
+        ct <- c(ct, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>' )
       }
 
       ## write [Content_type]
@@ -1194,8 +1178,8 @@ wbWorkbook <- R6::R6Class(
         fl = file.path(tmpDir, "[Content_Types].xml")
       )
 
-
       styleXML <- self$styles
+
       if (length(self$styles$numFmts)) {
         styleXML$numFmts <-
           stri_join(
@@ -1204,42 +1188,43 @@ wbWorkbook <- R6::R6Class(
             "</numFmts>"
           )
       }
-      styleXML$fonts <-
-        stri_join(
-          sprintf('<fonts count="%s">', length(self$styles$fonts)),
-          pxml(self$styles$fonts),
-          "</fonts>"
-        )
-      styleXML$fills <-
-        stri_join(
-          sprintf('<fills count="%s">', length(self$styles$fills)),
-          pxml(self$styles$fills),
-          "</fills>"
-        )
-      styleXML$borders <-
-        stri_join(
-          sprintf('<borders count="%s">', length(self$styles$borders)),
-          pxml(self$styles$borders),
-          "</borders>"
-        )
-      styleXML$cellStyleXfs <-
-        c(
-          sprintf('<cellStyleXfs count="%s">', length(self$styles$cellStyleXfs)),
-          pxml(self$styles$cellStyleXfs),
-          "</cellStyleXfs>"
-        )
-      styleXML$cellXfs <-
-        stri_join(
-          sprintf('<cellXfs count="%s">', length(self$styles$cellXfs)),
-          paste0(self$styles$cellXfs, collapse = ""),
-          "</cellXfs>"
-        )
-      styleXML$cellStyles <-
-        stri_join(
-          sprintf('<cellStyles count="%s">', length(self$styles$cellStyles)),
-          pxml(self$styles$cellStyles),
-          "</cellStyles>"
-        )
+
+      styleXML$fonts <- stri_join(
+        sprintf('<fonts count="%s">', length(self$styles$fonts)),
+        pxml(self$styles$fonts),
+        "</fonts>"
+      )
+
+      styleXML$fills <- stri_join(
+        sprintf('<fills count="%s">', length(self$styles$fills)),
+        pxml(self$styles$fills),
+        "</fills>"
+      )
+
+      styleXML$borders <- stri_join(
+        sprintf('<borders count="%s">', length(self$styles$borders)),
+        pxml(self$styles$borders),
+        "</borders>"
+      )
+
+      styleXML$cellStyleXfs <- c(
+        sprintf('<cellStyleXfs count="%s">', length(self$styles$cellStyleXfs)),
+        pxml(self$styles$cellStyleXfs),
+        "</cellStyleXfs>"
+      )
+
+      styleXML$cellXfs <- stri_join(
+        sprintf('<cellXfs count="%s">', length(self$styles$cellXfs)),
+        paste0(self$styles$cellXfs, collapse = ""),
+        "</cellXfs>"
+      )
+
+      styleXML$cellStyles <- stri_join(
+        sprintf('<cellStyles count="%s">', length(self$styles$cellStyles)),
+        pxml(self$styles$cellStyles),
+        "</cellStyles>"
+      )
+
       # styleXML$cellStyles <-
       #   stri_join(
       #     pxml(self$styles$tableStyles)
@@ -1287,15 +1272,10 @@ wbWorkbook <- R6::R6Class(
 
       ## write workbook.xml
       workbookXML <- self$workbook
-      workbookXML$sheets <-
-        stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
+      workbookXML$sheets <- stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
+
       if (length(workbookXML$definedNames)) {
-        workbookXML$definedNames <-
-          stri_join(
-            "<definedNames>",
-            pxml(workbookXML$definedNames),
-            "</definedNames>"
-          )
+        workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>" )
       }
 
       write_file(
@@ -1304,16 +1284,14 @@ wbWorkbook <- R6::R6Class(
         tail = "</workbook>",
         fl = file.path(xlDir, "workbook.xml")
       )
-      self$workbook$sheets <-
-        self$workbook$sheets[order(self$sheetOrder)] ## Need to reset sheet order to allow multiple savings
+
+      ## Need to reset sheet order to allow multiple savings
+      self$workbook$sheets <- self$workbook$sheets[order(self$sheetOrder)]
 
       ## compress to xlsx
 
-      tmpFile <- tempfile(
-        tmpdir = tmpDir,
-        # TODO make self$vbaProject be TRUE/FALSE
-        fileext = if (isTRUE(self$vbaProject)) ".xlsm" else ".xlsx"
-      )
+      # TODO make self$vbaProject be TRUE/FALSE
+      tmpFile <- tempfile(tmpdir = tmpDir, fileext = if (isTRUE(self$vbaProject)) ".xlsm" else ".xlsx")
 
       ## zip it
       zip::zip(
