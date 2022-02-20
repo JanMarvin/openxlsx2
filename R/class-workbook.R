@@ -1330,7 +1330,7 @@ wbWorkbook <- R6::R6Class(
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
       id <- as.character(length(self$tables) + 1) # otherwise will start at 0 for table 1 length indicates the last known
       sheet <- wb_validate_sheet(self, sheet)
-      rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) +1
+      rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) + 1
 
       nms <- names(self$tables)
       tSheets <- attr(self$tables, "sheet")
@@ -1340,8 +1340,6 @@ wbWorkbook <- R6::R6Class(
       ### autofilter
       autofilter <- if (withFilter) {
         xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = ref))
-      } else {
-        NULL
       }
 
       ### tableColumn
