@@ -1486,26 +1486,28 @@ wbWorkbook <- R6::R6Class(
     getBaseFont = function() {
       baseFont <- self$styles$fonts[[1]]
 
+      # TODO can these checks be simplified with %||% or %|n|% or something?
+
       sz     <- as.list(xml_attr(baseFont, "font", "sz")[[1]])
       colour <- as.list(xml_attr(baseFont, "font", "color")[[1]])
       name   <- as.list(xml_attr(baseFont, "font", "name")[[1]])
 
       if (length(sz[[1]]) == 0) {
-        sz <- list("val" = "10")
+        sz <- list(val = "10")
       }
 
       if (length(colour[[1]]) == 0) {
-        colour <- list("rgb" = "#000000")
+        colour <- list(rgb = "#000000")
       }
 
       if (length(name[[1]]) == 0) {
-        name <- list("val" = "Calibri")
+        name <- list(val = "Calibri")
       }
 
       list(
-        "size" = sz,
-        "colour" = colour,
-        "name" = name
+        size   = sz,
+        colour = colour,
+        name   = name
       )
     },
 
