@@ -5,7 +5,7 @@
 #'   in `openxlsx.creator`.  If none is found, the environment variables
 #'   `USERNAME` and `USER` are searched, in that order.
 #'
-#' @param creator Creator of the workbook (see detaisl)
+#' @param creator Creator(s) of the workbook (see detaisl)
 #' @param title,subject,category Title, subject, and category of the workmust.
 #'   These must be `NULL` or single length `character` vectors
 #' @return A `wbWorkbook` object
@@ -23,14 +23,14 @@
 #'
 #' ## Set Workbook properties
 #' wb <- wb_workbook(
-#'   creator = "Me",
-#'   title = "Expense Report",
-#'   subject = "Expense Report - 2022 Q1",
+#'   creator  = "Me",
+#'   title    = "Expense Report",
+#'   subject  = "Expense Report - 2022 Q1",
 #'   category = "sales"
 #' )
 #' @export
 wb_workbook <- function(
-  creator  = NULL,
+  creator = NULL,
   title    = NULL,
   subject  = NULL,
   category = NULL
@@ -2455,7 +2455,7 @@ wb_remove_creators <- function(wb, creators) {
 #' @export
 wb_get_creators <- function(wb) {
   assert_workbook(wb)
-  wb[["creators"]]
+  wb[["creator"]]
 }
 
 

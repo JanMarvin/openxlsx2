@@ -155,8 +155,8 @@ wbWorkbook <- R6::R6Class(
     #' @field styleObjectsList styleObjectsList
     styleObjectsList = list(),
 
-    #' @field creators A character vector of creators
-    creators = character(),
+    #' @field creator A character vector of creators
+    creator = character(),
 
     #' @field title title
     title = NULL,
@@ -174,7 +174,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorkbook` object
-    #' @param creators A character vector of creators.  Duplicated are ignored.
+    #' @param creator character vector of creators.  Duplicated are ignored.
     #' @param title title
     #' @param subject subject
     #' @param category category
@@ -183,20 +183,20 @@ wbWorkbook <- R6::R6Class(
     #'   is created, not when the Excel files are saved.
     #' @return a `wbWorkbook` object
     initialize = function(
-      creators        = NULL,
+      creator         = NULL,
       title           = NULL,
       subject         = NULL,
       category        = NULL,
       datetimeCreated = Sys.time()
     ) {
 
-      self$creators <-
-        creators %||%
-        getOption("openxlsx.creators") %||%
+      self$creator <-
+        creator %||%
+        getOption("openxlsx.creator") %||%
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
-      assert_class(self$creators,   "character")
+      assert_class(self$creator,    "character")
       assert_class(title,           "character", or_null = TRUE)
       assert_class(subject,         "character", or_null = TRUE)
       assert_class(category,        "character", or_null = TRUE)
@@ -954,6 +954,7 @@ wbWorkbook <- R6::R6Class(
         file_copy_wb_save(self$pivotTables,          "pivotTable%i.xml",                pivotTablesDir)
         file_copy_wb_save(self$pivotDefinitions,     "pivotCacheDefinition%i.xml",      pivotCacheDir)
         file_copy_wb_save(self$pivotRecords,         "pivotCacheRecords%i.xml",         pivotCacheDir)
+        file_copy_wb_save(self$pivotDefinitionsRels, "pivotCacheDefinition%i.xml.rels", pivotCacheRelsDir)
 
         for (i in seq_along(self$pivotTables.xml.rels)) {
           write_file(
@@ -3412,12 +3413,12 @@ wbWorkbook <- R6::R6Class(
 
       value <- switch(
         method,
-        add    = unique(c(self$creators, value)),
+        add    = unique(c(self$creator, value)),
         set    = unique(value),
-        remove = setdiff(self$creators, value)
+        remove = setdiff(self$creator, value)
       )
 
-      self$creators <- value
+      self$creator <- value
       # core is made on initialization
       private$generate_base_core()
       self
@@ -4810,3 +4811,4 @@ file_copy_wb_save <- function(from, pattern, dir) {
       copy.date = TRUE
     )
   }
+}

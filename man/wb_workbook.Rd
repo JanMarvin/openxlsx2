@@ -7,7 +7,7 @@
 wb_workbook(creator = NULL, title = NULL, subject = NULL, category = NULL)
 }
 \arguments{
-\item{creator}{Creator of the workbook (see detaisl)}
+\item{creator}{Creator(s) of the workbook (see detaisl)}
 
 \item{title, subject, category}{Title, subject, and category of the workmust.
 These must be \code{NULL} or single length \code{character} vectors}
@@ -34,9 +34,9 @@ wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 
 ## Set Workbook properties
 wb <- wb_workbook(
-  creator = "Me",
-  title = "Expense Report",
-  subject = "Expense Report - 2022 Q1",
+  creator  = "Me",
+  title    = "Expense Report",
+  subject  = "Expense Report - 2022 Q1",
   category = "sales"
 )
 }

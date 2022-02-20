@@ -106,7 +106,7 @@ A Workbook
 
 \item{\code{styleObjectsList}}{styleObjectsList}
 
-\item{\code{creators}}{A character vector of creators}
+\item{\code{creator}}{A character vector of creators}
 
 \item{\code{title}}{title}
 
@@ -125,6 +125,7 @@ is created, not when the Excel files are saved.}
 \itemize{
 \item \href{#method-new}{\code{wbWorkbook$new()}}
 \item \href{#method-append}{\code{wbWorkbook$append()}}
+\item \href{#method-append_sheets}{\code{wbWorkbook$append_sheets()}}
 \item \href{#method-addWorksheet}{\code{wbWorkbook$addWorksheet()}}
 \item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
@@ -165,7 +166,7 @@ is created, not when the Excel files are saved.}
 Creates a new \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(
-  creators = NULL,
+  creator = NULL,
   title = NULL,
   subject = NULL,
   category = NULL,
@@ -176,7 +177,7 @@ Creates a new \code{wbWorkbook} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creators}}{A character vector of creators.  Duplicated are ignored.}
+\item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
 
 \item{\code{title}}{title}
 
@@ -212,6 +213,15 @@ Append a field. This method is intended for internal use
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-append_sheets"></a>}}
+\if{latex}{\out{\hypertarget{method-append_sheets}{}}}
+\subsection{Method \code{append_sheets()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$append_sheets(value)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addWorksheet"></a>}}
