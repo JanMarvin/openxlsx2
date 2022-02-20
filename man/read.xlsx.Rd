@@ -16,7 +16,7 @@ read.xlsx(
   rows = NULL,
   cols = NULL,
   namedRegion,
-  na.strings = "NA",
+  na.strings = "#N/A",
   check.names = FALSE,
   sep.names = ".",
   fillMergedCells = FALSE

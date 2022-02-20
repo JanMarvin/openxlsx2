@@ -3,7 +3,7 @@
 # test_that("Replace styles", {
 #
 # #   tempFile <- file.path(tempdir(), "temp.xlsx")
-# #   wb <- loadWorkbook(file = file.path(path.package("openxlsx"), "loadExample.xlsx"))
+# #   wb <- loadWorkbook(file = file.path(path.package("openxlsx2"), "loadExample.xlsx"))
 # #
 # #   ## create a new style and replace style 2
 # #
