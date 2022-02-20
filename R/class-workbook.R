@@ -225,6 +225,11 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    append_sheets = function(value) {
+      self$workbook$sheets <- c(self$workbook$sheets, value)
+      self
+    },
+
 
     #' @description
     #' Add worksheet to the `wbWorkbook` object
@@ -387,8 +392,7 @@ wbWorkbook <- R6::R6Class(
 
 
       ##  Add sheet to workbook.xml
-      self$workbook$sheets <- c(
-        self$workbook$sheets,
+      self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
           sheetName,
@@ -399,8 +403,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## append to worksheets list
-      self$worksheets <- c(
-        self$worksheets,
+      self$append("worksheets",
         wbWorksheet$new(
           showGridLines = showGridLines,
           tabSelected   = newSheetIndex == 1,
@@ -423,20 +426,12 @@ wbWorkbook <- R6::R6Class(
       ## update content_tyes
       ## add a drawing.xml for the worksheet
       if (hasDrawing) {
-        self$Content_Types <- c(
-          self$Content_Types,
-          sprintf(
-            '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
-            newSheetIndex
-          ),
-          sprintf(
-            '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-            newSheetIndex
-          )
-        )
+        self$append("Content_Types", c(
+          sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex),
+          sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', newSheetIndex)
+        ))
       } else {
-        self$Content_Types <- c(
-          self$Content_Types,
+        self$append("Content_Types",
           sprintf(
             '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
             newSheetIndex
@@ -445,14 +440,12 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Update xl/rels
-      self$workbook.xml.rels <- c(
-        self$workbook.xml.rels,
+      self$append("workbook.xml.rels",
         sprintf(
           '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>',
           newSheetIndex
         )
       )
-
 
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
@@ -508,8 +501,7 @@ wbWorkbook <- R6::R6Class(
         )
 
       ##  Add sheet to workbook.xml
-      self$workbook$sheets <- c(
-        self$workbook$sheets,
+      self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
           sheetName,
@@ -520,30 +512,19 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## append to worksheets list
-      self$worksheets <- c(self$worksheets, self$worksheets[[clonedSheet]]$clone())
+      self$append("worksheets", self$worksheets[[clonedSheet]]$clone())
 
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
-      self$Content_Types <- c(
-        self$Content_Types,
-        sprintf(
-          '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
-          newSheetIndex
-        ),
-        sprintf(
-          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-          newSheetIndex
-        )
-      )
+      self$append("Content_Types", c(
+        sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex),
+        sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', newSheetIndex)
+      ))
 
       ## Update xl/rels
-      self$workbook.xml.rels <- c(
-        self$workbook.xml.rels,
-        sprintf(
-          '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>',
-          newSheetIndex
-        )
+      self$append("workbook.xml.rels",
+        sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>', newSheetIndex)
       )
 
       ## create sheet.rels to simplify id assignment
@@ -591,8 +572,7 @@ wbWorkbook <- R6::R6Class(
 
               writeLines(chart, newfl)
 
-              self$Content_Types <- c(
-                self$Content_Types,
+              self$append("Content_Types",
                 sprintf('<Override PartName="/xl/charts/%s" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', newname)
               )
 
@@ -617,8 +597,8 @@ wbWorkbook <- R6::R6Class(
       self$rowHeights[[newSheetIndex]] <- self$rowHeights[[clonedSheet]]
       self$colWidths[[newSheetIndex]] <- self$colWidths[[clonedSheet]]
 
-      self$sheetOrder <- c(self$sheetOrder, as.integer(newSheetIndex))
-      self$sheet_names <- c(self$sheet_names, sheetName)
+      self$append("sheetOrder", as.integer(newSheetIndex))
+      self$append("sheet_names", sheetName)
 
 
       ############################
@@ -634,8 +614,7 @@ wbWorkbook <- R6::R6Class(
         self$styleObjects
       )
 
-      self$styleObjects <- c(
-        self$styleObjects,
+      self$append("styleObjects",
         Map(
           function(s) {
             s$sheet <- sheetName
@@ -690,9 +669,9 @@ wbWorkbook <- R6::R6Class(
         )
 
         oldtables <- self$tables
-        self$tables <- c(oldtables, newt)
         names(self$tables) <- c(names(oldtables), ref)
         attr(self$tables, "sheet") <- c(attr(oldtables, "sheet"), newSheetIndex)
+        self$append("tables", newt)
         attr(self$tables, "tableName") <- c(attr(oldtables, "tableName"), newname)
 
         oldparts <- self$worksheets[[newSheetIndex]]$tableParts
@@ -700,15 +679,11 @@ wbWorkbook <- R6::R6Class(
         attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName") <- c(attr(oldparts, "tableName"), newname)
         names(attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <- c(names(attr(oldparts, "tableName")), ref)
 
-        self$Content_Types <- c(
-          self$Content_Types,
-          sprintf(
-            '<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
-            newid
-          )
+        self$append("Content_Types",
+          sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', newid)
         )
 
-        self$tables.xml.rels <- c(self$tables.xml.rels, "")
+        self$append("tables.xml.rels", "")
 
         self$worksheets_rels[[newSheetIndex]] <- c(
           self$worksheets_rels[[newSheetIndex]],
@@ -749,8 +724,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ##  Add sheet to workbook.xml
-      self$workbook$sheets <- c(
-        self$workbook$sheets,
+      self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
           sheetName,
@@ -760,8 +734,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## append to worksheets list
-      self$worksheets <- c(
-        self$worksheets,
+      self$append("worksheets",
         wbChartSheet$new(
           tabSelected = newSheetIndex == 1,
           tabColour = tabColour,
@@ -769,11 +742,10 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      self$sheet_names <- c(self$sheet_names, sheetName)
+      self$append("sheet_names", sheetName)
 
       ## update content_tyes
-      self$Content_Types <- c(
-        self$Content_Types,
+      self$append("Content_Types",
         sprintf(
           '<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>',
           newSheetIndex
@@ -781,8 +753,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## Update xl/rels
-      self$workbook.xml.rels <- c(
-        self$workbook.xml.rels,
+      self$append("workbook.xml.rels",
         sprintf(
           '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>',
           newSheetIndex
@@ -790,8 +761,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## add a drawing.xml for the worksheet
-      self$Content_Types <- c(
-        self$Content_Types,
+      self$append("Content_Types",
         sprintf(
           '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
           newSheetIndex
@@ -807,7 +777,7 @@ wbWorkbook <- R6::R6Class(
       self$colWidths[[newSheetIndex]]        <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
-      self$sheetOrder                        <- c(self$sheetOrder, newSheetIndex)
+      self$append("sheetOrder", newSheetIndex)
 
       # invisible(newSheetIndex)
       invisible(self)
@@ -905,8 +875,7 @@ wbWorkbook <- R6::R6Class(
           if (length(self$comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
-            self$Content_Types <- c(
-              self$Content_Types,
+            self$append("Content_Types",
               sprintf(
                 '<Override PartName="/xl/%s" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
                 fn
