@@ -79,7 +79,8 @@ test_that("Deleting a Table Object", {
 
   ## removeTable clears table object and all data
   writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
-  wb_save(wb, "/tmp/test.xlsx")
+  temp <- temp_xlsx()
+  wb_save(wb, temp)
   expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId4\"/>", "<tablePart r:id=\"rId5\"/>"), check.attributes = FALSE)
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), c("mtcars", "iris"))
 
@@ -100,6 +101,7 @@ test_that("Deleting a Table Object", {
 
 
   expect_equal(getTables(wb, sheet = 1), "mtcars", check.attributes = FALSE)
+  file.remove(temp)
 })
 
 test_that("Save and load Table Deletion", {
