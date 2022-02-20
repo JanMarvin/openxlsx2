@@ -854,33 +854,18 @@ wbWorkbook <- R6::R6Class(
       nPersons <- length(self$persons)
       nVML <- sum(lengths(self$vml) > 0)
 
-      relsDir <- file.path(tmpDir, "_rels")
-      dir.create(path = relsDir, recursive = TRUE)
 
-      docPropsDir <- file.path(tmpDir, "docProps")
-      dir.create(path = docPropsDir, recursive = TRUE)
-
-      xlDir <- file.path(tmpDir, "xl")
-      dir.create(path = xlDir, recursive = TRUE)
-
-      xlrelsDir <- file.path(tmpDir, "xl", "_rels")
-      dir.create(path = xlrelsDir, recursive = TRUE)
-
-      xlTablesDir <- file.path(tmpDir, "xl", "tables")
-      dir.create(path = xlTablesDir, recursive = TRUE)
-
-      xlTablesRelsDir <- file.path(xlTablesDir, "_rels")
-      dir.create(path = xlTablesRelsDir, recursive = TRUE)
+      xlDir           <- dir_create(tmpDir, "xl")
+      xlrelsDir       <- dir_create(tmpDir, "xl", "_rels")
+      xlTablesDir     <- dir_create(tmpDir, "xl", "tables")
+      xlTablesRelsDir <- dir_create(xlTablesDir, "_rels")
 
       if (length(self$media)) {
-        xlmediaDir <- file.path(tmpDir, "xl", "media")
-        dir.create(path = xlmediaDir, recursive = TRUE)
+        xlmediaDir <- dir_create(tmpDir, "xl", "media")
       }
 
-
       ## will always have a theme
-      xlthemeDir <- file.path(tmpDir, "xl", "theme")
-      dir.create(path = xlthemeDir, recursive = TRUE)
+      xlthemeDir <- dir_create(tmpDir, "xl", "theme")
 
       if (is.null(self$theme)) {
         con <- file(file.path(xlthemeDir, "theme1.xml"), open = "wb")
@@ -898,18 +883,10 @@ wbWorkbook <- R6::R6Class(
 
 
       ## will always have drawings
-      xlworksheetsDir <- file.path(tmpDir, "xl", "worksheets")
-      dir.create(path = xlworksheetsDir, recursive = TRUE)
-
-      xlworksheetsRelsDir <-
-        file.path(tmpDir, "xl", "worksheets", "_rels")
-      dir.create(path = xlworksheetsRelsDir, recursive = TRUE)
-
-      xldrawingsDir <- file.path(tmpDir, "xl", "drawings")
-      dir.create(path = xldrawingsDir, recursive = TRUE)
-
-      xldrawingsRelsDir <- file.path(tmpDir, "xl", "drawings", "_rels")
-      dir.create(path = xldrawingsRelsDir, recursive = TRUE)
+      xlworksheetsDir     <- dir_create(tmpDir, "xl", "worksheets")
+      xlworksheetsRelsDir <- dir_create(tmpDir, "xl", "worksheets", "_rels")
+      xldrawingsDir       <- dir_create(tmpDir, "xl", "drawings")
+      xldrawingsRelsDir   <- dir_create(tmpDir, "xl", "drawings", "_rels")
 
       ## charts
       if (length(self$charts)) {
@@ -956,8 +933,7 @@ wbWorkbook <- R6::R6Class(
 
       ## Threaded Comments xl/threadedComments/threadedComment.xml
       if (nThreadComments > 0){
-        xlThreadComments <- file.path(tmpDir, "xl", "threadedComments")
-        dir.create(path = xlThreadComments, recursive = TRUE)
+        xlThreadComments <- dir_create(tmpDir, "xl", "threadedComments")
 
         for (i in seq_len(nSheets)) {
           if (length(self$threadComments[[i]])) {
@@ -982,21 +958,19 @@ wbWorkbook <- R6::R6Class(
 
       ## xl/persons/person.xml
       if (nPersons > 0){
-        personDir <- file.path(tmpDir, "xl", "persons")
-        dir.create(path = personDir, recursive = TRUE)
         file.copy(
           from = self$persons,
           to = personDir,
           overwrite = TRUE
         )
 
+        personDir <- dir_create(tmpDir, "xl", "persons")
       }
 
 
 
       if (length(self$embeddings)) {
-        embeddingsDir <- file.path(tmpDir, "xl", "embeddings")
-        dir.create(path = embeddingsDir, recursive = TRUE)
+        embeddingsDir <- dir_create(tmpDir, "xl", "embeddings")
         for (fl in embeddings) {
           file.copy(
             from = fl,
@@ -1011,19 +985,11 @@ wbWorkbook <- R6::R6Class(
         # TODO consider just making a function to create a bunch of directories
         # and return as a named list?  Easier/cleaner than checking for each
         # element if we just go seq_along()?
-        pivotTablesDir <- file.path(tmpDir, "xl", "pivotTables")
-        dir.create(path = pivotTablesDir, recursive = TRUE)
+        pivotTablesDir     <- dir_create(tmpDir, "xl", "pivotTables")
+        pivotTablesRelsDir <- dir_create(tmpDir, "xl", "pivotTables", "_rels")
+        pivotCacheDir      <- dir_create(tmpDir, "xl", "pivotCache")
+        pivotCacheRelsDir  <- dir_create(tmpDir, "xl", "pivotCache", "_rels")
 
-        pivotTablesRelsDir <-
-          file.path(tmpDir, "xl", "pivotTables", "_rels")
-        dir.create(path = pivotTablesRelsDir, recursive = TRUE)
-
-        pivotCacheDir <- file.path(tmpDir, "xl", "pivotCache")
-        dir.create(path = pivotCacheDir, recursive = TRUE)
-
-        pivotCacheRelsDir <-
-          file.path(tmpDir, "xl", "pivotCache", "_rels")
-        dir.create(path = pivotCacheRelsDir, recursive = TRUE)
 
         for (i in seq_along(self$pivotTables)) {
           file.copy(
@@ -1074,11 +1040,9 @@ wbWorkbook <- R6::R6Class(
 
       ## slicers
       if (nSlicers > 0) {
-        slicersDir <- file.path(tmpDir, "xl", "slicers")
-        dir.create(path = slicersDir, recursive = TRUE)
+        slicersDir      <- dir_create(tmpDir, "xl", "slicers")
+        slicerCachesDir <- dir_create(tmpDir, "xl", "slicerCaches")
 
-        slicerCachesDir <- file.path(tmpDir, "xl", "slicerCaches")
-        dir.create(path = slicerCachesDir, recursive = TRUE)
 
         for (i in seq_along(self$slicers)) {
           # TODO consider nzchar()?
@@ -1165,8 +1129,7 @@ wbWorkbook <- R6::R6Class(
 
       ## write query tables
       if (length(self$queryTables)) {
-        xlqueryTablesDir <- file.path(tmpDir, "xl", "queryTables")
-        dir.create(path = xlqueryTablesDir, recursive = TRUE)
+        xlqueryTablesDir <- dir_create(tmpDir, "xl", "queryTables")
 
         for (i in seq_along(self$queryTables)) {
           write_file(
@@ -1183,8 +1146,7 @@ wbWorkbook <- R6::R6Class(
 
       ## externalLinks
       if (length(self$externalLinks)) {
-        externalLinksDir <- file.path(tmpDir, "xl", "externalLinks")
-        dir.create(path = externalLinksDir, recursive = TRUE)
+        externalLinksDir <- dir_create(tmpDir, "xl", "externalLinks")
 
         for (i in seq_along(self$externalLinks)) {
           write_file(
@@ -1196,9 +1158,7 @@ wbWorkbook <- R6::R6Class(
 
       ## externalLinks rels
       if (length(self$externalLinksRels)) {
-        externalLinksRelsDir <-
-          file.path(tmpDir, "xl", "externalLinks", "_rels")
-        dir.create(path = externalLinksRelsDir, recursive = TRUE)
+        externalLinksRelsDir <- dir_create(tmpDir, "xl", "externalLinks", "_rels")
 
         for (i in seq_along(self$externalLinksRels)) {
           write_file(
