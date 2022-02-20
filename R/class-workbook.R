@@ -1440,102 +1440,44 @@ wbWorkbook <- R6::R6Class(
       # assert_style(style)
       baseFont <- self$getBaseFont()
 
-      # TODO implement paste_c()
-      fontNode <- "<font>"
+      # Create font name
+      paste_c(
+        "<font>",
 
-      ## size
-      if (is.null(style$fontSize[[1]])) {
-        fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size))
-      } else {
-        fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize))
-      }
-
-      ## colour
-      if (is.null(style$fontColour[[1]])) {
-        fontNode <-
-          stri_join(
-            fontNode,
-            sprintf(
-              '<color %s="%s"/>',
-              names(baseFont$colour),
-              baseFont$colour
-            )
-          )
-      } else {
-        if (length(style$fontColour) > 1) {
-          fontNode <- stri_join(fontNode, sprintf(
-            "<color %s/>",
-            stri_join(
-              sapply(
-                seq_along(style$fontColour),
-                function(i) {
-                  sprintf('%s="%s"', names(style$fontColour)[i], style$fontColour[i])
-                }
-              ),
-              sep = " ",
-              collapse = " "
-            )
-          ))
+        ## size
+        if (is.null(style$fontSize[[1]])) {
+          sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size)
         } else {
-          fontNode <- stri_join(
-            fontNode,
-            sprintf(
-              '<color %s="%s"/>',
-              names(style$fontColour),
-              style$fontColour
-            )
-          )
-        }
-      }
+          sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize)
+        },
 
+        # colour
+        if (is.null(style$fontColour[[1]])) {
+          sprintf('<color %s="%s"/>', names(baseFont$colour), baseFont$colour)
+        } else {
+          new <- sprintf('%s="%s"', names(style$fontColour), style$fontColour)
+          sprintf("<color %s/>", stri_join(new, sep = " ", collapse = " "))
+        },
 
-      ## name
-      if (is.null(style$fontName[[1]])) {
-        fontNode <-
-          stri_join(
-            fontNode,
-            sprintf('<name %s="%s"/>', names(baseFont$name), baseFont$name)
-          )
-      } else {
-        fontNode <-
-          stri_join(
-            fontNode,
-            sprintf('<name %s="%s"/>', names(style$fontName), style$fontName)
-          )
-      }
+        # font name
+        if (is.null(style$fontName[[1]])) {
+          sprintf('<name %s="%s"/>', names(baseFont$name), baseFont$name)
+        } else {
+          sprintf('<name %s="%s"/>', names(style$fontName), style$fontName)
+        },
 
-      ### Create new font and return Id
-      if (!is.null(style$fontFamily)) {
-        fontNode <-
-          stri_join(fontNode, sprintf('<family val = "%s"/>', style$fontFamily))
-      }
+        # new font name and return id
+        sprintf('<family val = "%s"/>', style$fontFamily),
+        sprintf('<scheme val = "%s"/>', style$fontScheme),
 
-      if (!is.null(style$fontScheme)) {
-        fontNode <-
-          stri_join(fontNode, sprintf('<scheme val = "%s"/>', style$fontScheme))
-      }
+        if ("BOLD"       %in% style$fontDecoration) "<b/>",
+        if ("ITALIC"     %in% style$fontDecoration) "<i/>",
+        if ("UNDERLINE"  %in% style$fontDecoration) '<u val="single"/>',
+        if ("UNDERLINE2" %in% style$fontDecoration) '<u val="double"/>',
+        if ("STRIKEOUT"  %in% style$fontDecoration) "<strike/>",
 
-      if ("BOLD" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, "<b/>")
-      }
-
-      if ("ITALIC" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, "<i/>")
-      }
-
-      if ("UNDERLINE" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, '<u val="single"/>')
-      }
-
-      if ("UNDERLINE2" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, '<u val="double"/>')
-      }
-
-      if ("STRIKEOUT" %in% style$fontDecoration) {
-        fontNode <- stri_join(fontNode, "<strike/>")
-      }
-
-      stri_join(fontNode, "</font>")
+        "</font>"
+      )
     },
 
     #' @description
