@@ -31,13 +31,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     xmlDir <- file
     xmlFiles <- list.files(path = xmlDir, full.names = TRUE, recursive = TRUE, all.files = TRUE)
   } else {
-    if (!is.null(xlsxFile)) {
-      file <- xlsxFile
-    }
-
+    file <- xlsxFile %||% file
     file <- getFile(file)
 
-    file <- getFile(file)
     if (!file.exists(file)) {
       stop("File does not exist.")
     }
@@ -50,8 +46,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
     ## Unzip files to temp directory
     xmlFiles <- unzip(file, exdir = xmlDir)
   }
-  wb <- wb_workbook()
 
+  wb <- wb_workbook()
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
     # targets xmlFiles; has presents
