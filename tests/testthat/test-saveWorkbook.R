@@ -1,16 +1,13 @@
 
 test_that("test return values for wb_save", {
-
   tempFile <- temp_xlsx()
   wb <- wb_add_worksheet(wb_workbook(), "name")
-  expect_equal(tempFile, wb_save(wb, tempFile))
+  expect_identical(tempFile, wb_save(wb, tempFile))
+  expect_error(wb_save(wb, tempFile), NA)
+  expect_error(wb_save(wb, tempFile, overwrite = FALSE))
 
-  expect_error( wb_save(wb, tempFile))
-
-
-  expect_equal(tempFile, wb_save(wb, tempFile, overwrite = TRUE))
-  unlink(tempFile, recursive = TRUE, force = TRUE)
-
+  expect_identical(tempFile, wb_save(wb, tempFile))
+  file.remove(tempFile)
 })
 
 # regression test for a typo
