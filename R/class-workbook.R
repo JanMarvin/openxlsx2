@@ -1380,8 +1380,7 @@ wbWorkbook <- R6::R6Class(
         #headerRowDxfId="1"
       )
 
-      self$tables <- c(
-        self$tables,
+      self$append("tables",
         xml_node_create(
           xml_name = "table",
           xml_children = c(autofilter, tableColumns, tableStyleXML),
@@ -1406,8 +1405,7 @@ wbWorkbook <- R6::R6Class(
 
 
       ## update Content_Types
-      self$Content_Types <- c(
-        self$Content_Types,
+      self$append("Content_Types",
         sprintf(
           '<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
           id
@@ -1415,7 +1413,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create a table.xml.rels
-      self$tables.xml.rels <- c(self$tables.xml.rels, "")
+      self$append("tables.xml.rels", "")
 
       ## update worksheets_rels
       # TODO do we have to worry about exisiting table relationships?
