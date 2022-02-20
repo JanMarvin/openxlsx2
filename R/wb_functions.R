@@ -256,8 +256,8 @@ wb_to_df <- function(
     # remove dollar sign: $A$1:$B$2
     wo <- gsub("\\$", "", wo)
     wo <- unapply(wo, strsplit, "!")
-    # remove ' from 'Sheet 1'
-    wo <- gsub("'", "", wo)
+    # removing starting and/or ending ' "
+    wo <- gsub("^[\"']|[\"']$", "", wo)
     wo <- unapply(wo, strsplit, "!")
 
     nr <- as.data.frame(
