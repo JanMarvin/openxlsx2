@@ -210,7 +210,8 @@ writeDataTable <- function(wb, sheet, x,
     addStyle(
       wb = wb, sheet = sheet, style = headerStyle,
       rows = startRow,
-      cols = 0:(ncol(x) - 1L) + startCol,
+      # cols = 0:(ncol(x) - 1L) + startCol,
+      cols = seq_along(x) - 1L + startCol,
       gridExpand = TRUE
     )
   }
@@ -252,8 +253,11 @@ writeDataTable <- function(wb, sheet, x,
   )
 
 
-  ## column class styling
-  colClasses <- lapply(x, function(x) tolower(class(x)))
+  # TODO don't bother with strings here?  Use inherits(x, "class") or write S3
+  # methods for helpers
+
+  # column class styling
+  # colClasses <- lapply(x, function(x) tolower(class(x)))
   # classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
   #             colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
 

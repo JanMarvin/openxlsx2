@@ -5,9 +5,9 @@ test_that("Writing Posixct with writeData & writeDataTable", {
   TimeDT <- c(0, 5, 10, 15, 30, 60, 120, 180, 240, 480, 720, 1440) * 60 + tstart
   df <- data.frame(TimeDT, TimeTxt = format(TimeDT, "%Y-%m-%d %H:%M"))
 
-  wb <- createWorkbook()
-  addWorksheet(wb, "writeData")
-  addWorksheet(wb, "writeDataTable")
+  wb <- wb_workbook()
+  wb$addWorksheet("writeData")
+  wb$addWorksheet("writeDataTable")
 
   writeData(wb, "writeData", df, startCol = 2, startRow = 3, rowNames = FALSE)
   writeDataTable(wb, "writeDataTable", df, startCol = 2, startRow = 3)
@@ -37,9 +37,9 @@ test_that("Writing Posixct with writeData & writeDataTable", {
 #     timetxt = format(c(TimeDT1, TimeDT2), "%Y-%m-%d %H:%M")
 #   )
 #
-#   wb <- createWorkbook()
-#   addWorksheet(wb, "writeData")
-#   addWorksheet(wb, "writeDataTable")
+#   wb <- wb_workbook()
+#   wb$addWorksheet("writeData")
+#   wb$addWorksheet("writeDataTable")
 #
 #   writeData(wb, "writeData", df, startCol = 2, startRow = 3, rowNames = FALSE)
 #   writeDataTable(wb, "writeDataTable", df, startCol = 2, startRow = 3)

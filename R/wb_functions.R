@@ -275,7 +275,7 @@ wb_to_df <- function(
     } else {
       nr$local <- 0
     }
-    nr$sheet <- sapply(nr$sheet, function(x)wb$validateSheet(x))
+    nr$sheet <- sapply(nr$sheet, function(x) wb_validate_sheet(wb, x))
 
     nr <- nr[order(nr$local, nr$name, nr$sheet),]
 
@@ -284,7 +284,7 @@ wb_to_df <- function(
       sheet <- sel$sheet
       dims  <- sel$dims
     } else if (definedName %in% nr$name) {
-      sel <- nr[nr$name == definedName & nr$sheet == wb$validateSheet(sheet), ]
+      sel <- nr[nr$name == definedName & nr$sheet == wb_validate_sheet(wb, sheet), ]
       if (NROW(sel) == 0) {
         stop("no such definedName on selected sheet")
       }
@@ -1058,7 +1058,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 #' @export
 deleteData <- function(wb, sheet, cols, rows, gridExpand) {
 
-  sheet_id <- wb$validateSheet(sheet)
+  sheet_id <- wb_validate_sheet(wb, sheet)
 
   cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
 

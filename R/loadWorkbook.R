@@ -542,7 +542,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   # TODO this loop should live in loadworksheets
   import_sheets <- seq_len(nSheets)
   if (!missing(sheet)) {
-    import_sheets <- wb$validateSheet(sheet)
+    import_sheets <- wb_validate_sheet(wb, sheet)
   }
 
   for (i in import_sheets) {

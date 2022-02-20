@@ -1374,8 +1374,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       id <- as.character(last_table_id() + 1) # otherwise will start at 0 for table 1 length indicates the last known
-      sheet <- self$validateSheet(sheet)
-      rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) +1
+      sheet <- wb_validate_sheet(self, sheet)
+      rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) + 1
 
       nms <- names(self$tables)
       tSheets <- attr(self$tables, "sheet")
@@ -3033,7 +3033,7 @@ wbWorkbook <- R6::R6Class(
     },
 
 
-    # creators ----------------------------------------------------------------
+    ### creators --------------------------------------------------------------
 
     #' @description Set creator(s)
     #' @param creators A character vector of creators to set.  Duplicates are

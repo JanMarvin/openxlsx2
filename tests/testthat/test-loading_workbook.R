@@ -870,8 +870,8 @@ test_that("sheet visibility", {
 test_that("additional wb tests", {
 
   # no data on sheet
-  wb <- createWorkbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
 
   expect_equal(NULL, wb_to_df(wb, sheet = "Sheet 1"))
 
