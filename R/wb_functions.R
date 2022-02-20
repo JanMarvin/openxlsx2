@@ -1013,19 +1013,20 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     sel <- which(dc == "logical")
     for (i in sel) {
       if (colNames) {
-        tmp <- as.integer(as.logical(data[-1, i]))
-        tmp[is.na(tmp)] <- "#N/A"
-        data[-1, i] <- tmp
+        data[-1, i] <- as.integer(as.logical(data[-1, i]))
       } else {
-        tmp <- as.integer(as.logical(data[i]))
-        tmp[is.na(tmp)] <- "#N/A"
-        data[i] <- tmp
+        data[i] <- as.integer(as.logical(data[i]))
       }
     }
 
     wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
-    # if any v is missing, set typ to 'e'
+
+    # if any v is missing, set typ to 'e'. v is only filled for non character
+    # values, but contains a string. To avoid issues, set it to the missing
+    # value expression
+    cc$v[cc$v == "NA"] <- "#N/A"
     cc$c_t[cc$v == "#N/A"] <- "e"
+
 
     cc$c_s[cc$typ == "0"] <- special_fmts$short_date
     cc$c_s[cc$typ == "1"] <- special_fmts$long_date
