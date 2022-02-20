@@ -13,6 +13,14 @@ rbindlist <- function(x) {
     .Call(`_openxlsx2_rbindlist`, x)
 }
 
+long_to_wide <- function(z, tt, zz) {
+    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
+}
+
+wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row) {
+    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row))
+}
+
 #' @import Rcpp
 NULL
 
@@ -34,10 +42,6 @@ si_to_txt <- function(doc) {
 
 is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
-}
-
-long_to_wide <- function(z, tt, zz) {
-    invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
 readXMLPtr <- function(path, isfile, escapes, declaration) {
@@ -90,6 +94,22 @@ getXMLXPtr3val <- function(doc, level1, level2, child) {
 
 getXMLXPtr4val <- function(doc, level1, level2, level3, child) {
     .Call(`_openxlsx2_getXMLXPtr4val`, doc, level1, level2, level3, child)
+}
+
+setXMLXPtr1val <- function(doc, child, value, no_escapes, raw) {
+    .Call(`_openxlsx2_setXMLXPtr1val`, doc, child, value, no_escapes, raw)
+}
+
+setXMLXPtr2val <- function(doc, level1, child, value, no_escapes, raw) {
+    .Call(`_openxlsx2_setXMLXPtr2val`, doc, level1, child, value, no_escapes, raw)
+}
+
+setXMLXPtr3val <- function(doc, level1, level2, child, value, no_escapes, raw) {
+    .Call(`_openxlsx2_setXMLXPtr3val`, doc, level1, level2, child, value, no_escapes, raw)
+}
+
+setXMLXPtr4val <- function(doc, level1, level2, level3, child, value, no_escapes, raw) {
+    .Call(`_openxlsx2_setXMLXPtr4val`, doc, level1, level2, level3, child, value, no_escapes, raw)
 }
 
 getXMLXPtr1attr <- function(doc, child) {
@@ -268,11 +288,7 @@ set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
-set_row <- function(row_attr, cells, row_idx) {
-    .Call(`_openxlsx2_set_row`, row_attr, cells, row_idx)
-}
-
-write_worksheet_xml_2 <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
-    .Call(`_openxlsx2_write_worksheet_xml_2`, prior, post, sheet_data, cols_attr, R_fileName)
+write_worksheet <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
+    invisible(.Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data, cols_attr, R_fileName))
 }
 

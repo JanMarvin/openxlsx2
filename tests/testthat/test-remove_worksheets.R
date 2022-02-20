@@ -1,9 +1,3 @@
-
-
-
-
-context("Removing worksheets.")
-
 test_that("Deleting worksheets", {
   tempFile <- temp_xlsx()
   genWS <- function(wb, sheetName) {

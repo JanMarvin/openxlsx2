@@ -6,19 +6,25 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 
   Rcpp::CharacterVector sst(sharedStrings.length());
 
-    for (auto i = 0; i < sharedStrings.length(); ++i) {
-      pugi::xml_document si;
-      std::string sharedString = Rcpp::as<std::string>(sharedStrings[i]);
+  for (auto i = 0; i < sharedStrings.length(); ++i) {
+    pugi::xml_document si;
+    std::string sharedString = Rcpp::as<std::string>(sharedStrings[i]);
 
-      si.append_child("si").append_child("t").append_child(pugi::node_pcdata).set_value(sharedString.c_str());
+    si.append_child("si").append_child("t").append_child(pugi::node_pcdata).set_value(sharedString.c_str());
 
-      std::ostringstream oss;
-      si.print(oss, " ", pugi::format_raw);
+    std::ostringstream oss;
+    si.print(oss, " ", pugi::format_raw);
 
-      sst[i] = oss.str();
-    }
+    sst[i] = oss.str();
+  }
 
-    return sst;
+  return sst;
+}
+
+
+// helper function to access element from Rcpp::Character Vector as string
+std::string to_string(Rcpp::Vector<16>::Proxy x) {
+  return Rcpp::as<std::string>(x);
 }
 
 
@@ -27,131 +33,131 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 // the column data used in this row. This function uses both to create a single
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
-//
-// [[Rcpp::export]]
-std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) {
+std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
+
+  auto lastrow = 0;
+  auto thisrow = 0;
+  auto row_idx = 0;
 
   pugi::xml_document doc;
+  pugi::xml_node row;
 
   // non optional: treat input as valid at this stage
   unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  // unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  pugi::xml_node row = doc.append_child("row");
-  Rcpp::CharacterVector attrnams = row_attr.names();
+  // we cannot access rows directly in the dataframe.
+  // Have to extract the columns and use these
+  Rcpp::CharacterVector cc_row_r = cc["row_r"]; // 1
+  Rcpp::CharacterVector cc_r     = cc["r"];     // A1
+  Rcpp::CharacterVector cc_v     = cc["v"];
+  Rcpp::CharacterVector cc_c_t   = cc["c_t"];
+  Rcpp::CharacterVector cc_c_s   = cc["c_s"];
+  Rcpp::CharacterVector cc_f     = cc["f"];
+  Rcpp::CharacterVector cc_f_t   = cc["f_t"];
+  Rcpp::CharacterVector cc_f_ref = cc["f_ref"];
+  Rcpp::CharacterVector cc_f_ca  = cc["f_ca"];
+  Rcpp::CharacterVector cc_f_si  = cc["f_si"];
+  Rcpp::CharacterVector cc_is    = cc["is"];
 
-  for (auto j = 0; j < row_attr.ncol(); ++j) {
+  for (auto i = 0; i < cc.nrow(); ++i) {
 
-    Rcpp::CharacterVector cv_s = "";
-    cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+    thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
 
-    if (cv_s[0] != "") {
-      const std::string val_strl = Rcpp::as<std::string>(cv_s);
-      row.append_attribute(attrnams[j]) = val_strl.c_str();
+    if (lastrow < thisrow) {
+      row = doc.append_child("row");
+      Rcpp::CharacterVector attrnams = row_attr.names();
+
+      for (auto j = 0; j < row_attr.ncol(); ++j) {
+
+        Rcpp::CharacterVector cv_s = "";
+        cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+
+        if (cv_s[0] != "") {
+          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          row.append_attribute(attrnams[j]) = val_strl.c_str();
+        }
+      }
+
+      // read the next row_idx when visiting again
+      ++row_idx;
     }
-  }
 
-  std::string rnastring = "_openxlsx_NA_";
-  std::string xml_preserver = "";
-
-  // Rf_PrintValue(attrnams);
-
-  for (auto i = 0; i < cells.length(); ++i) {
+    std::string rnastring = "_openxlsx_NA_";
+    std::string xml_preserver = "";
 
     // create node <c>
     pugi::xml_node cell = row.append_child("c");
 
-    Rcpp::List cll = cells[i];
-    // Rf_PrintValue(cll);
-
-    Rcpp::List cell_atr, cell_val, cell_isval;
-    std::vector<std::string> cell_val_names;
-
-
     // Every cell consists of a typ and a val list. Certain functions have an
     // additional attr list.
-    std::string c_typ        = Rcpp::as<std::string>(cll["c_t"]);
-    std::string c_sty        = Rcpp::as<std::string>(cll["c_s"]);
-    std::string c_rnm        = Rcpp::as<std::string>(cll["r"]);
-    std::string c_val        = Rcpp::as<std::string>(cll["v"]);
-
-    // Rf_PrintValue(cell_atr);
-    // Rf_PrintValue(cell_val);
-    // Rf_PrintValue(attr_val);
 
     // append attributes <c r="A1" ...>
-    cell.append_attribute("r") = c_rnm.c_str();
+    cell.append_attribute("r") = to_string(cc_r[i]).c_str();
 
-    if (c_sty.compare(rnastring.c_str()) != 0)
-      cell.append_attribute("s") = c_sty.c_str();
+    if (to_string(cc_c_s[i]).compare(rnastring.c_str()) != 0)
+      cell.append_attribute("s") = to_string(cc_c_s[i]).c_str();
 
     // assign type if not <v> aka numeric
-    if (c_typ.compare(rnastring.c_str()) != 0)
-      cell.append_attribute("t") = c_typ.c_str();
+    if (to_string(cc_c_t[i]).compare(rnastring.c_str()) != 0)
+      cell.append_attribute("t") = to_string(cc_c_t[i]).c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
 
-    // Rcpp::Rcout << c_val << std::endl;
     bool f_si = false;
 
     // <f> ... </f>
-
-    std::string fml = Rcpp::as<std::string>(cll["f"]);
-    std::string fml_type = Rcpp::as<std::string>(cll["f_t"]);
-    std::string fml_si = Rcpp::as<std::string>(cll["f_si"]);
-    std::string fml_ref = Rcpp::as<std::string>(cll["f_ref"]);
-
     // f node: formula to be evaluated
-    if (fml.compare(rnastring.c_str()) != 0 ||
-        fml_type.compare(rnastring.c_str()) != 0 ||
-        fml_si.compare(rnastring.c_str()) != 0) {
+    if (to_string(cc_f[i]).compare(rnastring.c_str()) != 0 || to_string(cc_f_t[i]).compare(rnastring.c_str()) != 0 || to_string(cc_f_si[i]).compare(rnastring.c_str()) != 0) {
       pugi::xml_node f = cell.append_child("f");
-      if (fml_type.compare(rnastring.c_str()) != 0) {
-        f.append_attribute("t") = fml_type.c_str();
+      if (to_string(cc_f_t[i]).compare(rnastring.c_str()) != 0) {
+        f.append_attribute("t") = to_string(cc_f_t[i]).c_str();
       }
-      if (fml_ref.compare(rnastring.c_str()) != 0) {
-        f.append_attribute("ref") = fml_ref.c_str();
+      if (to_string(cc_f_ref[i]).compare(rnastring.c_str()) != 0) {
+        f.append_attribute("ref") = to_string(cc_f_ref[i]).c_str();
       }
-      if (fml_si.compare(rnastring.c_str()) != 0) {
-        f.append_attribute("si") = fml_si.c_str();
+      if (to_string(cc_f_ca[i]).compare(rnastring.c_str()) != 0) {
+        f.append_attribute("ca") = to_string(cc_f_ca[i]).c_str();
+      }
+      if (to_string(cc_f_si[i]).compare(rnastring.c_str()) != 0) {
+        f.append_attribute("si") = to_string(cc_f_si[i]).c_str();
         f_si = true;
       }
 
-      f.append_child(pugi::node_pcdata).set_value(fml.c_str());
+      f.append_child(pugi::node_pcdata).set_value(to_string(cc_f[i]).c_str());
     }
 
     // v node: value stored from evaluated formula
-    if (c_val.compare(rnastring.c_str()) != 0) {
-      if (!f_si & (c_val.compare(xml_preserver.c_str()) == 0)) {
+    if (to_string(cc_v[i]).compare(rnastring.c_str()) != 0) {
+      if (!f_si & (to_string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
-        cell.append_child("v").append_child(pugi::node_pcdata).set_value(c_val.c_str());
+        cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_string(cc_v[i]).c_str());
       }
     }
 
-
     // <is><t> ... </t></is>
-    if(c_typ.compare("inlineStr") == 0) {
-      std::string c_ist = Rcpp::as<std::string>(cll["is"]);
-      if (c_ist.compare(rnastring.c_str()) != 0) {
+    if(to_string(cc_c_t[i]).compare("inlineStr") == 0) {
+      if (to_string(cc_is[i]).compare(rnastring.c_str()) != 0) {
 
         pugi::xml_document is_node;
-        pugi::xml_parse_result result = is_node.load_string(c_ist.c_str(), pugi_parse_flags);
+        pugi::xml_parse_result result = is_node.load_string(to_string(cc_is[i]).c_str(), pugi_parse_flags);
         if (!result) Rcpp::stop("loading inlineStr node while writing failed");
 
         cell.append_copy(is_node.first_child());
       }
     }
 
+    // update lastrow
+    lastrow = thisrow;
   }
 
   std::ostringstream oss;
   doc.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
-  // doc.print(oss);
-
   return oss.str();
 }
+
 
 // TODO: convert to pugi
 // function that creates the xml worksheet
@@ -159,11 +165,11 @@ std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx) 
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-SEXP write_worksheet_xml_2( std::string prior,
-                            std::string post,
-                            Rcpp::Environment sheet_data,
-                            Rcpp::CharacterVector cols_attr, // currently unused
-                            std::string R_fileName = "output"){
+void write_worksheet(std::string prior,
+                     std::string post,
+                     Rcpp::Environment sheet_data,
+                     Rcpp::CharacterVector cols_attr, // currently unused
+                     std::string R_fileName = "output") {
 
 
   // open file and write header XML
@@ -173,33 +179,29 @@ SEXP write_worksheet_xml_2( std::string prior,
   xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
   xmlFile << prior;
 
-
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
-  Rcpp::List cc = sheet_data["cc_out"];
+  Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc_out"]);
 
-  if (Rf_isNull(row_attr)) {
+  // TODO prev. this was Rf_isNull() no we have a zero col, zero row dataframe?
+  if ((row_attr.nrow() == 0) || (cc.nrow() == 0)) {
     xmlFile << "<sheetData />";
   } else {
 
     xmlFile << "<sheetData>";
 
-    for (int i = 0; i < row_attr.nrow(); ++i) {
-
-      xmlFile << set_row(row_attr, cc[i], i);
-
-    }
+    // cc to sheet_data
+    xmlFile << xml_sheet_data(row_attr, cc);
 
     // write closing tag and XML post data
     xmlFile << "</sheetData>";
 
   }
+
   xmlFile << post;
 
   //close file
   xmlFile.close();
-
-  return Rcpp::wrap(0);
 
 }

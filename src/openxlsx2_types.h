@@ -15,10 +15,35 @@ typedef struct {
   std::string v;
   std::string f;
   std::string f_t;
-  std::string f_si;
   std::string f_ref;
+  std::string f_ca;
+  std::string f_si;
   std::string is;
 } xml_col;
+
+
+typedef struct {
+  std::string v;
+  std::string c_s;
+  std::string c_t;
+  std::string is;
+  std::string f;
+  std::string typ;
+  std::string r;
+} celltyp;
+
+enum celltype {
+  short_date = 0,
+  long_date  = 1,
+  numeric    = 2,
+  boolean    = 3,
+  character  = 4,
+  formula    = 5,
+  accounting = 6,
+  percentage = 7,
+  scientific = 8,
+  comma      = 9
+};
 
 #include <Rcpp.h>
 
@@ -42,6 +67,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   Rcpp::CharacterVector f(no_init(n));         // <f> tag
   Rcpp::CharacterVector f_t(no_init(n));       // <f t=""> attribute most likely shared
   Rcpp::CharacterVector f_ref(no_init(n));     // <f ref=""> attribute most likely reference
+  Rcpp::CharacterVector f_ca(no_init(n));      // <f ca=""> attribute most likely conditional formatting
   Rcpp::CharacterVector f_si(no_init(n));      // <f si=""> attribute most likely sharedString
   Rcpp::CharacterVector is(no_init(n));        // <is> tag
 
@@ -55,6 +81,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
     f[i]     = x[i].f;
     f_t[i]   = x[i].f_t;
     f_ref[i] = x[i].f_ref;
+    f_ca[i]  = x[i].f_ca;
     f_si[i]  = x[i].f_si;
     is[i]     = x[i].is;
   }
@@ -69,8 +96,9 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
       Rcpp::Named("f")     = f,
       Rcpp::Named("f_t")   = f_t,
       Rcpp::Named("f_ref") = f_ref,
+      Rcpp::Named("f_ca")  = f_ca,
       Rcpp::Named("f_si")  = f_si,
-      Rcpp::Named("is")     = is
+      Rcpp::Named("is")    = is
   )
   );
 }

@@ -44,6 +44,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// long_to_wide
+void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz);
+RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP zzSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type tt(ttSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
+    long_to_wide(z, tt, zz);
+    return R_NilValue;
+END_RCPP
+}
+// wide_to_long
+void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row);
+RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type vtyps(vtypsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
+    Rcpp::traits::input_parameter< bool >::type ColNames(ColNamesSEXP);
+    Rcpp::traits::input_parameter< int32_t >::type start_col(start_colSEXP);
+    Rcpp::traits::input_parameter< int32_t >::type start_row(start_rowSEXP);
+    wide_to_long(z, vtyps, zz, ColNames, start_col, start_row);
+    return R_NilValue;
+END_RCPP
+}
 // col_to_df
 Rcpp::DataFrame col_to_df(XPtrXML doc);
 RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
@@ -98,18 +125,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type is_vec(is_vecSEXP);
     rcpp_result_gen = Rcpp::wrap(is_to_txt(is_vec));
     return rcpp_result_gen;
-END_RCPP
-}
-// long_to_wide
-void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz);
-RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP zzSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type tt(ttSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
-    long_to_wide(z, tt, zz);
-    return R_NilValue;
 END_RCPP
 }
 // readXMLPtr
@@ -280,6 +295,72 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type level3(level3SEXP);
     Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtr4val(doc, level1, level2, level3, child));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setXMLXPtr1val
+SEXP setXMLXPtr1val(XPtrXML doc, std::string child, std::string value, bool no_escapes, bool raw);
+RcppExport SEXP _openxlsx2_setXMLXPtr1val(SEXP docSEXP, SEXP childSEXP, SEXP valueSEXP, SEXP no_escapesSEXP, SEXP rawSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
+    Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
+    rcpp_result_gen = Rcpp::wrap(setXMLXPtr1val(doc, child, value, no_escapes, raw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setXMLXPtr2val
+SEXP setXMLXPtr2val(XPtrXML doc, std::string level1, std::string child, std::string value, bool no_escapes, bool raw);
+RcppExport SEXP _openxlsx2_setXMLXPtr2val(SEXP docSEXP, SEXP level1SEXP, SEXP childSEXP, SEXP valueSEXP, SEXP no_escapesSEXP, SEXP rawSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
+    Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
+    rcpp_result_gen = Rcpp::wrap(setXMLXPtr2val(doc, level1, child, value, no_escapes, raw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setXMLXPtr3val
+SEXP setXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::string child, std::string value, bool no_escapes, bool raw);
+RcppExport SEXP _openxlsx2_setXMLXPtr3val(SEXP docSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP childSEXP, SEXP valueSEXP, SEXP no_escapesSEXP, SEXP rawSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
+    Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
+    rcpp_result_gen = Rcpp::wrap(setXMLXPtr3val(doc, level1, level2, child, value, no_escapes, raw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setXMLXPtr4val
+SEXP setXMLXPtr4val(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child, std::string value, bool no_escapes, bool raw);
+RcppExport SEXP _openxlsx2_setXMLXPtr4val(SEXP docSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP level3SEXP, SEXP childSEXP, SEXP valueSEXP, SEXP no_escapesSEXP, SEXP rawSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
+    Rcpp::traits::input_parameter< std::string >::type level3(level3SEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
+    Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
+    rcpp_result_gen = Rcpp::wrap(setXMLXPtr4val(doc, level1, level2, level3, child, value, no_escapes, raw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -625,32 +706,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// set_row
-std::string set_row(Rcpp::DataFrame row_attr, Rcpp::List cells, size_t row_idx);
-RcppExport SEXP _openxlsx2_set_row(SEXP row_attrSEXP, SEXP cellsSEXP, SEXP row_idxSEXP) {
+// write_worksheet
+void write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName);
+RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type row_attr(row_attrSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type cells(cellsSEXP);
-    Rcpp::traits::input_parameter< size_t >::type row_idx(row_idxSEXP);
-    rcpp_result_gen = Rcpp::wrap(set_row(row_attr, cells, row_idx));
-    return rcpp_result_gen;
-END_RCPP
-}
-// write_worksheet_xml_2
-SEXP write_worksheet_xml_2(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName);
-RcppExport SEXP _openxlsx2_write_worksheet_xml_2(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type prior(priorSEXP);
     Rcpp::traits::input_parameter< std::string >::type post(postSEXP);
     Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cols_attr(cols_attrSEXP);
     Rcpp::traits::input_parameter< std::string >::type R_fileName(R_fileNameSEXP);
-    rcpp_result_gen = Rcpp::wrap(write_worksheet_xml_2(prior, post, sheet_data, cols_attr, R_fileName));
-    return rcpp_result_gen;
+    write_worksheet(prior, post, sheet_data, cols_attr, R_fileName);
+    return R_NilValue;
 END_RCPP
 }
 
@@ -658,12 +725,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
+    {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
+    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 6},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
-    {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 4},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 4},
     {"_openxlsx2_getXMLXPtrName", (DL_FUNC) &_openxlsx2_getXMLXPtrName, 1},
@@ -677,6 +745,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr2val", (DL_FUNC) &_openxlsx2_getXMLXPtr2val, 3},
     {"_openxlsx2_getXMLXPtr3val", (DL_FUNC) &_openxlsx2_getXMLXPtr3val, 4},
     {"_openxlsx2_getXMLXPtr4val", (DL_FUNC) &_openxlsx2_getXMLXPtr4val, 5},
+    {"_openxlsx2_setXMLXPtr1val", (DL_FUNC) &_openxlsx2_setXMLXPtr1val, 5},
+    {"_openxlsx2_setXMLXPtr2val", (DL_FUNC) &_openxlsx2_setXMLXPtr2val, 6},
+    {"_openxlsx2_setXMLXPtr3val", (DL_FUNC) &_openxlsx2_setXMLXPtr3val, 7},
+    {"_openxlsx2_setXMLXPtr4val", (DL_FUNC) &_openxlsx2_setXMLXPtr4val, 8},
     {"_openxlsx2_getXMLXPtr1attr", (DL_FUNC) &_openxlsx2_getXMLXPtr1attr, 2},
     {"_openxlsx2_getXMLXPtr2attr", (DL_FUNC) &_openxlsx2_getXMLXPtr2attr, 3},
     {"_openxlsx2_getXMLXPtr3attr", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr, 4},
@@ -706,8 +778,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
-    {"_openxlsx2_set_row", (DL_FUNC) &_openxlsx2_set_row, 3},
-    {"_openxlsx2_write_worksheet_xml_2", (DL_FUNC) &_openxlsx2_write_worksheet_xml_2, 5},
+    {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 5},
     {NULL, NULL, 0}
 };
 

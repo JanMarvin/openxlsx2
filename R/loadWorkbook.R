@@ -1,11 +1,10 @@
-
-
-
 #' @name loadWorkbook
 #' @title Load an existing .xlsx file
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param xlsxFile alias for file
 #' @param isUnzipped Set to TRUE if the xlsx file is already unzipped
+#' @param sheet optional sheet parameter. if this is applied, only the selected
+#'  sheet will be loaded.
 #' @description  loadWorkbook returns a workbook object conserving styles and
 #' formatting of the original .xlsx file.
 #' @return Workbook object.
@@ -24,7 +23,7 @@
 #' wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 #' }
 #'
-loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
+loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   # TODO  default of isUnzipped to tools::file_ext(file) == "zip" ?
   ## If this is a unzipped workbook, skip the temp dir stuff
   if (isUnzipped) {
@@ -541,7 +540,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
 
 
   # TODO this loop should live in loadworksheets
-  for (i in seq_len(nSheets)) {
+  import_sheets <- seq_len(nSheets)
+  if (!missing(sheet)) {
+    import_sheets <- wb$validateSheet(sheet)
+  }
+
+  for (i in import_sheets) {
     worksheet_xml <- read_xml(worksheetsXML[i])
 
     wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
@@ -750,26 +754,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE) {
       tableSheets <- unapply(seq_along(sheetrId), function(i) rep(i, length(tables[[i]])))
 
       if (length(unlist(tables))) {
-        ## get the tables that belong to each worksheet and create a worksheets_rels for each
-        tCount <- 2L ## table r:Ids start at 3
-        for (i in seq_along(tables)) {
-          if (length(tables[[i]])) {
-            k <- seq_along(tables[[i]]) + tCount
-            # wb$worksheets_rels[[i]] <- unlist(c(
-            #   wb$worksheets_rels[[i]],
-            #   sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>', k, k)
-            # ))
-
-
-            #wb$worksheets[[i]]$tableParts <- sprintf("<tablePart r:id=\"rId%s\"/>", k)
-            tCount <- tCount + length(k)
-          }
-        }
 
         ## sort the tables into the order they appear in the xml and tables variables
         names(tablesXML) <- basename(tablesXML)
         tablesXML <- tablesXML[sprintf("table%s.xml", unlist(tables))]
-
         ## tables are now in correct order so we can read them in as they are
         wb$tables <- sapply(tablesXML, read_xml, pointer = FALSE)
 

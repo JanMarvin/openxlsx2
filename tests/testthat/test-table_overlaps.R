@@ -1,5 +1,3 @@
-
-
 test_that("writeDataTable over tables", {
   overwrite_table_error <- "Cannot overwrite existing table with another table"
   df1 <- data.frame("X" = 1:10)

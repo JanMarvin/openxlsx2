@@ -202,6 +202,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   const std::string t_str = "t";
   const std::string v_str = "v";
   const std::string is_str = "is";
+  const std::string ca_str = "ca";
   const std::string si_str = "si";
   const std::string ref_str = "ref";
 
@@ -236,8 +237,9 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         "_openxlsx_NA_", // v
         "_openxlsx_NA_", // f
         "_openxlsx_NA_", // f_t
-        "_openxlsx_NA_", // f_si
         "_openxlsx_NA_", // f_ref
+        "_openxlsx_NA_", // f_ca
+        "_openxlsx_NA_", // f_si
         "_openxlsx_NA_"  // is
       };
 
@@ -309,13 +311,15 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             // This currently handles
             //  * t=
             //  * ref=
+            //  * ca=
             //  * si=
             for (auto cattr : val.attributes())
             {
               buffer = cattr.value();
               if (cattr.name() == t_str) single_xml_col.f_t = buffer;
-              if (cattr.name() == si_str) single_xml_col.f_si = buffer;
               if (cattr.name() == ref_str) single_xml_col.f_ref = buffer;
+              if (cattr.name() == ca_str) single_xml_col.f_ca = buffer;
+              if (cattr.name() == si_str) single_xml_col.f_si = buffer;
             }
 
           } // </f>
@@ -430,22 +434,4 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
   }
 
   return res;
-}
-
-
-// similar to dcast converts cc dataframe to z dataframe
-// [[Rcpp::export]]
-void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt,  Rcpp::DataFrame zz) {
-
-  auto n = zz.nrow();
-
-  Rcpp::IntegerVector rows = zz["rows"];
-  Rcpp::IntegerVector cols = zz["cols"];
-  Rcpp::CharacterVector vals = zz["val"];
-  Rcpp::CharacterVector typs = zz["typ"];
-
-  for (auto i = 0; i < n; ++i) {
-    Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
-    Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
-  }
 }

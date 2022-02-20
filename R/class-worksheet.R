@@ -507,7 +507,6 @@ wbWorksheet <- R6::R6Class(
   ## private ----
   private = list(
     # These were commented out in the RC object -- not sure if they're needed
-    rows_attr             = NULL,
     cols                  = NULL,
     sheetData             = NULL
   )

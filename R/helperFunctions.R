@@ -414,7 +414,9 @@ replaceXMLEntities <- function(v) {
 
 
 pxml <- function(x) {
-  paste(unique(unlist(x)), collapse = "")
+  ## TODO does this break anything? Why is unique called? lengths are off, if non unique values are found.
+  # paste(unique(unlist(x)), collapse = "")
+    paste(unlist(x), collapse = "")
 }
 
 

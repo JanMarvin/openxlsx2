@@ -8,6 +8,7 @@ writeData2(
   wb,
   sheet,
   data,
+  name = NULL,
   colNames = TRUE,
   rowNames = FALSE,
   startRow = 1,
@@ -21,6 +22,8 @@ writeData2(
 \item{sheet}{sheet}
 
 \item{data}{data to export}
+
+\item{name}{If not NULL, a named region is defined.}
 
 \item{colNames}{include colnames?}
 

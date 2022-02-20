@@ -2215,8 +2215,7 @@ removeTable <- function(wb, sheet, table) {
   cols <- seq(from = cols[1], to = cols[2], by = 1)
 
   ## now delete data
-  # FIXME: requires deleteData
-  # deleteData(wb = wb, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
+  deleteData(wb = wb, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
 
   invisible(0)
 }
