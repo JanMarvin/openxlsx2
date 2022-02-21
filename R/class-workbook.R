@@ -4049,7 +4049,7 @@ wbWorkbook <- R6::R6Class(
 
       ## re-order worksheets if need to
       if (any(self$sheetOrder != seq_len(nSheets))) {
-        self$workbook$sheets <- self$workbook$sheets[sheetOrder]
+        self$workbook$sheets <- self$workbook$sheets[self$sheetOrder]
       }
 
 
