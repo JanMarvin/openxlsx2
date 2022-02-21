@@ -365,23 +365,14 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      newSheetIndex <- length(self$worksheets) + 1L
-
-      if (newSheetIndex > 1) {
-        sheetId <-
-          max(as.integer(regmatches(
-            self$workbook$sheets,
-            regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets, perl = TRUE)
-          ))) + 1L
-      } else {
-        sheetId <- 1
-      }
-
-      # check for errors ----
-
       if (fail) {
         stop(msg, call. = FALSE)
       }
+
+      newSheetIndex <- length(self$worksheets) + 1L
+      sheetId <- max_sheet_id(self) # checks for self$worksheet length
+
+      # check for errors ----
 
       visible <- switch(
         visible,
@@ -482,24 +473,13 @@ wbWorkbook <- R6::R6Class(
           stop("colon not allowed in sheet names in Excel")
         }
       }
+
       newSheetIndex <- length(self$worksheets) + 1L
-      if (newSheetIndex > 1) {
-        sheetId <-
-          max(as.integer(regmatches(
-            self$workbook$sheets,
-            regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets, perl = TRUE)
-          ))) + 1L
-      } else {
-        sheetId <- 1
-      }
+      sheetId <- max_sheet_id(self) # checks for length of worksheets
 
 
       ## copy visibility from cloned sheet!
-      visible <-
-        regmatches(
-          self$workbook$sheets[[clonedSheet]],
-          regexpr('(?<=state=")[^"]+', self$workbook$sheets[[clonedSheet]], perl = TRUE)
-        )
+      visible <- reg_match0(self$workbook$sheets[[clonedSheet]], '(?<=state=")[^"]+')
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -540,7 +520,7 @@ wbWorkbook <- R6::R6Class(
           function(rl) {
             # is rl here a length of 1?
             stopifnot(length(rl) == 1L) # lets find out...  if this fails, just remove it
-            chartfiles <- regmatches(rl, gregexpr("(?<=charts/)chart[0-9]+\\.xml", rl, perl = TRUE))[[1]]
+            chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
 
             for (cf in chartfiles) {
               chartid <- length(.self$charts) + 1L
@@ -636,10 +616,10 @@ wbWorkbook <- R6::R6Class(
 
       for (t in tbls) {
         # Extract table name, displayName and ID from the xml
-        oldname <- regmatches(t, regexpr('(?<= name=")[^"]+', t, perl = TRUE))
-        olddispname <- regmatches(t, regexpr('(?<= displayName=")[^"]+', t, perl = TRUE))
-        oldid <- regmatches(t, regexpr('(?<= id=")[^"]+', t, perl = TRUE))
-        ref <- regmatches(t, regexpr('(?<= ref=")[^"]+', t, perl = TRUE))
+        oldname     <- reg_math0(t, '(?<= name=")[^"]+')
+        olddispname <- reg_math0(t, '(?<= displayName=")[^"]+')
+        oldid       <- reg_math0(t, '(?<= id=")[^"]+')
+        ref         <- reg_math0(t, '(?<= ref=")[^"]+')
 
         # Find new, unused table names by appending _n, where n=1,2,...
         n <- 0
@@ -713,16 +693,7 @@ wbWorkbook <- R6::R6Class(
     addChartSheet = function(sheetName, tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
-
-      if (newSheetIndex > 1) {
-        sheetId <-
-          max(as.integer(regmatches(
-            self$workbook$sheets,
-            regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets, perl = TRUE)
-          ))) + 1L
-      } else {
-        sheetId <- 1
-      }
+      sheetId <- max_sheet_id(self) # checks for length of worksheets
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -1564,16 +1535,8 @@ wbWorkbook <- R6::R6Class(
       self$sheet_names[[sheet]] <- newSheetName
 
       ## Rename in workbook
-      sheetId <-
-        regmatches(
-          self$workbook$sheets[[sheet]],
-          regexpr('(?<=sheetId=")[0-9]+', self$workbook$sheets[[sheet]], perl = TRUE)
-        )
-      rId <-
-        regmatches(
-          self$workbook$sheets[[sheet]],
-          regexpr('(?<= r:id="rId)[0-9]+', self$workbook$sheets[[sheet]], perl = TRUE)
-        )
+      sheetId <- get_sheet_id(self, sheet)
+      rId <- get_r_id(self, sheet)
       self$workbook$sheets[[sheet]] <-
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
@@ -1801,7 +1764,8 @@ wbWorkbook <- R6::R6Class(
       self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       ## remove highest sheet
-      self$Content_Types <- grep(sprintf("sheet%i.xml", nSheets), self$Content_Types, invert = TRUE, value = TRUE)
+      # (don't chagne this to a "grep(value = TRUE)" ... )
+      self$Content_Types <- self$Content_Types[!grepl(sprintf("sheet%s.xml", nSheets), self$Content_Types)]
 
       # The names for the other drawings have changed
       de <- xml_node(read_xml(self$Content_Types), "Default")
@@ -1854,7 +1818,8 @@ wbWorkbook <- R6::R6Class(
       # removeRels <- grepl("slicers", self$worksheets_rels[[sheet]])
 
       if (any(grepl("slicers", self$worksheets_rels[[sheet]]))) {
-        self$workbook.xml.rels <- grep(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels, invert = TRUE, value = TRUE)
+        # don't change to a grep(value = TRUE)
+        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels)]
       }
 
       ## wont't remove tables and then won't need to reassign table r:id's but will rename them!
@@ -1894,7 +1859,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## remove sheet
-      sn <- unapply(self$workbook$sheets, reg_match0, pat = "(?<= name=\")[^\"]+'")
+      sn <- apply_reg_match0(self$workbook$sheets, "(?<= name=\")[^\"]+'")
       self$workbook$sheets <- self$workbook$sheets[!sn %in% sheetName]
 
       ## Reset rIds
@@ -1912,7 +1877,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Can remove highest sheet
-      self$workbook.xml.rels <- grep(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels, invert = TRUE, value = TRUE)
+      # (don't use grepl(value = TRUE))
+      self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
 
       ## FIXME not sure about this
       # ## definedNames
@@ -2161,24 +2127,22 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## Increment priority of conditional formatting rule
-      if (length(self$worksheets[[sheet]]$conditionalFormatting)) {
-        for (i in length(self$worksheets[[sheet]]$conditionalFormatting):1) {
-          priority <- reg_match0(
-            self$worksheets[[sheet]]$conditionalFormatting[[i]],
-            '(?<=priority=")[0-9]+'
-            )
-          priority_new <- as.integer(priority) + 1L
-          priority_pattern <- sprintf('priority="%s"', priority)
-          priority_new <- sprintf('priority="%s"', priority_new)
+      for (i in rev(seq_along(self$worksheets[[sheet]]$conditionalFormatting))) {
+        priority <- reg_match0(
+          self$worksheets[[sheet]]$conditionalFormatting[[i]],
+          '(?<=priority=")[0-9]+'
+        )
+        priority_new <- as.integer(priority) + 1L
+        priority_pattern <- sprintf('priority="%s"', priority)
+        priority_new <- sprintf('priority="%s"', priority_new)
 
-          ## now replace
-          self$worksheets[[sheet]]$conditionalFormatting[[i]] <- gsub(
-            priority_pattern,
-            priority_new,
-            self$worksheets[[sheet]]$conditionalFormatting[[i]],
-            fixed = TRUE
-          )
-        }
+        ## now replace
+        self$worksheets[[sheet]]$conditionalFormatting[[i]] <- gsub(
+          priority_pattern,
+          priority_new,
+          self$worksheets[[sheet]]$conditionalFormatting[[i]],
+          fixed = TRUE
+        )
       }
 
       nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
@@ -3482,7 +3446,7 @@ wbWorkbook <- R6::R6Class(
           !is.null(style$fontDecoration) |
           !is.null(style$fontFamily) |
           !is.null(style$fontScheme)) {
-        fontNode <-wb_create_font_node(self, style)
+        fontNode <- wb_create_font_node(self, style)
         fontId <- style$fontId
 
         if (length(fontId) == 0) {
@@ -3555,7 +3519,7 @@ wbWorkbook <- R6::R6Class(
       }
 
 
-      if(!is.null(style$xfId))
+      if (!is.null(style$xfId))
         xfNode$xfId <- style$xfId
 
       childNodes <- ""
@@ -3958,7 +3922,9 @@ wbWorkbook <- R6::R6Class(
       ## HyperLinks from nTables+3 to nTables+3+nHyperLinks-1
       ## vmlDrawing to have rId
 
-      sheetRIds <- as.integer(unlist(reg_match0(self$workbook$sheets, '(?<=r:id="rId)[0-9]+')))
+      # browser()
+
+      sheetRIds <- get_r_id(self)
       nSheets   <- length(sheetRIds)
       nExtRefs  <- length(self$externalLinks)
       nPivots   <- length(self$pivotDefinitions)
@@ -4044,8 +4010,9 @@ wbWorkbook <- R6::R6Class(
 
       ## re-assign tabSelected
       state <- rep.int("visible", nSheets)
-      state[grepl("hidden", self$workbook$sheets)] <- "hidden"
-      visible_sheet_index <- which(state == "visible")[[1]]
+      hidden <- grepl("hidden", self$workbook$sheets)
+      state[hidden] <- "hidden"
+      visible_sheet_index <- which(!hidden)
 
       if (is.null(self$workbook$bookViews))
         self$workbook$bookViews <-
@@ -4083,7 +4050,7 @@ wbWorkbook <- R6::R6Class(
 
         ## sheetNames is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheetNames) - 1L
-        oldId <- as.numeric(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
+        oldId <- as.integer(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
 
         for (i in seq_along(self$workbook$definedNames)) {
           if (!is.na(newId[i])) {
@@ -4100,7 +4067,7 @@ wbWorkbook <- R6::R6Class(
 
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
       if (length(extRefInds)) {
-        newInds <- as.integer(seq_along(extRefInds) + length(sheetInds))
+        newInds <- seq_along(extRefInds) + length(sheetInds)
         self$workbook$externalReferences <- stri_join(
           "<externalReferences>",
           stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
@@ -4734,4 +4701,27 @@ file_copy_wb_save <- function(from, pattern, dir) {
 lcr <- function(var) {
   # quick function for specifying error message
   paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
+}
+
+
+max_sheet_id <- function(wb) {
+  if (!length(wb$workbook$sheets)) {
+    return(1L)
+  }
+
+  max(get_sheet_id(wb), 0L, na.rm = TRUE) + 1L
+}
+
+get_sheet_id <- function(wb, index = NULL) {
+  get_wb_sheet_id(wb, '(?<=sheetId=")[0-9]+', i = index)
+}
+
+get_r_id <- function(wb, index = NULL) {
+  get_wb_sheet_id(wb, '(?<= r:id="rId)[0-9]+', i = index)
+}
+
+get_wb_sheet_id <- function(wb, pattern, i = NULL) {
+  i <- i %||% seq_along(wb$workbook$sheets)
+  id <- reg_match0(wb$workbook$sheets[i], pattern)
+  as.integer(unlist(id))
 }
