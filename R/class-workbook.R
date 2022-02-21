@@ -2264,20 +2264,9 @@ wbWorkbook <- R6::R6Class(
             40000L + length(self$worksheets[[sheet]]$extLst)
           )
 
-        showValue <- 1
-        if ("showValue" %in% names(params)) {
-          showValue <- as.integer(params$showValue)
-        }
-
-        gradient <- 1
-        if ("gradient" %in% names(params)) {
-          gradient <- as.integer(params$gradient)
-        }
-
-        border <- 1
-        if ("border" %in% names(params)) {
-          border <- as.integer(params$border)
-        }
+          showValue <- as.integer(params$showValue %||% 1L)
+          gradient  <- as.integer(params$gradient  %||% 1L)
+          border    <- as.integer(params$border    %||% 1L)
 
         if (is.null(values)) {
           cfRule <-
