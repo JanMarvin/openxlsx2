@@ -160,23 +160,11 @@ test_that("xml_value", {
 
 test_that("as_xml", {
 
-  ## Not run:
-  tmp_xlsx <- tempdir()
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  unzip(xlsxFile, exdir = tmp_xlsx)
-
-  wb <- loadWorkbook(xlsxFile)
-  styles_xml <- sprintf("%s/xl/styles.xml", tmp_xlsx)
-
-  # is external pointer
-  sxml <- read_xml(styles_xml)
-
-  # is character
-  font <- xml_node(sxml, "styleSheet", "fonts", "font")
+  xml_str <- "<a><b><c><d>1</d></c></b></a>"
 
   ### no clue how to test this :-)
   # # is again external pointer
-  # as_xml(font)
+  expect_equal(class(as_xml(xml_str)), "pugi_xml")
 
 })
 
