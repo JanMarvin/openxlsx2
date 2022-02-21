@@ -4026,13 +4026,10 @@ wbWorkbook <- R6::R6Class(
 
 
       if (!is.null(self$vbaProject)) {
-        self$workbook.xml.rels <-
-          c(
-            self$workbook.xml.rels,
-            sprintf(
-              '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
-              1L + length(self$workbook.xml.rels)
-            )
+        self$append("workbook.xml.rels",
+          sprintf(
+            '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
+            1L + length(self$workbook.xml.rels)
           )
       }
 
