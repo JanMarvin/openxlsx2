@@ -2167,7 +2167,6 @@ wbWorkbook <- R6::R6Class(
             '(?<=priority=")[0-9]+'
             )
           priority_new <- as.integer(priority) + 1L
-
           priority_pattern <- sprintf('priority="%s"', priority)
           priority_new <- sprintf('priority="%s"', priority_new)
 
@@ -2183,15 +2182,24 @@ wbWorkbook <- R6::R6Class(
 
       nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
 
-      if (type == "colorScale") {
-        ## formula contains the colours
-        ## values contains numerics or is NULL
-        ## dxfId is ignored
 
-        if (is.null(values)) {
-          if (length(formula) == 2L) {
-            cfRule <-
+      # big switch statement
+      cfRule <- switch(
+        type,
+
+        ## colourScale ----
+        colorScale = {
+
+          ## formula contains the colours
+          ## values contains numerics or is NULL
+          ## dxfId is ignored
+
+          if (is.null(values)) {
+          # could use a switch() here for length to also check against other
+          # lengths, if these aren't checked somewhere already?
+            if (length(formula) == 2L) {
               sprintf(
+                # TODO is this indentation necessary?
                 '<cfRule type="colorScale" priority="1"><colorScale>
                              <cfvo type="min"/><cfvo type="max"/>
                              <color rgb="%s"/><color rgb="%s"/>
@@ -2199,8 +2207,7 @@ wbWorkbook <- R6::R6Class(
                 formula[[1]],
                 formula[[2]]
               )
-          } else {
-            cfRule <-
+            } else {
               sprintf(
                 '<cfRule type="colorScale" priority="1"><colorScale>
                              <cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/>
@@ -2210,10 +2217,9 @@ wbWorkbook <- R6::R6Class(
                 formula[[2]],
                 formula[[3]]
               )
-          }
-        } else {
-          if (length(formula) == 2L) {
-            cfRule <-
+            }
+          } else {
+            if (length(formula) == 2L) {
               sprintf(
                 '<cfRule type="colorScale" priority="1"><colorScale>
                             <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
@@ -2224,8 +2230,7 @@ wbWorkbook <- R6::R6Class(
                 formula[[1]],
                 formula[[2]]
               )
-          } else {
-            cfRule <-
+            } else {
               sprintf(
                 '<cfRule type="colorScale" priority="1"><colorScale>
                             <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
@@ -2238,22 +2243,21 @@ wbWorkbook <- R6::R6Class(
                 formula[[2]],
                 formula[[3]]
               )
+            }
           }
-        }
-      } else if (type == "dataBar") {
-        # forumula is a vector of colours of length 1 or 2
-        # values is NULL or a numeric vector of equal length as formula
+        },
 
-        if (length(formula) == 2L) {
-          negColour <- formula[[1]]
-          posColour <- formula[[2]]
-        } else {
-          posColour <- formula
-          negColour <- "FFFF0000"
-        }
+        ## dataBar ----
+        dataBar = {
+          if (length(formula) == 2L) {
+            negColour <- formula[[1]]
+            posColour <- formula[[2]]
+          } else {
+            posColour <- formula
+            negColour <- "FFFF0000"
+          }
 
-        guid <-
-          stri_join(
+          guid <- stri_join(
             "F7189283-14F7-4DE0-9601-54DE9DB",
             40000L + length(self$worksheets[[sheet]]$extLst)
           )
@@ -2262,8 +2266,7 @@ wbWorkbook <- R6::R6Class(
           gradient  <- as.integer(params$gradient  %||% 1L)
           border    <- as.integer(params$border    %||% 1L)
 
-        if (is.null(values)) {
-          cfRule <-
+          if (is.null(values)) {
             sprintf(
               '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
                           <cfvo type="min"/><cfvo type="max"/>
@@ -2275,8 +2278,7 @@ wbWorkbook <- R6::R6Class(
               posColour,
               guid
             )
-        } else {
-          cfRule <-
+          } else {
             sprintf(
               '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
                             <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
@@ -2290,36 +2292,41 @@ wbWorkbook <- R6::R6Class(
               posColour,
               guid
             )
-        }
+          }
 
-        self$worksheets[[sheet]]$extLst <-
-          c(
+          self$worksheets[[sheet]]$extLst <- c(
             self$worksheets[[sheet]]$extLst,
             gen_databar_extlst(
-              guid = guid,
-              sqref = sqref,
+              guid      = guid,
+              sqref     = sqref,
               posColour = posColour,
               negColour = negColour,
-              values = values,
-              border = border,
-              gradient = gradient
+              values    = values,
+              border    = border,
+              gradient  = gradient
             )
           )
-      } else if (type == "expression") {
-        cfRule <-
+        },
+
+        ## expression ----
+        expression = {
           sprintf(
             '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
             dxfId,
             formula
           )
-      } else if (type == "duplicatedValues") {
-        cfRule <-
+        },
+
+        ## duplicatedValues ----
+        duplicatedValues = {
           sprintf(
             '<cfRule type="duplicateValues" dxfId="%s" priority="1"/>',
             dxfId
           )
-      } else if (type == "containsText") {
-        cfRule <-
+        },
+
+        ## containsText ----
+        containsText = {
           sprintf(
             '<cfRule type="containsText" dxfId="%s" priority="1" operator="containsText" text="%s">
                         	<formula>NOT(ISERROR(SEARCH("%s", %s)))</formula>
@@ -2327,10 +2334,14 @@ wbWorkbook <- R6::R6Class(
             dxfId,
             values,
             values,
+            # is this unlist correct?  Would this not work?
+            # > strsplit(sqref, split = ":")[[1]]
             unlist(strsplit(sqref, split = ":"))[[1]]
           )
-      } else if (type == "notContainsText") {
-        cfRule <-
+        },
+
+        ## notContainsText ----
+        notContainsText = {
           sprintf(
             '<cfRule type="notContainsText" dxfId="%s" priority="1" operator="notContains" text="%s">
                         	<formula>ISERROR(SEARCH("%s", %s))</formula>
@@ -2340,8 +2351,10 @@ wbWorkbook <- R6::R6Class(
             values,
             unlist(strsplit(sqref, split = ":"))[[1]]
           )
-      } else if (type == "beginsWith") {
-        cfRule <-
+        },
+
+        ## beginsWith ----
+        beginsWith = {
           sprintf(
             '<cfRule type="beginsWith" dxfId="%s" priority="1" operator="beginsWith" text="%s">
                         	<formula>LEFT(%s,LEN("%s"))="%s"</formula>
@@ -2353,51 +2366,52 @@ wbWorkbook <- R6::R6Class(
             values,
             values
           )
-      } else if (type == "endsWith") {
-        cfRule <-
-          sprintf(
-            '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
+        },
+
+        ## endsWith ----
+        endsWith = sprintf(
+          '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
                         	<formula>RIGHT(%s,LEN("%s"))="%s"</formula>
                        </cfRule>',
-            dxfId,
-            values,
+          dxfId,
+          values,
 
-            unlist(strsplit(sqref, split = ":"))[[1]],
-            values,
-            values
-          )
-      } else if (type == "between") {
-        cfRule <-
-          sprintf(
-            '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
-            dxfId,
-            formula[1],
-            formula[2]
-          )
-      } else if (type == "topN") {
-        cfRule <-
-          sprintf(
-            '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
-            dxfId,
-            values[1],
-            values[2]
-          )
-      } else if (type == "bottomN") {
-        cfRule <-
+          unlist(strsplit(sqref, split = ":"))[[1]],
+          values,
+          values
+        ),
+
+        ## between ----
+        between = sprintf(
+          '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
+          dxfId,
+          formula[1],
+          formula[2]
+        ),
+
+        ## topN ----
+        topN = sprintf(
+          '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
+          dxfId,
+          values[1],
+          values[2]
+        ),
+
+        ## bottomN ----
+        bottomN = {
           sprintf(
             '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
             dxfId,
             values[1],
             values[2]
           )
-      }
+        },
+        # do we have a match.arg() anywhere or will it just be showned in this switch()?
+        stop("type `", type, "` is not a valid formatting rule")
+      )
 
-      # TODO replace append() with just c()
-      self$worksheets[[sheet]]$conditionalFormatting <-
-        append(self$worksheets[[sheet]]$conditionalFormatting, cfRule)
-
+      self$worksheets[[sheet]]$conditionalFormatting <- c(self$worksheets[[sheet]]$conditionalFormatting, cfRule)
       names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
-
       invisible(self)
     },
 
