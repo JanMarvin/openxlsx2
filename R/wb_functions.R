@@ -256,17 +256,13 @@ wb_to_df <- function(
     # remove dollar sign: $A$1:$B$2
     wo <- gsub("\\$", "", wo)
     wo <- unapply(wo, strsplit, "!")
-    # remove ' from 'Sheet 1'
-    wo <- gsub("'", "", wo)
+    # removing starting and/or ending ' "
+    wo <- gsub("^[\"']|[\"']$", "", wo)
     wo <- unapply(wo, strsplit, "!")
 
-    nr <- as.data.frame(
-      matrix(wo,
-        ncol = 2,
-        byrow = TRUE,
-        dimnames = list(seq_len(length(dn)),
-          c("sheet", "dims") ))
-    )
+    nr <- matrix(wo, ncol = 2, byrow = TRUE)
+    dimnames(nr) <- list(seq_len(length(dn)), c("sheet", "dims"))
+    nr <- as.data.frame(nr)
     dn_attr <- rbindlist(xml_attr(dn, "definedName"))
 
     nr$name <- dn_attr$name
