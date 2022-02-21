@@ -1892,12 +1892,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## remove sheet
-      sn <-
-        unapply(self$workbook$sheets, function(x) {
-          regmatches(
-            x, regexpr('(?<= name=")[^"]+', x, perl = TRUE)
-          )
-        })
+      sn <- unapply(self$workbook$sheets, reg_match0, pat = "(?<= name=\")[^\"]+'")
       self$workbook$sheets <- self$workbook$sheets[!sn %in% sheetName]
 
       ## Reset rIds
@@ -2173,6 +2168,9 @@ wbWorkbook <- R6::R6Class(
       ## Increment priority of conditional formatting rule
       if (length(self$worksheets[[sheet]]$conditionalFormatting)) {
         for (i in length(self$worksheets[[sheet]]$conditionalFormatting):1) {
+          priority <- reg_match0(
+            self$worksheets[[sheet]]$conditionalFormatting[[i]],
+            '(?<=priority=")[0-9]+'
             )
           priority_new <- as.integer(priority) + 1L
 
