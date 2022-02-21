@@ -2173,14 +2173,6 @@ wbWorkbook <- R6::R6Class(
       ## Increment priority of conditional formatting rule
       if (length(self$worksheets[[sheet]]$conditionalFormatting)) {
         for (i in length(self$worksheets[[sheet]]$conditionalFormatting):1) {
-          priority <-
-            regmatches(
-              self$worksheets[[sheet]]$conditionalFormatting[[i]],
-              regexpr(
-                '(?<=priority=")[0-9]+',
-                self$worksheets[[sheet]]$conditionalFormatting[[i]],
-                perl = TRUE
-              )
             )
           priority_new <- as.integer(priority) + 1L
 
@@ -4107,15 +4099,7 @@ wbWorkbook <- R6::R6Class(
 
         ## sheetNames is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheetNames) - 1L
-        oldId <-
-          as.numeric(regmatches(
-            self$workbook$definedNames,
-            regexpr(
-              '(?<= localSheetId=")[0-9]+',
-              self$workbook$definedNames,
-              perl = TRUE
-            )
-          ))
+        oldId <- as.numeric(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
 
         for (i in seq_along(self$workbook$definedNames)) {
           if (!is.na(newId[i])) {
