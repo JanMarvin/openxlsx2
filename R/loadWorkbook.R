@@ -218,12 +218,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       }
     }
 
-
     ## replace sheetId
     for (i in seq_len(nSheets)) {
-      wb$workbook$sheets[[i]] <- gsub(sprintf(' sheetId="%s"', i), sprintf(' sheetId="%s"', sheetId[i]), wb$workbook$sheets[[i]])
+      wb$workbook$sheets[[i]] <- gsub(
+        sprintf(' sheetId="%s"', i),
+        sprintf(' sheetId="%s"', sheetId[i]),
+        wb$workbook$sheets[[i]]
+      )
     }
-
 
     ## additional workbook attributes
     calcPr <- xml_node(workbook_xml, "workbook", "calcPr")

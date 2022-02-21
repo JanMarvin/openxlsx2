@@ -1784,9 +1784,9 @@ wbWorkbook <- R6::R6Class(
       vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
 
       # NULL the sheets
-      if (length(comment_id)) self$comments[[comment_id]]               <- NULL
-      if (length(drawing_id)) self$drawings[[drawing_id]]               <- NULL
-      if (length(drawing_id)) self$drawings_rels[[drawing_id]]          <- NULL
+      if (length(comment_id))    self$comments[[comment_id]]            <- NULL
+      if (length(drawing_id))    self$drawings[[drawing_id]]            <- NULL
+      if (length(drawing_id))    self$drawings_rels[[drawing_id]]       <- NULL
       if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
       if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]              <- NULL
       if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]         <- NULL
@@ -1827,6 +1827,7 @@ wbWorkbook <- R6::R6Class(
             removeRels,
             gregexpr("(?<=pivotTable)[0-9]+(?=\\.xml)", removeRels, perl = TRUE)
           )))
+
         toRemove <- stri_join(
           sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
           sep = " ",
@@ -1898,12 +1899,12 @@ wbWorkbook <- R6::R6Class(
       ## Reset rIds
       if (nSheets > 1) {
         for (i in (sheet + 1L):nSheets) {
-          self$workbook$sheets <-
-            gsub(stri_join("rId", i),
-              stri_join("rId", i - 1L),
-              self$workbook$sheets,
-              fixed = TRUE
-            )
+          self$workbook$sheets <- gsub(
+            stri_join("rId", i),
+            stri_join("rId", i - 1L),
+            self$workbook$sheets,
+            fixed = TRUE
+          )
         }
       } else {
         self$workbook$sheets <- NULL
@@ -2116,13 +2117,9 @@ wbWorkbook <- R6::R6Class(
           sqref
         )
 
-      formula <-
-        sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
+      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-
-      xmlData <-
-        stri_join(data_val, formula, sqref, "</x14:dataValidation>")
-
+      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
       self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
 
       invisible(self)
@@ -2157,13 +2154,10 @@ wbWorkbook <- R6::R6Class(
       # TODO rename: setConditionFormatting?  Or addConditionalFormatting
       # TODO can this be moved to the sheet data?
       sheet <- wb_validate_sheet(self, sheet)
-      sqref <-
-        stri_join(getCellRefs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )), collapse = ":")
-
-
+      sqref <- stri_join(
+        getCellRefs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
+        collapse = ":"
+      )
 
       ## Increment priority of conditional formatting rule
       if (length(self$worksheets[[sheet]]$conditionalFormatting)) {
@@ -2178,12 +2172,12 @@ wbWorkbook <- R6::R6Class(
           priority_new <- sprintf('priority="%s"', priority_new)
 
           ## now replace
-          self$worksheets[[sheet]]$conditionalFormatting[[i]] <-
-            gsub(priority_pattern,
-              priority_new,
-              self$worksheets[[sheet]]$conditionalFormatting[[i]],
-              fixed = TRUE
-            )
+          self$worksheets[[sheet]]$conditionalFormatting[[i]] <- gsub(
+            priority_pattern,
+            priority_new,
+            self$worksheets[[sheet]]$conditionalFormatting[[i]],
+            fixed = TRUE
+          )
         }
       }
 
@@ -3956,7 +3950,8 @@ wbWorkbook <- R6::R6Class(
 
       ## add a worksheet if none added
       if (nSheets == 0) {
-        warning("Workbook does not contain any worksheets. A worksheet will be added.",
+        warning(
+          "Workbook does not contain any worksheets. A worksheet will be added.",
           call. = FALSE
         )
         self$addWorksheet("Sheet 1")
@@ -4008,13 +4003,13 @@ wbWorkbook <- R6::R6Class(
       self$workbook.xml.rels <- c(self$workbook.xml.rels, pivotNode, slicerNode)
 
 
-
       if (!is.null(self$vbaProject)) {
         self$append("workbook.xml.rels",
           sprintf(
             '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
             1L + length(self$workbook.xml.rels)
           )
+        )
       }
 
       ## Reassign rId to workbook sheet elements, (order sheets by sheetId first)
@@ -4032,12 +4027,10 @@ wbWorkbook <- R6::R6Class(
       }
 
 
-
       ## re-assign tabSelected
       state <- rep.int("visible", nSheets)
-      # TODO grepl() to grep()
       state[grepl("hidden", self$workbook$sheets)] <- "hidden"
-      visible_sheet_index <- which(state %in% "visible")[[1]]
+      visible_sheet_index <- which(state == "visible")[[1]]
 
       if (is.null(self$workbook$bookViews))
         self$workbook$bookViews <-
@@ -4067,9 +4060,6 @@ wbWorkbook <- R6::R6Class(
       }
 
 
-
-
-
       if (length(self$workbook$definedNames)) {
         # TODO consider self$get_sheet_names() which orders the sheet names?
         sheetNames <- self$sheet_names[self$sheetOrder]
@@ -4093,21 +4083,14 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-
-
-
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
       if (length(extRefInds)) {
         newInds <- as.integer(seq_along(extRefInds) + length(sheetInds))
-        self$workbook$externalReferences <-
-          stri_join(
-            "<externalReferences>",
-            stri_join(
-              sprintf('<externalReference r:id=\"rId%s\"/>', newInds),
-              collapse = ""
-            ),
-            "</externalReferences>"
-          )
+        self$workbook$externalReferences <- stri_join(
+          "<externalReferences>",
+          stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
+          "</externalReferences>"
+        )
       }
 
       ## styles
@@ -4116,7 +4099,6 @@ wbWorkbook <- R6::R6Class(
       #  worksheets[[i]]$sheet_data$style_id <-
       #    rep.int(x = NA_integer_, times = worksheets[[i]]$sheet_data$n_elements)
       #}
-
 
       for (x in self$styleObjects) {
         if (length(x$rows) & length(x$cols)) {
