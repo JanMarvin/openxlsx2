@@ -2328,7 +2328,7 @@ wbWorkbook <- R6::R6Class(
 
       ## Increment priority of conditional formatting rule
       if (length(self$worksheets[[sheet]]$conditionalFormatting)) {
-        for (i in length(self$worksheets[[sheet]]$conditionalFormatting):1) {
+        for (i in rev(seq_len(length(self$worksheets[[sheet]]$conditionalFormatting)))) {
           priority <-
             regmatches(
               self$worksheets[[sheet]]$conditionalFormatting[[i]],

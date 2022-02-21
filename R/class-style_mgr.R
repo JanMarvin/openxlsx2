@@ -315,4 +315,3 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
   )
 
 })
-

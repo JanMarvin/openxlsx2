@@ -234,14 +234,14 @@ wb_to_df <- function(
   definedName
 ) {
 
-  .mc <- match.call()
+  # .mc <- match.call() # not (yet) used?
 
   if (is.character(xlsxFile)) {
     # TODO this should instead check for the Workbook class?  Maybe also check
     # if the file exists?
 
     # passes missing further on
-    if (missing(sheet)) 
+    if (missing(sheet))
       sheet <- substitute()
 
     wb <- loadWorkbook(xlsxFile, sheet = sheet)
@@ -435,7 +435,7 @@ wb_to_df <- function(
   zz$cols <- match(cc$c_r, colnames(z)) - 1
   zz$rows <- match(cc$row_r, rownames(z)) - 1
 
-  zz <- zz[with(zz, ordered(order(cols, rows))),]
+  zz <- zz[with(zz, ordered(order(cols, rows))),] #nolint
   zz <- zz[zz$val != "_openxlsx_NA_",]
   long_to_wide(z, tt, zz)
 
@@ -730,7 +730,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
   # order cc
-  cc <- cc[with(cc, order(as.integer(row_r), col2int(c_r))), ]
+  cc <- cc[with(cc, order(as.integer(row_r), col2int(c_r))), ] #nolint
   cc$ordered_cols <- NULL
   cc$ordered_rows <- NULL
 
@@ -942,15 +942,13 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   # from here on only wb$worksheets is required
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
 
-
-    sheet_data <- list()
     wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")
 
     # rtyp character vector per row
     # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
     rtyp <- dims_to_dataframe(dims, fill = TRUE)
 
-    rows_attr <- cols_attr <- cc_tmp <- vector("list", data_nrow)
+    rows_attr <- vector("list", data_nrow)
 
     # create <rows ...>
     want_rows <- startRow:endRow

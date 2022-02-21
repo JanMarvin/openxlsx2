@@ -196,7 +196,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     j <- 1
     for (i in seq_along(sheetrId)) {
       if (is_chart_sheet[i]) {
-        count <- 0
         txt <- read_xml(chartSheetsXML[j])
 
         zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))

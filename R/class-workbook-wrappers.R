@@ -1492,7 +1492,6 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
-  xml <- wb$worksheets[[sheet]]$sheetProtection
 
   props <- c()
 

@@ -254,7 +254,9 @@ writeDataTable <- function(wb, sheet, x,
 
 
   ## column class styling
-  colClasses <- lapply(x, function(x) tolower(class(x)))
+  # # keep this as a reminder that columnsytles should return sometime in the
+  # # future
+  # colClasses <- lapply(x, function(x) tolower(class(x)))
   # classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
   #             colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
 

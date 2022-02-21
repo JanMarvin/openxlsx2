@@ -226,10 +226,11 @@ writeData <- function(wb,
   borderStyle <- validate_border_style(borderStyle)[[1]]
 
   ## special case - vector of hyperlinks
-  hlinkNames <- NULL
+  # # hlinkNames not used?
+  # hlinkNames <- NULL
   if (inherits(x, "hyperlink")) {
     # consider wbHyperlink?
-    hlinkNames <- names(x)
+    # hlinkNames <- names(x)
     colNames <- FALSE
   }
 
