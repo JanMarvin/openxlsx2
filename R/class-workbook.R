@@ -1797,10 +1797,10 @@ wbWorkbook <- R6::R6Class(
       ## remove last drawings(sheet).xml from Content_Types
       # TODO replace x[!grepl(x)] with grep(values = TRUE, invert = TRUE)
       drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
-      self$Content_Types <- self$Content_Types[!grepl(drawing_name, self$Content_Types)]
+      self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       ## remove highest sheet
-      self$Content_Types <- self$Content_Types[!grepl(sprintf("sheet%s.xml", nSheets), self$Content_Types)]
+      self$Content_Types <- grep(sprintf("sheet%i.xml", nSheets), self$Content_Types, invert = TRUE, value = TRUE)
 
       # The names for the other drawings have changed
       de <- xml_node(read_xml(self$Content_Types), "Default")
@@ -1833,9 +1833,10 @@ wbWorkbook <- R6::R6Class(
           collapse = "|"
         )
 
-        fileNo <- grep(toRemove, self$pivotTables.xml.rels)
+        # fileNo <- grep(toRemove, self$pivotTables.xml.rels)
+
         toRemove <- stri_join(
-          sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
+          sprintf("(pivotCacheDefinition%s\\.xml)", grep(toRemove, self$pivotTables.xml.rels)),
           sep = " ",
           collapse = "|"
         )
@@ -1848,11 +1849,10 @@ wbWorkbook <- R6::R6Class(
 
       ## As above for slicers
       ## Need to remove reference from workbook.xml.rels to pivotCache
-      removeRels <- grepl("slicers", self$worksheets_rels[[sheet]])
-      if (any(removeRels)) {
-        # TODO !grepl() to grep()
-        self$workbook.xml.rels <-
-          self$workbook.xml.rels[!grepl(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels)]
+      # removeRels <- grepl("slicers", self$worksheets_rels[[sheet]])
+
+      if (any(grepl("slicers", self$worksheets_rels[[sheet]]))) {
+        self$workbook.xml.rels <- grep(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels, invert = TRUE, value = TRUE)
       }
 
       ## wont't remove tables and then won't need to reassign table r:id's but will rename them!
@@ -1915,8 +1915,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Can remove highest sheet
-      self$workbook.xml.rels <-
-        self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
+      self$workbook.xml.rels <- grep(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels, invert = TRUE, value = TRUE)
 
       ## FIXME not sure about this
       # ## definedNames
@@ -2129,8 +2128,7 @@ wbWorkbook <- R6::R6Class(
       xmlData <-
         stri_join(data_val, formula, sqref, "</x14:dataValidation>")
 
-      self$worksheets[[sheet]]$dataValidationsLst <-
-        c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
+      self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
 
       invisible(self)
     },
