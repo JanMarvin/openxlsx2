@@ -24,6 +24,7 @@ paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
 }
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
+`%|||%` <- function(x, y) if (length(x)) x else y
 
 na_to_null <- function(x) {
   if (is.null(x)) {
