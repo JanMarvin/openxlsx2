@@ -314,32 +314,32 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(oddHeader) & length(oddHeader) != 3) {
         fail <- TRUE
-        msg <- c(msg, "header must have length 3 where elements correspond to positions: left, center, right.")
+        msg <- c(msg, lcr("header"))
       }
 
       if (!is.null(oddFooter) & length(oddFooter) != 3) {
         fail <- TRUE
-        msg <- c(msg, "footer must have length 3 where elements correspond to positions: left, center, right.")
+        msg <- c(msg, lcr("footer"))
       }
 
       if (!is.null(evenHeader) & length(evenHeader) != 3) {
         fail <- TRUE
-        msg <- c(msg, "evenHeader must have length 3 where elements correspond to positions: left, center, right.")
+        msg <- c(msg, lcr("evenHeader"))
       }
 
       if (!is.null(evenFooter) & length(evenFooter) != 3) {
         fail <- TRUE
-        msg <- c(msg, "evenFooter must have length 3 where elements correspond to positions: left, center, right.")
+        msg <- c(msg, lcr("evenFooter"))
       }
 
       if (!is.null(firstHeader) & length(firstHeader) != 3) {
         fail <- TRUE
-        msg <- c(msg, "firstHeader must have length 3 where elements correspond to positions: left, center, right.")
+        msg <- c(msg, lcr("firstHeader"))
       }
 
       if (!is.null(firstFooter) & length(firstFooter) != 3) {
         fail <- TRUE
-        msg <- c(msg, "firstFooter must have length 3 where elements correspond to positions: left, center, right.")
+        msg <- c(msg, lcr("firstFooter"))
       }
 
       vdpi <- as.integer(vdpi)
@@ -364,6 +364,7 @@ wbWorkbook <- R6::R6Class(
           msg <- c(msg, "colon not allowed in sheet names in Excel")
         }
       }
+
       newSheetIndex <- length(self$worksheets) + 1L
 
       if (newSheetIndex > 1) {
@@ -4728,4 +4729,9 @@ file_copy_wb_save <- function(from, pattern, dir) {
       copy.date = TRUE
     )
   }
+}
+
+lcr <- function(var) {
+  # quick function for specifying error message
+  paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
 }
