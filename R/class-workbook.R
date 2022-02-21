@@ -3960,15 +3960,10 @@ wbWorkbook <- R6::R6Class(
       ## HyperLinks from nTables+3 to nTables+3+nHyperLinks-1
       ## vmlDrawing to have rId
 
-      sheetRIds <-
-        as.integer(unlist(regmatches(
-          self$workbook$sheets,
-          gregexpr('(?<=r:id="rId)[0-9]+', self$workbook$sheets, perl = TRUE)
-        )))
-
-      nSheets <- length(sheetRIds)
-      nExtRefs <- length(self$externalLinks)
-      nPivots <- length(self$pivotDefinitions)
+      sheetRIds <- as.integer(unlist(reg_match0(self$workbook$sheets, '(?<=r:id="rId)[0-9]+')))
+      nSheets   <- length(sheetRIds)
+      nExtRefs  <- length(self$externalLinks)
+      nPivots   <- length(self$pivotDefinitions)
 
       ## add a worksheet if none added
       if (nSheets == 0) {
