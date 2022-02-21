@@ -241,7 +241,8 @@ wb_to_df <- function(
     # if the file exists?
 
     # passes missing further on
-    if (missing(sheet)) substitute()
+    if (missing(sheet)) 
+      sheet <- substitute()
 
     wb <- loadWorkbook(xlsxFile, sheet = sheet)
   } else {
