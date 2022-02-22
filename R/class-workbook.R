@@ -1801,7 +1801,7 @@ wbWorkbook <- R6::R6Class(
       self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       ## remove highest sheet
-      self$Content_Types <- grep(sprintf("sheet%i.xml", nSheets), self$Content_Types, invert = TRUE, value = TRUE)
+      self$Content_Types <- self$Content_Types[!grepl(sprintf("sheet%i.xml", nSheets), self$Content_Types)]
 
       # The names for the other drawings have changed
       de <- xml_node(read_xml(self$Content_Types), "Default")
@@ -1854,7 +1854,7 @@ wbWorkbook <- R6::R6Class(
       # removeRels <- grepl("slicers", self$worksheets_rels[[sheet]])
 
       if (any(grepl("slicers", self$worksheets_rels[[sheet]]))) {
-        self$workbook.xml.rels <- grep(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels, invert = TRUE, value = TRUE)
+        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels)]
       }
 
       ## wont't remove tables and then won't need to reassign table r:id's but will rename them!
@@ -1912,7 +1912,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Can remove highest sheet
-      self$workbook.xml.rels <- grep(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels, invert = TRUE, value = TRUE)
+      self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
 
       ## FIXME not sure about this
       # ## definedNames
