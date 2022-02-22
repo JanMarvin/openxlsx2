@@ -130,7 +130,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
 \item \href{#method-save}{\code{wbWorkbook$save()}}
-\item \href{#method-getSheetName}{\code{wbWorkbook$getSheetName()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
@@ -353,26 +352,6 @@ Save the workbook
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getSheetName"></a>}}
-\if{latex}{\out{\hypertarget{method-getSheetName}{}}}
-\subsection{Method \code{getSheetName()}}{
-Get sheet name
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getSheetName(sheetIndex)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheetIndex}}{Sheet name index}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The sheet index
 }
 }
 \if{html}{\out{<hr>}}

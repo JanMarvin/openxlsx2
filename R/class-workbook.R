@@ -1315,22 +1315,6 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    # TODO Does this need to be checked?  No sheet name can be NA right?
-    # res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
-
-    # Doesn't make any assignments, could be pulled out
-    #' @description
-    #' Get sheet name
-    #' @param sheetIndex Sheet name index
-    #' @return The sheet index
-    getSheetName = function(sheetIndex) {
-      if (any(length(self$sheet_names) < sheetIndex)) {
-        stop(sprintf("Workbook only contains %s sheet(s).", length(self$sheet_names)))
-      }
-
-      self$sheet_names[sheetIndex]
-    },
-
     #' @description
     #' Build table
     #' @param sheet sheet
@@ -4667,4 +4651,24 @@ file_copy_wb_save <- function(from, pattern, dir) {
 lcr <- function(var) {
   # quick function for specifying error message
   paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
+}
+
+# TODO Does this need to be checked?  No sheet name can be NA right?
+# res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
+
+# Doesn't make any assignments, could be pulled out
+#' @description
+#' Get sheet name
+#' @param sheetIndex Sheet name index
+#' @return The sheet index
+wb_get_sheet_name = function(wb, index = NULL) {
+
+  index <- index %||% seq_along(wb$sheet_names)
+  n <- length(wb$sheet_names)
+
+  if (any(sheetIndex > n)) {
+    stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
+  }
+
+  self$sheet_names[sheetIndex]
 }
