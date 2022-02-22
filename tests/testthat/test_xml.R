@@ -39,6 +39,7 @@ test_that("xml_node", {
   expect_equal("a", xml_node_name(x))
   expect_equal(xml, xml_node(x))
   expect_equal(xml, xml_node(x, "a"))
+  expect_error(xml_node(x, 1))
 
   exp <- "<b/>"
   expect_equal(exp, xml_node(x, "a", "b"))
@@ -74,6 +75,7 @@ test_that("xml_attr", {
   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
   exp <- list(c(a = "1", b = "2"))
   expect_equal(exp, xml_attr(x, "a"))
+  expect_error(xml_attr(x, 1))
 
   x <- read_xml("<a><b r=\"1\">2</b></a>")
   exp <- list(c(r = "1"))
@@ -128,6 +130,7 @@ test_that("xml_value", {
   x <- read_xml("<a>1</a>")
   exp <- "1"
   expect_equal(exp, xml_value(x, "a"))
+  expect_error(xml_value(x, 1))
 
   x <- read_xml("<a><b r=\"1\">2</b></a>")
   exp <- "2"
@@ -162,9 +165,16 @@ test_that("as_xml", {
 
   xml_str <- "<a><b><c><d>1</d></c></b></a>"
 
-  ### no clue how to test this :-)
-  # # is again external pointer
+  # not the best test
   expect_equal(class(as_xml(xml_str)), "pugi_xml")
+
+})
+
+test_that("print", {
+
+  xml_str <- "<a/>"
+
+  expect_output(print(as_xml(xml_str)), "<a />")
 
 })
 
