@@ -1796,7 +1796,6 @@ wbWorkbook <- R6::R6Class(
 
       #### Modify Content_Types
       ## remove last drawings(sheet).xml from Content_Types
-      # TODO replace x[!grepl(x)] with grep(values = TRUE, invert = TRUE)
       drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
       self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
@@ -1806,13 +1805,12 @@ wbWorkbook <- R6::R6Class(
       # The names for the other drawings have changed
       de <- xml_node(read_xml(self$Content_Types), "Default")
       ct <- rbindlist(xml_attr(read_xml(self$Content_Types), "Override"))
-      ct[grepl("drawing", ct$PartName), "PartName"] <- sprintf("/xl/drawings/drawing%s.xml", seq_along(self$drawings))
+      ct[grepl("drawing", ct$PartName), "PartName"] <- sprintf("/xl/drawings/drawing%i.xml", seq_along(self$drawings))
       ct <- df_to_xml("Override", ct[c("PartName", "ContentType")])
       self$Content_Types <- c(de, ct)
 
 
       ## sheetOrder
-      # TODO use match()?
       toRemove <- which(self$sheetOrder == sheet)
       self$sheetOrder[self$sheetOrder > sheet] <- self$sheetOrder[self$sheetOrder > sheet] - 1L
       self$sheetOrder <- self$sheetOrder[-toRemove]
@@ -1823,30 +1821,23 @@ wbWorkbook <- R6::R6Class(
       if (length(removeRels)) {
         ## sheet rels links to a pivotTable file, the corresponding pivotTable_rels file links to the cacheDefn which is listing in workbook.xml.rels
         ## remove reference to this file from the workbook.xml.rels
-        fileNo <-
-          as.integer(unlist(regmatches(
-            removeRels,
-            gregexpr("(?<=pivotTable)[0-9]+(?=\\.xml)", removeRels, perl = TRUE)
-          )))
+        fileNo <- reg_match0(removeRels, "(?<=pivotTable)[0-9]+(?=\\.xml)")
+        fileNo <- as.integer(unlist(fileNo))
 
         toRemove <- stri_join(
-          sprintf("(pivotCacheDefinition%s\\.xml)", fileNo),
+          sprintf("(pivotCacheDefinition%i\\.xml)", fileNo),
           sep = " ",
           collapse = "|"
         )
 
-        # fileNo <- grep(toRemove, self$pivotTables.xml.rels)
-
         toRemove <- stri_join(
-          sprintf("(pivotCacheDefinition%s\\.xml)", grep(toRemove, self$pivotTables.xml.rels)),
+          sprintf("(pivotCacheDefinition%i\\.xml)", grep(toRemove, self$pivotTables.xml.rels)),
           sep = " ",
           collapse = "|"
         )
 
         ## remove reference to file from workbook.xml.res
-        # TODO grepl() to grep()
-        self$workbook.xml.rels <-
-          self$workbook.xml.rels[!grepl(toRemove, self$workbook.xml.rels)]
+        self$workbook.xml.rels <- grep(toRemove, self$workbook.xml.rels, invert = TRUE, value = TRUE)
       }
 
       ## As above for slicers
@@ -1894,7 +1885,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## remove sheet
-      sn <- unapply(self$workbook$sheets, reg_match0, pat = "(?<= name=\")[^\"]+'")
+      sn <- unapply(self$workbook$sheets, reg_match0, pat = '(?<= name=")[^"]+')
       self$workbook$sheets <- self$workbook$sheets[!sn %in% sheetName]
 
       ## Reset rIds

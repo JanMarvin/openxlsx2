@@ -5,6 +5,7 @@ test_that("Deleting a Table Object", {
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
+
   # Get table ----
 
   expect_equal(length(getTables(wb, sheet = 1)), 2L)
@@ -33,6 +34,7 @@ test_that("Deleting a Table Object", {
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
   expect_equal(attr(wb$tables, "sheet"), c(0, 0))
 
+  # wb$save(temp_xlsx())
 
   ## write same tables again ----
 
