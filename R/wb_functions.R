@@ -244,7 +244,8 @@ wb_to_df <- function(
     if (missing(sheet))
       sheet <- substitute()
 
-    wb <- loadWorkbook(xlsxFile, sheet = sheet)
+    # possible false positive on current lintr runs
+    wb <- loadWorkbook(xlsxFile, sheet = sheet) # nolint 
   } else {
     wb <- xlsxFile
   }
