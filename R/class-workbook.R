@@ -586,7 +586,6 @@ wbWorkbook <- R6::R6Class(
         )
       # The IDs in the drawings array are sheet-specific, so within the new cloned sheet
       # the same IDs can be used => no need to modify drawings
-      # TODO could these just be self$append()?
       self$drawings[[newSheetIndex]]       <- self$drawings[[clonedSheet]]
 
       self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[clonedSheet]]
@@ -770,7 +769,6 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      # TODO can these be self$append()?
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
       self$drawings_rels[[newSheetIndex]]    <- list()
@@ -2645,7 +2643,7 @@ wbWorkbook <- R6::R6Class(
       ## write file path to media slot to copy across on save
       tmp <- file
       names(tmp) <- stri_join("image", mediaNo, ".", imageType)
-      self$media <- append(self$media, tmp)
+      self$append("media", tmp)
 
       ## create drawing.xml
       anchor <-
@@ -2777,14 +2775,12 @@ wbWorkbook <- R6::R6Class(
                 c(keepStyle, TRUE) ## keepStyle is used to remove styles that apply to 0 rows OR 0 columns
 
               ## Merge Style and append to styleObjects
-              # TODO replace append() with c()
-              self$styleObjects <-
-                append(self$styleObjects, list(
+              self$append("styleObjects", list(
                   list(
                     style = mergeStyle(self$styleObjects[[i]]$style, newStyle = style),
                     sheet = sheet,
-                    rows = rows[mergeInds],
-                    cols = cols[mergeInds]
+                    rows  = rows[mergeInds],
+                    cols  = cols[mergeInds]
                   )
                 ))
             }
@@ -2798,23 +2794,21 @@ wbWorkbook <- R6::R6Class(
 
         ## append style object for non-intersecting cells
         if (length(newInds)) {
-          # TODO use c() not append()
-          self$styleObjects <- append(self$styleObjects, list(list(
+          self$append("styleObjects", list(
             style = style,
             sheet = sheet,
-            rows = rows[newInds],
-            cols = cols[newInds]
-          )))
+            rows  = rows[newInds],
+            cols  = cols[newInds]
+          ))
         }
       } else {
         ## else we are not stacking
-        # TODO use c() not append()
-        self$styleObjects <- append(self$styleObjects, list(list(
+        self$append("styleObjects", list(
           style = style,
           sheet = sheet,
-          rows = rows,
-          cols = cols
-        )))
+          rows  = rows,
+          cols  = cols
+        ))
       } ## End if(length(styleObjects)) else if(stack) {}
 
       invisible(self)
@@ -2889,7 +2883,7 @@ wbWorkbook <- R6::R6Class(
 
           if (length(self$rowHeights[[i]])) {
             tmpTxt <-
-              append(
+              c(
                 tmpTxt,
                 c(
                   "\n\tCustom row heights (row: height)\n\t",
@@ -2912,7 +2906,7 @@ wbWorkbook <- R6::R6Class(
             widths[widths != "auto"] <-
               as.numeric(widths[widths != "auto"])
             tmpTxt <-
-              append(
+              c(
                 tmpTxt,
                 c(
                   "\n\tCustom column widths (column: width)\n\t ",
@@ -3387,7 +3381,7 @@ wbWorkbook <- R6::R6Class(
       ## Function will return named list of references to new strings
       uStr <- uNewStr[which(!uNewStr %in% self$sharedStrings)]
       uCount <- attr(self$sharedStrings, "uniqueCount")
-      self$sharedStrings <- append(self$sharedStrings, uStr)
+      self$append("sharedStrings", uStr)
 
       attr(self$sharedStrings, "uniqueCount") <- uCount + length(uStr)
       invisible(self)
@@ -3479,11 +3473,11 @@ wbWorkbook <- R6::R6Class(
 
         if (length(fontId) == 0) {
           fontId <- style$fontId
-          self$styles$fonts <- append(styles[["fonts"]], fontNode)
+          self$styles$fonts <- c(styles[["fonts"]], fontNode)
         }
 
         xfNode$fontId <- fontId
-        xfNode <- append(xfNode, list("applyFont" = "1"))
+        xfNode <- c(xfNode, list("applyFont" = "1"))
       }
 
 
@@ -3505,7 +3499,7 @@ wbWorkbook <- R6::R6Class(
           }
 
           xfNode$numFmtId <- numFmtId
-          xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
+          xfNode <- c(xfNode, list(applyNumberFormat = "1"))
         }
       }
 
@@ -3520,7 +3514,7 @@ wbWorkbook <- R6::R6Class(
             self$styles$fills <- c(styles$fills, fillNode)
           }
           xfNode$fillId <- fillId
-          xfNode <- append(xfNode, list("applyFill" = "1"))
+          xfNode <- c(xfNode, list(applyFill = "1"))
         }
       }
 
@@ -3543,7 +3537,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         xfNode$borderId <- borderId
-        xfNode <- append(xfNode, list("applyBorder" = "1"))
+        xfNode <- c(xfNode, list(applyBorder = "1"))
       }
 
 
@@ -3593,13 +3587,13 @@ wbWorkbook <- R6::R6Class(
         alignNode <- stri_join(alignNode, "/>")
 
         alignmentFlag <- TRUE
-        xfNode <- append(xfNode, list("applyAlignment" = "1"))
+        xfNode <- c(xfNode, list(applyAlignment = "1"))
 
         childNodes <- stri_join(childNodes, alignNode)
       }
 
       if (!is.null(style$hidden) | !is.null(style$locked)) {
-        xfNode <- append(xfNode, list("applyProtection" = "1"))
+        xfNode <- c(xfNode, list(applyProtection = "1"))
         protectionNode <- "<protection"
 
         if (!is.null(style$hidden)) {
@@ -3676,11 +3670,11 @@ wbWorkbook <- R6::R6Class(
 
           if (length(fontId) == 0) {
             fontId <- length(self$styles$fonts)
-            self$styles$fonts <- append(self$styles[["fonts"]], fontNode)
+            self$styles$fonts <- c(self$styles[["fonts"]], fontNode)
           }
 
           xfNode$fontId <- fontId
-          xfNode <- append(xfNode, list("applyFont" = "1"))
+          xfNode <- c(xfNode, list(applyFont = "1"))
         }
 
 
@@ -3702,7 +3696,7 @@ wbWorkbook <- R6::R6Class(
             }
 
             xfNode$numFmtId <- numFmtId
-            xfNode <- append(xfNode, list("applyNumberFormat" = "1"))
+            xfNode <- c(xfNode, list("applyNumberFormat" = "1"))
           }
         }
 
@@ -3717,7 +3711,7 @@ wbWorkbook <- R6::R6Class(
               self$styles$fills <- c(self$styles$fills, fillNode)
             }
             xfNode$fillId <- fillId
-            xfNode <- append(xfNode, list("applyFill" = "1"))
+            xfNode <- c(xfNode, list(applyFill = "1"))
           }
         }
 
@@ -3740,7 +3734,7 @@ wbWorkbook <- R6::R6Class(
           }
 
           xfNode$borderId <- borderId
-          xfNode <- append(xfNode, list("applyBorder" = "1"))
+          xfNode <- c(xfNode, list(applyBorder = "1"))
         }
 
         xfNode <-
