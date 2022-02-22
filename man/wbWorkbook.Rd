@@ -217,10 +217,18 @@ Append a field. This method is intended for internal use
 \if{html}{\out{<a id="method-append_sheets"></a>}}
 \if{latex}{\out{\hypertarget{method-append_sheets}{}}}
 \subsection{Method \code{append_sheets()}}{
+Append to \code{self$workbook$sheets} This method is intended for internal use
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$append_sheets(value)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{value}}{A value for \code{self$workbook$sheets}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addWorksheet"></a>}}

@@ -225,6 +225,9 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    #' @description
+    #' Append to `self$workbook$sheets` This method is intended for internal use
+    #' @param value A value for `self$workbook$sheets`
     append_sheets = function(value) {
       self$workbook$sheets <- c(self$workbook$sheets, value)
       self
@@ -4656,11 +4659,12 @@ lcr <- function(var) {
 # TODO Does this need to be checked?  No sheet name can be NA right?
 # res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
 
-# Doesn't make any assignments, could be pulled out
-#' @description
 #' Get sheet name
+#'
+#' @param wb a [wbWorkbook] object
 #' @param sheetIndex Sheet name index
 #' @return The sheet index
+#' @export
 wb_get_sheet_name = function(wb, index = NULL) {
 
   index <- index %||% seq_along(wb$sheet_names)
