@@ -261,7 +261,7 @@ wb_to_df <- function(
     wo <- unapply(wo, strsplit, "!")
 
     nr <- matrix(wo, ncol = 2, byrow = TRUE)
-    dimnames(nr) <- list(seq_len(length(dn)), c("sheet", "dims"))
+    dimnames(nr) <- list(seq_along(dn), c("sheet", "dims"))
     nr <- as.data.frame(nr)
     dn_attr <- rbindlist(xml_attr(dn, "definedName"))
 
