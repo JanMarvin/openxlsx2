@@ -619,10 +619,10 @@ wbWorkbook <- R6::R6Class(
 
       for (t in tbls) {
         # Extract table name, displayName and ID from the xml
-        oldname     <- reg_math0(t, '(?<= name=")[^"]+')
-        olddispname <- reg_math0(t, '(?<= displayName=")[^"]+')
-        oldid       <- reg_math0(t, '(?<= id=")[^"]+')
-        ref         <- reg_math0(t, '(?<= ref=")[^"]+')
+        oldname     <- reg_match0(t, '(?<= name=")[^"]+')
+        olddispname <- reg_match0(t, '(?<= displayName=")[^"]+')
+        oldid       <- reg_match0(t, '(?<= id=")[^"]+')
+        ref         <- reg_match0(t, '(?<= ref=")[^"]+')
 
         # Find new, unused table names by appending _n, where n=1,2,...
         n <- 0
