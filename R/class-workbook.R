@@ -4677,5 +4677,5 @@ wb_get_sheet_name = function(wb, index = NULL) {
     stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
   }
 
-  self$sheet_names[sheetIndex]
+  wb$sheet_names[sheetIndex]
 }
