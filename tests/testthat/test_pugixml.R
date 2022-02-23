@@ -175,6 +175,7 @@ test_that("print", {
   xml_str <- "<a/>"
 
   expect_output(print(as_xml(xml_str)), "<a />")
+  expect_output(print(as_xml(xml_str), raw = TRUE), "<a/>")
 
 })
 
