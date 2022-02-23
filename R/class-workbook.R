@@ -4666,8 +4666,11 @@ lcr <- function(var) {
 #' @return The sheet index
 #' @export
 wb_get_sheet_name = function(wb, index = NULL) {
-
   index <- index %||% seq_along(wb$sheet_names)
+
+  # index should be integer like
+  stopifnot(is_integer_ish(index))
+
   n <- length(wb$sheet_names)
 
   if (any(sheetIndex > n)) {
