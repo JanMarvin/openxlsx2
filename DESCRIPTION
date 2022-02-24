@@ -25,7 +25,8 @@ Imports:
     utils,
     zip,
     stringi,
-    R6
+    R6,
+    magrittr
 LinkingTo: 
     Rcpp
 Suggests:
