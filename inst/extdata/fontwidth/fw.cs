@@ -1,3 +1,12 @@
+/*
+ * cd openxlsx2/inst/extdata/fontwidth
+ * csc fw.cs
+ * mono fw.exe
+ * 
+ * requires 96 dpi monitor settings
+ * 
+ */
+
 using System;
 using System.Drawing;
 using System.Drawing.Text;
