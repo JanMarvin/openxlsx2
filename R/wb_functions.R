@@ -410,7 +410,7 @@ wb_to_df <- function(
   if (!is.na(na.strings) | !missing(na.strings)) {
     sel <- cc$val %in% na.strings
     cc$val[sel] <- "NA"
-    cc$typ[sel] <- NA
+    cc$typ[sel] <- "na_string"
   }
   # dates
   if (!is.null(cc$c_s)) {
@@ -429,6 +429,9 @@ wb_to_df <- function(
   sel <- is.na(cc$typ)
   cc$val[sel] <- cc$v[sel]
   cc$typ[sel] <- "n"
+
+  # convert "na_string" to missing
+  cc$typ[cc$typ == "na_string"] <- NA
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
