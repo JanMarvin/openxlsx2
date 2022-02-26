@@ -254,7 +254,7 @@ wb_add_worksheet <- function(
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheetName A name for the new worksheet
 #' @param clonedSheet The name of the existing worksheet to be cloned.
-#' @return XML tree
+#' @return The `wb` object
 #' @export
 #' @examples
 #' ## Create a new workbook
@@ -262,52 +262,15 @@ wb_add_worksheet <- function(
 #'
 #' ## Add 3 worksheets
 #' wb_add_worksheet(wb, "Sheet 1")
-#' cloneWorksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
+#' wb_clone_worksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 #' }
-cloneWorksheet <- function(wb, sheetName, clonedSheet) {
+wb_clone_worksheet <- function(wb, sheetName, clonedSheet) {
   assert_workbook(wb)
-
-  # TODO move these checks into Workbook$cloneWorksheet()
-
-  if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
-    stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
-  }
-
-  if (nchar(sheetName) > 31) {
-    stop("sheetName too long! Max length is 31 characters.")
-  }
-
-  if (!is.character(sheetName)) {
-    sheetName <- as.character(sheetName)
-  }
-
-
-  ## Invalid XML characters
-  sheetName <- replaceIllegalCharacters(sheetName)
-  wb$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
-  # TODO change to return wb$clone()$cloneWorksheet(...) [which returns self]
-  # TODO use wb_clone_worksheet()
-  invisible(length(wb$worksheets))
-}
-
-wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
-  assert_workbook(wb)
-  if (!missing(sheetName)) {
-    warning("sheetName is soft deprecated: use old")
-    old <- sheetName
-  }
-
-  if (!missing(sheetName)) {
-    warning("clonedSheet is soft deprecated: use new")
-    new <- clonedSheet
-  }
-
-  # TODO use old_sheet, new_sheet
-  wb$clone()$cloneWorksheet(sheetName = old, clonedSheet = new)
+  wb$clone()$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
 }
 
 

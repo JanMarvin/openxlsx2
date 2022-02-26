@@ -146,7 +146,8 @@ test_that("Save and load Table Deletion", {
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars"))
 
   temp_file <- temp_xlsx()
-  wb_save(wb, temp_file)
+  # why does this fail?
+  wb$save(temp_file)
   wb <- loadWorkbook(file = temp_file)
 
   expect_equal(length(wb$tables), 1L)

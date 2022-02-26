@@ -471,6 +471,21 @@ wbWorkbook <- R6::R6Class(
     #' @param sheetName sheetName
     #' @param clonedSheet clonedSheet
     cloneWorksheet = function(sheetName, clonedSheet) {
+      if (tolower(sheetName) %in% tolower(self$sheet_names)) {
+        stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
+      }
+
+      if (nchar(sheetName) > 31) {
+        stop("sheetName too long! Max length is 31 characters.")
+      }
+
+      if (!is.character(sheetName)) {
+        sheetName <- as.character(sheetName)
+      }
+
+      ## Invalid XML characters
+      sheetName <- replaceIllegalCharacters(sheetName)
+
       clonedSheet <- wb_validate_sheet(self, clonedSheet)
       if (!missing(sheetName)) {
         if (grepl(pattern = ":", x = sheetName)) {

@@ -2,9 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{cloneWorksheet}
 \alias{cloneWorksheet}
+\alias{wb_clone_worksheet}
 \title{Clone a worksheet to a workbook}
 \usage{
-cloneWorksheet(wb, sheetName, clonedSheet)
+wb_clone_worksheet(wb, sheetName, clonedSheet)
 }
 \arguments{
 \item{wb}{A Workbook object to attach the new worksheet}
@@ -14,7 +15,7 @@ cloneWorksheet(wb, sheetName, clonedSheet)
 \item{clonedSheet}{The name of the existing worksheet to be cloned.}
 }
 \value{
-XML tree
+The \code{wb} object
 }
 \description{
 Clone a worksheet to a Workbook object
@@ -25,7 +26,7 @@ wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
 wb_add_worksheet(wb, "Sheet 1")
-cloneWorksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
+wb_clone_worksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
 
 ## Save workbook
 \dontrun{

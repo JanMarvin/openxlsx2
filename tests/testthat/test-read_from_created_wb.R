@@ -4,7 +4,7 @@ test_that("Reading from new workbook", {
 
   wb <- wb_workbook()
   for (i in 1:4) {
-    wb_add_worksheet(wb, sprintf("Sheet %s", i))
+    wb$addWorksheet(sprintf("Sheet %s", i))
   }
 
 
@@ -62,13 +62,13 @@ test_that("Reading NAs and NaN values", {
 
   wb <- wb_workbook()
 
-  wb <- wb_add_worksheet(wb, "Sheet 1")
+  wb$addWorksheet("Sheet 1")
   writeData(wb, 1, a, keepNA = FALSE)
 
-  wb <- wb_add_worksheet(wb, "Sheet 2")
+  wb$addWorksheet("Sheet 2")
   writeData(wb, 2, a, keepNA = TRUE)
 
-  wb <- wb_add_worksheet(wb, "Sheet 3")
+  wb$addWorksheet("Sheet 3")
   writeData(wb, 3, a, keepNA = TRUE, na.string = na.string)
 
   wb_save(wb, path = fileName, overwrite = TRUE)
