@@ -114,6 +114,12 @@ getDateOrigin <- function(xlsxFile) {
 #' convert back to ExcelDate
 #' @param df dataframe
 #' @param date1904 take different origin
+#' @examples 
+#'  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+#'  wb1 <- loadWorkbook(xlsxFile)
+#'  df <- wb_to_df(wb1)
+#'  # conversion is done on dataframes only
+#'  convertToExcelDate(df = df["Var5"], date1904 = FALSE)
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
   isPOSIXlt <- function(data) vapply(data, inherits, NA, "POSIXlt")
