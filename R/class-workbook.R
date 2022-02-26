@@ -3984,7 +3984,7 @@ wbWorkbook <- R6::R6Class(
       state <- rep.int("visible", nSheets)
       hidden <- grepl("hidden", self$workbook$sheets)
       state[hidden] <- "hidden"
-      visible_sheet_index <- which(!hidden)
+      visible_sheet_index <- which(!hidden)[1] # first visible
 
       if (is.null(self$workbook$bookViews))
         self$workbook$bookViews <-
