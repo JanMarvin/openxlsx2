@@ -24,7 +24,7 @@ namespace openxlsx2
             using (var stream = File.CreateText(file))
             {
 
-                string row  = string.Format("FontFamilyName, FontSize, Width");
+                string row  = string.Format("FontFamilyName, FontSize, Width, dpiX, dpiY");
                 
                 stream.WriteLine(row);
             
@@ -39,14 +39,19 @@ namespace openxlsx2
                         graphics.PageUnit = GraphicsUnit.Pixel;
                         StringFormat strFormat = new StringFormat(StringFormat.GenericTypographic);
                         
-                        for (int fontSize = 11; fontSize <= 20; fontSize++)
+                        for (int fontSize = 2; fontSize <= 25; fontSize++)
                         {
                             Font font = new Font(fontFamilies[i].Name, fontSize, FontStyle.Regular);
                             float digitWidth = graphics.MeasureString("00000000", font, 1000, strFormat).Width / 8;
                             font.Dispose();
                             float dpix = graphics.DpiX;
                             float dpiy = graphics.DpiY;
-                            row  = string.Format("{0}, {1}, {2}, {3}, {4}", font.OriginalFontName, font.SizeInPoints, digitWidth, dpix, dpiy); // font.FontFamily.Name
+                            row  = string.Format("{0}, {1}, {2}, {3}, {4}",
+                                                 font.OriginalFontName,
+                                                 font.SizeInPoints,
+                                                 Math.Round(digitWidth),
+                                                 dpix,
+                                                 dpiy); // font.FontFamily.Name
                             
                             stream.WriteLine(row);
                         }
