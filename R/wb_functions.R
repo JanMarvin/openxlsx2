@@ -61,16 +61,16 @@ guess_col_type <- function(tt) {
   names(types) <- names(tt)
 
   # but some values are numeric
-  col_num <- vapply(tt, function(x) all(x[is.na(x) == FALSE] == "n"), NA)
-  types[names(col_num[col_num == TRUE])] <- 1
+  col_num <- vapply(tt, function(x) all(x == "n", na.rm = TRUE), NA)
+  types[names(col_num[col_num])] <- 1
 
   # or even date
-  col_dte <- vapply(tt[!col_num], function(x) all(x[is.na(x) == FALSE] == "d"), NA)
-  types[names(col_dte[col_dte == TRUE])] <- 2
+  col_dte <- vapply(tt[!col_num], function(x) all(x == "d", na.rm = TRUE), NA)
+  types[names(col_dte[col_dte])] <- 2
 
   # there are bools as well
-  col_dte <- vapply(tt[!col_num], function(x) any(x[is.na(x) == FALSE] == "b"), NA)
-  types[names(col_dte[col_dte == TRUE])] <- 3
+  col_log <- vapply(tt[!col_num], function(x) any(x == "b", na.rm = TRUE), NA)
+  types[names(col_log[col_log])] <- 3
 
   types
 }
@@ -245,7 +245,7 @@ wb_to_df <- function(
       sheet <- substitute()
 
     # possible false positive on current lintr runs
-    wb <- loadWorkbook(xlsxFile, sheet = sheet) # nolint 
+    wb <- loadWorkbook(xlsxFile, sheet = sheet) # nolint
   } else {
     wb <- xlsxFile
   }
