@@ -86,7 +86,6 @@ test_that("wb_to_df", {
   expect_equal(test, got, check.attributes = FALSE)
 
   # na string
-  # FIXME This should not be equal.
   got <- wb_to_df(wb1, na.strings = "")
   expect_equal("#N/A", got$Var7[2], check.attributes = FALSE)
 
