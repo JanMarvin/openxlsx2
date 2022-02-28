@@ -49,12 +49,25 @@ test_that("Writing mixed EDT/EST Posixct with writeData & writeDataTable", {
   # wb_open(wb)
   xlsxFile <- temp_xlsx()
   saveWorkbook(wb, xlsxFile, TRUE)
-  wb <- wb_to_df(xlsxFile)
 
+  wb_s1 <- wb_to_df(xlsxFile, sheet = "writeData")
+  wb_s2 <- wb_to_df(xlsxFile, sheet = "writeDataTable")
+
+  # compare sheet 1
   exp <- df$timeval
-  got <- wb$timeval
+  got <- wb_s1$timeval
 
-  # compare
+  expect_equal(
+    exp,
+    got,
+    tolerance = 10 ^ -10,
+    check.tzone = FALSE
+  )
+
+  # compare sheet 2
+  exp <- df$timeval
+  got <- wb_s2$timeval
+
   expect_equal(
     exp,
     got,
