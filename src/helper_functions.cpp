@@ -104,7 +104,9 @@ SEXP rbindlist(Rcpp::List x) {
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 
-  auto n = zz.nrow();
+  size_t n = zz.nrow();
+  size_t z_cols = z.cols(), z_rows = z.rows();
+  size_t col = 0, row = 0;
 
   Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::IntegerVector cols = zz["cols"];
@@ -112,8 +114,14 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   Rcpp::CharacterVector typs = zz["typ"];
 
   for (auto i = 0; i < n; ++i) {
-    Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
-    Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
+    col = cols[i];
+    row = rows[i];
+
+    // need to check for missing values
+    if ((col <= z_cols) & (row <= z_rows)) {
+      Rcpp::as<Rcpp::CharacterVector>(z[col])[row] = vals[i];
+      Rcpp::as<Rcpp::CharacterVector>(tt[col])[row] = typs[i];
+    }
   }
 }
 
