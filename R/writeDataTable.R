@@ -34,6 +34,8 @@
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
+#' contains this string, the output will be broken.
 #' @seealso [addWorksheet()]
 #' @seealso [writeData()]
 #' @seealso [removeTable()]

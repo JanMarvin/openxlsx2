@@ -38,6 +38,10 @@ writeData2(
 \description{
 dummy function to write data
 }
+\details{
+The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame
+contains this string, the output will be broken.
+}
 \examples{
 # create a workbook and add some sheets
 wb <- createWorkbook()

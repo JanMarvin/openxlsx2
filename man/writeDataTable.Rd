@@ -83,6 +83,8 @@ Write to a worksheet and format as an Excel table
 columns of x with class Date/POSIXt, currency, accounting,
 hyperlink, percentage are automatically styled as dates, currency, accounting,
 hyperlinks, percentages respectively.
+The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame
+contains this string, the output will be broken.
 }
 \examples{
 ## see package vignettes for further examples.
