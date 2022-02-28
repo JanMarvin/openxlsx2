@@ -64,6 +64,11 @@ test_that("Writing mixed EDT/EST Posixct with writeData & writeDataTable", {
     check.tzone = FALSE
   )
 
+  exp <- df$timetxt
+  got <- wb_s1$timetxt
+
+  expect_equal(exp, got)
+
   # compare sheet 2
   exp <- df$timeval
   got <- wb_s2$timeval
@@ -74,6 +79,11 @@ test_that("Writing mixed EDT/EST Posixct with writeData & writeDataTable", {
     tolerance = 10 ^ -10,
     check.tzone = FALSE
   )
+
+  exp <- df$timetxt
+  got <- wb_s2$timetxt
+
+  expect_equal(exp, got)
 
   options("openxlsx.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 })

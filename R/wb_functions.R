@@ -456,7 +456,7 @@ wb_to_df <- function(
   # convert missings
   if (!is.na(na.strings) | !missing(na.strings)) {
     sel <- cc$val %in% na.strings
-    cc$val[sel] <- "NA"
+    cc$val[sel] <- NA_character_
     cc$typ[sel] <- "na_string"
   }
 
@@ -1073,14 +1073,24 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       }
     }
 
+    sel <- which(dc == "character")
+    for (i in sel) {
+      data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+    }
+
     wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
 
     # if any v is missing, set typ to 'e'. v is only filled for non character
     # values, but contains a string. To avoid issues, set it to the missing
     # value expression
+
+    ## fix missing characters (Otherwise NA cannot be differentiated from "NA")
+    sel <- cc$is == "<is><t>_openxlsx_NA</t></is>"
+    cc$v[sel] <- "NA"
+    cc$is[sel] <- "_openxlsx_NA"
+
     cc$v[cc$v == "NA"] <- "#N/A"
     cc$c_t[cc$v == "#N/A"] <- "e"
-
 
     cc$c_s[cc$typ == "0"] <- special_fmts$short_date
     cc$c_s[cc$typ == "1"] <- special_fmts$long_date
