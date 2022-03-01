@@ -68,9 +68,13 @@ guess_col_type <- function(tt) {
   col_dte <- vapply(tt[!col_num], function(x) all(x == "d", na.rm = TRUE), NA)
   types[names(col_dte[col_dte])] <- 2
 
+  # or even posix
+  col_dte <- vapply(tt[!col_num], function(x) all(x == "p", na.rm = TRUE), NA)
+  types[names(col_dte[col_dte])] <- 3
+
   # there are bools as well
   col_log <- vapply(tt[!col_num], function(x) any(x == "b", na.rm = TRUE), NA)
-  types[names(col_log[col_log])] <- 3
+  types[names(col_log[col_log])] <- 4
 
   types
 }
@@ -92,14 +96,41 @@ numfmt_is_date <- function(numFmt) {
   date_fmts <- c(
     "yy", "yyyy",
     "m", "mm", "mmm", "mmmm", "mmmmm",
-    "d", "dd", "ddd", "dddd",
-    "h", "hh", "m", "mm", "s", "ss",
-    "AM", "PM", "A", "P"
+    "d", "dd", "ddd", "dddd"
   )
   date_or_fmt <- paste0(date_fmts, collapse = "|")
   maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)
 
   z <- numFmt_df$numFmtId[maybe_dates & !maybe_num]
+  if (length(z)==0) z <- NULL
+  z
+}
+
+#' check if numFmt is posix. internal function
+#' @param numFmt numFmt xml nodes
+numfmt_is_posix <- function(numFmt) {
+
+  # if numFmt is character(0)
+  if (length(numFmt) ==0) return(z <- NULL)
+
+  numFmt_df <- read_numfmt(read_xml(numFmt))
+  num_fmts <- c(
+    "#", as.character(0:9)
+  )
+  num_or_fmt <- paste0(num_fmts, collapse = "|")
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$formatCode)
+
+  posix_fmts <- c(
+    "yy", "yyyy",
+    "m", "mm", "mmm", "mmmm", "mmmmm",
+    "d", "dd", "ddd", "dddd",
+    "h", "hh", "m", "mm", "s", "ss",
+    "AM", "PM", "A", "P"
+  )
+  posix_or_fmt <- paste0(posix_fmts, collapse = "|")
+  maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$formatCode)
+
+  z <- numFmt_df$numFmtId[maybe_posix & !maybe_num]
   if (length(z)==0) z <- NULL
   z
 }
@@ -111,7 +142,23 @@ numfmt_is_date <- function(numFmt) {
 style_is_date <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
-  date_numfmts <- as.character(14:22)
+  date_numfmts <- as.character(14:17)
+  numfmt_date <- c(numfmt_date, date_numfmts)
+
+  cellXfs_df <- read_xf(read_xml(cellXfs))
+  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date,])
+  if (length(z)==0) z <- NA
+  z
+}
+
+#' check if style is posix. internal function
+#'
+#' @param cellXfs cellXfs xml nodes
+#' @param numfmt_date custom numFmtId dates
+style_is_posix <- function(cellXfs, numfmt_date) {
+
+  # numfmt_date: some basic date formats and custom formats
+  date_numfmts <- as.character(18:22)
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
@@ -340,12 +387,12 @@ wb_to_df <- function(
   numfmt_date <- numfmt_is_date(wb$styles$numFmts)
   xlsx_date_style <- style_is_date(wb$styles$cellXfs, numfmt_date)
 
+  numfmt_posix <- numfmt_is_posix(wb$styles$numFmts)
+  xlsx_posix_style <- style_is_posix(wb$styles$cellXfs, numfmt_posix)
+
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
   tt <- dims_to_dataframe(dims)
-
-
-
 
   # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
   # names(tt) <- names(z)
@@ -409,9 +456,10 @@ wb_to_df <- function(
   # convert missings
   if (!is.na(na.strings) | !missing(na.strings)) {
     sel <- cc$val %in% na.strings
-    cc$val[sel] <- "NA"
+    cc$val[sel] <- NA_character_
     cc$typ[sel] <- "na_string"
   }
+
   # dates
   if (!is.null(cc$c_s)) {
     # if a cell is t="s" the content is a sst and not da date
@@ -421,10 +469,15 @@ wb_to_df <- function(
 
     if (detectDates) {
       sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string & cc$v != "_openxlsx_NA_"
-      cc$val[sel] <- as.character(convertToDate(cc$v[sel]))
+      cc$val[sel] <- suppressWarnings(as.character(convertToDate(cc$v[sel])))
       cc$typ[sel]  <- "d"
+
+      sel <- (cc$c_s %in% xlsx_posix_style) & !cc$is_string & cc$v != "_openxlsx_NA_"
+      cc$val[sel] <- suppressWarnings(as.character(convertToDateTime(cc$v[sel])))
+      cc$typ[sel]  <- "p"
     }
   }
+
   # remaining values are numeric?
   sel <- is.na(cc$typ)
   cc$val[sel] <- cc$v[sel]
@@ -509,11 +562,13 @@ wb_to_df <- function(
     if (any(sel)) {
       nums <- names( which(types[sel] == 1) )
       dtes <- names( which(types[sel] == 2) )
-      logs <- names( which(types[sel] == 3) )
+      poxs <- names( which(types[sel] == 3) )
+      logs <- names( which(types[sel] == 4) )
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       z[dtes] <- lapply(z[dtes], as.Date)
+      z[poxs] <- lapply(z[poxs], as.POSIXct)
       z[logs] <- lapply(z[logs], as.logical)
     } else {
       warning("could not convert. All missing in row used for variable names")
@@ -839,6 +894,9 @@ nmfmt_df <- function(x) {
 #' @param startRow row to place it
 #' @param startCol col to place it
 #' @param removeCellStyle keep the cell style?
+#' @details
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
+#' contains this string, the output will be broken.
 #'
 #' @examples
 #' # create a workbook and add some sheets
@@ -1018,14 +1076,24 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       }
     }
 
+    sel <- which(dc == "character")
+    for (i in sel) {
+      data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+    }
+
     wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
 
     # if any v is missing, set typ to 'e'. v is only filled for non character
     # values, but contains a string. To avoid issues, set it to the missing
     # value expression
+
+    ## fix missing characters (Otherwise NA cannot be differentiated from "NA")
+    sel <- cc$is == "<is><t>_openxlsx_NA</t></is>"
+    cc$v[sel] <- "NA"
+    cc$is[sel] <- "_openxlsx_NA"
+
     cc$v[cc$v == "NA"] <- "#N/A"
     cc$c_t[cc$v == "#N/A"] <- "e"
-
 
     cc$c_s[cc$typ == "0"] <- special_fmts$short_date
     cc$c_s[cc$typ == "1"] <- special_fmts$long_date

@@ -48,6 +48,7 @@
 #' @export writeData
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
 #' @rdname writeData
 #' @return invisible(0)
 #' @examples
