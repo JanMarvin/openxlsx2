@@ -1,3 +1,16 @@
+#' @name as_POSIXct_utc
+#' @title Convert to POSIXct with timezone UTC
+#' @param x something as.POSIXct can convert
+#' @examples
+#' as_POSIXct_utc(Sys.time())
+#' @export
+as_POSIXct_utc <- function(x) {
+  z <- as.POSIXct(x, tz = "UTC")
+  attr(z, "tzone") <- "UTC"
+  z
+}
+
+
 #' @name convertToDate
 #' @title Convert from excel date number to R Date type
 #' @description Convert from excel date number to R Date type
@@ -114,7 +127,7 @@ getDateOrigin <- function(xlsxFile) {
 #' convert back to ExcelDate
 #' @param df dataframe
 #' @param date1904 take different origin
-#' @examples 
+#' @examples
 #'  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #'  wb1 <- loadWorkbook(xlsxFile)
 #'  df <- wb_to_df(wb1)
