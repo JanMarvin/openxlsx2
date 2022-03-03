@@ -207,8 +207,9 @@ writeDataTable <- function(wb, sheet, x,
 
   ## header style
   if (inherits(headerStyle, "Style")) {
-    addStyle(
-      wb = wb, sheet = sheet, style = headerStyle,
+    wb$addStyle(
+      sheet = sheet,
+      style = headerStyle,
       rows = startRow,
       # cols = 0:(ncol(x) - 1L) + startCol,
       cols = seq_along(x) - 1L + startCol,
