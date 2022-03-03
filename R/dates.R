@@ -2,7 +2,7 @@
 #' @title Convert to POSIXct with timezone UTC
 #' @param x something as.POSIXct can convert
 #' @examples
-#' as_POSIXct_utc(Sys.time())
+#' openxlsx2:::as_POSIXct_utc(Sys.time())
 as_POSIXct_utc <- function(x) {
   z <- as.POSIXct(x, tz = "UTC")
   attr(z, "tzone") <- "UTC"
