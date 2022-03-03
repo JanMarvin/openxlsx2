@@ -316,52 +316,8 @@ wb_clone_worksheet <- function(wb, sheetName, clonedSheet) {
 #' wb_save(wb, "addStyleExample.xlsx", overwrite = TRUE)
 #' }
 addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = FALSE) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (!is.null(style$numFmt) & length(wb$styleObjects)) {
-    if (style$numFmt$numFmtId == 165) {
-      # get max numFmtId
-      maxnumFmtId <- vapply(
-        wb$styleObjects,
-        # was as.integer() needed?  can this just be double?
-        function(i) max(i$style$numFmt$numFmtId, 0),
-        NA_real_
-      )
-      style$numFmt$numFmtId <- as.integer(max(maxnumFmtId, 165L)) + 1L
-    }
-  }
-  sheet <- wb_validate_sheet(wb, sheet)
-
   assert_workbook(wb)
-  assert_style(style)
-
-  if (!is.logical(stack)) {
-    stop("stack parameter must be a logical!")
-  }
-
-  if (length(cols) == 0 | length(rows) == 0) {
-    return(invisible(0))
-  }
-
-  cols <- col2int(cols)
-  rows <- as.integer(rows)
-
-  ## rows and cols need to be the same length
-  if (gridExpand) {
-    n <- length(cols)
-    cols <- rep.int(cols, times = length(rows))
-    rows <- rep(rows, each = n)
-  } else if (length(rows) == 1 & length(cols) > 1) {
-    rows <- rep.int(rows, times = length(cols))
-  } else if (length(cols) == 1 & length(rows) > 1) {
-    cols <- rep.int(cols, times = length(rows))
-  } else if (length(rows) != length(cols)) {
-    stop("Length of rows and cols must be equal.")
-  }
-
-
-  wb$addStyle(sheet = sheet, style = style, rows = rows, cols = cols, stack = stack)
+  wb$clone()$addStyle(sheet = sheet, style = style, rows = rows, cols = cols, stack = stack)
 }
 
 

@@ -2678,6 +2678,50 @@ wbWorkbook <- R6::R6Class(
       cols,
       stack
     ) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (!is.null(style$numFmt) & length(self$styleObjects)) {
+        if (style$numFmt$numFmtId == 165) {
+          # get max numFmtId
+          maxnumFmtId <- vapply(
+            wb$styleObjects,
+            # was as.integer() needed?  can this just be double?
+            function(i) max(i$style$numFmt$numFmtId, 0),
+            NA_real_
+          )
+          style$numFmt$numFmtId <- as.integer(max(maxnumFmtId, 165L)) + 1L
+        }
+      }
+      sheet <- wb_validate_sheet(self, sheet)
+
+      assert_style(style)
+
+      if (!is.logical(stack)) {
+        stop("stack parameter must be a logical!")
+      }
+
+      if (length(cols) == 0 | length(rows) == 0) {
+        return(invisible(0))
+      }
+
+      cols <- col2int(cols)
+      rows <- as.integer(rows)
+
+      # TODO internal expand_vectors() function?
+      ## rows and cols need to bed to bed to be the same length
+      if (gridExpand) {
+        n <- length(cols)
+        cols <- rep.int(cols, times = length(rows))
+        rows <- rep(rows, each = n)
+      } else if (length(rows) == 1 & length(cols) > 1) {
+        rows <- rep.int(rows, times = length(cols))
+      } else if (length(cols) == 1 & length(rows) > 1) {
+        cols <- rep.int(cols, times = length(rows))
+      } else if (length(rows) != length(cols)) {
+        stop("Length of rows and cols must be equal.")
+      }
+
       sheet <- self$sheet_names[[sheet]]
 
       if (length(self$styleObjects) == 0) {
