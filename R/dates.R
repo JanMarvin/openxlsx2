@@ -3,7 +3,6 @@
 #' @param x something as.POSIXct can convert
 #' @examples
 #' as_POSIXct_utc(Sys.time())
-#' @export
 as_POSIXct_utc <- function(x) {
   z <- as.POSIXct(x, tz = "UTC")
   attr(z, "tzone") <- "UTC"
