@@ -2,9 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{freezePane}
 \alias{freezePane}
+\alias{wb_freeze_pane}
 \title{Freeze a worksheet pane}
 \usage{
-freezePane(
+wb_freeze_pane(
   wb,
   sheet,
   firstActiveRow = NULL,
@@ -34,16 +35,16 @@ Freeze a worksheet pane
 wb <- wb_workbook("Kenshin")
 
 ## Add some worksheets
-wb_add_worksheet(wb, "Sheet 1")
-wb_add_worksheet(wb, "Sheet 2")
-wb_add_worksheet(wb, "Sheet 3")
-wb_add_worksheet(wb, "Sheet 4")
+wb <- wb_add_worksheet(wb, "Sheet 1")
+wb <- wb_add_worksheet(wb, "Sheet 2")
+wb <- wb_add_worksheet(wb, "Sheet 3")
+wb <- wb_add_worksheet(wb, "Sheet 4")
 
 ## Freeze Panes
-freezePane(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-freezePane(wb, "Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-freezePane(wb, 3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-freezePane(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
+wb <- wb_freeze_panes(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
+wb <- wb_freeze_panes(wb, "Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
+wb <- wb_freeze_panes(wb, 3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
+wb <- wb_freeze_panes(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
 
 ## Save workbook
 \dontrun{
