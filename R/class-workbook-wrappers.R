@@ -337,60 +337,24 @@ wb_add_style <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack
 #' wb <- wb_workbook("Kenshin")
 #'
 #' ## Add some worksheets
-#' wb_add_worksheet(wb, "Sheet 1")
-#' wb_add_worksheet(wb, "Sheet 2")
-#' wb_add_worksheet(wb, "Sheet 3")
-#' wb_add_worksheet(wb, "Sheet 4")
+#' wb <- wb_add_worksheet(wb, "Sheet 1")
+#' wb <- wb_add_worksheet(wb, "Sheet 2")
+#' wb <- wb_add_worksheet(wb, "Sheet 3")
+#' wb <- wb_add_worksheet(wb, "Sheet 4")
 #'
 #' ## Freeze Panes
-#' freezePane(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-#' freezePane(wb, "Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-#' freezePane(wb, 3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-#' freezePane(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
+#' wb <- wb_freeze_panes(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
+#' wb <- wb_freeze_panes(wb, "Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
+#' wb <- wb_freeze_panes(wb, 3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
+#' wb <- wb_freeze_panes(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 #' }
-freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
-  # TODO should freezePane() be a workbookWorksheet method?
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (is.null(firstActiveRow) & is.null(firstActiveCol) & !firstRow & !firstCol) {
-    return(invisible(0))
-  }
-
-  if (!is.logical(firstRow)) {
-    stop("firstRow must be TRUE/FALSE")
-  }
-
-  if (!is.logical(firstCol)) {
-    stop("firstCol must be TRUE/FALSE")
-  }
-
-  if (firstRow & !firstCol) {
-    invisible(wb$freezePanes(sheet, firstRow = firstRow))
-  } else if (firstCol & !firstRow) {
-    invisible(wb$freezePanes(sheet, firstCol = firstCol))
-  } else if (firstRow & firstCol) {
-    invisible(wb$freezePanes(sheet, firstActiveRow = 2L, firstActiveCol = 2L))
-  } else { ## else both firstRow and firstCol are FALSE
-
-    if (is.null(firstActiveRow)) firstActiveRow <- 1L
-    if (is.null(firstActiveCol)) firstActiveCol <- 1L
-
-    ## Convert to numeric if column letter given
-    if (is.character(firstActiveRow)) {
-      firstActiveRow <- col2int(firstActiveRow)
-    }
-
-    if (is.character(firstActiveCol)) {
-      firstActiveCol <- col2int(firstActiveCol)
-    }
-
-    invisible(wb$freezePanes(sheet, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol, firstRow = firstRow, firstCol = firstCol))
-  }
+wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
+  assert_workbook(wb)
+  invisible(wb$freezePanes(sheet, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol, firstRow = firstRow, firstCol = firstCol))
 }
 
 

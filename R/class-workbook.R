@@ -2472,60 +2472,85 @@ wbWorkbook <- R6::R6Class(
       firstCol = FALSE
     ) {
       # TODO rename to setFreezePanes?
-      sheet <- wb_validate_sheet(self, sheet)
-      paneNode <- NULL
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
 
-      if (firstRow) {
-        paneNode <-
-          '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>'
-      } else if (firstCol) {
-        paneNode <-
-          '<pane xSplit="1" topLeftCell="B1" activePane="topRight" state="frozen"/>'
+      # fine to do the validation before the actual check to prevent other errors
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (is.null(firstActiveRow) & is.null(firstActiveCol) & !firstRow & !firstCol) {
+        return(invisible(self))
       }
 
+      # TODO simplify asserts
+      if (!is.logical(firstRow)) stop("firstRow must be TRUE/FALSE")
+      if (!is.logical(firstCol)) stop("firstCol must be TRUE/FALSE")
 
-      if (is.null(paneNode)) {
-        if (firstActiveRow == 1 & firstActiveCol == 1) {
-          ## nothing to do
-          # return(NULL)
-          return(invisible(self))
-        }
+      # make overwrides for arguments
+      if (firstRow & !firstCol) {
+        firstActiveCol <- NULL
+        firstActiveRow <- NULL
+        firstCol <- FALSE
+      } else if (firstCol & !firstRow) {
+        firstActiveRow <- NULL
+        firstActiveCol <- NULL
+        firstRow <- FALSE
+      } else if (firstRow & firstCol) {
+        firstActiveRow <- 2L
+        firstActiveCol <- 2L
+        firstRow <- FALSE
+        firstCol <- FALSE
+      } else {
+        ## else both firstRow and firstCol are FALSE
+        firstActiveRow <- firstActiveRow %||% 1L
+        firstActiveCol <- firstActiveCol %||% 1L
 
-        if (firstActiveRow > 1 & firstActiveCol == 1) {
-          attrs <- sprintf('ySplit="%s"', firstActiveRow - 1L)
-          activePane <- "bottomLeft"
-        }
+        # Convert to numeric if column letter given
+        # TODO is col2int() safe for non characters?
+        firstActiveRow <- col2int(firstActiveRow)
+        firstActiveCol <- col2int(firstActiveCol)
+      }
 
-        if (firstActiveRow == 1 & firstActiveCol > 1) {
-          attrs <- sprintf('xSplit="%s"', firstActiveCol - 1L)
-          activePane <- "topRight"
-        }
+      paneNode <-
+        if (firstRow) {
+          '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>'
+        } else if (firstCol) {
+          '<pane xSplit="1" topLeftCell="B1" activePane="topRight" state="frozen"/>'
+        } else {
+          if (firstActiveRow == 1 & firstActiveCol == 1) {
+            ## nothing to do
+            # return(NULL)
+            return(invisible(self))
+          }
 
-        if (firstActiveRow > 1 & firstActiveCol > 1) {
-          attrs <-
-            sprintf(
-              'ySplit="%s" xSplit="%s"',
+          if (firstActiveRow > 1 & firstActiveCol == 1) {
+            attrs <- sprintf('ySplit="%s"', firstActiveRow - 1L)
+            activePane <- "bottomLeft"
+          }
+
+          if (firstActiveRow == 1 & firstActiveCol > 1) {
+            attrs <- sprintf('xSplit="%s"', firstActiveCol - 1L)
+            activePane <- "topRight"
+          }
+
+          if (firstActiveRow > 1 & firstActiveCol > 1) {
+            attrs <- sprintf('ySplit="%s" xSplit="%s"',
               firstActiveRow - 1L,
               firstActiveCol - 1L
             )
-          activePane <- "bottomRight"
-        }
+            activePane <- "bottomRight"
+          }
 
-        topLeftCell <-
-          getCellRefs(data.frame(firstActiveRow, firstActiveCol))
-
-        paneNode <-
           sprintf(
             '<pane %s topLeftCell="%s" activePane="%s" state="frozen"/><selection pane="%s"/>',
             stri_join(attrs, collapse = " ", sep = " "),
-            topLeftCell,
+            getCellRefs(data.frame(firstActiveRow, firstActiveCol)),
             activePane,
             activePane
           )
-      }
+        }
 
       self$worksheets[[sheet]]$freezePane <- paneNode
-
       invisible(self)
     },
 
