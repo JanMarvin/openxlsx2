@@ -1580,7 +1580,25 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
     setRowHeights = function(sheet, rows, heights) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
       sheet <- wb_validate_sheet(self, sheet)
+
+      if (length(rows) > length(heights)) {
+        heights <- rep(heights, length.out = length(rows))
+      }
+
+      if (length(heights) > length(rows)) {
+        stop("Greater number of height values than rows.")
+      }
+
+      ## Remove duplicates
+      heights <- heights[!duplicated(rows)]
+      rows <- rows[!duplicated(rows)]
+
+      heights <- as.character(as.numeric(heights))
+      names(heights) <- rows
 
       ## remove any conflicting heights
       flag <- names(self$rowHeights[[sheet]]) %in% rows

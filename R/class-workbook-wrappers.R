@@ -386,26 +386,6 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 #' }
 setRowHeights <- function(wb, sheet, rows, heights) {
   assert_workbook(wb)
-  sheet <- wb_validate_sheet(wb, sheet)
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (length(rows) > length(heights)) {
-    heights <- rep(heights, length.out = length(rows))
-  }
-
-  if (length(heights) > length(rows)) {
-    stop("Greater number of height values than rows.")
-  }
-
-  ## Remove duplicates
-  heights <- heights[!duplicated(rows)]
-  rows <- rows[!duplicated(rows)]
-
-
-  heights <- as.character(as.numeric(heights))
-  names(heights) <- rows
-
   wb$setRowHeights(sheet, rows, heights)
 }
 
