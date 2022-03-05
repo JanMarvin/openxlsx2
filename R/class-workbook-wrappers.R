@@ -358,7 +358,6 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 }
 
 
-#' @name setRowHeights
 #' @title Set worksheet row heights
 #' @description Set worksheet row heights
 #' @param wb A workbook object
@@ -375,16 +374,20 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 #' wb_add_worksheet(wb, "Sheet 1")
 #'
 #' ## set row heights
-#' setRowHeights(wb, 1, rows = c(1, 4, 22, 2, 19), heights = c(24, 28, 32, 42, 33))
+#' wb <- wb_set_row_heights(
+#'   wb, 1,
+#'   rows = c(1, 4, 22, 2, 19),
+#'   heights = c(24, 28, 32, 42, 33)
+#' )
 #'
 #' ## overwrite row 1 height
-#' setRowHeights(wb, 1, rows = 1, heights = 40)
+#' wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
 #' }
-setRowHeights <- function(wb, sheet, rows, heights) {
+wb_set_row_heights <- function(wb, sheet, rows, heights) {
   assert_workbook(wb)
   wb$setRowHeights(sheet, rows, heights)
 }

@@ -229,7 +229,7 @@ conditionalFormatting(wb, "colourScale",
 )
 
 setColWidths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
-setRowHeights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
+wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
 ## Databars
 writeData(wb, "databar", -5:5)

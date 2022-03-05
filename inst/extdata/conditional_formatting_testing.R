@@ -53,12 +53,12 @@ writeData(wb, "colourScale", df, colNames=FALSE)  ## write data.frame
 
 ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
 conditionalFormatting(wb, "colourScale", cols=1:ncol(df), rows=1:nrow(df),
-   style = c("black", "red", "white"), 
+   style = c("black", "red", "white"),
    rule = c(0, 100, 255), #If rule is NULL, min and max are used. Rule must be the same length as style or NULL.
    type = "colourScale")
 
 setColWidths(wb, "colourScale", cols = 1:ncol(df), widths = 1.07)
-setRowHeights(wb, "colourScale", rows = 1:nrow(df), heights = 7.5) 
+wb$setRowHeights("colourScale", rows = 1:nrow(df), heights = 7.5)
 
 ## Databars
 writeData(wb, "databar", -5:5)
