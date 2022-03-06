@@ -180,7 +180,6 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
   return df;
 }
 
-//' @import Rcpp
 // this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
 void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {

@@ -1,6 +1,5 @@
 #' @name writeData
 #' @title Write an object to a worksheet
-#' @import stringi
 #' @description Write an object to worksheet with optional styling.
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.

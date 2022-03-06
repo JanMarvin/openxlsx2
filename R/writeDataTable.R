@@ -40,7 +40,6 @@
 #' @seealso [writeData()]
 #' @seealso [removeTable()]
 #' @seealso [getTables()]
-#' @importFrom stats na.omit
 #' @export
 #' @examples
 #' ## see package vignettes for further examples.

@@ -14,7 +14,6 @@ wb_workbook <- function() {
 #' @export
 #' @seealso [loadWorkbook()]
 #' @seealso [saveWorkbook()]
-#' @import methods
 #' @examples
 #' ## Create a new workbook
 #' wb <- createWorkbook()
@@ -831,7 +830,6 @@ removeRowHeights <- function(wb, sheet, rows) {
 #' @param dpi Image resolution
 #' @seealso [insertImage()]
 #' @export
-#' @importFrom grDevices bmp png jpeg tiff dev.copy dev.list dev.off
 #' @examples
 #' \dontrun{
 #' ## Create a new workbook
@@ -2566,7 +2564,6 @@ getCreators <- function(wb) {
 #' @param startCol Column coordinate of upper left corner of the image
 #' @param units Units of width and height. Can be "in", "cm" or "px"
 #' @param dpi Image resolution used for conversion between units.
-#' @importFrom grDevices bmp png jpeg
 #' @seealso [insertPlot()]
 #' @export
 #' @examples

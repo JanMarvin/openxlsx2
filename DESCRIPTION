@@ -19,7 +19,6 @@ Depends:
     R (>= 3.3.0)
 Imports:
     grDevices,
-    methods,
     Rcpp,
     stats,
     utils,
