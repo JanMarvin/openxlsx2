@@ -384,11 +384,11 @@ wb_to_df <- function(
 
   rnams <- row_attr$r
 
-  numfmt_date <- numfmt_is_date(wb$styles$numFmts)
-  xlsx_date_style <- style_is_date(wb$styles$cellXfs, numfmt_date)
+  numfmt_date <- numfmt_is_date(wb$styles_mgr$styles$numFmts)
+  xlsx_date_style <- style_is_date(wb$styles_mgr$styles$cellXfs, numfmt_date)
 
-  numfmt_posix <- numfmt_is_posix(wb$styles$numFmts)
-  xlsx_posix_style <- style_is_posix(wb$styles$cellXfs, numfmt_posix)
+  numfmt_posix <- numfmt_is_posix(wb$styles_mgr$styles$numFmts)
+  xlsx_posix_style <- style_is_posix(wb$styles_mgr$styles$cellXfs, numfmt_posix)
 
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
@@ -1030,7 +1030,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     names(cc) <- nams
 
     # update a few styles informations
-    wb$styles$numFmts <- character()
+    wb$styles_mgr$styles$numFmts <- character()
 
     ## create a cell style format for specific types at the end of the existing
     # styles. gets the reference an passes it on.
@@ -1043,7 +1043,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     if (any(dc == "scientific")) scientific_fmt <- write_xf(nmfmt_df(48))
     if (any(dc == "comma")) comma_fmt      <- write_xf(nmfmt_df(3))
 
-    wb$styles$cellXfs <- c(wb$styles$cellXfs,
+    wb$styles_mgr$styles$cellXfs <- c(wb$styles_mgr$styles$cellXfs,
                            short_date_fmt, long_date_fmt,
                            accounting_fmt,
                            percentage_fmt,
@@ -1052,7 +1052,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     # get the last style id
     style_id <- function(cellfmt) {
-      style_id <- which(wb$styles$cellXfs == cellfmt)
+      style_id <- which(wb$styles_mgr$styles$cellXfs == cellfmt)
       # get the last id, the one we have just written. return them as
       # 0-index and minimum value of 0
       if (length(style_id)) max(style_id - 1, 0) else 0
@@ -1104,7 +1104,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
-    wb$styles$dxfs <- character()
+    wb$styles_mgr$styles$dxfs <- character()
 
   } else {
     # update cell(s)

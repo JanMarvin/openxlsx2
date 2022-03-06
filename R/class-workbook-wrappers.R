@@ -1023,7 +1023,7 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
   if (fontSize < 0) stop("Invalid fontSize")
   fontColour <- validateColour(fontColour)
 
-  wb$styles$fonts[[1]] <- sprintf('<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>', fontSize, fontColour, fontName)
+  wb$styles_mgr$styles$fonts[[1]] <- sprintf('<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>', fontSize, fontColour, fontName)
 }
 
 

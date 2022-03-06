@@ -444,7 +444,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     # assign("styleObjects", styleObjects, globalenv())
     wb$styles_xml <- read_xml(stylesXML, pointer = FALSE)
 
-    wb$styles <- import_styles(wb$styles_xml)
+    wb$styles_mgr$styles <- import_styles(wb$styles_xml)
+    wb$styles_mgr$initialize(wb)
 
   } else {
     wb$styleObjects <- list()

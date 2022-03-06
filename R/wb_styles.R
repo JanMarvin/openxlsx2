@@ -230,8 +230,8 @@ create_border <- function(
 merge_borders <- function(wb, new_borders) {
 
   # read old and new into dataframe
-  if (length(wb$styles$borders)) {
-    old <- read_border(read_xml(wb$styles$borders))
+  if (length(wb$styles_mgr$styles$borders)) {
+    old <- read_border(read_xml(wb$styles_mgr$styles$borders))
     new <- read_border(read_xml(new_borders))
 
     # get new rownames
@@ -242,9 +242,9 @@ merge_borders <- function(wb, new_borders) {
     # both have identical length, therefore can be rbind
     borders <- rbind(old, new)
 
-    wb$styles$borders <- write_border(borders)
+    wb$styles_mgr$styles$borders <- write_border(borders)
   } else {
-    wb$styles$borders <- new_borders
+    wb$styles_mgr$styles$borders <- new_borders
     new_rownames <- seq_along(new_borders)
   }
 
@@ -278,9 +278,9 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' @export
 merge_numFmts <- function(wb, new_numfmts) {
 
-  if (length(wb$styles$numFmts)) {
+  if (length(wb$styles_mgr$styles$numFmts)) {
     # read old and new into dataframe
-    old <- read_numfmt(read_xml(wb$styles$numFmts))
+    old <- read_numfmt(read_xml(wb$styles_mgr$styles$numFmts))
     new <- read_numfmt(read_xml(new_numfmts))
 
     # get new rownames
@@ -291,9 +291,9 @@ merge_numFmts <- function(wb, new_numfmts) {
     # both have identical length, therefore can be rbind
     numfmts <- rbind(old, new)
 
-    wb$styles$numFmts <- write_numfmt(numfmts)
+    wb$styles_mgr$styles$numFmts <- write_numfmt(numfmts)
   } else {
-    wb$styles$numFmts <- new_numfmts
+    wb$styles_mgr$styles$numFmts <- new_numfmts
     new_rownames <- seq_along(new_numfmts)
   }
 
@@ -440,8 +440,8 @@ merge_fonts <- function(wb, new_fonts) {
 
   # read old and new into dataframe
 
-  if (length(wb$styles$fonts)) {
-    old <- read_font(read_xml(wb$styles$fonts))
+  if (length(wb$styles_mgr$styles$fonts)) {
+    old <- read_font(read_xml(wb$styles_mgr$styles$fonts))
     new <- read_font(read_xml(new_fonts))
 
     # get new rownames
@@ -452,9 +452,9 @@ merge_fonts <- function(wb, new_fonts) {
     # both have identical length, therefore can be rbind
     fonts <- rbind(old, new)
 
-    wb$styles$fonts <- write_font(fonts)
+    wb$styles_mgr$styles$fonts <- write_font(fonts)
   } else {
-    wb$styles$fonts <- new_fonts
+    wb$styles_mgr$styles$fonts <- new_fonts
     new_rownames <- seq_along(new_fonts)
   }
 
@@ -508,8 +508,8 @@ create_fill <- function(
 merge_fills <- function(wb, new_fills) {
 
   # read old and new into dataframe
-  if (length(wb$styles$fills)) {
-    old <- read_fill(read_xml(wb$styles$fills))
+  if (length(wb$styles_mgr$styles$fills)) {
+    old <- read_fill(read_xml(wb$styles_mgr$styles$fills))
     new <- read_fill(read_xml(new_fills))
 
     # get new rownames
@@ -520,9 +520,9 @@ merge_fills <- function(wb, new_fills) {
     # both have identical length, therefore can be rbind
     fills <- rbind(old, new)
 
-    wb$styles$fills <- write_fill(fills)
+    wb$styles_mgr$styles$fills <- write_fill(fills)
   } else {
-    wb$styles$fills <- new_fills
+    wb$styles_mgr$styles$fills <- new_fills
     new_rownames <- seq_along(new_fills)
   }
 
@@ -671,7 +671,7 @@ create_cell_style <- function(
 merge_cellXfs <- function(wb, new_cellxfs) {
 
   # read old and new into dataframe
-  old <- read_xf(read_xml(wb$styles$cellXfs))
+  old <- read_xf(read_xml(wb$styles_mgr$styles$cellXfs))
   new <- read_xf(read_xml(new_cellxfs))
 
   # get new rownames
@@ -682,7 +682,7 @@ merge_cellXfs <- function(wb, new_cellxfs) {
   # both have identical length, therefore can be rbind
   cellxfs <- rbind(old, new)
 
-  wb$styles$cellXfs <- write_xf(cellxfs)
+  wb$styles_mgr$styles$cellXfs <- write_xf(cellxfs)
 
   attr(wb, "wb_styles") <- new_rownames
   # let the user now, which styles are new
