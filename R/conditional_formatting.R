@@ -637,7 +637,8 @@ conditionalFormatting <-
       rule <- style
     }
 
-
+    # FIXME override to create conditionalFormatting
+    dxfId <- 1
 
     invisible(
       wb$conditionalFormatting(
