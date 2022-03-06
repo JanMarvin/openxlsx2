@@ -1,8 +1,3 @@
-
-
-
-
-
 #' @name conditionalFormatting
 #' @aliases databar
 #' @title Add conditional formatting to cells
@@ -90,209 +85,197 @@
 #' @examples
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "cellIs")
-#' addWorksheet(wb, "Moving Row")
-#' addWorksheet(wb, "Moving Col")
-#' addWorksheet(wb, "Dependent on")
-#' addWorksheet(wb, "Duplicates")
-#' addWorksheet(wb, "containsText")
-#' addWorksheet(wb, "notcontainsText")
-#' addWorksheet(wb, "beginsWith")
-#' addWorksheet(wb, "endsWith")
-#' addWorksheet(wb, "colourScale", zoom = 30)
-#' addWorksheet(wb, "databar")
-#' addWorksheet(wb, "between")
-#' addWorksheet(wb, "topN")
-#' addWorksheet(wb, "bottomN")
-#' addWorksheet(wb, "logical operators")
 #'
-#' negStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-#' posStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
+#' # negStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+#' # posStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
+#'
+#'
+#' negStyle <- xml_node_create(
+#'   "dxf",
+#'   xml_children = c(
+#'     create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+#'     create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+#'   )
+#' )
+#'
+#' posStyle <- xml_node_create(
+#'   "dxf",
+#'   xml_children = c(
+#'     create_font(color = c(rgb = "FF006100"), name = "Calibri", sz = "11"),
+#'     create_fill(patternType = "solid", bgColor = c(rgb = "FFC6EFCE"))
+#'   )
+#' )
+#'
+#' wb$styles_mgr$styles$dxfs <- c(negStyle, posStyle)
+#'
+#' set.seed(123)
 #'
 #' ## rule applies to all each cell in range
 #' writeData(wb, "cellIs", -5:5)
 #' writeData(wb, "cellIs", LETTERS[1:11], startCol = 2)
 #' conditionalFormatting(wb, "cellIs",
-#'   cols = 1,
-#'   rows = 1:11, rule = "!=0", style = negStyle
-#' )
-#' conditionalFormatting(wb, "cellIs",
-#'   cols = 1,
-#'   rows = 1:11, rule = "==0", style = posStyle
+#'                       cols = 1,
+#'                       rows = 1:11, rule = "!=0", style = negStyle
 #' )
 #'
+#' conditionalFormatting(wb, "cellIs",
+#'                       cols = 1,
+#'                       rows = 1:11, rule = "==0", style = posStyle
+#' )
+#'
+#'
+#' addWorksheet(wb, "Moving Row")
 #' ## highlight row dependent on first cell in row
 #' writeData(wb, "Moving Row", -5:5)
 #' writeData(wb, "Moving Row", LETTERS[1:11], startCol = 2)
 #' conditionalFormatting(wb, "Moving Row",
-#'   cols = 1:2,
-#'   rows = 1:11, rule = "$A1<0", style = negStyle
+#'                       cols = 1:2,
+#'                       rows = 1:11, rule = "$A1<0", style = negStyle
 #' )
 #' conditionalFormatting(wb, "Moving Row",
-#'   cols = 1:2,
-#'   rows = 1:11, rule = "$A1>0", style = posStyle
+#'                       cols = 1:2,
+#'                       rows = 1:11, rule = "$A1>0", style = posStyle
 #' )
 #'
+#'
+#' addWorksheet(wb, "Moving Col")
 #' ## highlight column dependent on first cell in column
 #' writeData(wb, "Moving Col", -5:5)
 #' writeData(wb, "Moving Col", LETTERS[1:11], startCol = 2)
 #' conditionalFormatting(wb, "Moving Col",
-#'   cols = 1:2,
-#'   rows = 1:11, rule = "A$1<0", style = negStyle
+#'                       cols = 1:2,
+#'                       rows = 1:11, rule = "A$1<0", style = negStyle
 #' )
 #' conditionalFormatting(wb, "Moving Col",
-#'   cols = 1:2,
-#'   rows = 1:11, rule = "A$1>0", style = posStyle
+#'                       cols = 1:2,
+#'                       rows = 1:11, rule = "A$1>0", style = posStyle
 #' )
 #'
+#'
+#' addWorksheet(wb, "Dependent on")
 #' ## highlight entire range cols X rows dependent only on cell A1
 #' writeData(wb, "Dependent on", -5:5)
 #' writeData(wb, "Dependent on", LETTERS[1:11], startCol = 2)
 #' conditionalFormatting(wb, "Dependent on",
-#'   cols = 1:2,
-#'   rows = 1:11, rule = "$A$1<0", style = negStyle
+#'                       cols = 1:2,
+#'                       rows = 1:11, rule = "$A$1<0", style = negStyle
 #' )
 #' conditionalFormatting(wb, "Dependent on",
-#'   cols = 1:2,
-#'   rows = 1:11, rule = "$A$1>0", style = posStyle
+#'                       cols = 1:2,
+#'                       rows = 1:11, rule = "$A$1>0", style = posStyle
 #' )
+#'
 #'
 #' ## highlight cells in column 1 based on value in column 2
 #' writeData(wb, "Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
 #' conditionalFormatting(wb, "Dependent on",
-#'   cols = 1,
-#'   rows = 16:25, rule = "B16<0.5", style = negStyle
+#'                       cols = 1,
+#'                       rows = 16:25, rule = "B16<0.5", style = negStyle
 #' )
 #' conditionalFormatting(wb, "Dependent on",
-#'   cols = 1,
-#'   rows = 16:25, rule = "B16>=0.5", style = posStyle
+#'                       cols = 1,
+#'                       rows = 16:25, rule = "B16>=0.5", style = posStyle
 #' )
 #'
 #'
+#' addWorksheet(wb, "Duplicates")
 #' ## highlight duplicates using default style
 #' writeData(wb, "Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
 #' conditionalFormatting(wb, "Duplicates", cols = 1, rows = 1:10, type = "duplicates")
 #'
+#'
+#' addWorksheet(wb, "containsText")
 #' ## cells containing text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "containsText", sapply(1:10, fn))
 #' conditionalFormatting(wb, "containsText", cols = 1, rows = 1:10, type = "contains", rule = "A")
 #'
+#'
+#' addWorksheet(wb, "notcontainsText")
 #' ## cells not containing text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "containsText", sapply(1:10, fn))
 #' conditionalFormatting(wb, "notcontainsText", cols = 1,
-#'                      rows = 1:10, type = "notcontains", rule = "A")
+#'                       rows = 1:10, type = "notcontains", rule = "A")
 #'
 #'
+#' addWorksheet(wb, "beginsWith")
 #' ## cells begins with text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "beginsWith", sapply(1:100, fn))
 #' conditionalFormatting(wb, "beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
 #'
 #'
+#' addWorksheet(wb, "endsWith")
 #' ## cells ends with text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 #' writeData(wb, "endsWith", sapply(1:100, fn))
 #' conditionalFormatting(wb, "endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
 #'
+#' addWorksheet(wb, "colourScale", zoom = 30)
 #' ## colourscale colours cells based on cell value
 #' df <- read.xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
 #' writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
-#'
 #' ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
 #' ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
 #' conditionalFormatting(wb, "colourScale",
-#'   cols = seq_along(df), rows = 1:nrow(df),
-#'   style = c("black", "white"),
-#'   rule = c(0, 255),
-#'   type = "colourScale"
+#'                       cols = seq_along(df), rows = 1:nrow(df),
+#'                       style = c("black", "white"),
+#'                       rule = c(0, 255),
+#'                       type = "colourScale"
 #' )
-#'
 #' setColWidths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
 #' setRowHeights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 #'
+#' addWorksheet(wb, "databar")
 #' ## Databars
 #' writeData(wb, "databar", -5:5)
 #' conditionalFormatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Default colours
 #'
+#' addWorksheet(wb, "between")
 #' ## Between
 #' # Highlight cells in interval [-2, 2]
 #' writeData(wb, "between", -5:5)
 #' conditionalFormatting(wb, "between", cols = 1, rows = 1:11, type = "between", rule = c(-2, 2))
 #'
+#' addWorksheet(wb, "topN")
 #' ## Top N
 #' writeData(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
 #' # Highlight top 5 values in column x
 #' conditionalFormatting(wb, "topN", cols = 1, rows = 2:11,
-#'  style = posStyle, type = "topN", rank = 5)#'
+#'                       style = posStyle, type = "topN", rank = 5)#'
 #' # Highlight top 20 percentage in column y
 #' conditionalFormatting(wb, "topN", cols = 2, rows = 2:11,
-#'  style = posStyle, type = "topN", rank = 20, percent = TRUE)
+#'                       style = posStyle, type = "topN", rank = 20, percent = TRUE)
 #'
-#'## Bottom N
+#' addWorksheet(wb, "bottomN")
+#' ## Bottom N
 #' writeData(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
 #' # Highlight bottom 5 values in column x
 #' conditionalFormatting(wb, "bottomN", cols = 1, rows = 2:11,
-#'  style = negStyle, type = "topN", rank = 5)
+#'                       style = negStyle, type = "topN", rank = 5)
 #' # Highlight bottom 20 percentage in column y
 #' conditionalFormatting(wb, "bottomN", cols = 2, rows = 2:11,
-#'  style = negStyle, type = "topN", rank = 20, percent = TRUE)
+#'                       style = negStyle, type = "topN", rank = 20, percent = TRUE)
 #'
+#' addWorksheet(wb, "logical operators")
 #' ## Logical Operators
 #' # You can use Excels logical Operators
 #' writeData(wb, "logical operators", 1:10)
 #' conditionalFormatting(wb, "logical operators",
-#'   cols = 1, rows = 1:10,
-#'   rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
+#'                       cols = 1, rows = 1:10,
+#'                       rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 #' )
-#' \dontrun{
-#' saveWorkbook(wb, "conditionalFormattingExample.xlsx", TRUE)
-#' }
-#'
-#'
-#' #########################################################################
-#' ## Databar Example
-#'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "databar")
-#'
-#' ## Databars
-#' writeData(wb, "databar", -5:5, startCol = 1)
-#' conditionalFormatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Defaults
-#'
-#' writeData(wb, "databar", -5:5, startCol = 3)
-#' conditionalFormatting(wb, "databar", cols = 3, rows = 1:11, type = "databar", border = FALSE)
-#'
-#' writeData(wb, "databar", -5:5, startCol = 5)
-#' conditionalFormatting(wb, "databar",
-#'   cols = 5, rows = 1:11,
-#'   type = "databar", style = c("#a6a6a6"), showValue = FALSE
-#' )
-#'
-#' writeData(wb, "databar", -5:5, startCol = 7)
-#' conditionalFormatting(wb, "databar",
-#'   cols = 7, rows = 1:11,
-#'   type = "databar", style = c("#a6a6a6"), showValue = FALSE, gradient = FALSE
-#' )
-#'
-#' writeData(wb, "databar", -5:5, startCol = 9)
-#' conditionalFormatting(wb, "databar",
-#'   cols = 9, rows = 1:11,
-#'   type = "databar", style = c("#a6a6a6", "#a6a6a6"), showValue = FALSE, gradient = FALSE
-#' )
-#' \dontrun{
-#' saveWorkbook(wb, file = "databarExample.xlsx", overwrite = TRUE)
-#' }
 #'
 conditionalFormatting <-
   function(wb,
-    sheet,
-    cols,
-    rows,
-    rule = NULL,
-    style = NULL,
-    type = "expression",
-    ...) {
+           sheet,
+           cols,
+           rows,
+           rule = NULL,
+           style = NULL,
+           type = "expression",
+           ...) {
     op <- openxlsx_options()
     on.exit(options(op), add = TRUE)
 
@@ -336,6 +319,12 @@ conditionalFormatting <-
     ## check valid rule
     values <- NULL
     dxfId <- NULL
+
+    dxfs <- wb$styles_mgr$styles$dxfs
+    dxf <- xml_node(dxfs, "dxf")
+    dxfId <- which(dxf == style) - 1
+
+    # print(dxfId)
 
     # use switch() instead
     if (type == "colorScale") {
@@ -436,43 +425,70 @@ conditionalFormatting <-
           )), rule)
       } ## else, there is a letter in the formula and apply as is
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
-      # TODO check type up front and validate selections there...
-      # or only use style class...
-      if (!is_wb_style(style)) {
-        stop("If type == 'expression', style must be a Style object.")
-      }
+      # # TODO check type up front and validate selections there...
+      # # or only use style class...
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'expression', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
     } else if (type == "duplicatedValues") {
       # type == "duplicatedValues"
       # - style is a Style object
       # - rule is ignored
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'duplicates', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'duplicates', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
       rule <- style
     } else if (type == "containsText") {
       # type == "contains"
       # - style is Style object
       # - rule is text to look for
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
 
@@ -480,12 +496,12 @@ conditionalFormatting <-
         stop("If type == 'contains', rule must be a character vector of length 1.")
       }
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'contains', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'contains', style must be a Style object.")
+      # }
 
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "notContainsText") {
@@ -493,9 +509,18 @@ conditionalFormatting <-
       # - style is Style object
       # - rule is text to look for
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
 
@@ -503,11 +528,11 @@ conditionalFormatting <-
         stop("If type == 'notContains', rule must be a character vector of length 1.")
       }
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'notContains', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'notContains', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "beginsWith") {
@@ -515,9 +540,18 @@ conditionalFormatting <-
       # - style is Style object
       # - rule is text to look for
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
 
@@ -525,11 +559,11 @@ conditionalFormatting <-
         stop("If type == 'beginsWith', rule must be a character vector of length 1.")
       }
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'beginsWith', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'beginsWith', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "endsWith") {
@@ -537,9 +571,18 @@ conditionalFormatting <-
       # - style is Style object
       # - rule is text to look for
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
 
@@ -547,41 +590,58 @@ conditionalFormatting <-
         stop("If type == 'endsWith', rule must be a character vector of length 1.")
       }
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'endsWith', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'endsWith', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "between") {
       rule <- range(rule)
 
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'between', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'between', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
     } else if (type == "topN") {
       # type == "topN"
       # - rule is ignored
       # - 'rank' and 'percent' are named params
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'topN', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'topN', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
 
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
@@ -598,7 +658,7 @@ conditionalFormatting <-
         }
       }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- params
       rule <- style
     } else if (type == "bottomN") {
@@ -606,16 +666,25 @@ conditionalFormatting <-
       # - rule is ignored
       # - 'rank' and 'percent' are named params
 
+
       if (is.null(style)) {
-        style <-
-          createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+        style <- xml_node_create(
+          "dxf",
+          xml_children = c(
+            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
+            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
+          )
+        )
+
+        wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
+        dxfId <- which(dxf == style) - 1
       }
 
-      if (!is_wb_style(style)) {
-        stop("If type == 'bottomN', style must be a Style object.")
-      }
+      # if (!is_wb_style(style)) {
+      #   stop("If type == 'bottomN', style must be a Style object.")
+      # }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
 
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
@@ -632,13 +701,10 @@ conditionalFormatting <-
         }
       }
 
-      dxfId <- wb$addDXFS(style)$styles$dxfs
+      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- params
       rule <- style
     }
-
-    # FIXME override to create conditionalFormatting
-    dxfId <- 1
 
     invisible(
       wb$conditionalFormatting(

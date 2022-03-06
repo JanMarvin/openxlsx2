@@ -1104,8 +1104,8 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
-    wb$styles_mgr$styles$dxfs <- character()
-
+    # wb$styles_mgr$styles$dxfs <- character()
+    
   } else {
     # update cell(s)
     wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames, removeCellStyle)
