@@ -8,7 +8,7 @@
 #' @useDynLib openxlsx2, .registration=TRUE
 #' @importFrom zip zipr
 #' @importFrom utils download.file head menu unzip
-#' @import stringi
+#' @importFrom stringi stri_c stri_join stri_match stri_replace_all_fixed stri_conv
 #'
 #' @seealso
 #' \itemize{

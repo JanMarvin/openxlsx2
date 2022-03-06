@@ -12,6 +12,4 @@ as_POSIXct_utc(x)
 \description{
 Convert to POSIXct with timezone UTC
 }
-\examples{
-openxlsx2:::as_POSIXct_utc(Sys.time())
-}
+\keyword{internal}
