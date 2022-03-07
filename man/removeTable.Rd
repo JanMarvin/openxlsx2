@@ -28,7 +28,7 @@ writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
 writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
 
-removeWorksheet(wb, sheet = 1) ## delete worksheet removes table objects
+wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
 
 writeDataTable(wb, sheet = 1, x = iris, tableName = "iris")
 writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)

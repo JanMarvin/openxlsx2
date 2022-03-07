@@ -138,7 +138,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
 \item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
-\item \href{#method-deleteWorksheet}{\code{wbWorkbook$deleteWorksheet()}}
+\item \href{#method-removeWorksheet}{\code{wbWorkbook$removeWorksheet()}}
 \item \href{#method-addDXFS}{\code{wbWorkbook$addDXFS()}}
 \item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
 \item \href{#method-dataValidation_list}{\code{wbWorkbook$dataValidation_list()}}
@@ -569,12 +569,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-deleteWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-deleteWorksheet}{}}}
-\subsection{Method \code{deleteWorksheet()}}{
-Delete a worksheet
+\if{html}{\out{<a id="method-removeWorksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-removeWorksheet}{}}}
+\subsection{Method \code{removeWorksheet()}}{
+Remove a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$deleteWorksheet(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeWorksheet(sheet)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

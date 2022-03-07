@@ -38,5 +38,5 @@ wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 
 }
 \seealso{
-\code{\link[=removeWorksheet]{removeWorksheet()}}
+\code{\link[=wb_remove_worksheet]{wb_remove_worksheet()}}
 }
