@@ -1717,10 +1717,10 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
-    #' Delete a worksheet
+    #' Remove a worksheet
     #' @param sheet The worksheet to delete
     #' @return The `wbWorkbook` object, invisibly
-    deleteWorksheet = function(sheet) {
+    removeWorksheet = function(sheet) {
       # To delete a worksheet
       # Remove colwidths element
       # Remove drawing partname from Content_Types (drawing(sheet).xml)

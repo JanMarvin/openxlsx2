@@ -736,7 +736,7 @@ getStyles <- function(wb) {
 #' \dontrun{
 #' wb_save(wb, "removeWorksheetExample.xlsx", overwrite = TRUE)
 #' }
-removeWorksheet <- function(wb, sheet) {
+wb_remove_worksheet <- function(wb, sheet) {
   assert_workbook(wb)
   wb$clone()$deleteWorksheet(sheet)
 }
