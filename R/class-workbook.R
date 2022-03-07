@@ -1743,6 +1743,11 @@ wbWorkbook <- R6::R6Class(
       # Remove queryTable references from workbook$definedNames to worksheet
       # remove tables
 
+      # TODO can we allow multiple sheets?
+      if (length(sheet) != 1) {
+        stop("sheet must have length 1.")
+      }
+
       sheet <- wb_validate_sheet(self, sheet)
       sheetNames <- self$sheet_names
       nSheets <- length(sheetNames)

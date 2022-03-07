@@ -737,16 +737,8 @@ getStyles <- function(wb) {
 #' wb_save(wb, "removeWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 removeWorksheet <- function(wb, sheet) {
-  # TODO this should just be wbWorkbook$remove_worksheet(...)
   assert_workbook(wb)
-
-  if (length(sheet) != 1) {
-    stop("sheet must have length 1.")
-  }
-
-  wb$deleteWorksheet(sheet)
-
-  invisible(0)
+  wb$clone()$deleteWorksheet(sheet)
 }
 
 #' @name modifyBaseFont
