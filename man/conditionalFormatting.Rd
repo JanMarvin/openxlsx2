@@ -131,7 +131,9 @@ posStyle <- xml_node_create(
   )
 )
 
-wb$styles_mgr$styles$dxfs <- c(negStyle, posStyle)
+wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs,
+                                c(negStyle, posStyle)
+                             )
 
 set.seed(123)
 

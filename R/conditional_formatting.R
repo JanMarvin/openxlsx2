@@ -106,7 +106,9 @@
 #'   )
 #' )
 #'
-#' wb$styles_mgr$styles$dxfs <- c(negStyle, posStyle)
+#' wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs,
+#'                                 c(negStyle, posStyle)
+#'                              )
 #'
 #' set.seed(123)
 #'
@@ -441,11 +443,10 @@ conditionalFormatting <-
 
       # # TODO check type up front and validate selections there...
       # # or only use style class...
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'expression', style must be a Style object.")
-      # }
+      if (!grepl("^<dfx>", style)) {
+        stop("If type == 'expression', style must be a Style object.")
+      }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
     } else if (type == "duplicatedValues") {
       # type == "duplicatedValues"
       # - style is a Style object
@@ -466,11 +467,10 @@ conditionalFormatting <-
       }
 
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'duplicates', style must be a Style object.")
-      # }
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'duplicates', style must be a Style object.")
+      }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
       rule <- style
     } else if (type == "containsText") {
       # type == "contains"
@@ -491,17 +491,14 @@ conditionalFormatting <-
         dxfId <- which(dxf == style) - 1
       }
 
-
       if (!inherits(rule, "character")) {
         stop("If type == 'contains', rule must be a character vector of length 1.")
       }
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'contains', style must be a Style object.")
-      # }
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'contains', style must be a Style object.")
+      }
 
-
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "notContainsText") {
@@ -528,11 +525,10 @@ conditionalFormatting <-
         stop("If type == 'notContains', rule must be a character vector of length 1.")
       }
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'notContains', style must be a Style object.")
-      # }
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'notContains', style must be a Style object.")
+      }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "beginsWith") {
@@ -559,11 +555,10 @@ conditionalFormatting <-
         stop("If type == 'beginsWith', rule must be a character vector of length 1.")
       }
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'beginsWith', style must be a Style object.")
-      # }
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'beginsWith', style must be a Style object.")
+      }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "endsWith") {
@@ -590,11 +585,10 @@ conditionalFormatting <-
         stop("If type == 'endsWith', rule must be a character vector of length 1.")
       }
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'endsWith', style must be a Style object.")
-      # }
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'endsWith', style must be a Style object.")
+      }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- rule
       rule <- style
     } else if (type == "between") {
@@ -613,11 +607,10 @@ conditionalFormatting <-
         dxfId <- which(dxf == style) - 1
       }
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'between', style must be a Style object.")
-      # }
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'between', style must be a Style object.")
+      }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
     } else if (type == "topN") {
       # type == "topN"
       # - rule is ignored
@@ -637,11 +630,9 @@ conditionalFormatting <-
         dxfId <- which(dxf == style) - 1
       }
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'topN', style must be a Style object.")
-      # }
-
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'topN', style must be a Style object.")
+      }
 
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
@@ -658,7 +649,6 @@ conditionalFormatting <-
         }
       }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- params
       rule <- style
     } else if (type == "bottomN") {
@@ -680,11 +670,9 @@ conditionalFormatting <-
         dxfId <- which(dxf == style) - 1
       }
 
-      # if (!is_wb_style(style)) {
-      #   stop("If type == 'bottomN', style must be a Style object.")
-      # }
-
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
+      if (!!grepl("^<dfx>", style)) {
+        stop("If type == 'bottomN', style must be a Style object.")
+      }
 
       ## Additional parameters passed by ...
       if ("percent" %in% names(params)) {
@@ -701,7 +689,6 @@ conditionalFormatting <-
         }
       }
 
-      # dxfId <- wb$addDXFS(style)$styles$dxfs
       values <- params
       rule <- style
     }
