@@ -228,7 +228,7 @@ wb_add_worksheet <- function(
   hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))
 ) {
   assert_workbook(wb)
-  wb$addWorksheet(
+  wb$clone()$addWorksheet(
     sheetName     = sheetName,
     showGridLines = gridLines,
     tabColour     = tabColour,
@@ -354,7 +354,13 @@ wb_add_style <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack
 #' }
 wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
   assert_workbook(wb)
-  invisible(wb$freezePanes(sheet, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol, firstRow = firstRow, firstCol = firstCol))
+  wb$clone()$freezePanes(
+    sheet,
+    firstActiveRow = firstActiveRow,
+    firstActiveCol = firstActiveCol,
+    firstRow       = firstRow,
+    firstCol       = firstCol
+  )
 }
 
 
@@ -389,7 +395,7 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 #' }
 wb_set_row_heights <- function(wb, sheet, rows, heights) {
   assert_workbook(wb)
-  wb$setRowHeights(sheet, rows, heights)
+  wb$clone()$setRowHeights(sheet, rows, heights)
 }
 
 
