@@ -724,7 +724,6 @@ getStyles <- function(wb) {
 
 
 
-#' @name removeWorksheet
 #' @title Remove a worksheet from a workbook
 #' @description Remove a worksheet from a Workbook object
 #' @param wb A workbook object
@@ -736,7 +735,7 @@ getStyles <- function(wb) {
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## Remove sheet 2
-#' removeWorksheet(wb, 2)
+#' wb <- wb_remove_worksheet(wb, 2)
 #'
 #' ## save the modified workbook
 #' \dontrun{
@@ -2014,7 +2013,7 @@ getTables <- function(wb, sheet) {
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #'
-#' removeWorksheet(wb, sheet = 1) ## delete worksheet removes table objects
+#' wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
 #'
 #' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris")
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)

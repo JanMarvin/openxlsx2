@@ -9,7 +9,7 @@
 #' formatting of the original .xlsx file.
 #' @return Workbook object.
 #' @export
-#' @seealso [removeWorksheet()]
+#' @seealso [wb_remove_worksheet()]
 #' @examples
 #' ## load existing workbook from package folder
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
