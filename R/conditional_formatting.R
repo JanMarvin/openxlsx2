@@ -86,25 +86,8 @@
 #' wb <- createWorkbook()
 #' addWorksheet(wb, "cellIs")
 #'
-#' # negStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-#' # posStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
-#'
-#'
-#' negStyle <- xml_node_create(
-#'   "dxf",
-#'   xml_children = c(
-#'     create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-#'     create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-#'   )
-#' )
-#'
-#' posStyle <- xml_node_create(
-#'   "dxf",
-#'   xml_children = c(
-#'     create_font(color = c(rgb = "FF006100"), name = "Calibri", sz = "11"),
-#'     create_fill(patternType = "solid", bgColor = c(rgb = "FFC6EFCE"))
-#'   )
-#' )
+#' negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+#' posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
 #'
 #' wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs,
 #'                                 c(negStyle, posStyle)
@@ -429,13 +412,7 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
@@ -443,7 +420,7 @@ conditionalFormatting <-
 
       # # TODO check type up front and validate selections there...
       # # or only use style class...
-      if (!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'expression', style must be a Style object.")
       }
 
@@ -454,20 +431,14 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
       }
 
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'duplicates', style must be a Style object.")
       }
 
@@ -479,13 +450,7 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
@@ -495,7 +460,7 @@ conditionalFormatting <-
         stop("If type == 'contains', rule must be a character vector of length 1.")
       }
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'contains', style must be a Style object.")
       }
 
@@ -508,13 +473,7 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
@@ -525,7 +484,7 @@ conditionalFormatting <-
         stop("If type == 'notContains', rule must be a character vector of length 1.")
       }
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'notContains', style must be a Style object.")
       }
 
@@ -538,13 +497,7 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
@@ -555,7 +508,7 @@ conditionalFormatting <-
         stop("If type == 'beginsWith', rule must be a character vector of length 1.")
       }
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'beginsWith', style must be a Style object.")
       }
 
@@ -568,13 +521,7 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
@@ -585,7 +532,7 @@ conditionalFormatting <-
         stop("If type == 'endsWith', rule must be a character vector of length 1.")
       }
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'endsWith', style must be a Style object.")
       }
 
@@ -595,19 +542,13 @@ conditionalFormatting <-
       rule <- range(rule)
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
       }
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'between', style must be a Style object.")
       }
 
@@ -618,19 +559,13 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
       }
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'topN', style must be a Style object.")
       }
 
@@ -658,19 +593,13 @@ conditionalFormatting <-
 
 
       if (is.null(style)) {
-        style <- xml_node_create(
-          "dxf",
-          xml_children = c(
-            create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-            create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-          )
-        )
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
         wb$styles_mgr$styles$dxfs <- unique(c(wb$styles_mgr$styles$dxfs, style))
         dxfId <- which(dxf == style) - 1
       }
 
-      if (!!grepl("^<dfx>", style)) {
+      if (!grepl("^<dxf>", style)) {
         stop("If type == 'bottomN', style must be a Style object.")
       }
 

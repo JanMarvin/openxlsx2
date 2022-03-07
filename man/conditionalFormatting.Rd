@@ -111,25 +111,8 @@ If type == "bottomN"
 wb <- createWorkbook()
 addWorksheet(wb, "cellIs")
 
-# negStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-# posStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
-
-
-negStyle <- xml_node_create(
-  "dxf",
-  xml_children = c(
-    create_font(color = c(rgb = "FF9C0006"), name = "Calibri", sz = "11"),
-    create_fill(patternType = "solid", bgColor = c(rgb = "FFFFC7CE"))
-  )
-)
-
-posStyle <- xml_node_create(
-  "dxf",
-  xml_children = c(
-    create_font(color = c(rgb = "FF006100"), name = "Calibri", sz = "11"),
-    create_fill(patternType = "solid", bgColor = c(rgb = "FFC6EFCE"))
-  )
-)
+negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
 
 wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs,
                                 c(negStyle, posStyle)
