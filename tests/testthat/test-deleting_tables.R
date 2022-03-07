@@ -27,7 +27,7 @@ test_that("Deleting a Table Object", {
 
   ## Deleting a worksheet ----
 
-  removeWorksheet(wb, 1)
+  wb$removeWorksheet(1)
   expect_equal(length(wb$tables), 2L)
   expect_equal(length(getTables(wb, sheet = 1)), 0)
 
@@ -115,7 +115,7 @@ test_that("Save and load Table Deletion", {
   ###################################################################################
   ## Deleting a worksheet
 
-  removeWorksheet(wb, 1)
+  wb$removeWorksheet(1)
   expect_equal(length(wb$tables), 2L)
   expect_equal(length(getTables(wb, sheet = 1)), 0)
 

@@ -1,10 +1,8 @@
 
-
 test_that("Page setup", {
   wb <- wb_workbook()
-  wb_add_worksheet(wb, "s1")
-  wb_add_worksheet(wb, "s2")
-
+  wb$addWorksheet("s1")
+  wb$addWorksheet("s2")
 
   pageSetup(wb,
     sheet = "s1", orientation = "landscape", scale = 100, left = 0.1,
@@ -12,7 +10,6 @@ test_that("Page setup", {
     fitToWidth = TRUE, fitToHeight = TRUE, paperSize = 1,
     summaryRow = "below", summaryCol = "right"
   )
-
 
   pageSetup(wb,
     sheet = 2, orientation = "landscape", scale = 100, left = 0.1,
