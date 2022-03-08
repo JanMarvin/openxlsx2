@@ -108,8 +108,8 @@ If type == "bottomN"
 }
 }
 \examples{
-wb <- createWorkbook()
-addWorksheet(wb, "cellIs")
+wb <- wb_workbook()
+wb$addWorksheet("cellIs")
 
 negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
@@ -134,7 +134,7 @@ conditionalFormatting(wb, "cellIs",
 )
 
 
-addWorksheet(wb, "Moving Row")
+wb$addWorksheet("Moving Row")
 ## highlight row dependent on first cell in row
 writeData(wb, "Moving Row", -5:5)
 writeData(wb, "Moving Row", LETTERS[1:11], startCol = 2)
@@ -148,7 +148,7 @@ conditionalFormatting(wb, "Moving Row",
 )
 
 
-addWorksheet(wb, "Moving Col")
+wb$addWorksheet("Moving Col")
 ## highlight column dependent on first cell in column
 writeData(wb, "Moving Col", -5:5)
 writeData(wb, "Moving Col", LETTERS[1:11], startCol = 2)
@@ -162,7 +162,7 @@ conditionalFormatting(wb, "Moving Col",
 )
 
 
-addWorksheet(wb, "Dependent on")
+wb$addWorksheet("Dependent on")
 ## highlight entire range cols X rows dependent only on cell A1
 writeData(wb, "Dependent on", -5:5)
 writeData(wb, "Dependent on", LETTERS[1:11], startCol = 2)
@@ -188,20 +188,20 @@ conditionalFormatting(wb, "Dependent on",
 )
 
 
-addWorksheet(wb, "Duplicates")
+wb$addWorksheet("Duplicates")
 ## highlight duplicates using default style
 writeData(wb, "Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
 conditionalFormatting(wb, "Duplicates", cols = 1, rows = 1:10, type = "duplicates")
 
 
-addWorksheet(wb, "containsText")
+wb$addWorksheet("containsText")
 ## cells containing text
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 writeData(wb, "containsText", sapply(1:10, fn))
 conditionalFormatting(wb, "containsText", cols = 1, rows = 1:10, type = "contains", rule = "A")
 
 
-addWorksheet(wb, "notcontainsText")
+wb$addWorksheet("notcontainsText")
 ## cells not containing text
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 writeData(wb, "containsText", sapply(1:10, fn))
@@ -209,20 +209,20 @@ conditionalFormatting(wb, "notcontainsText", cols = 1,
                       rows = 1:10, type = "notcontains", rule = "A")
 
 
-addWorksheet(wb, "beginsWith")
+wb$addWorksheet("beginsWith")
 ## cells begins with text
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 writeData(wb, "beginsWith", sapply(1:100, fn))
 conditionalFormatting(wb, "beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
 
 
-addWorksheet(wb, "endsWith")
+wb$addWorksheet("endsWith")
 ## cells ends with text
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 writeData(wb, "endsWith", sapply(1:100, fn))
 conditionalFormatting(wb, "endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
 
-addWorksheet(wb, "colourScale", zoom = 30)
+wb$addWorksheet("colourScale", zoom = 30)
 ## colourscale colours cells based on cell value
 df <- read.xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
 writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
@@ -237,18 +237,18 @@ conditionalFormatting(wb, "colourScale",
 setColWidths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
 wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
-addWorksheet(wb, "databar")
+wb$addWorksheet("databar")
 ## Databars
 writeData(wb, "databar", -5:5)
 conditionalFormatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Default colours
 
-addWorksheet(wb, "between")
+wb$addWorksheet("between")
 ## Between
 # Highlight cells in interval [-2, 2]
 writeData(wb, "between", -5:5)
 conditionalFormatting(wb, "between", cols = 1, rows = 1:11, type = "between", rule = c(-2, 2))
 
-addWorksheet(wb, "topN")
+wb$addWorksheet("topN")
 ## Top N
 writeData(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
 # Highlight top 5 values in column x
@@ -258,7 +258,7 @@ conditionalFormatting(wb, "topN", cols = 1, rows = 2:11,
 conditionalFormatting(wb, "topN", cols = 2, rows = 2:11,
                       style = posStyle, type = "topN", rank = 20, percent = TRUE)
 
-addWorksheet(wb, "bottomN")
+wb$addWorksheet("bottomN")
 ## Bottom N
 writeData(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
 # Highlight bottom 5 values in column x
@@ -268,7 +268,7 @@ conditionalFormatting(wb, "bottomN", cols = 1, rows = 2:11,
 conditionalFormatting(wb, "bottomN", cols = 2, rows = 2:11,
                       style = negStyle, type = "topN", rank = 20, percent = TRUE)
 
-addWorksheet(wb, "logical operators")
+wb$addWorksheet("logical operators")
 ## Logical Operators
 # You can use Excels logical Operators
 writeData(wb, "logical operators", 1:10)

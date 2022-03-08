@@ -1,5 +1,4 @@
 
-#' @name createWorkbook
 #' @title Create a new Workbook object
 #' @description Create a new Workbook object
 #' @param creator Creator of the workbook (your name). Defaults to login username
@@ -9,7 +8,7 @@
 #' @return Workbook object
 #' @export
 #' @seealso [loadWorkbook()]
-#' @seealso [saveWorkbook()]
+#' @seealso [wb_save()]
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
