@@ -102,8 +102,8 @@ wbWorkbook <- R6::R6Class(
     #' @field styleObjects styleObjects
     styleObjects = list(),
 
-    #' @field styles styles
-    styles = genBaseStyleSheet(),
+    #' @field styles_mgr styles_mgr
+    styles_mgr = NULL,
 
     #' @field styles_xml styles_xml
     styles_xml = NULL,
@@ -189,6 +189,68 @@ wbWorkbook <- R6::R6Class(
       category        = NULL,
       datetimeCreated = Sys.time()
     ) {
+      self$charts <- list()
+      self$isChartSheet <- logical()
+
+      self$colWidths <- list()
+      self$connections <- NULL
+      self$Content_Types <- genBaseContent_Type()
+      self$core <-
+        genBaseCore(
+          creator = creator,
+          title = title,
+          subject = subject,
+          category = category
+        )
+      self$comments <- list()
+      self$threadComments <- list()
+
+
+      self$drawings <- list()
+      self$drawings_rels <- list()
+      self$drawings_vml <- list()
+
+      self$embeddings <- NULL
+      self$externalLinks <- NULL
+      self$externalLinksRels <- NULL
+
+      self$headFoot <- NULL
+
+      self$media <- list()
+
+      self$persons <- NULL
+
+      self$pivotTables <- NULL
+      self$pivotTables.xml.rels <- NULL
+      self$pivotDefinitions <- NULL
+      self$pivotRecords <- NULL
+      self$pivotDefinitionsRels <- NULL
+
+      self$queryTables <- NULL
+      self$rowHeights <- list()
+
+      self$slicers <- NULL
+      self$slicerCaches <- NULL
+
+      self$sheet_names <- character()
+      self$sheetOrder <- integer()
+
+      self$sharedStrings <- list()
+      attr(self$sharedStrings, "uniqueCount") <- 0
+
+      self$styles_mgr <- style_mgr$new(self)
+      self$styles_mgr$styles <- genBaseStyleSheet()
+      self$styleObjects <- list()
+
+
+      self$tables <- NULL
+      self$tables.xml.rels <- NULL
+      self$theme <- NULL
+
+
+      self$vbaProject <- NULL
+      self$vml <- list()
+      self$vml_rels <- list()
 
       self$creator <-
         creator %||%
@@ -459,7 +521,7 @@ wbWorkbook <- R6::R6Class(
 
       # TODO this should live wherever the other default values for an empty worksheet are initialized
       empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-      self$styles$cellXfs <- write_xf(empty_cellXfs)
+      self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
 
       invisible(self)
     },
@@ -1166,66 +1228,65 @@ wbWorkbook <- R6::R6Class(
         fl = file.path(tmpDir, "[Content_Types].xml")
       )
 
-      styleXML <- self$styles
 
-      if (length(self$styles$numFmts)) {
+      styleXML <- self$styles_mgr$styles
+      if (length(styleXML$numFmts)) {
         styleXML$numFmts <-
           stri_join(
-            sprintf('<numFmts count="%s">', length(self$styles$numFmts)),
-            pxml(self$styles$numFmts),
+            sprintf('<numFmts count="%s">', length(styleXML$numFmts)),
+            pxml(styleXML$numFmts),
             "</numFmts>"
           )
       }
-
-      styleXML$fonts <- stri_join(
-        sprintf('<fonts count="%s">', length(self$styles$fonts)),
-        pxml(self$styles$fonts),
-        "</fonts>"
-      )
-
-      styleXML$fills <- stri_join(
-        sprintf('<fills count="%s">', length(self$styles$fills)),
-        pxml(self$styles$fills),
-        "</fills>"
-      )
-
-      styleXML$borders <- stri_join(
-        sprintf('<borders count="%s">', length(self$styles$borders)),
-        pxml(self$styles$borders),
-        "</borders>"
-      )
-
-      styleXML$cellStyleXfs <- c(
-        sprintf('<cellStyleXfs count="%s">', length(self$styles$cellStyleXfs)),
-        pxml(self$styles$cellStyleXfs),
-        "</cellStyleXfs>"
-      )
-
-      styleXML$cellXfs <- stri_join(
-        sprintf('<cellXfs count="%s">', length(self$styles$cellXfs)),
-        paste0(self$styles$cellXfs, collapse = ""),
-        "</cellXfs>"
-      )
-
-      styleXML$cellStyles <- stri_join(
-        sprintf('<cellStyles count="%s">', length(self$styles$cellStyles)),
-        pxml(self$styles$cellStyles),
-        "</cellStyles>"
-      )
-
+      styleXML$fonts <-
+        stri_join(
+          sprintf('<fonts count="%s">', length(styleXML$fonts)),
+          pxml(styleXML$fonts),
+          "</fonts>"
+        )
+      styleXML$fills <-
+        stri_join(
+          sprintf('<fills count="%s">', length(styleXML$fills)),
+          pxml(styleXML$fills),
+          "</fills>"
+        )
+      styleXML$borders <-
+        stri_join(
+          sprintf('<borders count="%s">', length(styleXML$borders)),
+          pxml(styleXML$borders),
+          "</borders>"
+        )
+      styleXML$cellStyleXfs <-
+        c(
+          sprintf('<cellStyleXfs count="%s">', length(styleXML$cellStyleXfs)),
+          pxml(styleXML$cellStyleXfs),
+          "</cellStyleXfs>"
+        )
+      styleXML$cellXfs <-
+        stri_join(
+          sprintf('<cellXfs count="%s">', length(styleXML$cellXfs)),
+          paste0(styleXML$cellXfs, collapse = ""),
+          "</cellXfs>"
+        )
+      styleXML$cellStyles <-
+        stri_join(
+          sprintf('<cellStyles count="%s">', length(styleXML$cellStyles)),
+          pxml(styleXML$cellStyles),
+          "</cellStyles>"
+        )
       # styleXML$cellStyles <-
       #   stri_join(
-      #     pxml(self$styles$tableStyles)
+      #     pxml(self$styles_mgr$tableStyles)
       #   )
       # TODO
       # tableStyles
       # extLst
 
       styleXML$dxfs <-
-        if (length(self$styles$dxfs)) {
+        if (length(styleXML$dxfs)) {
           stri_join(
-            sprintf('<dxfs count="%s">', length(self$styles$dxfs)),
-            stri_join(unlist(self$styles$dxfs), sep = " ", collapse = ""),
+            sprintf('<dxfs count="%s">', length(styleXML$dxfs)),
+            stri_join(unlist(styleXML$dxfs), sep = " ", collapse = ""),
             "</dxfs>"
           )
         } else {
@@ -1492,7 +1553,7 @@ wbWorkbook <- R6::R6Class(
     #' Get the base font
     #' @return A list of of the font
     getBaseFont = function() {
-      baseFont <- self$styles$fonts[[1]]
+      baseFont <- self$styles_mgr$styles$fonts[[1]]
 
       # TODO can these checks be simplified with %||% or %|n|% or something?
 
@@ -1989,13 +2050,13 @@ wbWorkbook <- R6::R6Class(
 
       dxf <- stri_join(dxf, "</dxf>", sep = " ")
 
-      if (dxf %in% self$styles$dxfs) {
+      if (dxf %in% self$styles_mgr$styles$dxfs) {
         # return(which(styles$dxfs == dxf) - 1L)
         return(invisible(self))
       }
 
       # dxfId <- length(styles$dxfs)
-      self$styles$dxfs <- c(self$styles$dxfs, dxf)
+      self$styles_mgr$styles$dxfs <- c(self$styles_mgr$styles$dxfs, dxf)
 
       # return(dxfId)
       invisible(self)
@@ -3552,315 +3613,6 @@ wbWorkbook <- R6::R6Class(
           x = self$drawings_vml[[i]],
           file = file.path(dir, sprintf("vmlDrawing%s.vml", i))
         )
-      }
-
-      invisible(self)
-    },
-
-    updateStyles = function(style) {
-      # TODO assert_class(style, "Style")
-
-      ## Updates styles.xml
-      xfNode <- list(
-        numFmtId = 0,
-        fontId = 0,
-        fillId = 0,
-        borderId = 0,
-        xfId = 0
-      )
-
-
-      alignmentFlag <- FALSE
-
-      ## Font
-      if (!is.null(style$fontName) |
-          !is.null(style$fontSize) |
-          !is.null(style$fontColour) |
-          !is.null(style$fontDecoration) |
-          !is.null(style$fontFamily) |
-          !is.null(style$fontScheme)) {
-        fontNode <- wb_create_font_node(self, style)
-        fontId <- style$fontId
-
-        if (length(fontId) == 0) {
-          fontId <- style$fontId
-          self$styles$fonts <- c(styles[["fonts"]], fontNode)
-        }
-
-        xfNode$fontId <- fontId
-        xfNode <- c(xfNode, list("applyFont" = "1"))
-      }
-
-
-      ## numFmt
-      if (!is.null(style$numFmt)) {
-        if (as.integer(style$numFmt$numFmtId)) {
-          numFmtId <- style$numFmt$numFmtId
-          if (as.integer(numFmtId) > 163L) {
-            tmp <- style$numFmt$formatCode
-
-            self$styles$numFmts <- unique(c(
-              styles$numFmts,
-              sprintf(
-                '<numFmt numFmtId="%s" formatCode="%s"/>',
-                numFmtId,
-                tmp
-              )
-            ))
-          }
-
-          xfNode$numFmtId <- numFmtId
-          xfNode <- c(xfNode, list(applyNumberFormat = "1"))
-        }
-      }
-
-      ## Fill
-      if (!is.null(style$fill)) {
-        fillNode <- createFillNode(style)
-        if (!is.null(fillNode)) {
-          fillId <- which(self$styles$fills == fillNode) - 1L
-
-          if (length(fillId) == 0) {
-            fillId <- length(styles$fills)
-            self$styles$fills <- c(styles$fills, fillNode)
-          }
-          xfNode$fillId <- fillId
-          xfNode <- c(xfNode, list(applyFill = "1"))
-        }
-      }
-
-      ## Border
-      if (any(!is.null(
-        c(
-          style$borderLeft,
-          style$borderRight,
-          style$borderTop,
-          style$borderBottom,
-          style$borderDiagonal
-        )
-      ))) {
-        borderNode <- createBorderNode(style)
-        borderId <- which(self$styles$borders == borderNode) - 1L
-
-        if (length(borderId) == 0) {
-          borderId <- length(self$styles$borders)
-          self$styles$borders <- c(self$styles$borders, borderNode)
-        }
-
-        xfNode$borderId <- borderId
-        xfNode <- c(xfNode, list(applyBorder = "1"))
-      }
-
-
-      if (!is.null(style$xfId))
-        xfNode$xfId <- style$xfId
-
-      childNodes <- ""
-
-      ## Alignment
-      if (!is.null(style$halign) |
-          !is.null(style$valign) |
-          !is.null(style$wrapText) |
-          !is.null(style$textRotation) | !is.null(style$indent)) {
-        attrs <- list()
-        alignNode <- "<alignment"
-
-        if (!is.null(style$textRotation)) {
-          alignNode <-
-            stri_join(alignNode,
-              sprintf('textRotation="%s"', style$textRotation),
-              sep = " "
-            )
-        }
-
-        if (!is.null(style$halign)) {
-          alignNode <-
-            stri_join(alignNode, sprintf('horizontal="%s"', style$halign), sep = " ")
-        }
-
-        if (!is.null(style$valign)) {
-          alignNode <-
-            stri_join(alignNode, sprintf('vertical="%s"', style$valign), sep = " ")
-        }
-
-        if (!is.null(style$indent)) {
-          alignNode <-
-            stri_join(alignNode, sprintf('indent="%s"', style$indent), sep = " ")
-        }
-
-        if (!is.null(style$wrapText)) {
-          if (style$wrapText) {
-            alignNode <- stri_join(alignNode, 'wrapText="1"', sep = " ")
-          }
-        }
-
-
-        alignNode <- stri_join(alignNode, "/>")
-
-        alignmentFlag <- TRUE
-        xfNode <- c(xfNode, list(applyAlignment = "1"))
-
-        childNodes <- stri_join(childNodes, alignNode)
-      }
-
-      if (!is.null(style$hidden) | !is.null(style$locked)) {
-        xfNode <- c(xfNode, list(applyProtection = "1"))
-        protectionNode <- "<protection"
-
-        if (!is.null(style$hidden)) {
-          protectionNode <-
-            stri_join(protectionNode, sprintf('hidden="%s"', as.numeric(style$hidden)), sep = " ")
-        }
-        if (!is.null(style$locked)) {
-          protectionNode <-
-            stri_join(protectionNode, sprintf('locked="%s"', as.numeric(style$locked)), sep = " ")
-        }
-
-        protectionNode <- stri_join(protectionNode, "/>")
-        childNodes <- stri_join(childNodes, protectionNode)
-      }
-
-      if (length(childNodes)) {
-        xfNode <-
-          stri_join(
-            "<xf ",
-            stri_join(
-              stri_join(names(xfNode), '="', xfNode, '"'),
-              sep = " ",
-              collapse = " "
-            ),
-            ">",
-            childNodes,
-            "</xf>"
-          )
-      } else {
-        xfNode <-
-          stri_join("<xf ", stri_join(
-            stri_join(names(xfNode), '="', xfNode, '"'),
-            sep = " ",
-            collapse = " "
-          ), "/>")
-      }
-
-      styleId <- which(self$styles$cellXfs == xfNode) - 1L
-      if (length(styleId) == 0) {
-        styleId <- length(self$styles$cellXfs)
-        self$styles$cellXfs <- c(self$styles$cellXfs, xfNode)
-      }
-
-
-      # Seems to be fine to return self
-      # return(as.integer(styleId))
-      invisible(self)
-    },
-
-    # TODO can wb$updateCellStyles() be removed?
-    updateCellStyles = function() {
-      flag <- TRUE
-      for (style in self$cellStyleObjects) {
-        ## Updates styles.xml
-        xfNode <- list(
-          numFmtId = 0,
-          fontId = 0,
-          fillId = 0,
-          borderId = 0
-        )
-
-
-        alignmentFlag <- FALSE
-
-        ## Font
-        if (!is.null(style$fontName) |
-            !is.null(style$fontSize) |
-            !is.null(style$fontColour) |
-            !is.null(style$fontDecoration) |
-            !is.null(style$fontFamily) |
-            !is.null(style$fontScheme)) {
-          fontNode <- wb_create_font_node(self, style)
-          fontId <- which(self$styles$font == fontNode) - 1L
-
-          if (length(fontId) == 0) {
-            fontId <- length(self$styles$fonts)
-            self$styles$fonts <- c(self$styles[["fonts"]], fontNode)
-          }
-
-          xfNode$fontId <- fontId
-          xfNode <- c(xfNode, list(applyFont = "1"))
-        }
-
-
-        ## numFmt
-        if (!is.null(style$numFmt)) {
-          if (as.integer(style$numFmt$numFmtId)) {
-            numFmtId <- style$numFmt$numFmtId
-            if (as.integer(numFmtId) > 163L) {
-              tmp <- style$numFmt$formatCode
-
-              self$styles$numFmts <- unique(c(
-                self$styles$numFmts,
-                sprintf(
-                  '<numFmt numFmtId="%s" formatCode="%s"/>',
-                  numFmtId,
-                  tmp
-                )
-              ))
-            }
-
-            xfNode$numFmtId <- numFmtId
-            xfNode <- c(xfNode, list("applyNumberFormat" = "1"))
-          }
-        }
-
-        ## Fill
-        if (!is.null(style$fill)) {
-          fillNode <- createFillNode(style)
-          if (!is.null(fillNode)) {
-            fillId <- which(self$styles$fills == fillNode) - 1L
-
-            if (length(fillId) == 0) {
-              fillId <- length(self$styles$fills)
-              self$styles$fills <- c(self$styles$fills, fillNode)
-            }
-            xfNode$fillId <- fillId
-            xfNode <- c(xfNode, list(applyFill = "1"))
-          }
-        }
-
-        ## Border
-        if (any(!is.null(
-          c(
-            style$borderLeft,
-            style$borderRight,
-            style$borderTop,
-            style$borderBottom,
-            style$borderDiagonal
-          )
-        ))) {
-          borderNode <- createBorderNode(style)
-          borderId <- which(self$styles$borders == borderNode) - 1L
-
-          if (length(borderId) == 0) {
-            borderId <- length(self$styles$borders)
-            self$styles$borders <- c(self$styles$borders, borderNode)
-          }
-
-          xfNode$borderId <- borderId
-          xfNode <- c(xfNode, list(applyBorder = "1"))
-        }
-
-        xfNode <-
-          stri_join("<xf ", stri_join(
-            stri_join(names(xfNode), '="', xfNode, '"'),
-            sep = " ",
-            collapse = " "
-          ), "/>")
-
-        if (flag) {
-          self$styles$cellStyleXfs <- xfNode
-          flag <- FALSE
-        } else {
-          self$styles$cellStyleXfs <- c(self$styles$cellStyleXfs, xfNode)
-        }
       }
 
       invisible(self)

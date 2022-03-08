@@ -9,69 +9,69 @@ style manager
 style manager
 }
 \examples{
-
 xlsxFile <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
 wb <- loadWorkbook(xlsxFile)
 
-## start style mgr
-style <- style_mgr$new(wb)
-style$initialize(wb)
+# ## start style mgr
+# style <- style_mgr$new(wb)
+# style$initialize(wb)
 
-# style$get_numfmt() |> print()
-# style$next_numfmt_id() |> print()
-# style$get_numfmt_id("numFmt-166")
+# wb$styles_mgr$get_numfmt() |> print()
+# wb$styles_mgr$next_numfmt_id() |> print()
+# wb$styles_mgr$get_numfmt_id("numFmt-166")
 
 # create new number format
-new_numfmt <- create_numfmt(numFmtId = style$next_numfmt_id(), formatCode = "#,#")
+new_numfmt <- create_numfmt(numFmtId = wb$styles_mgr$next_numfmt_id(), formatCode = "#,#")
 
 # add it via stylemgr
-style$add(new_numfmt, "test")
+wb$styles_mgr$add(new_numfmt, "test")
 
 ## get numfmts (invisible)
-# z <- style$get_numfmt()
+# z <- wb$styles_mgr$get_numfmt()
 # z
-# wb$styles$numFmts
+wb$styles_mgr$styles$numFmts
 
 ## create and add huge font
 new_huge_font <- create_font(sz = "20", name = "Arial", b = "1", color = c(rgb = "FFFFFFFF"))
-style$add(new_huge_font, "arial_huge")
+wb$styles_mgr$add(new_huge_font, "arial_huge")
 
 ## create another font
 new_font <- create_font(name = "Arial")
-style$add(new_font, "arial")
+wb$styles_mgr$add(new_font, "arial")
 
 ## create and add new fill
 new_fill <- create_fill(patternType = "solid", fgColor = c(rgb = "FF00224B"))
-style$add(new_fill, "blue")
+wb$styles_mgr$add(new_fill, "blue")
 
 # create new style with numfmt enabled
 head_xf <- create_cell_style(
   horizontal = "center",
   textRotation = "45",
   numFmtId = "0",
-  fontId = style$get_font_id("arial_huge"),
-  fillId = style$get_fill_id("blue")
+  fontId = wb$styles_mgr$get_font_id("arial_huge"),
+  fillId = wb$styles_mgr$get_fill_id("blue")
 )
 
 new_xf <- create_cell_style(
-  numFmtId = style$get_numfmt_id("test"),
-  fontId = style$get_font_id("arial")
+  numFmtId = wb$styles_mgr$get_numfmt_id("test"),
+  fontId = wb$styles_mgr$get_font_id("arial")
 )
 
 ## add new styles
-style$add(head_xf, "head_xf")
-style$add(new_xf, "new_xf")
+wb$styles_mgr$add(head_xf, "head_xf")
+wb$styles_mgr$add(new_xf, "new_xf")
 
 ## get cell style ids (invisible)
-# z <- style$get_xf()
+# z <- wb$styles_mgr$get_xf()
 
 ## get cell style id
-# style$get_xf_id("test_xf")
+# wb$styles_mgr$get_xf_id("new_xf")
 
-## assign styles to cells
-set_cell_style(wb, "SUM", "B3:I3", style$get_xf_id("head_xf"))
-set_cell_style(wb, "SUM", "C7:C16", style$get_xf_id("new_xf"))
-# openXL(wb)
+ ## assign styles to cells
+set_cell_style(wb, "SUM", "B3:I3", wb$styles_mgr$get_xf_id("head_xf"))
+set_cell_style(wb, "SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
+# wb_open(wb)
+
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -85,6 +85,8 @@ set_cell_style(wb, "SUM", "C7:C16", style$get_xf_id("new_xf"))
 \item{\code{border}}{border-ids}
 
 \item{\code{xf}}{xf-ids}
+
+\item{\code{styles}}{styles as xml}
 }
 \if{html}{\out{</div>}}
 }
@@ -117,7 +119,14 @@ set_cell_style(wb, "SUM", "C7:C16", style$get_xf_id("new_xf"))
 \subsection{Method \code{new()}}{
 Creates a new \code{wbStylesMgr} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{style_mgr$new(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$new(
+  numfmt = NA,
+  font = NA,
+  fill = NA,
+  border = NA,
+  xf = NA,
+  styles = NA
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -132,6 +141,8 @@ Creates a new \code{wbStylesMgr} object
 \item{\code{border}}{border}
 
 \item{\code{xf}}{xf}
+
+\item{\code{styles}}{styles}
 }
 \if{html}{\out{</div>}}
 }

@@ -1,6 +1,5 @@
 #' @name writeData
 #' @title Write an object to a worksheet
-#' @import stringi
 #' @description Write an object to worksheet with optional styling.
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
@@ -48,6 +47,7 @@
 #' @export writeData
 #' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
 #' @rdname writeData
 #' @return invisible(0)
 #' @examples
@@ -226,10 +226,11 @@ writeData <- function(wb,
   borderStyle <- validate_border_style(borderStyle)[[1]]
 
   ## special case - vector of hyperlinks
-  hlinkNames <- NULL
+  # # hlinkNames not used?
+  # hlinkNames <- NULL
   if (inherits(x, "hyperlink")) {
     # consider wbHyperlink?
-    hlinkNames <- names(x)
+    # hlinkNames <- names(x)
     colNames <- FALSE
   }
 

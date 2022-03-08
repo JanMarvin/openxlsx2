@@ -125,7 +125,6 @@ openxlsxCoerce.summary.prcomp <- function(x, rowNames) {
 #' @description like print.survdiff with some ideas from the ascii package
 #' @param x data.frame for input
 #' @param rowNames rownames
-#' @importFrom stats pchisq
 #' @keywords internal
 #' @noRd
 openxlsxCoerce.survdiff <- function(x, rowNames) {
@@ -203,7 +202,6 @@ openxlsxCoerce.coxph <- function(x, rowNames) {
 openxlsxCoerce.summary.coxph <- function(x, rowNames) {
   coef <- x$coefficients
   ci <- x$conf.int
-  nvars <- nrow(coef)
 
   tmp <- cbind(
     coef[, -ncol(coef), drop = FALSE], # p later

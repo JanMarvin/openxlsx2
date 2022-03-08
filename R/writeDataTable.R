@@ -34,8 +34,12 @@
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.
-#' @seealso [wb_add_worksheet()], [writeData()], [removeTable()], [getTables()]
-#' @importFrom stats na.omit
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
+#' contains this string, the output will be broken.
+#' @seealso [addWorksheet()]
+#' @seealso [writeData()]
+#' @seealso [removeTable()]
+#' @seealso [getTables()]
 #' @export
 #' @examples
 #' ## see package vignettes for further examples.
@@ -254,10 +258,9 @@ writeDataTable <- function(wb, sheet, x,
   )
 
 
-  # TODO don't bother with strings here?  Use inherits(x, "class") or write S3
-  # methods for helpers
-
-  # column class styling
+  ## column class styling
+  # # keep this as a reminder that columnsytles should return sometime in the
+  # # future
   # colClasses <- lapply(x, function(x) tolower(class(x)))
   # classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
   #             colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)

@@ -19,13 +19,13 @@ Depends:
     R (>= 3.3.0)
 Imports:
     grDevices,
-    methods,
     Rcpp,
     stats,
     utils,
     zip,
     stringi,
-    R6
+    R6,
+    magrittr
 LinkingTo: 
     Rcpp
 Suggests:

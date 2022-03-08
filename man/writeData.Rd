@@ -97,6 +97,7 @@ Write an object to worksheet with optional styling.
 \details{
 Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
 This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame contains this string, the output will be broken.
 }
 \examples{
 

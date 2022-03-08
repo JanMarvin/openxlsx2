@@ -139,8 +139,6 @@ createComment <- function(comment,
   width <- round(width)
   height <- round(height)
 
-  # is n even used?
-  n <- length(comment)
   author <- author[1]
   visible <- visible[1]
 

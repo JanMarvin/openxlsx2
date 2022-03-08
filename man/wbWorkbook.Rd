@@ -72,7 +72,7 @@ A Workbook
 
 \item{\code{styleObjects}}{styleObjects}
 
-\item{\code{styles}}{styles}
+\item{\code{styles_mgr}}{styles_mgr}
 
 \item{\code{styles_xml}}{styles_xml}
 

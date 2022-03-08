@@ -73,6 +73,6 @@ test_that("Reading NAs and NaN values", {
 
   wb_save(wb, path = fileName, overwrite = TRUE)
 
-  expect_equal(expect_warning(read.xlsx(fileName)), a, check.attributes = FALSE)
+  expect_equal(read.xlsx(fileName), a, check.attributes=FALSE)
   unlink(fileName, recursive = TRUE, force = TRUE)
 })

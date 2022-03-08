@@ -21,9 +21,6 @@ wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row) {
     invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row))
 }
 
-#' @import Rcpp
-NULL
-
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }

@@ -91,7 +91,8 @@ read.xlsx <- function(
 
   # keep sheet missing // read.xlsx is the function to replace.
   # dont mess with wb_to_df
-  if (missing(sheet)) substitute()
+  if (missing(sheet)) 
+    sheet <- substitute()
 
   wb_to_df(
     wb,

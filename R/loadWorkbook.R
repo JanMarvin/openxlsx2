@@ -192,7 +192,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     j <- 1
     for (i in seq_along(sheetrId)) {
       if (is_chart_sheet[i]) {
-        count <- 0
         txt <- read_xml(chartSheetsXML[j])
 
         zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))
@@ -443,7 +442,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     # assign("styleObjects", styleObjects, globalenv())
     wb$styles_xml <- read_xml(stylesXML, pointer = FALSE)
 
-    wb$styles <- import_styles(wb$styles_xml)
+    wb$styles_mgr$styles <- import_styles(wb$styles_xml)
+    wb$styles_mgr$initialize(wb)
 
   } else {
     wb$styleObjects <- list()

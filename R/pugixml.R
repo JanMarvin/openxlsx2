@@ -90,11 +90,11 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 
   z <- NULL
 
-  if(class(xml) != "pugi_xml")
+  if (!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml)
 
 
-  if (class(xml) == "pugi_xml") {
+  if (inherits(xml, "pugi_xml")) {
     if (length(lvl) == 0) z <- getXMLXPtr0(xml)
     if (length(lvl) == 1) z <- getXMLXPtr1(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2(xml, level1, level2)
@@ -111,7 +111,7 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #' xml_node_name("<a/>")
 #' @export
 xml_node_name <- function(xml) {
-  if(class(xml) != "pugi_xml") xml <- read_xml(xml)
+  if (!inherits(xml, "pugi_xml")) xml <- read_xml(xml)
   getXMLXPtrName(xml)
 }
 
@@ -134,10 +134,10 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
 
   z <- NULL
 
-  if(class(xml) != "pugi_xml")
+  if(!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml)
 
-  if (class(xml) == "pugi_xml") {
+  if (inherits(xml, "pugi_xml")) {
     if (length(lvl) == 1) z <- getXMLXPtr1val(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2val(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3val(xml, level1, level2, level3)
@@ -170,10 +170,10 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 
   z <- NULL
 
-  if(class(xml) != "pugi_xml")
+  if(!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml)
 
-  if (class(xml) == "pugi_xml") {
+  if (inherits(xml, "pugi_xml")) {
     if (length(lvl) == 1) z <- getXMLXPtr1attr(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2attr(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3attr(xml, level1, level2, level3)

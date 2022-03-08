@@ -1,17 +1,15 @@
 
-#' Create a new Workbook object
-#'
-#' @details When `creator` is not set, a search is made for a non-`NULL` option
-#'   in `openxlsx.creator`.  If none is found, the environment variables
-#'   `USERNAME` and `USER` are searched, in that order.
-#'
-#' @param creator Creator(s) of the workbook (see detaisl)
-#' @param title,subject,category Title, subject, and category of the workmust.
-#'   These must be `NULL` or single length `character` vectors
-#' @return A `wbWorkbook` object
-#'
-#' @seealso [loadWorkbook()], [wb_save()]
-#'
+#' @name createWorkbook
+#' @title Create a new Workbook object
+#' @description Create a new Workbook object
+#' @param creator Creator of the workbook (your name). Defaults to login username
+#' @param title Workbook properties title
+#' @param subject Workbook properties subject
+#' @param category Workbook properties category
+#' @return Workbook object
+#' @export
+#' @seealso [loadWorkbook()]
+#' @seealso [saveWorkbook()]
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
@@ -594,7 +592,6 @@ removeRowHeights <- function(wb, sheet, rows) {
 #' @param dpi Image resolution
 #' @seealso [insertImage()]
 #' @export
-#' @importFrom grDevices bmp png jpeg tiff dev.copy dev.list dev.off
 #' @examples
 #' \dontrun{
 #' ## Create a new workbook
@@ -777,7 +774,7 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
   if (fontSize < 0) stop("Invalid fontSize")
   fontColour <- validateColour(fontColour)
 
-  wb$styles$fonts[[1]] <- sprintf('<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>', fontSize, fontColour, fontName)
+  wb$styles_mgr$styles$fonts[[1]] <- sprintf('<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>', fontSize, fontColour, fontName)
 }
 
 
@@ -1245,7 +1242,6 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
   assert_workbook(wb)
 
   sheet <- wb_validate_sheet(wb, sheet)
-  xml <- wb$worksheets[[sheet]]$sheetProtection
 
   props <- c()
 
@@ -2281,7 +2277,6 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #' @param startCol Column coordinate of upper left corner of the image
 #' @param units Units of width and height. Can be "in", "cm" or "px"
 #' @param dpi Image resolution used for conversion between units.
-#' @importFrom grDevices bmp png jpeg
 #' @seealso [insertPlot()]
 #' @export
 #' @examples

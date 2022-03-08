@@ -104,7 +104,9 @@ SEXP rbindlist(Rcpp::List x) {
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 
-  auto n = zz.nrow();
+  size_t n = zz.nrow();
+  size_t z_cols = z.cols(), z_rows = z.rows();
+  size_t col = 0, row = 0;
 
   Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::IntegerVector cols = zz["cols"];
@@ -112,8 +114,14 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   Rcpp::CharacterVector typs = zz["typ"];
 
   for (auto i = 0; i < n; ++i) {
-    Rcpp::as<Rcpp::CharacterVector>(z[cols[i]])[rows[i]] = vals[i];
-    Rcpp::as<Rcpp::CharacterVector>(tt[cols[i]])[rows[i]] = typs[i];
+    col = cols[i];
+    row = rows[i];
+
+    // need to check for missing values
+    if ((col <= z_cols) & (row <= z_rows)) {
+      Rcpp::as<Rcpp::CharacterVector>(z[col])[row] = vals[i];
+      Rcpp::as<Rcpp::CharacterVector>(tt[col])[row] = typs[i];
+    }
   }
 }
 
@@ -188,13 +196,13 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       // TODO change only if not "_openxlsx_NA_"
       Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
       Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos] = cell.v;
-      Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
-      Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
-      Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos] = cell.is;
-      Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos] = cell.f;
-      Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
-      Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos] = cell.r;
+      if (cell.v   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
+      if (cell.c_s != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
+      if (cell.c_t != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
+      if (cell.is  != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
+      if (cell.f   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
+      if (cell.typ != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
+      if (cell.r   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
 
       ++startrow;
     }

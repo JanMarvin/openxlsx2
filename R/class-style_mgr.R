@@ -1,69 +1,69 @@
 #' style manager
 #'
 #' @examples
-#'
 #' xlsxFile <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
 #' wb <- loadWorkbook(xlsxFile)
 #'
-#' ## start style mgr
-#' style <- style_mgr$new(wb)
-#' style$initialize(wb)
+#' # ## start style mgr
+#' # style <- style_mgr$new(wb)
+#' # style$initialize(wb)
 #'
-#' # style$get_numfmt() |> print()
-#' # style$next_numfmt_id() |> print()
-#' # style$get_numfmt_id("numFmt-166")
+#' # wb$styles_mgr$get_numfmt() |> print()
+#' # wb$styles_mgr$next_numfmt_id() |> print()
+#' # wb$styles_mgr$get_numfmt_id("numFmt-166")
 #'
 #' # create new number format
-#' new_numfmt <- create_numfmt(numFmtId = style$next_numfmt_id(), formatCode = "#,#")
+#' new_numfmt <- create_numfmt(numFmtId = wb$styles_mgr$next_numfmt_id(), formatCode = "#,#")
 #'
 #' # add it via stylemgr
-#' style$add(new_numfmt, "test")
+#' wb$styles_mgr$add(new_numfmt, "test")
 #'
 #' ## get numfmts (invisible)
-#' # z <- style$get_numfmt()
+#' # z <- wb$styles_mgr$get_numfmt()
 #' # z
-#' # wb$styles$numFmts
+#' wb$styles_mgr$styles$numFmts
 #'
 #' ## create and add huge font
 #' new_huge_font <- create_font(sz = "20", name = "Arial", b = "1", color = c(rgb = "FFFFFFFF"))
-#' style$add(new_huge_font, "arial_huge")
+#' wb$styles_mgr$add(new_huge_font, "arial_huge")
 #'
 #' ## create another font
 #' new_font <- create_font(name = "Arial")
-#' style$add(new_font, "arial")
+#' wb$styles_mgr$add(new_font, "arial")
 #'
 #' ## create and add new fill
 #' new_fill <- create_fill(patternType = "solid", fgColor = c(rgb = "FF00224B"))
-#' style$add(new_fill, "blue")
+#' wb$styles_mgr$add(new_fill, "blue")
 #'
 #' # create new style with numfmt enabled
 #' head_xf <- create_cell_style(
 #'   horizontal = "center",
 #'   textRotation = "45",
 #'   numFmtId = "0",
-#'   fontId = style$get_font_id("arial_huge"),
-#'   fillId = style$get_fill_id("blue")
+#'   fontId = wb$styles_mgr$get_font_id("arial_huge"),
+#'   fillId = wb$styles_mgr$get_fill_id("blue")
 #' )
 #'
 #' new_xf <- create_cell_style(
-#'   numFmtId = style$get_numfmt_id("test"),
-#'   fontId = style$get_font_id("arial")
+#'   numFmtId = wb$styles_mgr$get_numfmt_id("test"),
+#'   fontId = wb$styles_mgr$get_font_id("arial")
 #' )
 #'
 #' ## add new styles
-#' style$add(head_xf, "head_xf")
-#' style$add(new_xf, "new_xf")
+#' wb$styles_mgr$add(head_xf, "head_xf")
+#' wb$styles_mgr$add(new_xf, "new_xf")
 #'
 #' ## get cell style ids (invisible)
-#' # z <- style$get_xf()
+#' # z <- wb$styles_mgr$get_xf()
 #'
 #' ## get cell style id
-#' # style$get_xf_id("test_xf")
+#' # wb$styles_mgr$get_xf_id("new_xf")
 #'
-#' ## assign styles to cells
-#' set_cell_style(wb, "SUM", "B3:I3", style$get_xf_id("head_xf"))
-#' set_cell_style(wb, "SUM", "C7:C16", style$get_xf_id("new_xf"))
-#' # openXL(wb)
+#'  ## assign styles to cells
+#' set_cell_style(wb, "SUM", "B3:I3", wb$styles_mgr$get_xf_id("head_xf"))
+#' set_cell_style(wb, "SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
+#' # wb_open(wb)
+#'
 #' @export
 style_mgr <- R6::R6Class("wbStylesMgr", {
 
@@ -84,6 +84,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @field xf xf-ids
     xf = NULL,
 
+    #' @field styles styles as xml
+    styles = NULL,
 
     #' @description
     #' Creates a new `wbStylesMgr` object
@@ -92,9 +94,11 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param fill fill
     #' @param border border
     #' @param xf xf
+    #' @param styles styles
     #' @return a `wbStylesMgr` object
-    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA) {
-      numfmts <- wb$styles$numFmts
+    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA, styles = NA) {
+
+      numfmts <- self$styles$numFmts
       if (length(numfmts)) {
         typ <- xml_node_name(numfmts)
         id  <- openxlsx2:::rbindlist(xml_attr(numfmts, "numFmt"))[["numFmtId"]]
@@ -107,7 +111,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
-      fonts <- wb$styles$fonts
+      fonts <- self$styles$fonts
       if (length(fonts)) {
         typ <- xml_node_name(fonts)
         id  <- rownames(openxlsx2:::read_font(read_xml(fonts)))
@@ -120,7 +124,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
-      fills <- wb$styles$fills
+      fills <- self$styles$fills
       if (length(fills)) {
         typ <- xml_node_name(fills)
         id  <- rownames(openxlsx2:::read_fill(read_xml(fills)))
@@ -133,7 +137,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
-      borders <- wb$styles$borders
+      borders <- self$styles$borders
       if (length(borders)) {
         typ <- xml_node_name(borders)
         id  <- rownames(openxlsx2:::read_border(read_xml(borders)))
@@ -146,7 +150,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
-      xfs <- wb$styles$cellXfs
+      xfs <- self$styles$cellXfs
       if (length(xfs)) {
         typ <- xml_node_name(xfs)
         id  <- rownames(openxlsx2:::read_xf(read_xml(xfs)))
@@ -267,35 +271,35 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       if (is_numfmt) {
         typ <- "numFmt"
         id  <- unname(unlist(xml_attr(style, "numFmt"))["numFmtId"])
-        wb$styles$numFmts <- c(wb$styles$numFmts, style)
+        self$styles$numFmts <- c(self$styles$numFmts, style)
       }
 
       if (is_font) {
         typ <- "font"
-        fonts <- c(wb$styles$fonts, style)
+        fonts <- c(self$styles$fonts, style)
         id  <- rownames(openxlsx2:::read_font(read_xml(fonts)))
-        wb$styles$fonts <- fonts
+        self$styles$fonts <- fonts
       }
 
       if (is_fill) {
         typ <- "fill"
-        fills <- c(wb$styles$fills, style)
+        fills <- c(self$styles$fills, style)
         id  <- rownames(openxlsx2:::read_fill(read_xml(fills)))
-        wb$styles$fills <- fills
+        self$styles$fills <- fills
       }
 
       if (is_border) {
         typ <- "border"
-        borders <- c(wb$styles$borders, style)
+        borders <- c(self$styles$borders, style)
         id  <- rownames(openxlsx2:::read_fill(read_xml(borders)))
-        wb$styles$borders <- borders
+        self$styles$borders <- borders
       }
 
       if (is_xf) {
         typ <- "xf"
-        xfs <- c(wb$styles$cellXfs, style)
+        xfs <- c(self$styles$cellXfs, style)
         id  <- rownames(openxlsx2:::read_xf(read_xml(xfs)))
-        wb$styles$cellXfs <- xfs
+        self$styles$cellXfs <- xfs
       }
 
       new_entry <- data.frame(
@@ -315,4 +319,3 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
   )
 
 })
-
