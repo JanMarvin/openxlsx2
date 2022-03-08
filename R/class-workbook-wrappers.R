@@ -2069,7 +2069,7 @@ removeTable <- function(wb, sheet, table) {
 #' @export
 wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-  wb$groupCols(
+  wb$clone()$groupCols(
     sheet     = sheet,
     cols      = cols,
     collapsed = collapsed,
@@ -2148,7 +2148,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' @export
 wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-  wb$groupRows(
+  wb$clone()$groupRows(
     sheet     = sheet,
     rows      = rows,
     collapsed = collapsed,
