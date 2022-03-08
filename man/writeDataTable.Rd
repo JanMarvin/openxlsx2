@@ -184,5 +184,11 @@ wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 
 }
 \seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}, \code{\link[=removeTable]{removeTable()}}, \code{\link[=getTables]{getTables()}}
+\code{\link[=addWorksheet]{addWorksheet()}}
+
+\code{\link[=writeData]{writeData()}}
+
+\code{\link[=removeTable]{removeTable()}}
+
+\code{\link[=getTables]{getTables()}}
 }

@@ -108,22 +108,8 @@ If type == "bottomN"
 }
 }
 \examples{
-wb <- wb_workbook()
-wb_add_worksheet(wb, "cellIs")
-wb_add_worksheet(wb, "Moving Row")
-wb_add_worksheet(wb, "Moving Col")
-wb_add_worksheet(wb, "Dependent on")
-wb_add_worksheet(wb, "Duplicates")
-wb_add_worksheet(wb, "containsText")
-wb_add_worksheet(wb, "notcontainsText")
-wb_add_worksheet(wb, "beginsWith")
-wb_add_worksheet(wb, "endsWith")
-wb_add_worksheet(wb, "colourScale", zoom = 30)
-wb_add_worksheet(wb, "databar")
-wb_add_worksheet(wb, "between")
-wb_add_worksheet(wb, "topN")
-wb_add_worksheet(wb, "bottomN")
-wb_add_worksheet(wb, "logical operators")
+wb <- createWorkbook()
+addWorksheet(wb, "cellIs")
 
 negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
@@ -290,44 +276,6 @@ conditionalFormatting(wb, "logical operators",
                       cols = 1, rows = 1:10,
                       rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 )
-\dontrun{
-wb_save(wb, "conditionalFormattingExample.xlsx", TRUE)
-}
-
-
-#########################################################################
-## Databar Example
-
-wb <- wb_workbook()
-wb_add_worksheet(wb, "databar")
-
-## Databars
-writeData(wb, "databar", -5:5, startCol = 1)
-conditionalFormatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Defaults
-
-writeData(wb, "databar", -5:5, startCol = 3)
-conditionalFormatting(wb, "databar", cols = 3, rows = 1:11, type = "databar", border = FALSE)
-
-writeData(wb, "databar", -5:5, startCol = 5)
-conditionalFormatting(wb, "databar",
-  cols = 5, rows = 1:11,
-  type = "databar", style = c("#a6a6a6"), showValue = FALSE
-)
-
-writeData(wb, "databar", -5:5, startCol = 7)
-conditionalFormatting(wb, "databar",
-  cols = 7, rows = 1:11,
-  type = "databar", style = c("#a6a6a6"), showValue = FALSE, gradient = FALSE
-)
-
-writeData(wb, "databar", -5:5, startCol = 9)
-conditionalFormatting(wb, "databar",
-  cols = 9, rows = 1:11,
-  type = "databar", style = c("#a6a6a6", "#a6a6a6"), showValue = FALSE, gradient = FALSE
-)
-\dontrun{
-wb_save(wb, path = "databarExample.xlsx", overwrite = TRUE)
-}
 
 }
 \seealso{
