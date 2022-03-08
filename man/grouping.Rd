@@ -4,7 +4,7 @@
 \alias{wb_group_cols}
 \alias{ungroupColumns}
 \alias{grouping}
-\alias{groupRows}
+\alias{wb_group_rows}
 \alias{ungroupRows}
 \title{Group Rows and Columns}
 \usage{
@@ -12,7 +12,7 @@ wb_group_cols(wb, sheet, cols, collapsed = FALSE, levels = NULL)
 
 ungroupColumns(wb, sheet, cols)
 
-groupRows(wb, sheet, rows, collapsed = FALSE)
+wb_group_rows(wb, sheet, rows, collapsed = FALSE, levels = NULL)
 
 ungroupRows(wb, sheet, rows)
 }
@@ -51,9 +51,9 @@ wb <- wb_add_worksheet(wb, "AirPass")
 writeData(wb, "AirPass", t2, rowNames = TRUE)
 
 # groups will always end on/show the last row. in the example 1950, 1955, and 1960
-groupRows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
-groupRows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
-groupRows(wb, "AirPass", 9:13)                  # group years 1956-1960
+wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
+wb <- wb_group_rows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
+wb <- wb_group_rows(wb, "AirPass", 9:13)                  # group years 1956-1960
 
 wb$createCols("AirPass", 13)
 

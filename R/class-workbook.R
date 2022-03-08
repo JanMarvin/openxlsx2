@@ -1699,6 +1699,9 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    # TODO groupRows() and groupCols() are very similiar.  Can problem turn
+    # these into some wrappers for another method
+
     #' @description
     #' Group rows
     #' @param sheet sheet
@@ -1706,8 +1709,33 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    groupRows = function(sheet, rows, collapsed, levels) {
+    groupRows = function(sheet, rows, collapsed, levels = NULL) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
 
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (length(collapsed) > length(rows)) {
+        stop("Collapses argument is of greater length than number of rows.")
+      }
+
+      if (!is.logical(collapsed)) {
+        stop("Collapses should be a logical value (TRUE/FALSE).")
+      }
+
+      if (any(rows) < 1L) {
+        stop("Invalid rows entered (<= 0).")
+      }
+
+      collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
+
+      levels <- levels %||% rep("1", length(rows))
+
+      # Remove duplicates
+      ok <- !duplicaed(rows)
+      collapsed <- collapsed[ok]
+      levels <- levels[ok]
+      rows <- rows[ok]
       sheet <- wb_validate_sheet(self, sheet)
 
       # fetch the row_attr data.frame

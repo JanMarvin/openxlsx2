@@ -2134,9 +2134,9 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' writeData(wb, "AirPass", t2, rowNames = TRUE)
 #'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
-#' groupRows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
-#' groupRows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
-#' groupRows(wb, "AirPass", 9:13)                  # group years 1956-1960
+#' wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
+#' wb <- wb_group_rows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
+#' wb <- wb_group_rows(wb, "AirPass", 9:13)                  # group years 1956-1960
 #'
 #' wb$createCols("AirPass", 13)
 #'
@@ -2146,36 +2146,14 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
 #' @export
-groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
+wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  if (length(collapsed) > length(rows)) {
-    stop("Collapses argument is of greater length than number of rows.")
-  }
-
-  if (!is.logical(collapsed)) {
-    stop("Collapses should be a logical value (TRUE/FALSE).")
-  }
-
-  if (any(rows) < 1L) {
-    stop("Invalid rows entered (<= 0).")
-  }
-
-  collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
-
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  levels <- rep("1", length(rows))
-
-  # Remove duplicates
-  collapsed <- collapsed[!duplicated(rows)]
-  levels <- levels[!duplicated(rows)]
-  rows <- rows[!duplicated(rows)]
-
-  wb$groupRows(sheet = sheet, rows = rows, collapsed = collapsed, levels = levels)
+  wb$groupRows(
+    sheet     = sheet,
+    rows      = rows,
+    collapsed = collapsed,
+    levels    = levels
+  )
 }
 
 #' @rdname grouping

@@ -548,7 +548,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{groupRows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed, levels)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
