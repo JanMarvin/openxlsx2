@@ -1929,29 +1929,6 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 }
 
 
-#' @name copyWorkbook
-#' @title Copy a Workbook object.
-#' @description Just a wrapper of wb$clone()
-#' @param wb A workbook object
-#' @return Workbook
-#' @examples
-#'
-#' wb <- wb_workbook()
-#' wb2 <- wb ## does not create a copy
-#' wb3 <- copyWorkbook(wb) ## wrapper for wb$clone()
-#'
-#' wb_add_worksheet(wb, "Sheet1") ## adds worksheet to both wb and wb2 but not wb3
-#'
-#' names(wb)
-#' names(wb2)
-#' names(wb3)
-#' @export
-copyWorkbook <- function(wb) {
-  assert_workbook(wb)
-  wb$clone()
-}
-
-
 #' @name getTables
 #' @title List Excel tables in a workbook
 #' @description List Excel tables in a workbook
