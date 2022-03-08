@@ -1634,15 +1634,40 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    groupCols = function(sheet, cols, collapsed, levels) {
+    groupCols = function(sheet, cols, collapsed, levels = NULL) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
+
+      if (length(collapsed) > length(cols)) {
+        stop("Collapses argument is of greater length than number of cols.")
+      }
+
+      if (!is.logical(collapsed)) {
+        stop("Collapses should be a logical value (TRUE/FALSE).")
+      }
+
+      if (any(cols) < 1L) {
+        stop("Invalid rows entered (<= 0).")
+      }
+
+      collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
+      levels <- levels %||% rep("1", length(cols))
+
+      # Remove duplicates
+      ok <- !duplicated(cols)
+      collapsed <- collapsed[ok]
+      levels    <- levels[ok]
+      cols      <- cols[ok]
 
       # fetch the row_attr data.frame
       col_attr <- self$worksheets[[sheet]]$unfold_cols()
 
-      if (NROW(col_attr) == 0)
+      if (NROW(col_attr) == 0) {
+        # TODO should this be a warning?  Or an error?
         message("worksheet has no columns. please create some with createCols")
+      }
 
       # reverse to make it easier to get the fist
       cols_rev <- rev(cols)

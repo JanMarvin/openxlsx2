@@ -522,7 +522,7 @@ creates column object for worksheet
 \subsection{Method \code{groupCols()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupCols(sheet, cols, collapsed, levels)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupCols(sheet, cols, collapsed, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

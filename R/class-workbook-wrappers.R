@@ -417,7 +417,7 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #'
 #' NOTE: The calculation of column widths can be slow for large worksheets.
 #'
-#' NOTE: The `hidden` parameter may conflict with the one set in `groupColumns`; changing one will update the other.
+#' NOTE: The `hidden` parameter may conflict with the one set in [wb_group_cols]; changing one will update the other.
 #'
 #' @seealso [removeColWidths()]
 #' @export
@@ -2064,38 +2064,17 @@ removeTable <- function(wb, sheet, table) {
 #' @param sheet A name or index of a worksheet.
 #' @param cols Indices of cols to group.
 #' @param collapsed Logical vector. If TRUE the grouped columns are hidden. Defaults to FALSE.
+#' @param levels levels?
 #' @details Group columns together, with the option to hide them.
 #' @export
-groupColumns <- function(wb, sheet, cols, collapsed = FALSE) {
+wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (length(collapsed) > length(cols)) {
-    stop("Collapses argument is of greater length than number of cols.")
-  }
-
-  if (!is.logical(collapsed)) {
-    stop("Collapses should be a logical value (TRUE/FALSE).")
-  }
-
-  if (any(cols) < 1L) {
-    stop("Invalid rows entered (<= 0).")
-  }
-
-  collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
-
-
-  levels <- rep("1", length(cols))
-
-  # Remove duplicates
-  collapsed <- collapsed[!duplicated(cols)]
-  levels <- levels[!duplicated(cols)]
-  cols <- cols[!duplicated(cols)]
-
-  wb$groupCols(sheet = sheet, cols = cols, collapsed = collapsed, levels = levels)
+  wb$groupCols(
+    sheet     = sheet,
+    cols      = cols,
+    collapsed = collapsed,
+    levels    = levels
+  )
 }
 
 #' @rdname grouping
@@ -2151,7 +2130,7 @@ ungroupColumns <- function(wb, sheet, cols) {
 #' dimnames(t2) <- dimnames(.preformat.ts(t1))
 #'
 #' wb <- wb_workbook()
-#' wb_add_worksheet(wb, "AirPass")
+#' wb <- wb_add_worksheet(wb, "AirPass")
 #' writeData(wb, "AirPass", t2, rowNames = TRUE)
 #'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
@@ -2161,10 +2140,10 @@ ungroupColumns <- function(wb, sheet, cols) {
 #'
 #' wb$createCols("AirPass", 13)
 #'
-#' groupColumns(wb, "AirPass", 2:4, collapsed = TRUE)
-#' groupColumns(wb, "AirPass", 5:7, collapsed = TRUE)
-#' groupColumns(wb, "AirPass", 8:10, collapsed = TRUE)
-#' groupColumns(wb, "AirPass", 11:13)
+#' wb <- wb_group_cols(wb, "AirPass", 2:4, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
 #' @export
 groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
