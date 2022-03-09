@@ -1793,7 +1793,7 @@ wbWorkbook <- R6::R6Class(
       levels <- levels %||% rep("1", length(rows))
 
       # Remove duplicates
-      ok <- !duplicaed(rows)
+      ok <- !duplicated(rows)
       collapsed <- collapsed[ok]
       levels <- levels[ok]
       rows <- rows[ok]
