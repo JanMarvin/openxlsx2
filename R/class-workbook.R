@@ -4570,7 +4570,7 @@ get_wb_sheet_id <- function(wb, pattern, i = NULL) {
 #' Get sheet name
 #'
 #' @param wb a [wbWorkbook] object
-#' @param sheetIndex Sheet name index
+#' @param index Sheet name index
 #' @return The sheet index
 #' @export
 wb_get_sheet_name = function(wb, index = NULL) {
