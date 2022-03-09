@@ -162,9 +162,9 @@ wb_unmerge_cells <- function(wb, sheet, cols, rows) {
 #'
 #' ## Add 3 worksheets
 #' wb$addWorksheet("Sheet 1")
-#' wb$addWorksheet("Sheet 2", gridLines = FALSE)
+#' wb$addWorksheet("Sheet 2", showGridLines = FALSE)
 #' wb$addWorksheet("Sheet 3", tabColour = "red")
-#' wb$addWorksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+#' wb$addWorksheet("Sheet 4", showGridLines = FALSE, tabColour = "#4F81BD")
 #'
 #' ## Headers and Footers
 #' wb$addWorksheet("Sheet 5",
@@ -612,7 +612,7 @@ removeRowHeights <- function(wb, sheet, rows) {
 #' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' wb$addWorksheet("Sheet 1", gridLines = FALSE)
+#' wb$addWorksheet("Sheet 1", showGridLines = FALSE)
 #'
 #' ## create plot objects
 #' require(ggplot2)
@@ -1392,13 +1392,13 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 #' @examples
 #' ## setup a workbook with 3 worksheets
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "Sheet 1", gridLines = FALSE)
+#' wb$addWorksheet(sheetName = "Sheet 1", showGridLines = FALSE)
 #' writeDataTable(wb = wb, sheet = 1, x = iris)
 #'
-#' wb$addWorksheet(sheetName = "mtcars (Sheet 2)", gridLines = FALSE)
+#' wb$addWorksheet(sheetName = "mtcars (Sheet 2)", showGridLines = FALSE)
 #' writeData(wb = wb, sheet = 2, x = mtcars)
 #'
-#' wb$addWorksheet(sheetName = "Sheet 3", gridLines = FALSE)
+#' wb$addWorksheet(sheetName = "Sheet 3", showGridLines = FALSE)
 #' writeData(wb = wb, sheet = 3, x = Formaldehyde)
 #'
 #' worksheetOrder(wb)

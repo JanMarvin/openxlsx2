@@ -79,9 +79,9 @@ wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
 wb$addWorksheet("Sheet 1")
-wb$addWorksheet("Sheet 2", gridLines = FALSE)
+wb$addWorksheet("Sheet 2", showGridLines = FALSE)
 wb$addWorksheet("Sheet 3", tabColour = "red")
-wb$addWorksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+wb$addWorksheet("Sheet 4", showGridLines = FALSE, tabColour = "#4F81BD")
 
 ## Headers and Footers
 wb$addWorksheet("Sheet 5",
