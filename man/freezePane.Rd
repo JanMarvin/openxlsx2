@@ -35,10 +35,10 @@ Freeze a worksheet pane
 wb <- wb_workbook("Kenshin")
 
 ## Add some worksheets
-wb <- wb_add_worksheet(wb, "Sheet 1")
-wb <- wb_add_worksheet(wb, "Sheet 2")
-wb <- wb_add_worksheet(wb, "Sheet 3")
-wb <- wb_add_worksheet(wb, "Sheet 4")
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
+wb$addWorksheet("Sheet 3")
+wb$addWorksheet("Sheet 4")
 
 ## Freeze Panes
 wb <- wb_freeze_panes(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)

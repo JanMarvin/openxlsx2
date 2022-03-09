@@ -105,7 +105,7 @@ wbComment <- R6::R6Class(
 #' @seealso [writeComment()]
 #' @examples
 #' wb <- wb_workbook()
-#' wb_add_worksheet(wb, "Sheet 1")
+#' wb$addWorksheet("Sheet 1")
 #'
 #' c1 <- createComment(comment = "this is comment")
 #' writeComment(wb, 1, col = "B", row = 10, comment = c1)
@@ -170,7 +170,7 @@ createComment <- function(comment,
 #' @seealso [createComment()]
 #' @examples
 #' wb <- wb_workbook()
-#' wb_add_worksheet(wb, "Sheet 1")
+#' wb$addWorksheet("Sheet 1")
 #'
 #' c1 <- createComment(comment = "this is comment")
 #' writeComment(wb, 1, col = "B", row = 10, comment = c1)

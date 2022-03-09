@@ -31,8 +31,8 @@ rows are used.
 wb <- wb_workbook()
 
 # Add a worksheets
-wb <- wb_add_worksheet(wb, "Sheet 1")
-wb <- wb_add_worksheet(wb, "Sheet 2")
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
 
 # Merge cells: Row 2 column C to F (3:6)
 wb <- wb_merge_cells(wb, "Sheet 1", cols = 2, rows = 3:6)

@@ -9,7 +9,7 @@
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
-#' wb_add_worksheet(wb, "Sheet 1")
+#' wb$addWorksheet("Sheet 1")
 #'
 #' ## specify region
 #' writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)

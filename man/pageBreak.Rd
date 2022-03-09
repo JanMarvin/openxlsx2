@@ -20,7 +20,7 @@ insert page breaks into a worksheet
 }
 \examples{
 wb <- wb_workbook()
-wb_add_worksheet(wb, "Sheet 1")
+wb$addWorksheet("Sheet 1")
 writeData(wb, sheet = 1, x = iris)
 
 pageBreak(wb, sheet = 1, i = 10, type = "row")

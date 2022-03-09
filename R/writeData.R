@@ -360,7 +360,7 @@ writeData <- function(wb,
 #' ## There are 3 ways to write a formula
 #'
 #' wb <- wb_workbook()
-#' wb_add_worksheet(wb, "Sheet 1")
+#' wb$addWorksheet("Sheet 1")
 #' writeData(wb, "Sheet 1", x = iris)
 #'
 #' ## SEE int2col() to convert int to Excel column label

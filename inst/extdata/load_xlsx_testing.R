@@ -158,7 +158,7 @@ openXL(wb)
 
 ## write jsuts a date
 wb <- wb_workbook()
-wb_add_worksheet(wb, "Sheet 1")
+wb$addWorksheet("Sheet 1")
 writeData(wb, 1, as.Date('2014-01-01'))
 openXL(wb)
 

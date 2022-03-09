@@ -50,10 +50,10 @@ Headers and footers can contain special tags
 \examples{
 wb <- wb_workbook()
 
-wb_add_worksheet(wb, "S1")
-wb_add_worksheet(wb, "S2")
-wb_add_worksheet(wb, "S3")
-wb_add_worksheet(wb, "S4")
+wb$addWorksheet("S1")
+wb$addWorksheet("S2")
+wb$addWorksheet("S3")
+wb$addWorksheet("S4")
 
 writeData(wb, 1, 1:400)
 writeData(wb, 2, 1:400)

@@ -16,9 +16,9 @@ Removes filters from addFilter() and writeData()
 }
 \examples{
 wb <- wb_workbook()
-wb_add_worksheet(wb, "Sheet 1")
-wb_add_worksheet(wb, "Sheet 2")
-wb_add_worksheet(wb, "Sheet 3")
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
+wb$addWorksheet("Sheet 3")
 
 writeData(wb, 1, iris)
 addFilter(wb, 1, row = 1, cols = seq_along(iris))

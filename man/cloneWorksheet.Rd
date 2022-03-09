@@ -25,7 +25,7 @@ Clone a worksheet to a Workbook object
 wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
-wb_add_worksheet(wb, "Sheet 1")
+wb$addWorksheet("Sheet 1")
 wb_clone_worksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
 
 ## Save workbook

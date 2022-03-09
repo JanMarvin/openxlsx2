@@ -31,7 +31,7 @@ Create a cell Comment object to pass to writeComment()
 }
 \examples{
 wb <- wb_workbook()
-wb_add_worksheet(wb, "Sheet 1")
+wb$addWorksheet("Sheet 1")
 
 c1 <- createComment(comment = "this is comment")
 writeComment(wb, 1, col = "B", row = 10, comment = c1)

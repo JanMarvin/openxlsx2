@@ -78,13 +78,13 @@ Headers and footers can contain special tags \itemize{
 wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
-wb_add_worksheet(wb, "Sheet 1")
-wb_add_worksheet(wb, "Sheet 2", gridLines = FALSE)
-wb_add_worksheet(wb, "Sheet 3", tabColour = "red")
-wb_add_worksheet(wb, "Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2", gridLines = FALSE)
+wb$addWorksheet("Sheet 3", tabColour = "red")
+wb$addWorksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
 
 ## Headers and Footers
-wb_add_worksheet(wb, "Sheet 5",
+wb$addWorksheet("Sheet 5",
   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
   evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
@@ -93,19 +93,19 @@ wb_add_worksheet(wb, "Sheet 5",
   firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
 )
 
-wb_add_worksheet(wb, "Sheet 6",
+wb$addWorksheet("Sheet 6",
   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
   footer = c("&[Path]&[File]", NA, "&[Tab]"),
   firstHeader = c(NA, "Center Header of First Page", NA),
   firstFooter = c(NA, "Center Footer of First Page", NA)
 )
 
-wb_add_worksheet(wb, "Sheet 7",
+wb$addWorksheet("Sheet 7",
   header = c("ALL HEAD LEFT 2", "ALL HEAD CENTER 2", "ALL HEAD RIGHT 2"),
   footer = c("ALL FOOT RIGHT 2", "ALL FOOT CENTER 2", "ALL FOOT RIGHT 2")
 )
 
-wb_add_worksheet(wb, "Sheet 8",
+wb$addWorksheet("Sheet 8",
   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )

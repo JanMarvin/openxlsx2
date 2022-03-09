@@ -25,9 +25,9 @@ Get and set worksheet visible state
 \examples{
 
 wb <- wb_workbook()
-wb_add_worksheet(wb, sheetName = "S1", visible = FALSE)
-wb_add_worksheet(wb, sheetName = "S2", visible = TRUE)
-wb_add_worksheet(wb, sheetName = "S3", visible = FALSE)
+wb$addWorksheet(sheetName = "S1", visible = FALSE)
+wb$addWorksheet(sheetName = "S2", visible = TRUE)
+wb$addWorksheet(sheetName = "S3", visible = FALSE)
 
 sheetVisibility(wb)
 sheetVisibility(wb)[1] <- TRUE ## show sheet 1
