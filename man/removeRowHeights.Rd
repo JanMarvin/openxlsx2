@@ -27,5 +27,5 @@ wb_save(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
-\code{\link[=setRowHeights]{setRowHeights()}}
+\code{\link[=wb_set_row_heights]{wb_set_row_heights()}}
 }

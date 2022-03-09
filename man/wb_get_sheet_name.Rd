@@ -9,7 +9,7 @@ wb_get_sheet_name(wb, index = NULL)
 \arguments{
 \item{wb}{a \link{wbWorkbook} object}
 
-\item{sheetIndex}{Sheet name index}
+\item{index}{Sheet name index}
 }
 \value{
 The sheet index
