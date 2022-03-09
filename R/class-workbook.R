@@ -4581,9 +4581,9 @@ wb_get_sheet_name = function(wb, index = NULL) {
 
   n <- length(wb$sheet_names)
 
-  if (any(sheetIndex > n)) {
+  if (any(index > n)) {
     stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
   }
 
-  wb$sheet_names[sheetIndex]
+  wb$sheet_names[index]
 }
