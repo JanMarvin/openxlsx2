@@ -76,7 +76,7 @@ df <- data.frame(
 class(df$z) <- c(class(df$z), "formula")
 class(df$z2) <- c(class(df$z2), "formula")
 
-wb_add_worksheet(wb, "Sheet 2")
+wb$addWorksheet("Sheet 2")
 writeData(wb, sheet = 2, x = df)
 
 
@@ -97,8 +97,8 @@ wb_save(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
 ## 4. - Writing internal hyperlinks
 
 wb <- wb_workbook()
-wb_add_worksheet(wb, "Sheet1")
-wb_add_worksheet(wb, "Sheet2")
+wb$addWorksheet("Sheet1")
+wb$addWorksheet("Sheet2")
 writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 
 ## Save workbook

@@ -7,9 +7,9 @@
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' wb_add_worksheet(wb, "S1")
-#' wb_add_worksheet(wb, "S2")
-#' wb_add_worksheet(wb, "S3")
+#' wb$addWorksheet("S1")
+#' wb$addWorksheet("S2")
+#' wb$addWorksheet("S3")
 #'
 #' names(wb)
 #' names(wb)[[2]] <- "S2a"

@@ -92,9 +92,9 @@ contains this string, the output will be broken.
 #####################################################################################
 ## Create Workbook object and add worksheets
 wb <- wb_workbook()
-wb_add_worksheet(wb, "S1")
-wb_add_worksheet(wb, "S2")
-wb_add_worksheet(wb, "S3")
+wb$addWorksheet("S1")
+wb$addWorksheet("S2")
+wb$addWorksheet("S3")
 
 
 #####################################################################################
@@ -152,7 +152,7 @@ wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 ## Pre-defined table styles gallery
 
 wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
-wb_add_worksheet(wb, "Style Samples")
+wb$addWorksheet("Style Samples")
 for (i in 1:21) {
   style <- paste0("TableStyleLight", i)
   writeDataTable(wb,
