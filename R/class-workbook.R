@@ -2832,13 +2832,15 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @param cols cols
     #' @param stack stack
+    #' @param gridExpand gridExpand
     #' @return The `wbWorkbook` object, invisibly
     addStyle = function(
       sheet,
       style,
       rows,
       cols,
-      stack
+      stack,
+      gridExpand = FALSE
     ) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)

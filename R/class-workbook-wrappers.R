@@ -312,9 +312,24 @@ wb_clone_worksheet <- function(wb, sheetName, clonedSheet) {
 #' \dontrun{
 #' wb_save(wb, "addStyleExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_style <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = FALSE) {
+wb_add_style <- function(
+  wb,
+  sheet,
+  style,
+  rows,
+  cols,
+  gridExpand = FALSE,
+  stack = FALSE
+) {
   assert_workbook(wb)
-  wb$clone()$addStyle(sheet = sheet, style = style, rows = rows, cols = cols, stack = stack)
+  wb$clone()$addStyle(
+    sheet      = sheet,
+    style      = style,
+    rows       = rows,
+    cols       = cols,
+    gridExpand = gridExpand,
+    stack      = stack
+  )
 }
 
 
