@@ -565,7 +565,7 @@ removeColWidths <- function(wb, sheet, cols) {
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to remove custom height (if any) from.
-#' @seealso [setRowHeights()]
+#' @seealso [wb_set_row_heights()]
 #' @export
 #' @examples
 #' ## Create a new workbook

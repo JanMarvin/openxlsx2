@@ -36,7 +36,7 @@
 #' hyperlinks, percentages respectively.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
-#' @seealso [addWorksheet()]
+#' @seealso [wb_add_worksheet()]
 #' @seealso [writeData()]
 #' @seealso [removeTable()]
 #' @seealso [getTables()]
