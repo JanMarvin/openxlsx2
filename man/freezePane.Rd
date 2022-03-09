@@ -41,10 +41,10 @@ wb$addWorksheet("Sheet 3")
 wb$addWorksheet("Sheet 4")
 
 ## Freeze Panes
-wb <- wb_freeze_panes(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-wb <- wb_freeze_panes(wb, "Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-wb <- wb_freeze_panes(wb, 3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-wb <- wb_freeze_panes(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
+wb$freezePanes("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
+wb$freezePanes("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
+wb$freezePanes(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
+wb$freezePanes(4, firstActiveRow = 1, firstActiveCol = "D")
 
 ## Save workbook
 \dontrun{
