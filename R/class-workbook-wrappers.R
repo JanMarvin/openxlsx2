@@ -754,7 +754,7 @@ getStyles <- function(wb) {
 #' }
 wb_remove_worksheet <- function(wb, sheet) {
   assert_workbook(wb)
-  wb$clone()$deleteWorksheet(sheet)
+  wb$clone()$removeWorksheet(sheet)
 }
 
 #' @name modifyBaseFont
