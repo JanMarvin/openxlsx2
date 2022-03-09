@@ -302,6 +302,8 @@ wbWorkbook <- R6::R6Class(
     #' @param showGridLines showGridLines
     #' @param tabColour tabColour
     #' @param zoom zoom
+    #' @param header header
+    #' @param footer footer
     #' @param oddHeader oddHeader
     #' @param oddFooter oddFooter
     #' @param evenHeader evenHeader
@@ -320,12 +322,14 @@ wbWorkbook <- R6::R6Class(
       showGridLines = TRUE,
       tabColour     = NULL,
       zoom          = 100,
-      oddHeader     = NULL,
-      oddFooter     = NULL,
-      evenHeader    = NULL,
-      evenFooter    = NULL,
-      firstHeader   = NULL,
-      firstFooter   = NULL,
+      header        = NULL,
+      footer        = NULL,
+      oddHeader     = header,
+      oddFooter     = footer,
+      evenHeader    = header,
+      evenFooter    = footer,
+      firstHeader   = header,
+      firstFooter   = footer,
       visible       = c("true", "false", "hidden", "visible", "veryhidden"),
       hasDrawing    = FALSE,
       paperSize     = 9,

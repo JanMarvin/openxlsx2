@@ -241,12 +241,14 @@ Add worksheet to the \code{wbWorkbook} object
   showGridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
-  oddHeader = NULL,
-  oddFooter = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
+  header = NULL,
+  footer = NULL,
+  oddHeader = header,
+  oddFooter = footer,
+  evenHeader = header,
+  evenFooter = footer,
+  firstHeader = header,
+  firstFooter = footer,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
   paperSize = 9,
@@ -266,6 +268,10 @@ Add worksheet to the \code{wbWorkbook} object
 \item{\code{tabColour}}{tabColour}
 
 \item{\code{zoom}}{zoom}
+
+\item{\code{header}}{header}
+
+\item{\code{footer}}{footer}
 
 \item{\code{oddHeader}}{oddHeader}
 
