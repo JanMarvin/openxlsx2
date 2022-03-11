@@ -625,10 +625,29 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   }
 
   ## Fix headers/footers
+  # TODO think about improving headerFooter
   for (i in seq_len(nSheets)) {
     if (!is_chart_sheet[i]) {
       if (length(wb$worksheets[[i]]$headerFooter)) {
-        wb$worksheets[[i]]$headerFooter <- lapply(wb$worksheets[[i]]$headerFooter, splitHeaderFooter)
+
+        amp_split <- function(x) {
+          z <- stri_split_regex(x, "&amp;[LCR]")
+          z <- unlist(z)
+          z[-1]
+        }
+
+        head_foot <- c("oddHeader", "oddFooter",
+                       "evenHeader", "evenFooter",
+                       "firstHeader", "firstFooter")
+
+        headerFooter <- vector("list", length = length(head_foot))
+        names(headerFooter) <- head_foot
+
+        for (hf in head_foot) {
+          headerFooter[[hf]] <- amp_split(xml_value(wb$worksheets[[i]]$headerFooter, "headerFooter", hf))
+        }
+
+        wb$worksheets[[i]]$headerFooter <- headerFooter
       }
     }
   }
