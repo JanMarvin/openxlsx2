@@ -110,6 +110,8 @@ wb_save <- function(wb, path, overwrite = TRUE) {
 #' @name ws_cell_merge
 NULL
 
+# merge cells -------------------------------------------------------------
+
 #' @export
 #' @rdname ws_cell_merge
 wb_merge_cells <- function(wb, sheet, cols, rows) {
@@ -124,6 +126,8 @@ wb_unmerge_cells <- function(wb, sheet, cols, rows) {
   wb$clone()$removeCellMerge(sheet, rows = rows, cols = cols)
 }
 
+
+# worksheets --------------------------------------------------------------
 
 #' Add a worksheet to a workbook
 #'
@@ -376,6 +380,10 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 }
 
 
+# heights and columns -----------------------------------------------------
+
+# TODO order these...
+
 #' @title Set worksheet row heights
 #' @description Set worksheet row heights
 #' @param wb A workbook object
@@ -590,6 +598,9 @@ removeRowHeights <- function(wb, sheet, rows) {
 }
 
 
+# images ------------------------------------------------------------------
+
+
 #' @name insertPlot
 #' @title Insert the current plot into a worksheet
 #' @description The current plot is saved to a temporary image file using dev.copy.
@@ -686,6 +697,8 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 }
 
 
+# styles ------------------------------------------------------------------
+
 
 #' @name replaceStyle
 #' @title Replace an existing cell style
@@ -756,6 +769,9 @@ wb_remove_worksheet <- function(wb, sheet) {
   assert_workbook(wb)
   wb$clone()$removeWorksheet(sheet)
 }
+
+
+# base font ---------------------------------------------------------------
 
 #' @name modifyBaseFont
 #' @title Modify the default font
@@ -1206,6 +1222,8 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 }
 
 
+# protect -----------------------------------------------------------------
+
 #' @name protectWorksheet
 #' @title Protect a worksheet from modifications
 #' @description Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
@@ -1345,6 +1363,9 @@ protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure =
   invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows))
 }
 
+
+# grid lines --------------------------------------------------------------
+
 #' @name showGridLines
 #' @title Set worksheet gridlines to show or hide.
 #' @description Set worksheet gridlines to show or hide.
@@ -1382,6 +1403,10 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 
   wb$worksheets[[sheet]]$sheetViews <- sv
 }
+
+# TODO hide gridlines?
+
+# worksheet order ---------------------------------------------------------
 
 #' @name worksheetOrder
 #' @title Order of worksheets in xlsx file
@@ -1537,6 +1562,9 @@ createNamedRegion <- function(wb, sheet, cols, rows, name) {
   )
 }
 
+
+# filters -----------------------------------------------------------------
+
 #' @name addFilter
 #' @title Add column filters
 #' @description Add excel column filters to a worksheet
@@ -1625,6 +1653,9 @@ removeFilter <- function(wb, sheet) {
 
   invisible(wb)
 }
+
+
+# validations -------------------------------------------------------------
 
 #' @name dataValidation
 #' @title Add data validation to cells
@@ -1809,6 +1840,8 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
   invisible(0)
 }
 
+
+# visibility --------------------------------------------------------------
 
 #' @name sheetVisibility
 #' @title Get/set worksheet visible state
@@ -2069,6 +2102,9 @@ removeTable <- function(wb, sheet, table) {
   invisible(0)
 }
 
+
+# grouping ----------------------------------------------------------------
+
 #' @rdname grouping
 #' @param wb A workbook object.
 #' @param sheet A name or index of a worksheet.
@@ -2263,6 +2299,8 @@ wb_get_creators <- function(wb) {
   wb[["creator"]]
 }
 
+
+# others? -----------------------------------------------------------------
 
 #' @name setLastModifiedBy
 #' @title Add another author to the meta data of the file.
