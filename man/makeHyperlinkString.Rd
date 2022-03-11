@@ -40,7 +40,7 @@ writeData(wb, sheet = 1, x = x, startCol = 10)
 ## Internal Hyperlink - create hyperlink formula manually
 writeFormula(
   wb, "Sheet1",
-  x = '=HYPERLINK(Sheet2!B3, "Text to Display - Link to Sheet2")',
+  x = '=HYPERLINK(\"#Sheet2!B3\", "Text to Display - Link to Sheet2")',
   startCol = 3
 )
 
