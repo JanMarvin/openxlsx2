@@ -913,14 +913,16 @@ test_that("test headerFooter", {
   firstFooter = c('BOTTOM', 'OF FIRST', 'PAGE')
 
   # Add Sheet 1
-  wb=createWorkbook()
-  addWorksheet(wb, 'Sheet 1',
-               header = header,
-               footer = footer,
-               evenHeader = evenHeader,
-               evenFooter = evenFooter,
-               firstHeader = firstHeader,
-               firstFooter = firstFooter)
+  wb <- wb_workbook()
+  wb$addWorksheet(
+    'Sheet 1',
+    header = header,
+    footer = footer,
+    evenHeader = evenHeader,
+    evenFooter = evenFooter,
+    firstHeader = firstHeader,
+    firstFooter = firstFooter
+  )
 
   # Modified headers and footers to make them Arial 8
   header <- paste0('&"Arial"&8', header)
@@ -931,19 +933,21 @@ test_that("test headerFooter", {
   firstFooter <- paste0('&"Arial"&8', firstFooter)
 
   # Add Sheet 2
-  addWorksheet(wb, 'Sheet 2',
-               header = header,
-               footer = footer,
-               evenHeader = evenHeader,
-               evenFooter = evenFooter,
-               firstHeader = firstHeader,
-               firstFooter = firstFooter)
+  wb$addWorksheet(
+    'Sheet 2',
+    header = header,
+    footer = footer,
+    evenHeader = evenHeader,
+    evenFooter = evenFooter,
+    firstHeader = firstHeader,
+    firstFooter = firstFooter
+  )
   writeData(wb, sheet = 1, 1:400)
   writeData(wb, sheet = 2, 1:400)
 
   tmp1 <- temp_xlsx()
   # Save workbook
-  saveWorkbook(wb, tmp1, overwrite = T)
+  wb_save(wb, tmp1, overwrite = TRUE)
   # Load workbook and save again
   wb2 <- loadWorkbook(tmp1)
 
