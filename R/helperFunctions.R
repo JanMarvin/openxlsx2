@@ -105,7 +105,7 @@ makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NUL
     if (!is.null(file)) {
       dest <- sprintf('"[%s]%s!%s"', file, sheet, cell)
     } else {
-      dest <- sprintf("'%s'!%s", sheet, cell)
+      dest <- sprintf('"#\'%s\'!%s"', sheet, cell)
     }
 
     if (is.null(text)) {
