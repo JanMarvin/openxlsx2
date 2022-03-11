@@ -1021,7 +1021,9 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     # original cc dataframe
     # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
-    nams <- c("row_r", "c_r", "c_s", "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ", "r")
+    nams <- c("row_r", "c_r", "c_s", "c_t", "v",
+              "f", "f_t", "f_ref", "f_ca", "f_si",
+              "is", "typ", "r")
     cc <- as.data.frame(
       matrix(data = "_openxlsx_NA_",
              nrow = nrow(data) * ncol(data),
@@ -1029,43 +1031,40 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     )
     names(cc) <- nams
 
-    # update a few styles informations
-    wb$styles_mgr$styles$numFmts <- character()
-
     ## create a cell style format for specific types at the end of the existing
     # styles. gets the reference an passes it on.
+    # TODO we are already able to create custom numFmts and could add these
+    # here. For examples see ?style_mgr
+    # TODO this creates every format exactly once. After that it is recreated.
+    # It should not matter to Excel, but might create different styles, if
+    # custom formats of similar name are created as well. Maybe we should create
+    # the formats with a random name.
     short_date_fmt <- long_date_fmt <- accounting_fmt <- percentage_fmt <-
       comma_fmt <- scientific_fmt <- NULL
-    if (any(dc == "date")) short_date_fmt <- write_xf(nmfmt_df(14))
-    if (any(dc == "posix")) long_date_fmt  <- write_xf(nmfmt_df(22))
-    if (any(dc == "accounting")) accounting_fmt <- write_xf(nmfmt_df(4))
-    if (any(dc == "percentage")) percentage_fmt <- write_xf(nmfmt_df(10))
-    if (any(dc == "scientific")) scientific_fmt <- write_xf(nmfmt_df(48))
-    if (any(dc == "comma")) comma_fmt      <- write_xf(nmfmt_df(3))
-
-    wb$styles_mgr$styles$cellXfs <- c(wb$styles_mgr$styles$cellXfs,
-                           short_date_fmt, long_date_fmt,
-                           accounting_fmt,
-                           percentage_fmt,
-                           comma_fmt,
-                           scientific_fmt)
-
-    # get the last style id
-    style_id <- function(cellfmt) {
-      style_id <- which(wb$styles_mgr$styles$cellXfs == cellfmt)
-      # get the last id, the one we have just written. return them as
-      # 0-index and minimum value of 0
-      if (length(style_id)) max(style_id - 1, 0) else 0
+    if (any(dc == "date")) {
+      short_date_fmt <- write_xf(nmfmt_df(14))
+      wb$styles_mgr$add(short_date_fmt, "short_date_fmt")
     }
-
-    special_fmts <- data.frame(
-      short_date = style_id(short_date_fmt),
-      long_date = style_id(long_date_fmt),
-      accounting = style_id(accounting_fmt),
-      percentage = style_id(percentage_fmt),
-      scientific = style_id(scientific_fmt),
-      comma = style_id(comma_fmt)
-    )
+    if (any(dc == "posix")) {
+      long_date_fmt  <- write_xf(nmfmt_df(22))
+      wb$styles_mgr$add(long_date_fmt, "long_date_fmt")
+    }
+    if (any(dc == "accounting")) {
+      accounting_fmt <- write_xf(nmfmt_df(4))
+      wb$styles_mgr$add(accounting_fmt, "accounting_fmt")
+    }
+    if (any(dc == "percentage")) {
+      percentage_fmt <- write_xf(nmfmt_df(10))
+      wb$styles_mgr$add(percentage_fmt, "percentage_fmt")
+    }
+    if (any(dc == "scientific")) {
+      scientific_fmt <- write_xf(nmfmt_df(48))
+      wb$styles_mgr$add(scientific_fmt, "scientific_fmt")
+    }
+    if (any(dc == "comma")) {
+      comma_fmt      <- write_xf(nmfmt_df(3))
+      wb$styles_mgr$add(comma_fmt, "comma_fmt")
+    }
 
     sel <- which(dc == "logical")
     for (i in sel) {
@@ -1095,17 +1094,15 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     cc$v[cc$v == "NA"] <- "#N/A"
     cc$c_t[cc$v == "#N/A"] <- "e"
 
-    cc$c_s[cc$typ == "0"] <- special_fmts$short_date
-    cc$c_s[cc$typ == "1"] <- special_fmts$long_date
-    cc$c_s[cc$typ == "6"] <- special_fmts$accounting
-    cc$c_s[cc$typ == "7"] <- special_fmts$percentage
-    cc$c_s[cc$typ == "8"] <- special_fmts$scientific
-    cc$c_s[cc$typ == "9"] <- special_fmts$comma
+    cc$c_s[cc$typ == "0"] <- wb$styles_mgr$get_xf_id("short_date_fmt")
+    cc$c_s[cc$typ == "1"] <- wb$styles_mgr$get_xf_id("long_date_fmt")
+    cc$c_s[cc$typ == "6"] <- wb$styles_mgr$get_xf_id("accounting_fmt")
+    cc$c_s[cc$typ == "7"] <- wb$styles_mgr$get_xf_id("percentage_fmt")
+    cc$c_s[cc$typ == "8"] <- wb$styles_mgr$get_xf_id("scientific_fmt")
+    cc$c_s[cc$typ == "9"] <- wb$styles_mgr$get_xf_id("comma_fmt")
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
-    # wb$styles_mgr$styles$dxfs <- character()
-    
   } else {
     # update cell(s)
     wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames, removeCellStyle)
