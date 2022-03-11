@@ -774,11 +774,12 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
         cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
-
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
-        if (data_class[m] %in% c("character", "factor") | (colNames == TRUE & n == 1)) {
+        if (celltyp(data_class[m]) == 4 | (colNames == TRUE & n == 1)) {
           cc[sel, "c_t"] <- "inlineStr"
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
+        } else if (celltyp(data_class[m]) == 5) {
+          cc[sel, "f"] <- as.character(value)
         } else {
           cc[sel, "v"]   <- as.character(value)
         }
@@ -857,16 +858,16 @@ celltyp <- function(data_class) {
 
   z <- vector("integer", length = length(data_class))
 
-  z[data_class %in% c("date")] <- 0
-  z[data_class %in% c("posix")] <- 1
-  z[data_class %in% c("numeric", "integer")] <- 2
-  z[data_class %in% c("logical")] <- 3
-  z[data_class %in% c("character", "factor", "hyperlink", "currency")] <- 4
-  z[data_class %in% c("formula")] <- 5
-  z[data_class %in% c("accounting")] <- 6
-  z[data_class %in% c("percentage")] <- 7
-  z[data_class %in% c("scientific")] <- 8
-  z[data_class %in% c("comma")] <- 9
+  z[grepl("date", data_class)] <- 0
+  z[grepl("posix", data_class)] <- 1
+  z[grepl(paste(c("numeric", "integer"), collapse = "|"), data_class)] <- 2
+  z[grepl("logical", data_class)] <- 3
+  z[grepl(paste(c("character", "factor", "hyperlink", "currency"), collapse = "|"), data_class)] <- 4
+  z[grepl("formula", data_class)] <- 5
+  z[grepl("accounting", data_class)] <- 6
+  z[grepl("percentage", data_class)] <- 7
+  z[grepl("scientific", data_class)] <- 8
+  z[grepl("comma", data_class)] <- 9
 
   z
 }
