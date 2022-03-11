@@ -232,6 +232,8 @@ writeData <- function(wb,
     # consider wbHyperlink?
     # hlinkNames <- names(x)
     colNames <- FALSE
+    x <- makeHyperlinkString(text = x)
+    class(x) <- c("character", "formula", "hyperlink")
   }
 
   ## special case - formula

@@ -92,7 +92,14 @@ makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NUL
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
 
-    str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", file, text)
+    if (is.null(text))
+      str <- sprintf("=HYPERLINK(\"%s\")", file)
+
+    if (is.null(file))
+      str <- sprintf("=HYPERLINK(\"%s\")", text)
+
+    if (!is.null(text) & !is.null(file))
+      str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", file, text)
   } else {
     cell <- paste0(int2col(col), row)
     if (!is.null(file)) {
