@@ -624,7 +624,7 @@ create_cell_style <- function(
   if (any(fontId != "")) applyFont <- "1"
 
   applyNumberFormat <- ""
-  if (any(x != "0")) applyNumberFormat <- "1"
+  if (any(numFmtId != "")) applyNumberFormat <- "1"
 
   applyProtection <- ""
   if (any(hidden != "") | any(locked != "")) applyProtection <- "1"

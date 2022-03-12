@@ -780,6 +780,12 @@ update_cell <- function(x, wb, sheet, cell, data_class,
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
         } else if (celltyp(data_class[m]) == 5) {
           cc[sel, "f"] <- as.character(value)
+        } else if (celltyp(data_class[m]) == 10) {
+          cc[sel, "f"] <- as.character(value)
+          # FIXME assign the hyperlinkstyle if no style found. This might not be
+          # desired. We should provide an option to prevent this.
+          if (cc[sel, "c_s"] == "_openxlsx_NA_")
+            cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
         } else {
           cc[sel, "v"]   <- as.character(value)
         }
@@ -819,7 +825,6 @@ numfmt_class <- function(data) {
     is_char <- is_class(dc, "character")
     is_inte <- is_class(dc, "integer")
     is_numb <- is_class(dc, "numeric")
-    is_hype <- is_class(dc, "hyperlink")
     is_curr <- is_class(dc, "currency")
     is_acco <- is_class(dc, "accounting")
     is_perc <- is_class(dc, "percentage")
@@ -828,6 +833,7 @@ numfmt_class <- function(data) {
     # formulas get no special output class here. They are characters, but are
     # assigned to <f ...>
     is_form <- is_class(dc, "formula")
+    is_hype <- is_class(dc, "hyperlink")
 
     # prepare output
     out_class <- dc[1, , drop = FALSE]
@@ -841,13 +847,13 @@ numfmt_class <- function(data) {
     out_class[is_char] <- "character" # superfluous
     out_class[is_inte] <- "integer"
     out_class[is_numb] <- "numeric"
-    out_class[is_hype] <- "hyperlink"
     out_class[is_curr] <- "currency"
     out_class[is_acco] <- "accounting"
     out_class[is_perc] <- "percentage"
     out_class[is_scie] <- "scientific"
     out_class[is_comm] <- "comma"
     out_class[is_form] <- "formula"
+    out_class[is_hype] <- "hyperlink"
   }
 
   out_class
@@ -862,12 +868,13 @@ celltyp <- function(data_class) {
   z[grepl("posix", data_class)] <- 1
   z[grepl(paste(c("numeric", "integer"), collapse = "|"), data_class)] <- 2
   z[grepl("logical", data_class)] <- 3
-  z[grepl(paste(c("character", "factor", "hyperlink", "currency"), collapse = "|"), data_class)] <- 4
+  z[grepl(paste(c("character", "factor", "currency"), collapse = "|"), data_class)] <- 4
   z[grepl("formula", data_class)] <- 5
   z[grepl("accounting", data_class)] <- 6
   z[grepl("percentage", data_class)] <- 7
   z[grepl("scientific", data_class)] <- 8
   z[grepl("comma", data_class)] <- 9
+  z[grepl("hyperlink", data_class)] <- 10
 
   z
 }
@@ -932,6 +939,23 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   #### prepare the correct data formats for openxml
   data_class <- as.data.frame(Map(class, data))
   dc <- numfmt_class(data)
+
+  # if hyperlinks are found, Excel sets something like the following font
+  # blue with underline
+  if (any(celltyp(data_class) == 10)) {
+    if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
+      hyperlinkfont <- create_font(
+        color = c(rgb = "FF0000FF"),
+        name = getBaseFont(wb)$name$val,
+        u = "single")
+
+      wb$styles_mgr$add(hyperlinkfont, "hyperlinkfont")
+
+      hyperlink_xf <- create_cell_style(fontId = wb$styles_mgr$get_font_id("hyperlinkfont"))
+      wb$styles_mgr$add(hyperlink_xf, "hyperlinkstyle")
+    }
+  }
+
 
   # convert factor to character
   if (any(data_class == "factor")) {
@@ -1095,12 +1119,13 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     cc$v[cc$v == "NA"] <- "#N/A"
     cc$c_t[cc$v == "#N/A"] <- "e"
 
-    cc$c_s[cc$typ == "0"] <- wb$styles_mgr$get_xf_id("short_date_fmt")
-    cc$c_s[cc$typ == "1"] <- wb$styles_mgr$get_xf_id("long_date_fmt")
-    cc$c_s[cc$typ == "6"] <- wb$styles_mgr$get_xf_id("accounting_fmt")
-    cc$c_s[cc$typ == "7"] <- wb$styles_mgr$get_xf_id("percentage_fmt")
-    cc$c_s[cc$typ == "8"] <- wb$styles_mgr$get_xf_id("scientific_fmt")
-    cc$c_s[cc$typ == "9"] <- wb$styles_mgr$get_xf_id("comma_fmt")
+    cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id("short_date_fmt")
+    cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id("long_date_fmt")
+    cc$c_s[cc$typ == "6"]  <- wb$styles_mgr$get_xf_id("accounting_fmt")
+    cc$c_s[cc$typ == "7"]  <- wb$styles_mgr$get_xf_id("percentage_fmt")
+    cc$c_s[cc$typ == "8"]  <- wb$styles_mgr$get_xf_id("scientific_fmt")
+    cc$c_s[cc$typ == "9"]  <- wb$styles_mgr$get_xf_id("comma_fmt")
+    cc$c_s[cc$typ == "10"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 

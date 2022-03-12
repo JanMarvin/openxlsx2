@@ -181,6 +181,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         cell.is  = "<is><t>" + vals + "</t></is>";
         cell.f   = "_openxlsx_NA_";
         break;
+      case hyperlink:
       case formula:
         cell.v   = "_openxlsx_NA_";
         cell.c_s = "_openxlsx_NA_";
