@@ -33,7 +33,8 @@ Suggests:
     testthat,
     roxygen2,
     rmarkdown,
-    covr
+    covr,
+    waldo
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
