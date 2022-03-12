@@ -946,7 +946,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
       hyperlinkfont <- create_font(
         color = c(rgb = "FF0000FF"),
-        name = getBaseFont(wb)$name$val,
+        name = wb_get_base_font(wb)$name$val,
         u = "single")
 
       wb$styles_mgr$add(hyperlinkfont, "hyperlinkfont")
