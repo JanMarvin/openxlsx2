@@ -235,7 +235,7 @@ merge_borders <- function(wb, new_borders) {
     new <- read_border(read_xml(new_borders))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old))) + 1, NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -283,7 +283,7 @@ merge_numFmts <- function(wb, new_numfmts) {
     new <- read_numfmt(read_xml(new_numfmts))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old))) + 1, NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -443,7 +443,7 @@ merge_fonts <- function(wb, new_fonts) {
     new <- read_font(read_xml(new_fonts))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old))) + 1, NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -510,7 +510,7 @@ merge_fills <- function(wb, new_fills) {
     new <- read_fill(read_xml(new_fills))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old))) + 1, NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -671,7 +671,7 @@ merge_cellXfs <- function(wb, new_cellxfs) {
   new <- read_xf(read_xml(new_cellxfs))
 
   # get new rownames
-  new_rownames <- seq(max(as.numeric(rownames(old))) + 1, NROW(new))
+  new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
   row.names(new) <- as.character(new_rownames)
 
   # both have identical length, therefore can be rbind
