@@ -42,7 +42,8 @@ enum celltype {
   accounting = 6,
   percentage = 7,
   scientific = 8,
-  comma      = 9
+  comma      = 9,
+  hyperlink  = 10
 };
 
 #include <Rcpp.h>
