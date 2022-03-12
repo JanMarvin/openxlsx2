@@ -251,10 +251,10 @@ Add worksheet to the \code{wbWorkbook} object
   firstFooter = footer,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
-  paperSize = 9,
-  orientation = c("portrait", "landscape"),
-  hdpi = 300,
-  vdpi = 300
+  paperSize = getOption("openxlsx.paperSize", default = 9),
+  orientation = getOption("openxlsx.orientation", default = "portrait"),
+  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
 )}\if{html}{\out{</div>}}
 }
 
@@ -789,7 +789,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{removeCellMerge()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, rows, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

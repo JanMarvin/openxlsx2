@@ -7,7 +7,7 @@
 wb_add_worksheet(
   wb,
   sheetName,
-  gridLines = TRUE,
+  showGridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
   header = NULL,
@@ -18,21 +18,18 @@ wb_add_worksheet(
   evenFooter = footer,
   firstHeader = header,
   firstFooter = footer,
-  visible = TRUE,
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
   paperSize = getOption("openxlsx.paperSize", default = 9),
   orientation = getOption("openxlsx.orientation", default = "portrait"),
-  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
-  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))
+  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
 )
 }
 \arguments{
 \item{wb}{A Workbook object to attach the new worksheet}
 
 \item{sheetName}{A name for the new worksheet}
-
-\item{gridLines}{A logical. If \code{FALSE}, the worksheet grid lines will be
-hidden.}
 
 \item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
 colours()) or a valid hex colour beginning with "#"}
@@ -54,11 +51,14 @@ details.}
 
 \item{orientation}{One of "portrait" or "landscape"}
 
+\item{hdpi}{Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or
+options("openxlsx.hdpi" = X)}
+
 \item{vdpi}{Vertical DPI. Can be set with options("openxlsx.dpi" = X) or
 options("openxlsx.vdpi" = X)}
 
-\item{hdpi}{Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or
-options("openxlsx.hdpi" = X)}
+\item{gridLines}{A logical. If \code{FALSE}, the worksheet grid lines will be
+hidden.}
 }
 \value{
 XML tree

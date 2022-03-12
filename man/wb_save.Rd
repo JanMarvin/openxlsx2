@@ -4,7 +4,7 @@
 \alias{wb_save}
 \title{Save Workbook to file}
 \usage{
-wb_save(wb, path, overwrite = TRUE)
+wb_save(wb, path = NULL, overwrite = TRUE)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}

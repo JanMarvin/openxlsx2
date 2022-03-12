@@ -4,7 +4,13 @@
 \alias{wb_workbook}
 \title{Create a new Workbook object}
 \usage{
-wb_workbook(creator = NULL, title = NULL, subject = NULL, category = NULL)
+wb_workbook(
+  creator = NULL,
+  title = NULL,
+  subject = NULL,
+  category = NULL,
+  datetimeCreated = Sys.time()
+)
 }
 \arguments{
 \item{creator}{Creator of the workbook (your name). Defaults to login username}
@@ -14,6 +20,8 @@ wb_workbook(creator = NULL, title = NULL, subject = NULL, category = NULL)
 \item{subject}{Workbook properties subject}
 
 \item{category}{Workbook properties category}
+
+\item{datetimeCreated}{The time of the workbook is created}
 }
 \value{
 Workbook object

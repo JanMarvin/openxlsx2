@@ -6,9 +6,9 @@
 \alias{wb_unmerge_cells}
 \title{Worksheet cell merging}
 \usage{
-wb_merge_cells(wb, sheet, cols, rows)
+wb_merge_cells(wb, sheet, rows = NULL, cols = NULL)
 
-wb_unmerge_cells(wb, sheet, cols, rows)
+wb_unmerge_cells(wb, sheet, rows = NULL, cols = NULL)
 }
 \arguments{
 \item{wb}{A workbook object}
