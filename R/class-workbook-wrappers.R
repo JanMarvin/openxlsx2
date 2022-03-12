@@ -5,6 +5,7 @@
 #' @param title Workbook properties title
 #' @param subject Workbook properties subject
 #' @param category Workbook properties category
+#' @param datetimeCreated The time of the workbook is created
 #' @return Workbook object
 #' @export
 #' @seealso [loadWorkbook()]
@@ -27,16 +28,18 @@
 #' )
 #' @export
 wb_workbook <- function(
-  creator = NULL,
-  title    = NULL,
-  subject  = NULL,
-  category = NULL
+  creator         = NULL,
+  title           = NULL,
+  subject         = NULL,
+  category        = NULL,
+  datetimeCreated = Sys.time()
 ) {
   wbWorkbook$new(
-    creator  = creator,
-    title    = title,
-    subject  = subject,
-    category = category
+    creator         = creator,
+    title           = title,
+    subject         = subject,
+    category        = category,
+    datetimeCreated = datetimeCreated
   )
 }
 
@@ -60,7 +63,7 @@ wb_workbook <- function(
 #' \dontrun{
 #' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
-wb_save <- function(wb, path, overwrite = TRUE) {
+wb_save <- function(wb, path = NULL, overwrite = TRUE) {
   assert_workbook(wb)
   wb$clone()$save(path = path, overwrite = overwrite)$path
 }
@@ -114,14 +117,14 @@ NULL
 
 #' @export
 #' @rdname ws_cell_merge
-wb_merge_cells <- function(wb, sheet, cols, rows) {
+wb_merge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$addCellMerge(sheet, rows = rows, cols = cols)
 }
 
 #' @export
 #' @rdname ws_cell_merge
-wb_unmerge_cells <- function(wb, sheet, cols, rows) {
+wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$removeCellMerge(sheet, rows = rows, cols = cols)
 }
@@ -210,28 +213,28 @@ wb_unmerge_cells <- function(wb, sheet, cols, rows) {
 wb_add_worksheet <- function(
   wb,
   sheetName,
-  gridLines   = TRUE,
-  tabColour   = NULL,
-  zoom        = 100,
-  header      = NULL,
-  footer      = NULL,
-  oddHeader   = header,
-  oddFooter   = footer,
-  evenHeader  = header,
-  evenFooter  = footer,
-  firstHeader = header,
-  firstFooter = footer,
-  visible     = TRUE,
-  hasDrawing  = FALSE,
-  paperSize   = getOption("openxlsx.paperSize", default = 9),
-  orientation = getOption("openxlsx.orientation", default = "portrait"),
-  vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
-  hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))
+  showGridLines = TRUE,
+  tabColour     = NULL,
+  zoom          = 100,
+  header        = NULL,
+  footer        = NULL,
+  oddHeader     = header,
+  oddFooter     = footer,
+  evenHeader    = header,
+  evenFooter    = footer,
+  firstHeader   = header,
+  firstFooter   = footer,
+  visible       = c("true", "false", "hidden", "visible", "veryhidden"),
+  hasDrawing    = FALSE,
+  paperSize     = getOption("openxlsx.paperSize", default = 9),
+  orientation   = getOption("openxlsx.orientation", default = "portrait"),
+  hdpi          = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+  vdpi          = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
 ) {
   assert_workbook(wb)
   wb$clone()$addWorksheet(
     sheetName     = sheetName,
-    showGridLines = gridLines,
+    showGridLines = showGridLines,
     tabColour     = tabColour,
     zoom          = zoom,
     oddHeader     = headerFooterSub(oddHeader),

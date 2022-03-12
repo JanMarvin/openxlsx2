@@ -332,16 +332,14 @@ wbWorkbook <- R6::R6Class(
       firstFooter   = footer,
       visible       = c("true", "false", "hidden", "visible", "veryhidden"),
       hasDrawing    = FALSE,
-      paperSize     = 9,
-      orientation   = c("portrait", "landscape"),
-      hdpi          = 300,
-      vdpi          = 300
+      paperSize     = getOption("openxlsx.paperSize", default = 9),
+      orientation   = getOption("openxlsx.orientation", default = "portrait"),
+      hdpi          = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+      vdpi          = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
     ) {
-
-
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
-      orientation <- match.arg(orientation)
+      orientation <- match.arg(orientation, c("portrait", "landscape"))
 
       # set up so that a single error can be reported on fail
       fail <- FALSE
@@ -2529,12 +2527,10 @@ wbWorkbook <- R6::R6Class(
 
       # TODO If the cell merge specs were saved as a data.frame or matrix
       # this would be quicker to check
-      current <- regmatches(
-        self$worksheets[[sheet]]$mergeCells,
-        regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
-      )
+      current <- reg_match0(self$worksheets[[sheet]]$mergeCells, "[A-Z0-9]+:[A-Z0-9]+")
 
-      if (!is.null(current)) {
+      # regmatch0 will return character(0) when x is NULL
+      if (length(current)) {
         comps <- lapply(
           current,
           function(rectCoords) {
@@ -2572,7 +2568,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    removeCellMerge = function(sheet, rows, cols) {
+    removeCellMerge = function(sheet, rows = NULL, cols = NULL) {
       sheet <- wb_validate_sheet(self, sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
