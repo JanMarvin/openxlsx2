@@ -2181,7 +2181,7 @@ removeTable <- function(wb, sheet, table) {
 NULL
 
 #' @export
-#' @rdname grouping
+#' @rdname workbook_grouping
 wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$groupCols(
