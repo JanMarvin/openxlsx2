@@ -1056,6 +1056,8 @@ Change the last modified by
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 }
 \if{html}{\out{<hr>}}

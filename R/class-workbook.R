@@ -3492,6 +3492,21 @@ wbWorkbook <- R6::R6Class(
   # any functions that are not present elsewhere or are non-exported internal
   # functions that are used to make assignments
   private = list(
+    deep_clone = function(name, value) {
+      #' Deep cloning method for workbooks.  This method also accesses
+      #' `$clone(deep = TRUE)` methods for `R6` fields.
+      if (R6::is.R6(value)) {
+        value <- value$clone(deep = TRUE)
+      } else if (is.list(value)) {
+        # specifically targetting fields like `worksheets`
+        for (i in wapply(value, R6::is.R6)) {
+          value[[i]] <- value[[i]]$clone(deep = TRUE)
+        }
+      }
+
+      value
+    },
+
     generate_base_core = function() {
 
       self$core <-
