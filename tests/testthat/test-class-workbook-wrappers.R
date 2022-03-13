@@ -28,4 +28,8 @@ test_that("wrappers are wrappers", {
   wb <- wbWorkbook$new()$addWorksheet("sheet")
   expect_wrapper("cloneWorksheet", "wb_clone_worksheet", wb = wb, params = list(old = "sheet", new = "new"))
 
+  # wb_add_style() ----
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  params <- list(sheet = "sheet", style = wb_style(), cols = 1, rows = 1)
+  expect_wrapper("addStyle", "wb_add_style", wb = wb, params = params)
 })
