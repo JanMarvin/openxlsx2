@@ -532,29 +532,27 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Clone a workbooksheet
-    #' @param sheetName sheetName
-    #' @param clonedSheet clonedSheet
-    cloneWorksheet = function(sheetName, clonedSheet) {
-      if (tolower(sheetName) %in% tolower(self$sheet_names)) {
+    #' @param old name of worksheet to clone
+    #' @param new name of new worksheet to add
+    cloneWorksheet = function(old, new) {
+      old <- wb_validate_sheet(self, old)
+
+      if (tolower(new) %in% tolower(self$sheet_names)) {
         stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
       }
 
-      if (nchar(sheetName) > 31) {
+      if (nchar(new) > 31) {
         stop("sheetName too long! Max length is 31 characters.")
       }
 
-      if (!is.character(sheetName)) {
-        sheetName <- as.character(sheetName)
+      if (!is.character(new)) {
+        new <- as.character(new)
       }
 
       ## Invalid XML characters
-      sheetName <- replaceIllegalCharacters(sheetName)
-
-      clonedSheet <- wb_validate_sheet(self, clonedSheet)
-      if (!missing(sheetName)) {
-        if (grepl(pattern = ":", x = sheetName)) {
-          stop("colon not allowed in sheet names in Excel")
-        }
+      new <- replaceIllegalCharacters(new)
+      if (grepl(pattern = ":", x = new)) {
+        stop("colon not allowed in sheet names in Excel")
       }
 
       newSheetIndex <- length(self$worksheets) + 1L
@@ -562,13 +560,13 @@ wbWorkbook <- R6::R6Class(
 
 
       ## copy visibility from cloned sheet!
-      visible <- reg_match0(self$workbook$sheets[[clonedSheet]], '(?<=state=")[^"]+')
+      visible <- reg_match0(self$workbook$sheets[[old]], '(?<=state=")[^"]+')
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-          sheetName,
+          new,
           sheetId,
           visible,
           newSheetIndex
@@ -576,8 +574,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## append to worksheets list
-      self$append("worksheets", self$worksheets[[clonedSheet]]$clone())
-
+      self$append("worksheets", self$worksheets[[old]]$clone())
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
@@ -593,7 +590,7 @@ wbWorkbook <- R6::R6Class(
 
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]] <- genBaseSheetRels(newSheetIndex)
-      self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[clonedSheet]]
+      self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[old]]
 
       # give each chart its own filename (images can re-use the same file, but charts can't)
       self$drawings_rels[[newSheetIndex]] <-
@@ -620,15 +617,15 @@ wbWorkbook <- R6::R6Class(
               chart <- read_xml(fl, pointer = FALSE)
 
               chart <- gsub(
-                stri_join("(?<=')", self$sheet_names[[clonedSheet]], "(?='!)"),
-                stri_join("'", sheetName, "'"),
+                stri_join("(?<=')", self$sheet_names[[old]], "(?='!)"),
+                stri_join("'", new, "'"),
                 chart,
                 perl = TRUE
               )
 
               chart <- gsub(
-                stri_join("(?<=[^A-Za-z0-9])", .self$sheet_names[[clonedSheet]], "(?=!)"),
-                stri_join("'", sheetName, "'"),
+                stri_join("(?<=[^A-Za-z0-9])", .self$sheet_names[[old]], "(?=!)"),
+                stri_join("'", new, "'"),
                 chart,
                 perl = TRUE
               )
@@ -648,20 +645,20 @@ wbWorkbook <- R6::R6Class(
         )
       # The IDs in the drawings array are sheet-specific, so within the new cloned sheet
       # the same IDs can be used => no need to modify drawings
-      self$drawings[[newSheetIndex]]       <- self$drawings[[clonedSheet]]
+      self$drawings[[newSheetIndex]]       <- self$drawings[[old]]
 
-      self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[clonedSheet]]
-      self$vml[[newSheetIndex]]            <- self$vml[[clonedSheet]]
+      self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
+      self$vml[[newSheetIndex]]            <- self$vml[[old]]
 
-      self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[clonedSheet]]
-      self$comments[[newSheetIndex]]       <- self$comments[[clonedSheet]]
-      self$threadComments[[newSheetIndex]] <- self$threadComments[[clonedSheet]]
+      self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
+      self$comments[[newSheetIndex]]       <- self$comments[[old]]
+      self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
-      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[clonedSheet]]
-      self$colWidths[[newSheetIndex]]      <- self$colWidths[[clonedSheet]]
+      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[old]]
+      self$colWidths[[newSheetIndex]]      <- self$colWidths[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
-      self$append("sheet_names", sheetName)
+      self$append("sheet_names", new)
 
 
       ############################
@@ -673,14 +670,14 @@ wbWorkbook <- R6::R6Class(
 
 
       sheetStyles <- Filter(
-        function(s) s$sheet == self$sheet_names[[clonedSheet]],
+        function(s) s$sheet == self$sheet_names[[old]],
         self$styleObjects
       )
 
       self$append("styleObjects",
         Map(
           function(s) {
-            s$sheet <- sheetName
+            s$sheet <- new
             s
           },
           sheetStyles
@@ -694,7 +691,7 @@ wbWorkbook <- R6::R6Class(
       ## and in the worksheets[]$tableParts list. We also need to adjust the
       ## worksheets_rels and set the content type for the new table
 
-      tbls <- self$tables[attr(self$tables, "sheet") == clonedSheet]
+      tbls <- self$tables[attr(self$tables, "sheet") == old]
 
       for (t in tbls) {
         # Extract table name, displayName and ID from the xml
@@ -716,18 +713,18 @@ wbWorkbook <- R6::R6Class(
         # Use the table definition from the cloned sheet and simply replace the names
         newt <- t
         newt <- gsub(
-          stri_join(" name=\"", oldname, "\""),
-          stri_join(" name=\"", newname, "\""),
+          stri_join(' name="', oldname, '"'),
+          stri_join(' name="', newname, '"'),
           newt
         )
         newt <- gsub(
-          stri_join(" displayName=\"", olddispname, "\""),
-          stri_join(" displayName=\"", newdispname, "\""),
+          stri_join(' displayName="', olddispname, '"'),
+          stri_join(' displayName="', newdispname, '"'),
           newt
         )
         newt <- gsub(
-          stri_join("(<table [^<]* id=\")", oldid, "\""),
-          stri_join("\\1", newid, "\""),
+          stri_join('(<table [^<]* id=")', oldid, '"'),
+          stri_join("\\1", newid, '"'),
           newt
         )
 

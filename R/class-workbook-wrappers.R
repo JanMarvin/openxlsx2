@@ -252,12 +252,13 @@ wb_add_worksheet <- function(
 }
 
 
-#' @name cloneWorksheet
-#' @title Clone a worksheet to a workbook
-#' @description Clone a worksheet to a Workbook object
+#' Clone a worksheet to a workbook
+#'
+#' Clone a worksheet to a Workbook object
+#'
 #' @param wb A Workbook object to attach the new worksheet
-#' @param sheetName A name for the new worksheet
-#' @param clonedSheet The name of the existing worksheet to be cloned.
+#' @param old The name of the existing worksheet to be cloned.
+#' @param new A name for the new worksheet
 #' @return The `wb` object
 #' @export
 #' @examples
@@ -266,15 +267,15 @@ wb_add_worksheet <- function(
 #'
 #' ## Add 3 worksheets
 #' wb$addWorksheet("Sheet 1")
-#' wb_clone_worksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
+#' wb$cloneWorksheet("Sheet 1", "Sheet 2")
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 #' }
-wb_clone_worksheet <- function(wb, sheetName, clonedSheet) {
+wb_clone_worksheet <- function(wb, old, new) {
   assert_workbook(wb)
-  wb$clone()$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
+  wb$clone()$cloneWorksheet(old = old, new = new)
 }
 
 
