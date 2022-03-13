@@ -89,8 +89,8 @@ expect_wrapper <- function(
 
   if (!is.null(params)) {
     # create now so that it's the same every time
-    wb_fun <- wb$clone()
-    wb_method <- wb$clone()
+    wb_fun <- wb$clone(deep = TRUE)
+    wb_method <- wb$clone(deep = TRUE)
 
     # be careful and report when we failed to run these
     res_fun    <- try(do.call(fun, c(wb = wb_fun, params)), silent = TRUE)
