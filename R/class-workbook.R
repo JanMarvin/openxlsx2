@@ -2845,7 +2845,7 @@ wbWorkbook <- R6::R6Class(
       style,
       rows,
       cols,
-      stack,
+      stack      = FALSE,
       gridExpand = FALSE
     ) {
       op <- openxlsx_options()
@@ -2943,16 +2943,15 @@ wbWorkbook <- R6::R6Class(
 
                 if (length(self$styleObjects[[i]]$rows) == 0 |
                     length(self$styleObjects[[i]]$cols) == 0) {
-                  keepStyle[i] <-
-                    FALSE
-                } ## this style applies to no rows or columns anymore
+                  # this style applies to no rows or columns anymore
+                  keepStyle[i] <- FALSE
+                }
               }
 
-              ## append style object for intersecting cells
-
-              ## we are appending a new style
-              keepStyle <-
-                c(keepStyle, TRUE) ## keepStyle is used to remove styles that apply to 0 rows OR 0 columns
+              # append style object for intersecting cells. we are appending a
+              # new style. keepStyle is used to remove styles that apply to 0
+              # rows OR 0 columns
+              keepStyle <- c(keepStyle, TRUE)
 
               ## Merge Style and append to styleObjects
               self$append("styleObjects", list(
