@@ -309,15 +309,15 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{cloneWorksheet()}}{
 Clone a workbooksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$cloneWorksheet(sheetName, clonedSheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$cloneWorksheet(old, new)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{old}}{name of worksheet to clone}
 
-\item{\code{clonedSheet}}{clonedSheet}
+\item{\code{new}}{name of new worksheet to add}
 }
 \if{html}{\out{</div>}}
 }
