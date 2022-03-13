@@ -19,4 +19,8 @@ test_that("wrappers are wrappers", {
   params <- list(sheet = "sheet", rows = 1:2, cols = 2)
   expect_wrapper("addCellMerge",    "wb_merge_cells",   wb = wb, params = params)
   expect_wrapper("removeCellMerge", "wb_unmerge_cells", wb = wb, params = params)
+
+  # wb_freeze_pane() ----
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("freezePanes", "wb_freeze_pane", wb = wb, params = list(sheet = "sheet"))
 })
