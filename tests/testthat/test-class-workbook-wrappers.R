@@ -1,34 +1,53 @@
 
+# wb_workbook() -----------------------------------------------------------
 
-test_that("wrappers are wrappers", {
+test_that("wb_workbook() is a wrapper", {
 
   # wb_workbook() ----
   ts <- Sys.time()
   expect_equal(wb_workbook(datetimeCreated = ts), wbWorkbook$new(datetimeCreated = ts))
   expect_wrapper("initialize", "wb_workbook", params = NULL)
+})
 
-  # wb_add_worksheet() ----
+# wb_add_worksheet() ------------------------------------------------------
+
+test_that("wb_add_worksheet() is a wrapper", {
   expect_wrapper("addWorksheet", "wb_add_worksheet", params = list(sheetName = "this"))
+})
 
-  # wb_save() ----
+# wb_save() ---------------------------------------------------------------
+
+test_that("wb_save() is a wrapper", {
   # returns the file path instead
   expect_wrapper("save", "wb_save", params = NULL, ignore = "path")
+})
 
-  # wb_merge_cells(), wb_unmerge_cells() ----
+# wb_merge_cells(), wb_unmerge_cells() ------------------------------------
+
+test_that("wb_merge_cells(), wb_unmerge_cells() are wrappers", {
   wb <- wbWorkbook$new()$addWorksheet("sheet")
   params <- list(sheet = "sheet", rows = 1:2, cols = 2)
   expect_wrapper("addCellMerge",    "wb_merge_cells",   wb = wb, params = params)
   expect_wrapper("removeCellMerge", "wb_unmerge_cells", wb = wb, params = params)
+})
 
-  # wb_freeze_pane() ----
+# wb_freeze_pane() --------------------------------------------------------
+
+test_that("wb_freeze_pane() is a wrapper", {
   wb <- wbWorkbook$new()$addWorksheet("sheet")
   expect_wrapper("freezePanes", "wb_freeze_pane", wb = wb, params = list(sheet = "sheet"))
+})
 
-  # wb_clone_worksheet() ----
+# wb_clone_worksheet() ----------------------------------------------------
+
+test_that("wb_clone_worksheet() is a wrapper", {
   wb <- wbWorkbook$new()$addWorksheet("sheet")
   expect_wrapper("cloneWorksheet", "wb_clone_worksheet", wb = wb, params = list(old = "sheet", new = "new"))
+})
 
-  # wb_add_style() ----
+# wb_add_style() ----------------------------------------------------------
+
+test_that("wb_add_style() is a wrapper", {
   wb <- wbWorkbook$new()$addWorksheet("sheet")
   params <- list(sheet = "sheet", style = wb_style(), cols = 1, rows = 1)
   expect_wrapper("addStyle", "wb_add_style", wb = wb, params = params)
