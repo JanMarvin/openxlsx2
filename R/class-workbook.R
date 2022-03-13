@@ -1644,6 +1644,10 @@ wbWorkbook <- R6::R6Class(
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
+      # TODO move to wbWorksheet method
+      # TODO consider reworking rowHeights
+      # self$worksheets[[sheet]]$setRowHeights(rows = rows, heights = heights)
+      # invisible(self)
 
       if (length(rows) > length(heights)) {
         heights <- rep(heights, length.out = length(rows))
@@ -2516,6 +2520,10 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     addCellMerge = function(sheet, rows = NULL, cols = NULL) {
       sheet <- wb_validate_sheet(self, sheet)
+
+      # TODO send to wbWorksheet() method
+      # self$worksheets[[sheet]]$addCellMerge(rows = rows, cols = cols)
+      # invisible(self)
 
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
