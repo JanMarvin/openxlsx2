@@ -1654,8 +1654,9 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Remove duplicates
-      heights <- heights[!duplicated(rows)]
-      rows <- rows[!duplicated(rows)]
+      ok <- !duplicated(rows)
+      heights <- heights[ok]
+      rows <- rows[ok]
 
       heights <- as.character(as.numeric(heights))
       names(heights) <- rows
