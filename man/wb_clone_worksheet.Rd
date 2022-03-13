@@ -7,11 +7,11 @@
 wb_clone_worksheet(wb, old, new)
 }
 \arguments{
-\item{wb}{A Workbook object to attach the new worksheet}
+\item{wb}{A \link{wbWorkbook} object}
 
-\item{old}{The name of the existing worksheet to be cloned.}
+\item{old}{Name of existing worksheet to copy}
 
-\item{new}{A name for the new worksheet}
+\item{new}{Name of New worksheet to create}
 }
 \value{
 The \code{wb} object
@@ -20,14 +20,14 @@ The \code{wb} object
 Clone a worksheet to a Workbook object
 }
 \examples{
-## Create a new workbook
+# Create a new workbook
 wb <- wb_workbook("Fred")
 
-## Add 3 worksheets
+# Add worksheets
 wb$addWorksheet("Sheet 1")
 wb$cloneWorksheet("Sheet 1", "Sheet 2")
 
-## Save workbook
+# Save workbook
 \dontrun{
 wb_save(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 }

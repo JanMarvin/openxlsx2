@@ -888,7 +888,14 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{addStyle()}}{
 Add a style to a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addStyle(sheet, style, rows, cols, stack, gridExpand = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addStyle(
+  sheet,
+  style,
+  rows,
+  cols,
+  stack = FALSE,
+  gridExpand = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
