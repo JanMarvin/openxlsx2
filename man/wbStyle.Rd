@@ -71,8 +71,6 @@ A style
 \item{\code{hidden}}{hidden}
 
 \item{\code{xfId}}{xfId}
-
-\item{\code{styleShow}}{styleShow}
 }
 \if{html}{\out{</div>}}
 }

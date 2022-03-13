@@ -76,8 +76,6 @@ wbStyle <- R6::R6Class(
     hidden = NULL,
     #' @field xfId xfId
     xfId = NULL,
-    #' @field styleShow styleShow
-    styleShow = NULL,
 
     #' @description
     #' Creates a new `wbStyle` object
@@ -237,7 +235,7 @@ wbStyle <- R6::R6Class(
     #' @param ... Not implemented
     #' @return the `wbStyle` object, invisibly; called for its side effects
     print = function(...) {
-      .numFmtMapping <- c(
+      numFmtMapping <- c(
         GENERAL    =   0,
         NUMBER     =   2,
         CURRENCY   = 164,
@@ -250,8 +248,8 @@ wbStyle <- R6::R6Class(
       )
 
       numFmtStr <- if (!is.null(self$numFmt)) {
-        if (as.integer(self$numFmt$numFmtId) %in% .numFmtMapping) {
-          names(.numFmtMapping)[.numFmtMapping == as.integer(self$numFmt$numFmtId)]
+        if (as.integer(self$numFmt$numFmtId) %in% numFmtMapping) {
+          names(numFmtMapping)[numFmtMapping == as.integer(self$numFmt$numFmtId)]
         } else {
           sprintf('"%s"', self$numFmt$formatCode)
         }
@@ -271,7 +269,7 @@ wbStyle <- R6::R6Class(
       borderColours <- gsub("^FF", "#", borderColours)
 
       # make as private
-      self$styleShow  <- c(
+      cat(c(
         "A custom cell style. \n\n",
         # numFmt
         sprintf("Cell formatting: %s \n", numFmtStr),
@@ -324,9 +322,8 @@ wbStyle <- R6::R6Class(
         # wrapText
         sprintf("Cell wrap text: %s", self$wrapText),
         "\n\n"
-      )
+      ))
 
-      # if (print) cat(self$styleShow)
       invisible(self)
     }
   ),
