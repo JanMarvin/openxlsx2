@@ -99,7 +99,6 @@ expect_wrapper <- function(
     msg <- NULL
 
     if (inherits(res_fun, "try-error")) {
-      # browser()
       temp <- file()
       writeLines(attr(res_fun, "condition")$message, temp)
       bad <- paste0("# > ", readLines(temp))
@@ -113,7 +112,9 @@ expect_wrapper <- function(
       writeLines(attr(res_method, "condition")$message, temp)
       bad <- paste0("# > ", readLines(temp))
       close(temp)
-      expr <- sprintf("\n%s(%s)", method0, paste(names(params), params, sep = " = ", collapse = ", "))
+      expr <- paste0("\n", deparse1(do.call(call, c(method0, params))))
+      # slight fix because we get those "`" which I don't want to see
+      expr <- sub(paste0("`", method0, "`"), method0, expr, fixed = TRUE)
       msg <- c(msg, expr, bad)
     }
 
