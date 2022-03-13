@@ -14,32 +14,34 @@ setColWidths(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \link{wbWorkbook} object}
 
 \item{sheet}{A name or index of a worksheet}
 
 \item{cols}{Indices of cols to set width}
 
-\item{widths}{widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-recycled to the length of cols.}
+\item{widths}{widths to set cols to specified in Excel column width units or
+"auto" for automatic sizing. The widths argument is recycled to the length
+of cols.}
 
 \item{hidden}{Logical vector. If TRUE the column is hidden.}
 
-\item{ignoreMergedCells}{Ignore any cells that have been merged with other cells in the calculation of "auto" column widths.}
+\item{ignoreMergedCells}{Ignore any cells that have been merged with other
+cells in the calculation of "auto" column widths.}
 }
 \description{
 Set worksheet column widths to specific width or "auto".
 }
 \details{
-The global min and max column width for "auto" columns is set by (default values show):
-\itemize{
-\item{options("openxlsx.minWidth" = 3)}
-\item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width allowed in Excel
-}
+The global min and max column width for "auto" columns is set by
+(default values show): \itemize{ \item{options("openxlsx.minWidth" = 3)}
+\item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width
+allowed in Excel }
 
 NOTE: The calculation of column widths can be slow for large worksheets.
 
-NOTE: The \code{hidden} parameter may conflict with the one set in \link{wb_group_cols}; changing one will update the other.
+NOTE: The \code{hidden} parameter may conflict with the one set in
+\link{wb_group_cols}; changing one will update the other.
 }
 \examples{
 ## Create a new workbook
@@ -65,4 +67,19 @@ wb_save(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 }
 \seealso{
 \code{\link[=removeColWidths]{removeColWidths()}}
+
+Other workbook wrappers: 
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_style}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_freeze_pane}()},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}},
+\code{\link{ws_cell_merge}}
 }
+\concept{workbook wrappers}

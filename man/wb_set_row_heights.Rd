@@ -7,7 +7,7 @@
 wb_set_row_heights(wb, sheet, rows, heights)
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \link{wbWorkbook} object}
 
 \item{sheet}{A name or index of a worksheet}
 
@@ -42,4 +42,19 @@ wb_save(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
 }
 \seealso{
 \code{\link[=removeRowHeights]{removeRowHeights()}}
+
+Other workbook wrappers: 
+\code{\link{setColWidths}()},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_style}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_freeze_pane}()},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}},
+\code{\link{ws_cell_merge}}
 }
+\concept{workbook wrappers}
