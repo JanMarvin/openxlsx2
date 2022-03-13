@@ -256,20 +256,20 @@ wb_add_worksheet <- function(
 #'
 #' Clone a worksheet to a Workbook object
 #'
-#' @param wb A Workbook object to attach the new worksheet
-#' @param old The name of the existing worksheet to be cloned.
-#' @param new A name for the new worksheet
+#' @param wb A [wbWorkbook] object
+#' @param old Name of existing worksheet to copy
+#' @param new Name of New worksheet to create
 #' @return The `wb` object
 #' @export
 #' @examples
-#' ## Create a new workbook
+#' # Create a new workbook
 #' wb <- wb_workbook("Fred")
 #'
-#' ## Add 3 worksheets
+#' # Add worksheets
 #' wb$addWorksheet("Sheet 1")
 #' wb$cloneWorksheet("Sheet 1", "Sheet 2")
 #'
-#' ## Save workbook
+#' # Save workbook
 #' \dontrun{
 #' wb_save(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 #' }
@@ -279,19 +279,19 @@ wb_clone_worksheet <- function(wb, old, new) {
 }
 
 
-#' @name addStyle
-#' @title Add a style to a set of cells
-#' @description Function adds a style to a specified set of cells.
-#' @param wb A Workbook object containing a worksheet.
+#' Add a style to a set of cells
+#'
+#' Function adds a style to a specified set of cells.
+#'
+#' @param wb A [wbWorkbook] object
 #' @param sheet A worksheet to apply the style to.
-#' @param style A style object returned from createStyle()
-#' @param rows Rows to apply style to.
-#' @param cols columns to apply style to.
-#' @param gridExpand If `TRUE`, style will be applied to all combinations of rows and cols.
-#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
-#' existing style is replaced by the new style.
-#' @seealso [createStyle()]
-#' @seealso expand.grid
+#' @param style A [wbStyle] object
+#' @param rows,cols Rows and columns to apply style to.
+#' @param stack If `TRUE` the new style is merged with any existing cell styles.
+#'   If `FALSE`, any existing style is replaced by the new style.
+#' @param gridExpand If `TRUE`, style will be applied to all combinations of
+#'   `rows` and `cols.`
+#' @seealso [wb_style()]
 #' @export
 #' @examples
 #' ## See package vignette for more examples.
@@ -306,17 +306,22 @@ wb_clone_worksheet <- function(wb, old, new) {
 #' writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
 #'
 #' ## create and add a style to the column headers
-#' headerStyle <- createStyle(
-#'   fontSize = 14, fontColour = "#FFFFFF", halign = "center",
-#'   fgFill = "#4F81BD", border = c("top", "bottom"), borderColour = "#4F81BD"
+#' headerStyle <- wbStyle$new(
+#'   fontSize     = 14,
+#'   fontColour   = "#FFFFFF",
+#'   halign       = "center",
+#'   fgFill       = "#4F81BD",
+#'   border       = c("top", "bottom"),
+#'   borderColour = "#4F81BD"
 #' )
 #'
-#' wb <- wb_add_style(wb, sheet = 1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
+#' wb$addStyle(1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
 #'
 #' ## style for body
-#' bodyStyle <- createStyle(border = c("top", "bottom"), borderColour = "#4F81BD")
-#' wb <- wb_add_style(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
-#' setColWidths(wb, 1, cols = 1, widths = 21) ## set column width for row names column
+#' bodyStyle <- wbStyle$new(border = c("top", "bottom"), borderColour = "#4F81BD")
+#' wb$addStyle(1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
+#' # set column widht for row names and column
+#' setColWidths(wb, 1, cols = 1, widths = 21)
 #' \dontrun{
 #' wb_save(wb, "addStyleExample.xlsx", overwrite = TRUE)
 #' }
@@ -326,8 +331,8 @@ wb_add_style <- function(
   style,
   rows,
   cols,
-  gridExpand = FALSE,
-  stack = FALSE
+  stack      = FALSE,
+  gridExpand = FALSE
 ) {
   assert_workbook(wb)
   wb$clone()$addStyle(
@@ -335,8 +340,8 @@ wb_add_style <- function(
     style      = style,
     rows       = rows,
     cols       = cols,
-    gridExpand = gridExpand,
-    stack      = stack
+    stack      = stack,
+    gridExpand = gridExpand
   )
 }
 
