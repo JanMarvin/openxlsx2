@@ -23,4 +23,9 @@ test_that("wrappers are wrappers", {
   # wb_freeze_pane() ----
   wb <- wbWorkbook$new()$addWorksheet("sheet")
   expect_wrapper("freezePanes", "wb_freeze_pane", wb = wb, params = list(sheet = "sheet"))
+
+  # wb_clone_worksheet() ----
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("cloneWorksheet", "wb_clone_worksheet", wb = wb, params = list(old = "sheet", new = "new"))
+
 })
