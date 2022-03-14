@@ -1371,8 +1371,8 @@ wbWorkbook <- R6::R6Class(
         mode = "cherry-pick"
       )
 
-      # Copy file; stop if filed
-      if (!file.copy(from = tmpFile, to = path, overwrite = overwrite)) {
+      # Copy file; stop if failed
+      if (!file.copy(from = tmpFile, to = path, overwrite = overwrite, copy.mode = FALSE)) {
         stop("Failed to save workbook")
       }
 
