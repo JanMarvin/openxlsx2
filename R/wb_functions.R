@@ -796,59 +796,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 }
 
 
-numfmt_class <- function(data) {
-  dc <- as.data.frame(Map(class, data))
-
-  # check all columns for the required types
-  if (nrow(dc) >= 1) {
-
-    # returns logical vector of length ncol(data)
-    is_class <- function(dc, cl) apply(dc, 2, function(x)(any(x == cl)))
-
-    # check the class. all have the basic R classes, some have additional
-    # openxml builtin formats
-    is_fact <- is_class(dc, "factor")
-    is_date <- is_class(dc, "Date")
-    is_posi <- is_class(dc, "POSIXct")
-    is_logi <- is_class(dc, "logical")
-    is_char <- is_class(dc, "character")
-    is_inte <- is_class(dc, "integer")
-    is_numb <- is_class(dc, "numeric")
-    is_curr <- is_class(dc, "currency")
-    is_acco <- is_class(dc, "accounting")
-    is_perc <- is_class(dc, "percentage")
-    is_scie <- is_class(dc, "scientific")
-    is_comm <- is_class(dc, "comma")
-    # formulas get no special output class here. They are characters, but are
-    # assigned to <f ...>
-    is_form <- is_class(dc, "formula")
-    is_hype <- is_class(dc, "hyperlink")
-
-    # prepare output
-    out_class <- dc[1, , drop = FALSE]
-    out_class[1,] <- "character"
-
-    # assign the final output
-    out_class[is_fact] <- "factor"
-    out_class[is_date] <- "date"
-    out_class[is_posi] <- "posix"
-    out_class[is_logi] <- "logical"
-    out_class[is_char] <- "character" # superfluous
-    out_class[is_inte] <- "integer"
-    out_class[is_numb] <- "numeric"
-    out_class[is_curr] <- "currency"
-    out_class[is_acco] <- "accounting"
-    out_class[is_perc] <- "percentage"
-    out_class[is_scie] <- "scientific"
-    out_class[is_comm] <- "comma"
-    out_class[is_form] <- "formula"
-    out_class[is_hype] <- "hyperlink"
-  }
-
-  out_class
-}
-
-
 celltyp <- function(data_class) {
 
   z <- vector("integer", length = length(data_class))
