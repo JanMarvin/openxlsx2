@@ -102,3 +102,14 @@ quick_df <- function(x = NULL) {
   )
 }
 
+has_chr <- function(x, na = FALSE) {
+  # na controls if NA is returned as TRUE or FALSE
+  vapply(nzchar(x, keepNA = !na), isTRUE, NA)
+}
+
+dir_create <- function(..., warn = TRUE, recurse = TRUE) {
+  # create path and directory -- returns path
+  path <- file.path(...)
+  dir.create(path, showWarnings = warn, recursive = recurse)
+  path
+}
