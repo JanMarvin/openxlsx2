@@ -14,8 +14,7 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 
   if (identical(dims, "Inf:-Inf")) {
     # This should probably be fixed elsewhere?
-    cols <- NA
-    rows <- NA
+    stop("dims are inf:-inf")
   } else {
     dimensions <- strsplit(dims, ":")[[1]]
 
@@ -27,21 +26,11 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
     cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
   }
 
-  if (fill) {
-    data <- expand.grid(cols, rows, stringsAsFactors = FALSE)
-    data <- paste0(data[[1L]], data[[2L]])
-  } else {
-    data <- NA_character_
-  }
-
-  # matrix as.data.frame
-  as.data.frame(matrix(
-    data     = data,
-    nrow     = max(length(rows), 1L),
-    ncol     = max(length(cols), 1L),
-    dimnames = list(rows, cols),
-    byrow    = TRUE
-  ))
+  # create data frame from rows/
+  dims_to_df(
+    rows = rows,
+    cols = cols,
+    fill = fill)
 }
 
 # # similar to all, simply check if most of the values match the condition
@@ -392,7 +381,7 @@ wb_to_df <- function(
 
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
-  tt <- dims_to_dataframe(dims)
+  tt <- copy(z)
 
   # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
   # names(tt) <- names(z)
