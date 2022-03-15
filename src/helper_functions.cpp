@@ -117,15 +117,16 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fi
   Rcpp::List df(kk);
   for (auto i = 0; i < kk; ++i)
   {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    if (fill)
+      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    else
+      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
   for (auto i = 0; i < nn; ++i) {
     for (auto j = 0; j < kk; ++j) {
       if (fill)
         Rcpp::as<Rcpp::CharacterVector>(df[j])[i] = cols[j] + std::to_string(rows[i]);
-      else
-        Rcpp::as<Rcpp::CharacterVector>(df[j])[i] = NA_STRING;
     }
   }
 
