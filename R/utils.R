@@ -76,3 +76,29 @@ wapply <- function(x, FUN, ...) {
   FUN <- match.fun(FUN)
   which(vapply(x, FUN, FUN.VALUE = NA, ...))
 }
+
+# ripped from mark::quick_df()
+# much more efficient than data.frame() for simple inputs
+quick_df <- function(x = NULL) {
+  if (is.null(x)) {
+    return(structure(list(), class = "data.frame", row.names = integer(), names = character()))
+  }
+
+  if (!is.list(x)) {
+    stop("x is not a list", call. = FALSE)
+  }
+
+  n <- unique(lengths(x))
+
+  if (length(n) != 1L) {
+    stop("List does not have an equal length", call. = FALSE)
+  }
+
+  structure(
+    x,
+    class = "data.frame",
+    names = names(x) %||% make.names(1:length(x)),
+    row.names = c(NA_integer_, -n)
+  )
+}
+
