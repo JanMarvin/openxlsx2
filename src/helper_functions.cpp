@@ -100,6 +100,39 @@ SEXP rbindlist(Rcpp::List x) {
   return df;
 }
 
+
+
+// provide a basic rbindlist for lists of named characters
+// [[Rcpp::export]]
+SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fill) {
+
+  auto kk = cols.size();
+  auto nn = rows.size();
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (auto i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  for (auto i = 0; i < nn; ++i) {
+    for (auto j = 0; j < kk; ++j) {
+      if (fill)
+        Rcpp::as<Rcpp::CharacterVector>(df[j])[i] = cols[j] + std::to_string(rows[i]);
+      else
+        Rcpp::as<Rcpp::CharacterVector>(df[j])[i] = NA_STRING;
+    }
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rows;
+  df.attr("names") = cols;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
