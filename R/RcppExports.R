@@ -13,6 +13,10 @@ rbindlist <- function(x) {
     .Call(`_openxlsx2_rbindlist`, x)
 }
 
+copy <- function(x) {
+    .Call(`_openxlsx2_copy`, x)
+}
+
 dims_to_df <- function(rows, cols, fill) {
     .Call(`_openxlsx2_dims_to_df`, rows, cols, fill)
 }

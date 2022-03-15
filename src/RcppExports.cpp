@@ -44,6 +44,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// copy
+SEXP copy(SEXP x);
+RcppExport SEXP _openxlsx2_copy(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(copy(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // dims_to_df
 SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fill);
 RcppExport SEXP _openxlsx2_dims_to_df(SEXP rowsSEXP, SEXP colsSEXP, SEXP fillSEXP) {
@@ -738,6 +749,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
+    {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 3},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 6},

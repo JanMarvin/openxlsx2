@@ -381,7 +381,7 @@ wb_to_df <- function(
 
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
-  tt <- dims_to_dataframe(dims)
+  tt <- copy(z)
 
   # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
   # names(tt) <- names(z)

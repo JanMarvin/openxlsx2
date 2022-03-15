@@ -100,6 +100,10 @@ SEXP rbindlist(Rcpp::List x) {
   return df;
 }
 
+// [[Rcpp::export]]
+SEXP copy(SEXP x) {
+ return Rf_duplicate(x);
+}
 
 
 // provide a basic rbindlist for lists of named characters
