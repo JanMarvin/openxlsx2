@@ -35,12 +35,16 @@ std::string to_string(Rcpp::Vector<16>::Proxy x) {
 // sheet_data part for this worksheet
 std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
 
-  auto lastrow = 0;
-  auto thisrow = 0;
-  auto row_idx = 0;
+  auto lastrow = 0; // integer value of the last row with column data
+  auto thisrow = 0; // integer value of the current row with column data
+  auto row_idx = 0; // the index of the row_attr file. this is != rowid
+  auto rowid   = 0; // integer value of the r field in row_attr
 
   pugi::xml_document doc;
   pugi::xml_node row;
+
+  std::string rnastring = "_openxlsx_NA_";
+  std::string xml_preserver = "";
 
   // non optional: treat input as valid at this stage
   unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
@@ -60,31 +64,42 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   Rcpp::CharacterVector cc_f_si  = cc["f_si"];
   Rcpp::CharacterVector cc_is    = cc["is"];
 
+
+  // auto max_r = std::stoi(Rcpp::as<std::string>(cc_row_r[cc_row_r.size()-1]));
+  // Rcpp::Rcout << max_r << " : " << cc_row_r.size() << std::endl;
+
   for (auto i = 0; i < cc.nrow(); ++i) {
 
     thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
 
     if (lastrow < thisrow) {
-      row = doc.append_child("row");
-      Rcpp::CharacterVector attrnams = row_attr.names();
 
-      for (auto j = 0; j < row_attr.ncol(); ++j) {
+      // there might be entirely empty rows in between. this is the case for
+      // loadExample. We check the rowid and write the line and skip until we
+      // have every row and only then continue writing the column
+      while (rowid < thisrow) {
+        row = doc.append_child("row");
+        Rcpp::CharacterVector attrnams = row_attr.names();
 
-        Rcpp::CharacterVector cv_s = "";
-        cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+        rowid = std::stoi(Rcpp::as<std::string>(
+          Rcpp::as<Rcpp::CharacterVector>(row_attr["r"])[row_idx]
+        ));
 
-        if (cv_s[0] != "") {
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          row.append_attribute(attrnams[j]) = val_strl.c_str();
+        for (auto j = 0; j < row_attr.ncol(); ++j) {
+
+          Rcpp::CharacterVector cv_s = "";
+          cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+
+          if (cv_s[0] != "") {
+            const std::string val_strl = Rcpp::as<std::string>(cv_s);
+            row.append_attribute(attrnams[j]) = val_strl.c_str();
+          }
         }
+
+        // read the next row_idx when visiting again
+        ++row_idx;
       }
-
-      // read the next row_idx when visiting again
-      ++row_idx;
     }
-
-    std::string rnastring = "_openxlsx_NA_";
-    std::string xml_preserver = "";
 
     // create node <c>
     pugi::xml_node cell = row.append_child("c");
