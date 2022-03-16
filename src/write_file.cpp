@@ -64,9 +64,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   Rcpp::CharacterVector cc_f_si  = cc["f_si"];
   Rcpp::CharacterVector cc_is    = cc["is"];
 
-
-  // auto max_r = std::stoi(Rcpp::as<std::string>(cc_row_r[cc_row_r.size()-1]));
-  // Rcpp::Rcout << max_r << " : " << cc_row_r.size() << std::endl;
+  Rcpp::CharacterVector row_r    = row_attr["r"];
 
   for (auto i = 0; i < cc.nrow(); ++i) {
 
@@ -78,12 +76,13 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
       // loadExample. We check the rowid and write the line and skip until we
       // have every row and only then continue writing the column
       while (rowid < thisrow) {
-        row = doc.append_child("row");
-        Rcpp::CharacterVector attrnams = row_attr.names();
 
         rowid = std::stoi(Rcpp::as<std::string>(
-          Rcpp::as<Rcpp::CharacterVector>(row_attr["r"])[row_idx]
+          row_r[row_idx]
         ));
+
+        row = doc.append_child("row");
+        Rcpp::CharacterVector attrnams = row_attr.names();
 
         for (auto j = 0; j < row_attr.ncol(); ++j) {
 
