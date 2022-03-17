@@ -1662,20 +1662,26 @@ wbWorkbook <- R6::R6Class(
     getBaseFont = function() {
       baseFont <- self$styles_mgr$styles$fonts[[1]]
 
-      sz     <- as.list(xml_attr(baseFont, "font", "sz")[[1]])
-      colour <- as.list(xml_attr(baseFont, "font", "color")[[1]])
-      name   <- as.list(xml_attr(baseFont, "font", "name")[[1]])
+      sz     <- unlist(xml_attr(baseFont, "font", "sz"))
+      colour <- unlist(xml_attr(baseFont, "font", "color"))
+      name   <- unlist(xml_attr(baseFont, "font", "name"))
 
       if (length(sz[[1]]) == 0) {
         sz <- list("val" = "10")
+      } else {
+        sz <- as.list(sz)
       }
 
       if (length(colour[[1]]) == 0) {
         colour <- list("rgb" = "#000000")
+      } else {
+        colour <- as.list(colour)
       }
 
       if (length(name[[1]]) == 0) {
         name <- list("val" = "Calibri")
+      } else {
+        name <- as.list(name)
       }
 
       list(
