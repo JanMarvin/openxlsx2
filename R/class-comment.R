@@ -175,13 +175,13 @@ createComment <- function(comment,
 #' c1 <- createComment(comment = "this is comment")
 #' writeComment(wb, 1, col = "B", row = 10, comment = c1)
 #'
-#' s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = "bold")
-#' s2 <- createStyle(fontSize = 9, fontColour = "black")
-#'
-#' c2 <- createComment(comment = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
-#' c2
-#'
-#' writeComment(wb, 1, col = 6, row = 3, comment = c2)
+#' # s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = "bold")
+#' # s2 <- createStyle(fontSize = 9, fontColour = "black")
+#' #
+#' # c2 <- createComment(comment = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
+#' # c2
+#' #
+#' # writeComment(wb, 1, col = 6, row = 3, comment = c2)
 #' \dontrun{
 #' saveWorkbook(wb, file = "writeCommentExample.xlsx", overwrite = TRUE)
 #' }
@@ -196,7 +196,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
   #   rPr <- sapply(comment$style, function(x) wb$createFontNode(x))
   # }
   assert_comment(comment)
-  rPr <- wb$createFontNode(comment$style)
+  rPr <- wb$createFontNode(NULL) # TODO not yet possible
 
   rPr <- gsub("font>", "rPr>", rPr)
   sheet <- wb$validateSheet(sheet)
@@ -224,7 +224,42 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
     "clientData" = genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
   )
 
+  fn <- sprintf("comments%s.xml", sheet)
+
+  if (!any(grepl(fn, wb$Content_Types))) {
+    wb$Content_Types <- c(
+      wb$Content_Types,
+      sprintf(
+        '<Override PartName="/xl/%s" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
+        fn
+      )
+    ) 
+  }
+
   wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
+
+  relship <- openxlsx2:::rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
+  relship$typ <- basename(relship$Type)
+  relship$id  <- as.integer(gsub("\\D+", "", relship$Id))
+  
+  next_rid <- max(relship$id) + 1
+  if (any(relship$typ == "comments"))
+    next_rid <- relship$id[relship$typ == "comments"]
+
+  # unique? keep prev legacyDrawing?
+  #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
+  # TODO hardcoded 2. Marvin fears that this is not good enough
+  wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', 2)
+
+
+  wb$worksheets_rels[[sheet]] <- unique(c(
+    wb$worksheets_rels[[sheet]],
+    sprintf(
+      '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../%s"/>',
+      next_rid,
+      fn
+    )
+  ))
 
   invisible(wb)
 }

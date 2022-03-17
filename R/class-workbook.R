@@ -865,22 +865,6 @@ wbWorkbook <- R6::R6Class(
           if (length(self$comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
-            self$Content_Types <- c(
-              self$Content_Types,
-              sprintf(
-                '<Override PartName="/xl/%s" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
-                fn
-              )
-            )
-
-            self$worksheets_rels[[i]] <- unique(c(
-              self$worksheets_rels[[i]],
-              sprintf(
-                '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../%s"/>',
-                fn
-              )
-            ))
-
             writeCommentXML(
               comment_list = self$comments[[i]],
               file_name = file.path(tmpDir, "xl", fn)
@@ -3709,8 +3693,6 @@ wbWorkbook <- R6::R6Class(
             file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
             append = TRUE
           )
-          self$worksheets[[i]]$legacyDrawing <-
-            '<legacyDrawing r:id="rId2"/>'
         }
 
       }

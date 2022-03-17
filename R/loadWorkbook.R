@@ -566,6 +566,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     # has <drawing> a child <legacyDrawing> ?
     wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
     wb$worksheets[[i]]$drawingHF <- xml_node(worksheet_xml, "worksheet", "drawingHF")
+    wb$worksheets[[i]]$legacyDrawing <- xml_node(worksheet_xml, "worksheet", "legacyDrawing")
+    wb$worksheets[[i]]$legacyDrawingHF <- xml_node(worksheet_xml, "worksheet", "legacyDrawingHF")
     # wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
     wb$worksheets[[i]]$headerFooter <- xml_node(worksheet_xml, "worksheet", "headerFooter")
     # wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks")
@@ -916,7 +918,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       wb$Content_Types <- c(wb$Content_Types, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
       # TODO missed <<-
-      drawXMLrelationship <<- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
+      drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
 
       for (i in seq_along(vmlDrawingXML)) {
         wb$drawings_vml[[i]] <- read_xml(vmlDrawingXML[[i]], pointer = FALSE)
