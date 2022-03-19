@@ -1774,7 +1774,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    groupRows = function(sheet, rows, collapsed, levels = NULL) {
+    groupRows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1788,7 +1788,7 @@ wbWorkbook <- R6::R6Class(
         stop("Collapses should be a logical value (TRUE/FALSE).")
       }
 
-      if (any(rows) < 1L) {
+      if (any(rows <= 0L)) {
         stop("Invalid rows entered (<= 0).")
       }
 
