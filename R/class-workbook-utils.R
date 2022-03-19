@@ -1,34 +1,34 @@
 #' Validate sheet
 #'
 #' @param wb A workbook
-#' @param sheetName The sheet name to validate
+#' @param sheet The sheet name to validate
 #' @return The sheet name -- or the position?  This should be consistent
 #' @noRd
-wb_validate_sheet <- function(wb, sheetName) {
+wb_validate_sheet <- function(wb, sheet) {
   assert_workbook(wb)
 
-  if (!is.numeric(sheetName)) {
+  if (!is.numeric(sheet)) {
     if (is.null(wb$sheet_names)) {
       stop("wb does not contain any worksheets.", call. = FALSE)
     }
   }
 
-  if (is.numeric(sheetName)) {
-    if (sheetName > length(wb$sheet_names)) {
+  if (is.numeric(sheet)) {
+    if (sheet > length(wb$sheet_names)) {
       msg <- sprintf("wb only contains %i sheets.", length(wb$sheet_names))
       stop(msg, call. = FALSE)
     }
 
-    return(sheetName)
+    return(sheet)
   }
 
-  if (!sheetName %in% replaceXMLEntities(wb$sheet_names)) {
-    msg <- sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheetName))
+  if (!sheet %in% replaceXMLEntities(wb$sheet_names)) {
+    msg <- sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheet))
     stop(msg, call. = FALSE)
   }
 
 
-  which(replaceXMLEntities(wb$sheet_names) == sheetName)
+  which(replaceXMLEntities(wb$sheet_names) == sheet)
 }
 
 

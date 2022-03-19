@@ -58,7 +58,7 @@ wb_workbook <- function(
 #' @examples
 #' ## Create a new workbook and add a worksheet
 #' wb <- wb_workbook("Creator of workbook")
-#' wb$addWorksheet(sheetName = "My first worksheet")
+#' wb$addWorksheet(sheet = "My first worksheet")
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
@@ -138,7 +138,7 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' Add a worksheet to a workbook
 #'
 #' @param wb A Workbook object to attach the new worksheet
-#' @param sheetName A name for the new worksheet
+#' @param sheet A name for the new worksheet
 #' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
 #'   hidden.
 #' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
@@ -218,7 +218,7 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' }
 wb_add_worksheet <- function(
   wb,
-  sheetName,
+  sheet,
   showGridLines = TRUE,
   tabColour     = NULL,
   zoom          = 100,
@@ -239,7 +239,7 @@ wb_add_worksheet <- function(
 ) {
   assert_workbook(wb)
   wb$clone()$addWorksheet(
-    sheetName     = sheetName,
+    sheet         = sheet,
     showGridLines = showGridLines,
     tabColour     = tabColour,
     zoom          = zoom,
@@ -1454,13 +1454,13 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 #' @examples
 #' ## setup a workbook with 3 worksheets
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "Sheet 1", showGridLines = FALSE)
+#' wb$addWorksheet(sheet = "Sheet 1", showGridLines = FALSE)
 #' writeDataTable(wb = wb, sheet = 1, x = iris)
 #'
-#' wb$addWorksheet(sheetName = "mtcars (Sheet 2)", showGridLines = FALSE)
+#' wb$addWorksheet(sheet = "mtcars (Sheet 2)", showGridLines = FALSE)
 #' writeData(wb = wb, sheet = 2, x = mtcars)
 #'
-#' wb$addWorksheet(sheetName = "Sheet 3", showGridLines = FALSE)
+#' wb$addWorksheet(sheet = "Sheet 3", showGridLines = FALSE)
 #' writeData(wb = wb, sheet = 3, x = Formaldehyde)
 #'
 #' worksheetOrder(wb)
@@ -1889,9 +1889,9 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "S1", visible = FALSE)
-#' wb$addWorksheet(sheetName = "S2", visible = TRUE)
-#' wb$addWorksheet(sheetName = "S3", visible = FALSE)
+#' wb$addWorksheet(sheet = "S1", visible = FALSE)
+#' wb$addWorksheet(sheet = "S2", visible = TRUE)
+#' wb$addWorksheet(sheet = "S3", visible = FALSE)
 #'
 #' sheetVisibility(wb)
 #' sheetVisibility(wb)[1] <- TRUE ## show sheet 1
@@ -2018,7 +2018,7 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "Sheet 1")
+#' wb$addWorksheet(sheet = "Sheet 1")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris)
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
@@ -2063,8 +2063,8 @@ getTables <- function(wb, sheet) {
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "Sheet 1")
-#' wb$addWorksheet(sheetName = "Sheet 2")
+#' wb$addWorksheet(sheet = "Sheet 1")
+#' wb$addWorksheet(sheet = "Sheet 2")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'

@@ -91,7 +91,7 @@ read.xlsx <- function(
 
   # keep sheet missing // read.xlsx is the function to replace.
   # dont mess with wb_to_df
-  if (missing(sheet)) 
+  if (missing(sheet))
     sheet <- substitute()
 
   wb_to_df(
@@ -191,8 +191,8 @@ getSheetNames <- function(file) {
   ## Such sheets need to be filtered out because otherwise their sheet names
   ## occur in the list of all sheet names, leading to a wrong association
   ## of sheet names with sheet indeces.
-  sheetNames <- sheets$name[sheets$`r:id` != ""]
-  sheetNames <- replaceXMLEntities(sheetNames)
+  sheets <- sheets$name[sheets$`r:id` != ""]
+  sheets <- replaceXMLEntities(sheets)
 
-  return(sheetNames)
+  return(sheets)
 }

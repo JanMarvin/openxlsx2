@@ -298,7 +298,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Add worksheet to the `wbWorkbook` object
-    #' @param sheetName sheetName
+    #' @param sheet sheet
     #' @param showGridLines showGridLines
     #' @param tabColour tabColour
     #' @param zoom zoom
@@ -318,7 +318,7 @@ wbWorkbook <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return The `wbWorkbook` object, invisibly
     addWorksheet = function(
-      sheetName,
+      sheet,
       showGridLines = TRUE,
       tabColour     = NULL,
       zoom          = 100,
@@ -345,13 +345,13 @@ wbWorkbook <- R6::R6Class(
       fail <- FALSE
       msg <- NULL
 
-      sheetName <- as.character(sheetName)
+      sheet <- as.character(sheet)
 
-      if (tolower(sheetName) %in% tolower(self$sheet_names)) {
+      if (tolower(sheet) %in% tolower(self$sheet_names)) {
         fail <- TRUE
         msg <- c(
           msg,
-          sprintf("A worksheet by the name \"%s\" already exists.", sheetName),
+          sprintf("A worksheet by the name \"%s\" already exists.", sheet),
           "Sheet names must be unique case-insensitive.",
         )
       }
@@ -361,11 +361,11 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "showGridLines must be a logical of length 1.")
       }
 
-      if (nchar(sheetName) > 31) {
+      if (nchar(sheet) > 31) {
         fail <- TRUE
         msg <- c(
           msg,
-          sprintf("sheetName \"sheetName\" too long.", sheetName),
+          sprintf("sheet \"sheet\" too long.", sheet),
           "Max length is 31 characters."
         )
       }
@@ -423,10 +423,10 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Invalid XML characters
-      sheetName <- replaceIllegalCharacters(sheetName)
+      sheet <- replaceIllegalCharacters(sheet)
 
-      if (!missing(sheetName)) {
-        if (grepl(":", sheetName)) {
+      if (!missing(sheet)) {
+        if (grepl(":", sheet)) {
           fail <- TRUE
           msg <- c(msg, "colon not allowed in sheet names in Excel")
         }
@@ -454,7 +454,7 @@ wbWorkbook <- R6::R6Class(
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-          sheetName,
+          sheet,
           sheetId,
           visible,
           newSheetIndex
@@ -519,7 +519,7 @@ wbWorkbook <- R6::R6Class(
       self$colWidths[[newSheetIndex]]        <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
-      self$append("sheet_names", sheetName)
+      self$append("sheet_names", sheet)
 
       # TODO this should live wherever the other default values for an empty worksheet are initialized
       empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
@@ -542,7 +542,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (nchar(new) > 31) {
-        stop("sheetName too long! Max length is 31 characters.")
+        stop("sheet too long! Max length is 31 characters.")
       }
 
       if (!is.character(new)) {
@@ -765,11 +765,11 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Add a chart sheet to the workbook
-    #' @param sheetName sheetName
+    #' @param sheet sheet
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheetName, tabColour = NULL, zoom = 100) {
+    addChartSheet = function(sheet, tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
       sheetId <- max_sheet_id(self) # checks for length of worksheets
@@ -778,7 +778,7 @@ wbWorkbook <- R6::R6Class(
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          sheetName,
+          sheet,
           sheetId,
           newSheetIndex
         )
@@ -793,7 +793,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      self$append("sheet_names", sheetName)
+      self$append("sheet_names", sheet)
 
       ## update content_tyes
       self$append("Content_Types",
@@ -1582,18 +1582,18 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Sets a sheet name
     #' @param sheet Old sheet name
-    #' @param newSheetName New sheet name
+    #' @param name New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    setSheetName = function(sheet, newSheetName) {
+    setSheetName = function(sheet, name) {
       # TODO assert sheet class?
-      if (newSheetName %in% self$sheet_names) {
-        stop(sprintf("Sheet %s already exists!", newSheetName))
+      if (newsheet %in% self$sheet_names) {
+        stop(sprintf("Sheet %s already exists!", name))
       }
 
       sheet <- wb_validate_sheet(self, sheet)
 
       oldName <- self$sheet_names[[sheet]]
-      self$sheet_names[[sheet]] <- newSheetName
+      self$sheet_names[[sheet]] <- name
 
       ## Rename in workbook
       sheetId <- get_sheet_id(self, sheet)
@@ -1601,7 +1601,7 @@ wbWorkbook <- R6::R6Class(
       self$workbook$sheets[[sheet]] <-
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          newSheetName,
+          name,
           sheetId,
           rId
         )
@@ -1610,7 +1610,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$styleObjects)) {
         self$styleObjects <- lapply(self$styleObjects, function(x) {
           if (x$sheet == oldName) {
-            x$sheet <- newSheetName
+            x$sheet <- name
           }
 
           return(x)
@@ -1622,9 +1622,9 @@ wbWorkbook <- R6::R6Class(
         belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
         toChange <- belongTo == oldName
         if (any(toChange)) {
-          newSheetName <- sprintf("'%s'", newSheetName)
+          name <- sprintf("'%s'", name)
           tmp <-
-            gsub(oldName, newSheetName, self$workbook$definedName[toChange], fixed = TRUE)
+            gsub(oldName, name, self$workbook$definedName[toChange], fixed = TRUE)
           tmp <- gsub("'+", "'", tmp)
           self$workbook$definedNames[toChange] <- tmp
         }
@@ -1866,10 +1866,10 @@ wbWorkbook <- R6::R6Class(
         stop("sheet must have length 1.")
       }
 
-      sheet <- wb_validate_sheet(self, sheet)
-      sheetNames <- self$sheet_names
-      nSheets <- length(sheetNames)
-      sheetName <- sheetNames[[sheet]]
+      sheet       <- wb_validate_sheet(self, sheet)
+      sheet_names <- self$sheet_names
+      nSheets     <- length(sheet_names)
+      sheet_names <- sheet_names[[sheet]]
 
       self$sheet_names <- self$sheet_names[-sheet]
 
@@ -1993,7 +1993,7 @@ wbWorkbook <- R6::R6Class(
 
       ## remove sheet
       sn <- apply_reg_match0(self$workbook$sheets, pat = '(?<= name=")[^"]+')
-      self$workbook$sheets <- self$workbook$sheets[!sn %in% sheetName]
+      self$workbook$sheets <- self$workbook$sheets[!sn %in% sheet_names]
 
       ## Reset rIds
       if (nSheets > 1) {
@@ -2018,7 +2018,7 @@ wbWorkbook <- R6::R6Class(
       # if (length(self$workbook$definedNames)) {
       #   belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
       #   self$workbook$definedNames <-
-      #     self$workbook$definedNames[!belongTo %in% sheetName]
+      #     self$workbook$definedNames[!belongTo %in% sheet]
       # }
 
       invisible(self)
@@ -3950,12 +3950,12 @@ wbWorkbook <- R6::R6Class(
 
       if (length(self$workbook$definedNames)) {
         # TODO consider self$get_sheet_names() which orders the sheet names?
-        sheetNames <- self$sheet_names[self$sheetOrder]
+        sheets <- self$sheet_names[self$sheetOrder]
 
         belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
 
-        ## sheetNames is in re-ordered order (order it will be displayed)
-        newId <- match(belongTo, sheetNames) - 1L
+        ## sheets is in re-ordered order (order it will be displayed)
+        newId <- match(belongTo, sheets) - 1L
         oldId <- as.integer(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
 
         for (i in seq_along(self$workbook$definedNames)) {

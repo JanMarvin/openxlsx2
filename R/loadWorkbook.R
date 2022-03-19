@@ -182,7 +182,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     sheetrId <- sheets$`r:id`
     sheetId <- sheets$sheetId
-    sheetNames <- sheets$name
+    sheets <- sheets$name
 
     is_chart_sheet <- sheetrId %in% chartSheetRIds
     if (is.null(sheets$state)) sheets$state <- "visible"
@@ -206,14 +206,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
         j <- j + 1L
 
-        wb$addChartSheet(sheetName = sheetNames[i], tabColour = tabColour, zoom = as.numeric(zoom))
+        wb$addChartSheet(sheet = sheets[i], tabColour = tabColour, zoom = as.numeric(zoom))
       } else {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$addWorksheet(sheetNames[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
+        wb$addWorksheet(sheets[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
     }
 
