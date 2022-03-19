@@ -180,9 +180,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
 
-    sheetrId <- sheets$`r:id`
-    sheetId <- sheets$sheetId
-    sheets <- sheets$name
+    sheetrId    <- sheets$`r:id`
+    sheetId     <- sheets$sheetId
+    sheet_names <- sheets$name
 
     is_chart_sheet <- sheetrId %in% chartSheetRIds
     if (is.null(sheets$state)) sheets$state <- "visible"
@@ -206,14 +206,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
         j <- j + 1L
 
-        wb$addChartSheet(sheet = sheets[i], tabColour = tabColour, zoom = as.numeric(zoom))
+        wb$addChartSheet(sheet = sheet_names[i], tabColour = tabColour, zoom = as.numeric(zoom))
       } else {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$addWorksheet(sheets[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
+        wb$addWorksheet(sheet_names[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
     }
 
