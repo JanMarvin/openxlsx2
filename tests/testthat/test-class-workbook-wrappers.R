@@ -65,3 +65,10 @@ test_that("wb_freeze_pane() is a wrapper", {
   expect_wrapper("freezePanes", "wb_freeze_pane", wb = wb, params = list(sheet = "sheet"))
 })
 
+# wb_set_row_heights() --------------------------------------------------------
+
+test_that("wb_set_row_heights() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  params <- list(sheet = "sheet", rows = 1, heights = 5)
+  expect_wrapper("setRowHeights", "wb_set_row_heights", wb = wb, params = params)
+})
