@@ -57,3 +57,11 @@ test_that("wb_add_style() is a wrapper", {
   params <- list(sheet = "sheet", style = wb_style(), cols = 1, rows = 1)
   expect_wrapper("addStyle", "wb_add_style", wb = wb, params = params)
 })
+
+# wb_freeze_pane() --------------------------------------------------------
+
+test_that("wb_freeze_pane() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("freezePanes", "wb_freeze_pane", wb = wb, params = list(sheet = "sheet"))
+})
+
