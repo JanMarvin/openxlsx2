@@ -81,3 +81,22 @@ test_that("wb_group_rows() is a wrapper", {
   expect_wrapper("groupRows", "wb_group_rows", wb = wb, params = params)
 })
 
+# wb_add_creators() -----------------------------------------------------------
+
+test_that("wb_set_creators() is a wrapper", {
+  expect_wrapper("addCreators", "wb_add_creators", params = list(creators = "myself"))
+})
+
+# wb_set_creators() -----------------------------------------------------------
+
+test_that("wb_set_creators() is a wrapper", {
+  expect_wrapper("setCreators", "wb_set_creators", params = list(creators = "myself"))
+})
+
+# wb_remove_creators() --------------------------------------------------------
+
+test_that("wb_remove_creators() is a wrapper", {
+  wb <- wb_workbook(creator = "myself")
+  expect_wrapper("removeCreators", "wb_remove_creators", params = list(creators = "myself"))
+})
+
