@@ -260,9 +260,8 @@ removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
 
   sheet <- wb_validate_sheet(wb, sheet)
 
-  if (!is.numeric(col)) {
-    col <- col2int(col)
-  }
+  # col2int checks for numeric
+  col <- col2int(col)
   row <- as.integer(row)
 
   ## rows and cols need to be the same length
