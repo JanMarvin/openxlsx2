@@ -17,7 +17,7 @@ createComment(
 
 writeComment(wb, sheet, col, row, comment, xy = NULL)
 
-removeComment(wb, sheet, cols, rows, gridExpand = TRUE)
+removeComment(wb, sheet, col, row, gridExpand = TRUE)
 }
 \arguments{
 \item{text}{Comment text. Character vector.}
@@ -36,9 +36,9 @@ removeComment(wb, sheet, cols, rows, gridExpand = TRUE)
 
 \item{sheet}{A vector of names or indices of worksheets}
 
-\item{col}{Column a column number of letter}
+\item{col}{Column a column number of letter. For \code{removeComment} this can be a range.}
 
-\item{row}{A row number.}
+\item{row}{A row number. For \code{removeComment} this can be a range.}
 
 \item{comment}{A Comment object. See \code{\link[=createComment]{createComment()}}.}
 
@@ -75,7 +75,7 @@ c3 <- createComment(text = c("This Part Bold red\n\n", "This part black"), style
 writeComment(wb, 1, col = 6, row = 3, comment = c3)
 
 # remove the first comment
-removeComment(wb, 1, cols = "B", row = 10)
+removeComment(wb, 1, col = "B", row = 10)
 \dontrun{
 saveWorkbook(wb, file = "createCommentExample.xlsx", overwrite = TRUE)
 }

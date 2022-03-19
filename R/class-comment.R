@@ -118,7 +118,7 @@ wbComment <- R6::R6Class(
 #' writeComment(wb, 1, col = 6, row = 3, comment = c3)
 #'
 #' # remove the first comment
-#' removeComment(wb, 1, cols = "B", row = 10)
+#' removeComment(wb, 1, col = "B", row = 10)
 #' \dontrun{
 #' saveWorkbook(wb, file = "createCommentExample.xlsx", overwrite = TRUE)
 #' }
@@ -137,6 +137,9 @@ createComment <- function(text,
   assert_class(width, "numeric")
   assert_class(height, "numeric")
   assert_class(visible, "logical")
+
+  if (length(visible) > 1) stop("visible must be a single logical")
+  if (length(author) > 1) stop("author) must be a single character")
 
   width <- round(width)
   height <- round(height)
@@ -159,8 +162,8 @@ createComment <- function(text,
 #' @name writeComment
 #' @param wb A workbook object
 #' @param sheet A vector of names or indices of worksheets
-#' @param col Column a column number of letter
-#' @param row A row number.
+#' @param col Column a column number of letter. For `removeComment` this can be a range.
+#' @param row A row number. For `removeComment` this can be a range.
 #' @param comment A Comment object. See [createComment()].
 #' @param xy An alternative to specifying `col` and
 #' `row` individually.  A vector of the form
@@ -251,26 +254,29 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 #' will be removed.
 #' @rdname comment
 #' @export
-removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
+removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
   sheet <- wb$validateSheet(sheet)
-  cols <- col2int(cols)
-  rows <- as.integer(rows)
+  
+  if (!is.numeric(col)) {
+    col <- col2int(col)
+  }
+  rows <- as.integer(row)
 
   ## rows and cols need to be the same length
   if (gridExpand) {
-    combs <- expand.grid(rows, cols)
-    rows <- combs[, 1]
-    cols <- combs[, 2]
+    combs <- expand.grid(row, col)
+    row <- combs[, 1]
+    col <- combs[, 2]
   }
 
-  if (length(rows) != length(cols)) {
+  if (length(row) != length(col)) {
     stop("Length of rows and cols must be equal.")
   }
 
-  comb <- paste0(int2col(cols), rows)
+  comb <- paste0(int2col(col), row)
   toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
 
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
