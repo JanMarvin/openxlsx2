@@ -10,7 +10,7 @@ test_that("wb_workbook() is a wrapper", {
 # wb_add_worksheet() ------------------------------------------------------
 
 test_that("wb_add_worksheet() is a wrapper", {
-  expect_wrapper("addWorksheet", "wb_add_worksheet", params = list(sheetName = "this"))
+  expect_wrapper("addWorksheet", "wb_add_worksheet", params = list(sheet = "this"))
 })
 
 # wb_save() ---------------------------------------------------------------
