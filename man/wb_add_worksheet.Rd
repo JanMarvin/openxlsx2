@@ -6,7 +6,7 @@
 \usage{
 wb_add_worksheet(
   wb,
-  sheetName,
+  sheet,
   showGridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
@@ -29,7 +29,7 @@ wb_add_worksheet(
 \arguments{
 \item{wb}{A Workbook object to attach the new worksheet}
 
-\item{sheetName}{A name for the new worksheet}
+\item{sheet}{A name for the new worksheet}
 
 \item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
 colours()) or a valid hex colour beginning with "#"}

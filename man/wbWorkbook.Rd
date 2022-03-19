@@ -237,7 +237,7 @@ Append to \code{self$workbook$sheets} This method is intended for internal use
 Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addWorksheet(
-  sheetName,
+  sheet,
   showGridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
@@ -261,7 +261,7 @@ Add worksheet to the \code{wbWorkbook} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{sheet}}{sheet}
 
 \item{\code{showGridLines}}{showGridLines}
 
@@ -328,13 +328,13 @@ Clone a workbooksheet
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheetName, tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet, tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{sheet}}{sheet}
 
 \item{\code{tabColour}}{tabColour}
 
@@ -462,7 +462,7 @@ A list of of the font
 \subsection{Method \code{setSheetName()}}{
 Sets a sheet name
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, newSheetName)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -470,7 +470,7 @@ Sets a sheet name
 \describe{
 \item{\code{sheet}}{Old sheet name}
 
-\item{\code{newSheetName}}{New sheet name}
+\item{\code{name}}{New sheet name}
 }
 \if{html}{\out{</div>}}
 }

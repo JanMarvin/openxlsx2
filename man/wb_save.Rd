@@ -19,7 +19,7 @@ Save Workbook to file
 \examples{
 ## Create a new workbook and add a worksheet
 wb <- wb_workbook("Creator of workbook")
-wb$addWorksheet(sheetName = "My first worksheet")
+wb$addWorksheet(sheet = "My first worksheet")
 
 ## Save workbook to working directory
 \dontrun{
