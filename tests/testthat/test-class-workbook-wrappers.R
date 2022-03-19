@@ -13,6 +13,13 @@ test_that("wb_add_worksheet() is a wrapper", {
   expect_wrapper("addWorksheet", "wb_add_worksheet", params = list(sheet = "this"))
 })
 
+# wb_remove_worksheet() ---------------------------------------------------
+
+test_that("wb_remove_worksheet() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("removeWorksheet", "wb_remove_worksheet", wb = wb, params = list(sheet = "sheet"))
+})
+
 # wb_save() ---------------------------------------------------------------
 
 test_that("wb_save() is a wrapper", {
