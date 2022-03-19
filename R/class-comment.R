@@ -258,7 +258,7 @@ removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   if (!is.numeric(col)) {
     col <- col2int(col)
