@@ -2,8 +2,6 @@
 # wb_workbook() -----------------------------------------------------------
 
 test_that("wb_workbook() is a wrapper", {
-
-  # wb_workbook() ----
   ts <- Sys.time()
   expect_equal(wb_workbook(datetimeCreated = ts), wbWorkbook$new(datetimeCreated = ts))
   expect_wrapper("initialize", "wb_workbook", params = NULL)
