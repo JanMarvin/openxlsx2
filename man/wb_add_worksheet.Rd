@@ -118,6 +118,6 @@ writeData(wb, sheet = 8, 1:400)
 
 ## Save workbook
 \dontrun{
-wb_save(wb, temp_xlsx(), overwrite = TRUE)
+wb_save(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
 }
 }
