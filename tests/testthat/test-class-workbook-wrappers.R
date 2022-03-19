@@ -72,3 +72,12 @@ test_that("wb_set_row_heights() is a wrapper", {
   params <- list(sheet = "sheet", rows = 1, heights = 5)
   expect_wrapper("setRowHeights", "wb_set_row_heights", wb = wb, params = params)
 })
+
+# wb_group_rows() -------------------------------------------------------------
+
+test_that("wb_group_rows() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  params <- list(sheet = "sheet", rows = 1)
+  expect_wrapper("groupRows", "wb_group_rows", wb = wb, params = params)
+})
+
