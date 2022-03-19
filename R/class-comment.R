@@ -80,7 +80,7 @@ wbComment <- R6::R6Class(
 
 # wrappers ----------------------------------------------------------------
 
-# TODO createComment() should leverage wbwbComment$new() more
+# TODO createComment() should leverage wbComment$new() more
 # TODO writeComment() should leverage wbWorkbook$addComment() more
 # TODO removeComment() should leverage wbWorkbook$removeComment() more
 
