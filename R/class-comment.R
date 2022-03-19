@@ -263,7 +263,7 @@ removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   if (!is.numeric(col)) {
     col <- col2int(col)
   }
-  rows <- as.integer(row)
+  row <- as.integer(row)
 
   ## rows and cols need to be the same length
   if (gridExpand) {
