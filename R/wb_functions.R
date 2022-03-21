@@ -1188,8 +1188,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id(short_date_fmtid)
     cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id(long_date_fmtid)
-    if (!is.null(wb$styles_mgr$get_xf_id(numeric_fmtid))) {
-      print(wb$styles_mgr$get_xf_id(numeric_fmtid))
+    if (length(wb$styles_mgr$get_xf_id(numeric_fmtid)) == 1) {
       cc$c_s[cc$typ == "2"]  <- wb$styles_mgr$get_xf_id(numeric_fmtid)
     }
     cc$c_s[cc$typ == "6"]  <- wb$styles_mgr$get_xf_id(accounting_fmtid)
