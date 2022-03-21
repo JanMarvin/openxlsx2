@@ -74,19 +74,24 @@ test_that("writeData2", {
 
   wb1 <- loadWorkbook(file)
 
-  expect_true(
-    all.equal(mtcars, wb_to_df(wb1, "sheet1", rowNames = TRUE),
-            ignore_attr = TRUE)
+  expect_equal(
+    mtcars,
+    wb_to_df(wb1, "sheet1", rowNames = TRUE),
+    ignore_attr = TRUE
   )
 
-  expect_equivalent(cars, wb_to_df(wb1, "sheet2", colNames = FALSE))
+  expect_equal(cars, wb_to_df(wb1, "sheet2", colNames = FALSE), ignore_attr = TRUE)
 
-  expect_equal(letters,
-               as.character(wb_to_df(wb1, "sheet3", colNames = FALSE))
+  expect_equal(
+    letters,
+    as.character(wb_to_df(wb1, "sheet3", colNames = FALSE))
   )
 
-  expect_equivalent(wb_to_df(wb1, "sheet4"),
-                    as.data.frame(Titanic, stringsAsFactors = FALSE))
+  expect_equal(
+    wb_to_df(wb1, "sheet4"),
+    as.data.frame(Titanic, stringsAsFactors = FALSE),
+    ignore_attr = TRUE
+  )
 
   file.remove(file)
 })
