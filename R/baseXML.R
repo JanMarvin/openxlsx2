@@ -244,8 +244,7 @@ genBaseStyleSheet <- function(dxfs = NULL, tableStyles = NULL, extLst = NULL) {
     fonts = c('<font><sz val="11"/><color rgb="FF000000"/><name val="Calibri"/><family val="2"/><scheme val="minor"/></font>'),
 
     fills = c(
-      '<fill><patternFill patternType="none"/></fill>',
-      '<fill><patternFill patternType="gray125"/></fill>'
+      '<fill><patternFill patternType="none"/></fill>'
     ),
 
     borders = c("<border><left/><right/><top/><bottom/><diagonal/></border>"),

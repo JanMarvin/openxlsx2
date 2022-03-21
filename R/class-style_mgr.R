@@ -250,7 +250,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
     #' @description get next xf id
     next_xf_id = function() {
-      invisible(as.character(max(as.numeric(self$xf$id), 0) + 1))
+      invisible(as.character(max(as.numeric(self$xf$id), -1) + 1))
     },
 
     ### adds
