@@ -147,7 +147,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-removeCellMerge}{\code{wbWorkbook$removeCellMerge()}}
 \item \href{#method-freezePanes}{\code{wbWorkbook$freezePanes()}}
 \item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
-\item \href{#method-addStyle}{\code{wbWorkbook$addStyle()}}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
@@ -875,36 +874,6 @@ Insert an image into a sheet
 \item{\code{rowOffset}}{rowOffset}
 
 \item{\code{colOffset}}{colOffset}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addStyle"></a>}}
-\if{latex}{\out{\hypertarget{method-addStyle}{}}}
-\subsection{Method \code{addStyle()}}{
-Add a style to a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addStyle(sheet, style, rows, cols, stack, gridExpand = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{style}}{style}
-
-\item{\code{rows}}{rows}
-
-\item{\code{cols}}{cols}
-
-\item{\code{stack}}{stack}
-
-\item{\code{gridExpand}}{gridExpand}
 }
 \if{html}{\out{</div>}}
 }

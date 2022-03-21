@@ -55,7 +55,6 @@ or a valid hex colour beginning with "#".}
 A vector of the form c(startCol, startRow)}
 \item{\strong{colNames or col.names}}{ If \code{TRUE}, column names of x are written.}
 \item{\strong{rowNames or row.names}}{ If \code{TRUE}, row names of x are written.}
-\item{\strong{headerStyle}}{ Custom style to apply to column names.}
 \item{\strong{borders}}{ Either "surrounding", "columns" or "rows" or NULL.  If "surrounding", a border is drawn around the
 data.  If "rows", a surrounding border is drawn a border around each row. If "columns", a surrounding border is drawn with a border
 between each column.  If "\code{all}" all cell borders are drawn.}
@@ -103,7 +102,7 @@ hs <- createStyle(
 \dontrun{
 write.xlsx(iris,
   file = "writeXLSX3.xlsx",
-  colNames = TRUE, borders = "rows", headerStyle = hs
+  colNames = TRUE, borders = "rows"
 )
 }
 

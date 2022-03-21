@@ -275,69 +275,6 @@ wb_clone_worksheet <- function(wb, sheetName, clonedSheet) {
 }
 
 
-#' @name addStyle
-#' @title Add a style to a set of cells
-#' @description Function adds a style to a specified set of cells.
-#' @param wb A Workbook object containing a worksheet.
-#' @param sheet A worksheet to apply the style to.
-#' @param style A style object returned from createStyle()
-#' @param rows Rows to apply style to.
-#' @param cols columns to apply style to.
-#' @param gridExpand If `TRUE`, style will be applied to all combinations of rows and cols.
-#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
-#' existing style is replaced by the new style.
-#' @seealso [createStyle()]
-#' @seealso expand.grid
-#' @export
-#' @examples
-#' ## See package vignette for more examples.
-#'
-#' ## Create a new workbook
-#' wb <- wb_workbook("My name here")
-#'
-#' ## Add a worksheets
-#' wb$addWorksheet("Expenditure", showGridLines = FALSE)
-#'
-#' ## write data to worksheet 1
-#' writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
-#'
-#' ## create and add a style to the column headers
-#' headerStyle <- createStyle(
-#'   fontSize = 14, fontColour = "#FFFFFF", halign = "center",
-#'   fgFill = "#4F81BD", border = c("top", "bottom"), borderColour = "#4F81BD"
-#' )
-#'
-#' wb <- wb_add_style(wb, sheet = 1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
-#'
-#' ## style for body
-#' bodyStyle <- createStyle(border = c("top", "bottom"), borderColour = "#4F81BD")
-#' wb <- wb_add_style(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
-#' setColWidths(wb, 1, cols = 1, widths = 21) ## set column width for row names column
-#' \dontrun{
-#' wb_save(wb, "addStyleExample.xlsx", overwrite = TRUE)
-#' }
-wb_add_style <- function(
-  wb,
-  sheet,
-  style,
-  rows,
-  cols,
-  gridExpand = FALSE,
-  stack = FALSE
-) {
-  assert_workbook(wb)
-  wb$clone()$addStyle(
-    sheet      = sheet,
-    style      = style,
-    rows       = rows,
-    cols       = cols,
-    gridExpand = gridExpand,
-    stack      = stack
-  )
-}
-
-
-
 #' @name freezePane
 #' @title Freeze a worksheet pane
 #' @description Freeze a worksheet pane
@@ -695,57 +632,6 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 
   insertImage(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
 }
-
-
-# styles ------------------------------------------------------------------
-
-
-#' @name replaceStyle
-#' @title Replace an existing cell style
-#' @description Replace an existing cell style
-#' @param wb A workbook object
-#' @param index Index of style object to replace
-#' @param newStyle A style to replace the existing style as position index
-#' @description Replace a style object
-#' @export
-#' @seealso [getStyles()]
-#' @examples
-#'
-#' \dontrun{
-#' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#'
-#' ## create a new style and replace style 2
-#'
-#' newStyle <- createStyle(fgFill = "#00FF00")
-#'
-#' ## replace style 2
-#' getStyles(wb)[1:3] ## prints styles
-#' replaceStyle(wb, 2, newStyle = newStyle)
-#'
-#' ## Save workbook
-#' wb_save(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
-#' }
-replaceStyle <- function(wb, index, newStyle) {
-  return(NULL)
-}
-
-
-#' @name getStyles
-#' @title Returns a list of all styles in the workbook
-#' @description Returns list of style objects in the workbook
-#' @param wb A workbook object
-#' @export
-#' @seealso [replaceStyle()]
-#' @examples
-#' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#' getStyles(wb)[1:3]
-getStyles <- function(wb) {
-
-  return(NULL)
-}
-
 
 
 #' @title Remove a worksheet from a workbook

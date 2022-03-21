@@ -281,6 +281,6 @@ removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
 }
 
-wb_comment <- function(text = character(), author = character(), style = wb_style()) {
+wb_comment <- function(text = character(), author = character(), style = character()) {
   wbComment$new(text = text, author = author, style = style)
 }

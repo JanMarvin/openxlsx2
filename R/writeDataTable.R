@@ -14,7 +14,6 @@
 #' @param rowNames If `TRUE`, row names of x are written.
 #' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
 #' @param tableName name of table in workbook. The table name must be unique.
-#' @param headerStyle Custom style to apply to column names.
 #' @param withFilter If `TRUE`, columns with have filters in the first row.
 #' @param keepNA If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty.
 #' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
@@ -86,8 +85,8 @@
 #' ## Additional Header Styling and remove column filters
 #'
 #' writeDataTable(wb,
-#'   # todo createStyle does not work
-#'   sheet = 1, x = iris, startCol = 7, headerStyle = createStyle(textRotation = 45),
+#'   # todo header styling not implemented
+#'   sheet = 1, x = iris, startCol = 7,
 #'   withFilter = FALSE
 #' )
 #'
@@ -145,7 +144,6 @@ writeDataTable <- function(wb, sheet, x,
   rowNames = FALSE,
   tableStyle = "TableStyleLight9",
   tableName = NULL,
-  headerStyle = NULL,
   withFilter = TRUE,
   keepNA = FALSE,
   na.string = NULL,
@@ -166,7 +164,6 @@ writeDataTable <- function(wb, sheet, x,
   ## Input validating
   assert_workbook(wb)
   assert_class(x, "data.frame")
-  if (!is.null(headerStyle)) assert_style(headerStyle)
 
   # TODO sipmlify these --
   if (!is.logical(colNames)) stop("colNames must be a logical.")
@@ -209,18 +206,6 @@ writeDataTable <- function(wb, sheet, x,
     stop("Unknown table style.")
   }
 
-  ## header style
-  if (inherits(headerStyle, "Style")) {
-    wb$addStyle(
-      sheet = sheet,
-      style = headerStyle,
-      rows = startRow,
-      # cols = 0:(ncol(x) - 1L) + startCol,
-      cols = seq_along(x) - 1L + startCol,
-      gridExpand = TRUE
-    )
-  }
-
   showColNames <- colNames
 
   if (colNames) {
@@ -257,28 +242,8 @@ writeDataTable <- function(wb, sheet, x,
     new_cols = c(startCol, startCol + ncol(x) - 1L)
   )
 
-
-  ## column class styling
-  # # keep this as a reminder that columnsytles should return sometime in the
-  # # future
-  # colClasses <- lapply(x, function(x) tolower(class(x)))
-  # classStyles(wb, sheet = sheet, startRow = startRow, startCol = startCol,
-  #             colNames = TRUE, nRow = nrow(x), colClasses = colClasses, stack = stack)
-
-  # ## write data to worksheet
-  # wb$writeData(
-  #   df = x,
-  #   colNames = TRUE,
-  #   sheet = sheet,
-  #   startRow = startRow,
-  #   startCol = startCol,
-  #   colClasses = colClasses,
-  #   hlinkNames = NULL,
-  #   keepNA = keepNA,
-  #   na.string = na.string,
-  #   list_sep = sep
-  # )
-
+  ## write data to worksheet
+  # TODO writeData2 should be wb$writeData
   wb <- writeData2(
     wb =  wb,
     sheet = sheet,
