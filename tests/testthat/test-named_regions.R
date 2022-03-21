@@ -169,7 +169,7 @@ test_that("Missing rows in named regions", {
   ## iris2 region is rows 1:7 & cols 1:2
 
   ## row 6 columns 1 & 2 are blank
-  expect_equal(getNamedRegions(wb)[1:2], c("iris", "iris2"), ignore.attributes = TRUE)
+  expect_equal(getNamedRegions(wb)[1:2], c("iris", "iris2"), ignore_attr = TRUE)
   expect_equal(attr(getNamedRegions(wb), "sheet"), c("Sheet 1", "Sheet 1"))
   expect_equal(attr(getNamedRegions(wb), "position"), c("A1:B6", "A1:B7"))
 
@@ -244,7 +244,7 @@ test_that("Missing columns in named regions", {
   ## iris2 region is rows 1:5 & cols 1:3
 
   ## row 6 columns 1 & 2 are blank
-  expect_equal(getNamedRegions(wb)[1:2], c("iris", "iris2"), ignore.attributes = TRUE)
+  expect_equal(getNamedRegions(wb)[1:2], c("iris", "iris2"), ignore_attr = TRUE)
   expect_equal(attr(getNamedRegions(wb), "sheet"), c("Sheet 1", "Sheet 1"))
   expect_equal(attr(getNamedRegions(wb), "position"), c("A1:B5", "A1:C5"))
 
