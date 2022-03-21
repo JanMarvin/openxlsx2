@@ -29,11 +29,10 @@ test_that("fill merged cells", {
   r2_1 <- r2[1:5, 1:3]
   names(r2_1) <- c("A", "B", "B")
 
-  expect_true(all.equal(read.xlsx(tmp_file, fillMergedCells = FALSE), r1, ignore_attr = TRUE))
-  expect_true(all.equal(read.xlsx(tmp_file, fillMergedCells = TRUE), r2, ignore_attr = TRUE))
+  expect_equal(read.xlsx(tmp_file, fillMergedCells = FALSE), r1, ignore_attr = TRUE)
+  expect_equal(read.xlsx(tmp_file, fillMergedCells = TRUE), r2, ignore_attr = TRUE)
 
-  expect_true(all.equal(read.xlsx(tmp_file, cols = 1:3, fillMergedCells = TRUE), r2_1, ignore_attr = TRUE))
-  expect_true(all.equal(read.xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], ignore_attr = TRUE))
-  expect_true(all.equal(read.xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], ignore_attr = TRUE))
-
+  expect_equal(read.xlsx(tmp_file, cols = 1:3, fillMergedCells = TRUE), r2_1, ignore_attr = TRUE)
+  expect_equal(read.xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], ignore_attr = TRUE)
+  expect_equal(read.xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], ignore_attr = TRUE)
 })
