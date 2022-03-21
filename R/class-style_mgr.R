@@ -292,7 +292,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       if (is_border) {
         typ <- "border"
         borders <- c(self$styles$borders, style)
-        id  <- rownames(openxlsx2:::read_fill(read_xml(borders)))
+        id  <- rownames(openxlsx2:::read_border(read_xml(borders)))
         self$styles$borders <- borders
       }
 
@@ -310,10 +310,10 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       )
 
       if (is_numfmt) self$numfmt <- rbind(self$numfmt, new_entry)
-      if (is_font)   self$font <- rbind(self$font, new_entry)
-      if (is_fill)   self$fill <- rbind(self$fill, new_entry)
-      if (is_border) self$borders <- rbind(self$border, new_entry)
-      if (is_xf)     self$xf <- rbind(self$xf, new_entry)
+      if (is_font)   self$font   <- rbind(self$font, new_entry)
+      if (is_fill)   self$fill   <- rbind(self$fill, new_entry)
+      if (is_border) self$border <- rbind(self$border, new_entry)
+      if (is_xf)     self$xf     <- rbind(self$xf, new_entry)
 
       invisible(self)
     }
