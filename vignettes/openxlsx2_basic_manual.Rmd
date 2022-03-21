@@ -130,4 +130,3 @@ There is the "#N/A" string, but often the user will be faced with custom missing
 # na string
 wb_to_df(xlsxFile, na.strings = "")
 ```
-
