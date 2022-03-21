@@ -67,11 +67,11 @@
 #'
 #' #####################################################################################
 #' ## Create Workbook object and add worksheets
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add worksheets
-#' addWorksheet(wb, "Cars")
-#' addWorksheet(wb, "Formula")
+#' wb$addWorksheet("Cars")
+#' wb$addWorksheet("Formula")
 #'
 #'
 #' x <- mtcars[1:6, ]
@@ -160,7 +160,7 @@
 #' wb_to_df(wb2)
 #' \dontrun{
 #' file <- tempfile(fileext = ".xlsx")
-#' saveWorkbook(wb2, file, overwrite = TRUE)
+#' wb_save(wb2, file, overwrite = TRUE)
 #' file.remove(file)
 #' }
 #'
@@ -168,7 +168,7 @@
 #' ## Save workbook
 #' ## Open in excel without saving file: openXL(wb)
 #' \dontrun{
-#' saveWorkbook(wb, "writeDataExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "writeDataExample.xlsx", overwrite = TRUE)
 #' }
 writeData <- function(wb,
   sheet,
@@ -276,9 +276,9 @@ writeData <- function(wb,
   }
 
   if (is.numeric(sheet)) {
-    sheetX <- wb$validateSheet(sheet)
+    sheetX <- wb_validate_sheet(wb, sheet)
   } else {
-    sheetX <- wb$validateSheet(replaceXMLEntities(sheet))
+    sheetX <- wb_validate_sheet(wb, replaceXMLEntities(sheet))
     sheet <- replaceXMLEntities(sheet)
   }
 
@@ -290,7 +290,8 @@ writeData <- function(wb,
 
 
   ## Check not overwriting existing table headers
-  wb$check_overwrite_tables(
+  wb_check_overwrite_tables(
+    wb,
     sheet = sheet,
     new_rows = c(startRow, startRow + nRow - 1L + colNames),
     new_cols = c(startCol, startCol + nCol - 1L),
@@ -360,8 +361,8 @@ writeData <- function(wb,
 #'
 #' ## There are 3 ways to write a formula
 #'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
+#' wb <- wb_workbook()
+#' wb$addWorksheet("Sheet 1")
 #' writeData(wb, "Sheet 1", x = iris)
 #'
 #' ## SEE int2col() to convert int to Excel column label
@@ -386,7 +387,7 @@ writeData <- function(wb,
 #' class(df$z) <- c(class(df$z), "formula")
 #' class(df$z2) <- c(class(df$z2), "formula")
 #'
-#' addWorksheet(wb, "Sheet 2")
+#' wb$addWorksheet("Sheet 2")
 #' writeData(wb, sheet = 2, x = df)
 #'
 #'
@@ -400,20 +401,20 @@ writeData <- function(wb,
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #'
 #' ## 4. - Writing internal hyperlinks
 #'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet1")
-#' addWorksheet(wb, "Sheet2")
+#' wb <- wb_workbook()
+#' wb$addWorksheet("Sheet1")
+#' wb$addWorksheet("Sheet2")
 #' writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 #' }
 #'
 writeFormula <- function(wb,

@@ -39,27 +39,27 @@ The global min and max column width for "auto" columns is set by (default values
 
 NOTE: The calculation of column widths can be slow for large worksheets.
 
-NOTE: The \code{hidden} parameter may conflict with the one set in \code{groupColumns}; changing one will update the other.
+NOTE: The \code{hidden} parameter may conflict with the one set in \link{wb_group_cols}; changing one will update the other.
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 ## Add a worksheet
-addWorksheet(wb, "Sheet 1")
+wb$addWorksheet("Sheet 1")
 
 
 ## set col widths
 setColWidths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
-addWorksheet(wb, "Sheet 2")
+wb$addWorksheet("Sheet 2")
 writeData(wb, sheet = 2, x = iris)
 setColWidths(wb, sheet = 2, cols = 1:5, widths = "auto")
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
+wb_save(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 }
 
 }

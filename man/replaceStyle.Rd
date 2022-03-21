@@ -33,7 +33,7 @@ getStyles(wb)[1:3] ## prints styles
 replaceStyle(wb, 2, newStyle = newStyle)
 
 ## Save workbook
-saveWorkbook(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
+wb_save(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

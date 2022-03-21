@@ -24,10 +24,10 @@ writeDataTable automatically adds filters to first row of a table.
 NOTE Can only have a single filter per worksheet unless using tables.
 }
 \examples{
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
-addWorksheet(wb, "Sheet 3")
+wb <- wb_workbook()
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
+wb$addWorksheet("Sheet 3")
 
 writeData(wb, 1, iris)
 addFilter(wb, 1, row = 1, cols = seq_along(iris))
@@ -38,7 +38,7 @@ writeData(wb, 2, x = iris, withFilter = TRUE)
 ## Similarly
 writeDataTable(wb, 3, iris)
 \dontrun{
-saveWorkbook(wb, file = "addFilterExample.xlsx", overwrite = TRUE)
+wb_save(wb, path = "addFilterExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

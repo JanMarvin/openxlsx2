@@ -56,8 +56,8 @@ are called comments in openxml. Modification of what Excel now calls comment
 (openxml calls them threadedComments) is not yet possible
 }
 \examples{
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet 1")
+wb <- wb_workbook()
+wb$addWorksheet("Sheet 1")
 
 # write comment without author
 c1 <- createComment(text = "this is a comment", author = "")
@@ -77,6 +77,6 @@ writeComment(wb, 1, col = 6, row = 3, comment = c3)
 # remove the first comment
 removeComment(wb, 1, col = "B", row = 10)
 \dontrun{
-saveWorkbook(wb, file = "createCommentExample.xlsx", overwrite = TRUE)
+wb_save(wb, path = "createCommentExample.xlsx", overwrite = TRUE)
 }
 }

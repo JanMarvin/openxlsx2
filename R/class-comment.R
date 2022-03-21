@@ -80,7 +80,7 @@ wbComment <- R6::R6Class(
 
 # wrappers ----------------------------------------------------------------
 
-# TODO createComment() should leverage wbwbComment$new() more
+# TODO createComment() should leverage wbComment$new() more
 # TODO writeComment() should leverage wbWorkbook$addComment() more
 # TODO removeComment() should leverage wbWorkbook$removeComment() more
 
@@ -99,8 +99,8 @@ wbComment <- R6::R6Class(
 #' @export
 #' @rdname comment
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
+#' wb <- wb_workbook()
+#' wb$addWorksheet("Sheet 1")
 #'
 #' # write comment without author
 #' c1 <- createComment(text = "this is a comment", author = "")
@@ -120,7 +120,7 @@ wbComment <- R6::R6Class(
 #' # remove the first comment
 #' removeComment(wb, 1, col = "B", row = 10)
 #' \dontrun{
-#' saveWorkbook(wb, file = "createCommentExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "createCommentExample.xlsx", overwrite = TRUE)
 #' }
 createComment <- function(text,
   author = Sys.info()[["user"]],
@@ -183,7 +183,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
   }
 
   rPr <- gsub("font>", "rPr>", rPr)
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   ## All input conversions/validations
   if (!is.null(xy)) {
@@ -258,12 +258,11 @@ removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
-  
-  if (!is.numeric(col)) {
-    col <- col2int(col)
-  }
-  rows <- as.integer(row)
+  sheet <- wb_validate_sheet(wb, sheet)
+
+  # col2int checks for numeric
+  col <- col2int(col)
+  row <- as.integer(row)
 
   ## rows and cols need to be the same length
   if (gridExpand) {

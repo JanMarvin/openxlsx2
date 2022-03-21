@@ -45,10 +45,10 @@ This file is then written to the workbook using insertImage.
 \examples{
 \dontrun{
 ## Create a new workbook
-wb <- createWorkbook()
+wb <- wb_workbook()
 
 ## Add a worksheet
-addWorksheet(wb, "Sheet 1", gridLines = FALSE)
+wb$addWorksheet("Sheet 1", showGridLines = FALSE)
 
 ## create plot objects
 require(ggplot2)
@@ -69,7 +69,7 @@ print(p2)
 insertPlot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 
 ## Save workbook
-saveWorkbook(wb, "insertPlotExample.xlsx", overwrite = TRUE)
+wb_save(wb, "insertPlotExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

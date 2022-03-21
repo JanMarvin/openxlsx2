@@ -91,10 +91,10 @@ contains this string, the output will be broken.
 
 #####################################################################################
 ## Create Workbook object and add worksheets
-wb <- createWorkbook()
-addWorksheet(wb, "S1")
-addWorksheet(wb, "S2")
-addWorksheet(wb, "S3")
+wb <- wb_workbook()
+wb$addWorksheet("S1")
+wb$addWorksheet("S2")
+wb$addWorksheet("S3")
 
 
 #####################################################################################
@@ -141,7 +141,7 @@ writeDataTable(wb,
 ## Save workbook
 ## Open in excel without saving file: openXL(wb)
 \dontrun{
-saveWorkbook(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
+wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 }
 
 
@@ -151,8 +151,8 @@ saveWorkbook(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 #####################################################################################
 ## Pre-defined table styles gallery
 
-wb <- createWorkbook(paste0("tableStylesGallery.xlsx"))
-addWorksheet(wb, "Style Samples")
+wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
+wb$addWorksheet("Style Samples")
 for (i in 1:21) {
   style <- paste0("TableStyleLight", i)
   writeDataTable(wb,
@@ -179,12 +179,12 @@ for (i in 1:11) {
 
 ## openXL(wb)
 \dontrun{
-saveWorkbook(wb, file = "tableStylesGallery.xlsx", overwrite = TRUE)
+wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 }
 
 }
 \seealso{
-\code{\link[=addWorksheet]{addWorksheet()}}
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
 
 \code{\link[=writeData]{writeData()}}
 

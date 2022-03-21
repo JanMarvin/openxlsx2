@@ -23,7 +23,7 @@ wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "
 ## remove column widths in columns 1 to 20
 removeColWidths(wb, 1, cols = 1:20)
 \dontrun{
-saveWorkbook(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
+wb_save(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

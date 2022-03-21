@@ -2,9 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{getBaseFont}
 \alias{getBaseFont}
+\alias{wb_get_base_font}
 \title{Return the workbook default font}
 \usage{
-getBaseFont(wb)
+wb_get_base_font(wb)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -16,11 +17,11 @@ Returns the base font used in the workbook.
 }
 \examples{
 ## create a workbook
-wb <- createWorkbook()
-getBaseFont(wb)
+wb <- wb_workbook()
+wb_get_base_font(wb)
 
 ## modify base font to size 10 Arial Narrow in red
 modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 
-getBaseFont(wb)
+wb_get_base_font(wb)
 }

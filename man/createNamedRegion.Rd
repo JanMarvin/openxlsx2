@@ -25,8 +25,8 @@ Region is given by: min(cols):max(cols) X min(rows):max(rows)
 }
 \examples{
 ## create named regions
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet 1")
+wb <- wb_workbook()
+wb$addWorksheet("Sheet 1")
 
 ## specify region
 writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
@@ -44,7 +44,7 @@ writeData(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
 
 out_file <- tempfile(fileext = ".xlsx")
 \dontrun{
-saveWorkbook(wb, out_file, overwrite = TRUE)
+wb_save(wb, out_file, overwrite = TRUE)
 
 ## see named regions
 getNamedRegions(wb) ## From Workbook object

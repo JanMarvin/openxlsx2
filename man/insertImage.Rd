@@ -40,12 +40,12 @@ Insert an image into a worksheet
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook("Ayanami")
+wb <- wb_workbook("Ayanami")
 
 ## Add some worksheets
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
-addWorksheet(wb, "Sheet 3")
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
+wb$addWorksheet("Sheet 3")
 
 ## Insert images
 img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
@@ -55,7 +55,7 @@ insertImage(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", u
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "insertImageExample.xlsx", overwrite = TRUE)
+wb_save(wb, "insertImageExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

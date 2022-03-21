@@ -2,9 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{freezePane}
 \alias{freezePane}
+\alias{wb_freeze_pane}
 \title{Freeze a worksheet pane}
 \usage{
-freezePane(
+wb_freeze_pane(
   wb,
   sheet,
   firstActiveRow = NULL,
@@ -31,22 +32,22 @@ Freeze a worksheet pane
 }
 \examples{
 ## Create a new workbook
-wb <- createWorkbook("Kenshin")
+wb <- wb_workbook("Kenshin")
 
 ## Add some worksheets
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
-addWorksheet(wb, "Sheet 3")
-addWorksheet(wb, "Sheet 4")
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
+wb$addWorksheet("Sheet 3")
+wb$addWorksheet("Sheet 4")
 
 ## Freeze Panes
-freezePane(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-freezePane(wb, "Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-freezePane(wb, 3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-freezePane(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
+wb$freezePanes("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
+wb$freezePanes("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
+wb$freezePanes(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
+wb$freezePanes(4, firstActiveRow = 1, firstActiveCol = "D")
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "freezePaneExample.xlsx", overwrite = TRUE)
+wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 }
 }

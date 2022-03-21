@@ -1,19 +1,19 @@
 test_that("fill merged cells", {
-  wb <- createWorkbook()
-  addWorksheet(wb, sheetName = "sheet1")
-  writeData(wb = wb, sheet = 1, x = data.frame("A" = 1, "B" = 2))
-  writeData(wb = wb, sheet = 1, x = 2, startRow = 2, startCol = 2)
-  writeData(wb = wb, sheet = 1, x = 3, startRow = 2, startCol = 3)
-  writeData(wb = wb, sheet = 1, x = 4, startRow = 2, startCol = 4)
-  writeData(wb = wb, sheet = 1, x = t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+  wb <- wb_workbook()
+  wb$addWorksheet(sheetName = "sheet1")
+  writeData(wb, 1, data.frame("A" = 1, "B" = 2))
+  writeData(wb, 1, 2, startRow = 2, startCol = 2)
+  writeData(wb, 1, 3, startRow = 2, startCol = 3)
+  writeData(wb, 1, 4, startRow = 2, startCol = 4)
+  writeData(wb, 1, t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
 
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 1)
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 3)
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 4)
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 5)
+  wb$addCellMerge(1, rows = 1, cols = 2:4)
+  wb$addCellMerge(1, rows = 3, cols = 2:4)
+  wb$addCellMerge(1, rows = 4, cols = 2:4)
+  wb$addCellMerge(1, rows = 5, cols = 2:4)
 
   tmp_file <- temp_xlsx()
-  saveWorkbook(wb = wb, file = tmp_file, overwrite = TRUE)
+  wb_save(wb, tmp_file)
 
   # in openxlsx X3 and X4 because of name fixing
   expect_equal(names(read.xlsx(tmp_file, fillMergedCells = FALSE)), c("A", "B", NA_character_, NA_character_))

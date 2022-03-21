@@ -743,7 +743,7 @@ test_that("Load and saving a file with Threaded Comments works", {
   fl <- system.file("extdata", "loadThreadComment.xlsx", package = "openxlsx2")
   expect_silent(wb <- loadWorkbook(fl))
   # Check that wb can be saved without error
-  expect_silent(saveWorkbook(wb, file = temp_xlsx()))
+  expect_silent(wb_save(wb, path = temp_xlsx()))
 
 })
 
@@ -777,7 +777,7 @@ test_that("Read and save file with inlineStr", {
 
   tmp_xlsx <- temp_xlsx()
   # Check that wb can be saved without error and reimported
-  expect_equal(tmp_xlsx, saveWorkbook(wb, file = tmp_xlsx))
+  expect_equal(tmp_xlsx, wb_save(wb, path = tmp_xlsx))
   wb_df_re <- readWorkbook(loadWorkbook(tmp_xlsx))
   attr(wb_df_re, "tt") <- NULL
   attr(wb_df_re, "types") <- NULL
@@ -851,7 +851,7 @@ test_that("sheet visibility", {
   wb_vis <- sheetVisibility(wb)
 
   # save
-  saveWorkbook(wb, tmp_dir)
+  wb_save(wb, tmp_dir)
 
   # re-import
   wb2 <- loadWorkbook(tmp_dir)
@@ -870,8 +870,8 @@ test_that("sheet visibility", {
 test_that("additional wb tests", {
 
   # no data on sheet
-  wb <- createWorkbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
 
   expect_equal(NULL, wb_to_df(wb, sheet = "Sheet 1"))
 
@@ -913,14 +913,16 @@ test_that("test headerFooter", {
   firstFooter = c('BOTTOM', 'OF FIRST', 'PAGE')
 
   # Add Sheet 1
-  wb=createWorkbook()
-  addWorksheet(wb, 'Sheet 1',
-               header = header,
-               footer = footer,
-               evenHeader = evenHeader,
-               evenFooter = evenFooter,
-               firstHeader = firstHeader,
-               firstFooter = firstFooter)
+  wb <- wb_workbook()
+  wb$addWorksheet(
+    'Sheet 1',
+    header = header,
+    footer = footer,
+    evenHeader = evenHeader,
+    evenFooter = evenFooter,
+    firstHeader = firstHeader,
+    firstFooter = firstFooter
+  )
 
   # Modified headers and footers to make them Arial 8
   header <- paste0('&"Arial"&8', header)
@@ -931,19 +933,21 @@ test_that("test headerFooter", {
   firstFooter <- paste0('&"Arial"&8', firstFooter)
 
   # Add Sheet 2
-  addWorksheet(wb, 'Sheet 2',
-               header = header,
-               footer = footer,
-               evenHeader = evenHeader,
-               evenFooter = evenFooter,
-               firstHeader = firstHeader,
-               firstFooter = firstFooter)
+  wb$addWorksheet(
+    'Sheet 2',
+    header = header,
+    footer = footer,
+    evenHeader = evenHeader,
+    evenFooter = evenFooter,
+    firstHeader = firstHeader,
+    firstFooter = firstFooter
+  )
   writeData(wb, sheet = 1, 1:400)
   writeData(wb, sheet = 2, 1:400)
 
   tmp1 <- temp_xlsx()
   # Save workbook
-  saveWorkbook(wb, tmp1, overwrite = T)
+  wb_save(wb, tmp1, overwrite = TRUE)
   # Load workbook and save again
   wb2 <- loadWorkbook(tmp1)
 

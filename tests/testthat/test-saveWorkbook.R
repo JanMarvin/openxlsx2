@@ -1,17 +1,13 @@
 
-test_that("test return values for saveWorkbook", {
-
+test_that("test return values for wb_save", {
   tempFile <- temp_xlsx()
-  wb <- createWorkbook()
-  addWorksheet(wb, "name")
-  expect_equal(tempFile, saveWorkbook(wb, tempFile))
+  wb <- wb_add_worksheet(wb_workbook(), "name")
+  expect_identical(tempFile, wb_save(wb, tempFile))
+  expect_error(wb_save(wb, tempFile), NA)
+  expect_error(wb_save(wb, tempFile, overwrite = FALSE))
 
-  expect_error( saveWorkbook(wb, tempFile))
-
-
-  expect_equal(tempFile, saveWorkbook(wb, tempFile, overwrite = TRUE))
-  unlink(tempFile, recursive = TRUE, force = TRUE)
-
+  expect_identical(tempFile, wb_save(wb, tempFile))
+  file.remove(tempFile)
 })
 
 # regression test for a typo
@@ -35,9 +31,8 @@ test_that("creating hyperlinks", {
 
   # prepare a file
   tempFile <- temp_xlsx()
-  wb <- createWorkbook()
   sheet <- "test"
-  addWorksheet(wb, sheet)
+  wb <- wb_add_worksheet(wb_workbook(), sheet)
   img <- "D:/somepath/somepicture.png"
 
   # warning: col and row provided, but not required
@@ -52,7 +47,7 @@ test_that("creating hyperlinks", {
 
   # write file without errors
   writeFormula(wb, sheet, x = linkString, startCol = 1, startRow = 1)
-  expect_silent(saveWorkbook(wb, tempFile, overwrite = TRUE))
+  expect_silent(wb_save(wb, tempFile, overwrite = TRUE))
 
   # TODO: add a check that the written xlsx file contains linkString
 
@@ -60,22 +55,22 @@ test_that("creating hyperlinks", {
 
 test_that("writeData2", {
   # create a workbook and add some sheets
-  wb <- createWorkbook()
+  wb <- wb_workbook()
 
-  addWorksheet(wb, "sheet1")
+  wb$addWorksheet("sheet1")
   writeData2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
 
-  addWorksheet(wb, "sheet2")
+  wb$addWorksheet("sheet2")
   writeData2(wb, "sheet2", cars, colNames = FALSE)
 
-  addWorksheet(wb, "sheet3")
+  wb$addWorksheet("sheet3")
   writeData2(wb, "sheet3", letters)
 
-  addWorksheet(wb, "sheet4")
+  wb$addWorksheet("sheet4")
   writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
   file <- tempfile(fileext = ".xlsx")
-  saveWorkbook(wb, file = file, overwrite = TRUE)
+  wb_save(wb,file)
 
   wb1 <- loadWorkbook(file)
 

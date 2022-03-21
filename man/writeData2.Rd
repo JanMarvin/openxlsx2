@@ -44,23 +44,23 @@ contains this string, the output will be broken.
 }
 \examples{
 # create a workbook and add some sheets
-wb <- createWorkbook()
+wb <- wb_workbook()
 
-addWorksheet(wb, "sheet1")
+wb$addWorksheet("sheet1")
 writeData2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
 
-addWorksheet(wb, "sheet2")
+wb$addWorksheet("sheet2")
 writeData2(wb, "sheet2", cars, colNames = FALSE)
 
-addWorksheet(wb, "sheet3")
+wb$addWorksheet("sheet3")
 writeData2(wb, "sheet3", letters)
 
-addWorksheet(wb, "sheet4")
+wb$addWorksheet("sheet4")
 writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
 \dontrun{
 file <- tempfile(fileext = ".xlsx")
-saveWorkbook(wb, file = file, overwrite = TRUE)
+wb_save(wb, path = file, overwrite = TRUE)
 file.remove(file)
 }
 

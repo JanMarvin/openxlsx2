@@ -23,10 +23,10 @@ Wrapper to create internal hyperlink string to pass to writeFormula(). Either li
 \examples{
 
 ## Writing internal hyperlinks
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet1")
-addWorksheet(wb, "Sheet2")
-addWorksheet(wb, "Sheet 3")
+wb <- wb_workbook()
+wb$addWorksheet("Sheet1")
+wb$addWorksheet("Sheet2")
+wb$addWorksheet("Sheet 3")
 writeData(wb, sheet = 3, x = iris)
 
 ## External Hyperlink
@@ -94,7 +94,7 @@ x = makeHyperlinkString(text = "test.png", file = "D:/somepath/somepicture.png")
 writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
 
 \dontrun{
-saveWorkbook(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
+wb_save(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 }
 
 }

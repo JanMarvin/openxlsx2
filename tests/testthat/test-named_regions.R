@@ -1,9 +1,9 @@
 
 test_that("Maintaining Named Regions on Load", {
   ## create named regions
-  wb <- createWorkbook()
-  addWorksheet(wb, "Sheet 1")
-  addWorksheet(wb, "Sheet 2")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
+  wb$addWorksheet("Sheet 2")
 
   ## specify region
   writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
@@ -23,7 +23,7 @@ test_that("Maintaining Named Regions on Load", {
 
   ## save file for testing
   out_file <- temp_xlsx()
-  saveWorkbook(wb, out_file, overwrite = TRUE)
+  wb_save(wb, out_file, overwrite = TRUE)
 
   expect_equal(object = getNamedRegions(wb), expected = getNamedRegions(out_file))
 
@@ -143,8 +143,8 @@ test_that("Load names from an Excel file with funky non-region names", {
 test_that("Missing rows in named regions", {
   temp_file <- temp_xlsx()
 
-  wb <- createWorkbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
 
   ## create region
   writeData(wb, sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
@@ -193,7 +193,7 @@ test_that("Missing rows in named regions", {
 
 
   ######################################################################## from file
-  saveWorkbook(wb, file = temp_file, overwrite = TRUE)
+  wb_save(wb, temp_file)
 
   ## Skip empty rows
   x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyRows = TRUE)
@@ -217,8 +217,8 @@ test_that("Missing rows in named regions", {
 test_that("Missing columns in named regions", {
   temp_file <- temp_xlsx()
 
-  wb <- createWorkbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
 
   ## create region
   writeData(wb, sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
@@ -268,7 +268,7 @@ test_that("Missing columns in named regions", {
 
 
   ######################################################################## from file
-  saveWorkbook(wb, file = temp_file, overwrite = TRUE)
+  wb_save(wb, temp_file)
 
   ## Skip empty cols
   x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyCols = TRUE)
@@ -292,9 +292,9 @@ test_that("Missing columns in named regions", {
 test_that("Matching Substrings breaks reading named regions", {
   temp_file <- temp_xlsx()
 
-  wb <- createWorkbook()
-  addWorksheet(wb, "table")
-  addWorksheet(wb, "table2")
+  wb <- wb_workbook()
+  wb$addWorksheet("table")
+  wb$addWorksheet("table2")
 
   t1 <- head(iris)
   t1$Species <- as.character(t1$Species)
@@ -306,7 +306,7 @@ test_that("Matching Substrings breaks reading named regions", {
   writeData(wb, sheet = "table", x = head(t1, 3), name = "t1", startCol = 9, startRow = 3)
   writeData(wb, sheet = "table2", x = head(t2, 3), name = "t22", startCol = 15, startRow = 12, rowNames = TRUE)
 
-  saveWorkbook(wb, file = temp_file, overwrite = TRUE)
+  wb_save(wb, temp_file)
 
   r1 <- getNamedRegions(wb)
   expect_equal(attr(r1, "sheet"), c("table", "table2", "table", "table2"))
@@ -358,8 +358,8 @@ test_that("Read namedRegion from specific sheet", {
 # test_that("Overwrite and delete named regions", {
 #   temp_file <- temp_xlsx()
 #
-#   wb <- createWorkbook()
-#   addWorksheet(wb, "Sheet 1")
+#   wb <- wb_workbook()
+#   wb$addWorksheet("Sheet 1")
 #
 #   ## create region
 #   writeData(wb, sheet = 1, x = iris[1:11, ], startCol = 1,

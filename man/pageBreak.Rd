@@ -19,18 +19,18 @@ pageBreak(wb, sheet, i, type = "row")
 insert page breaks into a worksheet
 }
 \examples{
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet 1")
+wb <- wb_workbook()
+wb$addWorksheet("Sheet 1")
 writeData(wb, sheet = 1, x = iris)
 
 pageBreak(wb, sheet = 1, i = 10, type = "row")
 pageBreak(wb, sheet = 1, i = 20, type = "row")
 pageBreak(wb, sheet = 1, i = 2, type = "column")
 \dontrun{
-saveWorkbook(wb, "pageBreakExample.xlsx", TRUE)
+wb_save(wb, "pageBreakExample.xlsx", TRUE)
 }
 ## In Excel: View tab -> Page Break Preview
 }
 \seealso{
-\code{\link[=addWorksheet]{addWorksheet()}}
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
 }

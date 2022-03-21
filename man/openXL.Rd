@@ -32,9 +32,9 @@ example(writeData)
 # openXL("writeDataExample.xlsx")
 
 # (not yet saved) Workbook example
-wb <- createWorkbook()
+wb <- wb_workbook()
 x <- mtcars[1:6, ]
-addWorksheet(wb, "Cars")
+wb$addWorksheet("Cars")
 writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 # openXL(wb)
 }

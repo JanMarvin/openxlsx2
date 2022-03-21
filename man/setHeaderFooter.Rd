@@ -48,12 +48,12 @@ Headers and footers can contain special tags
 }
 }
 \examples{
-wb <- createWorkbook()
+wb <- wb_workbook()
 
-addWorksheet(wb, "S1")
-addWorksheet(wb, "S2")
-addWorksheet(wb, "S3")
-addWorksheet(wb, "S4")
+wb$addWorksheet("S1")
+wb$addWorksheet("S2")
+wb$addWorksheet("S3")
+wb$addWorksheet("S4")
 
 writeData(wb, 1, 1:400)
 writeData(wb, 2, 1:400)
@@ -90,9 +90,9 @@ setHeaderFooter(wb,
   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
 \dontrun{
-saveWorkbook(wb, "setHeaderFooterExample.xlsx", overwrite = TRUE)
+wb_save(wb, "setHeaderFooterExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
-\code{\link[=addWorksheet]{addWorksheet()}} to set headers and footers when adding a worksheet
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}} to set headers and footers when adding a worksheet
 }

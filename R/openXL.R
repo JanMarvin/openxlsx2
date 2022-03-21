@@ -25,9 +25,9 @@
 #' # openXL("writeDataExample.xlsx")
 #'
 #' # (not yet saved) Workbook example
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #' x <- mtcars[1:6, ]
-#' addWorksheet(wb, "Cars")
+#' wb$addWorksheet("Cars")
 #' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #' # openXL(wb)
 openXL <- function(file = NULL) {
@@ -38,7 +38,7 @@ openXL <- function(file = NULL) {
 
   ## workbook handling
   if (inherits(file, "wbWorkbook")) {
-    file <- file$saveWorkbook(path = tempfile("temp_xlsx.xlsx"))$path
+    file <- file$save(path = temp_xlsx())$path
   }
 
   if (!file.exists(file)) stop("Non existent file or wrong path.")

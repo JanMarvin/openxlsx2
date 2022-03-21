@@ -105,6 +105,18 @@ A Workbook
 \item{\code{path}}{path}
 
 \item{\code{styleObjectsList}}{styleObjectsList}
+
+\item{\code{creator}}{A character vector of creators}
+
+\item{\code{title}}{title}
+
+\item{\code{subject}}{subject}
+
+\item{\code{category}}{category}
+
+\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+created.  Defaults to the current \code{Sys.time()} when the workbook object
+is created, not when the Excel files are saved.}
 }
 \if{html}{\out{</div>}}
 }
@@ -112,12 +124,12 @@ A Workbook
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{wbWorkbook$new()}}
+\item \href{#method-append}{\code{wbWorkbook$append()}}
+\item \href{#method-append_sheets}{\code{wbWorkbook$append_sheets()}}
 \item \href{#method-addWorksheet}{\code{wbWorkbook$addWorksheet()}}
 \item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
-\item \href{#method-saveWorkbook}{\code{wbWorkbook$saveWorkbook()}}
-\item \href{#method-validateSheet}{\code{wbWorkbook$validateSheet()}}
-\item \href{#method-getSheetName}{\code{wbWorkbook$getSheetName()}}
+\item \href{#method-save}{\code{wbWorkbook$save()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
@@ -126,23 +138,22 @@ A Workbook
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
 \item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
-\item \href{#method-deleteWorksheet}{\code{wbWorkbook$deleteWorksheet()}}
+\item \href{#method-removeWorksheet}{\code{wbWorkbook$removeWorksheet()}}
 \item \href{#method-addDXFS}{\code{wbWorkbook$addDXFS()}}
 \item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
 \item \href{#method-dataValidation_list}{\code{wbWorkbook$dataValidation_list()}}
 \item \href{#method-conditionalFormatting}{\code{wbWorkbook$conditionalFormatting()}}
-\item \href{#method-mergeCells}{\code{wbWorkbook$mergeCells()}}
+\item \href{#method-addCellMerge}{\code{wbWorkbook$addCellMerge()}}
 \item \href{#method-removeCellMerge}{\code{wbWorkbook$removeCellMerge()}}
 \item \href{#method-freezePanes}{\code{wbWorkbook$freezePanes()}}
 \item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
 \item \href{#method-addStyle}{\code{wbWorkbook$addStyle()}}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
-\item \href{#method-validate_table_name}{\code{wbWorkbook$validate_table_name()}}
-\item \href{#method-check_overwrite_tables}{\code{wbWorkbook$check_overwrite_tables()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
-\item \href{#method-addCreator}{\code{wbWorkbook$addCreator()}}
-\item \href{#method-getCreators}{\code{wbWorkbook$getCreators()}}
+\item \href{#method-setCreators}{\code{wbWorkbook$setCreators()}}
+\item \href{#method-addCreators}{\code{wbWorkbook$addCreators()}}
+\item \href{#method-removeCreators}{\code{wbWorkbook$removeCreators()}}
 \item \href{#method-changeLastModifiedBy}{\code{wbWorkbook$changeLastModifiedBy()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
@@ -153,24 +164,70 @@ A Workbook
 \subsection{Method \code{new()}}{
 Creates a new \code{wbWorkbook} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(creator = "", title = NULL, subject = NULL, category = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(
+  creator = NULL,
+  title = NULL,
+  subject = NULL,
+  category = NULL,
+  datetimeCreated = Sys.time()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{creator}
+\item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
 
 \item{\code{title}}{title}
 
 \item{\code{subject}}{subject}
 
 \item{\code{category}}{category}
+
+\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+created.  Defaults to the current \code{Sys.time()} when the workbook object
+is created, not when the Excel files are saved.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 a \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-append"></a>}}
+\if{latex}{\out{\hypertarget{method-append}{}}}
+\subsection{Method \code{append()}}{
+Append a field. This method is intended for internal use
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$append(field, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{field}}{A valid field name}
+
+\item{\code{value}}{A value for the field}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-append_sheets"></a>}}
+\if{latex}{\out{\hypertarget{method-append_sheets}{}}}
+\subsection{Method \code{append_sheets()}}{
+Append to \code{self$workbook$sheets} This method is intended for internal use
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$append_sheets(value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{value}}{A value for \code{self$workbook$sheets}}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -184,16 +241,18 @@ Add worksheet to the \code{wbWorkbook} object
   showGridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
-  oddHeader = NULL,
-  oddFooter = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
-  visible = TRUE,
+  header = NULL,
+  footer = NULL,
+  oddHeader = header,
+  oddFooter = footer,
+  evenHeader = header,
+  evenFooter = footer,
+  firstHeader = header,
+  firstFooter = footer,
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
   paperSize = 9,
-  orientation = "portrait",
+  orientation = c("portrait", "landscape"),
   hdpi = 300,
   vdpi = 300
 )}\if{html}{\out{</div>}}
@@ -209,6 +268,10 @@ Add worksheet to the \code{wbWorkbook} object
 \item{\code{tabColour}}{tabColour}
 
 \item{\code{zoom}}{zoom}
+
+\item{\code{header}}{header}
+
+\item{\code{footer}}{footer}
 
 \item{\code{oddHeader}}{oddHeader}
 
@@ -284,12 +347,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-saveWorkbook"></a>}}
-\if{latex}{\out{\hypertarget{method-saveWorkbook}{}}}
-\subsection{Method \code{saveWorkbook()}}{
+\if{html}{\out{<a id="method-save"></a>}}
+\if{latex}{\out{\hypertarget{method-save}{}}}
+\subsection{Method \code{save()}}{
 Save the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$saveWorkbook(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -297,52 +360,12 @@ Save the workbook
 \describe{
 \item{\code{path}}{The path to save the workbook to}
 
-\item{\code{overwrite}}{If \code{FALSE} will not overwrite when \code{path} is not empty}
+\item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{path} exists}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validateSheet"></a>}}
-\if{latex}{\out{\hypertarget{method-validateSheet}{}}}
-\subsection{Method \code{validateSheet()}}{
-Validate sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validateSheet(sheetName)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheetName}}{The sheet name to validate}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The sheet name -- or the position?  This should be consistent
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getSheetName"></a>}}
-\if{latex}{\out{\hypertarget{method-getSheetName}{}}}
-\subsection{Method \code{getSheetName()}}{
-Get sheet name
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getSheetName(sheetIndex)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheetIndex}}{Sheet name index}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The sheet index
 }
 }
 \if{html}{\out{<hr>}}
@@ -505,7 +528,7 @@ creates column object for worksheet
 \subsection{Method \code{groupCols()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupCols(sheet, cols, collapsed, levels)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupCols(sheet, cols, collapsed, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -531,7 +554,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{groupRows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed, levels)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -552,12 +575,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-deleteWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-deleteWorksheet}{}}}
-\subsection{Method \code{deleteWorksheet()}}{
-Delete a worksheet
+\if{html}{\out{<a id="method-removeWorksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-removeWorksheet}{}}}
+\subsection{Method \code{removeWorksheet()}}{
+Remove a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$deleteWorksheet(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeWorksheet(sheet)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -739,12 +762,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mergeCells"></a>}}
-\if{latex}{\out{\hypertarget{method-mergeCells}{}}}
-\subsection{Method \code{mergeCells()}}{
+\if{html}{\out{<a id="method-addCellMerge"></a>}}
+\if{latex}{\out{\hypertarget{method-addCellMerge}{}}}
+\subsection{Method \code{addCellMerge()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$mergeCells(sheet, startRow, endRow, startCol, endCol)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCellMerge(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -752,13 +775,7 @@ Set cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows, cols}}{Row and column specifications.}
 }
 \if{html}{\out{</div>}}
 }
@@ -772,7 +789,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{removeCellMerge()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, startRow, endRow, startCol, endCol)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, rows, cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -780,13 +797,7 @@ Removes cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows, cols}}{Row and column specifications.}
 }
 \if{html}{\out{</div>}}
 }
@@ -877,7 +888,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{addStyle()}}{
 Add a style to a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addStyle(sheet, style, rows, cols, stack)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addStyle(sheet, style, rows, cols, stack, gridExpand = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -892,6 +903,8 @@ Add a style to a sheet
 \item{\code{cols}}{cols}
 
 \item{\code{stack}}{stack}
+
+\item{\code{gridExpand}}{gridExpand}
 }
 \if{html}{\out{</div>}}
 }
@@ -925,57 +938,6 @@ Create a named region in a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate_table_name"></a>}}
-\if{latex}{\out{\hypertarget{method-validate_table_name}{}}}
-\subsection{Method \code{validate_table_name()}}{
-Validate table name for a workbook
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validate_table_name(tableName)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{tableName}}{Table name}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A valid table name as a \code{character}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-check_overwrite_tables"></a>}}
-\if{latex}{\out{\hypertarget{method-check_overwrite_tables}{}}}
-\subsection{Method \code{check_overwrite_tables()}}{
-Checks for overwrite columns
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$check_overwrite_tables(
-  sheet,
-  new_rows,
-  new_cols,
-  error_msg = "Cannot overwrite existing table with another table.",
-  check_table_header_only = FALSE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{new_rows}}{new_rows}
-
-\item{\code{new_cols}}{new_cols}
-
-\item{\code{error_msg}}{error_msg}
-
-\item{\code{check_table_header_only}}{check_table_header_only}
-}
-\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -1023,36 +985,57 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addCreator"></a>}}
-\if{latex}{\out{\hypertarget{method-addCreator}{}}}
-\subsection{Method \code{addCreator()}}{
-Add a creator (author) to the workbook
+\if{html}{\out{<a id="method-setCreators"></a>}}
+\if{latex}{\out{\hypertarget{method-setCreators}{}}}
+\subsection{Method \code{setCreators()}}{
+Set creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreator(Creator = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setCreators(creators)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{Creator}}{A name}
+\item{\code{creators}}{A character vector of creators to set.  Duplicates are
+ignored.}
 }
 \if{html}{\out{</div>}}
 }
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addCreators"></a>}}
+\if{latex}{\out{\hypertarget{method-addCreators}{}}}
+\subsection{Method \code{addCreators()}}{
+Add creator(s)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreators(creators)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creators}}{A character vector of creators to add.  Duplicates are
+ignored.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCreators"></a>}}
-\if{latex}{\out{\hypertarget{method-getCreators}{}}}
-\subsection{Method \code{getCreators()}}{
-Get the workbook creators
+\if{html}{\out{<a id="method-removeCreators"></a>}}
+\if{latex}{\out{\hypertarget{method-removeCreators}{}}}
+\subsection{Method \code{removeCreators()}}{
+Remove creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getCreators()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCreators(creators)}\if{html}{\out{</div>}}
 }
 
-\subsection{Returns}{
-A character vector of the workbook creators
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creators}}{A character vector of creators to remove.  All duplicated
+are removed.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

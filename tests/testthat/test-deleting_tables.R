@@ -1,9 +1,10 @@
 test_that("Deleting a Table Object", {
-  wb <- createWorkbook()
-  addWorksheet(wb, sheetName = "Sheet 1")
-  addWorksheet(wb, sheetName = "Sheet 2")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
+  wb$addWorksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+
 
   # Get table ----
 
@@ -26,18 +27,16 @@ test_that("Deleting a Table Object", {
 
   ## Deleting a worksheet ----
 
-  removeWorksheet(wb, 1)
+  wb$removeWorksheet(1)
   expect_equal(length(wb$tables), 2L)
   expect_equal(length(getTables(wb, sheet = 1)), 0)
 
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
   expect_equal(attr(wb$tables, "sheet"), c(0, 0))
 
+  # wb$save(temp_xlsx())
 
-
-
-  ###################################################################################
-  ## write same tables again
+  ## write same tables again ----
 
   writeDataTable(wb, sheet = 1, x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
@@ -60,8 +59,7 @@ test_that("Deleting a Table Object", {
   expect_equal(length(wb$tables), 4L)
 
 
-  ###################################################################################
-  ## removeTable
+  ## removeTable ----
 
   ## remove iris and re-write it
   removeTable(wb = wb, sheet = 1, table = "iris")
@@ -107,9 +105,9 @@ test_that("Deleting a Table Object", {
 test_that("Save and load Table Deletion", {
   temp_file <- temp_xlsx()
 
-  wb <- createWorkbook()
-  addWorksheet(wb, sheetName = "Sheet 1")
-  addWorksheet(wb, sheetName = "Sheet 2")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
+  wb$addWorksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
@@ -117,7 +115,7 @@ test_that("Save and load Table Deletion", {
   ###################################################################################
   ## Deleting a worksheet
 
-  removeWorksheet(wb, 1)
+  wb$removeWorksheet(1)
   expect_equal(length(wb$tables), 2L)
   expect_equal(length(getTables(wb, sheet = 1)), 0)
 
@@ -126,10 +124,10 @@ test_that("Save and load Table Deletion", {
 
 
   ## both table were written to sheet 1 and are expected to not exist after load
-  saveWorkbook(wb = wb, file = temp_file, overwrite = TRUE)
+  wb_save(wb, temp_file)
   wb <- loadWorkbook(file = temp_file)
   expect_null(wb$tables)
-  unlink(temp_file)
+  file.remove(temp_file)
 
 
 
@@ -137,9 +135,9 @@ test_that("Save and load Table Deletion", {
   ###################################################################################
   ## Deleting a table
 
-  wb <- createWorkbook()
-  addWorksheet(wb, sheetName = "Sheet 1")
-  addWorksheet(wb, sheetName = "Sheet 2")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
+  wb$addWorksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
@@ -148,7 +146,8 @@ test_that("Save and load Table Deletion", {
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars"))
 
   temp_file <- temp_xlsx()
-  saveWorkbook(wb = wb, file = temp_file, overwrite = TRUE)
+  # why does this fail?
+  wb$save(temp_file)
   wb <- loadWorkbook(file = temp_file)
 
   expect_equal(length(wb$tables), 1L)
@@ -156,14 +155,14 @@ test_that("Save and load Table Deletion", {
 
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", check.attributes = FALSE) ## rId reset
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), "mtcars")
-  unlink(temp_file)
+  file.remove(temp_file)
 
 
 
   ## now delete the other table
-  wb <- createWorkbook()
-  addWorksheet(wb, sheetName = "Sheet 1")
-  addWorksheet(wb, sheetName = "Sheet 2")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
+  wb$addWorksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
   writeDataTable(wb, sheet = 2, x = mtcars, tableName = "mtcars2", startCol = 3)
@@ -173,9 +172,8 @@ test_that("Save and load Table Deletion", {
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "mtcars2"))
 
   temp_file <- temp_xlsx()
-  saveWorkbook(wb = wb, file = temp_file, overwrite = TRUE)
+  wb_save(wb, temp_file)
   wb <- loadWorkbook(file = temp_file)
-
 
   expect_equal(length(wb$tables), 1L)
   expect_equal(unname(attr(wb$tables, "tableName")), "mtcars2")
@@ -200,7 +198,7 @@ test_that("Save and load Table Deletion", {
   expect_equal(wb$worksheets[[2]]$tableParts, c("<tablePart r:id=\"rId3\"/>"), check.attributes = FALSE)
   expect_equal(unname(attr(wb$worksheets[[2]]$tableParts, "tableName")), "mtcars2")
 
-  saveWorkbook(wb = wb, file = temp_file, overwrite = TRUE)
+  wb_save(wb, temp_file)
 
 
   ## Ids should get reset after load

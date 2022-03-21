@@ -20,10 +20,11 @@ naToNULLList <- function(x) {
 paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
   x <- c(...)
   if (unlist) x <- unlist(x, use.names = FALSE)
-  paste(x[nzchar(x)], sep = "", collapse = " ")
+  paste(x[nzchar(x)], sep = "", collapse = collapse)
 }
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
+`%|||%` <- function(x, y) if (length(x)) x else y
 
 na_to_null <- function(x) {
   if (is.null(x)) {
@@ -76,7 +77,6 @@ wapply <- function(x, FUN, ...) {
   FUN <- match.fun(FUN)
   which(vapply(x, FUN, FUN.VALUE = NA, ...))
 }
-
 
 has_chr <- function(x, na = FALSE) {
   # na controls if NA is returned as TRUE or FALSE

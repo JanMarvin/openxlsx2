@@ -44,9 +44,9 @@ Add Excel data validation to cells
 }
 \examples{
 \dontrun{
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
+wb <- wb_workbook()
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
 
 writeDataTable(wb, 1, x = iris[1:30, ])
 
@@ -77,16 +77,16 @@ dataValidation(wb, 2,
   col = 2, rows = 2:12, type = "time",
   operator = "between", value = df$t[c(4, 8)]
 )
-saveWorkbook(wb, "dataValidationExample.xlsx", overwrite = TRUE)
+wb_save(wb, "dataValidationExample.xlsx", overwrite = TRUE)
 
 
 ######################################################################
 ## If type == 'list'
 # operator argument is ignored.
 
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet 1")
-addWorksheet(wb, "Sheet 2")
+wb <- wb_workbook()
+wb$addWorksheet("Sheet 1")
+wb$addWorksheet("Sheet 2")
 
 writeDataTable(wb, sheet = 1, x = iris[1:30, ])
 writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))

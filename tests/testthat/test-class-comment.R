@@ -25,8 +25,8 @@ test_that("createComment() works", {
 
 test_that("comments", {
   tmp <- temp_xlsx()
-  wb <- createWorkbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_workbook()
+  wb$addWorksheet("Sheet 1")
 
   # write comment without author
   c1 <- createComment(text = "this is a comment", author = "")

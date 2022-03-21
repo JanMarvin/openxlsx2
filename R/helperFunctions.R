@@ -11,10 +11,10 @@
 #' @examples
 #'
 #' ## Writing internal hyperlinks
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet1")
-#' addWorksheet(wb, "Sheet2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb <- wb_workbook()
+#' wb$addWorksheet("Sheet1")
+#' wb$addWorksheet("Sheet2")
+#' wb$addWorksheet("Sheet 3")
 #' writeData(wb, sheet = 3, x = iris)
 #'
 #' ## External Hyperlink
@@ -82,7 +82,7 @@
 #' writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
 #'
 #' \dontrun{
-#' saveWorkbook(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
+#' wb_save(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 #' }
 #'
 makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
@@ -128,7 +128,7 @@ getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 ## creates style object based on column classes
 ## Used in writeData for styling when no borders and writeData table for all column-class based styling
 classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasses, stack = TRUE) {
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
   allColClasses <- unlist(colClasses, use.names = FALSE)
   rowInds <- (1 + startRow + colNames - 1L):(nRow + startRow + colNames - 1L)
   startCol <- startCol - 1L
