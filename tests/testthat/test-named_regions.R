@@ -311,12 +311,12 @@ test_that("Matching Substrings breaks reading named regions", {
   r1 <- getNamedRegions(wb)
   expect_equal(attr(r1, "sheet"), c("table", "table2", "table", "table2"))
   expect_equal(attr(r1, "position"), c("C12:G18", "E24:P30", "I3:M6", "O12:Z15"))
-  expect_equal(r1, c("t", "t2", "t1", "t22"), check.attributes = FALSE)
+  expect_equal(r1, c("t", "t2", "t1", "t22"), ignore_attr = TRUE)
 
   r2 <- getNamedRegions(temp_file)
   expect_equal(attr(r2, "sheet"), c("table", "table2", "table", "table2"))
   expect_equal(attr(r1, "position"), c("C12:G18", "E24:P30", "I3:M6", "O12:Z15"))
-  expect_equal(r2, c("t", "t2", "t1", "t22"), check.attributes = FALSE)
+  expect_equal(r2, c("t", "t2", "t1", "t22"), ignore_attr = TRUE)
 
 
   ## read file named region

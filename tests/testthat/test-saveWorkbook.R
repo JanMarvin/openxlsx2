@@ -76,7 +76,7 @@ test_that("writeData2", {
 
   expect_true(
     all.equal(mtcars, wb_to_df(wb1, "sheet1", rowNames = TRUE),
-            check.attributes = FALSE)
+            ignore_attr = TRUE)
   )
 
   expect_equivalent(cars, wb_to_df(wb1, "sheet2", colNames = FALSE))
