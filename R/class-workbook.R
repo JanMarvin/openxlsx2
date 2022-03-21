@@ -1613,7 +1613,7 @@ wbWorkbook <- R6::R6Class(
 
       ## rename defined names
       if (length(self$workbook$definedNames)) {
-        belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
+        belongTo <- getNamedRegions(self)$sheets
         toChange <- belongTo == oldName
         if (any(toChange)) {
           newSheetName <- sprintf("'%s'", newSheetName)
@@ -2002,13 +2002,12 @@ wbWorkbook <- R6::R6Class(
       # (don't use grepl(value = TRUE))
       self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
 
-      ## FIXME not sure about this
-      # ## definedNames
-      # if (length(self$workbook$definedNames)) {
-      #   belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
-      #   self$workbook$definedNames <-
-      #     self$workbook$definedNames[!belongTo %in% sheetName]
-      # }
+      ## definedNames
+      if (length(self$workbook$definedNames)) {
+        belongTo <- getNamedRegions(self)$sheets
+        self$workbook$definedNames <-
+          self$workbook$definedNames[!belongTo %in% sheetName]
+      }
 
       invisible(self)
     },
@@ -3923,7 +3922,7 @@ wbWorkbook <- R6::R6Class(
         # TODO consider self$get_sheet_names() which orders the sheet names?
         sheetNames <- self$sheet_names[self$sheetOrder]
 
-        belongTo <- getDefinedNamesSheet(self$workbook$definedNames)
+        belongTo <- getNamedRegions(self)$sheets
 
         ## sheetNames is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheetNames) - 1L
