@@ -1056,95 +1056,28 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     # the formats with a random name.
     short_date_fmt <- long_date_fmt <- accounting_fmt <- percentage_fmt <-
       comma_fmt <- scientific_fmt <- NULL
-
-    # options("openxlsx2.numFmt" = NULL)
-    if (any(dc %in% c("numeric", "integer"))) {
-      if (!is.null(unlist(options("openxlsx2.numFmt")))) {
-        cust_numFmt <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.numFmt")))
-        wb$styles_mgr$add(cust_numFmt, "numFmt")
-        numfmt_num <- wb$styles_mgr$get_numfmt_id("numFmt")
-        numeric_fmt <- write_xf(nmfmt_df(numfmt_num))
-        wb$styles_mgr$add(numeric_fmt, "numeric_fmt")
-      }
-    }
     if (any(dc == "date")) {
-      if (is.null(unlist(options("openxlsx2.dateFormat")))) {
-        numfmt_dt <- 14
-      } else {
-        cust_dateFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.dateFormat")))
-        wb$styles_mgr$add(cust_dateFormat, "dateFormat")
-        numfmt_dt <- wb$styles_mgr$get_numfmt_id("dateFormat")
-      }
-      short_date_fmt <- write_xf(nmfmt_df(numfmt_dt))
+      short_date_fmt <- write_xf(nmfmt_df(14))
       wb$styles_mgr$add(short_date_fmt, "short_date_fmt")
     }
     if (any(dc == "posix")) {
-      if (is.null(unlist(options("openxlsx2.datetimeFormat")))) {
-        numfmt_posix <- 22
-      } else {
-        cust_datetimeFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.datetimeFormat")))
-        wb$styles_mgr$add(cust_datetimeFormat, "datetimeFormat")
-        numfmt_posix <- wb$styles_mgr$get_numfmt_id("datetimeFormat")
-      }
-      long_date_fmt  <- write_xf(nmfmt_df(numfmt_posix))
+      long_date_fmt  <- write_xf(nmfmt_df(22))
       wb$styles_mgr$add(long_date_fmt, "long_date_fmt")
     }
     if (any(dc == "accounting")) {
-      if (is.null(unlist(options("openxlsx2.accountingFormat")))) {
-        numfmt_accounting <- 4
-      } else {
-        cust_accountingFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.accountingFormat")))
-        wb$styles_mgr$add(cust_accountingFormat, "accounting")
-        numfmt_accounting <- wb$styles_mgr$get_numfmt_id("accounting")
-      }
-      accounting_fmt <- write_xf(nmfmt_df(numfmt_accounting))
+      accounting_fmt <- write_xf(nmfmt_df(4))
       wb$styles_mgr$add(accounting_fmt, "accounting_fmt")
     }
     if (any(dc == "percentage")) {
-      if (is.null(unlist(options("openxlsx2.percentageFormat")))) {
-        numfmt_percentage <- 10
-      } else {
-        cust_percentageFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.percentageFormat")))
-        wb$styles_mgr$add(cust_percentageFormat, "percentage")
-        numfmt_percentage <- wb$styles_mgr$get_numfmt_id("percentage")
-      }
-      percentage_fmt <- write_xf(nmfmt_df(numfmt_percentage))
+      percentage_fmt <- write_xf(nmfmt_df(10))
       wb$styles_mgr$add(percentage_fmt, "percentage_fmt")
     }
     if (any(dc == "scientific")) {
-      if (is.null(unlist(options("openxlsx2.scientificFormat")))) {
-        numfmt_scientific <- 48
-      } else {
-        cust_scientificFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.scientificFormat")))
-        wb$styles_mgr$add(cust_scientificFormat, "scientific")
-        numfmt_scientific <- wb$styles_mgr$get_numfmt_id("scientific")
-      }
-      scientific_fmt <- write_xf(nmfmt_df(numfmt_scientific))
+      scientific_fmt <- write_xf(nmfmt_df(48))
       wb$styles_mgr$add(scientific_fmt, "scientific_fmt")
     }
     if (any(dc == "comma")) {
-      if (is.null(unlist(options("openxlsx2.comma")))) {
-        numfmt_comma <- 3
-      } else {
-        cust_scientificFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.commaFormat")))
-        wb$styles_mgr$add(cust_scientificFormat, "comma")
-        numfmt_comma <- wb$styles_mgr$get_numfmt_id("comma")
-      }
-      comma_fmt <- write_xf(nmfmt_df(numfmt_comma))
+      comma_fmt      <- write_xf(nmfmt_df(3))
       wb$styles_mgr$add(comma_fmt, "comma_fmt")
     }
 
@@ -1178,8 +1111,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id("short_date_fmt")
     cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id("long_date_fmt")
-    if (!is.null(wb$styles_mgr$get_xf_id("numeric_fmt")))
-      cc$c_s[cc$typ == "2"]  <- wb$styles_mgr$get_xf_id("numeric_fmt")
     cc$c_s[cc$typ == "6"]  <- wb$styles_mgr$get_xf_id("accounting_fmt")
     cc$c_s[cc$typ == "7"]  <- wb$styles_mgr$get_xf_id("percentage_fmt")
     cc$c_s[cc$typ == "8"]  <- wb$styles_mgr$get_xf_id("scientific_fmt")
