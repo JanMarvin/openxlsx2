@@ -491,29 +491,23 @@ buildFontList <- function(fonts) {
 }
 
 
-
 get_named_regions_from_string <- function(dn) {
-  dn <- gsub("</definedNames>", "", dn, fixed = TRUE)
-  dn <- gsub("</workbook>", "", dn, fixed = TRUE)
+  dn <- cbind(
+    openxlsx2:::rbindlist(xml_attr(dn, "definedName")),
+    value =  xml_value(dn, "definedName")
+  )
 
-  dn <- unique(unlist(strsplit(dn, split = "</definedName>", fixed = TRUE)))
-  dn <- grep("<definedName", dn, fixed = TRUE, value = TRUE)
+  if (!is.null(dn$value)) {
+    dn_pos <- dn$value
+    dn_pos <- gsub("[$']", "", dn_pos)
 
-  dn_names <- regmatches(dn, regexpr('(?<=name=")[^"]+', dn, perl = TRUE))
+    has_bang <- grepl("!", dn_pos, fixed = TRUE)
+    dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
+    dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
+  }
 
-  dn_pos <- regmatches(dn, regexpr("(?<=>).*", dn, perl = TRUE))
-  dn_pos <- gsub("[$']", "", dn_pos)
-
-  has_bang <- grepl("!", dn_pos, fixed = TRUE)
-  dn_sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
-  dn_coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
-
-  attr(dn_names, "sheet") <- dn_sheets
-  attr(dn_names, "position") <- dn_coords
-
-  dn_names
+  return(dn)
 }
-
 
 
 nodeAttributes <- function(x) {
