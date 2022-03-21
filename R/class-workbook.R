@@ -926,21 +926,6 @@ wbWorkbook <- R6::R6Class(
           if (length(self$comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
-            self$append("Content_Types",
-              sprintf(
-                '<Override PartName="/xl/%s" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
-                fn
-              )
-            )
-
-            self$worksheets_rels[[i]] <- unique(c(
-              self$worksheets_rels[[i]],
-              sprintf(
-                '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../%s"/>',
-                fn
-              )
-            ))
-
             writeCommentXML(
               comment_list = self$comments[[i]],
               file_name = file.path(tmpDir, "xl", fn)
@@ -1354,8 +1339,8 @@ wbWorkbook <- R6::R6Class(
         mode = "cherry-pick"
       )
 
-      # Copy file; stop if filed
-      if (!file.copy(from = tmpFile, to = path, overwrite = overwrite)) {
+      # Copy file; stop if failed
+      if (!file.copy(from = tmpFile, to = path, overwrite = overwrite, copy.mode = FALSE)) {
         stop("Failed to save workbook")
       }
 
@@ -1554,22 +1539,26 @@ wbWorkbook <- R6::R6Class(
     getBaseFont = function() {
       baseFont <- self$styles_mgr$styles$fonts[[1]]
 
-      # TODO can these checks be simplified with %||% or %|n|% or something?
-
-      sz     <- as.list(xml_attr(baseFont, "font", "sz")[[1]])
-      colour <- as.list(xml_attr(baseFont, "font", "color")[[1]])
-      name   <- as.list(xml_attr(baseFont, "font", "name")[[1]])
+      sz     <- unlist(xml_attr(baseFont, "font", "sz"))
+      colour <- unlist(xml_attr(baseFont, "font", "color"))
+      name   <- unlist(xml_attr(baseFont, "font", "name"))
 
       if (length(sz[[1]]) == 0) {
-        sz <- list(val = "10")
+        sz <- list("val" = "10")
+      } else {
+        sz <- as.list(sz)
       }
 
       if (length(colour[[1]]) == 0) {
-        colour <- list(rgb = "#000000")
+        colour <- list("rgb" = "#000000")
+      } else {
+        colour <- as.list(colour)
       }
 
       if (length(name[[1]]) == 0) {
-        name <- list(val = "Calibri")
+        name <- list("val" = "Calibri")
+      } else {
+        name <- as.list(name)
       }
 
       list(
@@ -3624,8 +3613,6 @@ wbWorkbook <- R6::R6Class(
             file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
             append = TRUE
           )
-          self$worksheets[[i]]$legacyDrawing <-
-            '<legacyDrawing r:id="rId2"/>'
         }
 
       }

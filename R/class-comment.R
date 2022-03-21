@@ -1,4 +1,3 @@
-
 #' R6 class for a Workbook Comments
 #'
 #' A comment
@@ -15,7 +14,7 @@ wbComment <- R6::R6Class(
     author = character(),
 
     #' @field style A style (class `wbStyle`) for the comment (?)
-    style = NULL,
+    style = character(),
 
     #' @field visible `logical`, if `FALSE` is not visible
     visible = TRUE,
@@ -56,25 +55,18 @@ wbComment <- R6::R6Class(
         sprintf("Text:\n %s\n\n", paste(self$text, collapse = ""))
       )
 
-      # TODO style should probably always be a list?
-      # TODO would style be a style object?
-      s <- if (inherits(self$style, "list")) {
-        self$style
-      }  else  {
-        list(self$style)
-      }
+      s <- self$style
+
+      if (!inherits(self$style, "character"))
+        stop("style must be a character string: something like <font>...</font>")
 
       styleShow <- "Style:\n"
       for (i in seq_along(s)) {
         styleShow <- c(
           styleShow,
-          sprintf("Font name: %s\n", s[[i]]$fontName[[1]]), ## Font name
-          sprintf("Font size: %s\n", s[[i]]$fontSize[[1]]), ## Font size
-          sprintf("Font colour: %s\n", gsub("^FF", "#", s[[i]]$fontColour[[1]])), ## Font colour
-          ## Font decoration
-          if (length(s[[i]]$fontDecoration)) {
-            sprintf("Font decoration: %s\n", paste(s[[i]]$fontDecoration, collapse = ", "))
-          },
+          sprintf("Font name: %s\n", unname(unlist(xml_attr(s[[i]], "font", "name")))), ## Font name
+          sprintf("Font size: %s\n", unname(unlist(xml_attr(s[[i]], "font", "sz")))), ## Font size
+          sprintf("Font colour: %s\n", gsub("^FF", "#", unname(unlist(xml_attr(s[[i]], "font", "color"))))), ## Font colour
           "\n\n"
         )
       }
@@ -93,35 +85,45 @@ wbComment <- R6::R6Class(
 # TODO removeComment() should leverage wbWorkbook$removeComment() more
 
 #' @name createComment
-#' @title create a Comment object
-#' @description Create a cell Comment object to pass to writeComment()
-#' @param comment Comment text. Character vector.
+#' @title Create, write and remove comments
+#' @description The comment functions (create, write and remove) allow the
+#' modification of comments. In newer Excels they are called notes, while they
+#' are called comments in openxml. Modification of what Excel now calls comment
+#' (openxml calls them threadedComments) is not yet possible
+#' @param text Comment text. Character vector.
 #' @param author Author of comment. Character vector of length 1
 #' @param style A Style object or list of style objects the same length as comment vector. See [createStyle()].
 #' @param visible TRUE or FALSE. Is comment visible.
 #' @param width Textbox integer width in number of cells
 #' @param height Textbox integer height in number of cells
 #' @export
-#' @seealso [writeComment()]
+#' @rdname comment
 #' @examples
 #' wb <- wb_workbook()
 #' wb$addWorksheet("Sheet 1")
 #'
-#' c1 <- createComment(comment = "this is comment")
+#' # write comment without author
+#' c1 <- createComment(text = "this is a comment", author = "")
 #' writeComment(wb, 1, col = "B", row = 10, comment = c1)
 #'
-#' s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = "bold")
-#' s2 <- createStyle(fontSize = 9, fontColour = "black")
+#' # Write another comment with author information
+#' c2 <- createComment(text = "this is another comment", author = "Marco Polo")
+#' writeComment(wb, 1, col = "C", row = 10, comment = c2)
 #'
-#' c2 <- createComment(comment = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
-#' c2
+#' # write a styled comment with system author
+#' s1 <- create_font(b = "true", color = c(rgb = "FFFF0000"), sz = "12")
+#' s2 <- create_font(color = c(rgb = "FF000000"), sz = "9")
+#' c3 <- createComment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
-#' writeComment(wb, 1, col = 6, row = 3, comment = c2)
+#' writeComment(wb, 1, col = 6, row = 3, comment = c3)
+#'
+#' # remove the first comment
+#' removeComment(wb, 1, col = "B", row = 10)
 #' \dontrun{
 #' wb_save(wb, path = "createCommentExample.xlsx", overwrite = TRUE)
 #' }
-createComment <- function(comment,
-  author = Sys.getenv("USERNAME"),
+createComment <- function(text,
+  author = Sys.info()[["user"]],
   style = NULL,
   visible = TRUE,
   width = 2,
@@ -131,10 +133,13 @@ createComment <- function(comment,
   # wb_comment()
 
   assert_class(author, "character")
-  assert_class(comment, "character")
+  assert_class(text, "character")
   assert_class(width, "numeric")
   assert_class(height, "numeric")
   assert_class(visible, "logical")
+
+  if (length(visible) > 1) stop("visible must be a single logical")
+  if (length(author) > 1) stop("author) must be a single character")
 
   width <- round(width)
   height <- round(height)
@@ -143,60 +148,39 @@ createComment <- function(comment,
   visible <- visible[1]
 
   if (is.null(style)) {
-    style <- createStyle(fontName = "Tahoma", fontSize = 9, fontColour = "black")
+    style <- create_font()
   }
 
   author <- replaceIllegalCharacters(author)
-  comment <- replaceIllegalCharacters(comment)
+  text <- replaceIllegalCharacters(text)
 
 
-  invisible(wbComment$new(text = comment, author = author, style = style, visible = visible, width = width[1], height = height[1]))
+  invisible(wbComment$new(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1]))
 }
 
 
-
 #' @name writeComment
-#' @title write a cell comment
-#' @description Write a Comment object to a worksheet
 #' @param wb A workbook object
 #' @param sheet A vector of names or indices of worksheets
-#' @param col Column a column number of letter
-#' @param row A row number.
+#' @param col Column a column number of letter. For `removeComment` this can be a range.
+#' @param row A row number. For `removeComment` this can be a range.
 #' @param comment A Comment object. See [createComment()].
 #' @param xy An alternative to specifying `col` and
 #' `row` individually.  A vector of the form
 #' `c(col, row)`.
+#' @rdname comment
 #' @export
-#' @seealso [createComment()]
-#' @examples
-#' wb <- wb_workbook()
-#' wb$addWorksheet("Sheet 1")
-#'
-#' c1 <- createComment(comment = "this is comment")
-#' writeComment(wb, 1, col = "B", row = 10, comment = c1)
-#'
-#' s1 <- createStyle(fontSize = 12, fontColour = "red", textDecoration = "bold")
-#' s2 <- createStyle(fontSize = 9, fontColour = "black")
-#'
-#' c2 <- createComment(comment = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
-#' c2
-#'
-#' writeComment(wb, 1, col = 6, row = 3, comment = c2)
-#' \dontrun{
-#' wb_save(wb, path = "writeCommentExample.xlsx", overwrite = TRUE)
-#' }
 writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
   # TODO add as method: wbWorkbook$addComment(); add param for replace?
   assert_workbook(wb)
   assert_comment(comment)
 
-  # if (length(comment$style) == 1) {
-  #   rPr <- wb_create_font_node(wb, comment$style)
-  # } else {
-  #   rPr <- sapply(comment$style, function(x) wb_create_font_node(wb, x))
-  # }
-  assert_comment(comment)
-  rPr <- wb_create_font_node(wb, comment$style)
+  # rPr <- wb$createFontNode(NULL) # TODO not yet possible
+  if (is.null(comment$style)) {
+    rPr <- create_font()
+    } else {
+    rPr <- comment$style
+  }
 
   rPr <- gsub("font>", "rPr>", rPr)
   sheet <- wb_validate_sheet(wb, sheet)
@@ -224,45 +208,75 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
     "clientData" = genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
   )
 
+  fn <- sprintf("comments%s.xml", sheet)
+
+  if (!any(grepl(fn, wb$Content_Types))) {
+    wb$Content_Types <- c(
+      wb$Content_Types,
+      sprintf(
+        '<Override PartName="/xl/%s" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
+        fn
+      )
+    )
+  }
+
   wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
+
+  relship <- openxlsx2:::rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
+  relship$typ <- basename(relship$Type)
+  relship$id  <- as.integer(gsub("\\D+", "", relship$Id))
+
+  next_rid <- max(relship$id) + 1
+  if (any(relship$typ == "comments"))
+    next_rid <- relship$id[relship$typ == "comments"]
+
+  # unique? keep prev legacyDrawing?
+  #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
+  # TODO hardcoded 2. Marvin fears that this is not good enough
+  wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', 2)
+
+
+  wb$worksheets_rels[[sheet]] <- unique(c(
+    wb$worksheets_rels[[sheet]],
+    sprintf(
+      '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../%s"/>',
+      next_rid,
+      fn
+    )
+  ))
 
   invisible(wb)
 }
 
 
-
 #' @name removeComment
-#' @title Remove a comment from a cell
-#' @description Remove a cell comment from a worksheet
-#' @param wb A workbook object
-#' @param sheet A vector of names or indices of worksheets
-#' @param cols Columns to delete comments from
-#' @param rows Rows to delete comments from
 #' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 #' will be removed.
+#' @rdname comment
 #' @export
-#' @seealso [createComment()]
-#' @seealso [writeComment()]
-removeComment <- function(wb, sheet, cols, rows, gridExpand = TRUE) {
+removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
-  sheet <- wb_validate_sheet(wb, sheet)
-  cols <- col2int(cols)
-  rows <- as.integer(rows)
+  sheet <- wb$validateSheet(sheet)
+
+  if (!is.numeric(col)) {
+    col <- col2int(col)
+  }
+  rows <- as.integer(row)
 
   ## rows and cols need to be the same length
   if (gridExpand) {
-    combs <- expand.grid(rows, cols)
-    rows <- combs[, 1]
-    cols <- combs[, 2]
+    combs <- expand.grid(row, col)
+    row <- combs[, 1]
+    col <- combs[, 2]
   }
 
-  if (length(rows) != length(cols)) {
+  if (length(row) != length(col)) {
     stop("Length of rows and cols must be equal.")
   }
 
-  comb <- paste0(int2col(cols), rows)
+  comb <- paste0(int2col(col), row)
   toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
 
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
