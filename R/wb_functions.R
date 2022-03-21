@@ -1048,23 +1048,17 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     ## create a cell style format for specific types at the end of the existing
     # styles. gets the reference an passes it on.
-    # TODO we are already able to create custom numFmts and could add these
-    # here. For examples see ?style_mgr
-    # TODO this creates every format exactly once. After that it is recreated.
-    # It should not matter to Excel, but might create different styles, if
-    # custom formats of similar name are created as well. Maybe we should create
-    # the formats with a random name.
     short_date_fmt <- long_date_fmt <- accounting_fmt <- percentage_fmt <-
       comma_fmt <- scientific_fmt <- NULL
 
-    hash_id <- as.integer(Sys.time())
-    numeric_fmtid <- paste0("numeric_fmt", hash_id)
+    hash_id          <- as.integer(Sys.time())
+    numeric_fmtid    <- paste0("numeric_fmt", hash_id)
     short_date_fmtid <- paste0("short_date_fmt", hash_id)
-    long_date_fmtid <- paste0("long_date_fmt", hash_id)
+    long_date_fmtid  <- paste0("long_date_fmt", hash_id)
     accounting_fmtid <- paste0("accounting_fmt", hash_id)
     percentage_fmtid <- paste0("percentage_fmt", hash_id)
     scientific_fmtid <- paste0("scientific_fmt", hash_id)
-    comma_fmtid <- paste0("comma_fmt", hash_id)
+    comma_fmtid      <- paste0("comma_fmt", hash_id)
 
     # options("openxlsx2.numFmt" = NULL)
     if (any(dc %in% c("numeric", "integer"))) {
@@ -1075,7 +1069,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
         wb$styles_mgr$add(cust_numFmt, numeric_fmtid)
         numfmt_num <- wb$styles_mgr$get_numfmt_id(numeric_fmtid)
         numeric_fmt <- write_xf(nmfmt_df(numfmt_num))
-        print(numeric_fmt)
         wb$styles_mgr$add(numeric_fmt, numeric_fmtid)
       }
     }
