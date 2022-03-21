@@ -217,7 +217,6 @@ create_border <- function(
     outline = outline, # unknown position in border
     stringsAsFactors = FALSE
   )
-  assign("df_brd", df_border, globalenv())
   border <- write_border(df_border)
 
   return(border)
