@@ -214,7 +214,7 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #'
 #' ## Save workbook
 #' \dontrun{
-#' wb_save(wb, temp_xlsx(), overwrite = TRUE)
+#' wb_save(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
 #' }
 wb_add_worksheet <- function(
   wb,

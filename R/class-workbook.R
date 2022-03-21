@@ -351,8 +351,8 @@ wbWorkbook <- R6::R6Class(
         fail <- TRUE
         msg <- c(
           msg,
-          sprintf("A worksheet by the name \"%s\" already exists.", sheet),
-          "Sheet names must be unique case-insensitive.",
+          sprintf("A worksheet by the name \"%s\" already exists.", sheetName),
+          "Sheet names must be unique case-insensitive."
         )
       }
 

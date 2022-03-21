@@ -309,7 +309,7 @@ wb_to_df <- function(
     } else {
       nr$local <- 0
     }
-    nr$sheet <- sapply(nr$sheet, function(x) wb_validate_sheet(wb, x))
+    nr$sheet <- vapply(nr$sheet, function(x) wb_validate_sheet(wb, x), NA_integer_)
 
     nr <- nr[order(nr$local, nr$name, nr$sheet),]
 

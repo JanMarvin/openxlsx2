@@ -80,7 +80,7 @@ wbComment <- R6::R6Class(
 
 # wrappers ----------------------------------------------------------------
 
-# TODO createComment() should leverage wbwbComment$new() more
+# TODO createComment() should leverage wbComment$new() more
 # TODO writeComment() should leverage wbWorkbook$addComment() more
 # TODO removeComment() should leverage wbWorkbook$removeComment() more
 
@@ -258,12 +258,11 @@ removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   # TODO add as method; wbWorkbook$removeComment()
   assert_workbook(wb)
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
-  if (!is.numeric(col)) {
-    col <- col2int(col)
-  }
-  rows <- as.integer(row)
+  # col2int checks for numeric
+  col <- col2int(col)
+  row <- as.integer(row)
 
   ## rows and cols need to be the same length
   if (gridExpand) {
