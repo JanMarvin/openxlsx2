@@ -23,7 +23,7 @@ test_that("wb_to_df", {
     class = "data.frame"
   )
   got <- wb_to_df(wb1)
-  expect_equal(exp, got, check.attributes = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
 
   # do not convert first row to colNames
   got <- wb_to_df(wb1, colNames = FALSE)
@@ -43,22 +43,22 @@ test_that("wb_to_df", {
   test <- data.frame(A = c(TRUE, TRUE, TRUE, FALSE),
                      B = c(1, NA, 2, 2),
                      C = rep(NA_real_, 4))
-  expect_equal(test, got, check.attributes = FALSE)
+  expect_equal(test, got, ignore_attr = TRUE)
 
   # read selected cols
   got <- wb_to_df(wb1, cols = c(1:2, 7))
-  expect_equal(exp[c(1,2,7)], got, check.attributes = FALSE)
+  expect_equal(exp[c(1,2,7)], got, ignore_attr = TRUE)
 
   # read selected rows
   got <- wb_to_df(wb1, rows = c(1, 4, 6))
   got[c(4,7)] <- lapply(got[c(4,7)], as.character)
-  expect_equal(exp[c(3,5),], got, check.attributes = FALSE)
+  expect_equal(exp[c(3,5),], got, ignore_attr = TRUE)
 
   # convert characters to numerics and date (logical too?)
   got <- wb_to_df(wb1, convert = FALSE)
   chrs <- exp
   chrs[seq_along(chrs)] <- lapply(chrs[seq_along(chrs)], as.character)
-  expect_equal(chrs, got, check.attributes = FALSE)
+  expect_equal(chrs, got, ignore_attr = TRUE)
 
   # # erase empty Rows from dataset
   # not gonna test this :) just want to mention how blazing fast it is now.
@@ -66,7 +66,7 @@ test_that("wb_to_df", {
 
   # erase rmpty Cols from dataset
   got <- wb_to_df(wb1, skipEmptyCols = TRUE)
-  expect_equal(exp[c(1, 2, 4, 5, 6, 7, 8)], got, check.attributes = FALSE)
+  expect_equal(exp[c(1, 2, 4, 5, 6, 7, 8)], got, ignore_attr = TRUE)
 
   # # convert first row to rownames
   # wb_to_df(wb1, sheet = 3, dims = "C6:G9", rowNames = TRUE)
@@ -76,18 +76,18 @@ test_that("wb_to_df", {
   test <- exp[c("Var1", "Var3")]
   test["Var1"] <- lapply(test["Var1"], as.character)
   suppressWarnings(test["Var3"] <- lapply(test["Var3"], as.numeric))
-  expect_equal(test, got, check.attributes = FALSE)
+  expect_equal(test, got, ignore_attr = TRUE)
 
   # start in row 5
   got <- wb_to_df(wb1, startRow = 5, colNames = FALSE)
   test <- exp[4:10,]
   names(test) <- int2col(seq_along(test))
   test[c("D", "G", "H")] <- lapply(test[c("D", "G", "H")], as.numeric)
-  expect_equal(test, got, check.attributes = FALSE)
+  expect_equal(test, got, ignore_attr = TRUE)
 
   # na string
   got <- wb_to_df(wb1, na.strings = "")
-  expect_equal("#N/A", got$Var7[2], check.attributes = FALSE)
+  expect_equal("#N/A", got$Var7[2], ignore_attr = TRUE)
 
 
   ###########################################################################
@@ -107,7 +107,7 @@ test_that("wb_to_df", {
   rownames(exp) <- seq(2, nrow(exp)+ 1)
   # read dataset with inlinestr
   got <- wb_to_df(wb2)
-  expect_equal(exp, got, check.attributes = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
 
 
   ###########################################################################
@@ -118,11 +118,11 @@ test_that("wb_to_df", {
   # read dataset with definedName (returns global first)
   exp <- data.frame(A = "S2A1", B = "S2B1")
   got <- wb_to_df(wb3, definedName = "MyRange", colNames = FALSE)
-  expect_equal(exp, got, check.attributes = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
 
   # read definedName from sheet
   exp <- data.frame(A = "S3A1", B = "S3B1")
   got <- wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
-  expect_equal(exp, got, check.attributes = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
 
 })
