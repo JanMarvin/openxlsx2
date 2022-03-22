@@ -11,8 +11,8 @@
 cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
 
   # check if sheets exist in wb
-  id_org <- wb$validateSheet(from_sheet)
-  id_new <- wb$validateSheet(to_sheet)
+  id_org <- wb_validate_sheet(wb, from_sheet)
+  id_new <- wb_validate_sheet(wb, to_sheet)
 
   org_style <- wb$worksheets[[id_org]]$sheet_data$cc
   wb_style <- wb$worksheets[[id_new]]$sheet_data$cc
@@ -133,7 +133,7 @@ import_styles <- function(x) {
 #' @export
 styles_on_sheet <- function(wb, sheet) {
 
-  sheet_id <- wb$validateSheet(sheet)
+  sheet_id <- wb_validate_sheet(wb, sheet)
 
   z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
 
@@ -142,7 +142,7 @@ styles_on_sheet <- function(wb, sheet) {
 }
 
 # TODO guessing here
-#' create fill
+#' create border
 #'
 #' @param diagonalDown x
 #' @param diagonalUp x
@@ -203,18 +203,18 @@ create_border <- function(
   diagonal <- xml_node_create("diagonal", xml_children = diagonal_color, xml_attributes = diagonal)
 
   df_border <- data.frame(
-    diagonalDown = diagonalDown,
-    diagonalUp = diagonalUp,
-    outline = outline,
-    bottom = bottom,
-    diagonal = diagonal,
+    start = start,
     end = end,
-    horizontal = horizontal,
     left = left,
     right = right,
-    start = start,
     top = top,
+    bottom = bottom,
+    diagonalDown = diagonalDown,
+    diagonalUp = diagonalUp,
+    diagonal = diagonal,
     vertical = vertical,
+    horizontal = horizontal,
+    outline = outline, # unknown position in border
     stringsAsFactors = FALSE
   )
   border <- write_border(df_border)
@@ -235,8 +235,7 @@ merge_borders <- function(wb, new_borders) {
     new <- read_border(read_xml(new_borders))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
-                        length.out = NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -284,8 +283,7 @@ merge_numFmts <- function(wb, new_numfmts) {
     new <- read_numfmt(read_xml(new_numfmts))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
-                        length.out = NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -445,8 +443,7 @@ merge_fonts <- function(wb, new_fonts) {
     new <- read_font(read_xml(new_fonts))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
-                        length.out = NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -513,8 +510,7 @@ merge_fills <- function(wb, new_fills) {
     new <- read_fill(read_xml(new_fills))
 
     # get new rownames
-    new_rownames <- seq(max(as.numeric(rownames(old)))+1,
-                        length.out = NROW(new))
+    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
     row.names(new) <- as.character(new_rownames)
 
     # both have identical length, therefore can be rbind
@@ -675,8 +671,7 @@ merge_cellXfs <- function(wb, new_cellxfs) {
   new <- read_xf(read_xml(new_cellxfs))
 
   # get new rownames
-  new_rownames <- seq(max(as.numeric(rownames(old)))+1,
-                      length.out = NROW(new))
+  new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
   row.names(new) <- as.character(new_rownames)
 
   # both have identical length, therefore can be rbind
@@ -697,7 +692,7 @@ merge_cellXfs <- function(wb, new_cellxfs) {
 #' @export
 get_cell_style <- function(wb, sheet, cell) {
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc
@@ -715,8 +710,8 @@ get_cell_style <- function(wb, sheet, cell) {
 #' @param cell a cell
 #' @param value a value to assign
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "test")
+#' wb <- wb_workbook()
+#' wb$addWorksheet("test")
 #'
 #' mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
 #' writeData(wb, "test", mat, colNames = FALSE)
@@ -745,7 +740,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #' @export
 set_cell_style <- function(wb, sheet, cell, value) {
 
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc

@@ -15,11 +15,11 @@ write.xlsx(x, file, asTable = FALSE, ...)
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
-\item{createWorkbook}
-\item{addWorksheet}
-\item{writeData}
-\item{freezePane}
-\item{saveWorkbook}
+\item{\code{\link[=wb_workbook]{wb_workbook()}}}
+\item{\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}}
+\item{\code{\link[=writeData]{writeData()}}}
+\item{\link{freezePane}}
+\item{\code{\link[=wb_save]{wb_save()}}}
 }
 
 see details.}
@@ -33,12 +33,12 @@ write a data.frame or list of data.frames to an xlsx file
 \details{
 Optional parameters are:
 
-\strong{createWorkbook Parameters}
+\strong{wb_workbook Parameters}
 \itemize{
 \item{\strong{creator}}{ A string specifying the workbook author}
 }
 
-\strong{addWorksheet Parameters}
+\strong{wb_add_worksheet() Parameters}
 \itemize{
 \item{\strong{sheetName}}{ Name of the worksheet}
 \item{\strong{gridLines}}{ A logical. If \code{FALSE}, the worksheet grid lines will be hidden.}
@@ -78,7 +78,7 @@ between each column.  If "\code{all}" all cell borders are drawn.}
 \item{\strong{colWidths}} {May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)}
 }
 
-\strong{saveWorkbook Parameters}
+\strong{wb_save Parameters}
 \itemize{
 \item{\strong{overwrite}}{ Overwrite existing file (Defaults to TRUE as with write.table)}
 }
@@ -130,9 +130,5 @@ write.xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5,
 
 }
 \seealso{
-\code{\link[=addWorksheet]{addWorksheet()}}
-
-\code{\link[=writeData]{writeData()}}
-
-\code{\link[=createStyle]{createStyle()}} for style parameters
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}, \code{\link[=createStyle]{createStyle()}} for style parameters
 }

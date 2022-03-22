@@ -8,22 +8,22 @@
 #' @param asTable write using writeDataTable as opposed to writeData
 #' @param ... optional parameters to pass to functions:
 #' \itemize{
-#'   \item{createWorkbook}
-#'   \item{addWorksheet}
-#'   \item{writeData}
-#'   \item{freezePane}
-#'   \item{saveWorkbook}
+#'   \item{[wb_workbook()]}
+#'   \item{[wb_add_worksheet()]}
+#'   \item{[writeData()]}
+#'   \item{[freezePane]}
+#'   \item{[wb_save()]}
 #' }
 #'
 #' see details.
 #' @details Optional parameters are:
 #'
-#' **createWorkbook Parameters**
+#' **wb_workbook Parameters**
 #' \itemize{
 #'   \item{**creator**}{ A string specifying the workbook author}
 #' }
 #'
-#' **addWorksheet Parameters**
+#' **wb_add_worksheet() Parameters**
 #' \itemize{
 #'   \item{**sheetName**}{ Name of the worksheet}
 #'   \item{**gridLines**}{ A logical. If `FALSE`, the worksheet grid lines will be hidden.}
@@ -64,7 +64,7 @@
 #' }
 #'
 #'
-#' **saveWorkbook Parameters**
+#' **wb_save Parameters**
 #' \itemize{
 #'   \item{**overwrite**}{ Overwrite existing file (Defaults to TRUE as with write.table)}
 #' }
@@ -72,9 +72,7 @@
 #'
 #' columns of x with class Date or POSIXt are automatically
 #' styled as dates and datetimes respectively.
-#' @seealso [addWorksheet()]
-#' @seealso [writeData()]
-#' @seealso [createStyle()] for style parameters
+#' @seealso [wb_add_worksheet()], [writeData()], [createStyle()] for style parameters
 #' @return A workbook object
 #' @examples
 #'
@@ -128,7 +126,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   ## Possible parameters
 
-  #---createWorkbook---#
+  #---wb_workbook---#
   ## creator
 
   #---addWorksheet---#
@@ -174,7 +172,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## firstCol = FALSE
 
 
-  #---saveWorkbook---#
+  #---wb_save---#
   #   overwrite = TRUE
 
   if (!is.logical(asTable)) {
@@ -214,7 +212,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     }
   }
 
-  ## AddWorksheet
+  ## wb_add_worksheet()
   gridLines <- TRUE
   if ("gridLines" %in% names(params)) {
     if (all(is.logical(params$gridLines))) {
@@ -368,7 +366,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
 
   ## create new Workbook object
-  wb <- createWorkbook(creator = creator, title = title, subject = subject, category = category)
+  wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
 
 
   ## If a list is supplied write to individual worksheets using names if available
@@ -601,7 +599,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   if (freezePanes) {
     for (i in seq_len(nSheets)) {
-      freezePane(
+      wb <- wb_freeze_pane(
         wb = wb,
         sheet = i,
         firstActiveRow = firstActiveRow[i],
@@ -612,10 +610,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     }
   }
 
-
-
-
-  saveWorkbook(wb = wb, file = file, overwrite = overwrite)
-
+  wb_save(wb, path = file, overwrite = overwrite)
   invisible(wb)
 }

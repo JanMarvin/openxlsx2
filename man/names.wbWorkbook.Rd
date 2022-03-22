@@ -21,10 +21,10 @@ get or set worksheet names
 }
 \examples{
 
-wb <- createWorkbook()
-addWorksheet(wb, "S1")
-addWorksheet(wb, "S2")
-addWorksheet(wb, "S3")
+wb <- wb_workbook()
+wb$addWorksheet("S1")
+wb$addWorksheet("S2")
+wb$addWorksheet("S3")
 
 names(wb)
 names(wb)[[2]] <- "S2a"

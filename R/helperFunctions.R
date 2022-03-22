@@ -11,10 +11,10 @@
 #' @examples
 #'
 #' ## Writing internal hyperlinks
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet1")
-#' addWorksheet(wb, "Sheet2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb <- wb_workbook()
+#' wb$addWorksheet("Sheet1")
+#' wb$addWorksheet("Sheet2")
+#' wb$addWorksheet("Sheet 3")
 #' writeData(wb, sheet = 3, x = iris)
 #'
 #' ## External Hyperlink
@@ -82,7 +82,7 @@
 #' writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
 #'
 #' \dontrun{
-#' saveWorkbook(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
+#' wb_save(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 #' }
 #'
 makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
@@ -128,7 +128,7 @@ getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 ## creates style object based on column classes
 ## Used in writeData for styling when no borders and writeData table for all column-class based styling
 classStyles <- function(wb, sheet, startRow, startCol, colNames, nRow, colClasses, stack = TRUE) {
-  sheet <- wb$validateSheet(sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
   allColClasses <- unlist(colClasses, use.names = FALSE)
   rowInds <- (1 + startRow + colNames - 1L):(nRow + startRow + colNames - 1L)
   startCol <- startCol - 1L
@@ -363,22 +363,18 @@ writeCommentXML <- function(comment_list, file_name) {
     authorInd <- which(authors == comment_list[[i]]$author) - 1L
     xml <- c(xml, sprintf('<comment ref="%s" authorId="%s" shapeId="0"><text>', comment_list[[i]]$ref, authorInd))
 
-    if(length(comment_list[[i]]$style) != 0){ ## check that style information is present
-      for (j in seq_along(comment_list[[i]]$comment)) {
-        if (j == 1) # author
-          xml <- c(xml, sprintf('<r>%s<t>%s</t></r>',
-            comment_list[[i]]$style[[j]],
-            comment_list[[i]]$comment[[j]]))
-        if (j == 2) # comment
-          xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
-            comment_list[[i]]$style[[j]],
-            comment_list[[i]]$comment[[j]]))
-      }
-    }else{ ## Case with no styling information.
-      for (j in seq_along(comment_list[[i]]$comment)) {
-        xml <- c(xml, sprintf('<t>%s</t>',
-          comment_list[[i]]$comment[[j]]))
-      }
+    ## Comment can have optional authors. Style and text is mandatory
+    for (j in seq_along(comment_list[[i]]$comment)) {
+      # write author to top of node. will be written in bold
+      if (j == 1 & (comment_list[[i]]$author != ""))
+        xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
+          gsub("font>", "rPr>", create_font(b = "true")),
+          paste0(comment_list[[i]]$author, ":\n")))
+        
+      # write styles and comments
+      xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
+        comment_list[[i]]$style[[j]],
+        comment_list[[i]]$comment[[j]]))
     }
 
     xml <- c(xml, "</text></comment>")
@@ -495,29 +491,23 @@ buildFontList <- function(fonts) {
 }
 
 
-
 get_named_regions_from_string <- function(dn) {
-  dn <- gsub("</definedNames>", "", dn, fixed = TRUE)
-  dn <- gsub("</workbook>", "", dn, fixed = TRUE)
+  dn <- cbind(
+    openxlsx2:::rbindlist(xml_attr(dn, "definedName")),
+    value =  xml_value(dn, "definedName")
+  )
 
-  dn <- unique(unlist(strsplit(dn, split = "</definedName>", fixed = TRUE)))
-  dn <- grep("<definedName", dn, fixed = TRUE, value = TRUE)
+  if (!is.null(dn$value)) {
+    dn_pos <- dn$value
+    dn_pos <- gsub("[$']", "", dn_pos)
 
-  dn_names <- regmatches(dn, regexpr('(?<=name=")[^"]+', dn, perl = TRUE))
+    has_bang <- grepl("!", dn_pos, fixed = TRUE)
+    dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
+    dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
+  }
 
-  dn_pos <- regmatches(dn, regexpr("(?<=>).*", dn, perl = TRUE))
-  dn_pos <- gsub("[$']", "", dn_pos)
-
-  has_bang <- grepl("!", dn_pos, fixed = TRUE)
-  dn_sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
-  dn_coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
-
-  attr(dn_names, "sheet") <- dn_sheets
-  attr(dn_names, "position") <- dn_coords
-
-  dn_names
+  return(dn)
 }
-
 
 
 nodeAttributes <- function(x) {

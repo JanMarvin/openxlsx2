@@ -27,15 +27,15 @@ protectWorkbook(
 Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
 }
 \examples{
-wb <- createWorkbook()
-addWorksheet(wb, "S1")
+wb <- wb_workbook()
+wb$addWorksheet("S1")
 protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 \dontrun{
-saveWorkbook(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
+wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
 }
 # Remove the protection
 protectWorkbook(wb, protect = FALSE)
 \dontrun{
-saveWorkbook(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
+wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 }
 }

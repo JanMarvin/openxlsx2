@@ -36,7 +36,7 @@
 #' hyperlinks, percentages respectively.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
-#' @seealso [addWorksheet()]
+#' @seealso [wb_add_worksheet()]
 #' @seealso [writeData()]
 #' @seealso [removeTable()]
 #' @seealso [getTables()]
@@ -46,10 +46,10 @@
 #'
 #' #####################################################################################
 #' ## Create Workbook object and add worksheets
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "S1")
-#' addWorksheet(wb, "S2")
-#' addWorksheet(wb, "S3")
+#' wb <- wb_workbook()
+#' wb$addWorksheet("S1")
+#' wb$addWorksheet("S2")
+#' wb$addWorksheet("S3")
 #'
 #'
 #' #####################################################################################
@@ -96,7 +96,7 @@
 #' ## Save workbook
 #' ## Open in excel without saving file: openXL(wb)
 #' \dontrun{
-#' saveWorkbook(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #'
@@ -106,8 +106,8 @@
 #' #####################################################################################
 #' ## Pre-defined table styles gallery
 #'
-#' wb <- createWorkbook(paste0("tableStylesGallery.xlsx"))
-#' addWorksheet(wb, "Style Samples")
+#' wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
+#' wb$addWorksheet("Style Samples")
 #' for (i in 1:21) {
 #'   style <- paste0("TableStyleLight", i)
 #'   writeDataTable(wb,
@@ -134,7 +134,7 @@
 #'
 #' ## openXL(wb)
 #' \dontrun{
-#' saveWorkbook(wb, file = "tableStylesGallery.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 #' }
 #'
 writeDataTable <- function(wb, sheet, x,
@@ -183,7 +183,7 @@ writeDataTable <- function(wb, sheet, x,
   if (is.null(tableName)) {
     tableName <- paste0("Table", as.character(length(wb$tables) + 1L))
   } else {
-    tableName <- wb$validate_table_name(tableName)
+    tableName <- wb_validate_table_name(wb, tableName)
   }
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
@@ -211,10 +211,12 @@ writeDataTable <- function(wb, sheet, x,
 
   ## header style
   if (inherits(headerStyle, "Style")) {
-    addStyle(
-      wb = wb, sheet = sheet, style = headerStyle,
+    wb$addStyle(
+      sheet = sheet,
+      style = headerStyle,
       rows = startRow,
-      cols = 0:(ncol(x) - 1L) + startCol,
+      # cols = 0:(ncol(x) - 1L) + startCol,
+      cols = seq_along(x) - 1L + startCol,
       gridExpand = TRUE
     )
   }
@@ -247,10 +249,12 @@ writeDataTable <- function(wb, sheet, x,
   ref <- paste(ref1, ref2, sep = ":")
 
   ## check not overwriting another table
-  wb$check_overwrite_tables(
+  wb_check_overwrite_tables(
+    wb,
     sheet = sheet,
-    new_rows = c(startRow, startRow + nrow(x) - 1L + 1L) ## + header
-    , new_cols = c(startCol, startCol + ncol(x) - 1L)
+    # header
+    new_rows = c(startRow, startRow + nrow(x) - 1L + 1L),
+    new_cols = c(startCol, startCol + ncol(x) - 1L)
   )
 
 

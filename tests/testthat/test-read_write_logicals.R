@@ -14,7 +14,7 @@ test_that("TRUE, FALSE, NA", {
   wb <- write.xlsx(x, file = fileName, colNames = TRUE)
 
   y <- read.xlsx(fileName, sheet = 1, na.strings = "#N/A")
-  expect_equivalent(x, y)
+  expect_equal(x, y, ignore_attr = TRUE)
 
   ## T becomes false TRUE and NA exist in a columns
   expect_equal(x$t_na, y$t_na)
@@ -25,7 +25,7 @@ test_that("TRUE, FALSE, NA", {
 
   ## From Workbook
   y <- read.xlsx(wb, sheet = 1)
-  expect_equivalent(x, y)
+  expect_equal(x, y, ignore_attr = TRUE)
 
 
   ## T becomes false TRUE and NA exist in a columns

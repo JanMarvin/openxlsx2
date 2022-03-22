@@ -2,35 +2,35 @@
 test_that("Reading from new workbook", {
   curr_wd <- getwd()
 
-  wb <- createWorkbook()
+  wb <- wb_workbook()
   for (i in 1:4) {
-    addWorksheet(wb, sprintf("Sheet %s", i))
+    wb$addWorksheet(sprintf("Sheet %s", i))
   }
 
 
   ## colNames = TRUE, rowNames = TRUE
   writeData(wb, sheet = 1, x = mtcars, colNames = TRUE, rowNames = TRUE, startRow = 10, startCol = 5)
   x <- read.xlsx(wb, 1, colNames = TRUE, rowNames = TRUE)
-  expect_equal(object = mtcars, expected = x, check.attributes = FALSE)
+  expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
 
 
   ## colNames = TRUE, rowNames = FALSE
   writeData(wb, sheet = 2, x = mtcars, colNames = TRUE, rowNames = FALSE, startRow = 10, startCol = 5)
   x <- read.xlsx(wb, sheet = 2, colNames = TRUE, rowNames = FALSE)
-  expect_equal(object = mtcars, expected = x, check.attributes = FALSE)
-  expect_equal(object = colnames(mtcars), expected = colnames(x), check.attributes = FALSE)
+  expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
+  expect_equal(object = colnames(mtcars), expected = colnames(x), ignore_attr = TRUE)
 
   ## colNames = FALSE, rowNames = TRUE
   writeData(wb, sheet = 3, x = mtcars, colNames = FALSE, rowNames = TRUE, startRow = 2, startCol = 2)
   x <- read.xlsx(wb, sheet = 3, colNames = FALSE, rowNames = TRUE)
-  expect_equal(object = mtcars, expected = x, check.attributes = FALSE)
+  expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
   expect_equal(object = rownames(mtcars), expected = rownames(x))
 
 
   ## colNames = FALSE, rowNames = FALSE
   writeData(wb, sheet = 4, x = mtcars, colNames = FALSE, rowNames = FALSE, startRow = 12, startCol = 1)
   x <- read.xlsx(wb, sheet = 4, colNames = FALSE, rowNames = FALSE)
-  expect_equal(object = mtcars, expected = x, check.attributes = FALSE)
+  expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
 
   expect_equal(object = getwd(), curr_wd)
   rm(wb)
@@ -60,18 +60,19 @@ test_that("Reading NAs and NaN values", {
   is_nan_after <- sapply(c, is.nan)
   c[is_nan & !is_nan_after] <- NA
 
-  wb <- createWorkbook()
-  addWorksheet(wb, "Sheet 1")
+  wb <- wb_workbook()
+
+  wb$addWorksheet("Sheet 1")
   writeData(wb, 1, a, keepNA = FALSE)
 
-  addWorksheet(wb, "Sheet 2")
+  wb$addWorksheet("Sheet 2")
   writeData(wb, 2, a, keepNA = TRUE)
 
-  addWorksheet(wb, "Sheet 3")
+  wb$addWorksheet("Sheet 3")
   writeData(wb, 3, a, keepNA = TRUE, na.string = na.string)
 
-  saveWorkbook(wb, file = fileName, overwrite = TRUE)
+  wb_save(wb, path = fileName, overwrite = TRUE)
 
-  expect_equal(read.xlsx(fileName), a, check.attributes=FALSE)
+  expect_equal(read.xlsx(fileName), a, ignore_attr = TRUE)
   unlink(fileName, recursive = TRUE, force = TRUE)
 })

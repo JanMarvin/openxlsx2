@@ -29,14 +29,14 @@ wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "
 names(wb) # list worksheets
 wb ## view object
 ## Add a worksheet
-addWorksheet(wb, "A new worksheet")
+wb$addWorksheet("A new worksheet")
 
 ## Save workbook
 \dontrun{
-saveWorkbook(wb, "loadExample.xlsx", overwrite = TRUE)
+wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 }
 
 }
 \seealso{
-\code{\link[=removeWorksheet]{removeWorksheet()}}
+\code{\link[=wb_remove_worksheet]{wb_remove_worksheet()}}
 }

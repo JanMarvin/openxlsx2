@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_border}
 \alias{create_border}
-\title{create fill}
+\title{create border}
 \usage{
 create_border(
   diagonalDown = "",
@@ -60,5 +60,5 @@ create_border(
 \item{vertical}{x}
 }
 \description{
-create fill
+create border
 }

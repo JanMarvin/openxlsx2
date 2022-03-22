@@ -1,19 +1,19 @@
 test_that("fill merged cells", {
-  wb <- createWorkbook()
-  addWorksheet(wb, sheetName = "sheet1")
-  writeData(wb = wb, sheet = 1, x = data.frame("A" = 1, "B" = 2))
-  writeData(wb = wb, sheet = 1, x = 2, startRow = 2, startCol = 2)
-  writeData(wb = wb, sheet = 1, x = 3, startRow = 2, startCol = 3)
-  writeData(wb = wb, sheet = 1, x = 4, startRow = 2, startCol = 4)
-  writeData(wb = wb, sheet = 1, x = t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+  wb <- wb_workbook()
+  wb$addWorksheet(sheetName = "sheet1")
+  writeData(wb, 1, data.frame("A" = 1, "B" = 2))
+  writeData(wb, 1, 2, startRow = 2, startCol = 2)
+  writeData(wb, 1, 3, startRow = 2, startCol = 3)
+  writeData(wb, 1, 4, startRow = 2, startCol = 4)
+  writeData(wb, 1, t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
 
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 1)
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 3)
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 4)
-  mergeCells(wb = wb, sheet = 1, cols = 2:4, rows = 5)
+  wb$addCellMerge(1, rows = 1, cols = 2:4)
+  wb$addCellMerge(1, rows = 3, cols = 2:4)
+  wb$addCellMerge(1, rows = 4, cols = 2:4)
+  wb$addCellMerge(1, rows = 5, cols = 2:4)
 
   tmp_file <- temp_xlsx()
-  saveWorkbook(wb = wb, file = tmp_file, overwrite = TRUE)
+  wb_save(wb, tmp_file)
 
   # in openxlsx X3 and X4 because of name fixing
   expect_equal(names(read.xlsx(tmp_file, fillMergedCells = FALSE)), c("A", "B", NA_character_, NA_character_))
@@ -29,11 +29,10 @@ test_that("fill merged cells", {
   r2_1 <- r2[1:5, 1:3]
   names(r2_1) <- c("A", "B", "B")
 
-  expect_true(all.equal(read.xlsx(tmp_file, fillMergedCells = FALSE), r1, check.attributes = FALSE))
-  expect_true(all.equal(read.xlsx(tmp_file, fillMergedCells = TRUE), r2, check.attributes = FALSE))
+  expect_equal(read.xlsx(tmp_file, fillMergedCells = FALSE), r1, ignore_attr = TRUE)
+  expect_equal(read.xlsx(tmp_file, fillMergedCells = TRUE), r2, ignore_attr = TRUE)
 
-  expect_true(all.equal(read.xlsx(tmp_file, cols = 1:3, fillMergedCells = TRUE), r2_1, check.attributes = FALSE))
-  expect_true(all.equal(read.xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], check.attributes = FALSE))
-  expect_true(all.equal(read.xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], check.attributes = FALSE))
-
+  expect_equal(read.xlsx(tmp_file, cols = 1:3, fillMergedCells = TRUE), r2_1, ignore_attr = TRUE)
+  expect_equal(read.xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], ignore_attr = TRUE)
+  expect_equal(read.xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], ignore_attr = TRUE)
 })

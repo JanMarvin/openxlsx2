@@ -69,8 +69,8 @@ protectWorksheet(
 Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
 }
 \examples{
-wb <- createWorkbook()
-addWorksheet(wb, "S1")
+wb <- wb_workbook()
+wb$addWorksheet("S1")
 writeDataTable(wb, 1, x = iris[1:30, ])
 # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
 protectWorksheet(wb, "S1",
@@ -82,6 +82,6 @@ protectWorksheet(wb, "S1",
 # Remove the protection
 protectWorksheet(wb, "S1", protect = FALSE)
 \dontrun{
-saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
 }
 }

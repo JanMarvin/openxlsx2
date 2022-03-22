@@ -23,14 +23,14 @@ shuffles the order when writing to file.
 }
 \examples{
 ## setup a workbook with 3 worksheets
-wb <- createWorkbook()
-addWorksheet(wb = wb, sheetName = "Sheet 1", gridLines = FALSE)
+wb <- wb_workbook()
+wb$addWorksheet(sheetName = "Sheet 1", showGridLines = FALSE)
 writeDataTable(wb = wb, sheet = 1, x = iris)
 
-addWorksheet(wb = wb, sheetName = "mtcars (Sheet 2)", gridLines = FALSE)
+wb$addWorksheet(sheetName = "mtcars (Sheet 2)", showGridLines = FALSE)
 writeData(wb = wb, sheet = 2, x = mtcars)
 
-addWorksheet(wb = wb, sheetName = "Sheet 3", gridLines = FALSE)
+wb$addWorksheet(sheetName = "Sheet 3", showGridLines = FALSE)
 writeData(wb = wb, sheet = 3, x = Formaldehyde)
 
 worksheetOrder(wb)
@@ -40,10 +40,10 @@ writeData(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
 worksheetOrder(wb)
 names(wb) ## ordering within workbook is not changed
 \dontrun{
-saveWorkbook(wb, "worksheetOrderExample.xlsx", overwrite = TRUE)
+wb_save(wb, "worksheetOrderExample.xlsx", overwrite = TRUE)
 }
 worksheetOrder(wb) <- c(3, 2, 1)
 \dontrun{
-saveWorkbook(wb, "worksheetOrderExample2.xlsx", overwrite = TRUE)
+wb_save(wb, "worksheetOrderExample2.xlsx", overwrite = TRUE)
 }
 }

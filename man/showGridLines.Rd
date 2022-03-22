@@ -22,6 +22,6 @@ names(wb) ## list worksheets in workbook
 showGridLines(wb, 1, showGridLines = FALSE)
 showGridLines(wb, "testing", showGridLines = FALSE)
 \dontrun{
-saveWorkbook(wb, "showGridLinesExample.xlsx", overwrite = TRUE)
+wb_save(wb, "showGridLinesExample.xlsx", overwrite = TRUE)
 }
 }

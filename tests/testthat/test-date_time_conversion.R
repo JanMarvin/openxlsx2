@@ -22,13 +22,19 @@ test_that("convert to date", {
 
 test_that("convert to datetime", {
   x <- 43037 + 2 / 1440
-  expect_equal(object = convertToDateTime(x, tx = Sys.timezone()), expected = as.POSIXct("2017-10-29 00:02:00", tz = Sys.timezone()))
+  res <- convertToDateTime(x, tx = Sys.timezone())
+  exp <- as.POSIXct("2017-10-29 00:02:00", tz = Sys.timezone())
+  expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2 / 1440 + 1 / 86400
-  expect_equal(object = convertToDateTime(x, tx = Sys.timezone()), expected = as.POSIXct("2017-10-29 00:02:01", tz = Sys.timezone()))
+  res <- convertToDateTime(x, tx = Sys.timezone())
+  exp <- as.POSIXct("2017-10-29 00:02:01", tz = Sys.timezone())
+  expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2.50 / 1440
-  expect_equal(object = convertToDateTime(x, tx = Sys.timezone()), expected = as.POSIXct("2017-10-29 00:02:30", tz = Sys.timezone()))
+  res <- convertToDateTime(x, tx = Sys.timezone())
+  exp <- as.POSIXct("2017-10-29 00:02:30", tz = Sys.timezone())
+  expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2 / 1440 + 12.12 / 86400
   x_datetime <- convertToDateTime(x, tx = "UTC")

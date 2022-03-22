@@ -1,6 +1,6 @@
 test_that("Protect Workbook", {
-  wb <- createWorkbook()
-  addWorksheet(wb, "s1")
+  wb <- wb_workbook()
+  wb$addWorksheet("s1")
 
   wb$protectWorkbook(password = "abcdefghij")
 
@@ -11,18 +11,18 @@ test_that("Protect Workbook", {
 })
 
 test_that("Reading protected Workbook", {
-  tmp_file <- file.path(tempdir(), "xlsx_read_protectedwb.xlsx")
+  temp_file <- temp_xlsx()
 
-  wb <- createWorkbook()
-  addWorksheet(wb, "s1")
+  wb <- wb_workbook()
+  wb$addWorksheet("s1")
   protectWorkbook(wb, password = "abcdefghij")
-  saveWorkbook(wb, tmp_file, overwrite = TRUE)
+  wb_save(wb, temp_file)
 
-  wb2 <- loadWorkbook(file = tmp_file)
+  wb2 <- loadWorkbook(file = temp_file)
   # Check that the order of the sub-elements is preserved
   n1 <- names(wb2$workbook)
   n2 <- names(wb$workbook)[names(wb$workbook) != "apps"]
   expect_equal(n1, n2)
 
-  unlink(tmp_file, recursive = TRUE, force = TRUE)
+  file.remove(temp_file)
 })

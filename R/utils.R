@@ -20,10 +20,11 @@ naToNULLList <- function(x) {
 paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
   x <- c(...)
   if (unlist) x <- unlist(x, use.names = FALSE)
-  paste(x[nzchar(x)], sep = "", collapse = " ")
+  paste(x[nzchar(x)], sep = "", collapse = collapse)
 }
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
+`%|||%` <- function(x, y) if (length(x)) x else y
 
 na_to_null <- function(x) {
   if (is.null(x)) {

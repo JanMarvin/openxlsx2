@@ -9,18 +9,18 @@
 #' formatting of the original .xlsx file.
 #' @return Workbook object.
 #' @export
-#' @seealso [removeWorksheet()]
+#' @seealso [wb_remove_worksheet()]
 #' @examples
 #' ## load existing workbook from package folder
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' names(wb) # list worksheets
 #' wb ## view object
 #' ## Add a worksheet
-#' addWorksheet(wb, "A new worksheet")
+#' wb$addWorksheet("A new worksheet")
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "loadExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 #' }
 #'
 loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
@@ -30,13 +30,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     xmlDir <- file
     xmlFiles <- list.files(path = xmlDir, full.names = TRUE, recursive = TRUE, all.files = TRUE)
   } else {
-    if (!is.null(xlsxFile)) {
-      file <- xlsxFile
-    }
-
+    file <- xlsxFile %||% file
     file <- getFile(file)
 
-    file <- getFile(file)
     if (!file.exists(file)) {
       stop("File does not exist.")
     }
@@ -49,8 +45,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     ## Unzip files to temp directory
     xmlFiles <- unzip(file, exdir = xmlDir)
   }
-  wb <- createWorkbook()
 
+  wb <- wb_workbook()
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
     # targets xmlFiles; has presents
@@ -221,12 +217,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       }
     }
 
-
     ## replace sheetId
     for (i in seq_len(nSheets)) {
-      wb$workbook$sheets[[i]] <- gsub(sprintf(' sheetId="%s"', i), sprintf(' sheetId="%s"', sheetId[i]), wb$workbook$sheets[[i]])
+      wb$workbook$sheets[[i]] <- gsub(
+        sprintf(' sheetId="%s"', i),
+        sprintf(' sheetId="%s"', sheetId[i]),
+        wb$workbook$sheets[[i]]
+      )
     }
-
 
     ## additional workbook attributes
     calcPr <- xml_node(workbook_xml, "workbook", "calcPr")
@@ -546,7 +544,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   # TODO this loop should live in loadworksheets
   import_sheets <- seq_len(nSheets)
   if (!missing(sheet)) {
-    import_sheets <- wb$validateSheet(sheet)
+    import_sheets <- wb_validate_sheet(wb, sheet)
   }
 
   for (i in import_sheets) {
@@ -566,6 +564,8 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     # has <drawing> a child <legacyDrawing> ?
     wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
     wb$worksheets[[i]]$drawingHF <- xml_node(worksheet_xml, "worksheet", "drawingHF")
+    wb$worksheets[[i]]$legacyDrawing <- xml_node(worksheet_xml, "worksheet", "legacyDrawing")
+    wb$worksheets[[i]]$legacyDrawingHF <- xml_node(worksheet_xml, "worksheet", "legacyDrawingHF")
     # wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
     wb$worksheets[[i]]$headerFooter <- xml_node(worksheet_xml, "worksheet", "headerFooter")
     # wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks")
@@ -633,9 +633,18 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       if (length(wb$worksheets[[i]]$headerFooter)) {
 
         amp_split <- function(x) {
-          z <- stri_split_regex(x, "&amp;[LCR]")
-          z <- unlist(z)
-          z[-1]
+          if (length(x) == 0) return (NULL)
+          # create output string of width 3
+          res <- vector("character", 3)
+          # Identify the names found in the string: returns them as matrix: strip the &amp;
+          nam <- gsub(pattern = "&amp;", "", unlist(stri_match_all_regex(x, "&amp;[LCR]")))
+          # split the string and assign names to join
+          z <- unlist(stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
+          names(z) <- as.character(nam)
+          res[c("L", "C", "R") %in% names(z)] <- z
+
+          # return the string vector
+          unname(res)
         }
 
         head_foot <- c("oddHeader", "oddFooter",
@@ -907,7 +916,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       wb$Content_Types <- c(wb$Content_Types, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
       # TODO missed <<-
-      drawXMLrelationship <<- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
+      drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
 
       for (i in seq_along(vmlDrawingXML)) {
         wb$drawings_vml[[i]] <- read_xml(vmlDrawingXML[[i]], pointer = FALSE)

@@ -21,14 +21,14 @@ List Excel tables in a workbook
 }
 \examples{
 
-wb <- createWorkbook()
-addWorksheet(wb, sheetName = "Sheet 1")
-addWorksheet(wb, sheetName = "Sheet 2")
+wb <- wb_workbook()
+wb$addWorksheet(sheetName = "Sheet 1")
+wb$addWorksheet(sheetName = "Sheet 2")
 writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
 writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
 
-removeWorksheet(wb, sheet = 1) ## delete worksheet removes table objects
+wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
 
 writeDataTable(wb, sheet = 1, x = iris, tableName = "iris")
 writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
@@ -42,7 +42,7 @@ getTables(wb, sheet = 1)
 removeTable(wb = wb, sheet = 1, table = "iris")
 writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 \dontrun{
-saveWorkbook(wb = wb, file = "removeTableExample.xlsx", overwrite = TRUE)
+wb_save(wb, path = "removeTableExample.xlsx", overwrite = TRUE)
 }
 
 }

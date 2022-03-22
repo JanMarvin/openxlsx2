@@ -2,9 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{addStyle}
 \alias{addStyle}
+\alias{wb_add_style}
 \title{Add a style to a set of cells}
 \usage{
-addStyle(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = FALSE)
+wb_add_style(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = FALSE)
 }
 \arguments{
 \item{wb}{A Workbook object containing a worksheet.}
@@ -29,10 +30,10 @@ Function adds a style to a specified set of cells.
 ## See package vignette for more examples.
 
 ## Create a new workbook
-wb <- createWorkbook("My name here")
+wb <- wb_workbook("My name here")
 
 ## Add a worksheets
-addWorksheet(wb, "Expenditure", gridLines = FALSE)
+wb$addWorksheet("Expenditure", showGridLines = FALSE)
 
 ## write data to worksheet 1
 writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
@@ -43,14 +44,14 @@ headerStyle <- createStyle(
   fgFill = "#4F81BD", border = c("top", "bottom"), borderColour = "#4F81BD"
 )
 
-addStyle(wb, sheet = 1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
+wb <- wb_add_style(wb, sheet = 1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
 
 ## style for body
 bodyStyle <- createStyle(border = c("top", "bottom"), borderColour = "#4F81BD")
-addStyle(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
+wb <- wb_add_style(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
 setColWidths(wb, 1, cols = 1, widths = 21) ## set column width for row names column
 \dontrun{
-saveWorkbook(wb, "addStyleExample.xlsx", overwrite = TRUE)
+wb_save(wb, "addStyleExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
