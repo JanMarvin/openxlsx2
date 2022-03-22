@@ -94,25 +94,9 @@
 #'   startCol = "O", startRow = 12, borders = "rows"
 #' )
 #'
-#'
-#' #####################################################################################
-#' ## Header Styles
-#'
-#' hs1 <- createStyle(
-#'   fgFill = "#DCE6F1", halign = "center", textDecoration = "italic",
-#'   border = "bottom"
-#' )
-#'
 #' writeData(wb, "Cars", x,
 #'   colNames = TRUE, rowNames = TRUE, startCol = "B",
 #'   startRow = 23, borders = "rows", borderStyle = "dashed"
-#' )
-#'
-#'
-#' hs2 <- createStyle(
-#'   fontColour = "#ffffff", fgFill = "#4F80BD",
-#'   halign = "center", valign = "center", textDecoration = "bold",
-#'   border = "all"
 #' )
 #'
 #' writeData(wb, "Cars", x,

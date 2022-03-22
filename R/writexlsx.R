@@ -71,7 +71,7 @@
 #'
 #' columns of x with class Date or POSIXt are automatically
 #' styled as dates and datetimes respectively.
-#' @seealso [wb_add_worksheet()], [writeData()], [createStyle()] for style parameters
+#' @seealso [wb_add_worksheet()], [writeData()]
 #' @return A workbook object
 #' @examples
 #'
@@ -83,10 +83,6 @@
 #' }
 #'
 #'
-#' hs <- createStyle(
-#'   textDecoration = "bold", fontColour = "#FFFFFF", fontSize = 12,
-#'   fontName = "Arial Narrow", fgFill = "#4F80BD"
-#' )
 #' \dontrun{
 #' write.xlsx(iris,
 #'   file = "writeXLSX3.xlsx",
@@ -314,10 +310,10 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     borderColour <- params$borderColour
   }
 
-  borderStyle <- getOption("openxlsx.borderStyle", "thin")
-  if ("borderStyle" %in% names(params)) {
-    borderStyle <- validate_border_style(params$borderStyle)
-  }
+  # borderStyle <- getOption("openxlsx.borderStyle", "thin")
+  # if ("borderStyle" %in% names(params)) {
+  #   borderStyle <- validate_border_style(params$borderStyle)
+  # }
 
   keepNA <- FALSE
   if ("keepNA" %in% names(params)) {

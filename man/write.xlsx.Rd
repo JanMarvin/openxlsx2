@@ -95,10 +95,6 @@ write.xlsx(iris, file = "writeXLSX2.xlsx", colNames = TRUE, borders = "surroundi
 }
 
 
-hs <- createStyle(
-  textDecoration = "bold", fontColour = "#FFFFFF", fontSize = 12,
-  fontName = "Arial Narrow", fgFill = "#4F80BD"
-)
 \dontrun{
 write.xlsx(iris,
   file = "writeXLSX3.xlsx",
@@ -129,5 +125,5 @@ write.xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5,
 
 }
 \seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}, \code{\link[=createStyle]{createStyle()}} for style parameters
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}
 }

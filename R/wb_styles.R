@@ -753,3 +753,82 @@ set_cell_style <- function(wb, sheet, cell, value) {
 
   wb$worksheets[[sheet]]$sheet_data$cc <- cc
 }
+
+#' @name create_dxfs_style
+#' @title Create a custom formatting style
+#' @description Create a new style to apply to worksheet cells
+#' @param font_name A name of a font. Note the font name is not validated. If fontName is NULL,
+#' the workbook base font is used. (Defaults to Calibri)
+#' @param font_color Colour of text in cell.  A valid hex colour beginning with "#"
+#' or one of colours(). If fontColour is NULL, the workbook base font colours is used.
+#' (Defaults to black)
+#' @param font_size Font size. A numeric greater than 0.
+#' If fontSize is NULL, the workbook base font size is used. (Defaults to 11)
+#' @param numFmt Cell formatting. Some custom openxml format
+#' @param border NULL or TRUE
+#' @param border_color "black"
+#' @param border_style "thin"
+#' @param bgFill Cell background fill color.
+#' @param text_bold bold
+#' @param text_strike strikeout
+#' @param text_italic italic
+#' @param text_underline underline 1, true, single or double
+#' @return A dxfs style node
+#' @export
+#' @examples
+#' ## See package vignettes for further examples
+create_dxfs_style <- function(
+    font_name      = "Calibri",
+    font_size      = "11",
+    font_color     = c(rgb = "FF9C0006"),
+    numFmt         = NULL,
+    border         = NULL,
+    border_color   = getOption("openxlsx.borderColour", "black"),
+    border_style   = getOption("openxlsx.borderStyle", "thin"),
+    bgFill         = c(rgb = "FFFFC7CE"),
+    text_bold      = NULL,
+    text_strike    = NULL,
+    text_italic    = NULL,
+    text_underline = NULL # "true" or "double"
+) {
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
+
+  if (is.null(text_bold)) text_bold = ""
+  if (is.null(text_strike)) text_strike = ""
+  if (is.null(text_italic)) text_italic = ""
+  if (is.null(text_underline)) text_underline = ""
+
+  # found numFmtId=3 in MS365 xml not sure if this should be increased
+  if (!is.null(numFmt)) numFmt <- create_numfmt(3, numFmt)
+
+  font <- create_font(color = font_color, name = font_name, sz = font_size,
+                      b = text_bold, i = text_italic, strike = text_strike,
+                      u = text_underline,
+                      family = "", scheme = "")
+
+  fill <- create_fill(patternType = "solid", bgColor = bgFill)
+
+  # untested
+  if (!is.null(border))
+    border <- create_border(left = border_style,
+                            left_color = border_color,
+                            right = border_style,
+                            right_color = border_color,
+                            top = border_style,
+                            top_color = border_color,
+                            bottom = border_style,
+                            bottom_color = border_color)
+
+  xml_node_create(
+    "dxf",
+    xml_children = c(
+      font,
+      numFmt,
+      fill,
+      border
+    )
+  )
+
+}
+

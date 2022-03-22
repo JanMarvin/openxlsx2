@@ -92,7 +92,7 @@ wbComment <- R6::R6Class(
 #' (openxml calls them threadedComments) is not yet possible
 #' @param text Comment text. Character vector.
 #' @param author Author of comment. Character vector of length 1
-#' @param style A Style object or list of style objects the same length as comment vector. See [createStyle()].
+#' @param style A Style object or list of style objects the same length as comment vector.
 #' @param visible TRUE or FALSE. Is comment visible.
 #' @param width Textbox integer width in number of cells
 #' @param height Textbox integer height in number of cells
