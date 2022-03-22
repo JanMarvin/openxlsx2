@@ -351,7 +351,7 @@ wbWorkbook <- R6::R6Class(
         fail <- TRUE
         msg <- c(
           msg,
-          sprintf("A worksheet by the name \"%s\" already exists.", sheetName),
+          sprintf("A worksheet by the name \"%s\" already exists.", sheet),
           "Sheet names must be unique case-insensitive."
         )
       }
@@ -1860,6 +1860,13 @@ wbWorkbook <- R6::R6Class(
       nSheets     <- length(sheet_names)
       sheet_names <- sheet_names[[sheet]]
 
+      ## definedNames
+      if (length(self$workbook$definedNames)) {
+        # wb_validate_sheet() makes sheet an integer
+        # so we need to remove this before getting rid of the sheet names
+        self$workbook$definedNames <- self$workbook$definedNames[!getNamedRegions(self)$sheets %in% self$sheet_names[sheet]]
+      }
+
       self$sheet_names <- self$sheet_names[-sheet]
 
       xml_rels <- rbindlist(
@@ -2001,13 +2008,6 @@ wbWorkbook <- R6::R6Class(
       ## Can remove highest sheet
       # (don't use grepl(value = TRUE))
       self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
-
-      ## definedNames
-      if (length(self$workbook$definedNames)) {
-        belongTo <- getNamedRegions(self)$sheets
-        self$workbook$definedNames <-
-          self$workbook$definedNames[!belongTo %in% sheetName]
-      }
 
       invisible(self)
     },
