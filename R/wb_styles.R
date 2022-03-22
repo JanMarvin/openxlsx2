@@ -142,7 +142,7 @@ styles_on_sheet <- function(wb, sheet) {
 }
 
 # TODO guessing here
-#' create fill
+#' create border
 #'
 #' @param diagonalDown x
 #' @param diagonalUp x
@@ -203,18 +203,18 @@ create_border <- function(
   diagonal <- xml_node_create("diagonal", xml_children = diagonal_color, xml_attributes = diagonal)
 
   df_border <- data.frame(
-    diagonalDown = diagonalDown,
-    diagonalUp = diagonalUp,
-    outline = outline,
-    bottom = bottom,
-    diagonal = diagonal,
+    start = start,
     end = end,
-    horizontal = horizontal,
     left = left,
     right = right,
-    start = start,
     top = top,
+    bottom = bottom,
+    diagonalDown = diagonalDown,
+    diagonalUp = diagonalUp,
+    diagonal = diagonal,
     vertical = vertical,
+    horizontal = horizontal,
+    outline = outline, # unknown position in border
     stringsAsFactors = FALSE
   )
   border <- write_border(df_border)

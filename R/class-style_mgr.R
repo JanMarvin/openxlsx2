@@ -229,27 +229,28 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
     #' @description get next numfmt id
     next_numfmt_id = function() {
-      invisible(as.character(max(as.numeric(self$numfmt$id)) + 1))
+      # TODO check: first free custom format begins at 165?
+      invisible(as.character(max(as.numeric(self$numfmt$id), 164) + 1))
     },
 
     #' @description get next font id
     next_font_id = function() {
-      invisible(as.character(max(as.numeric(self$font$id)) + 1))
+      invisible(as.character(max(as.numeric(self$font$id), 0) + 1))
     },
 
     #' @description get next fill id
     next_fill_id = function() {
-      invisible(as.character(max(as.numeric(self$fill$id)) + 1))
+      invisible(as.character(max(as.numeric(self$fill$id), 0) + 1))
     },
 
     #' @description get next border id
     next_border_id = function() {
-      invisible(as.character(max(as.numeric(self$border$id)) + 1))
+      invisible(as.character(max(as.numeric(self$border$id), 0) + 1))
     },
 
     #' @description get next xf id
     next_xf_id = function() {
-      invisible(as.character(max(as.numeric(self$xf$id)) + 1))
+      invisible(as.character(max(as.numeric(self$xf$id), -1) + 1))
     },
 
     ### adds
@@ -291,7 +292,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       if (is_border) {
         typ <- "border"
         borders <- c(self$styles$borders, style)
-        id  <- rownames(openxlsx2:::read_fill(read_xml(borders)))
+        id  <- rownames(openxlsx2:::read_border(read_xml(borders)))
         self$styles$borders <- borders
       }
 
@@ -309,10 +310,10 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       )
 
       if (is_numfmt) self$numfmt <- rbind(self$numfmt, new_entry)
-      if (is_font)   self$font <- rbind(self$font, new_entry)
-      if (is_fill)   self$fill <- rbind(self$fill, new_entry)
-      if (is_border) self$borders <- rbind(self$border, new_entry)
-      if (is_xf)     self$xf <- rbind(self$xf, new_entry)
+      if (is_font)   self$font   <- rbind(self$font, new_entry)
+      if (is_fill)   self$fill   <- rbind(self$fill, new_entry)
+      if (is_border) self$border <- rbind(self$border, new_entry)
+      if (is_xf)     self$xf     <- rbind(self$xf, new_entry)
 
       invisible(self)
     }

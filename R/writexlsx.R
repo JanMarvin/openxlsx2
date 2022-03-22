@@ -599,7 +599,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   if (freezePanes) {
     for (i in seq_len(nSheets)) {
-      freezePane(
+      wb <- wb_freeze_pane(
         wb = wb,
         sheet = i,
         firstActiveRow = firstActiveRow[i],
