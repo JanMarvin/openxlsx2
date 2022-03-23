@@ -15,7 +15,6 @@ writeDataTable(
   rowNames = FALSE,
   tableStyle = "TableStyleLight9",
   tableName = NULL,
-  headerStyle = NULL,
   withFilter = TRUE,
   keepNA = FALSE,
   na.string = NULL,
@@ -49,8 +48,6 @@ A vector of the form c(startCol, startRow)}
 \item{tableStyle}{Any excel table style name or "none" (see "formatting" vignette).}
 
 \item{tableName}{name of table in workbook. The table name must be unique.}
-
-\item{headerStyle}{Custom style to apply to column names.}
 
 \item{withFilter}{If \code{TRUE}, columns with have filters in the first row.}
 
@@ -131,8 +128,8 @@ writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "Ta
 ## Additional Header Styling and remove column filters
 
 writeDataTable(wb,
-  # todo createStyle does not work
-  sheet = 1, x = iris, startCol = 7, headerStyle = createStyle(textRotation = 45),
+  # todo header styling not implemented
+  sheet = 1, x = iris, startCol = 7,
   withFilter = FALSE
 )
 

@@ -14,7 +14,6 @@ writeData(
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
-  headerStyle = NULL,
   borders = c("none", "surrounding", "rows", "columns", "all"),
   borderColour = getOption("openxlsx.borderColour", "black"),
   borderStyle = getOption("openxlsx.borderStyle", "thin"),
@@ -46,8 +45,6 @@ writeData(
 \item{colNames}{If \code{TRUE}, column names of x are written.}
 
 \item{rowNames}{If \code{TRUE}, data.frame row names of x are written.}
-
-\item{headerStyle}{Custom style to apply to column names.}
 
 \item{borders}{Either "\code{none}" (default), "\code{surrounding}",
 "\code{columns}", "\code{rows}" or \emph{respective abbreviations}.  If
@@ -144,30 +141,14 @@ writeData(wb, "Cars", x,
   startCol = "O", startRow = 12, borders = "rows"
 )
 
-
-#####################################################################################
-## Header Styles
-
-hs1 <- createStyle(
-  fgFill = "#DCE6F1", halign = "center", textDecoration = "italic",
-  border = "bottom"
-)
-
 writeData(wb, "Cars", x,
   colNames = TRUE, rowNames = TRUE, startCol = "B",
-  startRow = 23, borders = "rows", headerStyle = hs1, borderStyle = "dashed"
-)
-
-
-hs2 <- createStyle(
-  fontColour = "#ffffff", fgFill = "#4F80BD",
-  halign = "center", valign = "center", textDecoration = "bold",
-  border = "all"
+  startRow = 23, borders = "rows", borderStyle = "dashed"
 )
 
 writeData(wb, "Cars", x,
   colNames = TRUE, rowNames = TRUE,
-  startCol = "O", startRow = 23, borders = "columns", headerStyle = hs2
+  startCol = "O", startRow = 23, borders = "columns"
 )
 
 

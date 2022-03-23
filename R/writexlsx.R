@@ -40,7 +40,6 @@
 #'  A vector of the form c(startCol, startRow)}
 #'   \item{**colNames or col.names**}{ If `TRUE`, column names of x are written.}
 #'   \item{**rowNames or row.names**}{ If `TRUE`, row names of x are written.}
-#'   \item{**headerStyle**}{ Custom style to apply to column names.}
 #'   \item{**borders**}{ Either "surrounding", "columns" or "rows" or NULL.  If "surrounding", a border is drawn around the
 #' data.  If "rows", a surrounding border is drawn a border around each row. If "columns", a surrounding border is drawn with a border
 #' between each column.  If "`all`" all cell borders are drawn.}
@@ -72,7 +71,7 @@
 #'
 #' columns of x with class Date or POSIXt are automatically
 #' styled as dates and datetimes respectively.
-#' @seealso [wb_add_worksheet()], [writeData()], [createStyle()] for style parameters
+#' @seealso [wb_add_worksheet()], [writeData()]
 #' @return A workbook object
 #' @examples
 #'
@@ -84,14 +83,10 @@
 #' }
 #'
 #'
-#' hs <- createStyle(
-#'   textDecoration = "bold", fontColour = "#FFFFFF", fontSize = 12,
-#'   fontName = "Arial Narrow", fgFill = "#4F80BD"
-#' )
 #' \dontrun{
 #' write.xlsx(iris,
 #'   file = "writeXLSX3.xlsx",
-#'   colNames = TRUE, borders = "rows", headerStyle = hs
+#'   colNames = TRUE, borders = "rows"
 #' )
 #' }
 #'
@@ -147,7 +142,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## xy = NULL,
   ## colNames = TRUE,
   ## rowNames = FALSE,
-  ## headerStyle = NULL,
   ## borders = NULL,
   ## borderColour = "#4F81BD"
   ## borderStyle
@@ -162,7 +156,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## rowNames = FALSE
   ## tableStyle = "TableStyleLight9"
   ## tableName = NULL
-  ## headerStyle = NULL
   ## withFilter = TRUE
 
   #---freezePane---#
@@ -304,21 +297,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     xy <- params$xy
   }
 
-
-  headerStyle <- NULL
-  if ("headerStyle" %in% names(params)) {
-    if (length(params$headerStyle) == 1) {
-      assert_style(params$headerStyle)
-      headerStyle <- params$headerStyle
-    } else {
-      if (all(vapply(params$headerStyle, is_wb_style, NA))) {
-        headerStyle <- params$headerStyle
-      } else {
-        stop("headerStyle must be a style object.")
-      }
-    }
-  }
-
   borders <- NULL
   if ("borders" %in% names(params)) {
     borders <- tolower(params$borders)
@@ -332,10 +310,10 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     borderColour <- params$borderColour
   }
 
-  borderStyle <- getOption("openxlsx.borderStyle", "thin")
-  if ("borderStyle" %in% names(params)) {
-    borderStyle <- validate_border_style(params$borderStyle)
-  }
+  # borderStyle <- getOption("openxlsx.borderStyle", "thin")
+  # if ("borderStyle" %in% names(params)) {
+  #   borderStyle <- validate_border_style(params$borderStyle)
+  # }
 
   keepNA <- FALSE
   if ("keepNA" %in% names(params)) {
@@ -423,11 +401,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       startCol <- rep_len(startCol, length.out = nSheets)
     }
 
-    if (!is.null(headerStyle)) {
-      headerStyle <- rep_len(list(headerStyle), nSheets)
-      # headerStyle <- lapply(seq_len(nSheets), function(x) headerStyle)
-    }
-
     if (length(borders) != nSheets & !is.null(borders)) {
       borders <- rep_len(borders, length.out = nSheets)
     }
@@ -475,7 +448,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
           rowNames = rowNames[[i]],
           tableStyle = tableStyle[[i]],
           tableName = NULL,
-          headerStyle = headerStyle[[i]],
           withFilter = withFilter[[i]],
           keepNA = keepNA[[i]],
           na.string = na.string[[i]]
@@ -490,10 +462,8 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
           xy = xy,
           colNames = colNames[[i]],
           rowNames = rowNames[[i]],
-          headerStyle = headerStyle[[i]],
           borders = borders[[i]],
           borderColour = borderColour[[i]],
-          borderStyle = borderStyle[[i]],
           keepNA = keepNA[[i]],
           na.string = na.string[[i]]
         )
@@ -522,7 +492,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
         rowNames = rowNames,
         tableStyle = tableStyle,
         tableName = NULL,
-        headerStyle = headerStyle,
         withFilter = withFilter,
         keepNA = keepNA,
         na.string = na.string
@@ -537,10 +506,8 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
         xy = xy,
         colNames = colNames,
         rowNames = rowNames,
-        headerStyle = headerStyle,
         borders = borders,
         borderColour = borderColour,
-        borderStyle = borderStyle,
         withFilter = withFilter,
         keepNA = keepNA,
         na.string = na.string

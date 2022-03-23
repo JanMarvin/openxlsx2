@@ -12,7 +12,6 @@
 #' `c(startCol, startRow)`.
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
-#' @param headerStyle Custom style to apply to column names.
 #' @param borders Either "`none`" (default), "`surrounding`",
 #' "`columns`", "`rows`" or *respective abbreviations*.  If
 #' "`surrounding`", a border is drawn around the data.  If "`rows`",
@@ -95,30 +94,14 @@
 #'   startCol = "O", startRow = 12, borders = "rows"
 #' )
 #'
-#'
-#' #####################################################################################
-#' ## Header Styles
-#'
-#' hs1 <- createStyle(
-#'   fgFill = "#DCE6F1", halign = "center", textDecoration = "italic",
-#'   border = "bottom"
-#' )
-#'
 #' writeData(wb, "Cars", x,
 #'   colNames = TRUE, rowNames = TRUE, startCol = "B",
-#'   startRow = 23, borders = "rows", headerStyle = hs1, borderStyle = "dashed"
-#' )
-#'
-#'
-#' hs2 <- createStyle(
-#'   fontColour = "#ffffff", fgFill = "#4F80BD",
-#'   halign = "center", valign = "center", textDecoration = "bold",
-#'   border = "all"
+#'   startRow = 23, borders = "rows", borderStyle = "dashed"
 #' )
 #'
 #' writeData(wb, "Cars", x,
 #'   colNames = TRUE, rowNames = TRUE,
-#'   startCol = "O", startRow = 23, borders = "columns", headerStyle = hs2
+#'   startCol = "O", startRow = 23, borders = "columns"
 #' )
 #'
 #'
@@ -179,7 +162,6 @@ writeData <- function(wb,
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
-  headerStyle = NULL,
   borders = c("none", "surrounding", "rows", "columns", "all"),
   borderColour = getOption("openxlsx.borderColour", "black"),
   borderStyle = getOption("openxlsx.borderStyle", "thin"),
@@ -212,7 +194,6 @@ writeData <- function(wb,
   startRow <- as.integer(startRow)
 
   assert_workbook(wb)
-  if (!is.null(headerStyle)) assert_style(headerStyle)
   assert_class(colNames, "logical")
   assert_class(rowNames, "logical")
 
@@ -223,7 +204,7 @@ writeData <- function(wb,
 
   ## borderColours validation
   borderColour <- validateColour(borderColour, "Invalid border colour")
-  borderStyle <- validate_border_style(borderStyle)[[1]]
+  # borderStyle <- validate_border_style(borderStyle)[[1]]
 
   ## special case - vector of hyperlinks
   # # hlinkNames not used?
