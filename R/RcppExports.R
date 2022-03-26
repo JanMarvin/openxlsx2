@@ -29,6 +29,10 @@ wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row) {
     invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row))
 }
 
+build_cell_merges <- function(comps) {
+    .Call(`_openxlsx2_build_cell_merges`, comps)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
@@ -291,10 +295,6 @@ read_colors <- function(xml_doc_colors) {
 
 write_colors <- function(df_colors) {
     .Call(`_openxlsx2_write_colors`, df_colors)
-}
-
-build_cell_merges <- function(comps) {
-    .Call(`_openxlsx2_build_cell_merges`, comps)
 }
 
 set_sst <- function(sharedStrings) {
