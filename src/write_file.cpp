@@ -1,5 +1,5 @@
 #include "openxlsx2.h"
-
+#include <fstream>
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {

@@ -69,7 +69,6 @@ unsigned int pugi_format(XPtrXML doc){
 SEXP getXMLXPtrName(XPtrXML doc) {
 
   std::vector<std::string> res;
-  unsigned int  pugi_format_flags = pugi_format(doc);
 
   for (auto worksheet : doc->children())
   {

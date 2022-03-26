@@ -41,14 +41,6 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
-si_to_txt <- function(doc) {
-    .Call(`_openxlsx2_si_to_txt`, doc)
-}
-
-is_to_txt <- function(is_vec) {
-    .Call(`_openxlsx2_is_to_txt`, is_vec)
-}
-
 readXMLPtr <- function(path, isfile, escapes, declaration) {
     .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration)
 }
@@ -211,6 +203,22 @@ xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL
 
 xml_append_child <- function(node, child, pointer, escapes) {
     .Call(`_openxlsx2_xml_append_child`, node, child, pointer, escapes)
+}
+
+si_to_txt <- function(doc) {
+    .Call(`_openxlsx2_si_to_txt`, doc)
+}
+
+txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE) {
+    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw)
+}
+
+is_to_txt <- function(is_vec) {
+    .Call(`_openxlsx2_is_to_txt`, is_vec)
+}
+
+txt_to_is <- function(text, no_escapes, raw) {
+    .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw)
 }
 
 read_xf <- function(xml_doc_xf) {

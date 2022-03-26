@@ -216,7 +216,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         cell.v   = "_openxlsx_NA_";
         cell.c_s = "_openxlsx_NA_";
         cell.c_t = "inlineStr";
-        cell.is  = "<is><t>" + vals + "</t></is>";
+        cell.is  = txt_to_is(vals, 0, 1);
         cell.f   = "_openxlsx_NA_";
         break;
       case hyperlink:
