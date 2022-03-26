@@ -3474,9 +3474,6 @@ wbWorkbook <- R6::R6Class(
           prior <- ws$get_prior_sheet_data()
           post <- ws$get_post_sheet_data()
 
-          # worksheets[[i]]$sheet_data$style_id <-
-          #   as.character(worksheets[[i]]$sheet_data$style_id)
-
           cc <- ws$sheet_data$cc
 
 
@@ -3518,10 +3515,6 @@ wbWorkbook <- R6::R6Class(
             cols_attr = ws$cols_attr,
             R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
           )
-
-          # # why would I want to erase everything in here?
-          # worksheets[[i]]$sheet_data$style_id <- integer()
-
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {

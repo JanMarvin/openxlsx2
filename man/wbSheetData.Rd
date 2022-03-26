@@ -23,12 +23,6 @@ A hyperlink
 \item{\code{cc}}{cc}
 
 \item{\code{cc_out}}{cc_out}
-
-\item{\code{style_id}}{style_id}
-
-\item{\code{data_count}}{data_count}
-
-\item{\code{n_elements}}{n_elements}
 }
 \if{html}{\out{</div>}}
 }
