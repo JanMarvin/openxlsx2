@@ -13,7 +13,7 @@ wbComment <- R6::R6Class(
     #' @field author The comment author
     author = character(),
 
-    #' @field style A style (class `wbStyle`) for the comment (?)
+    #' @field style A style for the comment
     style = character(),
 
     #' @field visible `logical`, if `FALSE` is not visible
@@ -30,7 +30,7 @@ wbComment <- R6::R6Class(
     #' Creates a new `wbComment` object
     #' @param text Comment text
     #' @param author The comment author
-    #' @param style A style (class `wbStyle`) for the comment (?)
+    #' @param style A style for the comment
     #' @param visible `logical`, if `FALSE` is not visible
     #' @param width Width of the comment in ... units
     #' @param height Height of comment in ... units
