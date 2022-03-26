@@ -70,8 +70,6 @@ A Workbook
 
 \item{\code{sharedStrings}}{sharedStrings}
 
-\item{\code{styleObjects}}{styleObjects}
-
 \item{\code{styles_mgr}}{styles_mgr}
 
 \item{\code{styles_xml}}{styles_xml}
@@ -103,8 +101,6 @@ A Workbook
 \item{\code{sheetOrder}}{sheetOrder}
 
 \item{\code{path}}{path}
-
-\item{\code{styleObjectsList}}{styleObjectsList}
 
 \item{\code{creator}}{A character vector of creators}
 

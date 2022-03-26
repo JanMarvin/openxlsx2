@@ -99,9 +99,6 @@ wbWorkbook <- R6::R6Class(
     #' @field sharedStrings sharedStrings
     sharedStrings = structure(list(), uniqueCount = 0L),
 
-    #' @field styleObjects styleObjects
-    styleObjects = list(),
-
     #' @field styles_mgr styles_mgr
     styles_mgr = NULL,
 
@@ -149,11 +146,6 @@ wbWorkbook <- R6::R6Class(
 
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
-
-    # FIXME styleObjectsList() may be getting removed [11]
-
-    #' @field styleObjectsList styleObjectsList
-    styleObjectsList = list(),
 
     #' @field creator A character vector of creators
     creator = character(),
@@ -240,8 +232,6 @@ wbWorkbook <- R6::R6Class(
 
       self$styles_mgr <- style_mgr$new(self)
       self$styles_mgr$styles <- genBaseStyleSheet()
-      self$styleObjects <- list()
-
 
       self$tables <- NULL
       self$tables.xml.rels <- NULL
@@ -664,30 +654,6 @@ wbWorkbook <- R6::R6Class(
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheetName)
-
-
-      ############################
-      ## STYLE
-      ## ... objects are stored in a global list, so we need to get all styles
-      ## assigned to the cloned sheet and duplicate them
-
-      # TODO can we replace Filter() and Map()?
-
-
-      sheetStyles <- Filter(
-        function(s) s$sheet == self$sheet_names[[clonedSheet]],
-        self$styleObjects
-      )
-
-      self$append("styleObjects",
-        Map(
-          function(s) {
-            s$sheet <- sheetName
-            s
-          },
-          sheetStyles
-        )
-      )
 
 
       ############################
@@ -1600,17 +1566,6 @@ wbWorkbook <- R6::R6Class(
           rId
         )
 
-      ## rename styleObjects sheet component
-      if (length(self$styleObjects)) {
-        self$styleObjects <- lapply(self$styleObjects, function(x) {
-          if (x$sheet == oldName) {
-            x$sheet <- newSheetName
-          }
-
-          return(x)
-        })
-      }
-
       ## rename defined names
       if (length(self$workbook$definedNames)) {
         belongTo <- getNamedRegions(self)$sheets
@@ -1839,7 +1794,6 @@ wbWorkbook <- R6::R6Class(
       # Remove vml_rels element
 
       # Remove rowHeights element
-      # Remove styleObjects on sheet
       # Remove last sheet element from workbook
       # Remove last sheet element from workbook.xml.rels
       # Remove element from worksheets
@@ -2871,7 +2825,6 @@ wbWorkbook <- R6::R6Class(
       nSheets <- length(exSheets)
       nImages <- length(self$media)
       nCharts <- length(self$charts)
-      # nStyles <- length(self$styleObjects) # not used?
 
       exSheets <- replaceXMLEntities(exSheets)
       showText <- "A Workbook object.\n"
@@ -3786,30 +3739,6 @@ wbWorkbook <- R6::R6Class(
           stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
           "</externalReferences>"
         )
-      }
-
-      ## styles
-      numFmtIds <- 50000L
-      #for (i in which(!self$isChartSheet)) {
-      #  worksheets[[i]]$sheet_data$style_id <-
-      #    rep.int(x = NA_integer_, times = worksheets[[i]]$sheet_data$n_elements)
-      #}
-
-      for (x in self$styleObjects) {
-        if (length(x$rows) & length(x$cols)) {
-          this.sty <- x$style$clone()
-
-          if (!is.null(this.sty$numFmt)) {
-            if (this.sty$numFmt$numFmtId == 9999) {
-              this.sty$numFmt$numFmtId <- numFmtIds
-              numFmtIds <- numFmtIds + 1L
-            }
-          }
-
-          ## convert sheet name to index
-          ## this creates the XML for styles.XML
-          private$updateStyles(this.sty)
-        }
       }
 
       invisible(self)
