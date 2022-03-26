@@ -1,4 +1,5 @@
 #include "openxlsx2.h"
+#include <set>
 
 // [[Rcpp::export]]
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
@@ -104,7 +105,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
-  Rcpp::CharacterVector row_nams= {
+  std::set<std::string> row_nams {
     "r",
     "spans",
     "s",
@@ -121,7 +122,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
   };
 
   auto nn = std::distance(ws.children("row").begin(), ws.children("row").end());
-  auto kk = row_nams.length();
+  auto kk = row_nams.size();
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -139,31 +140,29 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
     bool has_rowname = false;
     for (auto attrs : row.attributes()) {
 
-      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
 
       // mimic which
-      Rcpp::IntegerVector mtc = Rcpp::match(row_nams, attr_name);
-      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+      auto find_res = row_nams.find(attr_name);
 
       // check if name is already known
-      if (all(Rcpp::is_na(mtc))) {
+      if (row_nams.count(attr_name) == 0) {
         Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
       } else {
-        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
-        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
-        if (attr_name[0] == "r") has_rowname = true;
+        auto mtc = std::distance(row_nams.begin(), find_res);
+        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        if (attr_name == "r") has_rowname = true;
       }
 
     }
 
     // some files have no row name in this case, we add one
     if (!has_rowname) {
-      Rcpp::CharacterVector attr_name = {"r"};
-      Rcpp::IntegerVector mtc = Rcpp::match(row_nams, attr_name);
-      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
-      size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
-      Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = std::to_string(itr + 1);
+      std::string attr_name = {"r"};
+      auto find_res = row_nams.find(attr_name);
+      auto mtc = std::distance(row_nams.begin(), find_res);
+      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::to_string(itr + 1);
     }
 
     // rownames as character vectors matching to <c s= ...>
