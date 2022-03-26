@@ -1,5 +1,33 @@
 #include "openxlsx2.h"
 
+
+// helper function to check if row contains any of the expected types
+bool has_it(Rcpp::DataFrame df_xf, Rcpp::CharacterVector xf_nams, size_t row) {
+
+  bool has_it = false;
+  Rcpp::CharacterVector attrnams = df_xf.names();
+
+  Rcpp::DataFrame df_tmp;
+  Rcpp::CharacterVector cv_tmp;
+
+  Rcpp::IntegerVector mtc = Rcpp::match(attrnams, xf_nams);
+  Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+
+  idx = idx[!Rcpp::is_na(mtc)];
+  df_tmp = df_xf[idx];
+
+  for (auto ii = 0; ii < df_tmp.ncol(); ++ii) {
+    cv_tmp = Rcpp::as<Rcpp::CharacterVector>(df_tmp[ii])[row];
+    if (cv_tmp[0] != "") has_it = true;
+  }
+
+  return has_it;
+}
+
+// we modify CellStyleFormats. Not CellStyles. The latter are pre defined sets,
+// and we create the set from scratch. Though we might think about adding pre-
+// defined style sets as well.
+
 // [[Rcpp::export]]
 Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
@@ -7,19 +35,19 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
   // openxml 2.8.1
   Rcpp::CharacterVector nams = {
-    "applyAlignment",
-    "applyBorder",
-    "applyFill",
-    "applyFont",
-    "applyNumberFormat",
-    "applyProtection",
-    "borderId",
-    "fillId",
-    "fontId",
     "numFmtId",
+    "fontId",
+    "fillId",
+    "borderId",
+    "xfId",
+    "applyNumberFormat",
+    "applyFont",
+    "applyFill",
+    "applyBorder",
+    "applyAlignment",
+    "applyProtection",
     "pivotButton",
     "quotePrefix",
-    "xfId",
     // child alignment
     "horizontal",
     "indent",
@@ -64,7 +92,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << attr_name << ": not found in xf name table" << std::endl;
+        Rcpp::warning("%s: not found in xf name table", attr_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
@@ -92,14 +120,14 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
           // check if name is already known
           if (all(Rcpp::is_na(mtc))) {
-            Rcpp::Rcout << attr_name << ": not found in xf name table" << std::endl;
+            Rcpp::warning("%s: not found in xf name table", attr_name);
           } else {
             size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
             Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
           }
         }
       } else {
-        Rcpp::Rcout << cld_name << ": not valid for xf in openxml 2.8.1" << std::endl;
+        Rcpp::warning("%s: not valid for xf in openxml 2.8.1", cld_name);
       }
 
     } // end aligment, extLst, protection
@@ -119,32 +147,6 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 }
 
 
-
-
-// helper function to check if row contains any of the expected types
-bool has_it(Rcpp::DataFrame df_xf, Rcpp::CharacterVector xf_nams, size_t row) {
-
-  bool has_it = false;
-  Rcpp::CharacterVector attrnams = df_xf.names();
-
-  Rcpp::DataFrame df_tmp;
-  Rcpp::CharacterVector cv_tmp;
-
-  Rcpp::IntegerVector mtc = Rcpp::match(attrnams, xf_nams);
-  Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
-
-  idx = idx[!Rcpp::is_na(mtc)];
-  df_tmp = df_xf[idx];
-
-  for (auto ii = 0; ii < df_tmp.ncol(); ++ii) {
-    cv_tmp = Rcpp::as<Rcpp::CharacterVector>(df_tmp[ii])[row];
-    if (cv_tmp[0] != "") has_it = true;
-  }
-
-  return has_it;
-}
-
-
 // [[Rcpp::export]]
 Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
@@ -154,19 +156,19 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector xf_nams = {
-    "applyAlignment",
-    "applyBorder",
-    "applyFill",
+    "numFmtId",
+    "fontId",
+    "fillId",
+    "borderId",
+    "xfId",
     "applyFont",
+    "applyFill",
+    "applyBorder",
+    "applyAlignment",
     "applyNumberFormat",
     "applyProtection",
-    "borderId",
-    "fillId",
-    "fontId",
-    "numFmtId",
     "pivotButton",
-    "quotePrefix",
-    "xfId"
+    "quotePrefix"
   };
 
   Rcpp::CharacterVector xf_nams_alignment = {
@@ -343,7 +345,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << name << ": not found in font name table" << std::endl;
+        Rcpp::warning("%s: not found in font name table", name);
       } else {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
@@ -450,7 +452,7 @@ Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << attr_name << ": not found in xf name table" << std::endl;
+        Rcpp::warning("%s: not found in numfmt name table", attr_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
@@ -553,7 +555,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << attr_name << ": not found in border name table" << std::endl;
+        Rcpp::warning("%s: not found in border name table", attr_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
@@ -573,7 +575,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << cld_name << ": not found in border name table" << std::endl;
+        Rcpp::warning("%s: not found in border name table", cld_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = cld_value;
@@ -656,7 +658,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
 
           pugi::xml_document border_node;
           pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi_parse_flags);
-          if (!result) Rcpp::stop("loading font node fail: %s", cv_s);
+          if (!result) Rcpp::stop("loading border node fail: %s", cv_s);
 
           border.append_copy(border_node.first_child());
 
@@ -664,7 +666,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
       }
 
       if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
-        Rcpp::Rcout << attr_j << ": not found in border name table" << std::endl;
+        Rcpp::warning("%s: not found in border name table", attr_j);
     }
 
     std::ostringstream oss;
@@ -716,7 +718,7 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << name << ": not found in fill name table" << std::endl;
+        Rcpp::warning("%s: not found in fill name table", name);
       } else {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
@@ -831,7 +833,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << attr_name << ": not found in cellStyle name table" << std::endl;
+        Rcpp::warning("%s: not found in cellStyle name table", attr_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
@@ -851,7 +853,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << cld_name << ": not found in cellStyle name table" << std::endl;
+        Rcpp::warning("%s: not found in cellStyle name table", cld_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = cld_value;
@@ -942,7 +944,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
       }
 
       if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
-        Rcpp::Rcout << attr_j << ": not found in cellStyle name table" << std::endl;
+        Rcpp::warning("%s: not found in cellStyle name table", attr_j);
     }
 
     std::ostringstream oss;
@@ -999,7 +1001,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << attr_name << ": not found in tableStyle name table" << std::endl;
+        Rcpp::warning("%s: not found in tableStyle name table", attr_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
@@ -1019,7 +1021,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << cld_name << ": not found in cellStyle name table" << std::endl;
+        Rcpp::warning("%s: not found in tableStyle name table", cld_name);
       } else {
         size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
         Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = cld_value;
@@ -1062,8 +1064,6 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
     pugi::xml_node tablestyle = doc.append_child("tableStyle");
-
-
 
     for (auto j = 0; j < df_tablestyle.ncol(); ++j) {
 
@@ -1109,7 +1109,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
       }
 
       if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
-        Rcpp::Rcout << attr_j << ": not found in df_tablestyle name table" << std::endl;
+        Rcpp::warning("%s: not found in df_tablestyle name table", attr_j);
     }
 
     std::ostringstream oss;
@@ -1167,7 +1167,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << name << ": not found in dxf name table" << std::endl;
+        Rcpp::warning("%s: not found in dxf name table", name);
       } else {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
@@ -1277,7 +1277,7 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
 
       // check if name is already known
       if (all(Rcpp::is_na(mtc))) {
-        Rcpp::Rcout << name << ": not found in color name table" << std::endl;
+        Rcpp::warning("%s: not found in color name table", name);
       } else {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
