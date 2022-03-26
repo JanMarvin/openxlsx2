@@ -33,7 +33,7 @@ test_that("loadWorkbook from different sources", {
   wb_file <- loadWorkbook(xlsxFile)
 
   ## check
-  expect_true(all.equal.Workbook(wb_url, wb_file), "Loading from URL vs local not equal")
+  expect_true(all.equal(wb_url, wb_file), "Loading from URL vs local not equal")
 })
 
 

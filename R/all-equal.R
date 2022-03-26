@@ -1,12 +1,6 @@
-#' @name all.equal
-#' @aliases all.equal.Workbook
-#' @title Check equality of workbooks
-#' @description Check equality of workbooks
-#' @method all.equal Workbook
-#' @param target A `Workbook` object
-#' @param current A `Workbook` object
-#' @param ... ignored
-all.equal.Workbook <- function(target, current, ...) {
+#' @method all.equal wbWorkbook
+#' @export
+all.equal.wbWorkbook <- function(target, current, ...) {
 
 
   # print("Comparing workbooks...")
@@ -113,59 +107,26 @@ all.equal.Workbook <- function(target, current, ...) {
   }
 
 
-
-  # flag <- sapply(along, function(i) isTRUE(all.equal(x$worksheets[[i]]$sheet_data, y$worksheets[[i]]$sheet_data)))
-  # if(!all(flag)){
-  #
-  #   tmp_x <- x$sheet_data[[which(!flag)[[1]]]]
-  #   tmp_y <- y$sheet_data[[which(!flag)[[1]]]]
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "r")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "r")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("r elements: %s", paste(which(flag), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "t")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "t")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("t elements: %s", paste(which(isTRUE(flag)), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  #
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "v")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "v")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("v elements: %s", paste(which(flag), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "f")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "f")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("f elements: %s", paste(which(flag), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  # }
-
-
-  flag <- all(names(x$styles) %in% names(y$styles)) & all(names(y$styles) %in% names(x$styles))
-  if (!flag) {
-    message("names styles not equal")
-    failures <- c(failures, "names of styles not equal")
+  flag <- sapply(along, function(i) !isTRUE(all.equal(x$worksheets[[i]]$sheet_data$cc, y$worksheets[[i]]$sheet_data$cc)))
+  if (any(flag)) {
+    for (i in which(flag[flag])) {
+      txt <- sprintf("cc elements on sheet %s: not equal",i)
+      message(txt)
+      failures <- c(failures, txt)
+    }
   }
 
-  flag <- all(unlist(x$styles) %in% unlist(y$styles)) & all(unlist(y$styles) %in% unlist(x$styles))
+
+  flag <- sapply(along, function(i) !isTRUE(all.equal(x$worksheets[[i]]$sheet_data$row_attr, y$worksheets[[i]]$sheet_data$row_attr)))
+  if (any(flag)) {
+    for (i in which(flag[flag])) {
+      txt <- sprintf("row_attr elements on sheet %s: not equal",i)
+      message(txt)
+      failures <- c(failures, txt)
+    }
+  }
+
+  flag <- all(x$styles_mgr$styles %in% y$styles_mgr$styles) & all(y$styles_mgr$styles %in% x$styles_mgr$styles)
   if (!flag) {
     message("styles not equal")
     failures <- c(failures, "styles not equal")
