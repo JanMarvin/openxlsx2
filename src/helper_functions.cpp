@@ -200,31 +200,31 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       case comma:
       case numeric:
         cell.v   = vals;
-        cell.c_s = "_openxlsx_NA_";
-        cell.c_t = "_openxlsx_NA_";
-        cell.is  = "_openxlsx_NA_";
-        cell.f   = "_openxlsx_NA_";
+        cell.c_s = openxlsxNA;
+        cell.c_t = openxlsxNA;
+        cell.is  = openxlsxNA;
+        cell.f   = openxlsxNA;
         break;
       case boolean:
         cell.v   = vals;
-        cell.c_s = "_openxlsx_NA_";
+        cell.c_s = openxlsxNA;
         cell.c_t = "b";
-        cell.is  = "_openxlsx_NA_";
-        cell.f   = "_openxlsx_NA_";
+        cell.is  = openxlsxNA;
+        cell.f   = openxlsxNA;
         break;
       case character:
-        cell.v   = "_openxlsx_NA_";
-        cell.c_s = "_openxlsx_NA_";
+        cell.v   = openxlsxNA;
+        cell.c_s = openxlsxNA;
         cell.c_t = "inlineStr";
         cell.is  = txt_to_is(vals, 0, 1);
-        cell.f   = "_openxlsx_NA_";
+        cell.f   = openxlsxNA;
         break;
       case hyperlink:
       case formula:
-        cell.v   = "_openxlsx_NA_";
-        cell.c_s = "_openxlsx_NA_";
+        cell.v   = openxlsxNA;
+        cell.c_s = openxlsxNA;
         cell.c_t = "str";
-        cell.is  = "_openxlsx_NA_";
+        cell.is  = openxlsxNA;
         cell.f   = vals;
         break;
       }
@@ -232,16 +232,16 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
-      // TODO change only if not "_openxlsx_NA_"
+      // TODO change only if not openxlsxNA
       Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
       Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (cell.v   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
-      if (cell.c_s != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
-      if (cell.c_t != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
-      if (cell.is  != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
-      if (cell.f   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
-      if (cell.typ != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
-      if (cell.r   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
+      if (cell.v   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
+      if (cell.c_s != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
+      if (cell.c_t != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
+      if (cell.is  != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
+      if (cell.f   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
+      if (cell.typ != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
+      if (cell.r   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
 
       ++startrow;
     }

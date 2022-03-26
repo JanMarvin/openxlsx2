@@ -228,17 +228,17 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
       // contains all values of a col
       xml_col single_xml_col {
-        "_openxlsx_NA_", // row_r
-        "_openxlsx_NA_", // c_r
-        "_openxlsx_NA_", // c_s
-        "_openxlsx_NA_", // c_t
-        "_openxlsx_NA_", // v
-        "_openxlsx_NA_", // f
-        "_openxlsx_NA_", // f_t
-        "_openxlsx_NA_", // f_ref
-        "_openxlsx_NA_", // f_ca
-        "_openxlsx_NA_", // f_si
-        "_openxlsx_NA_"  // is
+        openxlsxNA, // row_r
+        openxlsxNA, // c_r
+        openxlsxNA, // c_s
+        openxlsxNA, // c_t
+        openxlsxNA, // v
+        openxlsxNA, // f
+        openxlsxNA, // f_t
+        openxlsxNA, // f_ref
+        openxlsxNA, // f_ca
+        openxlsxNA, // f_si
+        openxlsxNA  // is
       };
 
       // get number of children and attributes
