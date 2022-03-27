@@ -28,7 +28,7 @@ int2col <- function(x) {
 #' col2int(LETTERS)
 col2int <- function(x) {
 
-  if (is.numeric(x) | is.integer(x) | is.factor(x) | suppressWarnings(isTRUE(as.character(as.numeric(x)) == x)))
+  if (is.numeric(x) || is.integer(x) || is.factor(x) || suppressWarnings(isTRUE(as.character(as.numeric(x)) == x)))
     return(as.numeric(x))
 
   if (!is.character(x)) {
