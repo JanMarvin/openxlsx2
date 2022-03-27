@@ -265,7 +265,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 
 
 // [[Rcpp::export]]
-Rcpp::List build_cell_merges(Rcpp::List comps){
+Rcpp::List build_cell_merges(Rcpp::List comps) {
 
   size_t nMerges = comps.size();
   Rcpp::List res(nMerges);

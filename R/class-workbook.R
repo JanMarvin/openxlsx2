@@ -3478,7 +3478,7 @@ wbWorkbook <- R6::R6Class(
 
 
           if (!is.null(cc)) {
-            cc$r <- paste0(cc$c_r, cc$row_r)
+            cc$r <- stri_join(cc$c_r, cc$row_r)
             # prepare data for output
 
             # there can be files, where row_attr is incomplete because a row
