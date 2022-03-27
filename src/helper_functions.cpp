@@ -1,4 +1,5 @@
 #include "openxlsx2.h"
+#include <algorithm>
 
 
 // [[Rcpp::export]]
@@ -32,6 +33,15 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
 
   for(int i = 0; i < n; i++){
     a = r[i];
+
+    // check if the value is digit only, if yes, add it and continue the loop
+    // at the top. This avoids slow:
+    // suppressWarnings(isTRUE(as.character(as.numeric(x)) == x))
+    if (std::all_of(a.begin(), a.end(), ::isdigit))
+    {
+      colNums[i] = std::stoi(a);
+      continue;
+    }
 
     // remove digits from string
     a.erase(std::remove_if(a.begin()+1, a.end(), ::isdigit), a.end());
