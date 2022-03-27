@@ -53,21 +53,26 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
 }
 
 // provide a basic rbindlist for lists of named characters
+// xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+// wb <- loadWorkbook(xlsxFile)
+// openxlsx2:::rbindlist(xml_attr(wb$styles_mgr$styles$cellXfs, "xf"))
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
 
   auto nn = x.length();
   std::vector<std::string> all_names;
 
+  // get unique names and create set
   for (auto i = 0; i < nn; ++i) {
     std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
-    std::copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
+    std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
   }
 
-  Rcpp::CharacterVector all_nams = Rcpp::wrap(all_names);
-  Rcpp::CharacterVector unique_names = Rcpp::unique(all_nams).sort();
+  std::sort(all_names.begin(), all_names.end());
+  std::set<std::string> unique_names(std::make_move_iterator(all_names.begin()),
+                                     std::make_move_iterator(all_names.end()));
 
-  auto kk = unique_names.length();
+  auto kk = unique_names.size();
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -78,15 +83,14 @@ SEXP rbindlist(Rcpp::List x) {
 
   for (auto i = 0; i < nn; ++i) {
 
-    Rcpp::CharacterVector values = Rcpp::as<Rcpp::CharacterVector>(x[i]);
-    Rcpp::CharacterVector names = values.attr("names");
+    std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
+    std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
 
-    // mimic which
-    Rcpp::IntegerVector mtc = Rcpp::match(names, unique_names);
-    std::vector<size_t> ii = Rcpp::as<std::vector<size_t>>(mtc[!Rcpp::is_na(mtc)]);
+    for (auto j = 0; j < names.size(); ++j) {
+      auto find_res = unique_names.find(names[j]);
+      auto mtc = std::distance(unique_names.begin(), find_res);
 
-    for (auto j = 0; j < ii.size(); ++j) {
-      Rcpp::as<Rcpp::CharacterVector>(df[ii[j] -1 ])[i] = values[j];
+      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = values[j];
     }
 
   }
@@ -102,7 +106,7 @@ SEXP rbindlist(Rcpp::List x) {
 
 // [[Rcpp::export]]
 SEXP copy(SEXP x) {
- return Rf_duplicate(x);
+  return Rf_duplicate(x);
 }
 
 
