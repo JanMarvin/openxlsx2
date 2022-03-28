@@ -106,10 +106,10 @@ test_that("xml_append_child", {
   xml_node <- read_xml("<node><child1/><child2/></node>")
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&amp;</new_child></node>"
-  xml_append_child(xml_node, xml_child, pointer = FALSE, escapes = TRUE)
+  expect_equal(exp, xml_append_child(xml_node, xml_child, pointer = FALSE, escapes = TRUE))
 
-  # xml_append_child(xml_node, xml_child, pointer = TRUE, escapes = FALSE)
-  # xml_append_child(xml_node, xml_child, pointer = TRUE, escapes = TRUE)
+  expect_true(inherits(xml_append_child(xml_node, xml_child, pointer = TRUE, escapes = FALSE), "pugi_xml"))
+  expect_true(inherits(xml_append_child(xml_node, xml_child, pointer = TRUE, escapes = TRUE), "pugi_xml"))
 
 })
 
