@@ -403,9 +403,6 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   assert_workbook(wb)
   sheet <- wb_validate_sheet(wb, sheet)
 
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
   # widths <- tolower(widths) ## possibly "auto"
   # if (ignoreMergedCells) {
   #   widths[widths == "auto"] <- "auto2"
@@ -432,7 +429,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 
   # TODO add bestFit option?
   bestFit <- rep("", length.out = length(cols))
-  customWidth <- rep("1", length.out = length(cols))
+  customWidth <- rep("true", length.out = length(cols))
 
   ## Remove duplicates
   widths <- widths[!duplicated(cols)]
@@ -442,9 +439,34 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   col_df <- wb$worksheets[[sheet]]$unfold_cols()
 
   if (any(widths == "auto")) {
-    bestFit <- rep("1", length(widths))
-    widths <- rep("5", length(widths))
-    customWidth <- rep("1", length(widths))
+    # TODO these did not really have any impact for me
+    # bestFit <- rep("true", length(widths))
+    # customWidth <- rep("true", length(widths))
+
+    df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
+    # TODO format(x) might not be the way it is formatted in the xlsx file.
+    col_width <- vapply(df, function(x) {max(nchar(format(x)))}, NA_real_)
+    print(col_width)
+
+    # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
+    fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
+    font_width_tab <- read.csv(fw)
+
+    # TODO base font might not be the font used in this column
+    base_font <- wb_get_base_font(wb)
+    font <- base_font$name$val
+    size <- as.integer(base_font$size$val)
+
+    sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
+    # maximum digit width of selected font
+    mdw <- font_width_tab$Width[sel]
+
+    # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
+    # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
+    # the results were close to the initial col_width sizes. Character width is still bad, numbers are
+    # way larger, therefore characters cells are to wide. Not sure if we need improve this.
+    widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
+    widths <- round(widths)
   }
 
   # create empty rows
