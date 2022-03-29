@@ -445,7 +445,6 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 
     df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
     # TODO format(x) might not be the way it is formatted in the xlsx file.
-    # +1 is just to avoid very slim columns
     col_width <- vapply(df, function(x) {max(nchar(format(x)))}, NA_real_)
     print(col_width)
 
@@ -463,7 +462,9 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
     mdw <- font_width_tab$Width[sel]
 
     # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
-    # value, but the output in excel is still off.
+    # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
+    # the results were close to the initial col_width sizes. Character width is still bad, numbers are
+    # way larger, therefore characters cells are to wide. Not sure if we need improve this.
     widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
     widths <- round(widths)
   }
