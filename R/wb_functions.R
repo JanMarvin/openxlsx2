@@ -963,6 +963,9 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   if (class(data) == "data.frame" | class(data) == "matrix") {
     is_data_frame <- TRUE
 
+    sel <- !dc %in% c(4, 5, 10)
+    data[sel] <- lapply(data[sel], as.character)
+
     # add colnames
     if (colNames)
       data <- rbind(colnames(data), data)
