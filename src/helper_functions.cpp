@@ -185,21 +185,37 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
   auto n = z.nrow();
   auto m = z.ncol();
 
+  std::vector<std::string> names;
+
+  if (ColNames)
+    names = Rcpp::as<std::vector<std::string>>(z.attr("names"));
+
   auto startcol = start_col;
   for (auto i = 0; i < m; ++i) {
 
+    bool thisColName = ColNames;
     auto startrow = start_row;
     for (auto j = 0; j < n; ++j) {
 
-      int8_t vtyp = vtyps[i];
-      // if colname is provided, the first row is always a character
-      if (ColNames & (j == 0)) vtyp = character;
+      int8_t vtyp;
+      std::string vals;
 
-      std::string vals = Rcpp::as<std::string>(Rcpp::as<Rcpp::CharacterVector>(z[i])[j]);
+      // if colname is provided, the first row is always a character
+      if (thisColName & (j == 0)) {
+        vtyp = character;
+        vals = names[i];
+
+        // restart at the top, but this time, to not pick the column name
+        thisColName = false;
+        --j;
+      } else {
+        vtyp = vtyps[i];
+        vals = Rcpp::as<std::string>(Rcpp::as<Rcpp::CharacterVector>(z[i])[j]);
+      }
+      auto pos = ((j+ColNames) * m) + i;
+
       std::string row = std::to_string(startrow);
       std::string col = int_to_col(startcol);
-
-      auto pos = (j * m) + i;
 
       // create struct
       celltyp cell;

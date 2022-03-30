@@ -966,10 +966,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     sel <- !dc %in% c(4, 5, 10)
     data[sel] <- lapply(data[sel], as.character)
 
-    # add colnames
-    if (colNames)
-      data <- rbind(colnames(data), data)
-
     # add rownames
     if (rowNames) {
       nam <- names(data)
@@ -979,7 +975,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       names(data_class) <- names(data)
       dc <- cbind(c("_rowNames_" = "character"), dc)
       names(dc) <- names(data)
-
     }
   }
 
@@ -988,10 +983,12 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   # message("sheet no: ", sheetno)
 
   # create a data frame
-  if (!is_data_frame)
+  if (!is_data_frame) {
     data <- as.data.frame(t(data))
+    colNames <- FALSE
+  }
 
-  data_nrow <- NROW(data)
+  data_nrow <- NROW(data) + colNames # Extra row for colnames
   data_ncol <- NCOL(data)
 
   endRow <- (startRow -1) + data_nrow
@@ -1044,7 +1041,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
               "is", "typ", "r")
     cc <- as.data.frame(
       matrix(data = "_openxlsx_NA_",
-             nrow = nrow(data) * ncol(data),
+             nrow = data_nrow * data_ncol,
              ncol = length(nams))
     )
     names(cc) <- nams
@@ -1196,6 +1193,11 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
   } else {
+
+    # add colnames
+    if (colNames)
+      data <- rbind(colnames(data), data)
+
     # update cell(s)
     wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames, removeCellStyle)
   }
