@@ -27,9 +27,6 @@ wbWorkbook <- R6::R6Class(
     #' @field isChartSheet isChartSheet
     isChartSheet = logical(),
 
-    #' @field colWidths colWidths
-    colWidths = list(),
-
     #' @field connections connections
     connections = NULL,
 
@@ -184,7 +181,6 @@ wbWorkbook <- R6::R6Class(
       self$charts <- list()
       self$isChartSheet <- logical()
 
-      self$colWidths <- list()
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
       self$core <-
@@ -508,7 +504,6 @@ wbWorkbook <- R6::R6Class(
       self$comments[[newSheetIndex]]         <- list()
       self$threadComments[[newSheetIndex]]   <- list()
       self$rowHeights[[newSheetIndex]]       <- list()
-      self$colWidths[[newSheetIndex]]        <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheetName)
@@ -650,7 +645,6 @@ wbWorkbook <- R6::R6Class(
       self$threadComments[[newSheetIndex]] <- self$threadComments[[clonedSheet]]
 
       self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[clonedSheet]]
-      self$colWidths[[newSheetIndex]]      <- self$colWidths[[clonedSheet]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheetName)
@@ -796,7 +790,6 @@ wbWorkbook <- R6::R6Class(
       self$drawings[[newSheetIndex]]         <- list()
       self$isChartSheet[[newSheetIndex]]     <- TRUE
       self$rowHeights[[newSheetIndex]]       <- list()
-      self$colWidths[[newSheetIndex]]        <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$append("sheetOrder", newSheetIndex)
@@ -2853,29 +2846,6 @@ wbWorkbook <- R6::R6Class(
                 )
               )
           }
-
-          if (length(self$colWidths[[i]])) {
-            cols <- names(self$colWidths[[i]])
-            widths <- unname(self$colWidths[[i]])
-
-            # is width() a list or character vector?
-            widths[widths != "auto"] <-
-              as.numeric(widths[widths != "auto"])
-            tmpTxt <-
-              c(
-                tmpTxt,
-                c(
-                  "\n\tCustom column widths (column: width)\n\t ",
-                  stri_join(
-                    sprintf("%s: %s", cols, substr(widths, 1, 5)),
-                    sep = " ",
-                    collapse = ", "
-                  )
-                )
-              )
-            tmpTxt <- c(tmpTxt, "\n")
-          }
-          c(tmpTxt, "\n\n")
         })
 
         showText <- c(showText, sheetTxt, "\n")

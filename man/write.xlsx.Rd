@@ -4,7 +4,7 @@
 \alias{write.xlsx}
 \title{write data to an xlsx file}
 \usage{
-write.xlsx(x, file, asTable = FALSE, ...)
+write.xlsx(x, file, asTable = FALSE, colWidths, ...)
 }
 \arguments{
 \item{x}{object or a list of objects that can be handled by \code{\link[=writeData]{writeData()}} to write to file}
@@ -12,6 +12,8 @@ write.xlsx(x, file, asTable = FALSE, ...)
 \item{file}{xlsx file name}
 
 \item{asTable}{write using writeDataTable as opposed to writeData}
+
+\item{colWidths}{optional vector of column widths. Can be "auto", see examples.}
 
 \item{...}{optional parameters to pass to functions:
 \itemize{

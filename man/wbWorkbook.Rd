@@ -22,8 +22,6 @@ A Workbook
 
 \item{\code{isChartSheet}}{isChartSheet}
 
-\item{\code{colWidths}}{colWidths}
-
 \item{\code{connections}}{connections}
 
 \item{\code{Content_Types}}{Content_Types}

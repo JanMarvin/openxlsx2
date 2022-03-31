@@ -1,11 +1,10 @@
-
-
 #' @name write.xlsx
 #' @title write data to an xlsx file
 #' @description write a data.frame or list of data.frames to an xlsx file
 #' @param x object or a list of objects that can be handled by [writeData()] to write to file
 #' @param file xlsx file name
 #' @param asTable write using writeDataTable as opposed to writeData
+#' @param colWidths optional vector of column widths. Can be "auto", see examples.
 #' @param ... optional parameters to pass to functions:
 #' \itemize{
 #'   \item{[wb_workbook()]}
@@ -112,7 +111,7 @@
 #' }
 #'
 #' @export
-write.xlsx <- function(x, file, asTable = FALSE, ...) {
+write.xlsx <- function(x, file, asTable = FALSE, colWidths, ...) {
 
 
   ## set scientific notation penalty
@@ -333,16 +332,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   }
 
 
-  ## auto column widths
-  colWidths <- ""
-  if ("colWidths" %in% names(params)) {
-    if (length(params$colWidths) != 1L && !is.list(params$colWidths)) {
-      warning("colWidths must be passed as a list", call. = FALSE)
-    }
-    colWidths <- params$colWidths
-  }
-
-
   ## create new Workbook object
   wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
 
@@ -469,10 +458,13 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
         )
       }
 
-      if (identical(colWidths[[i]], "auto")) {
-        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = "auto")
-      } else if (!identical(colWidths[[i]], "")) {
-        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = colWidths[[i]])
+      # colWidth is not required for the output
+      if (!missing(colWidths)) {
+        if (identical(colWidths[[i]], "auto")) {
+          setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = "auto")
+        } else if (!identical(colWidths[[i]], "")) {
+          setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = colWidths[[i]])
+        }
       }
     }
   } else {
@@ -514,10 +506,13 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       )
     }
 
-    if (identical(colWidths, "auto")) {
-      setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = "auto")
-    } else if (!identical(colWidths, "")) {
-      setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = colWidths)
+    # colWidth is not required for the output
+    if (!missing(colWidths)) {
+      if (identical(colWidths, "auto")) {
+        setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = "auto")
+      } else if (!identical(colWidths, "")) {
+        setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = colWidths)
+      }
     }
   }
 
