@@ -363,9 +363,10 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
 #' @param widths widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-#' recycled to the length of cols.
+#' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
+#' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
+#' of the selected width.
 #' @param hidden Logical vector. If TRUE the column is hidden.
-#' @param ignoreMergedCells Ignore any cells that have been merged with other cells in the calculation of "auto" column widths.
 #' @details The global min and max column width for "auto" columns is set by (default values show):
 #' \itemize{
 #'   \item{options("openxlsx.minWidth" = 3)}
@@ -385,7 +386,6 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' ## Add a worksheet
 #' wb$addWorksheet("Sheet 1")
 #'
-#'
 #' ## set col widths
 #' setColWidths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 #'
@@ -399,17 +399,14 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' wb_save(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
-setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols)), ignoreMergedCells = FALSE) {
+setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols))) {
   assert_workbook(wb)
   sheet <- wb_validate_sheet(wb, sheet)
 
-  # widths <- tolower(widths) ## possibly "auto"
-  # if (ignoreMergedCells) {
-  #   widths[widths == "auto"] <- "auto2"
-  # }
-
   # should do nothing if the cols' length is zero
   if (length(cols) == 0L) return(invisible(0))
+
+  cols <- col2int(cols)
 
   if (length(widths) > length(cols)) {
     stop("More widths than columns supplied.")
@@ -428,8 +425,8 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   }
 
   # TODO add bestFit option?
-  bestFit <- rep("", length.out = length(cols))
-  customWidth <- rep("true", length.out = length(cols))
+  bestFit <- rep("1", length.out = length(cols))
+  customWidth <- rep("1", length.out = length(cols))
 
   ## Remove duplicates
   widths <- widths[!duplicated(cols)]
@@ -439,9 +436,6 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   col_df <- wb$worksheets[[sheet]]$unfold_cols()
 
   if (any(widths == "auto")) {
-    # TODO these did not really have any impact for me
-    # bestFit <- rep("true", length(widths))
-    # customWidth <- rep("true", length(widths))
 
     df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
     # TODO format(x) might not be the way it is formatted in the xlsx file.
@@ -469,16 +463,29 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
     widths <- round(widths)
   }
 
-  # create empty rows
+  # create empty cols
   if (NROW(col_df) == 0)
-    col_df <- col_to_df(read_xml(wb$createCols(sheet, max(cols))))
+    col_df <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
 
-  select <- col_df$min %in% as.character(cols)
+  # found a few cols, but not all required cols. create the missing columns
+  if (any(!cols %in% as.numeric(col_df$min))) {
+    beg <- max(as.numeric(col_df$min)) + 1
+    end <- max(cols)
+
+    # new columns
+    new_cols <- col_to_df(read_xml(wb$createCols(sheet, beg = beg, end = end)))
+
+    # rbind only the missing columns. avoiding dups
+    sel <- !new_cols$min %in% col_df$min
+    col_df <- rbind(col_df, new_cols[sel,])
+    col_df <- col_df[order(as.numeric(col_df[, "min"])),]
+  }
+
+  select <- as.numeric(col_df$min) %in% cols
   col_df$width[select] <- widths
   col_df$hidden[select] <- tolower(hidden)
   col_df$bestFit[select] <- bestFit
   col_df$customWidth[select] <- customWidth
-
   wb$worksheets[[sheet]]$fold_cols(col_df)
 
 }

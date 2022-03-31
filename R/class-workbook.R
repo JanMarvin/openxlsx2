@@ -1624,9 +1624,11 @@ wbWorkbook <- R6::R6Class(
     #' creates column object for worksheet
     #' @param sheet sheet
     #' @param n n
-    createCols = function(sheet, n) {
+    #' @param beg beg
+    #' @param end end
+    createCols = function(sheet, n, beg, end) {
        sheet <- wb_validate_sheet(self, sheet)
-       self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n))
+       self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
     },
 
     #' @description

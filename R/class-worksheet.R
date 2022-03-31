@@ -518,8 +518,15 @@ wb_worksheet <- function() {
   wbWorksheet$new()
 }
 
-empty_cols_attr <- function(n = 0) {
+empty_cols_attr <- function(n = 0, beg, end) {
   # make make this a specific class/object?
+
+  if (!missing(beg) & !missing(end)) {
+    n_seq <- seq.int(beg, end, by = 1)
+    n <- length(n_seq)
+  } else {
+     n_seq <- seq_len(n)
+  }
 
   cols_attr_nams <- c("bestFit", "collapsed", "customWidth", "hidden", "max",
                       "min", "outlineLevel", "phonetic", "style", "width")
@@ -531,8 +538,8 @@ empty_cols_attr <- function(n = 0) {
   names(z) <- cols_attr_nams
 
   if (n > 0) {
-    z$min <- seq_len(n)
-    z$max <- seq_len(n)
+    z$min <- n_seq
+    z$max <- n_seq
     z$width <- "8.43" # default width in ms365
   }
 

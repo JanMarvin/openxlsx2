@@ -502,7 +502,7 @@ creates column object for worksheet
 \if{latex}{\out{\hypertarget{method-createCols}{}}}
 \subsection{Method \code{createCols()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n, beg, end)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -511,6 +511,10 @@ creates column object for worksheet
 \item{\code{sheet}}{sheet}
 
 \item{\code{n}}{n}
+
+\item{\code{beg}}{beg}
+
+\item{\code{end}}{end}
 }
 \if{html}{\out{</div>}}
 }
