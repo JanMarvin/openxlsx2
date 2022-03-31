@@ -18,6 +18,16 @@ test_that("strings_xml", {
     openxlsx2:::txt_to_si(txt, raw = FALSE)
   )
 
+  txt <- "foo "
+  expect_equal(
+    "<si><t xml:space=\"preserve\">foo </t></si>",
+    openxlsx2:::txt_to_si(txt, raw = TRUE, no_escapes = FALSE)
+  )
+  expect_equal(
+    "<si>\n <t xml:space=\"preserve\">foo </t>\n</si>\n",
+    openxlsx2:::txt_to_si(txt, raw = FALSE, no_escapes = FALSE)
+  )
+
   txt <- "foo&bar"
   expect_equal(
     "<si><t>foo&amp;bar</t></si>",
@@ -45,6 +55,16 @@ test_that("strings_xml", {
   )
   expect_equal(
     "<is>\n <t>foo</t>\n</is>\n",
+    openxlsx2:::txt_to_is(txt, raw = FALSE, no_escapes = FALSE)
+  )
+
+  txt <- "foo "
+  expect_equal(
+    "<is><t xml:space=\"preserve\">foo </t></is>",
+    openxlsx2:::txt_to_is(txt, raw = TRUE, no_escapes = FALSE)
+  )
+  expect_equal(
+    "<is>\n <t xml:space=\"preserve\">foo </t>\n</is>\n",
     openxlsx2:::txt_to_is(txt, raw = FALSE, no_escapes = FALSE)
   )
 
