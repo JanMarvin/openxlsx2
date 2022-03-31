@@ -200,7 +200,7 @@ wbWorksheet <- R6::R6Class(
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
       self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
-      self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
+      self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
       self$mergeCells            <- character()
