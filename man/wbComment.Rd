@@ -21,7 +21,7 @@ A comment
 
 \item{\code{author}}{The comment author}
 
-\item{\code{style}}{A style (class \code{wbStyle}) for the comment (?)}
+\item{\code{style}}{A style for the comment}
 
 \item{\code{visible}}{\code{logical}, if \code{FALSE} is not visible}
 
@@ -55,7 +55,7 @@ Creates a new \code{wbComment} object
 
 \item{\code{author}}{The comment author}
 
-\item{\code{style}}{A style (class \code{wbStyle}) for the comment (?)}
+\item{\code{style}}{A style for the comment}
 
 \item{\code{visible}}{\code{logical}, if \code{FALSE} is not visible}
 

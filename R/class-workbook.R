@@ -27,9 +27,6 @@ wbWorkbook <- R6::R6Class(
     #' @field isChartSheet isChartSheet
     isChartSheet = logical(),
 
-    #' @field colWidths colWidths
-    colWidths = list(),
-
     #' @field connections connections
     connections = NULL,
 
@@ -99,9 +96,6 @@ wbWorkbook <- R6::R6Class(
     #' @field sharedStrings sharedStrings
     sharedStrings = structure(list(), uniqueCount = 0L),
 
-    #' @field styleObjects styleObjects
-    styleObjects = list(),
-
     #' @field styles_mgr styles_mgr
     styles_mgr = NULL,
 
@@ -150,11 +144,6 @@ wbWorkbook <- R6::R6Class(
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
 
-    # FIXME styleObjectsList() may be getting removed [11]
-
-    #' @field styleObjectsList styleObjectsList
-    styleObjectsList = list(),
-
     #' @field creator A character vector of creators
     creator = character(),
 
@@ -192,7 +181,6 @@ wbWorkbook <- R6::R6Class(
       self$charts <- list()
       self$isChartSheet <- logical()
 
-      self$colWidths <- list()
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
       self$core <-
@@ -240,8 +228,6 @@ wbWorkbook <- R6::R6Class(
 
       self$styles_mgr <- style_mgr$new(self)
       self$styles_mgr$styles <- genBaseStyleSheet()
-      self$styleObjects <- list()
-
 
       self$tables <- NULL
       self$tables.xml.rels <- NULL
@@ -516,7 +502,6 @@ wbWorkbook <- R6::R6Class(
       self$comments[[newSheetIndex]]         <- list()
       self$threadComments[[newSheetIndex]]   <- list()
       self$rowHeights[[newSheetIndex]]       <- list()
-      self$colWidths[[newSheetIndex]]        <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheet)
@@ -654,35 +639,10 @@ wbWorkbook <- R6::R6Class(
       self$comments[[newSheetIndex]]       <- self$comments[[old]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
-      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[old]]
-      self$colWidths[[newSheetIndex]]      <- self$colWidths[[old]]
+      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[clonedSheet]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
-
-
-      ############################
-      ## STYLE
-      ## ... objects are stored in a global list, so we need to get all styles
-      ## assigned to the cloned sheet and duplicate them
-
-      # TODO can we replace Filter() and Map()?
-
-
-      sheetStyles <- Filter(
-        function(s) s$sheet == self$sheet_names[[old]],
-        self$styleObjects
-      )
-
-      self$append("styleObjects",
-        Map(
-          function(s) {
-            s$sheet <- new
-            s
-          },
-          sheetStyles
-        )
-      )
 
 
       ############################
@@ -825,7 +785,6 @@ wbWorkbook <- R6::R6Class(
       self$drawings[[newSheetIndex]]         <- list()
       self$isChartSheet[[newSheetIndex]]     <- TRUE
       self$rowHeights[[newSheetIndex]]       <- list()
-      self$colWidths[[newSheetIndex]]        <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$append("sheetOrder", newSheetIndex)
@@ -1595,17 +1554,6 @@ wbWorkbook <- R6::R6Class(
           rId
         )
 
-      ## rename styleObjects sheet component
-      if (length(self$styleObjects)) {
-        self$styleObjects <- lapply(self$styleObjects, function(x) {
-          if (x$sheet == oldName) {
-            x$sheet <- name
-          }
-
-          return(x)
-        })
-      }
-
       ## rename defined names
       if (length(self$workbook$definedNames)) {
         belongTo <- getNamedRegions(self)$sheets
@@ -1676,9 +1624,11 @@ wbWorkbook <- R6::R6Class(
     #' creates column object for worksheet
     #' @param sheet sheet
     #' @param n n
-    createCols = function(sheet, n) {
+    #' @param beg beg
+    #' @param end end
+    createCols = function(sheet, n, beg, end) {
        sheet <- wb_validate_sheet(self, sheet)
-       self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n))
+       self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
     },
 
     #' @description
@@ -1839,7 +1789,6 @@ wbWorkbook <- R6::R6Class(
       # Remove vml_rels element
 
       # Remove rowHeights element
-      # Remove styleObjects on sheet
       # Remove last sheet element from workbook
       # Remove last sheet element from workbook.xml.rels
       # Remove element from worksheets
@@ -2820,168 +2769,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
-    #' Add a style to a sheet
-    #' @param sheet sheet
-    #' @param style style
-    #' @param rows rows
-    #' @param cols cols
-    #' @param stack stack
-    #' @param gridExpand gridExpand
-    #' @return The `wbWorkbook` object, invisibly
-    addStyle = function(
-      sheet,
-      style,
-      rows,
-      cols,
-      stack      = FALSE,
-      gridExpand = FALSE
-    ) {
-      op <- openxlsx_options()
-      on.exit(options(op), add = TRUE)
-
-      if (!is.null(style$numFmt) & length(self$styleObjects)) {
-        if (style$numFmt$numFmtId == 165) {
-          # get max numFmtId
-          maxnumFmtId <- vapply(
-            wb$styleObjects,
-            # was as.integer() needed?  can this just be double?
-            function(i) max(i$style$numFmt$numFmtId, 0),
-            NA_real_
-          )
-          style$numFmt$numFmtId <- as.integer(max(maxnumFmtId, 165L)) + 1L
-        }
-      }
-      sheet <- wb_validate_sheet(self, sheet)
-
-      assert_style(style)
-
-      if (!is.logical(stack)) {
-        stop("stack parameter must be a logical!")
-      }
-
-      if (length(cols) == 0 | length(rows) == 0) {
-        return(invisible(0))
-      }
-
-      cols <- col2int(cols)
-      rows <- as.integer(rows)
-
-      # TODO internal expand_vectors() function?
-      ## rows and cols need to bed to bed to be the same length
-      if (gridExpand) {
-        n <- length(cols)
-        cols <- rep.int(cols, times = length(rows))
-        rows <- rep(rows, each = n)
-      } else if (length(rows) == 1 & length(cols) > 1) {
-        rows <- rep.int(rows, times = length(cols))
-      } else if (length(cols) == 1 & length(rows) > 1) {
-        cols <- rep.int(cols, times = length(rows))
-      } else if (length(rows) != length(cols)) {
-        stop("Length of rows and cols must be equal.")
-      }
-
-      sheet <- self$sheet_names[[sheet]]
-
-      if (length(self$styleObjects) == 0) {
-        self$styleObjects <- list(list(
-          style = style,
-          sheet = sheet,
-          rows = rows,
-          cols = cols
-        ))
-      } else if (stack) {
-        nStyles <- length(self$styleObjects)
-
-        ## ********** Assume all styleObjects cells have one a single worksheet **********
-        ## Loop through existing styleObjects
-        # TODO use seq_along()
-        newInds <- seq_along(rows)
-        keepStyle <- rep(TRUE, nStyles)
-        for (i in seq_len(nStyles)) {
-          if (sheet == self$styleObjects[[i]]$sheet) {
-            ## Now check rows and cols intersect
-            ## toRemove are the elements that the new style doesn't apply to, we remove these from the style object as it
-            ## is copied, merged with the new style and given the new data points
-
-            ex_row_cols <-
-              stri_join(self$styleObjects[[i]]$rows, self$styleObjects[[i]]$cols, sep = "-")
-            new_row_cols <- stri_join(rows, cols, sep = "-")
-
-
-            ## mergeInds are the intersection of the two styles that will need to merge
-            mergeInds <- which(new_row_cols %in% ex_row_cols)
-
-            ## newInds are inds that don't exist in the current - this cumulates until the end to see if any are new
-            newInds <- newInds[!newInds %in% mergeInds]
-
-
-            ## If the new style does not merge
-            if (length(mergeInds)) {
-              to_remove_from_this_style_object <-
-                which(ex_row_cols %in% new_row_cols)
-
-              ## the new style intersects with this styleObjects[[i]], we need to remove the intersecting rows and
-              ## columns from styleObjects[[i]]
-              if (length(to_remove_from_this_style_object)) {
-                ## remove these from style object
-                self$styleObjects[[i]]$rows <-
-                  self$styleObjects[[i]]$rows[-to_remove_from_this_style_object]
-                self$styleObjects[[i]]$cols <-
-                  self$styleObjects[[i]]$cols[-to_remove_from_this_style_object]
-
-                if (length(self$styleObjects[[i]]$rows) == 0 |
-                    length(self$styleObjects[[i]]$cols) == 0) {
-                  # this style applies to no rows or columns anymore
-                  keepStyle[i] <- FALSE
-                }
-              }
-
-              # append style object for intersecting cells. we are appending a
-              # new style. keepStyle is used to remove styles that apply to 0
-              # rows OR 0 columns
-              keepStyle <- c(keepStyle, TRUE)
-
-              ## Merge Style and append to styleObjects
-              self$append("styleObjects", list(
-                  list(
-                    style = mergeStyle(self$styleObjects[[i]]$style, newStyle = style),
-                    sheet = sheet,
-                    rows  = rows[mergeInds],
-                    cols  = cols[mergeInds]
-                  )
-                ))
-            }
-          } ## if sheet == styleObjects[[i]]$sheet
-        } ## End of loop through styles
-
-        ## remove any styles that no longer have any affect
-        if (!all(keepStyle)) {
-          self$styleObjects <- self$styleObjects[keepStyle]
-        }
-
-        ## append style object for non-intersecting cells
-        if (length(newInds)) {
-          self$append("styleObjects", list(
-            style = style,
-            sheet = sheet,
-            rows  = rows[newInds],
-            cols  = cols[newInds]
-          ))
-        }
-      } else {
-        ## else we are not stacking
-        self$append("styleObjects", list(
-          style = style,
-          sheet = sheet,
-          rows  = rows,
-          cols  = cols
-        ))
-      } ## End if(length(styleObjects)) else if(stack) {}
-
-      invisible(self)
-    },
-
-    #' @description
     #' Create a named region in a sheet
     #' @param ref1 ref1
     #' @param ref2 ref2
@@ -3035,7 +2822,6 @@ wbWorkbook <- R6::R6Class(
       nSheets <- length(exSheets)
       nImages <- length(self$media)
       nCharts <- length(self$charts)
-      # nStyles <- length(self$styleObjects) # not used?
 
       exSheets <- replaceXMLEntities(exSheets)
       showText <- "A Workbook object.\n"
@@ -3064,29 +2850,6 @@ wbWorkbook <- R6::R6Class(
                 )
               )
           }
-
-          if (length(self$colWidths[[i]])) {
-            cols <- names(self$colWidths[[i]])
-            widths <- unname(self$colWidths[[i]])
-
-            # is width() a list or character vector?
-            widths[widths != "auto"] <-
-              as.numeric(widths[widths != "auto"])
-            tmpTxt <-
-              c(
-                tmpTxt,
-                c(
-                  "\n\tCustom column widths (column: width)\n\t ",
-                  stri_join(
-                    sprintf("%s: %s", cols, substr(widths, 1, 5)),
-                    sep = " ",
-                    collapse = ", "
-                  )
-                )
-              )
-            tmpTxt <- c(tmpTxt, "\n")
-          }
-          c(tmpTxt, "\n\n")
         })
 
         showText <- c(showText, sheetTxt, "\n")
@@ -3700,14 +3463,11 @@ wbWorkbook <- R6::R6Class(
           prior <- ws$get_prior_sheet_data()
           post <- ws$get_post_sheet_data()
 
-          # worksheets[[i]]$sheet_data$style_id <-
-          #   as.character(worksheets[[i]]$sheet_data$style_id)
-
           cc <- ws$sheet_data$cc
 
 
           if (!is.null(cc)) {
-            cc$r <- paste0(cc$c_r, cc$row_r)
+            cc$r <- stri_join(cc$c_r, cc$row_r)
             # prepare data for output
 
             # there can be files, where row_attr is incomplete because a row
@@ -3715,12 +3475,12 @@ wbWorkbook <- R6::R6Class(
             # still row_attr is what we want!
 
             rows_attr <- ws$sheet_data$row_attr
-            ws$sheet_data$row_attr <- rows_attr[with(rows_attr, order(as.numeric(r))),]
+            ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])),]
 
             cc_rows <- ws$sheet_data$row_attr$r
             cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
 
-            ws$sheet_data$cc_out <- cc_out[with(cc_out, order(as.integer(row_r), col2int(c_r))),]
+            ws$sheet_data$cc_out <- cc_out[order(as.integer(cc_out[,"row_r"]), col2int(cc_out[, "c_r"])),]
           } else {
             ws$sheet_data$row_attr <- NULL
             ws$sheet_data$cc_out <- NULL
@@ -3744,10 +3504,6 @@ wbWorkbook <- R6::R6Class(
             cols_attr = ws$cols_attr,
             R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
           )
-
-          # # why would I want to erase everything in here?
-          # worksheets[[i]]$sheet_data$style_id <- integer()
-
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {
@@ -3966,549 +3722,6 @@ wbWorkbook <- R6::R6Class(
           "</externalReferences>"
         )
       }
-
-      ## styles
-      numFmtIds <- 50000L
-      #for (i in which(!self$isChartSheet)) {
-      #  worksheets[[i]]$sheet_data$style_id <-
-      #    rep.int(x = NA_integer_, times = worksheets[[i]]$sheet_data$n_elements)
-      #}
-
-      for (x in self$styleObjects) {
-        if (length(x$rows) & length(x$cols)) {
-          this.sty <- x$style$clone()
-
-          if (!is.null(this.sty$numFmt)) {
-            if (this.sty$numFmt$numFmtId == 9999) {
-              this.sty$numFmt$numFmtId <- numFmtIds
-              numFmtIds <- numFmtIds + 1L
-            }
-          }
-
-          ## convert sheet name to index
-          ## this creates the XML for styles.XML
-          private$updateStyles(this.sty)
-        }
-      }
-
-      invisible(self)
-    },
-
-    surroundingBorders = function(
-      colClasses,
-      sheet, startRow,
-      startCol,
-      nRow,
-      nCol,
-      borderColour,
-      borderStyle,
-      borderType
-    ) {
-      # TODO remove -- I don't think this is used?
-
-      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        tmp <- genBaseColStyle(colClasses[[i]])
-
-        colStyle <- tmp$style
-        specialFormat <- tmp$specialFormat
-
-        ## create style objects
-        sTop <- colStyle$clone()
-        sMid <- colStyle$clone()
-        sBot <- colStyle$clone()
-
-        ## First column
-        if (i == 1) {
-          if (nRow == 1 & nCol == 1) {
-
-            ## All
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sTop$borderBottom       <- borderStyle
-            sTop$borderBottomColour <- borderColour
-            sTop$borderLeft         <- borderStyle
-            sTop$borderLeftColour   <- borderColour
-            sTop$borderRight        <- borderStyle
-            sTop$borderRightColour  <- borderColour
-
-            self$append("styleObjects", list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol
-              )
-            ))
-          } else if (nCol == 1) {
-
-            ## Top
-            sTop$borderLeft        <- borderStyle
-            sTop$borderLeftColour  <- borderColour
-            sTop$borderTop         <- borderStyle
-            sTop$borderTopColour   <- borderColour
-            sTop$borderRight       <- borderStyle
-            sTop$borderRightColour <- borderColour
-
-            ## Middle
-            sMid$borderLeft        <- borderStyle
-            sMid$borderLeftColour  <- borderColour
-            sMid$borderRight       <- borderStyle
-            sMid$borderRightColour <- borderColour
-
-            ## Bottom
-            sBot$borderBottom       <- borderStyle
-            sBot$borderBottomColour <- borderColour
-            sBot$borderLeft         <- borderStyle
-            sBot$borderLeftColour   <- borderColour
-            sBot$borderRight        <- borderStyle
-            sBot$borderRightColour  <- borderColour
-
-            self$append("styleObjects", list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol
-              ),
-              list(
-                style = sMid,
-                sheet = sheet,
-                rows  = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                cols  = rep.int(startCol, nRow - 2L)
-              ),
-              list(
-                style = sBot,
-                sheet = sheet,
-                rows  = startRow + nRow - 1L,
-                cols  = startCol
-              )
-            ))
-          } else if (nRow == 1) {
-
-            ## All
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sTop$borderBottom       <- borderStyle
-            sTop$borderBottomColour <- borderColour
-            sTop$borderLeft         <- borderStyle
-            sTop$borderLeftColour   <- borderColour
-
-            self$append("styleObjects", list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol
-              )
-            ))
-          } else {
-
-            ## Top Middle Bottom
-            sTop$borderLeft         <- borderStyle
-            sTop$borderLeftColour   <- borderColour
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sMid$borderLeft         <- borderStyle
-            sMid$borderLeftColour   <- borderColour
-            sBot$borderLeft         <- borderStyle
-            sBot$borderLeftColour   <- borderColour
-            sBot$borderBottom       <- borderStyle
-            sBot$borderBottomColour <- borderColour
-
-            self$styleObjects <- c(self$styleObjects, list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol
-              )
-            ))
-
-            if (nRow > 2) {
-              self$append("styleObjects", list(
-                list(
-                  style = sMid,
-                  sheet = sheet,
-                  rows  = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                  cols  = rep.int(startCol, nRow - 2L)
-                )
-              ))
-            }
-
-            self$append("styleObjects", list(
-              list(
-                style = sBot,
-                sheet = sheet,
-                rows  = startRow + nRow - 1L,
-                cols  = startCol
-              )
-            ))
-          }
-        } else if (i == nCol) {
-          if (nRow == 1) {
-
-            ## All
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sTop$borderBottom       <- borderStyle
-            sTop$borderBottomColour <- borderColour
-            sTop$borderRight        <- borderStyle
-            sTop$borderRightColour  <- borderColour
-
-            self$append("styleObjects", list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol + nCol - 1L
-              )
-            ))
-          } else {
-
-            ## Top Middle Bottom
-            sTop$borderRight        <- borderStyle
-            sTop$borderRightColour  <- borderColour
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sMid$borderRight        <- borderStyle
-            sMid$borderRightColour  <- borderColour
-            sBot$borderRight        <- borderStyle
-            sBot$borderRightColour  <- borderColour
-            sBot$borderBottom       <- borderStyle
-            sBot$borderBottomColour <- borderColour
-
-            self$append("styleObjects", list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol + nCol - 1L
-              )
-            ))
-
-            if (nRow > 2) {
-              self$apppend("styleObjects", list(
-                list(
-                  style = sMid,
-                  sheet = sheet,
-                  rows  = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                  cols  = rep.int(startCol + nCol - 1L, nRow - 2L)
-                )
-              ))
-            }
-
-
-            self$append("styleObjects", list(
-              list(
-                style = sBot,
-                sheet = sheet,
-                rows  = startRow + nRow - 1L,
-                cols  = startCol + nCol - 1L
-              )
-            ))
-          }
-        } else { ## inside columns
-
-          if (nRow == 1) {
-
-            ## Top Bottom
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sTop$borderBottom       <- borderStyle
-            sTop$borderBottomColour <- borderColour
-
-            self$append("styleObjects", list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol + i - 1L
-              )
-            ))
-          } else {
-
-            ## Top Bottom
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sBot$borderBottom       <- borderStyle
-            sBot$borderBottomColour <- borderColour
-
-            self$append("styleObjects", list(
-              list(
-                style = sTop,
-                sheet = sheet,
-                rows  = startRow,
-                cols  = startCol + i - 1L
-              )
-            ))
-
-            ## Middle
-            if (specialFormat) {
-              self$append("styleObjects", list(
-                list(
-                  style = sMid,
-                  sheet = sheet,
-                  rows  = (startRow + 1L):(startRow + nRow - 2L), # 2nd -> 2nd to last
-                  cols  = rep.int(startCol + i - 1L, nRow - 2L)
-                )
-              ))
-            }
-
-            self$append("styleObjects", list(
-              list(
-                style = sBot,
-                sheet = sheet,
-                rows  = startRow + nRow - 1L,
-                cols  = startCol + i - 1L
-              )
-            ))
-          }
-        } ## End of if(i == 1), i == NCol, else inside columns
-      } ## End of loop through columns
-
-
-      invisible(self)
-    },
-
-    rowBorders = function(
-      colClasses,
-      sheet,
-      startRow,
-      startCol,
-      nRow,
-      nCol,
-      borderColour,
-      borderStyle,
-      borderType
-    ) {
-      # TODO remove?  This isn't used
-      # TODO can nCol be defaulted to length(colClasses)?
-      # TODO rename to: setRowBorders?
-      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        # TODO use seq_along() with colClasses?
-        tmp <- genBaseColStyle(colClasses[[i]])
-        sTop <- tmp$style
-
-        ## First column
-        if (i == 1) {
-          if (nCol == 1) {
-
-            ## All borders (rows and surrounding)
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sTop$borderBottom       <- borderStyle
-            sTop$borderBottomColour <- borderColour
-            sTop$borderLeft         <- borderStyle
-            sTop$borderLeftColour   <- borderColour
-            sTop$borderRight        <- borderStyle
-            sTop$borderRightColour  <- borderColour
-          } else {
-            ## Top, Left, Bottom
-            sTop$borderTop          <- borderStyle
-            sTop$borderTopColour    <- borderColour
-            sTop$borderBottom       <- borderStyle
-            sTop$borderBottomColour <- borderColour
-            sTop$borderLeft         <- borderStyle
-            sTop$borderLeftColour   <- borderColour
-          }
-        } else if (i == nCol) {
-
-          ## Top, Right, Bottom
-          sTop$borderTop          <- borderStyle
-          sTop$borderTopColour    <- borderColour
-          sTop$borderBottom       <- borderStyle
-          sTop$borderBottomColour <- borderColour
-          sTop$borderRight        <- borderStyle
-          sTop$borderRightColour  <- borderColour
-        } else { ## inside columns
-
-          ## Top, Middle, Bottom
-          sTop$borderTop          <- borderStyle
-          sTop$borderTopColour    <- borderColour
-          sTop$borderBottom       <- borderStyle
-          sTop$borderBottomColour <- borderColour
-        } ## End of if(i == 1), i == NCol, else inside columns
-
-        self$append("styleObjects", list(
-          list(
-            style = sTop,
-            sheet = sheet,
-            rows  = (startRow):(startRow + nRow - 1L),
-            cols  = rep(startCol + i - 1L, nRow)
-          )
-        ))
-      } ## End of loop through columns
-
-
-      invisible(self)
-    },
-
-    columnBorders = function(
-      colClasses,
-      sheet,
-      startRow,
-      startCol,
-      nRow,
-      nCol,
-      borderColour,
-      borderStyle,
-      borderType
-    ) {
-      # TODO can probably remove nCol?
-      # TODO rename to setColumnBorders
-      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        tmp <- genBaseColStyle(colClasses[[i]])
-        colStyle <- tmp$style
-        # TODO Is specialFormat used?
-        specialFormat <- tmp$specialFormat
-
-        ## create style objects
-        sTop <- colStyle$clone()
-        sMid <- colStyle$clone()
-        sBot <- colStyle$clone()
-
-        if (nRow == 1) {
-
-          sTop$borderTop          <- borderStyle
-          sTop$borderTopColour    <- borderColour
-          sTop$borderBottom       <- borderStyle
-          sTop$borderBottomColour <- borderColour
-          sTop$borderLeft         <- borderStyle
-          sTop$borderLeftColour   <- borderColour
-          sTop$borderRight        <- borderStyle
-          sTop$borderRightColour  <- borderColour
-
-          self$append("styleObjects", list(
-            list(
-              style = sTop,
-              sheet = sheet,
-              rows = startRow,
-              cols = startCol + i - 1L
-            )
-          ))
-        } else {
-
-          ## Top
-          sTop$borderTop          <- borderStyle
-          sTop$borderTopColour    <- borderColour
-          sTop$borderLeft         <- borderStyle
-          sTop$borderLeftColour   <- borderColour
-          sTop$borderRight        <- borderStyle
-          sTop$borderRightColour  <- borderColour
-
-          ## Middle
-          sMid$borderLeft         <- borderStyle
-          sMid$borderLeftColour   <- borderColour
-          sMid$borderRight        <- borderStyle
-          sMid$borderRightColour  <- borderColour
-
-          ## Bottom
-          sBot$borderBottom       <- borderStyle
-          sBot$borderBottomColour <- borderColour
-          sBot$borderLeft         <- borderStyle
-          sBot$borderLeftColour   <- borderColour
-          sBot$borderRight        <- borderStyle
-          sBot$borderRightColour  <- borderColour
-
-          colInd <- startCol + i - 1L
-
-          self$append("styleObjects", list(
-            list(
-              style = sTop,
-              sheet = sheet,
-              rows  = startRow,
-              cols  = colInd
-            )
-          ))
-
-          if (nRow > 2) {
-            self$append("styleObjects", list(
-              list(
-                style = sMid,
-                sheet = sheet,
-                rows  = (startRow + 1L):(startRow + nRow - 2L),
-                cols  = rep(colInd, nRow - 2L)
-              )
-            ))
-          }
-
-          self$append("styleObjects", list(
-            list(
-              style = sBot,
-              sheet = sheet,
-              rows  = startRow + nRow - 1L,
-              cols  = colInd
-            )
-          ))
-        }
-      } ## End of loop through columns
-
-
-      invisible(self)
-    },
-
-    allBorders = function(
-      colClasses,
-      sheet,
-      startRow,
-      startCol,
-      nRow,
-      nCol,
-      borderColour,
-      borderStyle,
-      borderType
-    ) {
-      # TODO remove this?  I don't think it's used
-      # TODO safe to remove nCol?
-      # TODO is nCol just length(colClasses?)
-      # TODO rename to setAllBorders
-      sheet <- self$sheet_names[[wb_validate_sheet(self, sheet)]]
-      ## steps
-      # get column class
-      # get corresponding base style
-
-      for (i in seq_len(nCol)) {
-        tmp <- genBaseColStyle(colClasses[[i]])
-        sTop <- tmp$style
-
-        ## All borders
-        sTop$borderTop          <- borderStyle
-        sTop$borderTopColour    <- borderColour
-
-        sTop$borderBottom       <- borderStyle
-        sTop$borderBottomColour <- borderColour
-
-        sTop$borderLeft         <- borderStyle
-        sTop$borderLeftColour   <- borderColour
-
-        sTop$borderRight        <- borderStyle
-        sTop$borderRightColour  <- borderColour
-
-        self$append("styleObjects", list(
-          list(
-            style = sTop,
-            sheet = sheet,
-            rows  = (startRow):(startRow + nRow - 1L),
-            cols  = rep(startCol + i - 1L, nRow)
-          )
-        ))
-      } ## End of loop through columns
-
 
       invisible(self)
     }

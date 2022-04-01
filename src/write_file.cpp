@@ -1,5 +1,5 @@
 #include "openxlsx2.h"
-
+#include <fstream>
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
@@ -43,7 +43,6 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   pugi::xml_document doc;
   pugi::xml_node row;
 
-  std::string rnastring = "_openxlsx_NA_";
   std::string xml_preserver = "";
 
   // non optional: treat input as valid at this stage
@@ -109,11 +108,11 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
     // append attributes <c r="A1" ...>
     cell.append_attribute("r") = to_string(cc_r[i]).c_str();
 
-    if (to_string(cc_c_s[i]).compare(rnastring.c_str()) != 0)
+    if (to_string(cc_c_s[i]).compare(openxlsxNA.c_str()) != 0)
       cell.append_attribute("s") = to_string(cc_c_s[i]).c_str();
 
     // assign type if not <v> aka numeric
-    if (to_string(cc_c_t[i]).compare(rnastring.c_str()) != 0)
+    if (to_string(cc_c_t[i]).compare(openxlsxNA.c_str()) != 0)
       cell.append_attribute("t") = to_string(cc_c_t[i]).c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
@@ -122,18 +121,18 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
 
     // <f> ... </f>
     // f node: formula to be evaluated
-    if (to_string(cc_f[i]).compare(rnastring.c_str()) != 0 || to_string(cc_f_t[i]).compare(rnastring.c_str()) != 0 || to_string(cc_f_si[i]).compare(rnastring.c_str()) != 0) {
+    if (to_string(cc_f[i]).compare(openxlsxNA.c_str()) != 0 || to_string(cc_f_t[i]).compare(openxlsxNA.c_str()) != 0 || to_string(cc_f_si[i]).compare(openxlsxNA.c_str()) != 0) {
       pugi::xml_node f = cell.append_child("f");
-      if (to_string(cc_f_t[i]).compare(rnastring.c_str()) != 0) {
+      if (to_string(cc_f_t[i]).compare(openxlsxNA.c_str()) != 0) {
         f.append_attribute("t") = to_string(cc_f_t[i]).c_str();
       }
-      if (to_string(cc_f_ref[i]).compare(rnastring.c_str()) != 0) {
+      if (to_string(cc_f_ref[i]).compare(openxlsxNA.c_str()) != 0) {
         f.append_attribute("ref") = to_string(cc_f_ref[i]).c_str();
       }
-      if (to_string(cc_f_ca[i]).compare(rnastring.c_str()) != 0) {
+      if (to_string(cc_f_ca[i]).compare(openxlsxNA.c_str()) != 0) {
         f.append_attribute("ca") = to_string(cc_f_ca[i]).c_str();
       }
-      if (to_string(cc_f_si[i]).compare(rnastring.c_str()) != 0) {
+      if (to_string(cc_f_si[i]).compare(openxlsxNA.c_str()) != 0) {
         f.append_attribute("si") = to_string(cc_f_si[i]).c_str();
         f_si = true;
       }
@@ -142,7 +141,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
     }
 
     // v node: value stored from evaluated formula
-    if (to_string(cc_v[i]).compare(rnastring.c_str()) != 0) {
+    if (to_string(cc_v[i]).compare(openxlsxNA.c_str()) != 0) {
       if (!f_si & (to_string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
@@ -153,7 +152,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
 
     // <is><t> ... </t></is>
     if(to_string(cc_c_t[i]).compare("inlineStr") == 0) {
-      if (to_string(cc_is[i]).compare(rnastring.c_str()) != 0) {
+      if (to_string(cc_is[i]).compare(openxlsxNA.c_str()) != 0) {
 
         pugi::xml_document is_node;
         pugi::xml_parse_result result = is_node.load_string(to_string(cc_is[i]).c_str(), pugi_parse_flags);

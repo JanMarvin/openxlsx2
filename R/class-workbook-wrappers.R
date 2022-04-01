@@ -288,82 +288,10 @@ wb_clone_worksheet <- function(wb, old, new) {
 }
 
 
-#' Add a style to a set of cells
-#'
-#' Function adds a style to a specified set of cells.
-#'
-#' @param wb A [wbWorkbook] object
-#' @param sheet A worksheet to apply the style to.
-#' @param style A [wbStyle] object
-#' @param rows,cols Rows and columns to apply style to.
-#' @param stack If `TRUE` the new style is merged with any existing cell styles.
-#'   If `FALSE`, any existing style is replaced by the new style.
-#' @param gridExpand If `TRUE`, style will be applied to all combinations of
-#'   `rows` and `cols.`
-#'
-#' @export
-#' @family workbook wrappers
-#' @seealso [wb_style()]
-#'
-#' @examples
-#' ## See package vignette for more examples.
-#'
-#' ## Create a new workbook
-#' wb <- wb_workbook("My name here")
-#'
-#' ## Add a worksheets
-#' wb$addWorksheet("Expenditure", showGridLines = FALSE)
-#'
-#' ## write data to worksheet 1
-#' writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
-#'
-#' ## create and add a style to the column headers
-#' headerStyle <- wbStyle$new(
-#'   fontSize     = 14,
-#'   fontColour   = "#FFFFFF",
-#'   halign       = "center",
-#'   fgFill       = "#4F81BD",
-#'   border       = c("top", "bottom"),
-#'   borderColour = "#4F81BD"
-#' )
-#'
-#' wb$addStyle(1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
-#'
-#' ## style for body
-#' bodyStyle <- wbStyle$new(border = c("top", "bottom"), borderColour = "#4F81BD")
-#' wb$addStyle(1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
-#' # set column widht for row names and column
-#' setColWidths(wb, 1, cols = 1, widths = 21)
-#' \dontrun{
-#' wb_save(wb, "addStyleExample.xlsx", overwrite = TRUE)
-#' }
-wb_add_style <- function(
-  wb,
-  sheet,
-  style,
-  rows,
-  cols,
-  stack      = FALSE,
-  gridExpand = FALSE
-) {
-  assert_workbook(wb)
-  wb$clone()$addStyle(
-    sheet      = sheet,
-    style      = style,
-    rows       = rows,
-    cols       = cols,
-    stack      = stack,
-    gridExpand = gridExpand
-  )
-}
-
-
-
-#' freezePane
-#'
-#' Freeze a worksheet pane
-#'
-#' @param wb A [wbWorkbook] object
+#' @name freezePane
+#' @title Freeze a worksheet pane
+#' @description Freeze a worksheet pane
+#' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param firstActiveRow Top row of active region
 #' @param firstActiveCol Furthest left column of active region
@@ -456,16 +384,16 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' @param wb A [wbWorkbook] object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
-#' @param widths widths to set cols to specified in Excel column width units or
-#'   "auto" for automatic sizing. The widths argument is recycled to the length
-#'   of cols.
+#' @param widths widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
+#' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
+#' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
+#' of the selected width.
 #' @param hidden Logical vector. If TRUE the column is hidden.
-#' @param ignoreMergedCells Ignore any cells that have been merged with other
-#'   cells in the calculation of "auto" column widths.
-#' @details The global min and max column width for "auto" columns is set by
-#'   (default values show): \itemize{ \item{options("openxlsx.minWidth" = 3)}
-#'   \item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width
-#'   allowed in Excel }
+#' @details The global min and max column width for "auto" columns is set by (default values show):
+#' \itemize{
+#'   \item{options("openxlsx.minWidth" = 3)}
+#'   \item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width allowed in Excel
+#' }
 #'
 #'   NOTE: The calculation of column widths can be slow for large worksheets.
 #'
@@ -483,7 +411,6 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' ## Add a worksheet
 #' wb$addWorksheet("Sheet 1")
 #'
-#'
 #' ## set col widths
 #' setColWidths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 #'
@@ -497,20 +424,14 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' wb_save(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
-setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols)), ignoreMergedCells = FALSE) {
+setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols))) {
   assert_workbook(wb)
   sheet <- wb_validate_sheet(wb, sheet)
 
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  # widths <- tolower(widths) ## possibly "auto"
-  # if (ignoreMergedCells) {
-  #   widths[widths == "auto"] <- "auto2"
-  # }
-
   # should do nothing if the cols' length is zero
   if (length(cols) == 0L) return(invisible(0))
+
+  cols <- col2int(cols)
 
   if (length(widths) > length(cols)) {
     stop("More widths than columns supplied.")
@@ -529,7 +450,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   }
 
   # TODO add bestFit option?
-  bestFit <- rep("", length.out = length(cols))
+  bestFit <- rep("1", length.out = length(cols))
   customWidth <- rep("1", length.out = length(cols))
 
   ## Remove duplicates
@@ -540,21 +461,56 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
   col_df <- wb$worksheets[[sheet]]$unfold_cols()
 
   if (any(widths == "auto")) {
-    bestFit <- rep("1", length(widths))
-    widths <- rep("5", length(widths))
-    customWidth <- rep("1", length(widths))
+
+    df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
+    # TODO format(x) might not be the way it is formatted in the xlsx file.
+    col_width <- vapply(df, function(x) {max(nchar(format(x)))}, NA_real_)
+    print(col_width)
+
+    # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
+    fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
+    font_width_tab <- read.csv(fw)
+
+    # TODO base font might not be the font used in this column
+    base_font <- wb_get_base_font(wb)
+    font <- base_font$name$val
+    size <- as.integer(base_font$size$val)
+
+    sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
+    # maximum digit width of selected font
+    mdw <- font_width_tab$Width[sel]
+
+    # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
+    # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
+    # the results were close to the initial col_width sizes. Character width is still bad, numbers are
+    # way larger, therefore characters cells are to wide. Not sure if we need improve this.
+    widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
+    widths <- round(widths)
   }
 
-  # create empty rows
+  # create empty cols
   if (NROW(col_df) == 0)
-    col_df <- col_to_df(read_xml(wb$createCols(sheet, max(cols))))
+    col_df <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
 
-  select <- col_df$min %in% as.character(cols)
+  # found a few cols, but not all required cols. create the missing columns
+  if (any(!cols %in% as.numeric(col_df$min))) {
+    beg <- max(as.numeric(col_df$min)) + 1
+    end <- max(cols)
+
+    # new columns
+    new_cols <- col_to_df(read_xml(wb$createCols(sheet, beg = beg, end = end)))
+
+    # rbind only the missing columns. avoiding dups
+    sel <- !new_cols$min %in% col_df$min
+    col_df <- rbind(col_df, new_cols[sel,])
+    col_df <- col_df[order(as.numeric(col_df[, "min"])),]
+  }
+
+  select <- as.numeric(col_df$min) %in% cols
   col_df$width[select] <- widths
   col_df$hidden[select] <- tolower(hidden)
   col_df$bestFit[select] <- bestFit
   col_df$customWidth[select] <- customWidth
-
   wb$worksheets[[sheet]]$fold_cols(col_df)
 
 }
@@ -730,57 +686,6 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 
   insertImage(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
 }
-
-
-# styles ------------------------------------------------------------------
-
-
-#' @name replaceStyle
-#' @title Replace an existing cell style
-#' @description Replace an existing cell style
-#' @param wb A workbook object
-#' @param index Index of style object to replace
-#' @param newStyle A style to replace the existing style as position index
-#' @description Replace a style object
-#' @export
-#' @seealso [getStyles()]
-#' @examples
-#'
-#' \dontrun{
-#' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#'
-#' ## create a new style and replace style 2
-#'
-#' newStyle <- createStyle(fgFill = "#00FF00")
-#'
-#' ## replace style 2
-#' getStyles(wb)[1:3] ## prints styles
-#' replaceStyle(wb, 2, newStyle = newStyle)
-#'
-#' ## Save workbook
-#' wb_save(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
-#' }
-replaceStyle <- function(wb, index, newStyle) {
-  return(NULL)
-}
-
-
-#' @name getStyles
-#' @title Returns a list of all styles in the workbook
-#' @description Returns list of style objects in the workbook
-#' @param wb A workbook object
-#' @export
-#' @seealso [replaceStyle()]
-#' @examples
-#' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#' getStyles(wb)[1:3]
-getStyles <- function(wb) {
-
-  return(NULL)
-}
-
 
 
 #' @title Remove a worksheet from a workbook
@@ -1584,7 +1489,7 @@ createNamedRegion <- function(wb, sheet, cols, rows, name, overwrite = FALSE) {
   if (tolower(name) %in% ex_names) {
     if (overwrite)
       wb$workbook$definedNames <- wb$workbook$definedNames[!ex_names %in% tolower(name)]
-    else 
+    else
       stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
   } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
     stop("name cannot look like a cell reference.")

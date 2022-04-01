@@ -7,7 +7,7 @@
 #' @param cols Columns to apply conditional formatting to
 #' @param rows Rows to apply conditional formatting to
 #' @param rule The condition under which to apply the formatting. See examples.
-#' @param style A style to apply to those cells that satisfy the rule. Default is createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+#' @param style A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'
 #' @param type Either 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith',
 #' 'endsWith', 'topN', 'bottomN', 'contains' or 'notContains' (case insensitive).
 #' @param ... See below
@@ -15,7 +15,7 @@
 #'
 #' If type == "expression"
 #' \itemize{
-#'   \item{style is a Style object. See [createStyle()]}
+#'   \item{style is a Style object.}
 #'   \item{rule is an expression. Valid operators are "<", "<=", ">", ">=", "==", "!=".}
 #' }
 #'
@@ -40,25 +40,25 @@
 #'
 #' If type == "duplicates"
 #' \itemize{
-#'   \item{style is a Style object. See [createStyle()]}
+#'   \item{style is a Style object.}
 #'   \item{rule is ignored.}
 #' }
 #'
 #' If type == "contains"
 #' \itemize{
-#'   \item{style is a Style object. See [createStyle()]}
+#'   \item{style is a Style object.}
 #'   \item{rule is the text to look for within cells}
 #' }
 #'
 #' If type == "between"
 #' \itemize{
-#'   \item{style is a Style object. See [createStyle()]}
+#'   \item{style is a Style object.}
 #'   \item{rule is a numeric vector of length 2 specifying lower and upper bound (Inclusive)}
 #' }
 #'
 #' If type == "topN"
 #' \itemize{
-#'   \item{style is a Style object. See [createStyle()]}
+#'   \item{style is a Style object.}
 #'   \item{rule is ignored}
 #'   \item{...
 #'   \itemize{
@@ -70,7 +70,7 @@
 #'
 #' If type == "bottomN"
 #' \itemize{
-#'   \item{style is a Style object. See [createStyle()]}
+#'   \item{style is a Style object.}
 #'   \item{rule is ignored}
 #'   \item{...
 #'   \itemize{
@@ -80,7 +80,6 @@
 #'    }
 #' }
 #'
-#' @seealso [createStyle()]
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -393,9 +392,6 @@ conditionalFormatting <-
       values <- rule
       rule <- style
     } else if (type == "expression") {
-      # type == "expression"
-      # - style = createStyle()
-      # - rule is an expression to evaluate
 
       # rule <- gsub(" ", "", rule)
       rule <- replaceIllegalCharacters(rule)

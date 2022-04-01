@@ -1,4 +1,5 @@
 #include "openxlsx2.h"
+#include <algorithm>
 
 
 // [[Rcpp::export]]
@@ -33,6 +34,15 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
   for(int i = 0; i < n; i++){
     a = r[i];
 
+    // check if the value is digit only, if yes, add it and continue the loop
+    // at the top. This avoids slow:
+    // suppressWarnings(isTRUE(as.character(as.numeric(x)) == x))
+    if (std::all_of(a.begin(), a.end(), ::isdigit))
+    {
+      colNums[i] = std::stoi(a);
+      continue;
+    }
+
     // remove digits from string
     a.erase(std::remove_if(a.begin()+1, a.end(), ::isdigit), a.end());
     transform(a.begin(), a.end(), a.begin(), ::toupper);
@@ -53,21 +63,26 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
 }
 
 // provide a basic rbindlist for lists of named characters
+// xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+// wb <- loadWorkbook(xlsxFile)
+// openxlsx2:::rbindlist(xml_attr(wb$styles_mgr$styles$cellXfs, "xf"))
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
 
   auto nn = x.length();
   std::vector<std::string> all_names;
 
+  // get unique names and create set
   for (auto i = 0; i < nn; ++i) {
     std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
-    std::copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
+    std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
   }
 
-  Rcpp::CharacterVector all_nams = Rcpp::wrap(all_names);
-  Rcpp::CharacterVector unique_names = Rcpp::unique(all_nams).sort();
+  std::sort(all_names.begin(), all_names.end());
+  std::set<std::string> unique_names(std::make_move_iterator(all_names.begin()),
+                                     std::make_move_iterator(all_names.end()));
 
-  auto kk = unique_names.length();
+  auto kk = unique_names.size();
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -78,15 +93,14 @@ SEXP rbindlist(Rcpp::List x) {
 
   for (auto i = 0; i < nn; ++i) {
 
-    Rcpp::CharacterVector values = Rcpp::as<Rcpp::CharacterVector>(x[i]);
-    Rcpp::CharacterVector names = values.attr("names");
+    std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
+    std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
 
-    // mimic which
-    Rcpp::IntegerVector mtc = Rcpp::match(names, unique_names);
-    std::vector<size_t> ii = Rcpp::as<std::vector<size_t>>(mtc[!Rcpp::is_na(mtc)]);
+    for (auto j = 0; j < names.size(); ++j) {
+      auto find_res = unique_names.find(names[j]);
+      auto mtc = std::distance(unique_names.begin(), find_res);
 
-    for (auto j = 0; j < ii.size(); ++j) {
-      Rcpp::as<Rcpp::CharacterVector>(df[ii[j] -1 ])[i] = values[j];
+      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = values[j];
     }
 
   }
@@ -102,7 +116,7 @@ SEXP rbindlist(Rcpp::List x) {
 
 // [[Rcpp::export]]
 SEXP copy(SEXP x) {
- return Rf_duplicate(x);
+  return Rf_duplicate(x);
 }
 
 
@@ -200,31 +214,31 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       case comma:
       case numeric:
         cell.v   = vals;
-        cell.c_s = "_openxlsx_NA_";
-        cell.c_t = "_openxlsx_NA_";
-        cell.is  = "_openxlsx_NA_";
-        cell.f   = "_openxlsx_NA_";
+        cell.c_s = openxlsxNA;
+        cell.c_t = openxlsxNA;
+        cell.is  = openxlsxNA;
+        cell.f   = openxlsxNA;
         break;
       case boolean:
         cell.v   = vals;
-        cell.c_s = "_openxlsx_NA_";
+        cell.c_s = openxlsxNA;
         cell.c_t = "b";
-        cell.is  = "_openxlsx_NA_";
-        cell.f   = "_openxlsx_NA_";
+        cell.is  = openxlsxNA;
+        cell.f   = openxlsxNA;
         break;
       case character:
-        cell.v   = "_openxlsx_NA_";
-        cell.c_s = "_openxlsx_NA_";
+        cell.v   = openxlsxNA;
+        cell.c_s = openxlsxNA;
         cell.c_t = "inlineStr";
-        cell.is  = "<is><t>" + vals + "</t></is>";
-        cell.f   = "_openxlsx_NA_";
+        cell.is  = txt_to_is(vals, 0, 1);
+        cell.f   = openxlsxNA;
         break;
       case hyperlink:
       case formula:
-        cell.v   = "_openxlsx_NA_";
-        cell.c_s = "_openxlsx_NA_";
+        cell.v   = openxlsxNA;
+        cell.c_s = openxlsxNA;
         cell.c_t = "str";
-        cell.is  = "_openxlsx_NA_";
+        cell.is  = openxlsxNA;
         cell.f   = vals;
         break;
       }
@@ -232,19 +246,69 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
-      // TODO change only if not "_openxlsx_NA_"
+      // TODO change only if not openxlsxNA
       Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
       Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (cell.v   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
-      if (cell.c_s != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
-      if (cell.c_t != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
-      if (cell.is  != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
-      if (cell.f   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
-      if (cell.typ != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
-      if (cell.r   != "_openxlsx_NA_") Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
+      if (cell.v   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
+      if (cell.c_s != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
+      if (cell.c_t != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
+      if (cell.is  != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
+      if (cell.f   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
+      if (cell.typ != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
+      if (cell.r   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
 
       ++startrow;
     }
     ++startcol;
   }
+}
+
+
+// [[Rcpp::export]]
+Rcpp::List build_cell_merges(Rcpp::List comps) {
+
+  size_t nMerges = comps.size();
+  Rcpp::List res(nMerges);
+
+  for(size_t i =0; i < nMerges; i++){
+    Rcpp::IntegerVector col = col_to_int(comps[i]);
+    Rcpp::CharacterVector comp = comps[i];
+    Rcpp::IntegerVector row(2);
+
+    for(size_t j = 0; j < 2; j++){
+      std::string rt(comp[j]);
+      rt.erase(std::remove_if(rt.begin(), rt.end(), ::isalpha), rt.end());
+      row[j] = atoi(rt.c_str());
+    }
+
+    size_t ca(col[0]);
+    size_t ck = size_t(col[1]) - ca + 1;
+
+    std::vector<int> v(ck) ;
+    for(size_t j = 0; j < ck; j++)
+      v[j] = j + ca;
+
+    size_t ra(row[0]);
+
+    size_t rk = int(row[1]) - ra + 1;
+    std::vector<int> r(rk) ;
+    for(size_t j = 0; j < rk; j++)
+      r[j] = j + ra;
+
+    Rcpp::CharacterVector M(ck*rk);
+    int ind = 0;
+    for(size_t j = 0; j < ck; j++){
+      for(size_t k = 0; k < rk; k++){
+        char name[30];
+        sprintf(&(name[0]), "%d-%d", r[k], v[j]);
+        M(ind) = name;
+        ind++;
+      }
+    }
+
+    res[i] = M;
+  }
+
+  return wrap(res) ;
+
 }

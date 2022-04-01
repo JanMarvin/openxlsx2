@@ -24,7 +24,7 @@ removeComment(wb, sheet, col, row, gridExpand = TRUE)
 
 \item{author}{Author of comment. Character vector of length 1}
 
-\item{style}{A Style object or list of style objects the same length as comment vector. See \code{\link[=createStyle]{createStyle()}}.}
+\item{style}{A Style object or list of style objects the same length as comment vector.}
 
 \item{visible}{TRUE or FALSE. Is comment visible.}
 

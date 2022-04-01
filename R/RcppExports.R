@@ -29,6 +29,10 @@ wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row) {
     invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row))
 }
 
+build_cell_merges <- function(comps) {
+    .Call(`_openxlsx2_build_cell_merges`, comps)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
@@ -39,14 +43,6 @@ df_to_xml <- function(name, df_col) {
 
 loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
-}
-
-si_to_txt <- function(doc) {
-    .Call(`_openxlsx2_si_to_txt`, doc)
-}
-
-is_to_txt <- function(is_vec) {
-    .Call(`_openxlsx2_is_to_txt`, is_vec)
 }
 
 readXMLPtr <- function(path, isfile, escapes, declaration) {
@@ -99,22 +95,6 @@ getXMLXPtr3val <- function(doc, level1, level2, child) {
 
 getXMLXPtr4val <- function(doc, level1, level2, level3, child) {
     .Call(`_openxlsx2_getXMLXPtr4val`, doc, level1, level2, level3, child)
-}
-
-setXMLXPtr1val <- function(doc, child, value, no_escapes, raw) {
-    .Call(`_openxlsx2_setXMLXPtr1val`, doc, child, value, no_escapes, raw)
-}
-
-setXMLXPtr2val <- function(doc, level1, child, value, no_escapes, raw) {
-    .Call(`_openxlsx2_setXMLXPtr2val`, doc, level1, child, value, no_escapes, raw)
-}
-
-setXMLXPtr3val <- function(doc, level1, level2, child, value, no_escapes, raw) {
-    .Call(`_openxlsx2_setXMLXPtr3val`, doc, level1, level2, child, value, no_escapes, raw)
-}
-
-setXMLXPtr4val <- function(doc, level1, level2, level3, child, value, no_escapes, raw) {
-    .Call(`_openxlsx2_setXMLXPtr4val`, doc, level1, level2, level3, child, value, no_escapes, raw)
 }
 
 getXMLXPtr1attr <- function(doc, child) {
@@ -213,6 +193,22 @@ xml_append_child <- function(node, child, pointer, escapes) {
     .Call(`_openxlsx2_xml_append_child`, node, child, pointer, escapes)
 }
 
+si_to_txt <- function(doc) {
+    .Call(`_openxlsx2_si_to_txt`, doc)
+}
+
+txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE) {
+    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw)
+}
+
+is_to_txt <- function(is_vec) {
+    .Call(`_openxlsx2_is_to_txt`, is_vec)
+}
+
+txt_to_is <- function(text, no_escapes, raw) {
+    .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw)
+}
+
 read_xf <- function(xml_doc_xf) {
     .Call(`_openxlsx2_read_xf`, xml_doc_xf)
 }
@@ -283,10 +279,6 @@ read_colors <- function(xml_doc_colors) {
 
 write_colors <- function(df_colors) {
     .Call(`_openxlsx2_write_colors`, df_colors)
-}
-
-build_cell_merges <- function(comps) {
-    .Call(`_openxlsx2_build_cell_merges`, comps)
 }
 
 set_sst <- function(sharedStrings) {
