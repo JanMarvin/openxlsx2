@@ -7,7 +7,7 @@
 wb_add_plot(
   wb,
   sheet,
-  width = 6,
+  widths = 6,
   height = 4,
   xy = NULL,
   startRow = 1,
@@ -22,8 +22,6 @@ wb_add_plot(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{width}{Width of figure. Defaults to 6in.}
-
 \item{height}{Height of figure . Defaults to 4in.}
 
 \item{xy}{Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)}
@@ -37,6 +35,8 @@ wb_add_plot(
 \item{units}{Units of width and height. Can be "in", "cm" or "px"}
 
 \item{dpi}{Image resolution}
+
+\item{width}{Width of figure. Defaults to 6in.}
 }
 \description{
 The current plot is saved to a temporary image file using dev.copy.
@@ -62,11 +62,11 @@ p2 <- qplot(age, circumference,
 
 ## Insert currently displayed plot to sheet 1, row 1, column 1
 print(p1) # plot needs to be showing
-wb_add_plot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
+wb_add_plot(wb, 1, widths = 5, height = 3.5, fileType = "png", units = "in")
 
 ## Insert plot 2
 print(p2)
-wb_add_plot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+wb_add_plot(wb, 1, xy = c("J", 2), widths = 16, height = 10, fileType = "png", units = "cm")
 
 ## Save workbook
 wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)

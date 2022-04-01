@@ -37,6 +37,6 @@ test_that("wb_set_col_widths", {
   )
 
   # a few more errors
-  expect_error(wb_set_col_widths(wb, "test", cols = "Y", width = 1:2))
+  expect_error(wb_set_col_widths(wb, "test", cols = "Y", widths = 1:2))
   expect_error(wb_set_col_widths(wb, "test", cols = "Y", hidden = 1:2))
 })

@@ -135,7 +135,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
-\item \href{#method-wb_remove_col_widths}{\code{wbWorkbook$wb_remove_col_widths()}}
+\item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
+\item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
 \item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
@@ -603,12 +604,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wb_remove_col_widths"></a>}}
-\if{latex}{\out{\hypertarget{method-wb_remove_col_widths}{}}}
-\subsection{Method \code{wb_remove_col_widths()}}{
+\if{html}{\out{<a id="method-remove_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_col_widths}{}}}
+\subsection{Method \code{remove_col_widths()}}{
 Remove row heights from a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -617,6 +618,33 @@ Remove row heights from a worksheet
 \item{\code{sheet}}{A name or index of a worksheet}
 
 \item{\code{cols}}{Indices of columns to remove custom width (if any) from.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-set_col_widths}{}}}
+\subsection{Method \code{set_col_widths()}}{
+Group cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(sheet, cols, widths = 8.43, hidden = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{widths}}{Width of columns}
+
+\item{\code{hidden}}{A logical vector to determine which cols are hidden; values
+are repeated across length of \code{cols}}
 }
 \if{html}{\out{</div>}}
 }
