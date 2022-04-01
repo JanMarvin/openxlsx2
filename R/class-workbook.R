@@ -1703,6 +1703,35 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description Remove row heights from a worksheet
+    #' @param sheet A name or index of a worksheet
+    #' @param cols Indices of columns to remove custom width (if any) from.
+    #' @return The `wbWorkbook` object, invisibly
+    removeColWidths = function(sheet, cols) {
+      sheet <- wb_validate_sheet(self, sheet)
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (!is.numeric(cols)) {
+        cols <- col2int(cols)
+      }
+
+      customCols <- as.integer(names(self$colWidths[[sheet]]))
+      removeInds <- which(customCols %in% cols)
+      if (length(removeInds)) {
+        remainingCols <- customCols[-removeInds]
+        if (length(remainingCols) == 0) {
+          wb$colWidths[[sheet]] <- list()
+        } else {
+          rem_widths <- self$colWidths[[sheet]][-removeInds]
+          names(rem_widths) <- as.character(remainingCols)
+          self$colWidths[[sheet]] <- rem_widths
+        }
+      }
+
+      invisible(self)
+    },
+
     # TODO groupRows() and groupCols() are very similiar.  Can problem turn
     # these into some wrappers for another method
 

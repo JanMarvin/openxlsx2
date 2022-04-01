@@ -490,13 +490,14 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 
 }
 
-#' @name removeColWidths
-#' @title Remove column widths from a worksheet
-
-#' @description Remove column widths from a worksheet
+#' Remove column widths from a worksheet
+#'
+#' Remove column widths from a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of columns to remove custom width (if any) from.
+#' @returns A `wbWorkbook` object, invisibly
 #' @seealso [setColWidths()]
 #' @export
 #' @examples
@@ -504,33 +505,14 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove column widths in columns 1 to 20
-#' removeColWidths(wb, 1, cols = 1:20)
+#' wb$removeColWidths(1, cols = 1:20)
 #' \dontrun{
 #' wb_save(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
 #' }
-removeColWidths <- function(wb, sheet, cols) {
-  sheet <- wb_validate_sheet(wb, sheet)
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-
-  customCols <- as.integer(names(wb$colWidths[[sheet]]))
-  removeInds <- which(customCols %in% cols)
-  if (length(removeInds)) {
-    remainingCols <- customCols[-removeInds]
-    if (length(remainingCols) == 0) {
-      wb$colWidths[[sheet]] <- list()
-    } else {
-      rem_widths <- wb$colWidths[[sheet]][-removeInds]
-      names(rem_widths) <- as.character(remainingCols)
-      wb$colWidths[[sheet]] <- rem_widths
-    }
-  }
+wb_remove_col_widths <- function(wb, sheet, cols) {
+  assert_wb(wb)
+  wb$removeColWidths(sheet = sheet, cols = cols)
 }
-
 
 
 #' @name removeRowHeights
@@ -1462,7 +1444,7 @@ createNamedRegion <- function(wb, sheet, cols, rows, name, overwrite = FALSE) {
   if (tolower(name) %in% ex_names) {
     if (overwrite)
       wb$workbook$definedNames <- wb$workbook$definedNames[!ex_names %in% tolower(name)]
-    else 
+    else
       stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
   } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
     stop("name cannot look like a cell reference.")
