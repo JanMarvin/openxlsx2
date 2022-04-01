@@ -427,8 +427,8 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
   wb$set_col_widths(
-    sheet = sheet,
-    cols = cols,
+    sheet  = sheet,
+    cols   = cols,
     widths = widths,
     # TODO allow either 1 or length(cols)
     hidden = hidden
