@@ -22,8 +22,6 @@ A Workbook
 
 \item{\code{isChartSheet}}{isChartSheet}
 
-\item{\code{colWidths}}{colWidths}
-
 \item{\code{connections}}{connections}
 
 \item{\code{Content_Types}}{Content_Types}
@@ -70,8 +68,6 @@ A Workbook
 
 \item{\code{sharedStrings}}{sharedStrings}
 
-\item{\code{styleObjects}}{styleObjects}
-
 \item{\code{styles_mgr}}{styles_mgr}
 
 \item{\code{styles_xml}}{styles_xml}
@@ -103,8 +99,6 @@ A Workbook
 \item{\code{sheetOrder}}{sheetOrder}
 
 \item{\code{path}}{path}
-
-\item{\code{styleObjectsList}}{styleObjectsList}
 
 \item{\code{creator}}{A character vector of creators}
 
@@ -147,7 +141,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-removeCellMerge}{\code{wbWorkbook$removeCellMerge()}}
 \item \href{#method-freezePanes}{\code{wbWorkbook$freezePanes()}}
 \item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
-\item \href{#method-addStyle}{\code{wbWorkbook$addStyle()}}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
@@ -509,7 +502,7 @@ creates column object for worksheet
 \if{latex}{\out{\hypertarget{method-createCols}{}}}
 \subsection{Method \code{createCols()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n, beg, end)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -518,6 +511,10 @@ creates column object for worksheet
 \item{\code{sheet}}{sheet}
 
 \item{\code{n}}{n}
+
+\item{\code{beg}}{beg}
+
+\item{\code{end}}{end}
 }
 \if{html}{\out{</div>}}
 }
@@ -875,36 +872,6 @@ Insert an image into a sheet
 \item{\code{rowOffset}}{rowOffset}
 
 \item{\code{colOffset}}{colOffset}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addStyle"></a>}}
-\if{latex}{\out{\hypertarget{method-addStyle}{}}}
-\subsection{Method \code{addStyle()}}{
-Add a style to a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addStyle(sheet, style, rows, cols, stack, gridExpand = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{style}}{style}
-
-\item{\code{rows}}{rows}
-
-\item{\code{cols}}{cols}
-
-\item{\code{stack}}{stack}
-
-\item{\code{gridExpand}}{gridExpand}
 }
 \if{html}{\out{</div>}}
 }

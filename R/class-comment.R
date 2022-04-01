@@ -13,7 +13,7 @@ wbComment <- R6::R6Class(
     #' @field author The comment author
     author = character(),
 
-    #' @field style A style (class `wbStyle`) for the comment (?)
+    #' @field style A style for the comment
     style = character(),
 
     #' @field visible `logical`, if `FALSE` is not visible
@@ -30,7 +30,7 @@ wbComment <- R6::R6Class(
     #' Creates a new `wbComment` object
     #' @param text Comment text
     #' @param author The comment author
-    #' @param style A style (class `wbStyle`) for the comment (?)
+    #' @param style A style for the comment
     #' @param visible `logical`, if `FALSE` is not visible
     #' @param width Width of the comment in ... units
     #' @param height Height of comment in ... units
@@ -92,7 +92,7 @@ wbComment <- R6::R6Class(
 #' (openxml calls them threadedComments) is not yet possible
 #' @param text Comment text. Character vector.
 #' @param author Author of comment. Character vector of length 1
-#' @param style A Style object or list of style objects the same length as comment vector. See [createStyle()].
+#' @param style A Style object or list of style objects the same length as comment vector.
 #' @param visible TRUE or FALSE. Is comment visible.
 #' @param width Textbox integer width in number of cells
 #' @param height Textbox integer height in number of cells
@@ -281,6 +281,6 @@ removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
 }
 
-wb_comment <- function(text = character(), author = character(), style = wb_style()) {
+wb_comment <- function(text = character(), author = character(), style = character()) {
   wbComment$new(text = text, author = author, style = style)
 }

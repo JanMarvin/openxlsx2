@@ -1,4 +1,5 @@
 #include "openxlsx2.h"
+#include <set>
 
 // [[Rcpp::export]]
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
@@ -104,7 +105,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
-  Rcpp::CharacterVector row_nams= {
+  std::set<std::string> row_nams {
     "r",
     "spans",
     "s",
@@ -121,7 +122,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
   };
 
   auto nn = std::distance(ws.children("row").begin(), ws.children("row").end());
-  auto kk = row_nams.length();
+  auto kk = row_nams.size();
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -139,31 +140,29 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
     bool has_rowname = false;
     for (auto attrs : row.attributes()) {
 
-      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
 
       // mimic which
-      Rcpp::IntegerVector mtc = Rcpp::match(row_nams, attr_name);
-      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+      auto find_res = row_nams.find(attr_name);
 
       // check if name is already known
-      if (all(Rcpp::is_na(mtc))) {
+      if (row_nams.count(attr_name) == 0) {
         Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
       } else {
-        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
-        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
-        if (attr_name[0] == "r") has_rowname = true;
+        auto mtc = std::distance(row_nams.begin(), find_res);
+        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        if (attr_name == "r") has_rowname = true;
       }
 
     }
 
     // some files have no row name in this case, we add one
     if (!has_rowname) {
-      Rcpp::CharacterVector attr_name = {"r"};
-      Rcpp::IntegerVector mtc = Rcpp::match(row_nams, attr_name);
-      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
-      size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
-      Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = std::to_string(itr + 1);
+      std::string attr_name = {"r"};
+      auto find_res = row_nams.find(attr_name);
+      auto mtc = std::distance(row_nams.begin(), find_res);
+      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::to_string(itr + 1);
     }
 
     // rownames as character vectors matching to <c s= ...>
@@ -229,17 +228,17 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
       // contains all values of a col
       xml_col single_xml_col {
-        "_openxlsx_NA_", // row_r
-        "_openxlsx_NA_", // c_r
-        "_openxlsx_NA_", // c_s
-        "_openxlsx_NA_", // c_t
-        "_openxlsx_NA_", // v
-        "_openxlsx_NA_", // f
-        "_openxlsx_NA_", // f_t
-        "_openxlsx_NA_", // f_ref
-        "_openxlsx_NA_", // f_ca
-        "_openxlsx_NA_", // f_si
-        "_openxlsx_NA_"  // is
+        openxlsxNA, // row_r
+        openxlsxNA, // c_r
+        openxlsxNA, // c_s
+        openxlsxNA, // c_t
+        openxlsxNA, // v
+        openxlsxNA, // f
+        openxlsxNA, // f_t
+        openxlsxNA, // f_ref
+        openxlsxNA, // f_ca
+        openxlsxNA, // f_si
+        openxlsxNA  // is
       };
 
       // get number of children and attributes
@@ -345,92 +344,4 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
   sheet_data["row_attr"] = row_attributes;
   sheet_data["cc"] = Rcpp::wrap(xml_cols);
-}
-
-
-// converts sharedstrings xml tree to R-Character Vector
-// [[Rcpp::export]]
-SEXP si_to_txt(XPtrXML doc) {
-
-  auto sst = doc->child("sst");
-  auto n = std::distance(sst.begin(), sst.end());
-
-  Rcpp::CharacterVector res(Rcpp::no_init(n));
-
-  auto i = 0;
-  for (auto si : doc->child("sst").children("si"))
-  {
-    // text to export
-    std::string text = "";
-
-    // has only t node
-    for (auto t : si.children("t")) {
-      text = t.child_value();
-    }
-
-    // has r node with t node
-    // linebreaks and spaces are handled in the nodes
-    for (auto r : si.children("r")) {
-      for (auto t :r.children("t")) {
-        text += t.child_value();
-      }
-    }
-
-    // push everything back
-    res[i] = text;
-    ++i;
-  }
-
-  return res;
-}
-
-
-// converts inlineStr xml tree to R-Character Vector
-// [[Rcpp::export]]
-SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
-
-  auto n = is_vec.length();
-  Rcpp::CharacterVector res(Rcpp::no_init(n));
-
-  for (auto i = 0; i < n; ++i) {
-
-    std::string tmp = Rcpp::as<std::string>(is_vec[i]);
-
-    pugi::xml_document doc;
-    pugi::xml_parse_result result = doc.load_string(tmp.c_str(), pugi::parse_default | pugi::parse_escapes);
-
-    if (!result) {
-      Rcpp::stop("inlineStr xml import unsuccessfull");
-    }
-
-    for (auto is : doc.children("is"))
-    {
-      // text to export
-      std::string text = "";
-
-      // has only t node
-      for (auto t : is.children("t")) {
-        text = t.child_value();
-      }
-
-      // has r node with t node
-      // phoneticPr (Phonetic Properties)
-      // r (Rich Text Run)
-      // rPr (Run Properties)
-      // rPh (Phonetic Run)
-      // t (Text)
-      // linebreaks and spaces are handled in the nodes
-      for (auto r : is.children("r")) {
-        for (auto t :r.children("t")) {
-          text += t.child_value();
-        }
-      }
-
-      // push everything back
-      res[i] = text;
-    }
-
-  }
-
-  return res;
 }

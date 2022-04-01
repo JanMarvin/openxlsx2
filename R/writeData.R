@@ -12,31 +12,6 @@
 #' `c(startCol, startRow)`.
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
-#' @param headerStyle Custom style to apply to column names.
-#' @param borders Either "`none`" (default), "`surrounding`",
-#' "`columns`", "`rows`" or *respective abbreviations*.  If
-#' "`surrounding`", a border is drawn around the data.  If "`rows`",
-#' a surrounding border is drawn with a border around each row. If
-#' "`columns`", a surrounding border is drawn with a border between
-#' each column. If "`all`" all cell borders are drawn.
-#' @param borderColour Colour of cell border.  A valid colour (belonging to `colours()` or a hex colour code, eg see [here](https://www.webfx.com/web-design/color-picker/)).
-#' @param borderStyle Border line style
-#' \itemize{
-#'    \item{**none**}{ no border}
-#'    \item{**thin**}{ thin border}
-#'    \item{**medium**}{ medium border}
-#'    \item{**dashed**}{ dashed border}
-#'    \item{**dotted**}{ dotted border}
-#'    \item{**thick**}{ thick border}
-#'    \item{**double**}{ double line border}
-#'    \item{**hair**}{ hairline border}
-#'    \item{**mediumDashed**}{ medium weight dashed border}
-#'    \item{**dashDot**}{ dash-dot border}
-#'    \item{**mediumDashDot**}{ medium weight dash-dot border}
-#'    \item{**dashDotDot**}{ dash-dot-dot border}
-#'    \item{**mediumDashDotDot**}{ medium weight dash-dot-dot border}
-#'    \item{**slantDashDot**}{ slanted dash-dot border}
-#'   }
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param keepNA If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty.
 #' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
@@ -55,14 +30,9 @@
 #' ## See formatting vignette for further examples.
 #'
 #' ## Options for default styling (These are the defaults)
-#' options("openxlsx.borderColour" = "black")
-#' options("openxlsx.borderStyle" = "thin")
-#' options("openxlsx.dateFormat" = "mm/dd/yyyy")
-#' options("openxlsx.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
-#' options("openxlsx.numFmt" = NULL)
-#'
-#' ## Change the default border colour to #4F81BD
-#' options("openxlsx.borderColour" = "#4F81BD")
+#' options("openxlsx2.dateFormat" = "mm/dd/yyyy")
+#' options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
+#' options("openxlsx2.numFmt" = NULL)
 #'
 #'
 #' #####################################################################################
@@ -76,52 +46,6 @@
 #'
 #' x <- mtcars[1:6, ]
 #' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
-#'
-#' #####################################################################################
-#' ## Bordering
-#'
-#' writeData(wb, "Cars", x,
-#'   rowNames = TRUE, startCol = "O", startRow = 3,
-#'   borders = "surrounding", borderColour = "black"
-#' ) ## black border
-#'
-#' writeData(wb, "Cars", x,
-#'   rowNames = TRUE,
-#'   startCol = 2, startRow = 12, borders = "columns"
-#' )
-#'
-#' writeData(wb, "Cars", x,
-#'   rowNames = TRUE,
-#'   startCol = "O", startRow = 12, borders = "rows"
-#' )
-#'
-#'
-#' #####################################################################################
-#' ## Header Styles
-#'
-#' hs1 <- createStyle(
-#'   fgFill = "#DCE6F1", halign = "center", textDecoration = "italic",
-#'   border = "bottom"
-#' )
-#'
-#' writeData(wb, "Cars", x,
-#'   colNames = TRUE, rowNames = TRUE, startCol = "B",
-#'   startRow = 23, borders = "rows", headerStyle = hs1, borderStyle = "dashed"
-#' )
-#'
-#'
-#' hs2 <- createStyle(
-#'   fontColour = "#ffffff", fgFill = "#4F80BD",
-#'   halign = "center", valign = "center", textDecoration = "bold",
-#'   border = "all"
-#' )
-#'
-#' writeData(wb, "Cars", x,
-#'   colNames = TRUE, rowNames = TRUE,
-#'   startCol = "O", startRow = 23, borders = "columns", headerStyle = hs2
-#' )
-#'
-#'
 #'
 #'
 #' #####################################################################################
@@ -179,10 +103,6 @@ writeData <- function(wb,
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
-  headerStyle = NULL,
-  borders = c("none", "surrounding", "rows", "columns", "all"),
-  borderColour = getOption("openxlsx.borderColour", "black"),
-  borderStyle = getOption("openxlsx.borderStyle", "thin"),
   withFilter = FALSE,
   keepNA = FALSE,
   na.string = NULL,
@@ -212,28 +132,36 @@ writeData <- function(wb,
   startRow <- as.integer(startRow)
 
   assert_workbook(wb)
-  if (!is.null(headerStyle)) assert_style(headerStyle)
   assert_class(colNames, "logical")
   assert_class(rowNames, "logical")
 
   if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
-  borders <- match.arg(borders)
-  if (length(borders) != 1) stop("borders argument must be length 1.")
-
-  ## borderColours validation
-  borderColour <- validateColour(borderColour, "Invalid border colour")
-  borderStyle <- validate_border_style(borderStyle)[[1]]
-
   ## special case - vector of hyperlinks
   # # hlinkNames not used?
   # hlinkNames <- NULL
-  if (inherits(x, "hyperlink")) {
+
+  is_hyperlink <- FALSE
+  if (is.null(dim(x))) {
+    is_hyperlink <- inherits(x, "hyperlink")
+  } else {
+    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
+  }
+
+  if (any(is_hyperlink)) {
     # consider wbHyperlink?
     # hlinkNames <- names(x)
-    colNames <- FALSE
-    x <- makeHyperlinkString(text = x)
-    class(x) <- c("character", "formula", "hyperlink")
+    if (is.null(dim(x))) {
+      colNames <- FALSE
+      x[is_hyperlink] <- makeHyperlinkString(text = x[is_hyperlink])
+      class(x[is_hyperlink]) <- c("character", "hyperlink")
+    } else {
+      # check should be in makeHyperlinkString and that apply should not be required either
+      if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
+        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) makeHyperlinkString(text = str))
+      }
+      class(x[,is_hyperlink]) <- c("character", "hyperlink")
+    }
   }
 
   ## special case - formula
@@ -431,8 +359,6 @@ writeFormula <- function(wb,
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")
   }
-
-
 
   writeData(
     wb = wb,

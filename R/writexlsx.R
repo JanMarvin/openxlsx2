@@ -1,5 +1,3 @@
-
-
 #' @name write.xlsx
 #' @title write data to an xlsx file
 #' @description write a data.frame or list of data.frames to an xlsx file
@@ -40,12 +38,6 @@
 #'  A vector of the form c(startCol, startRow)}
 #'   \item{**colNames or col.names**}{ If `TRUE`, column names of x are written.}
 #'   \item{**rowNames or row.names**}{ If `TRUE`, row names of x are written.}
-#'   \item{**headerStyle**}{ Custom style to apply to column names.}
-#'   \item{**borders**}{ Either "surrounding", "columns" or "rows" or NULL.  If "surrounding", a border is drawn around the
-#' data.  If "rows", a surrounding border is drawn a border around each row. If "columns", a surrounding border is drawn with a border
-#' between each column.  If "`all`" all cell borders are drawn.}
-#'   \item{**borderColour**}{ Colour of cell border}
-#'   \item{**borderStyle**}{ Border line style.}
 #'   \item{**keepNA**} {If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty. Defaults to FALSE.}
 #'   \item{**na.string**} {If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel. Defaults to NULL.}
 #' }
@@ -72,26 +64,19 @@
 #'
 #' columns of x with class Date or POSIXt are automatically
 #' styled as dates and datetimes respectively.
-#' @seealso [wb_add_worksheet()], [writeData()], [createStyle()] for style parameters
+#' @seealso [wb_add_worksheet()], [writeData()]
 #' @return A workbook object
 #' @examples
 #'
 #' ## write to working directory
-#' options("openxlsx.borderColour" = "#4F80BD") ## set default border colour
 #' \dontrun{
-#' write.xlsx(iris, file = "writeXLSX1.xlsx", colNames = TRUE, borders = "columns")
-#' write.xlsx(iris, file = "writeXLSX2.xlsx", colNames = TRUE, borders = "surrounding")
+#' write.xlsx(iris, file = "writeXLSX1.xlsx", colNames = TRUE)
 #' }
 #'
-#'
-#' hs <- createStyle(
-#'   textDecoration = "bold", fontColour = "#FFFFFF", fontSize = 12,
-#'   fontName = "Arial Narrow", fgFill = "#4F80BD"
-#' )
 #' \dontrun{
 #' write.xlsx(iris,
 #'   file = "writeXLSX3.xlsx",
-#'   colNames = TRUE, borders = "rows", headerStyle = hs
+#'   colNames = TRUE
 #' )
 #' }
 #'
@@ -147,10 +132,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## xy = NULL,
   ## colNames = TRUE,
   ## rowNames = FALSE,
-  ## headerStyle = NULL,
-  ## borders = NULL,
-  ## borderColour = "#4F81BD"
-  ## borderStyle
   ## keepNA = FALSE
   ## na.string = NULL
 
@@ -162,7 +143,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## rowNames = FALSE
   ## tableStyle = "TableStyleLight9"
   ## tableName = NULL
-  ## headerStyle = NULL
   ## withFilter = TRUE
 
   #---freezePane---#
@@ -304,37 +284,9 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     xy <- params$xy
   }
 
-
-  headerStyle <- NULL
-  if ("headerStyle" %in% names(params)) {
-    if (length(params$headerStyle) == 1) {
-      assert_style(params$headerStyle)
-      headerStyle <- params$headerStyle
-    } else {
-      if (all(vapply(params$headerStyle, is_wb_style, NA))) {
-        headerStyle <- params$headerStyle
-      } else {
-        stop("headerStyle must be a style object.")
-      }
-    }
-  }
-
-  borders <- NULL
-  if ("borders" %in% names(params)) {
-    borders <- tolower(params$borders)
-    if (!all(borders %in% c("surrounding", "rows", "columns", "all"))) {
-      stop("Invalid borders argument")
-    }
-  }
-
-  borderColour <- getOption("openxlsx.borderColour", "black")
-  if ("borderColour" %in% names(params)) {
-    borderColour <- params$borderColour
-  }
-
-  borderStyle <- getOption("openxlsx.borderStyle", "thin")
-  if ("borderStyle" %in% names(params)) {
-    borderStyle <- validate_border_style(params$borderStyle)
+  colWidths <- NULL
+  if ("colWidths" %in% names(params)) {
+    colWidths <- params$colWidths
   }
 
   keepNA <- FALSE
@@ -352,16 +304,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   tableStyle <- "TableStyleLight9"
   if ("tableStyle" %in% names(params)) {
     tableStyle <- params$tableStyle
-  }
-
-
-  ## auto column widths
-  colWidths <- ""
-  if ("colWidths" %in% names(params)) {
-    if (length(params$colWidths) != 1L && !is.list(params$colWidths)) {
-      warning("colWidths must be passed as a list", call. = FALSE)
-    }
-    colWidths <- params$colWidths
   }
 
 
@@ -423,23 +365,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       startCol <- rep_len(startCol, length.out = nSheets)
     }
 
-    if (!is.null(headerStyle)) {
-      headerStyle <- rep_len(list(headerStyle), nSheets)
-      # headerStyle <- lapply(seq_len(nSheets), function(x) headerStyle)
-    }
-
-    if (length(borders) != nSheets & !is.null(borders)) {
-      borders <- rep_len(borders, length.out = nSheets)
-    }
-
-    if (length(borderColour) != nSheets) {
-      borderColour <- rep_len(borderColour, length.out = nSheets)
-    }
-
-    if (length(borderStyle) != nSheets) {
-      borderStyle <- rep_len(borderStyle, length.out = nSheets)
-    }
-
     if (length(keepNA) != nSheets) {
       keepNA <- rep_len(keepNA, length.out = nSheets)
     }
@@ -475,7 +400,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
           rowNames = rowNames[[i]],
           tableStyle = tableStyle[[i]],
           tableName = NULL,
-          headerStyle = headerStyle[[i]],
           withFilter = withFilter[[i]],
           keepNA = keepNA[[i]],
           na.string = na.string[[i]]
@@ -490,19 +414,18 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
           xy = xy,
           colNames = colNames[[i]],
           rowNames = rowNames[[i]],
-          headerStyle = headerStyle[[i]],
-          borders = borders[[i]],
-          borderColour = borderColour[[i]],
-          borderStyle = borderStyle[[i]],
           keepNA = keepNA[[i]],
           na.string = na.string[[i]]
         )
       }
 
-      if (identical(colWidths[[i]], "auto")) {
-        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = "auto")
-      } else if (!identical(colWidths[[i]], "")) {
-        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = colWidths[[i]])
+      # colWidth is not required for the output
+      if (!is.null(colWidths)) {
+        if (identical(colWidths[[i]], "auto")) {
+          setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = "auto")
+        } else if (!identical(colWidths[[i]], "")) {
+          setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = colWidths[[i]])
+        }
       }
     }
   } else {
@@ -522,7 +445,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
         rowNames = rowNames,
         tableStyle = tableStyle,
         tableName = NULL,
-        headerStyle = headerStyle,
         withFilter = withFilter,
         keepNA = keepNA,
         na.string = na.string
@@ -537,20 +459,19 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
         xy = xy,
         colNames = colNames,
         rowNames = rowNames,
-        headerStyle = headerStyle,
-        borders = borders,
-        borderColour = borderColour,
-        borderStyle = borderStyle,
         withFilter = withFilter,
         keepNA = keepNA,
         na.string = na.string
       )
     }
 
-    if (identical(colWidths, "auto")) {
-      setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = "auto")
-    } else if (!identical(colWidths, "")) {
-      setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = colWidths)
+    # colWidth is not required for the output
+    if (!is.null(colWidths)) {
+      if (identical(colWidths, "auto")) {
+        setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = "auto")
+      } else if (!identical(colWidths, "")) {
+        setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = colWidths)
+      }
     }
   }
 

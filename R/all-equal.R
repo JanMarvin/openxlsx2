@@ -1,12 +1,6 @@
-#' @name all.equal
-#' @aliases all.equal.Workbook
-#' @title Check equality of workbooks
-#' @description Check equality of workbooks
-#' @method all.equal Workbook
-#' @param target A `Workbook` object
-#' @param current A `Workbook` object
-#' @param ... ignored
-all.equal.Workbook <- function(target, current, ...) {
+#' @method all.equal wbWorkbook
+#' @export
+all.equal.wbWorkbook <- function(target, current, ...) {
 
 
   # print("Comparing workbooks...")
@@ -113,218 +107,29 @@ all.equal.Workbook <- function(target, current, ...) {
   }
 
 
-
-  # flag <- sapply(along, function(i) isTRUE(all.equal(x$worksheets[[i]]$sheet_data, y$worksheets[[i]]$sheet_data)))
-  # if(!all(flag)){
-  #
-  #   tmp_x <- x$sheet_data[[which(!flag)[[1]]]]
-  #   tmp_y <- y$sheet_data[[which(!flag)[[1]]]]
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "r")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "r")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("r elements: %s", paste(which(flag), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "t")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "t")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("t elements: %s", paste(which(isTRUE(flag)), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  #
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "v")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "v")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("v elements: %s", paste(which(flag), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  #
-  #   tmp_x_e <- sapply(tmp_x, "[[", "f")
-  #   tmp_y_e <- sapply(tmp_y, "[[", "f")
-  #   flag <- paste0(tmp_x_e, "") != paste0(tmp_x_e, "")
-  #   if(any(flag)){
-  #     message(sprintf("sheet_data %s not equal", which(!flag)[[1]]))
-  #     message(sprintf("f elements: %s", paste(which(flag), collapse = ", ")))
-  #     return(FALSE)
-  #   }
-  # }
-
-
-  flag <- all(names(x$styles) %in% names(y$styles)) & all(names(y$styles) %in% names(x$styles))
-  if (!flag) {
-    message("names styles not equal")
-    failures <- c(failures, "names of styles not equal")
+  flag <- sapply(along, function(i) !isTRUE(all.equal(x$worksheets[[i]]$sheet_data$cc, y$worksheets[[i]]$sheet_data$cc)))
+  if (any(flag)) {
+    for (i in which(flag[flag])) {
+      txt <- sprintf("cc elements on sheet %s: not equal",i)
+      message(txt)
+      failures <- c(failures, txt)
+    }
   }
 
-  flag <- all(unlist(x$styles) %in% unlist(y$styles)) & all(unlist(y$styles) %in% unlist(x$styles))
+
+  flag <- sapply(along, function(i) !isTRUE(all.equal(x$worksheets[[i]]$sheet_data$row_attr, y$worksheets[[i]]$sheet_data$row_attr)))
+  if (any(flag)) {
+    for (i in which(flag[flag])) {
+      txt <- sprintf("row_attr elements on sheet %s: not equal",i)
+      message(txt)
+      failures <- c(failures, txt)
+    }
+  }
+
+  flag <- all(x$styles_mgr$styles %in% y$styles_mgr$styles) & all(y$styles_mgr$styles %in% x$styles_mgr$styles)
   if (!flag) {
     message("styles not equal")
     failures <- c(failures, "styles not equal")
-  }
-
-
-  flag <- length(x$styleObjects) == length(y$styleObjects)
-  if (!flag) {
-    message("styleObjects lengths not equal")
-    failures <- c(failures, "styleObjects lengths not equal")
-  }
-
-
-  for (i in seq_along(x$styleObjects)) {
-    sx <- x$styleObjects[[i]]
-    sy <- y$styleObjects[[i]]
-
-
-    # TODOS simplify: foo(x, y) isTRUE(all.equal(x, y)) --> then c(msg, msg); don't report msg each time
-    flag <- isTRUE(all.equal(sx$sheet, sy$sheet))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' sheet name not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' sheet name not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$rows, sy$rows))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' rows not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' rows not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$cols, sy$cols))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' cols not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' cols not equal", i))
-    }
-
-    ## check style class equality
-    flag <- isTRUE(all.equal(sx$style$fontName, sy$style$fontName))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' fontName not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' fontName not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$fontColour, sy$style$fontColour))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' fontColour not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' fontColour not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$fontSize, sy$style$fontSize))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' fontSize not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' fontSize not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$fontFamily, sy$style$fontFamily))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' fontFamily not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' fontFamily not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$fontDecoration, sy$style$fontDecoration))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' fontDecoration not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' fontDecoration not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderTop, sy$style$borderTop))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderTop not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderTop not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderLeft, sy$style$borderLeft))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderLeft not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderLeft not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderRight, sy$style$borderRight))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderRight not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderRight not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderBottom, sy$style$borderBottom))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderBottom not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderBottom not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderTopColour, sy$style$borderTopColour))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderTopColour not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderTopColour not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderLeftColour, sy$style$borderLeftColour))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderLeftColour not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderLeftColour not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderRightColour, sy$style$borderRightColour))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderRightColour not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderRightColour not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$borderBottomColour, sy$style$borderBottomColour))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' borderBottomColour not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' borderBottomColour not equal", i))
-    }
-
-
-    flag <- isTRUE(all.equal(sx$style$halign, sy$style$halign))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' halign not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' halign not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$valign, sy$style$valign))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' valign not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' valign not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$indent, sy$style$indent))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' indent not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' indent not equal", i))
-    }
-
-
-    flag <- isTRUE(all.equal(sx$style$textRotation, sy$style$textRotation))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' textRotation not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' textRotation not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$numFmt, sy$style$numFmt))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' numFmt not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' numFmt not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$fill, sy$style$fill))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' fill not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' fill not equal", i))
-    }
-
-    flag <- isTRUE(all.equal(sx$style$wrapText, sy$style$wrapText))
-    if (!flag) {
-      message(sprintf("styleObjects '%s' wrapText not equal", i))
-      failures <- c(failures, sprintf("styleObjects '%s' wrapText not equal", i))
-    }
   }
 
 
@@ -344,34 +149,6 @@ all.equal.Workbook <- function(target, current, ...) {
   if (!flag) {
     message("workbook.xml.rels not equal")
     failures <- c(failures, "wb$workbook.xml.rels")
-  }
-
-
-  for (i in seq_along(x$styleObjects)) {
-    ws_x <- x$worksheets[[i]]
-    ws_y <- y$worksheets[[i]]
-
-    flag <- all(names(ws_x) %in% names(ws_y)) & all(names(ws_y) %in% names(ws_x))
-    if (!flag) {
-      message(sprintf("names of worksheet elements for sheet %s not equal", i))
-      failures <- c(failures, sprintf("names of worksheet elements for sheet %s not equal", i))
-    }
-
-    nms <- c(
-      "sheetPr", "dataValidations", "sheetViews", "cols", "pageMargins",
-      "extLst", "conditionalFormatting", "oleObjects",
-      "colBreaks", "dimension", "drawing", "sheetFormatPr", "tableParts",
-      "mergeCells", "hyperlinks", "headerFooter", "autoFilter",
-      "rowBreaks", "pageSetup", "freezePane", "legacyDrawingHF", "legacyDrawing"
-    )
-
-    for (j in nms) {
-      flag <- isTRUE(all.equal(gsub(" |\t", "", ws_x[[j]]), gsub(" |\t", "", ws_y[[j]])))
-      if (!flag) {
-        message(sprintf("worksheet '%s', element '%s' not equal", i, j))
-        failures <- c(failures, sprintf("worksheet '%s', element '%s' not equal", i, j))
-      }
-    }
   }
 
 

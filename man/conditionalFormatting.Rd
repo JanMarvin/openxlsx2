@@ -27,7 +27,7 @@ conditionalFormatting(
 
 \item{rule}{The condition under which to apply the formatting. See examples.}
 
-\item{style}{A style to apply to those cells that satisfy the rule. Default is createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")}
+\item{style}{A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'}
 
 \item{type}{Either 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith',
 'endsWith', 'topN', 'bottomN', 'contains' or 'notContains' (case insensitive).}
@@ -42,7 +42,7 @@ See Examples.
 
 If type == "expression"
 \itemize{
-\item{style is a Style object. See \code{\link[=createStyle]{createStyle()}}}
+\item{style is a Style object.}
 \item{rule is an expression. Valid operators are "<", "<=", ">", ">=", "==", "!=".}
 }
 
@@ -67,25 +67,25 @@ If type == "databar"
 
 If type == "duplicates"
 \itemize{
-\item{style is a Style object. See \code{\link[=createStyle]{createStyle()}}}
+\item{style is a Style object.}
 \item{rule is ignored.}
 }
 
 If type == "contains"
 \itemize{
-\item{style is a Style object. See \code{\link[=createStyle]{createStyle()}}}
+\item{style is a Style object.}
 \item{rule is the text to look for within cells}
 }
 
 If type == "between"
 \itemize{
-\item{style is a Style object. See \code{\link[=createStyle]{createStyle()}}}
+\item{style is a Style object.}
 \item{rule is a numeric vector of length 2 specifying lower and upper bound (Inclusive)}
 }
 
 If type == "topN"
 \itemize{
-\item{style is a Style object. See \code{\link[=createStyle]{createStyle()}}}
+\item{style is a Style object.}
 \item{rule is ignored}
 \item{...
 \itemize{
@@ -97,7 +97,7 @@ If type == "topN"
 
 If type == "bottomN"
 \itemize{
-\item{style is a Style object. See \code{\link[=createStyle]{createStyle()}}}
+\item{style is a Style object.}
 \item{rule is ignored}
 \item{...
 \itemize{
@@ -277,7 +277,4 @@ conditionalFormatting(wb, "logical operators",
                       rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 )
 
-}
-\seealso{
-\code{\link[=createStyle]{createStyle()}}
 }

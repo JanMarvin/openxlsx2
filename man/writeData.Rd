@@ -14,10 +14,6 @@ writeData(
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
-  headerStyle = NULL,
-  borders = c("none", "surrounding", "rows", "columns", "all"),
-  borderColour = getOption("openxlsx.borderColour", "black"),
-  borderStyle = getOption("openxlsx.borderStyle", "thin"),
   withFilter = FALSE,
   keepNA = FALSE,
   na.string = NULL,
@@ -47,35 +43,6 @@ writeData(
 
 \item{rowNames}{If \code{TRUE}, data.frame row names of x are written.}
 
-\item{headerStyle}{Custom style to apply to column names.}
-
-\item{borders}{Either "\code{none}" (default), "\code{surrounding}",
-"\code{columns}", "\code{rows}" or \emph{respective abbreviations}.  If
-"\code{surrounding}", a border is drawn around the data.  If "\code{rows}",
-a surrounding border is drawn with a border around each row. If
-"\code{columns}", a surrounding border is drawn with a border between
-each column. If "\code{all}" all cell borders are drawn.}
-
-\item{borderColour}{Colour of cell border.  A valid colour (belonging to \code{colours()} or a hex colour code, eg see \href{https://www.webfx.com/web-design/color-picker/}{here}).}
-
-\item{borderStyle}{Border line style
-\itemize{
-\item{\strong{none}}{ no border}
-\item{\strong{thin}}{ thin border}
-\item{\strong{medium}}{ medium border}
-\item{\strong{dashed}}{ dashed border}
-\item{\strong{dotted}}{ dotted border}
-\item{\strong{thick}}{ thick border}
-\item{\strong{double}}{ double line border}
-\item{\strong{hair}}{ hairline border}
-\item{\strong{mediumDashed}}{ medium weight dashed border}
-\item{\strong{dashDot}}{ dash-dot border}
-\item{\strong{mediumDashDot}}{ medium weight dash-dot border}
-\item{\strong{dashDotDot}}{ dash-dot-dot border}
-\item{\strong{mediumDashDotDot}}{ medium weight dash-dot-dot border}
-\item{\strong{slantDashDot}}{ slanted dash-dot border}
-}}
-
 \item{withFilter}{If \code{TRUE}, add filters to the column name row. NOTE can only have one filter per worksheet.}
 
 \item{keepNA}{If \code{TRUE}, NA values are converted to #N/A (or \code{na.string}, if not NULL) in Excel, else NA cells will be empty.}
@@ -104,14 +71,9 @@ The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data f
 ## See formatting vignette for further examples.
 
 ## Options for default styling (These are the defaults)
-options("openxlsx.borderColour" = "black")
-options("openxlsx.borderStyle" = "thin")
-options("openxlsx.dateFormat" = "mm/dd/yyyy")
-options("openxlsx.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
-options("openxlsx.numFmt" = NULL)
-
-## Change the default border colour to #4F81BD
-options("openxlsx.borderColour" = "#4F81BD")
+options("openxlsx2.dateFormat" = "mm/dd/yyyy")
+options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
+options("openxlsx2.numFmt" = NULL)
 
 
 #####################################################################################
@@ -125,52 +87,6 @@ wb$addWorksheet("Formula")
 
 x <- mtcars[1:6, ]
 writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
-
-#####################################################################################
-## Bordering
-
-writeData(wb, "Cars", x,
-  rowNames = TRUE, startCol = "O", startRow = 3,
-  borders = "surrounding", borderColour = "black"
-) ## black border
-
-writeData(wb, "Cars", x,
-  rowNames = TRUE,
-  startCol = 2, startRow = 12, borders = "columns"
-)
-
-writeData(wb, "Cars", x,
-  rowNames = TRUE,
-  startCol = "O", startRow = 12, borders = "rows"
-)
-
-
-#####################################################################################
-## Header Styles
-
-hs1 <- createStyle(
-  fgFill = "#DCE6F1", halign = "center", textDecoration = "italic",
-  border = "bottom"
-)
-
-writeData(wb, "Cars", x,
-  colNames = TRUE, rowNames = TRUE, startCol = "B",
-  startRow = 23, borders = "rows", headerStyle = hs1, borderStyle = "dashed"
-)
-
-
-hs2 <- createStyle(
-  fontColour = "#ffffff", fgFill = "#4F80BD",
-  halign = "center", valign = "center", textDecoration = "bold",
-  border = "all"
-)
-
-writeData(wb, "Cars", x,
-  colNames = TRUE, rowNames = TRUE,
-  startCol = "O", startRow = 23, borders = "columns", headerStyle = hs2
-)
-
-
 
 
 #####################################################################################

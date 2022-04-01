@@ -55,12 +55,6 @@ or a valid hex colour beginning with "#".}
 A vector of the form c(startCol, startRow)}
 \item{\strong{colNames or col.names}}{ If \code{TRUE}, column names of x are written.}
 \item{\strong{rowNames or row.names}}{ If \code{TRUE}, row names of x are written.}
-\item{\strong{headerStyle}}{ Custom style to apply to column names.}
-\item{\strong{borders}}{ Either "surrounding", "columns" or "rows" or NULL.  If "surrounding", a border is drawn around the
-data.  If "rows", a surrounding border is drawn a border around each row. If "columns", a surrounding border is drawn with a border
-between each column.  If "\code{all}" all cell borders are drawn.}
-\item{\strong{borderColour}}{ Colour of cell border}
-\item{\strong{borderStyle}}{ Border line style.}
 \item{\strong{keepNA}} {If \code{TRUE}, NA values are converted to #N/A (or \code{na.string}, if not NULL) in Excel, else NA cells will be empty. Defaults to FALSE.}
 \item{\strong{na.string}} {If not NULL, and if \code{keepNA} is \code{TRUE}, NA values are converted to this string in Excel. Defaults to NULL.}
 }
@@ -89,21 +83,14 @@ styled as dates and datetimes respectively.
 \examples{
 
 ## write to working directory
-options("openxlsx.borderColour" = "#4F80BD") ## set default border colour
 \dontrun{
-write.xlsx(iris, file = "writeXLSX1.xlsx", colNames = TRUE, borders = "columns")
-write.xlsx(iris, file = "writeXLSX2.xlsx", colNames = TRUE, borders = "surrounding")
+write.xlsx(iris, file = "writeXLSX1.xlsx", colNames = TRUE)
 }
 
-
-hs <- createStyle(
-  textDecoration = "bold", fontColour = "#FFFFFF", fontSize = 12,
-  fontName = "Arial Narrow", fgFill = "#4F80BD"
-)
 \dontrun{
 write.xlsx(iris,
   file = "writeXLSX3.xlsx",
-  colNames = TRUE, borders = "rows", headerStyle = hs
+  colNames = TRUE
 )
 }
 
@@ -130,5 +117,5 @@ write.xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5,
 
 }
 \seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}, \code{\link[=createStyle]{createStyle()}} for style parameters
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}
 }

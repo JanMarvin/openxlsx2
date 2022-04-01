@@ -481,7 +481,7 @@ wb_to_df <- function(
   zz$cols <- match(cc$c_r, colnames(z)) - 1
   zz$rows <- match(cc$row_r, rownames(z)) - 1
 
-  zz <- zz[with(zz, ordered(order(cols, rows))),] #nolint
+  zz <- zz[order(zz[, "cols"], zz[,"rows"]),]
   zz <- zz[zz$val != "_openxlsx_NA_",]
   long_to_wide(z, tt, zz)
 
@@ -785,7 +785,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
   # order cc
-  cc <- cc[with(cc, order(as.integer(row_r), col2int(c_r))), ] #nolint
+  cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
   cc$ordered_cols <- NULL
   cc$ordered_rows <- NULL
 
@@ -909,6 +909,9 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
   if (class(data) == "data.frame" | class(data) == "matrix") {
     is_data_frame <- TRUE
+
+    sel <- !dc %in% c(4, 5, 10)
+    data[sel] <- lapply(data[sel], as.character)
 
     # add colnames
     if (colNames)

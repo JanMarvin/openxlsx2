@@ -18,26 +18,10 @@ wbSheetData <- R6::R6Class(
     #' @field cc_out cc_out
     cc_out = NULL,
 
-    #' @field style_id style_id
-    style_id = character(),
-
-    #' @field data_count data_count
-
-    data_count = 0L,
-
-    #' @field n_elements n_elements
-    n_elements = 0L,
-
     #' @description
     #' Creates a new `wbSheetData` object
     #' @return a `wbSheetData` object
     initialize = function() {
-
-      self$style_id <- character()
-
-      self$data_count <- 0L
-      self$n_elements <- 0L
-
       self
     }
   )
