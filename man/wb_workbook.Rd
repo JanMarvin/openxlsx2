@@ -48,13 +48,12 @@ wb <- wb_workbook(
 }
 \seealso{
 Other workbook wrappers: 
+\code{\link{freezePane}},
 \code{\link{setColWidths}()},
 \code{\link{setLastModifiedBy}()},
-\code{\link{wb_add_style}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
-\code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
 \code{\link{wb_set_row_heights}()},
