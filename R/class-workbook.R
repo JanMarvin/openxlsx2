@@ -628,18 +628,15 @@ wbWorkbook <- R6::R6Class(
           NA_character_,
           USE.NAMES = FALSE
         )
-      # The IDs in the drawings array are sheet-specific, so within the new cloned sheet
-      # the same IDs can be used => no need to modify drawings
+      # The IDs in the drawings array are sheet-specific, so within the new
+      # cloned sheet the same IDs can be used => no need to modify drawings
       self$drawings[[newSheetIndex]]       <- self$drawings[[old]]
-
       self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
       self$vml[[newSheetIndex]]            <- self$vml[[old]]
-
       self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
       self$comments[[newSheetIndex]]       <- self$comments[[old]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
-
-      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[clonedSheet]]
+      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
