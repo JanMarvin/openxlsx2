@@ -1,0 +1,132 @@
+---
+title: "openxlsx2 basic manual"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{openxlsx2_basic_manual}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+library(openxlsx2)
+options(rmarkdown.html_vignette.check_title = FALSE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Welcome to the basic manual to `openxlsx2`. In this manual you will learn how to use `openxlsx2` to import data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these openxml workbooks in R. This package is based on the work of many contributors to `openxlsx`. It was mostly rewritten using `pugixml` and `R6` making use of modern technology, providing a fresh and easy to use R package.
+
+Over the years many people have worked on the tricky task to handle xls and xlsx files. Notably `openxlsx`, but there are countless other R-packages as well as third party libraries or calculation software capable of handling such files. Please feel free to use and test your files with other software and or let us know about your experience. Open an issue on github or write us a mail.
+
+## Importing data
+
+Coming from `openxlsx` you might know about `read.xlsx()`, `readWorkbook()` and `loadWorkbook` multiple functions that do may different things, but mostly the same. In `openxlsx2` we tried our best to reduce the complexity under the hood and for the user as well. For this example we will use example data provided by the package. You can locate it in our "inst/extdata" folder. The files are included with the package source and you can open them in any calculation software as well.
+
+### Basic import
+We begin with the `readTest.xlsx` file by telling R where to find this file on our system
+```{r}
+xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+```
+
+The object contains a path to the xlsx file and we pass this file to our function to read the workbook into R
+```{r}
+# import workbook
+wb_to_df(xlsxFile)
+```
+
+The output is created as a data frame and contains data types date, logical, numeric and character. The function to import the file to R, `wb_to_df()` provides similar options as the `openxlsx` functions `read.xlsx()` and `readWorkbook()` and a few new functions we will go through the options. As you might have noticed, we return the column of the xlsx file as the row name of the data frame returned.
+Per default the first sheet in the workbook is imported. If you want to switch this, either provide the `sheet` parameter with the correct index or provide the sheet name. 
+
+### colNames - first row as column name
+In the previous example the first imported row was used as column name for the data frame. This is the default behavior, but not always wanted or expected. Therefore this behavior can be disabled by the user.
+```{r}
+# do not convert first row to colNames
+wb_to_df(xlsxFile, colNames = FALSE)
+```
+
+### detectDates - convert cells to R dates
+The creators of the openxml standard are well known for mistakenly treating something as a date and `openxlsx2` has built in ways to identify a cell as a date and will try to convert the value for you, but unfortunately this is not always a trivial task and might fail. In such a case we provide an option to disable the date conversion entirely. In this case the underlying numerical value will be returned.
+```{r}
+# do not try to identify dates in the data
+wb_to_df(xlsxFile, detectDates = FALSE)
+```
+
+### showFormula - show formulas instead of results
+Sometimes things might feel off. This can be because the openxml files are not updating formula results in the sheets unless they are opened in software that provides such functionality as certain tabular calculation software. Therefore the user might be interested in the underlying functions to see what is going on in the sheet. Using `showFormula` this is possible
+```{r}
+# return the underlying Excel formula instead of their values
+wb_to_df(xlsxFile, showFormula = TRUE)
+```
+
+### dims - read specific dimension
+Sometimes the entire worksheet contains to much data, in such case we provide functions to read only a selected dimension range. Such a range consists of either a specific cell like "A1" or a cell range in the notion used in the openxml standard
+```{r}
+# read dimension withot colNames
+wb_to_df(xlsxFile, dims = "A2:C5", colNames = FALSE)
+```
+
+### cols - read selected columns
+If you do not want to read a specific cell, but a cell range you can use the column attribute. This attribute takes a numeric vector as argument
+```{r}
+# read selected cols
+wb_to_df(xlsxFile, cols = c(1:2, 7))
+```
+
+### rows - read selected rows
+The same goes with rows. You can select them using numeric vectors
+```{r}
+# read selected rows
+wb_to_df(xlsxFile, rows = c(1, 4, 6))
+```
+
+### convert - convert input to guessed type
+In xml exists no difference between value types. All values are per default characters. To provide these as numerics, logicals or dates, `openxlsx2` and every other software dealing with xlsx files has to make assumptions about the cell type. This is especially tricky due to the notion of worksheets. Unlike in a data frame, a worksheet can have a wild mix of all types of data. Even though the conversion process from character to date or numeric is rather solid, sometimes the user might want to see the data without any conversion applied. This might be useful in cases where something unexpected happened or the import created warnings. In such a case you can look at the raw input data. If you want to disable date detection as well, please see the entry above.
+```{r}
+# convert characters to numerics and date (logical too?)
+wb_to_df(xlsxFile, convert = FALSE)
+```
+
+### skipEmptyRows - remove emty rows
+Even though `openxlsx2` imports everything as requested, sometimes it might be helpful to remove empty lines from the data. These might be either left empty intentional or empty because they are were formatted, but the cell value was removed afterwards. This was added mostly for backward comparability, but the default has been changed to `FALSE`. The behavior has changed a bit as well. Previously empty cells were removed prior to the conversion to R data frames, now they are removed after the conversion and are removed only if they are completely empty
+```{r}
+# erase empty Rows from dataset
+wb_to_df(xlsxFile, sheet = 3, skipEmptyRows = TRUE) |> head()
+```
+
+### skipEmptyCols - remove empty columns
+The same for columns 
+```{r}
+# erase empty Cols from dataset
+wb_to_df(xlsxFile, skipEmptyCols = TRUE)
+```
+
+### rowNames - keep rownames from input
+Sometimes the data source might provide rownames as well. In such a case you can `openxlsx2` to treat the first column as rowname
+```{r}
+# convert first row to rownames
+wb_to_df(xlsxFile, sheet = 3, dims = "C6:G9", rowNames = TRUE)
+```
+
+### types - convert column to specific type
+If the user know better than the software what type to expect in a worksheet, this can be provided via types. This parameter takes a named numeric. `0` is character, `1` is numeric and `2` is date
+```{r}
+# define type of the data.frame
+wb_to_df(xlsxFile, cols = c(1, 4), types = c("Var1" = 0, "Var3" = 1))
+```
+
+### startRow - where to begin
+Often the creator of the worksheet has used a lot of creativity and the data does not begin in the first row, instead it begins somewhere else. To define the row where to begin reading, define it via the `startRow` parameter
+```{r}
+# start in row 5
+wb_to_df(xlsxFile, startRow = 5, colNames = FALSE)
+```
+
+### na.strings - define missing values
+There is the "#N/A" string, but often the user will be faced with custom missing values and other values we are not interested. Such strings can be passed as character vector via `na.strings`
+```{r}
+# na string
+wb_to_df(xlsxFile, na.strings = "")
+```
