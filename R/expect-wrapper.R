@@ -24,6 +24,7 @@ expect_wrapper <- function(
 ) {
   stopifnot(
     requireNamespace("waldo", quietly = TRUE),
+    requireNamespace("testthat", quietly = TRUE),
     is.list(params) || is.null(params)
   )
 
