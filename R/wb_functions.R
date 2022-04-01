@@ -1154,6 +1154,8 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       wb$styles_mgr$add(comma_fmt, comma_fmtid)
     }
 
+    print(colNames)
+
     sel <- which(dc == "logical")
     for (i in sel) {
       if (colNames) {

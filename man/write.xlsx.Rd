@@ -4,7 +4,7 @@
 \alias{write.xlsx}
 \title{write data to an xlsx file}
 \usage{
-write.xlsx(x, file, asTable = FALSE, colWidths, ...)
+write.xlsx(x, file, asTable = FALSE, ...)
 }
 \arguments{
 \item{x}{object or a list of objects that can be handled by \code{\link[=writeData]{writeData()}} to write to file}
@@ -12,8 +12,6 @@ write.xlsx(x, file, asTable = FALSE, colWidths, ...)
 \item{file}{xlsx file name}
 
 \item{asTable}{write using writeDataTable as opposed to writeData}
-
-\item{colWidths}{optional vector of column widths. Can be "auto", see examples.}
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
@@ -57,11 +55,6 @@ or a valid hex colour beginning with "#".}
 A vector of the form c(startCol, startRow)}
 \item{\strong{colNames or col.names}}{ If \code{TRUE}, column names of x are written.}
 \item{\strong{rowNames or row.names}}{ If \code{TRUE}, row names of x are written.}
-\item{\strong{borders}}{ Either "surrounding", "columns" or "rows" or NULL.  If "surrounding", a border is drawn around the
-data.  If "rows", a surrounding border is drawn a border around each row. If "columns", a surrounding border is drawn with a border
-between each column.  If "\code{all}" all cell borders are drawn.}
-\item{\strong{borderColour}}{ Colour of cell border}
-\item{\strong{borderStyle}}{ Border line style.}
 \item{\strong{keepNA}} {If \code{TRUE}, NA values are converted to #N/A (or \code{na.string}, if not NULL) in Excel, else NA cells will be empty. Defaults to FALSE.}
 \item{\strong{na.string}} {If not NULL, and if \code{keepNA} is \code{TRUE}, NA values are converted to this string in Excel. Defaults to NULL.}
 }
@@ -90,17 +83,14 @@ styled as dates and datetimes respectively.
 \examples{
 
 ## write to working directory
-options("openxlsx.borderColour" = "#4F80BD") ## set default border colour
 \dontrun{
-write.xlsx(iris, file = "writeXLSX1.xlsx", colNames = TRUE, borders = "columns")
-write.xlsx(iris, file = "writeXLSX2.xlsx", colNames = TRUE, borders = "surrounding")
+write.xlsx(iris, file = "writeXLSX1.xlsx", colNames = TRUE)
 }
-
 
 \dontrun{
 write.xlsx(iris,
   file = "writeXLSX3.xlsx",
-  colNames = TRUE, borders = "rows"
+  colNames = TRUE
 )
 }
 
