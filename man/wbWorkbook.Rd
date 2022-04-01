@@ -131,6 +131,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
+\item \href{#method-removeColWidths}{\code{wbWorkbook$removeColWidths()}}
 \item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
 \item \href{#method-removeWorksheet}{\code{wbWorkbook$removeWorksheet()}}
 \item \href{#method-addDXFS}{\code{wbWorkbook$addDXFS()}}
@@ -538,6 +539,28 @@ Group cols
 \item{\code{collapsed}}{collapsed}
 
 \item{\code{levels}}{levels}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-removeColWidths"></a>}}
+\if{latex}{\out{\hypertarget{method-removeColWidths}{}}}
+\subsection{Method \code{removeColWidths()}}{
+Remove row heights from a worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeColWidths(sheet, cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{A name or index of a worksheet}
+
+\item{\code{cols}}{Indices of columns to remove custom width (if any) from.}
 }
 \if{html}{\out{</div>}}
 }
