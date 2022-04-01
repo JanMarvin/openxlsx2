@@ -1721,7 +1721,7 @@ wbWorkbook <- R6::R6Class(
       if (length(removeInds)) {
         remainingCols <- customCols[-removeInds]
         if (length(remainingCols) == 0) {
-          wb$colWidths[[sheet]] <- list()
+          self$colWidths[[sheet]] <- list()
         } else {
           rem_widths <- self$colWidths[[sheet]][-removeInds]
           names(rem_widths) <- as.character(remainingCols)
