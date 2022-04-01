@@ -50,14 +50,6 @@ test_that("wb_clone_worksheet() is a wrapper", {
   expect_wrapper("cloneWorksheet", "wb_clone_worksheet", wb = wb, params = list(old = "sheet", new = "new"))
 })
 
-# wb_add_style() ----------------------------------------------------------
-
-test_that("wb_add_style() is a wrapper", {
-  wb <- wbWorkbook$new()$addWorksheet("sheet")
-  params <- list(sheet = "sheet", style = wb_style(), cols = 1, rows = 1)
-  expect_wrapper("addStyle", "wb_add_style", wb = wb, params = params)
-})
-
 # wb_freeze_pane() --------------------------------------------------------
 
 test_that("wb_freeze_pane() is a wrapper", {
