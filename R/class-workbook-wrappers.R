@@ -550,7 +550,7 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #' ## Save workbook
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_plot <- function(wb, sheet, widths = 6, height = 4, xy = NULL,
+wb_add_plot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
   startRow = 1, startCol = 1, fileType = "png", units = "in", dpi = 300) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
@@ -585,19 +585,19 @@ wb_add_plot <- function(wb, sheet, widths = 6, height = 4, xy = NULL,
   fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
 
   if (fileType == "bmp") {
-    dev.copy(bmp, filename = fileName, widths = width, height = height, units = units, res = dpi)
+    dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
   } else if (fileType == "jpeg") {
-    dev.copy(jpeg, filename = fileName, widths = width, height = height, units = units, quality = 100, res = dpi)
+    dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100, res = dpi)
   } else if (fileType == "png") {
-    dev.copy(png, filename = fileName, widths = width, height = height, units = units, res = dpi)
+    dev.copy(png, filename = fileName, width = width, height = height, units = units, res = dpi)
   } else if (fileType == "tiff") {
-    dev.copy(tiff, filename = fileName, widths = width, height = height, units = units, compression = "none", res = dpi)
+    dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
   }
 
   ## write image
   invisible(dev.off())
 
-  wb_add_image(wb = wb, sheet = sheet, file = fileName, widths = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
+  wb_add_image(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
 }
 
 
@@ -2209,15 +2209,15 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' wb_add_image(wb, "Sheet 1", img, startRow = 5, startCol = 3, widths = 6, height = 5)
+#' wb_add_image(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
 #' wb_add_image(wb, 2, img, startRow = 2, startCol = 2)
-#' wb_add_image(wb, 3, img, widths = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#' wb_add_image(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_image <- function(wb, sheet, file, widths = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
+wb_add_image <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
@@ -2251,5 +2251,5 @@ wb_add_image <- function(wb, sheet, file, widths = 6, height = 3, startRow = 1, 
   widthEMU <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
   heightEMU <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
 
-  wb$add_image(sheet, file = file, startRow = startRow, startCol = startCol, widths = widthEMU, height = heightEMU)
+  wb$add_image(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
 }

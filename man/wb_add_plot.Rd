@@ -7,7 +7,7 @@
 wb_add_plot(
   wb,
   sheet,
-  widths = 6,
+  width = 6,
   height = 4,
   xy = NULL,
   startRow = 1,
@@ -22,6 +22,8 @@ wb_add_plot(
 
 \item{sheet}{A name or index of a worksheet}
 
+\item{width}{Width of figure. Defaults to 6in.}
+
 \item{height}{Height of figure . Defaults to 4in.}
 
 \item{xy}{Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)}
@@ -35,8 +37,6 @@ wb_add_plot(
 \item{units}{Units of width and height. Can be "in", "cm" or "px"}
 
 \item{dpi}{Image resolution}
-
-\item{width}{Width of figure. Defaults to 6in.}
 }
 \description{
 The current plot is saved to a temporary image file using dev.copy.
