@@ -140,12 +140,28 @@ writeData <- function(wb,
   ## special case - vector of hyperlinks
   # # hlinkNames not used?
   # hlinkNames <- NULL
-  if (inherits(x, "hyperlink")) {
+
+  is_hyperlink <- FALSE
+  if (is.null(dim(x))) {
+    is_hyperlink <- inherits(x, "hyperlink")
+  } else {
+    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
+  }
+
+  if (any(is_hyperlink)) {
     # consider wbHyperlink?
     # hlinkNames <- names(x)
-    colNames <- FALSE
-    x <- makeHyperlinkString(text = x)
-    class(x) <- c("character", "formula", "hyperlink")
+    if (is.null(dim(x))) {
+      colNames <- FALSE
+      x[is_hyperlink] <- makeHyperlinkString(text = x[is_hyperlink])
+      class(x[is_hyperlink]) <- c("character", "hyperlink")
+    } else {
+      # check should be in makeHyperlinkString and that apply should not be required either
+      if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
+        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) makeHyperlinkString(text = str))
+      }
+      class(x[,is_hyperlink]) <- c("character", "hyperlink")
+    }
   }
 
   ## special case - formula
@@ -239,7 +255,7 @@ writeData <- function(wb,
   # actual driver, the rest should not create data used for writing
   wb <- writeData2(wb = wb, sheet = sheet, data = x, name = name, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
 
-  wb
+  invisible(0)
 }
 
 
@@ -343,8 +359,6 @@ writeFormula <- function(wb,
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")
   }
-
-
 
   writeData(
     wb = wb,

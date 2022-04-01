@@ -242,6 +242,30 @@ writeDataTable <- function(wb, sheet, x,
     new_cols = c(startCol, startCol + ncol(x) - 1L)
   )
 
+  is_hyperlink <- FALSE
+  if (is.null(dim(x))) {
+    is_hyperlink <- inherits(x, "hyperlink")
+  } else {
+    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
+  }
+
+  if (any(is_hyperlink)) {
+    # consider wbHyperlink?
+    # hlinkNames <- names(x)
+    if (is.null(dim(x))) {
+      colNames <- FALSE
+      x[is_hyperlink] <- makeHyperlinkString(text = x[is_hyperlink])
+      class(x[is_hyperlink]) <- c("character", "hyperlink")
+    } else {
+      # check should be in makeHyperlinkString and that apply should not be required either
+      if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
+        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) makeHyperlinkString(text = str))
+      }
+      class(x[,is_hyperlink]) <- c("character", "hyperlink")
+    }
+  }
+
+
   ## write data to worksheet
   # TODO writeData2 should be wb$writeData
   wb <- writeData2(
