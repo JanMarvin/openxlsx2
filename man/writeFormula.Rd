@@ -11,6 +11,7 @@ writeFormula(
   startCol = 1,
   startRow = 1,
   array = FALSE,
+  ref = "",
   xy = NULL
 )
 }
@@ -26,6 +27,8 @@ writeFormula(
 \item{startRow}{A vector specifying the starting row to write to.}
 
 \item{array}{A bool if the function written is of type array}
+
+\item{ref}{A reference vector for array formulas "A1:A2"}
 
 \item{xy}{An alternative to specifying \code{startCol} and
 \code{startRow} individually.  A vector of the form
@@ -105,6 +108,19 @@ writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link
 \dontrun{
 wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 }
+
+## write array formulas
+set.seed(123)
+df <- data.frame(C = rnorm(10), D = rnorm(10))
+
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "df")
+
+writeData(wb, "df", df, startCol = "C")
+
+writeFormula(wb, "df", startCol = "E", startRow = "2",
+             x = "SUM(C2:C11*D2:D11)", ref = "C2:D11",
+             array = TRUE)
 
 }
 \seealso{

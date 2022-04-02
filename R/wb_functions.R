@@ -631,7 +631,7 @@ wb_to_df <- function(
 #'
 #' @export
 update_cell <- function(x, wb, sheet, cell, data_class,
-                        colNames = FALSE, removeCellStyle = FALSE) {
+                        colNames = FALSE, removeCellStyle = FALSE, ref = "") {
 
   dimensions <- unlist(strsplit(cell, ":"))
   rows <- gsub("[[:upper:]]","", dimensions)
@@ -763,13 +763,18 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
         cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
+        assign("dc", data_class, globalenv())
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
         if (celltyp(data_class[m]) == 4 | (colNames == TRUE & n == 1)) {
           cc[sel, "c_t"] <- "inlineStr"
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
         } else if (celltyp(data_class[m]) == 5) {
           cc[sel, "f"] <- as.character(value)
-        } else if (celltyp(data_class[m]) == 10) {
+        } else if (celltyp(data_class[m]) == 11) {
+          cc[sel, "f"] <- as.character(value)
+          cc[sel, "f_t"] <- "array"
+          cc[sel, "f_ref"] <- ref
+        }else if (celltyp(data_class[m]) == 10) {
           cc[sel, "f"] <- as.character(value)
           # FIXME assign the hyperlinkstyle if no style found. This might not be
           # desired. We should provide an option to prevent this.
@@ -821,6 +826,7 @@ numfmt_class <- function(data) {
     is_comm <- is_class(dc, "comma")
     # formulas get no special output class here. They are characters, but are
     # assigned to <f ...>
+    is_afrm <- is_class(dc, "array_formula")
     is_form <- is_class(dc, "formula")
     is_hype <- is_class(dc, "hyperlink")
 
@@ -841,6 +847,7 @@ numfmt_class <- function(data) {
     out_class[is_perc] <- "percentage"
     out_class[is_scie] <- "scientific"
     out_class[is_comm] <- "comma"
+    out_class[is_afrm] <- "array_formula"
     out_class[is_form] <- "formula"
     out_class[is_hype] <- "hyperlink"
   }
@@ -864,6 +871,7 @@ celltyp <- function(data_class) {
   z[grepl("scientific", data_class)] <- 8
   z[grepl("comma", data_class)] <- 9
   z[grepl("hyperlink", data_class)] <- 10
+  z[grepl("array_formula", data_class)] <- 11
 
   z
 }
@@ -891,6 +899,7 @@ nmfmt_df <- function(x) {
 #' @param startRow row to place it
 #' @param startCol col to place it
 #' @param removeCellStyle keep the cell style?
+#' @param ref A reference vector for array formulas "A1:A2"
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -921,13 +930,15 @@ nmfmt_df <- function(x) {
 writeData2 <-function(wb, sheet, data, name = NULL,
                       colNames = TRUE, rowNames = FALSE,
                       startRow = 1, startCol = 1,
-                      removeCellStyle = FALSE) {
+                      removeCellStyle = FALSE,
+                      ref = "") {
 
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
   data_class <- as.data.frame(Map(class, data))
   dc <- numfmt_class(data)
+  assign("dc", dc, globalenv())
 
   # if hyperlinks are found, Excel sets something like the following font
   # blue with underline
@@ -1168,7 +1179,15 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       data[sel][is.na(data[sel])] <- "_openxlsx_NA"
     }
 
-    wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
+    wide_to_long(
+      data,
+      celltyp(dc),
+      cc,
+      ColNames = colNames,
+      start_col = startCol,
+      start_row = startRow,
+      ref = ref
+    )
 
     # if any v is missing, set typ to 'e'. v is only filled for non character
     # values, but contains a string. To avoid issues, set it to the missing
@@ -1197,7 +1216,16 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
   } else {
     # update cell(s)
-    wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames, removeCellStyle)
+    wb <- update_cell(
+      x = data,
+      wb,
+      sheetno,
+      dims,
+      data_class,
+      colNames,
+      removeCellStyle,
+      ref
+    )
   }
 
   wb

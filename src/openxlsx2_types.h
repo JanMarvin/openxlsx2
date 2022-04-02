@@ -30,22 +30,25 @@ typedef struct {
   std::string c_t;
   std::string is;
   std::string f;
+  std::string f_t;
+  std::string f_ref;
   std::string typ;
   std::string r;
 } celltyp;
 
 enum celltype {
-  short_date = 0,
-  long_date  = 1,
-  numeric    = 2,
-  boolean    = 3,
-  character  = 4,
-  formula    = 5,
-  accounting = 6,
-  percentage = 7,
-  scientific = 8,
-  comma      = 9,
-  hyperlink  = 10
+  short_date     = 0,
+  long_date      = 1,
+  numeric        = 2,
+  boolean        = 3,
+  character      = 4,
+  formula        = 5,
+  accounting     = 6,
+  percentage     = 7,
+  scientific     = 8,
+  comma          = 9,
+  hyperlink      = 10,
+  array_formula  = 11
 };
 
 #include <Rcpp.h>

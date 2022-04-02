@@ -7,6 +7,7 @@
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
+#' @param ref A reference vector for array formulas "A1:A2"
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
@@ -100,6 +101,7 @@ writeData <- function(wb,
   startCol = 1,
   startRow = 1,
   array = FALSE,
+  ref = "",
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
@@ -252,8 +254,21 @@ writeData <- function(wb,
     }
   }
 
+  assign("x", x, globalenv())
+
   # actual driver, the rest should not create data used for writing
-  wb <- writeData2(wb = wb, sheet = sheet, data = x, name = name, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
+  wb <- writeData2(
+    wb = wb,
+    sheet = sheet,
+    data = x,
+    name = name,
+    colNames = colNames,
+    rowNames = FALSE,
+    startRow = startRow,
+    startCol = startCol,
+    removeCellStyle = removeCellStyle,
+    ref = ref
+  )
 
   invisible(0)
 }
@@ -279,6 +294,7 @@ writeData <- function(wb,
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
+#' @param ref A reference vector for array formulas "A1:A2"
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
@@ -345,16 +361,32 @@ writeData <- function(wb,
 #' wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 #' }
 #'
+#' ## write array formulas
+#' set.seed(123)
+#' df <- data.frame(C = rnorm(10), D = rnorm(10))
+#'
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb, "df")
+#'
+#' writeData(wb, "df", df, startCol = "C")
+#'
+#' writeFormula(wb, "df", startCol = "E", startRow = "2",
+#'              x = "SUM(C2:C11*D2:D11)", ref = "C2:D11",
+#'              array = TRUE)
+#'
 writeFormula <- function(wb,
   sheet,
   x,
   startCol = 1,
   startRow = 1,
   array = FALSE,
+  ref = "",
   xy = NULL) {
   assert_class(x, "character")
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   class(dfx$X) <- c("character", if (array) "array_formula" else "formula")
+
+  assign("dfx", dfx, globalenv())
 
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")
@@ -367,6 +399,7 @@ writeFormula <- function(wb,
     startCol = startCol,
     startRow = startRow,
     array = array,
+    ref = ref,
     xy = xy,
     colNames = FALSE,
     rowNames = FALSE
