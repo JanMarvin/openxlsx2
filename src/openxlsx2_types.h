@@ -40,7 +40,7 @@ enum celltype {
   short_date     = 0,
   long_date      = 1,
   numeric        = 2,
-  boolean        = 3,
+  logical        = 3,
   character      = 4,
   formula        = 5,
   accounting     = 6,
@@ -48,7 +48,8 @@ enum celltype {
   scientific     = 8,
   comma          = 9,
   hyperlink      = 10,
-  array_formula  = 11
+  array_formula  = 11,
+  factor         = 12
 };
 
 #include <Rcpp.h>
