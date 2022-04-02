@@ -30,7 +30,8 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   dims_to_df(
     rows = rows,
     cols = cols,
-    fill = fill)
+    fill = fill
+  )
 }
 
 # # similar to all, simply check if most of the values match the condition
@@ -631,7 +632,7 @@ wb_to_df <- function(
 #'
 #' @export
 update_cell <- function(x, wb, sheet, cell, data_class,
-                        colNames = FALSE, removeCellStyle = FALSE, ref = "") {
+                        colNames = FALSE, removeCellStyle = FALSE) {
 
   dimensions <- unlist(strsplit(cell, ":"))
   rows <- gsub("[[:upper:]]","", dimensions)
@@ -763,17 +764,17 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
         cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
-        assign("dc", data_class, globalenv())
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
         if (celltyp(data_class[m]) == 4 | (colNames == TRUE & n == 1)) {
           cc[sel, "c_t"] <- "inlineStr"
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
         } else if (celltyp(data_class[m]) == 5) {
+          cc[sel, "c_t"] <- "str"
           cc[sel, "f"] <- as.character(value)
         } else if (celltyp(data_class[m]) == 11) {
           cc[sel, "f"] <- as.character(value)
           cc[sel, "f_t"] <- "array"
-          cc[sel, "f_ref"] <- ref
+          cc[sel, "f_ref"] <- cell
         }else if (celltyp(data_class[m]) == 10) {
           cc[sel, "f"] <- as.character(value)
           # FIXME assign the hyperlinkstyle if no style found. This might not be
@@ -899,7 +900,6 @@ nmfmt_df <- function(x) {
 #' @param startRow row to place it
 #' @param startCol col to place it
 #' @param removeCellStyle keep the cell style?
-#' @param ref A reference vector for array formulas "A1:A2"
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -930,15 +930,13 @@ nmfmt_df <- function(x) {
 writeData2 <-function(wb, sheet, data, name = NULL,
                       colNames = TRUE, rowNames = FALSE,
                       startRow = 1, startCol = 1,
-                      removeCellStyle = FALSE,
-                      ref = "") {
+                      removeCellStyle = FALSE) {
 
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
   data_class <- as.data.frame(Map(class, data))
   dc <- numfmt_class(data)
-  assign("dc", dc, globalenv())
 
   # if hyperlinks are found, Excel sets something like the following font
   # blue with underline
@@ -1008,10 +1006,11 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   endRow <- (startRow -1) + data_nrow
   endCol <- (startCol -1) + data_ncol
 
-
-  dims <- paste0(int2col(startCol), startRow,
+  dims <- paste0(
+    int2col(startCol), startRow,
     ":",
-    int2col(endCol), endRow)
+    int2col(endCol), endRow
+  )
 
   # TODO writing defined name should handle global and local: localSheetId
   # this requires access to wb$workbook.
@@ -1186,7 +1185,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       ColNames = colNames,
       start_col = startCol,
       start_row = startRow,
-      ref = ref
+      ref = dims
     )
 
     # if any v is missing, set typ to 'e'. v is only filled for non character
@@ -1223,8 +1222,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       dims,
       data_class,
       colNames,
-      removeCellStyle,
-      ref
+      removeCellStyle
     )
   }
 

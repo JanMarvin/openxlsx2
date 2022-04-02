@@ -13,8 +13,7 @@ writeData2(
   rowNames = FALSE,
   startRow = 1,
   startCol = 1,
-  removeCellStyle = FALSE,
-  ref = ""
+  removeCellStyle = FALSE
 )
 }
 \arguments{
@@ -35,8 +34,6 @@ writeData2(
 \item{startCol}{col to place it}
 
 \item{removeCellStyle}{keep the cell style?}
-
-\item{ref}{A reference vector for array formulas "A1:A2"}
 }
 \description{
 dummy function to write data

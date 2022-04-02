@@ -240,7 +240,6 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         cell.f   = vals;
         break;
       case array_formula:
-        cell.c_t = "str";
         cell.f   = vals;
         cell.f_t = "array";
         cell.f_ref = ref[i];
@@ -252,14 +251,15 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 
       Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
       Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (cell.v   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
-      if (cell.c_s != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
-      if (cell.c_t != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
-      if (cell.is  != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
-      if (cell.f   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
-      if (cell.f_t != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f_t"])[pos] = cell.f_t;
-      if (cell.typ != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
-      if (cell.r   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
+      if (cell.v     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]     = cell.v;
+      if (cell.c_s   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos]   = cell.c_s;
+      if (cell.c_t   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos]   = cell.c_t;
+      if (cell.is    != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]    = cell.is;
+      if (cell.f     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]     = cell.f;
+      if (cell.f_t   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f_t"])[pos]   = cell.f_t;
+      if (cell.f_ref != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"])[pos] = cell.f_ref;
+      if (cell.typ   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos]   = cell.typ;
+      if (cell.r     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]     = cell.r;
 
       ++startrow;
     }
