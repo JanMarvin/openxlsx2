@@ -253,7 +253,17 @@ writeData <- function(wb,
   }
 
   # actual driver, the rest should not create data used for writing
-  wb <- writeData2(wb = wb, sheet = sheet, data = x, name = name, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
+  wb <- writeData2(
+    wb = wb,
+    sheet = sheet,
+    data = x,
+    name = name,
+    colNames = colNames,
+    rowNames = FALSE,
+    startRow = startRow,
+    startCol = startCol,
+    removeCellStyle = removeCellStyle
+  )
 
   invisible(0)
 }
@@ -344,6 +354,19 @@ writeData <- function(wb,
 #' \dontrun{
 #' wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 #' }
+#'
+#' ## 5. - Writing array formulas
+#' set.seed(123)
+#' df <- data.frame(C = rnorm(10), D = rnorm(10))
+#'
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb, "df")
+#'
+#' writeData(wb, "df", df, startCol = "C")
+#'
+#' writeFormula(wb, "df", startCol = "E", startRow = "2",
+#'              x = "SUM(C2:C11*D2:D11)",
+#'              array = TRUE)
 #'
 writeFormula <- function(wb,
   sheet,

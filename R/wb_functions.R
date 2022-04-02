@@ -30,7 +30,8 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   dims_to_df(
     rows = rows,
     cols = cols,
-    fill = fill)
+    fill = fill
+  )
 }
 
 # # similar to all, simply check if most of the values match the condition
@@ -768,8 +769,13 @@ update_cell <- function(x, wb, sheet, cell, data_class,
           cc[sel, "c_t"] <- "inlineStr"
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
         } else if (celltyp(data_class[m]) == 5) {
+          cc[sel, "c_t"] <- "str"
           cc[sel, "f"] <- as.character(value)
-        } else if (celltyp(data_class[m]) == 10) {
+        } else if (celltyp(data_class[m]) == 11) {
+          cc[sel, "f"] <- as.character(value)
+          cc[sel, "f_t"] <- "array"
+          cc[sel, "f_ref"] <- cell
+        }else if (celltyp(data_class[m]) == 10) {
           cc[sel, "f"] <- as.character(value)
           # FIXME assign the hyperlinkstyle if no style found. This might not be
           # desired. We should provide an option to prevent this.
@@ -821,6 +827,7 @@ numfmt_class <- function(data) {
     is_comm <- is_class(dc, "comma")
     # formulas get no special output class here. They are characters, but are
     # assigned to <f ...>
+    is_afrm <- is_class(dc, "array_formula")
     is_form <- is_class(dc, "formula")
     is_hype <- is_class(dc, "hyperlink")
 
@@ -841,6 +848,7 @@ numfmt_class <- function(data) {
     out_class[is_perc] <- "percentage"
     out_class[is_scie] <- "scientific"
     out_class[is_comm] <- "comma"
+    out_class[is_afrm] <- "array_formula"
     out_class[is_form] <- "formula"
     out_class[is_hype] <- "hyperlink"
   }
@@ -864,6 +872,7 @@ celltyp <- function(data_class) {
   z[grepl("scientific", data_class)] <- 8
   z[grepl("comma", data_class)] <- 9
   z[grepl("hyperlink", data_class)] <- 10
+  z[grepl("array_formula", data_class)] <- 11
 
   z
 }
@@ -997,10 +1006,11 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   endRow <- (startRow -1) + data_nrow
   endCol <- (startCol -1) + data_ncol
 
-
-  dims <- paste0(int2col(startCol), startRow,
+  dims <- paste0(
+    int2col(startCol), startRow,
     ":",
-    int2col(endCol), endRow)
+    int2col(endCol), endRow
+  )
 
   # TODO writing defined name should handle global and local: localSheetId
   # this requires access to wb$workbook.
@@ -1168,7 +1178,15 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       data[sel][is.na(data[sel])] <- "_openxlsx_NA"
     }
 
-    wide_to_long(data, celltyp(dc), cc, ColNames = colNames, start_col = startCol, start_row = startRow)
+    wide_to_long(
+      data,
+      celltyp(dc),
+      cc,
+      ColNames = colNames,
+      start_col = startCol,
+      start_row = startRow,
+      ref = dims
+    )
 
     # if any v is missing, set typ to 'e'. v is only filled for non character
     # values, but contains a string. To avoid issues, set it to the missing
@@ -1197,7 +1215,15 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
   } else {
     # update cell(s)
-    wb <- update_cell(x = data, wb, sheetno, dims, data_class, colNames, removeCellStyle)
+    wb <- update_cell(
+      x = data,
+      wb,
+      sheetno,
+      dims,
+      data_class,
+      colNames,
+      removeCellStyle
+    )
   }
 
   wb

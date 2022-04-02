@@ -180,7 +180,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
-                  bool ColNames, int32_t start_col, int32_t start_row) {
+                  bool ColNames, int32_t start_col, int32_t start_row,
+                  Rcpp::CharacterVector ref) {
 
   auto n = z.nrow();
   auto m = z.ncol();
@@ -203,9 +204,19 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 
       // create struct
       celltyp cell;
+      cell.v     = openxlsxNA;
+      cell.c_s   = openxlsxNA;
+      cell.c_t   = openxlsxNA;
+      cell.is    = openxlsxNA;
+      cell.f     = openxlsxNA;
+      cell.f_t   = openxlsxNA;
+      cell.f_ref = openxlsxNA;
+      cell.typ   = openxlsxNA;
+      cell.r     = openxlsxNA;
 
       switch(vtyp)
       {
+
       case short_date:
       case long_date:
       case accounting:
@@ -214,48 +225,41 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       case comma:
       case numeric:
         cell.v   = vals;
-        cell.c_s = openxlsxNA;
-        cell.c_t = openxlsxNA;
-        cell.is  = openxlsxNA;
-        cell.f   = openxlsxNA;
         break;
       case boolean:
         cell.v   = vals;
-        cell.c_s = openxlsxNA;
         cell.c_t = "b";
-        cell.is  = openxlsxNA;
-        cell.f   = openxlsxNA;
         break;
       case character:
-        cell.v   = openxlsxNA;
-        cell.c_s = openxlsxNA;
         cell.c_t = "inlineStr";
         cell.is  = txt_to_is(vals, 0, 1);
-        cell.f   = openxlsxNA;
         break;
       case hyperlink:
       case formula:
-        cell.v   = openxlsxNA;
-        cell.c_s = openxlsxNA;
         cell.c_t = "str";
-        cell.is  = openxlsxNA;
         cell.f   = vals;
+        break;
+      case array_formula:
+        cell.f   = vals;
+        cell.f_t = "array";
+        cell.f_ref = ref[i];
         break;
       }
 
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
-      // TODO change only if not openxlsxNA
       Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
       Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (cell.v   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
-      if (cell.c_s != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
-      if (cell.c_t != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
-      if (cell.is  != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
-      if (cell.f   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
-      if (cell.typ != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
-      if (cell.r   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
+      if (cell.v     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]     = cell.v;
+      if (cell.c_s   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos]   = cell.c_s;
+      if (cell.c_t   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos]   = cell.c_t;
+      if (cell.is    != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]    = cell.is;
+      if (cell.f     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]     = cell.f;
+      if (cell.f_t   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f_t"])[pos]   = cell.f_t;
+      if (cell.f_ref != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"])[pos] = cell.f_ref;
+      if (cell.typ   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos]   = cell.typ;
+      if (cell.r     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]     = cell.r;
 
       ++startrow;
     }
