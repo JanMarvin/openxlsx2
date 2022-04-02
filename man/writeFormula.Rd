@@ -11,6 +11,7 @@ writeFormula(
   startCol = 1,
   startRow = 1,
   array = FALSE,
+  ref = "",
   xy = NULL
 )
 }
@@ -26,6 +27,8 @@ writeFormula(
 \item{startRow}{A vector specifying the starting row to write to.}
 
 \item{array}{A bool if the function written is of type array}
+
+\item{ref}{A reference vector for array formulas "A1:A2"}
 
 \item{xy}{An alternative to specifying \code{startCol} and
 \code{startRow} individually.  A vector of the form

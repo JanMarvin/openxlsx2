@@ -11,7 +11,8 @@ update_cell(
   cell,
   data_class,
   colNames = FALSE,
-  removeCellStyle = FALSE
+  removeCellStyle = FALSE,
+  ref = ""
 )
 }
 \arguments{
