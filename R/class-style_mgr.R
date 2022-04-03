@@ -263,11 +263,11 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       typ <- NULL
       id  <- NULL
 
-      is_numfmt <- ifelse(xml_node_name(style) == "numFmt", TRUE, FALSE)
-      is_font   <- ifelse(xml_node_name(style) == "font", TRUE, FALSE)
-      is_fill   <- ifelse(xml_node_name(style) == "fill", TRUE, FALSE)
-      is_border <- ifelse(xml_node_name(style) == "border", TRUE, FALSE)
-      is_xf     <- ifelse(xml_node_name(style) == "xf", TRUE, FALSE)
+      is_numfmt <- any(ifelse(xml_node_name(style) == "numFmt", TRUE, FALSE))
+      is_font   <- any(ifelse(xml_node_name(style) == "font", TRUE, FALSE))
+      is_fill   <- any(ifelse(xml_node_name(style) == "fill", TRUE, FALSE))
+      is_border <- any(ifelse(xml_node_name(style) == "border", TRUE, FALSE))
+      is_xf     <- any(ifelse(xml_node_name(style) == "xf", TRUE, FALSE))
 
       if (is_numfmt) {
         typ <- "numFmt"

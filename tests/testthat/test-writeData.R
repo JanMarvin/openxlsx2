@@ -39,3 +39,16 @@ test_that("writeFormula", {
   expect_equal(exp[1:11], got[1:11])
 
 })
+
+test_that("silent with numfmt option", {
+
+  options("openxlsx2.numFmt" = "### ##0")
+
+  wb <- wb_workbook()
+  wb$addWorksheet("S1")
+  wb$addWorksheet("S2")
+
+  expect_silent(writeData(wb, "S1", x = iris))
+  expect_silent(writeData(wb, "S2", x = mtcars, xy = c("B", 3), rowNames = TRUE))
+
+})
