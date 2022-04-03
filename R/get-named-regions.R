@@ -1,11 +1,11 @@
 
-#' @name getNamedRegions
-#' @title Get named regions
+#' @name NamedRegions
+#' @title Get create or remove named regions
 #' @description Return a vector of named regions in a xlsx file or
 #' Workbook object
 #' @param x An xlsx file or Workbook object
 #' @export
-#' @seealso [createNamedRegion()]
+#' @seealso [createNamedRegion()] [deleteNamedRegion()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
@@ -43,28 +43,17 @@ getNamedRegions <- function(x) {
   UseMethod("getNamedRegions", x)
 }
 
+
 #' @export
 getNamedRegions.default <- function(x) {
-  if (!file.exists(x)) {
-    stop(sprintf("File '%s' does not exist.", x))
-  }
-
-  xmlDir <- tempfile("named_regions_tmp")
-  # don't unlink on exit
-  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
-
-  xmlFiles <- unzip(x, exdir = xmlDir)
-
-  workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- read_xml(workbook)
-
-  dn <- xml_node(xml = workbook, "workbook", "definedNames", "definedName")
+  wb <- loadWorkbook(x)
+  dn <- wb$workbook$definedNames
 
   if (length(dn) == 0) {
     return(NULL)
   }
 
-  get_named_regions_from_string(dn = dn)
+  get_named_regions_from_string(wb = wb, dn = dn)
 }
 
 
@@ -76,5 +65,5 @@ getNamedRegions.wbWorkbook <- function(x) {
     return(NULL)
   }
 
-  get_named_regions_from_string(dn = dn)
+  get_named_regions_from_string(wb = x, dn = dn)
 }

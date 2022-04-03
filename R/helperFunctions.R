@@ -248,7 +248,7 @@ pxml <- function(x) {
 }
 
 
-get_named_regions_from_string <- function(dn) {
+get_named_regions_from_string <- function(wb, dn) {
   dn <- cbind(
     openxlsx2:::rbindlist(xml_attr(dn, "definedName")),
     value =  xml_value(dn, "definedName")
@@ -263,7 +263,16 @@ get_named_regions_from_string <- function(dn) {
     dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
   }
 
-  return(dn)
+  dn$id <- seq_len(nrow(dn))
+
+  if (!is.null(dn$localSheetId)) {
+    dn$local <- as.integer(dn$localSheetId != "")
+  } else {
+    dn$local <- 0
+  }
+  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
+
+  dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]),]
 }
 
 
