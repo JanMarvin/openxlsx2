@@ -42,13 +42,22 @@ test_that("writeFormula", {
 
 test_that("silent with numfmt option", {
 
-  options("openxlsx2.numFmt" = "### ##0")
-
   wb <- wb_workbook()
   wb$addWorksheet("S1")
   wb$addWorksheet("S2")
 
-  expect_silent(writeData(wb, "S1", x = iris))
-  expect_silent(writeData(wb, "S2", x = mtcars, xy = c("B", 3), rowNames = TRUE))
+  writeDataTable(wb, "S1", x = iris)
+  writeDataTable(wb, "S2",
+                 x = mtcars, xy = c("B", 3), rowNames = TRUE,
+                 tableStyle = "TableStyleLight9"
+  )
+
+  # [1:4] to ignore factor
+  expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
+  expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
+  got <- wb_to_df(wb, "S2", rowNames = TRUE)
+  attr(got, "tt") <- NULL
+  attr(got, "types") <- NULL
+  expect_equal(mtcars, got)
 
 })
