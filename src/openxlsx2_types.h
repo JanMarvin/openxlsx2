@@ -36,6 +36,7 @@ typedef struct {
   std::string r;
 } celltyp;
 
+// matches openxlsx2_celltype in openxlsx2.R
 enum celltype {
   short_date     = 0,
   long_date      = 1,
