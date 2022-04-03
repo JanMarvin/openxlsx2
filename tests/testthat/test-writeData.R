@@ -55,9 +55,12 @@ test_that("silent with numfmt option", {
   # [1:4] to ignore factor
   expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
   expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
+
+  # handle rownames
   got <- wb_to_df(wb, "S2", rowNames = TRUE)
   attr(got, "tt") <- NULL
   attr(got, "types") <- NULL
   expect_equal(mtcars, got)
+  expect_equal(rownames(mtcars), rownames(got))
 
 })
