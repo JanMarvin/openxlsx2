@@ -1,6 +1,85 @@
 #include "openxlsx2.h"
 #include <algorithm>
 
+// [[Rcpp::export]]
+SEXP openxlsx2_type(SEXP x) {
+
+  const SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+  auto ncol = Rf_length(x);
+
+  Rcpp::IntegerVector type(ncol);
+  if (!Rf_isNull(names)) type.attr("names") = names;
+
+  for (auto i = 0; i < ncol; ++i) {
+
+    // check if dim != NULL
+    SEXP z;
+    if (Rf_isNull(names)) {
+      z = x;
+    } else {
+      z = VECTOR_ELT(x, i);
+    }
+
+    switch (TYPEOF(z)) {
+
+    // logical
+    case LGLSXP:
+      type[i] =  3;
+      break;
+
+      // character, formula, hyperlink, array_formula
+    case CPLXSXP:
+    case STRSXP:
+      if (Rf_inherits(z, "formula")) {
+        type[i] = 5;
+      } else if (Rf_inherits(z, "hyperlink")) {
+        type[i] = 10;
+      } else if (Rf_inherits(z, "array_formula")) {
+        type[i] = 11;
+      } else {
+        type[i] = 4;
+      }
+      break;
+
+      // raw, integer, numeric, Date, POSIXct, accounting,
+      //  percentage, scientific, comma
+    case RAWSXP:
+    case INTSXP:
+    case REALSXP: {
+      if (Rf_inherits(z, "Date")) {
+      type[i] = 0;
+    } else if (Rf_inherits(z, "POSIXct")) {
+      type[i] = 1;
+    } else if (Rf_inherits(z, "accounting")) {
+      type[i] = 6;
+    } else if (Rf_inherits(z, "percentage")) {
+      type[i] = 7;
+    } else if (Rf_inherits(z, "scientific")) {
+      type[i] = 8;
+    } else if (Rf_inherits(z, "comma")) {
+      type[i] = 9;
+    } else if (Rf_inherits(z, "factor")) {
+      type[i] = 12;
+    } else {
+      type[i] = 2; // numeric or integer
+    }
+    break;
+
+    }
+
+    // whatever is not covered from above
+    default: {
+      type[i] = 4;
+      break;
+    }
+
+    }
+
+  }
+
+  return type;
+}
+
 
 // [[Rcpp::export]]
 std::string int_to_col(uint32_t cell) {
@@ -226,7 +305,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       case numeric:
         cell.v   = vals;
         break;
-      case boolean:
+      case logical:
         cell.v   = vals;
         cell.c_t = "b";
         break;

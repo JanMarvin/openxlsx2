@@ -50,3 +50,20 @@
 #' }
 #'
 NULL
+
+# matches enum celltype
+openxlsx2_celltype <- c(
+  short_date     = 0,
+  long_date      = 1,
+  numeric        = 2,
+  logical        = 3,
+  character      = 4,
+  formula        = 5,
+  accounting     = 6,
+  percentage     = 7,
+  scientific     = 8,
+  comma          = 9,
+  hyperlink      = 10,
+  array_formula  = 11,
+  factor         = 12
+)

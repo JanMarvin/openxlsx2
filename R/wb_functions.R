@@ -656,7 +656,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   if (missing(data_class)) {
     # TODO consider using inherit() for class chekcing
-    data_class <- sapply(x, class)
+    data_class <- openxlsx2_type(x)
   }
 
 
@@ -765,17 +765,17 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
-        if (celltyp(data_class[m]) == 4 | (colNames == TRUE & n == 1)) {
+        if (data_class[m] == openxlsx2_celltype[["character"]] | (colNames == TRUE & n == 1)) {
           cc[sel, "c_t"] <- "inlineStr"
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
-        } else if (celltyp(data_class[m]) == 5) {
+        } else if (data_class[m] == openxlsx2_celltype[["formula"]]) {
           cc[sel, "c_t"] <- "str"
           cc[sel, "f"] <- as.character(value)
-        } else if (celltyp(data_class[m]) == 11) {
+        } else if (data_class[m] == openxlsx2_celltype[["array_formula"]]) {
           cc[sel, "f"] <- as.character(value)
           cc[sel, "f_t"] <- "array"
           cc[sel, "f_ref"] <- cell
-        }else if (celltyp(data_class[m]) == 10) {
+        }else if (data_class[m] == openxlsx2_celltype[["hyperlink"]]) {
           cc[sel, "f"] <- as.character(value)
           # FIXME assign the hyperlinkstyle if no style found. This might not be
           # desired. We should provide an option to prevent this.
@@ -801,81 +801,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   wb
 }
 
-
-numfmt_class <- function(data) {
-  dc <- as.data.frame(Map(class, data))
-
-  # check all columns for the required types
-  if (nrow(dc) >= 1) {
-
-    # returns logical vector of length ncol(data)
-    is_class <- function(dc, cl) apply(dc, 2, function(x)(any(x == cl)))
-
-    # check the class. all have the basic R classes, some have additional
-    # openxml builtin formats
-    is_fact <- is_class(dc, "factor")
-    is_date <- is_class(dc, "Date")
-    is_posi <- is_class(dc, "POSIXct")
-    is_logi <- is_class(dc, "logical")
-    is_char <- is_class(dc, "character")
-    is_inte <- is_class(dc, "integer")
-    is_numb <- is_class(dc, "numeric")
-    is_curr <- is_class(dc, "currency")
-    is_acco <- is_class(dc, "accounting")
-    is_perc <- is_class(dc, "percentage")
-    is_scie <- is_class(dc, "scientific")
-    is_comm <- is_class(dc, "comma")
-    # formulas get no special output class here. They are characters, but are
-    # assigned to <f ...>
-    is_afrm <- is_class(dc, "array_formula")
-    is_form <- is_class(dc, "formula")
-    is_hype <- is_class(dc, "hyperlink")
-
-    # prepare output
-    out_class <- dc[1, , drop = FALSE]
-    out_class[1,] <- "character"
-
-    # assign the final output
-    out_class[is_fact] <- "factor"
-    out_class[is_date] <- "date"
-    out_class[is_posi] <- "posix"
-    out_class[is_logi] <- "logical"
-    out_class[is_char] <- "character" # superfluous
-    out_class[is_inte] <- "integer"
-    out_class[is_numb] <- "numeric"
-    out_class[is_curr] <- "currency"
-    out_class[is_acco] <- "accounting"
-    out_class[is_perc] <- "percentage"
-    out_class[is_scie] <- "scientific"
-    out_class[is_comm] <- "comma"
-    out_class[is_afrm] <- "array_formula"
-    out_class[is_form] <- "formula"
-    out_class[is_hype] <- "hyperlink"
-  }
-
-  out_class
-}
-
-
-celltyp <- function(data_class) {
-
-  z <- vector("integer", length = length(data_class))
-
-  z[grepl("date", data_class)] <- 0
-  z[grepl("posix", data_class)] <- 1
-  z[grepl(paste(c("numeric", "integer"), collapse = "|"), data_class)] <- 2
-  z[grepl("logical", data_class)] <- 3
-  z[grepl(paste(c("character", "factor", "currency"), collapse = "|"), data_class)] <- 4
-  z[grepl("formula", data_class)] <- 5
-  z[grepl("accounting", data_class)] <- 6
-  z[grepl("percentage", data_class)] <- 7
-  z[grepl("scientific", data_class)] <- 8
-  z[grepl("comma", data_class)] <- 9
-  z[grepl("hyperlink", data_class)] <- 10
-  z[grepl("array_formula", data_class)] <- 11
-
-  z
-}
 
 nmfmt_df <- function(x) {
   data.frame(
@@ -935,12 +860,11 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
-  data_class <- as.data.frame(Map(class, data))
-  dc <- numfmt_class(data)
+  dc <- openxlsx2_type(data)
 
   # if hyperlinks are found, Excel sets something like the following font
   # blue with underline
-  if (any(celltyp(data_class) == 10)) {
+  if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
     if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
       hyperlinkfont <- create_font(
         color = c(rgb = "FF0000FF"),
@@ -956,10 +880,11 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
 
   # convert factor to character
-  if (any(data_class == "factor")) {
-    is_factor <- apply(data_class, 2, function(x)(any(x == "factor")))
-    fcts <- names(data_class[is_factor])
+  if (any(dc == openxlsx2_celltype[["factor"]])) {
+    is_factor <- dc == openxlsx2_celltype[["factor"]]
+    fcts <- names(dc[is_factor])
     data[fcts] <- lapply(data[fcts], as.character)
+    dc <- openxlsx2_type(data)
   }
 
   has_date1904 <- grepl('date1904="1"|date1904="true"',
@@ -983,12 +908,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     if (rowNames) {
       nam <- names(data)
       data <- cbind(rownames(data), data)
-      names(data) <- c("", nam)
-      data_class <- cbind(c("_rowNames_" = "character"), data_class)
-      names(data_class) <- names(data)
-      dc <- cbind(c("_rowNames_" = "character"), dc)
-      names(dc) <- names(data)
-
+      dc <- c(c("_rowNames_" = openxlsx2_celltype[["character"]]), dc)
     }
   }
 
@@ -1074,7 +994,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     comma_fmtid      <- paste0("comma_fmt", hash_id)
 
     # options("openxlsx2.numFmt" = NULL)
-    if (any(dc %in% c("numeric", "integer"))) {
+    if (any(dc == openxlsx2_celltype[["numeric"]])) { # numeric or integer
       if (!is.null(unlist(options("openxlsx2.numFmt")))) {
         cust_numFmt <- create_numfmt(
           numFmtId = wb$styles_mgr$next_numfmt_id(),
@@ -1085,7 +1005,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
         wb$styles_mgr$add(numeric_fmt, numeric_fmtid)
       }
     }
-    if (any(dc == "date")) {
+    if (any(dc == openxlsx2_celltype[["short_date"]])) { # Date
       if (is.null(unlist(options("openxlsx2.dateFormat")))) {
         numfmt_dt <- 14
       } else {
@@ -1098,7 +1018,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       short_date_fmt <- write_xf(nmfmt_df(numfmt_dt))
       wb$styles_mgr$add(short_date_fmt, short_date_fmtid)
     }
-    if (any(dc == "posix")) {
+    if (any(dc == openxlsx2_celltype[["long_date"]])) {
       if (is.null(unlist(options("openxlsx2.datetimeFormat")))) {
         numfmt_posix <- 22
       } else {
@@ -1111,7 +1031,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       long_date_fmt  <- write_xf(nmfmt_df(numfmt_posix))
       wb$styles_mgr$add(long_date_fmt, long_date_fmtid)
     }
-    if (any(dc == "accounting")) {
+    if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
       if (is.null(unlist(options("openxlsx2.accountingFormat")))) {
         numfmt_accounting <- 4
       } else {
@@ -1124,7 +1044,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       accounting_fmt <- write_xf(nmfmt_df(numfmt_accounting))
       wb$styles_mgr$add(accounting_fmt, accounting_fmtid)
     }
-    if (any(dc == "percentage")) {
+    if (any(dc == openxlsx2_celltype[["percentage"]])) { # percentage
       if (is.null(unlist(options("openxlsx2.percentageFormat")))) {
         numfmt_percentage <- 10
       } else {
@@ -1137,7 +1057,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       percentage_fmt <- write_xf(nmfmt_df(numfmt_percentage))
       wb$styles_mgr$add(percentage_fmt, percentage_fmtid)
     }
-    if (any(dc == "scientific")) {
+    if (any(dc == openxlsx2_celltype[["scientific"]])) {
       if (is.null(unlist(options("openxlsx2.scientificFormat")))) {
         numfmt_scientific <- 48
       } else {
@@ -1150,7 +1070,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       scientific_fmt <- write_xf(nmfmt_df(numfmt_scientific))
       wb$styles_mgr$add(scientific_fmt, scientific_fmtid)
     }
-    if (any(dc == "comma")) {
+    if (any(dc == openxlsx2_celltype[["comma"]])) {
       if (is.null(unlist(options("openxlsx2.comma")))) {
         numfmt_comma <- 3
       } else {
@@ -1164,7 +1084,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       wb$styles_mgr$add(comma_fmt, comma_fmtid)
     }
 
-    sel <- which(dc == "logical")
+    sel <- which(dc == openxlsx2_celltype[["logical"]])
     for (i in sel) {
       if (colNames) {
         data[-1, i] <- as.integer(as.logical(data[-1, i]))
@@ -1173,14 +1093,14 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       }
     }
 
-    sel <- which(dc == "character")
+    sel <- which(dc == openxlsx2_celltype[["character"]]) # character
     for (i in sel) {
       data[sel][is.na(data[sel])] <- "_openxlsx_NA"
     }
 
     wide_to_long(
       data,
-      celltyp(dc),
+      dc,
       cc,
       ColNames = colNames,
       start_col = startCol,
@@ -1220,7 +1140,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
       wb,
       sheetno,
       dims,
-      data_class,
+      dc,
       colNames,
       removeCellStyle
     )
