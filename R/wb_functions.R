@@ -916,7 +916,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   if (!is.null(name)) {
 
     sheet_name <- wb$sheet_names[[sheetno]]
-    if (grepl(" ", sheet_name)) sheet_name <- shQuote(sheet_name)
+    if (grepl(" ", sheet_name)) sheet_name <- shQuote(sheet_name, "sh")
 
     sheet_dim <- paste0(sheet_name, "!", dims)
 
