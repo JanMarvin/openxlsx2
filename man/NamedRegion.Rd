@@ -7,7 +7,7 @@
 \usage{
 createNamedRegion(wb, sheet, cols, rows, name, overwrite = FALSE)
 
-deleteNamedRegion(wb, name)
+deleteNamedRegion(wb, sheet, name)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -68,5 +68,5 @@ head(df)
 }
 }
 \seealso{
-\code{\link[=getNamedRegions]{getNamedRegions()}}
+\code{\link[=getNamedRegions]{getNamedRegions()}} \code{\link[=deleteNamedRegion]{deleteNamedRegion()}}
 }

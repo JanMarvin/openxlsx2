@@ -290,40 +290,18 @@ wb_to_df <- function(
 
   if (!missing(definedName)) {
 
-    dn <- wb$workbook$definedNames
-    wo <- xml_value(dn, "definedName")
-    # remove dollar sign: $A$1:$B$2
-    wo <- gsub("\\$", "", wo)
-    wo <- unapply(wo, strsplit, "!")
-    # removing starting and/or ending ' "
-    wo <- gsub("^[\"']|[\"']$", "", wo)
-    wo <- unapply(wo, strsplit, "!")
-
-    nr <- matrix(wo, ncol = 2, byrow = TRUE)
-    dimnames(nr) <- list(seq_along(dn), c("sheet", "dims"))
-    nr <- as.data.frame(nr)
-    dn_attr <- rbindlist(xml_attr(dn, "definedName"))
-
-    nr$name <- dn_attr$name
-    if (!is.null(dn_attr$localSheetId)) {
-      nr$local <- as.integer(dn_attr$localSheetId != "")
-    } else {
-      nr$local <- 0
-    }
-    nr$sheet <- vapply(nr$sheet, function(x) wb_validate_sheet(wb, x), NA_integer_)
-
-    nr <- nr[order(nr$local, nr$name, nr$sheet),]
+    nr <- getNamedRegions(wb)
 
     if (definedName %in% nr$name & missing(sheet)) {
       sel   <- nr[nr$name == definedName, ][1,]
       sheet <- sel$sheet
-      dims  <- sel$dims
+      dims  <- sel$coords
     } else if (definedName %in% nr$name) {
       sel <- nr[nr$name == definedName & nr$sheet == wb_validate_sheet(wb, sheet), ]
       if (NROW(sel) == 0) {
         stop("no such definedName on selected sheet")
       }
-      dims <- sel$dims
+      dims <- sel$coords
     } else {
       stop("no such definedName")
     }
