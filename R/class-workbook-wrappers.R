@@ -1423,7 +1423,7 @@ worksheetOrder <- function(wb) {
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to FALSE
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
-#' @seealso [getNamedRegions()]
+#' @seealso [getNamedRegions()] [deleteNamedRegion()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
@@ -1515,16 +1515,32 @@ createNamedRegion <- function(wb, sheet, cols, rows, name, overwrite = FALSE) {
 
 #' @export
 #' @rdname NamedRegion
-deleteNamedRegion <- function(wb, name) {
+deleteNamedRegion <- function(wb, sheet, name) {
 
   assert_workbook(wb)
 
-  ex_names <- getNamedRegions(wb)$name
+  # get all nown defined names
+  dn <- getNamedRegions(wb)
 
-  if (tolower(name) %in% ex_names) {
-    wb$workbook$definedNames <- wb$workbook$definedNames[!ex_names %in% tolower(name)]
+  if (missing(name) & !missing(sheet)) {
+    sheet <- wb_validate_sheet(wb, sheet)
+    del <- dn$id[dn$sheet == sheet]
+  } else if (!missing(name) & missing(sheet)) {
+    del <- dn$id[dn$name == name]
   } else {
-    warning(sprintf("Cannot find named region with name '%s'", name))
+    sheet <- wb_validate_sheet(wb, sheet)
+    del <- dn$id[dn$sheet == sheet & dn$name == name]
+  }
+
+  if (length(del)) {
+    wb$workbook$definedNames <- wb$workbook$definedNames[-del]
+  } else {
+    if (!missing(name))
+      warning(sprintf("Cannot find named region with name '%s'", name))
+    # do not warn if wb and sheet are selected. deleteNamedRegion is 
+    # called with every wb_remove_worksheet and would throw meaningless
+    # warnings. For now simply assume if no name is defined, that the
+    # user does not care, as long as no defined name remains on a sheet.
   }
 
   invisible(0)

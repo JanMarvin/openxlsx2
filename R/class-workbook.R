@@ -1813,6 +1813,8 @@ wbWorkbook <- R6::R6Class(
         self$workbook$definedNames <- self$workbook$definedNames[!getNamedRegions(self)$sheets %in% self$sheet_names[sheet]]
       }
 
+      deleteNamedRegion(self, sheet)
+
       self$sheet_names <- self$sheet_names[-sheet]
 
       xml_rels <- rbindlist(

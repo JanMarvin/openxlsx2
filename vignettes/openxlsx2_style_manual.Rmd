@@ -1,8 +1,8 @@
 ---
-title: "openxlsx2 basic manual"
+title: "openxlsx2 style manual"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{openxlsx2_basic_manual}
+  %\VignetteIndexEntry{openxlsx2_style_manual}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

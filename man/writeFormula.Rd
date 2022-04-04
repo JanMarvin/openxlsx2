@@ -106,6 +106,19 @@ writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link
 wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 }
 
+## 5. - Writing array formulas
+set.seed(123)
+df <- data.frame(C = rnorm(10), D = rnorm(10))
+
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "df")
+
+writeData(wb, "df", df, startCol = "C")
+
+writeFormula(wb, "df", startCol = "E", startRow = "2",
+             x = "SUM(C2:C11*D2:D11)",
+             array = TRUE)
+
 }
 \seealso{
 \code{\link[=writeData]{writeData()}}
