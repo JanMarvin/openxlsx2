@@ -528,24 +528,27 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   ### BEGIN READING IN WORKSHEET DATA
   ##* ----------------------------------------------------------------------------------------------*##
 
-  nWorksheets <- sum(grepl("sheet[0-9]+.xml", worksheet_rId_mapping))
-
   ## xl\worksheets
   file_names <- regmatches(worksheet_rId_mapping, regexpr("sheet[0-9]+\\.xml", worksheet_rId_mapping, perl = TRUE))
   file_rIds <- unlist(getId(worksheet_rId_mapping))
   file_names <- file_names[match(sheetrId, file_rIds)]
+  # with chartsheets file_names can be NA
   file_names <- file_names[!is.na(file_names)]
 
   worksheetsXML <- file.path(dirname(worksheetsXML), file_names)
 
+  # nSheets contains all sheets. worksheets and chartsheets. For this loop we
+  # only need worksheets. We can not loop over import_sheets, because some
+  # might be chart sheets. If a certain sheet is requested, we have to respect
+  # this and select only this sheet.
 
-  # TODO this loop should live in loadworksheets
+  j <- 0
   import_sheets <- seq_len(nSheets)
   if (!missing(sheet)) {
     import_sheets <- wb_validate_sheet(wb, sheet)
+    j <- import_sheets - 1
   }
 
-  j <- 0
   for (i in import_sheets) {
     if (!is_chart_sheet[i]) {
       j <- j + 1
