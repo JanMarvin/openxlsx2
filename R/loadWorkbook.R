@@ -192,7 +192,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     j <- 1
     for (i in seq_along(sheetrId)) {
       if (is_chart_sheet[i]) {
-        txt <- read_xml(chartSheetsXML[j])
+        txt <- read_xml(chartSheetsXML[j], pointer = FALSE)
 
         zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))
         if (length(zoom) == 0) {
@@ -528,23 +528,25 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   ### BEGIN READING IN WORKSHEET DATA
   ##* ----------------------------------------------------------------------------------------------*##
 
+  nWorksheets <- sum(grepl("sheet[0-9]+.xml", worksheet_rId_mapping))
+
   ## xl\worksheets
   file_names <- regmatches(worksheet_rId_mapping, regexpr("sheet[0-9]+\\.xml", worksheet_rId_mapping, perl = TRUE))
   file_rIds <- unlist(getId(worksheet_rId_mapping))
   file_names <- file_names[match(sheetrId, file_rIds)]
+  file_names <- file_names[!is.na(file_names)]
 
   worksheetsXML <- file.path(dirname(worksheetsXML), file_names)
 
 
   # TODO this loop should live in loadworksheets
-  import_sheets <- seq_len(nSheets)
+  import_sheets <- seq_len(nWorksheets)
   if (!missing(sheet)) {
     import_sheets <- wb_validate_sheet(wb, sheet)
   }
 
   for (i in import_sheets) {
     worksheet_xml <- read_xml(worksheetsXML[i])
-
     wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
     wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
     wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks")
