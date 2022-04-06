@@ -1809,6 +1809,8 @@ wbWorkbook <- R6::R6Class(
       nSheets <- length(sheetNames)
       sheetName <- sheetNames[[sheet]]
 
+      deleteNamedRegion(self, sheet)
+
       self$sheet_names <- self$sheet_names[-sheet]
 
       xml_rels <- rbindlist(
@@ -1950,13 +1952,6 @@ wbWorkbook <- R6::R6Class(
       ## Can remove highest sheet
       # (don't use grepl(value = TRUE))
       self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
-
-      ## definedNames
-      if (length(self$workbook$definedNames)) {
-        belongTo <- getNamedRegions(self)$sheets
-        self$workbook$definedNames <-
-          self$workbook$definedNames[!belongTo %in% sheetName]
-      }
 
       invisible(self)
     },
