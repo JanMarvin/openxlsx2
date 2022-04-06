@@ -512,10 +512,22 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       sprintf('<Override PartName="/xl/externalLinks/externalLink%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml"/>', seq_along(extLinksXML))
     )
 
-    wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf(
-      '<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink" Target="externalLinks/externalLink1.xml"/>',
-      seq_along(extLinksXML)
-    ))
+    wb_rels_xml <- rbindlist(xml_attr(wb$workbook.xml.rels, "Relationship"))
+
+    ext_ref <- openxlsx2:::rbindlist(xml_attr(wb$workbook$externalReferences, "externalReferences", "externalReference"))
+    # ext_ref[,1] <- paste0("rIde", seq_len(nrow(ext_ref)))
+    wb$workbook$externalReferences <- xml_node_create("externalReferences", openxlsx2:::df_to_xml("externalReference", ext_ref))
+
+    for (i in seq_along(extLinksXML)) {
+      wb$workbook.xml.rels <- c(
+        wb$workbook.xml.rels,
+        sprintf(
+          '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink" Target="externalLinks/externalLink%s.xml"/>',
+          ext_ref[i,1],
+          i
+        )
+      )
+    }
   }
 
   ## externalLinksRels
