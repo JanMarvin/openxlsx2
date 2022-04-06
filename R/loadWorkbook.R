@@ -198,9 +198,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     sheetrId <- sheets$`r:id`
     sheetId <- sheets$sheetId
-    sheetNames <- sheets$name
 
-    is_chart_sheet <- sheetrId %in% chartSheetRIds
     if (is.null(sheets$state)) sheets$state <- "visible"
     is_visible <- sheets$state %in% c("", "true", "visible")
 
@@ -219,14 +217,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
           tabColour <- NULL
         }
 
-        wb$addChartSheet(sheetName = sheetNames[i], tabColour = tabColour, zoom = as.numeric(zoom))
+        wb$addChartSheet(sheetName = sheets$name[i], tabColour = tabColour, zoom = as.numeric(zoom))
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$addWorksheet(sheetNames[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
+        wb$addWorksheet(sheets$name[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
     }
 
@@ -636,7 +634,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   ## Fix headers/footers
   # TODO think about improving headerFooter
   for (i in seq_len(nSheets)) {
-    if (!is_chart_sheet[i]) {
+    if (sheets$typ[i] == "worksheet") {
       if (length(wb$worksheets[[i]]$headerFooter)) {
 
         amp_split <- function(x) {
@@ -691,7 +689,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       allRels <- rep("", length(wb$worksheets))
 
       for (i in seq_len(nSheets)) {
-        if (is_chart_sheet[i]) {
+        if (sheets$typ[i] == "chartsheet") {
           ind <- which(chartSheetRIds == sheetrId[i])
           rels_file <- file.path(chartSheetsRelsDir, paste0(chartsheet_rId_mapping[ind], ".rels"))
         } else {
@@ -828,7 +826,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     ## might we have some external hyperlinks
     # TODO use lengths()
-    if (any(vapply(wb$worksheets[!is_chart_sheet], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
+    if (any(vapply(wb$worksheets[sheets$typ == "worksheet"], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
 
       ## Do we have external hyperlinks
       hlinks <- lapply(xml, function(x) x[grepl("hyperlink", x) & grepl("External", x)])
