@@ -128,12 +128,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   nSheets <- length(worksheetsXML) + length(chartSheetsXML)
 
   ## get Rid of chartsheets, these do not have a worksheet/sheeti.xml
-  worksheet_rId_mapping <- NULL
-  workbookRelsXML <- grep_xml("workbook.xml.rels$")
-  if (length(workbookRelsXML)) {
-    xml <- read_xml(workbookRelsXML)
-    workbookRelsXML <- xml_node(xml, "Relationships", "Relationship")
-    worksheet_rId_mapping <- grep("worksheets/sheet", workbookRelsXML, fixed = TRUE, value = TRUE)
+  wb_relsxml <- grep_xml("workbook.xml.rels$")
+  if (length(wb_relsxml)) {
+    workbookRelsXML <- xml_node(wb_relsxml, "Relationships", "Relationship")
   }
 
   ##
@@ -175,24 +172,34 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     ## of sheet names with sheet indeces.
     sheets <- sheets[sheets$`r:id` != "",]
 
+    # if wb_relsxml is not available, the workbook has no relationships, not
+    # sure if this is possible
+    if (length(wb_relsxml))
+      wb_rels_xml <- rbindlist(
+        xml_attr(wb_relsxml, "Relationships", "Relationship")
+      )
+
+    sheets <- merge(
+      sheets, wb_rels_xml,
+      by.x = "r:id", by.y = "Id",
+      all.x = TRUE, all.y = FALSE
+    )
 
     ## sheetId is meaningless
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
+    sheets$typ <- basename(sheets$Type)
+    sheets$target <- stri_join(xmlDir, "/xl/", sheets$Target)
+    sheets$id <- rank(as.numeric(gsub("[^0-9.-]+", "", sheets$`r:id`)))
+    sheets <- sheets[order(sheets$id),]
 
-    sheetrId <- sheets$`r:id`
-    sheetId <- sheets$sheetId
-    sheetNames <- sheets$name
-
-    is_chart_sheet <- sheetrId %in% chartSheetRIds
     if (is.null(sheets$state)) sheets$state <- "visible"
     is_visible <- sheets$state %in% c("", "true", "visible")
 
     ## add worksheets to wb
-    j <- 1
-    for (i in seq_along(sheetrId)) {
-      if (is_chart_sheet[i]) {
-        txt <- read_xml(chartSheetsXML[j])
+    for (i in seq_len(nrow(sheets))) {
+      if (sheets$typ[i] == "chartsheet") {
+        txt <- read_xml(sheets$target[i], pointer = FALSE)
 
         zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))
         if (length(zoom) == 0) {
@@ -204,16 +211,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
           tabColour <- NULL
         }
 
-        j <- j + 1L
-
-        wb$addChartSheet(sheetName = sheetNames[i], tabColour = tabColour, zoom = as.numeric(zoom))
-      } else {
+        wb$addChartSheet(sheetName = sheets$name[i], tabColour = tabColour, zoom = as.numeric(zoom))
+      } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$addWorksheet(sheetNames[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
+        wb$addWorksheet(sheets$name[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
     }
 
@@ -221,7 +226,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     for (i in seq_len(nSheets)) {
       wb$workbook$sheets[[i]] <- gsub(
         sprintf(' sheetId="%s"', i),
-        sprintf(' sheetId="%s"', sheetId[i]),
+        sprintf(' sheetId="%s"', sheets$sheetId[i]),
         wb$workbook$sheets[[i]]
       )
     }
@@ -529,22 +534,22 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   ##* ----------------------------------------------------------------------------------------------*##
 
   ## xl\worksheets
-  file_names <- regmatches(worksheet_rId_mapping, regexpr("sheet[0-9]+\\.xml", worksheet_rId_mapping, perl = TRUE))
-  file_rIds <- unlist(getId(worksheet_rId_mapping))
-  file_names <- file_names[match(sheetrId, file_rIds)]
+  file_names <- basename(sheets$Target)
 
-  worksheetsXML <- file.path(dirname(worksheetsXML), file_names)
+  # nSheets contains all sheets. worksheets and chartsheets. For this loop we
+  # only need worksheets. We can not loop over import_sheets, because some
+  # might be chart sheets. If a certain sheet is requested, we have to respect
+  # this and select only this sheet.
 
-
-  # TODO this loop should live in loadworksheets
-  import_sheets <- seq_len(nSheets)
+  import_sheets <- which(sheets$typ == "worksheet")
   if (!missing(sheet)) {
     import_sheets <- wb_validate_sheet(wb, sheet)
+    sheet <- import_sheets
   }
 
   for (i in import_sheets) {
-    worksheet_xml <- read_xml(worksheetsXML[i])
-
+    if (sheets$typ[i] == "chartsheet") next
+    worksheet_xml <- read_xml(sheets$target[i])
     wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
     wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
     wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks")
@@ -618,13 +623,12 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     # load the data. This function reads sheet_data and returns cc and row_attr
     loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
-
   }
 
   ## Fix headers/footers
   # TODO think about improving headerFooter
   for (i in seq_len(nSheets)) {
-    if (!is_chart_sheet[i]) {
+    if (sheets$typ[i] == "worksheet") {
       if (length(wb$worksheets[[i]]$headerFooter)) {
 
         amp_split <- function(x) {
@@ -679,11 +683,11 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       allRels <- rep("", length(wb$worksheets))
 
       for (i in seq_len(nSheets)) {
-        if (is_chart_sheet[i]) {
-          ind <- which(chartSheetRIds == sheetrId[i])
+        if (sheets$typ[i] == "chartsheet") {
+          ind <- which(chartSheetRIds == sheets$`r:id`[i])
           rels_file <- file.path(chartSheetsRelsDir, paste0(chartsheet_rId_mapping[ind], ".rels"))
         } else {
-          ind <- sheetrId[i]
+          ind <- sheets$`r:id`[i]
           rels_file <- file.path(xmlDir, "xl", "worksheets", "_rels", paste0(file_names[i], ".rels"))
         }
         if (file.exists(rels_file)) {
@@ -698,8 +702,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     xml <- lapply(seq_along(allRels), function(i) {
       if (haveRels[i]) {
-        xml <- read_xml(allRels[[i]])
-        xml <- xml_node(xml, "Relationships", "Relationship")
+        xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
       } else {
         xml <- character()
       }
@@ -778,7 +781,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     if (length(tablesXML)) {
       tables <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=table)[0-9]+(?=\\.xml)", x, perl = TRUE))))
-      tableSheets <- unapply(seq_along(sheetrId), function(i) rep(i, length(tables[[i]])))
+      tableSheets <- unapply(seq_along(sheets$`r:id`), function(i) rep(i, length(tables[[i]])))
 
       if (length(unlist(tables))) {
 
@@ -817,7 +820,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     ## might we have some external hyperlinks
     # TODO use lengths()
-    if (any(vapply(wb$worksheets[!is_chart_sheet], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
+    if (any(vapply(wb$worksheets[sheets$typ == "worksheet"], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
 
       ## Do we have external hyperlinks
       hlinks <- lapply(xml, function(x) x[grepl("hyperlink", x) & grepl("External", x)])
