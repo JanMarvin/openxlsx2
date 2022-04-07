@@ -2254,6 +2254,20 @@ wbWorkbook <- R6::R6Class(
           gradient  <- as.integer(params$gradient  %||% 1L)
           border    <- as.integer(params$border    %||% 1L)
 
+
+          self$worksheets[[sheet]]$extLst <- c(
+            self$worksheets[[sheet]]$extLst,
+            gen_databar_extlst(
+              guid      = guid,
+              sqref     = sqref,
+              posColour = posColour,
+              negColour = negColour,
+              values    = values,
+              border    = border,
+              gradient  = gradient
+            )
+          )
+
           if (is.null(values)) {
             sprintf(
               '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
@@ -2281,19 +2295,6 @@ wbWorkbook <- R6::R6Class(
               guid
             )
           }
-
-          self$worksheets[[sheet]]$extLst <- c(
-            self$worksheets[[sheet]]$extLst,
-            gen_databar_extlst(
-              guid      = guid,
-              sqref     = sqref,
-              posColour = posColour,
-              negColour = negColour,
-              values    = values,
-              border    = border,
-              gradient  = gradient
-            )
-          )
         },
 
         ## expression ----
