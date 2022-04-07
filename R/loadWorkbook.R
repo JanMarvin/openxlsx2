@@ -512,11 +512,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       sprintf('<Override PartName="/xl/externalLinks/externalLink%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml"/>', seq_along(extLinksXML))
     )
 
-    wb_rels_xml <- rbindlist(xml_attr(wb$workbook.xml.rels, "Relationship"))
-
     ext_ref <- rbindlist(xml_attr(wb$workbook$externalReferences, "externalReferences", "externalReference"))
-    # ext_ref[,1] <- paste0("rIde", seq_len(nrow(ext_ref)))
-    wb$workbook$externalReferences <- xml_node_create("externalReferences", df_to_xml("externalReference", ext_ref))
 
     for (i in seq_along(extLinksXML)) {
       wb$workbook.xml.rels <- c(
