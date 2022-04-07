@@ -935,7 +935,7 @@ wbWorkbook <- R6::R6Class(
 
       if (length(self$embeddings)) {
         embeddingsDir <- dir_create(tmpDir, "xl", "embeddings")
-        for (fl in embeddings) {
+        for (fl in self$embeddings) {
           file.copy(fl, embeddingsDir, overwrite = TRUE)
         }
       }
