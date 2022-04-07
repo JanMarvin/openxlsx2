@@ -133,7 +133,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
 \item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
 \item \href{#method-removeWorksheet}{\code{wbWorkbook$removeWorksheet()}}
-\item \href{#method-addDXFS}{\code{wbWorkbook$addDXFS()}}
 \item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
 \item \href{#method-dataValidation_list}{\code{wbWorkbook$dataValidation_list()}}
 \item \href{#method-conditionalFormatting}{\code{wbWorkbook$conditionalFormatting()}}
@@ -584,26 +583,6 @@ Remove a worksheet
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{The worksheet to delete}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addDXFS"></a>}}
-\if{latex}{\out{\hypertarget{method-addDXFS}{}}}
-\subsection{Method \code{addDXFS()}}{
-Add DXFS?
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addDXFS(style)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{style}}{style}
 }
 \if{html}{\out{</div>}}
 }

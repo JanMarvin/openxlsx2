@@ -1957,48 +1957,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
-    #' Add DXFS?
-    #' @param style style
-    #' @return The `wbWorkbook` object, invisibly
-    addDXFS = function(style) {
-      # TODO possible changes to self
-      # TODO assert_class(style, "Style")
-      dxf <- "<dxf>"
-      dxf <- stri_join(dxf, wb_create_font_node(self, style))
-      # fillNode <- NULL
-
-      if (!is.null(style$fill$fillFg) | !is.null(style$fill$fillBg)) {
-        dxf <- stri_join(dxf, createFillNode(style))
-      }
-
-      # TODO go with length(); c() drops NULL elements
-      if (any(!is.null(
-        c(
-          style$borderLeft,
-          style$borderRight,
-          style$borderTop,
-          style$borderBottom,
-          style$borderDiagonal
-        )
-      ))) {
-        dxf <- stri_join(dxf, createBorderNode(style))
-      }
-
-      dxf <- stri_join(dxf, "</dxf>", sep = " ")
-
-      if (dxf %in% self$styles_mgr$styles$dxfs) {
-        # return(which(styles$dxfs == dxf) - 1L)
-        return(invisible(self))
-      }
-
-      # dxfId <- length(styles$dxfs)
-      self$styles_mgr$styles$dxfs <- c(self$styles_mgr$styles$dxfs, dxf)
-
-      # return(dxfId)
-      invisible(self)
-    },
-
-    #' @description
     #' Set data validations for a sheet
     #' @param sheet sheet
     #' @param startRow startRow
