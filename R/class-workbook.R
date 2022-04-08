@@ -1162,6 +1162,14 @@ wbWorkbook <- R6::R6Class(
         ct <- ct[!grepl("sharedStrings", ct)]
       }
 
+      for (draw in seq_along(self$drawings)) {
+          if (length(self$drawings[[draw]])) {
+              ct <- c(ct, 
+                sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', draw)
+              )
+          }
+      }
+
       if (nComments > 0) {
         ct <- c(ct, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>' )
       }
@@ -1925,7 +1933,8 @@ wbWorkbook <- R6::R6Class(
           if (any(basename(rel$Type) == "drawing")) {
             rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
           }
-          self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel)
+          if (is.null(rel$TargetMode)) rel$TargetMode <- ""
+          self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
         }
       } else {
         self$worksheets_rels <- list()
@@ -2614,17 +2623,6 @@ wbWorkbook <- R6::R6Class(
       ## worksheetRels(sheet(i)) references drawings(j)
 
       sheet <- wb_validate_sheet(self, sheet)
-
-      # TODO this simply adds the required drawings to the Content_Types. Might want to look
-      # into a way to handle such things.
-      self$Content_Types <- unique(
-        c(self$Content_Types,
-          sprintf(
-            "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
-            sheet
-          )
-        )
-      )
 
       # TODO tools::file_ext() ...
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
@@ -3360,12 +3358,11 @@ wbWorkbook <- R6::R6Class(
 
         ## vml drawing
         if (length(self$vml_rels[[i]])) {
-          file.copy(
-            from = self$vml_rels[[i]],
-            to = file.path(
-              xldrawingsRelsDir,
-              stri_join("vmlDrawing", i, ".vml.rels")
-            )
+          write_file(
+            head = '',
+            body = pxml(self$vml_rels[[i]]),
+            tail = '',
+            fl = file.path(xldrawingsRelsDir, stri_join("vmlDrawing", i, ".vml.rels"))
           )
         }
 
@@ -3473,7 +3470,8 @@ wbWorkbook <- R6::R6Class(
                 relship <- relship[!delete,]
               }
               relship$typ <- relship$tid <- NULL
-              ws_rels <- df_to_xml("Relationship", df_col = relship)
+              if (is.null(relship$TargetMode)) relship$TargetMode <- ""
+              ws_rels <- df_to_xml("Relationship", df_col = relship[c("Id", "Type", "Target", "TargetMode")])
             }
 
 
