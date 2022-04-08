@@ -716,6 +716,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     xml <- lapply(seq_along(allRels), function(i) {
       if (haveRels[i]) {
         xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
+
+        xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
+        xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+        xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
+
+        if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
+        xml <- df_to_xml("Relationship", xml_relship[c("Id", "Type", "Target", "TargetMode")])
       } else {
         xml <- character()
       }
@@ -724,7 +731,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     wb$worksheets_rels <- xml
 
-
+    xml <- lapply(seq_along(allRels), function(i) {
+      if (haveRels[i]) {
+        xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
+      } else {
+        xml <- character()
+      }
+      return(xml)
+    })
 
 
 
