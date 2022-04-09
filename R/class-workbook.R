@@ -1164,7 +1164,7 @@ wbWorkbook <- R6::R6Class(
 
       for (draw in seq_along(self$drawings)) {
           if (length(self$drawings[[draw]])) {
-              ct <- c(ct, 
+              ct <- c(ct,
                 sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', draw)
               )
           }
@@ -2630,7 +2630,7 @@ wbWorkbook <- R6::R6Class(
 
       drawing_len <- 0
       if (length(self$drawings_rels[[sheet]]))
-        drawing_len <- length(xml_node(self$drawings_rels[[sheet]], "Relationship"))
+        drawing_len <- length(xml_node(unlist(self$drawings_rels[[sheet]]), "Relationship"))
 
       imageNo <- drawing_len + 1L
       mediaNo <- length(self$media) + 1L
@@ -2651,8 +2651,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## drawings rels (Reference from drawings.xml to image file in media folder)
-      self$drawings_rels[[sheet]] <- c(
-        self$drawings_rels[[sheet]],
+      self$drawings_rels[[sheet]] <- paste0(
+        unlist(self$drawings_rels[[sheet]]),
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
           imageNo,
@@ -2705,15 +2705,10 @@ wbWorkbook <- R6::R6Class(
           "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
           "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         )
-        drawingsXML <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
-        drawingsXML <- c(self$drawings[[sheet]], drawingsXML)
+        self$drawings[[sheet]] <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
       } else {
-        drawingsXML <- xml_add_child(self$drawings[[sheet]], drawingsXML)
+        self$drawings[[sheet]] <- xml_add_child(self$drawings[[sheet]], drawingsXML)
       }
-
-
-      ## append to workbook drawing
-      self$drawings[[sheet]] <- drawingsXML
 
       invisible(self)
     },
