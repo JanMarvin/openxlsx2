@@ -716,6 +716,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     xml <- lapply(seq_along(allRels), function(i) {
       if (haveRels[i]) {
         xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
+
+        xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
+        xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+        xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
+
+        if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
+        xml <- df_to_xml("Relationship", xml_relship[c("Id", "Type", "Target", "TargetMode")])
       } else {
         xml <- character()
       }
@@ -724,7 +731,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     wb$worksheets_rels <- xml
 
-
+    xml <- lapply(seq_along(allRels), function(i) {
+      if (haveRels[i]) {
+        xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
+      } else {
+        xml <- character()
+      }
+      return(xml)
+    })
 
 
 
@@ -882,12 +896,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       dXML <- gsub("<xdr:wsDr .*?>", "", dXML)
       dXML <- gsub("</xdr:wsDr>", "", dXML)
 
-
-      for (drawing in seq_along(drawingsXML)) {
-        drwng_xml <- read_xml(drawingsXML[drawing])
-        wb$drawings[[drawing]] <- xml_node(drwng_xml, "xdr:wsDr")
-      }
-
       # ptn1 <- "<(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)"
       # ptn2 <- "</(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)>"
 
@@ -926,13 +934,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     if (length(vmlDrawingXML)) {
       wb$Content_Types <- c(wb$Content_Types, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
-      # TODO missed <<-
       drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
-
-      for (i in seq_along(vmlDrawingXML)) {
-        wb$drawings_vml[[i]] <- read_xml(vmlDrawingXML[[i]], pointer = FALSE)
-      }
-
 
       # TODO use lengths()
       hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
@@ -946,16 +948,11 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
             ind <- grepl(target, vmlDrawingXML)
 
             if (any(ind)) {
-              txt <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
-
-              i1 <- regexpr("<v:shapetype", txt, fixed = TRUE)
-              i2 <- regexpr("</xml>", txt, fixed = TRUE)
-
-              wb$vml[[i]] <- substring(text = txt, first = i1, last = (i2 - 1L))
+              wb$vml[[i]] <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {
-                wb$vml_rels[i] <- vmlDrawingRelsXML[relsInd]
+                wb$vml_rels[i] <- read_xml(vmlDrawingRelsXML[relsInd], pointer = FALSE)
               }
             }
           }
@@ -965,6 +962,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
 
 
+    # remove drawings from Content_Types. These drawings are the old imported drawings.
+    # we will add drawings only when writing and will use the sheet to create them.
+    wb$Content_Types <- wb$Content_Types[!grepl("drawings/drawing", wb$Content_Types)]
 
 
 
@@ -1074,45 +1074,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     }
 
 
-    ## rels image
-    drawXMLrelationship <- lapply(xml, function(x) grep("relationships/image", x, value = TRUE))
-    hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
-    if (any(hasDrawing)) {
-      for (i in seq_along(xml)) {
-        if (hasDrawing[i]) {
-          image_ids <- unlist(getId(drawXMLrelationship[[i]]))
-          new_image_ids <- paste0("rId", seq_along(image_ids) + 70000)
-          for (j in seq_along(image_ids)) {
-            wb$worksheets[[i]]$oleObjects <- gsub(image_ids[j], new_image_ids[j], wb$worksheets[[i]]$oleObjects, fixed = TRUE)
-            # wb$worksheets_rels[[i]] <- c(wb$worksheets_rels[[i]], gsub(image_ids[j], new_image_ids[j], drawXMLrelationship[[i]][j], fixed = TRUE))
-          }
-        }
-      }
-    }
-
-    ## rels image
-    drawXMLrelationship <- lapply(xml, function(x) grep("relationships/package", x, value = TRUE))
-    hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
-    if (any(hasDrawing)) {
-      for (i in seq_along(xml)) {
-        if (hasDrawing[i]) {
-          image_ids <- unlist(getId(drawXMLrelationship[[i]]))
-          new_image_ids <- paste0("rId", seq_along(image_ids) + 90000)
-          for (j in seq_along(image_ids)) {
-            wb$worksheets[[i]]$oleObjects <- gsub(image_ids[j], new_image_ids[j], wb$worksheets[[i]]$oleObjects, fixed = TRUE)
-            # wb$worksheets_rels[[i]] <- c(
-            #   wb$worksheets_rels[[i]],
-            #   sprintf("<Relationship Id=\"%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/package\" Target=\"../embeddings/Microsoft_Word_Document1.docx\"/>", new_image_ids[j])
-            # )
-          }
-        }
-      }
-    }
-
-
 
     ## Embedded docx
     if (length(embeddings) > 0) {
+      # TODO only valid for docx. need to check xls and doc?
       wb$Content_Types <- c(wb$Content_Types, '<Default Extension="docx" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>')
       wb$embeddings <- embeddings
     }
