@@ -913,14 +913,6 @@ wbWorkbook <- R6::R6Class(
               overwrite = TRUE,
               copy.date = TRUE
             )
-
-            self$worksheets_rels[[i]] <- unique(c(
-              self$worksheets_rels[[i]],
-              sprintf(
-                '<Relationship Id="rIdthread" Type="http://schemas.microsoft.com/office/2017/10/relationships/threadedComment" Target="../threadedComments/%s"/>',
-                basename(fl)
-              )
-            ))
           }
         }
       }
@@ -1078,7 +1070,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## ct is updated as xml
-      ct <- c(default, openxlsx2:::df_to_xml(name = "Override", df_col = override))
+      ct <- c(default, openxlsx2:::df_to_xml(name = "Override", df_col = override[c("PartName", "ContentType")]))
 
 
       ## write query tables
@@ -1171,7 +1163,13 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (nComments > 0) {
-        ct <- c(ct, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>' )
+        ct <- c(
+          ct,
+          # TODO this default extension is most likely wrong here and should be set when searching for and writing the vml entrys
+          '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>',
+          sprintf('<Override PartName="/xl/comments%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>', seq_len(nComments)
+          )
+        )
       }
 
       self$Content_Types <- ct
@@ -1179,7 +1177,7 @@ wbWorkbook <- R6::R6Class(
       ## write [Content_type]
       write_file(
         head = '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">',
-        body = pxml(ct),
+        body = pxml(unique(ct)),
         tail = "</Types>",
         fl = file.path(tmpDir, "[Content_Types].xml")
       )
