@@ -18,6 +18,8 @@ A Workbook
 
 \item{\code{calcChain}}{calcChain}
 
+\item{\code{apps}}{apps}
+
 \item{\code{charts}}{charts}
 
 \item{\code{isChartSheet}}{isChartSheet}
@@ -909,7 +911,11 @@ Protect a workbook
   protect = TRUE,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  password = NULL
+  password = NULL,
+  type = NULL,
+  fileSharing = FALSE,
+  username = unname(Sys.info()["user"]),
+  readOnlyRecommended = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -923,6 +929,14 @@ Protect a workbook
 \item{\code{lockWindows}}{lockWindows}
 
 \item{\code{password}}{password}
+
+\item{\code{type}}{type}
+
+\item{\code{fileSharing}}{fileSharing}
+
+\item{\code{username}}{username}
+
+\item{\code{readOnlyRecommended}}{readOnlyRecommended}
 }
 \if{html}{\out{</div>}}
 }
