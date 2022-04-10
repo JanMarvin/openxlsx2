@@ -21,6 +21,9 @@ wbWorkbook <- R6::R6Class(
     #' @field calcChain calcChain
     calcChain = character(),
 
+    #' @field apps apps
+    apps = character(),
+
     #' @field charts charts
     charts = list(),
 
@@ -178,6 +181,7 @@ wbWorkbook <- R6::R6Class(
       category        = NULL,
       datetimeCreated = Sys.time()
     ) {
+      self$apps <- character()
       self$charts <- list()
       self$isChartSheet <- logical()
 
@@ -984,12 +988,15 @@ wbWorkbook <- R6::R6Class(
         fl = file.path(relsDir, ".rels")
       )
 
+      app <- "<Application>Microsoft Excel</Application>"
+      # further protect argument (might be extended with: <ScaleCrop>, <HeadingPairs>, <TitlesOfParts>, <LinksUpToDate>, <SharedDoc>, <HyperlinksChanged>, <AppVersion>)
+      if (!is.null(self$apps)) app <- paste0(app, self$apps)
 
       ## write app.xml
       if (length(self$app) == 0) {
         write_file(
           head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
-          body = "<Application>Microsoft Excel</Application>",
+          body = app,
           tail = "</Properties>",
           fl = file.path(docPropsDir, "app.xml")
         )
@@ -2839,14 +2846,25 @@ wbWorkbook <- R6::R6Class(
     #' @param lockStructure lockStructure
     #' @param lockWindows lockWindows
     #' @param password password
+    #' @param type type
+    #' @param fileSharing fileSharing
+    #' @param username username
+    #' @param readOnlyRecommended readOnlyRecommended
     #' @return The `wbWorkbook` object, invisibly
     protectWorkbook = function(
       protect = TRUE,
       lockStructure = FALSE,
       lockWindows = FALSE,
-      password = NULL
+      password = NULL,
+      type = NULL,
+      fileSharing = FALSE,
+      username = unname(Sys.info()["user"]),
+      readOnlyRecommended = FALSE
     ) {
-      attr <- c()
+
+      attr <- vector("character", 3L)
+      names(attr) <- c("workbookPassword", "lockStructure", "lockWindows")
+
       if (!is.null(password)) {
         attr["workbookPassword"] <- hashPassword(password)
       }
@@ -2856,20 +2874,26 @@ wbWorkbook <- R6::R6Class(
       if (!missing(lockWindows) && !is.null(lockWindows)) {
         attr["lockWindows"] <- toString(as.numeric(lockWindows))
       }
+
       # TODO: Shall we parse the existing protection settings and preserve all unchanged attributes?
       if (protect) {
         self$workbook$workbookProtection <-
-          sprintf(
-            "<workbookProtection %s/>",
-            stri_join(
-              names(attr),
-              '="',
-              attr,
-              '"',
-              collapse = " ",
-              sep = ""
-            )
-          )
+          xml_node_create("workbookProtection", xml_attributes = attr[attr != ""])
+
+        # TODO: use xml_node_create
+        if (fileSharing) {
+          if (type == 2L) readOnlyRecommended <- TRUE
+          fileSharingPassword <- function(x, username, readOnlyRecommended) {
+            readonly <- ifelse(readOnlyRecommended, 'readOnlyRecommended="1"', '')
+            sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x) 
+          }
+
+          self$workbook$fileSharing <- fileSharingPassword(attr["workbookPassword"], username, readOnlyRecommended)
+        }
+
+        if (!is.null(type) | !is.null(password))
+          self$workbook$apps <- sprintf("<DocSecurity>%i</DocSecurity>", type)
+
       } else {
         self$workbook$workbookProtection <- ""
       }
