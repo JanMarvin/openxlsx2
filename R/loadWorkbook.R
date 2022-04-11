@@ -2,7 +2,6 @@
 #' @title Load an existing .xlsx file
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param xlsxFile alias for file
-#' @param isUnzipped Set to TRUE if the xlsx file is already unzipped
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #'  sheet will be loaded.
 #' @description  loadWorkbook returns a workbook object conserving styles and
@@ -23,28 +22,22 @@
 #' wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 #' }
 #'
-loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
-  # TODO  default of isUnzipped to tools::file_ext(file) == "zip" ?
-  ## If this is a unzipped workbook, skip the temp dir stuff
-  if (isUnzipped) {
-    xmlDir <- file
-    xmlFiles <- list.files(path = xmlDir, full.names = TRUE, recursive = TRUE, all.files = TRUE)
-  } else {
-    file <- xlsxFile %||% file
-    file <- getFile(file)
+loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
+  
+  file <- xlsxFile %||% file
+  file <- getFile(file)
 
-    if (!file.exists(file)) {
-      stop("File does not exist.")
-    }
-
-    ## create temp dir
-    xmlDir <- tempfile("_openxlsx_loadWorkbook")
-    # do not unlink after loading
-    # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
-
-    ## Unzip files to temp directory
-    xmlFiles <- unzip(file, exdir = xmlDir)
+  if (!file.exists(file)) {
+    stop("File does not exist.")
   }
+
+  ## create temp dir
+  xmlDir <- tempfile("_openxlsx_loadWorkbook")
+  # do not unlink after loading
+  # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
+
+  ## Unzip files to temp directory
+  xmlFiles <- unzip(file, exdir = xmlDir)
 
   wb <- wb_workbook()
 
@@ -106,15 +99,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   vbaProject        <- grep_xml("vbaProject\\.bin$")
 
   ## remove all EXCEPT media and charts
-  if (!isUnzipped) {
-    on.exit(
-      unlink(
-        grep_xml("charts|media|vmlDrawing|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
-        recursive = TRUE, force = TRUE
-      ),
-      add = TRUE
-    )
-  }
+  on.exit(
+    unlink(
+      grep_xml("charts|media|vmlDrawing|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
+      recursive = TRUE, force = TRUE
+    ),
+    add = TRUE
+  )
 
   ## core
   if (length(coreXML) == 1) {
