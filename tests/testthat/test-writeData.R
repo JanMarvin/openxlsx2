@@ -109,3 +109,34 @@ test_that("write xlsx", {
   expect_silent(write.xlsx(df, tmp, asTable = TRUE, tableStyle = "TableStyleLight9"))
 
 })
+
+
+test_that("example", {
+
+  tmp <- temp_xlsx()
+
+  # write to working directory
+  expect_silent(write.xlsx(iris, file = tmp, colNames = TRUE))
+
+  expect_silent(
+    write.xlsx(iris,
+               file = tmp,
+               colNames = TRUE
+    )
+  )
+
+  ## Lists elements are written to individual worksheets, using list names as sheet names if available
+  l <- list("IRIS" = iris, "MTCATS" = mtcars, matrix(runif(1000), ncol = 5))
+  write.xlsx(l, tmp, colWidths = c(NA, "auto", "auto"))
+
+  expect_silent(write.xlsx(l, tmp,
+             startCol = c(1, 2, 3), startRow = 2,
+             asTable = c(TRUE, TRUE, FALSE), withFilter = c(TRUE, FALSE, FALSE)
+  ))
+
+  # specify column widths for multiple sheets
+  expect_silent(write.xlsx(l, tmp, colWidths = 20))
+  expect_silent(write.xlsx(l, tmp, colWidths = list(100, 200, 300)))
+  expect_silent(write.xlsx(l, tmp, colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5))))
+
+})

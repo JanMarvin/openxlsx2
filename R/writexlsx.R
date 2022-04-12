@@ -287,6 +287,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   colWidths <- NULL
   if ("colWidths" %in% names(params)) {
     colWidths <- params$colWidths
+    if (any(is.na(colWidths))) colWidths[is.na(colWidths)] <- 8.43
   }
 
   keepNA <- FALSE
@@ -423,10 +424,11 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
     # colWidth is not required for the output
     if (!is.null(colWidths)) {
+      cols <- seq_len(NCOL(x[[i]])) + startCol[[i]] - 1L
       if (identical(colWidths[[i]], "auto")) {
-        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = "auto")
+        setColWidths(wb, sheet = i, cols = cols, widths = "auto")
       } else if (!identical(colWidths[[i]], "")) {
-        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = colWidths[[i]])
+        setColWidths(wb, sheet = i, cols = cols, widths = colWidths[[i]])
       }
     }
   }

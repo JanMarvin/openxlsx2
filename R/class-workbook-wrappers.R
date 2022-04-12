@@ -440,7 +440,6 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
     df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
     # TODO format(x) might not be the way it is formatted in the xlsx file.
     col_width <- vapply(df, function(x) {max(nchar(format(x)))}, NA_real_)
-    print(col_width)
 
     # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
     fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
