@@ -9,7 +9,11 @@ protectWorkbook(
   protect = TRUE,
   password = NULL,
   lockStructure = FALSE,
-  lockWindows = FALSE
+  lockWindows = FALSE,
+  type = 1L,
+  fileSharing = FALSE,
+  username = unname(Sys.info()["user"]),
+  readOnlyRecommended = FALSE
 )
 }
 \arguments{
@@ -22,6 +26,14 @@ protectWorkbook(
 \item{lockStructure}{Whether the workbook structure should be locked}
 
 \item{lockWindows}{Whether the window position of the spreadsheet should be locked}
+
+\item{type}{Lock type, default 1 - xlsx with password. 2 - xlsx recommends read-only. 4 - xlsx enforces read-only. 8 - xlsx is locked for annotation.}
+
+\item{fileSharing}{Whether to enable a popup requesting the unlock password is prompted}
+
+\item{username}{The username for the fileSharing popup}
+
+\item{readOnlyRecommended}{Whether or not a post unlock message appears stating that the workbook is recommended to be opened in readonly mode.}
 }
 \description{
 Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
@@ -38,4 +50,7 @@ protectWorkbook(wb, protect = FALSE)
 \dontrun{
 wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 }
+
+protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE, type = 2L, fileSharing = TRUE, username = "Test", readOnlyRecommended = TRUE)
+
 }

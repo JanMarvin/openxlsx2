@@ -21,6 +21,9 @@ wbWorkbook <- R6::R6Class(
     #' @field calcChain calcChain
     calcChain = character(),
 
+    #' @field apps apps
+    apps = character(),
+
     #' @field charts charts
     charts = list(),
 
@@ -178,6 +181,7 @@ wbWorkbook <- R6::R6Class(
       category        = NULL,
       datetimeCreated = Sys.time()
     ) {
+      self$apps <- character()
       self$charts <- list()
       self$isChartSheet <- logical()
 
@@ -905,14 +909,6 @@ wbWorkbook <- R6::R6Class(
               overwrite = TRUE,
               copy.date = TRUE
             )
-
-            self$worksheets_rels[[i]] <- unique(c(
-              self$worksheets_rels[[i]],
-              sprintf(
-                '<Relationship Id="rIdthread" Type="http://schemas.microsoft.com/office/2017/10/relationships/threadedComment" Target="../threadedComments/%s"/>',
-                basename(fl)
-              )
-            ))
           }
         }
       }
@@ -927,7 +923,7 @@ wbWorkbook <- R6::R6Class(
 
       if (length(self$embeddings)) {
         embeddingsDir <- dir_create(tmpDir, "xl", "embeddings")
-        for (fl in embeddings) {
+        for (fl in self$embeddings) {
           file.copy(fl, embeddingsDir, overwrite = TRUE)
         }
       }
@@ -984,12 +980,15 @@ wbWorkbook <- R6::R6Class(
         fl = file.path(relsDir, ".rels")
       )
 
+      app <- "<Application>Microsoft Excel</Application>"
+      # further protect argument (might be extended with: <ScaleCrop>, <HeadingPairs>, <TitlesOfParts>, <LinksUpToDate>, <SharedDoc>, <HyperlinksChanged>, <AppVersion>)
+      if (!is.null(self$apps)) app <- paste0(app, self$apps)
 
       ## write app.xml
       if (length(self$app) == 0) {
         write_file(
           head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
-          body = "<Application>Microsoft Excel</Application>",
+          body = app,
           tail = "</Properties>",
           fl = file.path(docPropsDir, "app.xml")
         )
@@ -1070,7 +1069,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## ct is updated as xml
-      ct <- c(default, openxlsx2:::df_to_xml(name = "Override", df_col = override))
+      ct <- c(default, openxlsx2:::df_to_xml(name = "Override", df_col = override[c("PartName", "ContentType")]))
 
 
       ## write query tables
@@ -1154,8 +1153,22 @@ wbWorkbook <- R6::R6Class(
         ct <- ct[!grepl("sharedStrings", ct)]
       }
 
+      for (draw in seq_along(self$drawings)) {
+          if (length(self$drawings[[draw]])) {
+              ct <- c(ct,
+                sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', draw)
+              )
+          }
+      }
+
       if (nComments > 0) {
-        ct <- c(ct, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>' )
+        ct <- c(
+          ct,
+          # TODO this default extension is most likely wrong here and should be set when searching for and writing the vml entrys
+          '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>',
+          sprintf('<Override PartName="/xl/comments%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>', seq_len(nComments)
+          )
+        )
       }
 
       self$Content_Types <- ct
@@ -1163,7 +1176,7 @@ wbWorkbook <- R6::R6Class(
       ## write [Content_type]
       write_file(
         head = '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">',
-        body = pxml(ct),
+        body = pxml(unique(ct)),
         tail = "</Types>",
         fl = file.path(tmpDir, "[Content_Types].xml")
       )
@@ -1929,7 +1942,8 @@ wbWorkbook <- R6::R6Class(
           if (any(basename(rel$Type) == "drawing")) {
             rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
           }
-          self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel)
+          if (is.null(rel$TargetMode)) rel$TargetMode <- ""
+          self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
         }
       } else {
         self$worksheets_rels <- list()
@@ -1957,48 +1971,6 @@ wbWorkbook <- R6::R6Class(
       # (don't use grepl(value = TRUE))
       self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
 
-      invisible(self)
-    },
-
-    #' @description
-    #' Add DXFS?
-    #' @param style style
-    #' @return The `wbWorkbook` object, invisibly
-    addDXFS = function(style) {
-      # TODO possible changes to self
-      # TODO assert_class(style, "Style")
-      dxf <- "<dxf>"
-      dxf <- stri_join(dxf, wb_create_font_node(self, style))
-      # fillNode <- NULL
-
-      if (!is.null(style$fill$fillFg) | !is.null(style$fill$fillBg)) {
-        dxf <- stri_join(dxf, createFillNode(style))
-      }
-
-      # TODO go with length(); c() drops NULL elements
-      if (any(!is.null(
-        c(
-          style$borderLeft,
-          style$borderRight,
-          style$borderTop,
-          style$borderBottom,
-          style$borderDiagonal
-        )
-      ))) {
-        dxf <- stri_join(dxf, createBorderNode(style))
-      }
-
-      dxf <- stri_join(dxf, "</dxf>", sep = " ")
-
-      if (dxf %in% self$styles_mgr$styles$dxfs) {
-        # return(which(styles$dxfs == dxf) - 1L)
-        return(invisible(self))
-      }
-
-      # dxfId <- length(styles$dxfs)
-      self$styles_mgr$styles$dxfs <- c(self$styles_mgr$styles$dxfs, dxf)
-
-      # return(dxfId)
       invisible(self)
     },
 
@@ -2300,6 +2272,20 @@ wbWorkbook <- R6::R6Class(
           gradient  <- as.integer(params$gradient  %||% 1L)
           border    <- as.integer(params$border    %||% 1L)
 
+
+          self$worksheets[[sheet]]$extLst <- c(
+            self$worksheets[[sheet]]$extLst,
+            gen_databar_extlst(
+              guid      = guid,
+              sqref     = sqref,
+              posColour = posColour,
+              negColour = negColour,
+              values    = values,
+              border    = border,
+              gradient  = gradient
+            )
+          )
+
           if (is.null(values)) {
             sprintf(
               '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
@@ -2327,19 +2313,6 @@ wbWorkbook <- R6::R6Class(
               guid
             )
           }
-
-          self$worksheets[[sheet]]$extLst <- c(
-            self$worksheets[[sheet]]$extLst,
-            gen_databar_extlst(
-              guid      = guid,
-              sqref     = sqref,
-              posColour = posColour,
-              negColour = negColour,
-              values    = values,
-              border    = border,
-              gradient  = gradient
-            )
-          )
         },
 
         ## expression ----
@@ -2662,24 +2635,13 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- wb_validate_sheet(self, sheet)
 
-      # TODO this simply adds the required drawings to the Content_Types. Might want to look
-      # into a way to handle such things.
-      self$Content_Types <- unique(
-        c(self$Content_Types,
-          sprintf(
-            "<Override PartName=\"/xl/drawings/drawing%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\"/>",
-            sheet
-          )
-        )
-      )
-
       # TODO tools::file_ext() ...
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
       drawing_len <- 0
       if (length(self$drawings_rels[[sheet]]))
-        drawing_len <- length(xml_node(self$drawings_rels[[sheet]], "Relationship"))
+        drawing_len <- length(xml_node(unlist(self$drawings_rels[[sheet]]), "Relationship"))
 
       imageNo <- drawing_len + 1L
       mediaNo <- length(self$media) + 1L
@@ -2700,8 +2662,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## drawings rels (Reference from drawings.xml to image file in media folder)
-      self$drawings_rels[[sheet]] <- c(
-        self$drawings_rels[[sheet]],
+      self$drawings_rels[[sheet]] <- paste0(
+        unlist(self$drawings_rels[[sheet]]),
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
           imageNo,
@@ -2754,15 +2716,10 @@ wbWorkbook <- R6::R6Class(
           "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
           "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         )
-        drawingsXML <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
-        drawingsXML <- c(self$drawings[[sheet]], drawingsXML)
+        self$drawings[[sheet]] <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
       } else {
-        drawingsXML <- xml_add_child(self$drawings[[sheet]], drawingsXML)
+        self$drawings[[sheet]] <- xml_add_child(self$drawings[[sheet]], drawingsXML)
       }
-
-
-      ## append to workbook drawing
-      self$drawings[[sheet]] <- drawingsXML
 
       invisible(self)
     },
@@ -2895,14 +2852,25 @@ wbWorkbook <- R6::R6Class(
     #' @param lockStructure lockStructure
     #' @param lockWindows lockWindows
     #' @param password password
+    #' @param type type
+    #' @param fileSharing fileSharing
+    #' @param username username
+    #' @param readOnlyRecommended readOnlyRecommended
     #' @return The `wbWorkbook` object, invisibly
     protectWorkbook = function(
       protect = TRUE,
       lockStructure = FALSE,
       lockWindows = FALSE,
-      password = NULL
+      password = NULL,
+      type = NULL,
+      fileSharing = FALSE,
+      username = unname(Sys.info()["user"]),
+      readOnlyRecommended = FALSE
     ) {
-      attr <- c()
+
+      attr <- vector("character", 3L)
+      names(attr) <- c("workbookPassword", "lockStructure", "lockWindows")
+
       if (!is.null(password)) {
         attr["workbookPassword"] <- hashPassword(password)
       }
@@ -2912,20 +2880,26 @@ wbWorkbook <- R6::R6Class(
       if (!missing(lockWindows) && !is.null(lockWindows)) {
         attr["lockWindows"] <- toString(as.numeric(lockWindows))
       }
+
       # TODO: Shall we parse the existing protection settings and preserve all unchanged attributes?
       if (protect) {
         self$workbook$workbookProtection <-
-          sprintf(
-            "<workbookProtection %s/>",
-            stri_join(
-              names(attr),
-              '="',
-              attr,
-              '"',
-              collapse = " ",
-              sep = ""
-            )
-          )
+          xml_node_create("workbookProtection", xml_attributes = attr[attr != ""])
+
+        # TODO: use xml_node_create
+        if (fileSharing) {
+          if (type == 2L) readOnlyRecommended <- TRUE
+          fileSharingPassword <- function(x, username, readOnlyRecommended) {
+            readonly <- ifelse(readOnlyRecommended, 'readOnlyRecommended="1"', '')
+            sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x) 
+          }
+
+          self$workbook$fileSharing <- fileSharingPassword(attr["workbookPassword"], username, readOnlyRecommended)
+        }
+
+        if (!is.null(type) | !is.null(password))
+          self$workbook$apps <- sprintf("<DocSecurity>%i</DocSecurity>", type)
+
       } else {
         self$workbook$workbookProtection <- ""
       }
@@ -3422,12 +3396,11 @@ wbWorkbook <- R6::R6Class(
 
         ## vml drawing
         if (length(self$vml_rels[[i]])) {
-          file.copy(
-            from = self$vml_rels[[i]],
-            to = file.path(
-              xldrawingsRelsDir,
-              stri_join("vmlDrawing", i, ".vml.rels")
-            )
+          write_file(
+            head = '',
+            body = pxml(self$vml_rels[[i]]),
+            tail = '',
+            fl = file.path(xldrawingsRelsDir, stri_join("vmlDrawing", i, ".vml.rels"))
           )
         }
 
@@ -3535,7 +3508,8 @@ wbWorkbook <- R6::R6Class(
                 relship <- relship[!delete,]
               }
               relship$typ <- relship$tid <- NULL
-              ws_rels <- df_to_xml("Relationship", df_col = relship)
+              if (is.null(relship$TargetMode)) relship$TargetMode <- ""
+              ws_rels <- df_to_xml("Relationship", df_col = relship[c("Id", "Type", "Target", "TargetMode")])
             }
 
 

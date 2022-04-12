@@ -2,7 +2,6 @@
 #' @title Load an existing .xlsx file
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param xlsxFile alias for file
-#' @param isUnzipped Set to TRUE if the xlsx file is already unzipped
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #'  sheet will be loaded.
 #' @description  loadWorkbook returns a workbook object conserving styles and
@@ -23,28 +22,22 @@
 #' wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 #' }
 #'
-loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
-  # TODO  default of isUnzipped to tools::file_ext(file) == "zip" ?
-  ## If this is a unzipped workbook, skip the temp dir stuff
-  if (isUnzipped) {
-    xmlDir <- file
-    xmlFiles <- list.files(path = xmlDir, full.names = TRUE, recursive = TRUE, all.files = TRUE)
-  } else {
-    file <- xlsxFile %||% file
-    file <- getFile(file)
+loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
 
-    if (!file.exists(file)) {
-      stop("File does not exist.")
-    }
+  file <- xlsxFile %||% file
+  file <- getFile(file)
 
-    ## create temp dir
-    xmlDir <- tempfile("_openxlsx_loadWorkbook")
-    # do not unlink after loading
-    # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
-
-    ## Unzip files to temp directory
-    xmlFiles <- unzip(file, exdir = xmlDir)
+  if (!file.exists(file)) {
+    stop("File does not exist.")
   }
+
+  ## create temp dir
+  xmlDir <- tempfile("_openxlsx_loadWorkbook")
+  # do not unlink after loading
+  # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
+
+  ## Unzip files to temp directory
+  xmlFiles <- unzip(file, exdir = xmlDir)
 
   wb <- wb_workbook()
 
@@ -106,15 +99,13 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   vbaProject        <- grep_xml("vbaProject\\.bin$")
 
   ## remove all EXCEPT media and charts
-  if (!isUnzipped) {
-    on.exit(
-      unlink(
-        grep_xml("charts|media|vmlDrawing|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
-        recursive = TRUE, force = TRUE
-      ),
-      add = TRUE
-    )
-  }
+  on.exit(
+    unlink(
+      grep_xml("charts|media|vmlDrawing|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
+      recursive = TRUE, force = TRUE
+    ),
+    add = TRUE
+  )
 
   ## core
   if (length(coreXML) == 1) {
@@ -128,12 +119,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   nSheets <- length(worksheetsXML) + length(chartSheetsXML)
 
   ## get Rid of chartsheets, these do not have a worksheet/sheeti.xml
-  worksheet_rId_mapping <- NULL
-  workbookRelsXML <- grep_xml("workbook.xml.rels$")
-  if (length(workbookRelsXML)) {
-    xml <- read_xml(workbookRelsXML)
-    workbookRelsXML <- xml_node(xml, "Relationships", "Relationship")
-    worksheet_rId_mapping <- grep("worksheets/sheet", workbookRelsXML, fixed = TRUE, value = TRUE)
+  wb_relsxml <- grep_xml("workbook.xml.rels$")
+  if (length(wb_relsxml)) {
+    workbookRelsXML <- xml_node(wb_relsxml, "Relationships", "Relationship")
   }
 
   ##
@@ -175,45 +163,53 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     ## of sheet names with sheet indeces.
     sheets <- sheets[sheets$`r:id` != "",]
 
+    # if wb_relsxml is not available, the workbook has no relationships, not
+    # sure if this is possible
+    if (length(wb_relsxml))
+      wb_rels_xml <- rbindlist(
+        xml_attr(wb_relsxml, "Relationships", "Relationship")
+      )
+
+    sheets <- merge(
+      sheets, wb_rels_xml,
+      by.x = "r:id", by.y = "Id",
+      all.x = TRUE, all.y = FALSE
+    )
 
     ## sheetId is meaningless
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
+    sheets$typ <- basename(sheets$Type)
+    sheets$target <- stri_join(xmlDir, "/xl/", sheets$Target)
+    sheets$id <- rank(as.numeric(gsub("[^0-9.-]+", "", sheets$`r:id`)))
+    sheets <- sheets[order(sheets$id),]
 
-    sheetrId    <- sheets$`r:id`
-    sheetId     <- sheets$sheetId
-    sheet_names <- sheets$name
-
-    is_chart_sheet <- sheetrId %in% chartSheetRIds
     if (is.null(sheets$state)) sheets$state <- "visible"
     is_visible <- sheets$state %in% c("", "true", "visible")
 
     ## add worksheets to wb
-    j <- 1
-    for (i in seq_along(sheetrId)) {
-      if (is_chart_sheet[i]) {
-        txt <- read_xml(chartSheetsXML[j])
+    for (i in seq_len(nrow(sheets))) {
+      if (sheets$typ[i] == "chartsheet") {
+        txt <- read_xml(sheets$target[i], pointer = FALSE)
 
         zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))
         if (length(zoom) == 0) {
           zoom <- 100
         }
 
-        tabColour <- xml_node(txt, "worksheet", "sheetPr", "tabColor")
+        tabColour <- xml_node(txt, "chartsheet", "sheetPr", "tabColor")
         if (length(tabColour) == 0) {
           tabColour <- NULL
         }
 
-        j <- j + 1L
-
-        wb$addChartSheet(sheet = sheet_names[i], tabColour = tabColour, zoom = as.numeric(zoom))
-      } else {
+        wb$addChartSheet(sheetName = sheets$name[i], tabColour = tabColour, zoom = as.numeric(zoom))
+      } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$addWorksheet(sheet_names[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
+        wb$addWorksheet(sheets$name[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
     }
 
@@ -221,7 +217,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     for (i in seq_len(nSheets)) {
       wb$workbook$sheets[[i]] <- gsub(
         sprintf(' sheetId="%s"', i),
-        sprintf(' sheetId="%s"', sheetId[i]),
+        sprintf(' sheetId="%s"', sheets$sheetId[i]),
         wb$workbook$sheets[[i]]
       )
     }
@@ -507,10 +503,18 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       sprintf('<Override PartName="/xl/externalLinks/externalLink%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml"/>', seq_along(extLinksXML))
     )
 
-    wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf(
-      '<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink" Target="externalLinks/externalLink1.xml"/>',
-      seq_along(extLinksXML)
-    ))
+    ext_ref <- rbindlist(xml_attr(wb$workbook$externalReferences, "externalReferences", "externalReference"))
+
+    for (i in seq_along(extLinksXML)) {
+      wb$workbook.xml.rels <- c(
+        wb$workbook.xml.rels,
+        sprintf(
+          '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink" Target="externalLinks/externalLink%s.xml"/>',
+          ext_ref[i,1],
+          i
+        )
+      )
+    }
   }
 
   ## externalLinksRels
@@ -529,102 +533,106 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
   ##* ----------------------------------------------------------------------------------------------*##
 
   ## xl\worksheets
-  file_names <- regmatches(worksheet_rId_mapping, regexpr("sheet[0-9]+\\.xml", worksheet_rId_mapping, perl = TRUE))
-  file_rIds <- unlist(getId(worksheet_rId_mapping))
-  file_names <- file_names[match(sheetrId, file_rIds)]
+  file_names <- basename(sheets$Target)
 
-  worksheetsXML <- file.path(dirname(worksheetsXML), file_names)
+  # nSheets contains all sheets. worksheets and chartsheets. For this loop we
+  # only need worksheets. We can not loop over import_sheets, because some
+  # might be chart sheets. If a certain sheet is requested, we have to respect
+  # this and select only this sheet.
 
-
-  # TODO this loop should live in loadworksheets
-  import_sheets <- seq_len(nSheets)
+  import_sheets <- seq_len(nrow(sheets))
   if (!missing(sheet)) {
     import_sheets <- wb_validate_sheet(wb, sheet)
+    sheet <- import_sheets
   }
 
   for (i in import_sheets) {
-    worksheet_xml <- read_xml(worksheetsXML[i])
-
-    wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
-    wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
-    wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks")
-    # wb$worksheets[[i]]$cols <- xml_node(worksheet_xml, "worksheet", "cols")
-    # wb$worksheets[[i]]$conditionalFormatting <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
-    wb$worksheets[[i]]$controls <- xml_node(worksheet_xml, "worksheet", "controls")
-    wb$worksheets[[i]]$customProperties <- xml_node(worksheet_xml, "worksheet", "customProperties")
-    wb$worksheets[[i]]$customSheetViews <- xml_node(worksheet_xml, "worksheet", "customSheetViews")
-    wb$worksheets[[i]]$dataConsolidate <- xml_node(worksheet_xml, "worksheet", "dataConsolidate")
-    # wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations")
-    # wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
-    # has <drawing> a child <legacyDrawing> ?
-    wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
-    wb$worksheets[[i]]$drawingHF <- xml_node(worksheet_xml, "worksheet", "drawingHF")
-    wb$worksheets[[i]]$legacyDrawing <- xml_node(worksheet_xml, "worksheet", "legacyDrawing")
-    wb$worksheets[[i]]$legacyDrawingHF <- xml_node(worksheet_xml, "worksheet", "legacyDrawingHF")
-    # wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
-    wb$worksheets[[i]]$headerFooter <- xml_node(worksheet_xml, "worksheet", "headerFooter")
-    # wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks")
-    wb$worksheets[[i]]$ignoredErrors <- xml_node(worksheet_xml, "worksheet", "ignoredErrors")
-    # wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells")
-    wb$worksheets[[i]]$oleObjects <- xml_node(worksheet_xml, "worksheet", "oleObjects")
-    wb$worksheets[[i]]$pageMargins <- xml_node(worksheet_xml, "worksheet", "pageMargins")
-    wb$worksheets[[i]]$pageSetup <- xml_node(worksheet_xml, "worksheet", "pageSetup")
-    wb$worksheets[[i]]$phoneticPr <- xml_node(worksheet_xml, "worksheet", "phoneticPr")
-    wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
-    wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")
-    wb$worksheets[[i]]$protectedRanges <- xml_node(worksheet_xml, "worksheet", "protectedRanges")
-    wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks")
-    wb$worksheets[[i]]$scenarios <- xml_node(worksheet_xml, "worksheet", "scenarios")
-    wb$worksheets[[i]]$sheetCalcPr <- xml_node(worksheet_xml, "worksheet", "sheetCalcPr")
-    # wb$worksheets[[i]]$sheetData <- xml_node(worksheet_xml, "worksheet", "sheetData")
-    # wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
-    wb$worksheets[[i]]$sheetPr <- xml_node(worksheet_xml, "worksheet", "sheetPr")
-    wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
-    # wb$worksheets[[i]]$sheetViews <- xml_node(worksheet_xml, "worksheet", "sheetViews")
-    wb$worksheets[[i]]$smartTags <- xml_node(worksheet_xml, "worksheet", "smartTags")
-    wb$worksheets[[i]]$sortState <- xml_node(worksheet_xml, "worksheet", "sortState")
-    # wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts")
-    wb$worksheets[[i]]$webPublishItems <- xml_node(worksheet_xml, "worksheet", "webPublishItems")
-
-
-
-    wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
-
-    wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
-    wb$worksheets[[i]]$sheetViews    <- xml_node(worksheet_xml, "worksheet", "sheetViews")
-    wb$worksheets[[i]]$cols_attr     <- xml_node(worksheet_xml, "worksheet", "cols", "col")
+    if (sheets$typ[i] == "chartsheet") {
+      chartsheet_xml <- read_xml(sheets$target[i])
+      wb$worksheets[[i]]$sheetPr <- xml_node(chartsheet_xml, "chartsheet", "sheetPr")
+      wb$worksheets[[i]]$sheetViews    <- xml_node(chartsheet_xml, "chartsheet", "sheetViews")
+      wb$worksheets[[i]]$pageMargins <- xml_node(chartsheet_xml, "chartsheet", "pageMargins")
+    } else {
+      worksheet_xml <- read_xml(sheets$target[i])
+      wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
+      wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
+      wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks")
+      # wb$worksheets[[i]]$cols <- xml_node(worksheet_xml, "worksheet", "cols")
+      # wb$worksheets[[i]]$conditionalFormatting <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
+      wb$worksheets[[i]]$controls <- xml_node(worksheet_xml, "worksheet", "controls")
+      wb$worksheets[[i]]$customProperties <- xml_node(worksheet_xml, "worksheet", "customProperties")
+      wb$worksheets[[i]]$customSheetViews <- xml_node(worksheet_xml, "worksheet", "customSheetViews")
+      wb$worksheets[[i]]$dataConsolidate <- xml_node(worksheet_xml, "worksheet", "dataConsolidate")
+      # wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations")
+      # wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
+      # has <drawing> a child <legacyDrawing> ?
+      wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
+      wb$worksheets[[i]]$drawingHF <- xml_node(worksheet_xml, "worksheet", "drawingHF")
+      wb$worksheets[[i]]$legacyDrawing <- xml_node(worksheet_xml, "worksheet", "legacyDrawing")
+      wb$worksheets[[i]]$legacyDrawingHF <- xml_node(worksheet_xml, "worksheet", "legacyDrawingHF")
+      # wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
+      wb$worksheets[[i]]$headerFooter <- xml_node(worksheet_xml, "worksheet", "headerFooter")
+      # wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks")
+      wb$worksheets[[i]]$ignoredErrors <- xml_node(worksheet_xml, "worksheet", "ignoredErrors")
+      # wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells")
+      wb$worksheets[[i]]$oleObjects <- xml_node(worksheet_xml, "worksheet", "oleObjects")
+      wb$worksheets[[i]]$pageMargins <- xml_node(worksheet_xml, "worksheet", "pageMargins")
+      wb$worksheets[[i]]$pageSetup <- xml_node(worksheet_xml, "worksheet", "pageSetup")
+      wb$worksheets[[i]]$phoneticPr <- xml_node(worksheet_xml, "worksheet", "phoneticPr")
+      wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
+      wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")
+      wb$worksheets[[i]]$protectedRanges <- xml_node(worksheet_xml, "worksheet", "protectedRanges")
+      wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks")
+      wb$worksheets[[i]]$scenarios <- xml_node(worksheet_xml, "worksheet", "scenarios")
+      wb$worksheets[[i]]$sheetCalcPr <- xml_node(worksheet_xml, "worksheet", "sheetCalcPr")
+      # wb$worksheets[[i]]$sheetData <- xml_node(worksheet_xml, "worksheet", "sheetData")
+      # wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
+      wb$worksheets[[i]]$sheetPr <- xml_node(worksheet_xml, "worksheet", "sheetPr")
+      wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
+      # wb$worksheets[[i]]$sheetViews <- xml_node(worksheet_xml, "worksheet", "sheetViews")
+      wb$worksheets[[i]]$smartTags <- xml_node(worksheet_xml, "worksheet", "smartTags")
+      wb$worksheets[[i]]$sortState <- xml_node(worksheet_xml, "worksheet", "sortState")
+      # wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts")
+      wb$worksheets[[i]]$webPublishItems <- xml_node(worksheet_xml, "worksheet", "webPublishItems")
 
 
-    # need to expand the names. multiple conditions can be combined in one conditionalFormatting
-    cfs <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
-    if (length(cfs)) {
-      nms <- unlist(xml_attr(cfs, "conditionalFormatting"))
-      cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
-      names(cf) <- nms
-      conditionalFormatting <- unlist(cf)
-      names(conditionalFormatting) <- unapply(nms, function(x) rep(x, length(cf[[x]])))
 
-      wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
+      wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
+
+      wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
+      wb$worksheets[[i]]$sheetViews    <- xml_node(worksheet_xml, "worksheet", "sheetViews")
+      wb$worksheets[[i]]$cols_attr     <- xml_node(worksheet_xml, "worksheet", "cols", "col")
+
+
+      # need to expand the names. multiple conditions can be combined in one conditionalFormatting
+      cfs <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
+      if (length(cfs)) {
+        nms <- unlist(xml_attr(cfs, "conditionalFormatting"))
+        cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
+        names(cf) <- nms
+        conditionalFormatting <- unlist(cf)
+        names(conditionalFormatting) <- unapply(nms, function(x) rep(x, length(cf[[x]])))
+
+        wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
+      }
+
+      wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
+      wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst", "ext")
+      wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
+
+      # wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
+      wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks", "hyperlink")
+      wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
+
+      # load the data. This function reads sheet_data and returns cc and row_attr
+      loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
     }
-    wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
-
-    wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
-    wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst", "ext")
-    wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
-
-    # wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
-    wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks", "hyperlink")
-    wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
-
-    # load the data. This function reads sheet_data and returns cc and row_attr
-    loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
-
   }
 
   ## Fix headers/footers
   # TODO think about improving headerFooter
   for (i in seq_len(nSheets)) {
-    if (!is_chart_sheet[i]) {
+    if (sheets$typ[i] == "worksheet") {
       if (length(wb$worksheets[[i]]$headerFooter)) {
 
         amp_split <- function(x) {
@@ -679,11 +687,11 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       allRels <- rep("", length(wb$worksheets))
 
       for (i in seq_len(nSheets)) {
-        if (is_chart_sheet[i]) {
-          ind <- which(chartSheetRIds == sheetrId[i])
+        if (sheets$typ[i] == "chartsheet") {
+          ind <- which(chartSheetRIds == sheets$`r:id`[i])
           rels_file <- file.path(chartSheetsRelsDir, paste0(chartsheet_rId_mapping[ind], ".rels"))
         } else {
-          ind <- sheetrId[i]
+          ind <- sheets$`r:id`[i]
           rels_file <- file.path(xmlDir, "xl", "worksheets", "_rels", paste0(file_names[i], ".rels"))
         }
         if (file.exists(rels_file)) {
@@ -698,8 +706,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     xml <- lapply(seq_along(allRels), function(i) {
       if (haveRels[i]) {
-        xml <- read_xml(allRels[[i]])
-        xml <- xml_node(xml, "Relationships", "Relationship")
+        xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
+
+        xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
+        xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+        xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
+
+        if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
+        xml <- df_to_xml("Relationship", xml_relship[c("Id", "Type", "Target", "TargetMode")])
       } else {
         xml <- character()
       }
@@ -708,7 +722,14 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     wb$worksheets_rels <- xml
 
-
+    xml <- lapply(seq_along(allRels), function(i) {
+      if (haveRels[i]) {
+        xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
+      } else {
+        xml <- character()
+      }
+      return(xml)
+    })
 
 
 
@@ -778,7 +799,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     if (length(tablesXML)) {
       tables <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=table)[0-9]+(?=\\.xml)", x, perl = TRUE))))
-      tableSheets <- unapply(seq_along(sheetrId), function(i) rep(i, length(tables[[i]])))
+      tableSheets <- unapply(seq_along(sheets$`r:id`), function(i) rep(i, length(tables[[i]])))
 
       if (length(unlist(tables))) {
 
@@ -817,7 +838,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
     ## might we have some external hyperlinks
     # TODO use lengths()
-    if (any(vapply(wb$worksheets[!is_chart_sheet], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
+    if (any(vapply(wb$worksheets[sheets$typ == "worksheet"], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
 
       ## Do we have external hyperlinks
       hlinks <- lapply(xml, function(x) x[grepl("hyperlink", x) & grepl("External", x)])
@@ -866,12 +887,6 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
       dXML <- gsub("<xdr:wsDr .*?>", "", dXML)
       dXML <- gsub("</xdr:wsDr>", "", dXML)
 
-
-      for (drawing in seq_along(drawingsXML)) {
-        drwng_xml <- read_xml(drawingsXML[drawing])
-        wb$drawings[[drawing]] <- xml_node(drwng_xml, "xdr:wsDr")
-      }
-
       # ptn1 <- "<(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)"
       # ptn2 <- "</(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)>"
 
@@ -910,13 +925,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     if (length(vmlDrawingXML)) {
       wb$Content_Types <- c(wb$Content_Types, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
-      # TODO missed <<-
       drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
-
-      for (i in seq_along(vmlDrawingXML)) {
-        wb$drawings_vml[[i]] <- read_xml(vmlDrawingXML[[i]], pointer = FALSE)
-      }
-
 
       # TODO use lengths()
       hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
@@ -930,16 +939,11 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
             ind <- grepl(target, vmlDrawingXML)
 
             if (any(ind)) {
-              txt <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
-
-              i1 <- regexpr("<v:shapetype", txt, fixed = TRUE)
-              i2 <- regexpr("</xml>", txt, fixed = TRUE)
-
-              wb$vml[[i]] <- substring(text = txt, first = i1, last = (i2 - 1L))
+              wb$vml[[i]] <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {
-                wb$vml_rels[i] <- vmlDrawingRelsXML[relsInd]
+                wb$vml_rels[i] <- read_xml(vmlDrawingRelsXML[relsInd], pointer = FALSE)
               }
             }
           }
@@ -949,6 +953,9 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
 
 
 
+    # remove drawings from Content_Types. These drawings are the old imported drawings.
+    # we will add drawings only when writing and will use the sheet to create them.
+    wb$Content_Types <- wb$Content_Types[!grepl("drawings/drawing", wb$Content_Types)]
 
 
 
@@ -1058,45 +1065,10 @@ loadWorkbook <- function(file, xlsxFile = NULL, isUnzipped = FALSE, sheet) {
     }
 
 
-    ## rels image
-    drawXMLrelationship <- lapply(xml, function(x) grep("relationships/image", x, value = TRUE))
-    hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
-    if (any(hasDrawing)) {
-      for (i in seq_along(xml)) {
-        if (hasDrawing[i]) {
-          image_ids <- unlist(getId(drawXMLrelationship[[i]]))
-          new_image_ids <- paste0("rId", seq_along(image_ids) + 70000)
-          for (j in seq_along(image_ids)) {
-            wb$worksheets[[i]]$oleObjects <- gsub(image_ids[j], new_image_ids[j], wb$worksheets[[i]]$oleObjects, fixed = TRUE)
-            # wb$worksheets_rels[[i]] <- c(wb$worksheets_rels[[i]], gsub(image_ids[j], new_image_ids[j], drawXMLrelationship[[i]][j], fixed = TRUE))
-          }
-        }
-      }
-    }
-
-    ## rels image
-    drawXMLrelationship <- lapply(xml, function(x) grep("relationships/package", x, value = TRUE))
-    hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
-    if (any(hasDrawing)) {
-      for (i in seq_along(xml)) {
-        if (hasDrawing[i]) {
-          image_ids <- unlist(getId(drawXMLrelationship[[i]]))
-          new_image_ids <- paste0("rId", seq_along(image_ids) + 90000)
-          for (j in seq_along(image_ids)) {
-            wb$worksheets[[i]]$oleObjects <- gsub(image_ids[j], new_image_ids[j], wb$worksheets[[i]]$oleObjects, fixed = TRUE)
-            # wb$worksheets_rels[[i]] <- c(
-            #   wb$worksheets_rels[[i]],
-            #   sprintf("<Relationship Id=\"%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/package\" Target=\"../embeddings/Microsoft_Word_Document1.docx\"/>", new_image_ids[j])
-            # )
-          }
-        }
-      }
-    }
-
-
 
     ## Embedded docx
     if (length(embeddings) > 0) {
+      # TODO only valid for docx. need to check xls and doc?
       wb$Content_Types <- c(wb$Content_Types, '<Default Extension="docx" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>')
       wb$embeddings <- embeddings
     }

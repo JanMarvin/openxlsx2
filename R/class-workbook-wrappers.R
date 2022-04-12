@@ -1278,7 +1278,6 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 }
 
 
-
 #' @name protectWorkbook
 #' @title Protect a workbook from modifications
 #' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
@@ -1287,6 +1286,10 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' @param password (optional) password required to unprotect the workbook
 #' @param lockStructure Whether the workbook structure should be locked
 #' @param lockWindows Whether the window position of the spreadsheet should be locked
+#' @param type Lock type, default 1 - xlsx with password. 2 - xlsx recommends read-only. 4 - xlsx enforces read-only. 8 - xlsx is locked for annotation.
+#' @param fileSharing Whether to enable a popup requesting the unlock password is prompted
+#' @param username The username for the fileSharing popup
+#' @param readOnlyRecommended Whether or not a post unlock message appears stating that the workbook is recommended to be opened in readonly mode.
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1300,9 +1303,12 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' \dontrun{
 #' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
-protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE) {
+#' 
+#' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE, type = 2L, fileSharing = TRUE, username = "Test", readOnlyRecommended = TRUE)
+#' 
+protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
   assert_workbook(wb)
-  invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows))
+  invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
 }
 
 
