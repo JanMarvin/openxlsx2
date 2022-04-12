@@ -64,3 +64,48 @@ test_that("silent with numfmt option", {
   expect_equal(rownames(mtcars), rownames(got))
 
 })
+
+
+test_that("write xlsx", {
+
+  tmp <- temp_xlsx()
+  df <- data.frame(a = 1:26, b = letters)
+
+  # expect_silent(write.xlsx(df, tmp, tabColour = "#4F81BD"))
+  expect_error(write.xlsx(df, tmp, asTable = "YES"))
+  expect_error(write.xlsx(df, tmp, sheetName = paste0(letters, letters, collapse = "")))
+  expect_error(write.xlsx(df, tmp, zoom = "FULL"))
+  expect_silent(write.xlsx(df, tmp, zoom = 200))
+  expect_silent(write.xlsx(x = list("S1" = df, "S2" = df), tmp, sheetName = c("Sheet1", "Sheet2")))
+  expect_silent(write.xlsx(x = list("S1" = df, "S2" = df), file = tmp))
+  expect_error(write.xlsx(df, tmp, gridLines = "YES"))
+  expect_silent(write.xlsx(df, tmp, gridLines = FALSE))
+  expect_error(write.xlsx(df, tmp, overwrite = FALSE))
+  expect_error(write.xlsx(df, tmp, overwrite = "NO"))
+  expect_silent(write.xlsx(df, tmp, withFilter = FALSE))
+  expect_silent(write.xlsx(df, tmp, withFilter = TRUE))
+  expect_error(write.xlsx(df, tmp, withFilter = "NO"))
+  ## FIXME both do not work as expected
+  # expect_error(write.xlsx(df, tmp, startRow = "A"))
+  # expect_error(write.xlsx(df, tmp, startCol = "2"))
+  expect_error(write.xlsx(df, tmp, col.names = "NO"))
+  expect_silent(write.xlsx(df, tmp, col.names = TRUE))
+  expect_error(write.xlsx(df, tmp, colNames = "NO"))
+  expect_silent(write.xlsx(df, tmp, colNames = TRUE))
+  expect_error(write.xlsx(df, tmp, row.names = "NO"))
+  expect_silent(write.xlsx(df, tmp, row.names = TRUE))
+  expect_error(write.xlsx(df, tmp, rowNames = "NO"))
+  expect_silent(write.xlsx(df, tmp, rowNames = TRUE))
+  expect_error(write.xlsx(df, tmp, xy = "A2"))
+  expect_silent(write.xlsx(df, tmp, xy = c(1, 2)))
+  expect_silent(write.xlsx(df, tmp, xy = c(1, 2)))
+  expect_silent(write.xlsx(df, tmp, colWidth = "auto"))
+  # expect_error(write.xlsx(df, tmp, keepNA = "yes"))
+  # test works but does not work as intended
+  expect_silent(write.xlsx(data.frame(x = NA), tmp, keepNA = TRUE))
+  expect_silent(write.xlsx(data.frame(x = NA), tmp, keepNA = TRUE))
+  # test works but does not work as intended
+  expect_silent(write.xlsx(data.frame(x = NA), tmp, na.string = "N-A"))
+  expect_silent(write.xlsx(df, tmp, asTable = TRUE, tableStyle = "TableStyleLight9"))
+
+})

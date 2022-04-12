@@ -312,169 +312,125 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
 
   ## If a list is supplied write to individual worksheets using names if available
-  nSheets <- 1
-  if (inherits(x, "list")) {
-    nms <- names(x)
-    nSheets <- length(x)
+  if (!inherits(x, "list"))
+    x <- list(x)
+  
+  nms <- names(x)
+  nSheets <- length(x)
 
-    if (is.null(nms)) {
-      nms <- paste("Sheet", seq_len(nSheets))
-    } else if (any("" %in% nms)) {
-      nms[nms == ""] <- paste("Sheet", (seq_len(nSheets))[nms %in% ""])
-    } else {
-      nms <- make.unique(nms)
-    }
-
-    if (any(nchar(nms) > 31)) {
-      warning("Truncating list names to 31 characters.")
-      nms <- substr(nms, 1, 31)
-    }
-
-    ## make all inputs as long as the list
-    if (!is.null(tabColour)) {
-      if (length(tabColour) != nSheets) {
-        tabColour <- rep_len(tabColour, length.out = nSheets)
-      }
-    }
-
-    if (length(zoom) != nSheets) {
-      zoom <- rep_len(zoom, length.out = nSheets)
-    }
-
-    if (length(gridLines) != nSheets) {
-      gridLines <- rep_len(gridLines, length.out = nSheets)
-    }
-
-    if (length(withFilter) != nSheets) {
-      withFilter <- rep_len(withFilter, length.out = nSheets)
-    }
-
-    if (length(colNames) != nSheets) {
-      colNames <- rep_len(colNames, length.out = nSheets)
-    }
-
-    if (length(rowNames) != nSheets) {
-      rowNames <- rep_len(rowNames, length.out = nSheets)
-    }
-
-    if (length(startRow) != nSheets) {
-      startRow <- rep_len(startRow, length.out = nSheets)
-    }
-
-    if (length(startCol) != nSheets) {
-      startCol <- rep_len(startCol, length.out = nSheets)
-    }
-
-    if (length(keepNA) != nSheets) {
-      keepNA <- rep_len(keepNA, length.out = nSheets)
-    }
-
-    if (length(na.string) != nSheets & !is.null(na.string)) {
-      na.string <- rep_len(na.string, length.out = nSheets)
-    }
-
-    if (length(asTable) != nSheets) {
-      asTable <- rep_len(asTable, length.out = nSheets)
-    }
-
-    if (length(tableStyle) != nSheets) {
-      tableStyle <- rep_len(tableStyle, length.out = nSheets)
-    }
-
-    if (length(colWidths) != nSheets) {
-      colWidths <- rep_len(colWidths, length.out = nSheets)
-    }
-
-    for (i in seq_len(nSheets)) {
-      wb$addWorksheet(nms[[i]], showGridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
-
-      if (asTable[i]) {
-        writeDataTable(
-          wb = wb,
-          sheet = i,
-          x = x[[i]],
-          startCol = startCol[[i]],
-          startRow = startRow[[i]],
-          xy = xy,
-          colNames = colNames[[i]],
-          rowNames = rowNames[[i]],
-          tableStyle = tableStyle[[i]],
-          tableName = NULL,
-          withFilter = withFilter[[i]],
-          keepNA = keepNA[[i]],
-          na.string = na.string[[i]]
-        )
-      } else {
-        writeData(
-          wb = wb,
-          sheet = i,
-          x = x[[i]],
-          startCol = startCol[[i]],
-          startRow = startRow[[i]],
-          xy = xy,
-          colNames = colNames[[i]],
-          rowNames = rowNames[[i]],
-          keepNA = keepNA[[i]],
-          na.string = na.string[[i]]
-        )
-      }
-
-      # colWidth is not required for the output
-      if (!is.null(colWidths)) {
-        if (identical(colWidths[[i]], "auto")) {
-          setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = "auto")
-        } else if (!identical(colWidths[[i]], "")) {
-          setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = colWidths[[i]])
-        }
-      }
-    }
+  if (is.null(nms)) {
+    nms <- paste("Sheet", seq_len(nSheets))
+  } else if (any("" %in% nms)) {
+    nms[nms == ""] <- paste("Sheet", (seq_len(nSheets))[nms %in% ""])
   } else {
-    wb$addWorksheet(sheetName, showGridLines = gridLines, tabColour = tabColour, zoom = zoom)
+    nms <- make.unique(nms)
+  }
 
-    if (asTable) {
-      assert_class(x, "data.frame")
+  if (any(nchar(nms) > 31)) {
+    warning("Truncating list names to 31 characters.")
+    nms <- substr(nms, 1, 31)
+  }
 
+  ## make all inputs as long as the list
+  if (!is.null(tabColour)) {
+    if (length(tabColour) != nSheets) {
+      tabColour <- rep_len(tabColour, length.out = nSheets)
+    }
+  }
+
+  if (length(zoom) != nSheets) {
+    zoom <- rep_len(zoom, length.out = nSheets)
+  }
+
+  if (length(gridLines) != nSheets) {
+    gridLines <- rep_len(gridLines, length.out = nSheets)
+  }
+
+  if (length(withFilter) != nSheets) {
+    withFilter <- rep_len(withFilter, length.out = nSheets)
+  }
+
+  if (length(colNames) != nSheets) {
+    colNames <- rep_len(colNames, length.out = nSheets)
+  }
+
+  if (length(rowNames) != nSheets) {
+    rowNames <- rep_len(rowNames, length.out = nSheets)
+  }
+
+  if (length(startRow) != nSheets) {
+    startRow <- rep_len(startRow, length.out = nSheets)
+  }
+
+  if (length(startCol) != nSheets) {
+    startCol <- rep_len(startCol, length.out = nSheets)
+  }
+
+  if (length(keepNA) != nSheets) {
+    keepNA <- rep_len(keepNA, length.out = nSheets)
+  }
+
+  if (length(na.string) != nSheets & !is.null(na.string)) {
+    na.string <- rep_len(na.string, length.out = nSheets)
+  }
+
+  if (length(asTable) != nSheets) {
+    asTable <- rep_len(asTable, length.out = nSheets)
+  }
+
+  if (length(tableStyle) != nSheets) {
+    tableStyle <- rep_len(tableStyle, length.out = nSheets)
+  }
+
+  if (length(colWidths) != nSheets) {
+    if (!is.null(colWidths))
+      colWidths <- rep_len(colWidths, length.out = nSheets)
+  }
+
+  for (i in seq_len(nSheets)) {
+    wb$addWorksheet(nms[[i]], showGridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
+
+    if (asTable[i]) {
       writeDataTable(
         wb = wb,
-        sheet = 1,
-        x = x,
-        startCol = startCol,
-        startRow = startRow,
+        sheet = i,
+        x = x[[i]],
+        startCol = startCol[[i]],
+        startRow = startRow[[i]],
         xy = xy,
-        colNames = colNames,
-        rowNames = rowNames,
-        tableStyle = tableStyle,
+        colNames = colNames[[i]],
+        rowNames = rowNames[[i]],
+        tableStyle = tableStyle[[i]],
         tableName = NULL,
-        withFilter = withFilter,
-        keepNA = keepNA,
-        na.string = na.string
+        withFilter = withFilter[[i]],
+        keepNA = keepNA[[i]],
+        na.string = na.string[[i]]
       )
     } else {
       writeData(
         wb = wb,
-        sheet = 1,
-        x = x,
-        startCol = startCol,
-        startRow = startRow,
+        sheet = i,
+        x = x[[i]],
+        startCol = startCol[[i]],
+        startRow = startRow[[i]],
         xy = xy,
-        colNames = colNames,
-        rowNames = rowNames,
-        withFilter = withFilter,
-        keepNA = keepNA,
-        na.string = na.string
+        colNames = colNames[[i]],
+        rowNames = rowNames[[i]],
+        keepNA = keepNA[[i]],
+        na.string = na.string[[i]]
       )
     }
 
     # colWidth is not required for the output
     if (!is.null(colWidths)) {
-      if (identical(colWidths, "auto")) {
-        setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = "auto")
-      } else if (!identical(colWidths, "")) {
-        setColWidths(wb, sheet = 1, cols = seq_along(x) + startCol - 1L, widths = colWidths)
+      if (identical(colWidths[[i]], "auto")) {
+        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = "auto")
+      } else if (!identical(colWidths[[i]], "")) {
+        setColWidths(wb, sheet = i, cols = seq_along(x[[i]]) + startCol[[i]] - 1L, widths = colWidths[[i]])
       }
     }
   }
-
+  
   ### --Freeze Panes---###
   ## firstActiveRow = NULL
   ## firstActiveCol = NULL
