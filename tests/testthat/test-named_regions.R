@@ -363,9 +363,12 @@ test_that("Overwrite and delete named regions", {
   writeData(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris")
   exp <- data.frame(
     name   = "iris",
-    value  = "\"Sheet 1\"!A1:E12",
-    sheets = "\"Sheet 1\"",
-    coords = "A1:E12"
+    value  = "'Sheet 1'!A1:E12",
+    sheets = "Sheet 1",
+    coords = "A1:E12",
+    id     = 1L,
+    local  = 0,
+    sheet  = 1L
   )
   expect_identical(getNamedRegions(wb), exp)
 
@@ -383,7 +386,10 @@ test_that("Overwrite and delete named regions", {
     value  = "'Sheet 1'!$A$1:$B$5",
     # and this doesn't have the `'`?
     sheets = "Sheet 1",
-    coords = "A1:B5"
+    coords = "A1:B5",
+    id     = 1L,
+    local  = 0,
+    sheet  = 1L
   )
 
   # check modification
