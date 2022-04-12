@@ -974,7 +974,7 @@ test_that("load workbook with chartsheet", {
   expect_equal(read.xlsx(fl, sheet = "test"), mtcars, ignore_attr = TRUE)
   expect_equal(read.xlsx(fl, sheet = 2), mtcars, ignore_attr = TRUE)
 
-  expect_equal(read.xlsx(fl, sheet = "Chart1"), NULL, ignore_attr = TRUE)
-  expect_equal(read.xlsx(fl, sheet = 1), NULL, ignore_attr = TRUE)
-
+  # sheet found, but contains no data
+  expect_message(expect_equal(read.xlsx(fl, sheet = "Chart1"), NULL, ignore_attr = TRUE))
+  expect_message(expect_equal(read.xlsx(fl, sheet = 1), NULL, ignore_attr = TRUE))
 })
