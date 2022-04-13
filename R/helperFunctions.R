@@ -250,7 +250,7 @@ pxml <- function(x) {
 
 get_named_regions_from_string <- function(wb, dn) {
   dn <- cbind(
-    openxlsx2:::rbindlist(xml_attr(dn, "definedName")),
+    rbindlist(xml_attr(dn, "definedName")),
     value =  xml_value(dn, "definedName")
   )
 

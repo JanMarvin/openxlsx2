@@ -1031,7 +1031,7 @@ wbWorkbook <- R6::R6Class(
       ct <- self$Content_Types
       ## update tables in content types (some have been added, some removed, get the final state)
       default <- xml_node(ct, "Default")
-      override <- openxlsx2:::rbindlist(xml_attr(ct, "Override"))
+      override <- rbindlist(xml_attr(ct, "Override"))
       override$typ <- gsub(".xml$", "", basename(override$PartName))
       override <- override[!grepl("table", override$typ), ]
       override$typ <- NULL
@@ -1041,7 +1041,7 @@ wbWorkbook <- R6::R6Class(
 
         # TODO get table Id from table entry
         table_ids <- function() {
-          relship <- openxlsx2:::rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
+          relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
           relship$typ <- basename(relship$Type)
           relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
           sort(relship$tid[relship$typ == "table"])
@@ -1077,7 +1077,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## ct is updated as xml
-      ct <- c(default, openxlsx2:::df_to_xml(name = "Override", df_col = override[c("PartName", "ContentType")]))
+      ct <- c(default, df_to_xml(name = "Override", df_col = override[c("PartName", "ContentType")]))
 
 
       ## write query tables
@@ -1359,7 +1359,7 @@ wbWorkbook <- R6::R6Class(
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
       last_table_id <- function() {
         z <- 0
-        relship <- openxlsx2:::rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
+        relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
         relship$typ <- basename(relship$Type)
         relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
         if (any(relship$typ == "table"))
@@ -3474,7 +3474,7 @@ wbWorkbook <- R6::R6Class(
             if (length(self$tables)) {
               table_inds <- grep("tables/table[0-9].xml", ws_rels)
 
-              relship <- openxlsx2:::rbindlist(xml_attr(ws_rels, "Relationship"))
+              relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               relship$typ <- basename(relship$Type)
               relship$tid <- gsub("\\D+", "", relship$Target)
 

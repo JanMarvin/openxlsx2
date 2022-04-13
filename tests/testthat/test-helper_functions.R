@@ -1,16 +1,16 @@
 test_that("openxlsx2_types", {
 
   # test vector types
-  expect_equal(openxlsx2:::openxlsx2_celltype[["short_date"]], openxlsx2:::openxlsx2_type(Sys.Date()))
-  expect_equal(openxlsx2:::openxlsx2_celltype[["long_date"]], openxlsx2:::openxlsx2_type(as.POSIXct(Sys.Date())))
-  expect_equal(openxlsx2:::openxlsx2_celltype[["numeric"]], openxlsx2:::openxlsx2_type(1))
-  expect_equal(openxlsx2:::openxlsx2_celltype[["logical"]], openxlsx2:::openxlsx2_type(TRUE))
-  expect_equal(openxlsx2:::openxlsx2_celltype[["character"]], openxlsx2:::openxlsx2_type("a"))
-  expect_equal(openxlsx2:::openxlsx2_celltype[["factor"]], openxlsx2:::openxlsx2_type(as.factor(1)))
+  expect_equal(openxlsx2_celltype[["short_date"]], openxlsx2_type(Sys.Date()))
+  expect_equal(openxlsx2_celltype[["long_date"]], openxlsx2_type(as.POSIXct(Sys.Date())))
+  expect_equal(openxlsx2_celltype[["numeric"]], openxlsx2_type(1))
+  expect_equal(openxlsx2_celltype[["logical"]], openxlsx2_type(TRUE))
+  expect_equal(openxlsx2_celltype[["character"]], openxlsx2_type("a"))
+  expect_equal(openxlsx2_celltype[["factor"]], openxlsx2_type(as.factor(1)))
 
   # even complex numbers
   z <- complex(real = stats::rnorm(1), imaginary = stats::rnorm(1))
-  expect_equal(openxlsx2:::openxlsx2_celltype[["character"]], openxlsx2:::openxlsx2_type(z))
+  expect_equal(openxlsx2_celltype[["character"]], openxlsx2_type(z))
 
   # writeDataTable example: data frame with various types
   df <- data.frame(
@@ -30,9 +30,9 @@ test_that("openxlsx2_types", {
   class(df$Percentage) <- c(class(df$Percentage), "percentage")
   class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 
-  got <- openxlsx2:::openxlsx2_type(df)
+  got <- openxlsx2_type(df)
   exp <- c(
-    Date = openxlsx2:::openxlsx2_celltype[["short_date"]],
+    Date = openxlsx2_celltype[["short_date"]],
     T = openxlsx2:::openxlsx2_celltype[["logical"]],
     F = openxlsx2:::openxlsx2_celltype[["logical"]],
     Time = openxlsx2:::openxlsx2_celltype[["long_date"]],
