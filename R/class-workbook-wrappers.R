@@ -100,7 +100,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' # Intersecting merges
 #' wb <- wb_merge_cells(wb, 2, cols = 1:10, rows = 1)
 #' wb <- wb_merge_cells(wb, 2, cols = 5:10, rows = 2)
-#' wb <- wb_merge_cells(wb, 2, cols = c(1, 10), rows = 12) # equivalent to 1:10 as only min/max are used
+#' wb <- wb_merge_cells(wb, 2, cols = c(1, 10), rows = 12) # equivalent to 1:10
 #' try(wb_merge_cells(wb, 2, cols = 1, rows = c(1,10)))    # intersects existing merge
 #'
 #' # remove merged cells
@@ -1302,9 +1302,18 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' \dontrun{
 #' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
-#' 
-#' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE, type = 2L, fileSharing = TRUE, username = "Test", readOnlyRecommended = TRUE)
-#' 
+#'
+#' protectWorkbook(
+#'   wb,
+#'   protect = TRUE,
+#'   password = "Password",
+#'   lockStructure = TRUE,
+#'   type = 2L,
+#'   fileSharing = TRUE,
+#'   username = "Test",
+#'   readOnlyRecommended = TRUE
+#' )
+#'
 protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
   assert_workbook(wb)
   invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
@@ -1542,7 +1551,7 @@ deleteNamedRegion <- function(wb, sheet, name) {
   } else {
     if (!missing(name))
       warning(sprintf("Cannot find named region with name '%s'", name))
-    # do not warn if wb and sheet are selected. deleteNamedRegion is 
+    # do not warn if wb and sheet are selected. deleteNamedRegion is
     # called with every wb_remove_worksheet and would throw meaningless
     # warnings. For now simply assume if no name is defined, that the
     # user does not care, as long as no defined name remains on a sheet.

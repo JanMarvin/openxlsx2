@@ -51,6 +51,15 @@ protectWorkbook(wb, protect = FALSE)
 wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 }
 
-protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE, type = 2L, fileSharing = TRUE, username = "Test", readOnlyRecommended = TRUE)
+protectWorkbook(
+  wb,
+  protect = TRUE,
+  password = "Password",
+  lockStructure = TRUE,
+  type = 2L,
+  fileSharing = TRUE,
+  username = "Test",
+  readOnlyRecommended = TRUE
+)
 
 }

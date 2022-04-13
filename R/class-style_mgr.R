@@ -101,7 +101,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       numfmts <- self$styles$numFmts
       if (length(numfmts)) {
         typ <- xml_node_name(numfmts)
-        id  <- openxlsx2:::rbindlist(xml_attr(numfmts, "numFmt"))[["numFmtId"]]
+        id  <- rbindlist(xml_attr(numfmts, "numFmt"))[["numFmtId"]]
         name <- paste0(typ, "-", id)
 
         self$numfmt <- data.frame(
@@ -114,7 +114,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       fonts <- self$styles$fonts
       if (length(fonts)) {
         typ <- xml_node_name(fonts)
-        id  <- rownames(openxlsx2:::read_font(read_xml(fonts)))
+        id  <- rownames(read_font(read_xml(fonts)))
         name <- paste0(typ, "-", id)
 
         self$font <- data.frame(
@@ -127,7 +127,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       fills <- self$styles$fills
       if (length(fills)) {
         typ <- xml_node_name(fills)
-        id  <- rownames(openxlsx2:::read_fill(read_xml(fills)))
+        id  <- rownames(read_fill(read_xml(fills)))
         name <- paste0(typ, "-", id)
 
         self$fill <- data.frame(
@@ -140,7 +140,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       borders <- self$styles$borders
       if (length(borders)) {
         typ <- xml_node_name(borders)
-        id  <- rownames(openxlsx2:::read_border(read_xml(borders)))
+        id  <- rownames(read_border(read_xml(borders)))
         name <- paste0(typ, "-", id)
 
         self$border <- data.frame(
@@ -153,7 +153,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       xfs <- self$styles$cellXfs
       if (length(xfs)) {
         typ <- xml_node_name(xfs)
-        id  <- rownames(openxlsx2:::read_xf(read_xml(xfs)))
+        id  <- rownames(read_xf(read_xml(xfs)))
         name <- paste0(typ, "-", id)
 
         self$xf <- data.frame(
@@ -278,28 +278,28 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       if (is_font) {
         typ <- "font"
         fonts <- c(self$styles$fonts, style)
-        id  <- rownames(openxlsx2:::read_font(read_xml(fonts)))
+        id  <- rownames(read_font(read_xml(fonts)))
         self$styles$fonts <- fonts
       }
 
       if (is_fill) {
         typ <- "fill"
         fills <- c(self$styles$fills, style)
-        id  <- rownames(openxlsx2:::read_fill(read_xml(fills)))
+        id  <- rownames(read_fill(read_xml(fills)))
         self$styles$fills <- fills
       }
 
       if (is_border) {
         typ <- "border"
         borders <- c(self$styles$borders, style)
-        id  <- rownames(openxlsx2:::read_border(read_xml(borders)))
+        id  <- rownames(read_border(read_xml(borders)))
         self$styles$borders <- borders
       }
 
       if (is_xf) {
         typ <- "xf"
         xfs <- c(self$styles$cellXfs, style)
-        id  <- rownames(openxlsx2:::read_xf(read_xml(xfs)))
+        id  <- rownames(read_xf(read_xml(xfs)))
         self$styles$cellXfs <- xfs
       }
 
