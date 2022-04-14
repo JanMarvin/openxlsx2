@@ -7,7 +7,7 @@
 wb_add_worksheet(
   wb,
   sheet,
-  showGridLines = TRUE,
+  gridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
   header = NULL,
@@ -30,6 +30,9 @@ wb_add_worksheet(
 \item{wb}{A Workbook object to attach the new worksheet}
 
 \item{sheet}{A name for the new worksheet}
+
+\item{gridLines}{A logical. If \code{FALSE}, the worksheet grid lines will be
+hidden.}
 
 \item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
 colours()) or a valid hex colour beginning with "#"}
@@ -56,9 +59,6 @@ options("openxlsx.hdpi" = X)}
 
 \item{vdpi}{Vertical DPI. Can be set with options("openxlsx.dpi" = X) or
 options("openxlsx.vdpi" = X)}
-
-\item{gridLines}{A logical. If \code{FALSE}, the worksheet grid lines will be
-hidden.}
 }
 \value{
 The \link{wbWorkbook} object \code{wb}
