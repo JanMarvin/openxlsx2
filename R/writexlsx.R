@@ -180,7 +180,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   tabColour <- NULL
   if ("tabColour" %in% names(params)) {
-    tabColour <- validateColour(params$tabColour, "Invalid tabColour!")
+    tabColour <- params$tabColour
   }
 
   zoom <- 100
@@ -223,7 +223,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   startRow <- 1
   if ("startRow" %in% names(params)) {
-    if (all(startRow > 0)) {
+    if (all(params$startRow > 0)) {
       startRow <- params$startRow
     } else {
       stop("startRow must be a positive integer")
@@ -232,7 +232,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
   startCol <- 1
   if ("startCol" %in% names(params)) {
-    if (all(startCol > 0)) {
+    if (all(col2int(params$startCol) > 0)) {
       startCol <- params$startCol
     } else {
       stop("startCol must be a positive integer")
@@ -290,17 +290,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     if (any(is.na(colWidths))) colWidths[is.na(colWidths)] <- 8.43
   }
 
-  keepNA <- FALSE
-  if ("keepNA" %in% names(params)) {
-    assert_class(keepNA, "logical")
-    keepNA <- params$keepNA
-  }
-
-  na.string <- NULL
-  if ("na.string" %in% names(params)) {
-    na.string <- as.character(params$na.string)
-  }
-
 
   tableStyle <- "TableStyleLight9"
   if ("tableStyle" %in% names(params)) {
@@ -315,7 +304,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## If a list is supplied write to individual worksheets using names if available
   if (!inherits(x, "list"))
     x <- list(x)
-  
+
   nms <- names(x)
   nSheets <- length(x)
 
@@ -367,14 +356,6 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     startCol <- rep_len(startCol, length.out = nSheets)
   }
 
-  if (length(keepNA) != nSheets) {
-    keepNA <- rep_len(keepNA, length.out = nSheets)
-  }
-
-  if (length(na.string) != nSheets & !is.null(na.string)) {
-    na.string <- rep_len(na.string, length.out = nSheets)
-  }
-
   if (length(asTable) != nSheets) {
     asTable <- rep_len(asTable, length.out = nSheets)
   }
@@ -389,7 +370,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   }
 
   for (i in seq_len(nSheets)) {
-    wb$addWorksheet(nms[[i]], showGridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
+    wb$addWorksheet(nms[[i]], gridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
 
     if (asTable[i]) {
       writeDataTable(
@@ -403,9 +384,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
         rowNames = rowNames[[i]],
         tableStyle = tableStyle[[i]],
         tableName = NULL,
-        withFilter = withFilter[[i]],
-        keepNA = keepNA[[i]],
-        na.string = na.string[[i]]
+        withFilter = withFilter[[i]]
       )
     } else {
       writeData(
@@ -416,9 +395,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
         startRow = startRow[[i]],
         xy = xy,
         colNames = colNames[[i]],
-        rowNames = rowNames[[i]],
-        keepNA = keepNA[[i]],
-        na.string = na.string[[i]]
+        rowNames = rowNames[[i]]
       )
     }
 
@@ -432,7 +409,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       }
     }
   }
-  
+
   ### --Freeze Panes---###
   ## firstActiveRow = NULL
   ## firstActiveCol = NULL

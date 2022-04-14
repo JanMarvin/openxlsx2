@@ -289,7 +289,7 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Add worksheet to the `wbWorkbook` object
     #' @param sheet sheet
-    #' @param showGridLines showGridLines
+    #' @param gridLines gridLines
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @param header header
@@ -309,23 +309,23 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     addWorksheet = function(
       sheet,
-      showGridLines = TRUE,
-      tabColour     = NULL,
-      zoom          = 100,
-      header        = NULL,
-      footer        = NULL,
-      oddHeader     = header,
-      oddFooter     = footer,
-      evenHeader    = header,
-      evenFooter    = footer,
-      firstHeader   = header,
-      firstFooter   = footer,
-      visible       = c("true", "false", "hidden", "visible", "veryhidden"),
-      hasDrawing    = FALSE,
-      paperSize     = getOption("openxlsx.paperSize", default = 9),
-      orientation   = getOption("openxlsx.orientation", default = "portrait"),
-      hdpi          = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
-      vdpi          = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
+      gridLines   = TRUE,
+      tabColour   = NULL,
+      zoom        = 100,
+      header      = NULL,
+      footer      = NULL,
+      oddHeader   = header,
+      oddFooter   = footer,
+      evenHeader  = header,
+      evenFooter  = footer,
+      firstHeader = header,
+      firstFooter = footer,
+      visible     = c("true", "false", "hidden", "visible", "veryhidden"),
+      hasDrawing  = FALSE,
+      paperSize   = getOption("openxlsx.paperSize", default = 9),
+      orientation = getOption("openxlsx.orientation", default = "portrait"),
+      hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+      vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
     ) {
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
@@ -346,9 +346,9 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
-      if (!is.logical(showGridLines) | length(showGridLines) > 1) {
+      if (!is.logical(gridLines) | length(gridLines) > 1) {
         fail <- TRUE
-        msg <- c(msg, "showGridLines must be a logical of length 1.")
+        msg <- c(msg, "gridLines must be a logical of length 1.")
       }
 
       if (nchar(sheet) > 31) {
@@ -454,20 +454,20 @@ wbWorkbook <- R6::R6Class(
       ## append to worksheets list
       self$append("worksheets",
         wbWorksheet$new(
-          showGridLines = showGridLines,
-          tabSelected   = newSheetIndex == 1,
-          tabColour     = tabColour,
-          zoom          = zoom,
-          oddHeader     = oddHeader,
-          oddFooter     = oddFooter,
-          evenHeader    = evenHeader,
-          evenFooter    = evenFooter,
-          firstHeader   = firstHeader,
-          firstFooter   = firstFooter,
-          paperSize     = paperSize,
-          orientation   = orientation,
-          hdpi          = hdpi,
-          vdpi          = vdpi
+          gridLines   = gridLines,
+          tabSelected = newSheetIndex == 1,
+          tabColour   = tabColour,
+          zoom        = zoom,
+          oddHeader   = oddHeader,
+          oddFooter   = oddFooter,
+          evenHeader  = evenHeader,
+          evenFooter  = evenFooter,
+          firstHeader = firstHeader,
+          firstFooter = firstFooter,
+          paperSize   = paperSize,
+          orientation = orientation,
+          hdpi        = hdpi,
+          vdpi        = vdpi
         )
       )
 
@@ -2891,7 +2891,7 @@ wbWorkbook <- R6::R6Class(
           if (type == 2L) readOnlyRecommended <- TRUE
           fileSharingPassword <- function(x, username, readOnlyRecommended) {
             readonly <- ifelse(readOnlyRecommended, 'readOnlyRecommended="1"', '')
-            sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x) 
+            sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x)
           }
 
           self$workbook$fileSharing <- fileSharingPassword(attr["workbookPassword"], username, readOnlyRecommended)

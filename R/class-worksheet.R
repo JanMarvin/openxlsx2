@@ -140,7 +140,7 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorksheet` object
-    #' @param showGridLines showGridLines
+    #' @param gridLines gridLines
     #' @param tabSelected tabSelected
     #' @param tabColour tabColour
     #' @param zoom zoom
@@ -156,20 +156,20 @@ wbWorksheet <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return a `wbWorksheet` object
     initialize = function(
-      showGridLines = TRUE,
-      tabSelected   = FALSE,
-      tabColour     = NULL,
-      zoom          = 100,
-      oddHeader     = NULL,
-      oddFooter     = NULL,
-      evenHeader    = NULL,
-      evenFooter    = NULL,
-      firstHeader   = NULL,
-      firstFooter   = NULL,
-      paperSize     = 9,
-      orientation   = "portrait",
-      hdpi          = 300,
-      vdpi          = 300
+      gridLines   = TRUE,
+      tabSelected = FALSE,
+      tabColour   = NULL,
+      zoom        = 100,
+      oddHeader   = NULL,
+      oddFooter   = NULL,
+      evenHeader  = NULL,
+      evenFooter  = NULL,
+      firstHeader = NULL,
+      firstFooter = NULL,
+      paperSize   = 9,
+      orientation = "portrait",
+      hdpi        = 300,
+      vdpi        = 300
     ) {
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
@@ -199,7 +199,7 @@ wbWorksheet <- R6::R6Class(
       ## list of all possible children
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
-      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
+      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" gridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(tabSelected))
       self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()

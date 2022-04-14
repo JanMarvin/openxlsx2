@@ -15,8 +15,6 @@
 #' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
 #' @param tableName name of table in workbook. The table name must be unique.
 #' @param withFilter If `TRUE`, columns with have filters in the first row.
-#' @param keepNA If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty.
-#' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
 #' existing style is replaced by the new style.
@@ -145,8 +143,6 @@ writeDataTable <- function(wb, sheet, x,
   tableStyle = "TableStyleLight9",
   tableName = NULL,
   withFilter = TRUE,
-  keepNA = FALSE,
-  na.string = NULL,
   sep = ", ",
   stack = FALSE,
   firstColumn = FALSE,

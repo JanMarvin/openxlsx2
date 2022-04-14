@@ -13,8 +13,6 @@
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
-#' @param keepNA If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty.
-#' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param removeCellStyle keep the cell style?
@@ -104,8 +102,6 @@ writeData <- function(wb,
   colNames = TRUE,
   rowNames = FALSE,
   withFilter = FALSE,
-  keepNA = FALSE,
-  na.string = NULL,
   name = NULL,
   sep = ", ",
   removeCellStyle = TRUE) {
