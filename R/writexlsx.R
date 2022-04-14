@@ -304,7 +304,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## If a list is supplied write to individual worksheets using names if available
   if (!inherits(x, "list"))
     x <- list(x)
-  
+
   nms <- names(x)
   nSheets <- length(x)
 
@@ -370,7 +370,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   }
 
   for (i in seq_len(nSheets)) {
-    wb$addWorksheet(nms[[i]], showGridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
+    wb$addWorksheet(nms[[i]], gridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
 
     if (asTable[i]) {
       writeDataTable(
@@ -409,7 +409,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
       }
     }
   }
-  
+
   ### --Freeze Panes---###
   ## firstActiveRow = NULL
   ## firstActiveCol = NULL
