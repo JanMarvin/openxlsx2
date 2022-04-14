@@ -239,7 +239,7 @@ wb_add_worksheet <- function(
 ) {
   assert_workbook(wb)
   wb$clone()$addWorksheet(
-    sheetName   = sheetName,
+    sheet       = sheet,
     gridLines   = gridLines,
     tabColour   = tabColour,
     zoom        = zoom,
