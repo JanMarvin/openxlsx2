@@ -213,5 +213,6 @@ wb <- wb_add_worksheet(wb, sheet)
 writeData(wb, sheet, mtcars, rowNames = TRUE)
 
 cols <- 1:12
-wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")
+wb <- wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")
+wb
 ```
