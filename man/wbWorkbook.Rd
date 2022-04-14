@@ -232,7 +232,7 @@ Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addWorksheet(
   sheetName,
-  showGridLines = TRUE,
+  gridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
   header = NULL,
@@ -257,7 +257,7 @@ Add worksheet to the \code{wbWorkbook} object
 \describe{
 \item{\code{sheetName}}{sheetName}
 
-\item{\code{showGridLines}}{showGridLines}
+\item{\code{gridLines}}{gridLines}
 
 \item{\code{tabColour}}{tabColour}
 
