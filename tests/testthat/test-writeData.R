@@ -89,7 +89,6 @@ test_that("write xlsx", {
   expect_silent(write.xlsx(df, tmp, withFilter = FALSE))
   expect_silent(write.xlsx(df, tmp, withFilter = TRUE))
   expect_error(write.xlsx(df, tmp, withFilter = "NO"))
-  ## FIXME both do not work as expected
   expect_silent(write.xlsx(df, tmp, startRow = 2))
   expect_error(write.xlsx(df, tmp, startRow = -1))
   expect_silent(write.xlsx(df, tmp, startCol = "A"))
@@ -109,6 +108,8 @@ test_that("write xlsx", {
   expect_silent(write.xlsx(df, tmp, xy = c(1, 2)))
   expect_silent(write.xlsx(df, tmp, colWidth = "auto"))
   expect_silent(write.xlsx(list(df, df), tmp, firstActiveCol = 2, firstActiveRow = 2))
+  expect_silent(write.xlsx(list(df, df), tmp, firstCol = FALSE, firstRow = FALSE))
+  expect_silent(write.xlsx(list(df, df), tmp, firstCol = TRUE, firstRow = TRUE))
   expect_silent(write.xlsx(df, tmp, asTable = TRUE, tableStyle = "TableStyleLight9"))
 
 })
