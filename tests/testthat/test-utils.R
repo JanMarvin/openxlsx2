@@ -6,3 +6,10 @@ test_that("paste_c() works", {
 
   expect_identical(paste_c(character(), "", NULL), "")
 })
+
+
+test_that("rbindlist", {
+
+  expect_equal(data.frame(), rbindlist(character()))
+
+})

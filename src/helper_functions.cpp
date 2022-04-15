@@ -153,6 +153,7 @@ SEXP rbindlist(Rcpp::List x) {
 
   // get unique names and create set
   for (auto i = 0; i < nn; ++i) {
+    if (Rf_isNull(x[i])) continue;
     std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
     std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
   }
@@ -171,6 +172,7 @@ SEXP rbindlist(Rcpp::List x) {
   }
 
   for (auto i = 0; i < nn; ++i) {
+    if (Rf_isNull(x[i])) continue;
 
     std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
     std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");

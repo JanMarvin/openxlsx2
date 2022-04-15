@@ -1830,10 +1830,12 @@ wbWorkbook <- R6::R6Class(
          xml_attr(self$worksheets_rels[[sheet]], "Relationship")
       )
 
-      xml_rels$type   <- basename(xml_rels$Type)
-      xml_rels$target <- basename(xml_rels$Target)
-      xml_rels$target[xml_rels$type == "hyperlink"] <- ""
-      xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+      if (nrow(xml_rels)) {
+        xml_rels$type   <- basename(xml_rels$Type)
+        xml_rels$target <- basename(xml_rels$Target)
+        xml_rels$target[xml_rels$type == "hyperlink"] <- ""
+        xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+      }
 
       comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
       drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
@@ -1855,7 +1857,7 @@ wbWorkbook <- R6::R6Class(
       #### Modify Content_Types
       ## remove last drawings(sheet).xml from Content_Types
       drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
-      self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
+      if (!is.null(drawing_name)) self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       ## remove highest sheet
       # (don't chagne this to a "grep(value = TRUE)" ... )
@@ -1935,11 +1937,13 @@ wbWorkbook <- R6::R6Class(
           # did this get updated from length of 3 to 2?
           #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
           rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
-          if (any(basename(rel$Type) == "drawing")) {
-            rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+          if (nrow(rel)) {
+            if (any(basename(rel$Type) == "drawing")) {
+              rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+            }
+            if (is.null(rel$TargetMode)) rel$TargetMode <- ""
+            self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
           }
-          if (is.null(rel$TargetMode)) rel$TargetMode <- ""
-          self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
         }
       } else {
         self$worksheets_rels <- list()
