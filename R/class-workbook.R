@@ -1544,7 +1544,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     setSheetName = function(sheet, name) {
       # TODO assert sheet class?
-      if (newsheet %in% self$sheet_names) {
+      if (name %in% self$sheet_names) {
         stop(sprintf("Sheet %s already exists!", name))
       }
 
