@@ -24,6 +24,8 @@ write.xlsx(df, "new.xlsx")
 
 # or import workbooks
 wb <- loadWorkbook("file.xlsx")
+# read a data frame
+wb_to_df(wb)
 # and save it
 wb_save(wb, "new_wb.xlsx")
 
