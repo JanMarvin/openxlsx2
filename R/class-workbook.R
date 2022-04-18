@@ -2121,8 +2121,7 @@ wbWorkbook <- R6::R6Class(
           '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
           allowBlank,
           showInputMsg,
-          showErrorMsg,
-          sqref
+          showErrorMsg
         )
 
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
