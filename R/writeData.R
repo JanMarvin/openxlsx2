@@ -131,7 +131,7 @@ writeData <- function(wb,
   assert_class(colNames, "logical")
   assert_class(rowNames, "logical")
 
-  if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
+  if ((!is.character(sep)) || (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
   ## special case - vector of hyperlinks
   # # hlinkNames not used?
@@ -179,7 +179,7 @@ writeData <- function(wb,
     }
   }
 
-  if (is.vector(x) | is.factor(x) | inherits(x, "Date")) {
+  if (is.vector(x) || is.factor(x) || inherits(x, "Date")) {
     colNames <- FALSE
   } ## this will go to coerce.default and rowNames will be ignored
 
@@ -190,12 +190,12 @@ writeData <- function(wb,
   nRow <- nrow(x)
 
   ## If no rows and not writing column names return as nothing to write
-  if (nRow == 0 & !colNames) {
+  if (nRow == 0 && !colNames) {
     return(invisible(0))
   }
 
   ## If no columns and not writing row names return as nothing to write
-  if (nCol == 0 & !rowNames) {
+  if (nCol == 0 && !rowNames) {
     return(invisible(0))
   }
 

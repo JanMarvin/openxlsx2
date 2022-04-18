@@ -1255,7 +1255,7 @@ wbWorkbook <- R6::R6Class(
         }
 
       ## write styles.xml
-      #if(class(self$styles_xml) == "uninitializedField") {
+      #if (class(self$styles_xml) == "uninitializedField") {
       write_file(
         head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">',
         body = pxml(styleXML),
@@ -2988,7 +2988,7 @@ wbWorkbook <- R6::R6Class(
     #
     #     for (i in dInds) {
     #       df[[i]] <- as.integer(df[[i]]) + origin
-    #       if (origin == 25569L){
+    #       if (origin == 25569L) {
     #         earlyDate <- df[[i]] < 60
     #         df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
     #       }
@@ -3446,7 +3446,7 @@ wbWorkbook <- R6::R6Class(
           #                            max(as.numeric(nam_at))))
           # empty_row_attr <- wanted[!wanted %in% nam_at]
           # # add empty list
-          # if(!identical(empty_row_attr, character()))
+          # if (!identical(empty_row_attr, character()))
           #   row_attr[[empty_row_attr]] <- list()
           # # restore order
           # ws$sheet_data$row_attr <- row_attr[wanted]

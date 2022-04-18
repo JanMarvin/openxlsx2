@@ -169,7 +169,7 @@ test_that("conditional formatting", {
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   conditionalFormatting(wb, "colourScale",
-                        cols = seq_along(df), rows = 1:nrow(df),
+                        cols = seq_along(df), rows = seq_len(nrow(df)),
                         style = c("black", "white"),
                         rule = c(0, 255),
                         type = "colourScale"
@@ -252,8 +252,8 @@ test_that("conditional formatting", {
   # all.equal(wb, wb1)
   for (sheet in seq_along(wb$sheet_names))
     expect_equal(
-      read_xml(wb$worksheets[[sheet]]$conditionalFormatting, pointer = F),
-      read_xml(wb1$worksheets[[sheet]]$conditionalFormatting, pointer = F)
+      read_xml(wb$worksheets[[sheet]]$conditionalFormatting, pointer = FALSE),
+      read_xml(wb1$worksheets[[sheet]]$conditionalFormatting, pointer = FALSE)
     )
 
 })

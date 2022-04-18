@@ -159,7 +159,7 @@ wb_validate_table_name <- function(wb, tableName) {
     stop("spaces cannot exist in a table name", call. = FALSE)
   }
 
-  # if(!grepl("^[A-Za-z_]", tableName, perl = TRUE))
+  # if (!grepl("^[A-Za-z_]", tableName, perl = TRUE))
   #   stop("tableName must begin with a letter or an underscore")
 
   if (grepl("R[0-9]+C[0-9]+", tableName, perl = TRUE, ignore.case = TRUE)) {
@@ -234,14 +234,14 @@ wb_check_overwrite_tables <- function(
         existing_cols <- cols[[i]]
         existing_rows <- rows[[i]]
 
-        if ((min(new_cols) <= max(existing_cols)) &
-            (max(new_cols) >= min(existing_cols)) &
-            (min(new_rows) <= max(existing_rows)) &
+        if ((min(new_cols) <= max(existing_cols)) &&
+            (max(new_cols) >= min(existing_cols)) &&
+            (min(new_rows) <= max(existing_rows)) &&
             (max(new_rows) >= min(existing_rows))) {
           stop(error_msg)
         }
       }
-    } ## end if(sheet %in% tableSheets)
+    } ## end if (sheet %in% tableSheets)
   } ## end (length(tables))
 
   invisible(wb)

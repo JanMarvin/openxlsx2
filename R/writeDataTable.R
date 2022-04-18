@@ -166,7 +166,7 @@ writeDataTable <- function(wb, sheet, x,
   if (!is.logical(rowNames)) stop("rowNames must be a logical.")
 
   if (!is.logical(withFilter)) stop("withFilter must be a logical.")
-  if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
+  if ((!is.character(sep)) || (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
   if (!is.logical(firstColumn)) stop("firstColumn must be a logical.")
   if (!is.logical(lastColumn)) stop("lastColumn must be a logical.")

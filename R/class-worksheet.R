@@ -446,9 +446,9 @@ wbWorksheet <- R6::R6Class(
       )
 
       out <- NULL
-      for (i in seq_len(nrow(col_df))){
+      for (i in seq_len(nrow(col_df))) {
         z <- col_df[i,]
-        for (j in seq(z$min, z$max)){
+        for (j in seq(z$min, z$max)) {
           z$key <- j
           out <- rbind(out, z)
         }
@@ -521,7 +521,7 @@ wb_worksheet <- function() {
 empty_cols_attr <- function(n = 0, beg, end) {
   # make make this a specific class/object?
 
-  if (!missing(beg) & !missing(end)) {
+  if (!missing(beg) && !missing(end)) {
     n_seq <- seq.int(beg, end, by = 1)
     n <- length(n_seq)
   } else {

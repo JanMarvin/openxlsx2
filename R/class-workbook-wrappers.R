@@ -439,7 +439,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 
     df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
     # TODO format(x) might not be the way it is formatted in the xlsx file.
-    col_width <- vapply(df, function(x) {max(nchar(format(x)))}, NA_real_)
+    col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
 
     # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
     fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
@@ -825,27 +825,27 @@ setHeaderFooter <- function(wb, sheet,
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
-  if (!is.null(header) & length(header) != 3) {
+  if (!is.null(header) && length(header) != 3) {
     stop("header must have length 3 where elements correspond to positions: left, center, right.")
   }
 
-  if (!is.null(footer) & length(footer) != 3) {
+  if (!is.null(footer) && length(footer) != 3) {
     stop("footer must have length 3 where elements correspond to positions: left, center, right.")
   }
 
-  if (!is.null(evenHeader) & length(evenHeader) != 3) {
+  if (!is.null(evenHeader) && length(evenHeader) != 3) {
     stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
   }
 
-  if (!is.null(evenFooter) & length(evenFooter) != 3) {
+  if (!is.null(evenFooter) && length(evenFooter) != 3) {
     stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
   }
 
-  if (!is.null(firstHeader) & length(firstHeader) != 3) {
+  if (!is.null(firstHeader) && length(firstHeader) != 3) {
     stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
   }
 
-  if (!is.null(firstFooter) & length(firstFooter) != 3) {
+  if (!is.null(firstFooter) && length(firstFooter) != 3) {
     stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
   }
 
@@ -1014,7 +1014,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
     orientation <- ifelse(grepl("landscape", xml), "landscape", "portrait") ## get existing
   }
 
-  if (scale < 10 | scale > 400) {
+  if ((scale < 10) || (scale > 400)) {
     stop("Scale must be between 10 and 400.")
   }
 
@@ -1043,7 +1043,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
     paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
   )
 
-  if (fitToHeight | fitToWidth) {
+  if (fitToHeight || fitToWidth) {
     wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<pageSetUpPr fitToPage="1"/>'))
   }
 
@@ -1086,7 +1086,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
   }
 
   ## print Titles
-  if (!is.null(printTitleRows) & is.null(printTitleCols)) {
+  if (!is.null(printTitleRows) && is.null(printTitleCols)) {
     if (!is.numeric(printTitleRows)) {
       stop("printTitleRows must be numeric.")
     }
@@ -1098,7 +1098,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
       sheet = names(wb)[[sheet]],
       localSheetId = sheet - 1L
     )
-  } else if (!is.null(printTitleCols) & is.null(printTitleRows)) {
+  } else if (!is.null(printTitleCols) && is.null(printTitleRows)) {
     if (!is.numeric(printTitleCols)) {
       stop("printTitleCols must be numeric.")
     }
@@ -1111,7 +1111,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
       sheet = names(wb)[[sheet]],
       localSheetId = sheet - 1L
     )
-  } else if (!is.null(printTitleCols) & !is.null(printTitleRows)) {
+  } else if (!is.null(printTitleCols) && !is.null(printTitleRows)) {
     if (!is.numeric(printTitleRows)) {
       stop("printTitleRows must be numeric.")
     }
@@ -1509,10 +1509,10 @@ deleteNamedRegion <- function(wb, sheet, name) {
   # get all nown defined names
   dn <- getNamedRegions(wb)
 
-  if (missing(name) & !missing(sheet)) {
+  if (missing(name) && !missing(sheet)) {
     sheet <- wb_validate_sheet(wb, sheet)
     del <- dn$id[dn$sheet == sheet]
-  } else if (!missing(name) & missing(sheet)) {
+  } else if (!missing(name) && missing(sheet)) {
     del <- dn$id[dn$name == name]
   } else {
     sheet <- wb_validate_sheet(wb, sheet)
@@ -1671,7 +1671,7 @@ removeFilter <- function(wb, sheet) {
 #'   col = 2, rows = 2:12, type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
-#' 
+#'
 #' \dontrun{
 #' wb_save(wb, "dataValidationExample.xlsx", overwrite = TRUE)
 #' }
@@ -1761,11 +1761,11 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
   type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
 
   ## check input combinations
-  if (type == "date" & !inherits(value, "Date")) {
+  if ((type == "date") && !inherits(value, "Date")) {
     stop("If type == 'date' value argument must be a Date vector.")
   }
 
-  if (type == "time" & !inherits(value, c("POSIXct", "POSIXt"))) {
+  if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
     stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
   }
 
