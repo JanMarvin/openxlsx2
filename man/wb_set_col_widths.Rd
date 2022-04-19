@@ -54,7 +54,6 @@ wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 \dontrun{
 wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
 }
-
 }
 \seealso{
 \code{\link[=wb_remove_col_widths]{wb_remove_col_widths()}}
