@@ -6,9 +6,9 @@
 \alias{wb_unmerge_cells}
 \title{Worksheet cell merging}
 \usage{
-wb_merge_cells(wb, sheet, cols, rows)
+wb_merge_cells(wb, sheet, rows = NULL, cols = NULL)
 
-wb_unmerge_cells(wb, sheet, cols, rows)
+wb_unmerge_cells(wb, sheet, rows = NULL, cols = NULL)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -56,3 +56,18 @@ wb_save(wb, temp_xlsx(), overwrite = TRUE)
 }
 
 }
+\seealso{
+Other workbook wrappers: 
+\code{\link{freezePane}},
+\code{\link{setColWidths}()},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}}
+}
+\concept{workbook wrappers}

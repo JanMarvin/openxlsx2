@@ -4,7 +4,13 @@
 \alias{wb_workbook}
 \title{Create a new Workbook object}
 \usage{
-wb_workbook(creator = NULL, title = NULL, subject = NULL, category = NULL)
+wb_workbook(
+  creator = NULL,
+  title = NULL,
+  subject = NULL,
+  category = NULL,
+  datetimeCreated = Sys.time()
+)
 }
 \arguments{
 \item{creator}{Creator of the workbook (your name). Defaults to login username}
@@ -14,9 +20,11 @@ wb_workbook(creator = NULL, title = NULL, subject = NULL, category = NULL)
 \item{subject}{Workbook properties subject}
 
 \item{category}{Workbook properties category}
+
+\item{datetimeCreated}{The time of the workbook is created}
 }
 \value{
-Workbook object
+A \link{wbWorkbook} object
 }
 \description{
 Create a new Workbook object
@@ -39,7 +47,17 @@ wb <- wb_workbook(
 )
 }
 \seealso{
-\code{\link[=loadWorkbook]{loadWorkbook()}}
-
-\code{\link[=wb_save]{wb_save()}}
+Other workbook wrappers: 
+\code{\link{freezePane}},
+\code{\link{setColWidths}()},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{workbook_grouping}},
+\code{\link{ws_cell_merge}}
 }
+\concept{workbook wrappers}

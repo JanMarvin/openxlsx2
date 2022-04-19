@@ -23,7 +23,7 @@
 #' }
 #'
 loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
-  
+
   file <- xlsxFile %||% file
   file <- getFile(file)
 
@@ -202,7 +202,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
           tabColour <- NULL
         }
 
-        wb$addChartSheet(sheetName = sheets$name[i], tabColour = tabColour, zoom = as.numeric(zoom))
+        wb$addChartSheet(sheet = sheets$name[i], tabColour = tabColour, zoom = as.numeric(zoom))
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")

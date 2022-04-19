@@ -1,14 +1,18 @@
 
-#' @title Create a new Workbook object
-#' @description Create a new Workbook object
+#' Create a new Workbook object
+#'
+#' Create a new Workbook object
+#'
 #' @param creator Creator of the workbook (your name). Defaults to login username
 #' @param title Workbook properties title
 #' @param subject Workbook properties subject
 #' @param category Workbook properties category
-#' @return Workbook object
+#' @param datetimeCreated The time of the workbook is created
+#' @return A [wbWorkbook] object
+#'
 #' @export
-#' @seealso [loadWorkbook()]
-#' @seealso [wb_save()]
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
@@ -25,18 +29,19 @@
 #'   subject  = "Expense Report - 2022 Q1",
 #'   category = "sales"
 #' )
-#' @export
 wb_workbook <- function(
-  creator = NULL,
-  title    = NULL,
-  subject  = NULL,
-  category = NULL
+  creator         = NULL,
+  title           = NULL,
+  subject         = NULL,
+  category        = NULL,
+  datetimeCreated = Sys.time()
 ) {
   wbWorkbook$new(
-    creator  = creator,
-    title    = title,
-    subject  = subject,
-    category = category
+    creator         = creator,
+    title           = title,
+    subject         = subject,
+    category        = category,
+    datetimeCreated = datetimeCreated
   )
 }
 
@@ -46,21 +51,20 @@ wb_workbook <- function(
 #' @param wb A `wbWorkbook` object to write to file
 #' @param path A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `path` exists
-#' @seealso [wb_workbook()], [wb_add_worksheet()], [loadWorkbook()], [writeData()].
-#'   [writeDataTable()]
 #'
 #' @export
+#' @family workbook wrappers
 #'
 #' @examples
 #' ## Create a new workbook and add a worksheet
 #' wb <- wb_workbook("Creator of workbook")
-#' wb$addWorksheet(sheetName = "My first worksheet")
+#' wb$addWorksheet(sheet = "My first worksheet")
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
 #' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
-wb_save <- function(wb, path, overwrite = TRUE) {
+wb_save <- function(wb, path = NULL, overwrite = TRUE) {
   assert_workbook(wb)
   wb$clone()$save(path = path, overwrite = overwrite)$path
 }
@@ -78,6 +82,7 @@ wb_save <- function(wb, path, overwrite = TRUE) {
 #' @param cols,rows Column and row specifications to merge on.  Note: `min()` and
 #'   `max()` of each vector are provided for specs.  Skipping rows or columns is
 #'   not recognized.
+#'
 #' @examples
 #' # Create a new workbook
 #' wb <- wb_workbook()
@@ -108,20 +113,21 @@ wb_save <- function(wb, path, overwrite = TRUE) {
 #' }
 #'
 #' @name ws_cell_merge
+#' @family workbook wrappers
 NULL
 
 # merge cells -------------------------------------------------------------
 
 #' @export
 #' @rdname ws_cell_merge
-wb_merge_cells <- function(wb, sheet, cols, rows) {
+wb_merge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$addCellMerge(sheet, rows = rows, cols = cols)
 }
 
 #' @export
 #' @rdname ws_cell_merge
-wb_unmerge_cells <- function(wb, sheet, cols, rows) {
+wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$removeCellMerge(sheet, rows = rows, cols = cols)
 }
@@ -132,7 +138,7 @@ wb_unmerge_cells <- function(wb, sheet, cols, rows) {
 #' Add a worksheet to a workbook
 #'
 #' @param wb A Workbook object to attach the new worksheet
-#' @param sheetName A name for the new worksheet
+#' @param sheet A name for the new worksheet
 #' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
 #'   hidden.
 #' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
@@ -158,8 +164,11 @@ wb_unmerge_cells <- function(wb, sheet, cols, rows) {
 #'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
 #'   \item{**&\[Path\]**}{ File path} \item{**&\[File\]**}{ File name}
 #'   \item{**&\[Tab\]**}{ Worksheet name} }
-#' @return XML tree
+#' @return The [wbWorkbook] object `wb`
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook("Fred")
@@ -209,7 +218,7 @@ wb_unmerge_cells <- function(wb, sheet, cols, rows) {
 #' }
 wb_add_worksheet <- function(
   wb,
-  sheetName,
+  sheet,
   gridLines   = TRUE,
   tabColour   = NULL,
   zoom        = 100,
@@ -221,16 +230,16 @@ wb_add_worksheet <- function(
   evenFooter  = footer,
   firstHeader = header,
   firstFooter = footer,
-  visible     = TRUE,
+  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing  = FALSE,
   paperSize   = getOption("openxlsx.paperSize", default = 9),
   orientation = getOption("openxlsx.orientation", default = "portrait"),
-  vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
-  hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))
+  hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+  vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
 ) {
   assert_workbook(wb)
   wb$clone()$addWorksheet(
-    sheetName   = sheetName,
+    sheet       = sheet,
     gridLines   = gridLines,
     tabColour   = tabColour,
     zoom        = zoom,
@@ -249,29 +258,33 @@ wb_add_worksheet <- function(
 }
 
 
-#' @name cloneWorksheet
-#' @title Clone a worksheet to a workbook
-#' @description Clone a worksheet to a Workbook object
-#' @param wb A Workbook object to attach the new worksheet
-#' @param sheetName A name for the new worksheet
-#' @param clonedSheet The name of the existing worksheet to be cloned.
+#' Clone a worksheet to a workbook
+#'
+#' Clone a worksheet to a Workbook object
+#'
+#' @param wb A [wbWorkbook] object
+#' @param old Name of existing worksheet to copy
+#' @param new Name of New worksheet to create
 #' @return The `wb` object
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
-#' ## Create a new workbook
+#' # Create a new workbook
 #' wb <- wb_workbook("Fred")
 #'
-#' ## Add 3 worksheets
+#' # Add worksheets
 #' wb$addWorksheet("Sheet 1")
-#' wb_clone_worksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
+#' wb$cloneWorksheet("Sheet 1", "Sheet 2")
 #'
-#' ## Save workbook
+#' # Save workbook
 #' \dontrun{
 #' wb_save(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
 #' }
-wb_clone_worksheet <- function(wb, sheetName, clonedSheet) {
+wb_clone_worksheet <- function(wb, old, new) {
   assert_workbook(wb)
-  wb$clone()$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
+  wb$clone()$cloneWorksheet(old = old, new = new)
 }
 
 
@@ -284,7 +297,10 @@ wb_clone_worksheet <- function(wb, sheetName, clonedSheet) {
 #' @param firstActiveCol Furthest left column of active region
 #' @param firstRow If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)
 #' @param firstCol If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook("Kenshin")
@@ -321,14 +337,19 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 
 # TODO order these...
 
-#' @title Set worksheet row heights
-#' @description Set worksheet row heights
-#' @param wb A workbook object
+#' Set worksheet row heights
+#'
+#' Set worksheet row heights
+#'
+#' @param wb A [wbWorkbook] object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to set height
 #' @param heights Heights to set rows to specified in Excel column height units.
-#' @seealso [removeRowHeights()]
+#'
 #' @export
+#' @family workbook wrappers
+#' @seealso [removeRowHeights()]
+#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
@@ -356,10 +377,11 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 }
 
 
-#' @name setColWidths
-#' @title Set worksheet column widths
-#' @description Set worksheet column widths to specific width or "auto".
-#' @param wb A workbook object
+#' Set worksheet column widths
+#'
+#' Set worksheet column widths to specific width or "auto".
+#'
+#' @param wb A [wbWorkbook] object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
 #' @param widths widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
@@ -373,12 +395,15 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #'   \item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width allowed in Excel
 #' }
 #'
-#' NOTE: The calculation of column widths can be slow for large worksheets.
+#'   NOTE: The calculation of column widths can be slow for large worksheets.
 #'
-#' NOTE: The `hidden` parameter may conflict with the one set in [wb_group_cols]; changing one will update the other.
+#'   NOTE: The `hidden` parameter may conflict with the one set in
+#'   [wb_group_cols]; changing one will update the other.
 #'
-#' @seealso [removeColWidths()]
 #' @export
+#' @family workbook wrappers
+#' @seealso [removeColWidths()]
+#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
@@ -722,12 +747,14 @@ modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "
 }
 
 
-#' @name getBaseFont
-#' @title Return the workbook default font
-#' @description Return the workbook default font
-#' @param wb A workbook object
-#' @description Returns the base font used in the workbook.
+#' Return the workbook default font
+#'
+#' Get the base font used in the workbook.
+#' @param wb A [wbWorkbook] object
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## create a workbook
 #' wb <- wb_workbook()
@@ -1346,13 +1373,13 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 #' @examples
 #' ## setup a workbook with 3 worksheets
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "Sheet 1", gridLines = FALSE)
+#' wb$addWorksheet("Sheet 1", gridLines = FALSE)
 #' writeDataTable(wb = wb, sheet = 1, x = iris)
 #'
-#' wb$addWorksheet(sheetName = "mtcars (Sheet 2)", gridLines = FALSE)
+#' wb$addWorksheet("mtcars (Sheet 2)", gridLines = FALSE)
 #' writeData(wb = wb, sheet = 2, x = mtcars)
 #'
-#' wb$addWorksheet(sheetName = "Sheet 3", gridLines = FALSE)
+#' wb$addWorksheet("Sheet 3", gridLines = FALSE)
 #' writeData(wb = wb, sheet = 3, x = Formaldehyde)
 #'
 #' worksheetOrder(wb)
@@ -1820,9 +1847,9 @@ dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBl
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "S1", visible = FALSE)
-#' wb$addWorksheet(sheetName = "S2", visible = TRUE)
-#' wb$addWorksheet(sheetName = "S3", visible = FALSE)
+#' wb$addWorksheet(sheet = "S1", visible = FALSE)
+#' wb$addWorksheet(sheet = "S2", visible = TRUE)
+#' wb$addWorksheet(sheet = "S3", visible = FALSE)
 #'
 #' sheetVisibility(wb)
 #' sheetVisibility(wb)[1] <- TRUE ## show sheet 1
@@ -1949,7 +1976,7 @@ pageBreak <- function(wb, sheet, i, type = "row") {
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "Sheet 1")
+#' wb$addWorksheet(sheet = "Sheet 1")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris)
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
@@ -1994,8 +2021,8 @@ getTables <- function(wb, sheet) {
 #' @examples
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet(sheetName = "Sheet 1")
-#' wb$addWorksheet(sheetName = "Sheet 2")
+#' wb$addWorksheet(sheet = "Sheet 1")
+#' wb$addWorksheet(sheet = "Sheet 2")
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
@@ -2073,14 +2100,46 @@ removeTable <- function(wb, sheet, table) {
 
 # grouping ----------------------------------------------------------------
 
-#' @rdname grouping
-#' @param wb A workbook object.
-#' @param sheet A name or index of a worksheet.
-#' @param cols Indices of cols to group.
-#' @param collapsed Logical vector. If TRUE the grouped columns are hidden. Defaults to FALSE.
-#' @param levels levels?
-#' @details Group columns together, with the option to hide them.
+#' Group Rows and Columns
+#'
+#' Group a selection of rows or cols
+#'
+#' @details If row was previously hidden, it will now be shown
+#'
+#' @param wb A [wbWorkbook] object
+#' @param sheet A name or index of a worksheet
+#' @param rows,cols Indices of rows and columns to group
+#' @param collapsed If `TRUE` the grouped columns are collapsed
+#' @param levels levels
+#'
+#' @examples
+#' # create matrix
+#' t1 <- AirPassengers
+#' t2 <- do.call(cbind, split(t1, cycle(t1)))
+#' dimnames(t2) <- dimnames(.preformat.ts(t1))
+#'
+#' wb <- wb_workbook()
+#' wb$addWorksheet("AirPass")
+#' writeData(wb, "AirPass", t2, rowNames = TRUE)
+#'
+#' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
+#' wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
+#' wb <- wb_group_rows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
+#' wb <- wb_group_rows(wb, "AirPass", 9:13)                  # group years 1956-1960
+#'
+#' wb$createCols("AirPass", 13)
+#'
+#' wb <- wb_group_cols(wb, "AirPass", 2:4, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 11:13)
+#'
+#' @name workbook_grouping
+#' @family workbook wrappers
+NULL
+
 #' @export
+#' @rdname workbook_grouping
 wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$groupCols(
@@ -2091,12 +2150,8 @@ wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
   )
 }
 
-#' @rdname grouping
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols Indices of columns to ungroup
-#' @details If column was previously hidden, it will now be shown
 #' @export
+#' @rdname workbook_grouping
 ungroupColumns <- function(wb, sheet, cols) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
@@ -2129,37 +2184,9 @@ ungroupColumns <- function(wb, sheet, cols) {
   }
 }
 
-#' @name grouping
-#' @title Group Rows and Columns
-#' @description Group a selection of rows or cols
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param rows Indices of rows to group
-#' @param collapsed Logical vector. If TRUE the grouped columns are collapsed. Defaults to FALSE
-#' @examples
-#'
-#' # create matrix
-#' t1 <- AirPassengers
-#' t2 <- do.call(cbind, split(t1, cycle(t1)))
-#' dimnames(t2) <- dimnames(.preformat.ts(t1))
-#'
-#' wb <- wb_workbook()
-#' wb$addWorksheet("AirPass")
-#' writeData(wb, "AirPass", t2, rowNames = TRUE)
-#'
-#' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
-#' wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
-#' wb <- wb_group_rows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
-#' wb <- wb_group_rows(wb, "AirPass", 9:13)                  # group years 1956-1960
-#'
-#' wb$createCols("AirPass", 13)
-#'
-#' wb <- wb_group_cols(wb, "AirPass", 2:4, collapsed = TRUE)
-#' wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
-#' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
-#' wb <- wb_group_cols(wb, "AirPass", 11:13)
-#'
+
 #' @export
+#' @rdname workbook_grouping
 wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$groupRows(
@@ -2170,12 +2197,8 @@ wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
   )
 }
 
-#' @rdname grouping
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param rows Indices of rows to ungroup
-#' @details If row was previously hidden, it will now be shown
 #' @export
+#' @rdname workbook_grouping
 ungroupRows <- function(wb, sheet, rows) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
@@ -2235,7 +2258,7 @@ ungroupRows <- function(wb, sheet, rows) {
 #' * `wb_get_creators()` returns a `character` vector of creators
 #'
 #' @name wb_creators
-#' @family workbook_wrappers
+#' @family workbook wrappers
 NULL
 
 #' @rdname wb_creators
@@ -2270,16 +2293,19 @@ wb_get_creators <- function(wb) {
 
 # others? -----------------------------------------------------------------
 
-#' @name setLastModifiedBy
-#' @title Add another author to the meta data of the file.
-#' @description Just a wrapper of wb$changeLastModifiedBy()
+#' Add another author to the meta data of the file.
+#'
+#' Just a wrapper of wb$changeLastModifiedBy()
+#'
 #' @param wb A workbook object
 #' @param LastModifiedBy A string object with the name of the LastModifiedBy-User
-#' @examples
 #'
+#' @export
+#' @family workbook wrappers
+#'
+#' @examples
 #' wb <- wb_workbook()
 #' setLastModifiedBy(wb, "test")
-#' @export
 setLastModifiedBy <- function(wb, LastModifiedBy) {
   assert_workbook(wb)
   wb$changeLastModifiedBy(LastModifiedBy)

@@ -354,60 +354,55 @@ test_that("Overwrite and delete named regions", {
   temp_file <- temp_xlsx()
 
   wb <- wb_workbook()
+  expect_null(getNamedRegions(wb))
+
   wb$addWorksheet("Sheet 1")
+  expect_null(getNamedRegions(wb))
 
   ## create region
-  writeData(wb, sheet = 1, x = iris[1:11, ], startCol = 1,
-            startRow = 1, name = "iris")
-
-  init_nr <- getNamedRegions(wb)
-  expect_equal(init_nr$coords, "A1:E12")
+  writeData(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris")
+  exp <- data.frame(
+    name   = "iris",
+    value  = "'Sheet 1'!A1:E12",
+    sheets = "Sheet 1",
+    coords = "A1:E12",
+    id     = 1L,
+    local  = 0,
+    sheet  = 1L
+  )
+  expect_identical(getNamedRegions(wb), exp)
 
   # no overwrite
-  expect_error({
-    writeData(wb, sheet = 1, x = iris[1:11, ], startCol = 1,
-              startRow = 1, name = "iris")
-  })
+  expect_error(writeData(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris"))
 
-  expect_error({
-    createNamedRegion(
-      wb = wb,
-      sheet = 1,
-      name = "iris",
-      rows = 1:5,
-      cols = 1:2
-    )
-  })
+  expect_error(createNamedRegion(wb, 1, name = "iris", rows = 1:5, cols = 1:2))
 
   # overwrite
-  createNamedRegion(
-    wb = wb,
-    sheet = 1,
-    name = "iris",
-    rows = 1:5,
-    cols = 1:2,
-    overwrite = TRUE
+  createNamedRegion(wb, 1, name = "iris", rows = 1:5, cols = 1:2, overwrite = TRUE)
+
+  exp <- data.frame(
+    name   = "iris",
+    # oh, why are these `'` and not `"`?
+    value  = "'Sheet 1'!$A$1:$B$5",
+    # and this doesn't have the `'`?
+    sheets = "Sheet 1",
+    coords = "A1:B5",
+    id     = 1L,
+    local  = 0,
+    sheet  = 1L
   )
 
-  # check midification
-  modify_nr <- getNamedRegions(wb)
-  expect_equal(modify_nr$coords, "A1:B5")
-  expect_true("iris" %in% modify_nr)
+  # check modification
+  expect_identical(getNamedRegions(wb), exp)
 
   # delete name region
   deleteNamedRegion(wb, name = "iris")
   expect_false("iris" %in% getNamedRegions(wb)$name)
 
-  createNamedRegion(
-    wb = wb,
-    sheet = 1,
-    name = "iris",
-    rows = 1:5,
-    cols = 1:2
-  )
+  createNamedRegion(wb, 1, name = "iris", rows = 1:5, cols = 1:2)
+  expect_identical(getNamedRegions(wb), exp)
 
   # removing a worksheet removes the named region as well
   wb <- wb_remove_worksheet(wb, 1)
-  expect_true(is.null(getNamedRegions(wb)))
-
+  expect_null(getNamedRegions(wb))
 })

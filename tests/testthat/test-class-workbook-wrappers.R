@@ -1,41 +1,94 @@
-test_that("Workbook class wrappers work", {
-  skip("no tests yet")
+
+# wb_workbook() -----------------------------------------------------------
+
+test_that("wb_workbook() is a wrapper", {
+  ts <- Sys.time()
+  expect_equal(wb_workbook(datetimeCreated = ts), wbWorkbook$new(datetimeCreated = ts))
+  expect_wrapper("initialize", "wb_workbook", params = NULL)
 })
 
-test_that("setColWidths", {
+# wb_add_worksheet() ------------------------------------------------------
 
-  wb <- wb_workbook()
-  wb <- wb_add_worksheet(wb, "test")
-  writeData(wb, "test", mtcars)
-
-  # set column width to 12
-  expect_silent(setColWidths(wb, "test", widths = 12L, cols = seq_along(mtcars)))
-  expect_equal(
-    "<col min=\"1\" max=\"11\" width=\"12\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\"/>",
-    wb$worksheets[[1]]$cols_attr
-  )
-
-  # wrong sheet
-  expect_error(setColWidths(wb, "test2", widths = 12L, cols = seq_along(mtcars)))
-
-  # reset the column with, we do not provide an option ot remove the column entry
-  expect_silent(setColWidths(wb, "test", cols = seq_along(mtcars)))
-  expect_equal(
-    "<col min=\"1\" max=\"11\" width=\"8.43\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\"/>",
-    wb$worksheets[[1]]$cols_attr
-  )
-
-  # create column width for column 25
-  expect_silent(setColWidths(wb, "test", cols = "Y", widths = 22))
-  expect_equal(
-    c("<col min=\"1\" max=\"11\" width=\"8.43\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\"/>",
-      "<col min=\"12\" max=\"24\" width=\"8.43\"/>",
-      "<col min=\"25\" max=\"25\" width=\"22\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\"/>"),
-    wb$worksheets[[1]]$cols_attr
-  )
-
-  # a few more errors
-  expect_error(setColWidths(wb, "test", cols = "Y", width = 1:2))
-  expect_error(setColWidths(wb, "test", cols = "Y", hidden = 1:2))
-
+test_that("wb_add_worksheet() is a wrapper", {
+  expect_wrapper("addWorksheet", "wb_add_worksheet", params = list(sheet = "this"))
 })
+
+# wb_remove_worksheet() ---------------------------------------------------
+
+test_that("wb_remove_worksheet() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("removeWorksheet", "wb_remove_worksheet", wb = wb, params = list(sheet = "sheet"))
+})
+
+# wb_save() ---------------------------------------------------------------
+
+test_that("wb_save() is a wrapper", {
+  # returns the file path instead
+  expect_wrapper("save", "wb_save", params = NULL, ignore = "path")
+})
+
+# wb_merge_cells(), wb_unmerge_cells() ------------------------------------
+
+test_that("wb_merge_cells(), wb_unmerge_cells() are wrappers", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  params <- list(sheet = "sheet", rows = 1:2, cols = 2)
+  expect_wrapper("addCellMerge",    "wb_merge_cells",   wb = wb, params = params)
+  expect_wrapper("removeCellMerge", "wb_unmerge_cells", wb = wb, params = params)
+})
+
+# wb_freeze_pane() --------------------------------------------------------
+
+test_that("wb_freeze_pane() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("freezePanes", "wb_freeze_pane", wb = wb, params = list(sheet = "sheet"))
+})
+
+# wb_clone_worksheet() ----------------------------------------------------
+
+test_that("wb_clone_worksheet() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("cloneWorksheet", "wb_clone_worksheet", wb = wb, params = list(old = "sheet", new = "new"))
+})
+
+# wb_freeze_pane() --------------------------------------------------------
+
+test_that("wb_freeze_pane() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  expect_wrapper("freezePanes", "wb_freeze_pane", wb = wb, params = list(sheet = "sheet"))
+})
+
+# wb_set_row_heights() --------------------------------------------------------
+
+test_that("wb_set_row_heights() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  params <- list(sheet = "sheet", rows = 1, heights = 5)
+  expect_wrapper("setRowHeights", "wb_set_row_heights", wb = wb, params = params)
+})
+
+# wb_group_rows() -------------------------------------------------------------
+
+test_that("wb_group_rows() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  params <- list(sheet = "sheet", rows = 1)
+  expect_wrapper("groupRows", "wb_group_rows", wb = wb, params = params)
+})
+
+# wb_add_creators() -----------------------------------------------------------
+
+test_that("wb_set_creators() is a wrapper", {
+  expect_wrapper("addCreators", "wb_add_creators", params = list(creators = "myself"))
+})
+
+# wb_set_creators() -----------------------------------------------------------
+
+test_that("wb_set_creators() is a wrapper", {
+  expect_wrapper("setCreators", "wb_set_creators", params = list(creators = "myself"))
+})
+
+# wb_remove_creators() --------------------------------------------------------
+
+test_that("wb_remove_creators() is a wrapper", {
+  wb <- wb_workbook(creator = "myself")
+  expect_wrapper("removeCreators", "wb_remove_creators", params = list(creators = "myself"))
+})
+

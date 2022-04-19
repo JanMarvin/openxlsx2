@@ -4,7 +4,7 @@
 \alias{wb_save}
 \title{Save Workbook to file}
 \usage{
-wb_save(wb, path, overwrite = TRUE)
+wb_save(wb, path = NULL, overwrite = TRUE)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
@@ -19,7 +19,7 @@ Save Workbook to file
 \examples{
 ## Create a new workbook and add a worksheet
 wb <- wb_workbook("Creator of workbook")
-wb$addWorksheet(sheetName = "My first worksheet")
+wb$addWorksheet(sheet = "My first worksheet")
 
 ## Save workbook to working directory
 \dontrun{
@@ -27,6 +27,17 @@ wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 }
 }
 \seealso{
-\code{\link[=wb_workbook]{wb_workbook()}}, \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=loadWorkbook]{loadWorkbook()}}, \code{\link[=writeData]{writeData()}}.
-\code{\link[=writeDataTable]{writeDataTable()}}
+Other workbook wrappers: 
+\code{\link{freezePane}},
+\code{\link{setColWidths}()},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}},
+\code{\link{ws_cell_merge}}
 }
+\concept{workbook wrappers}

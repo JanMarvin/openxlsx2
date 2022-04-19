@@ -288,7 +288,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Add worksheet to the `wbWorkbook` object
-    #' @param sheetName sheetName
+    #' @param sheet sheet
     #' @param gridLines gridLines
     #' @param tabColour tabColour
     #' @param zoom zoom
@@ -308,7 +308,7 @@ wbWorkbook <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return The `wbWorkbook` object, invisibly
     addWorksheet = function(
-      sheetName,
+      sheet,
       gridLines   = TRUE,
       tabColour   = NULL,
       zoom        = 100,
@@ -322,28 +322,26 @@ wbWorkbook <- R6::R6Class(
       firstFooter = footer,
       visible     = c("true", "false", "hidden", "visible", "veryhidden"),
       hasDrawing  = FALSE,
-      paperSize   = 9,
-      orientation = c("portrait", "landscape"),
-      hdpi        = 300,
-      vdpi        = 300
+      paperSize   = getOption("openxlsx.paperSize", default = 9),
+      orientation = getOption("openxlsx.orientation", default = "portrait"),
+      hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+      vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
     ) {
-
-
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
-      orientation <- match.arg(orientation)
+      orientation <- match.arg(orientation, c("portrait", "landscape"))
 
       # set up so that a single error can be reported on fail
       fail <- FALSE
       msg <- NULL
 
-      sheetName <- as.character(sheetName)
+      sheet <- as.character(sheet)
 
-      if (tolower(sheetName) %in% tolower(self$sheet_names)) {
+      if (tolower(sheet) %in% tolower(self$sheet_names)) {
         fail <- TRUE
         msg <- c(
           msg,
-          sprintf("A worksheet by the name \"%s\" already exists.", sheetName),
+          sprintf("A worksheet by the name \"%s\" already exists.", sheet),
           "Sheet names must be unique case-insensitive."
         )
       }
@@ -353,11 +351,11 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "gridLines must be a logical of length 1.")
       }
 
-      if (nchar(sheetName) > 31) {
+      if (nchar(sheet) > 31) {
         fail <- TRUE
         msg <- c(
           msg,
-          sprintf("sheetName \"sheetName\" too long.", sheetName),
+          sprintf("sheet \"sheet\" too long.", sheet),
           "Max length is 31 characters."
         )
       }
@@ -415,10 +413,10 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Invalid XML characters
-      sheetName <- replaceIllegalCharacters(sheetName)
+      sheet <- replaceIllegalCharacters(sheet)
 
-      if (!missing(sheetName)) {
-        if (grepl(":", sheetName)) {
+      if (!missing(sheet)) {
+        if (grepl(":", sheet)) {
           fail <- TRUE
           msg <- c(msg, "colon not allowed in sheet names in Excel")
         }
@@ -446,7 +444,7 @@ wbWorkbook <- R6::R6Class(
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-          sheetName,
+          sheet,
           sheetId,
           visible,
           newSheetIndex
@@ -510,7 +508,7 @@ wbWorkbook <- R6::R6Class(
       self$rowHeights[[newSheetIndex]]       <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
-      self$append("sheet_names", sheetName)
+      self$append("sheet_names", sheet)
 
       # TODO this should live wherever the other default values for an empty worksheet are initialized
       empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
@@ -523,29 +521,27 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Clone a workbooksheet
-    #' @param sheetName sheetName
-    #' @param clonedSheet clonedSheet
-    cloneWorksheet = function(sheetName, clonedSheet) {
-      if (tolower(sheetName) %in% tolower(self$sheet_names)) {
+    #' @param old name of worksheet to clone
+    #' @param new name of new worksheet to add
+    cloneWorksheet = function(old, new) {
+      old <- wb_validate_sheet(self, old)
+
+      if (tolower(new) %in% tolower(self$sheet_names)) {
         stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
       }
 
-      if (nchar(sheetName) > 31) {
-        stop("sheetName too long! Max length is 31 characters.")
+      if (nchar(new) > 31) {
+        stop("sheet too long! Max length is 31 characters.")
       }
 
-      if (!is.character(sheetName)) {
-        sheetName <- as.character(sheetName)
+      if (!is.character(new)) {
+        new <- as.character(new)
       }
 
       ## Invalid XML characters
-      sheetName <- replaceIllegalCharacters(sheetName)
-
-      clonedSheet <- wb_validate_sheet(self, clonedSheet)
-      if (!missing(sheetName)) {
-        if (grepl(pattern = ":", x = sheetName)) {
-          stop("colon not allowed in sheet names in Excel")
-        }
+      new <- replaceIllegalCharacters(new)
+      if (grepl(pattern = ":", x = new)) {
+        stop("colon not allowed in sheet names in Excel")
       }
 
       newSheetIndex <- length(self$worksheets) + 1L
@@ -553,13 +549,13 @@ wbWorkbook <- R6::R6Class(
 
 
       ## copy visibility from cloned sheet!
-      visible <- reg_match0(self$workbook$sheets[[clonedSheet]], '(?<=state=")[^"]+')
+      visible <- reg_match0(self$workbook$sheets[[old]], '(?<=state=")[^"]+')
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-          sheetName,
+          new,
           sheetId,
           visible,
           newSheetIndex
@@ -567,8 +563,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## append to worksheets list
-      self$append("worksheets", self$worksheets[[clonedSheet]]$clone())
-
+      self$append("worksheets", self$worksheets[[old]]$clone())
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
@@ -584,7 +579,7 @@ wbWorkbook <- R6::R6Class(
 
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]] <- genBaseSheetRels(newSheetIndex)
-      self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[clonedSheet]]
+      self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[old]]
 
       # give each chart its own filename (images can re-use the same file, but charts can't)
       self$drawings_rels[[newSheetIndex]] <-
@@ -611,15 +606,15 @@ wbWorkbook <- R6::R6Class(
               chart <- read_xml(fl, pointer = FALSE)
 
               chart <- gsub(
-                stri_join("(?<=')", self$sheet_names[[clonedSheet]], "(?='!)"),
-                stri_join("'", sheetName, "'"),
+                stri_join("(?<=')", self$sheet_names[[old]], "(?='!)"),
+                stri_join("'", new, "'"),
                 chart,
                 perl = TRUE
               )
 
               chart <- gsub(
-                stri_join("(?<=[^A-Za-z0-9])", .self$sheet_names[[clonedSheet]], "(?=!)"),
-                stri_join("'", sheetName, "'"),
+                stri_join("(?<=[^A-Za-z0-9])", .self$sheet_names[[old]], "(?=!)"),
+                stri_join("'", new, "'"),
                 chart,
                 perl = TRUE
               )
@@ -637,21 +632,18 @@ wbWorkbook <- R6::R6Class(
           NA_character_,
           USE.NAMES = FALSE
         )
-      # The IDs in the drawings array are sheet-specific, so within the new cloned sheet
-      # the same IDs can be used => no need to modify drawings
-      self$drawings[[newSheetIndex]]       <- self$drawings[[clonedSheet]]
-
-      self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[clonedSheet]]
-      self$vml[[newSheetIndex]]            <- self$vml[[clonedSheet]]
-
-      self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[clonedSheet]]
-      self$comments[[newSheetIndex]]       <- self$comments[[clonedSheet]]
-      self$threadComments[[newSheetIndex]] <- self$threadComments[[clonedSheet]]
-
-      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[clonedSheet]]
+      # The IDs in the drawings array are sheet-specific, so within the new
+      # cloned sheet the same IDs can be used => no need to modify drawings
+      self$drawings[[newSheetIndex]]       <- self$drawings[[old]]
+      self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
+      self$vml[[newSheetIndex]]            <- self$vml[[old]]
+      self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
+      self$comments[[newSheetIndex]]       <- self$comments[[old]]
+      self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
+      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
-      self$append("sheet_names", sheetName)
+      self$append("sheet_names", new)
 
 
       ############################
@@ -660,7 +652,7 @@ wbWorkbook <- R6::R6Class(
       ## and in the worksheets[]$tableParts list. We also need to adjust the
       ## worksheets_rels and set the content type for the new table
 
-      tbls <- self$tables[attr(self$tables, "sheet") == clonedSheet]
+      tbls <- self$tables[attr(self$tables, "sheet") == old]
 
       for (t in tbls) {
         # Extract table name, displayName and ID from the xml
@@ -682,18 +674,18 @@ wbWorkbook <- R6::R6Class(
         # Use the table definition from the cloned sheet and simply replace the names
         newt <- t
         newt <- gsub(
-          stri_join(" name=\"", oldname, "\""),
-          stri_join(" name=\"", newname, "\""),
+          stri_join(' name="', oldname, '"'),
+          stri_join(' name="', newname, '"'),
           newt
         )
         newt <- gsub(
-          stri_join(" displayName=\"", olddispname, "\""),
-          stri_join(" displayName=\"", newdispname, "\""),
+          stri_join(' displayName="', olddispname, '"'),
+          stri_join(' displayName="', newdispname, '"'),
           newt
         )
         newt <- gsub(
-          stri_join("(<table [^<]* id=\")", oldid, "\""),
-          stri_join("\\1", newid, "\""),
+          stri_join('(<table [^<]* id=")', oldid, '"'),
+          stri_join("\\1", newid, '"'),
           newt
         )
 
@@ -734,11 +726,11 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Add a chart sheet to the workbook
-    #' @param sheetName sheetName
+    #' @param sheet sheet
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheetName, tabColour = NULL, zoom = 100) {
+    addChartSheet = function(sheet, tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
       sheetId <- max_sheet_id(self) # checks for length of worksheets
@@ -747,7 +739,7 @@ wbWorkbook <- R6::R6Class(
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          sheetName,
+          sheet,
           sheetId,
           newSheetIndex
         )
@@ -762,7 +754,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      self$append("sheet_names", sheetName)
+      self$append("sheet_names", sheet)
 
       ## update content_tyes
       self$append("Content_Types",
@@ -1548,18 +1540,18 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Sets a sheet name
     #' @param sheet Old sheet name
-    #' @param newSheetName New sheet name
+    #' @param name New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    setSheetName = function(sheet, newSheetName) {
+    setSheetName = function(sheet, name) {
       # TODO assert sheet class?
-      if (newSheetName %in% self$sheet_names) {
-        stop(sprintf("Sheet %s already exists!", newSheetName))
+      if (name %in% self$sheet_names) {
+        stop(sprintf("Sheet %s already exists!", name))
       }
 
       sheet <- wb_validate_sheet(self, sheet)
 
       oldName <- self$sheet_names[[sheet]]
-      self$sheet_names[[sheet]] <- newSheetName
+      self$sheet_names[[sheet]] <- name
 
       ## Rename in workbook
       sheetId <- get_sheet_id(self, sheet)
@@ -1567,7 +1559,7 @@ wbWorkbook <- R6::R6Class(
       self$workbook$sheets[[sheet]] <-
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          newSheetName,
+          name,
           sheetId,
           rId
         )
@@ -1577,9 +1569,9 @@ wbWorkbook <- R6::R6Class(
         belongTo <- getNamedRegions(self)$sheets
         toChange <- belongTo == oldName
         if (any(toChange)) {
-          newSheetName <- sprintf("'%s'", newSheetName)
+          name <- sprintf("'%s'", name)
           tmp <-
-            gsub(oldName, newSheetName, self$workbook$definedName[toChange], fixed = TRUE)
+            gsub(oldName, name, self$workbook$definedName[toChange], fixed = TRUE)
           tmp <- gsub("'+", "'", tmp)
           self$workbook$definedNames[toChange] <- tmp
         }
@@ -1599,6 +1591,10 @@ wbWorkbook <- R6::R6Class(
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
+      # TODO move to wbWorksheet method
+      # TODO consider reworking rowHeights
+      # self$worksheets[[sheet]]$setRowHeights(rows = rows, heights = heights)
+      # invisible(self)
 
       if (length(rows) > length(heights)) {
         heights <- rep(heights, length.out = length(rows))
@@ -1609,8 +1605,9 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Remove duplicates
-      heights <- heights[!duplicated(rows)]
-      rows <- rows[!duplicated(rows)]
+      ok <- !duplicated(rows)
+      heights <- heights[ok]
+      rows <- rows[ok]
 
       heights <- as.character(as.numeric(heights))
       names(heights) <- rows
@@ -1726,7 +1723,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    groupRows = function(sheet, rows, collapsed, levels = NULL) {
+    groupRows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1740,7 +1737,7 @@ wbWorkbook <- R6::R6Class(
         stop("Collapses should be a logical value (TRUE/FALSE).")
       }
 
-      if (any(rows) < 1L) {
+      if (any(rows <= 0L)) {
         stop("Invalid rows entered (<= 0).")
       }
 
@@ -1817,10 +1814,17 @@ wbWorkbook <- R6::R6Class(
         stop("sheet must have length 1.")
       }
 
-      sheet <- wb_validate_sheet(self, sheet)
-      sheetNames <- self$sheet_names
-      nSheets <- length(sheetNames)
-      sheetName <- sheetNames[[sheet]]
+      sheet       <- wb_validate_sheet(self, sheet)
+      sheet_names <- self$sheet_names
+      nSheets     <- length(sheet_names)
+      sheet_names <- sheet_names[[sheet]]
+
+      ## definedNames
+      if (length(self$workbook$definedNames)) {
+        # wb_validate_sheet() makes sheet an integer
+        # so we need to remove this before getting rid of the sheet names
+        self$workbook$definedNames <- self$workbook$definedNames[!getNamedRegions(self)$sheets %in% self$sheet_names[sheet]]
+      }
 
       deleteNamedRegion(self, sheet)
 
@@ -1951,7 +1955,7 @@ wbWorkbook <- R6::R6Class(
 
       ## remove sheet
       sn <- apply_reg_match0(self$workbook$sheets, pat = '(?<= name=")[^"]+')
-      self$workbook$sheets <- self$workbook$sheets[!sn %in% sheetName]
+      self$workbook$sheets <- self$workbook$sheets[!sn %in% sheet_names]
 
       ## Reset rIds
       if (nSheets > 1) {
@@ -2429,6 +2433,10 @@ wbWorkbook <- R6::R6Class(
     addCellMerge = function(sheet, rows = NULL, cols = NULL) {
       sheet <- wb_validate_sheet(self, sheet)
 
+      # TODO send to wbWorksheet() method
+      # self$worksheets[[sheet]]$addCellMerge(rows = rows, cols = cols)
+      # invisible(self)
+
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
 
@@ -2437,12 +2445,10 @@ wbWorkbook <- R6::R6Class(
 
       # TODO If the cell merge specs were saved as a data.frame or matrix
       # this would be quicker to check
-      current <- regmatches(
-        self$worksheets[[sheet]]$mergeCells,
-        regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
-      )
+      current <- reg_match0(self$worksheets[[sheet]]$mergeCells, "[A-Z0-9]+:[A-Z0-9]+")
 
-      if (!is.null(current)) {
+      # regmatch0 will return character(0) when x is NULL
+      if (length(current)) {
         comps <- lapply(
           current,
           function(rectCoords) {
@@ -2480,7 +2486,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    removeCellMerge = function(sheet, rows, cols) {
+    removeCellMerge = function(sheet, rows = NULL, cols = NULL) {
       sheet <- wb_validate_sheet(self, sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
@@ -3218,6 +3224,21 @@ wbWorkbook <- R6::R6Class(
   # any functions that are not present elsewhere or are non-exported internal
   # functions that are used to make assignments
   private = list(
+    deep_clone = function(name, value) {
+      #' Deep cloning method for workbooks.  This method also accesses
+      #' `$clone(deep = TRUE)` methods for `R6` fields.
+      if (R6::is.R6(value)) {
+        value <- value$clone(deep = TRUE)
+      } else if (is.list(value)) {
+        # specifically targetting fields like `worksheets`
+        for (i in wapply(value, R6::is.R6)) {
+          value[[i]] <- value[[i]]$clone(deep = TRUE)
+        }
+      }
+
+      value
+    },
+
     generate_base_core = function() {
 
       self$core <-
@@ -3647,12 +3668,12 @@ wbWorkbook <- R6::R6Class(
 
       if (length(self$workbook$definedNames)) {
         # TODO consider self$get_sheet_names() which orders the sheet names?
-        sheetNames <- self$sheet_names[self$sheetOrder]
+        sheets <- self$sheet_names[self$sheetOrder]
 
         belongTo <- getNamedRegions(self)$sheets
 
-        ## sheetNames is in re-ordered order (order it will be displayed)
-        newId <- match(belongTo, sheetNames) - 1L
+        ## sheets is in re-ordered order (order it will be displayed)
+        newId <- match(belongTo, sheets) - 1L
         oldId <- as.integer(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
 
         for (i in seq_along(self$workbook$definedNames)) {
