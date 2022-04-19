@@ -54,7 +54,7 @@ genClientData <- function(col, row, visible, height, width) {
 }
 
 
-# genBaseRels <- function(){
+# genBaseRels <- function() {
 #
 #   '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
 #    <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
@@ -63,7 +63,7 @@ genClientData <- function(col, row, visible, height, width) {
 # }
 #
 #
-# genBaseApp <- function(){
+# genBaseApp <- function() {
 #   list('<Application>Microsoft Excel</Application>')
 # }
 
@@ -93,7 +93,7 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
 }
 
 #
-# addAuthor <- function(wb,Author = NULL){
+# addAuthor <- function(wb,Author = NULL) {
 #
 #   if (!is.null(Author)) {
 #     current_creator <-
@@ -110,7 +110,7 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
 # }
 #
 #
-# setAuthor <- function(wb,Author = NULL){
+# setAuthor <- function(wb,Author = NULL) {
 #
 #   if (!is.null(Author)) {
 #     current_creator <-
@@ -126,7 +126,7 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
 #
 # }
 #
-# setLastModifiedBy <- function(wb,ModifiedBy=NULL){
+# setLastModifiedBy <- function(wb,ModifiedBy=NULL) {
 #
 #   if (!is.null(addmodifier)) {
 #     current_lastmodifier <-
@@ -147,19 +147,19 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
 #
 #
 # setBaseCore <- function(core,setcreator="",setmodifier="",
-#                         title = NULL, subject = NULL, category = NULL){
+#                         title = NULL, subject = NULL, category = NULL) {
 #
 #
 #   core <- c(core, sprintf('<dc:creator>%s</dc:creator>', setcreator))
 #   core <- c(core, sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")))
 #
-#   if(!is.null(title))
+#   if (!is.null(title))
 #     core <- c(core, sprintf('<dc:title>%s</dc:title>', replaceIllegalCharacters(title)))
 #
-#   if(!is.null(subject))
+#   if (!is.null(subject))
 #     core <- c(core, sprintf('<dc:subject>%s</dc:subject>', replaceIllegalCharacters(subject)))
 #
-#   if(!is.null(category))
+#   if (!is.null(category))
 #     core <- c(core, sprintf('<cp:category>%s</cp:category>', replaceIllegalCharacters(category)))
 #
 #   core <- c(core, '</coreProperties>')

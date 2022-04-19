@@ -97,7 +97,7 @@ std::string int_to_col(uint32_t cell) {
 
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
+Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
 
   // This function converts the Excel column letter to an integer
 
@@ -110,7 +110,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
   char A = 'A';
   int aVal = (int)A - 1;
 
-  for(int i = 0; i < n; i++){
+  for (int i = 0; i < n; i++) {
     a = r[i];
 
     // check if the value is digit only, if yes, add it and continue the loop
@@ -129,7 +129,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
     int sum = 0;
     k = a.length();
 
-    for (int j = 0; j < k; j++){
+    for (int j = 0; j < k; j++) {
       sum *= 26;
       sum += (a[j] - aVal);
 
@@ -153,6 +153,7 @@ SEXP rbindlist(Rcpp::List x) {
 
   // get unique names and create set
   for (auto i = 0; i < nn; ++i) {
+    if (Rf_isNull(x[i])) continue;
     std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
     std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
   }
@@ -171,6 +172,7 @@ SEXP rbindlist(Rcpp::List x) {
   }
 
   for (auto i = 0; i < nn; ++i) {
+    if (Rf_isNull(x[i])) continue;
 
     std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
     std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
@@ -353,12 +355,12 @@ Rcpp::List build_cell_merges(Rcpp::List comps) {
   size_t nMerges = comps.size();
   Rcpp::List res(nMerges);
 
-  for(size_t i =0; i < nMerges; i++){
+  for (size_t i =0; i < nMerges; i++) {
     Rcpp::IntegerVector col = col_to_int(comps[i]);
     Rcpp::CharacterVector comp = comps[i];
     Rcpp::IntegerVector row(2);
 
-    for(size_t j = 0; j < 2; j++){
+    for (size_t j = 0; j < 2; j++) {
       std::string rt(comp[j]);
       rt.erase(std::remove_if(rt.begin(), rt.end(), ::isalpha), rt.end());
       row[j] = atoi(rt.c_str());
@@ -368,20 +370,20 @@ Rcpp::List build_cell_merges(Rcpp::List comps) {
     size_t ck = size_t(col[1]) - ca + 1;
 
     std::vector<int> v(ck) ;
-    for(size_t j = 0; j < ck; j++)
+    for (size_t j = 0; j < ck; j++)
       v[j] = j + ca;
 
     size_t ra(row[0]);
 
     size_t rk = int(row[1]) - ra + 1;
     std::vector<int> r(rk) ;
-    for(size_t j = 0; j < rk; j++)
+    for (size_t j = 0; j < rk; j++)
       r[j] = j + ra;
 
     Rcpp::CharacterVector M(ck*rk);
     int ind = 0;
-    for(size_t j = 0; j < ck; j++){
-      for(size_t k = 0; k < rk; k++){
+    for (size_t j = 0; j < ck; j++) {
+      for (size_t k = 0; k < rk; k++) {
         char name[30];
         sprintf(&(name[0]), "%d-%d", r[k], v[j]);
         M(ind) = name;

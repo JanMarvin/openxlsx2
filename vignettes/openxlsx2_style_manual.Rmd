@@ -119,8 +119,8 @@ class(df$hLink) <- "hyperlink"
 class(df$Percentage) <- c(class(df$Percentage), "percentage")
 class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 
-writeData(wb, "S1", x = df, startRow = 4, rowNames = F)
-writeDataTable(wb, "S2", x = df, startRow = 4, rowNames = F)
+writeData(wb, "S1", x = df, startRow = 4, rowNames = FALSE)
+writeDataTable(wb, "S2", x = df, startRow = 4, rowNames = FALSE)
 ```
 
 
@@ -210,7 +210,7 @@ set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
 sheet <- "mtcars"
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb, sheet)
-writeData(wb, sheet, mtcars, rowNames = T)
+writeData(wb, sheet, mtcars, rowNames = TRUE)
 
 cols <- 1:12
 setColWidths(wb, sheet, cols = cols, widths = "auto")

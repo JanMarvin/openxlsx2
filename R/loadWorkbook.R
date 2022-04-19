@@ -834,7 +834,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
           attr(wb$worksheets[[table_sheet_i]]$tableParts, "tableName") <- c(attr(wb$worksheets[[table_sheet_i]]$tableParts, "tableName"), displayNames[i])
         }
       }
-    } ## if(length(tablesXML))
+    } ## if (length(tablesXML))
 
     ## might we have some external hyperlinks
     # TODO use lengths()
@@ -1016,7 +1016,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
 
 
             wb$comments[[i]] <- lapply(seq_along(comments), function(j) {
-              comment_list <- list(
+              list(
                 #"refId" = com_rId[j],
                 "ref" = refs[j],
                 "author" = authors[j],
@@ -1034,7 +1034,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
     if (length(threadCommentsXML) > 0) {
       threadCommentsXMLrelationship <- lapply(xml, function(x) grep("threadedComment[0-9]+\\.xml", x, value = TRUE))
       hasThreadComments <- lengths(threadCommentsXMLrelationship) > 0
-      if(any(hasThreadComments)) {
+      if (any(hasThreadComments)) {
         for (i in seq_along(xml)) {
           if (hasThreadComments[i]) {
             target <- apply_reg_match(threadCommentsXMLrelationship[[i]], '(?<=Target=").*?"')
@@ -1053,7 +1053,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
     }
 
     ## Persons (needed for Threaded Comment)
-    if(length(personXML) > 0){
+    if (length(personXML) > 0) {
       wb$persons <- personXML
       wb$Content_Types <- c(
         wb$Content_Types,

@@ -173,7 +173,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
 
     sheetName <- as.character(params$sheetName)
 
-    if (inherits(x, "list") & length(sheetName) == length(x)) {
+    if (inherits(x, "list") && (length(sheetName) == length(x))) {
       names(x) <- sheetName
     }
   }
@@ -439,7 +439,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   if ("firstRow" %in% names(params)) {
     firstRow <- params$firstRow
     freezePanes <- TRUE
-    if (inherits(x, "list") & length(firstRow) != nSheets) {
+    if (inherits(x, "list") && (length(firstRow) != nSheets)) {
       firstRow <- rep_len(firstRow, length.out = nSheets)
     }
   }
@@ -448,7 +448,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   if ("firstCol" %in% names(params)) {
     firstCol <- params$firstCol
     freezePanes <- TRUE
-    if (inherits(x, "list") & length(firstCol) != nSheets) {
+    if (inherits(x, "list") && (length(firstCol) != nSheets)) {
       firstCol <- rep_len(firstCol, length.out = nSheets)
     }
   }

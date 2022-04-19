@@ -475,11 +475,11 @@ create_fill <- function(
     fgColor = ""
 ) {
 
-  if (bgColor != ""){
+  if (bgColor != "") {
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
   }
 
-  if (fgColor != ""){
+  if (fgColor != "") {
     fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
@@ -605,10 +605,9 @@ create_cell_style <- function(
     locked = ""
 ) {
   n <- length(numFmtId)
-  x <- as.character(numFmtId)
 
   applyAlignment <- ""
-  if (any(horizontal != "") | any(textRotation != "") | any(vertical != "")) applyAlignment <- "1"
+  if (any(horizontal != "") || any(textRotation != "") || any(vertical != "")) applyAlignment <- "1"
 
   applyBorder <- ""
   if (any(borderId != "")) applyBorder <- "1"
@@ -623,7 +622,7 @@ create_cell_style <- function(
   if (any(numFmtId != "")) applyNumberFormat <- "1"
 
   applyProtection <- ""
-  if (any(hidden != "") | any(locked != "")) applyProtection <- "1"
+  if (any(hidden != "") || any(locked != "")) applyProtection <- "1"
 
 
   df_cellXfs <- data.frame(
@@ -831,4 +830,3 @@ create_dxfs_style <- function(
   )
 
 }
-

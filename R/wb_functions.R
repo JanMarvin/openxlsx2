@@ -36,7 +36,7 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 
 # # similar to all, simply check if most of the values match the condition
 # # in guess_col_type not all bools may be "b" some are "s" (missings)
-# most <- function(x){
+# most <- function(x) {
 #   as.logical(names(sort(table(x), decreasing = TRUE)[1]))
 # }
 
@@ -292,7 +292,7 @@ wb_to_df <- function(
 
     nr <- getNamedRegions(wb)
 
-    if (definedName %in% nr$name & missing(sheet)) {
+    if ((definedName %in% nr$name) && missing(sheet)) {
       sel   <- nr[nr$name == definedName, ][1,]
       sheet <- sel$sheet
       dims  <- sel$coords
@@ -335,7 +335,7 @@ wb_to_df <- function(
   # If no dims are requested via definedName, simply construct them from min
   # and max columns and row found on worksheet
   # in theory it could be useful to have both definedName and dims?
-  if (missing(definedName) & missing(dims)) {
+  if (missing(definedName) && missing(dims)) {
 
     sd <- wb$worksheets[[sheet]]$sheet_data$cc[c("row_r", "c_r")]
     sd$row <- as.integer(sd$row_r)
@@ -422,7 +422,7 @@ wb_to_df <- function(
   cc$val[sel] <- sst[as.numeric(cc$v[sel])+1]
   cc$typ[sel] <- "s"
   # convert missings
-  if (!is.na(na.strings) | !missing(na.strings)) {
+  if (!is.na(na.strings) || !missing(na.strings)) {
     sel <- cc$val %in% na.strings
     cc$val[sel] <- NA_character_
     cc$typ[sel] <- "na_string"
@@ -476,7 +476,7 @@ wb_to_df <- function(
 
       mc <- unlist(xml_attr(mc, "mergeCell"))
 
-      for (i in seq_along(mc)){
+      for (i in seq_along(mc)) {
         dms <- dims_to_dataframe(mc[i])
 
         z[rownames(z) %in% rownames(dms),
@@ -626,7 +626,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
 
-  if(is.character(sheet)) {
+  if (is.character(sheet)) {
     sheet_id <- which(sheet == wb$sheet_names)
   } else {
     sheet_id <- sheet
@@ -638,7 +638,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
 
-  # if(identical(sheet_id, integer()))
+  # if (identical(sheet_id, integer()))
   #   stop("sheet not in workbook")
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
@@ -675,7 +675,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   if (!any(cols %in% cells_in_wb)) {
     # all rows are availabe in the dataframe
-    for (row in rows){
+    for (row in rows) {
 
       # collect all wanted cols and order for excel
       total_cols <- unique(c(cc$c_r[cc$row_r == row], cols))
@@ -723,7 +723,8 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   if (all(rows %in% rows_in_wb)) {
     # message("cell(s) to update already in workbook. updating ...")
 
-    i <- 0; n <- 0
+    i <- 0
+    n <- 0
     for (row in rows) {
 
       n <- n+1
@@ -743,7 +744,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
-        if (data_class[m] == openxlsx2_celltype[["character"]] | (colNames == TRUE & n == 1)) {
+        if ((data_class[m] == openxlsx2_celltype[["character"]]) || ((colNames == TRUE) && (n == 1))) {
           cc[sel, "c_t"] <- "inlineStr"
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
         } else if (data_class[m] == openxlsx2_celltype[["formula"]]) {
@@ -872,7 +873,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   # TODO need to tell excel that we have a date, apply some kind of numFmt
   data <- convertToExcelDate(df = data, date1904 = has_date1904)
 
-  if (class(data) == "data.frame" | class(data) == "matrix") {
+  if ((class(data) == "data.frame") || (class(data) == "matrix")) {
     is_data_frame <- TRUE
 
     sel <- !dc %in% c(4, 5, 10)
@@ -884,7 +885,6 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
     # add rownames
     if (rowNames) {
-      nam <- names(data)
       data <- cbind(rownames(data), data)
       dc <- c(c("_rowNames_" = openxlsx2_celltype[["character"]]), dc)
     }

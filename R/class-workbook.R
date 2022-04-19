@@ -1247,7 +1247,7 @@ wbWorkbook <- R6::R6Class(
         }
 
       ## write styles.xml
-      #if(class(self$styles_xml) == "uninitializedField") {
+      #if (class(self$styles_xml) == "uninitializedField") {
       write_file(
         head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">',
         body = pxml(styleXML),
@@ -1834,10 +1834,12 @@ wbWorkbook <- R6::R6Class(
          xml_attr(self$worksheets_rels[[sheet]], "Relationship")
       )
 
-      xml_rels$type   <- basename(xml_rels$Type)
-      xml_rels$target <- basename(xml_rels$Target)
-      xml_rels$target[xml_rels$type == "hyperlink"] <- ""
-      xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+      if (nrow(xml_rels)) {
+        xml_rels$type   <- basename(xml_rels$Type)
+        xml_rels$target <- basename(xml_rels$Target)
+        xml_rels$target[xml_rels$type == "hyperlink"] <- ""
+        xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+      }
 
       comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
       drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
@@ -1859,7 +1861,7 @@ wbWorkbook <- R6::R6Class(
       #### Modify Content_Types
       ## remove last drawings(sheet).xml from Content_Types
       drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
-      self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
+      if (!is.null(drawing_name)) self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       ## remove highest sheet
       # (don't chagne this to a "grep(value = TRUE)" ... )
@@ -1939,11 +1941,13 @@ wbWorkbook <- R6::R6Class(
           # did this get updated from length of 3 to 2?
           #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
           rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
-          if (any(basename(rel$Type) == "drawing")) {
-            rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+          if (nrow(rel)) {
+            if (any(basename(rel$Type) == "drawing")) {
+              rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+            }
+            if (is.null(rel$TargetMode)) rel$TargetMode <- ""
+            self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
           }
-          if (is.null(rel$TargetMode)) rel$TargetMode <- ""
-          self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
         }
       } else {
         self$worksheets_rels <- list()
@@ -2121,8 +2125,7 @@ wbWorkbook <- R6::R6Class(
           '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
           allowBlank,
           showInputMsg,
-          showErrorMsg,
-          sqref
+          showErrorMsg
         )
 
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
@@ -2991,7 +2994,7 @@ wbWorkbook <- R6::R6Class(
     #
     #     for (i in dInds) {
     #       df[[i]] <- as.integer(df[[i]]) + origin
-    #       if (origin == 25569L){
+    #       if (origin == 25569L) {
     #         earlyDate <- df[[i]] < 60
     #         df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
     #       }
@@ -3464,7 +3467,7 @@ wbWorkbook <- R6::R6Class(
           #                            max(as.numeric(nam_at))))
           # empty_row_attr <- wanted[!wanted %in% nam_at]
           # # add empty list
-          # if(!identical(empty_row_attr, character()))
+          # if (!identical(empty_row_attr, character()))
           #   row_attr[[empty_row_attr]] <- list()
           # # restore order
           # ws$sheet_data$row_attr <- row_attr[wanted]
