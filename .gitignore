@@ -21,3 +21,5 @@ docs/
 # temporary xlsx files
 ~$*
 inst/doc
+/doc/
+/Meta/
