@@ -257,6 +257,10 @@ get_named_regions_from_string <- function(wb, dn) {
   if (!is.null(dn$value)) {
     dn_pos <- dn$value
     dn_pos <- gsub("[$']", "", dn_pos)
+    # for pageSetup we can have multiple defined names for column and row
+    # separated by a colon. This keeps only the first and drops the second.
+    # This will allow saving, but changes getNamedRegions()
+    dn_pos <- vapply(strsplit(dn_pos, ","), FUN = function(x) x[1], NA_character_)
 
     has_bang <- grepl("!", dn_pos, fixed = TRUE)
     dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")

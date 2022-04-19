@@ -47,3 +47,50 @@ test_that("openxlsx2_types", {
   expect_equal(exp, got)
 
 })
+
+
+test_that("pageSetup example", {
+
+  wb <- wb_workbook()
+  wb$addWorksheet("S1")
+  wb$addWorksheet("S2")
+  writeDataTable(wb, 1, x = iris[1:30, ])
+  writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
+
+  ## landscape page scaled to 50%
+  pageSetup(wb, sheet = 1, orientation = "landscape", scale = 50)
+  exp <- "<pageSetup paperSize=\"9\" orientation=\"landscape\" scale = \"50\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
+  expect_equal(exp, wb$worksheets[[1]]$pageSetup)
+
+
+  ## portrait page scales to 300% with 0.5in left and right margins
+  pageSetup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+  exp <- "<pageSetup paperSize=\"9\" orientation=\"portrait\" scale = \"300\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
+  expect_equal(exp, wb$worksheets[[2]]$pageSetup)
+
+
+  ## print titles
+  wb$addWorksheet("print_title_rows")
+  wb$addWorksheet("print_title_cols")
+
+  writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
+  writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
+
+  pageSetup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
+  pageSetup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+
+  exp <- c(
+    "<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"2\">'print_title_rows'!$1:$1</definedName>",
+    "<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"3\">'print_title_cols'!$A:$A,'print_title_cols'!$1:$1</definedName>"
+  )
+  expect_equal(exp, wb$workbook$definedNames)
+
+  tmp <- temp_xlsx()
+  expect_silent(wb_save(wb, tmp, overwrite = TRUE))
+
+  # survives write and load
+  wb <- loadWorkbook(tmp)
+  expect_equal(exp, wb$workbook$definedNames)
+
+
+})
