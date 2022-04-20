@@ -1619,6 +1619,26 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description
+    #' Sets a row height for a sheet
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @return The `wbWorkbook` object, invisibly
+    removeRowHeights = function(sheet, rows) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      customRows <- as.integer(names(self$rowHeights[[sheet]]))
+      removeInds <- which(customRows %in% rows)
+
+      if (length(removeInds)) {
+        self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][-removeInds]
+      }
+
+      self
+    },
 
     #' description
     #' creates column object for worksheet
