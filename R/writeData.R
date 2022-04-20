@@ -184,7 +184,7 @@ writeData <- function(wb,
   } ## this will go to coerce.default and rowNames will be ignored
 
   ## Coerce to data.frame
-  x <- openxlsxCoerce(x = x, rowNames = rowNames)
+  x <- openxlsx2Coerce(x = x, rowNames = rowNames)
 
   nCol <- ncol(x)
   nRow <- nrow(x)
