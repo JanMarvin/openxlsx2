@@ -2,11 +2,11 @@ test_that("Protect Workbook", {
   wb <- wb_workbook()
   wb$addWorksheet("s1")
 
-  wb$protectWorkbook(password = "abcdefghij")
+  wb$wb_protect(password = "abcdefghij")
 
   expect_true(wb$workbook$workbookProtection == "<workbookProtection workbookPassword=\"FEF1\"/>")
 
-  wb$protectWorkbook(protect = FALSE, password = "abcdefghij", lockStructure = TRUE, lockWindows = TRUE)
+  wb$wb_protect(protect = FALSE, password = "abcdefghij", lockStructure = TRUE, lockWindows = TRUE)
   expect_true(wb$workbook$workbookProtection == "")
 })
 
@@ -15,7 +15,7 @@ test_that("Reading protected Workbook", {
 
   wb <- wb_workbook()
   wb$addWorksheet("s1")
-  protectWorkbook(wb, password = "abcdefghij")
+  wb_protect(wb, password = "abcdefghij")
   wb_save(wb, temp_file)
 
   wb2 <- wb_load(file = temp_file)

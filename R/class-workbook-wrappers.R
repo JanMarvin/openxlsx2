@@ -1158,7 +1158,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 
 # protect -----------------------------------------------------------------
 
-#' @name protectWorksheet
+#' @name ws_protect
 #' @title Protect a worksheet from modifications
 #' @description Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
 #' @param wb A workbook object
@@ -1186,18 +1186,18 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 #' wb$addWorksheet("S1")
 #' writeDataTable(wb, 1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
-#' protectWorksheet(wb, "S1",
+#' ws_protect(wb, "S1",
 #'   protect = TRUE,
 #'   lockFormattingCells = FALSE, lockFormattingColumns = FALSE,
 #'   lockInsertingColumns = TRUE, lockDeletingColumns = TRUE
 #' )
 #'
 #' # Remove the protection
-#' protectWorksheet(wb, "S1", protect = FALSE)
+#' ws_protect(wb, "S1", protect = FALSE)
 #' \dontrun{
 #' wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
 #' }
-protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
+ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
   lockSelectingLockedCells = NULL, lockSelectingUnlockedCells = NULL,
   lockFormattingCells = NULL, lockFormattingColumns = NULL, lockFormattingRows = NULL,
   lockInsertingColumns = NULL, lockInsertingRows = NULL, lockInsertingHyperlinks = NULL,
@@ -1270,7 +1270,7 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 }
 
 
-#' @name protectWorkbook
+#' @name wb_protect
 #' @title Protect a workbook from modifications
 #' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
 #' @param wb A workbook object
@@ -1286,17 +1286,17 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' @examples
 #' wb <- wb_workbook()
 #' wb$addWorksheet("S1")
-#' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
+#' wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 #' \dontrun{
 #' wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
 #' }
 #' # Remove the protection
-#' protectWorkbook(wb, protect = FALSE)
+#' wb_protect(wb, protect = FALSE)
 #' \dontrun{
 #' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
 #'
-#' protectWorkbook(
+#' wb_protect(
 #'   wb,
 #'   protect = TRUE,
 #'   password = "Password",
@@ -1307,9 +1307,9 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #'   readOnlyRecommended = TRUE
 #' )
 #'
-protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
+wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
   assert_workbook(wb)
-  invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
+  invisible(wb$wb_protect(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
 }
 
 

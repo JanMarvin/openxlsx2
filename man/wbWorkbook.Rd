@@ -146,7 +146,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
-\item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
+\item \href{#method-wb_protect}{\code{wbWorkbook$wb_protect()}}
 \item \href{#method-setCreators}{\code{wbWorkbook$setCreators()}}
 \item \href{#method-addCreators}{\code{wbWorkbook$addCreators()}}
 \item \href{#method-removeCreators}{\code{wbWorkbook$removeCreators()}}
@@ -950,12 +950,12 @@ The \code{wbWorkbook} object, invisibly; called for its side-effects
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-protectWorkbook"></a>}}
-\if{latex}{\out{\hypertarget{method-protectWorkbook}{}}}
-\subsection{Method \code{protectWorkbook()}}{
+\if{html}{\out{<a id="method-wb_protect"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_protect}{}}}
+\subsection{Method \code{wb_protect()}}{
 Protect a workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protectWorkbook(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_protect(
   protect = TRUE,
   lockStructure = FALSE,
   lockWindows = FALSE,
