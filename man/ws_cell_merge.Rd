@@ -6,9 +6,9 @@
 \alias{wb_unmerge_cells}
 \title{Worksheet cell merging}
 \usage{
-wb_merge_cells(wb, sheet, cols, rows)
+wb_merge_cells(wb, sheet, rows = NULL, cols = NULL)
 
-wb_unmerge_cells(wb, sheet, cols, rows)
+wb_unmerge_cells(wb, sheet, rows = NULL, cols = NULL)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -43,7 +43,7 @@ wb <- wb_merge_cells(wb, 1, cols = 1:10, rows = 10:20)
 # Intersecting merges
 wb <- wb_merge_cells(wb, 2, cols = 1:10, rows = 1)
 wb <- wb_merge_cells(wb, 2, cols = 5:10, rows = 2)
-wb <- wb_merge_cells(wb, 2, cols = c(1, 10), rows = 12) # equivalent to 1:10 as only min/max are used
+wb <- wb_merge_cells(wb, 2, cols = c(1, 10), rows = 12) # equivalent to 1:10
 try(wb_merge_cells(wb, 2, cols = 1, rows = c(1,10)))    # intersects existing merge
 
 # remove merged cells
@@ -56,3 +56,18 @@ wb_save(wb, temp_xlsx(), overwrite = TRUE)
 }
 
 }
+\seealso{
+Other workbook wrappers: 
+\code{\link{freezePane}},
+\code{\link{setColWidths}()},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}}
+}
+\concept{workbook wrappers}

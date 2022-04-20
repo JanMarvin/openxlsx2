@@ -4,14 +4,12 @@
 \alias{loadWorkbook}
 \title{Load an existing .xlsx file}
 \usage{
-loadWorkbook(file, xlsxFile = NULL, isUnzipped = FALSE, sheet)
+loadWorkbook(file, xlsxFile = NULL, sheet)
 }
 \arguments{
 \item{file}{A path to an existing .xlsx or .xlsm file}
 
 \item{xlsxFile}{alias for file}
-
-\item{isUnzipped}{Set to TRUE if the xlsx file is already unzipped}
 
 \item{sheet}{optional sheet parameter. if this is applied, only the selected
 sheet will be loaded.}

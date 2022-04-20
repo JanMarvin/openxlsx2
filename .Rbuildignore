@@ -17,3 +17,5 @@ cran-comments.md
 ^codecov\.yml$
 ^data-raw$
 ^.covrignore$
+^doc$
+^Meta$

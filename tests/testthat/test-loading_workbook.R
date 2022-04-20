@@ -958,3 +958,23 @@ test_that("test headerFooter", {
                wb2$worksheets[[2]]$headerFooter)
 
 })
+
+
+test_that("load workbook with chartsheet", {
+
+  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+
+  expect_silent(z <- loadWorkbook(fl))
+  expect_silent(z <- loadWorkbook(fl, sheet = "Chart1"))
+  expect_silent(z <- loadWorkbook(fl, sheet = "test"))
+  # explicitly request the chartsheet
+  expect_silent(z <- loadWorkbook(fl, sheet = 1))
+  expect_silent(z <- loadWorkbook(fl, sheet = 2))
+
+  expect_equal(read.xlsx(fl, sheet = "test"), mtcars, ignore_attr = TRUE)
+  expect_equal(read.xlsx(fl, sheet = 2), mtcars, ignore_attr = TRUE)
+
+  # sheet found, but contains no data
+  expect_message(expect_equal(read.xlsx(fl, sheet = "Chart1"), NULL, ignore_attr = TRUE))
+  expect_message(expect_equal(read.xlsx(fl, sheet = 1), NULL, ignore_attr = TRUE))
+})

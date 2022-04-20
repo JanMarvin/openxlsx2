@@ -6,7 +6,7 @@
 \usage{
 wb_add_worksheet(
   wb,
-  sheetName,
+  sheet,
   gridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
@@ -18,18 +18,18 @@ wb_add_worksheet(
   evenFooter = footer,
   firstHeader = header,
   firstFooter = footer,
-  visible = TRUE,
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
   paperSize = getOption("openxlsx.paperSize", default = 9),
   orientation = getOption("openxlsx.orientation", default = "portrait"),
-  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300)),
-  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300))
+  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
 )
 }
 \arguments{
 \item{wb}{A Workbook object to attach the new worksheet}
 
-\item{sheetName}{A name for the new worksheet}
+\item{sheet}{A name for the new worksheet}
 
 \item{gridLines}{A logical. If \code{FALSE}, the worksheet grid lines will be
 hidden.}
@@ -54,14 +54,14 @@ details.}
 
 \item{orientation}{One of "portrait" or "landscape"}
 
-\item{vdpi}{Vertical DPI. Can be set with options("openxlsx.dpi" = X) or
-options("openxlsx.vdpi" = X)}
-
 \item{hdpi}{Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or
 options("openxlsx.hdpi" = X)}
+
+\item{vdpi}{Vertical DPI. Can be set with options("openxlsx.dpi" = X) or
+options("openxlsx.vdpi" = X)}
 }
 \value{
-XML tree
+The \link{wbWorkbook} object \code{wb}
 }
 \description{
 Add a worksheet to a workbook
@@ -79,9 +79,9 @@ wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
 wb$addWorksheet("Sheet 1")
-wb$addWorksheet("Sheet 2", showGridLines = FALSE)
+wb$addWorksheet("Sheet 2", gridLines = FALSE)
 wb$addWorksheet("Sheet 3", tabColour = "red")
-wb$addWorksheet("Sheet 4", showGridLines = FALSE, tabColour = "#4F81BD")
+wb$addWorksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
 
 ## Headers and Footers
 wb$addWorksheet("Sheet 5",
@@ -121,3 +121,18 @@ writeData(wb, sheet = 8, 1:400)
 wb_save(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
 }
 }
+\seealso{
+Other workbook wrappers: 
+\code{\link{freezePane}},
+\code{\link{setColWidths}()},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}},
+\code{\link{ws_cell_merge}}
+}
+\concept{workbook wrappers}

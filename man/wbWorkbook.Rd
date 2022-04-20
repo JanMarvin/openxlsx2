@@ -18,6 +18,8 @@ A Workbook
 
 \item{\code{calcChain}}{calcChain}
 
+\item{\code{apps}}{apps}
+
 \item{\code{charts}}{charts}
 
 \item{\code{isChartSheet}}{isChartSheet}
@@ -134,7 +136,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-removeColWidths}{\code{wbWorkbook$removeColWidths()}}
 \item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
 \item \href{#method-removeWorksheet}{\code{wbWorkbook$removeWorksheet()}}
-\item \href{#method-addDXFS}{\code{wbWorkbook$addDXFS()}}
 \item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
 \item \href{#method-dataValidation_list}{\code{wbWorkbook$dataValidation_list()}}
 \item \href{#method-conditionalFormatting}{\code{wbWorkbook$conditionalFormatting()}}
@@ -231,8 +232,8 @@ Append to \code{self$workbook$sheets} This method is intended for internal use
 Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addWorksheet(
-  sheetName,
-  showGridLines = TRUE,
+  sheet,
+  gridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
   header = NULL,
@@ -245,19 +246,19 @@ Add worksheet to the \code{wbWorkbook} object
   firstFooter = footer,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
-  paperSize = 9,
-  orientation = c("portrait", "landscape"),
-  hdpi = 300,
-  vdpi = 300
+  paperSize = getOption("openxlsx.paperSize", default = 9),
+  orientation = getOption("openxlsx.orientation", default = "portrait"),
+  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
+  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{sheet}}{sheet}
 
-\item{\code{showGridLines}}{showGridLines}
+\item{\code{gridLines}}{gridLines}
 
 \item{\code{tabColour}}{tabColour}
 
@@ -303,15 +304,15 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{cloneWorksheet()}}{
 Clone a workbooksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$cloneWorksheet(sheetName, clonedSheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$cloneWorksheet(old, new)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{old}}{name of worksheet to clone}
 
-\item{\code{clonedSheet}}{clonedSheet}
+\item{\code{new}}{name of new worksheet to add}
 }
 \if{html}{\out{</div>}}
 }
@@ -322,13 +323,13 @@ Clone a workbooksheet
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheetName, tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet, tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{sheet}}{sheet}
 
 \item{\code{tabColour}}{tabColour}
 
@@ -456,7 +457,7 @@ A list of of the font
 \subsection{Method \code{setSheetName()}}{
 Sets a sheet name
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, newSheetName)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -464,7 +465,7 @@ Sets a sheet name
 \describe{
 \item{\code{sheet}}{Old sheet name}
 
-\item{\code{newSheetName}}{New sheet name}
+\item{\code{name}}{New sheet name}
 }
 \if{html}{\out{</div>}}
 }
@@ -574,7 +575,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{groupRows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -607,26 +608,6 @@ Remove a worksheet
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{The worksheet to delete}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addDXFS"></a>}}
-\if{latex}{\out{\hypertarget{method-addDXFS}{}}}
-\subsection{Method \code{addDXFS()}}{
-Add DXFS?
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addDXFS(style)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{style}}{style}
 }
 \if{html}{\out{</div>}}
 }
@@ -809,7 +790,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{removeCellMerge()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, rows, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -953,7 +934,11 @@ Protect a workbook
   protect = TRUE,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  password = NULL
+  password = NULL,
+  type = NULL,
+  fileSharing = FALSE,
+  username = unname(Sys.info()["user"]),
+  readOnlyRecommended = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -967,6 +952,14 @@ Protect a workbook
 \item{\code{lockWindows}}{lockWindows}
 
 \item{\code{password}}{password}
+
+\item{\code{type}}{type}
+
+\item{\code{fileSharing}}{fileSharing}
+
+\item{\code{username}}{username}
+
+\item{\code{readOnlyRecommended}}{readOnlyRecommended}
 }
 \if{html}{\out{</div>}}
 }
@@ -1046,6 +1039,8 @@ Change the last modified by
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 }
 \if{html}{\out{<hr>}}

@@ -45,4 +45,18 @@ wb <- wb_remove_creators(wb, "test")
 wb_get_creators(wb)
 
 }
-\concept{workbook_wrappers}
+\seealso{
+Other workbook wrappers: 
+\code{\link{freezePane}},
+\code{\link{setColWidths}()},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}},
+\code{\link{ws_cell_merge}}
+}
+\concept{workbook wrappers}
