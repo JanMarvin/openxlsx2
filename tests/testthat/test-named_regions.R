@@ -335,7 +335,7 @@ test_that("Read namedRegion from specific sheet", {
   filename <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 
   namedR <- "MyRange"
-  sheets <- getSheetNames(filename)
+  sheets <- read_sheet_names(filename)
 
   # read the correct sheets
   expect_equal(data.frame(X1 = "S1A1", X2 = "S1B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet1", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)

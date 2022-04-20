@@ -158,15 +158,15 @@ wb_read <- function(
 
 }
 
-#' @name getSheetNames
+#' @name read_sheet_names
 #' @title Get names of worksheets
 #' @description Returns the worksheet names within an xlsx file
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples
-#' getSheetNames(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' read_sheet_names(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' @export
-getSheetNames <- function(file) {
+read_sheet_names <- function(file) {
   if (!file.exists(file)) {
     stop("file does not exist.")
   }
