@@ -751,7 +751,7 @@ test_that("Read and save file with inlineStr", {
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
   fl <- system.file("extdata", "inlineStr.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
-  wb_df <- readWorkbook(wb)
+  wb_df <- wb_read(wb)
   attr(wb_df, "tt") <- NULL
   attr(wb_df, "types") <- NULL
 
@@ -768,17 +768,17 @@ test_that("Read and save file with inlineStr", {
   attr(df_read_xlsx, "tt") <- NULL
   attr(df_read_xlsx, "types") <- NULL
 
-  df_readWorkbook <- readWorkbook(fl)
-  attr(df_readWorkbook, "tt") <- NULL
-  attr(df_readWorkbook, "types") <- NULL
+  df_wb_read <- wb_read(fl)
+  attr(df_wb_read, "tt") <- NULL
+  attr(df_wb_read, "types") <- NULL
 
   expect_true(all.equal(df, df_read_xlsx, compare.attributes = FALSE))
-  expect_true(all.equal(df, df_readWorkbook, compare.attributes = FALSE))
+  expect_true(all.equal(df, df_wb_read, compare.attributes = FALSE))
 
   tmp_xlsx <- temp_xlsx()
   # Check that wb can be saved without error and reimported
   expect_equal(tmp_xlsx, wb_save(wb, path = tmp_xlsx))
-  wb_df_re <- readWorkbook(wb_load(tmp_xlsx))
+  wb_df_re <- wb_read(wb_load(tmp_xlsx))
   attr(wb_df_re, "tt") <- NULL
   attr(wb_df_re, "types") <- NULL
   expect_true(all.equal(wb_df, wb_df_re, compare.attributes = FALSE))
