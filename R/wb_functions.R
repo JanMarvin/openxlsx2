@@ -228,7 +228,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'   # na string
 #'   wb_to_df(wb1, na.strings = "")
 #'
-#'   # read.xlsx(wb1)
+#'   # read_xlsx(wb1)
 #'
 #'   ###########################################################################
 #'   # inlinestr
@@ -237,7 +237,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'
 #'   # read dataset with inlinestr
 #'   wb_to_df(wb2)
-#'   # read.xlsx(wb2)
+#'   # read_xlsx(wb2)
 #'
 #'   ###########################################################################
 #'   # definedName // namedRegion

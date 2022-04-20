@@ -22,7 +22,7 @@
 #'    \item{[writeData()]}
 #'    \item{[writeDataTable()]}
 #'    \item{[write.xlsx()]}
-#'    \item{[read.xlsx()]}
+#'    \item{[read_xlsx()]}
 #'   }
 #' for examples
 #'

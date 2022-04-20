@@ -18,7 +18,7 @@ For a quick introduction to the package, you can try the following:
 
 ```R
 # read xlsx or xlsm files
-df <- read.xlsx("file.xlsx")
+df <- read_xlsx("file.xlsx")
 # write xlsx files
 write.xlsx(df, "new.xlsx")
 

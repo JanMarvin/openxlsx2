@@ -1,4 +1,4 @@
-test_that("read.xlsx correct sheet", {
+test_that("read_xlsx correct sheet", {
   fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   sheet_names <- getSheetNames(file = fl)
 
@@ -11,17 +11,17 @@ test_that("read.xlsx correct sheet", {
 
   expect_equal(object = sheet_names, expected = expected_sheet_names)
 
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = 7),  data.frame(x = 1),      ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = 8),  data.frame(x = 11),     ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = 9),  data.frame(x = 111),    ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = 10), data.frame(x = 1111),   ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = 11), data.frame(x = 11111),  ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = 12), data.frame(x = 111111), ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = 7),  data.frame(x = 1),      ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = 8),  data.frame(x = 11),     ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = 9),  data.frame(x = 111),    ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = 10), data.frame(x = 1111),   ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = 11), data.frame(x = 11111),  ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = 12), data.frame(x = 111111), ignore_attr = TRUE)
 
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = "1"),      data.frame(x = 1),      ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = "11"),     data.frame(x = 11),     ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = "111"),    data.frame(x = 111),    ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = "1111"),   data.frame(x = 1111),   ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = "11111"),  data.frame(x = 11111),  ignore_attr = TRUE)
-  expect_equal(read.xlsx(xlsxFile = fl, sheet = "111111"), data.frame(x = 111111), ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = "1"),      data.frame(x = 1),      ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = "11"),     data.frame(x = 11),     ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = "111"),    data.frame(x = 111),    ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = "1111"),   data.frame(x = 1111),   ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = "11111"),  data.frame(x = 11111),  ignore_attr = TRUE)
+  expect_equal(read_xlsx(xlsxFile = fl, sheet = "111111"), data.frame(x = 111111), ignore_attr = TRUE)
 })

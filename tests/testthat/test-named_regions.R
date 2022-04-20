@@ -27,23 +27,23 @@ test_that("Maintaining Named Regions on Load", {
 
   expect_equal(object = getNamedRegions(wb), expected = getNamedRegions(out_file))
 
-  df1 <- read.xlsx(wb, namedRegion = "iris")
-  df2 <- read.xlsx(out_file, namedRegion = "iris")
+  df1 <- read_xlsx(wb, namedRegion = "iris")
+  df2 <- read_xlsx(out_file, namedRegion = "iris")
   expect_equal(df1, df2)
 
-  df1 <- read.xlsx(wb, namedRegion = "region1", skipEmptyCols = FALSE)
+  df1 <- read_xlsx(wb, namedRegion = "region1", skipEmptyCols = FALSE)
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 0)
   expect_equal(ncol(df1), 1)
 
-  df1 <- read.xlsx(wb, namedRegion = "region1", colNames = FALSE)
+  df1 <- read_xlsx(wb, namedRegion = "region1", colNames = FALSE)
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 1)
   expect_equal(ncol(df1), 1)
 
   # nonsense
   # df1 is a single value and this single value is now used as rowName
-  expect_warning(df1 <- read.xlsx(wb, namedRegion = "region1", rowNames = TRUE))
+  expect_warning(df1 <- read_xlsx(wb, namedRegion = "region1", rowNames = TRUE))
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 0)
   expect_equal(ncol(df1), 0)
@@ -56,15 +56,15 @@ test_that("Correctly Loading Named Regions Created in Excel", {
   # of the package)
   filename <- system.file("extdata", "namedRegions.xlsx", package = "openxlsx2")
 
-  # Load this workbook. We will test read.xlsx by passing both the object wb and
+  # Load this workbook. We will test read_xlsx by passing both the object wb and
   # the filename. Both should produce the same results.
   wb <- wb_load(filename)
 
   # NamedTable refers to Sheet1!$C$5:$D$8
-  table_f <- read.xlsx(filename,
+  table_f <- read_xlsx(filename,
     namedRegion = "NamedTable"
   )
-  table_w <- read.xlsx(wb,
+  table_w <- read_xlsx(wb,
     namedRegion = "NamedTable"
   )
 
@@ -75,14 +75,14 @@ test_that("Correctly Loading Named Regions Created in Excel", {
 
   # NamedCell refers to Sheet1!$C$2
   # This proeduced an error in an earlier version of the pacage when the object
-  # wb was passed, but worked correctly when the filename was passed to read.xlsx
-  cell_f <- read.xlsx(filename,
+  # wb was passed, but worked correctly when the filename was passed to read_xlsx
+  cell_f <- read_xlsx(filename,
     namedRegion = "NamedCell",
     colNames = FALSE,
     rowNames = FALSE
   )
 
-  cell_w <- read.xlsx(wb,
+  cell_w <- read_xlsx(wb,
     namedRegion = "NamedCell",
     colNames = FALSE,
     rowNames = FALSE
@@ -94,13 +94,13 @@ test_that("Correctly Loading Named Regions Created in Excel", {
   expect_equal(object = NROW(cell_f), expected = 1)
 
   # NamedCell2 refers to Sheet1!$C$2:$C$2
-  cell2_f <- read.xlsx(filename,
+  cell2_f <- read_xlsx(filename,
     namedRegion = "NamedCell2",
     colNames = FALSE,
     rowNames = FALSE
   )
 
-  cell2_w <- read.xlsx(wb,
+  cell2_w <- read_xlsx(wb,
     namedRegion = "NamedCell2",
     colNames = FALSE,
     rowNames = FALSE
@@ -171,18 +171,18 @@ test_that("Missing rows in named regions", {
   ######################################################################## from Workbook
 
   ## Skip empty rows
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyRows = TRUE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = TRUE)
   expect_equal(dim(x), c(5, 2))
 
 
   ## Keep empty rows
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyRows = FALSE)
   expect_equal(dim(x), c(5, 2))
 
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = FALSE)
   expect_equal(dim(x), c(6, 2))
 
 
@@ -191,18 +191,18 @@ test_that("Missing rows in named regions", {
   wb_save(wb, temp_file)
 
   ## Skip empty rows
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyRows = TRUE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = TRUE)
   expect_equal(dim(x), c(5, 2))
 
 
   ## Keep empty rows
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyRows = FALSE)
   expect_equal(dim(x), c(5, 2))
 
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = FALSE)
   expect_equal(dim(x), c(6, 2))
 
   unlink(temp_file)
@@ -246,18 +246,18 @@ test_that("Missing columns in named regions", {
   ######################################################################## from Workbook
 
   ## Skip empty cols
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyCols = TRUE)
   expect_equal(dim(x), c(4, 1))
 
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = TRUE)
   expect_equal(dim(x), c(4, 2))
 
 
   ## Keep empty cols
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris", colNames = TRUE, skipEmptyCols = FALSE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read.xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(xlsxFile = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = FALSE)
   expect_equal(dim(x), c(4, 3))
 
 
@@ -266,18 +266,18 @@ test_that("Missing columns in named regions", {
   wb_save(wb, temp_file)
 
   ## Skip empty cols
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyCols = TRUE)
   expect_equal(dim(x), c(4, 1))
 
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = TRUE)
   expect_equal(dim(x), c(4, 2))
 
 
   ## Keep empty cols
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyCols = FALSE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read.xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(xlsxFile = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = FALSE)
   expect_equal(dim(x), c(4, 3))
 
   unlink(temp_file)
@@ -315,16 +315,16 @@ test_that("Matching Substrings breaks reading named regions", {
 
 
   ## read file named region
-  expect_equal(t1, read.xlsx(xlsxFile = temp_file, namedRegion = "t"), ignore_attr = TRUE)
-  expect_equal(t2, read.xlsx(xlsxFile = temp_file, namedRegion = "t2", rowNames = TRUE), ignore_attr = TRUE)
-  expect_equal(head(t1, 3), read.xlsx(xlsxFile = temp_file, namedRegion = "t1"), ignore_attr = TRUE)
-  expect_equal(head(t2, 3), read.xlsx(xlsxFile = temp_file, namedRegion = "t22", rowNames = TRUE), ignore_attr = TRUE)
+  expect_equal(t1, read_xlsx(xlsxFile = temp_file, namedRegion = "t"), ignore_attr = TRUE)
+  expect_equal(t2, read_xlsx(xlsxFile = temp_file, namedRegion = "t2", rowNames = TRUE), ignore_attr = TRUE)
+  expect_equal(head(t1, 3), read_xlsx(xlsxFile = temp_file, namedRegion = "t1"), ignore_attr = TRUE)
+  expect_equal(head(t2, 3), read_xlsx(xlsxFile = temp_file, namedRegion = "t22", rowNames = TRUE), ignore_attr = TRUE)
 
   ## read Workbook named region
-  expect_equal(t1, read.xlsx(xlsxFile = wb, namedRegion = "t"), ignore_attr = TRUE)
-  expect_equal(t2, read.xlsx(xlsxFile = wb, namedRegion = "t2", rowNames = TRUE), ignore_attr = TRUE)
-  expect_equal(head(t1, 3), read.xlsx(xlsxFile = wb, namedRegion = "t1"), ignore_attr = TRUE)
-  expect_equal(head(t2, 3), read.xlsx(xlsxFile = wb, namedRegion = "t22", rowNames = TRUE), ignore_attr = TRUE)
+  expect_equal(t1, read_xlsx(xlsxFile = wb, namedRegion = "t"), ignore_attr = TRUE)
+  expect_equal(t2, read_xlsx(xlsxFile = wb, namedRegion = "t2", rowNames = TRUE), ignore_attr = TRUE)
+  expect_equal(head(t1, 3), read_xlsx(xlsxFile = wb, namedRegion = "t1"), ignore_attr = TRUE)
+  expect_equal(head(t2, 3), read_xlsx(xlsxFile = wb, namedRegion = "t22", rowNames = TRUE), ignore_attr = TRUE)
 
   unlink(temp_file)
 })
@@ -338,15 +338,15 @@ test_that("Read namedRegion from specific sheet", {
   sheets <- getSheetNames(filename)
 
   # read the correct sheets
-  expect_equal(data.frame(X1 = "S1A1", X2 = "S1B1", stringsAsFactors = FALSE), read.xlsx(filename, sheet = "Sheet1", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
-  expect_equal(data.frame(X1 = "S2A1", X2 = "S2B1", stringsAsFactors = FALSE), read.xlsx(filename, sheet = which(sheets %in% "Sheet2"), namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
-  expect_equal(data.frame(X1 = "S3A1", X2 = "S3B1", stringsAsFactors = FALSE), read.xlsx(filename, sheet = "Sheet3", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
+  expect_equal(data.frame(X1 = "S1A1", X2 = "S1B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet1", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
+  expect_equal(data.frame(X1 = "S2A1", X2 = "S2B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = which(sheets %in% "Sheet2"), namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
+  expect_equal(data.frame(X1 = "S3A1", X2 = "S3B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet3", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
 
   # Warning: Workbook has no such named region. (Wrong namedRegion selected.)
-  expect_error(read.xlsx(filename, sheet = "Sheet2", namedRegion = "MyRage", rowNames = FALSE, colNames = FALSE))
+  expect_error(read_xlsx(filename, sheet = "Sheet2", namedRegion = "MyRage", rowNames = FALSE, colNames = FALSE))
 
   # Warning: Workbook has no such named region on this sheet. (Correct namedRegion, but wrong sheet selected.)
-  expect_error(read.xlsx(filename, sheet = "Sheet4", namedRegion = namedR, rowNames = FALSE, colNames = FALSE))
+  expect_error(read_xlsx(filename, sheet = "Sheet4", namedRegion = namedR, rowNames = FALSE, colNames = FALSE))
 })
 
 

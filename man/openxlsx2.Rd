@@ -35,7 +35,7 @@ Additional options
 \item{\code{\link[=writeData]{writeData()}}}
 \item{\code{\link[=writeDataTable]{writeDataTable()}}}
 \item{\code{\link[=write.xlsx]{write.xlsx()}}}
-\item{\code{\link[=read.xlsx]{read.xlsx()}}}
+\item{\code{\link[=read_xlsx]{read_xlsx()}}}
 }
 for examples
 }

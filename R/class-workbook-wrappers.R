@@ -1463,10 +1463,10 @@ worksheetOrder <- function(wb) {
 #' getNamedRegions(wb)
 #'
 #' ## read named regions
-#' df <- read.xlsx(wb, namedRegion = "iris")
+#' df <- read_xlsx(wb, namedRegion = "iris")
 #' head(df)
 #'
-#' df <- read.xlsx(out_file, namedRegion = "iris2")
+#' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
 #' }
 #' @rdname NamedRegion

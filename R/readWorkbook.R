@@ -1,4 +1,4 @@
-#' @name read.xlsx
+#' @name read_xlsx
 #' @title  Read from an Excel file or Workbook object
 #' @description Read data from an Excel file or Workbook object into a data.frame
 #' @param xlsxFile An xlsx file, Workbook object or URL to xlsx file.
@@ -22,7 +22,7 @@
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If `TRUE`, empty columns are skipped.
 #' @seealso [getNamedRegions()]
-#' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
+#' @details Formulae written using writeFormula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
 #' @return data.frame
@@ -30,15 +30,15 @@
 #' @examples
 #'
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-#' df1 <- read.xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
+#' df1 <- read_xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
 #' sapply(df1, class)
 #'
-#' df2 <- read.xlsx(xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE)
+#' df2 <- read_xlsx(xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE)
 #' df2$Date <- convertToDate(df2$Date)
 #' sapply(df2, class)
 #' head(df2)
 #'
-#' df2 <- read.xlsx(
+#' df2 <- read_xlsx(
 #'   xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE,
 #'   detectDates = TRUE
 #' )
@@ -46,12 +46,12 @@
 #' head(df2)
 #'
 #' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' df3 <- read.xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
-#' df4 <- read.xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
+#' df3 <- read_xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
+#' df4 <- read_xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 #' all.equal(df3, df4)
 #'
 #' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' df3 <- read.xlsx(wb,
+#' df3 <- read_xlsx(wb,
 #'   sheet = 2, skipEmptyRows = FALSE,
 #'   cols = c(1, 4), rows = c(1, 3, 4)
 #' )
@@ -60,11 +60,11 @@
 #' ##
 #' \dontrun{
 #' xlsxFile <- "https://github.com/awalker89/openxlsx/raw/master/inst/readTest.xlsx"
-#' head(read.xlsx(xlsxFile))
+#' head(read_xlsx(xlsxFile))
 #' }
 #'
 #' @export
-read.xlsx <- function(
+read_xlsx <- function(
   xlsxFile,
   sheet,
   startRow        = 1,
@@ -82,7 +82,7 @@ read.xlsx <- function(
   fillMergedCells = FALSE
 ) {
 
-  # keep sheet missing // read.xlsx is the function to replace.
+  # keep sheet missing // read_xlsx is the function to replace.
   # dont mess with wb_to_df
   if (missing(sheet))
     sheet <- substitute()
@@ -115,11 +115,11 @@ read.xlsx <- function(
 #' @name readWorkbook
 #' @title  Read from an Excel file or Workbook object
 #' @description Read data from an Excel file or Workbook object into a data.frame
-#' @inheritParams read.xlsx
+#' @inheritParams read_xlsx
 #' @details Creates a data.frame of all data in worksheet.
 #' @return data.frame
 #' @seealso [getNamedRegions()]
-#' @seealso [read.xlsx()]
+#' @seealso [read_xlsx()]
 #' @export
 #' @examples
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")

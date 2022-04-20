@@ -67,5 +67,5 @@ df1 <- readWorkbook(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:
 \seealso{
 \code{\link[=getNamedRegions]{getNamedRegions()}}
 
-\code{\link[=read.xlsx]{read.xlsx()}}
+\code{\link[=read_xlsx]{read_xlsx()}}
 }

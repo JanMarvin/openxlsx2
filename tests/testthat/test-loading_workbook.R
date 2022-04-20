@@ -757,14 +757,14 @@ test_that("Read and save file with inlineStr", {
 
   df <- data.frame(
     this = c("is an xlsx file", "written with writexl::write_xlsx"),
-    it = c("cannot be read", "with open.xlsx::read.xlsx"),
+    it = c("cannot be read", "with open.xlsx::read_xlsx"),
     stringsAsFactors = FALSE)
   rownames(df) <- c(2L, 3L)
 
   # compare file imported with inlineStr
   expect_true(all.equal(df, wb_df, compare.attributes = FALSE))
 
-  df_read_xlsx <- read.xlsx(fl)
+  df_read_xlsx <- read_xlsx(fl)
   attr(df_read_xlsx, "tt") <- NULL
   attr(df_read_xlsx, "types") <- NULL
 
@@ -971,10 +971,10 @@ test_that("load workbook with chartsheet", {
   expect_silent(z <- wb_load(fl, sheet = 1))
   expect_silent(z <- wb_load(fl, sheet = 2))
 
-  expect_equal(read.xlsx(fl, sheet = "test"), mtcars, ignore_attr = TRUE)
-  expect_equal(read.xlsx(fl, sheet = 2), mtcars, ignore_attr = TRUE)
+  expect_equal(read_xlsx(fl, sheet = "test"), mtcars, ignore_attr = TRUE)
+  expect_equal(read_xlsx(fl, sheet = 2), mtcars, ignore_attr = TRUE)
 
   # sheet found, but contains no data
-  expect_message(expect_equal(read.xlsx(fl, sheet = "Chart1"), NULL, ignore_attr = TRUE))
-  expect_message(expect_equal(read.xlsx(fl, sheet = 1), NULL, ignore_attr = TRUE))
+  expect_message(expect_equal(read_xlsx(fl, sheet = "Chart1"), NULL, ignore_attr = TRUE))
+  expect_message(expect_equal(read_xlsx(fl, sheet = 1), NULL, ignore_attr = TRUE))
 })

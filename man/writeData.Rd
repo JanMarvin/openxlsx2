@@ -56,7 +56,7 @@ invisible(0)
 Write an object to worksheet with optional styling.
 }
 \details{
-Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
+Formulae written using writeFormula to a Workbook object will not get picked up by read_xlsx().
 This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame contains this string, the output will be broken.
 }
@@ -114,7 +114,7 @@ wb2 <- wb_load(xlsxFile)
 
 # read dataset with inlinestr
 wb_to_df(wb2)
-# read.xlsx(wb2)
+# read_xlsx(wb2)
 writeData(wb2, 1, mtcars, startCol = 4, startRow = 4)
 wb_to_df(wb2)
 \dontrun{
