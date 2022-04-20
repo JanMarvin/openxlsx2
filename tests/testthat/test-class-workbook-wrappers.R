@@ -65,18 +65,22 @@ test_that("wb_set_row_heights() is a wrapper", {
   expect_wrapper("setRowHeights", "wb_set_row_heights", wb = wb, params = params)
 })
 
+# wb_remove_row_heights() -----------------------------------------------------
+
+test_that("wb_remove_row_heights() is a wrapper", {
+  wb <- wbWorkbook$new()$addWorksheet("sheet")
+  wb$addWorksheet("a")
+  wb$setRowHeights("a", 1:3, 20)
+  params <- list(sheet = "sheet", rows = 2)
+  expect_wrapper("removeRowHeights", "wb_remove_row_heights", wb = wb, params = params)
+})
+
 # wb_group_rows() -------------------------------------------------------------
 
 test_that("wb_group_rows() is a wrapper", {
   wb <- wbWorkbook$new()$addWorksheet("sheet")
   params <- list(sheet = "sheet", rows = 1)
   expect_wrapper("groupRows", "wb_group_rows", wb = wb, params = params)
-})
-
-# wb_add_creators() -----------------------------------------------------------
-
-test_that("wb_set_creators() is a wrapper", {
-  expect_wrapper("addCreators", "wb_add_creators", params = list(creators = "myself"))
 })
 
 # wb_set_creators() -----------------------------------------------------------
@@ -91,4 +95,3 @@ test_that("wb_remove_creators() is a wrapper", {
   wb <- wb_workbook(creator = "myself")
   expect_wrapper("removeCreators", "wb_remove_creators", params = list(creators = "myself"))
 })
-

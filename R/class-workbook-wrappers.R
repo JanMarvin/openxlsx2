@@ -514,14 +514,13 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 
 }
 
-#' Remove column widths from a worksheet
-#'
-#' Remove column widths from a worksheet
-#'
+#' @name removeColWidths
+#' @title Remove column widths from a worksheet
+
+#' @description Remove column widths from a worksheet
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of columns to remove custom width (if any) from.
-#' @returns A `wbWorkbook` object, invisibly
 #' @seealso [setColWidths()]
 #' @export
 #' @examples
@@ -529,19 +528,39 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove column widths in columns 1 to 20
-#' wb$removeColWidths(1, cols = 1:20)
+#' removeColWidths(wb, 1, cols = 1:20)
 #' \dontrun{
 #' wb_save(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
 #' }
-wb_remove_col_widths <- function(wb, sheet, cols) {
-  assert_wb(wb)
-  wb$removeColWidths(sheet = sheet, cols = cols)
+removeColWidths <- function(wb, sheet, cols) {
+  sheet <- wb_validate_sheet(wb, sheet)
+  op <- openxlsx_options()
+  on.exit(options(op), add = TRUE)
+
+  if (!is.numeric(cols)) {
+    cols <- col2int(cols)
+  }
+
+  customCols <- as.integer(names(wb$colWidths[[sheet]]))
+  removeInds <- which(customCols %in% cols)
+  if (length(removeInds)) {
+    remainingCols <- customCols[-removeInds]
+    if (length(remainingCols) == 0) {
+      wb$colWidths[[sheet]] <- list()
+    } else {
+      rem_widths <- wb$colWidths[[sheet]][-removeInds]
+      names(rem_widths) <- as.character(remainingCols)
+      wb$colWidths[[sheet]] <- rem_widths
+    }
+  }
 }
 
 
-#' @name removeRowHeights
-#' @title Remove custom row heights from a worksheet
-#' @description Remove row heights from a worksheet
+
+#' Remove custom row heights from a worksheet
+#'
+#' Remove row heights from a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to remove custom height (if any) from.
@@ -552,21 +571,13 @@ wb_remove_col_widths <- function(wb, sheet, cols) {
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove any custom row heights in rows 1 to 10
-#' removeRowHeights(wb, 1, rows = 1:10)
+#' wb$removeRowHeights(1, rows = 1:10)
 #' \dontrun{
 #' wb_save(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
 #' }
-removeRowHeights <- function(wb, sheet, rows) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  customRows <- as.integer(names(wb$rowHeights[[sheet]]))
-  removeInds <- which(customRows %in% rows)
-  if (length(removeInds)) {
-    wb$rowHeights[[sheet]] <- wb$rowHeights[[sheet]][-removeInds]
-  }
+wb_remove_row_heights <- function(wb, sheet, rows) {
+  assert_workbook(wb)
+  wb$removeRowHeights(sheet = sheet, rows = rows)
 }
 
 
