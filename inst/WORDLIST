@@ -183,7 +183,7 @@ showColNames
 showColumnStripes
 showErrorMsg
 showFirstColumn
-showGridLines
+ws_grid_lines
 showInputMsg
 showLastColumn
 showRowStripes
