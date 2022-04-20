@@ -1,6 +1,85 @@
 #include "openxlsx2.h"
 #include <algorithm>
 
+// [[Rcpp::export]]
+SEXP openxlsx2_type(SEXP x) {
+
+  const SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+  auto ncol = Rf_length(x);
+
+  Rcpp::IntegerVector type(ncol);
+  if (!Rf_isNull(names)) type.attr("names") = names;
+
+  for (auto i = 0; i < ncol; ++i) {
+
+    // check if dim != NULL
+    SEXP z;
+    if (Rf_isNull(names)) {
+      z = x;
+    } else {
+      z = VECTOR_ELT(x, i);
+    }
+
+    switch (TYPEOF(z)) {
+
+    // logical
+    case LGLSXP:
+      type[i] =  3;
+      break;
+
+      // character, formula, hyperlink, array_formula
+    case CPLXSXP:
+    case STRSXP:
+      if (Rf_inherits(z, "formula")) {
+        type[i] = 5;
+      } else if (Rf_inherits(z, "hyperlink")) {
+        type[i] = 10;
+      } else if (Rf_inherits(z, "array_formula")) {
+        type[i] = 11;
+      } else {
+        type[i] = 4;
+      }
+      break;
+
+      // raw, integer, numeric, Date, POSIXct, accounting,
+      //  percentage, scientific, comma
+    case RAWSXP:
+    case INTSXP:
+    case REALSXP: {
+      if (Rf_inherits(z, "Date")) {
+      type[i] = 0;
+    } else if (Rf_inherits(z, "POSIXct")) {
+      type[i] = 1;
+    } else if (Rf_inherits(z, "accounting")) {
+      type[i] = 6;
+    } else if (Rf_inherits(z, "percentage")) {
+      type[i] = 7;
+    } else if (Rf_inherits(z, "scientific")) {
+      type[i] = 8;
+    } else if (Rf_inherits(z, "comma")) {
+      type[i] = 9;
+    } else if (Rf_inherits(z, "factor")) {
+      type[i] = 12;
+    } else {
+      type[i] = 2; // numeric or integer
+    }
+    break;
+
+    }
+
+    // whatever is not covered from above
+    default: {
+      type[i] = 4;
+      break;
+    }
+
+    }
+
+  }
+
+  return type;
+}
+
 
 // [[Rcpp::export]]
 std::string int_to_col(uint32_t cell) {
@@ -18,7 +97,7 @@ std::string int_to_col(uint32_t cell) {
 
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
+Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
 
   // This function converts the Excel column letter to an integer
 
@@ -31,7 +110,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
   char A = 'A';
   int aVal = (int)A - 1;
 
-  for(int i = 0; i < n; i++){
+  for (int i = 0; i < n; i++) {
     a = r[i];
 
     // check if the value is digit only, if yes, add it and continue the loop
@@ -50,7 +129,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ){
     int sum = 0;
     k = a.length();
 
-    for (int j = 0; j < k; j++){
+    for (int j = 0; j < k; j++) {
       sum *= 26;
       sum += (a[j] - aVal);
 
@@ -74,6 +153,7 @@ SEXP rbindlist(Rcpp::List x) {
 
   // get unique names and create set
   for (auto i = 0; i < nn; ++i) {
+    if (Rf_isNull(x[i])) continue;
     std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
     std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
   }
@@ -92,6 +172,7 @@ SEXP rbindlist(Rcpp::List x) {
   }
 
   for (auto i = 0; i < nn; ++i) {
+    if (Rf_isNull(x[i])) continue;
 
     std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
     std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
@@ -180,7 +261,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
-                  bool ColNames, int32_t start_col, int32_t start_row) {
+                  bool ColNames, int32_t start_col, int32_t start_row,
+                  Rcpp::CharacterVector ref) {
 
   auto n = z.nrow();
   auto m = z.ncol();
@@ -203,9 +285,19 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 
       // create struct
       celltyp cell;
+      cell.v     = openxlsxNA;
+      cell.c_s   = openxlsxNA;
+      cell.c_t   = openxlsxNA;
+      cell.is    = openxlsxNA;
+      cell.f     = openxlsxNA;
+      cell.f_t   = openxlsxNA;
+      cell.f_ref = openxlsxNA;
+      cell.typ   = openxlsxNA;
+      cell.r     = openxlsxNA;
 
       switch(vtyp)
       {
+
       case short_date:
       case long_date:
       case accounting:
@@ -214,48 +306,41 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       case comma:
       case numeric:
         cell.v   = vals;
-        cell.c_s = openxlsxNA;
-        cell.c_t = openxlsxNA;
-        cell.is  = openxlsxNA;
-        cell.f   = openxlsxNA;
         break;
-      case boolean:
+      case logical:
         cell.v   = vals;
-        cell.c_s = openxlsxNA;
         cell.c_t = "b";
-        cell.is  = openxlsxNA;
-        cell.f   = openxlsxNA;
         break;
       case character:
-        cell.v   = openxlsxNA;
-        cell.c_s = openxlsxNA;
         cell.c_t = "inlineStr";
         cell.is  = txt_to_is(vals, 0, 1);
-        cell.f   = openxlsxNA;
         break;
       case hyperlink:
       case formula:
-        cell.v   = openxlsxNA;
-        cell.c_s = openxlsxNA;
         cell.c_t = "str";
-        cell.is  = openxlsxNA;
         cell.f   = vals;
+        break;
+      case array_formula:
+        cell.f   = vals;
+        cell.f_t = "array";
+        cell.f_ref = ref[i];
         break;
       }
 
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
-      // TODO change only if not openxlsxNA
       Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
       Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (cell.v   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]   = cell.v;
-      if (cell.c_s != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos] = cell.c_s;
-      if (cell.c_t != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos] = cell.c_t;
-      if (cell.is  != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]  = cell.is;
-      if (cell.f   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]   = cell.f;
-      if (cell.typ != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos] = cell.typ;
-      if (cell.r   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]   = cell.r;
+      if (cell.v     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]     = cell.v;
+      if (cell.c_s   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos]   = cell.c_s;
+      if (cell.c_t   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos]   = cell.c_t;
+      if (cell.is    != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]    = cell.is;
+      if (cell.f     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]     = cell.f;
+      if (cell.f_t   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f_t"])[pos]   = cell.f_t;
+      if (cell.f_ref != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"])[pos] = cell.f_ref;
+      if (cell.typ   != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos]   = cell.typ;
+      if (cell.r     != openxlsxNA) Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]     = cell.r;
 
       ++startrow;
     }
@@ -270,12 +355,12 @@ Rcpp::List build_cell_merges(Rcpp::List comps) {
   size_t nMerges = comps.size();
   Rcpp::List res(nMerges);
 
-  for(size_t i =0; i < nMerges; i++){
+  for (size_t i =0; i < nMerges; i++) {
     Rcpp::IntegerVector col = col_to_int(comps[i]);
     Rcpp::CharacterVector comp = comps[i];
     Rcpp::IntegerVector row(2);
 
-    for(size_t j = 0; j < 2; j++){
+    for (size_t j = 0; j < 2; j++) {
       std::string rt(comp[j]);
       rt.erase(std::remove_if(rt.begin(), rt.end(), ::isalpha), rt.end());
       row[j] = atoi(rt.c_str());
@@ -285,20 +370,20 @@ Rcpp::List build_cell_merges(Rcpp::List comps) {
     size_t ck = size_t(col[1]) - ca + 1;
 
     std::vector<int> v(ck) ;
-    for(size_t j = 0; j < ck; j++)
+    for (size_t j = 0; j < ck; j++)
       v[j] = j + ca;
 
     size_t ra(row[0]);
 
     size_t rk = int(row[1]) - ra + 1;
     std::vector<int> r(rk) ;
-    for(size_t j = 0; j < rk; j++)
+    for (size_t j = 0; j < rk; j++)
       r[j] = j + ra;
 
     Rcpp::CharacterVector M(ck*rk);
     int ind = 0;
-    for(size_t j = 0; j < ck; j++){
-      for(size_t k = 0; k < rk; k++){
+    for (size_t j = 0; j < ck; j++) {
+      for (size_t k = 0; k < rk; k++) {
         char name[30];
         sprintf(&(name[0]), "%d-%d", r[k], v[j]);
         M(ind) = name;

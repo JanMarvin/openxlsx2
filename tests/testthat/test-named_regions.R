@@ -112,7 +112,7 @@ test_that("Correctly Loading Named Regions Created in Excel", {
   expect_equal(object = NROW(cell2_f), expected = 1)
 })
 
-
+# Ordering locally and in testthat differs.
 test_that("Load names from an Excel file with funky non-region names", {
   filename <- system.file("extdata", "namedRegions2.xlsx", package = "openxlsx2")
   wb <- loadWorkbook(filename)
@@ -120,16 +120,15 @@ test_that("Load names from an Excel file with funky non-region names", {
 
   expect_equal(
     head(dn$name, 5),
-    c("barref", "barref", "fooref", "fooref", "IQ_CH")
+    c("IQ_CH", "IQ_CQ", "IQ_CY", "IQ_DAILY", "IQ_FH")
   )
   expect_equal(
     dn$sheets,
-    c(
-      "Sheet with space", "Sheet1", "Sheet with space", "Sheet1",
-      rep("", 26)
+    c(rep("", 26), "Sheet1",
+      "Sheet with space", "Sheet1", "Sheet with space"
     )
   )
-  expect_equal(dn$coords, c("B4", "B4", "B3", "B3", rep("", 26)))
+  expect_equal(dn$coords, c(rep("", 26), "B3", "B4", "B4", "B3"))
 
   dn2 <- getNamedRegions(filename)
   expect_equal(dn, dn2)
@@ -166,7 +165,7 @@ test_that("Missing rows in named regions", {
 
   ## row 6 columns 1 & 2 are blank
   expect_equal(getNamedRegions(wb)$name, c("iris", "iris2"))
-  expect_equal(getNamedRegions(wb)$sheet, c("Sheet 1", "Sheet 1"))
+  expect_equal(getNamedRegions(wb)$sheets, c("Sheet 1", "Sheet 1"))
   expect_equal(getNamedRegions(wb)$coords, c("A1:B6", "A1:B7"))
 
   ######################################################################## from Workbook
@@ -241,7 +240,7 @@ test_that("Missing columns in named regions", {
 
   ## row 6 columns 1 & 2 are blank
   expect_equal(getNamedRegions(wb)$name, c("iris", "iris2"), ignore_attr = TRUE)
-  expect_equal(getNamedRegions(wb)$sheet, c("Sheet 1", "Sheet 1"))
+  expect_equal(getNamedRegions(wb)$sheets, c("Sheet 1", "Sheet 1"))
   expect_equal(getNamedRegions(wb)$coords, c("A1:B5", "A1:C5"))
 
   ######################################################################## from Workbook
@@ -305,14 +304,14 @@ test_that("Matching Substrings breaks reading named regions", {
   wb_save(wb, temp_file)
 
   r1 <- getNamedRegions(wb)
-  expect_equal(r1$sheet, c("table", "table2", "table", "table2"))
-  expect_equal(r1$coords, c("C12:G18", "E24:P30", "I3:M6", "O12:Z15"))
-  expect_equal(r1$name, c("t", "t2", "t1", "t22"))
+  expect_equal(r1$sheets, c("table", "table", "table2", "table2"))
+  expect_equal(r1$coords, c("C12:G18", "I3:M6", "E24:P30", "O12:Z15"))
+  expect_equal(r1$name, c("t", "t1", "t2", "t22"))
 
   r2 <- getNamedRegions(temp_file)
-  expect_equal(r2$sheet, c("table", "table2", "table", "table2"))
-  expect_equal(r1$coords, c("C12:G18", "E24:P30", "I3:M6", "O12:Z15"))
-  expect_equal(r2$name, c("t", "t2", "t1", "t22"))
+  expect_equal(r2$sheets, c("table", "table", "table2", "table2"))
+  expect_equal(r1$coords, c("C12:G18", "I3:M6", "E24:P30", "O12:Z15"))
+  expect_equal(r2$name, c("t", "t1", "t2", "t22"))
 
 
   ## read file named region
@@ -355,60 +354,55 @@ test_that("Overwrite and delete named regions", {
   temp_file <- temp_xlsx()
 
   wb <- wb_workbook()
+  expect_null(getNamedRegions(wb))
+
   wb$addWorksheet("Sheet 1")
+  expect_null(getNamedRegions(wb))
 
   ## create region
-  writeData(wb, sheet = 1, x = iris[1:11, ], startCol = 1,
-            startRow = 1, name = "iris")
-
-  init_nr <- getNamedRegions(wb)
-  expect_equal(init_nr$coords, "A1:E12")
+  writeData(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris")
+  exp <- data.frame(
+    name   = "iris",
+    value  = "'Sheet 1'!A1:E12",
+    sheets = "Sheet 1",
+    coords = "A1:E12",
+    id     = 1L,
+    local  = 0,
+    sheet  = 1L
+  )
+  expect_identical(getNamedRegions(wb), exp)
 
   # no overwrite
-  expect_error({
-    writeData(wb, sheet = 1, x = iris[1:11, ], startCol = 1,
-              startRow = 1, name = "iris")
-  })
+  expect_error(writeData(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris"))
 
-  expect_error({
-    createNamedRegion(
-      wb = wb,
-      sheet = 1,
-      name = "iris",
-      rows = 1:5,
-      cols = 1:2
-    )
-  })
+  expect_error(createNamedRegion(wb, 1, name = "iris", rows = 1:5, cols = 1:2))
 
   # overwrite
-  createNamedRegion(
-    wb = wb,
-    sheet = 1,
-    name = "iris",
-    rows = 1:5,
-    cols = 1:2,
-    overwrite = TRUE
+  createNamedRegion(wb, 1, name = "iris", rows = 1:5, cols = 1:2, overwrite = TRUE)
+
+  exp <- data.frame(
+    name   = "iris",
+    # oh, why are these `'` and not `"`?
+    value  = "'Sheet 1'!$A$1:$B$5",
+    # and this doesn't have the `'`?
+    sheets = "Sheet 1",
+    coords = "A1:B5",
+    id     = 1L,
+    local  = 0,
+    sheet  = 1L
   )
 
-  # check midification
-  modify_nr <- getNamedRegions(wb)
-  expect_equal(modify_nr$coords, "A1:B5")
-  expect_true("iris" %in% modify_nr)
+  # check modification
+  expect_identical(getNamedRegions(wb), exp)
 
   # delete name region
-  deleteNamedRegion(wb, "iris")
+  deleteNamedRegion(wb, name = "iris")
   expect_false("iris" %in% getNamedRegions(wb)$name)
 
-  createNamedRegion(
-    wb = wb,
-    sheet = 1,
-    name = "iris",
-    rows = 1:5,
-    cols = 1:2
-  )
+  createNamedRegion(wb, 1, name = "iris", rows = 1:5, cols = 1:2)
+  expect_identical(getNamedRegions(wb), exp)
 
   # removing a worksheet removes the named region as well
   wb <- wb_remove_worksheet(wb, 1)
-  expect_true(is.null(getNamedRegions(wb)))
-
+  expect_null(getNamedRegions(wb))
 })

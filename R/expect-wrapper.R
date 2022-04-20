@@ -1,0 +1,146 @@
+#' Expect wrapper
+#'
+#' Internal tool:  see tests/testthat/test-workbook-wrappers.R
+#'
+#' @description Testing expectations for [wbWorkbook] wrappers.  These test that
+#'   the method and wrappers have the same params, same default values, and
+#'   return the same value.
+#'
+#'   Requires the `waldo` package, used within `testthat`.
+#'
+#' @param method The name of the [wbWorkbook] method
+#' @param fun The name of the wrapper (probably in R/class-workbook-wrappers)
+#' @param wb A `wbWorkbook` object
+#' @param params A named list of params.  Set to `NULL` to not execute functions
+#' @param ignore Names of params to ignore
+#' @returns Nothing, called for its side-effects
+#' @noRd
+expect_wrapper <- function(
+  method,
+  fun,
+  wb     = wb_workbook(),
+  params = list(),
+  ignore = NULL
+) {
+  stopifnot(
+    requireNamespace("waldo", quietly = TRUE),
+    requireNamespace("testthat", quietly = TRUE),
+    is.list(params) || is.null(params)
+  )
+
+  # TODO if using testthat 3e, safely change `all.equal()` to `waldo::compare()`
+  # as waldo is already a dependency for testing
+
+  method_fun <- get(method, wbWorkbook$public_methods)
+  fun_fun    <- match.fun(fun)
+
+  # these come as pairlist -- we don't really care about that
+  method_forms <- as.list(formals(method_fun))
+  fun_forms    <- as.list(formals(fun_fun))
+
+  method_args <- names(method_forms)
+  fun_args    <- names(fun_forms)
+
+  # remove wb and other ignores
+  ignore <- c("wb", ignore)
+
+  # remove ignores from fun
+  m <- match(ignore, fun_args, 0L)
+  if (!identical(m, 0L)) {
+    # remove wb from both the args and formals
+    fun_args  <- fun_args[-m]
+    fun_forms <- fun_forms[-m]
+  }
+
+  # remove ignores from method
+  m <- match(ignore, method_args, 0L)
+  if (!identical(m, 0L)) {
+    # remove wb from both the args and formals
+    method_args  <- method_args[-m]
+    method_forms <- method_forms[-m]
+  }
+
+  method0 <- paste0("wbWorkbook$", method)
+
+  # expectation that the names are the same (possibly redundant but quicker to)
+  bad <- waldo::compare(
+    x     = method_args,
+    y     = setdiff(fun_args, "wb"),
+    x_arg = method0,
+    y_arg = fun
+  )
+
+  if (length(bad)) {
+    testthat::fail(bad)
+    return(invisible())
+  }
+
+  # expectation that the default values are the same
+  bad <- waldo::compare(
+    x     = method_forms,
+    y     = fun_forms,
+    x_arg = method0,
+    y_arg = fun
+  )
+
+  if (length(bad)) {
+    testthat::fail(bad)
+    return(invisible())
+  }
+
+  if (!is.null(params)) {
+    # create now so that it's the same every time
+    wb_fun <- wb$clone(deep = TRUE)
+    wb_method <- wb$clone(deep = TRUE)
+
+    # be careful and report when we failed to run these
+    res_fun    <- try(do.call(fun, c(wb = wb_fun, params)), silent = TRUE)
+    res_method <- try(do.call(wb_method[[method]], params), silent = TRUE)
+
+    msg <- NULL
+
+    if (inherits(res_fun, "try-error")) {
+      temp <- file()
+      writeLines(attr(res_fun, "condition")$message, temp)
+      bad <- paste0("# > ", readLines(temp))
+      close(temp)
+      expr <- paste0("\n", deparse1(do.call(call, c(fun, c(wb = wb_fun, params)))))
+      msg <- c(msg, expr, bad)
+    }
+
+    if (inherits(res_method, "try-error")) {
+      temp <- file()
+      writeLines(attr(res_method, "condition")$message, temp)
+      bad <- paste0("# > ", readLines(temp))
+      close(temp)
+      expr <- paste0("\n", deparse1(do.call(call, c(method0, params))))
+      # slight fix because we get those "`" which I don't want to see
+      expr <- sub(paste0("`", method0, "`"), method0, expr, fixed = TRUE)
+      msg <- c(msg, expr, bad)
+    }
+
+    if (!is.null(msg)) {
+      # browser()
+      bad <- c("Failed to get results", msg)
+      testthat::fail(bad)
+      return(invisible())
+    }
+
+    # expectation that the results are the same
+    bad <- waldo::compare(
+      x                  = res_method,
+      y                  = res_fun,
+      x_arg              = method0,
+      y_arg              = fun,
+      ignore_formula_env = TRUE
+    )
+
+    if (length(bad)) {
+      testthat::fail(bad)
+      return(invisible())
+    }
+  }
+
+  testthat::succeed()
+  return(invisible())
+}

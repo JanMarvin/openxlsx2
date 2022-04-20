@@ -98,7 +98,7 @@ makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NUL
     if (is.null(file))
       str <- sprintf("=HYPERLINK(\"%s\")", text)
 
-    if (!is.null(text) & !is.null(file))
+    if (!is.null(text) && !is.null(file))
       str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", file, text)
   } else {
     cell <- paste0(int2col(col), row)
@@ -191,7 +191,7 @@ writeCommentXML <- function(comment_list, file_name) {
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
       # write author to top of node. will be written in bold
-      if (j == 1 & (comment_list[[i]]$author != ""))
+      if ((j == 1) && (comment_list[[i]]$author != ""))
         xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
           gsub("font>", "rPr>", create_font(b = "true")),
           paste0(comment_list[[i]]$author, ":\n")))
@@ -248,22 +248,35 @@ pxml <- function(x) {
 }
 
 
-get_named_regions_from_string <- function(dn) {
+get_named_regions_from_string <- function(wb, dn) {
   dn <- cbind(
-    openxlsx2:::rbindlist(xml_attr(dn, "definedName")),
+    rbindlist(xml_attr(dn, "definedName")),
     value =  xml_value(dn, "definedName")
   )
 
   if (!is.null(dn$value)) {
     dn_pos <- dn$value
     dn_pos <- gsub("[$']", "", dn_pos)
+    # for pageSetup we can have multiple defined names for column and row
+    # separated by a colon. This keeps only the first and drops the second.
+    # This will allow saving, but changes getNamedRegions()
+    dn_pos <- vapply(strsplit(dn_pos, ","), FUN = function(x) x[1], NA_character_)
 
     has_bang <- grepl("!", dn_pos, fixed = TRUE)
     dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
     dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
   }
 
-  return(dn)
+  dn$id <- seq_len(nrow(dn))
+
+  if (!is.null(dn$localSheetId)) {
+    dn$local <- as.integer(dn$localSheetId != "")
+  } else {
+    dn$local <- 0
+  }
+  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
+
+  dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]),]
 }
 
 

@@ -224,7 +224,7 @@ SEXP getXMLXPtr2val(XPtrXML doc, std::string level1, std::string child) {
   {
     std::vector<std::string> y;
 
-    for(auto col : worksheet.children(child.c_str()))
+    for (auto col : worksheet.children(child.c_str()))
       x.push_back(col.child_value() );
 
   }
@@ -242,7 +242,7 @@ SEXP getXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::st
   {
     std::vector<std::string> y;
 
-    for(auto col : worksheet.children(child.c_str()))
+    for (auto col : worksheet.children(child.c_str()))
       x.push_back(col.child_value() );
   }
 

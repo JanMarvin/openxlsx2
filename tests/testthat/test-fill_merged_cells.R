@@ -1,6 +1,6 @@
 test_that("fill merged cells", {
   wb <- wb_workbook()
-  wb$addWorksheet(sheetName = "sheet1")
+  wb$addWorksheet("sheet1")
   writeData(wb, 1, data.frame("A" = 1, "B" = 2))
   writeData(wb, 1, 2, startRow = 2, startCol = 2)
   writeData(wb, 1, 3, startRow = 2, startCol = 3)

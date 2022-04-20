@@ -1,0 +1,217 @@
+---
+title: "openxlsx2 style manual"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{openxlsx2_style_manual}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+library(openxlsx2)
+options(rmarkdown.html_vignette.check_title = FALSE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Welcome to the styling manual for `openxlsx2`. In this manual you will learn how to use `openxlsx2` to style your worksheets. data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these openxml workbooks in R. 
+
+```{r}
+# create workbook
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "test")
+
+# add some dummy data to the worksheet
+mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
+colnames(mat) <- make.names(seq_len(ncol(mat)))
+writeData(wb, "test", mat, colNames = TRUE)
+
+# create a border style and assign it to the workbook
+black <- c(rgb="FF000000")
+new_border <- create_border(bottom = "thin", bottom_color = black,
+                            top = "thin", top_color = black,
+                            left = "thin", left_color = black,
+                            right = "thin", right_color = black)
+wb$styles_mgr$add(new_border, "new_border")
+
+
+# create a fill style and assign it to the workbook
+new_fill <- create_fill(patternType = "solid", fgColor = c(rgb = "FF334E6F"))
+wb$styles_mgr$add(new_fill, "new_fill")
+
+# create a font style and assign it to the workbook
+new_font <- create_font(sz = "20", name = "Arial", b = "1", color = c(rgb = "FFFFFFFF"))
+wb$styles_mgr$add(new_font, "new_font")
+
+# create a new cell style, that uses the fill, the font and the border style
+new_cellxfs <- create_cell_style(
+  numFmtId = "0",
+  horizontal = "center",
+  textRotation = "45",
+  fillId = wb$styles_mgr$get_fill_id("new_fill"),
+  fontId = wb$styles_mgr$get_font_id("new_font"), 
+  borderId = wb$styles_mgr$get_border_id("new_border")
+)
+# assign this style to the workbook
+wb$styles_mgr$add(new_cellxfs, "new_styles")
+
+# assign the new cell style to the header row of our data set
+cell <- sprintf("A1:%s1", int2col(nrow(mat)))
+set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("new_styles"))
+
+## style the cells with some builtin format codes (no new numFmt entry is needed)
+# add builtin style ids
+x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
+       "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
+       "47", "48", "49")
+
+# create styles
+new_cellxfs <- create_cell_style(numFmtId = x, horizontal = "center")
+
+# assign the styles to the workbook
+for (i in seq_along(x)) {
+  wb$styles_mgr$add(new_cellxfs[i], paste0("new_style", i))
+}
+
+# new styles are 1:28
+new_styles <- wb$styles_mgr$get_xf()
+for (i in as.integer(new_styles$id[new_styles$name %in% paste0("new_style", seq_along(x))])) {
+  cell <- sprintf("%s2:%s29", int2col(i), int2col(i))
+  set_cell_style(wb, "test", cell, i)
+}
+
+# assign a custom tabColor
+wb$worksheets[[1]]$sheetPr <- xml_node_create(
+  "sheetPr",
+  xml_children = xml_node_create(
+    "tabColor",
+    xml_attributes = c(rgb = "FF00FF00")))
+
+# # look at the beauty you've created
+# wb_open(wb)
+```
+
+
+## numfmts
+```{r}
+## Create Workbook object and add worksheets
+wb <- wb_workbook()
+wb$addWorksheet("S1")
+wb$addWorksheet("S2")
+
+df <- data.frame(
+  "Date" = Sys.Date() - 0:19,
+  "T" = TRUE, "F" = FALSE,
+  "Time" = Sys.time() - 0:19 * 60 * 60,
+  "Cash" = paste("$", 1:20), "Cash2" = 31:50,
+  "hLink" = "https://CRAN.R-project.org/",
+  "Percentage" = seq(0, 1, length.out = 20),
+  "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE
+)
+
+## openxlsx will apply default Excel styling for these classes
+class(df$Cash) <- c(class(df$Cash), "currency")
+class(df$Cash2) <- c(class(df$Cash2), "accounting")
+class(df$hLink) <- "hyperlink"
+class(df$Percentage) <- c(class(df$Percentage), "percentage")
+class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
+
+writeData(wb, "S1", x = df, startRow = 4, rowNames = FALSE)
+writeDataTable(wb, "S2", x = df, startRow = 4, rowNames = FALSE)
+```
+
+
+## numfmts2
+
+```{r}
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "test")
+
+options("openxlsx2.dateFormat" = "yyyy")
+options("openxlsx2.datetimeFormat" = "yyyy-mm-dd")
+options("openxlsx2.numFmt" = "€ #.0")
+
+df <- data.frame(
+  "Date" = Sys.Date() - 0:19,
+  "T" = TRUE, "F" = FALSE,
+  "Time" = Sys.time() - 0:19 * 60 * 60,
+  "Cash" = paste("$", 1:20), "Cash2" = 31:50,
+  "hLink" = "https://CRAN.R-project.org/",
+  "Percentage" = seq(0, 1, length.out = 20),
+  "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE,
+  "numeric" = 1
+)
+
+## openxlsx will apply default Excel styling for these classes
+class(df$Cash) <- c(class(df$Cash), "currency")
+class(df$Cash2) <- c(class(df$Cash2), "accounting")
+class(df$hLink) <- "hyperlink"
+class(df$Percentage) <- c(class(df$Percentage), "percentage")
+class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
+
+writeData(wb, "test", df)
+```
+
+```{r include=FALSE}
+# cleanup
+options("openxlsx2.numFmt" = NULL)
+```
+
+
+## styled table
+```{r}
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "test")
+
+# add some dummy data to the worksheet
+mat <- matrix(1:4, ncol = 2, nrow = 2)
+
+colnames(mat) <- make.names(seq_len(ncol(mat)))
+writeData(wb, "test", mat, colNames = TRUE, startCol = 2, startRow = 2)
+
+# create a border style and assign it to the workbook
+black <- c(rgb="FF000000")
+top_border <- create_border(top = "double", top_color = black,
+                            bottom = "thin", bottom_color = black)
+
+bottom_border <- create_border(bottom = "double", bottom_color = black)
+
+wb$styles_mgr$add(top_border, "top_border")
+wb$styles_mgr$add(bottom_border, "bottom_border")
+
+# create a new cell style, that uses the fill, the font and the border style
+top_cellxfs <- create_cell_style(
+  numFmtId = "0",
+  horizontal = "center",
+  borderId = wb$styles_mgr$get_border_id("top_border")
+)
+bottom_cellxfs <- create_cell_style(
+  numFmtId = "0",
+  borderId = wb$styles_mgr$get_border_id("bottom_border")
+)
+
+# assign this style to the workbook
+wb$styles_mgr$add(top_cellxfs, "top_styles")
+wb$styles_mgr$add(bottom_cellxfs, "bottom_styles")
+
+# assign the new cell style to the header row of our data set
+cell <- "B2:C2"
+set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("top_styles"))
+cell <- "B4:C4"
+set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
+```
+
+
+## setColWidths
+```{r}
+sheet <- "mtcars"
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, sheet)
+writeData(wb, sheet, mtcars, rowNames = TRUE)
+
+cols <- 1:12
+setColWidths(wb, sheet, cols = cols, widths = "auto")
+```

@@ -117,7 +117,7 @@ A Worksheet
 Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
-  showGridLines = TRUE,
+  gridLines = TRUE,
   tabSelected = FALSE,
   tabColour = NULL,
   zoom = 100,
@@ -137,7 +137,7 @@ Creates a new \code{wbWorksheet} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{showGridLines}}{showGridLines}
+\item{\code{gridLines}}{gridLines}
 
 \item{\code{tabSelected}}{tabSelected}
 

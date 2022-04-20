@@ -151,7 +151,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
     }
 
     // <is><t> ... </t></is>
-    if(to_string(cc_c_t[i]).compare("inlineStr") == 0) {
+    if (to_string(cc_c_t[i]).compare("inlineStr") == 0) {
       if (to_string(cc_is[i]).compare(openxlsxNA.c_str()) != 0) {
 
         pugi::xml_document is_node;

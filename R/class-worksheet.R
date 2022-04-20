@@ -140,7 +140,7 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorksheet` object
-    #' @param showGridLines showGridLines
+    #' @param gridLines gridLines
     #' @param tabSelected tabSelected
     #' @param tabColour tabColour
     #' @param zoom zoom
@@ -156,20 +156,20 @@ wbWorksheet <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return a `wbWorksheet` object
     initialize = function(
-      showGridLines = TRUE,
-      tabSelected   = FALSE,
-      tabColour     = NULL,
-      zoom          = 100,
-      oddHeader     = NULL,
-      oddFooter     = NULL,
-      evenHeader    = NULL,
-      evenFooter    = NULL,
-      firstHeader   = NULL,
-      firstFooter   = NULL,
-      paperSize     = 9,
-      orientation   = "portrait",
-      hdpi          = 300,
-      vdpi          = 300
+      gridLines   = TRUE,
+      tabSelected = FALSE,
+      tabColour   = NULL,
+      zoom        = 100,
+      oddHeader   = NULL,
+      oddFooter   = NULL,
+      evenHeader  = NULL,
+      evenFooter  = NULL,
+      firstHeader = NULL,
+      firstFooter = NULL,
+      paperSize   = 9,
+      orientation = "portrait",
+      hdpi        = 300,
+      vdpi        = 300
     ) {
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
@@ -199,7 +199,7 @@ wbWorksheet <- R6::R6Class(
       ## list of all possible children
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
-      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
+      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" gridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(tabSelected))
       self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
@@ -230,7 +230,7 @@ wbWorksheet <- R6::R6Class(
     #' @return A character vector of xml
     get_prior_sheet_data = function() {
       paste_c(
-        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
+        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
 
         # sheetPr
         if (length(self$sheetPr) && !any(grepl("<sheetPr>", self$sheetPr, fixed = TRUE))) {
@@ -446,9 +446,9 @@ wbWorksheet <- R6::R6Class(
       )
 
       out <- NULL
-      for (i in seq_len(nrow(col_df))){
+      for (i in seq_len(nrow(col_df))) {
         z <- col_df[i,]
-        for (j in seq(z$min, z$max)){
+        for (j in seq(z$min, z$max)) {
           z$key <- j
           out <- rbind(out, z)
         }
@@ -521,7 +521,7 @@ wb_worksheet <- function() {
 empty_cols_attr <- function(n = 0, beg, end) {
   # make make this a specific class/object?
 
-  if (!missing(beg) & !missing(end)) {
+  if (!missing(beg) && !missing(end)) {
     n_seq <- seq.int(beg, end, by = 1)
     n <- length(n_seq)
   } else {

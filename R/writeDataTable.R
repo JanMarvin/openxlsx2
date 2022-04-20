@@ -15,8 +15,6 @@
 #' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
 #' @param tableName name of table in workbook. The table name must be unique.
 #' @param withFilter If `TRUE`, columns with have filters in the first row.
-#' @param keepNA If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty.
-#' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
 #' existing style is replaced by the new style.
@@ -145,8 +143,6 @@ writeDataTable <- function(wb, sheet, x,
   tableStyle = "TableStyleLight9",
   tableName = NULL,
   withFilter = TRUE,
-  keepNA = FALSE,
-  na.string = NULL,
   sep = ", ",
   stack = FALSE,
   firstColumn = FALSE,
@@ -170,7 +166,7 @@ writeDataTable <- function(wb, sheet, x,
   if (!is.logical(rowNames)) stop("rowNames must be a logical.")
 
   if (!is.logical(withFilter)) stop("withFilter must be a logical.")
-  if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
+  if ((!is.character(sep)) || (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
   if (!is.logical(firstColumn)) stop("firstColumn must be a logical.")
   if (!is.logical(lastColumn)) stop("lastColumn must be a logical.")
@@ -192,8 +188,31 @@ writeDataTable <- function(wb, sheet, x,
   startRow <- as.integer(startRow)
 
 
-  ## If 0 rows append a blank row
+  showColNames <- colNames
 
+  if (colNames) {
+    col_names <- colnames(x)
+    if (any(duplicated(tolower(col_names)))) {
+      stop("Column names of x must be case-insensitive unique.")
+    }
+
+    ## zero char names are invalid
+    char0 <- nchar(col_names) == 0
+    if (any(char0)) {
+      col_names[char0] <- colnames(x)[char0] <- paste0("Column", which(char0))
+    }
+  } else {
+    col_names <- paste0("Column", seq_along(x))
+    names(x) <- col_names
+  }
+
+  if (rowNames) {
+    nam <- names(x)
+    x <- cbind(rownames(x), x)
+    names(x) <- c("rownames", nam)
+  }
+
+  ## If 0 rows append a blank row
   validNames <- c("none", paste0("TableStyleLight", 1:21), paste0("TableStyleMedium", 1:28), paste0("TableStyleDark", 1:11))
   if (!tolower(tableStyle) %in% tolower(validNames)) {
     stop("Invalid table style.")
@@ -206,23 +225,6 @@ writeDataTable <- function(wb, sheet, x,
     stop("Unknown table style.")
   }
 
-  showColNames <- colNames
-
-  if (colNames) {
-    colNames <- colnames(x)
-    if (any(duplicated(tolower(colNames)))) {
-      stop("Column names of x must be case-insensitive unique.")
-    }
-
-    ## zero char names are invalid
-    char0 <- nchar(colNames) == 0
-    if (any(char0)) {
-      colNames[char0] <- colnames(x)[char0] <- paste0("Column", which(char0))
-    }
-  } else {
-    colNames <- paste0("Column", seq_along(x))
-    names(x) <- colNames
-  }
   ## If zero rows, append an empty row (prevent XML from corrupting)
   if (nrow(x) == 0) {
     x <- rbind(as.data.frame(x), matrix("", nrow = 1, ncol = ncol(x), dimnames = list(character(), colnames(x))))
@@ -278,12 +280,12 @@ writeDataTable <- function(wb, sheet, x,
   )
 
   ## replace invalid XML characters
-  colNames <- replaceIllegalCharacters(colNames)
+  col_names <- replaceIllegalCharacters(colnames(x))
 
   ## create table.xml and assign an id to worksheet tables
   wb$buildTable(
     sheet = sheet,
-    colNames = colNames,
+    colNames = col_names,
     ref = ref,
     showColNames = showColNames,
     tableStyle = tableStyle,
