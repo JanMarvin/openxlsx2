@@ -247,7 +247,7 @@ test_that("conditional formatting", {
   tmp <- temp_xlsx()
   wb_save(wb, tmp)
 
-  expect_silent(wb1 <- loadWorkbook(tmp))
+  expect_silent(wb1 <- wb_load(tmp))
 
   # all.equal(wb, wb1)
   for (sheet in seq_along(wb$sheet_names))

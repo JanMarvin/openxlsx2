@@ -18,7 +18,7 @@ test_that("Reading protected Workbook", {
   protectWorkbook(wb, password = "abcdefghij")
   wb_save(wb, temp_file)
 
-  wb2 <- loadWorkbook(file = temp_file)
+  wb2 <- wb_load(file = temp_file)
   # Check that the order of the sub-elements is preserved
   n1 <- names(wb2$workbook)
   n2 <- names(wb$workbook)[names(wb$workbook) != "apps"]

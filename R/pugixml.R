@@ -216,7 +216,7 @@ print.pugi_xml <- function(x, raw = FALSE, ...) {
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' unzip(xlsxFile, exdir = tmp_xlsx)
 #'
-#' wb <- loadWorkbook(xlsxFile)
+#' wb <- wb_load(xlsxFile)
 #' styles_xml <- sprintf("%s/xl/styles.xml", tmp_xlsx)
 #'
 #' # is external pointer

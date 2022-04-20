@@ -34,7 +34,7 @@ Minimal invasive update of cell(s) inside of imported workbooks.
 }
 \examples{
    xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
-   wb <- loadWorkbook(xlsxFile)
+   wb <- wb_load(xlsxFile)
 
    # update Cells D4:D6 with 1:3
    wb <- update_cell(x = c(1:3), wb = wb, sheet = "Sheet1", cell = "D4:D6")

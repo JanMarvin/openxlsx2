@@ -73,7 +73,7 @@
 #' ###########################################################################
 #' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
-#' wb2 <- loadWorkbook(xlsxFile)
+#' wb2 <- wb_load(xlsxFile)
 #'
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)

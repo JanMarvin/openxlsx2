@@ -1,7 +1,7 @@
 
 test_that("Loading readTest.xlsx Sheet 1", {
   fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  wb <- loadWorkbook(fl)
+  wb <- wb_load(fl)
 
   expected_shared_strings <- structure(c(
     "<si><t>v1</t></si>", "<si><t>v2</t></si>", "<si><t>v3</t></si>",
@@ -719,7 +719,7 @@ test_that("Loading readTest.xlsx Sheet 1", {
 test_that("Loading multiple pivot tables: loadPivotTables.xlsx works",{
   ## loadPivotTables.xlsx is a file with 3 pivot tables and 2 of them have the same reference data (pivotCacheDefinition)
   fl <- system.file("extdata", "loadPivotTables.xlsx", package = "openxlsx2")
-  wb <- loadWorkbook(fl)
+  wb <- wb_load(fl)
 
   # Check that wb is correctly loaded
   sheet_names <- c("iris",
@@ -741,7 +741,7 @@ test_that("Loading multiple pivot tables: loadPivotTables.xlsx works",{
 test_that("Load and saving a file with Threaded Comments works", {
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
   fl <- system.file("extdata", "loadThreadComment.xlsx", package = "openxlsx2")
-  expect_silent(wb <- loadWorkbook(fl))
+  expect_silent(wb <- wb_load(fl))
   # Check that wb can be saved without error
   expect_silent(wb_save(wb, path = temp_xlsx()))
 
@@ -750,7 +750,7 @@ test_that("Load and saving a file with Threaded Comments works", {
 test_that("Read and save file with inlineStr", {
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
   fl <- system.file("extdata", "inlineStr.xlsx", package = "openxlsx2")
-  wb <- loadWorkbook(fl)
+  wb <- wb_load(fl)
   wb_df <- readWorkbook(wb)
   attr(wb_df, "tt") <- NULL
   attr(wb_df, "types") <- NULL
@@ -778,7 +778,7 @@ test_that("Read and save file with inlineStr", {
   tmp_xlsx <- temp_xlsx()
   # Check that wb can be saved without error and reimported
   expect_equal(tmp_xlsx, wb_save(wb, path = tmp_xlsx))
-  wb_df_re <- readWorkbook(loadWorkbook(tmp_xlsx))
+  wb_df_re <- readWorkbook(wb_load(tmp_xlsx))
   attr(wb_df_re, "tt") <- NULL
   attr(wb_df_re, "types") <- NULL
   expect_true(all.equal(wb_df, wb_df_re, compare.attributes = FALSE))
@@ -846,7 +846,7 @@ test_that("sheet visibility", {
   exp_vis <- c("visible", "visible", "hidden")
 
   # after load
-  wb <- loadWorkbook(fl)
+  wb <- wb_load(fl)
   wb_sheets <- names(wb)
   wb_vis <- sheetVisibility(wb)
 
@@ -854,7 +854,7 @@ test_that("sheet visibility", {
   wb_save(wb, tmp_dir)
 
   # re-import
-  wb2 <- loadWorkbook(tmp_dir)
+  wb2 <- wb_load(tmp_dir)
   wb2_sheets <- names(wb)
   wb2_vis <- sheetVisibility(wb)
 
@@ -877,7 +877,7 @@ test_that("additional wb tests", {
 
   # wb_to_df
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  wb1 <- loadWorkbook(xlsxFile)
+  wb1 <- wb_load(xlsxFile)
 
   # showFormula
   exp <- data.frame(Var7 = "1/0", row.names = "2")
@@ -949,7 +949,7 @@ test_that("test headerFooter", {
   # Save workbook
   wb_save(wb, tmp1, overwrite = TRUE)
   # Load workbook and save again
-  wb2 <- loadWorkbook(tmp1)
+  wb2 <- wb_load(tmp1)
 
   expect_equal(wb$worksheets[[1]]$headerFooter,
                wb2$worksheets[[1]]$headerFooter)
@@ -964,12 +964,12 @@ test_that("load workbook with chartsheet", {
 
   fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
 
-  expect_silent(z <- loadWorkbook(fl))
-  expect_silent(z <- loadWorkbook(fl, sheet = "Chart1"))
-  expect_silent(z <- loadWorkbook(fl, sheet = "test"))
+  expect_silent(z <- wb_load(fl))
+  expect_silent(z <- wb_load(fl, sheet = "Chart1"))
+  expect_silent(z <- wb_load(fl, sheet = "test"))
   # explicitly request the chartsheet
-  expect_silent(z <- loadWorkbook(fl, sheet = 1))
-  expect_silent(z <- loadWorkbook(fl, sheet = 2))
+  expect_silent(z <- wb_load(fl, sheet = 1))
+  expect_silent(z <- wb_load(fl, sheet = 2))
 
   expect_equal(read.xlsx(fl, sheet = "test"), mtcars, ignore_attr = TRUE)
   expect_equal(read.xlsx(fl, sheet = 2), mtcars, ignore_attr = TRUE)

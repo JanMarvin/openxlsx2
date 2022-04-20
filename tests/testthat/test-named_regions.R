@@ -58,7 +58,7 @@ test_that("Correctly Loading Named Regions Created in Excel", {
 
   # Load this workbook. We will test read.xlsx by passing both the object wb and
   # the filename. Both should produce the same results.
-  wb <- loadWorkbook(filename)
+  wb <- wb_load(filename)
 
   # NamedTable refers to Sheet1!$C$5:$D$8
   table_f <- read.xlsx(filename,
@@ -115,7 +115,7 @@ test_that("Correctly Loading Named Regions Created in Excel", {
 # Ordering locally and in testthat differs.
 test_that("Load names from an Excel file with funky non-region names", {
   filename <- system.file("extdata", "namedRegions2.xlsx", package = "openxlsx2")
-  wb <- loadWorkbook(filename)
+  wb <- wb_load(filename)
   dn <- getNamedRegions(wb)
 
   expect_equal(

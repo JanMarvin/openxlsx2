@@ -11,7 +11,7 @@ test_that("names", {
 
   wb_save(wb, tmp)
 
-  wb <- loadWorkbook(tmp)
+  wb <- wb_load(tmp)
   got <- names(wb)
   expect_equal(exp, got)
 

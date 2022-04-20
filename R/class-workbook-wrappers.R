@@ -525,7 +525,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove column widths in columns 1 to 20
 #' removeColWidths(wb, 1, cols = 1:20)
@@ -568,7 +568,7 @@ removeColWidths <- function(wb, sheet, cols) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove any custom row heights in rows 1 to 10
 #' wb$removeRowHeights(1, rows = 1:10)
@@ -688,7 +688,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' @export
 #' @examples
 #' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## Remove sheet 2
 #' wb <- wb_remove_worksheet(wb, 2)
@@ -1323,7 +1323,7 @@ protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure =
 #' @param showGridLines A logical. If `FALSE`, grid lines are hidden.
 #' @export
 #' @examples
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' names(wb) ## list worksheets in workbook
 #' showGridLines(wb, 1, showGridLines = FALSE)
 #' showGridLines(wb, "testing", showGridLines = FALSE)

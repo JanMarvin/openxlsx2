@@ -1,17 +1,17 @@
-#' @name loadWorkbook
+#' @name wb_load
 #' @title Load an existing .xlsx file
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param xlsxFile alias for file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #'  sheet will be loaded.
-#' @description  loadWorkbook returns a workbook object conserving styles and
+#' @description  wb_load returns a workbook object conserving styles and
 #' formatting of the original .xlsx file.
 #' @return Workbook object.
 #' @export
 #' @seealso [wb_remove_worksheet()]
 #' @examples
 #' ## load existing workbook from package folder
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' names(wb) # list worksheets
 #' wb ## view object
 #' ## Add a worksheet
@@ -22,7 +22,7 @@
 #' wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
 #' }
 #'
-loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
+wb_load <- function(file, xlsxFile = NULL, sheet) {
 
   file <- xlsxFile %||% file
   file <- getFile(file)
@@ -32,7 +32,7 @@ loadWorkbook <- function(file, xlsxFile = NULL, sheet) {
   }
 
   ## create temp dir
-  xmlDir <- tempfile("_openxlsx_loadWorkbook")
+  xmlDir <- tempfile("_openxlsx_wb_load")
   # do not unlink after loading
   # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 

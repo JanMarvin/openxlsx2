@@ -32,7 +32,7 @@ test_that("Workbook properties", {
   expect_match(wb$core, "<cp:category>some category 2</cp:category>")
 
   ## maintain on load
-  wb_loaded <- loadWorkbook(temp_file)
+  wb_loaded <- wb_load(temp_file)
   expect_equal(wb_loaded$core, paste0(wb$core, collapse = ""))
 
   wb <- wb_workbook(

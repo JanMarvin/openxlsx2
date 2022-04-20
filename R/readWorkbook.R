@@ -45,12 +45,12 @@
 #' sapply(df2, class)
 #' head(df2)
 #'
-#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' df3 <- read.xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 #' df4 <- read.xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 #' all.equal(df3, df4)
 #'
-#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' df3 <- read.xlsx(wb,
 #'   sheet = 2, skipEmptyRows = FALSE,
 #'   cols = c(1, 4), rows = c(1, 3, 4)
@@ -91,7 +91,7 @@ read.xlsx <- function(
   if (inherits(xlsxFile, c("Workbook", "wbWorkbook"))) {
     wb <- xlsxFile
   } else {
-    wb <- loadWorkbook(xlsxFile = xlsxFile, sheet = sheet)
+    wb <- wb_load(xlsxFile = xlsxFile, sheet = sheet)
   }
 
   wb_to_df(

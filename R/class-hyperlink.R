@@ -79,7 +79,7 @@ wb_hyperlink <- function() {
 
 
 xml_to_hyperlink <- function(xml) {
-  # xml_to_hyperlink() is used once in loadWorkbook()
+  # xml_to_hyperlink() is used once in wb_load()
 
   # TODO allow wbHyperlink$new(xml = xml)
 

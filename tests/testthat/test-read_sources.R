@@ -22,15 +22,15 @@ test_that("read.xlsx from different sources", {
 })
 
 
-test_that("loadWorkbook from different sources", {
+test_that("wb_load from different sources", {
 
   ## URL
   xlsxFile <- "https://github.com/ycphs/openxlsx/raw/master/inst/extdata/readTest.xlsx"
-  wb_url <- loadWorkbook(xlsxFile)
+  wb_url <- wb_load(xlsxFile)
 
   ## File
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  wb_file <- loadWorkbook(xlsxFile)
+  wb_file <- wb_load(xlsxFile)
 
   ## check
   expect_true(all.equal(wb_url, wb_file), "Loading from URL vs local not equal")

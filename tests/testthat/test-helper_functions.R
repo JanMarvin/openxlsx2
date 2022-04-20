@@ -89,7 +89,7 @@ test_that("pageSetup example", {
   expect_silent(wb_save(wb, tmp, overwrite = TRUE))
 
   # survives write and load
-  wb <- loadWorkbook(tmp)
+  wb <- wb_load(tmp)
   expect_equal(exp, wb$workbook$definedNames)
 
 

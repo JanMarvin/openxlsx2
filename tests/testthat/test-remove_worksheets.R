@@ -26,7 +26,7 @@ test_that("Deleting worksheets", {
 
   ## re-load & re-order worksheets
 
-  wb <- loadWorkbook(tempFile)
+  wb <- wb_load(tempFile)
   expect_equal(names(wb), c("Sheet 3", "Sheet 1", "Sheet 2"))
 
   writeData(wb, sheet = "Sheet 2", x = iris[1:10, 1:4], startRow = 5)

@@ -125,7 +125,7 @@ test_that("Save and load Table Deletion", {
 
   ## both table were written to sheet 1 and are expected to not exist after load
   wb_save(wb, temp_file)
-  wb <- loadWorkbook(file = temp_file)
+  wb <- wb_load(file = temp_file)
   expect_null(wb$tables)
   file.remove(temp_file)
 
@@ -148,7 +148,7 @@ test_that("Save and load Table Deletion", {
   temp_file <- temp_xlsx()
   # why does this fail?
   wb$save(temp_file)
-  wb <- loadWorkbook(file = temp_file)
+  wb <- wb_load(file = temp_file)
 
   expect_equal(length(wb$tables), 1L)
   expect_equal(unname(attr(wb$tables, "tableName")), "mtcars")
@@ -173,7 +173,7 @@ test_that("Save and load Table Deletion", {
 
   temp_file <- temp_xlsx()
   wb_save(wb, temp_file)
-  wb <- loadWorkbook(file = temp_file)
+  wb <- wb_load(file = temp_file)
 
   expect_equal(length(wb$tables), 1L)
   expect_equal(unname(attr(wb$tables, "tableName")), "mtcars2")
@@ -202,7 +202,7 @@ test_that("Save and load Table Deletion", {
 
 
   ## Ids should get reset after load
-  wb <- loadWorkbook(file = temp_file)
+  wb <- wb_load(file = temp_file)
 
   expect_equal(length(wb$tables), 3L)
   expect_equal(unname(attr(wb$tables, "tableName")), c("iris", "mtcars", "mtcars2"))

@@ -3,7 +3,7 @@ test_that("wb_to_df", {
   ###########################################################################
   # numerics, dates, missings, bool and string
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  expect_silent(wb1 <- loadWorkbook(xlsxFile))
+  expect_silent(wb1 <- wb_load(xlsxFile))
 
   # import workbook
   exp <- structure(
@@ -93,7 +93,7 @@ test_that("wb_to_df", {
   ###########################################################################
   # inlinestr
   xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
-  expect_silent(wb2 <- loadWorkbook(xlsxFile))
+  expect_silent(wb2 <- wb_load(xlsxFile))
 
   exp <- data.frame(
     PairIndex = c(rep(1, 8), 2, 2), Drug1 = "abc", Drug2 = "def", Conc1 = 10000,
@@ -113,7 +113,7 @@ test_that("wb_to_df", {
   ###########################################################################
   # definedName // namedRegion
   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
-  expect_silent(wb3 <- loadWorkbook(xlsxFile))
+  expect_silent(wb3 <- wb_load(xlsxFile))
 
   # read dataset with definedName (returns global first)
   exp <- data.frame(A = "S2A1", B = "S2B1")

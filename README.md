@@ -23,7 +23,7 @@ df <- read.xlsx("file.xlsx")
 write.xlsx(df, "new.xlsx")
 
 # or import workbooks
-wb <- loadWorkbook("file.xlsx")
+wb <- wb_load("file.xlsx")
 # read a data frame
 wb_to_df(wb)
 # and save it

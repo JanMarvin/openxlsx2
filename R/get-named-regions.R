@@ -46,7 +46,7 @@ getNamedRegions <- function(x) {
 
 #' @export
 getNamedRegions.default <- function(x) {
-  wb <- loadWorkbook(x)
+  wb <- wb_load(x)
   dn <- wb$workbook$definedNames
 
   if (length(dn) == 0) {
