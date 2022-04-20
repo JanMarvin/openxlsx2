@@ -577,7 +577,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
       # wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells")
       wb$worksheets[[i]]$oleObjects <- xml_node(worksheet_xml, "worksheet", "oleObjects")
       wb$worksheets[[i]]$pageMargins <- xml_node(worksheet_xml, "worksheet", "pageMargins")
-      wb$worksheets[[i]]$pageSetup <- xml_node(worksheet_xml, "worksheet", "pageSetup")
+      wb$worksheets[[i]]$pageSetup <- xml_node(worksheet_xml, "worksheet", "ws_page_setup")
       wb$worksheets[[i]]$phoneticPr <- xml_node(worksheet_xml, "worksheet", "phoneticPr")
       wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
       wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")

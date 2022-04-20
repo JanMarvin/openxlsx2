@@ -145,7 +145,7 @@ oddHeader
 oleObjects
 openxlsx
 pageMargins
-pageSetup
+ws_page_setup
 paperSize
 params
 patternFill

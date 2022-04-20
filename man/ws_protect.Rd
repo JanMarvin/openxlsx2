@@ -82,6 +82,6 @@ ws_protect(wb, "S1",
 # Remove the protection
 ws_protect(wb, "S1", protect = FALSE)
 \dontrun{
-wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 }
 }

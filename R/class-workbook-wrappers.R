@@ -152,7 +152,7 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
 #' @param hasDrawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paperSize An integer corresponding to a paper size. See ?pageSetup for
+#' @param paperSize An integer corresponding to a paper size. See ?ws_page_setup for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
 #' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
@@ -895,7 +895,7 @@ setHeaderFooter <- function(wb, sheet,
 
 
 
-#' @name pageSetup
+#' @name ws_page_setup
 #' @title Set page margins, orientation and print scaling
 #' @description Set page margins, orientation and print scaling
 #' @param wb A workbook object
@@ -994,10 +994,10 @@ setHeaderFooter <- function(wb, sheet,
 #' writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 #'
 #' ## landscape page scaled to 50%
-#' pageSetup(wb, sheet = 1, orientation = "landscape", scale = 50)
+#' ws_page_setup(wb, sheet = 1, orientation = "landscape", scale = 50)
 #'
 #' ## portrait page scales to 300% with 0.5in left and right margins
-#' pageSetup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+#' ws_page_setup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
 #'
 #'
 #' ## print titles
@@ -1007,12 +1007,12 @@ setHeaderFooter <- function(wb, sheet,
 #' writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
 #' writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 #'
-#' pageSetup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
-#' pageSetup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+#' ws_page_setup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
+#' ws_page_setup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 #' \dontrun{
-#' wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
+ws_page_setup <- function(wb, sheet, orientation = NULL, scale = 100,
   left = 0.7, right = 0.7, top = 0.75, bottom = 0.75,
   header = 0.3, footer = 0.3,
   fitToWidth = FALSE, fitToHeight = FALSE, paperSize = NULL,
@@ -1042,7 +1042,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
     paperSizes <- 1:68
     paperSizes <- paperSizes[!paperSizes %in% 48:49]
     if (!paperSize %in% paperSizes) {
-      stop("paperSize must be an integer in range [1, 68]. See ?pageSetup details.")
+      stop("paperSize must be an integer in range [1, 68]. See ?ws_page_setup details.")
     }
     paperSize <- as.integer(paperSize)
   } else {
@@ -1059,12 +1059,12 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
   ##############################
   ## Update
   wb$worksheets[[sheet]]$pageSetup <- sprintf(
-    '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
+    '<ws_page_setup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
     paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
   )
 
   if (fitToHeight || fitToWidth) {
-    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<pageSetUpPr fitToPage="1"/>'))
+    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<ws_page_setupPr fitToPage="1"/>'))
   }
 
   wb$worksheets[[sheet]]$pageMargins <-
@@ -1195,7 +1195,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 #' # Remove the protection
 #' ws_protect(wb, "S1", protect = FALSE)
 #' \dontrun{
-#' wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
 ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
   lockSelectingLockedCells = NULL, lockSelectingUnlockedCells = NULL,
