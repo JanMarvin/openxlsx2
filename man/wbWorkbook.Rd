@@ -129,6 +129,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
+\item \href{#method-removeRowHeights}{\code{wbWorkbook$removeRowHeights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
 \item \href{#method-removeColWidths}{\code{wbWorkbook$removeColWidths()}}
@@ -489,6 +490,28 @@ Sets a row height for a sheet
 \item{\code{rows}}{rows}
 
 \item{\code{heights}}{heights}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-removeRowHeights"></a>}}
+\if{latex}{\out{\hypertarget{method-removeRowHeights}{}}}
+\subsection{Method \code{removeRowHeights()}}{
+Sets a row height for a sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeRowHeights(sheet, rows)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
 }
 \if{html}{\out{</div>}}
 }

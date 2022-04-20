@@ -7,7 +7,7 @@
 setColWidths(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols)))
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \link{wbWorkbook} object}
 
 \item{sheet}{A name or index of a worksheet}
 
@@ -32,7 +32,8 @@ The global min and max column width for "auto" columns is set by (default values
 
 NOTE: The calculation of column widths can be slow for large worksheets.
 
-NOTE: The \code{hidden} parameter may conflict with the one set in \link{wb_group_cols}; changing one will update the other.
+NOTE: The \code{hidden} parameter may conflict with the one set in
+\link{wb_group_cols}; changing one will update the other.
 }
 \examples{
 ## Create a new workbook
@@ -57,4 +58,18 @@ wb_save(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
 }
 \seealso{
 \code{\link[=removeColWidths]{removeColWidths()}}
+
+Other workbook wrappers: 
+\code{\link{freezePane}},
+\code{\link{setLastModifiedBy}()},
+\code{\link{wb_add_worksheet}()},
+\code{\link{wb_clone_worksheet}()},
+\code{\link{wb_creators}},
+\code{\link{wb_get_base_font}()},
+\code{\link{wb_save}()},
+\code{\link{wb_set_row_heights}()},
+\code{\link{wb_workbook}()},
+\code{\link{workbook_grouping}},
+\code{\link{ws_cell_merge}}
 }
+\concept{workbook wrappers}
