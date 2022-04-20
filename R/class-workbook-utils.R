@@ -1,136 +1,36 @@
 #' Validate sheet
 #'
 #' @param wb A workbook
-#' @param sheetName The sheet name to validate
+#' @param sheet The sheet name to validate
 #' @return The sheet name -- or the position?  This should be consistent
 #' @noRd
-wb_validate_sheet <- function(wb, sheetName) {
+wb_validate_sheet <- function(wb, sheet) {
   assert_workbook(wb)
 
-  if (!is.numeric(sheetName)) {
+  if (!is.numeric(sheet)) {
     if (is.null(wb$sheet_names)) {
       stop("wb does not contain any worksheets.", call. = FALSE)
     }
   }
 
-  if (is.numeric(sheetName)) {
-    if (sheetName > length(wb$sheet_names)) {
+  if (is.numeric(sheet)) {
+    if (sheet > length(wb$sheet_names)) {
       msg <- sprintf("wb only contains %i sheets.", length(wb$sheet_names))
       stop(msg, call. = FALSE)
     }
 
-    return(sheetName)
+    return(sheet)
   }
 
-  if (!sheetName %in% replaceXMLEntities(wb$sheet_names)) {
-    msg <- sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheetName))
+  if (!sheet %in% replaceXMLEntities(wb$sheet_names)) {
+    msg <- sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheet))
     stop(msg, call. = FALSE)
   }
 
 
-  which(replaceXMLEntities(wb$sheet_names) == sheetName)
+  which(replaceXMLEntities(wb$sheet_names) == sheet)
 }
 
-
-#' Create a font node from a style
-#'
-#' @param wb a workbook
-#' @param style style
-#' @return The font node as xml?
-#' @noRd
-wb_create_font_node <- function(wb, style) {
-  assert_workbook(wb)
-  # assert_style(style)
-
-  baseFont <- wb$getBaseFont()
-
-  # TODO implement paste_c()
-  fontNode <- "<font>"
-
-  ## size
-  if (is.null(style$fontSize[[1]])) {
-    fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size))
-  } else {
-    fontNode <- stri_join(fontNode, sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize))
-  }
-
-  ## colour
-  if (is.null(style$fontColour[[1]])) {
-    fontNode <- stri_join(
-      fontNode,
-      sprintf('<color %s="%s"/>', names(baseFont$colour), baseFont$colour)
-    )
-  } else {
-    if (length(style$fontColour) > 1) {
-      fontNode <- stri_join(
-        fontNode,
-        sprintf(
-          "<color %s/>",
-          stri_join(
-            sapply(
-              seq_along(style$fontColour),
-              function(i) {
-                sprintf('%s="%s"', names(style$fontColour)[i], style$fontColour[i])
-              }
-            ),
-            sep = " ",
-            collapse = " "
-          )
-        )
-      )
-    } else {
-      fontNode <- stri_join(
-        fontNode,
-        sprintf('<color %s="%s"/>', names(style$fontColour), style$fontColour)
-      )
-    }
-  }
-
-
-  ## name
-  if (is.null(style$fontName[[1]])) {
-    fontNode <- stri_join(
-      fontNode,
-      sprintf('<name %s="%s"/>', names(baseFont$name), baseFont$name)
-    )
-  } else {
-    fontNode <- stri_join(
-      fontNode,
-      sprintf('<name %s="%s"/>', names(style$fontName), style$fontName)
-    )
-  }
-
-  ### Create new font and return Id
-  if (!is.null(style$fontFamily)) {
-    fontNode <- stri_join(fontNode, sprintf('<family val = "%s"/>', style$fontFamily))
-  }
-
-  if (!is.null(style$fontScheme)) {
-    fontNode <- stri_join(fontNode, sprintf('<scheme val = "%s"/>', style$fontScheme))
-  }
-
-  if ("BOLD" %in% style$fontDecoration) {
-    fontNode <- stri_join(fontNode, "<b/>")
-  }
-
-  if ("ITALIC" %in% style$fontDecoration) {
-    fontNode <- stri_join(fontNode, "<i/>")
-  }
-
-  if ("UNDERLINE" %in% style$fontDecoration) {
-    fontNode <- stri_join(fontNode, '<u val="single"/>')
-  }
-
-  if ("UNDERLINE2" %in% style$fontDecoration) {
-    fontNode <- stri_join(fontNode, '<u val="double"/>')
-  }
-
-  if ("STRIKEOUT" %in% style$fontDecoration) {
-    fontNode <- stri_join(fontNode, "<strike/>")
-  }
-
-  stri_join(fontNode, "</font>")
-}
 
 #' Validate table name for a workbook
 #'
@@ -159,7 +59,7 @@ wb_validate_table_name <- function(wb, tableName) {
     stop("spaces cannot exist in a table name", call. = FALSE)
   }
 
-  # if(!grepl("^[A-Za-z_]", tableName, perl = TRUE))
+  # if (!grepl("^[A-Za-z_]", tableName, perl = TRUE))
   #   stop("tableName must begin with a letter or an underscore")
 
   if (grepl("R[0-9]+C[0-9]+", tableName, perl = TRUE, ignore.case = TRUE)) {
@@ -234,14 +134,14 @@ wb_check_overwrite_tables <- function(
         existing_cols <- cols[[i]]
         existing_rows <- rows[[i]]
 
-        if ((min(new_cols) <= max(existing_cols)) &
-            (max(new_cols) >= min(existing_cols)) &
-            (min(new_rows) <= max(existing_rows)) &
+        if ((min(new_cols) <= max(existing_cols)) &&
+            (max(new_cols) >= min(existing_cols)) &&
+            (min(new_rows) <= max(existing_rows)) &&
             (max(new_rows) >= min(existing_rows))) {
           stop(error_msg)
         }
       }
-    } ## end if(sheet %in% tableSheets)
+    } ## end if (sheet %in% tableSheets)
   } ## end (length(tables))
 
   invisible(wb)

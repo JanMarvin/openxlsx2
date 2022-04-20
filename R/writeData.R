@@ -13,8 +13,6 @@
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
-#' @param keepNA If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty.
-#' @param na.string If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param removeCellStyle keep the cell style?
@@ -104,8 +102,6 @@ writeData <- function(wb,
   colNames = TRUE,
   rowNames = FALSE,
   withFilter = FALSE,
-  keepNA = FALSE,
-  na.string = NULL,
   name = NULL,
   sep = ", ",
   removeCellStyle = TRUE) {
@@ -135,7 +131,7 @@ writeData <- function(wb,
   assert_class(colNames, "logical")
   assert_class(rowNames, "logical")
 
-  if ((!is.character(sep)) | (length(sep) != 1)) stop("sep must be a character vector of length 1")
+  if ((!is.character(sep)) || (length(sep) != 1)) stop("sep must be a character vector of length 1")
 
   ## special case - vector of hyperlinks
   # # hlinkNames not used?
@@ -183,7 +179,7 @@ writeData <- function(wb,
     }
   }
 
-  if (is.vector(x) | is.factor(x) | inherits(x, "Date")) {
+  if (is.vector(x) || is.factor(x) || inherits(x, "Date")) {
     colNames <- FALSE
   } ## this will go to coerce.default and rowNames will be ignored
 
@@ -194,12 +190,12 @@ writeData <- function(wb,
   nRow <- nrow(x)
 
   ## If no rows and not writing column names return as nothing to write
-  if (nRow == 0 & !colNames) {
+  if (nRow == 0 && !colNames) {
     return(invisible(0))
   }
 
   ## If no columns and not writing row names return as nothing to write
-  if (nCol == 0 & !rowNames) {
+  if (nCol == 0 && !rowNames) {
     return(invisible(0))
   }
 
@@ -253,7 +249,17 @@ writeData <- function(wb,
   }
 
   # actual driver, the rest should not create data used for writing
-  wb <- writeData2(wb = wb, sheet = sheet, data = x, name = name, colNames = colNames, rowNames = FALSE, startRow = startRow, startCol = startCol, removeCellStyle = removeCellStyle)
+  wb <- writeData2(
+    wb = wb,
+    sheet = sheet,
+    data = x,
+    name = name,
+    colNames = colNames,
+    rowNames = FALSE,
+    startRow = startRow,
+    startCol = startCol,
+    removeCellStyle = removeCellStyle
+  )
 
   invisible(0)
 }
@@ -344,6 +350,19 @@ writeData <- function(wb,
 #' \dontrun{
 #' wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
 #' }
+#'
+#' ## 5. - Writing array formulas
+#' set.seed(123)
+#' df <- data.frame(C = rnorm(10), D = rnorm(10))
+#'
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb, "df")
+#'
+#' writeData(wb, "df", df, startCol = "C")
+#'
+#' writeFormula(wb, "df", startCol = "E", startRow = "2",
+#'              x = "SUM(C2:C11*D2:D11)",
+#'              array = TRUE)
 #'
 writeFormula <- function(wb,
   sheet,

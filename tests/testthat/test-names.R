@@ -1,0 +1,37 @@
+test_that("names", {
+
+  tmp <- temp_xlsx()
+
+  wb <- wb_workbook()
+  wb$addWorksheet("S1")$addWorksheet("S2 & S3")$addWorksheet("S3 <> S4")
+
+  exp <- c("S1", "S2 & S3", "S3 <> S4")
+  got <- names(wb)
+  expect_equal(exp, got)
+
+  wb_save(wb, tmp)
+
+  wb <- loadWorkbook(tmp)
+  got <- names(wb)
+  expect_equal(exp, got)
+
+  expect_error(names(wb) <- c("S1", "S2", "S2"), "Worksheet names must be unique.")
+
+  expect_error(
+    expect_warning(
+      names(wb) <- c("A", "B"),
+      # First hint: something is not right.
+      "longer object length is not a multiple of shorter object length"
+    ),
+    # Second hint: something is not right!
+    "names vector must have length equal to number of worksheets in Workbook"
+  )
+
+  wb <- wb_workbook()
+  # TODO this should throw a warning or an error
+  expect_silent(names(wb) <- "S1")
+
+  wb$addWorksheet("S1")
+  expect_warning(names(wb) <- paste0(letters, letters, collapse = ""), "Worksheet names must less than 32 characters. Truncating names...")
+
+})

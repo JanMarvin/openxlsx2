@@ -134,7 +134,7 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
 
   z <- NULL
 
-  if(!inherits(xml, "pugi_xml"))
+  if (!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml)
 
   if (inherits(xml, "pugi_xml")) {
@@ -170,7 +170,7 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 
   z <- NULL
 
-  if(!inherits(xml, "pugi_xml"))
+  if (!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml)
 
   if (inherits(xml, "pugi_xml")) {

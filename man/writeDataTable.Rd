@@ -16,8 +16,6 @@ writeDataTable(
   tableStyle = "TableStyleLight9",
   tableName = NULL,
   withFilter = TRUE,
-  keepNA = FALSE,
-  na.string = NULL,
   sep = ", ",
   stack = FALSE,
   firstColumn = FALSE,
@@ -50,10 +48,6 @@ A vector of the form c(startCol, startRow)}
 \item{tableName}{name of table in workbook. The table name must be unique.}
 
 \item{withFilter}{If \code{TRUE}, columns with have filters in the first row.}
-
-\item{keepNA}{If \code{TRUE}, NA values are converted to #N/A (or \code{na.string}, if not NULL) in Excel, else NA cells will be empty.}
-
-\item{na.string}{If not NULL, and if \code{keepNA} is \code{TRUE}, NA values are converted to this string in Excel.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
 

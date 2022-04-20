@@ -222,7 +222,7 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
   wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
 
-  relship <- openxlsx2:::rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
+  relship <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
   relship$typ <- basename(relship$Type)
   relship$id  <- as.integer(gsub("\\D+", "", relship$Id))
 

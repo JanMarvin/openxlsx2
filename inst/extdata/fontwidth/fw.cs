@@ -31,7 +31,7 @@ namespace openxlsx2
                 InstalledFontCollection sysFontCollection = new InstalledFontCollection();
                 FontFamily[] fontFamilies = sysFontCollection.Families;
                 
-                for(int i =0; i < fontFamilies.Length; i++)
+                for (int i =0; i < fontFamilies.Length; i++)
                 {
                 
                         Bitmap bitmap = new Bitmap(100, 100);
