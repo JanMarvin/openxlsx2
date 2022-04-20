@@ -244,7 +244,7 @@ wbWorkbook <- R6::R6Class(
 
       self$creator <-
         creator %||%
-        getOption("openxlsx.creator") %||%
+        getOption("openxlsx2.creator") %||%
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
@@ -322,10 +322,10 @@ wbWorkbook <- R6::R6Class(
       firstFooter = footer,
       visible     = c("true", "false", "hidden", "visible", "veryhidden"),
       hasDrawing  = FALSE,
-      paperSize   = getOption("openxlsx.paperSize", default = 9),
-      orientation = getOption("openxlsx.orientation", default = "portrait"),
-      hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
-      vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
+      paperSize   = getOption("openxlsx2.paperSize", default = 9),
+      orientation = getOption("openxlsx2.orientation", default = "portrait"),
+      hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+      vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
     ) {
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
@@ -1300,7 +1300,7 @@ wbWorkbook <- R6::R6Class(
         zipfile = tmpFile,
         files = list.files(tmpDir, full.names = FALSE),
         recurse = TRUE,
-        compression_level = getOption("openxlsx.compresssionevel", 6),
+        compression_level = getOption("openxlsx2.compresssionevel", 6),
         include_directories = FALSE,
         # change the working directory for this
         root = tmpDir,

@@ -20,10 +20,12 @@ wb_add_worksheet(
   firstFooter = footer,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
-  paperSize = getOption("openxlsx.paperSize", default = 9),
-  orientation = getOption("openxlsx.orientation", default = "portrait"),
-  hdpi = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
-  vdpi = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
+  paperSize = getOption("openxlsx2.paperSize", default = 9),
+  orientation = getOption("openxlsx2.orientation", default = "portrait"),
+  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default =
+    300)),
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default =
+    300))
 )
 }
 \arguments{
@@ -54,11 +56,11 @@ details.}
 
 \item{orientation}{One of "portrait" or "landscape"}
 
-\item{hdpi}{Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or
-options("openxlsx.hdpi" = X)}
+\item{hdpi}{Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
+options("openxlsx2.hdpi" = X)}
 
-\item{vdpi}{Vertical DPI. Can be set with options("openxlsx.dpi" = X) or
-options("openxlsx.vdpi" = X)}
+\item{vdpi}{Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
+options("openxlsx2.vdpi" = X)}
 }
 \value{
 The \link{wbWorkbook} object \code{wb}

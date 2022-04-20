@@ -155,10 +155,10 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' @param paperSize An integer corresponding to a paper size. See ?pageSetup for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
-#' @param hdpi Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or
-#'   options("openxlsx.hdpi" = X)
-#' @param vdpi Vertical DPI. Can be set with options("openxlsx.dpi" = X) or
-#'   options("openxlsx.vdpi" = X)
+#' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
+#'   options("openxlsx2.hdpi" = X)
+#' @param vdpi Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
+#'   options("openxlsx2.vdpi" = X)
 #' @details Headers and footers can contain special tags \itemize{
 #'   \item{**&\[Page\]**}{ Page number} \item{**&\[Pages\]**}{ Number of pages}
 #'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
@@ -232,10 +232,10 @@ wb_add_worksheet <- function(
   firstFooter = footer,
   visible     = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing  = FALSE,
-  paperSize   = getOption("openxlsx.paperSize", default = 9),
-  orientation = getOption("openxlsx.orientation", default = "portrait"),
-  hdpi        = getOption("openxlsx.hdpi", default = getOption("openxlsx.dpi", default = 300)),
-  vdpi        = getOption("openxlsx.vdpi", default = getOption("openxlsx.dpi", default = 300))
+  paperSize   = getOption("openxlsx2.paperSize", default = 9),
+  orientation = getOption("openxlsx2.orientation", default = "portrait"),
+  hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
 ) {
   assert_workbook(wb)
   wb$clone()$addWorksheet(
@@ -391,8 +391,8 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' @param hidden Logical vector. If TRUE the column is hidden.
 #' @details The global min and max column width for "auto" columns is set by (default values show):
 #' \itemize{
-#'   \item{options("openxlsx.minWidth" = 3)}
-#'   \item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width allowed in Excel
+#'   \item{options("openxlsx2.minWidth" = 3)}
+#'   \item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
 #' }
 #'
 #'   NOTE: The calculation of column widths can be slow for large worksheets.

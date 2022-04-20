@@ -50,7 +50,7 @@ openXL <- function(file = NULL) {
 
 
   if ("Linux" == userSystem) {
-    if (is.null(app <- unlist(options("openxlsx.excelApp")))) {
+    if (is.null(app <- unlist(options("openxlsx2.excelApp")))) {
       app <- chooseExcelApp()
     }
     myCommand <- paste(app, file, "&", sep = " ")

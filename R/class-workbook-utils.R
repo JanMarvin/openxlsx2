@@ -45,7 +45,7 @@ wb_validate_table_name <- function(wb, tableName) {
 
   # TODO set these to warnings? trim and peplace bad characters with
 
-  # TODO add a strict = getOption("openxlsx.tableName.strict", FALSE)
+  # TODO add a strict = getOption("openxlsx2.tableName.strict", FALSE)
   # param to force these to allow to stopping
   if (nchar(tableName) > 255) {
     stop("tableName must be less than 255 characters.", call. = FALSE)

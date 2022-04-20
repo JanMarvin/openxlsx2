@@ -26,8 +26,8 @@ Set worksheet column widths to specific width or "auto".
 \details{
 The global min and max column width for "auto" columns is set by (default values show):
 \itemize{
-\item{options("openxlsx.minWidth" = 3)}
-\item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width allowed in Excel
+\item{options("openxlsx2.minWidth" = 3)}
+\item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
 }
 
 NOTE: The calculation of column widths can be slow for large worksheets.
