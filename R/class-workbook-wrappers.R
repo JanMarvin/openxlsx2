@@ -1320,7 +1320,7 @@ wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALS
 #' @description Set worksheet gridlines to show or hide.
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param ws_grid_lines A logical. If `FALSE`, grid lines are hidden.
+#' @param show_grid_lines A logical. If `FALSE`, grid lines are hidden.
 #' @export
 #' @examples
 #' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
