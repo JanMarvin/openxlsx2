@@ -41,7 +41,7 @@ wb_save(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
-\code{\link[=removeRowHeights]{removeRowHeights()}}
+\code{\link[=wb_remove_row_heights]{wb_remove_row_heights()}}
 
 Other workbook wrappers: 
 \code{\link{freezePane}},

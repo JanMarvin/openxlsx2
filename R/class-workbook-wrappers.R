@@ -348,7 +348,7 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 #'
 #' @export
 #' @family workbook wrappers
-#' @seealso [removeRowHeights()]
+#' @seealso [wb_remove_row_heights()]
 #'
 #' @examples
 #' ## Create a new workbook
