@@ -584,10 +584,10 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 # images ------------------------------------------------------------------
 
 
-#' @name insertPlot
+#' @name wb_add_plot
 #' @title Insert the current plot into a worksheet
 #' @description The current plot is saved to a temporary image file using dev.copy.
-#' This file is then written to the workbook using insertImage.
+#' This file is then written to the workbook using wb_add_image.
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param xy Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)
@@ -598,7 +598,7 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #' @param fileType File type of image
 #' @param units Units of width and height. Can be "in", "cm" or "px"
 #' @param dpi Image resolution
-#' @seealso [insertImage()]
+#' @seealso [wb_add_image()]
 #' @export
 #' @examples
 #' \dontrun{
@@ -620,16 +620,16 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
 #' print(p1) # plot needs to be showing
-#' insertPlot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
+#' wb_add_plot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
 #'
 #' ## Insert plot 2
 #' print(p2)
-#' insertPlot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+#' wb_add_plot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
 #' ## Save workbook
-#' wb_save(wb, "insertPlotExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
-insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
+wb_add_plot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
   startRow = 1, startCol = 1, fileType = "png", units = "in", dpi = 300) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
@@ -676,7 +676,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
   ## write image
   invisible(dev.off())
 
-  insertImage(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
+  wb_add_image(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
 }
 
 
@@ -2304,7 +2304,7 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
   wb$changeLastModifiedBy(LastModifiedBy)
 }
 
-#' @name insertImage
+#' @name wb_add_image
 #' @title Insert an image into a worksheet
 #' @description Insert an image into a worksheet
 #' @param wb A workbook object
@@ -2316,7 +2316,7 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #' @param startCol Column coordinate of upper left corner of the image
 #' @param units Units of width and height. Can be "in", "cm" or "px"
 #' @param dpi Image resolution used for conversion between units.
-#' @seealso [insertPlot()]
+#' @seealso [wb_add_plot()]
 #' @export
 #' @examples
 #' ## Create a new workbook
@@ -2329,15 +2329,15 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' insertImage(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-#' insertImage(wb, 2, img, startRow = 2, startCol = 2)
-#' insertImage(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#' wb_add_image(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
+#' wb_add_image(wb, 2, img, startRow = 2, startCol = 2)
+#' wb_add_image(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 #'
 #' ## Save workbook
 #' \dontrun{
-#' wb_save(wb, "insertImageExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
 #' }
-insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
+wb_add_image <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
@@ -2371,5 +2371,5 @@ insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, st
   widthEMU <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
   heightEMU <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
 
-  wb$insertImage(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
+  wb$wb_add_image(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
 }

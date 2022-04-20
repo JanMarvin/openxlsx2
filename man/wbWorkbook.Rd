@@ -143,7 +143,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-addCellMerge}{\code{wbWorkbook$addCellMerge()}}
 \item \href{#method-removeCellMerge}{\code{wbWorkbook$removeCellMerge()}}
 \item \href{#method-freezePanes}{\code{wbWorkbook$freezePanes()}}
-\item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
+\item \href{#method-wb_add_image}{\code{wbWorkbook$wb_add_image()}}
 \item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-wb_protect}{\code{wbWorkbook$wb_protect()}}
@@ -866,12 +866,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-insertImage"></a>}}
-\if{latex}{\out{\hypertarget{method-insertImage}{}}}
-\subsection{Method \code{insertImage()}}{
+\if{html}{\out{<a id="method-wb_add_image"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_add_image}{}}}
+\subsection{Method \code{wb_add_image()}}{
 Insert an image into a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$insertImage(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_add_image(
   sheet,
   file,
   startRow,

@@ -2669,7 +2669,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rowOffset rowOffset
     #' @param colOffset colOffset
     #' @return The `wbWorkbook` object, invisibly
-    insertImage = function(
+    wb_add_image = function(
       sheet,
       file,
       startRow,
