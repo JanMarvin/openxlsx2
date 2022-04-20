@@ -757,7 +757,7 @@ test_that("Read and save file with inlineStr", {
 
   df <- data.frame(
     this = c("is an xlsx file", "written with writexl::write_xlsx"),
-    it = c("cannot be read", "with open.xlsx::read_xlsx"),
+    it = c("cannot be read", "with open.xlsx::read.xlsx"),
     stringsAsFactors = FALSE)
   rownames(df) <- c(2L, 3L)
 
