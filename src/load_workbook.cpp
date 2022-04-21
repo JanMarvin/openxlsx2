@@ -221,7 +221,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     /* ---------------------------------------------------------------------- */
 
     // buffer is string buf is SEXP
-    std::string buffer;
+    std::string buffer, attr_name, val_name, cattr_name;
 
     auto itr_cols = 0;
     for (auto col : worksheet.children("c")) {
@@ -249,14 +249,13 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       auto attr_itr = 0;
       for (auto attr : col.attributes()) {
 
-        // buffer = attr.name();
-
         buffer = attr.value();
+        attr_name = attr.name();
 
-        if (attr.name() == r_str) {
+        if (attr_name == r_str) {
           // get r attr e.g. "A1" and return colnames "A"
           // get col name
-          std::string colrow = attr.value();
+          std::string colrow = buffer;
           colrow.erase(std::remove_if(colrow.begin(),
                                       colrow.end(),
                                       &isdigit),
@@ -265,7 +264,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           has_colname = true;
 
           // get colnum
-          colrow = attr.value();
+          colrow = buffer;
           // remove numeric from string
           colrow.erase(std::remove_if(colrow.begin(),
                                       colrow.end(),
@@ -275,8 +274,8 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
         }
 
-        if (attr.name() == s_str) single_xml_col.c_s = buffer;
-        if (attr.name() == t_str) single_xml_col.c_t = buffer;
+        if (attr_name == s_str) single_xml_col.c_s = buffer;
+        if (attr_name == t_str) single_xml_col.c_t = buffer;
 
         ++attr_itr;
       }
@@ -293,15 +292,17 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         auto val_itr = 0;
         for (auto val: col.children()) {
 
+          val_name = val.name();
+
           // <is>
-          if (val.name() == is_str) {
+          if (val_name == is_str) {
             std::ostringstream oss;
             val.print(oss, " ", pugi::format_raw);
             single_xml_col.is = oss.str();
           } // </is>
 
           // <f>
-          if (val.name() == f_str)  {
+          if (val_name == f_str) {
 
             single_xml_col.f = val.child_value();
 
@@ -314,16 +315,17 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             for (auto cattr : val.attributes())
             {
               buffer = cattr.value();
-              if (cattr.name() == t_str) single_xml_col.f_t = buffer;
-              if (cattr.name() == ref_str) single_xml_col.f_ref = buffer;
-              if (cattr.name() == ca_str) single_xml_col.f_ca = buffer;
-              if (cattr.name() == si_str) single_xml_col.f_si = buffer;
+              cattr_name = cattr.name();
+              if (cattr_name == t_str) single_xml_col.f_t = buffer;
+              if (cattr_name == ref_str) single_xml_col.f_ref = buffer;
+              if (cattr_name == ca_str) single_xml_col.f_ca = buffer;
+              if (cattr_name == si_str) single_xml_col.f_si = buffer;
             }
 
           } // </f>
 
           // <v>
-          if (val.name() == v_str)  single_xml_col.v = val.child_value();
+          if (val_name == v_str)  single_xml_col.v = val.child_value();
 
           ++val_itr;
         }
