@@ -751,7 +751,7 @@ wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName =
 #' wb_get_base_font(wb)
 #'
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font( fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb_get_base_font(wb)
 wb_get_base_font <- function(wb) {

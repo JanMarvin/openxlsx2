@@ -101,5 +101,5 @@ test_that("wb_remove_creators() is a wrapper", {
 
 test_that("wb_set_base_font() is a wrapper", {
   params <- list(fontColour = "red", fontSize = 20)
-  expect_wrapper("setBaseFont", "wb_set_base_font", params = params)
+  expect_wrapper("set_base_font", "wb_set_base_font", params = params)
 })
