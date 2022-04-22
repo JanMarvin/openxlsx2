@@ -3,14 +3,14 @@
 \name{workbook_grouping}
 \alias{workbook_grouping}
 \alias{wb_group_cols}
-\alias{wb_ungroup_columns}
+\alias{wb_ungroup_cols}
 \alias{wb_group_rows}
 \alias{wb_ungroup_rows}
 \title{Group Rows and Columns}
 \usage{
 wb_group_cols(wb, sheet, cols, collapsed = FALSE, levels = NULL)
 
-wb_ungroup_columns(wb, sheet, cols)
+wb_ungroup_cols(wb, sheet, cols)
 
 wb_group_rows(wb, sheet, rows, collapsed = FALSE, levels = NULL)
 

@@ -2145,7 +2145,7 @@ wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
 
 #' @export
 #' @rdname workbook_grouping
-wb_ungroup_columns <- function(wb, sheet, cols) {
+wb_ungroup_cols <- function(wb, sheet, cols) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
