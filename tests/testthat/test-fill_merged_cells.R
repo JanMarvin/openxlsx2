@@ -16,8 +16,8 @@ test_that("fill merged cells", {
   wb_save(wb, tmp_file)
 
   # in openxlsx X3 and X4 because of name fixing
-  expect_equal(names(read.xlsx(tmp_file, fillMergedCells = FALSE)), c("A", "B", NA_character_, NA_character_))
-  expect_equal(names(read.xlsx(tmp_file, fillMergedCells = TRUE)), c("A", "B", "B", "B"))
+  expect_equal(names(read_xlsx(tmp_file, fillMergedCells = FALSE)), c("A", "B", NA_character_, NA_character_))
+  expect_equal(names(read_xlsx(tmp_file, fillMergedCells = TRUE)), c("A", "B", "B", "B"))
 
   r1 <- data.frame("A" = rep(1, 5), "B" = rep(2, 5), "NA1" = rep(3,5), "NA2" = rep(4, 5))
   rnams <- as.character(seq(2, length.out = nrow(r1)))
@@ -29,10 +29,10 @@ test_that("fill merged cells", {
   r2_1 <- r2[1:5, 1:3]
   names(r2_1) <- c("A", "B", "B")
 
-  expect_equal(read.xlsx(tmp_file, fillMergedCells = FALSE), r1, ignore_attr = TRUE)
-  expect_equal(read.xlsx(tmp_file, fillMergedCells = TRUE), r2, ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, fillMergedCells = FALSE), r1, ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, fillMergedCells = TRUE), r2, ignore_attr = TRUE)
 
-  expect_equal(read.xlsx(tmp_file, cols = 1:3, fillMergedCells = TRUE), r2_1, ignore_attr = TRUE)
-  expect_equal(read.xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], ignore_attr = TRUE)
-  expect_equal(read.xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, cols = 1:3, fillMergedCells = TRUE), r2_1, ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], ignore_attr = TRUE)
 })

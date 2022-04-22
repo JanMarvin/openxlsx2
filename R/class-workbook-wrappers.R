@@ -152,7 +152,7 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
 #' @param hasDrawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paperSize An integer corresponding to a paper size. See ?pageSetup for
+#' @param paperSize An integer corresponding to a paper size. See ?ws_page_setup for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
 #' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
@@ -525,7 +525,7 @@ setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, len
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove column widths in columns 1 to 20
 #' removeColWidths(wb, 1, cols = 1:20)
@@ -568,7 +568,7 @@ removeColWidths <- function(wb, sheet, cols) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove any custom row heights in rows 1 to 10
 #' wb$removeRowHeights(1, rows = 1:10)
@@ -584,10 +584,10 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 # images ------------------------------------------------------------------
 
 
-#' @name insertPlot
+#' @name wb_add_plot
 #' @title Insert the current plot into a worksheet
 #' @description The current plot is saved to a temporary image file using dev.copy.
-#' This file is then written to the workbook using insertImage.
+#' This file is then written to the workbook using wb_add_image.
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param xy Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)
@@ -598,7 +598,7 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #' @param fileType File type of image
 #' @param units Units of width and height. Can be "in", "cm" or "px"
 #' @param dpi Image resolution
-#' @seealso [insertImage()]
+#' @seealso [wb_add_image()]
 #' @export
 #' @examples
 #' \dontrun{
@@ -620,16 +620,16 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
 #' print(p1) # plot needs to be showing
-#' insertPlot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
+#' wb_add_plot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
 #'
 #' ## Insert plot 2
 #' print(p2)
-#' insertPlot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+#' wb_add_plot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
 #' ## Save workbook
-#' wb_save(wb, "insertPlotExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
-insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
+wb_add_plot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
   startRow = 1, startCol = 1, fileType = "png", units = "in", dpi = 300) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
@@ -676,7 +676,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
   ## write image
   invisible(dev.off())
 
-  insertImage(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
+  wb_add_image(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
 }
 
 
@@ -688,7 +688,7 @@ insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
 #' @export
 #' @examples
 #' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## Remove sheet 2
 #' wb <- wb_remove_worksheet(wb, 2)
@@ -895,7 +895,7 @@ setHeaderFooter <- function(wb, sheet,
 
 
 
-#' @name pageSetup
+#' @name ws_page_setup
 #' @title Set page margins, orientation and print scaling
 #' @description Set page margins, orientation and print scaling
 #' @param wb A workbook object
@@ -994,10 +994,10 @@ setHeaderFooter <- function(wb, sheet,
 #' writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 #'
 #' ## landscape page scaled to 50%
-#' pageSetup(wb, sheet = 1, orientation = "landscape", scale = 50)
+#' ws_page_setup(wb, sheet = 1, orientation = "landscape", scale = 50)
 #'
 #' ## portrait page scales to 300% with 0.5in left and right margins
-#' pageSetup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+#' ws_page_setup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
 #'
 #'
 #' ## print titles
@@ -1007,12 +1007,12 @@ setHeaderFooter <- function(wb, sheet,
 #' writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
 #' writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 #'
-#' pageSetup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
-#' pageSetup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+#' ws_page_setup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
+#' ws_page_setup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 #' \dontrun{
-#' wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
+ws_page_setup <- function(wb, sheet, orientation = NULL, scale = 100,
   left = 0.7, right = 0.7, top = 0.75, bottom = 0.75,
   header = 0.3, footer = 0.3,
   fitToWidth = FALSE, fitToHeight = FALSE, paperSize = NULL,
@@ -1042,7 +1042,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
     paperSizes <- 1:68
     paperSizes <- paperSizes[!paperSizes %in% 48:49]
     if (!paperSize %in% paperSizes) {
-      stop("paperSize must be an integer in range [1, 68]. See ?pageSetup details.")
+      stop("paperSize must be an integer in range [1, 68]. See ?ws_page_setup details.")
     }
     paperSize <- as.integer(paperSize)
   } else {
@@ -1059,12 +1059,12 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
   ##############################
   ## Update
   wb$worksheets[[sheet]]$pageSetup <- sprintf(
-    '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
+    '<ws_page_setup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
     paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
   )
 
   if (fitToHeight || fitToWidth) {
-    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<pageSetUpPr fitToPage="1"/>'))
+    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<ws_page_setupPr fitToPage="1"/>'))
   }
 
   wb$worksheets[[sheet]]$pageMargins <-
@@ -1158,7 +1158,7 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 
 # protect -----------------------------------------------------------------
 
-#' @name protectWorksheet
+#' @name ws_protect
 #' @title Protect a worksheet from modifications
 #' @description Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
 #' @param wb A workbook object
@@ -1186,18 +1186,18 @@ pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
 #' wb$addWorksheet("S1")
 #' writeDataTable(wb, 1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
-#' protectWorksheet(wb, "S1",
+#' ws_protect(wb, "S1",
 #'   protect = TRUE,
 #'   lockFormattingCells = FALSE, lockFormattingColumns = FALSE,
 #'   lockInsertingColumns = TRUE, lockDeletingColumns = TRUE
 #' )
 #'
 #' # Remove the protection
-#' protectWorksheet(wb, "S1", protect = FALSE)
+#' ws_protect(wb, "S1", protect = FALSE)
 #' \dontrun{
-#' wb_save(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
+ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
   lockSelectingLockedCells = NULL, lockSelectingUnlockedCells = NULL,
   lockFormattingCells = NULL, lockFormattingColumns = NULL, lockFormattingRows = NULL,
   lockInsertingColumns = NULL, lockInsertingRows = NULL, lockInsertingHyperlinks = NULL,
@@ -1270,7 +1270,7 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 }
 
 
-#' @name protectWorkbook
+#' @name wb_protect
 #' @title Protect a workbook from modifications
 #' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
 #' @param wb A workbook object
@@ -1286,17 +1286,17 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #' @examples
 #' wb <- wb_workbook()
 #' wb$addWorksheet("S1")
-#' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
+#' wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 #' \dontrun{
 #' wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
 #' }
 #' # Remove the protection
-#' protectWorkbook(wb, protect = FALSE)
+#' wb_protect(wb, protect = FALSE)
 #' \dontrun{
 #' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
 #'
-#' protectWorkbook(
+#' wb_protect(
 #'   wb,
 #'   protect = TRUE,
 #'   password = "Password",
@@ -1307,30 +1307,30 @@ protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
 #'   readOnlyRecommended = TRUE
 #' )
 #'
-protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
+wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
   assert_workbook(wb)
-  invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
+  invisible(wb$wb_protect(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
 }
 
 
 # grid lines --------------------------------------------------------------
 
-#' @name showGridLines
+#' @name ws_grid_lines
 #' @title Set worksheet gridlines to show or hide.
 #' @description Set worksheet gridlines to show or hide.
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param showGridLines A logical. If `FALSE`, grid lines are hidden.
+#' @param show_grid_lines A logical. If `FALSE`, grid lines are hidden.
 #' @export
 #' @examples
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' names(wb) ## list worksheets in workbook
-#' showGridLines(wb, 1, showGridLines = FALSE)
-#' showGridLines(wb, "testing", showGridLines = FALSE)
+#' ws_grid_lines(wb, 1, show_grid_lines = FALSE)
+#' ws_grid_lines(wb, "testing", show_grid_lines = FALSE)
 #' \dontrun{
-#' wb_save(wb, "showGridLinesExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_grid_linesExample.xlsx", overwrite = TRUE)
 #' }
-showGridLines <- function(wb, sheet, showGridLines = FALSE) {
+ws_grid_lines <- function(wb, sheet, show_grid_lines = FALSE) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
@@ -1338,16 +1338,16 @@ showGridLines <- function(wb, sheet, showGridLines = FALSE) {
 
   sheet <- wb_validate_sheet(wb, sheet)
 
-  if (!is.logical(showGridLines)) stop("showGridLines must be a logical")
+  if (!is.logical(show_grid_lines)) stop("ws_grid_lines must be a logical")
 
 
   sv <- wb$worksheets[[sheet]]$sheetViews
-  showGridLines <- as.integer(showGridLines)
+  ws_grid_lines <- as.integer(show_grid_lines)
   ## If attribute exists gsub
-  if (grepl("showGridLines", sv)) {
-    sv <- gsub('showGridLines=".?[^"]', sprintf('showGridLines="%s', showGridLines), sv, perl = TRUE)
+  if (grepl("ws_grid_lines", sv)) {
+    sv <- gsub('ws_grid_lines=".?[^"]', sprintf('ws_grid_lines="%s', show_grid_lines), sv, perl = TRUE)
   } else {
-    sv <- gsub("<sheetView ", sprintf('<sheetView showGridLines="%s" ', showGridLines), sv)
+    sv <- gsub("<sheetView ", sprintf('<sheetView ws_grid_lines="%s" ', show_grid_lines), sv)
   }
 
   wb$worksheets[[sheet]]$sheetViews <- sv
@@ -1463,10 +1463,10 @@ worksheetOrder <- function(wb) {
 #' getNamedRegions(wb)
 #'
 #' ## read named regions
-#' df <- read.xlsx(wb, namedRegion = "iris")
+#' df <- read_xlsx(wb, namedRegion = "iris")
 #' head(df)
 #'
-#' df <- read.xlsx(out_file, namedRegion = "iris2")
+#' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
 #' }
 #' @rdname NamedRegion
@@ -2304,7 +2304,7 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
   wb$changeLastModifiedBy(LastModifiedBy)
 }
 
-#' @name insertImage
+#' @name wb_add_image
 #' @title Insert an image into a worksheet
 #' @description Insert an image into a worksheet
 #' @param wb A workbook object
@@ -2316,7 +2316,7 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #' @param startCol Column coordinate of upper left corner of the image
 #' @param units Units of width and height. Can be "in", "cm" or "px"
 #' @param dpi Image resolution used for conversion between units.
-#' @seealso [insertPlot()]
+#' @seealso [wb_add_plot()]
 #' @export
 #' @examples
 #' ## Create a new workbook
@@ -2329,15 +2329,15 @@ setLastModifiedBy <- function(wb, LastModifiedBy) {
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' insertImage(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-#' insertImage(wb, 2, img, startRow = 2, startCol = 2)
-#' insertImage(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#' wb_add_image(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
+#' wb_add_image(wb, 2, img, startRow = 2, startCol = 2)
+#' wb_add_image(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 #'
 #' ## Save workbook
 #' \dontrun{
-#' wb_save(wb, "insertImageExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
 #' }
-insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
+wb_add_image <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
@@ -2371,5 +2371,5 @@ insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, st
   widthEMU <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
   heightEMU <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
 
-  wb$insertImage(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
+  wb$wb_add_image(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
 }

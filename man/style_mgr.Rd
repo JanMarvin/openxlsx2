@@ -10,7 +10,7 @@ style manager
 }
 \examples{
 xlsxFile <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-wb <- loadWorkbook(xlsxFile)
+wb <- wb_load(xlsxFile)
 
 # ## start style mgr
 # style <- style_mgr$new(wb)

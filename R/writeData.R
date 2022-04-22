@@ -18,7 +18,7 @@
 #' @param removeCellStyle keep the cell style?
 #' @seealso [writeDataTable()]
 #' @export writeData
-#' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
+#' @details Formulae written using writeFormula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
 #' @rdname writeData
@@ -73,11 +73,11 @@
 #' ###########################################################################
 #' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
-#' wb2 <- loadWorkbook(xlsxFile)
+#' wb2 <- wb_load(xlsxFile)
 #'
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)
-#' # read.xlsx(wb2)
+#' # read_xlsx(wb2)
 #' writeData(wb2, 1, mtcars, startCol = 4, startRow = 4)
 #' wb_to_df(wb2)
 #' \dontrun{

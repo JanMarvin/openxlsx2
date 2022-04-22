@@ -72,7 +72,7 @@ test_that("writeData2", {
   file <- tempfile(fileext = ".xlsx")
   wb_save(wb,file)
 
-  wb1 <- loadWorkbook(file)
+  wb1 <- wb_load(file)
 
   expect_equal(
     mtcars,

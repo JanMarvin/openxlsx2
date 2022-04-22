@@ -49,7 +49,7 @@ test_that("openxlsx2_types", {
 })
 
 
-test_that("pageSetup example", {
+test_that("ws_page_setup example", {
 
   wb <- wb_workbook()
   wb$addWorksheet("S1")
@@ -58,14 +58,14 @@ test_that("pageSetup example", {
   writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 
   ## landscape page scaled to 50%
-  pageSetup(wb, sheet = 1, orientation = "landscape", scale = 50)
-  exp <- "<pageSetup paperSize=\"9\" orientation=\"landscape\" scale = \"50\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
+  ws_page_setup(wb, sheet = 1, orientation = "landscape", scale = 50)
+  exp <- "<ws_page_setup paperSize=\"9\" orientation=\"landscape\" scale = \"50\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
   expect_equal(exp, wb$worksheets[[1]]$pageSetup)
 
 
   ## portrait page scales to 300% with 0.5in left and right margins
-  pageSetup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
-  exp <- "<pageSetup paperSize=\"9\" orientation=\"portrait\" scale = \"300\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
+  ws_page_setup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+  exp <- "<ws_page_setup paperSize=\"9\" orientation=\"portrait\" scale = \"300\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
   expect_equal(exp, wb$worksheets[[2]]$pageSetup)
 
 
@@ -76,8 +76,8 @@ test_that("pageSetup example", {
   writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
   writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 
-  pageSetup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
-  pageSetup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+  ws_page_setup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
+  ws_page_setup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 
   exp <- c(
     "<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"2\">'print_title_rows'!$1:$1</definedName>",
@@ -89,7 +89,7 @@ test_that("pageSetup example", {
   expect_silent(wb_save(wb, tmp, overwrite = TRUE))
 
   # survives write and load
-  wb <- loadWorkbook(tmp)
+  wb <- wb_load(tmp)
   expect_equal(exp, wb$workbook$definedNames)
 
 

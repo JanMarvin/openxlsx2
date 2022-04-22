@@ -26,28 +26,28 @@ test_that("Deleting worksheets", {
 
   ## re-load & re-order worksheets
 
-  wb <- loadWorkbook(tempFile)
+  wb <- wb_load(tempFile)
   expect_equal(names(wb), c("Sheet 3", "Sheet 1", "Sheet 2"))
 
   writeData(wb, sheet = "Sheet 2", x = iris[1:10, 1:4], startRow = 5)
-  test <- read.xlsx(wb, "Sheet 2", startRow = 5)
+  test <- read_xlsx(wb, "Sheet 2", startRow = 5)
   rownames(test) <- seq_len(nrow(test))
   attr(test, "tt") <- NULL
   attr(test, "types") <- NULL
   expect_equal(iris[1:10, 1:4], test)
 
   writeData(wb, sheet = 1, x = iris[1:20, 1:4], startRow = 5)
-  test <- read.xlsx(wb, "Sheet 3", startRow = 5)
+  test <- read_xlsx(wb, "Sheet 3", startRow = 5)
   rownames(test) <- seq_len(nrow(test))
   attr(test, "tt") <- NULL
   attr(test, "types") <- NULL
   expect_equal(iris[1:20, 1:4], test)
 
   wb$removeWorksheet(sheet = 1)
-  expect_equal("This is sheet: Sheet 1", read.xlsx(wb, 1, startRow = 1)[[1]])
+  expect_equal("This is sheet: Sheet 1", read_xlsx(wb, 1, startRow = 1)[[1]])
 
   wb$removeWorksheet(sheet = 2)
-  expect_equal("This is sheet: Sheet 1", read.xlsx(wb, 1, startRow = 1)[[1]])
+  expect_equal("This is sheet: Sheet 1", read_xlsx(wb, 1, startRow = 1)[[1]])
 
   wb$removeWorksheet(sheet = 1)
   expect_equal(names(wb), character(0))

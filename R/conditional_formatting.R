@@ -198,7 +198,7 @@
 #'
 #' wb$addWorksheet("colourScale", zoom = 30)
 #' ## colourscale colours cells based on cell value
-#' df <- read.xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
+#' df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
 #' writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
 #' ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
 #' ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.

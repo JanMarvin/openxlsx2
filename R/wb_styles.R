@@ -49,7 +49,7 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
 }
 
 
-# internal function used in loadWorkbook
+# internal function used in wb_load
 # @param x character string containing styles.xml
 import_styles <- function(x) {
 

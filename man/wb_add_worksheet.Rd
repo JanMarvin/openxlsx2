@@ -51,7 +51,7 @@ skip a position.}
 
 \item{hasDrawing}{If TRUE prepare a drawing output (TODO does this work?)}
 
-\item{paperSize}{An integer corresponding to a paper size. See ?pageSetup for
+\item{paperSize}{An integer corresponding to a paper size. See ?ws_page_setup for
 details.}
 
 \item{orientation}{One of "portrait" or "landscape"}

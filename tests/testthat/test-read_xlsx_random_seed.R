@@ -5,7 +5,7 @@ test_that("read_xlsx() does not change random seed", {
   expect_identical(rs, .Random.seed)
   write.xlsx(data.frame(a = 1), tf)
   expect_identical(rs, .Random.seed)
-  read.xlsx(tf)
+  read_xlsx(tf)
   expect_identical(rs, .Random.seed)
   unlink(tf)
 })

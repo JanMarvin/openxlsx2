@@ -33,10 +33,10 @@
 #' getNamedRegions(out_file) ## From xlsx file
 #'
 #' ## read named regions
-#' df <- read.xlsx(wb, namedRegion = "iris")
+#' df <- read_xlsx(wb, namedRegion = "iris")
 #' head(df)
 #'
-#' df <- read.xlsx(out_file, namedRegion = "iris2")
+#' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
 #' }
 getNamedRegions <- function(x) {
@@ -46,7 +46,7 @@ getNamedRegions <- function(x) {
 
 #' @export
 getNamedRegions.default <- function(x) {
-  wb <- loadWorkbook(x)
+  wb <- wb_load(x)
   dn <- wb$workbook$definedNames
 
   if (length(dn) == 0) {

@@ -16,7 +16,7 @@ convert back to ExcelDate
 }
 \examples{
  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
- wb1 <- loadWorkbook(xlsxFile)
+ wb1 <- wb_load(xlsxFile)
  df <- wb_to_df(wb1)
  # conversion is done on dataframes only
  convertToExcelDate(df = df["Var5"], date1904 = FALSE)

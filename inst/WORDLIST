@@ -115,7 +115,7 @@ headFoot
 headerFooter
 headerStyle
 ignoredErrors
-insertImage
+wb_add_image
 isChartSheet
 jpeg
 keepNA
@@ -123,7 +123,7 @@ legacyDrawing
 legacyDrawingHF
 lessThan
 lessThanOrEqual
-loadWorkbook
+wb_load
 localSheetId
 lockStructure
 lockWindows
@@ -145,7 +145,7 @@ oddHeader
 oleObjects
 openxlsx
 pageMargins
-pageSetup
+ws_page_setup
 paperSize
 params
 patternFill
@@ -183,7 +183,7 @@ showColNames
 showColumnStripes
 showErrorMsg
 showFirstColumn
-showGridLines
+ws_grid_lines
 showInputMsg
 showLastColumn
 showRowStripes

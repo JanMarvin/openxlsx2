@@ -24,7 +24,7 @@ checks the date origin being used in an Excel file and returns is so it can be u
 ## create a file with some dates
 \dontrun{
 write.xlsx(as.Date("2015-01-10") - (0:4), file = "getDateOriginExample.xlsx")
-m <- read.xlsx("getDateOriginExample.xlsx")
+m <- read_xlsx("getDateOriginExample.xlsx")
 
 ## convert to dates
 do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))

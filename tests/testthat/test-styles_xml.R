@@ -1,10 +1,10 @@
 test_that("xf", {
 
   xlsxFile <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
-  wb <- loadWorkbook(xlsxFile)
+  wb <- wb_load(xlsxFile)
 
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  wb1 <- loadWorkbook(xlsxFile)
+  wb1 <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
   exp <- c(

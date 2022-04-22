@@ -68,7 +68,7 @@ written down and not optimized etc. The goal was to have something working.
   ###########################################################################
   # numerics, dates, missings, bool and string
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  wb1 <- loadWorkbook(xlsxFile)
+  wb1 <- wb_load(xlsxFile)
 
   # import workbook
   wb_to_df(wb1)
@@ -112,21 +112,21 @@ written down and not optimized etc. The goal was to have something working.
   # na string
   wb_to_df(wb1, na.strings = "")
 
-  # read.xlsx(wb1)
+  # read_xlsx(wb1)
 
   ###########################################################################
   # inlinestr
   xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
-  wb2 <- loadWorkbook(xlsxFile)
+  wb2 <- wb_load(xlsxFile)
 
   # read dataset with inlinestr
   wb_to_df(wb2)
-  # read.xlsx(wb2)
+  # read_xlsx(wb2)
 
   ###########################################################################
   # definedName // namedRegion
   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
-  wb3 <- loadWorkbook(xlsxFile)
+  wb3 <- wb_load(xlsxFile)
 
   # read dataset with definedName (returns global first)
   wb_to_df(wb3, definedName = "MyRange", colNames = FALSE)

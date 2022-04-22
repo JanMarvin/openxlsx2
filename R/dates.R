@@ -88,7 +88,7 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' ## create a file with some dates
 #' \dontrun{
 #' write.xlsx(as.Date("2015-01-10") - (0:4), file = "getDateOriginExample.xlsx")
-#' m <- read.xlsx("getDateOriginExample.xlsx")
+#' m <- read_xlsx("getDateOriginExample.xlsx")
 #'
 #' ## convert to dates
 #' do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
@@ -127,7 +127,7 @@ getDateOrigin <- function(xlsxFile) {
 #' @param date1904 take different origin
 #' @examples
 #'  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-#'  wb1 <- loadWorkbook(xlsxFile)
+#'  wb1 <- wb_load(xlsxFile)
 #'  df <- wb_to_df(wb1)
 #'  # conversion is done on dataframes only
 #'  convertToExcelDate(df = df["Var5"], date1904 = FALSE)

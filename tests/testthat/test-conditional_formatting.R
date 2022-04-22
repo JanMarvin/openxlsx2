@@ -164,7 +164,7 @@ test_that("conditional formatting", {
 
   wb$addWorksheet("colourScale", zoom = 30)
   ## colourscale colours cells based on cell value
-  df <- read.xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
+  df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
   writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
@@ -247,7 +247,7 @@ test_that("conditional formatting", {
   tmp <- temp_xlsx()
   wb_save(wb, tmp)
 
-  expect_silent(wb1 <- loadWorkbook(tmp))
+  expect_silent(wb1 <- wb_load(tmp))
 
   # all.equal(wb, wb1)
   for (sheet in seq_along(wb$sheet_names))
