@@ -129,6 +129,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-get_base_font}{\code{wbWorkbook$get_base_font()}}
+\item \href{#method-set_base_font}{\code{wbWorkbook$set_base_font()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
@@ -452,6 +453,34 @@ Get the base font
 
 \subsection{Returns}{
 A list of of the font
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_base_font"></a>}}
+\if{latex}{\out{\hypertarget{method-set_base_font}{}}}
+\subsection{Method \code{set_base_font()}}{
+Get the base font
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
+  fontSize = 11,
+  fontColour = "black",
+  fontName = "Calibri"
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fontSize}}{fontSize}
+
+\item{\code{fontColour}}{fontColour}
+
+\item{\code{fontName}}{fontName}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} objet
 }
 }
 \if{html}{\out{<hr>}}

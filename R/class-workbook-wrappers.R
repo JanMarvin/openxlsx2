@@ -720,23 +720,20 @@ wb_remove_worksheet <- function(wb, sheet) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb_modify_basefont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
 #' writeData(wb, "S1", iris)
 #' writeDataTable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
 #' \dontrun{
-#' wb_save(wb, "wb_modify_basefontExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 #' }
-wb_modify_basefont <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
+wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
   assert_workbook(wb)
-
-  if (fontSize < 0) stop("Invalid fontSize")
-  fontColour <- validateColour(fontColour)
-
-  wb$styles_mgr$styles$fonts[[1]] <- sprintf('<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>', fontSize, fontColour, fontName)
+  wb$clone()$set_base_font(
+    fontSize   = fontSize,
+    fontColour = fontColour,
+    fontName   = fontName
+  )
 }
 
 
@@ -754,7 +751,7 @@ wb_modify_basefont <- function(wb, fontSize = 11, fontColour = "black", fontName
 #' wb_get_base_font(wb)
 #'
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb_modify_basefont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font( fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb_get_base_font(wb)
 wb_get_base_font <- function(wb) {

@@ -1538,6 +1538,27 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
+    #' Get the base font
+    #' @param fontSize fontSize
+    #' @param fontColour fontColour
+    #' @param fontName fontName
+    #' @return The `wbWorkbook` objet
+    set_base_font = function(fontSize = 11, fontColour = "black", fontName = "Calibri") {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (fontSize < 0) stop("Invalid fontSize")
+      fontColour <- validateColour(fontColour)
+
+      self$styles_mgr$styles$fonts[[1]] <- sprintf(
+        '<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>',
+        fontSize,
+        fontColour,
+        fontName
+      )
+    },
+
+    #' @description
     #' Sets a sheet name
     #' @param sheet Old sheet name
     #' @param name New sheet name
