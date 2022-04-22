@@ -1059,12 +1059,12 @@ ws_page_setup <- function(wb, sheet, orientation = NULL, scale = 100,
   ##############################
   ## Update
   wb$worksheets[[sheet]]$pageSetup <- sprintf(
-    '<ws_page_setup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
+    '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
     paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
   )
 
   if (fitToHeight || fitToWidth) {
-    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<ws_page_setupPr fitToPage="1"/>'))
+    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<pageSetupPr fitToPage="1"/>'))
   }
 
   wb$worksheets[[sheet]]$pageMargins <-
@@ -1338,16 +1338,16 @@ ws_grid_lines <- function(wb, sheet, show_grid_lines = FALSE) {
 
   sheet <- wb_validate_sheet(wb, sheet)
 
-  if (!is.logical(show_grid_lines)) stop("ws_grid_lines must be a logical")
+  if (!is.logical(show_grid_lines)) stop("show_grid_lines must be a logical")
 
 
   sv <- wb$worksheets[[sheet]]$sheetViews
-  ws_grid_lines <- as.integer(show_grid_lines)
+  show_grid_lines <- as.integer(show_grid_lines)
   ## If attribute exists gsub
-  if (grepl("ws_grid_lines", sv)) {
-    sv <- gsub('ws_grid_lines=".?[^"]', sprintf('ws_grid_lines="%s', show_grid_lines), sv, perl = TRUE)
+  if (grepl("showGridLines", sv)) {
+    sv <- gsub('showGridLines=".?[^"]', sprintf('showGridLines="%s', show_grid_lines), sv, perl = TRUE)
   } else {
-    sv <- gsub("<sheetView ", sprintf('<sheetView ws_grid_lines="%s" ', show_grid_lines), sv)
+    sv <- gsub("<sheetView ", sprintf('<sheetView showGridLines="%s" ', show_grid_lines), sv)
   }
 
   wb$worksheets[[sheet]]$sheetViews <- sv
