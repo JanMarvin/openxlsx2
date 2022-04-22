@@ -348,7 +348,7 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 #'
 #' @export
 #' @family workbook wrappers
-#' @seealso [removeRowHeights()]
+#' @seealso [wb_remove_row_heights()]
 #'
 #' @examples
 #' ## Create a new workbook
@@ -557,9 +557,10 @@ removeColWidths <- function(wb, sheet, cols) {
 
 
 
-#' @name removeRowHeights
-#' @title Remove custom row heights from a worksheet
-#' @description Remove row heights from a worksheet
+#' Remove custom row heights from a worksheet
+#'
+#' Remove row heights from a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to remove custom height (if any) from.
@@ -570,21 +571,13 @@ removeColWidths <- function(wb, sheet, cols) {
 #' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove any custom row heights in rows 1 to 10
-#' removeRowHeights(wb, 1, rows = 1:10)
+#' wb$removeRowHeights(1, rows = 1:10)
 #' \dontrun{
 #' wb_save(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
 #' }
-removeRowHeights <- function(wb, sheet, rows) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  customRows <- as.integer(names(wb$rowHeights[[sheet]]))
-  removeInds <- which(customRows %in% rows)
-  if (length(removeInds)) {
-    wb$rowHeights[[sheet]] <- wb$rowHeights[[sheet]][-removeInds]
-  }
+wb_remove_row_heights <- function(wb, sheet, rows) {
+  assert_workbook(wb)
+  wb$removeRowHeights(sheet = sheet, rows = rows)
 }
 
 

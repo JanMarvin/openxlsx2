@@ -131,8 +131,10 @@ is created, not when the Excel files are saved.}
 \item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
+\item \href{#method-removeRowHeights}{\code{wbWorkbook$removeRowHeights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
+\item \href{#method-removeColWidths}{\code{wbWorkbook$removeColWidths()}}
 \item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
 \item \href{#method-removeWorksheet}{\code{wbWorkbook$removeWorksheet()}}
 \item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
@@ -496,6 +498,28 @@ Sets a row height for a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-removeRowHeights"></a>}}
+\if{latex}{\out{\hypertarget{method-removeRowHeights}{}}}
+\subsection{Method \code{removeRowHeights()}}{
+Sets a row height for a sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeRowHeights(sheet, rows)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
 description
 creates column object for worksheet
 }
@@ -541,6 +565,28 @@ Group cols
 \item{\code{collapsed}}{collapsed}
 
 \item{\code{levels}}{levels}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-removeColWidths"></a>}}
+\if{latex}{\out{\hypertarget{method-removeColWidths}{}}}
+\subsection{Method \code{removeColWidths()}}{
+Remove row heights from a worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeColWidths(sheet, cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{A name or index of a worksheet}
+
+\item{\code{cols}}{Indices of columns to remove custom width (if any) from.}
 }
 \if{html}{\out{</div>}}
 }

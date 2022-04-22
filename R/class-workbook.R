@@ -1629,6 +1629,26 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description
+    #' Sets a row height for a sheet
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @return The `wbWorkbook` object, invisibly
+    removeRowHeights = function(sheet, rows) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      customRows <- as.integer(names(self$rowHeights[[sheet]]))
+      removeInds <- which(customRows %in% rows)
+
+      if (length(removeInds)) {
+        self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][-removeInds]
+      }
+
+      self
+    },
 
     #' description
     #' creates column object for worksheet
@@ -1708,6 +1728,35 @@ wbWorkbook <- R6::R6Class(
       # check if there are valid outlineLevel in col_attr and assign outlineLevelRow the max outlineLevel (thats in the documentation)
       if (any(col_attr$outlineLevel != "")) {
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel), na.rm = TRUE))))
+      }
+
+      invisible(self)
+    },
+
+    #' @description Remove row heights from a worksheet
+    #' @param sheet A name or index of a worksheet
+    #' @param cols Indices of columns to remove custom width (if any) from.
+    #' @return The `wbWorkbook` object, invisibly
+    removeColWidths = function(sheet, cols) {
+      sheet <- wb_validate_sheet(self, sheet)
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (!is.numeric(cols)) {
+        cols <- col2int(cols)
+      }
+
+      customCols <- as.integer(names(self$colWidths[[sheet]]))
+      removeInds <- which(customCols %in% cols)
+      if (length(removeInds)) {
+        remainingCols <- customCols[-removeInds]
+        if (length(remainingCols) == 0) {
+          self$colWidths[[sheet]] <- list()
+        } else {
+          rem_widths <- self$colWidths[[sheet]][-removeInds]
+          names(rem_widths) <- as.character(remainingCols)
+          self$colWidths[[sheet]] <- rem_widths
+        }
       }
 
       invisible(self)
