@@ -2,9 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{data_validation}
 \alias{data_validation}
+\alias{wb_data_validation}
 \title{Add data validation to cells}
 \usage{
-data_validation(
+wb_data_validation(
   wb,
   sheet,
   cols,
@@ -48,11 +49,11 @@ wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
 
 writeDataTable(wb, 1, x = iris[1:30, ])
-data_validation(wb, 1,
+wb_data_validation(wb, 1,
   col = 1:3, rows = 2:31, type = "whole",
   operator = "between", value = c(1, 9)
 )
-data_validation(wb, 1,
+wb_data_validation(wb, 1,
   col = 5, rows = 2:31, type = "textLength",
   operator = "between", value = c(4, 6)
 )
@@ -63,11 +64,11 @@ df <- data.frame(
   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 )
 writeDataTable(wb, 2, x = df)
-data_validation(wb, 2,
+wb_data_validation(wb, 2,
   col = 1, rows = 2:12, type = "date",
   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 )
-data_validation(wb, 2,
+wb_data_validation(wb, 2,
   col = 2, rows = 2:12, type = "time",
   operator = "between", value = df$t[c(4, 8)]
 )
@@ -88,7 +89,7 @@ wb$add_worksheet("Sheet 2")
 writeDataTable(wb, sheet = 1, x = iris[1:30, ])
 writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
 
-data_validation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+wb_data_validation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 
 \dontrun{
 wb_save(wb, "data_validationExample2.xlsx", overwrite = TRUE)
