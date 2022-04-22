@@ -3,18 +3,18 @@
 \name{workbook_grouping}
 \alias{workbook_grouping}
 \alias{wb_group_cols}
-\alias{ungroupColumns}
+\alias{wb_ungroup_columns}
 \alias{wb_group_rows}
-\alias{ungroupRows}
+\alias{wb_ungroup_rows}
 \title{Group Rows and Columns}
 \usage{
 wb_group_cols(wb, sheet, cols, collapsed = FALSE, levels = NULL)
 
-ungroupColumns(wb, sheet, cols)
+wb_ungroup_columns(wb, sheet, cols)
 
 wb_group_rows(wb, sheet, rows, collapsed = FALSE, levels = NULL)
 
-ungroupRows(wb, sheet, rows)
+wb_ungroup_rows(wb, sheet, rows)
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}
@@ -40,7 +40,7 @@ t2 <- do.call(cbind, split(t1, cycle(t1)))
 dimnames(t2) <- dimnames(.preformat.ts(t1))
 
 wb <- wb_workbook()
-wb$addWorksheet("AirPass")
+wb$add_worksheet("AirPass")
 writeData(wb, "AirPass", t2, rowNames = TRUE)
 
 # groups will always end on/show the last row. in the example 1950, 1955, and 1960
@@ -59,13 +59,13 @@ wb <- wb_group_cols(wb, "AirPass", 11:13)
 \seealso{
 Other workbook wrappers: 
 \code{\link{freezePane}},
-\code{\link{setColWidths}()},
-\code{\link{setLastModifiedBy}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
+\code{\link{wb_set_col_widths}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
 \code{\link{ws_cell_merge}}

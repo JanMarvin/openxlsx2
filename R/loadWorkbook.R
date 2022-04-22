@@ -15,7 +15,7 @@
 #' names(wb) # list worksheets
 #' wb ## view object
 #' ## Add a worksheet
-#' wb$addWorksheet("A new worksheet")
+#' wb$add_worksheet("A new worksheet")
 #'
 #' ## Save workbook
 #' \dontrun{
@@ -209,7 +209,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$addWorksheet(sheets$name[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
+        wb$add_worksheet(sheets$name[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
     }
 

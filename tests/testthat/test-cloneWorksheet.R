@@ -2,11 +2,11 @@
 
 test_that("clone Worksheet with data", {
   wb <- wb_workbook()
-  wb$addWorksheet("Sheet 1")
+  wb$add_worksheet("Sheet 1")
   writeData(wb, "Sheet 1", 1)
-  wb$cloneWorksheet("Sheet 1", "Sheet 2")
+  wb$clone_worksheet("Sheet 1", "Sheet 2")
 
-  file_name <- system.file("extdata", "cloneWorksheetExample.xlsx", package = "openxlsx2")
+  file_name <- system.file("extdata", "clone_worksheetExample.xlsx", package = "openxlsx2")
   refwb <- wb_load(file = file_name)
 
   expect_equal(names(wb), names(refwb))
@@ -15,8 +15,8 @@ test_that("clone Worksheet with data", {
 
 test_that("clone empty Worksheet", {
   wb <- wb_workbook()
-  wb$addWorksheet("Sheet 1")
-  wb$cloneWorksheet("Sheet 1", "Sheet 2")
+  wb$add_worksheet("Sheet 1")
+  wb$clone_worksheet("Sheet 1", "Sheet 2")
 
   file_name <- system.file("extdata", "cloneEmptyWorksheetExample.xlsx", package = "openxlsx2")
   refwb <- wb_load(file = file_name)

@@ -135,8 +135,8 @@ paperSize is an integer corresponding to:
 }
 \examples{
 wb <- wb_workbook()
-wb$addWorksheet("S1")
-wb$addWorksheet("S2")
+wb$add_worksheet("S1")
+wb$add_worksheet("S2")
 writeDataTable(wb, 1, x = iris[1:30, ])
 writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 
@@ -148,8 +148,8 @@ ws_page_setup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, 
 
 
 ## print titles
-wb$addWorksheet("print_title_rows")
-wb$addWorksheet("print_title_cols")
+wb$add_worksheet("print_title_rows")
+wb$add_worksheet("print_title_cols")
 
 writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
 writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)

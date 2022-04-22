@@ -48,7 +48,7 @@ This file is then written to the workbook using wb_add_image.
 wb <- wb_workbook()
 
 ## Add a worksheet
-wb$addWorksheet("Sheet 1", gridLines = FALSE)
+wb$add_worksheet("Sheet 1", gridLines = FALSE)
 
 ## create plot objects
 require(ggplot2)

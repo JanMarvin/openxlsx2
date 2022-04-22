@@ -17,12 +17,12 @@ test_that("Tables loaded correctly", {
 
 
   ## now remove a table
-  expect_equal(unname(getTables(wb, 1)), "Table2", ignore_attr = TRUE)
-  expect_equal(unname(getTables(wb, 3)), "Table3", ignore_attr = TRUE)
+  expect_equal(unname(wb_get_tables(wb, 1)), "Table2", ignore_attr = TRUE)
+  expect_equal(unname(wb_get_tables(wb, 3)), "Table3", ignore_attr = TRUE)
 
-  removeTable(wb, sheet = 1, table = "Table2")
+  wb_remove_tables(wb, sheet = 1, table = "Table2")
 
-  expect_equal(getTables(wb, sheet = 1), character(), ignore_attr = TRUE)
+  expect_equal(wb_get_tables(wb, sheet = 1), character(), ignore_attr = TRUE)
   expect_equal(length(wb$worksheets[[1]]$tableParts), 0)
   expect_equal(wb$worksheets[[1]]$tableParts, character(), ignore_attr = TRUE)
 
@@ -31,5 +31,5 @@ test_that("Tables loaded correctly", {
   expect_equal(names(attr(wb$worksheets[[3]]$tableParts, "tableName")), "A1:K30")
 
 
-  expect_error(removeTable(wb, sheet = 1, table = "Table2"), regexp = "table 'Table2' does not exist")
+  expect_error(wb_remove_tables(wb, sheet = 1, table = "Table2"), regexp = "table 'Table2' does not exist")
 })

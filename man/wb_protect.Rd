@@ -40,7 +40,7 @@ Protect or unprotect a workbook from modifications by the user in the graphical 
 }
 \examples{
 wb <- wb_workbook()
-wb$addWorksheet("S1")
+wb$add_worksheet("S1")
 wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 \dontrun{
 wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)

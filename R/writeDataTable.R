@@ -35,8 +35,8 @@
 #' contains this string, the output will be broken.
 #' @seealso [wb_add_worksheet()]
 #' @seealso [writeData()]
-#' @seealso [removeTable()]
-#' @seealso [getTables()]
+#' @seealso [wb_remove_tables()]
+#' @seealso [wb_get_tables()]
 #' @export
 #' @examples
 #' ## see package vignettes for further examples.
@@ -44,9 +44,9 @@
 #' #####################################################################################
 #' ## Create Workbook object and add worksheets
 #' wb <- wb_workbook()
-#' wb$addWorksheet("S1")
-#' wb$addWorksheet("S2")
-#' wb$addWorksheet("S3")
+#' wb$add_worksheet("S1")
+#' wb$add_worksheet("S2")
+#' wb$add_worksheet("S3")
 #'
 #'
 #' #####################################################################################
@@ -104,7 +104,7 @@
 #' ## Pre-defined table styles gallery
 #'
 #' wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
-#' wb$addWorksheet("Style Samples")
+#' wb$add_worksheet("Style Samples")
 #' for (i in 1:21) {
 #'   style <- paste0("TableStyleLight", i)
 #'   writeDataTable(wb,

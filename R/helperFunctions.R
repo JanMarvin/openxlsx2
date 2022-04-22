@@ -12,9 +12,9 @@
 #'
 #' ## Writing internal hyperlinks
 #' wb <- wb_workbook()
-#' wb$addWorksheet("Sheet1")
-#' wb$addWorksheet("Sheet2")
-#' wb$addWorksheet("Sheet 3")
+#' wb$add_worksheet("Sheet1")
+#' wb$add_worksheet("Sheet2")
+#' wb$add_worksheet("Sheet 3")
 #' writeData(wb, sheet = 3, x = iris)
 #'
 #' ## External Hyperlink

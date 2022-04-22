@@ -1,7 +1,7 @@
 test_that("conditional formatting", {
 
   wb <- wb_workbook()
-  wb$addWorksheet("cellIs")
+  wb$add_worksheet("cellIs")
 
   negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
   posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
@@ -38,7 +38,7 @@ test_that("conditional formatting", {
   expect_equal(exp, wb$worksheets[[1]]$conditionalFormatting)
 
 
-  wb$addWorksheet("Moving Row")
+  wb$add_worksheet("Moving Row")
   ## highlight row dependent on first cell in row
   writeData(wb, "Moving Row", -5:5)
   writeData(wb, "Moving Row", LETTERS[1:11], startCol = 2)
@@ -57,7 +57,7 @@ test_that("conditional formatting", {
   )
   expect_equal(exp, wb$worksheets[[2]]$conditionalFormatting)
 
-  wb$addWorksheet("Moving Col")
+  wb$add_worksheet("Moving Col")
   ## highlight column dependent on first cell in column
   writeData(wb, "Moving Col", -5:5)
   writeData(wb, "Moving Col", LETTERS[1:11], startCol = 2)
@@ -77,7 +77,7 @@ test_that("conditional formatting", {
   expect_equal(exp, wb$worksheets[[3]]$conditionalFormatting)
 
 
-  wb$addWorksheet("Dependent on")
+  wb$add_worksheet("Dependent on")
   ## highlight entire range cols X rows dependent only on cell A1
   writeData(wb, "Dependent on", -5:5)
   writeData(wb, "Dependent on", LETTERS[1:11], startCol = 2)
@@ -116,7 +116,7 @@ test_that("conditional formatting", {
   )
   expect_equal(exp, wb$worksheets[[4]]$conditionalFormatting)
 
-  wb$addWorksheet("Duplicates")
+  wb$add_worksheet("Duplicates")
   ## highlight duplicates using default style
   writeData(wb, "Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
   conditionalFormatting(wb, "Duplicates", cols = 1, rows = 1:10, type = "duplicates")
@@ -124,7 +124,7 @@ test_that("conditional formatting", {
   exp <- c(`A1:A10` = "<cfRule type=\"duplicateValues\" dxfId=\"0\" priority=\"1\"/>")
   expect_equal(exp, wb$worksheets[[5]]$conditionalFormatting)
 
-  wb$addWorksheet("containsText")
+  wb$add_worksheet("containsText")
   ## cells containing text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
   writeData(wb, "containsText", sapply(1:10, fn))
@@ -134,7 +134,7 @@ test_that("conditional formatting", {
   exp <- c(`A1:A10` = "<cfRule type=\"containsText\" dxfId=\"0\" priority=\"1\" operator=\"containsText\" text=\"A\">\n                        \t<formula>NOT(ISERROR(SEARCH(\"A\", A1)))</formula>\n                       </cfRule>")
   expect_equal(exp, wb$worksheets[[6]]$conditionalFormatting)
 
-  wb$addWorksheet("notcontainsText")
+  wb$add_worksheet("notcontainsText")
   ## cells not containing text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
   writeData(wb, "containsText", sapply(1:10, fn))
@@ -144,7 +144,7 @@ test_that("conditional formatting", {
   exp <- c(`A1:A10` = "<cfRule type=\"notContainsText\" dxfId=\"0\" priority=\"1\" operator=\"notContains\" text=\"A\">\n                        \t<formula>ISERROR(SEARCH(\"A\", A1))</formula>\n                       </cfRule>")
   expect_equal(exp, wb$worksheets[[7]]$conditionalFormatting)
 
-  wb$addWorksheet("beginsWith")
+  wb$add_worksheet("beginsWith")
   ## cells begins with text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
   writeData(wb, "beginsWith", sapply(1:100, fn))
@@ -153,7 +153,7 @@ test_that("conditional formatting", {
   exp <- c(`A1:A100` = "<cfRule type=\"beginsWith\" dxfId=\"0\" priority=\"1\" operator=\"beginsWith\" text=\"A\">\n                        \t<formula>LEFT(A1,LEN(\"A\"))=\"A\"</formula>\n                       </cfRule>")
   expect_equal(exp, wb$worksheets[[8]]$conditionalFormatting)
 
-  wb$addWorksheet("endsWith")
+  wb$add_worksheet("endsWith")
   ## cells ends with text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
   writeData(wb, "endsWith", sapply(1:100, fn))
@@ -162,7 +162,7 @@ test_that("conditional formatting", {
   exp <- c(`A1:A100` = "<cfRule type=\"endsWith\" dxfId=\"0\" priority=\"1\" operator=\"endsWith\" text=\"A\">\n                        \t<formula>RIGHT(A1,LEN(\"A\"))=\"A\"</formula>\n                       </cfRule>")
   expect_equal(exp, wb$worksheets[[9]]$conditionalFormatting)
 
-  wb$addWorksheet("colourScale", zoom = 30)
+  wb$add_worksheet("colourScale", zoom = 30)
   ## colourscale colours cells based on cell value
   df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
   writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
@@ -174,13 +174,13 @@ test_that("conditional formatting", {
                         rule = c(0, 255),
                         type = "colourScale"
   )
-  setColWidths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
+  wb_set_col_widths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
   wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
   exp <- c(`A1:D4` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale>\n                            <cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"255\"/>\n                            <color rgb=\"FF000000\"/><color rgb=\"FFFFFFFF\"/>\n                           </colorScale></cfRule>")
   expect_equal(exp, wb$worksheets[[10]]$conditionalFormatting)
 
-  wb$addWorksheet("databar")
+  wb$add_worksheet("databar")
   ## Databars
   writeData(wb, "databar", -5:5)
   conditionalFormatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Default colours
@@ -188,7 +188,7 @@ test_that("conditional formatting", {
   exp <- c(`A1:A11` = "<cfRule type=\"dataBar\" priority=\"1\"><dataBar showValue=\"1\">\n                          <cfvo type=\"min\"/><cfvo type=\"max\"/>\n                          <color rgb=\"FF638EC6\"/>\n                          </dataBar>\n                          <extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext>\n                        </extLst></cfRule>")
   expect_equal(exp, wb$worksheets[[11]]$conditionalFormatting)
 
-  wb$addWorksheet("between")
+  wb$add_worksheet("between")
   ## Between
   # Highlight cells in interval [-2, 2]
   writeData(wb, "between", -5:5)
@@ -197,7 +197,7 @@ test_that("conditional formatting", {
   exp <- c(`A1:A11` = "<cfRule type=\"cellIs\" dxfId=\"0\" priority=\"1\" operator=\"between\"><formula>-2</formula><formula>2</formula></cfRule>")
   expect_equal(exp, wb$worksheets[[12]]$conditionalFormatting)
 
-  wb$addWorksheet("topN")
+  wb$add_worksheet("topN")
   ## Top N
   writeData(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
   # Highlight top 5 values in column x
@@ -214,7 +214,7 @@ test_that("conditional formatting", {
   expect_equal(exp, wb$worksheets[[13]]$conditionalFormatting)
 
 
-  wb$addWorksheet("bottomN")
+  wb$add_worksheet("bottomN")
   ## Bottom N
   writeData(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
   # Highlight bottom 5 values in column x
@@ -231,7 +231,7 @@ test_that("conditional formatting", {
   expect_equal(exp, wb$worksheets[[14]]$conditionalFormatting)
 
 
-  wb$addWorksheet("logical operators")
+  wb$add_worksheet("logical operators")
   ## Logical Operators
   # You can use Excels logical Operators
   writeData(wb, "logical operators", 1:10)

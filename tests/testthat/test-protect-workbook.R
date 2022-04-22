@@ -1,6 +1,6 @@
 test_that("Protect Workbook", {
   wb <- wb_workbook()
-  wb$addWorksheet("s1")
+  wb$add_worksheet("s1")
 
   wb$wb_protect(password = "abcdefghij")
 
@@ -14,7 +14,7 @@ test_that("Reading protected Workbook", {
   temp_file <- temp_xlsx()
 
   wb <- wb_workbook()
-  wb$addWorksheet("s1")
+  wb$add_worksheet("s1")
   wb_protect(wb, password = "abcdefghij")
   wb_save(wb, temp_file)
 

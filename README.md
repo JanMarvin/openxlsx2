@@ -32,7 +32,7 @@ wb_save(wb, "new_wb.xlsx")
 ## or create one yourself
 wb <- wb_workbook()
 # add a worksheet
-wb$addWorksheet("sheet")
+wb$add_worksheet("sheet")
 # add some data
 writeData(df, "sheet")
 # open it in your default spreadsheet software

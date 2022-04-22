@@ -20,7 +20,7 @@ helper set_cell_style
 }
 \examples{
 wb <- wb_workbook()
-wb$addWorksheet("test")
+wb$add_worksheet("test")
 
 mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
 writeData(wb, "test", mat, colNames = FALSE)

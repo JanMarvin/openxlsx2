@@ -43,8 +43,8 @@ test_that("writeFormula", {
 test_that("silent with numfmt option", {
 
   wb <- wb_workbook()
-  wb$addWorksheet("S1")
-  wb$addWorksheet("S2")
+  wb$add_worksheet("S1")
+  wb$add_worksheet("S2")
 
   writeDataTable(wb, "S1", x = iris)
   writeDataTable(wb, "S2",

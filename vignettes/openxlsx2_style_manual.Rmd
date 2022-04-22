@@ -99,8 +99,8 @@ wb$worksheets[[1]]$sheetPr <- xml_node_create(
 ```{r}
 ## Create Workbook object and add worksheets
 wb <- wb_workbook()
-wb$addWorksheet("S1")
-wb$addWorksheet("S2")
+wb$add_worksheet("S1")
+wb$add_worksheet("S2")
 
 df <- data.frame(
   "Date" = Sys.Date() - 0:19,
@@ -205,7 +205,7 @@ set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
 ```
 
 
-## setColWidths
+## wb_set_col_widths
 ```{r}
 sheet <- "mtcars"
 wb <- wb_workbook()
@@ -213,5 +213,5 @@ wb <- wb_add_worksheet(wb, sheet)
 writeData(wb, sheet, mtcars, rowNames = TRUE)
 
 cols <- 1:12
-setColWidths(wb, sheet, cols = cols, widths = "auto")
+wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")
 ```

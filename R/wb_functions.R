@@ -812,16 +812,16 @@ nmfmt_df <- function(x) {
 #' # create a workbook and add some sheets
 #' wb <- wb_workbook()
 #'
-#' wb$addWorksheet("sheet1")
+#' wb$add_worksheet("sheet1")
 #' writeData2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
 #'
-#' wb$addWorksheet("sheet2")
+#' wb$add_worksheet("sheet2")
 #' writeData2(wb, "sheet2", cars, colNames = FALSE)
 #'
-#' wb$addWorksheet("sheet3")
+#' wb$add_worksheet("sheet3")
 #' writeData2(wb, "sheet3", letters)
 #'
-#' wb$addWorksheet("sheet4")
+#' wb$add_worksheet("sheet4")
 #' writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 #'
 #' \dontrun{

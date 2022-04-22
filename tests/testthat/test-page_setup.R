@@ -1,8 +1,8 @@
 
 test_that("Page setup", {
   wb <- wb_workbook()
-  wb$addWorksheet("s1")
-  wb$addWorksheet("s2")
+  wb$add_worksheet("s1")
+  wb$add_worksheet("s2")
 
   ws_page_setup(wb,
     sheet = "s1", orientation = "landscape", scale = 100, left = 0.1,
