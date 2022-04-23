@@ -27,7 +27,7 @@ wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openx
 names(wb) # list worksheets
 wb ## view object
 ## Add a worksheet
-wb$addWorksheet("A new worksheet")
+wb$add_worksheet("A new worksheet")
 
 ## Save workbook
 \dontrun{

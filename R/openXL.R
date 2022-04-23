@@ -27,7 +27,7 @@
 #' # (not yet saved) Workbook example
 #' wb <- wb_workbook()
 #' x <- mtcars[1:6, ]
-#' wb$addWorksheet("Cars")
+#' wb$add_worksheet("Cars")
 #' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #' # openXL(wb)
 openXL <- function(file = NULL) {

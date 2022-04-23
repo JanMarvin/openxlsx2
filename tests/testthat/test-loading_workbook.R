@@ -848,7 +848,7 @@ test_that("sheet visibility", {
   # after load
   wb <- wb_load(fl)
   wb_sheets <- names(wb)
-  wb_vis <- sheetVisibility(wb)
+  wb_vis <- wb_sheet_visibility(wb)
 
   # save
   wb_save(wb, tmp_dir)
@@ -856,7 +856,7 @@ test_that("sheet visibility", {
   # re-import
   wb2 <- wb_load(tmp_dir)
   wb2_sheets <- names(wb)
-  wb2_vis <- sheetVisibility(wb)
+  wb2_vis <- wb_sheet_visibility(wb)
 
   expect_equal(exp_sheets, wb_sheets)
   expect_equal(exp_vis, wb_vis)
@@ -871,7 +871,7 @@ test_that("additional wb tests", {
 
   # no data on sheet
   wb <- wb_workbook()
-  wb$addWorksheet("Sheet 1")
+  wb$add_worksheet("Sheet 1")
 
   expect_equal(NULL, wb_to_df(wb, sheet = "Sheet 1"))
 
@@ -914,7 +914,7 @@ test_that("test headerFooter", {
 
   # Add Sheet 1
   wb <- wb_workbook()
-  wb$addWorksheet(
+  wb$add_worksheet(
     'Sheet 1',
     header = header,
     footer = footer,
@@ -933,7 +933,7 @@ test_that("test headerFooter", {
   firstFooter <- paste0('&"Arial"&8', firstFooter)
 
   # Add Sheet 2
-  wb$addWorksheet(
+  wb$add_worksheet(
     'Sheet 2',
     header = header,
     footer = footer,

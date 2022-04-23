@@ -114,7 +114,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   #---wb_workbook---#
   ## creator
 
-  #---addWorksheet---#
+  #---add_worksheet---#
   ## sheetName
   ## gridLines
   ## tabColour = NULL
@@ -370,7 +370,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   }
 
   for (i in seq_len(nSheets)) {
-    wb$addWorksheet(nms[[i]], gridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
+    wb$add_worksheet(nms[[i]], gridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
 
     if (asTable[i]) {
       writeDataTable(
@@ -403,9 +403,9 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     if (!is.null(colWidths)) {
       cols <- seq_len(NCOL(x[[i]])) + startCol[[i]] - 1L
       if (identical(colWidths[[i]], "auto")) {
-        setColWidths(wb, sheet = i, cols = cols, widths = "auto")
+        wb_set_col_widths(wb, sheet = i, cols = cols, widths = "auto")
       } else if (!identical(colWidths[[i]], "")) {
-        setColWidths(wb, sheet = i, cols = cols, widths = colWidths[[i]])
+        wb_set_col_widths(wb, sheet = i, cols = cols, widths = colWidths[[i]])
       }
     }
   }
@@ -416,11 +416,11 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   ## firstRow = FALSE
   ## firstCol = FALSE
 
-  freezePanes <- FALSE
+  freeze_pane <- FALSE
   firstActiveRow <- rep_len(1L, length.out = nSheets)
   if ("firstActiveRow" %in% names(params)) {
     firstActiveRow <- params$firstActiveRow
-    freezePanes <- TRUE
+    freeze_pane <- TRUE
     if (length(firstActiveRow) != nSheets) {
       firstActiveRow <- rep_len(firstActiveRow, length.out = nSheets)
     }
@@ -429,7 +429,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   firstActiveCol <- rep_len(1L, length.out = nSheets)
   if ("firstActiveCol" %in% names(params)) {
     firstActiveCol <- params$firstActiveCol
-    freezePanes <- TRUE
+    freeze_pane <- TRUE
     if (length(firstActiveCol) != nSheets) {
       firstActiveCol <- rep_len(firstActiveCol, length.out = nSheets)
     }
@@ -438,7 +438,7 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   firstRow <- rep_len(FALSE, length.out = nSheets)
   if ("firstRow" %in% names(params)) {
     firstRow <- params$firstRow
-    freezePanes <- TRUE
+    freeze_pane <- TRUE
     if (inherits(x, "list") && (length(firstRow) != nSheets)) {
       firstRow <- rep_len(firstRow, length.out = nSheets)
     }
@@ -447,13 +447,13 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
   firstCol <- rep_len(FALSE, length.out = nSheets)
   if ("firstCol" %in% names(params)) {
     firstCol <- params$firstCol
-    freezePanes <- TRUE
+    freeze_pane <- TRUE
     if (inherits(x, "list") && (length(firstCol) != nSheets)) {
       firstCol <- rep_len(firstCol, length.out = nSheets)
     }
   }
 
-  if (freezePanes) {
+  if (freeze_pane) {
     for (i in seq_len(nSheets)) {
       wb <- wb_freeze_pane(
         wb = wb,

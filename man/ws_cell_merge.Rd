@@ -31,8 +31,8 @@ rows are used.
 wb <- wb_workbook()
 
 # Add a worksheets
-wb$addWorksheet("Sheet 1")
-wb$addWorksheet("Sheet 2")
+wb$add_worksheet("Sheet 1")
+wb$add_worksheet("Sheet 2")
 
 # Merge cells: Row 2 column C to F (3:6)
 wb <- wb_merge_cells(wb, "Sheet 1", cols = 2, rows = 3:6)
@@ -59,13 +59,13 @@ wb_save(wb, temp_xlsx(), overwrite = TRUE)
 \seealso{
 Other workbook wrappers: 
 \code{\link{freezePane}},
-\code{\link{setColWidths}()},
-\code{\link{setLastModifiedBy}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
+\code{\link{wb_set_col_widths}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
 \code{\link{workbook_grouping}}

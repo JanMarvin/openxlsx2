@@ -122,35 +122,35 @@ is created, not when the Excel files are saved.}
 \item \href{#method-new}{\code{wbWorkbook$new()}}
 \item \href{#method-append}{\code{wbWorkbook$append()}}
 \item \href{#method-append_sheets}{\code{wbWorkbook$append_sheets()}}
-\item \href{#method-addWorksheet}{\code{wbWorkbook$addWorksheet()}}
-\item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
+\item \href{#method-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
+\item \href{#method-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
 \item \href{#method-save}{\code{wbWorkbook$save()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
-\item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
+\item \href{#method-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
-\item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
-\item \href{#method-removeRowHeights}{\code{wbWorkbook$removeRowHeights()}}
+\item \href{#method-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
+\item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
-\item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
-\item \href{#method-removeColWidths}{\code{wbWorkbook$removeColWidths()}}
-\item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
-\item \href{#method-removeWorksheet}{\code{wbWorkbook$removeWorksheet()}}
-\item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
-\item \href{#method-dataValidation_list}{\code{wbWorkbook$dataValidation_list()}}
+\item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
+\item \href{#method-wb_remove_col_widths}{\code{wbWorkbook$wb_remove_col_widths()}}
+\item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
+\item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
+\item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
+\item \href{#method-data_validation_list}{\code{wbWorkbook$data_validation_list()}}
 \item \href{#method-conditionalFormatting}{\code{wbWorkbook$conditionalFormatting()}}
-\item \href{#method-addCellMerge}{\code{wbWorkbook$addCellMerge()}}
-\item \href{#method-removeCellMerge}{\code{wbWorkbook$removeCellMerge()}}
-\item \href{#method-freezePanes}{\code{wbWorkbook$freezePanes()}}
-\item \href{#method-wb_add_image}{\code{wbWorkbook$wb_add_image()}}
-\item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
+\item \href{#method-merge_cells}{\code{wbWorkbook$merge_cells()}}
+\item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
+\item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
+\item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
+\item \href{#method-wb_create_named_region}{\code{wbWorkbook$wb_create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-wb_protect}{\code{wbWorkbook$wb_protect()}}
-\item \href{#method-setCreators}{\code{wbWorkbook$setCreators()}}
-\item \href{#method-addCreators}{\code{wbWorkbook$addCreators()}}
-\item \href{#method-removeCreators}{\code{wbWorkbook$removeCreators()}}
-\item \href{#method-changeLastModifiedBy}{\code{wbWorkbook$changeLastModifiedBy()}}
+\item \href{#method-set_creators}{\code{wbWorkbook$set_creators()}}
+\item \href{#method-add_creators}{\code{wbWorkbook$add_creators()}}
+\item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
+\item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -227,12 +227,12 @@ Append to \code{self$workbook$sheets} This method is intended for internal use
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-addWorksheet}{}}}
-\subsection{Method \code{addWorksheet()}}{
+\if{html}{\out{<a id="method-add_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-add_worksheet}{}}}
+\subsection{Method \code{add_worksheet()}}{
 Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addWorksheet(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
   sheet,
   gridLines = TRUE,
   tabColour = NULL,
@@ -302,12 +302,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-cloneWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-cloneWorksheet}{}}}
-\subsection{Method \code{cloneWorksheet()}}{
+\if{html}{\out{<a id="method-clone_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-clone_worksheet}{}}}
+\subsection{Method \code{clone_worksheet()}}{
 Clone a workbooksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$cloneWorksheet(old, new)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_worksheet(old, new)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -442,12 +442,12 @@ The font node as xml?
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getBaseFont"></a>}}
-\if{latex}{\out{\hypertarget{method-getBaseFont}{}}}
-\subsection{Method \code{getBaseFont()}}{
+\if{html}{\out{<a id="method-get_base_font"></a>}}
+\if{latex}{\out{\hypertarget{method-get_base_font}{}}}
+\subsection{Method \code{get_base_font()}}{
 Get the base font
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getBaseFont()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_font()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
@@ -477,12 +477,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setRowHeights"></a>}}
-\if{latex}{\out{\hypertarget{method-setRowHeights}{}}}
-\subsection{Method \code{setRowHeights()}}{
+\if{html}{\out{<a id="method-set_row_heights"></a>}}
+\if{latex}{\out{\hypertarget{method-set_row_heights}{}}}
+\subsection{Method \code{set_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setRowHeights(sheet, rows, heights)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(sheet, rows, heights)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -501,12 +501,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeRowHeights"></a>}}
-\if{latex}{\out{\hypertarget{method-removeRowHeights}{}}}
-\subsection{Method \code{removeRowHeights()}}{
+\if{html}{\out{<a id="method-remove_row_heights"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_row_heights}{}}}
+\subsection{Method \code{remove_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeRowHeights(sheet, rows)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_row_heights(sheet, rows)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -547,12 +547,12 @@ creates column object for worksheet
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-groupCols"></a>}}
-\if{latex}{\out{\hypertarget{method-groupCols}{}}}
-\subsection{Method \code{groupCols()}}{
+\if{html}{\out{<a id="method-group_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-group_cols}{}}}
+\subsection{Method \code{group_cols()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupCols(sheet, cols, collapsed, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(sheet, cols, collapsed, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -573,12 +573,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeColWidths"></a>}}
-\if{latex}{\out{\hypertarget{method-removeColWidths}{}}}
-\subsection{Method \code{removeColWidths()}}{
+\if{html}{\out{<a id="method-wb_remove_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_remove_col_widths}{}}}
+\subsection{Method \code{wb_remove_col_widths()}}{
 Remove row heights from a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeColWidths(sheet, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -595,12 +595,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-groupRows"></a>}}
-\if{latex}{\out{\hypertarget{method-groupRows}{}}}
-\subsection{Method \code{groupRows()}}{
+\if{html}{\out{<a id="method-wb_group_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_group_rows}{}}}
+\subsection{Method \code{wb_group_rows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_group_rows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -621,12 +621,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-removeWorksheet}{}}}
-\subsection{Method \code{removeWorksheet()}}{
+\if{html}{\out{<a id="method-remove_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_worksheet}{}}}
+\subsection{Method \code{remove_worksheet()}}{
 Remove a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeWorksheet(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_worksheet(sheet)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -641,12 +641,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-dataValidation"></a>}}
-\if{latex}{\out{\hypertarget{method-dataValidation}{}}}
-\subsection{Method \code{dataValidation()}}{
+\if{html}{\out{<a id="method-data_validation"></a>}}
+\if{latex}{\out{\hypertarget{method-data_validation}{}}}
+\subsection{Method \code{data_validation()}}{
 Set data validations for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$dataValidation(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$data_validation(
   sheet,
   startRow,
   endRow,
@@ -693,12 +693,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-dataValidation_list"></a>}}
-\if{latex}{\out{\hypertarget{method-dataValidation_list}{}}}
-\subsection{Method \code{dataValidation_list()}}{
+\if{html}{\out{<a id="method-data_validation_list"></a>}}
+\if{latex}{\out{\hypertarget{method-data_validation_list}{}}}
+\subsection{Method \code{data_validation_list()}}{
 Set data validations for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$dataValidation_list(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$data_validation_list(
   sheet,
   startRow,
   endRow,
@@ -788,12 +788,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addCellMerge"></a>}}
-\if{latex}{\out{\hypertarget{method-addCellMerge}{}}}
-\subsection{Method \code{addCellMerge()}}{
+\if{html}{\out{<a id="method-merge_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-merge_cells}{}}}
+\subsection{Method \code{merge_cells()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCellMerge(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -810,12 +810,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeCellMerge"></a>}}
-\if{latex}{\out{\hypertarget{method-removeCellMerge}{}}}
-\subsection{Method \code{removeCellMerge()}}{
+\if{html}{\out{<a id="method-unmerge_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-unmerge_cells}{}}}
+\subsection{Method \code{unmerge_cells()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$unmerge_cells(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -832,12 +832,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-freezePanes"></a>}}
-\if{latex}{\out{\hypertarget{method-freezePanes}{}}}
-\subsection{Method \code{freezePanes()}}{
+\if{html}{\out{<a id="method-freeze_pane"></a>}}
+\if{latex}{\out{\hypertarget{method-freeze_pane}{}}}
+\subsection{Method \code{freeze_pane()}}{
 Set freeze panes for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$freezePanes(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$freeze_pane(
   sheet,
   firstActiveRow = NULL,
   firstActiveCol = NULL,
@@ -866,12 +866,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wb_add_image"></a>}}
-\if{latex}{\out{\hypertarget{method-wb_add_image}{}}}
-\subsection{Method \code{wb_add_image()}}{
+\if{html}{\out{<a id="method-add_image"></a>}}
+\if{latex}{\out{\hypertarget{method-add_image}{}}}
+\subsection{Method \code{add_image()}}{
 Insert an image into a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_add_image(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_image(
   sheet,
   file,
   startRow,
@@ -909,12 +909,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-createNamedRegion"></a>}}
-\if{latex}{\out{\hypertarget{method-createNamedRegion}{}}}
-\subsection{Method \code{createNamedRegion()}}{
+\if{html}{\out{<a id="method-wb_create_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_create_named_region}{}}}
+\subsection{Method \code{wb_create_named_region()}}{
 Create a named region in a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createNamedRegion(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_create_named_region(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -993,12 +993,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setCreators"></a>}}
-\if{latex}{\out{\hypertarget{method-setCreators}{}}}
-\subsection{Method \code{setCreators()}}{
+\if{html}{\out{<a id="method-set_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-set_creators}{}}}
+\subsection{Method \code{set_creators()}}{
 Set creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setCreators(creators)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_creators(creators)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1011,12 +1011,12 @@ ignored.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addCreators"></a>}}
-\if{latex}{\out{\hypertarget{method-addCreators}{}}}
-\subsection{Method \code{addCreators()}}{
+\if{html}{\out{<a id="method-add_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-add_creators}{}}}
+\subsection{Method \code{add_creators()}}{
 Add creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreators(creators)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_creators(creators)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1029,12 +1029,12 @@ ignored.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeCreators"></a>}}
-\if{latex}{\out{\hypertarget{method-removeCreators}{}}}
-\subsection{Method \code{removeCreators()}}{
+\if{html}{\out{<a id="method-remove_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_creators}{}}}
+\subsection{Method \code{remove_creators()}}{
 Remove creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCreators(creators)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_creators(creators)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1047,12 +1047,12 @@ are removed.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-changeLastModifiedBy"></a>}}
-\if{latex}{\out{\hypertarget{method-changeLastModifiedBy}{}}}
-\subsection{Method \code{changeLastModifiedBy()}}{
+\if{html}{\out{<a id="method-set_last_modified_by"></a>}}
+\if{latex}{\out{\hypertarget{method-set_last_modified_by}{}}}
+\subsection{Method \code{set_last_modified_by()}}{
 Change the last modified by
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$changeLastModifiedBy(LastModifiedBy = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_last_modified_by(LastModifiedBy = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

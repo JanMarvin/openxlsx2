@@ -53,7 +53,7 @@ test_that("Workbook properties", {
   expect_identical(res, "Philipp")
 
 
-  setLastModifiedBy(wb, "Philipp 2")
+  wb_set_last_modified_by(wb, "Philipp 2")
   expect_match(wb$core, "<cp:lastModifiedBy>Philipp 2</cp:lastModifiedBy>")
 
   creators <- c("person", "place", "thing")

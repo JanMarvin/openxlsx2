@@ -80,13 +80,13 @@ Headers and footers can contain special tags \itemize{
 wb <- wb_workbook("Fred")
 
 ## Add 3 worksheets
-wb$addWorksheet("Sheet 1")
-wb$addWorksheet("Sheet 2", gridLines = FALSE)
-wb$addWorksheet("Sheet 3", tabColour = "red")
-wb$addWorksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+wb$add_worksheet("Sheet 1")
+wb$add_worksheet("Sheet 2", gridLines = FALSE)
+wb$add_worksheet("Sheet 3", tabColour = "red")
+wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
 
 ## Headers and Footers
-wb$addWorksheet("Sheet 5",
+wb$add_worksheet("Sheet 5",
   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
   evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
@@ -95,19 +95,19 @@ wb$addWorksheet("Sheet 5",
   firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
 )
 
-wb$addWorksheet("Sheet 6",
+wb$add_worksheet("Sheet 6",
   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
   footer = c("&[Path]&[File]", NA, "&[Tab]"),
   firstHeader = c(NA, "Center Header of First Page", NA),
   firstFooter = c(NA, "Center Footer of First Page", NA)
 )
 
-wb$addWorksheet("Sheet 7",
+wb$add_worksheet("Sheet 7",
   header = c("ALL HEAD LEFT 2", "ALL HEAD CENTER 2", "ALL HEAD RIGHT 2"),
   footer = c("ALL FOOT RIGHT 2", "ALL FOOT CENTER 2", "ALL FOOT RIGHT 2")
 )
 
-wb$addWorksheet("Sheet 8",
+wb$add_worksheet("Sheet 8",
   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
@@ -120,18 +120,18 @@ writeData(wb, sheet = 8, 1:400)
 
 ## Save workbook
 \dontrun{
-wb_save(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
+wb_save(wb, "add_worksheetExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
 Other workbook wrappers: 
 \code{\link{freezePane}},
-\code{\link{setColWidths}()},
-\code{\link{setLastModifiedBy}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
+\code{\link{wb_set_col_widths}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
 \code{\link{workbook_grouping}},

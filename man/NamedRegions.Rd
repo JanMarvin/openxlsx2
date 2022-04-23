@@ -17,11 +17,11 @@ Workbook object
 \examples{
 ## create named regions
 wb <- wb_workbook()
-wb$addWorksheet("Sheet 1")
+wb$add_worksheet("Sheet 1")
 
 ## specify region
 writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
-createNamedRegion(
+wb_create_named_region(
   wb = wb,
   sheet = 1,
   name = "iris",
@@ -49,5 +49,5 @@ head(df)
 }
 }
 \seealso{
-\code{\link[=createNamedRegion]{createNamedRegion()}} \code{\link[=deleteNamedRegion]{deleteNamedRegion()}}
+\code{\link[=wb_create_named_region]{wb_create_named_region()}} \code{\link[=wb_delete_named_region]{wb_delete_named_region()}}
 }

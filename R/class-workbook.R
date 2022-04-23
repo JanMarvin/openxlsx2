@@ -307,7 +307,7 @@ wbWorkbook <- R6::R6Class(
     #' @param hdpi hdpi
     #' @param vdpi vdpi
     #' @return The `wbWorkbook` object, invisibly
-    addWorksheet = function(
+    add_worksheet = function(
       sheet,
       gridLines   = TRUE,
       tabColour   = NULL,
@@ -361,7 +361,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(tabColour)) {
-        tabColour <- validateColour(tabColour, "Invalid tabColour in addWorksheet.")
+        tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
       }
 
       if (!is.numeric(zoom)) {
@@ -523,7 +523,7 @@ wbWorkbook <- R6::R6Class(
     #' Clone a workbooksheet
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
-    cloneWorksheet = function(old, new) {
+    clone_worksheet = function(old, new) {
       old <- wb_validate_sheet(self, old)
 
       if (tolower(new) %in% tolower(self$sheet_names)) {
@@ -1460,7 +1460,7 @@ wbWorkbook <- R6::R6Class(
       # Nothing is assigned to self, so this is fine to not return self
       # TODO pull out from public methods
       # assert_style(style)
-      baseFont <- self$getBaseFont()
+      baseFont <- self$get_base_font()
 
       # Create font name
       paste_c(
@@ -1505,7 +1505,7 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Get the base font
     #' @return A list of of the font
-    getBaseFont = function() {
+    get_base_font = function() {
       baseFont <- self$styles_mgr$styles$fonts[[1]]
 
       sz     <- unlist(xml_attr(baseFont, "font", "sz"))
@@ -1586,14 +1586,14 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
-    setRowHeights = function(sheet, rows, heights) {
+    set_row_heights = function(sheet, rows, heights) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
       # TODO move to wbWorksheet method
       # TODO consider reworking rowHeights
-      # self$worksheets[[sheet]]$setRowHeights(rows = rows, heights = heights)
+      # self$worksheets[[sheet]]$set_row_heights(rows = rows, heights = heights)
       # invisible(self)
 
       if (length(rows) > length(heights)) {
@@ -1634,7 +1634,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
-    removeRowHeights = function(sheet, rows) {
+    remove_row_heights = function(sheet, rows) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1668,7 +1668,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    groupCols = function(sheet, cols, collapsed, levels = NULL) {
+    group_cols = function(sheet, cols, collapsed, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1737,7 +1737,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet A name or index of a worksheet
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
-    removeColWidths = function(sheet, cols) {
+    wb_remove_col_widths = function(sheet, cols) {
       sheet <- wb_validate_sheet(self, sheet)
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
@@ -1762,7 +1762,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    # TODO groupRows() and groupCols() are very similiar.  Can problem turn
+    # TODO wb_group_rows() and group_cols() are very similiar.  Can problem turn
     # these into some wrappers for another method
 
     #' @description
@@ -1772,7 +1772,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    groupRows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
+    wb_group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1836,7 +1836,7 @@ wbWorkbook <- R6::R6Class(
     #' Remove a worksheet
     #' @param sheet The worksheet to delete
     #' @return The `wbWorkbook` object, invisibly
-    removeWorksheet = function(sheet) {
+    remove_worksheet = function(sheet) {
       # To delete a worksheet
       # Remove colwidths element
       # Remove drawing partname from Content_Types (drawing(sheet).xml)
@@ -1875,7 +1875,7 @@ wbWorkbook <- R6::R6Class(
         self$workbook$definedNames <- self$workbook$definedNames[!getNamedRegions(self)$sheets %in% self$sheet_names[sheet]]
       }
 
-      deleteNamedRegion(self, sheet)
+      wb_delete_named_region(self, sheet)
 
       self$sheet_names <- self$sheet_names[-sheet]
 
@@ -2041,7 +2041,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showInputMsg showInputMsg
     #' @param showErrorMsg showErrorMsg
     #' @return The `wbWorkbook` object, invisibly
-    dataValidation = function(
+    data_validation = function(
       sheet,
       startRow,
       endRow,
@@ -2129,7 +2129,7 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$dataValidations <- c(
         self$worksheets[[sheet]]$dataValidations,
-        stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
+        stri_join(header, stri_join(form, collapse = ""), "</data_validation>")
       )
 
       invisible(self)
@@ -2147,7 +2147,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showInputMsg showInputMsg
     #' @param showErrorMsg showErrorMsg
     #' @return The `wbWorkbook` object, invisibly
-    dataValidation_list = function(
+    data_validation_list = function(
       sheet,
       startRow,
       endRow,
@@ -2479,11 +2479,11 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    addCellMerge = function(sheet, rows = NULL, cols = NULL) {
+    merge_cells = function(sheet, rows = NULL, cols = NULL) {
       sheet <- wb_validate_sheet(self, sheet)
 
       # TODO send to wbWorksheet() method
-      # self$worksheets[[sheet]]$addCellMerge(rows = rows, cols = cols)
+      # self$worksheets[[sheet]]$merge_cells(rows = rows, cols = cols)
       # invisible(self)
 
       rows <- range(as.integer(rows))
@@ -2535,7 +2535,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    removeCellMerge = function(sheet, rows = NULL, cols = NULL) {
+    unmerge_cells = function(sheet, rows = NULL, cols = NULL) {
       sheet <- wb_validate_sheet(self, sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
@@ -2568,7 +2568,7 @@ wbWorkbook <- R6::R6Class(
     #' @param firstRow firstRow
     #' @param firstCol firstCol
     #' @return The `wbWorkbook` object, invisibly
-    freezePanes = function(
+    freeze_pane = function(
       sheet,
       firstActiveRow = NULL,
       firstActiveCol = NULL,
@@ -2669,7 +2669,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rowOffset rowOffset
     #' @param colOffset colOffset
     #' @return The `wbWorkbook` object, invisibly
-    wb_add_image = function(
+    add_image = function(
       sheet,
       file,
       startRow,
@@ -2784,7 +2784,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param localSheetId localSheetId
     #' @return The `wbWorkbook` object, invisibly
-    createNamedRegion = function(
+    wb_create_named_region = function(
       ref1,
       ref2,
       name,
@@ -2965,7 +2965,7 @@ wbWorkbook <- R6::R6Class(
     #' @description Set creator(s)
     #' @param creators A character vector of creators to set.  Duplicates are
     #'   ignored.
-    setCreators = function(creators) {
+    set_creators = function(creators) {
       private$modify_creators("set", creators)
     },
 
@@ -2973,7 +2973,7 @@ wbWorkbook <- R6::R6Class(
     #' @description Add creator(s)
     #' @param creators A character vector of creators to add.  Duplicates are
     #'   ignored.
-    addCreators = function(creators) {
+    add_creators = function(creators) {
       private$modify_creators("add", creators)
     },
 
@@ -2981,7 +2981,7 @@ wbWorkbook <- R6::R6Class(
     #' @description Remove creator(s)
     #' @param creators A character vector of creators to remove.  All duplicated
     #'   are removed.
-    removeCreators = function(creators) {
+    remove_creators = function(creators) {
       private$modify_creators("remove", creators)
     },
 
@@ -2990,8 +2990,8 @@ wbWorkbook <- R6::R6Class(
     #' Change the last modified by
     #' @param LastModifiedBy A new value
     #' @return The `wbWorkbook` object, invisibly
-    changeLastModifiedBy = function(LastModifiedBy = NULL) {
-      # TODO rename to setLastModifiedBy() ?
+    set_last_modified_by = function(LastModifiedBy = NULL) {
+      # TODO rename to wb_set_last_modified_by() ?
       if (!is.null(LastModifiedBy)) {
         current_LastModifiedBy <-
           stri_match(self$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
@@ -3609,7 +3609,7 @@ wbWorkbook <- R6::R6Class(
           "Workbook does not contain any worksheets. A worksheet will be added.",
           call. = FALSE
         )
-        self$addWorksheet("Sheet 1")
+        self$add_worksheet("Sheet 1")
         nSheets <- 1L
       }
 

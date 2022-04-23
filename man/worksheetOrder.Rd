@@ -24,13 +24,13 @@ shuffles the order when writing to file.
 \examples{
 ## setup a workbook with 3 worksheets
 wb <- wb_workbook()
-wb$addWorksheet("Sheet 1", gridLines = FALSE)
+wb$add_worksheet("Sheet 1", gridLines = FALSE)
 writeDataTable(wb = wb, sheet = 1, x = iris)
 
-wb$addWorksheet("mtcars (Sheet 2)", gridLines = FALSE)
+wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
 writeData(wb = wb, sheet = 2, x = mtcars)
 
-wb$addWorksheet("Sheet 3", gridLines = FALSE)
+wb$add_worksheet("Sheet 3", gridLines = FALSE)
 writeData(wb = wb, sheet = 3, x = Formaldehyde)
 
 worksheetOrder(wb)

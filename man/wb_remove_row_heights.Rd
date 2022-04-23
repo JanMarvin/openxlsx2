@@ -21,9 +21,9 @@ Remove row heights from a worksheet
 wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 
 ## remove any custom row heights in rows 1 to 10
-wb$removeRowHeights(1, rows = 1:10)
+wb$remove_row_heights(1, rows = 1:10)
 \dontrun{
-wb_save(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
+wb_save(wb, "remove_row_heightsExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

@@ -6,8 +6,8 @@ test_that("Writing Posixct with writeData & writeDataTable", {
   df <- data.frame(TimeDT, TimeTxt = format(TimeDT, "%Y-%m-%d %H:%M"))
 
   wb <- wb_workbook()
-  wb$addWorksheet("writeData")
-  wb$addWorksheet("writeDataTable")
+  wb$add_worksheet("writeData")
+  wb$add_worksheet("writeDataTable")
 
   writeData(wb, "writeData", df, startCol = 2, startRow = 3, rowNames = FALSE)
   writeDataTable(wb, "writeDataTable", df, startCol = 2, startRow = 3)
@@ -38,8 +38,8 @@ test_that("Writing mixed EDT/EST Posixct with writeData & writeDataTable", {
   )
 
   wb <- wb_workbook()
-  wb$addWorksheet("writeData")
-  wb$addWorksheet("writeDataTable")
+  wb$add_worksheet("writeData")
+  wb$add_worksheet("writeDataTable")
 
   writeData(wb, "writeData", df, startCol = 2, startRow = 3, rowNames = FALSE)
   writeDataTable(wb, "writeDataTable", df, startCol = 2, startRow = 3)

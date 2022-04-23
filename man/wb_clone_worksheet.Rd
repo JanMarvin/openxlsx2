@@ -24,23 +24,23 @@ Clone a worksheet to a Workbook object
 wb <- wb_workbook("Fred")
 
 # Add worksheets
-wb$addWorksheet("Sheet 1")
-wb$cloneWorksheet("Sheet 1", "Sheet 2")
+wb$add_worksheet("Sheet 1")
+wb$clone_worksheet("Sheet 1", "Sheet 2")
 
 # Save workbook
 \dontrun{
-wb_save(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
+wb_save(wb, "clone_worksheetExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
 Other workbook wrappers: 
 \code{\link{freezePane}},
-\code{\link{setColWidths}()},
-\code{\link{setLastModifiedBy}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_creators}},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
+\code{\link{wb_set_col_widths}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
 \code{\link{workbook_grouping}},

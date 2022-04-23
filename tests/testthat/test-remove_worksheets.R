@@ -1,7 +1,7 @@
 test_that("Deleting worksheets", {
   tempFile <- temp_xlsx()
   genWS <- function(wb, sheetName) {
-    wb$addWorksheet(sheetName)
+    wb$add_worksheet(sheetName)
     writeDataTable(wb, sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), colNames = FALSE)
   }
 
@@ -11,10 +11,10 @@ test_that("Deleting worksheets", {
   genWS(wb, "Sheet 3")
   expect_equal(names(wb), c("Sheet 1", "Sheet 2", "Sheet 3"))
 
-  wb$removeWorksheet(sheet = 1)
+  wb$remove_worksheet(sheet = 1)
   expect_equal(names(wb), c("Sheet 2", "Sheet 3"))
 
-  wb$removeWorksheet(sheet = 1)
+  wb$remove_worksheet(sheet = 1)
   expect_equal(names(wb), c("Sheet 3"))
 
   ## add to end
@@ -43,13 +43,13 @@ test_that("Deleting worksheets", {
   attr(test, "types") <- NULL
   expect_equal(iris[1:20, 1:4], test)
 
-  wb$removeWorksheet(sheet = 1)
+  wb$remove_worksheet(sheet = 1)
   expect_equal("This is sheet: Sheet 1", read_xlsx(wb, 1, startRow = 1)[[1]])
 
-  wb$removeWorksheet(sheet = 2)
+  wb$remove_worksheet(sheet = 2)
   expect_equal("This is sheet: Sheet 1", read_xlsx(wb, 1, startRow = 1)[[1]])
 
-  wb$removeWorksheet(sheet = 1)
+  wb$remove_worksheet(sheet = 1)
   expect_equal(names(wb), character(0))
 
   unlink(tempFile, recursive = TRUE, force = TRUE)

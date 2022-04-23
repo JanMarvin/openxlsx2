@@ -57,7 +57,7 @@ are called comments in openxml. Modification of what Excel now calls comment
 }
 \examples{
 wb <- wb_workbook()
-wb$addWorksheet("Sheet 1")
+wb$add_worksheet("Sheet 1")
 
 # write comment without author
 c1 <- createComment(text = "this is a comment", author = "")

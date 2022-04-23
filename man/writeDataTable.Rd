@@ -83,9 +83,9 @@ contains this string, the output will be broken.
 #####################################################################################
 ## Create Workbook object and add worksheets
 wb <- wb_workbook()
-wb$addWorksheet("S1")
-wb$addWorksheet("S2")
-wb$addWorksheet("S3")
+wb$add_worksheet("S1")
+wb$add_worksheet("S2")
+wb$add_worksheet("S3")
 
 
 #####################################################################################
@@ -143,7 +143,7 @@ wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 ## Pre-defined table styles gallery
 
 wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
-wb$addWorksheet("Style Samples")
+wb$add_worksheet("Style Samples")
 for (i in 1:21) {
   style <- paste0("TableStyleLight", i)
   writeDataTable(wb,
@@ -179,7 +179,7 @@ wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 
 \code{\link[=writeData]{writeData()}}
 
-\code{\link[=removeTable]{removeTable()}}
+\code{\link[=wb_remove_tables]{wb_remove_tables()}}
 
-\code{\link[=getTables]{getTables()}}
+\code{\link[=wb_get_tables]{wb_get_tables()}}
 }
