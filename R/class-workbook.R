@@ -2944,6 +2944,86 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description Add plot. A wrapper for add_image()
+    #' @param sheet sheet
+    #' @param width width
+    #' @param height height
+    #' @param xy xy
+    #' @param startRow startRow
+    #' @param startCol startCol
+    #' @param fileType fileType
+    #' @param units units
+    #' @param dpi dpi
+    #' @returns The `wbWorkbook` object
+    add_plot = function(
+      sheet,
+      width = 6,
+      height = 4,
+      xy = NULL,
+      startRow = 1,
+      startCol = 1,
+      fileType = "png",
+      units = "in",
+      dpi = 300
+    ) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (is.null(dev.list()[[1]])) {
+        warning("No plot to insert.")
+        return(self)
+      }
+
+      if (!is.null(xy)) {
+        startCol <- xy[[1]]
+        startRow <- xy[[2]]
+      }
+
+      fileType <- tolower(fileType)
+      units <- tolower(units)
+
+      # TODO just don't allow jpg
+      if (fileType == "jpg") {
+        fileType <- "jpeg"
+      }
+
+      # TODO add match.arg()
+      if (!fileType %in% c("png", "jpeg", "tiff", "bmp")) {
+        stop("Invalid file type.\nfileType must be one of: png, jpeg, tiff, bmp")
+      }
+
+      if (!units %in% c("cm", "in", "px")) {
+        stop("Invalid units.\nunits must be one of: cm, in, px")
+      }
+
+      fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
+
+      # TODO use switch()
+      if (fileType == "bmp") {
+        dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
+      } else if (fileType == "jpeg") {
+        dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100, res = dpi)
+      } else if (fileType == "png") {
+        dev.copy(png, filename = fileName, width = width, height = height, units = units, res = dpi)
+      } else if (fileType == "tiff") {
+        dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
+      }
+
+      ## write image
+      invisible(dev.off())
+
+      wb$add_image(
+        sheet    = sheet,
+        file     = fileName,
+        width    = width,
+        height   = height,
+        startRow = startRow,
+        startCol = startCol,
+        units    = units,
+        dpi      = dpi
+      )
+    },
+
     #' @description
     #' Create a named region in a sheet
     #' @param ref1 ref1

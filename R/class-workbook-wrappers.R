@@ -550,54 +550,29 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #' ## Save workbook
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_plot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
-  startRow = 1, startCol = 1, fileType = "png", units = "in", dpi = 300) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (is.null(dev.list()[[1]])) {
-    warning("No plot to insert.")
-    return()
-  }
-
+wb_add_plot <- function(
+  wb,
+  sheet,
+  width    = 6,
+  height   = 4,
+  xy       = NULL,
+  startRow = 1,
+  startCol = 1,
+  fileType = "png",
+  units    = "in",
+  dpi      = 300
+) {
   assert_workbook(wb)
-
-  if (!is.null(xy)) {
-    startCol <- xy[[1]]
-    startRow <- xy[[2]]
-  }
-
-  fileType <- tolower(fileType)
-  units <- tolower(units)
-
-  if (fileType == "jpg") {
-    fileType <- "jpeg"
-  }
-
-  if (!fileType %in% c("png", "jpeg", "tiff", "bmp")) {
-    stop("Invalid file type.\nfileType must be one of: png, jpeg, tiff, bmp")
-  }
-
-  if (!units %in% c("cm", "in", "px")) {
-    stop("Invalid units.\nunits must be one of: cm, in, px")
-  }
-
-  fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
-
-  if (fileType == "bmp") {
-    dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
-  } else if (fileType == "jpeg") {
-    dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100, res = dpi)
-  } else if (fileType == "png") {
-    dev.copy(png, filename = fileName, width = width, height = height, units = units, res = dpi)
-  } else if (fileType == "tiff") {
-    dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
-  }
-
-  ## write image
-  invisible(dev.off())
-
-  wb_add_image(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
+  wb$clone()$add_plot(
+    sheet     = sheet,
+    file      = file,
+    startRow  = startRow,
+    startCol  = startCol,
+    width     = width,
+    height    = height,
+    rowOffset = rowOffset,
+    colOffset = colOffset
+  )
 }
 
 
