@@ -828,66 +828,26 @@ wb_get_base_font <- function(wb) {
 #' \dontrun{
 #' wb_save(wb, "wb_set_header_footerExample.xlsx", overwrite = TRUE)
 #' }
-wb_set_header_footer <- function(wb, sheet,
+wb_set_header_footer <- function(
+  wb,
+  sheet,
   header = NULL,
   footer = NULL,
   evenHeader = NULL,
   evenFooter = NULL,
   firstHeader = NULL,
-  firstFooter = NULL) {
-
+  firstFooter = NULL
+) {
   assert_workbook(wb)
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (!is.null(header) && length(header) != 3) {
-    stop("header must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(footer) && length(footer) != 3) {
-    stop("footer must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenHeader) && length(evenHeader) != 3) {
-    stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenFooter) && length(evenFooter) != 3) {
-    stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstHeader) && length(firstHeader) != 3) {
-    stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstFooter) && length(firstFooter) != 3) {
-    stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  oddHeader <- headerFooterSub(header)
-  oddFooter <- headerFooterSub(footer)
-  evenHeader <- headerFooterSub(evenHeader)
-  evenFooter <- headerFooterSub(evenFooter)
-  firstHeader <- headerFooterSub(firstHeader)
-  firstFooter <- headerFooterSub(firstFooter)
-
-  hf <- list(
-    oddHeader = naToNULLList(oddHeader),
-    oddFooter = naToNULLList(oddFooter),
-    evenHeader = naToNULLList(evenHeader),
-    evenFooter = naToNULLList(evenFooter),
-    firstHeader = naToNULLList(firstHeader),
-    firstFooter = naToNULLList(firstFooter)
+  wb$clone()$set_header_footer(
+    sheet       = sheet,
+    header      = header,
+    footer      = footer,
+    evenHeader  = evenHeader,
+    evenFooter  = evenFooter,
+    firstHeader = firstHeader,
+    firstFooter = firstFooter
   )
-
-  if (all(lengths(hf) == 0)) {
-    hf <- NULL
-  }
-
-
-  wb$worksheets[[sheet]]$headerFooter <- hf
 }
 
 
