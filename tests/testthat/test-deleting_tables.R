@@ -14,7 +14,7 @@ test_that("Deleting a Table Object", {
   expect_equal(length(wb_get_tables(wb, sheet = 2)), 0)
   expect_equal(length(wb_get_tables(wb, sheet = "Sheet 2")), 0)
 
-  expect_error(wb_get_tables(wb, sheet = 3))
+  expect_error(wb_get_tables(wb, sheet = 3), "No such sheet in workbook")
   expect_error(wb_get_tables(wb, sheet = "Sheet 3"))
 
   expect_equal(wb_get_tables(wb, sheet = 1), c("iris", "mtcars"), ignore_attr = TRUE)

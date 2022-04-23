@@ -1987,6 +1987,7 @@ wb_get_tables <- function(wb, sheet) {
   }
 
   sheet <- wb_validate_sheet(wb, sheet)
+  if (is.na(sheet)) stop("No such sheet in workbook")
 
   table_sheets <- attr(wb$tables, "sheet")
   tables <- attr(wb$tables, "tableName")
