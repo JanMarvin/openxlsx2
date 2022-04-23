@@ -155,8 +155,9 @@ test_that("set_col_widths", {
 # wb_add_image() ----------------------------------------------------------
 
 test_that("wb_add_image() is a wrapper", {
-  # TODO add tests for results
-  expect_wrapper("add_image", "wb_add_image", params = NULL)
+  path <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  wb <- wb_workbook()$add_worksheet("a")
+  expect_wrapper("add_image", "wb_add_image", wb = wb, params = list(file = path, sheet = "a"))
 })
 
 # wb_add_plot() -----------------------------------------------------------
