@@ -96,7 +96,6 @@ test_that("wb_remove_creators() is a wrapper", {
   expect_wrapper("remove_creators", "wb_remove_creators", params = list(creators = "myself"))
 })
 
-
 # wb_set_base_font() ----------------------------------------------------------
 
 test_that("wb_set_base_font() is a wrapper", {
@@ -151,4 +150,18 @@ test_that("set_col_widths", {
   # a few more errors
   expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
+})
+
+# wb_add_image() ----------------------------------------------------------
+
+test_that("wb_add_image() is a wrapper", {
+  # TODO add tests for results
+  expect_wrapper("add_image", "wb_add_image", params = NULL)
+})
+
+# wb_add_plot() -----------------------------------------------------------
+
+test_that("wb_add_plot() is a wrapper", {
+  # TODO add tests for results
+  expect_wrapper("add_plot", "wb_add_plot", params = NULL)
 })
