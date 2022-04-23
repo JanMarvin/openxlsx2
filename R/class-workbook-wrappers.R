@@ -505,19 +505,24 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 # images ------------------------------------------------------------------
 
 
-#' @name wb_add_plot
-#' @title Insert the current plot into a worksheet
-#' @description The current plot is saved to a temporary image file using dev.copy.
-#' This file is then written to the workbook using wb_add_image.
+#' Insert the current plot into a worksheet
+#'
+#' The current plot is saved to a temporary image file using
+#' [grDevices::dev.copy()] This file is then written to the workbook using
+#' [wb_add_image()].
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param xy Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)
-#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when xy is given.
-#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]` when xy is given.
-#' @param width Width of figure. Defaults to 6in.
-#' @param height Height of figure . Defaults to 4in.
+#' @param xy Alternate way to specify `startRow` and `startCol.`  A vector of
+#'   length `2` of form (`startcol`, `startRow`)
+#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when
+#'   `xy` is given.
+#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]`
+#'   when `xy` is given.
+#' @param width Width of figure. Defaults to `6`in.
+#' @param height Height of figure . Defaults to `4`in.
 #' @param fileType File type of image
-#' @param units Units of width and height. Can be "in", "cm" or "px"
+#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution
 #' @seealso [wb_add_image()]
 #' @export
@@ -541,11 +546,11 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
 #' print(p1) # plot needs to be showing
-#' wb_add_plot(wb, 1, widths = 5, height = 3.5, fileType = "png", units = "in")
+#' wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
 #'
 #' ## Insert plot 2
 #' print(p2)
-#' wb_add_plot(wb, 1, xy = c("J", 2), widths = 16, height = 10, fileType = "png", units = "cm")
+#' wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
 #' ## Save workbook
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
@@ -2159,17 +2164,18 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
   wb$set_last_modified_by(LastModifiedBy)
 }
 
-#' @name wb_add_image
-#' @title Insert an image into a worksheet
-#' @description Insert an image into a worksheet
+#' Insert an image into a worksheet
+#'
+#' Insert an image into a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param file An image file. Valid file types are: jpeg, png, bmp
+#' @param file An image file. Valid file types are:` "jpeg"`, `"png"`, `"bmp"`
 #' @param width Width of figure.
 #' @param height Height of figure.
 #' @param startRow Row coordinate of upper left corner of the image
 #' @param startCol Column coordinate of upper left corner of the image
-#' @param units Units of width and height. Can be "in", "cm" or "px"
+#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
 #' @seealso [wb_add_plot()]
 #' @export
@@ -2184,9 +2190,9 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' wb_add_image(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-#' wb_add_image(wb, 2, img, startRow = 2, startCol = 2)
-#' wb_add_image(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#' wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
+#' wb$add_image(2, img, startRow = 2, startCol = 2)
+#' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 #'
 #' ## Save workbook
 #' \dontrun{
