@@ -214,7 +214,10 @@ writeCommentXML <- function(comment_list, file_name) {
 illegalchars <- c("&", '"', "'", "<", ">", "\a", "\b", "\v", "\f")
 illegalcharsreplace <- c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "", "", "", "")
 
-
+#' converts & to &amp;
+#' @param v some xml string
+#' @keywords internal
+#' @noRd 
 replaceIllegalCharacters <- function(v) {
   vEnc <- Encoding(v)
   v <- as.character(v)
@@ -229,7 +232,10 @@ replaceIllegalCharacters <- function(v) {
   return(v)
 }
 
-
+#' converts &amp; to &
+#' @param v some xml string
+#' @keywords internal
+#' @noRd 
 replaceXMLEntities <- function(v) {
   v <- gsub("&amp;", "&", v, fixed = TRUE)
   v <- gsub("&quot;", '"', v, fixed = TRUE)
