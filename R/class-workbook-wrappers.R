@@ -760,9 +760,10 @@ wb_get_base_font <- function(wb) {
   wb$get_base_font()
 }
 
-#' @name wb_set_header_footer
-#' @title Set document headers and footers
-#' @description Set document headers and footers
+#' Set document headers and footers
+#'
+#' Set document headers and footers
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param header document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
@@ -796,7 +797,7 @@ wb_get_base_font <- function(wb) {
 #' writeData(wb, 3, 3:400)
 #' writeData(wb, 4, 3:400)
 #'
-#' wb_set_header_footer(wb,
+#' wb$set_header_footer(
 #'   sheet = "S1",
 #'   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
 #'   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
@@ -806,7 +807,7 @@ wb_get_base_font <- function(wb) {
 #'   firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
 #' )
 #'
-#' wb_set_header_footer(wb,
+#' wb$set_header_footer(
 #'   sheet = 2,
 #'   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
 #'   footer = c("&[Path]&[File]", NA, "&[Tab]"),
@@ -814,13 +815,13 @@ wb_get_base_font <- function(wb) {
 #'   firstFooter = c(NA, "Center Footer of First Page", NA)
 #' )
 #'
-#' wb_set_header_footer(wb,
+#' wb$set_header_footer(
 #'   sheet = 3,
 #'   header = c("ALL HEAD LEFT 2", "ALL HEAD CENTER 2", "ALL HEAD RIGHT 2"),
 #'   footer = c("ALL FOOT RIGHT 2", "ALL FOOT CENTER 2", "ALL FOOT RIGHT 2")
 #' )
 #'
-#' wb_set_header_footer(wb,
+#' wb$set_header_footer(
 #'   sheet = 4,
 #'   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
 #'   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
