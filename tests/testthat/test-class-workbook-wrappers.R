@@ -103,3 +103,10 @@ test_that("wb_set_base_font() is a wrapper", {
   params <- list(fontColour = "red", fontSize = 20)
   expect_wrapper("set_base_font", "wb_set_base_font", params = params)
 })
+
+# wb_set_header_footer() ------------------------------------------------------
+
+test_that("wb_set_header_footer() is a wrapper", {
+  wb <- wb_workbook(creator = "myself")$addWorksheet("a")
+  expect_wrapper("set_header_footer", "wb_set_header_footer", params = list(sheet = "a"))
+})
