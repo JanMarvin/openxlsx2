@@ -12,6 +12,8 @@ wb_add_plot(
   xy = NULL,
   startRow = 1,
   startCol = 1,
+  rowOffset = 0,
+  colOffset = 0,
   fileType = "png",
   units = "in",
   dpi = 300

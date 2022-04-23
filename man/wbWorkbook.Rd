@@ -989,6 +989,8 @@ Add plot. A wrapper for add_image()
   xy = NULL,
   startRow = 1,
   startCol = 1,
+  rowOffset = 0,
+  colOffset = 0,
   fileType = "png",
   units = "in",
   dpi = 300
@@ -1009,6 +1011,10 @@ Add plot. A wrapper for add_image()
 \item{\code{startRow}}{startRow}
 
 \item{\code{startCol}}{startCol}
+
+\item{\code{rowOffset}}{rowOffset}
+
+\item{\code{colOffset}}{colOffset}
 
 \item{\code{fileType}}{fileType}
 
