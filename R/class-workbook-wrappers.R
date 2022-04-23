@@ -558,25 +558,30 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 wb_add_plot <- function(
   wb,
   sheet,
-  width    = 6,
-  height   = 4,
-  xy       = NULL,
-  startRow = 1,
-  startCol = 1,
-  fileType = "png",
-  units    = "in",
-  dpi      = 300
+  width     = 6,
+  height    = 4,
+  xy        = NULL,
+  startRow  = 1,
+  startCol  = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  fileType  = "png",
+  units     = "in",
+  dpi       = 300
 ) {
   assert_workbook(wb)
   wb$clone()$add_plot(
     sheet     = sheet,
-    file      = file,
-    startRow  = startRow,
-    startCol  = startCol,
     width     = width,
     height    = height,
+    xy        = xy,
+    startRow  = startRow,
+    startCol  = startCol,
     rowOffset = rowOffset,
-    colOffset = colOffset
+    colOffset = colOffset,
+    fileType  = fileType,
+    units     = units,
+    dpi       = dpi
   )
 }
 

@@ -2951,20 +2951,24 @@ wbWorkbook <- R6::R6Class(
     #' @param xy xy
     #' @param startRow startRow
     #' @param startCol startCol
+    #' @param rowOffset rowOffset
+    #' @param colOffset colOffset
     #' @param fileType fileType
     #' @param units units
     #' @param dpi dpi
     #' @returns The `wbWorkbook` object
     add_plot = function(
       sheet,
-      width = 6,
-      height = 4,
-      xy = NULL,
-      startRow = 1,
-      startCol = 1,
-      fileType = "png",
-      units = "in",
-      dpi = 300
+      width     = 6,
+      height    = 4,
+      xy        = NULL,
+      startRow  = 1,
+      startCol  = 1,
+      rowOffset = 0,
+      colOffset = 0,
+      fileType  = "png",
+      units     = "in",
+      dpi       = 300
     ) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
@@ -3012,15 +3016,17 @@ wbWorkbook <- R6::R6Class(
       ## write image
       invisible(dev.off())
 
-      wb$add_image(
-        sheet    = sheet,
-        file     = fileName,
-        width    = width,
-        height   = height,
-        startRow = startRow,
-        startCol = startCol,
-        units    = units,
-        dpi      = dpi
+      self$add_image(
+        sheet     = sheet,
+        file      = fileName,
+        width     = width,
+        height    = height,
+        startRow  = startRow,
+        startCol  = startCol,
+        rowOffset = rowOffset,
+        colOffset = colOffset,
+        units     = units,
+        dpi       = dpi
       )
     },
 
