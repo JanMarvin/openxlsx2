@@ -2217,39 +2217,30 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #' \dontrun{
 #' wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_image <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (!file.exists(file)) {
-    stop("File does not exist.")
-  }
-
-  if (!grepl("\\\\|\\/", file)) {
-    file <- file.path(getwd(), file, fsep = .Platform$file.sep)
-  }
-
-  units <- tolower(units)
-
-  if (!units %in% c("cm", "in", "px")) {
-    stop("Invalid units.\nunits must be one of: cm, in, px")
-  }
-
-  startCol <- col2int(startCol)
-  startRow <- as.integer(startRow)
-
-  ## convert to inches
-  if (units == "px") {
-    width <- width / dpi
-    height <- height / dpi
-  } else if (units == "cm") {
-    width <- width / 2.54
-    height <- height / 2.54
-  }
-
-  ## Convert to EMUs
-  widthEMU <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
-  heightEMU <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
-
-  wb$add_image(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
+wb_add_image <- function(
+  wb,
+  sheet,
+  file,
+  width     = 6,
+  height    = 3,
+  startRow  = 1,
+  startCol  = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  units     = "in",
+  dpi       = 300
+) {
+  assert_workbook(wb)
+  wb$clone()$add_image(
+    sheet     = sheet,
+    file      = file,
+    startRow  = startRow,
+    startCol  = startCol,
+    width     = width,
+    height    = height,
+    rowOffset = rowOffset,
+    colOffset = colOffset,
+    units     = units,
+    dpi       = dpi
+  )
 }

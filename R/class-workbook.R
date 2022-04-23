@@ -2790,6 +2790,8 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    ## plots and images ----
+
     #' @description
     #' Insert an image into a sheet
     #' @param sheet sheet
@@ -2800,17 +2802,56 @@ wbWorkbook <- R6::R6Class(
     #' @param height height
     #' @param rowOffset rowOffset
     #' @param colOffset colOffset
+    #' @param units units
+    #' @param dpi dpi
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
       sheet,
       file,
-      startRow,
-      startCol,
-      width,
-      height,
+      width     = 6,
+      height    = 3,
+      startRow  = 1,
+      startCol  = 1,
       rowOffset = 0,
-      colOffset = 0
+      colOffset = 0,
+      units     = "in",
+      dpi       = 300
     ) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (!file.exists(file)) {
+        stop("File does not exist.")
+      }
+
+      # TODO require user to pass a valid path
+      if (!grepl("\\\\|\\/", file)) {
+        file <- file.path(getwd(), file, fsep = .Platform$file.sep)
+      }
+
+      units <- tolower(units)
+
+      # TODO use match.arg()
+      if (!units %in% c("cm", "in", "px")) {
+        stop("Invalid units.\nunits must be one of: cm, in, px")
+      }
+
+      startCol <- col2int(startCol)
+      startRow <- as.integer(startRow)
+
+      ## convert to inches
+      if (units == "px") {
+        width <- width / dpi
+        height <- height / dpi
+      } else if (units == "cm") {
+        width <- width / 2.54
+        height <- height / 2.54
+      }
+
+      ## Convert to EMUs
+      width <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
+      height <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
+
       ## within the sheet the drawing node's Id refernce an id in the sheetRels
       ## sheet rels reference the drawingi.xml file
       ## drawingi.xml refernece drawingRels
@@ -2862,16 +2903,15 @@ wbWorkbook <- R6::R6Class(
       self$append("media", tmp)
 
       ## create drawing.xml
-      anchor <-
-        '<xdr:oneCellAnchor>'
+      anchor <- '<xdr:oneCellAnchor>'
 
       from <- sprintf(
         '<xdr:from>
-    <xdr:col>%s</xdr:col>
-    <xdr:colOff>%s</xdr:colOff>
-    <xdr:row>%s</xdr:row>
-    <xdr:rowOff>%s</xdr:rowOff>
-  </xdr:from>',
+        <xdr:col>%s</xdr:col>
+        <xdr:colOff>%s</xdr:colOff>
+        <xdr:row>%s</xdr:row>
+        <xdr:rowOff>%s</xdr:rowOff>
+        </xdr:from>',
         startCol - 1L,
         colOffset,
         startRow - 1L,
@@ -2881,11 +2921,7 @@ wbWorkbook <- R6::R6Class(
       drawingsXML <- stri_join(
         anchor,
         from,
-        sprintf(
-          '<xdr:ext cx="%s" cy="%s"/>',
-          width,
-          height
-        ),
+        sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
         genBasePic(imageNo),
         "<xdr:clientData/>",
         "</xdr:oneCellAnchor>"
