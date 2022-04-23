@@ -58,7 +58,7 @@ openXL <- function(file = NULL) {
   } else if ("Windows" == userSystem) {
     shell(shQuote(file, "sh"), wait = FALSE) # nolint
   } else if ("Darwin" == userSystem) {
-    myCommand <- paste0("open ", file)
+    myCommand <- paste0('open ', shQuote(file))
     system(command = myCommand)
   } else {
     warning("Operating system not handled.")
