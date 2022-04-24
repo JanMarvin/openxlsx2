@@ -177,7 +177,7 @@ test_that("conditional formatting", {
   setColWidths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
   wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
-  exp <- c(`A1:D4` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale>\n                            <cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"255\"/>\n                            <color rgb=\"FF000000\"/><color rgb=\"FFFFFFFF\"/>\n                           </colorScale></cfRule>")
+  exp <- c(`A1:E5` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale>\n                            <cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"255\"/>\n                            <color rgb=\"FF000000\"/><color rgb=\"FFFFFFFF\"/>\n                           </colorScale></cfRule>")
   expect_equal(exp, wb$worksheets[[10]]$conditionalFormatting)
 
   wb$addWorksheet("databar")
