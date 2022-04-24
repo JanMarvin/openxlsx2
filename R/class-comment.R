@@ -100,7 +100,7 @@ wbComment <- R6::R6Class(
 #' @rdname comment
 #' @examples
 #' wb <- wb_workbook()
-#' wb$addWorksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 1")
 #'
 #' # write comment without author
 #' c1 <- createComment(text = "this is a comment", author = "")

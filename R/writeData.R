@@ -38,8 +38,8 @@
 #' wb <- wb_workbook()
 #'
 #' ## Add worksheets
-#' wb$addWorksheet("Cars")
-#' wb$addWorksheet("Formula")
+#' wb$add_worksheet("Cars")
+#' wb$add_worksheet("Formula")
 #'
 #'
 #' x <- mtcars[1:6, ]
@@ -221,7 +221,7 @@ writeData <- function(wb,
     new_cols = c(startCol, startCol + nCol - 1L),
     check_table_header_only = TRUE,
     error_msg =
-      "Cannot overwrite table headers. Avoid writing over the header row or see getTables() & removeTables() to remove the table object."
+      "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
   )
 
 
@@ -296,7 +296,7 @@ writeData <- function(wb,
 #' ## There are 3 ways to write a formula
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 1")
 #' writeData(wb, "Sheet 1", x = iris)
 #'
 #' ## SEE int2col() to convert int to Excel column label
@@ -321,7 +321,7 @@ writeData <- function(wb,
 #' class(df$z) <- c(class(df$z), "formula")
 #' class(df$z2) <- c(class(df$z2), "formula")
 #'
-#' wb$addWorksheet("Sheet 2")
+#' wb$add_worksheet("Sheet 2")
 #' writeData(wb, sheet = 2, x = df)
 #'
 #'
@@ -342,8 +342,8 @@ writeData <- function(wb,
 #' ## 4. - Writing internal hyperlinks
 #'
 #' wb <- wb_workbook()
-#' wb$addWorksheet("Sheet1")
-#' wb$addWorksheet("Sheet2")
+#' wb$add_worksheet("Sheet1")
+#' wb$add_worksheet("Sheet2")
 #' writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
 #' ## Save workbook

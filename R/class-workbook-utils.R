@@ -7,24 +7,22 @@
 wb_validate_sheet <- function(wb, sheet) {
   assert_workbook(wb)
 
-  if (!is.numeric(sheet)) {
-    if (is.null(wb$sheet_names)) {
-      stop("wb does not contain any worksheets.", call. = FALSE)
-    }
+  # workbook has no sheets
+  if (is.null(wb$sheet_names)) {
+    return(NA_integer_)
   }
 
+  # input is number
   if (is.numeric(sheet)) {
-    if (sheet > length(wb$sheet_names)) {
-      msg <- sprintf("wb only contains %i sheets.", length(wb$sheet_names))
-      stop(msg, call. = FALSE)
+    if (!sheet %in% seq_along(wb$sheet_names)) {
+      return(NA_integer_)
+    } else {
+      return(sheet)
     }
-
-    return(sheet)
   }
 
   if (!sheet %in% replaceXMLEntities(wb$sheet_names)) {
-    msg <- sprintf("Sheet '%s' does not exist.", replaceXMLEntities(sheet))
-    stop(msg, call. = FALSE)
+    return(NA_integer_)
   }
 
 

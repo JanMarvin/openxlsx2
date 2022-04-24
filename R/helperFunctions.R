@@ -12,9 +12,9 @@
 #'
 #' ## Writing internal hyperlinks
 #' wb <- wb_workbook()
-#' wb$addWorksheet("Sheet1")
-#' wb$addWorksheet("Sheet2")
-#' wb$addWorksheet("Sheet 3")
+#' wb$add_worksheet("Sheet1")
+#' wb$add_worksheet("Sheet2")
+#' wb$add_worksheet("Sheet 3")
 #' writeData(wb, sheet = 3, x = iris)
 #'
 #' ## External Hyperlink
@@ -214,7 +214,10 @@ writeCommentXML <- function(comment_list, file_name) {
 illegalchars <- c("&", '"', "'", "<", ">", "\a", "\b", "\v", "\f")
 illegalcharsreplace <- c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "", "", "", "")
 
-
+#' converts & to &amp;
+#' @param v some xml string
+#' @keywords internal
+#' @noRd 
 replaceIllegalCharacters <- function(v) {
   vEnc <- Encoding(v)
   v <- as.character(v)
@@ -229,7 +232,10 @@ replaceIllegalCharacters <- function(v) {
   return(v)
 }
 
-
+#' converts &amp; to &
+#' @param v some xml string
+#' @keywords internal
+#' @noRd 
 replaceXMLEntities <- function(v) {
   v <- gsub("&amp;", "&", v, fixed = TRUE)
   v <- gsub("&quot;", '"', v, fixed = TRUE)

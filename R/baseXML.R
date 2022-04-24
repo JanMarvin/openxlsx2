@@ -126,7 +126,7 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
 #
 # }
 #
-# setLastModifiedBy <- function(wb,ModifiedBy=NULL) {
+# wb_set_last_modified_by <- function(wb,ModifiedBy=NULL) {
 #
 #   if (!is.null(addmodifier)) {
 #     current_lastmodifier <-

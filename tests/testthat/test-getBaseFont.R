@@ -1,7 +1,7 @@
-test_that("getBaseFont works", {
+test_that("get_base_font works", {
   wb <- wb_workbook()
   expect_equal(
-    wb$getBaseFont(),
+    wb$get_base_font(),
     list(
       size = list(val = "11"),
       # should this be "#000000"?
@@ -10,9 +10,9 @@ test_that("getBaseFont works", {
     )
   )
 
-  modifyBaseFont(wb, fontSize = 9, fontName = "Arial", fontColour = "red")
+  wb_modify_basefont(wb, fontSize = 9, fontName = "Arial", fontColour = "red")
   expect_equal(
-    wb$getBaseFont(),
+    wb$get_base_font(),
     list(
       size = list(val = "9"),
       colour = list(rgb = "FFFF0000"),

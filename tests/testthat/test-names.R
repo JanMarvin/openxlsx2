@@ -3,7 +3,7 @@ test_that("names", {
   tmp <- temp_xlsx()
 
   wb <- wb_workbook()
-  wb$addWorksheet("S1")$addWorksheet("S2 & S3")$addWorksheet("S3 <> S4")
+  wb$add_worksheet("S1")$add_worksheet("S2 & S3")$add_worksheet("S3 <> S4")
 
   exp <- c("S1", "S2 & S3", "S3 <> S4")
   got <- names(wb)
@@ -31,7 +31,7 @@ test_that("names", {
   # TODO this should throw a warning or an error
   expect_silent(names(wb) <- "S1")
 
-  wb$addWorksheet("S1")
+  wb$add_worksheet("S1")
   expect_warning(names(wb) <- paste0(letters, letters, collapse = ""), "Worksheet names must less than 32 characters. Truncating names...")
 
 })

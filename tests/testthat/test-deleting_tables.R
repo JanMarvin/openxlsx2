@@ -1,35 +1,35 @@
 test_that("Deleting a Table Object", {
   wb <- wb_workbook()
-  wb$addWorksheet("Sheet 1")
-  wb$addWorksheet("Sheet 2")
+  wb$add_worksheet("Sheet 1")
+  wb$add_worksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
 
   # Get table ----
 
-  expect_equal(length(getTables(wb, sheet = 1)), 2L)
-  expect_equal(length(getTables(wb, sheet = "Sheet 1")), 2L)
+  expect_equal(length(wb_get_tables(wb, sheet = 1)), 2L)
+  expect_equal(length(wb_get_tables(wb, sheet = "Sheet 1")), 2L)
 
-  expect_equal(length(getTables(wb, sheet = 2)), 0)
-  expect_equal(length(getTables(wb, sheet = "Sheet 2")), 0)
+  expect_equal(length(wb_get_tables(wb, sheet = 2)), 0)
+  expect_equal(length(wb_get_tables(wb, sheet = "Sheet 2")), 0)
 
-  expect_error(getTables(wb, sheet = 3))
-  expect_error(getTables(wb, sheet = "Sheet 3"))
+  expect_error(wb_get_tables(wb, sheet = 3), "No such sheet in workbook")
+  expect_error(wb_get_tables(wb, sheet = "Sheet 3"))
 
-  expect_equal(getTables(wb, sheet = 1), c("iris", "mtcars"), ignore_attr = TRUE)
-  expect_equal(getTables(wb, sheet = "Sheet 1"), c("iris", "mtcars"), ignore_attr = TRUE)
+  expect_equal(wb_get_tables(wb, sheet = 1), c("iris", "mtcars"), ignore_attr = TRUE)
+  expect_equal(wb_get_tables(wb, sheet = "Sheet 1"), c("iris", "mtcars"), ignore_attr = TRUE)
 
-  expect_equal(attr(getTables(wb, sheet = 1), "refs"), c("A1:E151", "J1:T33"))
-  expect_equal(attr(getTables(wb, sheet = "Sheet 1"), "refs"), c("A1:E151", "J1:T33"))
+  expect_equal(attr(wb_get_tables(wb, sheet = 1), "refs"), c("A1:E151", "J1:T33"))
+  expect_equal(attr(wb_get_tables(wb, sheet = "Sheet 1"), "refs"), c("A1:E151", "J1:T33"))
 
   expect_equal(length(wb$tables), 2L)
 
   ## Deleting a worksheet ----
 
-  wb$removeWorksheet(1)
+  wb$remove_worksheet(1)
   expect_equal(length(wb$tables), 2L)
-  expect_equal(length(getTables(wb, sheet = 1)), 0)
+  expect_equal(length(wb_get_tables(wb, sheet = 1)), 0)
 
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
   expect_equal(attr(wb$tables, "sheet"), c(0, 0))
@@ -44,25 +44,25 @@ test_that("Deleting a Table Object", {
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "iris", "mtcars"))
   expect_equal(attr(wb$tables, "sheet"), c(0, 0, 1, 1))
 
-  expect_equal(length(getTables(wb, sheet = 1)), 2L)
-  expect_equal(length(getTables(wb, sheet = "Sheet 2")), 2L)
+  expect_equal(length(wb_get_tables(wb, sheet = 1)), 2L)
+  expect_equal(length(wb_get_tables(wb, sheet = "Sheet 2")), 2L)
 
-  expect_error(getTables(wb, sheet = 2))
-  expect_error(getTables(wb, sheet = "Sheet 1"))
+  expect_error(wb_get_tables(wb, sheet = 2))
+  expect_error(wb_get_tables(wb, sheet = "Sheet 1"))
 
-  expect_equal(getTables(wb, sheet = 1), c("iris", "mtcars"), ignore_attr = TRUE)
-  expect_equal(getTables(wb, sheet = "Sheet 2"), c("iris", "mtcars"), ignore_attr = TRUE)
+  expect_equal(wb_get_tables(wb, sheet = 1), c("iris", "mtcars"), ignore_attr = TRUE)
+  expect_equal(wb_get_tables(wb, sheet = "Sheet 2"), c("iris", "mtcars"), ignore_attr = TRUE)
 
-  expect_equal(attr(getTables(wb, sheet = 1), "refs"), c("A1:E151", "J1:T33"))
-  expect_equal(attr(getTables(wb, sheet = "Sheet 2"), "refs"), c("A1:E151", "J1:T33"))
+  expect_equal(attr(wb_get_tables(wb, sheet = 1), "refs"), c("A1:E151", "J1:T33"))
+  expect_equal(attr(wb_get_tables(wb, sheet = "Sheet 2"), "refs"), c("A1:E151", "J1:T33"))
 
   expect_equal(length(wb$tables), 4L)
 
 
-  ## removeTable ----
+  ## wb_remove_tables ----
 
   ## remove iris and re-write it
-  removeTable(wb = wb, sheet = 1, table = "iris")
+  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
 
   expect_equal(length(wb$tables), 4L)
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
@@ -75,7 +75,7 @@ test_that("Deleting a Table Object", {
     "mtcars"
   ))
 
-  ## removeTable clears table object and all data
+  ## wb_remove_tables clears table object and all data
   writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
   temp <- temp_xlsx()
   wb_save(wb, temp)
@@ -83,7 +83,7 @@ test_that("Deleting a Table Object", {
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), c("mtcars", "iris"))
 
 
-  removeTable(wb = wb, sheet = 1, table = "iris")
+  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
 
   expect_equal(length(wb$tables), 5L)
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
@@ -98,7 +98,7 @@ test_that("Deleting a Table Object", {
   ))
 
 
-  expect_equal(getTables(wb, sheet = 1), "mtcars", ignore_attr = TRUE)
+  expect_equal(wb_get_tables(wb, sheet = 1), "mtcars", ignore_attr = TRUE)
   file.remove(temp)
 })
 
@@ -106,8 +106,8 @@ test_that("Save and load Table Deletion", {
   temp_file <- temp_xlsx()
 
   wb <- wb_workbook()
-  wb$addWorksheet("Sheet 1")
-  wb$addWorksheet("Sheet 2")
+  wb$add_worksheet("Sheet 1")
+  wb$add_worksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
@@ -115,9 +115,9 @@ test_that("Save and load Table Deletion", {
   ###################################################################################
   ## Deleting a worksheet
 
-  wb$removeWorksheet(1)
+  wb$remove_worksheet(1)
   expect_equal(length(wb$tables), 2L)
-  expect_equal(length(getTables(wb, sheet = 1)), 0)
+  expect_equal(length(wb_get_tables(wb, sheet = 1)), 0)
 
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
   expect_equal(attr(wb$tables, "sheet"), c(0, 0))
@@ -136,13 +136,13 @@ test_that("Save and load Table Deletion", {
   ## Deleting a table
 
   wb <- wb_workbook()
-  wb$addWorksheet("Sheet 1")
-  wb$addWorksheet("Sheet 2")
+  wb$add_worksheet("Sheet 1")
+  wb$add_worksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
   ## remove iris and re-write it
-  removeTable(wb = wb, sheet = 1, table = "iris")
+  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars"))
 
   temp_file <- temp_xlsx()
@@ -161,14 +161,14 @@ test_that("Save and load Table Deletion", {
 
   ## now delete the other table
   wb <- wb_workbook()
-  wb$addWorksheet("Sheet 1")
-  wb$addWorksheet("Sheet 2")
+  wb$add_worksheet("Sheet 1")
+  wb$add_worksheet("Sheet 2")
   writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
   writeDataTable(wb, sheet = 2, x = mtcars, tableName = "mtcars2", startCol = 3)
 
-  removeTable(wb = wb, sheet = 1, table = "iris")
-  removeTable(wb = wb, sheet = 1, table = "mtcars")
+  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+  wb_remove_tables(wb = wb, sheet = 1, table = "mtcars")
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "mtcars2"))
 
   temp_file <- temp_xlsx()

@@ -75,8 +75,8 @@ options("openxlsx2.numFmt" = NULL)
 wb <- wb_workbook()
 
 ## Add worksheets
-wb$addWorksheet("Cars")
-wb$addWorksheet("Formula")
+wb$add_worksheet("Cars")
+wb$add_worksheet("Formula")
 
 
 x <- mtcars[1:6, ]

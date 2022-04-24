@@ -8,6 +8,7 @@
 #' @useDynLib openxlsx2, .registration=TRUE
 #'
 #' @import Rcpp
+#' @import R6
 #' @importFrom grDevices bmp col2rgb colours dev.copy dev.list dev.off jpeg png rgb tiff
 #' @importFrom magrittr %>%
 #' @importFrom stats na.omit pchisq

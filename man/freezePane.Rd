@@ -35,16 +35,16 @@ Freeze a worksheet pane
 wb <- wb_workbook("Kenshin")
 
 ## Add some worksheets
-wb$addWorksheet("Sheet 1")
-wb$addWorksheet("Sheet 2")
-wb$addWorksheet("Sheet 3")
-wb$addWorksheet("Sheet 4")
+wb$add_worksheet("Sheet 1")
+wb$add_worksheet("Sheet 2")
+wb$add_worksheet("Sheet 3")
+wb$add_worksheet("Sheet 4")
 
 ## Freeze Panes
-wb$freezePanes("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-wb$freezePanes("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-wb$freezePanes(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-wb$freezePanes(4, firstActiveRow = 1, firstActiveCol = "D")
+wb$freeze_pane("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
+wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
+wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
+wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
 
 ## Save workbook
 \dontrun{
@@ -53,13 +53,13 @@ wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 }
 \seealso{
 Other workbook wrappers: 
-\code{\link{setColWidths}()},
-\code{\link{setLastModifiedBy}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
+\code{\link{wb_set_col_widths}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
 \code{\link{workbook_grouping}},

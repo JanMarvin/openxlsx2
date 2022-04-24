@@ -27,7 +27,7 @@
 #' # (not yet saved) Workbook example
 #' wb <- wb_workbook()
 #' x <- mtcars[1:6, ]
-#' wb$addWorksheet("Cars")
+#' wb$add_worksheet("Cars")
 #' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #' # openXL(wb)
 openXL <- function(file = NULL) {
@@ -58,7 +58,7 @@ openXL <- function(file = NULL) {
   } else if ("Windows" == userSystem) {
     shell(shQuote(file, "sh"), wait = FALSE) # nolint
   } else if ("Darwin" == userSystem) {
-    myCommand <- paste0("open ", file)
+    myCommand <- paste0('open ', shQuote(file))
     system(command = myCommand)
   } else {
     warning("Operating system not handled.")

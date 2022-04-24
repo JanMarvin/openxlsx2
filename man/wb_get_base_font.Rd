@@ -18,19 +18,19 @@ wb <- wb_workbook()
 wb_get_base_font(wb)
 
 ## modify base font to size 10 Arial Narrow in red
-modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+wb_modify_basefont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 
 wb_get_base_font(wb)
 }
 \seealso{
 Other workbook wrappers: 
 \code{\link{freezePane}},
-\code{\link{setColWidths}()},
-\code{\link{setLastModifiedBy}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
 \code{\link{wb_save}()},
+\code{\link{wb_set_col_widths}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
 \code{\link{workbook_grouping}},

@@ -23,8 +23,8 @@ Textbox
 Unmerges
 XLConnect
 addCreator
-addFilter
-addWorksheet
+wb_add_filter
+add_worksheet
 allowBlank
 attr
 autoFilter
@@ -50,7 +50,7 @@ bottomN
 calcChain
 cellWatches
 cellXfs
-changeLastModifiedBy
+set_last_modified_by
 charset
 cloneable
 clonedSheet
@@ -178,7 +178,7 @@ sheetOrder
 sheetPr
 sheetProtection
 sheetViews
-sheetVisibility
+wb_sheet_visibility
 showColNames
 showColumnStripes
 showErrorMsg

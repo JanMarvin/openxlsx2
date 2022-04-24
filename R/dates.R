@@ -2,6 +2,7 @@
 #' @title Convert to POSIXct with timezone UTC
 #' @param x something as.POSIXct can convert
 #' @keywords internal
+#' @noRd
 as_POSIXct_utc <- function(x) {
   z <- as.POSIXct(x, tz = "UTC")
   attr(z, "tzone") <- "UTC"

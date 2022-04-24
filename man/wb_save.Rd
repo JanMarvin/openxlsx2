@@ -19,7 +19,7 @@ Save Workbook to file
 \examples{
 ## Create a new workbook and add a worksheet
 wb <- wb_workbook("Creator of workbook")
-wb$addWorksheet(sheet = "My first worksheet")
+wb$add_worksheet(sheet = "My first worksheet")
 
 ## Save workbook to working directory
 \dontrun{
@@ -29,12 +29,12 @@ wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 \seealso{
 Other workbook wrappers: 
 \code{\link{freezePane}},
-\code{\link{setColWidths}()},
-\code{\link{setLastModifiedBy}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
 \code{\link{wb_get_base_font}()},
+\code{\link{wb_set_col_widths}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
 \code{\link{workbook_grouping}},
