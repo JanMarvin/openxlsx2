@@ -2,14 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_modify_basefont}
 \alias{wb_modify_basefont}
+\alias{wb_set_base_font}
 \title{Modify the default font}
 \usage{
-wb_modify_basefont(
-  wb,
-  fontSize = 11,
-  fontColour = "black",
-  fontName = "Calibri"
-)
+wb_set_base_font(wb, fontSize = 11, fontColour = "black", fontName = "Calibri")
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -32,11 +28,11 @@ with Arial. Base font is black, size 11, Calibri.
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 ## modify base font to size 10 Arial Narrow in red
-wb_modify_basefont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 
 writeData(wb, "S1", iris)
 writeDataTable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
 \dontrun{
-wb_save(wb, "wb_modify_basefontExample.xlsx", overwrite = TRUE)
+wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 }
 }

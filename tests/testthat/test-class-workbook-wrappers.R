@@ -95,3 +95,11 @@ test_that("wb_remove_creators() is a wrapper", {
   wb <- wb_workbook(creator = "myself")
   expect_wrapper("remove_creators", "wb_remove_creators", params = list(creators = "myself"))
 })
+
+
+# wb_set_base_font() ----------------------------------------------------------
+
+test_that("wb_set_base_font() is a wrapper", {
+  params <- list(fontColour = "red", fontSize = 20)
+  expect_wrapper("set_base_font", "wb_set_base_font", params = params)
+})
