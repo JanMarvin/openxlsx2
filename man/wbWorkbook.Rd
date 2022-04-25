@@ -152,6 +152,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
 \item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
+\item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1088,6 +1089,46 @@ Change the last modified by
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{LastModifiedBy}}{A new value}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_header_footer"></a>}}
+\if{latex}{\out{\hypertarget{method-set_header_footer}{}}}
+\subsection{Method \code{set_header_footer()}}{
+Sets headers and footers
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_header_footer(
+  sheet,
+  header = NULL,
+  footer = NULL,
+  evenHeader = NULL,
+  evenFooter = NULL,
+  firstHeader = NULL,
+  firstFooter = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{header}}{header}
+
+\item{\code{footer}}{footer}
+
+\item{\code{evenHeader}}{evenHeader}
+
+\item{\code{evenFooter}}{evenFooter}
+
+\item{\code{firstHeader}}{firstHeader}
+
+\item{\code{firstFooter}}{firstFooter}
 }
 \if{html}{\out{</div>}}
 }
