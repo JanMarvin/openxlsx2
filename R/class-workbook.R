@@ -1737,7 +1737,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet A name or index of a worksheet
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
-    wb_remove_col_widths = function(sheet, cols) {
+    remove_col_widths = function(sheet, cols) {
       sheet <- wb_validate_sheet(self, sheet)
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
@@ -2784,7 +2784,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param localSheetId localSheetId
     #' @return The `wbWorkbook` object, invisibly
-    wb_create_named_region = function(
+    create_named_region = function(
       ref1,
       ref2,
       name,
@@ -2909,7 +2909,7 @@ wbWorkbook <- R6::R6Class(
     #' @param username username
     #' @param readOnlyRecommended readOnlyRecommended
     #' @return The `wbWorkbook` object, invisibly
-    wb_protect = function(
+    protect = function(
       protect = TRUE,
       lockStructure = FALSE,
       lockWindows = FALSE,
