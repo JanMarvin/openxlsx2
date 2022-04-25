@@ -2302,7 +2302,7 @@ wb_get_creators <- function(wb) {
 #' wb_set_last_modified_by(wb, "test")
 wb_set_last_modified_by <- function(wb, LastModifiedBy) {
   assert_workbook(wb)
-  wb$set_last_modified_by(LastModifiedBy)
+  wb$clone()$set_last_modified_by(LastModifiedBy)
 }
 
 #' @name wb_add_image
