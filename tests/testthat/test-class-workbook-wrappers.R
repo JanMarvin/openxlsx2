@@ -101,6 +101,7 @@ test_that("wb_remove_creators() is a wrapper", {
 test_that("wb_page_setup() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
   expect_wrapper("page_setup", "wb_page_setup", wb = wb, params = list(sheet = "a"))
+})
 
 # wb_set_base_font() ----------------------------------------------------------
 

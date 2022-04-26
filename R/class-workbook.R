@@ -3189,8 +3189,10 @@ wbWorkbook <- R6::R6Class(
           sprintf('<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>', localSheetId, sheet, cols, sheet, rows)
         )
 
-        self
-      },
+      }
+
+      self
+    },
 
     ## header footer ----
 
