@@ -129,12 +129,13 @@ is created, not when the Excel files are saved.}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-get_base_font}{\code{wbWorkbook$get_base_font()}}
+\item \href{#method-set_base_font}{\code{wbWorkbook$set_base_font()}}
 \item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
-\item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
+\item \href{#method-wb_remove_col_widths}{\code{wbWorkbook$wb_remove_col_widths()}}
 \item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
@@ -144,14 +145,14 @@ is created, not when the Excel files are saved.}
 \item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
-\item \href{#method-create_named_region}{\code{wbWorkbook$create_named_region()}}
+\item \href{#method-wb_create_named_region}{\code{wbWorkbook$wb_create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
-\item \href{#method-protect}{\code{wbWorkbook$protect()}}
+\item \href{#method-wb_protect}{\code{wbWorkbook$wb_protect()}}
 \item \href{#method-set_creators}{\code{wbWorkbook$set_creators()}}
 \item \href{#method-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
 \item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
-\item \href{#method-page_setup}{\code{wbWorkbook$page_setup()}}
+\item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -456,6 +457,34 @@ A list of of the font
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_base_font"></a>}}
+\if{latex}{\out{\hypertarget{method-set_base_font}{}}}
+\subsection{Method \code{set_base_font()}}{
+Get the base font
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
+  fontSize = 11,
+  fontColour = "black",
+  fontName = "Calibri"
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fontSize}}{fontSize}
+
+\item{\code{fontColour}}{fontColour}
+
+\item{\code{fontName}}{fontName}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} objet
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-setSheetName"></a>}}
 \if{latex}{\out{\hypertarget{method-setSheetName}{}}}
 \subsection{Method \code{setSheetName()}}{
@@ -574,12 +603,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_col_widths"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_col_widths}{}}}
-\subsection{Method \code{remove_col_widths()}}{
+\if{html}{\out{<a id="method-wb_remove_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_remove_col_widths}{}}}
+\subsection{Method \code{wb_remove_col_widths()}}{
 Remove row heights from a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -910,12 +939,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-create_named_region"></a>}}
-\if{latex}{\out{\hypertarget{method-create_named_region}{}}}
-\subsection{Method \code{create_named_region()}}{
+\if{html}{\out{<a id="method-wb_create_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_create_named_region}{}}}
+\subsection{Method \code{wb_create_named_region()}}{
 Create a named region in a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$create_named_region(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_create_named_region(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -951,12 +980,12 @@ The \code{wbWorkbook} object, invisibly; called for its side-effects
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-protect"></a>}}
-\if{latex}{\out{\hypertarget{method-protect}{}}}
-\subsection{Method \code{protect()}}{
+\if{html}{\out{<a id="method-wb_protect"></a>}}
+\if{latex}{\out{\hypertarget{method-wb_protect}{}}}
+\subsection{Method \code{wb_protect()}}{
 Protect a workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_protect(
   protect = TRUE,
   lockStructure = FALSE,
   lockWindows = FALSE,
@@ -1068,28 +1097,19 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-page_setup"></a>}}
-\if{latex}{\out{\hypertarget{method-page_setup}{}}}
-\subsection{Method \code{page_setup()}}{
-page_setup()
+\if{html}{\out{<a id="method-set_header_footer"></a>}}
+\if{latex}{\out{\hypertarget{method-set_header_footer}{}}}
+\subsection{Method \code{set_header_footer()}}{
+Sets headers and footers
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$page_setup(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_header_footer(
   sheet,
-  orientation = NULL,
-  scale = 100,
-  left = 0.7,
-  right = 0.7,
-  top = 0.75,
-  bottom = 0.75,
-  header = 0.3,
-  footer = 0.3,
-  fitToWidth = FALSE,
-  fitToHeight = FALSE,
-  paperSize = NULL,
-  printTitleRows = NULL,
-  printTitleCols = NULL,
-  summaryRow = NULL,
-  summaryCol = NULL
+  header = NULL,
+  footer = NULL,
+  evenHeader = NULL,
+  evenFooter = NULL,
+  firstHeader = NULL,
+  firstFooter = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -1098,35 +1118,17 @@ page_setup()
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{orientation}}{orientation}
-
-\item{\code{scale}}{scale}
-
-\item{\code{left}}{left}
-
-\item{\code{right}}{right}
-
-\item{\code{top}}{top}
-
-\item{\code{bottom}}{bottom}
-
 \item{\code{header}}{header}
 
 \item{\code{footer}}{footer}
 
-\item{\code{fitToWidth}}{fitToWidth}
+\item{\code{evenHeader}}{evenHeader}
 
-\item{\code{fitToHeight}}{fitToHeight}
+\item{\code{evenFooter}}{evenFooter}
 
-\item{\code{paperSize}}{paperSize}
+\item{\code{firstHeader}}{firstHeader}
 
-\item{\code{printTitleRows}}{printTitleRows}
-
-\item{\code{printTitleCols}}{printTitleCols}
-
-\item{\code{summaryRow}}{summaryRow}
-
-\item{\code{summaryCol}}{summaryCol}
+\item{\code{firstFooter}}{firstFooter}
 }
 \if{html}{\out{</div>}}
 }

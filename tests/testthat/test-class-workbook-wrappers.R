@@ -101,4 +101,17 @@ test_that("wb_remove_creators() is a wrapper", {
 test_that("wb_page_setup() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
   expect_wrapper("page_setup", "wb_page_setup", wb = wb, params = list(sheet = "a"))
+
+# wb_set_base_font() ----------------------------------------------------------
+
+test_that("wb_set_base_font() is a wrapper", {
+  params <- list(fontColour = "red", fontSize = 20)
+  expect_wrapper("set_base_font", "wb_set_base_font", params = params)
+})
+
+# wb_set_header_footer() ------------------------------------------------------
+
+test_that("wb_set_header_footer() is a wrapper", {
+  wb <- wb_workbook(creator = "myself")$add_worksheet("a")
+  expect_wrapper("set_header_footer", "wb_set_header_footer", wb = wb, params = list(sheet = "a"))
 })

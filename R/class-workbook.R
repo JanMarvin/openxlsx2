@@ -1538,6 +1538,27 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
+    #' Get the base font
+    #' @param fontSize fontSize
+    #' @param fontColour fontColour
+    #' @param fontName fontName
+    #' @return The `wbWorkbook` objet
+    set_base_font = function(fontSize = 11, fontColour = "black", fontName = "Calibri") {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (fontSize < 0) stop("Invalid fontSize")
+      fontColour <- validateColour(fontColour)
+
+      self$styles_mgr$styles$fonts[[1]] <- sprintf(
+        '<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>',
+        fontSize,
+        fontColour,
+        fontName
+      )
+    },
+
+    #' @description
     #' Sets a sheet name
     #' @param sheet Old sheet name
     #' @param name New sheet name
@@ -3042,10 +3063,6 @@ wbWorkbook <- R6::R6Class(
       summaryRow     = NULL,
       summaryCol     = NULL
     ) {
-
-      op <- openxlsx_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- wb_validate_sheet(self, sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
 
@@ -3171,8 +3188,81 @@ wbWorkbook <- R6::R6Class(
           self$workbook$definedNames,
           sprintf('<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>', localSheetId, sheet, cols, sheet, rows)
         )
+
+        self
+      },
+
+    ## header footer ----
+
+    #' @description Sets headers and footers
+    #' @param sheet sheet
+    #' @param header header
+    #' @param footer footer
+    #' @param evenHeader evenHeader
+    #' @param evenFooter evenFooter
+    #' @param firstHeader firstHeader
+    #' @param firstFooter firstFooter
+    #' @return The `wbWorkbook` object, invisibly
+    set_header_footer = function(
+      sheet,
+      header      = NULL,
+      footer      = NULL,
+      evenHeader  = NULL,
+      evenFooter  = NULL,
+      firstHeader = NULL,
+      firstFooter = NULL
+    ) {
+      sheet <- wb_validate_sheet(self, sheet)
+
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (!is.null(header) && length(header) != 3) {
+        stop("header must have length 3 where elements correspond to positions: left, center, right.")
       }
 
+      if (!is.null(footer) && length(footer) != 3) {
+        stop("footer must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(evenHeader) && length(evenHeader) != 3) {
+        stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(evenFooter) && length(evenFooter) != 3) {
+        stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(firstHeader) && length(firstHeader) != 3) {
+        stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      if (!is.null(firstFooter) && length(firstFooter) != 3) {
+        stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
+      }
+
+      # TODO this could probably be moved to the hf assignment
+      oddHeader   <- headerFooterSub(header)
+      oddFooter   <- headerFooterSub(footer)
+      evenHeader  <- headerFooterSub(evenHeader)
+      evenFooter  <- headerFooterSub(evenFooter)
+      firstHeader <- headerFooterSub(firstHeader)
+      firstFooter <- headerFooterSub(firstFooter)
+
+      hf <- list(
+        oddHeader = naToNULLList(oddHeader),
+        oddFooter = naToNULLList(oddFooter),
+        evenHeader = naToNULLList(evenHeader),
+        evenFooter = naToNULLList(evenFooter),
+        firstHeader = naToNULLList(firstHeader),
+        firstFooter = naToNULLList(firstFooter)
+      )
+
+      if (all(lengths(hf) == 0)) {
+        hf <- NULL
+      }
+
+      self$worksheets[[sheet]]$headerFooter <- hf
       self
     }
 
