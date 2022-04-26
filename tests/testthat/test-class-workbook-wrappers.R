@@ -110,3 +110,14 @@ test_that("wb_set_header_footer() is a wrapper", {
   wb <- wb_workbook(creator = "myself")$add_worksheet("a")
   expect_wrapper("set_header_footer", "wb_set_header_footer", wb = wb, params = list(sheet = "a"))
 })
+
+
+# wb_add_filter(), wb_remove_filter() -------------------------------------
+
+test_that("wb_add_filter(), wb_remove_filter() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  params <- list(sheet = "a", col = 1, row = 1)
+  expect_wrapper("add_filter", "wb_add_filter", wb = wb, params = params)
+  wb$add_filter("a", 1, 1)
+  expect_wrapper("remove_filter", "wb_remove_filter", wb = wb, params = list(sheet = "a"))
+})
