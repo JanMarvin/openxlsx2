@@ -12,6 +12,8 @@ wb_add_plot(
   xy = NULL,
   startRow = 1,
   startCol = 1,
+  rowOffset = 0,
+  colOffset = 0,
   fileType = "png",
   units = "in",
   dpi = 300
@@ -22,25 +24,33 @@ wb_add_plot(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{width}{Width of figure. Defaults to 6in.}
+\item{width}{Width of figure. Defaults to \code{6}in.}
 
-\item{height}{Height of figure . Defaults to 4in.}
+\item{height}{Height of figure . Defaults to \code{4}in.}
 
-\item{xy}{Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)}
+\item{xy}{Alternate way to specify \code{startRow} and \code{startCol.}  A vector of
+length \code{2} of form (\code{startcol}, \code{startRow})}
 
-\item{startRow}{Row coordinate of upper left corner of figure. \code{xy[[2]]} when xy is given.}
+\item{startRow}{Row coordinate of upper left corner of figure. \code{xy[[2]]} when
+\code{xy} is given.}
 
-\item{startCol}{Column coordinate of upper left corner of figure. \code{xy[[1]]} when xy is given.}
+\item{startCol}{Column coordinate of upper left corner of figure. \code{xy[[1]]}
+when \code{xy} is given.}
+
+\item{rowOffset}{offset within cell (row)}
+
+\item{colOffset}{offset within cell (column)}
 
 \item{fileType}{File type of image}
 
-\item{units}{Units of width and height. Can be "in", "cm" or "px"}
+\item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution}
 }
 \description{
-The current plot is saved to a temporary image file using dev.copy.
-This file is then written to the workbook using wb_add_image.
+The current plot is saved to a temporary image file using
+\code{\link[grDevices:dev2]{grDevices::dev.copy()}} This file is then written to the workbook using
+\code{\link[=wb_add_image]{wb_add_image()}}.
 }
 \examples{
 \dontrun{
@@ -62,11 +72,11 @@ p2 <- qplot(age, circumference,
 
 ## Insert currently displayed plot to sheet 1, row 1, column 1
 print(p1) # plot needs to be showing
-wb_add_plot(wb, 1, widths = 5, height = 3.5, fileType = "png", units = "in")
+wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
 
 ## Insert plot 2
 print(p2)
-wb_add_plot(wb, 1, xy = c("J", 2), widths = 16, height = 10, fileType = "png", units = "cm")
+wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 
 ## Save workbook
 wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)

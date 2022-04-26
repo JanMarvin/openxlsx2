@@ -13,14 +13,17 @@
 #' @param wb A `wbWorkbook` object
 #' @param params A named list of params.  Set to `NULL` to not execute functions
 #' @param ignore Names of params to ignore
+#' @param ignore_attr Passed to `waldo::compare()` for the result of the
+#'   executed functions
 #' @returns Nothing, called for its side-effects
 #' @noRd
 expect_wrapper <- function(
   method,
   fun,
-  wb     = wb_workbook(),
-  params = list(),
-  ignore = NULL
+  wb          = wb_workbook(),
+  params      = list(),
+  ignore      = NULL,
+  ignore_attr = "waldo_opts"
 ) {
   stopifnot(
     requireNamespace("waldo", quietly = TRUE),
@@ -132,6 +135,7 @@ expect_wrapper <- function(
       y                  = res_fun,
       x_arg              = method0,
       y_arg              = fun,
+      ignore_attr        = ignore_attr,
       ignore_formula_env = TRUE
     )
 

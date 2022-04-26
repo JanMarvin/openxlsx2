@@ -96,7 +96,6 @@ test_that("wb_remove_creators() is a wrapper", {
   expect_wrapper("remove_creators", "wb_remove_creators", params = list(creators = "myself"))
 })
 
-
 # wb_set_base_font() ----------------------------------------------------------
 
 test_that("wb_set_base_font() is a wrapper", {
@@ -151,4 +150,36 @@ test_that("set_col_widths", {
   # a few more errors
   expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
+})
+
+# wb_add_image() ----------------------------------------------------------
+
+test_that("wb_add_image() is a wrapper", {
+  path <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  wb <- wb_workbook()$add_worksheet("a")
+  expect_wrapper("add_image", "wb_add_image", wb = wb, params = list(file = path, sheet = "a"))
+})
+
+# wb_add_plot() -----------------------------------------------------------
+
+test_that("wb_add_plot() is a wrapper", {
+  # plot is written to file. test can only be completed in interactive mode
+  if(interactive()) {
+
+    plot(1:5, 1:5)
+    wb <- wb_workbook()$add_worksheet("a")
+
+    # okay, not the best but the results have different field names.  Maybe that's
+    # a feature to add to expect_wrapper()
+    expect_error(
+      openxlsx2:::expect_wrapper(
+        "add_plot",
+        "wb_add_plot",
+        wb = wb,
+        params = list(sheet = "a")
+      ),
+      "wbWorkbook$add_plot$media$image1.png vs wb_add_plot$media$image1.png",
+      fixed = TRUE
+    )
+  }
 })
