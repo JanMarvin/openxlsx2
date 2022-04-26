@@ -1513,9 +1513,10 @@ wb_delete_named_region <- function(wb, sheet, name) {
 
 # filters -----------------------------------------------------------------
 
-#' @name wb_add_filter
-#' @title Add column filters
-#' @description Add excel column filters to a worksheet
+#' Add column filters
+#'
+#' Add excel column filters to a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols columns to add filter to.
@@ -1533,7 +1534,7 @@ wb_delete_named_region <- function(wb, sheet, name) {
 #' wb$add_worksheet("Sheet 3")
 #'
 #' writeData(wb, 1, iris)
-#' wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
+#' wb$add_filter(1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
 #' writeData(wb, 2, x = iris, withFilter = TRUE)
@@ -1544,24 +1545,8 @@ wb_delete_named_region <- function(wb, sheet, name) {
 #' wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 #' }
 wb_add_filter <- function(wb, sheet, rows, cols) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  if (length(rows) != 1) {
-    stop("row must be a numeric of length 1.")
-  }
-
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-
-  wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
-
-  invisible(wb)
+  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
 }
 
 #' @name wb_remove_filter
@@ -1593,13 +1578,7 @@ wb_add_filter <- function(wb, sheet, rows, cols) {
 #' }
 wb_remove_filter <- function(wb, sheet) {
   assert_workbook(wb)
-
-  for (s in sheet) {
-    s <- wb_validate_sheet(wb, s)
-    wb$worksheets[[s]]$autoFilter <- character()
-  }
-
-  invisible(wb)
+  wb$clone()$remove_filter(sheet = sheet)
 }
 
 

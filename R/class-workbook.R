@@ -3099,8 +3099,46 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$headerFooter <- hf
       self
-    }
+    },
 
+    ### filters ----
+
+    #' @description add filters
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @param cols cols
+    #' @returns The `wbWorkbook` object
+    add_filter = function(sheet, rows, cols) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (length(rows) != 1) {
+        stop("row must be a numeric of length 1.")
+      }
+
+      if (!is.numeric(cols)) {
+        cols <- col2int(cols)
+      }
+
+      self$worksheets[[sheet]]$autoFilter <- sprintf(
+        '<autoFilter ref="%s"/>',
+        paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
+      )
+
+      self
+    },
+
+    #' @description remove filters
+    #' @param sheet sheet
+    #' @returns The `wbWorkbook` object
+    remove_filter = function(sheet) {
+      for (s in wb_validate_sheet(self, sheet)) {
+        self$worksheets[[s]]$autoFilter <- character()
+      }
+
+      self
+    }
   ),
 
   ## private ----
