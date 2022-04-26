@@ -163,19 +163,23 @@ test_that("wb_add_image() is a wrapper", {
 # wb_add_plot() -----------------------------------------------------------
 
 test_that("wb_add_plot() is a wrapper", {
-  plot(1:5, 1:5)
-  wb <- wb_workbook()$add_worksheet("a")
+  # plot is written to file. test can only be completed in interactive mode
+  if(interactive()) {
 
-  # okay, not the best but the results have different field names.  Maybe that's
-  # a feature to add to expect_wrapper()
-  expect_failure(
-    expect_wrapper(
-      "add_plot",
-      "wb_add_plot",
-      wb = wb,
-      params = list(sheet = "a")
-    ),
-    "wbWorkbook$add_plot$media$image1.png vs wb_add_plot$media$image1.png",
-    fixed = TRUE
-  )
+    plot(1:5, 1:5)
+    wb <- wb_workbook()$add_worksheet("a")
+
+    # okay, not the best but the results have different field names.  Maybe that's
+    # a feature to add to expect_wrapper()
+    expect_error(
+      openxlsx2:::expect_wrapper(
+        "add_plot",
+        "wb_add_plot",
+        wb = wb,
+        params = list(sheet = "a")
+      ),
+      "wbWorkbook$add_plot$media$image1.png vs wb_add_plot$media$image1.png",
+      fixed = TRUE
+    )
+  }
 })

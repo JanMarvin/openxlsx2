@@ -33,6 +33,10 @@ wb_add_image(
 
 \item{startCol}{Column coordinate of upper left corner of the image}
 
+\item{rowOffset}{offset within cell (row)}
+
+\item{colOffset}{offset within cell (column)}
+
 \item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution used for conversion between units.}

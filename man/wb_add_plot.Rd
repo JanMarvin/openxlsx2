@@ -37,6 +37,10 @@ length \code{2} of form (\code{startcol}, \code{startRow})}
 \item{startCol}{Column coordinate of upper left corner of figure. \code{xy[[1]]}
 when \code{xy} is given.}
 
+\item{rowOffset}{offset within cell (row)}
+
+\item{colOffset}{offset within cell (column)}
+
 \item{fileType}{File type of image}
 
 \item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}

@@ -519,6 +519,8 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #'   `xy` is given.
 #' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]`
 #'   when `xy` is given.
+#' @param rowOffset offset within cell (row)
+#' @param colOffset offset within cell (column)
 #' @param width Width of figure. Defaults to `6`in.
 #' @param height Height of figure . Defaults to `4`in.
 #' @param fileType File type of image
@@ -2180,6 +2182,8 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #' @param height Height of figure.
 #' @param startRow Row coordinate of upper left corner of the image
 #' @param startCol Column coordinate of upper left corner of the image
+#' @param rowOffset offset within cell (row)
+#' @param colOffset offset within cell (column)
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
 #' @seealso [wb_add_plot()]
