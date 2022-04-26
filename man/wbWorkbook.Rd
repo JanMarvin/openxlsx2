@@ -3,6 +3,13 @@
 \name{wbWorkbook}
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
+\value{
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
+}
 \description{
 R6 class for a Workbook
 
@@ -153,6 +160,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
 \item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
 \item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
+\item \href{#method-add_filter}{\code{wbWorkbook$add_filter()}}
+\item \href{#method-remove_filter}{\code{wbWorkbook$remove_filter()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1134,8 +1143,44 @@ Sets headers and footers
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_filter"></a>}}
+\if{latex}{\out{\hypertarget{method-add_filter}{}}}
+\subsection{Method \code{add_filter()}}{
+add filters
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_filter(sheet, rows, cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+
+\item{\code{cols}}{cols}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-remove_filter"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_filter}{}}}
+\subsection{Method \code{remove_filter()}}{
+remove filters
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_filter(sheet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
