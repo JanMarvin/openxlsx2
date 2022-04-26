@@ -62,11 +62,11 @@ p2 <- qplot(age, circumference,
 
 ## Insert currently displayed plot to sheet 1, row 1, column 1
 print(p1) # plot needs to be showing
-wb_add_plot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
+wb_add_plot(wb, 1, widths = 5, height = 3.5, fileType = "png", units = "in")
 
 ## Insert plot 2
 print(p2)
-wb_add_plot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+wb_add_plot(wb, 1, xy = c("J", 2), widths = 16, height = 10, fileType = "png", units = "cm")
 
 ## Save workbook
 wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)

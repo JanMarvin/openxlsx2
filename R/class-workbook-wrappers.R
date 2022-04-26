@@ -384,7 +384,7 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' @param wb A [wbWorkbook] object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
-#' @param widths widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
+#' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
 #' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
 #' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 #' of the selected width.
@@ -412,106 +412,27 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' wb$add_worksheet("Sheet 1")
 #'
 #' ## set col widths
-#' wb_set_col_widths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+#' wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 #'
 #' ## auto columns
 #' wb$add_worksheet("Sheet 2")
 #' writeData(wb, sheet = 2, x = iris)
-#' wb_set_col_widths(wb, sheet = 2, cols = 1:5, widths = "auto")
+#' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
-wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols))) {
+wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # should do nothing if the cols' length is zero
-  if (length(cols) == 0L) return(invisible(0))
-
-  cols <- col2int(cols)
-
-  if (length(widths) > length(cols)) {
-    stop("More widths than columns supplied.")
-  }
-
-  if (length(hidden) > length(cols)) {
-    stop("hidden argument is longer than cols.")
-  }
-
-  if (length(widths) < length(cols)) {
-    widths <- rep(widths, length.out = length(cols))
-  }
-
-  if (length(hidden) < length(cols)) {
-    hidden <- rep(hidden, length.out = length(cols))
-  }
-
-  # TODO add bestFit option?
-  bestFit <- rep("1", length.out = length(cols))
-  customWidth <- rep("1", length.out = length(cols))
-
-  ## Remove duplicates
-  widths <- widths[!duplicated(cols)]
-  hidden <- hidden[!duplicated(cols)]
-  cols <- cols[!duplicated(cols)]
-
-  col_df <- wb$worksheets[[sheet]]$unfold_cols()
-
-  if (any(widths == "auto")) {
-
-    df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
-    # TODO format(x) might not be the way it is formatted in the xlsx file.
-    col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
-
-    # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
-    fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
-    font_width_tab <- read.csv(fw)
-
-    # TODO base font might not be the font used in this column
-    base_font <- wb_get_base_font(wb)
-    font <- base_font$name$val
-    size <- as.integer(base_font$size$val)
-
-    sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
-    # maximum digit width of selected font
-    mdw <- font_width_tab$Width[sel]
-
-    # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
-    # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
-    # the results were close to the initial col_width sizes. Character width is still bad, numbers are
-    # way larger, therefore characters cells are to wide. Not sure if we need improve this.
-    widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
-    widths <- round(widths)
-  }
-
-  # create empty cols
-  if (NROW(col_df) == 0)
-    col_df <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
-
-  # found a few cols, but not all required cols. create the missing columns
-  if (any(!cols %in% as.numeric(col_df$min))) {
-    beg <- max(as.numeric(col_df$min)) + 1
-    end <- max(cols)
-
-    # new columns
-    new_cols <- col_to_df(read_xml(wb$createCols(sheet, beg = beg, end = end)))
-
-    # rbind only the missing columns. avoiding dups
-    sel <- !new_cols$min %in% col_df$min
-    col_df <- rbind(col_df, new_cols[sel,])
-    col_df <- col_df[order(as.numeric(col_df[, "min"])),]
-  }
-
-  select <- as.numeric(col_df$min) %in% cols
-  col_df$width[select] <- widths
-  col_df$hidden[select] <- tolower(hidden)
-  col_df$bestFit[select] <- bestFit
-  col_df$customWidth[select] <- customWidth
-  wb$worksheets[[sheet]]$fold_cols(col_df)
-
+  wb$set_col_widths(
+    sheet  = sheet,
+    cols   = cols,
+    widths = widths,
+    # TODO allow either 1 or length(cols)
+    hidden = hidden
+  )
 }
 
 #' @name wb_remove_col_widths
@@ -620,11 +541,11 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
 #' print(p1) # plot needs to be showing
-#' wb_add_plot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
+#' wb_add_plot(wb, 1, widths = 5, height = 3.5, fileType = "png", units = "in")
 #'
 #' ## Insert plot 2
 #' print(p2)
-#' wb_add_plot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+#' wb_add_plot(wb, 1, xy = c("J", 2), widths = 16, height = 10, fileType = "png", units = "cm")
 #'
 #' ## Save workbook
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)

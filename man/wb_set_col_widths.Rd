@@ -4,13 +4,7 @@
 \alias{wb_set_col_widths}
 \title{Set worksheet column widths}
 \usage{
-wb_set_col_widths(
-  wb,
-  sheet,
-  cols,
-  widths = 8.43,
-  hidden = rep(FALSE, length(cols))
-)
+wb_set_col_widths(wb, sheet, cols, widths = 8.43, hidden = FALSE)
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}
@@ -19,7 +13,7 @@ wb_set_col_widths(
 
 \item{cols}{Indices of cols to set width}
 
-\item{widths}{widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
+\item{widths}{width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
 recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
 Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 of the selected width.}
@@ -49,12 +43,12 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 
 ## set col widths
-wb_set_col_widths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
 wb$add_worksheet("Sheet 2")
 writeData(wb, sheet = 2, x = iris)
-wb_set_col_widths(wb, sheet = 2, cols = 1:5, widths = "auto")
+wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 
 ## Save workbook
 \dontrun{

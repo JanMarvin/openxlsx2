@@ -1671,6 +1671,8 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    ## columns ----
+
     #' description
     #' creates column object for worksheet
     #' @param sheet sheet
@@ -1758,7 +1760,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet A name or index of a worksheet
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
-    wb_remove_col_widths = function(sheet, cols) {
+    remove_col_widths = function(sheet, cols) {
       sheet <- wb_validate_sheet(self, sheet)
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
@@ -1784,6 +1786,115 @@ wbWorkbook <- R6::R6Class(
     },
 
     # TODO wb_group_rows() and group_cols() are very similiar.  Can problem turn
+    #' @description
+    #' Group cols
+    #' @param sheet sheet
+    #' @param cols cols
+    #' @param widths Width of columns
+    #' @param hidden A logical vector to determine which cols are hidden; values
+    #'   are repeated across length of `cols`
+    #' @return The `wbWorkbook` object, invisibly
+    set_col_widths = function(sheet, cols, widths = 8.43, hidden = FALSE) {
+      sheet <- wb_validate_sheet(self, sheet)
+
+      # should do nothing if the cols' length is zero
+      # TODO why would cols ever be 0?  Can we just signal this as an error?
+      if (length(cols) == 0L) {
+        return(self)
+      }
+
+      cols <- col2int(cols)
+
+      if (length(widths) > length(cols)) {
+        stop("More widths than columns supplied.")
+      }
+
+      if (length(hidden) > length(cols)) {
+        stop("hidden argument is longer than cols.")
+      }
+
+      if (length(widths) < length(cols)) {
+        widths <- rep(widths, length.out = length(cols))
+      }
+
+      if (length(hidden) < length(cols)) {
+        hidden <- rep(hidden, length.out = length(cols))
+      }
+
+      # TODO add bestFit option?
+      bestFit <- rep("1", length.out = length(cols))
+      customWidth <- rep("1", length.out = length(cols))
+
+      ## Remove duplicates
+      ok <- !duplicated(cols)
+      widths <- widths[ok]
+      hidden <- hidden[ok]
+      cols <- cols[ok]
+
+      col_df <- self$worksheets[[sheet]]$unfold_cols()
+
+      if (any(widths == "auto")) {
+
+        df <- wb_to_df(self, sheet = sheet, cols = cols, colNames = FALSE)
+        # TODO format(x) might not be the way it is formatted in the xlsx file.
+        col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
+
+        # message() should be used instead if we really needed to show this
+        # print(col_width)
+
+        # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
+
+        # TODO save this instead as internal package data for quicker loading
+        fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
+        font_width_tab <- read.csv(fw)
+
+        # TODO base font might not be the font used in this column
+        base_font <- wb_get_base_font(self)
+        font <- base_font$name$val
+        size <- as.integer(base_font$size$val)
+
+        sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
+        # maximum digit width of selected font
+        mdw <- font_width_tab$Width[sel]
+
+        # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
+        # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
+        # the results were close to the initial col_width sizes. Character width is still bad, numbers are
+        # way larger, therefore characters cells are to wide. Not sure if we need improve this.
+        widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
+        widths <- round(widths)
+      }
+
+      # create empty cols
+      if (NROW(col_df) == 0)
+        col_df <- col_to_df(read_xml(self$createCols(sheet, n = max(cols))))
+
+      # found a few cols, but not all required cols. create the missing columns
+      if (any(!cols %in% as.numeric(col_df$min))) {
+        beg <- max(as.numeric(col_df$min)) + 1
+        end <- max(cols)
+
+        # new columns
+        new_cols <- col_to_df(read_xml(self$createCols(sheet, beg = beg, end = end)))
+
+        # rbind only the missing columns. avoiding dups
+        sel <- !new_cols$min %in% col_df$min
+        col_df <- rbind(col_df, new_cols[sel, ])
+        col_df <- col_df[order(as.numeric(col_df[, "min"])), ]
+      }
+
+      select <- as.numeric(col_df$min) %in% cols
+      col_df$width[select] <- widths
+      col_df$hidden[select] <- tolower(hidden)
+      col_df$bestFit[select] <- bestFit
+      col_df$customWidth[select] <- customWidth
+      self$worksheets[[sheet]]$fold_cols(col_df)
+      self
+    },
+
+    ## rows ----
+
+    # TODO groupRows() and groupCols() are very similiar.  Can problem turn
     # these into some wrappers for another method
 
     #' @description
