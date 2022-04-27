@@ -3332,6 +3332,35 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$headerFooter <- hf
       self
+    },
+
+    #' @description get tables
+    #' @param sheet sheet
+    #' @returns The sheet tables.  `character()` if empty
+    get_tables = function(sheet) {
+      if (length(sheet) != 1) {
+        stop("sheet argument must be length 1")
+      }
+
+      if (length(self$tables) == 0) {
+        return(character())
+      }
+
+      sheet <- wb_validate_sheet(self, sheet)
+      if (is.na(sheet)) stop("No such sheet in workbook")
+
+      table_sheets <- attr(self$tables, "sheet")
+      tables <- attr(self$tables, "tableName")
+      refs <- names(self$tables)
+
+      refs <- refs[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
+      tables <- tables[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
+
+      if (length(tables)) {
+        attr(tables, "refs") <- refs
+      }
+
+      return(tables)
     }
 
     ##### should be revived (for the time beeing use writeData2() )

@@ -1839,34 +1839,11 @@ wb_page_break <- function(wb, sheet, i, type = "row") {
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris)
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
-#' wb_get_tables(wb, sheet = "Sheet 1")
+#' wb$get_tables(sheet = "Sheet 1")
 #' @export
 wb_get_tables <- function(wb, sheet) {
   assert_workbook(wb)
-
-  if (length(sheet) != 1) {
-    stop("sheet argument must be length 1")
-  }
-
-  if (length(wb$tables) == 0) {
-    return(character())
-  }
-
-  sheet <- wb_validate_sheet(wb, sheet)
-  if (is.na(sheet)) stop("No such sheet in workbook")
-
-  table_sheets <- attr(wb$tables, "sheet")
-  tables <- attr(wb$tables, "tableName")
-  refs <- names(wb$tables)
-
-  refs <- refs[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
-  tables <- tables[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
-
-  if (length(tables)) {
-    attr(tables, "refs") <- refs
-  }
-
-  return(tables)
+  wb$clone()$get_tables(sheet = sheet)
 }
 
 
