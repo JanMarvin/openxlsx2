@@ -5,6 +5,10 @@
 \title{R6 class for a Workbook}
 \value{
 The \code{wbWorkbook} object
+
+The sheet tables.  \code{character()} if empty
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 \description{
 R6 class for a Workbook
@@ -158,6 +162,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
 \item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
 \item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
+\item \href{#method-get_tables}{\code{wbWorkbook$get_tables()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1221,8 +1226,23 @@ Sets headers and footers
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_tables"></a>}}
+\if{latex}{\out{\hypertarget{method-get_tables}{}}}
+\subsection{Method \code{get_tables()}}{
+get tables
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_tables(sheet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
