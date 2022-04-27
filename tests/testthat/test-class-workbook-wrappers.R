@@ -111,9 +111,6 @@ test_that("wb_set_header_footer() is a wrapper", {
 
 })
 
-test_that("Workbook class wrappers work", {
-  skip("no tests yet")
-})
 
 test_that("set_col_widths", {
 
@@ -182,4 +179,15 @@ test_that("wb_add_plot() is a wrapper", {
       fixed = TRUE
     )
   }
+})
+
+
+# wb_get_tables() ---------------------------------------------------------
+
+test_that("wb_get_tables() is a wrapper", {
+  wb <- wb_workbook()
+  wb$add_worksheet(sheet = "Sheet 1")
+  writeDataTable(wb, sheet = "Sheet 1", x = iris)
+  writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  expect_wrapper("get_tables", "wb_get_tables", wb = wb, params = list(sheet = 1))
 })
