@@ -96,6 +96,13 @@ test_that("wb_remove_creators() is a wrapper", {
   expect_wrapper("remove_creators", "wb_remove_creators", params = list(creators = "myself"))
 })
 
+# wb_page_setup() -------------------------------------------------------------
+
+test_that("wb_page_setup() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  expect_wrapper("page_setup", "wb_page_setup", wb = wb, params = list(sheet = "a"))
+})
+
 # wb_set_base_font() ----------------------------------------------------------
 
 test_that("wb_set_base_font() is a wrapper", {
@@ -181,7 +188,6 @@ test_that("wb_add_plot() is a wrapper", {
   }
 })
 
-
 # wb_get_tables(), wb_remove_tables() -------------------------------------
 
 test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
@@ -191,4 +197,14 @@ test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
   expect_wrapper("get_tables", "wb_get_tables", wb = wb, params = list(sheet = 1))
   expect_wrapper("remove_tables", "wb_remove_tables", wb = wb, params = list(sheet = 1, table = "mtcars"))
+})
+
+# wb_add_filter(), wb_remove_filter() -------------------------------------
+
+test_that("wb_add_filter(), wb_remove_filter() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  params <- list(sheet = "a", col = 1, row = 1)
+  expect_wrapper("add_filter", "wb_add_filter", wb = wb, params = params)
+  wb$add_filter("a", 1, 1)
+  expect_wrapper("remove_filter", "wb_remove_filter", wb = wb, params = list(sheet = "a"))
 })

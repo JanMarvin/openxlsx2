@@ -860,10 +860,10 @@ wb_set_header_footer <- function(
 #' writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 #'
 #' ## landscape page scaled to 50%
-#' ws_page_setup(wb, sheet = 1, orientation = "landscape", scale = 50)
+#' wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
 #'
 #' ## portrait page scales to 300% with 0.5in left and right margins
-#' ws_page_setup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+#' wb$page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
 #'
 #'
 #' ## print titles
@@ -873,152 +873,49 @@ wb_set_header_footer <- function(
 #' writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
 #' writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 #'
-#' ws_page_setup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
-#' ws_page_setup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+#' wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
+#' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 #' \dontrun{
 #' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-ws_page_setup <- function(wb, sheet, orientation = NULL, scale = 100,
-  left = 0.7, right = 0.7, top = 0.75, bottom = 0.75,
-  header = 0.3, footer = 0.3,
-  fitToWidth = FALSE, fitToHeight = FALSE, paperSize = NULL,
-  printTitleRows = NULL, printTitleCols = NULL,
-  summaryRow = NULL, summaryCol = NULL) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
+wb_page_setup <- function(
+  wb,
+  sheet,
+  orientation    = NULL,
+  scale          = 100,
+  left           = 0.7,
+  right          = 0.7,
+  top            = 0.75,
+  bottom         = 0.75,
+  header         = 0.3,
+  footer         = 0.3,
+  fitToWidth     = FALSE,
+  fitToHeight    = FALSE,
+  paperSize      = NULL,
+  printTitleRows = NULL,
+  printTitleCols = NULL,
+  summaryRow     = NULL,
+  summaryCol     = NULL
+) {
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-  xml <- wb$worksheets[[sheet]]$pageSetup
-
-  if (!is.null(orientation)) {
-    orientation <- tolower(orientation)
-    if (!orientation %in% c("portrait", "landscape")) stop("Invalid page orientation.")
-  } else {
-    # if length(xml) == 1 then use if () {} else {}
-    orientation <- ifelse(grepl("landscape", xml), "landscape", "portrait") ## get existing
-  }
-
-  if ((scale < 10) || (scale > 400)) {
-    stop("Scale must be between 10 and 400.")
-  }
-
-  if (!is.null(paperSize)) {
-    paperSizes <- 1:68
-    paperSizes <- paperSizes[!paperSizes %in% 48:49]
-    if (!paperSize %in% paperSizes) {
-      stop("paperSize must be an integer in range [1, 68]. See ?ws_page_setup details.")
-    }
-    paperSize <- as.integer(paperSize)
-  } else {
-    paperSize <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
-  }
-
-
-  ##############################
-  ## Keep defaults on orientation, hdpi, vdpi, paperSize
-  hdpi <- regmatches(xml, regexpr('(?<=horizontalDpi=")[0-9]+', xml, perl = TRUE))
-  vdpi <- regmatches(xml, regexpr('(?<=verticalDpi=")[0-9]+', xml, perl = TRUE))
-
-
-  ##############################
-  ## Update
-  wb$worksheets[[sheet]]$pageSetup <- sprintf(
-    '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
-    paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
+  wb$clone()$page_setup(
+    sheet          = sheet,
+    orientation    = orientation,
+    scale          = scale,
+    left           = left,
+    right          = right,
+    top            = top,
+    bottom         = bottom,
+    header         = header,
+    footer         = footer,
+    fitToWidth     = fitToWidth,
+    fitToHeight    = fitToHeight,
+    paperSize      = paperSize,
+    printTitleRows = printTitleRows,
+    printTitleCols = printTitleCols,
+    summaryRow     = summaryRow,
+    summaryCol     = summaryCol
   )
-
-  if (fitToHeight || fitToWidth) {
-    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<pageSetupPr fitToPage="1"/>'))
-  }
-
-  wb$worksheets[[sheet]]$pageMargins <-
-    sprintf('<pageMargins left="%s" right="%s" top="%s" bottom="%s" header="%s" footer="%s"/>', left, right, top, bottom, header, footer)
-
-  validRow <- function(summaryRow) {
-    return(tolower(summaryRow) %in% c("above", "below"))
-  }
-  validCol <- function(summaryCol) {
-    return(tolower(summaryCol) %in% c("left", "right"))
-  }
-
-  outlinepr <- ""
-
-  if (!is.null(summaryRow)) {
-
-    if (!validRow(summaryRow)) {
-      stop("Invalid \`summaryRow\` option. Must be one of \"Above\" or \"Below\".")
-    } else if (tolower(summaryRow) == "above") {
-      outlinepr <- ' summaryBelow=\"0\"'
-    } else {
-      outlinepr <- ' summaryBelow=\"1\"'
-    }
-  }
-
-  if (!is.null(summaryCol)) {
-
-    if (!validCol(summaryCol)) {
-      stop("Invalid \`summaryCol\` option. Must be one of \"Left\" or \"Right\".")
-    } else if (tolower(summaryCol) == "left") {
-      outlinepr <- paste0(outlinepr, ' summaryRight=\"0\"')
-    } else {
-      outlinepr <- paste0(outlinepr, ' summaryRight=\"1\"')
-    }
-  }
-
-  if (!stri_isempty(outlinepr)) {
-    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, paste0("<outlinePr", outlinepr, "/>")))
-  }
-
-  ## print Titles
-  if (!is.null(printTitleRows) && is.null(printTitleCols)) {
-    if (!is.numeric(printTitleRows)) {
-      stop("printTitleRows must be numeric.")
-    }
-
-    wb$wb_create_named_region(
-      ref1 = paste0("$", min(printTitleRows)),
-      ref2 = paste0("$", max(printTitleRows)),
-      name = "_xlnm.Print_Titles",
-      sheet = names(wb)[[sheet]],
-      localSheetId = sheet - 1L
-    )
-  } else if (!is.null(printTitleCols) && is.null(printTitleRows)) {
-    if (!is.numeric(printTitleCols)) {
-      stop("printTitleCols must be numeric.")
-    }
-
-    cols <- int2col(range(printTitleCols))
-    wb$wb_create_named_region(
-      ref1 = paste0("$", cols[1]),
-      ref2 = paste0("$", cols[2]),
-      name = "_xlnm.Print_Titles",
-      sheet = names(wb)[[sheet]],
-      localSheetId = sheet - 1L
-    )
-  } else if (!is.null(printTitleCols) && !is.null(printTitleRows)) {
-    if (!is.numeric(printTitleRows)) {
-      stop("printTitleRows must be numeric.")
-    }
-
-    if (!is.numeric(printTitleCols)) {
-      stop("printTitleCols must be numeric.")
-    }
-
-    cols <- int2col(range(printTitleCols))
-    rows <- range(printTitleRows)
-
-    cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
-    rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
-    localSheetId <- sheet - 1L
-    sheet <- names(wb)[[sheet]]
-
-    wb$workbook$definedNames <- c(
-      wb$workbook$definedNames,
-      sprintf('<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>', localSheetId, sheet, cols, sheet, rows)
-    )
-  }
 }
 
 
@@ -1175,7 +1072,7 @@ ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
 #'
 wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
   assert_workbook(wb)
-  invisible(wb$wb_protect(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
+  invisible(wb$protect(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
 }
 
 
@@ -1382,7 +1279,7 @@ wb_create_named_region <- function(wb, sheet, cols, rows, name, overwrite = FALS
   ref2 <- paste0("$", int2col(endCol), "$", endRow)
 
   invisible(
-    wb$wb_create_named_region(ref1 = ref1, ref2 = ref2, name = name, sheet = wb$sheet_names[sheet])
+    wb$create_named_region(ref1 = ref1, ref2 = ref2, name = name, sheet = wb$sheet_names[sheet])
   )
 }
 
@@ -1421,9 +1318,10 @@ wb_delete_named_region <- function(wb, sheet, name) {
 
 # filters -----------------------------------------------------------------
 
-#' @name wb_add_filter
-#' @title Add column filters
-#' @description Add excel column filters to a worksheet
+#' Add column filters
+#'
+#' Add excel column filters to a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols columns to add filter to.
@@ -1441,7 +1339,7 @@ wb_delete_named_region <- function(wb, sheet, name) {
 #' wb$add_worksheet("Sheet 3")
 #'
 #' writeData(wb, 1, iris)
-#' wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
+#' wb$add_filter(1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
 #' writeData(wb, 2, x = iris, withFilter = TRUE)
@@ -1452,24 +1350,8 @@ wb_delete_named_region <- function(wb, sheet, name) {
 #' wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 #' }
 wb_add_filter <- function(wb, sheet, rows, cols) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  if (length(rows) != 1) {
-    stop("row must be a numeric of length 1.")
-  }
-
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-
-  wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
-
-  invisible(wb)
+  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
 }
 
 #' @name wb_remove_filter
@@ -1501,13 +1383,7 @@ wb_add_filter <- function(wb, sheet, rows, cols) {
 #' }
 wb_remove_filter <- function(wb, sheet) {
   assert_workbook(wb)
-
-  for (s in sheet) {
-    s <- wb_validate_sheet(wb, s)
-    wb$worksheets[[s]]$autoFilter <- character()
-  }
-
-  invisible(wb)
+  wb$clone()$remove_filter(sheet = sheet)
 }
 
 
@@ -1872,7 +1748,7 @@ wb_get_tables <- function(wb, sheet) {
 #'
 #' ## wb_remove_tables() deletes table object and all data
 #' wb_get_tables(wb, sheet = 1)
-#' wb$remove_tables(wb, sheet = 1, table = "iris")
+#' wb$remove_tables(sheet = 1, table = "iris")
 #' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #'
 #' wb_get_tables(wb, sheet = 1)
@@ -2099,7 +1975,7 @@ wb_get_creators <- function(wb) {
 #' wb_set_last_modified_by(wb, "test")
 wb_set_last_modified_by <- function(wb, LastModifiedBy) {
   assert_workbook(wb)
-  wb$set_last_modified_by(LastModifiedBy)
+  wb$clone()$set_last_modified_by(LastModifiedBy)
 }
 
 #' Insert an image into a worksheet

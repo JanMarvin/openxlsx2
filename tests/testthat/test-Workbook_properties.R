@@ -1,5 +1,3 @@
-
-
 test_that("Workbook properties", {
   # TODO check datetimeCreated field
 
@@ -53,7 +51,7 @@ test_that("Workbook properties", {
   expect_identical(res, "Philipp")
 
 
-  wb_set_last_modified_by(wb, "Philipp 2")
+  wb <- wb_set_last_modified_by(wb, "Philipp 2")
   expect_match(wb$core, "<cp:lastModifiedBy>Philipp 2</cp:lastModifiedBy>")
 
   creators <- c("person", "place", "thing")

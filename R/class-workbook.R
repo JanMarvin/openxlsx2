@@ -3038,7 +3038,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param localSheetId localSheetId
     #' @return The `wbWorkbook` object, invisibly
-    wb_create_named_region = function(
+    create_named_region = function(
       ref1,
       ref2,
       name,
@@ -3163,7 +3163,7 @@ wbWorkbook <- R6::R6Class(
     #' @param username username
     #' @param readOnlyRecommended readOnlyRecommended
     #' @return The `wbWorkbook` object, invisibly
-    wb_protect = function(
+    protect = function(
       protect = TRUE,
       lockStructure = FALSE,
       lockWindows = FALSE,
@@ -3258,6 +3258,173 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(self)
+    },
+
+    #' @description page_setup()
+    #' @param sheet sheet
+    #' @param orientation orientation
+    #' @param scale scale
+    #' @param left left
+    #' @param right right
+    #' @param top top
+    #' @param bottom bottom
+    #' @param header header
+    #' @param footer footer
+    #' @param fitToWidth fitToWidth
+    #' @param fitToHeight fitToHeight
+    #' @param paperSize paperSize
+    #' @param printTitleRows printTitleRows
+    #' @param printTitleCols printTitleCols
+    #' @param summaryRow summaryRow
+    #' @param summaryCol summaryCol
+    #' @return The `wbWorkbook` object, invisibly
+    page_setup = function(
+      sheet,
+      orientation    = NULL,
+      scale          = 100,
+      left           = 0.7,
+      right          = 0.7,
+      top            = 0.75,
+      bottom         = 0.75,
+      header         = 0.3,
+      footer         = 0.3,
+      fitToWidth     = FALSE,
+      fitToHeight    = FALSE,
+      paperSize      = NULL,
+      printTitleRows = NULL,
+      printTitleCols = NULL,
+      summaryRow     = NULL,
+      summaryCol     = NULL
+    ) {
+      sheet <- wb_validate_sheet(self, sheet)
+      xml <- self$worksheets[[sheet]]$pageSetup
+
+      if (!is.null(orientation)) {
+        orientation <- tolower(orientation)
+        if (!orientation %in% c("portrait", "landscape")) stop("Invalid page orientation.")
+      } else {
+        # if length(xml) == 1 then use if () {} else {}
+        orientation <- ifelse(grepl("landscape", xml), "landscape", "portrait") ## get existing
+      }
+
+      if ((scale < 10) || (scale > 400)) {
+        stop("Scale must be between 10 and 400.")
+      }
+
+      if (!is.null(paperSize)) {
+        paperSizes <- 1:68
+        paperSizes <- paperSizes[!paperSizes %in% 48:49]
+        if (!paperSize %in% paperSizes) {
+          stop("paperSize must be an integer in range [1, 68]. See ?ws_page_setup details.")
+        }
+        paperSize <- as.integer(paperSize)
+      } else {
+        paperSize <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
+      }
+
+      ## Keep defaults on orientation, hdpi, vdpi, paperSize ----
+      hdpi <- regmatches(xml, regexpr('(?<=horizontalDpi=")[0-9]+', xml, perl = TRUE))
+      vdpi <- regmatches(xml, regexpr('(?<=verticalDpi=")[0-9]+', xml, perl = TRUE))
+
+      ## Update ----
+      self$worksheets[[sheet]]$pageSetup <- sprintf(
+        '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
+        paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
+      )
+
+      if (fitToHeight || fitToWidth) {
+        self$worksheets[[sheet]]$sheetPr <- unique(c(self$worksheets[[sheet]]$sheetPr, '<pageSetupPr fitToPage="1"/>'))
+      }
+
+      self$worksheets[[sheet]]$pageMargins <-
+        sprintf('<pageMargins left="%s" right="%s" top="%s" bottom="%s" header="%s" footer="%s"/>', left, right, top, bottom, header, footer)
+
+      validRow <- function(summaryRow) {
+        return(tolower(summaryRow) %in% c("above", "below"))
+      }
+      validCol <- function(summaryCol) {
+        return(tolower(summaryCol) %in% c("left", "right"))
+      }
+
+      outlinepr <- ""
+
+      if (!is.null(summaryRow)) {
+
+        if (!validRow(summaryRow)) {
+          stop("Invalid \`summaryRow\` option. Must be one of \"Above\" or \"Below\".")
+        } else if (tolower(summaryRow) == "above") {
+          outlinepr <- ' summaryBelow=\"0\"'
+        } else {
+          outlinepr <- ' summaryBelow=\"1\"'
+        }
+      }
+
+      if (!is.null(summaryCol)) {
+
+        if (!validCol(summaryCol)) {
+          stop("Invalid \`summaryCol\` option. Must be one of \"Left\" or \"Right\".")
+        } else if (tolower(summaryCol) == "left") {
+          outlinepr <- paste0(outlinepr, ' summaryRight=\"0\"')
+        } else {
+          outlinepr <- paste0(outlinepr, ' summaryRight=\"1\"')
+        }
+      }
+
+      if (!stri_isempty(outlinepr)) {
+        self$worksheets[[sheet]]$sheetPr <- unique(c(self$worksheets[[sheet]]$sheetPr, paste0("<outlinePr", outlinepr, "/>")))
+      }
+
+      ## print Titles ----
+      if (!is.null(printTitleRows) && is.null(printTitleCols)) {
+        if (!is.numeric(printTitleRows)) {
+          stop("printTitleRows must be numeric.")
+        }
+
+        self$create_named_region(
+          ref1 = paste0("$", min(printTitleRows)),
+          ref2 = paste0("$", max(printTitleRows)),
+          name = "_xlnm.Print_Titles",
+          sheet = names(self)[[sheet]],
+          localSheetId = sheet - 1L
+        )
+      } else if (!is.null(printTitleCols) && is.null(printTitleRows)) {
+        if (!is.numeric(printTitleCols)) {
+          stop("printTitleCols must be numeric.")
+        }
+
+        cols <- int2col(range(printTitleCols))
+        self$create_named_region(
+          ref1 = paste0("$", cols[1]),
+          ref2 = paste0("$", cols[2]),
+          name = "_xlnm.Print_Titles",
+          sheet = names(self)[[sheet]],
+          localSheetId = sheet - 1L
+        )
+      } else if (!is.null(printTitleCols) && !is.null(printTitleRows)) {
+        if (!is.numeric(printTitleRows)) {
+          stop("printTitleRows must be numeric.")
+        }
+
+        if (!is.numeric(printTitleCols)) {
+          stop("printTitleCols must be numeric.")
+        }
+
+        cols <- int2col(range(printTitleCols))
+        rows <- range(printTitleRows)
+
+        cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
+        rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
+        localSheetId <- sheet - 1L
+        sheet <- names(self)[[sheet]]
+
+        self$workbook$definedNames <- c(
+          self$workbook$definedNames,
+          sprintf('<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>', localSheetId, sheet, cols, sheet, rows)
+        )
+
+      }
+
+      self
     },
 
     ## header footer ----
@@ -3411,268 +3578,44 @@ wbWorkbook <- R6::R6Class(
       ## now delete data
       deleteData(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
       self
-    }
+    },
 
-    ##### should be revived (for the time beeing use writeData2() )
-    # # TODO add default values?
-    # writeData = function(df, sheet, startRow, startCol, colNames, colClasses, hlinkNames, keepNA, na.string, list_sep) {
-    #   sheet <- wb_validate_sheet(self, sheet)
-    #   nCols <- ncol(df)
-    #   nRows <- nrow(df)
-    #   df_nms <- names(df)
-    #
-    #   allColClasses <- unlist(colClasses)
-    #   df <- as.list(df)
-    #
-    ### standardise all column types ----
-    #
-    #
-    #   ## pull out NaN values
-    #   nans <- unlist(lapply(seq_len(nCols), function(i) {
-    #     tmp <- df[[i]]
-    #     if (!inherits(tmp, c("character", "list"))) {
-    #       v <- which(is.nan(tmp) | is.infinite(tmp))
-    #       if (length(v) == 0) {
-    #         return(v)
-    #       }
-    #       return(as.integer(nCols * (v - 1) + i)) ## row position
-    #     }
-    #   }))
-    #
-    #   ## convert any Dates to integers and create date style object
-    #   if (any(c("date", "posixct", "posixt") %in% allColClasses)) {
-    #     dInds <- which(sapply(colClasses, function(x) "date" %in% x))
-    #
-    #     origin <- 25569L
-    #     if (grepl('date1904="1"|date1904="true"', stri_join(unlist(self$workbook), collapse = ""), ignore.case = TRUE)) {
-    #       origin <- 24107L
-    #     }
-    #
-    #     for (i in dInds) {
-    #       df[[i]] <- as.integer(df[[i]]) + origin
-    #       if (origin == 25569L) {
-    #         earlyDate <- df[[i]] < 60
-    #         df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
-    #       }
-    #     }
-    #
-    #     pInds <- which(sapply(colClasses, function(x) any(c("posixct", "posixt", "posixlt") %in% x)))
-    #     if (length(pInds) & nRows > 0) {
-    #       parseOffset <- function(tz) {
-    #         suppressWarnings(
-    #           ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
-    #           * (as.integer(stri_sub(tz, 2, 3)) + as.integer(stri_sub(tz, 4, 5)) / 60) / 24
-    #         )
-    #       }
-    #
-    #       t <- lapply(df[pInds], function(x) format(x, "%z"))
-    #       offSet <- lapply(t, parseOffset)
-    #       offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
-    #
-    #       for (i in seq_along(pInds)) {
-    #         df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
-    #       }
-    #     }
-    #   }
-    #
-    #   # TODO for these if () ... for (i in ...); just use the loop?
-    #
-    #   ## convert any Dates to integers and create date style object
-    #   if (any(c("currency", "accounting", "percentage", "3", "comma") %in% allColClasses)) {
-    #     cInds <- which(sapply(colClasses, function(x) any(c("accounting", "currency", "percentage", "3", "comma") %in% tolower(x))))
-    #     for (i in cInds) {
-    #       df[[i]] <- as.numeric(gsub("[^0-9\\.-]", "", df[[i]], perl = TRUE))
-    #     }
-    #     class(df[[i]]) <- "numeric"
-    #     # TODO is the above line a typo?  Only assign numeric to the last column?
-    #   }
-    #
-    #   ## convert scientific
-    #   if ("scientific" %in% allColClasses) {
-    #     for (i in which(sapply(colClasses, function(x) "scientific" %in% x))) {
-    #       class(df[[i]]) <- "numeric"
-    #     }
-    #   }
-    #
-    #   ##
-    #   if ("list" %in% allColClasses) {
-    #     for (i in which(sapply(colClasses, function(x) "list" %in% x))) {
-    #       df[[i]] <- sapply(lapply(df[[i]], unlist), stri_join, collapse = list_sep)
-    #     }
-    #   }
-    #
-    #   if (any(c("formula", "array_formula") %in% allColClasses)) {
-    #
-    #     frm <- "formula"
-    #     cls <- "openxlsx_formula"
-    #
-    #     # TODO use if () ... else ...
-    #
-    #     if ("array_formula" %in% allColClasses) {
-    #       frm <- "array_formula"
-    #       cls <- "openxlsx_array_formula"
-    #     }
-    #
-    #     for (i in which(sapply(colClasses, function(x) frm %in% x))) {
-    #       df[[i]] <- replaceIllegalCharacters(as.character(df[[i]]))
-    #       class(df[[i]]) <- cls
-    #     }
-    #   }
-    #
-    #   if ("hyperlink" %in% allColClasses) {
-    #     for (i in which(sapply(colClasses, function(x) "hyperlink" %in% x))) {
-    #       class(df[[i]]) <- "hyperlink"
-    #     }
-    #   }
-    #
-    #   colClasses <- sapply(df, function(x) tolower(class(x))[[1]]) ## by here all cols must have a single class only
-    #
-    #
-    #   ## convert logicals (Excel stores logicals as 0 & 1)
-    #   if ("logical" %in% allColClasses) {
-    #     for (i in which(sapply(colClasses, function(x) "logical" %in% x))) {
-    #       class(df[[i]]) <- "numeric"
-    #     }
-    #   }
-    #
-    #   ## convert all numerics to character (this way preserves digits)
-    #   if ("numeric" %in% colClasses) {
-    #     for (i in which(sapply(colClasses, function(x) "numeric" %in% x))) {
-    #       class(df[[i]]) <- "character"
-    #     }
-    #   }
-    #
-    #
-    ### End standardise all column types ----
-    #
-    #   ## cell types
-    #   t <- build_cell_types_integer(classes = colClasses, n_rows = nRows)
-    #
-    #   for (i in which(sapply(colClasses, function(x) !"character" %in% x & !"numeric" %in% x))) {
-    #     df[[i]] <- as.character(df[[i]])
-    #   }
-    #
-    #   ## cell values
-    #   v <- as.character(t(as.matrix(
-    #     data.frame(df, stringsAsFactors = FALSE, check.names = FALSE, fix.empty.names = FALSE)
-    #   )))
-    #
-    #
-    #   if (keepNA) {
-    #     if (is.null(na.string)) {
-    #       # t[is.na(v)] <- 4L
-    #       v[is.na(v)] <- "#N/A"
-    #     } else {
-    #       # t[is.na(v)] <- 1L
-    #       v[is.na(v)] <- as.character(na.string)
-    #     }
-    #   } else {
-    #     t[is.na(v)] <- NA_character_
-    #     v[is.na(v)] <- NA_character_
-    #   }
-    #
-    #   ## If any NaN values
-    #   if (length(nans)) {
-    #     t[nans] <- 4L
-    #     v[nans] <- "#NUM!"
-    #   }
-    #
-    #
-    #   # prepend column headers
-    #   if (colNames) {
-    #     t <- c(rep.int(1L, nCols), t)
-    #     v <- c(df_nms, v)
-    #     nRows <- nRows + 1L
-    #   }
-    #
-    #
-    #   ## Formulas
-    #   f_in <- rep.int(NA_character_, length(t))
-    #   any_functions <- FALSE
-    #   ref_cell <- paste0(int_to_col(startCol), startRow)
-    #
-    #   if (any(c("openxlsx_formula", "openxlsx_array_formula") %in% colClasses)) {
-    #
-    #     ## alter the elements of t where we have a formula to be "str"
-    #     if ("openxlsx_formula" %in% colClasses) {
-    #       formula_cols <- which(sapply(colClasses, function(x) "openxlsx_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
-    #       formula_strs <- stri_join("<f>", unlist(df[formula_cols], use.names = FALSE), "</f>")
-    #     } else { # openxlsx_array_formula
-    #       formula_cols <- which(sapply(colClasses, function(x) "openxlsx_array_formula" %in% x, USE.NAMES = FALSE), useNames = FALSE)
-    #       formula_strs <- stri_join("<f t=\"array\" ref=\"", ref_cell, ":", ref_cell, "\">", unlist(df[formula_cols], use.names = FALSE), "</f>")
-    #     }
-    #     formula_inds <- unlist(lapply(formula_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE)
-    #     f_in[formula_inds] <- formula_strs
-    #     any_functions <- TRUE
-    #
-    #     rm(formula_cols)
-    #     rm(formula_strs)
-    #     rm(formula_inds)
-    #   }
-    #
-    #   suppressWarnings(try(rm(df), silent = TRUE))
-    #
-    #   ## Append hyperlinks, convert h to s in cell type
-    #   hyperlink_cols <- which(sapply(colClasses, function(x) "hyperlink" %in% x, USE.NAMES = FALSE), useNames = FALSE)
-    #   if (length(hyperlink_cols)) {
-    #     hyperlink_inds <- sort(unlist(lapply(hyperlink_cols, function(i) i + (1:(nRows - colNames) - 1) * nCols + (colNames * nCols)), use.names = FALSE))
-    #     na_hyperlink <- intersect(hyperlink_inds, which(is.na(t)))
-    #
-    #     if (length(hyperlink_inds)) {
-    #       t[t %in% 9] <- 1L ## set cell type to "s"
-    #
-    #       hyperlink_refs <- convert_to_excel_ref_expand(cols = hyperlink_cols + startCol - 1, LETTERS = LETTERS, rows = as.character((startRow + colNames):(startRow + nRows - 1L)))
-    #
-    #       if (length(na_hyperlink)) {
-    #         to_remove <- which(hyperlink_inds %in% na_hyperlink)
-    #         hyperlink_refs <- hyperlink_refs[-to_remove]
-    #         hyperlink_inds <- hyperlink_inds[-to_remove]
-    #       }
-    #
-    #       exHlinks <- worksheets[[sheet]]$hyperlinks
-    #       targets <- replaceIllegalCharacters(v[hyperlink_inds])
-    #
-    #       if (!is.null(hlinkNames) & length(hlinkNames) == length(hyperlink_inds)) {
-    #         v[hyperlink_inds] <- hlinkNames
-    #       } ## this is text to display instead of hyperlink
-    #
-    #       ## create hyperlink objects
-    #       newhl <- lapply(seq_along(hyperlink_inds), function(i) {
-    #         wbHyperlink$new(ref = hyperlink_refs[i], target = targets[i], location = NULL, display = NULL, is_external = TRUE)
-    #       })
-    #
-    #       self$worksheets[[sheet]]$hyperlinks <- append(worksheets[[sheet]]$hyperlinks, newhl)
-    #     }
-    #   }
-    #
-    #
-    #   ## convert all strings to references in sharedStrings and update values (v)
-    #   strFlag <- which(t == 1L)
-    #   newStrs <- v[strFlag]
-    #   if (length(newStrs)) {
-    #     newStrs <- replaceIllegalCharacters(newStrs)
-    #     newStrs <- stri_join("<si><t xml:space=\"preserve\">", newStrs, "</t></si>")
-    #
-    #     uNewStr <- unique(newStrs)
-    #
-    #     self$updateSharedStrings(uNewStr)
-    #     v[strFlag] <- match(newStrs, sharedStrings) - 1L
-    #   }
-    #
-    #   # ## Create cell list of lists
-    #   self$worksheets[[sheet]]$sheet_data$write(
-    #     rows_in = startRow:(startRow + nRows - 1L),
-    #     cols_in = startCol:(startCol + nCols - 1L),
-    #     t_in = t,
-    #     v_in = v,
-    #     f_in = f_in,
-    #     any_functions = any_functions
-    #   )
-    #
-    #
-    #
-    #   invisible(self)
-    # },
+    #' @description add filters
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @param cols cols
+    #' @returns The `wbWorkbook` object
+    add_filter = function(sheet, rows, cols) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (length(rows) != 1) {
+        stop("row must be a numeric of length 1.")
+      }
+
+      if (!is.numeric(cols)) {
+        cols <- col2int(cols)
+      }
+
+      self$worksheets[[sheet]]$autoFilter <- sprintf(
+        '<autoFilter ref="%s"/>',
+        paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
+      )
+
+      self
+    },
+
+    #' @description remove filters
+    #' @param sheet sheet
+    #' @returns The `wbWorkbook` object
+    remove_filter = function(sheet) {
+      for (s in wb_validate_sheet(self, sheet)) {
+        self$worksheets[[s]]$autoFilter <- character()
+      }
+
+      self
+    }
   ),
 
   ## private ----

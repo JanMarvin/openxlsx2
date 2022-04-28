@@ -4,14 +4,14 @@ test_that("Page setup", {
   wb$add_worksheet("s1")
   wb$add_worksheet("s2")
 
-  ws_page_setup(wb,
+  wb$page_setup(
     sheet = "s1", orientation = "landscape", scale = 100, left = 0.1,
     right = 0.1, top = .75, bottom = .75, header = 0.1, footer = 0.1,
     fitToWidth = TRUE, fitToHeight = TRUE, paperSize = 1,
     summaryRow = "below", summaryCol = "right"
   )
 
-  ws_page_setup(wb,
+  wb$page_setup(
     sheet = 2, orientation = "landscape", scale = 100, left = 0.1,
     right = 0.1, top = .75, bottom = .75, header = 0.1, footer = 0.1,
     fitToWidth = TRUE, fitToHeight = TRUE, paperSize = 1,

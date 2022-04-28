@@ -30,7 +30,7 @@ wb$add_worksheet("Sheet 2")
 wb$add_worksheet("Sheet 3")
 
 writeData(wb, 1, iris)
-wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
+wb$add_filter(1, row = 1, cols = seq_along(iris))
 
 ## Equivalently
 writeData(wb, 2, x = iris, withFilter = TRUE)
