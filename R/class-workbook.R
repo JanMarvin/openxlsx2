@@ -3393,7 +3393,7 @@ wbWorkbook <- R6::R6Class(
       attr(self$tables, "tableName") <- table_names
 
       ## delete reference from worksheet to table
-      worksheet_table_names <- attr(selfb$worksheets[[sheet]]$tableParts, "tableName")
+      worksheet_table_names <- attr(self$worksheets[[sheet]]$tableParts, "tableName")
       to_remove <- which(worksheet_table_names == table_name_original)
 
       self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
