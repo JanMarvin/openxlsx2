@@ -35,11 +35,11 @@ writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
 ## wb_remove_tables() deletes table object and all data
 wb_get_tables(wb, sheet = 1)
-wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+wb$remove_tables(wb, sheet = 1, table = "iris")
 writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 
 wb_get_tables(wb, sheet = 1)
-wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+wb$remove_tables(sheet = 1, table = "iris")
 writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 \dontrun{
 wb_save(wb, path = "wb_remove_tablesExample.xlsx", overwrite = TRUE)
