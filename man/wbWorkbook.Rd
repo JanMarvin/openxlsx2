@@ -3,6 +3,9 @@
 \name{wbWorkbook}
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
+\value{
+The \code{wbWorkbook} object
+}
 \description{
 R6 class for a Workbook
 
@@ -136,6 +139,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
 \item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
+\item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
 \item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
@@ -145,6 +149,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
+\item \href{#method-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-create_named_region}{\code{wbWorkbook$create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protect}{\code{wbWorkbook$protect()}}
@@ -626,6 +631,33 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-set_col_widths}{}}}
+\subsection{Method \code{set_col_widths()}}{
+Group cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(sheet, cols, widths = 8.43, hidden = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{widths}}{Width of columns}
+
+\item{\code{hidden}}{A logical vector to determine which cols are hidden; values
+are repeated across length of \code{cols}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wb_group_rows"></a>}}
 \if{latex}{\out{\hypertarget{method-wb_group_rows}{}}}
 \subsection{Method \code{wb_group_rows()}}{
@@ -905,12 +937,14 @@ Insert an image into a sheet
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_image(
   sheet,
   file,
-  startRow,
-  startCol,
-  width,
-  height,
+  width = 6,
+  height = 3,
+  startRow = 1,
+  startCol = 1,
   rowOffset = 0,
-  colOffset = 0
+  colOffset = 0,
+  units = "in",
+  dpi = 300
 )}\if{html}{\out{</div>}}
 }
 
@@ -921,22 +955,75 @@ Insert an image into a sheet
 
 \item{\code{file}}{file}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{startCol}}{startCol}
-
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
 
+\item{\code{startRow}}{startRow}
+
+\item{\code{startCol}}{startCol}
+
 \item{\code{rowOffset}}{rowOffset}
 
 \item{\code{colOffset}}{colOffset}
+
+\item{\code{units}}{units}
+
+\item{\code{dpi}}{dpi}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_plot"></a>}}
+\if{latex}{\out{\hypertarget{method-add_plot}{}}}
+\subsection{Method \code{add_plot()}}{
+Add plot. A wrapper for add_image()
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_plot(
+  sheet,
+  width = 6,
+  height = 4,
+  xy = NULL,
+  startRow = 1,
+  startCol = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  fileType = "png",
+  units = "in",
+  dpi = 300
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{width}}{width}
+
+\item{\code{height}}{height}
+
+\item{\code{xy}}{xy}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{rowOffset}}{rowOffset}
+
+\item{\code{colOffset}}{colOffset}
+
+\item{\code{fileType}}{fileType}
+
+\item{\code{units}}{units}
+
+\item{\code{dpi}}{dpi}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
