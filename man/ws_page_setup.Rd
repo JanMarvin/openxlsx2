@@ -2,9 +2,10 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{ws_page_setup}
 \alias{ws_page_setup}
+\alias{wb_page_setup}
 \title{Set page margins, orientation and print scaling}
 \usage{
-ws_page_setup(
+wb_page_setup(
   wb,
   sheet,
   orientation = NULL,
@@ -141,10 +142,10 @@ writeDataTable(wb, 1, x = iris[1:30, ])
 writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 
 ## landscape page scaled to 50\%
-ws_page_setup(wb, sheet = 1, orientation = "landscape", scale = 50)
+wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
 
 ## portrait page scales to 300\% with 0.5in left and right margins
-ws_page_setup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+wb$page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
 
 
 ## print titles
@@ -154,8 +155,8 @@ wb$add_worksheet("print_title_cols")
 writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
 writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 
-ws_page_setup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
-ws_page_setup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
+wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 \dontrun{
 wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 }

@@ -150,13 +150,14 @@ is created, not when the Excel files are saved.}
 \item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-add_plot}{\code{wbWorkbook$add_plot()}}
-\item \href{#method-wb_create_named_region}{\code{wbWorkbook$wb_create_named_region()}}
+\item \href{#method-create_named_region}{\code{wbWorkbook$create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
-\item \href{#method-wb_protect}{\code{wbWorkbook$wb_protect()}}
+\item \href{#method-protect}{\code{wbWorkbook$protect()}}
 \item \href{#method-set_creators}{\code{wbWorkbook$set_creators()}}
 \item \href{#method-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
 \item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
+\item \href{#method-page_setup}{\code{wbWorkbook$page_setup()}}
 \item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
@@ -1026,12 +1027,12 @@ Add plot. A wrapper for add_image()
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wb_create_named_region"></a>}}
-\if{latex}{\out{\hypertarget{method-wb_create_named_region}{}}}
-\subsection{Method \code{wb_create_named_region()}}{
+\if{html}{\out{<a id="method-create_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-create_named_region}{}}}
+\subsection{Method \code{create_named_region()}}{
 Create a named region in a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_create_named_region(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$create_named_region(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1067,12 +1068,12 @@ The \code{wbWorkbook} object, invisibly; called for its side-effects
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wb_protect"></a>}}
-\if{latex}{\out{\hypertarget{method-wb_protect}{}}}
-\subsection{Method \code{wb_protect()}}{
+\if{html}{\out{<a id="method-protect"></a>}}
+\if{latex}{\out{\hypertarget{method-protect}{}}}
+\subsection{Method \code{protect()}}{
 Protect a workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_protect(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect(
   protect = TRUE,
   lockStructure = FALSE,
   lockWindows = FALSE,
@@ -1176,6 +1177,73 @@ Change the last modified by
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{LastModifiedBy}}{A new value}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-page_setup"></a>}}
+\if{latex}{\out{\hypertarget{method-page_setup}{}}}
+\subsection{Method \code{page_setup()}}{
+page_setup()
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$page_setup(
+  sheet,
+  orientation = NULL,
+  scale = 100,
+  left = 0.7,
+  right = 0.7,
+  top = 0.75,
+  bottom = 0.75,
+  header = 0.3,
+  footer = 0.3,
+  fitToWidth = FALSE,
+  fitToHeight = FALSE,
+  paperSize = NULL,
+  printTitleRows = NULL,
+  printTitleCols = NULL,
+  summaryRow = NULL,
+  summaryCol = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{orientation}}{orientation}
+
+\item{\code{scale}}{scale}
+
+\item{\code{left}}{left}
+
+\item{\code{right}}{right}
+
+\item{\code{top}}{top}
+
+\item{\code{bottom}}{bottom}
+
+\item{\code{header}}{header}
+
+\item{\code{footer}}{footer}
+
+\item{\code{fitToWidth}}{fitToWidth}
+
+\item{\code{fitToHeight}}{fitToHeight}
+
+\item{\code{paperSize}}{paperSize}
+
+\item{\code{printTitleRows}}{printTitleRows}
+
+\item{\code{printTitleCols}}{printTitleCols}
+
+\item{\code{summaryRow}}{summaryRow}
+
+\item{\code{summaryCol}}{summaryCol}
 }
 \if{html}{\out{</div>}}
 }

@@ -2,11 +2,11 @@ test_that("Protect Workbook", {
   wb <- wb_workbook()
   wb$add_worksheet("s1")
 
-  wb$wb_protect(password = "abcdefghij")
+  wb$protect(password = "abcdefghij")
 
   expect_true(wb$workbook$workbookProtection == "<workbookProtection workbookPassword=\"FEF1\"/>")
 
-  wb$wb_protect(protect = FALSE, password = "abcdefghij", lockStructure = TRUE, lockWindows = TRUE)
+  wb$protect(protect = FALSE, password = "abcdefghij", lockStructure = TRUE, lockWindows = TRUE)
   expect_true(wb$workbook$workbookProtection == "")
 })
 
