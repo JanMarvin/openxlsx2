@@ -14,11 +14,9 @@ wb_validate_sheet <- function(wb, sheet) {
 
   # input is number
   if (is.numeric(sheet)) {
-    if (!sheet %in% seq_along(wb$sheet_names)) {
-      return(NA_integer_)
-    } else {
-      return(sheet)
-    }
+    badsheet <- !sheet %in% seq_along(wb$sheet_names)
+    if (any(badsheet)) sheet[badsheet] <- NA_integer_
+    return(sheet)
   }
 
   if (!sheet %in% replaceXMLEntities(wb$sheet_names)) {
