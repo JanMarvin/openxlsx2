@@ -62,7 +62,7 @@ test_that("Deleting a Table Object", {
   ## wb_remove_tables ----
 
   ## remove iris and re-write it
-  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+  wb$remove_tables(sheet = 1, table = "iris")
 
   expect_equal(length(wb$tables), 4L)
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
@@ -83,7 +83,7 @@ test_that("Deleting a Table Object", {
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), c("mtcars", "iris"))
 
 
-  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+  wb$remove_tables(sheet = 1, table = "iris")
 
   expect_equal(length(wb$tables), 5L)
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
@@ -142,7 +142,7 @@ test_that("Save and load Table Deletion", {
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
   ## remove iris and re-write it
-  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+  wb$remove_tables(sheet = 1, table = "iris")
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars"))
 
   temp_file <- temp_xlsx()
@@ -167,8 +167,8 @@ test_that("Save and load Table Deletion", {
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
   writeDataTable(wb, sheet = 2, x = mtcars, tableName = "mtcars2", startCol = 3)
 
-  wb_remove_tables(wb = wb, sheet = 1, table = "iris")
-  wb_remove_tables(wb = wb, sheet = 1, table = "mtcars")
+  wb$remove_tables(sheet = 1, table = "iris")
+  wb$remove_tables(sheet = 1, table = "mtcars")
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "mtcars2"))
 
   temp_file <- temp_xlsx()

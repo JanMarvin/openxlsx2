@@ -6,6 +6,10 @@
 \value{
 The \code{wbWorkbook} object
 
+The sheet tables.  \code{character()} if empty
+
+The \code{wbWorkbook} object
+
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
@@ -165,6 +169,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
 \item \href{#method-page_setup}{\code{wbWorkbook$page_setup()}}
 \item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
+\item \href{#method-get_tables}{\code{wbWorkbook$get_tables()}}
+\item \href{#method-remove_tables}{\code{wbWorkbook$remove_tables()}}
 \item \href{#method-add_filter}{\code{wbWorkbook$add_filter()}}
 \item \href{#method-remove_filter}{\code{wbWorkbook$remove_filter()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
@@ -1297,6 +1303,42 @@ Sets headers and footers
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_tables"></a>}}
+\if{latex}{\out{\hypertarget{method-get_tables}{}}}
+\subsection{Method \code{get_tables()}}{
+get tables
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_tables(sheet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-remove_tables"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_tables}{}}}
+\subsection{Method \code{remove_tables()}}{
+remove tables
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_tables(sheet, table)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{table}}{table}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

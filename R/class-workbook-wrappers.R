@@ -1715,41 +1715,19 @@ wb_page_break <- function(wb, sheet, i, type = "row") {
 #' writeDataTable(wb, sheet = "Sheet 1", x = iris)
 #' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
-#' wb_get_tables(wb, sheet = "Sheet 1")
+#' wb$get_tables(sheet = "Sheet 1")
 #' @export
 wb_get_tables <- function(wb, sheet) {
   assert_workbook(wb)
-
-  if (length(sheet) != 1) {
-    stop("sheet argument must be length 1")
-  }
-
-  if (length(wb$tables) == 0) {
-    return(character())
-  }
-
-  sheet <- wb_validate_sheet(wb, sheet)
-  if (is.na(sheet)) stop("No such sheet in workbook")
-
-  table_sheets <- attr(wb$tables, "sheet")
-  tables <- attr(wb$tables, "tableName")
-  refs <- names(wb$tables)
-
-  refs <- refs[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
-  tables <- tables[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
-
-  if (length(tables)) {
-    attr(tables, "refs") <- refs
-  }
-
-  return(tables)
+  wb$clone()$get_tables(sheet = sheet)
 }
 
 
 
-#' @name wb_remove_tables
-#' @title Remove an Excel table in a workbook
-#' @description List Excel tables in a workbook
+#' Remove an Excel table in a workbook
+#'
+#' List Excel tables in a workbook
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param table Name of table to remove. See [wb_get_tables()]
@@ -1770,11 +1748,11 @@ wb_get_tables <- function(wb, sheet) {
 #'
 #' ## wb_remove_tables() deletes table object and all data
 #' wb_get_tables(wb, sheet = 1)
-#' wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+#' wb$remove_tables(sheet = 1, table = "iris")
 #' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #'
 #' wb_get_tables(wb, sheet = 1)
-#' wb_remove_tables(wb = wb, sheet = 1, table = "iris")
+#' wb$remove_tables(sheet = 1, table = "iris")
 #' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' \dontrun{
 #' wb_save(wb, path = "wb_remove_tablesExample.xlsx", overwrite = TRUE)
@@ -1783,54 +1761,7 @@ wb_get_tables <- function(wb, sheet) {
 #' @export
 wb_remove_tables <- function(wb, sheet, table) {
   assert_workbook(wb)
-
-  if (length(sheet) != 1) {
-    stop("sheet argument must be length 1")
-  }
-
-  if (length(table) != 1) {
-    stop("table argument must be length 1")
-  }
-
-  ## delete table object and all data in it
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  if (!table %in% attr(wb$tables, "tableName")) {
-    stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
-  }
-
-  ## get existing tables
-  table_sheets <- attr(wb$tables, "sheet")
-  table_names <- attr(wb$tables, "tableName")
-  refs <- names(wb$tables)
-
-  ## delete table object (by flagging as deleted)
-  inds <- which(table_sheets %in% sheet & table_names %in% table)
-  table_name_original <- table_names[inds]
-
-  table_names[inds] <- paste0(table_name_original, "_openxlsx_deleted")
-  attr(wb$tables, "tableName") <- table_names
-
-  ## delete reference from worksheet to table
-  worksheet_table_names <- attr(wb$worksheets[[sheet]]$tableParts, "tableName")
-  to_remove <- which(worksheet_table_names == table_name_original)
-
-  wb$worksheets[[sheet]]$tableParts <- wb$worksheets[[sheet]]$tableParts[-to_remove]
-  attr(wb$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
-
-
-  ## Now delete data from the worksheet
-  refs <- strsplit(refs[[inds]], split = ":")[[1]]
-  rows <- as.integer(gsub("[A-Z]", "", refs))
-  rows <- seq(from = rows[1], to = rows[2], by = 1)
-
-  cols <- col2int(refs)
-  cols <- seq(from = cols[1], to = cols[2], by = 1)
-
-  ## now delete data
-  deleteData(wb = wb, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
-
-  invisible(0)
+  wb$clone()$remove_tables(sheet = sheet, table = table)
 }
 
 

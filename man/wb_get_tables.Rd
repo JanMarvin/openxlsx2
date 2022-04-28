@@ -24,5 +24,5 @@ wb$add_worksheet(sheet = "Sheet 1")
 writeDataTable(wb, sheet = "Sheet 1", x = iris)
 writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
-wb_get_tables(wb, sheet = "Sheet 1")
+wb$get_tables(sheet = "Sheet 1")
 }

@@ -3501,7 +3501,84 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
-    ### filters ----
+    #' @description get tables
+    #' @param sheet sheet
+    #' @returns The sheet tables.  `character()` if empty
+    get_tables = function(sheet) {
+      if (length(sheet) != 1) {
+        stop("sheet argument must be length 1")
+      }
+
+      if (length(self$tables) == 0) {
+        return(character())
+      }
+
+      sheet <- wb_validate_sheet(self, sheet)
+      if (is.na(sheet)) stop("No such sheet in workbook")
+
+      table_sheets <- attr(self$tables, "sheet")
+      tables <- attr(self$tables, "tableName")
+      refs <- names(self$tables)
+
+      refs <- refs[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
+      tables <- tables[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
+
+      if (length(tables)) {
+        attr(tables, "refs") <- refs
+      }
+
+      return(tables)
+    },
+
+
+    #' @description remove tables
+    #' @param sheet sheet
+    #' @param table table
+    #' @returns The `wbWorkbook` object
+    remove_tables = function(sheet, table) {
+      if (length(table) != 1) {
+        stop("table argument must be length 1")
+      }
+
+      ## delete table object and all data in it
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (!table %in% attr(self$tables, "tableName")) {
+        stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
+      }
+
+      ## get existing tables
+      table_sheets <- attr(self$tables, "sheet")
+      table_names <- attr(self$tables, "tableName")
+      refs <- names(self$tables)
+
+      ## delete table object (by flagging as deleted)
+      inds <- which(table_sheets %in% sheet & table_names %in% table)
+      table_name_original <- table_names[inds]
+
+      table_names[inds] <- paste0(table_name_original, "_openxlsx_deleted")
+      attr(self$tables, "tableName") <- table_names
+
+      ## delete reference from worksheet to table
+      worksheet_table_names <- attr(self$worksheets[[sheet]]$tableParts, "tableName")
+      to_remove <- which(worksheet_table_names == table_name_original)
+
+      self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
+      attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
+
+
+      ## Now delete data from the worksheet
+      refs <- strsplit(refs[[inds]], split = ":")[[1]]
+      rows <- as.integer(gsub("[A-Z]", "", refs))
+      rows <- seq(from = rows[1], to = rows[2], by = 1)
+
+      cols <- col2int(refs)
+      cols <- seq(from = cols[1], to = cols[2], by = 1)
+
+      ## now delete data
+      deleteData(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
+      self
+    },
 
     #' @description add filters
     #' @param sheet sheet
