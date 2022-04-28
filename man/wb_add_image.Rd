@@ -12,6 +12,8 @@ wb_add_image(
   height = 3,
   startRow = 1,
   startCol = 1,
+  rowOffset = 0,
+  colOffset = 0,
   units = "in",
   dpi = 300
 )
@@ -21,7 +23,7 @@ wb_add_image(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{file}{An image file. Valid file types are: jpeg, png, bmp}
+\item{file}{An image file. Valid file types are:\code{ "jpeg"}, \code{"png"}, \code{"bmp"}}
 
 \item{width}{Width of figure.}
 
@@ -31,7 +33,11 @@ wb_add_image(
 
 \item{startCol}{Column coordinate of upper left corner of the image}
 
-\item{units}{Units of width and height. Can be "in", "cm" or "px"}
+\item{rowOffset}{offset within cell (row)}
+
+\item{colOffset}{offset within cell (column)}
+
+\item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution used for conversion between units.}
 }
@@ -49,9 +55,9 @@ wb$add_worksheet("Sheet 3")
 
 ## Insert images
 img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-wb_add_image(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-wb_add_image(wb, 2, img, startRow = 2, startCol = 2)
-wb_add_image(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
+wb$add_image(2, img, startRow = 2, startCol = 2)
+wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 
 ## Save workbook
 \dontrun{

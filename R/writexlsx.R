@@ -403,9 +403,9 @@ write.xlsx <- function(x, file, asTable = FALSE, ...) {
     if (!is.null(colWidths)) {
       cols <- seq_len(NCOL(x[[i]])) + startCol[[i]] - 1L
       if (identical(colWidths[[i]], "auto")) {
-        wb_set_col_widths(wb, sheet = i, cols = cols, widths = "auto")
+        wb$set_col_widths(sheet = i, cols = cols, widths = "auto")
       } else if (!identical(colWidths[[i]], "")) {
-        wb_set_col_widths(wb, sheet = i, cols = cols, widths = colWidths[[i]])
+        wb$set_col_widths(sheet = i, cols = cols, widths = colWidths[[i]])
       }
     }
   }

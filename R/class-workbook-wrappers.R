@@ -384,7 +384,7 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' @param wb A [wbWorkbook] object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
-#' @param widths widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
+#' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
 #' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
 #' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 #' of the selected width.
@@ -412,106 +412,27 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' wb$add_worksheet("Sheet 1")
 #'
 #' ## set col widths
-#' wb_set_col_widths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+#' wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 #'
 #' ## auto columns
 #' wb$add_worksheet("Sheet 2")
 #' writeData(wb, sheet = 2, x = iris)
-#' wb_set_col_widths(wb, sheet = 2, cols = 1:5, widths = "auto")
+#' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
-wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols))) {
+wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # should do nothing if the cols' length is zero
-  if (length(cols) == 0L) return(invisible(0))
-
-  cols <- col2int(cols)
-
-  if (length(widths) > length(cols)) {
-    stop("More widths than columns supplied.")
-  }
-
-  if (length(hidden) > length(cols)) {
-    stop("hidden argument is longer than cols.")
-  }
-
-  if (length(widths) < length(cols)) {
-    widths <- rep(widths, length.out = length(cols))
-  }
-
-  if (length(hidden) < length(cols)) {
-    hidden <- rep(hidden, length.out = length(cols))
-  }
-
-  # TODO add bestFit option?
-  bestFit <- rep("1", length.out = length(cols))
-  customWidth <- rep("1", length.out = length(cols))
-
-  ## Remove duplicates
-  widths <- widths[!duplicated(cols)]
-  hidden <- hidden[!duplicated(cols)]
-  cols <- cols[!duplicated(cols)]
-
-  col_df <- wb$worksheets[[sheet]]$unfold_cols()
-
-  if (any(widths == "auto")) {
-
-    df <- wb_to_df(wb, sheet = sheet, cols = cols, colNames = FALSE)
-    # TODO format(x) might not be the way it is formatted in the xlsx file.
-    col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
-
-    # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
-    fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
-    font_width_tab <- read.csv(fw)
-
-    # TODO base font might not be the font used in this column
-    base_font <- wb_get_base_font(wb)
-    font <- base_font$name$val
-    size <- as.integer(base_font$size$val)
-
-    sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
-    # maximum digit width of selected font
-    mdw <- font_width_tab$Width[sel]
-
-    # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
-    # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
-    # the results were close to the initial col_width sizes. Character width is still bad, numbers are
-    # way larger, therefore characters cells are to wide. Not sure if we need improve this.
-    widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
-    widths <- round(widths)
-  }
-
-  # create empty cols
-  if (NROW(col_df) == 0)
-    col_df <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
-
-  # found a few cols, but not all required cols. create the missing columns
-  if (any(!cols %in% as.numeric(col_df$min))) {
-    beg <- max(as.numeric(col_df$min)) + 1
-    end <- max(cols)
-
-    # new columns
-    new_cols <- col_to_df(read_xml(wb$createCols(sheet, beg = beg, end = end)))
-
-    # rbind only the missing columns. avoiding dups
-    sel <- !new_cols$min %in% col_df$min
-    col_df <- rbind(col_df, new_cols[sel,])
-    col_df <- col_df[order(as.numeric(col_df[, "min"])),]
-  }
-
-  select <- as.numeric(col_df$min) %in% cols
-  col_df$width[select] <- widths
-  col_df$hidden[select] <- tolower(hidden)
-  col_df$bestFit[select] <- bestFit
-  col_df$customWidth[select] <- customWidth
-  wb$worksheets[[sheet]]$fold_cols(col_df)
-
+  wb$set_col_widths(
+    sheet  = sheet,
+    cols   = cols,
+    widths = widths,
+    # TODO allow either 1 or length(cols)
+    hidden = hidden
+  )
 }
 
 #' @name wb_remove_col_widths
@@ -584,19 +505,26 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 # images ------------------------------------------------------------------
 
 
-#' @name wb_add_plot
-#' @title Insert the current plot into a worksheet
-#' @description The current plot is saved to a temporary image file using dev.copy.
-#' This file is then written to the workbook using wb_add_image.
+#' Insert the current plot into a worksheet
+#'
+#' The current plot is saved to a temporary image file using
+#' [grDevices::dev.copy()] This file is then written to the workbook using
+#' [wb_add_image()].
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param xy Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)
-#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when xy is given.
-#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]` when xy is given.
-#' @param width Width of figure. Defaults to 6in.
-#' @param height Height of figure . Defaults to 4in.
+#' @param xy Alternate way to specify `startRow` and `startCol.`  A vector of
+#'   length `2` of form (`startcol`, `startRow`)
+#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when
+#'   `xy` is given.
+#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]`
+#'   when `xy` is given.
+#' @param rowOffset offset within cell (row)
+#' @param colOffset offset within cell (column)
+#' @param width Width of figure. Defaults to `6`in.
+#' @param height Height of figure . Defaults to `4`in.
 #' @param fileType File type of image
-#' @param units Units of width and height. Can be "in", "cm" or "px"
+#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution
 #' @seealso [wb_add_image()]
 #' @export
@@ -620,63 +548,43 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
 #' print(p1) # plot needs to be showing
-#' wb_add_plot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
+#' wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
 #'
 #' ## Insert plot 2
 #' print(p2)
-#' wb_add_plot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+#' wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
 #' ## Save workbook
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_plot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
-  startRow = 1, startCol = 1, fileType = "png", units = "in", dpi = 300) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (is.null(dev.list()[[1]])) {
-    warning("No plot to insert.")
-    return()
-  }
-
+wb_add_plot <- function(
+  wb,
+  sheet,
+  width     = 6,
+  height    = 4,
+  xy        = NULL,
+  startRow  = 1,
+  startCol  = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  fileType  = "png",
+  units     = "in",
+  dpi       = 300
+) {
   assert_workbook(wb)
-
-  if (!is.null(xy)) {
-    startCol <- xy[[1]]
-    startRow <- xy[[2]]
-  }
-
-  fileType <- tolower(fileType)
-  units <- tolower(units)
-
-  if (fileType == "jpg") {
-    fileType <- "jpeg"
-  }
-
-  if (!fileType %in% c("png", "jpeg", "tiff", "bmp")) {
-    stop("Invalid file type.\nfileType must be one of: png, jpeg, tiff, bmp")
-  }
-
-  if (!units %in% c("cm", "in", "px")) {
-    stop("Invalid units.\nunits must be one of: cm, in, px")
-  }
-
-  fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
-
-  if (fileType == "bmp") {
-    dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
-  } else if (fileType == "jpeg") {
-    dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100, res = dpi)
-  } else if (fileType == "png") {
-    dev.copy(png, filename = fileName, width = width, height = height, units = units, res = dpi)
-  } else if (fileType == "tiff") {
-    dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
-  }
-
-  ## write image
-  invisible(dev.off())
-
-  wb_add_image(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
+  wb$clone()$add_plot(
+    sheet     = sheet,
+    width     = width,
+    height    = height,
+    xy        = xy,
+    startRow  = startRow,
+    startCol  = startCol,
+    rowOffset = rowOffset,
+    colOffset = colOffset,
+    fileType  = fileType,
+    units     = units,
+    dpi       = dpi
+  )
 }
 
 
@@ -2242,17 +2150,20 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
   wb$set_last_modified_by(LastModifiedBy)
 }
 
-#' @name wb_add_image
-#' @title Insert an image into a worksheet
-#' @description Insert an image into a worksheet
+#' Insert an image into a worksheet
+#'
+#' Insert an image into a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param file An image file. Valid file types are: jpeg, png, bmp
+#' @param file An image file. Valid file types are:` "jpeg"`, `"png"`, `"bmp"`
 #' @param width Width of figure.
 #' @param height Height of figure.
 #' @param startRow Row coordinate of upper left corner of the image
 #' @param startCol Column coordinate of upper left corner of the image
-#' @param units Units of width and height. Can be "in", "cm" or "px"
+#' @param rowOffset offset within cell (row)
+#' @param colOffset offset within cell (column)
+#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
 #' @seealso [wb_add_plot()]
 #' @export
@@ -2267,47 +2178,38 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' wb_add_image(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-#' wb_add_image(wb, 2, img, startRow = 2, startCol = 2)
-#' wb_add_image(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#' wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
+#' wb$add_image(2, img, startRow = 2, startCol = 2)
+#' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 #'
 #' ## Save workbook
 #' \dontrun{
 #' wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_image <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (!file.exists(file)) {
-    stop("File does not exist.")
-  }
-
-  if (!grepl("\\\\|\\/", file)) {
-    file <- file.path(getwd(), file, fsep = .Platform$file.sep)
-  }
-
-  units <- tolower(units)
-
-  if (!units %in% c("cm", "in", "px")) {
-    stop("Invalid units.\nunits must be one of: cm, in, px")
-  }
-
-  startCol <- col2int(startCol)
-  startRow <- as.integer(startRow)
-
-  ## convert to inches
-  if (units == "px") {
-    width <- width / dpi
-    height <- height / dpi
-  } else if (units == "cm") {
-    width <- width / 2.54
-    height <- height / 2.54
-  }
-
-  ## Convert to EMUs
-  widthEMU <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
-  heightEMU <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
-
-  wb$add_image(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
+wb_add_image <- function(
+  wb,
+  sheet,
+  file,
+  width     = 6,
+  height    = 3,
+  startRow  = 1,
+  startCol  = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  units     = "in",
+  dpi       = 300
+) {
+  assert_workbook(wb)
+  wb$clone()$add_image(
+    sheet     = sheet,
+    file      = file,
+    startRow  = startRow,
+    startCol  = startCol,
+    width     = width,
+    height    = height,
+    rowOffset = rowOffset,
+    colOffset = colOffset,
+    units     = units,
+    dpi       = dpi
+  )
 }

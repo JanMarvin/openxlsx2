@@ -1671,6 +1671,8 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    ## columns ----
+
     #' description
     #' creates column object for worksheet
     #' @param sheet sheet
@@ -1758,7 +1760,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet A name or index of a worksheet
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
-    wb_remove_col_widths = function(sheet, cols) {
+    remove_col_widths = function(sheet, cols) {
       sheet <- wb_validate_sheet(self, sheet)
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
@@ -1784,6 +1786,115 @@ wbWorkbook <- R6::R6Class(
     },
 
     # TODO wb_group_rows() and group_cols() are very similiar.  Can problem turn
+    #' @description
+    #' Group cols
+    #' @param sheet sheet
+    #' @param cols cols
+    #' @param widths Width of columns
+    #' @param hidden A logical vector to determine which cols are hidden; values
+    #'   are repeated across length of `cols`
+    #' @return The `wbWorkbook` object, invisibly
+    set_col_widths = function(sheet, cols, widths = 8.43, hidden = FALSE) {
+      sheet <- wb_validate_sheet(self, sheet)
+
+      # should do nothing if the cols' length is zero
+      # TODO why would cols ever be 0?  Can we just signal this as an error?
+      if (length(cols) == 0L) {
+        return(self)
+      }
+
+      cols <- col2int(cols)
+
+      if (length(widths) > length(cols)) {
+        stop("More widths than columns supplied.")
+      }
+
+      if (length(hidden) > length(cols)) {
+        stop("hidden argument is longer than cols.")
+      }
+
+      if (length(widths) < length(cols)) {
+        widths <- rep(widths, length.out = length(cols))
+      }
+
+      if (length(hidden) < length(cols)) {
+        hidden <- rep(hidden, length.out = length(cols))
+      }
+
+      # TODO add bestFit option?
+      bestFit <- rep("1", length.out = length(cols))
+      customWidth <- rep("1", length.out = length(cols))
+
+      ## Remove duplicates
+      ok <- !duplicated(cols)
+      widths <- widths[ok]
+      hidden <- hidden[ok]
+      cols <- cols[ok]
+
+      col_df <- self$worksheets[[sheet]]$unfold_cols()
+
+      if (any(widths == "auto")) {
+
+        df <- wb_to_df(self, sheet = sheet, cols = cols, colNames = FALSE)
+        # TODO format(x) might not be the way it is formatted in the xlsx file.
+        col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
+
+        # message() should be used instead if we really needed to show this
+        # print(col_width)
+
+        # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
+
+        # TODO save this instead as internal package data for quicker loading
+        fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
+        font_width_tab <- read.csv(fw)
+
+        # TODO base font might not be the font used in this column
+        base_font <- wb_get_base_font(self)
+        font <- base_font$name$val
+        size <- as.integer(base_font$size$val)
+
+        sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
+        # maximum digit width of selected font
+        mdw <- font_width_tab$Width[sel]
+
+        # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
+        # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
+        # the results were close to the initial col_width sizes. Character width is still bad, numbers are
+        # way larger, therefore characters cells are to wide. Not sure if we need improve this.
+        widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
+        widths <- round(widths)
+      }
+
+      # create empty cols
+      if (NROW(col_df) == 0)
+        col_df <- col_to_df(read_xml(self$createCols(sheet, n = max(cols))))
+
+      # found a few cols, but not all required cols. create the missing columns
+      if (any(!cols %in% as.numeric(col_df$min))) {
+        beg <- max(as.numeric(col_df$min)) + 1
+        end <- max(cols)
+
+        # new columns
+        new_cols <- col_to_df(read_xml(self$createCols(sheet, beg = beg, end = end)))
+
+        # rbind only the missing columns. avoiding dups
+        sel <- !new_cols$min %in% col_df$min
+        col_df <- rbind(col_df, new_cols[sel, ])
+        col_df <- col_df[order(as.numeric(col_df[, "min"])), ]
+      }
+
+      select <- as.numeric(col_df$min) %in% cols
+      col_df$width[select] <- widths
+      col_df$hidden[select] <- tolower(hidden)
+      col_df$bestFit[select] <- bestFit
+      col_df$customWidth[select] <- customWidth
+      self$worksheets[[sheet]]$fold_cols(col_df)
+      self
+    },
+
+    ## rows ----
+
+    # TODO groupRows() and groupCols() are very similiar.  Can problem turn
     # these into some wrappers for another method
 
     #' @description
@@ -2679,6 +2790,8 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    ## plots and images ----
+
     #' @description
     #' Insert an image into a sheet
     #' @param sheet sheet
@@ -2689,17 +2802,56 @@ wbWorkbook <- R6::R6Class(
     #' @param height height
     #' @param rowOffset rowOffset
     #' @param colOffset colOffset
+    #' @param units units
+    #' @param dpi dpi
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
       sheet,
       file,
-      startRow,
-      startCol,
-      width,
-      height,
+      width     = 6,
+      height    = 3,
+      startRow  = 1,
+      startCol  = 1,
       rowOffset = 0,
-      colOffset = 0
+      colOffset = 0,
+      units     = "in",
+      dpi       = 300
     ) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (!file.exists(file)) {
+        stop("File does not exist.")
+      }
+
+      # TODO require user to pass a valid path
+      if (!grepl("\\\\|\\/", file)) {
+        file <- file.path(getwd(), file, fsep = .Platform$file.sep)
+      }
+
+      units <- tolower(units)
+
+      # TODO use match.arg()
+      if (!units %in% c("cm", "in", "px")) {
+        stop("Invalid units.\nunits must be one of: cm, in, px")
+      }
+
+      startCol <- col2int(startCol)
+      startRow <- as.integer(startRow)
+
+      ## convert to inches
+      if (units == "px") {
+        width <- width / dpi
+        height <- height / dpi
+      } else if (units == "cm") {
+        width <- width / 2.54
+        height <- height / 2.54
+      }
+
+      ## Convert to EMUs
+      width <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
+      height <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
+
       ## within the sheet the drawing node's Id refernce an id in the sheetRels
       ## sheet rels reference the drawingi.xml file
       ## drawingi.xml refernece drawingRels
@@ -2751,16 +2903,15 @@ wbWorkbook <- R6::R6Class(
       self$append("media", tmp)
 
       ## create drawing.xml
-      anchor <-
-        '<xdr:oneCellAnchor>'
+      anchor <- '<xdr:oneCellAnchor>'
 
       from <- sprintf(
         '<xdr:from>
-    <xdr:col>%s</xdr:col>
-    <xdr:colOff>%s</xdr:colOff>
-    <xdr:row>%s</xdr:row>
-    <xdr:rowOff>%s</xdr:rowOff>
-  </xdr:from>',
+        <xdr:col>%s</xdr:col>
+        <xdr:colOff>%s</xdr:colOff>
+        <xdr:row>%s</xdr:row>
+        <xdr:rowOff>%s</xdr:rowOff>
+        </xdr:from>',
         startCol - 1L,
         colOffset,
         startRow - 1L,
@@ -2770,11 +2921,7 @@ wbWorkbook <- R6::R6Class(
       drawingsXML <- stri_join(
         anchor,
         from,
-        sprintf(
-          '<xdr:ext cx="%s" cy="%s"/>',
-          width,
-          height
-        ),
+        sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
         genBasePic(imageNo),
         "<xdr:clientData/>",
         "</xdr:oneCellAnchor>"
@@ -2795,6 +2942,92 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(self)
+    },
+
+    #' @description Add plot. A wrapper for add_image()
+    #' @param sheet sheet
+    #' @param width width
+    #' @param height height
+    #' @param xy xy
+    #' @param startRow startRow
+    #' @param startCol startCol
+    #' @param rowOffset rowOffset
+    #' @param colOffset colOffset
+    #' @param fileType fileType
+    #' @param units units
+    #' @param dpi dpi
+    #' @returns The `wbWorkbook` object
+    add_plot = function(
+      sheet,
+      width     = 6,
+      height    = 4,
+      xy        = NULL,
+      startRow  = 1,
+      startCol  = 1,
+      rowOffset = 0,
+      colOffset = 0,
+      fileType  = "png",
+      units     = "in",
+      dpi       = 300
+    ) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (is.null(dev.list()[[1]])) {
+        warning("No plot to insert.")
+        return(self)
+      }
+
+      if (!is.null(xy)) {
+        startCol <- xy[[1]]
+        startRow <- xy[[2]]
+      }
+
+      fileType <- tolower(fileType)
+      units <- tolower(units)
+
+      # TODO just don't allow jpg
+      if (fileType == "jpg") {
+        fileType <- "jpeg"
+      }
+
+      # TODO add match.arg()
+      if (!fileType %in% c("png", "jpeg", "tiff", "bmp")) {
+        stop("Invalid file type.\nfileType must be one of: png, jpeg, tiff, bmp")
+      }
+
+      if (!units %in% c("cm", "in", "px")) {
+        stop("Invalid units.\nunits must be one of: cm, in, px")
+      }
+
+      fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
+
+      # TODO use switch()
+      if (fileType == "bmp") {
+        dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
+      } else if (fileType == "jpeg") {
+        dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100, res = dpi)
+      } else if (fileType == "png") {
+        dev.copy(png, filename = fileName, width = width, height = height, units = units, res = dpi)
+      } else if (fileType == "tiff") {
+        dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
+      }
+
+      ## write image
+      invisible(dev.off())
+
+      self$add_image(
+        sheet     = sheet,
+        file      = fileName,
+        width     = width,
+        height    = height,
+        startRow  = startRow,
+        startCol  = startCol,
+        rowOffset = rowOffset,
+        colOffset = colOffset,
+        units     = units,
+        dpi       = dpi
+      )
     },
 
     #' @description

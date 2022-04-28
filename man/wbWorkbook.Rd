@@ -5,10 +5,6 @@
 \title{R6 class for a Workbook}
 \value{
 The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 \description{
 R6 class for a Workbook
@@ -142,7 +138,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
-\item \href{#method-wb_remove_col_widths}{\code{wbWorkbook$wb_remove_col_widths()}}
+\item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
+\item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
 \item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
@@ -152,6 +149,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
+\item \href{#method-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wb_create_named_region}{\code{wbWorkbook$wb_create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-wb_protect}{\code{wbWorkbook$wb_protect()}}
@@ -160,8 +158,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
 \item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
 \item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
-\item \href{#method-add_filter}{\code{wbWorkbook$add_filter()}}
-\item \href{#method-remove_filter}{\code{wbWorkbook$remove_filter()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -612,12 +608,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wb_remove_col_widths"></a>}}
-\if{latex}{\out{\hypertarget{method-wb_remove_col_widths}{}}}
-\subsection{Method \code{wb_remove_col_widths()}}{
+\if{html}{\out{<a id="method-remove_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_col_widths}{}}}
+\subsection{Method \code{remove_col_widths()}}{
 Remove row heights from a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -626,6 +622,33 @@ Remove row heights from a worksheet
 \item{\code{sheet}}{A name or index of a worksheet}
 
 \item{\code{cols}}{Indices of columns to remove custom width (if any) from.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-set_col_widths}{}}}
+\subsection{Method \code{set_col_widths()}}{
+Group cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(sheet, cols, widths = 8.43, hidden = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{widths}}{Width of columns}
+
+\item{\code{hidden}}{A logical vector to determine which cols are hidden; values
+are repeated across length of \code{cols}}
 }
 \if{html}{\out{</div>}}
 }
@@ -913,12 +936,14 @@ Insert an image into a sheet
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_image(
   sheet,
   file,
-  startRow,
-  startCol,
-  width,
-  height,
+  width = 6,
+  height = 3,
+  startRow = 1,
+  startCol = 1,
   rowOffset = 0,
-  colOffset = 0
+  colOffset = 0,
+  units = "in",
+  dpi = 300
 )}\if{html}{\out{</div>}}
 }
 
@@ -929,22 +954,75 @@ Insert an image into a sheet
 
 \item{\code{file}}{file}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{startCol}}{startCol}
-
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
 
+\item{\code{startRow}}{startRow}
+
+\item{\code{startCol}}{startCol}
+
 \item{\code{rowOffset}}{rowOffset}
 
 \item{\code{colOffset}}{colOffset}
+
+\item{\code{units}}{units}
+
+\item{\code{dpi}}{dpi}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_plot"></a>}}
+\if{latex}{\out{\hypertarget{method-add_plot}{}}}
+\subsection{Method \code{add_plot()}}{
+Add plot. A wrapper for add_image()
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_plot(
+  sheet,
+  width = 6,
+  height = 4,
+  xy = NULL,
+  startRow = 1,
+  startCol = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  fileType = "png",
+  units = "in",
+  dpi = 300
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{width}}{width}
+
+\item{\code{height}}{height}
+
+\item{\code{xy}}{xy}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{rowOffset}}{rowOffset}
+
+\item{\code{colOffset}}{colOffset}
+
+\item{\code{fileType}}{fileType}
+
+\item{\code{units}}{units}
+
+\item{\code{dpi}}{dpi}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -1143,44 +1221,8 @@ Sets headers and footers
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_filter"></a>}}
-\if{latex}{\out{\hypertarget{method-add_filter}{}}}
-\subsection{Method \code{add_filter()}}{
-add filters
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_filter(sheet, rows, cols)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{rows}}{rows}
-
-\item{\code{cols}}{cols}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_filter"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_filter}{}}}
-\subsection{Method \code{remove_filter()}}{
-remove filters
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_filter(sheet)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-}
-\if{html}{\out{</div>}}
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 }
 \if{html}{\out{<hr>}}
