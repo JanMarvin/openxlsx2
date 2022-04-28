@@ -182,12 +182,13 @@ test_that("wb_add_plot() is a wrapper", {
 })
 
 
-# wb_get_tables() ---------------------------------------------------------
+# wb_get_tables(), wb_remove_tables() -------------------------------------
 
-test_that("wb_get_tables() is a wrapper", {
+test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
   wb <- wb_workbook()
   wb$add_worksheet(sheet = "Sheet 1")
   writeDataTable(wb, sheet = "Sheet 1", x = iris)
   writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
   expect_wrapper("get_tables", "wb_get_tables", wb = wb, params = list(sheet = 1))
+  expect_wrapper("remove_tables", "wb_remove_tables", wb = wb, params = list(sheet = 1, table = "mtcars"))
 })
