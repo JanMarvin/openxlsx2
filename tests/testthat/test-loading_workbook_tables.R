@@ -20,7 +20,7 @@ test_that("Tables loaded correctly", {
   expect_equal(unname(wb_get_tables(wb, 1)), "Table2", ignore_attr = TRUE)
   expect_equal(unname(wb_get_tables(wb, 3)), "Table3", ignore_attr = TRUE)
 
-  wb_remove_tables(wb, sheet = 1, table = "Table2")
+  wb$remove_tables(sheet = 1, table = "Table2")
 
   expect_equal(wb_get_tables(wb, sheet = 1), character(), ignore_attr = TRUE)
   expect_equal(length(wb$worksheets[[1]]$tableParts), 0)
