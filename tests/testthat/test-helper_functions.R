@@ -58,13 +58,13 @@ test_that("ws_page_setup example", {
   writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 
   ## landscape page scaled to 50%
-  ws_page_setup(wb, sheet = 1, orientation = "landscape", scale = 50)
+  wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
   exp <- "<pageSetup paperSize=\"9\" orientation=\"landscape\" scale = \"50\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
   expect_equal(exp, wb$worksheets[[1]]$pageSetup)
 
 
   ## portrait page scales to 300% with 0.5in left and right margins
-  ws_page_setup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+  wb$page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
   exp <- "<pageSetup paperSize=\"9\" orientation=\"portrait\" scale = \"300\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\" r:id=\"rId2\"/>"
   expect_equal(exp, wb$worksheets[[2]]$pageSetup)
 
@@ -76,8 +76,8 @@ test_that("ws_page_setup example", {
   writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
   writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 
-  ws_page_setup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
-  ws_page_setup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+  wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
+  wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 
   exp <- c(
     "<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"2\">'print_title_rows'!$1:$1</definedName>",
