@@ -1,4 +1,4 @@
-#' @name openXL
+#' @name xl_open
 #' @title Open a Microsoft Excel file (xls/xlsx) or an openxlsx Workbook
 #' @description This function tries to open a Microsoft Excel
 #' (xls/xlsx) file or an openxlsx Workbook with the proper
@@ -17,20 +17,23 @@
 #' (`gnumeric`) and Calligra Sheets (`calligrasheets`).
 #'
 #' @param file path to the Excel (xls/xlsx) file or Workbook object.
-#' @usage openXL(file=NULL)
-#' @export openXL
+#' @usage xl_open(file=NULL)
+#' @export
 #' @examples
 #' # file example
 #' example(writeData)
-#' # openXL("writeDataExample.xlsx")
+#' # xl_open("writeDataExample.xlsx")
 #'
 #' # (not yet saved) Workbook example
 #' wb <- wb_workbook()
 #' x <- mtcars[1:6, ]
 #' wb$add_worksheet("Cars")
 #' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
-#' # openXL(wb)
-openXL <- function(file = NULL) {
+#' xl_open(wb)
+xl_open <- function(file = NULL) {
+
+  if (!interactive()) return()
+
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 

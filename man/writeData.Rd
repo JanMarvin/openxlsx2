@@ -125,7 +125,7 @@ file.remove(file)
 
 #####################################################################################
 ## Save workbook
-## Open in excel without saving file: openXL(wb)
+## Open in excel without saving file: xl_open(wb)
 \dontrun{
 wb_save(wb, "writeDataExample.xlsx", overwrite = TRUE)
 }

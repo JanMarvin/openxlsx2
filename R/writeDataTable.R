@@ -91,7 +91,7 @@
 #'
 #' #####################################################################################
 #' ## Save workbook
-#' ## Open in excel without saving file: openXL(wb)
+#' ## Open in excel without saving file: xl_open(wb)
 #' \dontrun{
 #' wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
 #' }
@@ -129,7 +129,7 @@
 #'   )
 #' }
 #'
-#' ## openXL(wb)
+#' ## xl_open(wb)
 #' \dontrun{
 #' wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 #' }

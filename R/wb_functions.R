@@ -1204,5 +1204,5 @@ wb_ws <- function(wb, sheet) {
 wb_open <- function(wb) {
   tmp <- temp_xlsx()
   wb_save(wb, tmp)
-  openXL(tmp)
+  xl_open(tmp)
 }
