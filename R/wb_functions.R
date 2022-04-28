@@ -873,7 +873,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
   # TODO need to tell excel that we have a date, apply some kind of numFmt
   data <- convertToExcelDate(df = data, date1904 = has_date1904)
 
-  if ((class(data) == "data.frame") || (class(data) == "matrix")) {
+  if (inherits(data, "data.frame") || inherits(data, "matrix")) {
     is_data_frame <- TRUE
 
     sel <- !dc %in% c(4, 5, 10)
