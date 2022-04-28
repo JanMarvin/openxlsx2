@@ -15,7 +15,7 @@ test_that("Workbook properties", {
   expect_match(wb$core, "<cp:category>some category</cp:category>")
 
   temp_file <- temp_xlsx()
-  wb <- write.xlsx(
+  wb <- write_xlsx(
     x        = iris,
     file     = temp_file,
     creator  = "Alex 2",

@@ -22,7 +22,7 @@
 #'    \item{`vignette("formatting", package = "openxlsx2")`}
 #'    \item{[writeData()]}
 #'    \item{[writeDataTable()]}
-#'    \item{[write.xlsx()]}
+#'    \item{[write_xlsx()]}
 #'    \item{[read_xlsx()]}
 #'   }
 #' for examples

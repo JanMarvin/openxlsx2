@@ -18,11 +18,11 @@ test_that("regression test for #248", {
   tempFile <- temp_xlsx()
 
   # no formatting
-  expect_silent(write.xlsx(df, tempFile, borders = "columns", overwrite = TRUE))
+  expect_silent(write_xlsx(df, tempFile, borders = "columns", overwrite = TRUE))
 
   # Change column class to percentage
   class(df$percent) <- "percentage"
-  expect_silent(write.xlsx(df, tempFile, borders = "columns", overwrite = TRUE))
+  expect_silent(write_xlsx(df, tempFile, borders = "columns", overwrite = TRUE))
 })
 
 
@@ -102,46 +102,46 @@ test_that("write xlsx", {
   tmp <- temp_xlsx()
   df <- data.frame(a = 1:26, b = letters)
 
-  expect_silent(write.xlsx(df, tmp, tabColour = "#4F81BD"))
-  expect_error(write.xlsx(df, tmp, asTable = "YES"))
-  expect_error(write.xlsx(df, tmp, sheetName = paste0(letters, letters, collapse = "")))
-  expect_error(write.xlsx(df, tmp, zoom = "FULL"))
-  expect_silent(write.xlsx(df, tmp, zoom = 200))
-  expect_silent(write.xlsx(x = list("S1" = df, "S2" = df), tmp, sheetName = c("Sheet1", "Sheet2")))
-  expect_silent(write.xlsx(x = list("S1" = df, "S2" = df), file = tmp))
-  expect_silent(write.xlsx(x = list("S1" = df, "S2" = df), tmp, tabColour = "#4F81BD"))
+  expect_silent(write_xlsx(df, tmp, tabColour = "#4F81BD"))
+  expect_error(write_xlsx(df, tmp, asTable = "YES"))
+  expect_error(write_xlsx(df, tmp, sheetName = paste0(letters, letters, collapse = "")))
+  expect_error(write_xlsx(df, tmp, zoom = "FULL"))
+  expect_silent(write_xlsx(df, tmp, zoom = 200))
+  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, sheetName = c("Sheet1", "Sheet2")))
+  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), file = tmp))
+  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, tabColour = "#4F81BD"))
   l <- list(letters)
   names(l) <- paste0(letters, letters, collapse = "")
-  expect_warning(write.xlsx(l, tmp))
-  expect_error(write.xlsx(df, tmp, gridLines = "YES"))
-  expect_silent(write.xlsx(df, tmp, gridLines = FALSE))
-  expect_error(write.xlsx(df, tmp, overwrite = FALSE))
-  expect_error(write.xlsx(df, tmp, overwrite = "NO"))
-  expect_silent(write.xlsx(df, tmp, withFilter = FALSE))
-  expect_silent(write.xlsx(df, tmp, withFilter = TRUE))
-  expect_error(write.xlsx(df, tmp, withFilter = "NO"))
-  expect_silent(write.xlsx(df, tmp, startRow = 2))
-  expect_error(write.xlsx(df, tmp, startRow = -1))
-  expect_silent(write.xlsx(df, tmp, startCol = "A"))
-  expect_silent(write.xlsx(df, tmp, startCol = "2"))
-  expect_silent(write.xlsx(df, tmp, startCol = 2))
-  expect_error(write.xlsx(df, tmp, startCol = -1))
-  expect_error(write.xlsx(df, tmp, col.names = "NO"))
-  expect_silent(write.xlsx(df, tmp, col.names = TRUE))
-  expect_error(write.xlsx(df, tmp, colNames = "NO"))
-  expect_silent(write.xlsx(df, tmp, colNames = TRUE))
-  expect_error(write.xlsx(df, tmp, row.names = "NO"))
-  expect_silent(write.xlsx(df, tmp, row.names = TRUE))
-  expect_error(write.xlsx(df, tmp, rowNames = "NO"))
-  expect_silent(write.xlsx(df, tmp, rowNames = TRUE))
-  expect_error(write.xlsx(df, tmp, xy = "A2"))
-  expect_silent(write.xlsx(df, tmp, xy = c(1, 2)))
-  expect_silent(write.xlsx(df, tmp, xy = c(1, 2)))
-  expect_silent(write.xlsx(df, tmp, colWidth = "auto"))
-  expect_silent(write.xlsx(list(df, df), tmp, firstActiveCol = 2, firstActiveRow = 2))
-  expect_silent(write.xlsx(list(df, df), tmp, firstCol = FALSE, firstRow = FALSE))
-  expect_silent(write.xlsx(list(df, df), tmp, firstCol = TRUE, firstRow = TRUE))
-  expect_silent(write.xlsx(df, tmp, asTable = TRUE, tableStyle = "TableStyleLight9"))
+  expect_warning(write_xlsx(l, tmp))
+  expect_error(write_xlsx(df, tmp, gridLines = "YES"))
+  expect_silent(write_xlsx(df, tmp, gridLines = FALSE))
+  expect_error(write_xlsx(df, tmp, overwrite = FALSE))
+  expect_error(write_xlsx(df, tmp, overwrite = "NO"))
+  expect_silent(write_xlsx(df, tmp, withFilter = FALSE))
+  expect_silent(write_xlsx(df, tmp, withFilter = TRUE))
+  expect_error(write_xlsx(df, tmp, withFilter = "NO"))
+  expect_silent(write_xlsx(df, tmp, startRow = 2))
+  expect_error(write_xlsx(df, tmp, startRow = -1))
+  expect_silent(write_xlsx(df, tmp, startCol = "A"))
+  expect_silent(write_xlsx(df, tmp, startCol = "2"))
+  expect_silent(write_xlsx(df, tmp, startCol = 2))
+  expect_error(write_xlsx(df, tmp, startCol = -1))
+  expect_error(write_xlsx(df, tmp, col.names = "NO"))
+  expect_silent(write_xlsx(df, tmp, col.names = TRUE))
+  expect_error(write_xlsx(df, tmp, colNames = "NO"))
+  expect_silent(write_xlsx(df, tmp, colNames = TRUE))
+  expect_error(write_xlsx(df, tmp, row.names = "NO"))
+  expect_silent(write_xlsx(df, tmp, row.names = TRUE))
+  expect_error(write_xlsx(df, tmp, rowNames = "NO"))
+  expect_silent(write_xlsx(df, tmp, rowNames = TRUE))
+  expect_error(write_xlsx(df, tmp, xy = "A2"))
+  expect_silent(write_xlsx(df, tmp, xy = c(1, 2)))
+  expect_silent(write_xlsx(df, tmp, xy = c(1, 2)))
+  expect_silent(write_xlsx(df, tmp, colWidth = "auto"))
+  expect_silent(write_xlsx(list(df, df), tmp, firstActiveCol = 2, firstActiveRow = 2))
+  expect_silent(write_xlsx(list(df, df), tmp, firstCol = FALSE, firstRow = FALSE))
+  expect_silent(write_xlsx(list(df, df), tmp, firstCol = TRUE, firstRow = TRUE))
+  expect_silent(write_xlsx(df, tmp, asTable = TRUE, tableStyle = "TableStyleLight9"))
 
 })
 
@@ -151,10 +151,10 @@ test_that("example", {
   tmp <- temp_xlsx()
 
   # write to working directory
-  expect_silent(write.xlsx(iris, file = tmp, colNames = TRUE))
+  expect_silent(write_xlsx(iris, file = tmp, colNames = TRUE))
 
   expect_silent(
-    write.xlsx(iris,
+    write_xlsx(iris,
                file = tmp,
                colNames = TRUE
     )
@@ -162,16 +162,16 @@ test_that("example", {
 
   ## Lists elements are written to individual worksheets, using list names as sheet names if available
   l <- list("IRIS" = iris, "MTCATS" = mtcars, matrix(runif(1000), ncol = 5))
-  write.xlsx(l, tmp, colWidths = c(NA, "auto", "auto"))
+  write_xlsx(l, tmp, colWidths = c(NA, "auto", "auto"))
 
-  expect_silent(write.xlsx(l, tmp,
+  expect_silent(write_xlsx(l, tmp,
                            startCol = c(1, 2, 3), startRow = 2,
                            asTable = c(TRUE, TRUE, FALSE), withFilter = c(TRUE, FALSE, FALSE)
   ))
 
   # specify column widths for multiple sheets
-  expect_silent(write.xlsx(l, tmp, colWidths = 20))
-  expect_silent(write.xlsx(l, tmp, colWidths = list(100, 200, 300)))
-  expect_silent(write.xlsx(l, tmp, colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5))))
+  expect_silent(write_xlsx(l, tmp, colWidths = 20))
+  expect_silent(write_xlsx(l, tmp, colWidths = list(100, 200, 300)))
+  expect_silent(write_xlsx(l, tmp, colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5))))
 
 })

@@ -88,7 +88,7 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #'
 #' ## create a file with some dates
 #' \dontrun{
-#' write.xlsx(as.Date("2015-01-10") - (0:4), file = "getDateOriginExample.xlsx")
+#' write_xlsx(as.Date("2015-01-10") - (0:4), file = "getDateOriginExample.xlsx")
 #' m <- read_xlsx("getDateOriginExample.xlsx")
 #'
 #' ## convert to dates

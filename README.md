@@ -20,7 +20,7 @@ For a quick introduction to the package, you can try the following:
 # read xlsx or xlsm files
 df <- read_xlsx("file.xlsx")
 # write xlsx files
-write.xlsx(df, "new.xlsx")
+write_xlsx(df, "new.xlsx")
 
 # or import workbooks
 wb <- wb_load("file.xlsx")
