@@ -3628,7 +3628,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- wb_validate_sheet(self, sheet)
 
       if (!is.logical(show)) {
-        stop("show_grid_lines must be a logical")
+        stop("show must be a logical")
       }
 
       sv <- self$worksheets[[sheet]]$sheetViews
