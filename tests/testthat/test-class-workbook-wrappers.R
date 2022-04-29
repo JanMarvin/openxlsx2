@@ -208,3 +208,10 @@ test_that("wb_add_filter(), wb_remove_filter() is a wrapper", {
   wb$add_filter("a", 1, 1)
   expect_wrapper("remove_filter", "wb_remove_filter", wb = wb, params = list(sheet = "a"))
 })
+
+# wb_grid_lines() ---------------------------------------------------------
+
+test_that("wb_grid_lines() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  expect_wrapper("grid_lines", "wb_grid_lines", wb = wb, params = list(sheet = 1, show = TRUE))
+})
