@@ -1078,42 +1078,25 @@ wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALS
 
 # grid lines --------------------------------------------------------------
 
-#' @name ws_grid_lines
-#' @title Set worksheet gridlines to show or hide.
-#' @description Set worksheet gridlines to show or hide.
+#' Set worksheet gridlines to show or hide.
+#'
+#' Set worksheet gridlines to show or hide.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param show_grid_lines A logical. If `FALSE`, grid lines are hidden.
+#' @param show A logical. If `FALSE`, grid lines are hidden.
 #' @export
 #' @examples
 #' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' names(wb) ## list worksheets in workbook
-#' ws_grid_lines(wb, 1, show_grid_lines = FALSE)
-#' ws_grid_lines(wb, "testing", show_grid_lines = FALSE)
+#' wb$grid_lines(1, show = FALSE)
+#' wb$grid_lines("testing", show = FALSE)
 #' \dontrun{
 #' wb_save(wb, "ws_grid_linesExample.xlsx", overwrite = TRUE)
 #' }
-ws_grid_lines <- function(wb, sheet, show_grid_lines = FALSE) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
+wb_grid_lines <- function(wb, sheet, show = FALSE) {
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  if (!is.logical(show_grid_lines)) stop("show_grid_lines must be a logical")
-
-
-  sv <- wb$worksheets[[sheet]]$sheetViews
-  show_grid_lines <- as.integer(show_grid_lines)
-  ## If attribute exists gsub
-  if (grepl("showGridLines", sv)) {
-    sv <- gsub('showGridLines=".?[^"]', sprintf('showGridLines="%s', show_grid_lines), sv, perl = TRUE)
-  } else {
-    sv <- gsub("<sheetView ", sprintf('<sheetView showGridLines="%s" ', show_grid_lines), sv)
-  }
-
-  wb$worksheets[[sheet]]$sheetViews <- sv
+  wb$clone()$grid_lines(sheet = sheet, show = show)
 }
 
 # TODO hide gridlines?

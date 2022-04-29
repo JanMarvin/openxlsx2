@@ -3615,6 +3615,33 @@ wbWorkbook <- R6::R6Class(
       }
 
       self
+    },
+
+    #' @description grid lines
+    #' @param sheet sheet
+    #' @param show show
+    #' @returns The `wbWorkbook` object
+    grid_lines = function(sheet, show = FALSE) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (!is.logical(show)) {
+        stop("show must be a logical")
+      }
+
+      sv <- self$worksheets[[sheet]]$sheetViews
+      show <- as.integer(show)
+      ## If attribute exists gsub
+      if (grepl("showGridLines", sv)) {
+        sv <- gsub('showGridLines=".?[^"]', sprintf('showGridLines="%s', show), sv, perl = TRUE)
+      } else {
+        sv <- gsub("<sheetView ", sprintf('<sheetView showGridLines="%s" ', show), sv)
+      }
+
+      self$worksheets[[sheet]]$sheetViews <- sv
+      self
     }
   ),
 
