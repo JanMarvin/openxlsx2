@@ -21,8 +21,8 @@ List Excel tables in a workbook
 
 wb <- wb_workbook()
 wb$add_worksheet(sheet = "Sheet 1")
-writeDataTable(wb, sheet = "Sheet 1", x = iris)
-writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+write_datatable(wb, sheet = "Sheet 1", x = iris)
+write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
 wb$get_tables(sheet = "Sheet 1")
 }

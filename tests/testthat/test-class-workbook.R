@@ -8,7 +8,7 @@ test_that("wb_set_col_widths", {
 
   wb <- wbWorkbook$new()
   wb <- wb$add_worksheet("test")
-  writeData(wb, "test", mtcars)
+  write_data(wb, "test", mtcars)
 
   # set column width to 12
   expect_silent(wb$set_col_widths("test", widths = 12L, cols = seq_along(mtcars)))

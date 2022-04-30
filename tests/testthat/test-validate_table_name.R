@@ -30,13 +30,13 @@ test_that("Existing Table Names", {
   wb <- wb_add_worksheet(wb_workbook(), "Sheet 1")
 
   ## Existing names - case in-sensitive
-  writeDataTable(wb, sheet = 1, x = head(iris), tableName = "Table1")
+  write_datatable(wb, sheet = 1, x = head(iris), tableName = "Table1")
   expect_error(wb_validate_table_name(wb, "Table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
-  expect_error(writeDataTable(wb, sheet = 1, x = head(iris), tableName = "Table1", startCol = 10), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(write_datatable(wb, sheet = 1, x = head(iris), tableName = "Table1", startCol = 10), regexp = "table with name 'table1' already exists", fixed = TRUE)
 
   expect_error(wb_validate_table_name(wb, "TABLE1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
-  expect_error(writeDataTable(wb, sheet = 1, x = head(iris), tableName = "TABLE1", startCol = 20), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(write_datatable(wb, sheet = 1, x = head(iris), tableName = "TABLE1", startCol = 20), regexp = "table with name 'table1' already exists", fixed = TRUE)
 
   expect_error(wb_validate_table_name(wb, "table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
-  expect_error(writeDataTable(wb, sheet = 1, x = head(iris), tableName = "table1", startCol = 30), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(write_datatable(wb, sheet = 1, x = head(iris), tableName = "table1", startCol = 30), regexp = "table with name 'table1' already exists", fixed = TRUE)
 })

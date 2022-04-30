@@ -7,17 +7,17 @@
 write_xlsx(x, file, asTable = FALSE, ...)
 }
 \arguments{
-\item{x}{object or a list of objects that can be handled by \code{\link[=writeData]{writeData()}} to write to file}
+\item{x}{object or a list of objects that can be handled by \code{\link[=write_data]{write_data()}} to write to file}
 
 \item{file}{xlsx file name}
 
-\item{asTable}{write using writeDataTable as opposed to writeData}
+\item{asTable}{write using write_datatable as opposed to write_data}
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
 \item{\code{\link[=wb_workbook]{wb_workbook()}}}
 \item{\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}}
-\item{\code{\link[=writeData]{writeData()}}}
+\item{\code{\link[=write_data]{write_data()}}}
 \item{\link{freezePane}}
 \item{\code{\link[=wb_save]{wb_save()}}}
 }
@@ -47,7 +47,7 @@ or a valid hex colour beginning with "#".}
 \item{\strong{zoom}}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
 }
 
-\strong{writeData/writeDataTable Parameters}
+\strong{write_data/write_datatable Parameters}
 \itemize{
 \item{\strong{startCol}}{ A vector specifying the starting column(s) to write df}
 \item{\strong{startRow}}{ A vector specifying the starting row(s) to write df}
@@ -117,5 +117,5 @@ write_xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5,
 
 }
 \seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=writeData]{writeData()}}
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=write_data]{write_data()}}
 }

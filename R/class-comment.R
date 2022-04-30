@@ -80,11 +80,11 @@ wbComment <- R6::R6Class(
 
 # wrappers ----------------------------------------------------------------
 
-# TODO createComment() should leverage wbComment$new() more
-# TODO writeComment() should leverage wbWorkbook$addComment() more
-# TODO removeComment() should leverage wbWorkbook$removeComment() more
+# TODO create_comment() should leverage wbComment$new() more
+# TODO write_comment() should leverage wbWorkbook$addComment() more
+# TODO remove_comment() should leverage wbWorkbook$remove_comment() more
 
-#' @name createComment
+#' @name create_comment
 #' @title Create, write and remove comments
 #' @description The comment functions (create, write and remove) allow the
 #' modification of comments. In newer Excels they are called notes, while they
@@ -103,26 +103,26 @@ wbComment <- R6::R6Class(
 #' wb$add_worksheet("Sheet 1")
 #'
 #' # write comment without author
-#' c1 <- createComment(text = "this is a comment", author = "")
-#' writeComment(wb, 1, col = "B", row = 10, comment = c1)
+#' c1 <- create_comment(text = "this is a comment", author = "")
+#' write_comment(wb, 1, col = "B", row = 10, comment = c1)
 #'
 #' # Write another comment with author information
-#' c2 <- createComment(text = "this is another comment", author = "Marco Polo")
-#' writeComment(wb, 1, col = "C", row = 10, comment = c2)
+#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+#' write_comment(wb, 1, col = "C", row = 10, comment = c2)
 #'
 #' # write a styled comment with system author
 #' s1 <- create_font(b = "true", color = c(rgb = "FFFF0000"), sz = "12")
 #' s2 <- create_font(color = c(rgb = "FF000000"), sz = "9")
-#' c3 <- createComment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
+#' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
-#' writeComment(wb, 1, col = 6, row = 3, comment = c3)
+#' write_comment(wb, 1, col = 6, row = 3, comment = c3)
 #'
 #' # remove the first comment
-#' removeComment(wb, 1, col = "B", row = 10)
+#' remove_comment(wb, 1, col = "B", row = 10)
 #' \dontrun{
-#' wb_save(wb, path = "createCommentExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "create_commentExample.xlsx", overwrite = TRUE)
 #' }
-createComment <- function(text,
+create_comment <- function(text,
   author = Sys.info()[["user"]],
   style = NULL,
   visible = TRUE,
@@ -159,18 +159,18 @@ createComment <- function(text,
 }
 
 
-#' @name writeComment
+#' @name write_comment
 #' @param wb A workbook object
 #' @param sheet A vector of names or indices of worksheets
-#' @param col Column a column number of letter. For `removeComment` this can be a range.
-#' @param row A row number. For `removeComment` this can be a range.
-#' @param comment A Comment object. See [createComment()].
+#' @param col Column a column number of letter. For `remove_comment` this can be a range.
+#' @param row A row number. For `remove_comment` this can be a range.
+#' @param comment A Comment object. See [create_comment()].
 #' @param xy An alternative to specifying `col` and
 #' `row` individually.  A vector of the form
 #' `c(col, row)`.
 #' @rdname comment
 #' @export
-writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
+write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
   # TODO add as method: wbWorkbook$addComment(); add param for replace?
   assert_workbook(wb)
   assert_comment(comment)
@@ -249,13 +249,13 @@ writeComment <- function(wb, sheet, col, row, comment, xy = NULL) {
 }
 
 
-#' @name removeComment
+#' @name remove_comment
 #' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 #' will be removed.
 #' @rdname comment
 #' @export
-removeComment <- function(wb, sheet, col, row, gridExpand = TRUE) {
-  # TODO add as method; wbWorkbook$removeComment()
+remove_comment <- function(wb, sheet, col, row, gridExpand = TRUE) {
+  # TODO add as method; wbWorkbook$remove_comment()
   assert_workbook(wb)
 
   sheet <- wb_validate_sheet(wb, sheet)

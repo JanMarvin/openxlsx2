@@ -1,4 +1,4 @@
-test_that("Writing Posixct with writeData & writeDataTable", {
+test_that("Writing Posixct with write_data & write_datatable", {
   options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
 
   tstart <- strptime("30/05/2017 08:30", "%d/%m/%Y %H:%M", tz = "CET")
@@ -6,11 +6,11 @@ test_that("Writing Posixct with writeData & writeDataTable", {
   df <- data.frame(TimeDT, TimeTxt = format(TimeDT, "%Y-%m-%d %H:%M"))
 
   wb <- wb_workbook()
-  wb$add_worksheet("writeData")
-  wb$add_worksheet("writeDataTable")
+  wb$add_worksheet("write_data")
+  wb$add_worksheet("write_datatable")
 
-  writeData(wb, "writeData", df, startCol = 2, startRow = 3, rowNames = FALSE)
-  writeDataTable(wb, "writeDataTable", df, startCol = 2, startRow = 3)
+  write_data(wb, "write_data", df, startCol = 2, startRow = 3, rowNames = FALSE)
+  write_datatable(wb, "write_datatable", df, startCol = 2, startRow = 3)
 
   # wb_open(wb)
 
@@ -24,7 +24,7 @@ test_that("Writing Posixct with writeData & writeDataTable", {
 })
 
 # missing datetime is not yet implemented
-test_that("Writing mixed EDT/EST Posixct with writeData & writeDataTable", {
+test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
 
   tstart1 <- as.POSIXct("12/03/2018 08:30", format = "%d/%m/%Y %H:%M")
@@ -38,11 +38,11 @@ test_that("Writing mixed EDT/EST Posixct with writeData & writeDataTable", {
   )
 
   wb <- wb_workbook()
-  wb$add_worksheet("writeData")
-  wb$add_worksheet("writeDataTable")
+  wb$add_worksheet("write_data")
+  wb$add_worksheet("write_datatable")
 
-  writeData(wb, "writeData", df, startCol = 2, startRow = 3, rowNames = FALSE)
-  writeDataTable(wb, "writeDataTable", df, startCol = 2, startRow = 3)
+  write_data(wb, "write_data", df, startCol = 2, startRow = 3, rowNames = FALSE)
+  write_datatable(wb, "write_datatable", df, startCol = 2, startRow = 3)
 
   # xlsx file is broken‚ <NA> where some missing value is expected.
   # TODO check: looks alright in LibreOffice
@@ -50,8 +50,8 @@ test_that("Writing mixed EDT/EST Posixct with writeData & writeDataTable", {
   xlsxFile <- temp_xlsx()
   wb_save(wb, xlsxFile, TRUE)
 
-  wb_s1 <- wb_to_df(xlsxFile, sheet = "writeData")
-  wb_s2 <- wb_to_df(xlsxFile, sheet = "writeDataTable")
+  wb_s1 <- wb_to_df(xlsxFile, sheet = "write_data")
+  wb_s2 <- wb_to_df(xlsxFile, sheet = "write_datatable")
 
   # compare sheet 1
   exp <- df$timeval

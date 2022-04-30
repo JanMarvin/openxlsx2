@@ -437,11 +437,11 @@ wb_to_df <- function(
 
     if (detectDates) {
       sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string & cc$v != "_openxlsx_NA_"
-      cc$val[sel] <- suppressWarnings(as.character(convertToDate(cc$v[sel])))
+      cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel])))
       cc$typ[sel]  <- "d"
 
       sel <- (cc$c_s %in% xlsx_posix_style) & !cc$is_string & cc$v != "_openxlsx_NA_"
-      cc$val[sel] <- suppressWarnings(as.character(convertToDateTime(cc$v[sel])))
+      cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
       cc$typ[sel]  <- "p"
     }
   }
@@ -813,16 +813,16 @@ nmfmt_df <- function(x) {
 #' wb <- wb_workbook()
 #'
 #' wb$add_worksheet("sheet1")
-#' writeData2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
+#' write_data2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
 #'
 #' wb$add_worksheet("sheet2")
-#' writeData2(wb, "sheet2", cars, colNames = FALSE)
+#' write_data2(wb, "sheet2", cars, colNames = FALSE)
 #'
 #' wb$add_worksheet("sheet3")
-#' writeData2(wb, "sheet3", letters)
+#' write_data2(wb, "sheet3", letters)
 #'
 #' wb$add_worksheet("sheet4")
-#' writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
+#' write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 #'
 #' \dontrun{
 #' file <- tempfile(fileext = ".xlsx")
@@ -831,7 +831,7 @@ nmfmt_df <- function(x) {
 #' }
 #'
 #' @export
-writeData2 <-function(wb, sheet, data, name = NULL,
+write_data2 <-function(wb, sheet, data, name = NULL,
                       colNames = TRUE, rowNames = FALSE,
                       startRow = 1, startCol = 1,
                       removeCellStyle = FALSE) {
@@ -866,12 +866,12 @@ writeData2 <-function(wb, sheet, data, name = NULL,
     dc <- openxlsx2_type(data)
   }
 
-  has_date1904 <- grepl('date1904="1"|date1904="true"',
+  hconvert_date1904 <- grepl('date1904="1"|date1904="true"',
                         stri_join(unlist(wb$workbook), collapse = ""),
                         ignore.case = TRUE)
 
   # TODO need to tell excel that we have a date, apply some kind of numFmt
-  data <- convertToExcelDate(df = data, date1904 = has_date1904)
+  data <- convertToExcelDate(df = data, date1904 = hconvert_date1904)
 
   if (inherits(data, "data.frame") || inherits(data, "matrix")) {
     is_data_frame <- TRUE
@@ -912,7 +912,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 
   # TODO writing defined name should handle global and local: localSheetId
   # this requires access to wb$workbook.
-  # TODO The check for existing names is in writeData()
+  # TODO The check for existing names is in write_data()
   if (!is.null(name)) {
 
     sheet_name <- wb$sheet_names[[sheetno]]
@@ -1135,7 +1135,7 @@ writeData2 <-function(wb, sheet, data, name = NULL,
 #' @param rows numeric row vector
 #' @param gridExpand does nothing
 #' @export
-deleteData <- function(wb, sheet, cols, rows, gridExpand) {
+delete_data <- function(wb, sheet, cols, rows, gridExpand) {
 
   sheet_id <- wb_validate_sheet(wb, sheet)
 

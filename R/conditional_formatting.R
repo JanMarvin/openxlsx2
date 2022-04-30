@@ -95,14 +95,14 @@
 #' set.seed(123)
 #'
 #' ## rule applies to all each cell in range
-#' writeData(wb, "cellIs", -5:5)
-#' writeData(wb, "cellIs", LETTERS[1:11], startCol = 2)
-#' conditionalFormatting(wb, "cellIs",
+#' write_data(wb, "cellIs", -5:5)
+#' write_data(wb, "cellIs", LETTERS[1:11], startCol = 2)
+#' wb_conditional_formatting(wb, "cellIs",
 #'                       cols = 1,
 #'                       rows = 1:11, rule = "!=0", style = negStyle
 #' )
 #'
-#' conditionalFormatting(wb, "cellIs",
+#' wb_conditional_formatting(wb, "cellIs",
 #'                       cols = 1,
 #'                       rows = 1:11, rule = "==0", style = posStyle
 #' )
@@ -110,13 +110,13 @@
 #'
 #' wb$add_worksheet("Moving Row")
 #' ## highlight row dependent on first cell in row
-#' writeData(wb, "Moving Row", -5:5)
-#' writeData(wb, "Moving Row", LETTERS[1:11], startCol = 2)
-#' conditionalFormatting(wb, "Moving Row",
+#' write_data(wb, "Moving Row", -5:5)
+#' write_data(wb, "Moving Row", LETTERS[1:11], startCol = 2)
+#' wb_conditional_formatting(wb, "Moving Row",
 #'                       cols = 1:2,
 #'                       rows = 1:11, rule = "$A1<0", style = negStyle
 #' )
-#' conditionalFormatting(wb, "Moving Row",
+#' wb_conditional_formatting(wb, "Moving Row",
 #'                       cols = 1:2,
 #'                       rows = 1:11, rule = "$A1>0", style = posStyle
 #' )
@@ -124,13 +124,13 @@
 #'
 #' wb$add_worksheet("Moving Col")
 #' ## highlight column dependent on first cell in column
-#' writeData(wb, "Moving Col", -5:5)
-#' writeData(wb, "Moving Col", LETTERS[1:11], startCol = 2)
-#' conditionalFormatting(wb, "Moving Col",
+#' write_data(wb, "Moving Col", -5:5)
+#' write_data(wb, "Moving Col", LETTERS[1:11], startCol = 2)
+#' wb_conditional_formatting(wb, "Moving Col",
 #'                       cols = 1:2,
 #'                       rows = 1:11, rule = "A$1<0", style = negStyle
 #' )
-#' conditionalFormatting(wb, "Moving Col",
+#' wb_conditional_formatting(wb, "Moving Col",
 #'                       cols = 1:2,
 #'                       rows = 1:11, rule = "A$1>0", style = posStyle
 #' )
@@ -138,25 +138,25 @@
 #'
 #' wb$add_worksheet("Dependent on")
 #' ## highlight entire range cols X rows dependent only on cell A1
-#' writeData(wb, "Dependent on", -5:5)
-#' writeData(wb, "Dependent on", LETTERS[1:11], startCol = 2)
-#' conditionalFormatting(wb, "Dependent on",
+#' write_data(wb, "Dependent on", -5:5)
+#' write_data(wb, "Dependent on", LETTERS[1:11], startCol = 2)
+#' wb_conditional_formatting(wb, "Dependent on",
 #'                       cols = 1:2,
 #'                       rows = 1:11, rule = "$A$1<0", style = negStyle
 #' )
-#' conditionalFormatting(wb, "Dependent on",
+#' wb_conditional_formatting(wb, "Dependent on",
 #'                       cols = 1:2,
 #'                       rows = 1:11, rule = "$A$1>0", style = posStyle
 #' )
 #'
 #'
 #' ## highlight cells in column 1 based on value in column 2
-#' writeData(wb, "Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
-#' conditionalFormatting(wb, "Dependent on",
+#' write_data(wb, "Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
+#' wb_conditional_formatting(wb, "Dependent on",
 #'                       cols = 1,
 #'                       rows = 16:25, rule = "B16<0.5", style = negStyle
 #' )
-#' conditionalFormatting(wb, "Dependent on",
+#' wb_conditional_formatting(wb, "Dependent on",
 #'                       cols = 1,
 #'                       rows = 16:25, rule = "B16>=0.5", style = posStyle
 #' )
@@ -164,45 +164,45 @@
 #'
 #' wb$add_worksheet("Duplicates")
 #' ## highlight duplicates using default style
-#' writeData(wb, "Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
-#' conditionalFormatting(wb, "Duplicates", cols = 1, rows = 1:10, type = "duplicates")
+#' write_data(wb, "Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
+#' wb_conditional_formatting(wb, "Duplicates", cols = 1, rows = 1:10, type = "duplicates")
 #'
 #'
 #' wb$add_worksheet("containsText")
 #' ## cells containing text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-#' writeData(wb, "containsText", sapply(1:10, fn))
-#' conditionalFormatting(wb, "containsText", cols = 1, rows = 1:10, type = "contains", rule = "A")
+#' write_data(wb, "containsText", sapply(1:10, fn))
+#' wb_conditional_formatting(wb, "containsText", cols = 1, rows = 1:10, type = "contains", rule = "A")
 #'
 #'
 #' wb$add_worksheet("notcontainsText")
 #' ## cells not containing text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-#' writeData(wb, "containsText", sapply(1:10, fn))
-#' conditionalFormatting(wb, "notcontainsText", cols = 1,
+#' write_data(wb, "containsText", sapply(1:10, fn))
+#' wb_conditional_formatting(wb, "notcontainsText", cols = 1,
 #'                       rows = 1:10, type = "notcontains", rule = "A")
 #'
 #'
 #' wb$add_worksheet("beginsWith")
 #' ## cells begins with text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-#' writeData(wb, "beginsWith", sapply(1:100, fn))
-#' conditionalFormatting(wb, "beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
+#' write_data(wb, "beginsWith", sapply(1:100, fn))
+#' wb_conditional_formatting(wb, "beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
 #'
 #'
 #' wb$add_worksheet("endsWith")
 #' ## cells ends with text
 #' fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-#' writeData(wb, "endsWith", sapply(1:100, fn))
-#' conditionalFormatting(wb, "endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
+#' write_data(wb, "endsWith", sapply(1:100, fn))
+#' wb_conditional_formatting(wb, "endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
 #'
 #' wb$add_worksheet("colourScale", zoom = 30)
 #' ## colourscale colours cells based on cell value
 #' df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
-#' writeData(wb, "colourScale", df, colNames = FALSE) ## write data.frame
+#' write_data(wb, "colourScale", df, colNames = FALSE) ## write data.frame
 #' ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
 #' ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
-#' conditionalFormatting(wb, "colourScale",
+#' wb_conditional_formatting(wb, "colourScale",
 #'                       cols = seq_along(df), rows = 1:nrow(df),
 #'                       style = c("black", "white"),
 #'                       rule = c(0, 255),
@@ -213,45 +213,45 @@
 #'
 #' wb$add_worksheet("databar")
 #' ## Databars
-#' writeData(wb, "databar", -5:5)
-#' conditionalFormatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Default colours
+#' write_data(wb, "databar", -5:5)
+#' wb_conditional_formatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Default colours
 #'
 #' wb$add_worksheet("between")
 #' ## Between
 #' # Highlight cells in interval [-2, 2]
-#' writeData(wb, "between", -5:5)
-#' conditionalFormatting(wb, "between", cols = 1, rows = 1:11, type = "between", rule = c(-2, 2))
+#' write_data(wb, "between", -5:5)
+#' wb_conditional_formatting(wb, "between", cols = 1, rows = 1:11, type = "between", rule = c(-2, 2))
 #'
 #' wb$add_worksheet("topN")
 #' ## Top N
-#' writeData(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
+#' write_data(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
 #' # Highlight top 5 values in column x
-#' conditionalFormatting(wb, "topN", cols = 1, rows = 2:11,
+#' wb_conditional_formatting(wb, "topN", cols = 1, rows = 2:11,
 #'                       style = posStyle, type = "topN", rank = 5)#'
 #' # Highlight top 20 percentage in column y
-#' conditionalFormatting(wb, "topN", cols = 2, rows = 2:11,
+#' wb_conditional_formatting(wb, "topN", cols = 2, rows = 2:11,
 #'                       style = posStyle, type = "topN", rank = 20, percent = TRUE)
 #'
 #' wb$add_worksheet("bottomN")
 #' ## Bottom N
-#' writeData(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
+#' write_data(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
 #' # Highlight bottom 5 values in column x
-#' conditionalFormatting(wb, "bottomN", cols = 1, rows = 2:11,
+#' wb_conditional_formatting(wb, "bottomN", cols = 1, rows = 2:11,
 #'                       style = negStyle, type = "topN", rank = 5)
 #' # Highlight bottom 20 percentage in column y
-#' conditionalFormatting(wb, "bottomN", cols = 2, rows = 2:11,
+#' wb_conditional_formatting(wb, "bottomN", cols = 2, rows = 2:11,
 #'                       style = negStyle, type = "topN", rank = 20, percent = TRUE)
 #'
 #' wb$add_worksheet("logical operators")
 #' ## Logical Operators
 #' # You can use Excels logical Operators
-#' writeData(wb, "logical operators", 1:10)
-#' conditionalFormatting(wb, "logical operators",
+#' write_data(wb, "logical operators", 1:10)
+#' wb_conditional_formatting(wb, "logical operators",
 #'                       cols = 1, rows = 1:10,
 #'                       rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 #' )
 #'
-conditionalFormatting <-
+wb_conditional_formatting <- 
   function(wb,
            sheet,
            cols,
@@ -619,7 +619,7 @@ conditionalFormatting <-
     }
 
     invisible(
-      wb$conditionalFormatting(
+      wb$conditional_formatting(
         sheet,
         startRow = min(rows),
         endRow = max(rows),

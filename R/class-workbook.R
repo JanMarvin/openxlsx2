@@ -886,7 +886,7 @@ wbWorkbook <- R6::R6Class(
           if (length(self$comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
-            writeCommentXML(
+            write_commentXML(
               comment_list = self$comments[[i]],
               file_name = file.path(tmpDir, "xl", fn)
             )
@@ -2330,7 +2330,7 @@ wbWorkbook <- R6::R6Class(
     #' @param values values
     #' @param params params
     #' @return The `wbWorkbook` object, invisibly
-    conditionalFormatting = function(
+    conditional_formatting = function(
       sheet,
       startRow,
       endRow,
@@ -3576,7 +3576,7 @@ wbWorkbook <- R6::R6Class(
       cols <- seq(from = cols[1], to = cols[2], by = 1)
 
       ## now delete data
-      deleteData(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
+      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
       self
     },
 

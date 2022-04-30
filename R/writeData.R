@@ -1,4 +1,4 @@
-#' @name writeData
+#' @name write_data
 #' @title Write an object to a worksheet
 #' @description Write an object to worksheet with optional styling.
 #' @param wb A Workbook object containing a worksheet.
@@ -16,12 +16,12 @@
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param removeCellStyle keep the cell style?
-#' @seealso [writeDataTable()]
-#' @export writeData
-#' @details Formulae written using writeFormula to a Workbook object will not get picked up by read_xlsx().
+#' @seealso [write_datatable()]
+#' @export write_data
+#' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
-#' @rdname writeData
+#' @rdname write_data
 #' @return invisible(0)
 #' @examples
 #'
@@ -43,7 +43,7 @@
 #'
 #'
 #' x <- mtcars[1:6, ]
-#' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+#' write_data(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #'
 #'
 #' #####################################################################################
@@ -53,7 +53,7 @@
 #' v <- rep("https://CRAN.R-project.org/", 4)
 #' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
 #' class(v) <- "hyperlink"
-#' writeData(wb, "Cars", x = v, xy = c("B", 32))
+#' write_data(wb, "Cars", x = v, xy = c("B", 32))
 #'
 #'
 #' #####################################################################################
@@ -68,7 +68,7 @@
 #'
 #' class(df$z) <- c(class(df$z), "formula")
 #'
-#' writeData(wb, sheet = "Formula", x = df)
+#' write_data(wb, sheet = "Formula", x = df)
 #'
 #' ###########################################################################
 #' # update cell range and add mtcars
@@ -78,7 +78,7 @@
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)
 #' # read_xlsx(wb2)
-#' writeData(wb2, 1, mtcars, startCol = 4, startRow = 4)
+#' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
 #' wb_to_df(wb2)
 #' \dontrun{
 #' file <- tempfile(fileext = ".xlsx")
@@ -90,9 +90,9 @@
 #' ## Save workbook
 #' ## Open in excel without saving file: xl_open(wb)
 #' \dontrun{
-#' wb_save(wb, "writeDataExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "write_dataExample.xlsx", overwrite = TRUE)
 #' }
-writeData <- function(wb,
+write_data <- function(wb,
   sheet,
   x,
   startCol = 1,
@@ -149,12 +149,12 @@ writeData <- function(wb,
     # hlinkNames <- names(x)
     if (is.null(dim(x))) {
       colNames <- FALSE
-      x[is_hyperlink] <- makeHyperlinkString(text = x[is_hyperlink])
+      x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
       class(x[is_hyperlink]) <- c("character", "hyperlink")
     } else {
-      # check should be in makeHyperlinkString and that apply should not be required either
+      # check should be in create_hyperlink and that apply should not be required either
       if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
-        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) makeHyperlinkString(text = str))
+        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
       }
       class(x[,is_hyperlink]) <- c("character", "hyperlink")
     }
@@ -249,7 +249,7 @@ writeData <- function(wb,
   }
 
   # actual driver, the rest should not create data used for writing
-  wb <- writeData2(
+  wb <- write_data2(
     wb = wb,
     sheet = sheet,
     data = x,
@@ -266,7 +266,7 @@ writeData <- function(wb,
 
 
 
-#' @name writeFormula
+#' @name write_formula
 #' @title Write a character vector as an Excel Formula
 #' @description Write a a character vector containing Excel formula to a worksheet.
 #' @details Currently only the English version of functions are supported. Please don't use the local translation.
@@ -288,27 +288,27 @@ writeData <- function(wb,
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
-#' @seealso [writeData()]
-#' @export writeFormula
-#' @rdname writeFormula
+#' @seealso [write_data()]
+#' @export write_formula
+#' @rdname write_formula
 #' @examples
 #'
 #' ## There are 3 ways to write a formula
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
-#' writeData(wb, "Sheet 1", x = iris)
+#' write_data(wb, "Sheet 1", x = iris)
 #'
 #' ## SEE int2col() to convert int to Excel column label
 #'
-#' ## 1. -  As a character vector using writeFormula
+#' ## 1. -  As a character vector using write_formula
 #'
 #' v <- c("SUM(A2:A151)", "AVERAGE(B2:B151)") ## skip header row
-#' writeFormula(wb, sheet = 1, x = v, startCol = 10, startRow = 2)
-#' writeFormula(wb, 1, x = "A2 + B2", startCol = 10, startRow = 10)
+#' write_formula(wb, sheet = 1, x = v, startCol = 10, startRow = 2)
+#' write_formula(wb, 1, x = "A2 + B2", startCol = 10, startRow = 10)
 #'
 #'
-#' ## 2. - As a data.frame column with class "formula" using writeData
+#' ## 2. - As a data.frame column with class "formula" using write_data
 #'
 #' df <- data.frame(
 #'   x = 1:3,
@@ -322,20 +322,20 @@ writeData <- function(wb,
 #' class(df$z2) <- c(class(df$z2), "formula")
 #'
 #' wb$add_worksheet("Sheet 2")
-#' writeData(wb, sheet = 2, x = df)
+#' write_data(wb, sheet = 2, x = df)
 #'
 #'
 #'
-#' ## 3. - As a vector with class "formula" using writeData
+#' ## 3. - As a vector with class "formula" using write_data
 #'
 #' v2 <- c("SUM(A2:A4)", "AVERAGE(B2:B4)", "MEDIAN(C2:C4)")
 #' class(v2) <- c(class(v2), "formula")
 #'
-#' writeData(wb, sheet = 2, x = v2, startCol = 10, startRow = 2)
+#' write_data(wb, sheet = 2, x = v2, startCol = 10, startRow = 2)
 #'
 #' ## Save workbook
 #' \dontrun{
-#' wb_save(wb, "writeFormulaExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "write_formulaExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #'
@@ -344,11 +344,11 @@ writeData <- function(wb,
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet1")
 #' wb$add_worksheet("Sheet2")
-#' writeFormula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
+#' write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
 #' ## Save workbook
 #' \dontrun{
-#' wb_save(wb, "writeFormulaHyperlinkExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "write_formulaHyperlinkExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #' ## 5. - Writing array formulas
@@ -358,13 +358,13 @@ writeData <- function(wb,
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb, "df")
 #'
-#' writeData(wb, "df", df, startCol = "C")
+#' write_data(wb, "df", df, startCol = "C")
 #'
-#' writeFormula(wb, "df", startCol = "E", startRow = "2",
+#' write_formula(wb, "df", startCol = "E", startRow = "2",
 #'              x = "SUM(C2:C11*D2:D11)",
 #'              array = TRUE)
 #'
-writeFormula <- function(wb,
+write_formula <- function(wb,
   sheet,
   x,
   startCol = 1,
@@ -379,7 +379,7 @@ writeFormula <- function(wb,
     class(dfx$X) <- c("character", "formula", "hyperlink")
   }
 
-  writeData(
+  write_data(
     wb = wb,
     sheet = sheet,
     x = dfx,

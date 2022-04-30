@@ -48,7 +48,7 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
 
-writeDataTable(wb, 1, x = iris[1:30, ])
+write_datatable(wb, 1, x = iris[1:30, ])
 wb_data_validation(wb, 1,
   col = 1:3, rows = 2:31, type = "whole",
   operator = "between", value = c(1, 9)
@@ -63,7 +63,7 @@ df <- data.frame(
   "d" = as.Date("2016-01-01") + -5:5,
   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 )
-writeDataTable(wb, 2, x = df)
+write_datatable(wb, 2, x = df)
 wb_data_validation(wb, 2,
   col = 1, rows = 2:12, type = "date",
   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
@@ -86,8 +86,8 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
 
-writeDataTable(wb, sheet = 1, x = iris[1:30, ])
-writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
+write_datatable(wb, sheet = 1, x = iris[1:30, ])
+write_data(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
 
 wb_data_validation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 

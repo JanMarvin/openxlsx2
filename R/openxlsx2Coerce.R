@@ -50,7 +50,7 @@ openxlsx2Coerce.matrix <- function(x, rowNames) {
 
 
 openxlsx2Coerce.array <- function(x, rowNames) {
-  stop("array in writeData : currently not supported")
+  stop("array in write_data : currently not supported")
 }
 
 openxlsx2Coerce.aov <- function(x, rowNames) {

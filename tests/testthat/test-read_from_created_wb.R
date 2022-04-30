@@ -9,26 +9,26 @@ test_that("Reading from new workbook", {
 
 
   ## colNames = TRUE, rowNames = TRUE
-  writeData(wb, sheet = 1, x = mtcars, colNames = TRUE, rowNames = TRUE, startRow = 10, startCol = 5)
+  write_data(wb, sheet = 1, x = mtcars, colNames = TRUE, rowNames = TRUE, startRow = 10, startCol = 5)
   x <- read_xlsx(wb, 1, colNames = TRUE, rowNames = TRUE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
 
 
   ## colNames = TRUE, rowNames = FALSE
-  writeData(wb, sheet = 2, x = mtcars, colNames = TRUE, rowNames = FALSE, startRow = 10, startCol = 5)
+  write_data(wb, sheet = 2, x = mtcars, colNames = TRUE, rowNames = FALSE, startRow = 10, startCol = 5)
   x <- read_xlsx(wb, sheet = 2, colNames = TRUE, rowNames = FALSE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
   expect_equal(object = colnames(mtcars), expected = colnames(x), ignore_attr = TRUE)
 
   ## colNames = FALSE, rowNames = TRUE
-  writeData(wb, sheet = 3, x = mtcars, colNames = FALSE, rowNames = TRUE, startRow = 2, startCol = 2)
+  write_data(wb, sheet = 3, x = mtcars, colNames = FALSE, rowNames = TRUE, startRow = 2, startCol = 2)
   x <- read_xlsx(wb, sheet = 3, colNames = FALSE, rowNames = TRUE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
   expect_equal(object = rownames(mtcars), expected = rownames(x))
 
 
   ## colNames = FALSE, rowNames = FALSE
-  writeData(wb, sheet = 4, x = mtcars, colNames = FALSE, rowNames = FALSE, startRow = 12, startCol = 1)
+  write_data(wb, sheet = 4, x = mtcars, colNames = FALSE, rowNames = FALSE, startRow = 12, startCol = 1)
   x <- read_xlsx(wb, sheet = 4, colNames = FALSE, rowNames = FALSE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
 
@@ -63,13 +63,13 @@ test_that("Reading NAs and NaN values", {
   wb <- wb_workbook()
 
   wb$add_worksheet("Sheet 1")
-  writeData(wb, 1, a)
+  write_data(wb, 1, a)
 
   wb$add_worksheet("Sheet 2")
-  writeData(wb, 2, a)
+  write_data(wb, 2, a)
 
   wb$add_worksheet("Sheet 3")
-  writeData(wb, 3, a)
+  write_data(wb, 3, a)
 
   wb_save(wb, path = fileName, overwrite = TRUE)
 

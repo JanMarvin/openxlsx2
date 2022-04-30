@@ -10,20 +10,20 @@ as_POSIXct_utc <- function(x) {
 }
 
 
-#' @name convertToDate
+#' @name convert_date
 #' @title Convert from excel date number to R Date type
 #' @description Convert from excel date number to R Date type
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
 #' @param ... additional parameters passed to as.Date()
 #' @details Excel stores dates as number of days from some origin day
-#' @seealso [writeData()]
+#' @seealso [write_data()]
 #' @export
 #' @examples
 #' ## 2014 April 21st to 25th
-#' convertToDate(c(41750, 41751, 41752, 41753, 41754, NA))
-#' convertToDate(c(41750.2, 41751.99, NA, 41753))
-convertToDate <- function(x, origin = "1900-01-01", ...) {
+#' convert_date(c(41750, 41751, 41752, 41753, 41754, NA))
+#' convert_date(c(41750.2, 41751.99, NA, 41753))
+convert_date <- function(x, origin = "1900-01-01", ...) {
   x <- as.numeric(x)
   notNa <- !is.na(x)
   earlyDate <- x < 60
@@ -37,7 +37,7 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
 }
 
 
-#' @name convertToDateTime
+#' @name convert_datetime
 #' @title Convert from excel time number to R POSIXct type.
 #' @description Convert from excel time number to R POSIXct type.
 #' @param x A numeric vector
@@ -48,15 +48,15 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
 #' @examples
 #' ## 2014-07-01, 2014-06-30, 2014-06-29
 #' x <- c(41821.8127314815, 41820.8127314815, NA, 41819, NaN)
-#' convertToDateTime(x)
-#' convertToDateTime(x, tz = "Australia/Perth")
-#' convertToDateTime(x, tz = "UTC")
-convertToDateTime <- function(x, origin = "1900-01-01", ...) {
+#' convert_datetime(x)
+#' convert_datetime(x, tz = "Australia/Perth")
+#' convert_datetime(x, tz = "UTC")
+convert_datetime <- function(x, origin = "1900-01-01", ...) {
   op <- openxlsx_options()
   on.exit(options(op), add = TRUE)
 
   x <- as.numeric(x)
-  date <- convertToDate(x, origin)
+  date <- convert_date(x, origin)
 
   x <- x * 86400
   rem <- x %% 86400
@@ -81,9 +81,9 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #' @description Return the date origin used internally by an xlsx or xlsm file
 #' @param xlsxFile An xlsx or xlsm file.
 #' @details Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
-#' checks the date origin being used in an Excel file and returns is so it can be used in [convertToDate()]
+#' checks the date origin being used in an Excel file and returns is so it can be used in [convert_date()]
 #' @return One of "1900-01-01" or "1904-01-01".
-#' @seealso [convertToDate()]
+#' @seealso [convert_date()]
 #' @examples
 #'
 #' ## create a file with some dates
@@ -93,7 +93,7 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
 #'
 #' ## convert to dates
 #' do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' convertToDate(m[[1]], do)
+#' convert_date(m[[1]], do)
 #' }
 #' @export
 getDateOrigin <- function(xlsxFile) {

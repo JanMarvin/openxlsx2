@@ -65,7 +65,7 @@ data.frame
 Read data from an Excel file or Workbook object into a data.frame
 }
 \details{
-Formulae written using writeFormula to a Workbook object will not get picked up by read_xlsx().
+Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 Opening, saving and closing the file with Excel will resolve this.
 }
@@ -76,7 +76,7 @@ df1 <- read_xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
 sapply(df1, class)
 
 df2 <- read_xlsx(xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE)
-df2$Date <- convertToDate(df2$Date)
+df2$Date <- convert_date(df2$Date)
 sapply(df2, class)
 head(df2)
 

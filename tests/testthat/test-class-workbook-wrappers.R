@@ -123,7 +123,7 @@ test_that("set_col_widths", {
 
   wb <- wbWorkbook$new()
   wb <- wb$add_worksheet("test")
-  writeData(wb, "test", mtcars)
+  write_data(wb, "test", mtcars)
 
   # set column width to 12
   expect_silent(wb$set_col_widths("test", widths = 12L, cols = seq_along(mtcars)))
@@ -193,8 +193,8 @@ test_that("wb_add_plot() is a wrapper", {
 test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
   wb <- wb_workbook()
   wb$add_worksheet(sheet = "Sheet 1")
-  writeDataTable(wb, sheet = "Sheet 1", x = iris)
-  writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  write_datatable(wb, sheet = "Sheet 1", x = iris)
+  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
   expect_wrapper("get_tables", "wb_get_tables", wb = wb, params = list(sheet = 1))
   expect_wrapper("remove_tables", "wb_remove_tables", wb = wb, params = list(sheet = 1, table = "mtcars"))
 })

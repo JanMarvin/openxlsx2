@@ -1,7 +1,7 @@
 test_that("clone Worksheet with data", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  writeData(wb, "Sheet 1", 1)
+  write_data(wb, "Sheet 1", 1)
   wb$clone_worksheet("Sheet 1", "Sheet 2")
 
   file_name <- system.file("extdata", "cloneWorksheetExample.xlsx", package = "openxlsx2")

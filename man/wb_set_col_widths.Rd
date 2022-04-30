@@ -47,7 +47,7 @@ wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
 wb$add_worksheet("Sheet 2")
-writeData(wb, sheet = 2, x = iris)
+write_data(wb, sheet = 2, x = iris)
 wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 
 ## Save workbook

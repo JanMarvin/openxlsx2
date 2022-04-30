@@ -207,10 +207,10 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' )
 #'
 #' ## Need data on worksheet to see all headers and footers
-#' writeData(wb, sheet = 5, 1:400)
-#' writeData(wb, sheet = 6, 1:400)
-#' writeData(wb, sheet = 7, 1:400)
-#' writeData(wb, sheet = 8, 1:400)
+#' write_data(wb, sheet = 5, 1:400)
+#' write_data(wb, sheet = 6, 1:400)
+#' write_data(wb, sheet = 7, 1:400)
+#' write_data(wb, sheet = 8, 1:400)
 #'
 #' ## Save workbook
 #' \dontrun{
@@ -416,7 +416,7 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #'
 #' ## auto columns
 #' wb$add_worksheet("Sheet 2")
-#' writeData(wb, sheet = 2, x = iris)
+#' write_data(wb, sheet = 2, x = iris)
 #' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 #'
 #' ## Save workbook
@@ -630,8 +630,8 @@ wb_remove_worksheet <- function(wb, sheet) {
 #' ## modify base font to size 10 Arial Narrow in red
 #' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
-#' writeData(wb, "S1", iris)
-#' writeDataTable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
+#' write_data(wb, "S1", iris)
+#' write_datatable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
 #' \dontrun{
 #' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 #' }
@@ -700,10 +700,10 @@ wb_get_base_font <- function(wb) {
 #' wb$add_worksheet("S3")
 #' wb$add_worksheet("S4")
 #'
-#' writeData(wb, 1, 1:400)
-#' writeData(wb, 2, 1:400)
-#' writeData(wb, 3, 3:400)
-#' writeData(wb, 4, 3:400)
+#' write_data(wb, 1, 1:400)
+#' write_data(wb, 2, 1:400)
+#' write_data(wb, 3, 3:400)
+#' write_data(wb, 4, 3:400)
 #'
 #' wb$set_header_footer(
 #'   sheet = "S1",
@@ -856,8 +856,8 @@ wb_set_header_footer <- function(
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' wb$add_worksheet("S2")
-#' writeDataTable(wb, 1, x = iris[1:30, ])
-#' writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
+#' write_datatable(wb, 1, x = iris[1:30, ])
+#' write_datatable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
 #'
 #' ## landscape page scaled to 50%
 #' wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
@@ -870,8 +870,8 @@ wb_set_header_footer <- function(
 #' wb$add_worksheet("print_title_rows")
 #' wb$add_worksheet("print_title_cols")
 #'
-#' writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
-#' writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
+#' write_data(wb, "print_title_rows", rbind(iris, iris, iris, iris))
+#' write_data(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 #'
 #' wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
 #' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
@@ -947,7 +947,7 @@ wb_page_setup <- function(
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
-#' writeDataTable(wb, 1, x = iris[1:30, ])
+#' write_datatable(wb, 1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
 #' ws_protect(wb, "S1",
 #'   protect = TRUE,
@@ -1113,18 +1113,18 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' ## setup a workbook with 3 worksheets
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1", gridLines = FALSE)
-#' writeDataTable(wb = wb, sheet = 1, x = iris)
+#' write_datatable(wb = wb, sheet = 1, x = iris)
 #'
 #' wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
-#' writeData(wb = wb, sheet = 2, x = mtcars)
+#' write_data(wb = wb, sheet = 2, x = mtcars)
 #'
 #' wb$add_worksheet("Sheet 3", gridLines = FALSE)
-#' writeData(wb = wb, sheet = 3, x = Formaldehyde)
+#' write_data(wb = wb, sheet = 3, x = Formaldehyde)
 #'
 #' worksheetOrder(wb)
 #' names(wb)
 #' worksheetOrder(wb) <- c(1, 3, 2) # switch position of sheets 2 & 3
-#' writeData(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
+#' write_data(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
 #' worksheetOrder(wb)
 #' names(wb) ## ordering within workbook is not changed
 #' \dontrun{
@@ -1183,7 +1183,7 @@ worksheetOrder <- function(wb) {
 #' wb$add_worksheet("Sheet 1")
 #'
 #' ## specify region
-#' writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
+#' write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
 #' wb_create_named_region(
 #'   wb = wb,
 #'   sheet = 1,
@@ -1193,8 +1193,8 @@ worksheetOrder <- function(wb) {
 #' )
 #'
 #'
-#' ## using writeData 'name' argument
-#' writeData(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
+#' ## using write_data 'name' argument
+#' write_data(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
 #'
 #' out_file <- tempfile(fileext = ".xlsx")
 #' \dontrun{
@@ -1309,9 +1309,9 @@ wb_delete_named_region <- function(wb, sheet, name) {
 #' @param sheet A name or index of a worksheet
 #' @param cols columns to add filter to.
 #' @param rows A row number.
-#' @seealso [writeData()]
-#' @details adds filters to worksheet columns, same as filter parameters in writeData.
-#' writeDataTable automatically adds filters to first row of a table.
+#' @seealso [write_data()]
+#' @details adds filters to worksheet columns, same as filter parameters in write_data.
+#' write_datatable automatically adds filters to first row of a table.
 #' NOTE Can only have a single filter per worksheet unless using tables.
 #' @export
 #' @seealso [wb_add_filter()]
@@ -1321,14 +1321,14 @@ wb_delete_named_region <- function(wb, sheet, name) {
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_worksheet("Sheet 3")
 #'
-#' writeData(wb, 1, iris)
+#' write_data(wb, 1, iris)
 #' wb$add_filter(1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' writeData(wb, 2, x = iris, withFilter = TRUE)
+#' write_data(wb, 2, x = iris, withFilter = TRUE)
 #'
 #' ## Similarly
-#' writeDataTable(wb, 3, iris)
+#' write_datatable(wb, 3, iris)
 #' \dontrun{
 #' wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 #' }
@@ -1339,7 +1339,7 @@ wb_add_filter <- function(wb, sheet, rows, cols) {
 
 #' @name wb_remove_filter
 #' @title Remove a worksheet filter
-#' @description Removes filters from wb_add_filter() and writeData()
+#' @description Removes filters from wb_add_filter() and write_data()
 #' @param wb A workbook object
 #' @param sheet A vector of names or indices of worksheets
 #' @export
@@ -1349,14 +1349,14 @@ wb_add_filter <- function(wb, sheet, rows, cols) {
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_worksheet("Sheet 3")
 #'
-#' writeData(wb, 1, iris)
+#' write_data(wb, 1, iris)
 #' wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' writeData(wb, 2, x = iris, withFilter = TRUE)
+#' write_data(wb, 2, x = iris, withFilter = TRUE)
 #'
 #' ## Similarly
-#' writeDataTable(wb, 3, iris)
+#' write_datatable(wb, 3, iris)
 #'
 #' ## remove filters
 #' wb_remove_filter(wb, 1:2) ## remove filters
@@ -1392,7 +1392,7 @@ wb_remove_filter <- function(wb, sheet) {
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
 #'
-#' writeDataTable(wb, 1, x = iris[1:30, ])
+#' write_datatable(wb, 1, x = iris[1:30, ])
 #' wb_data_validation(wb, 1,
 #'   col = 1:3, rows = 2:31, type = "whole",
 #'   operator = "between", value = c(1, 9)
@@ -1407,7 +1407,7 @@ wb_remove_filter <- function(wb, sheet) {
 #'   "d" = as.Date("2016-01-01") + -5:5,
 #'   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 #' )
-#' writeDataTable(wb, 2, x = df)
+#' write_datatable(wb, 2, x = df)
 #' wb_data_validation(wb, 2,
 #'   col = 1, rows = 2:12, type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
@@ -1430,8 +1430,8 @@ wb_remove_filter <- function(wb, sheet) {
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
 #'
-#' writeDataTable(wb, sheet = 1, x = iris[1:30, ])
-#' writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
+#' write_datatable(wb, sheet = 1, x = iris[1:30, ])
+#' write_data(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
 #' wb_data_validation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 #'
@@ -1639,7 +1639,7 @@ wb_sheet_visibility <- function(wb) {
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
-#' writeData(wb, sheet = 1, x = iris)
+#' write_data(wb, sheet = 1, x = iris)
 #'
 #' wb_page_break(wb, sheet = 1, i = 10, type = "row")
 #' wb_page_break(wb, sheet = 1, i = 20, type = "row")
@@ -1695,8 +1695,8 @@ wb_page_break <- function(wb, sheet, i, type = "row") {
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet(sheet = "Sheet 1")
-#' writeDataTable(wb, sheet = "Sheet 1", x = iris)
-#' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' write_datatable(wb, sheet = "Sheet 1", x = iris)
+#' write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #' wb$get_tables(sheet = "Sheet 1")
 #' @export
@@ -1720,23 +1720,23 @@ wb_get_tables <- function(wb, sheet) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet(sheet = "Sheet 1")
 #' wb$add_worksheet(sheet = "Sheet 2")
-#' writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-#' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' write_datatable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
+#' write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #'
 #' wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
 #'
-#' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris")
-#' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' write_datatable(wb, sheet = 1, x = iris, tableName = "iris")
+#' write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #' ## wb_remove_tables() deletes table object and all data
 #' wb_get_tables(wb, sheet = 1)
 #' wb$remove_tables(sheet = 1, table = "iris")
-#' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
+#' write_datatable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #'
 #' wb_get_tables(wb, sheet = 1)
 #' wb$remove_tables(sheet = 1, table = "iris")
-#' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
+#' write_datatable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' \dontrun{
 #' wb_save(wb, path = "wb_remove_tablesExample.xlsx", overwrite = TRUE)
 #' }
@@ -1770,7 +1770,7 @@ wb_remove_tables <- function(wb, sheet, table) {
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("AirPass")
-#' writeData(wb, "AirPass", t2, rowNames = TRUE)
+#' write_data(wb, "AirPass", t2, rowNames = TRUE)
 #'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
 #' wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950

@@ -34,7 +34,7 @@ wb <- wb_workbook()
 # add a worksheet
 wb$add_worksheet("sheet")
 # add some data
-writeData(df, "sheet")
+write_data(df, "sheet")
 # open it in your default spreadsheet software
 wb_open(wb)
 ```
