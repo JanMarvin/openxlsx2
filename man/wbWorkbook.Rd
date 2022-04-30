@@ -156,7 +156,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
 \item \href{#method-data_validation_list}{\code{wbWorkbook$data_validation_list()}}
-\item \href{#method-conditionalFormatting}{\code{wbWorkbook$conditionalFormatting()}}
+\item \href{#method-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
 \item \href{#method-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
@@ -504,7 +504,7 @@ Get the base font
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The \code{wbWorkbook} objet
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -819,12 +819,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-conditionalFormatting"></a>}}
-\if{latex}{\out{\hypertarget{method-conditionalFormatting}{}}}
-\subsection{Method \code{conditionalFormatting()}}{
+\if{html}{\out{<a id="method-conditional_formatting"></a>}}
+\if{latex}{\out{\hypertarget{method-conditional_formatting}{}}}
+\subsection{Method \code{conditional_formatting()}}{
 Set conditional formatting for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditionalFormatting(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditional_formatting(
   sheet,
   startRow,
   endRow,

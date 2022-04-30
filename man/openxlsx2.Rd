@@ -32,8 +32,8 @@ Additional options
 \itemize{
 \item{\code{vignette("Introduction", package = "openxlsx2")}}
 \item{\code{vignette("formatting", package = "openxlsx2")}}
-\item{\code{\link[=writeData]{writeData()}}}
-\item{\code{\link[=writeDataTable]{writeDataTable()}}}
+\item{\code{\link[=write_data]{write_data()}}}
+\item{\code{\link[=write_datatable]{write_datatable()}}}
 \item{\code{\link[=write_xlsx]{write_xlsx()}}}
 \item{\code{\link[=read_xlsx]{read_xlsx()}}}
 }

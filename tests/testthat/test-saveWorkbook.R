@@ -37,37 +37,37 @@ test_that("creating hyperlinks", {
 
   # warning: col and row provided, but not required
   expect_warning(
-    linkString <- makeHyperlinkString(col = 1, row = 4,
+    linkString <- create_hyperlink(col = 1, row = 4,
                                       text = "test.png", file = img))
 
-  linkString2 <- makeHyperlinkString(text = "test.png", file = img)
+  linkString2 <- create_hyperlink(text = "test.png", file = img)
 
   # col and row not needed
   expect_equal(linkString, linkString2)
 
   # write file without errors
-  writeFormula(wb, sheet, x = linkString, startCol = 1, startRow = 1)
+  write_formula(wb, sheet, x = linkString, startCol = 1, startRow = 1)
   expect_silent(wb_save(wb, tempFile, overwrite = TRUE))
 
   # TODO: add a check that the written xlsx file contains linkString
 
 })
 
-test_that("writeData2", {
+test_that("write_data2", {
   # create a workbook and add some sheets
   wb <- wb_workbook()
 
   wb$add_worksheet("sheet1")
-  writeData2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
+  write_data2(wb, "sheet1", mtcars, colNames = TRUE, rowNames = TRUE)
 
   wb$add_worksheet("sheet2")
-  writeData2(wb, "sheet2", cars, colNames = FALSE)
+  write_data2(wb, "sheet2", cars, colNames = FALSE)
 
   wb$add_worksheet("sheet3")
-  writeData2(wb, "sheet3", letters)
+  write_data2(wb, "sheet3", letters)
 
   wb$add_worksheet("sheet4")
-  writeData2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
+  write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
   file <- tempfile(fileext = ".xlsx")
   wb_save(wb,file)

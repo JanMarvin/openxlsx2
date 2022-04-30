@@ -12,7 +12,7 @@ wb_remove_filter(wb, sheet)
 \item{sheet}{A vector of names or indices of worksheets}
 }
 \description{
-Removes filters from wb_add_filter() and writeData()
+Removes filters from wb_add_filter() and write_data()
 }
 \examples{
 wb <- wb_workbook()
@@ -20,14 +20,14 @@ wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
 wb$add_worksheet("Sheet 3")
 
-writeData(wb, 1, iris)
+write_data(wb, 1, iris)
 wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
 
 ## Equivalently
-writeData(wb, 2, x = iris, withFilter = TRUE)
+write_data(wb, 2, x = iris, withFilter = TRUE)
 
 ## Similarly
-writeDataTable(wb, 3, iris)
+write_datatable(wb, 3, iris)
 
 ## remove filters
 wb_remove_filter(wb, 1:2) ## remove filters

@@ -1,13 +1,13 @@
-#' @name makeHyperlinkString
+#' @name create_hyperlink
 #' @title create Excel hyperlink string
-#' @description Wrapper to create internal hyperlink string to pass to writeFormula(). Either link to external urls or local files or straight to cells of local Excel sheets.
+#' @description Wrapper to create internal hyperlink string to pass to write_formula(). Either link to external urls or local files or straight to cells of local Excel sheets.
 #' @param sheet Name of a worksheet
 #' @param row integer row number for hyperlink to link to
 #' @param col column number of letter for hyperlink to link to
 #' @param text display text
 #' @param file Excel file name to point to. If NULL hyperlink is internal.
-#' @seealso [writeFormula()]
-#' @export makeHyperlinkString
+#' @seealso [write_formula()]
+#' @export create_hyperlink
 #' @examples
 #'
 #' ## Writing internal hyperlinks
@@ -15,55 +15,55 @@
 #' wb$add_worksheet("Sheet1")
 #' wb$add_worksheet("Sheet2")
 #' wb$add_worksheet("Sheet 3")
-#' writeData(wb, sheet = 3, x = iris)
+#' write_data(wb, sheet = 3, x = iris)
 #'
 #' ## External Hyperlink
 #' x <- c("https://www.google.com", "https://www.google.com.au")
 #' names(x) <- c("google", "google Aus")
 #' class(x) <- "hyperlink"
 #'
-#' writeData(wb, sheet = 1, x = x, startCol = 10)
+#' write_data(wb, sheet = 1, x = x, startCol = 10)
 #'
 #'
 #' ## Internal Hyperlink - create hyperlink formula manually
-#' writeFormula(
+#' write_formula(
 #'   wb, "Sheet1",
 #'   x = '=HYPERLINK(\"#Sheet2!B3\", "Text to Display - Link to Sheet2")',
 #'   startCol = 3
 #' )
 #'
-#' ## Internal - No text to display using makeHyperlinkString() function
-#' writeFormula(
+#' ## Internal - No text to display using create_hyperlink() function
+#' write_formula(
 #'   wb, "Sheet1",
 #'   startRow = 1,
-#'   x = makeHyperlinkString(sheet = "Sheet 3", row = 1, col = 2)
+#'   x = create_hyperlink(sheet = "Sheet 3", row = 1, col = 2)
 #' )
 #'
 #' ## Internal - Text to display
-#' writeFormula(
+#' write_formula(
 #'   wb, "Sheet1",
 #'   startRow = 2,
-#'   x = makeHyperlinkString(
+#'   x = create_hyperlink(
 #'     sheet = "Sheet 3", row = 1, col = 2,
 #'     text = "Link to Sheet 3"
 #'   )
 #' )
 #'
 #' ## Link to file - No text to display
-#' writeFormula(
+#' write_formula(
 #'   wb, "Sheet1",
 #'   startRow = 4,
-#'   x = makeHyperlinkString(
+#'   x = create_hyperlink(
 #'     sheet = "testing", row = 3, col = 10,
 #'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
 #'   )
 #' )
 #'
 #' ## Link to file - Text to display
-#' writeFormula(
+#' write_formula(
 #'   wb, "Sheet1",
 #'   startRow = 3,
-#'   x = makeHyperlinkString(
+#'   x = create_hyperlink(
 #'     sheet = "testing", row = 3, col = 10,
 #'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"),
 #'     text = "Link to File."
@@ -71,21 +71,21 @@
 #' )
 #'
 #' ## Link to external file - Text to display
-#' writeFormula(
+#' write_formula(
 #'   wb, "Sheet1",
 #'   startRow = 10, startCol = 1,
 #'   x = '=HYPERLINK("[C:/Users]", "Link to an external file")'
 #' )
 #'
 #' ## Link to internal file
-#' x = makeHyperlinkString(text = "test.png", file = "D:/somepath/somepicture.png")
-#' writeFormula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
+#' x = create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
+#' write_formula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
 #'
 #' \dontrun{
 #' wb_save(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
 #' }
 #'
-makeHyperlinkString <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
+create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   # op <- get_set_options()
   # on.exit(options(op), add = TRUE)
 
@@ -179,7 +179,7 @@ headerFooterSub <- function(x) {
 }
 
 
-writeCommentXML <- function(comment_list, file_name) {
+write_comment_xml <- function(comment_list, file_name) {
   authors <- unique(sapply(comment_list, "[[", "author"))
   xml <- '<comments xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">'
   xml <- c(xml, paste0("<authors>", paste(sprintf("<author>%s</author>", authors), collapse = ""), "</authors><commentList>"))

@@ -1,14 +1,14 @@
 #' @name write_xlsx
 #' @title write data to an xlsx file
 #' @description write a data.frame or list of data.frames to an xlsx file
-#' @param x object or a list of objects that can be handled by [writeData()] to write to file
+#' @param x object or a list of objects that can be handled by [write_data()] to write to file
 #' @param file xlsx file name
-#' @param asTable write using writeDataTable as opposed to writeData
+#' @param asTable write using write_datatable as opposed to write_data
 #' @param ... optional parameters to pass to functions:
 #' \itemize{
 #'   \item{[wb_workbook()]}
 #'   \item{[wb_add_worksheet()]}
-#'   \item{[writeData()]}
+#'   \item{[write_data()]}
 #'   \item{[freezePane]}
 #'   \item{[wb_save()]}
 #' }
@@ -30,7 +30,7 @@
 #'   \item{**zoom**}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
 #' }
 #'
-#' **writeData/writeDataTable Parameters**
+#' **write_data/write_datatable Parameters**
 #' \itemize{
 #'   \item{**startCol**}{ A vector specifying the starting column(s) to write df}
 #'   \item{**startRow**}{ A vector specifying the starting row(s) to write df}
@@ -64,7 +64,7 @@
 #'
 #' columns of x with class Date or POSIXt are automatically
 #' styled as dates and datetimes respectively.
-#' @seealso [wb_add_worksheet()], [writeData()]
+#' @seealso [wb_add_worksheet()], [write_data()]
 #' @return A workbook object
 #' @examples
 #'
@@ -126,7 +126,7 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   ## firstHeader = NULL
   ## firstFooter = NULL
 
-  #---writeData---#
+  #---write_data---#
   ## startCol = 1,
   ## startRow = 1,
   ## xy = NULL,
@@ -135,7 +135,7 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   ## keepNA = FALSE
   ## na.string = NULL
 
-  #----writeDataTable---#
+  #----write_datatable---#
   ## startCol = 1
   ## startRow = 1
   ## xy = NULL
@@ -373,7 +373,7 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
     wb$add_worksheet(nms[[i]], gridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
 
     if (asTable[i]) {
-      writeDataTable(
+      write_datatable(
         wb = wb,
         sheet = i,
         x = x[[i]],
@@ -387,7 +387,7 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
         withFilter = withFilter[[i]]
       )
     } else {
-      writeData(
+      write_data(
         wb = wb,
         sheet = i,
         x = x[[i]],

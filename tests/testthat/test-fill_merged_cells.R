@@ -1,11 +1,11 @@
 test_that("fill merged cells", {
   wb <- wb_workbook()
   wb$add_worksheet("sheet1")
-  writeData(wb, 1, data.frame("A" = 1, "B" = 2))
-  writeData(wb, 1, 2, startRow = 2, startCol = 2)
-  writeData(wb, 1, 3, startRow = 2, startCol = 3)
-  writeData(wb, 1, 4, startRow = 2, startCol = 4)
-  writeData(wb, 1, t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+  write_data(wb, 1, data.frame("A" = 1, "B" = 2))
+  write_data(wb, 1, 2, startRow = 2, startCol = 2)
+  write_data(wb, 1, 3, startRow = 2, startCol = 3)
+  write_data(wb, 1, 4, startRow = 2, startCol = 4)
+  write_data(wb, 1, t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
 
   wb$merge_cells(1, rows = 1, cols = 2:4)
   wb$merge_cells(1, rows = 3, cols = 2:4)

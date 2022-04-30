@@ -17,7 +17,7 @@ Return the date origin used internally by an xlsx or xlsm file
 }
 \details{
 Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
-checks the date origin being used in an Excel file and returns is so it can be used in \code{\link[=convertToDate]{convertToDate()}}
+checks the date origin being used in an Excel file and returns is so it can be used in \code{\link[=convert_date]{convert_date()}}
 }
 \examples{
 
@@ -28,9 +28,9 @@ m <- read_xlsx("getDateOriginExample.xlsx")
 
 ## convert to dates
 do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-convertToDate(m[[1]], do)
+convert_date(m[[1]], do)
 }
 }
 \seealso{
-\code{\link[=convertToDate]{convertToDate()}}
+\code{\link[=convert_date]{convert_date()}}
 }

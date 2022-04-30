@@ -113,10 +113,10 @@ wb$add_worksheet("Sheet 8",
 )
 
 ## Need data on worksheet to see all headers and footers
-writeData(wb, sheet = 5, 1:400)
-writeData(wb, sheet = 6, 1:400)
-writeData(wb, sheet = 7, 1:400)
-writeData(wb, sheet = 8, 1:400)
+write_data(wb, sheet = 5, 1:400)
+write_data(wb, sheet = 6, 1:400)
+write_data(wb, sheet = 7, 1:400)
+write_data(wb, sheet = 8, 1:400)
 
 ## Save workbook
 \dontrun{

@@ -19,8 +19,8 @@ wb_add_filter(wb, sheet, rows, cols)
 Add excel column filters to a worksheet
 }
 \details{
-adds filters to worksheet columns, same as filter parameters in writeData.
-writeDataTable automatically adds filters to first row of a table.
+adds filters to worksheet columns, same as filter parameters in write_data.
+write_datatable automatically adds filters to first row of a table.
 NOTE Can only have a single filter per worksheet unless using tables.
 }
 \examples{
@@ -29,20 +29,20 @@ wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
 wb$add_worksheet("Sheet 3")
 
-writeData(wb, 1, iris)
+write_data(wb, 1, iris)
 wb$add_filter(1, row = 1, cols = seq_along(iris))
 
 ## Equivalently
-writeData(wb, 2, x = iris, withFilter = TRUE)
+write_data(wb, 2, x = iris, withFilter = TRUE)
 
 ## Similarly
-writeDataTable(wb, 3, iris)
+write_datatable(wb, 3, iris)
 \dontrun{
 wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{
-\code{\link[=writeData]{writeData()}}
+\code{\link[=write_data]{write_data()}}
 
 \code{\link[=wb_add_filter]{wb_add_filter()}}
 }

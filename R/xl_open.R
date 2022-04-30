@@ -21,14 +21,14 @@
 #' @export
 #' @examples
 #' # file example
-#' example(writeData)
-#' # xl_open("writeDataExample.xlsx")
+#' example(write_data)
+#' # xl_open("write_dataExample.xlsx")
 #'
 #' # (not yet saved) Workbook example
 #' wb <- wb_workbook()
 #' x <- mtcars[1:6, ]
 #' wb$add_worksheet("Cars")
-#' writeData(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+#' write_data(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #' xl_open(wb)
 xl_open <- function(file = NULL) {
 

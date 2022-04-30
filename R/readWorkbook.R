@@ -9,7 +9,7 @@
 #' @param skipEmptyRows If `TRUE`, empty rows are skipped else empty rows after the first row containing data
 #' will return a row of NAs.
 #' @param rowNames If `TRUE`, first column of data will be used as row names.
-#' @param detectDates If `TRUE`, attempt to recognise dates and perform conversion.
+#' @param detectDates If `TRUE`, attempt to recognize dates and perform conversion.
 #' @param cols A numeric vector specifying which columns in the Excel file to read.
 #' If NULL, all columns are read.
 #' @param rows A numeric vector specifying which rows in the Excel file to read.
@@ -22,7 +22,7 @@
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If `TRUE`, empty columns are skipped.
 #' @seealso [getNamedRegions()]
-#' @details Formulae written using writeFormula to a Workbook object will not get picked up by read_xlsx().
+#' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
 #' @return data.frame
@@ -34,7 +34,7 @@
 #' sapply(df1, class)
 #'
 #' df2 <- read_xlsx(xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE)
-#' df2$Date <- convertToDate(df2$Date)
+#' df2$Date <- convert_date(df2$Date)
 #' sapply(df2, class)
 #' head(df2)
 #'

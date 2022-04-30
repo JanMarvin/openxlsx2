@@ -20,8 +20,8 @@
 #' \itemize{
 #'    \item{`vignette("Introduction", package = "openxlsx2")`}
 #'    \item{`vignette("formatting", package = "openxlsx2")`}
-#'    \item{[writeData()]}
-#'    \item{[writeDataTable()]}
+#'    \item{[write_data()]}
+#'    \item{[write_datatable()]}
 #'    \item{[write_xlsx()]}
 #'    \item{[read_xlsx()]}
 #'   }

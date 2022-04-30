@@ -71,7 +71,7 @@ Protect or unprotect a worksheet from modifications by the user in the graphical
 \examples{
 wb <- wb_workbook()
 wb$add_worksheet("S1")
-writeDataTable(wb, 1, x = iris[1:30, ])
+write_datatable(wb, 1, x = iris[1:30, ])
 # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
 ws_protect(wb, "S1",
   protect = TRUE,

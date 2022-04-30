@@ -1,5 +1,5 @@
 
-#' @name writeDataTable
+#' @name write_datatable
 #' @title Write to a worksheet as an Excel table
 #' @description Write to a worksheet and format as an Excel table
 #' @param wb A Workbook object containing a
@@ -34,7 +34,7 @@
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
 #' @seealso [wb_add_worksheet()]
-#' @seealso [writeData()]
+#' @seealso [write_data()]
 #' @seealso [wb_remove_tables()]
 #' @seealso [wb_get_tables()]
 #' @export
@@ -53,9 +53,9 @@
 #' ## -- write data.frame as an Excel table with column filters
 #' ## -- default table style is "TableStyleMedium2"
 #'
-#' writeDataTable(wb, "S1", x = iris)
+#' write_datatable(wb, "S1", x = iris)
 #'
-#' writeDataTable(wb, "S2",
+#' write_datatable(wb, "S2",
 #'   x = mtcars, xy = c("B", 3), rowNames = TRUE,
 #'   tableStyle = "TableStyleLight9"
 #' )
@@ -77,12 +77,12 @@
 #' class(df$Percentage) <- c(class(df$Percentage), "percentage")
 #' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 #'
-#' writeDataTable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+#' write_datatable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 #'
 #' #####################################################################################
 #' ## Additional Header Styling and remove column filters
 #'
-#' writeDataTable(wb,
+#' write_datatable(wb,
 #'   # todo header styling not implemented
 #'   sheet = 1, x = iris, startCol = 7,
 #'   withFilter = FALSE
@@ -93,7 +93,7 @@
 #' ## Save workbook
 #' ## Open in excel without saving file: xl_open(wb)
 #' \dontrun{
-#' wb_save(wb, "writeDataTableExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "write_datatableExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #'
@@ -107,7 +107,7 @@
 #' wb$add_worksheet("Style Samples")
 #' for (i in 1:21) {
 #'   style <- paste0("TableStyleLight", i)
-#'   writeDataTable(wb,
+#'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
 #'     tableStyle = style, startRow = 1, startCol = i * 3 - 2
 #'   )
@@ -115,7 +115,7 @@
 #'
 #' for (i in 1:28) {
 #'   style <- paste0("TableStyleMedium", i)
-#'   writeDataTable(wb,
+#'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
 #'     tableStyle = style, startRow = 4, startCol = i * 3 - 2
 #'   )
@@ -123,7 +123,7 @@
 #'
 #' for (i in 1:11) {
 #'   style <- paste0("TableStyleDark", i)
-#'   writeDataTable(wb,
+#'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
 #'     tableStyle = style, startRow = 7, startCol = i * 3 - 2
 #'   )
@@ -134,7 +134,7 @@
 #' wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 #' }
 #'
-writeDataTable <- function(wb, sheet, x,
+write_datatable <- function(wb, sheet, x,
   startCol = 1,
   startRow = 1,
   xy = NULL,
@@ -256,12 +256,12 @@ writeDataTable <- function(wb, sheet, x,
     # hlinkNames <- names(x)
     if (is.null(dim(x))) {
       colNames <- FALSE
-      x[is_hyperlink] <- makeHyperlinkString(text = x[is_hyperlink])
+      x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
       class(x[is_hyperlink]) <- c("character", "hyperlink")
     } else {
-      # check should be in makeHyperlinkString and that apply should not be required either
+      # check should be in create_hyperlink and that apply should not be required either
       if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
-        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) makeHyperlinkString(text = str))
+        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
       }
       class(x[,is_hyperlink]) <- c("character", "hyperlink")
     }
@@ -269,8 +269,8 @@ writeDataTable <- function(wb, sheet, x,
 
 
   ## write data to worksheet
-  # TODO writeData2 should be wb$writeData
-  wb <- writeData2(
+  # TODO write_data2 should be wb$write_data
+  wb <- write_data2(
     wb =  wb,
     sheet = sheet,
     data = x,

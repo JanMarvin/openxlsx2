@@ -30,8 +30,8 @@ wb$add_worksheet("S1")
 ## modify base font to size 10 Arial Narrow in red
 wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 
-writeData(wb, "S1", iris)
-writeDataTable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
+write_data(wb, "S1", iris)
+write_datatable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
 \dontrun{
 wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 }

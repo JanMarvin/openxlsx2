@@ -713,7 +713,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #' wb$add_worksheet("test")
 #'
 #' mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
-#' writeData(wb, "test", mat, colNames = FALSE)
+#' write_data(wb, "test", mat, colNames = FALSE)
 #'
 #'
 #' x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",

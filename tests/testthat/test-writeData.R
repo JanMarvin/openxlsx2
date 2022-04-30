@@ -1,4 +1,4 @@
-test_that("writeFormula", {
+test_that("write_formula", {
 
   set.seed(123)
   df <- data.frame(C = rnorm(10), D = rnorm(10))
@@ -15,8 +15,8 @@ test_that("writeFormula", {
   # write data add array formula later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
-  writeData(wb, "df", df, startCol = "C")
-  writeFormula(wb, "df", startCol = "E", startRow = "2",
+  write_data(wb, "df", df, startCol = "C")
+  write_formula(wb, "df", startCol = "E", startRow = "2",
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
 
@@ -29,10 +29,10 @@ test_that("writeFormula", {
   # write formula first add data later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
-  writeFormula(wb, "df", startCol = "E", startRow = "2",
+  write_formula(wb, "df", startCol = "E", startRow = "2",
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
-  writeData(wb, "df", df, startCol = "C")
+  write_data(wb, "df", df, startCol = "C")
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E",]
@@ -46,8 +46,8 @@ test_that("silent with numfmt option", {
   wb$add_worksheet("S1")
   wb$add_worksheet("S2")
 
-  writeDataTable(wb, "S1", x = iris)
-  writeDataTable(wb, "S2",
+  write_datatable(wb, "S1", x = iris)
+  write_datatable(wb, "S2",
                  x = mtcars, xy = c("B", 3), rowNames = TRUE,
                  tableStyle = "TableStyleLight9"
   )
