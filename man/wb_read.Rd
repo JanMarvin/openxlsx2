@@ -65,7 +65,7 @@ xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 }
 \seealso{
-\code{\link[=getNamedRegions]{getNamedRegions()}}
+\code{\link[=get_named_regions]{get_named_regions()}}
 
 \code{\link[=read_xlsx]{read_xlsx()}}
 }

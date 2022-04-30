@@ -290,7 +290,7 @@ wb_to_df <- function(
 
   if (!missing(definedName)) {
 
-    nr <- getNamedRegions(wb)
+    nr <- get_named_regions(wb)
 
     if ((definedName %in% nr$name) && missing(sheet)) {
       sel   <- nr[nr$name == definedName, ][1,]

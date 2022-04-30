@@ -401,7 +401,7 @@ wb_conditional_formatting <-
       if (!grepl("[A-Z]", substr(rule, 1, 2))) {
         ## formula looks like "operatorX" , attach top left cell to rule
         rule <-
-          paste0(getCellRefs(data.frame(
+          paste0(get_cell_refs(data.frame(
             "x" = min(rows), "y" = min(cols)
           )), rule)
       } ## else, there is a letter in the formula and apply as is

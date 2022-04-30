@@ -37,15 +37,15 @@ test_that("wb_load from different sources", {
 })
 
 
-test_that("getDateOrigin from different sources", {
+test_that("get_date_origin from different sources", {
 
   ## URL
   xlsxFile <- "https://github.com/ycphs/openxlsx/raw/master/inst/extdata/readTest.xlsx"
-  origin_url <- getDateOrigin(xlsxFile)
+  origin_url <- get_date_origin(xlsxFile)
 
   ## File
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  origin_file <- getDateOrigin(xlsxFile)
+  origin_file <- get_date_origin(xlsxFile)
 
   ## check
   expect_equal(origin_url, origin_file)
