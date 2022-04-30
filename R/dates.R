@@ -76,7 +76,7 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 
 
 
-#' @name getDateOrigin
+#' @name get_date_origin
 #' @title Get the date origin an xlsx file is using
 #' @description Return the date origin used internally by an xlsx or xlsm file
 #' @param xlsxFile An xlsx or xlsm file.
@@ -88,15 +88,15 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #'
 #' ## create a file with some dates
 #' \dontrun{
-#' write_xlsx(as.Date("2015-01-10") - (0:4), file = "getDateOriginExample.xlsx")
-#' m <- read_xlsx("getDateOriginExample.xlsx")
+#' write_xlsx(as.Date("2015-01-10") - (0:4), file = "get_date_originExample.xlsx")
+#' m <- read_xlsx("get_date_originExample.xlsx")
 #'
 #' ## convert to dates
-#' do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' do <- get_date_origin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' convert_date(m[[1]], do)
 #' }
 #' @export
-getDateOrigin <- function(xlsxFile) {
+get_date_origin <- function(xlsxFile) {
   # TODO: allow using a workbook?
   xlsxFile <- getFile(xlsxFile)
 

@@ -107,5 +107,5 @@ head(read_xlsx(xlsxFile))
 
 }
 \seealso{
-\code{\link[=getNamedRegions]{getNamedRegions()}}
+\code{\link[=get_named_regions]{get_named_regions()}}
 }

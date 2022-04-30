@@ -229,7 +229,7 @@ write_data <- function(wb,
   ## write autoFilter, can only have a single filter per worksheet
   if (withFilter) {
     coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
-    ref <- stri_join(getCellRefs(coords), collapse = ":")
+    ref <- stri_join(get_cell_refs(coords), collapse = ":")
 
     wb$worksheets[[sheetX]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 

@@ -52,12 +52,12 @@ out_file <- tempfile(fileext = ".xlsx")
 wb_save(wb, out_file, overwrite = TRUE)
 
 ## see named regions
-getNamedRegions(wb) ## From Workbook object
-getNamedRegions(out_file) ## From xlsx file
+get_named_regions(wb) ## From Workbook object
+get_named_regions(out_file) ## From xlsx file
 
 ## delete one
 wb_delete_named_region(wb = wb, name = "iris2")
-getNamedRegions(wb)
+get_named_regions(wb)
 
 ## read named regions
 df <- read_xlsx(wb, namedRegion = "iris")
@@ -68,5 +68,5 @@ head(df)
 }
 }
 \seealso{
-\code{\link[=getNamedRegions]{getNamedRegions()}} \code{\link[=wb_delete_named_region]{wb_delete_named_region()}}
+\code{\link[=get_named_regions]{get_named_regions()}} \code{\link[=wb_delete_named_region]{wb_delete_named_region()}}
 }

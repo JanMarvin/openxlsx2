@@ -1587,7 +1587,7 @@ wbWorkbook <- R6::R6Class(
 
       ## rename defined names
       if (length(self$workbook$definedNames)) {
-        belongTo <- getNamedRegions(self)$sheets
+        belongTo <- get_named_regions(self)$sheets
         toChange <- belongTo == oldName
         if (any(toChange)) {
           name <- sprintf("'%s'", name)
@@ -2004,7 +2004,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$workbook$definedNames)) {
         # wb_validate_sheet() makes sheet an integer
         # so we need to remove this before getting rid of the sheet names
-        self$workbook$definedNames <- self$workbook$definedNames[!getNamedRegions(self)$sheets %in% self$sheet_names[sheet]]
+        self$workbook$definedNames <- self$workbook$definedNames[!get_named_regions(self)$sheets %in% self$sheet_names[sheet]]
       }
 
       wb_delete_named_region(self, sheet)
@@ -2190,7 +2190,7 @@ wbWorkbook <- R6::R6Class(
       # TODO can this be moved to the worksheet class?
       sheet <- wb_validate_sheet(self, sheet)
       sqref <-
-        stri_join(getCellRefs(data.frame(
+        stri_join(get_cell_refs(data.frame(
           "x" = c(startRow, endRow),
           "y" = c(startCol, endCol)
         )),
@@ -2294,7 +2294,7 @@ wbWorkbook <- R6::R6Class(
       # TODO rename: setDataValidationList?
       sheet <- wb_validate_sheet(self, sheet)
       sqref <-
-        stri_join(getCellRefs(data.frame(
+        stri_join(get_cell_refs(data.frame(
           "x" = c(startRow, endRow),
           "y" = c(startCol, endCol)
         )),
@@ -2347,7 +2347,7 @@ wbWorkbook <- R6::R6Class(
       # TODO can this be moved to the sheet data?
       sheet <- wb_validate_sheet(self, sheet)
       sqref <- stri_join(
-        getCellRefs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
+        get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
         collapse = ":"
       )
 
@@ -2621,7 +2621,7 @@ wbWorkbook <- R6::R6Class(
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
 
-      # sqref <- getCellRefs(data.frame(x = rows, y = cols))
+      # sqref <- get_cell_refs(data.frame(x = rows, y = cols))
       sqref <- paste0(int2col(cols), rows)
 
       # TODO If the cell merge specs were saved as a data.frame or matrix
@@ -2671,7 +2671,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- wb_validate_sheet(self, sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
-      # sqref <- getCellRefs(data.frame(x = rows, y = cols))
+      # sqref <- get_cell_refs(data.frame(x = rows, y = cols))
       sqref <- paste0(int2col(cols), rows)
 
       current <- regmatches(
@@ -2780,7 +2780,7 @@ wbWorkbook <- R6::R6Class(
           sprintf(
             '<pane %s topLeftCell="%s" activePane="%s" state="frozen"/><selection pane="%s"/>',
             stri_join(attrs, collapse = " ", sep = " "),
-            getCellRefs(data.frame(firstActiveRow, firstActiveCol)),
+            get_cell_refs(data.frame(firstActiveRow, firstActiveCol)),
             activePane,
             activePane
           )
@@ -3600,7 +3600,7 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$autoFilter <- sprintf(
         '<autoFilter ref="%s"/>',
-        paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
+        paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
       )
 
       self
@@ -4096,7 +4096,7 @@ wbWorkbook <- R6::R6Class(
         # TODO consider self$get_sheet_names() which orders the sheet names?
         sheets <- self$sheet_names[self$sheetOrder]
 
-        belongTo <- getNamedRegions(self)$sheets
+        belongTo <- get_named_regions(self)$sheets
 
         ## sheets is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheets) - 1L

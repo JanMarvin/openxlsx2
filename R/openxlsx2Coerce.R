@@ -140,8 +140,7 @@ openxlsx2Coerce.survdiff <- function(x, rowNames) {
     if (is.matrix(x$obs)) {
       otmp <- apply(x$obs, 1, sum)
       etmp <- apply(x$exp, 1, sum)
-    }
-    else {
+    } else {
       otmp <- x$obs
       etmp <- x$exp
     }

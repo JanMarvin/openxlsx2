@@ -1103,7 +1103,7 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 
 # worksheet order ---------------------------------------------------------
 
-#' @name worksheetOrder
+#' @name wb_order
 #' @title Order of worksheets in xlsx file
 #' @description Get/set order of worksheets in a Workbook object
 #' @details This function does not reorder the worksheets within the workbook object, it simply
@@ -1121,29 +1121,29 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' wb$add_worksheet("Sheet 3", gridLines = FALSE)
 #' write_data(wb = wb, sheet = 3, x = Formaldehyde)
 #'
-#' worksheetOrder(wb)
+#' wb_order(wb)
 #' names(wb)
-#' worksheetOrder(wb) <- c(1, 3, 2) # switch position of sheets 2 & 3
+#' wb_order(wb) <- c(1, 3, 2) # switch position of sheets 2 & 3
 #' write_data(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
-#' worksheetOrder(wb)
+#' wb_order(wb)
 #' names(wb) ## ordering within workbook is not changed
 #' \dontrun{
-#' wb_save(wb, "worksheetOrderExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 #' }
-#' worksheetOrder(wb) <- c(3, 2, 1)
+#' wb_order(wb) <- c(3, 2, 1)
 #' \dontrun{
-#' wb_save(wb, "worksheetOrderExample2.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_orderExample2.xlsx", overwrite = TRUE)
 #' }
-worksheetOrder <- function(wb) {
+wb_order <- function(wb) {
   assert_workbook(wb)
   wb$sheetOrder
 }
 
-#' @rdname worksheetOrder
+#' @rdname wb_order
 #' @param wb A workbook object
 #' @param value Vector specifying order to write worksheets to file
 #' @export
-`worksheetOrder<-` <- function(wb, value) {
+`wb_order<-` <- function(wb, value) {
   assert_workbook(wb)
 
   if (any(value != as.integer(value))) {
@@ -1176,7 +1176,7 @@ worksheetOrder <- function(wb) {
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to FALSE
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
-#' @seealso [getNamedRegions()] [wb_delete_named_region()]
+#' @seealso [get_named_regions()] [wb_delete_named_region()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
@@ -1201,12 +1201,12 @@ worksheetOrder <- function(wb) {
 #' wb_save(wb, out_file, overwrite = TRUE)
 #'
 #' ## see named regions
-#' getNamedRegions(wb) ## From Workbook object
-#' getNamedRegions(out_file) ## From xlsx file
+#' get_named_regions(wb) ## From Workbook object
+#' get_named_regions(out_file) ## From xlsx file
 #'
 #' ## delete one
 #' wb_delete_named_region(wb = wb, name = "iris2")
-#' getNamedRegions(wb)
+#' get_named_regions(wb)
 #'
 #' ## read named regions
 #' df <- read_xlsx(wb, namedRegion = "iris")
@@ -1273,7 +1273,7 @@ wb_delete_named_region <- function(wb, sheet, name) {
   assert_workbook(wb)
 
   # get all nown defined names
-  dn <- getNamedRegions(wb)
+  dn <- get_named_regions(wb)
 
   if (missing(name) && !missing(sheet)) {
     sheet <- wb_validate_sheet(wb, sheet)
@@ -1679,7 +1679,7 @@ wb_page_break <- function(wb, sheet, i, type = "row") {
   }
 
 
-  # wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
+  # wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
 
   invisible(wb)
 }

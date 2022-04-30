@@ -2,10 +2,10 @@
 % Please edit documentation in R/get-named-regions.R
 \name{NamedRegions}
 \alias{NamedRegions}
-\alias{getNamedRegions}
+\alias{get_named_regions}
 \title{Get create or remove named regions}
 \usage{
-getNamedRegions(x)
+get_named_regions(x)
 }
 \arguments{
 \item{x}{An xlsx file or Workbook object}
@@ -37,8 +37,8 @@ out_file <- tempfile(fileext = ".xlsx")
 wb_save(wb, out_file, overwrite = TRUE)
 
 ## see named regions
-getNamedRegions(wb) ## From Workbook object
-getNamedRegions(out_file) ## From xlsx file
+get_named_regions(wb) ## From Workbook object
+get_named_regions(out_file) ## From xlsx file
 
 ## read named regions
 df <- read_xlsx(wb, namedRegion = "iris")

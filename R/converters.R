@@ -42,18 +42,18 @@ col2int <- function(x) {
 }
 
 
-#' @name getCellRefs
+#' @name get_cell_refs
 #' @title Return excel cell coordinates from (x,y) coordinates
 #' @description Return excel cell coordinates from (x,y) coordinates
 #' @param cellCoords A data.frame with two columns coordinate pairs.
 #' @return Excel alphanumeric cell reference
 #' @examples
-#' getCellRefs(data.frame(1, 2))
+#' get_cell_refs(data.frame(1, 2))
 #' # "B1"
-#' getCellRefs(data.frame(1:3, 2:4))
+#' get_cell_refs(data.frame(1:3, 2:4))
 #' # "B1" "C2" "D3"
 #' @export
-getCellRefs <- function(cellCoords) {
+get_cell_refs <- function(cellCoords) {
   assert_class(cellCoords, "data.frame")
   stopifnot(ncol(cellCoords) == 2L)
 

@@ -21,7 +21,7 @@
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If `TRUE`, empty columns are skipped.
-#' @seealso [getNamedRegions()]
+#' @seealso [get_named_regions()]
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
@@ -118,7 +118,7 @@ read_xlsx <- function(
 #' @inheritParams read_xlsx
 #' @details Creates a data.frame of all data in worksheet.
 #' @return data.frame
-#' @seealso [getNamedRegions()]
+#' @seealso [get_named_regions()]
 #' @seealso [read_xlsx()]
 #' @export
 #' @examples
