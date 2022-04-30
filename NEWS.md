@@ -1,7 +1,5 @@
-# Version history
 
-## development
+# openxlsx2 0.2.0
 
-## 0.2.0
-
-* first public release
+* Added a `NEWS.md` file to track changes to the package.
+* First public release
