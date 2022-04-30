@@ -31,7 +31,7 @@ regardless of the value of startRow.}
 
 \item{rowNames}{If \code{TRUE}, first column of data will be used as row names.}
 
-\item{detectDates}{If \code{TRUE}, attempt to recognise dates and perform conversion.}
+\item{detectDates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
 
 \item{skipEmptyRows}{If \code{TRUE}, empty rows are skipped else empty rows after the first row containing data
 will return a row of NAs.}

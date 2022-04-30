@@ -504,7 +504,7 @@ Get the base font
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The \code{wbWorkbook} objet
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}

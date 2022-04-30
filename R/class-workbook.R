@@ -886,7 +886,7 @@ wbWorkbook <- R6::R6Class(
           if (length(self$comments[[i]])) {
             fn <- sprintf("comments%s.xml", i)
 
-            write_commentXML(
+            write_comment_xml(
               comment_list = self$comments[[i]],
               file_name = file.path(tmpDir, "xl", fn)
             )
@@ -1542,7 +1542,7 @@ wbWorkbook <- R6::R6Class(
     #' @param fontSize fontSize
     #' @param fontColour fontColour
     #' @param fontName fontName
-    #' @return The `wbWorkbook` objet
+    #' @return The `wbWorkbook` object
     set_base_font = function(fontSize = 11, fontColour = "black", fontName = "Calibri") {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)

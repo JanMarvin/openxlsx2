@@ -55,7 +55,6 @@ drawingHF
 dxfId
 dxfs
 embeddings
-emty
 endCol
 endRow
 endsWith
@@ -117,7 +116,6 @@ numFmtId
 numFmts
 numfmt
 numfmts
-objet
 oddFooter
 oddHeader
 oleObjects
@@ -143,7 +141,6 @@ pugixml
 queryTables
 readOnlyRecommended
 readonly
-recognise
 reimported
 rels
 rgb

@@ -9,7 +9,7 @@
 #' @param skipEmptyRows If `TRUE`, empty rows are skipped else empty rows after the first row containing data
 #' will return a row of NAs.
 #' @param rowNames If `TRUE`, first column of data will be used as row names.
-#' @param detectDates If `TRUE`, attempt to recognise dates and perform conversion.
+#' @param detectDates If `TRUE`, attempt to recognize dates and perform conversion.
 #' @param cols A numeric vector specifying which columns in the Excel file to read.
 #' If NULL, all columns are read.
 #' @param rows A numeric vector specifying which rows in the Excel file to read.
