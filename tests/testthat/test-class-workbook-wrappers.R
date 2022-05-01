@@ -2,9 +2,13 @@
 # wb_workbook() -----------------------------------------------------------
 
 test_that("wb_workbook() is a wrapper", {
+  # slightly different be
   ts <- Sys.time()
-  expect_equal(wb_workbook(datetimeCreated = ts), wbWorkbook$new(datetimeCreated = ts))
-  expect_wrapper("initialize", "wb_workbook", params = NULL)
+  expect_identical(formals(wbWorkbook$public_methods$initialize), formals(wb_workbook))
+  expect_identical(
+    wbWorkbook$new(datetimeCreated = ts),
+    wb_workbook(datetimeCreated = ts)
+  )
 })
 
 # wb_add_worksheet() ------------------------------------------------------
