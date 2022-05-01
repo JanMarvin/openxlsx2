@@ -3210,6 +3210,54 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    #' @description protect worksheet
+    #' @param sheet sheet
+    #' @param protect protect
+    #' @param password password
+    #' @param properties A character vector of properties to lock.  Can be one
+    #'   or more of the following: `"selectLockedCells"`,
+    #'   `"selectUnlockedCells"`, `"formatCells"`, `"formatColumns"`,
+    #'   `"formatRows"`, `"insertColumns"`, `"insertRows"`,
+    #'   `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`, `"sort"`,
+    #'   `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
+    #' @returns The `wbWorkbook` object
+    protect_worksheet = function(
+        sheet,
+        protect    = TRUE,
+        password   = NULL,
+        properties = NULL
+    ) {
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (!protect) {
+        # initializes as character()
+        self$worksheets[[sheet]]$sheetProtection <- character()
+        return(self)
+      }
+
+      all_props <- worksheet_lock_properties()
+
+      if (!is.null(properties)) {
+        # ensure only valid properties are listed
+        properties <- match.arg(properties, all_props, several.ok = TRUE)
+      }
+
+      properties <- as.character(as.numeric(all_props %in% properties))
+      names(properties) <- all_props
+
+      self$worksheets[[sheet]]$sheetProtection <- xml_node_create(
+        "sheetProtection",
+        xml_attributes = c(
+          sheet = sheet,
+          properties,
+          if (!is.null(password)) hashPassword(password)
+        )
+      )
+
+      self
+    },
+
 
     ### creators --------------------------------------------------------------
 
@@ -4200,4 +4248,26 @@ wb_get_sheet_name = function(wb, index = NULL) {
   }
 
   wb$sheet_names[index]
+}
+
+worksheet_lock_properties <- function() {
+  # provides a reference for the lock properties
+  c(
+    "selectLockedCells",
+    "selectUnlockedCells",
+    "formatCells",
+    "formatColumns",
+    "formatRows",
+    "insertColumns",
+    "insertRows",
+    "insertHyperlinks",
+    "deleteColumns",
+    "deleteRows",
+    "sort",
+    "autoFilter",
+    "pivotTables",
+    "objects",
+    "scenarios",
+    NULL
+  )
 }
