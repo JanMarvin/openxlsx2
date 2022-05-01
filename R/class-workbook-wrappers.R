@@ -454,26 +454,8 @@ wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
 #' wb_save(wb, "wb_remove_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
 wb_remove_col_widths <- function(wb, sheet, cols) {
-  sheet <- wb_validate_sheet(wb, sheet)
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-
-  customCols <- as.integer(names(wb$colWidths[[sheet]]))
-  removeInds <- which(customCols %in% cols)
-  if (length(removeInds)) {
-    remainingCols <- customCols[-removeInds]
-    if (length(remainingCols) == 0) {
-      wb$colWidths[[sheet]] <- list()
-    } else {
-      rem_widths <- wb$colWidths[[sheet]][-removeInds]
-      names(rem_widths) <- as.character(remainingCols)
-      wb$colWidths[[sheet]] <- rem_widths
-    }
-  }
+  assert_workbook(wb)
+  wb$remove_col_widths(sheet = sheet, cols = cols)
 }
 
 
