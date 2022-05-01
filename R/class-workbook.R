@@ -3164,13 +3164,13 @@ wbWorkbook <- R6::R6Class(
     #' @param readOnlyRecommended readOnlyRecommended
     #' @return The `wbWorkbook` object, invisibly
     protect = function(
-      protect = TRUE,
-      lockStructure = FALSE,
-      lockWindows = FALSE,
-      password = NULL,
-      type = NULL,
-      fileSharing = FALSE,
-      username = unname(Sys.info()["user"]),
+      protect             = TRUE,
+      password            = NULL,
+      lockStructure       = FALSE,
+      lockWindows         = FALSE,
+      type                = 1L,
+      fileSharing         = FALSE,
+      username            = unname(Sys.info()["user"]),
       readOnlyRecommended = FALSE
     ) {
 
@@ -3180,6 +3180,7 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(password)) {
         attr["workbookPassword"] <- hashPassword(password)
       }
+      # TODO we don't need missing()
       if (!missing(lockStructure) && !is.null(lockStructure)) {
         attr["lockStructure"] <- toString(as.numeric(lockStructure))
       }
@@ -3195,6 +3196,7 @@ wbWorkbook <- R6::R6Class(
         # TODO: use xml_node_create
         if (fileSharing) {
           if (type == 2L) readOnlyRecommended <- TRUE
+          # why does this have to be a function?
           fileSharingPassword <- function(x, username, readOnlyRecommended) {
             readonly <- ifelse(readOnlyRecommended, 'readOnlyRecommended="1"', '')
             sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x)

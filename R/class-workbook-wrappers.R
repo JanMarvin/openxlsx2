@@ -1052,9 +1052,28 @@ ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
 #'   readOnlyRecommended = TRUE
 #' )
 #'
-wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
+wb_protect <- function(
+    wb,
+    protect             = TRUE,
+    password            = NULL,
+    lockStructure       = FALSE,
+    lockWindows         = FALSE,
+    type                = 1L,
+    fileSharing         = FALSE,
+    username            = unname(Sys.info()["user"]),
+    readOnlyRecommended = FALSE
+) {
   assert_workbook(wb)
-  invisible(wb$protect(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
+  wb$clone()$protect(
+    protect             = protect,
+    password            = password,
+    lockStructure       = lockStructure,
+    lockWindows         = lockWindows,
+    type                = type,
+    fileSharing         = fileSharing,
+    username            = username,
+    readOnlyRecommended = readOnlyRecommended
+  )
 }
 
 
