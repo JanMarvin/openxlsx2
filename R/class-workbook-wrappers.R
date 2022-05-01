@@ -426,7 +426,7 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #'
 wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
-  wb$set_col_widths(
+  wb$clone()$set_col_widths(
     sheet  = sheet,
     cols   = cols,
     widths = widths,
@@ -455,7 +455,7 @@ wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
 #' }
 wb_remove_col_widths <- function(wb, sheet, cols) {
   assert_workbook(wb)
-  wb$remove_col_widths(sheet = sheet, cols = cols)
+  wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
 }
 
 
@@ -480,7 +480,7 @@ wb_remove_col_widths <- function(wb, sheet, cols) {
 #' }
 wb_remove_row_heights <- function(wb, sheet, rows) {
   assert_workbook(wb)
-  wb$remove_row_heights(sheet = sheet, rows = rows)
+  wb$clone()$remove_row_heights(sheet = sheet, rows = rows)
 }
 
 
