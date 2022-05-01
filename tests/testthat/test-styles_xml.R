@@ -18,17 +18,17 @@ test_that("xf", {
     )
 
   input <- wb$styles_mgr$styles$cellXfs
-  got <- openxlsx2:::read_xf(as_xml(input))
+  got <- read_xf(as_xml(input))
   expect_equal(sort(exp), sort(names(got)))
 
   exp_dim <- c(74, 25)
   expect_equal(exp_dim, dim(got))
 
   expect_equal(input,
-               openxlsx2:::write_xf(got[exp]))
+               write_xf(got[exp]))
 
   expect_warning(
-    got <- openxlsx2:::read_xf(read_xml('<xf numFmtId="0" foo="0"/>')),
+    got <- read_xf(read_xml('<xf numFmtId="0" foo="0"/>')),
     "foo: not found in xf name table"
   )
 

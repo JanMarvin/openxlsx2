@@ -33,14 +33,14 @@ test_that("openxlsx2_types", {
   got <- openxlsx2_type(df)
   exp <- c(
     Date = openxlsx2_celltype[["short_date"]],
-    T = openxlsx2:::openxlsx2_celltype[["logical"]],
-    F = openxlsx2:::openxlsx2_celltype[["logical"]],
-    Time = openxlsx2:::openxlsx2_celltype[["long_date"]],
-    Cash = openxlsx2:::openxlsx2_celltype[["character"]],
-    Cash2 = openxlsx2:::openxlsx2_celltype[["accounting"]],
-    hLink = openxlsx2:::openxlsx2_celltype[["hyperlink"]],
-    Percentage = openxlsx2:::openxlsx2_celltype[["percentage"]],
-    TinyNumbers = openxlsx2:::openxlsx2_celltype[["scientific"]]
+    T = openxlsx2_celltype[["logical"]],
+    F = openxlsx2_celltype[["logical"]],
+    Time = openxlsx2_celltype[["long_date"]],
+    Cash = openxlsx2_celltype[["character"]],
+    Cash2 = openxlsx2_celltype[["accounting"]],
+    hLink = openxlsx2_celltype[["hyperlink"]],
+    Percentage = openxlsx2_celltype[["percentage"]],
+    TinyNumbers = openxlsx2_celltype[["scientific"]]
   )
 
 
