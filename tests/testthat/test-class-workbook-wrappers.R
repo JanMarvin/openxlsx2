@@ -190,8 +190,16 @@ test_that("wb_grid_lines() is a wrapper", {
   expect_wrapper("grid_lines", "wb_grid_lines", wb = wb, params = list(sheet = 1, show = TRUE))
 })
 
-# wb_protect() ------------------------------------------------------------
+# wb_protect(), wb_protect_worksheet() ------------------------------------
 
 test_that("wb_protect() is a wrapper", {
   expect_wrapper("protect", "wb_protect")
+})
+
+test_that("wb_protect_worksheet() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  params <- list(sheet = "a", properties = c("deleteRows", "autoFilter"))
+  # wbWorkbook$undebug("protect_worksheet")
+  # wb$protect_worksheet("a")
+  expect_wrapper("protect_worksheet", "wb_protect_worksheet", wb = wb, params = params)
 })
