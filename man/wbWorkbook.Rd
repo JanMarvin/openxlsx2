@@ -1092,10 +1092,10 @@ Protect a workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect(
   protect = TRUE,
+  password = NULL,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  password = NULL,
-  type = NULL,
+  type = c("1", "2", "4", "8"),
   fileSharing = FALSE,
   username = unname(Sys.info()["user"]),
   readOnlyRecommended = FALSE
@@ -1107,11 +1107,11 @@ Protect a workbook
 \describe{
 \item{\code{protect}}{protect}
 
+\item{\code{password}}{password}
+
 \item{\code{lockStructure}}{lockStructure}
 
 \item{\code{lockWindows}}{lockWindows}
-
-\item{\code{password}}{password}
 
 \item{\code{type}}{type}
 

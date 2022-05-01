@@ -10,7 +10,7 @@ wb_protect(
   password = NULL,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  type = 1L,
+  type = c("1", "2", "4", "8"),
   fileSharing = FALSE,
   username = unname(Sys.info()["user"]),
   readOnlyRecommended = FALSE
@@ -25,18 +25,32 @@ wb_protect(
 
 \item{lockStructure}{Whether the workbook structure should be locked}
 
-\item{lockWindows}{Whether the window position of the spreadsheet should be locked}
+\item{lockWindows}{Whether the window position of the spreadsheet should be
+locked}
 
-\item{type}{Lock type, default 1 - xlsx with password. 2 - xlsx recommends read-only. 4 - xlsx enforces read-only. 8 - xlsx is locked for annotation.}
+\item{type}{Lock type (see details)}
 
-\item{fileSharing}{Whether to enable a popup requesting the unlock password is prompted}
+\item{fileSharing}{Whether to enable a popup requesting the unlock password
+is prompted}
 
-\item{username}{The username for the fileSharing popup}
+\item{username}{The username for the \code{fileSharing} popup}
 
-\item{readOnlyRecommended}{Whether or not a post unlock message appears stating that the workbook is recommended to be opened in readonly mode.}
+\item{readOnlyRecommended}{Whether or not a post unlock message appears
+stating that the workbook is recommended to be opened in readonly mode.}
 }
 \description{
-Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
+Protect or unprotect a workbook from modifications by the user in the
+graphical user interface. Replaces an existing protection.
+}
+\details{
+Lock types:
+
+\describe{
+\item{\code{1} }{xlsx with password (default)}
+\item{\code{2} }{xlsx recommends read-only}
+\item{\code{4} }{xlsx enforces read-only}
+\item{\code{8} }{xlsx is locked for annotation}
+}
 }
 \examples{
 wb <- wb_workbook()
