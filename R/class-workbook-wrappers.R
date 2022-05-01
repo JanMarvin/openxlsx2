@@ -1015,18 +1015,34 @@ ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
 }
 
 
-#' @name wb_protect
-#' @title Protect a workbook from modifications
-#' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
+#' Protect a workbook from modifications
+#'
+#' Protect or unprotect a workbook from modifications by the user in the
+#' graphical user interface. Replaces an existing protection.
+#'
 #' @param wb A workbook object
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the workbook
 #' @param lockStructure Whether the workbook structure should be locked
-#' @param lockWindows Whether the window position of the spreadsheet should be locked
-#' @param type Lock type, default 1 - xlsx with password. 2 - xlsx recommends read-only. 4 - xlsx enforces read-only. 8 - xlsx is locked for annotation.
-#' @param fileSharing Whether to enable a popup requesting the unlock password is prompted
-#' @param username The username for the fileSharing popup
-#' @param readOnlyRecommended Whether or not a post unlock message appears stating that the workbook is recommended to be opened in readonly mode.
+#' @param lockWindows Whether the window position of the spreadsheet should be
+#'   locked
+#' @param type Lock type (see details)
+#' @param fileSharing Whether to enable a popup requesting the unlock password
+#'   is prompted
+#' @param username The username for the `fileSharing` popup
+#' @param readOnlyRecommended Whether or not a post unlock message appears
+#'   stating that the workbook is recommended to be opened in readonly mode.
+#'
+#' @details
+#' Lock types:
+#'
+#' \describe{
+#'   \item{`1` }{xlsx with password (default)}
+#'   \item{`2` }{xlsx recommends read-only}
+#'   \item{`4` }{xlsx enforces read-only}
+#'   \item{`8` }{xlsx is locked for annotation}
+#' }
+#'
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1058,7 +1074,7 @@ wb_protect <- function(
     password            = NULL,
     lockStructure       = FALSE,
     lockWindows         = FALSE,
-    type                = 1L,
+    type                = c("1", "2", "4", "8"),
     fileSharing         = FALSE,
     username            = unname(Sys.info()["user"]),
     readOnlyRecommended = FALSE

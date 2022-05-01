@@ -3168,51 +3168,46 @@ wbWorkbook <- R6::R6Class(
       password            = NULL,
       lockStructure       = FALSE,
       lockWindows         = FALSE,
-      type                = 1L,
+      type                = c("1", "2", "4", "8"),
       fileSharing         = FALSE,
       username            = unname(Sys.info()["user"]),
       readOnlyRecommended = FALSE
     ) {
 
-      attr <- vector("character", 3L)
-      names(attr) <- c("workbookPassword", "lockStructure", "lockWindows")
-
-      if (!is.null(password)) {
-        attr["workbookPassword"] <- hashPassword(password)
-      }
-      # TODO we don't need missing()
-      if (!missing(lockStructure) && !is.null(lockStructure)) {
-        attr["lockStructure"] <- toString(as.numeric(lockStructure))
-      }
-      if (!missing(lockWindows) && !is.null(lockWindows)) {
-        attr["lockWindows"] <- toString(as.numeric(lockWindows))
+      if (!protect) {
+        self$workbook$workbookProtection <- NULL
+        return(self)
       }
 
-      # TODO: Shall we parse the existing protection settings and preserve all unchanged attributes?
-      if (protect) {
-        self$workbook$workbookProtection <-
-          xml_node_create("workbookProtection", xml_attributes = attr[attr != ""])
+      # match.arg() doesn't handle numbers too well
+      type <- match.arg(type)
+      password <- if (is.null(password)) "" else hashPassword(password)
 
-        # TODO: use xml_node_create
-        if (fileSharing) {
-          if (type == 2L) readOnlyRecommended <- TRUE
-          # why does this have to be a function?
-          fileSharingPassword <- function(x, username, readOnlyRecommended) {
-            readonly <- ifelse(readOnlyRecommended, 'readOnlyRecommended="1"', '')
-            sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x)
-          }
+      # TODO: Shall we parse the existing protection settings and preserve all
+      # unchanged attributes?
 
-          self$workbook$fileSharing <- fileSharingPassword(attr["workbookPassword"], username, readOnlyRecommended)
-        }
-
-        if (!is.null(type) | !is.null(password))
-          self$workbook$apps <- sprintf("<DocSecurity>%i</DocSecurity>", type)
-
-      } else {
-        self$workbook$workbookProtection <- ""
+      if (fileSharing) {
+        self$workbook$fileSharing <- xml_node_create(
+          "fileSharing",
+          xml_attributes = c(
+            userName = username,
+            readOnlyRecommended = if (readOnlyRecommended | type == "2") "1",
+            reservationPassword = password
+          )
+        )
       }
 
-      invisible(self)
+      self$workbook$workbookProtection <- xml_node_create(
+        "workbookProtection",
+        xml_attributes = c(
+          hashPassword = password,
+          lockStructure = toString(as.numeric(lockStructure)),
+          lockWindows = toString(as.numeric(lockWindows))
+        )
+      )
+
+      self$workbook$apps <- xml_node_create("DocSecurity", type)
+      self
     },
 
 
