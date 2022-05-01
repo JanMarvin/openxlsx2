@@ -6,6 +6,8 @@
 \value{
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -165,6 +167,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-create_named_region}{\code{wbWorkbook$create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protect}{\code{wbWorkbook$protect()}}
+\item \href{#method-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
 \item \href{#method-set_creators}{\code{wbWorkbook$set_creators()}}
 \item \href{#method-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
@@ -1125,6 +1128,39 @@ Protect a workbook
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-protect_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-protect_worksheet}{}}}
+\subsection{Method \code{protect_worksheet()}}{
+protect worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect_worksheet(
+  sheet,
+  protect = TRUE,
+  password = NULL,
+  properties = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{protect}}{protect}
+
+\item{\code{password}}{password}
+
+\item{\code{properties}}{A character vector of properties to lock.  Can be one
+or more of the following: \code{"selectLockedCells"},
+\code{"selectUnlockedCells"}, \code{"formatCells"}, \code{"formatColumns"},
+\code{"formatRows"}, \code{"insertColumns"}, \code{"insertRows"},
+\code{"insertHyperlinks"}, \code{"deleteColumns"}, \code{"deleteRows"}, \code{"sort"},
+\code{"autoFilter"}, \code{"pivotTables"}, \code{"objects"}, \code{"scenarios"}}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
