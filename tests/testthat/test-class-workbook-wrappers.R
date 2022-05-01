@@ -189,3 +189,9 @@ test_that("wb_grid_lines() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
   expect_wrapper("grid_lines", "wb_grid_lines", wb = wb, params = list(sheet = 1, show = TRUE))
 })
+
+# wb_protect() ------------------------------------------------------------
+
+test_that("wb_protect() is a wrapper", {
+  expect_wrapper("protect", "wb_protect")
+})
