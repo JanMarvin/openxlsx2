@@ -4,10 +4,10 @@ test_that("Protect Workbook", {
 
   wb$protect(password = "abcdefghij")
 
-  expect_true(wb$workbook$workbookProtection == "<workbookProtection workbookPassword=\"FEF1\"/>")
+  expect_true(wb$workbook$workbookProtection == "<workbookProtection hashPassword=\"FEF1\" lockStructure=\"0\" lockWindows=\"0\"/>")
 
   wb$protect(protect = FALSE, password = "abcdefghij", lockStructure = TRUE, lockWindows = TRUE)
-  expect_true(wb$workbook$workbookProtection == "")
+  expect_true(is.null(wb$workbook$workbookProtection))
 })
 
 test_that("Reading protected Workbook", {
