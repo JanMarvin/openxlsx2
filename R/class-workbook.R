@@ -3180,7 +3180,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       # match.arg() doesn't handle numbers too well
-      type <- match.arg(type)
+      type <- if (!is.character(type)) as.character(type)
       password <- if (is.null(password)) "" else hashPassword(password)
 
       # TODO: Shall we parse the existing protection settings and preserve all
@@ -3246,7 +3246,7 @@ wbWorkbook <- R6::R6Class(
       properties <- as.character(as.numeric(all_props %in% properties))
       names(properties) <- all_props
 
-      if (!is.null(password)) 
+      if (!is.null(password))
         properties <- c(properties, password = hashPassword(password))
 
       self$worksheets[[sheet]]$sheetProtection <- xml_node_create(

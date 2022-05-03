@@ -65,7 +65,7 @@ wb_protect(wb, protect = FALSE)
 wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 }
 
-wb_protect(
+wb <- wb_protect(
   wb,
   protect = TRUE,
   password = "Password",
