@@ -15,8 +15,6 @@ The \code{wbWorkbook} object
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 \description{
 R6 class for a Workbook
@@ -176,6 +174,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_filter}{\code{wbWorkbook$add_filter()}}
 \item \href{#method-remove_filter}{\code{wbWorkbook$remove_filter()}}
 \item \href{#method-grid_lines}{\code{wbWorkbook$grid_lines()}}
+\item \href{#method-set_order}{\code{wbWorkbook$set_order()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1399,6 +1398,28 @@ grid lines
 \item{\code{show}}{show}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_order"></a>}}
+\if{latex}{\out{\hypertarget{method-set_order}{}}}
+\subsection{Method \code{set_order()}}{
+set worksheet order
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_order(sheets)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheets}}{sheets}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 }
 \if{html}{\out{<hr>}}

@@ -185,3 +185,10 @@ test_that("wb_grid_lines() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
   expect_wrapper("grid_lines", "wb_grid_lines", wb = wb, params = list(sheet = 1, show = TRUE))
 })
+
+# wb_set_order() ----------------------------------------------------------
+
+test_that("wb_set_order() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")$add_worksheet("c")
+  expect_wrapper("set_order", "wb_set_order", wb = wb, params = list(sheets = 3:1))
+})
