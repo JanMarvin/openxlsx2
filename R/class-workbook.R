@@ -2007,8 +2007,7 @@ wbWorkbook <- R6::R6Class(
         self$workbook$definedNames <- self$workbook$definedNames[!get_named_regions(self)$sheets %in% self$sheet_names[sheet]]
       }
 
-      wb_delete_named_region(self, sheet)
-
+      self$remove_named_region(sheet)
       self$sheet_names <- self$sheet_names[-sheet]
 
       xml_rels <- rbindlist(
@@ -3030,51 +3029,6 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
-    #' @description
-    #' Create a named region in a sheet
-    #' @param ref1 ref1
-    #' @param ref2 ref2
-    #' @param name name
-    #' @param sheet sheet
-    #' @param localSheetId localSheetId
-    #' @return The `wbWorkbook` object, invisibly
-    create_named_region = function(
-      ref1,
-      ref2,
-      name,
-      sheet,
-      localSheetId = NULL
-    ) {
-      name <- replaceIllegalCharacters(name)
-
-      if (is.null(localSheetId)) {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            sheet,
-            ref1,
-            ref2
-          )
-        )
-      } else {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            localSheetId,
-            sheet,
-            ref1,
-            ref2
-          )
-        )
-      }
-
-      invisible(self)
-    },
-
 
     #' @description
     #' Prints the `wbWorkbook` object
@@ -3380,7 +3334,7 @@ wbWorkbook <- R6::R6Class(
           stop("printTitleRows must be numeric.")
         }
 
-        self$create_named_region(
+        private$create_named_region(
           ref1 = paste0("$", min(printTitleRows)),
           ref2 = paste0("$", max(printTitleRows)),
           name = "_xlnm.Print_Titles",
@@ -3393,7 +3347,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         cols <- int2col(range(printTitleCols))
-        self$create_named_region(
+        private$create_named_region(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
           name = "_xlnm.Print_Titles",
@@ -3641,6 +3595,108 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$worksheets[[sheet]]$sheetViews <- sv
+      self
+    },
+
+    ### named region ----
+
+    #' @description add a named region
+    #' @param sheet sheet
+    #' @param cols cols
+    #' @param rows rows
+    #' @param name name
+    #' @param localSheetId localSheetId
+    #' @param overwrite overwrite
+    #' @returns The `wbWorkbook` object
+    add_named_region = function(
+      sheet,
+      cols,
+      rows,
+      name,
+      localSheetId = NULL,
+      overwrite = FALSE
+    ) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (!is.numeric(rows)) {
+        stop("rows argument must be a numeric/integer vector")
+      }
+
+      if (!is.numeric(cols)) {
+        stop("cols argument must be a numeric/integer vector")
+      }
+
+      ## check name doesn't already exist
+      ## named region
+
+      # TODO use reg_match0?
+      ex_names <- regmatches(self$workbook$definedNames, regexpr('(?<=name=")[^"]+', self$workbook$definedNames, perl = TRUE))
+      ex_names <- tolower(replaceXMLEntities(ex_names))
+
+      if (tolower(name) %in% ex_names) {
+        if (overwrite)
+          self$workbook$definedNames <- self$workbook$definedNames[!ex_names %in% tolower(name)]
+        else
+          stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
+      } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
+        stop("name cannot look like a cell reference.")
+      }
+
+      cols <- round(cols)
+      rows <- round(rows)
+
+      startCol <- min(cols)
+      endCol <- max(cols)
+
+      startRow <- min(rows)
+      endRow <- max(rows)
+
+      ref1 <- paste0("$", int2col(startCol), "$", startRow)
+      ref2 <- paste0("$", int2col(endCol), "$", endRow)
+
+      private$create_named_region(
+        ref1         = ref1,
+        ref2         = ref2,
+        name         = name,
+        sheet        = self$sheet_names[sheet],
+        localSheetId = localSheetId
+      )
+
+      self
+    },
+
+    #' @description remove a named region
+    #' @param sheet sheet
+    #' @param name name
+    #' @returns The `wbWorkbook` object
+    remove_named_region = function(sheet = NULL, name = NULL) {
+      # get all nown defined names
+      dn <- get_named_regions(self)
+
+      if (is.null(name) && !is.null(sheet)) {
+        sheet <- wb_validate_sheet(self, sheet)
+        del <- dn$id[dn$sheet == sheet]
+      } else if (!is.null(name) && is.null(sheet)) {
+        del <- dn$id[dn$name == name]
+      } else {
+        sheet <- wb_validate_sheet(self, sheet)
+        del <- dn$id[dn$sheet == sheet & dn$name == name]
+      }
+
+      if (length(del)) {
+        self$workbook$definedNames <- self$workbook$definedNames[-del]
+      } else {
+        if (!is.null(name))
+          warning(sprintf("Cannot find named region with name '%s'", name))
+        # do not warn if wb and sheet are selected. wb_delete_named_region is
+        # called with every wb_remove_worksheet and would throw meaningless
+        # warnings. For now simply assume if no name is defined, that the
+        # user does not care, as long as no defined name remains on a sheet.
+      }
+
       self
     }
   ),
@@ -3954,6 +4010,38 @@ wbWorkbook <- R6::R6Class(
       } ## end of loop through nSheets
 
       invisible(self)
+    },
+
+    # old add_named_region()
+    create_named_region = function(ref1, ref2, name, sheet, localSheetId = NULL) {
+      name <- replaceIllegalCharacters(name)
+
+      if (is.null(localSheetId)) {
+        self$workbook$definedNames <- c(
+          self$workbook$definedNames,
+          sprintf(
+            '<definedName name="%s">\'%s\'!%s:%s</definedName>',
+            name,
+            sheet,
+            ref1,
+            ref2
+          )
+        )
+      } else {
+        self$workbook$definedNames <- c(
+          self$workbook$definedNames,
+          sprintf(
+            '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
+            name,
+            localSheetId,
+            sheet,
+            ref1,
+            ref2
+          )
+        )
+      }
+
+      self
     },
 
     preSaveCleanUp = function() {

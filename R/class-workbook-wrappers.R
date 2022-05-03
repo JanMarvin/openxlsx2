@@ -1197,88 +1197,27 @@ wb_order <- function(wb) {
 #' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
 #' }
-#' @rdname NamedRegion
+#' @name named_region
+NULL
+
+#' @rdname named_region
 #' @export
-wb_create_named_region <- function(wb, sheet, cols, rows, name, overwrite = FALSE) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
+wb_add_named_region <- function(wb, sheet, cols, rows, name, localSheetId = NULL, overwrite = FALSE) {
   assert_workbook(wb)
-
-  if (!is.numeric(rows)) {
-    stop("rows argument must be a numeric/integer vector")
-  }
-
-  if (!is.numeric(cols)) {
-    stop("cols argument must be a numeric/integer vector")
-  }
-
-  ## check name doesn't already exist
-  ## named region
-
-  ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
-  ex_names <- tolower(replaceXMLEntities(ex_names))
-
-  if (tolower(name) %in% ex_names) {
-    if (overwrite)
-      wb$workbook$definedNames <- wb$workbook$definedNames[!ex_names %in% tolower(name)]
-    else
-      stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
-  } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
-    stop("name cannot look like a cell reference.")
-  }
-
-
-  cols <- round(cols)
-  rows <- round(rows)
-
-  startCol <- min(cols)
-  endCol <- max(cols)
-
-  startRow <- min(rows)
-  endRow <- max(rows)
-
-  ref1 <- paste0("$", int2col(startCol), "$", startRow)
-  ref2 <- paste0("$", int2col(endCol), "$", endRow)
-
-  invisible(
-    wb$create_named_region(ref1 = ref1, ref2 = ref2, name = name, sheet = wb$sheet_names[sheet])
+  wb$clone()$add_named_region(
+    sheet        = sheet,
+    cols         = cols,
+    rows         = rows,
+    name         = name,
+    localSheetId = localSheetId,
+    overwrite    = overwrite
   )
 }
 
 #' @export
-#' @rdname NamedRegion
-wb_delete_named_region <- function(wb, sheet, name) {
-
+wb_remove_named_region <- function(wb, sheet = NULL, name = NULL) {
   assert_workbook(wb)
-
-  # get all nown defined names
-  dn <- get_named_regions(wb)
-
-  if (missing(name) && !missing(sheet)) {
-    sheet <- wb_validate_sheet(wb, sheet)
-    del <- dn$id[dn$sheet == sheet]
-  } else if (!missing(name) && missing(sheet)) {
-    del <- dn$id[dn$name == name]
-  } else {
-    sheet <- wb_validate_sheet(wb, sheet)
-    del <- dn$id[dn$sheet == sheet & dn$name == name]
-  }
-
-  if (length(del)) {
-    wb$workbook$definedNames <- wb$workbook$definedNames[-del]
-  } else {
-    if (!missing(name))
-      warning(sprintf("Cannot find named region with name '%s'", name))
-    # do not warn if wb and sheet are selected. wb_delete_named_region is
-    # called with every wb_remove_worksheet and would throw meaningless
-    # warnings. For now simply assume if no name is defined, that the
-    # user does not care, as long as no defined name remains on a sheet.
-  }
-
-  invisible(0)
+  wb$clone()$remove_named_region(sheet = sheet, name = name)
 }
 
 # filters -----------------------------------------------------------------
