@@ -36,13 +36,13 @@ wb <- wb_workbook()
 wb$add_worksheet("S1")
 write_datatable(wb, 1, x = iris[1:30, ])
 # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
-wb$protect_worksheet(wb, "S1",
+wb$protect_worksheet("S1",
   protect = TRUE,
   properties = c("formatCells", "formatColumns", "insertColumns", "deleteColumns")
 )
 
 # Remove the protection
-ws$protect("S1", protect = FALSE)
+wb$protect_worksheet("S1", protect = FALSE)
 \dontrun{
 wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 }
