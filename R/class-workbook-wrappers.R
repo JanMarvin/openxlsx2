@@ -1148,17 +1148,22 @@ wb_order <- function(wb) {
   invisible(wb)
 }
 
-#' @name wb_create_named_region
-#' @title Create / delete a named region
-#' @description Create / delete a named region
+
+# named region ------------------------------------------------------------
+
+
+#' Create / delete a named region
+#'
+#' Create / delete a named region
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Numeric vector specifying rows to include in region
 #' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to FALSE
+#' @param localSheetId localSheetId
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
-#' @seealso [get_named_regions()] [wb_delete_named_region()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
@@ -1166,8 +1171,7 @@ wb_order <- function(wb) {
 #'
 #' ## specify region
 #' write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
-#' wb_create_named_region(
-#'   wb = wb,
+#' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
 #'   rows = seq_len(nrow(iris) + 1),
@@ -1187,7 +1191,7 @@ wb_order <- function(wb) {
 #' get_named_regions(out_file) ## From xlsx file
 #'
 #' ## delete one
-#' wb_delete_named_region(wb = wb, name = "iris2")
+#' wb$remove_named_region(name = "iris2")
 #' get_named_regions(wb)
 #'
 #' ## read named regions
@@ -1214,6 +1218,7 @@ wb_add_named_region <- function(wb, sheet, cols, rows, name, localSheetId = NULL
   )
 }
 
+#' @rdname named_region
 #' @export
 wb_remove_named_region <- function(wb, sheet = NULL, name = NULL) {
   assert_workbook(wb)
