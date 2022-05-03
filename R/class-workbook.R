@@ -3246,12 +3246,14 @@ wbWorkbook <- R6::R6Class(
       properties <- as.character(as.numeric(all_props %in% properties))
       names(properties) <- all_props
 
+      if (!is.null(password)) 
+        properties <- c(properties, password = hashPassword(password))
+
       self$worksheets[[sheet]]$sheetProtection <- xml_node_create(
         "sheetProtection",
         xml_attributes = c(
-          sheet = sheet,
-          properties,
-          if (!is.null(password)) hashPassword(password)
+          sheet = "1",
+          properties[properties != "0"]
         )
       )
 
