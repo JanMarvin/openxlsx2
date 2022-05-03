@@ -270,8 +270,7 @@ write_datatable <- function(wb, sheet, x,
 
   ## write data to worksheet
   # TODO write_data2 should be wb$write_data
-  wb <- write_data2(
-    wb =  wb,
+  wb$write_data(
     sheet = sheet,
     data = x,
     colNames = TRUE,

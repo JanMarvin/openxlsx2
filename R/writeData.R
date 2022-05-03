@@ -379,8 +379,7 @@ write_formula <- function(wb,
     class(dfx$X) <- c("character", "formula", "hyperlink")
   }
 
-  write_data(
-    wb = wb,
+  wb$write_data(
     sheet = sheet,
     x = dfx,
     startCol = startCol,
