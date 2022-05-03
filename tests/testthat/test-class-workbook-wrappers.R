@@ -185,3 +185,14 @@ test_that("wb_grid_lines() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
   expect_wrapper("grid_lines", "wb_grid_lines", wb = wb, params = list(sheet = 1, show = TRUE))
 })
+
+# wb_add_named_region(), wb_remove_named_region() -------------------------
+
+test_that("wb_add_named_region(), wb_remove_named_region() are wrappers", {
+  wb <- wb_workbook()$add_worksheet("a")
+  params <- list(sheet = 1, cols = 1, rows = 1, name = "cool")
+  expect_wrapper("add_named_region", "wb_add_named_region", wb = wb, params = params)
+  # now add the named region so that we can remove it
+  wb$add_named_region(sheet = 1, cols = 1, rows = 1, name = "cool")
+  expect_wrapper("remove_named_region", "wb_remove_named_region", wb = wb, params = list(name = "cool"))
+})
