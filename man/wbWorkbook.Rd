@@ -15,6 +15,10 @@ The \code{wbWorkbook} object
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
 Deep cloning method for workbooks.  This method also accesses
 \verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
@@ -162,7 +166,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-add_plot}{\code{wbWorkbook$add_plot()}}
-\item \href{#method-create_named_region}{\code{wbWorkbook$create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protect}{\code{wbWorkbook$protect()}}
 \item \href{#method-set_creators}{\code{wbWorkbook$set_creators()}}
@@ -176,6 +179,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_filter}{\code{wbWorkbook$add_filter()}}
 \item \href{#method-remove_filter}{\code{wbWorkbook$remove_filter()}}
 \item \href{#method-grid_lines}{\code{wbWorkbook$grid_lines()}}
+\item \href{#method-add_named_region}{\code{wbWorkbook$add_named_region()}}
+\item \href{#method-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1044,34 +1049,6 @@ Add plot. A wrapper for add_image()
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-create_named_region"></a>}}
-\if{latex}{\out{\hypertarget{method-create_named_region}{}}}
-\subsection{Method \code{create_named_region()}}{
-Create a named region in a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$create_named_region(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{ref1}}{ref1}
-
-\item{\code{ref2}}{ref2}
-
-\item{\code{name}}{name}
-
-\item{\code{sheet}}{sheet}
-
-\item{\code{localSheetId}}{localSheetId}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-print"></a>}}
 \if{latex}{\out{\hypertarget{method-print}{}}}
 \subsection{Method \code{print()}}{
@@ -1397,6 +1374,59 @@ grid lines
 \item{\code{sheet}}{sheet}
 
 \item{\code{show}}{show}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-add_named_region}{}}}
+\subsection{Method \code{add_named_region()}}{
+add a named region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
+  sheet,
+  cols,
+  rows,
+  name,
+  localSheetId = NULL,
+  overwrite = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{rows}}{rows}
+
+\item{\code{name}}{name}
+
+\item{\code{localSheetId}}{localSheetId}
+
+\item{\code{overwrite}}{overwrite}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-remove_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_named_region}{}}}
+\subsection{Method \code{remove_named_region()}}{
+remove a named region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_named_region(sheet = NULL, name = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{name}}{name}
 }
 \if{html}{\out{</div>}}
 }
