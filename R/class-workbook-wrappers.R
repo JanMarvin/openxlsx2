@@ -942,7 +942,7 @@ wb_protect_worksheet <- function(
 ) {
 
   assert_workbook(wb)
-  wb$clone()$protect_worksheet(
+  wb$clone(deep = TRUE)$protect_worksheet(
     sheet      = sheet,
     protect    = protect,
     password   = password,
