@@ -3620,8 +3620,9 @@ wbWorkbook <- R6::R6Class(
     #' @description grid lines
     #' @param sheet sheet
     #' @param show show
+    #' @param print_GridLines print grid lines
     #' @returns The `wbWorkbook` object
-    grid_lines = function(sheet, show = FALSE) {
+    grid_lines = function(sheet, show = FALSE,print_GridLines = FALSE) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -3631,8 +3632,15 @@ wbWorkbook <- R6::R6Class(
         stop("show must be a logical")
       }
 
+      if (!is.logical(print_GridLines)) {
+        stop("print_GridLines must be a logical")
+      }
+
       sv <- self$worksheets[[sheet]]$sheetViews
+      po <- self$worksheets[[sheet]]$printOptions
       show <- as.integer(show)
+      print_GridLines <- as.integer(print_GridLines)
+
       ## If attribute exists gsub
       if (grepl("showGridLines", sv)) {
         sv <- gsub('showGridLines=".?[^"]', sprintf('showGridLines="%s', show), sv, perl = TRUE)
@@ -3640,7 +3648,25 @@ wbWorkbook <- R6::R6Class(
         sv <- gsub("<sheetView ", sprintf('<sheetView showGridLines="%s" ', show), sv)
       }
 
+      if (length(print_GridLines) > 0) {
+        if (length(po) == 0) {
+          po <- sprintf('<printOptions gridLines="%s"/>', print_GridLines)
+        } else if (grepl("gridLines", po)) {
+          po <-
+            gsub('gridLines=".?[^"]',
+                 sprintf('gridLines="%s', print_GridLines),
+                 po,
+                 perl = TRUE)
+        } else {
+          po <-
+            gsub("<printOptions ",
+                 sprintf('<printOptions gridLines="%s" ', print_GridLines),
+                 po)
+        }
+      }
+
       self$worksheets[[sheet]]$sheetViews <- sv
+      self$worksheets[[sheet]]$printOptions <- po
       self
     }
   ),

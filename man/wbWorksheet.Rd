@@ -130,7 +130,8 @@ Creates a new \code{wbWorksheet} object
   paperSize = 9,
   orientation = "portrait",
   hdpi = 300,
-  vdpi = 300
+  vdpi = 300,
+  print_GridLines = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -164,6 +165,8 @@ Creates a new \code{wbWorksheet} object
 \item{\code{hdpi}}{hdpi}
 
 \item{\code{vdpi}}{vdpi}
+
+\item{\code{print_GridLines}}{add grid lines for prints}
 }
 \if{html}{\out{</div>}}
 }

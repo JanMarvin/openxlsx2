@@ -1388,7 +1388,7 @@ remove filters
 \subsection{Method \code{grid_lines()}}{
 grid lines
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$grid_lines(sheet, show = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$grid_lines(sheet, show = FALSE, print_GridLines = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1397,6 +1397,8 @@ grid lines
 \item{\code{sheet}}{sheet}
 
 \item{\code{show}}{show}
+
+\item{\code{print_GridLines}}{print grid lines}
 }
 \if{html}{\out{</div>}}
 }

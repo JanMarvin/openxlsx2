@@ -154,6 +154,7 @@ wbWorksheet <- R6::R6Class(
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
+    #' @param print_GridLines add grid lines for prints
     #' @return a `wbWorksheet` object
     initialize = function(
       gridLines   = TRUE,
@@ -169,7 +170,9 @@ wbWorksheet <- R6::R6Class(
       paperSize   = 9,
       orientation = "portrait",
       hdpi        = 300,
-      vdpi        = 300
+      vdpi        = 300,
+      print_GridLines = NULL
+
     ) {
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
@@ -196,6 +199,12 @@ wbWorksheet <- R6::R6Class(
         hf <- list()
       }
 
+      if (!is.null(print_GridLines)) {
+        print_GridLines <- sprintf('<printOptions gridLines="%s"/>', print_GridLines)
+      } else {
+        print_GridLines <- character()
+      }
+
       ## list of all possible children
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
@@ -208,6 +217,7 @@ wbWorksheet <- R6::R6Class(
       self$dataValidations       <- NULL
       self$dataValidationsLst    <- character()
       self$hyperlinks            <- list()
+      self$printOptions          <- print_GridLines
       self$pageMargins           <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$pageSetup             <- sprintf('<ws_page_setup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
       self$headerFooter          <- hf
@@ -321,6 +331,7 @@ wbWorksheet <- R6::R6Class(
         },
 
         self$pageMargins,
+        self$printOptions,
         self$pageSetup,
 
         # headerFooter
