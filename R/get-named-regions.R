@@ -5,7 +5,7 @@
 #' Workbook object
 #' @param x An xlsx file or Workbook object
 #' @export
-#' @seealso [wb_create_named_region()] [wb_delete_named_region()]
+#' @seealso [wb_add_named_region()] [wb_remove_named_region()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
@@ -13,7 +13,7 @@
 #'
 #' ## specify region
 #' write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
-#' wb_create_named_region(
+#' wb_add_named_region(
 #'   wb = wb,
 #'   sheet = 1,
 #'   name = "iris",

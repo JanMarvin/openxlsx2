@@ -7,8 +7,7 @@ test_that("Maintaining Named Regions on Load", {
 
   ## specify region
   write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
-  wb_create_named_region(
-    wb = wb,
+  wb$add_named_region(
     sheet = 1,
     name = "iris",
     rows = seq_len(nrow(iris) + 1),
@@ -145,15 +144,14 @@ test_that("Missing rows in named regions", {
   write_data(wb, sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
   delete_data(wb, sheet = 1, cols = 1:2, rows = c(6, 6))
 
-  wb_create_named_region(
-    wb = wb,
+  wb$add_named_region(
     sheet = 1,
     name = "iris",
     rows = 1:(5 + 1),
     cols = 1:2
   )
-  wb_create_named_region(
-    wb = wb,
+
+  wb$add_named_region(
     sheet = 1,
     name = "iris2",
     rows = 1:(5 + 2),
@@ -219,16 +217,14 @@ test_that("Missing columns in named regions", {
   write_data(wb, sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
   delete_data(wb, sheet = 1, cols = 2, rows = 1:12, gridExpand = TRUE)
 
-  wb_create_named_region(
-    wb = wb,
+  wb$add_named_region(
     sheet = 1,
     name = "iris",
     rows = 1:5,
     cols = 1:2
   )
 
-  wb_create_named_region(
-    wb = wb,
+  wb$add_named_region(
     sheet = 1,
     name = "iris2",
     rows = 1:5,
@@ -375,10 +371,10 @@ test_that("Overwrite and delete named regions", {
   # no overwrite
   expect_error(write_data(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris"))
 
-  expect_error(wb_create_named_region(wb, 1, name = "iris", rows = 1:5, cols = 1:2))
+  expect_error(wb$add_named_region(1, name = "iris", rows = 1:5, cols = 1:2))
 
   # overwrite
-  wb_create_named_region(wb, 1, name = "iris", rows = 1:5, cols = 1:2, overwrite = TRUE)
+  wb$add_named_region(1, name = "iris", rows = 1:5, cols = 1:2, overwrite = TRUE)
 
   exp <- data.frame(
     name   = "iris",
@@ -396,10 +392,10 @@ test_that("Overwrite and delete named regions", {
   expect_identical(get_named_regions(wb), exp)
 
   # delete name region
-  wb_delete_named_region(wb, name = "iris")
+  wb$remove_named_region(name = "iris")
   expect_false("iris" %in% get_named_regions(wb)$name)
 
-  wb_create_named_region(wb, 1, name = "iris", rows = 1:5, cols = 1:2)
+  wb$add_named_region(1, name = "iris", rows = 1:5, cols = 1:2)
   expect_identical(get_named_regions(wb), exp)
 
   # removing a worksheet removes the named region as well
