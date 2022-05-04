@@ -3698,6 +3698,28 @@ wbWorkbook <- R6::R6Class(
       }
 
       self
+    },
+
+    #' @description set worksheet order
+    #' @param sheets sheets
+    #' @return The `wbWorkbook` object
+    set_order = function(sheets) {
+      sheets <- wb_validate_sheet(self, sheet = sheets)
+
+      if (anyDuplicated(sheets)) {
+        stop("`sheets` cannot have duplicates")
+      }
+
+      if (length(sheets) != length(self$worksheets)) {
+        stop(sprintf("Worksheet order must be same length as number of worksheets [%s]", length(wb$worksheets)))
+      }
+
+      if (any(sheets > length(self$worksheets))) {
+        stop("Elements of order are greater than the number of worksheets")
+      }
+
+      self$sheetOrder <- sheets
+      self
     }
   ),
 

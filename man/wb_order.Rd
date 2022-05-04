@@ -2,24 +2,25 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_order}
 \alias{wb_order}
-\alias{wb_order<-}
+\alias{wb_get_order}
+\alias{wb_set_order}
 \title{Order of worksheets in xlsx file}
 \usage{
-wb_order(wb)
+wb_get_order(wb)
 
-wb_order(wb) <- value
+wb_set_order(wb, sheets)
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \code{wbWorkbook} object}
 
-\item{value}{Vector specifying order to write worksheets to file}
+\item{sheets}{Sheet order}
 }
 \description{
 Get/set order of worksheets in a Workbook object
 }
 \details{
-This function does not reorder the worksheets within the workbook object, it simply
-shuffles the order when writing to file.
+This function does not reorder the worksheets within the workbook
+object, it simply shuffles the order when writing to file.
 }
 \examples{
 ## setup a workbook with 3 worksheets
@@ -33,16 +34,16 @@ write_data(wb = wb, sheet = 2, x = mtcars)
 wb$add_worksheet("Sheet 3", gridLines = FALSE)
 write_data(wb = wb, sheet = 3, x = Formaldehyde)
 
-wb_order(wb)
+wb_get_order(wb)
 names(wb)
-wb_order(wb) <- c(1, 3, 2) # switch position of sheets 2 & 3
+wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 write_data(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
-wb_order(wb)
+wb_get_order(wb)
 names(wb) ## ordering within workbook is not changed
 \dontrun{
 wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 }
-wb_order(wb) <- c(3, 2, 1)
+wb$set_order(3:1)
 \dontrun{
 wb_save(wb, "wb_orderExample2.xlsx", overwrite = TRUE)
 }

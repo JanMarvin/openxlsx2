@@ -1085,11 +1085,14 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 
 # worksheet order ---------------------------------------------------------
 
-#' @name wb_order
-#' @title Order of worksheets in xlsx file
-#' @description Get/set order of worksheets in a Workbook object
-#' @details This function does not reorder the worksheets within the workbook object, it simply
-#' shuffles the order when writing to file.
+#' Order of worksheets in xlsx file
+#'
+#' Get/set order of worksheets in a Workbook object
+#'
+#' @param wb A `wbWorkbook` object
+#'
+#' @details This function does not reorder the worksheets within the workbook
+#'   object, it simply shuffles the order when writing to file.
 #' @export
 #' @examples
 #' ## setup a workbook with 3 worksheets
@@ -1103,49 +1106,31 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' wb$add_worksheet("Sheet 3", gridLines = FALSE)
 #' write_data(wb = wb, sheet = 3, x = Formaldehyde)
 #'
-#' wb_order(wb)
+#' wb_get_order(wb)
 #' names(wb)
-#' wb_order(wb) <- c(1, 3, 2) # switch position of sheets 2 & 3
+#' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 #' write_data(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
-#' wb_order(wb)
+#' wb_get_order(wb)
 #' names(wb) ## ordering within workbook is not changed
 #' \dontrun{
 #' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 #' }
-#' wb_order(wb) <- c(3, 2, 1)
+#' wb$set_order(3:1)
 #' \dontrun{
 #' wb_save(wb, "wb_orderExample2.xlsx", overwrite = TRUE)
 #' }
-wb_order <- function(wb) {
+#' @name wb_order
+wb_get_order <- function(wb) {
   assert_workbook(wb)
   wb$sheetOrder
 }
 
 #' @rdname wb_order
-#' @param wb A workbook object
-#' @param value Vector specifying order to write worksheets to file
+#' @param sheets Sheet order
 #' @export
-`wb_order<-` <- function(wb, value) {
+wb_set_order <- function(wb, sheets) {
   assert_workbook(wb)
-
-  if (any(value != as.integer(value))) {
-    stop("values must be integers")
-  }
-
-  value <- as.integer(value)
-
-  value <- unique(value)
-  if (length(value) != length(wb$worksheets)) {
-    stop(sprintf("Worksheet order must be same length as number of worksheets [%s]", length(wb$worksheets)))
-  }
-
-  if (any(value > length(wb$worksheets))) {
-    stop("Elements of order are greater than the number of worksheets")
-  }
-
-  wb$sheetOrder <- value
-
-  invisible(wb)
+  wb$clone()$set_order(sheets = sheets)
 }
 
 

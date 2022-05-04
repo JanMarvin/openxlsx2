@@ -196,3 +196,10 @@ test_that("wb_add_named_region(), wb_remove_named_region() are wrappers", {
   wb$add_named_region(sheet = 1, cols = 1, rows = 1, name = "cool")
   expect_wrapper("remove_named_region", "wb_remove_named_region", wb = wb, params = list(name = "cool"))
 })
+
+# wb_set_order() ----------------------------------------------------------
+
+test_that("wb_set_order() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")$add_worksheet("c")
+  expect_wrapper("set_order", "wb_set_order", wb = wb, params = list(sheets = 3:1))
+})
