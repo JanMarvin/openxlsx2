@@ -203,3 +203,12 @@ test_that("wb_set_order() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")$add_worksheet("c")
   expect_wrapper("set_order", "wb_set_order", wb = wb, params = list(sheets = 3:1))
 })
+
+
+# wb_add_data_validation() ------------------------------------------------
+
+test_that("wb_add_data_validation() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  params <- list(sheet = 1, cols = 1, rows = 1, type = "whole", operator = "between", value = c(0, 1))
+  expect_wrapper("add_data_validation", "wb_add_data_validation", wb = wb, params = params)
+})
