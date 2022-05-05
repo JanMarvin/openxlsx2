@@ -2158,162 +2158,138 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' Set data validations for a sheet
+    #' @description Adds data validation
     #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
+    #' @param cols cols
+    #' @param rows rows
     #' @param type type
     #' @param operator operator
     #' @param value value
     #' @param allowBlank allowBlank
     #' @param showInputMsg showInputMsg
     #' @param showErrorMsg showErrorMsg
-    #' @return The `wbWorkbook` object, invisibly
-    data_validation = function(
+    #' @returns The `wbWorkbook` object
+    add_data_validation = function(
       sheet,
-      startRow,
-      endRow,
-      startCol,
-      endCol,
+      cols,
+      rows,
       type,
       operator,
       value,
-      allowBlank,
-      showInputMsg,
-      showErrorMsg
+      allowBlank = TRUE,
+      showInputMsg = TRUE,
+      showErrorMsg = TRUE
     ) {
-      # TODO rename: setDataValidation?
-      # TODO can this be moved to the worksheet class?
-      sheet <- wb_validate_sheet(self, sheet)
-      sqref <-
-        stri_join(get_cell_refs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )),
-          sep = " ",
-          collapse = ":"
-        )
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
 
-      header <-
-        sprintf(
-          '<dataValidation type="%s" operator="%s" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s" sqref="%s">',
-          type,
-          operator,
-          allowBlank,
-          showInputMsg,
-          showErrorMsg,
-          sqref
-        )
+      ## rows and cols
+      if (!is.numeric(cols)) {
+        cols <- col2int(cols)
+      }
+      rows <- as.integer(rows)
 
-
-      # TODO consider switch(type, date = ..., time = ..., )
-      if (type == "date") {
-        # TODO consider origin <- if () ... else ...
-        origin <- 25569L
-        # TODO would it be faster to just search each self$workbook instead of
-        # trying to unlist and join everything?
-        if (grepl(
-          'date1904="1"|date1904="true"',
-          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
-          ignore.case = TRUE
-        )) {
-          origin <- 24107L
-        }
-
-        value <- as.integer(value) + origin
+      ## check length of value
+      if (length(value) > 2) {
+        stop("value argument must be length < 2")
       }
 
-      if (type == "time") {
-        # TODO simplify with above?  This is the same thing?
-        origin <- 25569L
-        if (grepl(
-          'date1904="1"|date1904="true"',
-          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
-          ignore.case = TRUE
-        )) {
-          origin <- 24107L
-        }
+      valid_types <- c(
+        "whole",
+        "decimal",
+        "date",
+        "time", ## need to conv
+        "textLength",
+        "list"
+      )
 
-        t <- format(value[1], "%z")
-        offSet <-
-          suppressWarnings(
-            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
-              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
-              ) / 24
-          )
-        if (is.na(offSet)) {
-          offSet[i] <- 0
-        }
-
-        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      if (!tolower(type) %in% tolower(valid_types)) {
+        stop("Invalid 'type' argument!")
       }
 
-      form <- sapply(
-        seq_along(value),
-        function(i) {
-          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
+
+      ## operator == 'between' we leave out
+      valid_operators <- c(
+        "between",
+        "notBetween",
+        "equal",
+        "notEqual",
+        "greaterThan",
+        "lessThan",
+        "greaterThanOrEqual",
+        "lessThanOrEqual"
+      )
+
+      if (tolower(type) != "list") {
+        if (!tolower(operator) %in% tolower(valid_operators)) {
+          stop("Invalid 'operator' argument!")
         }
-      )
 
-      self$worksheets[[sheet]]$dataValidations <- c(
-        self$worksheets[[sheet]]$dataValidations,
-        stri_join(header, stri_join(form, collapse = ""), "</data_validation>")
-      )
+        operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
+      } else {
+        operator <- "between" ## ignored
+      }
 
-      invisible(self)
-    },
+      if (!is.logical(allowBlank)) {
+        stop("Argument 'allowBlank' musts be logical!")
+      }
 
-    #' @description
-    #' Set data validations for a sheet
-    #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
-    #' @param value value
-    #' @param allowBlank allowBlank
-    #' @param showInputMsg showInputMsg
-    #' @param showErrorMsg showErrorMsg
-    #' @return The `wbWorkbook` object, invisibly
-    data_validation_list = function(
-      sheet,
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      value,
-      allowBlank,
-      showInputMsg,
-      showErrorMsg
-    ) {
-      # TODO consider some defaults to logicals
-      # TODO rename: setDataValidationList?
-      sheet <- wb_validate_sheet(self, sheet)
-      sqref <-
-        stri_join(get_cell_refs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )),
-          sep = " ",
-          collapse = ":"
+      if (!is.logical(showInputMsg)) {
+        stop("Argument 'showInputMsg' musts be logical!")
+      }
+
+      if (!is.logical(showErrorMsg)) {
+        stop("Argument 'showErrorMsg' musts be logical!")
+      }
+
+      ## All inputs validated
+
+      type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
+
+      ## check input combinations
+      if ((type == "date") && !inherits(value, "Date")) {
+        stop("If type == 'date' value argument must be a Date vector.")
+      }
+
+      if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
+        stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
+      }
+
+
+      value <- head(value, 2)
+      allowBlank <- as.integer(allowBlank[1])
+      showInputMsg <- as.integer(showInputMsg[1])
+      showErrorMsg <- as.integer(showErrorMsg[1])
+
+      if (type == "list") {
+        private$data_validation_list(
+          sheet        = sheet,
+          startRow     = min(rows),
+          endRow       = max(rows),
+          startCol     = min(cols),
+          endCol       = max(cols),
+          value        = value,
+          allowBlank   = allowBlank,
+          showInputMsg = showInputMsg,
+          showErrorMsg = showErrorMsg
         )
-      data_val <-
-        sprintf(
-          '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
-          allowBlank,
-          showInputMsg,
-          showErrorMsg
+      } else {
+        private$data_validation(
+          sheet        = sheet,
+          startRow     = min(rows),
+          endRow       = max(rows),
+          startCol     = min(cols),
+          endCol       = max(cols),
+          type         = type,
+          operator     = operator,
+          value        = value,
+          allowBlank   = allowBlank,
+          showInputMsg = showInputMsg,
+          showErrorMsg = showErrorMsg
         )
+      }
 
-      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
-      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
-      self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
-
-      invisible(self)
+      self
     },
 
     #' @description
@@ -4086,6 +4062,138 @@ wbWorkbook <- R6::R6Class(
           }
         } ## end of isChartSheet[i]
       } ## end of loop through nSheets
+
+      invisible(self)
+    },
+
+    data_validation = function(
+      sheet,
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      type,
+      operator,
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg
+    ) {
+      # TODO rename: setDataValidation?
+      # TODO can this be moved to the worksheet class?
+      sheet <- wb_validate_sheet(self, sheet)
+      sqref <-
+        stri_join(get_cell_refs(data.frame(
+          "x" = c(startRow, endRow),
+          "y" = c(startCol, endCol)
+        )),
+          sep = " ",
+          collapse = ":"
+        )
+
+      header <-
+        sprintf(
+          '<dataValidation type="%s" operator="%s" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s" sqref="%s">',
+          type,
+          operator,
+          allowBlank,
+          showInputMsg,
+          showErrorMsg,
+          sqref
+        )
+
+
+      # TODO consider switch(type, date = ..., time = ..., )
+      if (type == "date") {
+        # TODO consider origin <- if () ... else ...
+        origin <- 25569L
+        # TODO would it be faster to just search each self$workbook instead of
+        # trying to unlist and join everything?
+        if (grepl(
+          'date1904="1"|date1904="true"',
+          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
+          ignore.case = TRUE
+        )) {
+          origin <- 24107L
+        }
+
+        value <- as.integer(value) + origin
+      }
+
+      if (type == "time") {
+        # TODO simplify with above?  This is the same thing?
+        origin <- 25569L
+        if (grepl(
+          'date1904="1"|date1904="true"',
+          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
+          ignore.case = TRUE
+        )) {
+          origin <- 24107L
+        }
+
+        t <- format(value[1], "%z")
+        offSet <-
+          suppressWarnings(
+            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
+              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
+            ) / 24
+          )
+        if (is.na(offSet)) {
+          offSet[i] <- 0
+        }
+
+        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      }
+
+      form <- sapply(
+        seq_along(value),
+        function(i) {
+          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
+        }
+      )
+
+      self$worksheets[[sheet]]$dataValidations <- c(
+        self$worksheets[[sheet]]$dataValidations,
+        stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
+      )
+
+      invisible(self)
+    },
+
+    data_validation_list = function(
+      sheet,
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg
+    ) {
+      # TODO consider some defaults to logicals
+      # TODO rename: setDataValidationList?
+      sheet <- wb_validate_sheet(self, sheet)
+      sqref <-
+        stri_join(get_cell_refs(data.frame(
+          "x" = c(startRow, endRow),
+          "y" = c(startCol, endCol)
+        )),
+          sep = " ",
+          collapse = ":"
+        )
+      data_val <-
+        sprintf(
+          '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
+          allowBlank,
+          showInputMsg,
+          showErrorMsg
+        )
+
+      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
+      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
+      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
+      self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
 
       invisible(self)
     },

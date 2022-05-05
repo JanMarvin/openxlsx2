@@ -212,3 +212,11 @@ test_that("wb_get_sheet_visibility(), wb_set_sheet_visibility() are wrappers", {
   expect_wrapper("get_sheet_visibility", "wb_get_sheet_visibility", wb = wb)
   expect_wrapper("set_sheet_visibility", "wb_set_sheet_visibility", wb = wb, list(sheet = 2:3, value = c(FALSE, FALSE)))
 })
+
+# wb_add_data_validation() ------------------------------------------------
+
+test_that("wb_add_data_validation() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  params <- list(sheet = 1, cols = 1, rows = 1, type = "whole", operator = "between", value = c(0, 1))
+  expect_wrapper("add_data_validation", "wb_add_data_validation", wb = wb, params = params)
+})
