@@ -65,6 +65,15 @@ expect_wrapper <- function(
 
   method0 <- paste0("wbWorkbook$", method)
 
+  # adjustments for when wrappers don't have any args
+  if (!length(method_args)) {
+    method_args <- character()
+  }
+
+  if (!length(method_forms)) {
+    method_forms <- structure(list(), names = character())
+  }
+
   # expectation that the names are the same (possibly redundant but quicker to)
   bad <- waldo::compare(
     x     = method_args,

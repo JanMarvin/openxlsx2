@@ -21,6 +21,12 @@ The \code{wbWorkbook} object
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
+
+Returns sheet visibility
+
+The \code{wbWorkbook} object
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 \description{
 R6 class for a Workbook
@@ -181,6 +187,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_named_region}{\code{wbWorkbook$add_named_region()}}
 \item \href{#method-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
 \item \href{#method-set_order}{\code{wbWorkbook$set_order()}}
+\item \href{#method-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
+\item \href{#method-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1394,8 +1402,35 @@ set worksheet order
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-get_sheet_visibility}{}}}
+\subsection{Method \code{get_sheet_visibility()}}{
+Get sheet visibility
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_visibility()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-set_sheet_visibility}{}}}
+\subsection{Method \code{set_sheet_visibility()}}{
+Set sheet visibility
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_visibility(sheet, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{value}}{value}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

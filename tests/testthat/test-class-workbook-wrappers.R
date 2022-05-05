@@ -204,6 +204,14 @@ test_that("wb_set_order() is a wrapper", {
   expect_wrapper("set_order", "wb_set_order", wb = wb, params = list(sheets = 3:1))
 })
 
+# wb_get_sheet_visibility(), wb_set_sheet_visibility() --------------------
+
+test_that("wb_get_sheet_visibility(), wb_set_sheet_visibility() are wrappers", {
+  wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")$add_worksheet("c")
+  # debugonce(expect_wrapper)
+  expect_wrapper("get_sheet_visibility", "wb_get_sheet_visibility", wb = wb)
+  expect_wrapper("set_sheet_visibility", "wb_set_sheet_visibility", wb = wb, list(sheet = 2:3, value = c(FALSE, FALSE)))
+})
 
 # wb_add_data_validation() ------------------------------------------------
 

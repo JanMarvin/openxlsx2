@@ -1379,10 +1379,10 @@ wb_add_data_validation <- function(
 
 # visibility --------------------------------------------------------------
 
-#' @name wb_sheet_visibility
-#' @title Get/set worksheet visible state
-#' @description Get and set worksheet visible state
-#' @param wb A workbook object
+#' Get/set worksheet visible state
+#'
+#'Get and set worksheet visible state
+#'
 #' @return Character vector of worksheet names.
 #' @return  Vector of "hidden", "visible", "veryHidden"
 #' @examples
@@ -1392,61 +1392,29 @@ wb_add_data_validation <- function(
 #' wb$add_worksheet(sheet = "S2", visible = TRUE)
 #' wb$add_worksheet(sheet = "S3", visible = FALSE)
 #'
-#' wb_sheet_visibility(wb)
-#' wb_sheet_visibility(wb)[1] <- TRUE ## show sheet 1
-#' wb_sheet_visibility(wb)[2] <- FALSE ## hide sheet 2
-#' wb_sheet_visibility(wb)[3] <- "hidden" ## hide sheet 3
-#' wb_sheet_visibility(wb)[3] <- "veryHidden" ## hide sheet 3 from UI
+#' wb$get_sheet_visibility()
+#' wb$set_sheet_visibility(1, TRUE)         ## show sheet 1
+#' wb$set_sheet_visibility(2, FALSE)        ## hide sheet 2
+#' wb$set_sheet_visibility(3, "hidden")     ## hide sheet 3
+#' wb$set_sheet_visibility(3, "veryHidden") ## hide sheet 3 from UI
+#' @name sheet_visibility
+NULL
+
+#' @rdname sheet_visibility
+#' @param wb A `wbWorkbook` object
 #' @export
-wb_sheet_visibility <- function(wb) {
+wb_get_sheet_visibility <- function(wb) {
   assert_workbook(wb)
-
-  state <- rep("visible", length(wb$workbook$sheets))
-  state[grepl("hidden", wb$workbook$sheets)] <- "hidden"
-  state[grepl("veryHidden", wb$workbook$sheets, ignore.case = TRUE)] <- "veryHidden"
-
-
-  return(state)
+  wb$get_sheet_visibility()
 }
 
-#' @rdname wb_sheet_visibility
-#' @param value a logical/character vector the same length as wb_sheet_visibility(wb)
+#' @rdname sheet_visibility
+#' @param sheet Worksheet identifier
+#' @param value a logical/character vector the same length as sheet
 #' @export
-`wb_sheet_visibility<-` <- function(wb, value) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  value <- tolower(as.character(value))
-  if (!any(value %in% c("true", "visible"))) {
-    stop("A workbook must have atleast 1 visible worksheet.")
-  }
-
-  value[value %in% "true"] <- "visible"
-  value[value %in% "false"] <- "hidden"
-  value[value %in% "veryhidden"] <- "veryHidden"
-
-
-  exState0 <- regmatches(wb$workbook$sheets, regexpr('(?<=state=")[^"]+', wb$workbook$sheets, perl = TRUE))
-  exState <- tolower(exState0)
-  exState[exState %in% "true"] <- "visible"
-  exState[exState %in% "hidden"] <- "hidden"
-  exState[exState %in% "false"] <- "hidden"
-  exState[exState %in% "veryhidden"] <- "veryHidden"
-
-  if (length(value) != length(wb$workbook$sheets)) {
-    stop(sprintf("value vector must have length equal to number of worksheets in Workbook [%s]", length(exState)))
-  }
-
-  inds <- which(value != exState)
-  if (length(inds) == 0) {
-    return(invisible(wb))
-  }
-
-  for (i in seq_along(wb$worksheets)) {
-    wb$workbook$sheets[i] <- gsub(exState0[i], value[i], wb$workbook$sheets[i], fixed = TRUE)
-  }
-
-  invisible(wb)
+wb_set_sheet_visibility <- function(wb, sheet, value) {
+  assert_workbook(wb)
+  wb$clone()$set_sheet_visibility(sheet = sheet, value = value)
 }
 
 
