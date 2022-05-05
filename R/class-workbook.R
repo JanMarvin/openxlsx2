@@ -4098,7 +4098,7 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$dataValidations <- c(
         self$worksheets[[sheet]]$dataValidations,
-        stri_join(header, stri_join(form, collapse = ""), "</data_validation>")
+        stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
       )
 
       invisible(self)
