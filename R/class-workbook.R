@@ -3720,6 +3720,57 @@ wbWorkbook <- R6::R6Class(
 
       self$sheetOrder <- sheets
       self
+    },
+
+    ## sheet visibility ----
+
+    #' @description Get sheet visibility
+    #' @returns Returns sheet visibility
+    get_sheet_visibility = function() {
+      state <- rep("visible", length(self$workbook$sheets))
+      state[grepl("hidden", self$workbook$sheets)] <- "hidden"
+      state[grepl("veryHidden", self$workbook$sheets, ignore.case = TRUE)] <- "veryHidden"
+      state
+    },
+
+    #' @description Set sheet visibility
+    #' @param value value
+    #' @returns The `wbWorkbook` object
+    set_sheet_visibility = function(value) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      value <- tolower(as.character(value))
+      if (!any(value %in% c("true", "visible"))) {
+        stop("A workbook must have atleast 1 visible worksheet.")
+      }
+
+      value[value %in% "true"] <- "visible"
+      value[value %in% "false"] <- "hidden"
+      value[value %in% "veryhidden"] <- "veryHidden"
+
+
+      exState0 <- regmatches(self$workbook$sheets, regexpr('(?<=state=")[^"]+', self$workbook$sheets, perl = TRUE))
+      exState <- tolower(exState0)
+      exState[exState %in% "true"] <- "visible"
+      exState[exState %in% "hidden"] <- "hidden"
+      exState[exState %in% "false"] <- "hidden"
+      exState[exState %in% "veryhidden"] <- "veryHidden"
+
+      if (length(value) != length(self$workbook$sheets)) {
+        stop(sprintf("value vector must have length equal to number of worksheets in Workbook [%s]", length(exState)))
+      }
+
+      inds <- which(value != exState)
+      if (length(inds) == 0) {
+        return(self)
+      }
+
+      for (i in seq_along(self$worksheets)) {
+        self$workbook$sheets[i] <- gsub(exState0[i], value[i], self$workbook$sheets[i], fixed = TRUE)
+      }
+
+      self
     }
   ),
 
