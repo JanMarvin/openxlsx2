@@ -210,5 +210,5 @@ test_that("wb_get_sheet_visibility(), wb_set_sheet_visibility() are wrappers", {
   wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")$add_worksheet("c")
   # debugonce(expect_wrapper)
   expect_wrapper("get_sheet_visibility", "wb_get_sheet_visibility", wb = wb)
-  expect_wrapper("set_sheet_visibility", "wb_set_sheet_visibility", wb = wb, list(value = c(TRUE, FALSE, FALSE)))
+  expect_wrapper("set_sheet_visibility", "wb_set_sheet_visibility", wb = wb, list(sheet = 2:3, value = c(FALSE, FALSE)))
 })
