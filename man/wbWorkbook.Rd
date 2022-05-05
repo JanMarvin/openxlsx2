@@ -6,6 +6,8 @@
 \value{
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -156,8 +158,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
 \item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
-\item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
-\item \href{#method-data_validation_list}{\code{wbWorkbook$data_validation_list()}}
+\item \href{#method-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
 \item \href{#method-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
 \item \href{#method-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
@@ -725,23 +726,21 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-data_validation"></a>}}
-\if{latex}{\out{\hypertarget{method-data_validation}{}}}
-\subsection{Method \code{data_validation()}}{
-Set data validations for a sheet
+\if{html}{\out{<a id="method-add_data_validation"></a>}}
+\if{latex}{\out{\hypertarget{method-add_data_validation}{}}}
+\subsection{Method \code{add_data_validation()}}{
+Adds data validation
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$data_validation(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_validation(
   sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
+  cols,
+  rows,
   type,
   operator,
   value,
-  allowBlank,
-  showInputMsg,
-  showErrorMsg
+  allowBlank = TRUE,
+  showInputMsg = TRUE,
+  showErrorMsg = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -750,13 +749,9 @@ Set data validations for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
+\item{\code{cols}}{cols}
 
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows}}{rows}
 
 \item{\code{type}}{type}
 
@@ -771,55 +766,6 @@ Set data validations for a sheet
 \item{\code{showErrorMsg}}{showErrorMsg}
 }
 \if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-data_validation_list"></a>}}
-\if{latex}{\out{\hypertarget{method-data_validation_list}{}}}
-\subsection{Method \code{data_validation_list()}}{
-Set data validations for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$data_validation_list(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  value,
-  allowBlank,
-  showInputMsg,
-  showErrorMsg
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{value}}{value}
-
-\item{\code{allowBlank}}{allowBlank}
-
-\item{\code{showInputMsg}}{showInputMsg}
-
-\item{\code{showErrorMsg}}{showErrorMsg}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}

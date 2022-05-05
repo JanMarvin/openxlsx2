@@ -1283,9 +1283,10 @@ wb_remove_filter <- function(wb, sheet) {
 
 # validations -------------------------------------------------------------
 
-#' @name data_validation
-#' @title Add data validation to cells
-#' @description Add Excel data validation to cells
+#' Add data validation to cells
+#'
+#' Add Excel data validation to cells
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Contiguous columns to apply conditional formatting to
@@ -1304,11 +1305,11 @@ wb_remove_filter <- function(wb, sheet) {
 #' wb$add_worksheet("Sheet 2")
 #'
 #' write_datatable(wb, 1, x = iris[1:30, ])
-#' wb_data_validation(wb, 1,
+#' wb$add_data_validation(1,
 #'   col = 1:3, rows = 2:31, type = "whole",
 #'   operator = "between", value = c(1, 9)
 #' )
-#' wb_data_validation(wb, 1,
+#' wb$add_data_validation(1,
 #'   col = 5, rows = 2:31, type = "textLength",
 #'   operator = "between", value = c(4, 6)
 #' )
@@ -1319,11 +1320,11 @@ wb_remove_filter <- function(wb, sheet) {
 #'   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 #' )
 #' write_datatable(wb, 2, x = df)
-#' wb_data_validation(wb, 2,
+#' wb$add_data_validation(2,
 #'   col = 1, rows = 2:12, type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
-#' wb_data_validation(wb, 2,
+#' wb$add_data_validation(2,
 #'   col = 2, rows = 2:12, type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
@@ -1344,124 +1345,35 @@ wb_remove_filter <- function(wb, sheet) {
 #' write_datatable(wb, sheet = 1, x = iris[1:30, ])
 #' write_data(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
-#' wb_data_validation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 #'
 #' \dontrun{
 #' wb_save(wb, "data_validationExample2.xlsx", overwrite = TRUE)
 #' }
-wb_data_validation <- function(wb, sheet, cols, rows, type, operator, value, allowBlank = TRUE, showInputMsg = TRUE, showErrorMsg = TRUE) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  ## rows and cols
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-  rows <- as.integer(rows)
-
-  ## check length of value
-  if (length(value) > 2) {
-    stop("value argument must be length < 2")
-  }
-
-  valid_types <- c(
-    "whole",
-    "decimal",
-    "date",
-    "time", ## need to conv
-    "textLength",
-    "list"
+wb_add_data_validation <- function(
+    wb,
+    sheet,
+    cols,
+    rows,
+    type,
+    operator,
+    value,
+    allowBlank = TRUE,
+    showInputMsg = TRUE,
+    showErrorMsg = TRUE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_data_validation(
+    sheet        = sheet,
+    cols         = cols,
+    rows         = rows,
+    type         = type,
+    operator     = operator,
+    value        = value,
+    allowBlank   = allowBlank,
+    showInputMsg = showInputMsg,
+    showErrorMsg = showErrorMsg
   )
-
-  if (!tolower(type) %in% tolower(valid_types)) {
-    stop("Invalid 'type' argument!")
-  }
-
-
-  ## operator == 'between' we leave out
-  valid_operators <- c(
-    "between",
-    "notBetween",
-    "equal",
-    "notEqual",
-    "greaterThan",
-    "lessThan",
-    "greaterThanOrEqual",
-    "lessThanOrEqual"
-  )
-
-  if (tolower(type) != "list") {
-    if (!tolower(operator) %in% tolower(valid_operators)) {
-      stop("Invalid 'operator' argument!")
-    }
-
-    operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
-  } else {
-    operator <- "between" ## ignored
-  }
-
-  if (!is.logical(allowBlank)) {
-    stop("Argument 'allowBlank' musts be logical!")
-  }
-
-  if (!is.logical(showInputMsg)) {
-    stop("Argument 'showInputMsg' musts be logical!")
-  }
-
-  if (!is.logical(showErrorMsg)) {
-    stop("Argument 'showErrorMsg' musts be logical!")
-  }
-
-  ## All inputs validated
-
-  type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
-
-  ## check input combinations
-  if ((type == "date") && !inherits(value, "Date")) {
-    stop("If type == 'date' value argument must be a Date vector.")
-  }
-
-  if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
-    stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
-  }
-
-
-  value <- head(value, 2)
-  allowBlank <- as.integer(allowBlank[1])
-  showInputMsg <- as.integer(showInputMsg[1])
-  showErrorMsg <- as.integer(showErrorMsg[1])
-
-  if (type == "list") {
-    invisible(wb$data_validation_list(
-      sheet = sheet,
-      startRow = min(rows),
-      endRow = max(rows),
-      startCol = min(cols),
-      endCol = max(cols),
-      value = value,
-      allowBlank = allowBlank,
-      showInputMsg = showInputMsg,
-      showErrorMsg = showErrorMsg
-    ))
-  } else {
-    invisible(wb$data_validation(
-      sheet = sheet,
-      startRow = min(rows),
-      endRow = max(rows),
-      startCol = min(cols),
-      endCol = max(cols),
-      type = type,
-      operator = operator,
-      value = value,
-      allowBlank = allowBlank,
-      showInputMsg = showInputMsg,
-      showErrorMsg = showErrorMsg
-    ))
-  }
-
-
-
-  invisible(0)
 }
 
 
