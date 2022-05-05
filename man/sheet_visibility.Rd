@@ -8,13 +8,14 @@
 \usage{
 wb_get_sheet_visibility(wb)
 
-wb_set_sheet_visibility(wb, value)
+wb_set_sheet_visibility(wb, sheet, value)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object}
 
-\item{value}{a logical/character vector the same length as returned by
-\code{\link[=wb_get_sheet_visibility]{wb_get_sheet_visibility()}}}
+\item{sheet}{Worksheet identifier}
+
+\item{value}{a logical/character vector the same length as sheet}
 }
 \value{
 Character vector of worksheet names.

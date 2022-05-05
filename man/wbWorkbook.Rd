@@ -1474,12 +1474,14 @@ Get sheet visibility
 \subsection{Method \code{set_sheet_visibility()}}{
 Set sheet visibility
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_visibility(value)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_visibility(sheet, value)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{sheet}}{sheet}
+
 \item{\code{value}}{value}
 }
 \if{html}{\out{</div>}}
