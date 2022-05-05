@@ -3735,39 +3735,44 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Set sheet visibility
     #' @param value value
+    #' @param sheet sheet
     #' @returns The `wbWorkbook` object
-    set_sheet_visibility = function(value) {
+    set_sheet_visibility = function(sheet, value) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
-      value <- tolower(as.character(value))
-      if (!any(value %in% c("true", "visible"))) {
-        stop("A workbook must have atleast 1 visible worksheet.")
+      if (length(value) != length(sheet)) {
+        stop("`value` and `sheet` must be the same length")
       }
 
+      sheet <- wb_validate_sheet(self, sheet)
+
+      value <- tolower(as.character(value))
       value[value %in% "true"] <- "visible"
       value[value %in% "false"] <- "hidden"
       value[value %in% "veryhidden"] <- "veryHidden"
 
-
-      exState0 <- regmatches(self$workbook$sheets, regexpr('(?<=state=")[^"]+', self$workbook$sheets, perl = TRUE))
+      exState0 <- reg_match0(self$workbook$sheets[sheet], '(?<=state=")[^"]+')
       exState <- tolower(exState0)
       exState[exState %in% "true"] <- "visible"
       exState[exState %in% "hidden"] <- "hidden"
       exState[exState %in% "false"] <- "hidden"
       exState[exState %in% "veryhidden"] <- "veryHidden"
 
-      if (length(value) != length(self$workbook$sheets)) {
-        stop(sprintf("value vector must have length equal to number of worksheets in Workbook [%s]", length(exState)))
-      }
 
       inds <- which(value != exState)
+
       if (length(inds) == 0) {
         return(self)
       }
 
       for (i in seq_along(self$worksheets)) {
-        self$workbook$sheets[i] <- gsub(exState0[i], value[i], self$workbook$sheets[i], fixed = TRUE)
+        self$workbook$sheets[sheet[i]] <- gsub(exState0[i], value[i], self$workbook$sheets[sheet[i]], fixed = TRUE)
+      }
+
+      if (!any(self$get_sheet_visibility() %in% c("true", "visible"))) {
+        warning("A workbook must have atleast 1 visible worksheet.  Setting first for visible")
+        self$set_sheet_visibility(1, TRUE)
       }
 
       self

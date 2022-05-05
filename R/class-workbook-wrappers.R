@@ -1497,12 +1497,12 @@ wb_get_sheet_visibility <- function(wb) {
 }
 
 #' @rdname sheet_visibility
-#' @param value a logical/character vector the same length as returned by
-#'   [wb_get_sheet_visibility()]
+#' @param sheet Worksheet identifier
+#' @param value a logical/character vector the same length as sheet
 #' @export
-wb_set_sheet_visibility <- function(wb, value) {
+wb_set_sheet_visibility <- function(wb, sheet, value) {
   assert_workbook(wb)
-  wb$clone()$set_sheet_visibility(value = value)
+  wb$clone()$set_sheet_visibility(sheet = sheet, value = value)
 }
 
 
