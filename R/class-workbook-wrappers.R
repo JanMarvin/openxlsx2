@@ -1283,9 +1283,10 @@ wb_remove_filter <- function(wb, sheet) {
 
 # validations -------------------------------------------------------------
 
-#' @name data_validation
-#' @title Add data validation to cells
-#' @description Add Excel data validation to cells
+#' Add data validation to cells
+#'
+#' Add Excel data validation to cells
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Contiguous columns to apply conditional formatting to
@@ -1304,11 +1305,11 @@ wb_remove_filter <- function(wb, sheet) {
 #' wb$add_worksheet("Sheet 2")
 #'
 #' write_datatable(wb, 1, x = iris[1:30, ])
-#' wb_data_validation(wb, 1,
+#' wb$add_data_validation(1,
 #'   col = 1:3, rows = 2:31, type = "whole",
 #'   operator = "between", value = c(1, 9)
 #' )
-#' wb_data_validation(wb, 1,
+#' wb$add_data_validation(1,
 #'   col = 5, rows = 2:31, type = "textLength",
 #'   operator = "between", value = c(4, 6)
 #' )
@@ -1319,11 +1320,11 @@ wb_remove_filter <- function(wb, sheet) {
 #'   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 #' )
 #' write_datatable(wb, 2, x = df)
-#' wb_data_validation(wb, 2,
+#' wb$add_data_validation(2,
 #'   col = 1, rows = 2:12, type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
-#' wb_data_validation(wb, 2,
+#' wb$add_data_validation(2,
 #'   col = 2, rows = 2:12, type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
@@ -1344,7 +1345,7 @@ wb_remove_filter <- function(wb, sheet) {
 #' write_datatable(wb, sheet = 1, x = iris[1:30, ])
 #' write_data(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
-#' wb_data_validation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 #'
 #' \dontrun{
 #' wb_save(wb, "data_validationExample2.xlsx", overwrite = TRUE)
@@ -1371,7 +1372,7 @@ wb_add_data_validation <- function(
     value        = value,
     allowBlank   = allowBlank,
     showInputMsg = showInputMsg,
-    showErrorMsg = showErrorMsg,
+    showErrorMsg = showErrorMsg
   )
 }
 
