@@ -3752,6 +3752,32 @@ wbWorkbook <- R6::R6Class(
       }
 
       self
+    },
+
+    ## page breaks ----
+
+    #' @description Add a page break
+    #' @param sheet sheet
+    #' @param row row
+    #' @param col col
+    #' @returns The `wbWorkbook` object
+    add_page_break = function(sheet, row = NULL, col = NULL) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (!xor(is.null(row), is.null(col))) {
+        stop("either `row` or `col` must be NULL but not both")
+      }
+
+      if (!is.null(row)) {
+        if (!is.numeric(row)) stop("`row` must be numeric")
+        private$append_sheet_field(sheet, "rowBreaks", sprintf('<brk id="%i" max="16383" man="1"/>', round(row)))
+      } else if (!is.null(col)) {
+        if (!is.numeric(col)) stop("`col` must be numeric")
+        private$append_sheet_field(sheet, "colBreaks", sprintf('<brk id="%i" max="1048575" man="1"/>', round(col)))
+      }
+
+      self
     }
   ),
 
@@ -3773,6 +3799,12 @@ wbWorkbook <- R6::R6Class(
       }
 
       value
+    },
+
+    append_sheet_field = function(sheet, field, value = NULL) {
+      sheet <- wb_validate_sheet(self, sheet)
+      self$workbook[[sheet]][[field]] <- c(self$workbook[[sheet]][[field]], value)
+      self
     },
 
     generate_base_core = function() {

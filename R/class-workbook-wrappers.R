@@ -1418,13 +1418,13 @@ wb_set_sheet_visibility <- function(wb, sheet, value) {
 }
 
 
-#' @name wb_page_break
-#' @title add a page break to a worksheet
-#' @description insert page breaks into a worksheet
+#' Add a page break to a worksheet
+#'
+#' Insert page breaks into a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param i row or column number to insert page break.
-#' @param type One of "row" or "column" for a row break or column break.
+#' @param row,col Either a row number of column number.  One must be `NULL`
 #' @export
 #' @seealso [wb_add_worksheet()]
 #' @examples
@@ -1432,47 +1432,16 @@ wb_set_sheet_visibility <- function(wb, sheet, value) {
 #' wb$add_worksheet("Sheet 1")
 #' write_data(wb, sheet = 1, x = iris)
 #'
-#' wb_page_break(wb, sheet = 1, i = 10, type = "row")
-#' wb_page_break(wb, sheet = 1, i = 20, type = "row")
-#' wb_page_break(wb, sheet = 1, i = 2, type = "column")
+#' wb$add_page_break(sheet = 1, row = 10)
+#' wb$add_page_break(sheet = 1, row = 20)
+#' wb$add_page_break(sheet = 1, col = 2)
 #' \dontrun{
 #' wb_save(wb, "wb_page_breakExample.xlsx", TRUE)
 #' }
 #' ## In Excel: View tab -> Page Break Preview
-wb_page_break <- function(wb, sheet, i, type = "row") {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
+wb_add_page_break <- function(wb, sheet, row = NULL, col = NULL) {
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  type <- tolower(type)[1]
-  if (!type %in% c("row", "column")) {
-    stop("'type' argument must be 'row' or 'column'.")
-  }
-
-  if (!is.numeric(i)) {
-    stop("'i' must be numeric.")
-  }
-  i <- round(i)
-
-  if (type == "row") {
-    wb$worksheets[[sheet]]$rowBreaks <- c(
-      wb$worksheets[[sheet]]$rowBreaks,
-      sprintf('<brk id="%s" max="16383" man="1"/>', i)
-    )
-  } else if (type == "column") {
-    wb$worksheets[[sheet]]$colBreaks <- c(
-      wb$worksheets[[sheet]]$colBreaks,
-      sprintf('<brk id="%s" max="1048575" man="1"/>', i)
-    )
-  }
-
-
-  # wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
-
-  invisible(wb)
+  wb$clone()$add_page_break(sheet = sheet, row = row, col = col)
 }
 
 
