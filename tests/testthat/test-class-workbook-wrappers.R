@@ -220,3 +220,12 @@ test_that("wb_add_data_validation() is a wrapper", {
   params <- list(sheet = 1, cols = 1, rows = 1, type = "whole", operator = "between", value = c(0, 1))
   expect_wrapper("add_data_validation", "wb_add_data_validation", wb = wb, params = params)
 })
+
+
+# wb_add_page_break() -----------------------------------------------------
+
+test_that("wb_add_page_break() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  expect_wrapper("add_page_break", "wb_add_page_break", wb = wb, params = list(sheet = 1, row = 2))
+})
+
