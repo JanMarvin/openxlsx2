@@ -3829,6 +3829,21 @@ wbWorkbook <- R6::R6Class(
       }
 
       self
+    },
+
+    ## page breaks ----
+
+    #' @description Add a page break
+    #' @param sheet sheet
+    #' @param row row
+    #' @param col col
+    #' @returns The `wbWorkbook` object
+    add_page_break = function(sheet, row = NULL, col = NULL) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+      sheet <- wb_validate_sheet(self, sheet)
+      self$worksheets[[sheet]]$add_page_break(row = row, col = col)
+      self
     }
   ),
 
@@ -3850,6 +3865,14 @@ wbWorkbook <- R6::R6Class(
       }
 
       value
+    },
+
+    append_sheet_field = function(sheet, field, value = NULL) {
+      # if using this we should consider adding a method into the wbWorksheet
+      # object.  wbWorksheet$append() is currently public. _Currently_.
+      sheet <- wb_validate_sheet(self, sheet)
+      self$worksheet[[sheet]]$append(value)
+      self
     },
 
     generate_base_core = function() {
