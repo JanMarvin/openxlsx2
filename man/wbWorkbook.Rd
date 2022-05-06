@@ -25,6 +25,8 @@ The \code{wbWorkbook} object
 Returns sheet visibility
 
 The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
 Deep cloning method for workbooks.  This method also accesses
 \verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
@@ -189,6 +191,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-set_order}{\code{wbWorkbook$set_order()}}
 \item \href{#method-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
 \item \href{#method-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
+\item \href{#method-add_page_break}{\code{wbWorkbook$add_page_break()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1429,6 +1432,27 @@ Set sheet visibility
 \item{\code{sheet}}{sheet}
 
 \item{\code{value}}{value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_page_break"></a>}}
+\if{latex}{\out{\hypertarget{method-add_page_break}{}}}
+\subsection{Method \code{add_page_break()}}{
+Add a page break
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_page_break(sheet, row = NULL, col = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{row}}{row}
+
+\item{\code{col}}{col}
 }
 \if{html}{\out{</div>}}
 }
