@@ -162,7 +162,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
 \item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
 \item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
-\item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
+\item \href{#method-group_rows}{\code{wbWorkbook$group_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
 \item \href{#method-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
@@ -688,12 +688,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wb_group_rows"></a>}}
-\if{latex}{\out{\hypertarget{method-wb_group_rows}{}}}
-\subsection{Method \code{wb_group_rows()}}{
+\if{html}{\out{<a id="method-group_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-group_rows}{}}}
+\subsection{Method \code{group_rows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_group_rows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_rows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

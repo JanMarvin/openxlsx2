@@ -1630,7 +1630,7 @@ wb_ungroup_cols <- function(wb, sheet, cols) {
 #' @rdname workbook_grouping
 wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-  wb$clone()$wb_group_rows(
+  wb$clone()$group_rows(
     sheet     = sheet,
     rows      = rows,
     collapsed = collapsed,

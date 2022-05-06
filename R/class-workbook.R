@@ -1904,7 +1904,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    wb_group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
+    group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
