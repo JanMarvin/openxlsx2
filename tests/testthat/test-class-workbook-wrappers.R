@@ -75,11 +75,25 @@ test_that("wb_remove_row_heights() is a wrapper", {
   expect_wrapper("remove_row_heights", wb = wb, params = params)
 })
 
-# wb_group_rows() -------------------------------------------------------------
+# wb_group_rows(), wb_ungroup_rows() ------------------------------------------
 
-test_that("wb_group_rows() is a wrapper", {
+test_that("wb_group_rows(), wb_ungroup_rows() are wrappers", {
   wb <- wbWorkbook$new()$add_worksheet("sheet")
-  expect_wrapper("group_rows", wb = wb, params = list(sheet = "sheet", rows = 1))
+  params <- list(sheet = "sheet", rows = 1)
+  expect_wrapper("group_rows", wb = wb, params = params)
+  wb$group_rows(sheet = "sheet", rows = 1)
+  expect_wrapper("ungroup_rows", wb = wb, params = params)
+})
+
+# wb_group_cols(), wb_ungroup_cols() ------------------------------------------
+
+test_that("wb_group_cols(), wb_ungroup_cols() are wrapper", {
+  wb <- wbWorkbook$new()$add_worksheet("sheet")
+  params <- list(sheet = "sheet", cols = 1)
+  # TODO add step to actual create columns?
+  suppressMessages(expect_wrapper("group_cols", wb = wb, params = params))
+  suppressMessages(wb$group_cols(sheet = "sheet", cols = 1))
+  expect_wrapper("ungroup_cols", wb = wb, params = params)
 })
 
 # wb_set_creators() -----------------------------------------------------------

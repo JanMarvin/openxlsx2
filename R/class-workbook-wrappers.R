@@ -1594,35 +1594,8 @@ wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
 #' @export
 #' @rdname workbook_grouping
 wb_ungroup_cols <- function(wb, sheet, cols) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # check if any rows are selected
-  if (any(cols) < 1L) {
-    stop("Invalid cols entered (<= 0).")
-  }
-
-  # fetch the cols_attr data.frame
-  col_attr <- wb$worksheets[[sheet]]$unfold_cols()
-
-  # get the selection based on the col_attr frame.
-  select <- col_attr$min %in% as.character(cols)
-  if (length(select)) {
-    col_attr$outlineLevel[select] <- ""
-    col_attr$collapsed[select] <- ""
-    # TODO only if unhide = TRUE
-    col_attr$hidden[select] <- ""
-    wb$worksheets[[sheet]]$fold_cols(col_attr)
-  }
-
-  # If all outlineLevels are missing: remove the outlineLevelCol attribute. Assigning "" will remove the attribute
-  if (all(col_attr$outlineLevel == "")) {
-    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = ""))
-  } else {
-    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
-  }
+  assert_workbook(wb)
+  wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
 }
 
 
@@ -1641,35 +1614,8 @@ wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
 #' @export
 #' @rdname workbook_grouping
 wb_ungroup_rows <- function(wb, sheet, rows) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # check if any rows are selected
-  if (any(rows) < 1L) {
-    stop("Invalid rows entered (<= 0).")
-  }
-
-  # fetch the row_attr data.frame
-  row_attr <- wb$worksheets[[sheet]]$sheet_data$row_attr
-
-  # get the selection based on the row_attr frame.
-  select <- row_attr$r %in% as.character(rows)
-  if (length(select)) {
-    row_attr$outlineLevel[select] <- ""
-    row_attr$collapsed[select] <- ""
-    # TODO only if unhide = TRUE
-    row_attr$hidden[select] <- ""
-    wb$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
-  }
-
-  # If all outlineLevels are missing: remove the outlineLevelRow attribute. Assigning "" will remove the attribute
-  if (all(row_attr$outlineLevel == "")) {
-    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = ""))
-  } else {
-    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
-  }
+  assert_workbook(wb)
+  wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
 }
 
 

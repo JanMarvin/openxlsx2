@@ -8,6 +8,8 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -160,9 +162,11 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
+\item \href{#method-ungroup_cols}{\code{wbWorkbook$ungroup_cols()}}
 \item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
 \item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
 \item \href{#method-group_rows}{\code{wbWorkbook$group_rows()}}
+\item \href{#method-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
 \item \href{#method-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
@@ -618,7 +622,7 @@ creates column object for worksheet
 \subsection{Method \code{group_cols()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(sheet, cols, collapsed, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(sheet, cols, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -636,6 +640,25 @@ Group cols
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ungroup_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-ungroup_cols}{}}}
+\subsection{Method \code{ungroup_cols()}}{
+ungroup cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_cols(sheet, cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{= cols}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -711,6 +734,28 @@ Group rows
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ungroup_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-ungroup_rows}{}}}
+\subsection{Method \code{ungroup_rows()}}{
+ungroup rows
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_rows(sheet, rows)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
