@@ -3,6 +3,9 @@
 \name{wbWorksheet}
 \alias{wbWorksheet}
 \title{R6 class for a Workbook Worksheet}
+\value{
+The \code{wbWorksheet} object
+}
 \description{
 R6 class for a Workbook Worksheet
 
@@ -107,6 +110,8 @@ A Worksheet
 \item \href{#method-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
 \item \href{#method-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
 \item \href{#method-fold_cols}{\code{wbWorksheet$fold_cols()}}
+\item \href{#method-add_page_break}{\code{wbWorksheet$add_page_break()}}
+\item \href{#method-append}{\code{wbWorksheet$append()}}
 \item \href{#method-clone}{\code{wbWorksheet$clone()}}
 }
 }
@@ -247,6 +252,45 @@ fold the column dataframe back into a node.
 }
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_page_break"></a>}}
+\if{latex}{\out{\hypertarget{method-add_page_break}{}}}
+\subsection{Method \code{add_page_break()}}{
+add page break
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$add_page_break(row = NULL, col = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{row}}{row}
+
+\item{\code{col}}{col}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-append"></a>}}
+\if{latex}{\out{\hypertarget{method-append}{}}}
+\subsection{Method \code{append()}}{
+append a field.  Intended for internal use only.  Not
+guaranteed to remain a public method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$append(field, value = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{field}}{a field name}
+
+\item{\code{value}}{a new value}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
