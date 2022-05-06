@@ -500,8 +500,36 @@ wbWorksheet <- R6::R6Class(
       self$cols_attr <- df_to_xml("col", col_df)
 
       invisible(self)
-    }
+    },
 
+    #' @description add page break
+    #' @param row row
+    #' @param col col
+    #' @returns The `wbWorksheet` object
+    add_page_break = function(row = NULL, col = NULL) {
+      if (!xor(is.null(row), is.null(col))) {
+        stop("either `row` or `col` must be NULL but not both")
+      }
+
+      if (!is.null(row)) {
+        if (!is.numeric(row)) stop("`row` must be numeric")
+        private$append("rowBreaks", sprintf('<brk id="%i" max="16383" man="1"/>', round(row)))
+      } else if (!is.null(col)) {
+        if (!is.numeric(col)) stop("`col` must be numeric")
+        private$append("colBreaks", sprintf('<brk id="%i" max="1048575" man="1"/>', round(col)))
+      }
+
+      self
+    },
+
+    #' @description append a field.  Intended for internal use only.  Not
+    #'   guaranteed to remain a public method.
+    #' @param field a field name
+    #' @param value a new value
+    append = function(field, value = NULL) {
+      self[[field]] <- c(self[[field]], value)
+      self
+    }
   ),
 
   ## private ----
