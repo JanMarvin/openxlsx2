@@ -1,4 +1,3 @@
-
 test_that("Page setup", {
   wb <- wb_workbook()
   wb$add_worksheet("s1")
@@ -31,4 +30,24 @@ test_that("Page setup", {
   # SheetPr will be a character vector of length 2; the first entry will
   # be for ws_page_setupPr, inserted by `fitToWidth`/`fitToHeight`.
   expect_true(grepl('<outlinePr summaryBelow="1" summaryRight="1"/>', pr[2], fixed = TRUE))
+})
+
+test_that("page_breaks", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("Sheet 1")
+  write_data(wb, sheet = 1, x = iris)
+
+  wb$add_page_break(sheet = 1, row = 10)
+  wb$add_page_break(sheet = 1, row = 20)
+  wb$add_page_break(sheet = 1, col = 2)
+
+  rbrk <- c("<brk id=\"10\" max=\"16383\" man=\"1\"/>",
+            "<brk id=\"20\" max=\"16383\" man=\"1\"/>"
+  )
+  cbrk <- "<brk id=\"2\" max=\"1048575\" man=\"1\"/>"
+
+  expect_equal(rbrk, wb$worksheets[[1]]$rowBreaks)
+  expect_equal(cbrk, wb$worksheets[[1]]$colBreaks)
+
 })
