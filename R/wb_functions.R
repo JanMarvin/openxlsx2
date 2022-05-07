@@ -1239,7 +1239,7 @@ wb_set_selected <- function(wb, sheet) {
     # might lose other children if any. xml_replace_child?
     sv <- xml_node(svs, "sheetViews", "sheetView")
     sv <- xml_attr_mod(sv, xml_attr)
-    svs <- xml_node_create("sheetViews", xml_child = sv)
+    svs <- xml_node_create("sheetViews", xml_children = sv)
 
     wb$worksheets[[i]]$sheetViews <- svs
   }
