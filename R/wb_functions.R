@@ -1182,7 +1182,7 @@ wb_ws <- function(wb, sheet) {
 #'   wb <- wb_set_active_sheet(wb, sheet = "IrisSample")
 #' @name select_active_sheet
 wb_get_active_sheet <- function(wb) {
-  at <- openxlsx2:::rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))["activeTab"]
+  at <- rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))["activeTab"]
   # return c index as R index
   as.numeric(at) + 1
 }
@@ -1192,7 +1192,7 @@ wb_get_active_sheet <- function(wb) {
 #' @export
 wb_set_active_sheet <- function(wb, sheet) {
 
-  sheet <- openxlsx2:::wb_validate_sheet(wb, sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
   if (is.na(sheet)) stop("sheet not in workbook")
   wbv <- xml_node(wb$workbook$bookViews, "bookViews", "workbookView")
 
@@ -1219,7 +1219,7 @@ wb_get_selected <- function(wb) {
   }
 
   # print(sv)
-  z <- openxlsx2:::rbindlist(xml_attr(sv, "sheetView"))
+  z <- rbindlist(xml_attr(sv, "sheetView"))
   z$names <- names(wb)
 
   z
@@ -1229,7 +1229,7 @@ wb_get_selected <- function(wb) {
 #' @export
 wb_set_selected <- function(wb, sheet) {
 
-  sheet <- openxlsx2:::wb_validate_sheet(wb, sheet)
+  sheet <- wb_validate_sheet(wb, sheet)
 
   for (i in seq_along(wb$sheet_names)) {
 
