@@ -110,6 +110,7 @@ A Worksheet
 \item \href{#method-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
 \item \href{#method-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
 \item \href{#method-fold_cols}{\code{wbWorksheet$fold_cols()}}
+\item \href{#method-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
 \item \href{#method-add_page_break}{\code{wbWorksheet$add_page_break()}}
 \item \href{#method-append}{\code{wbWorksheet$append()}}
 \item \href{#method-clone}{\code{wbWorksheet$clone()}}
@@ -247,6 +248,37 @@ fold the column dataframe back into a node.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{col_df}}{the column data frame}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clean_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-clean_sheet}{}}}
+\subsection{Method \code{clean_sheet()}}{
+clean sheet (remove all values)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$clean_sheet(
+  numbers = FALSE,
+  characters = FALSE,
+  styles = FALSE,
+  merged_cells = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{numbers}}{remove all numbers}
+
+\item{\code{characters}}{remove all characters}
+
+\item{\code{styles}}{remove all styles}
+
+\item{\code{merged_cells}}{remove all merged_cells}
 }
 \if{html}{\out{</div>}}
 }

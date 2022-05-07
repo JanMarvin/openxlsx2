@@ -1730,3 +1730,19 @@ wb_add_image <- function(
     dpi       = dpi
   )
 }
+
+#' clean sheet (remove all values)
+#'
+#' @param wb workbook
+#' @param sheet sheet to clean
+#' @param numbers remove all numbers
+#' @param characters remove all characters
+#' @param styles remove all styles
+#' @param merged_cells remove all merged_cells
+#' @name cleanup
+#' @export
+wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
+  sheet <- wb_validate_sheet(wb, sheet)
+  wb$worksheets[[sheet]] <- wb$worksheets[[sheet]]$clone()$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+  wb
+}

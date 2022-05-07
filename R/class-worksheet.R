@@ -502,6 +502,37 @@ wbWorksheet <- R6::R6Class(
       invisible(self)
     },
 
+
+    #' @description clean sheet (remove all values)
+    #' @param numbers remove all numbers
+    #' @param characters remove all characters
+    #' @param styles remove all styles
+    #' @param merged_cells remove all merged_cells
+    #' @return The `wbWorksheetObject`, invisibly
+    clean_sheet = function(numbers = FALSE, characters = FALSE, styles = FALSE, merged_cells = FALSE) {
+
+      cc <- self$sheet_data$cc
+
+      if (numbers)
+        cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
+          c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
+
+      if (characters)
+        cc[cc$c_t %in% c("inlineStr", "s"),
+          c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+
+      if (styles)
+        cc[c("c_s")] <- "_openxlsx_NA_"
+
+      self$sheet_data$cc <- cc
+
+      if (merged_cells)
+        self$mergeCells <- character(0)
+
+      invisible(self)
+
+    },
+
     #' @description add page break
     #' @param row row
     #' @param col col

@@ -1153,40 +1153,6 @@ delete_data <- function(wb, sheet, cols, rows, gridExpand) {
 
 }
 
-#' clean sheet (remove all values)
-#'
-#' @param wb workbook
-#' @param sheet sheet to clean
-#' @param numbers remove all numbers
-#' @param characters remove all characters
-#' @param styles remove all styles
-#' @param merged_cells remove all merged_cells
-#' @name cleanup
-#' @export
-cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
-
-  sheet_id <- wb_validate_sheet(wb, sheet)
-
-  cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
-
-  if (numbers)
-    cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
-       c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
-
-  if (characters)
-    cc[cc$c_t %in% c("inlineStr", "s"),
-       c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
-
-  if (styles)
-    cc[c("c_s")] <- "_openxlsx_NA_"
-
-  wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
-
-  if (merged_cells)
-    wb$worksheets[[sheet_id]]$mergeCells <- character(0)
-
-}
-
 
 
 #' little worksheet helper
