@@ -126,3 +126,36 @@ test_that("wb_to_df", {
   expect_equal(exp, got, ignore_attr = TRUE)
 
 })
+
+
+test_that("select_active_sheet", {
+
+  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+
+  exp <- structure(
+    list(tabSelected = c("", "1", "", ""),
+         workbookViewId = c("0", "0", "0", "0"),
+         names = c("IrisSample", "testing", "mtcars", "mtCars Pivot")),
+    row.names = c(NA, 4L), class = "data.frame")
+
+  # testing is the selected sheet
+  expect_identical(exp, wb_get_selected(wb))
+
+  # change the selected sheet to IrisSample
+  exp <- structure(
+     list(tabSelected = c("true", "false", "false", "false"),
+          workbookViewId = c("0", "0", "0", "0"),
+          names = c("IrisSample", "testing", "mtcars", "mtCars Pivot")),
+     row.names = c(NA, 4L), class = "data.frame")
+
+  wb <- wb_set_selected(wb, "IrisSample")
+  expect_identical(exp, wb_get_selected(wb))
+
+  # get the active sheet
+  expect_identical(2, wb_get_active_sheet(wb))
+
+  # change the selected sheet to IrisSample
+  wb <- wb_set_active_sheet(wb, sheet = "IrisSample")
+  expect_identical(1, wb_get_active_sheet(wb))
+
+})

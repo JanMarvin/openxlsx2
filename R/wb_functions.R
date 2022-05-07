@@ -1162,3 +1162,87 @@ delete_data <- function(wb, sheet, cols, rows, gridExpand) {
 wb_ws <- function(wb, sheet) {
   wb$ws(sheet)
 }
+
+#' get and set table of sheets and their state as selected and active
+#' @description Multiple sheets can be selected, but only a single one can be
+#' active (visible). The visible sheet, must not necessarily be a selected
+#' sheet.
+#' @param wb a workbook
+#' @returns a data frame with tabSelected and names
+#' @export
+#' @examples
+#'   wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#'   # testing is the selected sheet
+#'   wb_get_selected(wb)
+#'   # change the selected sheet to IrisSample
+#'   wb <- wb_set_selected(wb, "IrisSample")
+#'   # get the active sheet
+#'   wb_get_active_sheet(wb)
+#'   # change the selected sheet to IrisSample
+#'   wb <- wb_set_active_sheet(wb, sheet = "IrisSample")
+#' @name select_active_sheet
+wb_get_active_sheet <- function(wb) {
+  at <- openxlsx2:::rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))["activeTab"]
+  # return c index as R index
+  as.numeric(at) + 1
+}
+
+#' @rdname select_active_sheet
+#' @param sheet a sheet name of the workbook
+#' @export
+wb_set_active_sheet <- function(wb, sheet) {
+
+  sheet <- openxlsx2:::wb_validate_sheet(wb, sheet)
+  if (is.na(sheet)) stop("sheet not in workbook")
+  wbv <- xml_node(wb$workbook$bookViews, "bookViews", "workbookView")
+
+
+  # active tab requires a c index
+  wb$workbook$bookViews <- xml_node_create(
+    "bookViews",
+    xml_children = xml_attr_mod(wbv,
+                                xml_attributes = c(activeTab = as.character(sheet - 1)))
+  )
+
+  wb
+}
+
+#' @name select_active_sheet
+#' @export
+wb_get_selected <- function(wb) {
+
+  len <- length(wb$sheet_names)
+  sv <- vector("list", length = len)
+
+  for (i in seq_len(len)) {
+    sv[[i]] <- xml_node(wb$worksheets[[i]]$sheetViews, "sheetViews", "sheetView")
+  }
+
+  # print(sv)
+  z <- openxlsx2:::rbindlist(xml_attr(sv, "sheetView"))
+  z$names <- names(wb)
+
+  z
+}
+
+#' @name select_active_sheet
+#' @export
+wb_set_selected <- function(wb, sheet) {
+
+  sheet <- openxlsx2:::wb_validate_sheet(wb, sheet)
+
+  for (i in seq_along(wb$sheet_names)) {
+
+    xml_attr <- c(tabSelected = ifelse(i == sheet, "true", "false"))
+    svs <- wb$worksheets[[i]]$sheetViews
+
+    # might lose other children if any. xml_replace_child?
+    sv <- xml_node(svs, "sheetViews", "sheetView")
+    sv <- xml_attr_mod(sv, xml_attr)
+    svs <- xml_node_create("sheetViews", xml_child = sv)
+
+    wb$worksheets[[i]]$sheetViews <- svs
+  }
+
+  wb
+}
