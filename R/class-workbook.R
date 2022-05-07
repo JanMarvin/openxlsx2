@@ -439,6 +439,14 @@ wbWorkbook <- R6::R6Class(
         visible
       )
 
+      # Order matters: if a sheet is added to a blank workbook, we add a default style. If we already have
+      # sheets in the workbook, we do not add a new style. This could confuse Excel which will complain.
+      # This fixes output of the example in wb_load.
+      if (length(self$sheet_names) == 0) {
+        # TODO this should live wherever the other default values for an empty worksheet are initialized
+        empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
+        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs) 
+      }
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -509,10 +517,6 @@ wbWorkbook <- R6::R6Class(
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheet)
-
-      # TODO this should live wherever the other default values for an empty worksheet are initialized
-      empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-      self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
 
       invisible(self)
     },
