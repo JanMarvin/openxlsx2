@@ -1162,13 +1162,3 @@ delete_data <- function(wb, sheet, cols, rows, gridExpand) {
 wb_ws <- function(wb, sheet) {
   wb$ws(sheet)
 }
-
-
-#' little worksheet opener
-#' @param wb a workbook
-#' @export
-wb_open <- function(wb) {
-  tmp <- temp_xlsx()
-  wb_save(wb, tmp)
-  xl_open(tmp)
-}

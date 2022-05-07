@@ -39,6 +39,8 @@ R6 class for a Workbook
 }
 \details{
 A Workbook
+
+minor helper wrapping xl_open which does the entire same thing
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -155,6 +157,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
 \item \href{#method-save}{\code{wbWorkbook$save()}}
+\item \href{#method-open}{\code{wbWorkbook$open()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-get_base_font}{\code{wbWorkbook$get_base_font()}}
@@ -409,6 +412,19 @@ Save the workbook
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-open"></a>}}
+\if{latex}{\out{\hypertarget{method-open}{}}}
+\subsection{Method \code{open()}}{
+open wbWorkbook in Excel.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$open()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}

@@ -1322,6 +1322,16 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description open wbWorkbook in Excel. 
+    #' @details minor helper wrapping xl_open which does the entire same thing
+    #' @return The `wbWorksheetObject`, invisibly
+    open = function() {
+      tmp <- temp_xlsx()
+      self$save(tmp)
+      xl_open(tmp)
+      invisible(self)
+    },
+
     #' @description
     #' Build table
     #' @param sheet sheet

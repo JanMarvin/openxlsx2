@@ -1746,3 +1746,10 @@ wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles 
   wb$worksheets[[sheet]] <- wb$worksheets[[sheet]]$clone()$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
   wb
 }
+
+#' little worksheet opener
+#' @param wb a workbook
+#' @export
+wb_open <- function(wb) {
+  wb$open()
+}
