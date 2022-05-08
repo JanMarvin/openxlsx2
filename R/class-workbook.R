@@ -469,7 +469,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$sheet_names) == 0) {
         # TODO this should live wherever the other default values for an empty worksheet are initialized
         empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs) 
+        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
       }
 
       ##  Add sheet to workbook.xml
@@ -728,20 +728,18 @@ wbWorkbook <- R6::R6Class(
         attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")        <- c(attr(oldparts, "tableName"), newname)
         names(attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <- c(names(attr(oldparts, "tableName")), ref)
 
-        self$append("Content_Types",
-          sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', newid)
-        )
+        self$append("Content_Types", sprintf('
+          <Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
+          newid
+        ))
 
         self$append("tables.xml.rels", "")
 
-        self$worksheets_rels[[newSheetIndex]] <- c(
-          self$worksheets_rels[[newSheetIndex]],
-          sprintf(
-            '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-            newid,
-            newid
-          )
-        )
+        private$append_sheet_rels(newSheetIndex, sprintf(
+          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
+          newid,
+          newid
+        ))
       }
 
       # TODO: The following items are currently NOT copied/duplicated for the cloned sheet:
@@ -1346,7 +1344,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description open wbWorkbook in Excel. 
+    #' @description open wbWorkbook in Excel.
     #' @details minor helper wrapping xl_open which does the entire same thing
     #' @return The `wbWorksheetObject`, invisibly
     open = function() {
@@ -1462,30 +1460,20 @@ wbWorkbook <- R6::R6Class(
       attr(self$tables, "sheet") <- c(tSheets, sheet)
       attr(self$tables, "tableName") <- c(tNames, tableName)
 
-      self$worksheets[[sheet]]$tableParts <- c(
-        self$worksheets[[sheet]]$tableParts,
-          sprintf('<tablePart r:id="rId%s"/>', rid)
-      )
-      attr(self$worksheets[[sheet]]$tableParts, "tableName") <- c(
-        tNames[tSheets == sheet &
-        !grepl("openxlsx_deleted", tNames, fixed = TRUE)],
-        tableName
-      )
+      private$append_sheet_field(sheet, "tableParts", sprintf('<tablePart r:id="rId%s"/>', rid))
+      ok <- tSheets == sheet & !grepl("openxlsx_deleted", tNames)
+      attr(self$worksheets[[sheet]]$tableParts, "tableName") <- c(tNames[ok], tableName)
 
       ## create a table.xml.rels
       self$append("tables.xml.rels", "")
 
       ## update worksheets_rels
       # TODO do we have to worry about exisiting table relationships?
-      self$worksheets_rels[[sheet]] <- c(
-        self$worksheets_rels[[sheet]],
-        sprintf(
-          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-          rid,
-          id
-        )
-      )
-
+      private$append_sheet_rels(sheet, sprintf(
+        '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
+        rid,
+        id
+      ))
       invisible(self)
     },
 
@@ -2546,9 +2534,7 @@ wbWorkbook <- R6::R6Class(
           gradient  <- as.integer(params$gradient  %||% 1L)
           border    <- as.integer(params$border    %||% 1L)
 
-
-          self$worksheets[[sheet]]$extLst <- c(
-            self$worksheets[[sheet]]$extLst,
+          private$append_sheet_field(sheet, "extLst", {
             gen_databar_extlst(
               guid      = guid,
               sqref     = sqref,
@@ -2558,7 +2544,7 @@ wbWorkbook <- R6::R6Class(
               border    = border,
               gradient  = gradient
             )
-          )
+          })
 
           if (is.null(values)) {
             sprintf(
@@ -2691,7 +2677,7 @@ wbWorkbook <- R6::R6Class(
         stop("type `", type, "` is not a valid formatting rule")
       )
 
-      self$worksheets[[sheet]]$conditionalFormatting <- c(self$worksheets[[sheet]]$conditionalFormatting, cfRule)
+      private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
       names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
       invisible(self)
     },
@@ -2741,14 +2727,10 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      self$worksheets[[sheet]]$mergeCells <- c(
-        self$worksheets[[sheet]]$mergeCells,
         # TODO does this have to be xml?  Can we just save the data.frame or
         # matrix and then check that?  This would also simplify removing the
         # merge specifications
-        sprintf('<mergeCell ref="%s"/>', stri_join(sqref, collapse = ":", sep = " " ))
-      )
-
+      private$append_sheet_field(sheet, "mergeCells", sprintf('<mergeCell ref="%s"/>', stri_join(sqref, collapse = ":", sep = " " )))
       invisible(self)
     },
 
@@ -3905,11 +3887,88 @@ wbWorkbook <- R6::R6Class(
       value
     },
 
+    validate_new_sheet = function(sheet) {
+      # returns nothing, throws error if there's a problem.
+
+      if (is.na(sheet)) {
+        stop("sheet cannot be NA")
+      }
+
+      if (is.numeric(sheet)) {
+        if (sheet %% 1 != 0) {
+          stop("If sheet is numeric it must be an integer")
+        }
+
+        if (sheet <= 0) {
+          stop("if sheet is an integer it must be a positive number")
+        }
+
+        if (sheet <= length(self$sheet_names)) {
+          stop("there is already a sheet at index ", sheet)
+        }
+
+        return()
+      }
+
+      sheet <- as.character(sheet)
+      if (any_illegal_chars(sheet)) {
+        stop("Illegal characters found in sheet. Please remove. See ?openxlsx::clean_worksheet_name")
+      }
+
+      if (nchar(sheet) > 31) {
+        stop("sheet names must be <= 32 chars")
+      }
+
+      if (tolower(sheet) %in% self$sheet_names) {
+        stop("a sheet with name '", sheet, '"already exists"')
+      }
+    },
+
+    get_sheet = function(sheet) {
+      # returns the sheet index, or NA
+      if (is.null(self$sheet_names)) {
+        warning("Workbook has no sheets")
+        return(NA_integer_)
+      }
+
+      if (is.character(sheet)) {
+        m <- match(tolower(sheet), tolower(self$sheet_names))
+        bad <- is.na(m)
+
+        if (any(bad)) {
+          stop("Sheet names not found: ", toString(sheet[bad]))
+        }
+
+        sheet <- m
+      } else {
+        sheet <- as.integer(sheet)
+        bad <- which(sheet > length(self$sheet_names))
+
+        if (length(bad)) {
+          stop("Invalid sheet position(s): ", toString(sheet[bad]))
+          # sheet[bad] <- NA_integer_
+        }
+      }
+
+      sheet
+    },
+
     append_sheet_field = function(sheet, field, value = NULL) {
       # if using this we should consider adding a method into the wbWorksheet
       # object.  wbWorksheet$append() is currently public. _Currently_.
-      sheet <- wb_validate_sheet(self, sheet)
-      self$worksheet[[sheet]]$append(value)
+      sheet <- private$get_sheet(sheet)
+      self$worksheets[[sheet]]$append(field, value)
+      self
+    },
+
+    append_workbook_field = function(field, value = NULL) {
+      self$workbook[[field]] <- c(self$workbook[[field]], value)
+      self
+    },
+
+    append_sheet_rels = function(sheet, value = NULL) {
+      sheet <- private$get_sheet(sheet)
+      self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
       self
     },
 
@@ -4289,11 +4348,7 @@ wbWorkbook <- R6::R6Class(
         }
       )
 
-      self$worksheets[[sheet]]$dataValidations <- c(
-        self$worksheets[[sheet]]$dataValidations,
-        stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
-      )
-
+      private$append_sheet_field(sheet, "dataValidations", stri_join(header, stri_join(form, collapse = ""), "</dataValidation>"))
       invisible(self)
     },
 
@@ -4330,41 +4385,33 @@ wbWorkbook <- R6::R6Class(
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
       xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
-      self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
-
+      private$append_sheet_field(sheet, "dataValidationsLst", xmlData)
       invisible(self)
     },
 
     # old add_named_region()
     create_named_region = function(ref1, ref2, name, sheet, localSheetId = NULL) {
       name <- replaceIllegalCharacters(name)
-
-      if (is.null(localSheetId)) {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            sheet,
-            ref1,
-            ref2
-          )
+      value <- if (is.null(localSheetId)) {
+        sprintf(
+          '<definedName name="%s">\'%s\'!%s:%s</definedName>',
+          name,
+          sheet,
+          ref1,
+          ref2
         )
       } else {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            localSheetId,
-            sheet,
-            ref1,
-            ref2
-          )
+        sprintf(
+          '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
+          name,
+          localSheetId,
+          sheet,
+          ref1,
+          ref2
         )
       }
 
-      self
+      private$append_workbook_field("definedNames", value)
     },
 
     preSaveCleanUp = function() {
