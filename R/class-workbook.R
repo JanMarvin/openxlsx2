@@ -3917,6 +3917,28 @@ wbWorkbook <- R6::R6Class(
       sheet <- wb_validate_sheet(self, sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
       self
+    },
+
+    #' @description clean sheet (remove all values)
+    #' @param sheet sheet
+    #' @param numbers remove all numbers
+    #' @param characters remove all characters
+    #' @param styles remove all styles
+    #' @param merged_cells remove all merged_cells
+    #' @return The `wbWorksheetObject`, invisibly
+    clean_sheet = function(
+      sheet,
+      numbers = TRUE,
+      characters = TRUE,
+      styles = TRUE,
+      merged_cells = TRUE
+    ) {
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+
+      invisible(self)
     }
   ),
 

@@ -31,8 +31,6 @@ Returns sheet visibility
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 \description{
 R6 class for a Workbook
@@ -202,6 +200,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
 \item \href{#method-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
 \item \href{#method-add_page_break}{\code{wbWorkbook$add_page_break()}}
+\item \href{#method-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1552,6 +1551,42 @@ Add a page break
 \item{\code{col}}{col}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clean_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-clean_sheet}{}}}
+\subsection{Method \code{clean_sheet()}}{
+clean sheet (remove all values)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clean_sheet(
+  sheet,
+  numbers = TRUE,
+  characters = TRUE,
+  styles = TRUE,
+  merged_cells = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{numbers}}{remove all numbers}
+
+\item{\code{characters}}{remove all characters}
+
+\item{\code{styles}}{remove all styles}
+
+\item{\code{merged_cells}}{remove all merged_cells}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 }
 \if{html}{\out{<hr>}}
