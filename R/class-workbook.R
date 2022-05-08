@@ -285,6 +285,29 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    #' @description validate sheet
+    #' @param sheet A character sheet name or integer location
+    #' @returns The integer position of the sheet
+    validate_sheet = function(sheet) {
+
+      # workbook has no sheets
+      if (is.null(self$sheet_names)) {
+        return(NA_integer_)
+      }
+
+      # input is number
+      if (is.numeric(sheet)) {
+        badsheet <- !sheet %in% seq_along(self$sheet_names)
+        if (any(badsheet)) sheet[badsheet] <- NA_integer_
+        return(sheet)
+      }
+
+      if (!sheet %in% replaceXMLEntities(self$sheet_names)) {
+        return(NA_integer_)
+      }
+
+      which(replaceXMLEntities(self$sheet_names) == sheet)
+    },
 
     #' @description
     #' Add worksheet to the `wbWorkbook` object
@@ -335,6 +358,7 @@ wbWorkbook <- R6::R6Class(
       fail <- FALSE
       msg <- NULL
 
+      private$validate_new_sheet(sheet)
       sheet <- as.character(sheet)
 
       if (tolower(sheet) %in% tolower(self$sheet_names)) {
