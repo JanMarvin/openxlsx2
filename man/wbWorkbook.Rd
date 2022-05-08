@@ -8,11 +8,25 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+Returns sheet visibility
 
 The \code{wbWorkbook} object
 
@@ -27,6 +41,8 @@ R6 class for a Workbook
 }
 \details{
 A Workbook
+
+minor helper wrapping xl_open which does the entire same thing
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -143,6 +159,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
 \item \href{#method-save}{\code{wbWorkbook$save()}}
+\item \href{#method-open}{\code{wbWorkbook$open()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-get_base_font}{\code{wbWorkbook$get_base_font()}}
@@ -152,19 +169,19 @@ is created, not when the Excel files are saved.}
 \item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
 \item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
+\item \href{#method-ungroup_cols}{\code{wbWorkbook$ungroup_cols()}}
 \item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
 \item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
-\item \href{#method-wb_group_rows}{\code{wbWorkbook$wb_group_rows()}}
+\item \href{#method-group_rows}{\code{wbWorkbook$group_rows()}}
+\item \href{#method-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
 \item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
-\item \href{#method-data_validation}{\code{wbWorkbook$data_validation()}}
-\item \href{#method-data_validation_list}{\code{wbWorkbook$data_validation_list()}}
+\item \href{#method-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
 \item \href{#method-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
 \item \href{#method-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-add_plot}{\code{wbWorkbook$add_plot()}}
-\item \href{#method-create_named_region}{\code{wbWorkbook$create_named_region()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protect}{\code{wbWorkbook$protect()}}
 \item \href{#method-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
@@ -179,6 +196,12 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_filter}{\code{wbWorkbook$add_filter()}}
 \item \href{#method-remove_filter}{\code{wbWorkbook$remove_filter()}}
 \item \href{#method-grid_lines}{\code{wbWorkbook$grid_lines()}}
+\item \href{#method-add_named_region}{\code{wbWorkbook$add_named_region()}}
+\item \href{#method-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
+\item \href{#method-set_order}{\code{wbWorkbook$set_order()}}
+\item \href{#method-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
+\item \href{#method-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
+\item \href{#method-add_page_break}{\code{wbWorkbook$add_page_break()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -395,6 +418,19 @@ The \code{wbWorkbook} object invisibly
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-open"></a>}}
+\if{latex}{\out{\hypertarget{method-open}{}}}
+\subsection{Method \code{open()}}{
+open wbWorkbook in Excel.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$open()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-buildTable"></a>}}
 \if{latex}{\out{\hypertarget{method-buildTable}{}}}
 \subsection{Method \code{buildTable()}}{
@@ -608,7 +644,7 @@ creates column object for worksheet
 \subsection{Method \code{group_cols()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(sheet, cols, collapsed, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(sheet, cols, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -626,6 +662,25 @@ Group cols
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ungroup_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-ungroup_cols}{}}}
+\subsection{Method \code{ungroup_cols()}}{
+ungroup cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_cols(sheet, cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{= cols}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -678,12 +733,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wb_group_rows"></a>}}
-\if{latex}{\out{\hypertarget{method-wb_group_rows}{}}}
-\subsection{Method \code{wb_group_rows()}}{
+\if{html}{\out{<a id="method-group_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-group_rows}{}}}
+\subsection{Method \code{group_rows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$wb_group_rows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_rows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -701,6 +756,28 @@ Group rows
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ungroup_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-ungroup_rows}{}}}
+\subsection{Method \code{ungroup_rows()}}{
+ungroup rows
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_rows(sheet, rows)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -724,23 +801,21 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-data_validation"></a>}}
-\if{latex}{\out{\hypertarget{method-data_validation}{}}}
-\subsection{Method \code{data_validation()}}{
-Set data validations for a sheet
+\if{html}{\out{<a id="method-add_data_validation"></a>}}
+\if{latex}{\out{\hypertarget{method-add_data_validation}{}}}
+\subsection{Method \code{add_data_validation()}}{
+Adds data validation
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$data_validation(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_validation(
   sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
+  cols,
+  rows,
   type,
   operator,
   value,
-  allowBlank,
-  showInputMsg,
-  showErrorMsg
+  allowBlank = TRUE,
+  showInputMsg = TRUE,
+  showErrorMsg = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -749,13 +824,9 @@ Set data validations for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
+\item{\code{cols}}{cols}
 
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows}}{rows}
 
 \item{\code{type}}{type}
 
@@ -770,55 +841,6 @@ Set data validations for a sheet
 \item{\code{showErrorMsg}}{showErrorMsg}
 }
 \if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-data_validation_list"></a>}}
-\if{latex}{\out{\hypertarget{method-data_validation_list}{}}}
-\subsection{Method \code{data_validation_list()}}{
-Set data validations for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$data_validation_list(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  value,
-  allowBlank,
-  showInputMsg,
-  showErrorMsg
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{value}}{value}
-
-\item{\code{allowBlank}}{allowBlank}
-
-\item{\code{showInputMsg}}{showInputMsg}
-
-\item{\code{showErrorMsg}}{showErrorMsg}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
@@ -1044,34 +1066,6 @@ Add plot. A wrapper for add_image()
 \item{\code{dpi}}{dpi}
 }
 \if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-create_named_region"></a>}}
-\if{latex}{\out{\hypertarget{method-create_named_region}{}}}
-\subsection{Method \code{create_named_region()}}{
-Create a named region in a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$create_named_region(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{ref1}}{ref1}
-
-\item{\code{ref2}}{ref2}
-
-\item{\code{name}}{name}
-
-\item{\code{sheet}}{sheet}
-
-\item{\code{localSheetId}}{localSheetId}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
@@ -1433,6 +1427,129 @@ grid lines
 \item{\code{sheet}}{sheet}
 
 \item{\code{show}}{show}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-add_named_region}{}}}
+\subsection{Method \code{add_named_region()}}{
+add a named region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
+  sheet,
+  cols,
+  rows,
+  name,
+  localSheetId = NULL,
+  overwrite = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{rows}}{rows}
+
+\item{\code{name}}{name}
+
+\item{\code{localSheetId}}{localSheetId}
+
+\item{\code{overwrite}}{overwrite}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-remove_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_named_region}{}}}
+\subsection{Method \code{remove_named_region()}}{
+remove a named region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_named_region(sheet = NULL, name = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_order"></a>}}
+\if{latex}{\out{\hypertarget{method-set_order}{}}}
+\subsection{Method \code{set_order()}}{
+set worksheet order
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_order(sheets)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheets}}{sheets}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-get_sheet_visibility}{}}}
+\subsection{Method \code{get_sheet_visibility()}}{
+Get sheet visibility
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_visibility()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-set_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-set_sheet_visibility}{}}}
+\subsection{Method \code{set_sheet_visibility()}}{
+Set sheet visibility
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_visibility(sheet, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{value}}{value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_page_break"></a>}}
+\if{latex}{\out{\hypertarget{method-add_page_break}{}}}
+\subsection{Method \code{add_page_break()}}{
+Add a page break
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_page_break(sheet, row = NULL, col = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{row}}{row}
+
+\item{\code{col}}{col}
 }
 \if{html}{\out{</div>}}
 }

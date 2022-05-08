@@ -439,6 +439,14 @@ wbWorkbook <- R6::R6Class(
         visible
       )
 
+      # Order matters: if a sheet is added to a blank workbook, we add a default style. If we already have
+      # sheets in the workbook, we do not add a new style. This could confuse Excel which will complain.
+      # This fixes output of the example in wb_load.
+      if (length(self$sheet_names) == 0) {
+        # TODO this should live wherever the other default values for an empty worksheet are initialized
+        empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
+        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs) 
+      }
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -509,10 +517,6 @@ wbWorkbook <- R6::R6Class(
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheet)
-
-      # TODO this should live wherever the other default values for an empty worksheet are initialized
-      empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-      self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
 
       invisible(self)
     },
@@ -1318,6 +1322,16 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description open wbWorkbook in Excel. 
+    #' @details minor helper wrapping xl_open which does the entire same thing
+    #' @return The `wbWorksheetObject`, invisibly
+    open = function() {
+      tmp <- temp_xlsx()
+      self$save(tmp)
+      xl_open(tmp)
+      invisible(self)
+    },
+
     #' @description
     #' Build table
     #' @param sheet sheet
@@ -1691,7 +1705,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    group_cols = function(sheet, cols, collapsed, levels = NULL) {
+    group_cols = function(sheet, cols, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1705,7 +1719,7 @@ wbWorkbook <- R6::R6Class(
         stop("Collapses should be a logical value (TRUE/FALSE).")
       }
 
-      if (any(cols) < 1L) {
+      if (any(cols < 1L)) {
         stop("Invalid rows entered (<= 0).")
       }
 
@@ -1754,6 +1768,45 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(self)
+    },
+
+    #' @description ungroup cols
+    #' @param sheet sheet
+    #' @param cols = cols
+    #' @returns The `wbWorkbook` object
+    ungroup_cols = function(sheet, cols) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      # check if any rows are selected
+      if (any(cols < 1L)) {
+        stop("Invalid cols entered (<= 0).")
+      }
+
+      # fetch the cols_attr data.frame
+      col_attr <- self$worksheets[[sheet]]$unfold_cols()
+
+      # get the selection based on the col_attr frame.
+      select <- col_attr$min %in% as.character(cols)
+
+      if (length(select)) {
+        col_attr$outlineLevel[select] <- ""
+        col_attr$collapsed[select] <- ""
+        # TODO only if unhide = TRUE
+        col_attr$hidden[select] <- ""
+        self$worksheets[[sheet]]$fold_cols(col_attr)
+      }
+
+      # If all outlineLevels are missing: remove the outlineLevelCol attribute. Assigning "" will remove the attribute
+      if (all(col_attr$outlineLevel == "")) {
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = ""))
+      } else {
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
+      }
+
+      self
     },
 
     #' @description Remove row heights from a worksheet
@@ -1904,7 +1957,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    wb_group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
+    group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1964,6 +2017,44 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description ungroup rows
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @return The `wbWorkbook` object
+    ungroup_rows = function(sheet, rows) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      # check if any rows are selected
+      if (any(rows < 1L)) {
+        stop("Invalid rows entered (<= 0).")
+      }
+
+      # fetch the row_attr data.frame
+      row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
+
+      # get the selection based on the row_attr frame.
+      select <- row_attr$r %in% as.character(rows)
+      if (length(select)) {
+        row_attr$outlineLevel[select] <- ""
+        row_attr$collapsed[select] <- ""
+        # TODO only if unhide = TRUE
+        row_attr$hidden[select] <- ""
+        self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
+      }
+
+      # If all outlineLevels are missing: remove the outlineLevelRow attribute. Assigning "" will remove the attribute
+      if (all(row_attr$outlineLevel == "")) {
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = ""))
+      } else {
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
+      }
+
+      self
+    },
+
     #' @description
     #' Remove a worksheet
     #' @param sheet The worksheet to delete
@@ -2007,8 +2098,7 @@ wbWorkbook <- R6::R6Class(
         self$workbook$definedNames <- self$workbook$definedNames[!get_named_regions(self)$sheets %in% self$sheet_names[sheet]]
       }
 
-      wb_delete_named_region(self, sheet)
-
+      self$remove_named_region(sheet)
       self$sheet_names <- self$sheet_names[-sheet]
 
       xml_rels <- rbindlist(
@@ -2159,162 +2249,138 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' Set data validations for a sheet
+    #' @description Adds data validation
     #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
+    #' @param cols cols
+    #' @param rows rows
     #' @param type type
     #' @param operator operator
     #' @param value value
     #' @param allowBlank allowBlank
     #' @param showInputMsg showInputMsg
     #' @param showErrorMsg showErrorMsg
-    #' @return The `wbWorkbook` object, invisibly
-    data_validation = function(
+    #' @returns The `wbWorkbook` object
+    add_data_validation = function(
       sheet,
-      startRow,
-      endRow,
-      startCol,
-      endCol,
+      cols,
+      rows,
       type,
       operator,
       value,
-      allowBlank,
-      showInputMsg,
-      showErrorMsg
+      allowBlank = TRUE,
+      showInputMsg = TRUE,
+      showErrorMsg = TRUE
     ) {
-      # TODO rename: setDataValidation?
-      # TODO can this be moved to the worksheet class?
-      sheet <- wb_validate_sheet(self, sheet)
-      sqref <-
-        stri_join(get_cell_refs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )),
-          sep = " ",
-          collapse = ":"
-        )
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
 
-      header <-
-        sprintf(
-          '<dataValidation type="%s" operator="%s" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s" sqref="%s">',
-          type,
-          operator,
-          allowBlank,
-          showInputMsg,
-          showErrorMsg,
-          sqref
-        )
+      ## rows and cols
+      if (!is.numeric(cols)) {
+        cols <- col2int(cols)
+      }
+      rows <- as.integer(rows)
 
-
-      # TODO consider switch(type, date = ..., time = ..., )
-      if (type == "date") {
-        # TODO consider origin <- if () ... else ...
-        origin <- 25569L
-        # TODO would it be faster to just search each self$workbook instead of
-        # trying to unlist and join everything?
-        if (grepl(
-          'date1904="1"|date1904="true"',
-          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
-          ignore.case = TRUE
-        )) {
-          origin <- 24107L
-        }
-
-        value <- as.integer(value) + origin
+      ## check length of value
+      if (length(value) > 2) {
+        stop("value argument must be length < 2")
       }
 
-      if (type == "time") {
-        # TODO simplify with above?  This is the same thing?
-        origin <- 25569L
-        if (grepl(
-          'date1904="1"|date1904="true"',
-          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
-          ignore.case = TRUE
-        )) {
-          origin <- 24107L
-        }
+      valid_types <- c(
+        "whole",
+        "decimal",
+        "date",
+        "time", ## need to conv
+        "textLength",
+        "list"
+      )
 
-        t <- format(value[1], "%z")
-        offSet <-
-          suppressWarnings(
-            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
-              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
-              ) / 24
-          )
-        if (is.na(offSet)) {
-          offSet[i] <- 0
-        }
-
-        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      if (!tolower(type) %in% tolower(valid_types)) {
+        stop("Invalid 'type' argument!")
       }
 
-      form <- sapply(
-        seq_along(value),
-        function(i) {
-          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
+
+      ## operator == 'between' we leave out
+      valid_operators <- c(
+        "between",
+        "notBetween",
+        "equal",
+        "notEqual",
+        "greaterThan",
+        "lessThan",
+        "greaterThanOrEqual",
+        "lessThanOrEqual"
+      )
+
+      if (tolower(type) != "list") {
+        if (!tolower(operator) %in% tolower(valid_operators)) {
+          stop("Invalid 'operator' argument!")
         }
-      )
 
-      self$worksheets[[sheet]]$dataValidations <- c(
-        self$worksheets[[sheet]]$dataValidations,
-        stri_join(header, stri_join(form, collapse = ""), "</data_validation>")
-      )
+        operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
+      } else {
+        operator <- "between" ## ignored
+      }
 
-      invisible(self)
-    },
+      if (!is.logical(allowBlank)) {
+        stop("Argument 'allowBlank' musts be logical!")
+      }
 
-    #' @description
-    #' Set data validations for a sheet
-    #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
-    #' @param value value
-    #' @param allowBlank allowBlank
-    #' @param showInputMsg showInputMsg
-    #' @param showErrorMsg showErrorMsg
-    #' @return The `wbWorkbook` object, invisibly
-    data_validation_list = function(
-      sheet,
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      value,
-      allowBlank,
-      showInputMsg,
-      showErrorMsg
-    ) {
-      # TODO consider some defaults to logicals
-      # TODO rename: setDataValidationList?
-      sheet <- wb_validate_sheet(self, sheet)
-      sqref <-
-        stri_join(get_cell_refs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )),
-          sep = " ",
-          collapse = ":"
+      if (!is.logical(showInputMsg)) {
+        stop("Argument 'showInputMsg' musts be logical!")
+      }
+
+      if (!is.logical(showErrorMsg)) {
+        stop("Argument 'showErrorMsg' musts be logical!")
+      }
+
+      ## All inputs validated
+
+      type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
+
+      ## check input combinations
+      if ((type == "date") && !inherits(value, "Date")) {
+        stop("If type == 'date' value argument must be a Date vector.")
+      }
+
+      if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
+        stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
+      }
+
+
+      value <- head(value, 2)
+      allowBlank <- as.integer(allowBlank[1])
+      showInputMsg <- as.integer(showInputMsg[1])
+      showErrorMsg <- as.integer(showErrorMsg[1])
+
+      if (type == "list") {
+        private$data_validation_list(
+          sheet        = sheet,
+          startRow     = min(rows),
+          endRow       = max(rows),
+          startCol     = min(cols),
+          endCol       = max(cols),
+          value        = value,
+          allowBlank   = allowBlank,
+          showInputMsg = showInputMsg,
+          showErrorMsg = showErrorMsg
         )
-      data_val <-
-        sprintf(
-          '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
-          allowBlank,
-          showInputMsg,
-          showErrorMsg
+      } else {
+        private$data_validation(
+          sheet        = sheet,
+          startRow     = min(rows),
+          endRow       = max(rows),
+          startCol     = min(cols),
+          endCol       = max(cols),
+          type         = type,
+          operator     = operator,
+          value        = value,
+          allowBlank   = allowBlank,
+          showInputMsg = showInputMsg,
+          showErrorMsg = showErrorMsg
         )
+      }
 
-      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
-      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
-      self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
-
-      invisible(self)
+      self
     },
 
     #' @description
@@ -3030,51 +3096,6 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
-    #' @description
-    #' Create a named region in a sheet
-    #' @param ref1 ref1
-    #' @param ref2 ref2
-    #' @param name name
-    #' @param sheet sheet
-    #' @param localSheetId localSheetId
-    #' @return The `wbWorkbook` object, invisibly
-    create_named_region = function(
-      ref1,
-      ref2,
-      name,
-      sheet,
-      localSheetId = NULL
-    ) {
-      name <- replaceIllegalCharacters(name)
-
-      if (is.null(localSheetId)) {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            sheet,
-            ref1,
-            ref2
-          )
-        )
-      } else {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            localSheetId,
-            sheet,
-            ref1,
-            ref2
-          )
-        )
-      }
-
-      invisible(self)
-    },
-
 
     #' @description
     #' Prints the `wbWorkbook` object
@@ -3427,7 +3448,7 @@ wbWorkbook <- R6::R6Class(
           stop("printTitleRows must be numeric.")
         }
 
-        self$create_named_region(
+        private$create_named_region(
           ref1 = paste0("$", min(printTitleRows)),
           ref2 = paste0("$", max(printTitleRows)),
           name = "_xlnm.Print_Titles",
@@ -3440,7 +3461,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         cols <- int2col(range(printTitleCols))
-        self$create_named_region(
+        private$create_named_region(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
           name = "_xlnm.Print_Titles",
@@ -3689,6 +3710,201 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$sheetViews <- sv
       self
+    },
+
+    ### named region ----
+
+    #' @description add a named region
+    #' @param sheet sheet
+    #' @param cols cols
+    #' @param rows rows
+    #' @param name name
+    #' @param localSheetId localSheetId
+    #' @param overwrite overwrite
+    #' @returns The `wbWorkbook` object
+    add_named_region = function(
+      sheet,
+      cols,
+      rows,
+      name,
+      localSheetId = NULL,
+      overwrite = FALSE
+    ) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (!is.numeric(rows)) {
+        stop("rows argument must be a numeric/integer vector")
+      }
+
+      if (!is.numeric(cols)) {
+        stop("cols argument must be a numeric/integer vector")
+      }
+
+      ## check name doesn't already exist
+      ## named region
+
+      # TODO use reg_match0?
+      ex_names <- regmatches(self$workbook$definedNames, regexpr('(?<=name=")[^"]+', self$workbook$definedNames, perl = TRUE))
+      ex_names <- tolower(replaceXMLEntities(ex_names))
+
+      if (tolower(name) %in% ex_names) {
+        if (overwrite)
+          self$workbook$definedNames <- self$workbook$definedNames[!ex_names %in% tolower(name)]
+        else
+          stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
+      } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
+        stop("name cannot look like a cell reference.")
+      }
+
+      cols <- round(cols)
+      rows <- round(rows)
+
+      startCol <- min(cols)
+      endCol <- max(cols)
+
+      startRow <- min(rows)
+      endRow <- max(rows)
+
+      ref1 <- paste0("$", int2col(startCol), "$", startRow)
+      ref2 <- paste0("$", int2col(endCol), "$", endRow)
+
+      private$create_named_region(
+        ref1         = ref1,
+        ref2         = ref2,
+        name         = name,
+        sheet        = self$sheet_names[sheet],
+        localSheetId = localSheetId
+      )
+
+      self
+    },
+
+    #' @description remove a named region
+    #' @param sheet sheet
+    #' @param name name
+    #' @returns The `wbWorkbook` object
+    remove_named_region = function(sheet = NULL, name = NULL) {
+      # get all nown defined names
+      dn <- get_named_regions(self)
+
+      if (is.null(name) && !is.null(sheet)) {
+        sheet <- wb_validate_sheet(self, sheet)
+        del <- dn$id[dn$sheet == sheet]
+      } else if (!is.null(name) && is.null(sheet)) {
+        del <- dn$id[dn$name == name]
+      } else {
+        sheet <- wb_validate_sheet(self, sheet)
+        del <- dn$id[dn$sheet == sheet & dn$name == name]
+      }
+
+      if (length(del)) {
+        self$workbook$definedNames <- self$workbook$definedNames[-del]
+      } else {
+        if (!is.null(name))
+          warning(sprintf("Cannot find named region with name '%s'", name))
+        # do not warn if wb and sheet are selected. wb_delete_named_region is
+        # called with every wb_remove_worksheet and would throw meaningless
+        # warnings. For now simply assume if no name is defined, that the
+        # user does not care, as long as no defined name remains on a sheet.
+      }
+
+      self
+    },
+
+    #' @description set worksheet order
+    #' @param sheets sheets
+    #' @return The `wbWorkbook` object
+    set_order = function(sheets) {
+      sheets <- wb_validate_sheet(self, sheet = sheets)
+
+      if (anyDuplicated(sheets)) {
+        stop("`sheets` cannot have duplicates")
+      }
+
+      if (length(sheets) != length(self$worksheets)) {
+        stop(sprintf("Worksheet order must be same length as number of worksheets [%s]", length(wb$worksheets)))
+      }
+
+      if (any(sheets > length(self$worksheets))) {
+        stop("Elements of order are greater than the number of worksheets")
+      }
+
+      self$sheetOrder <- sheets
+      self
+    },
+
+    ## sheet visibility ----
+
+    #' @description Get sheet visibility
+    #' @returns Returns sheet visibility
+    get_sheet_visibility = function() {
+      state <- rep("visible", length(self$workbook$sheets))
+      state[grepl("hidden", self$workbook$sheets)] <- "hidden"
+      state[grepl("veryHidden", self$workbook$sheets, ignore.case = TRUE)] <- "veryHidden"
+      state
+    },
+
+    #' @description Set sheet visibility
+    #' @param value value
+    #' @param sheet sheet
+    #' @returns The `wbWorkbook` object
+    set_sheet_visibility = function(sheet, value) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+
+      if (length(value) != length(sheet)) {
+        stop("`value` and `sheet` must be the same length")
+      }
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      value <- tolower(as.character(value))
+      value[value %in% "true"] <- "visible"
+      value[value %in% "false"] <- "hidden"
+      value[value %in% "veryhidden"] <- "veryHidden"
+
+      exState0 <- reg_match0(self$workbook$sheets[sheet], '(?<=state=")[^"]+')
+      exState <- tolower(exState0)
+      exState[exState %in% "true"] <- "visible"
+      exState[exState %in% "hidden"] <- "hidden"
+      exState[exState %in% "false"] <- "hidden"
+      exState[exState %in% "veryhidden"] <- "veryHidden"
+
+
+      inds <- which(value != exState)
+
+      if (length(inds) == 0) {
+        return(self)
+      }
+
+      for (i in seq_along(self$worksheets)) {
+        self$workbook$sheets[sheet[i]] <- gsub(exState0[i], value[i], self$workbook$sheets[sheet[i]], fixed = TRUE)
+      }
+
+      if (!any(self$get_sheet_visibility() %in% c("true", "visible"))) {
+        warning("A workbook must have atleast 1 visible worksheet.  Setting first for visible")
+        self$set_sheet_visibility(1, TRUE)
+      }
+
+      self
+    },
+
+    ## page breaks ----
+
+    #' @description Add a page break
+    #' @param sheet sheet
+    #' @param row row
+    #' @param col col
+    #' @returns The `wbWorkbook` object
+    add_page_break = function(sheet, row = NULL, col = NULL) {
+      op <- openxlsx_options()
+      on.exit(options(op), add = TRUE)
+      sheet <- wb_validate_sheet(self, sheet)
+      self$worksheets[[sheet]]$add_page_break(row = row, col = col)
+      self
     }
   ),
 
@@ -3710,6 +3926,14 @@ wbWorkbook <- R6::R6Class(
       }
 
       value
+    },
+
+    append_sheet_field = function(sheet, field, value = NULL) {
+      # if using this we should consider adding a method into the wbWorksheet
+      # object.  wbWorksheet$append() is currently public. _Currently_.
+      sheet <- wb_validate_sheet(self, sheet)
+      self$worksheet[[sheet]]$append(value)
+      self
     },
 
     generate_base_core = function() {
@@ -4001,6 +4225,170 @@ wbWorkbook <- R6::R6Class(
       } ## end of loop through nSheets
 
       invisible(self)
+    },
+
+    data_validation = function(
+      sheet,
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      type,
+      operator,
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg
+    ) {
+      # TODO rename: setDataValidation?
+      # TODO can this be moved to the worksheet class?
+      sheet <- wb_validate_sheet(self, sheet)
+      sqref <-
+        stri_join(get_cell_refs(data.frame(
+          "x" = c(startRow, endRow),
+          "y" = c(startCol, endCol)
+        )),
+          sep = " ",
+          collapse = ":"
+        )
+
+      header <-
+        sprintf(
+          '<dataValidation type="%s" operator="%s" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s" sqref="%s">',
+          type,
+          operator,
+          allowBlank,
+          showInputMsg,
+          showErrorMsg,
+          sqref
+        )
+
+
+      # TODO consider switch(type, date = ..., time = ..., )
+      if (type == "date") {
+        # TODO consider origin <- if () ... else ...
+        origin <- 25569L
+        # TODO would it be faster to just search each self$workbook instead of
+        # trying to unlist and join everything?
+        if (grepl(
+          'date1904="1"|date1904="true"',
+          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
+          ignore.case = TRUE
+        )) {
+          origin <- 24107L
+        }
+
+        value <- as.integer(value) + origin
+      }
+
+      if (type == "time") {
+        # TODO simplify with above?  This is the same thing?
+        origin <- 25569L
+        if (grepl(
+          'date1904="1"|date1904="true"',
+          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
+          ignore.case = TRUE
+        )) {
+          origin <- 24107L
+        }
+
+        t <- format(value[1], "%z")
+        offSet <-
+          suppressWarnings(
+            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
+              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
+            ) / 24
+          )
+        if (is.na(offSet)) {
+          offSet[i] <- 0
+        }
+
+        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      }
+
+      form <- sapply(
+        seq_along(value),
+        function(i) {
+          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
+        }
+      )
+
+      self$worksheets[[sheet]]$dataValidations <- c(
+        self$worksheets[[sheet]]$dataValidations,
+        stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
+      )
+
+      invisible(self)
+    },
+
+    data_validation_list = function(
+      sheet,
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg
+    ) {
+      # TODO consider some defaults to logicals
+      # TODO rename: setDataValidationList?
+      sheet <- wb_validate_sheet(self, sheet)
+      sqref <-
+        stri_join(get_cell_refs(data.frame(
+          "x" = c(startRow, endRow),
+          "y" = c(startCol, endCol)
+        )),
+          sep = " ",
+          collapse = ":"
+        )
+      data_val <-
+        sprintf(
+          '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
+          allowBlank,
+          showInputMsg,
+          showErrorMsg
+        )
+
+      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
+      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
+      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
+      self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
+
+      invisible(self)
+    },
+
+    # old add_named_region()
+    create_named_region = function(ref1, ref2, name, sheet, localSheetId = NULL) {
+      name <- replaceIllegalCharacters(name)
+
+      if (is.null(localSheetId)) {
+        self$workbook$definedNames <- c(
+          self$workbook$definedNames,
+          sprintf(
+            '<definedName name="%s">\'%s\'!%s:%s</definedName>',
+            name,
+            sheet,
+            ref1,
+            ref2
+          )
+        )
+      } else {
+        self$workbook$definedNames <- c(
+          self$workbook$definedNames,
+          sprintf(
+            '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
+            name,
+            localSheetId,
+            sheet,
+            ref1,
+            ref2
+          )
+        )
+      }
+
+      self
     },
 
     preSaveCleanUp = function() {

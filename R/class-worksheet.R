@@ -500,8 +500,67 @@ wbWorksheet <- R6::R6Class(
       self$cols_attr <- df_to_xml("col", col_df)
 
       invisible(self)
-    }
+    },
 
+
+    #' @description clean sheet (remove all values)
+    #' @param numbers remove all numbers
+    #' @param characters remove all characters
+    #' @param styles remove all styles
+    #' @param merged_cells remove all merged_cells
+    #' @return The `wbWorksheetObject`, invisibly
+    clean_sheet = function(numbers = FALSE, characters = FALSE, styles = FALSE, merged_cells = FALSE) {
+
+      cc <- self$sheet_data$cc
+
+      if (numbers)
+        cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
+          c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
+
+      if (characters)
+        cc[cc$c_t %in% c("inlineStr", "s"),
+          c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+
+      if (styles)
+        cc[c("c_s")] <- "_openxlsx_NA_"
+
+      self$sheet_data$cc <- cc
+
+      if (merged_cells)
+        self$mergeCells <- character(0)
+
+      invisible(self)
+
+    },
+
+    #' @description add page break
+    #' @param row row
+    #' @param col col
+    #' @returns The `wbWorksheet` object
+    add_page_break = function(row = NULL, col = NULL) {
+      if (!xor(is.null(row), is.null(col))) {
+        stop("either `row` or `col` must be NULL but not both")
+      }
+
+      if (!is.null(row)) {
+        if (!is.numeric(row)) stop("`row` must be numeric")
+        self$append("rowBreaks", sprintf('<brk id="%i" max="16383" man="1"/>', round(row)))
+      } else if (!is.null(col)) {
+        if (!is.numeric(col)) stop("`col` must be numeric")
+        self$append("colBreaks", sprintf('<brk id="%i" max="1048575" man="1"/>', round(col)))
+      }
+
+      self
+    },
+
+    #' @description append a field.  Intended for internal use only.  Not
+    #'   guaranteed to remain a public method.
+    #' @param field a field name
+    #' @param value a new value
+    append = function(field, value = NULL) {
+      self[[field]] <- c(self[[field]], value)
+      self
+    }
   ),
 
   ## private ----

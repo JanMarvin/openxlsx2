@@ -1153,40 +1153,6 @@ delete_data <- function(wb, sheet, cols, rows, gridExpand) {
 
 }
 
-#' clean sheet (remove all values)
-#'
-#' @param wb workbook
-#' @param sheet sheet to clean
-#' @param numbers remove all numbers
-#' @param characters remove all characters
-#' @param styles remove all styles
-#' @param merged_cells remove all merged_cells
-#' @name cleanup
-#' @export
-cleanSheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
-
-  sheet_id <- wb_validate_sheet(wb, sheet)
-
-  cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
-
-  if (numbers)
-    cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
-       c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
-
-  if (characters)
-    cc[cc$c_t %in% c("inlineStr", "s"),
-       c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
-
-  if (styles)
-    cc[c("c_s")] <- "_openxlsx_NA_"
-
-  wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
-
-  if (merged_cells)
-    wb$worksheets[[sheet_id]]$mergeCells <- character(0)
-
-}
-
 
 
 #' little worksheet helper
@@ -1197,12 +1163,86 @@ wb_ws <- function(wb, sheet) {
   wb$ws(sheet)
 }
 
-
-#' little worksheet opener
+#' get and set table of sheets and their state as selected and active
+#' @description Multiple sheets can be selected, but only a single one can be
+#' active (visible). The visible sheet, must not necessarily be a selected
+#' sheet.
 #' @param wb a workbook
+#' @returns a data frame with tabSelected and names
 #' @export
-wb_open <- function(wb) {
-  tmp <- temp_xlsx()
-  wb_save(wb, tmp)
-  xl_open(tmp)
+#' @examples
+#'   wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#'   # testing is the selected sheet
+#'   wb_get_selected(wb)
+#'   # change the selected sheet to IrisSample
+#'   wb <- wb_set_selected(wb, "IrisSample")
+#'   # get the active sheet
+#'   wb_get_active_sheet(wb)
+#'   # change the selected sheet to IrisSample
+#'   wb <- wb_set_active_sheet(wb, sheet = "IrisSample")
+#' @name select_active_sheet
+wb_get_active_sheet <- function(wb) {
+  at <- rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))["activeTab"]
+  # return c index as R index
+  as.numeric(at) + 1
+}
+
+#' @rdname select_active_sheet
+#' @param sheet a sheet name of the workbook
+#' @export
+wb_set_active_sheet <- function(wb, sheet) {
+
+  sheet <- wb_validate_sheet(wb, sheet)
+  if (is.na(sheet)) stop("sheet not in workbook")
+  wbv <- xml_node(wb$workbook$bookViews, "bookViews", "workbookView")
+
+
+  # active tab requires a c index
+  wb$workbook$bookViews <- xml_node_create(
+    "bookViews",
+    xml_children = xml_attr_mod(wbv,
+                                xml_attributes = c(activeTab = as.character(sheet - 1)))
+  )
+
+  wb
+}
+
+#' @name select_active_sheet
+#' @export
+wb_get_selected <- function(wb) {
+
+  len <- length(wb$sheet_names)
+  sv <- vector("list", length = len)
+
+  for (i in seq_len(len)) {
+    sv[[i]] <- xml_node(wb$worksheets[[i]]$sheetViews, "sheetViews", "sheetView")
+  }
+
+  # print(sv)
+  z <- rbindlist(xml_attr(sv, "sheetView"))
+  z$names <- names(wb)
+
+  z
+}
+
+#' @name select_active_sheet
+#' @export
+wb_set_selected <- function(wb, sheet) {
+
+  sheet <- wb_validate_sheet(wb, sheet)
+
+  for (i in seq_along(wb$sheet_names)) {
+
+    xml_attr <- c(tabSelected = ifelse(i == sheet, "true", "false"))
+    svs <- wb$worksheets[[i]]$sheetViews
+
+    # might lose other children if any. xml_replace_child?
+    sv <- xml_node(svs, "sheetViews", "sheetView")
+    sv <- xml_attr_mod(sv, xml_attr)
+    svs <- xml_node_create("sheetViews", xml_children = sv)
+
+    wb$worksheets[[i]]$sheetViews <- svs
+  }
+
+  wb
 }

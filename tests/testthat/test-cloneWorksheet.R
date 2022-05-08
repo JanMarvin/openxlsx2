@@ -8,7 +8,7 @@ test_that("clone Worksheet with data", {
   refwb <- wb_load(file = file_name)
 
   expect_equal(names(wb), names(refwb))
-  expect_equal(wb_order(wb), wb_order(refwb))
+  expect_equal(wb_get_order(wb), wb_get_order(refwb))
 })
 
 
@@ -21,5 +21,5 @@ test_that("clone empty Worksheet", {
   refwb <- wb_load(file = file_name)
 
   expect_equal(names(wb), names(refwb))
-  expect_equal(wb_order(wb), wb_order(refwb))
+  expect_equal(wb_get_order(wb), wb_get_order(refwb))
 })

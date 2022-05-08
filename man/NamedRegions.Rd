@@ -21,7 +21,7 @@ wb$add_worksheet("Sheet 1")
 
 ## specify region
 write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
-wb_create_named_region(
+wb_add_named_region(
   wb = wb,
   sheet = 1,
   name = "iris",
@@ -49,5 +49,5 @@ head(df)
 }
 }
 \seealso{
-\code{\link[=wb_create_named_region]{wb_create_named_region()}} \code{\link[=wb_delete_named_region]{wb_delete_named_region()}}
+\code{\link[=wb_add_named_region]{wb_add_named_region()}} \code{\link[=wb_remove_named_region]{wb_remove_named_region()}}
 }

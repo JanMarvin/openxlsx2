@@ -1056,11 +1056,14 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 
 # worksheet order ---------------------------------------------------------
 
-#' @name wb_order
-#' @title Order of worksheets in xlsx file
-#' @description Get/set order of worksheets in a Workbook object
-#' @details This function does not reorder the worksheets within the workbook object, it simply
-#' shuffles the order when writing to file.
+#' Order of worksheets in xlsx file
+#'
+#' Get/set order of worksheets in a Workbook object
+#'
+#' @param wb A `wbWorkbook` object
+#'
+#' @details This function does not reorder the worksheets within the workbook
+#'   object, it simply shuffles the order when writing to file.
 #' @export
 #' @examples
 #' ## setup a workbook with 3 worksheets
@@ -1074,62 +1077,49 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' wb$add_worksheet("Sheet 3", gridLines = FALSE)
 #' write_data(wb = wb, sheet = 3, x = Formaldehyde)
 #'
-#' wb_order(wb)
+#' wb_get_order(wb)
 #' names(wb)
-#' wb_order(wb) <- c(1, 3, 2) # switch position of sheets 2 & 3
+#' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 #' write_data(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
-#' wb_order(wb)
+#' wb_get_order(wb)
 #' names(wb) ## ordering within workbook is not changed
 #' \dontrun{
 #' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 #' }
-#' wb_order(wb) <- c(3, 2, 1)
+#' wb$set_order(3:1)
 #' \dontrun{
 #' wb_save(wb, "wb_orderExample2.xlsx", overwrite = TRUE)
 #' }
-wb_order <- function(wb) {
+#' @name wb_order
+wb_get_order <- function(wb) {
   assert_workbook(wb)
   wb$sheetOrder
 }
 
 #' @rdname wb_order
-#' @param wb A workbook object
-#' @param value Vector specifying order to write worksheets to file
+#' @param sheets Sheet order
 #' @export
-`wb_order<-` <- function(wb, value) {
+wb_set_order <- function(wb, sheets) {
   assert_workbook(wb)
-
-  if (any(value != as.integer(value))) {
-    stop("values must be integers")
-  }
-
-  value <- as.integer(value)
-
-  value <- unique(value)
-  if (length(value) != length(wb$worksheets)) {
-    stop(sprintf("Worksheet order must be same length as number of worksheets [%s]", length(wb$worksheets)))
-  }
-
-  if (any(value > length(wb$worksheets))) {
-    stop("Elements of order are greater than the number of worksheets")
-  }
-
-  wb$sheetOrder <- value
-
-  invisible(wb)
+  wb$clone()$set_order(sheets = sheets)
 }
 
-#' @name wb_create_named_region
-#' @title Create / delete a named region
-#' @description Create / delete a named region
+
+# named region ------------------------------------------------------------
+
+
+#' Create / delete a named region
+#'
+#' Create / delete a named region
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Numeric vector specifying rows to include in region
 #' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to FALSE
+#' @param localSheetId localSheetId
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
-#' @seealso [get_named_regions()] [wb_delete_named_region()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
@@ -1137,8 +1127,7 @@ wb_order <- function(wb) {
 #'
 #' ## specify region
 #' write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
-#' wb_create_named_region(
-#'   wb = wb,
+#' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
 #'   rows = seq_len(nrow(iris) + 1),
@@ -1158,7 +1147,7 @@ wb_order <- function(wb) {
 #' get_named_regions(out_file) ## From xlsx file
 #'
 #' ## delete one
-#' wb_delete_named_region(wb = wb, name = "iris2")
+#' wb$remove_named_region(name = "iris2")
 #' get_named_regions(wb)
 #'
 #' ## read named regions
@@ -1168,88 +1157,28 @@ wb_order <- function(wb) {
 #' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
 #' }
-#' @rdname NamedRegion
+#' @name named_region
+NULL
+
+#' @rdname named_region
 #' @export
-wb_create_named_region <- function(wb, sheet, cols, rows, name, overwrite = FALSE) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
+wb_add_named_region <- function(wb, sheet, cols, rows, name, localSheetId = NULL, overwrite = FALSE) {
   assert_workbook(wb)
-
-  if (!is.numeric(rows)) {
-    stop("rows argument must be a numeric/integer vector")
-  }
-
-  if (!is.numeric(cols)) {
-    stop("cols argument must be a numeric/integer vector")
-  }
-
-  ## check name doesn't already exist
-  ## named region
-
-  ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
-  ex_names <- tolower(replaceXMLEntities(ex_names))
-
-  if (tolower(name) %in% ex_names) {
-    if (overwrite)
-      wb$workbook$definedNames <- wb$workbook$definedNames[!ex_names %in% tolower(name)]
-    else
-      stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
-  } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
-    stop("name cannot look like a cell reference.")
-  }
-
-
-  cols <- round(cols)
-  rows <- round(rows)
-
-  startCol <- min(cols)
-  endCol <- max(cols)
-
-  startRow <- min(rows)
-  endRow <- max(rows)
-
-  ref1 <- paste0("$", int2col(startCol), "$", startRow)
-  ref2 <- paste0("$", int2col(endCol), "$", endRow)
-
-  invisible(
-    wb$create_named_region(ref1 = ref1, ref2 = ref2, name = name, sheet = wb$sheet_names[sheet])
+  wb$clone()$add_named_region(
+    sheet        = sheet,
+    cols         = cols,
+    rows         = rows,
+    name         = name,
+    localSheetId = localSheetId,
+    overwrite    = overwrite
   )
 }
 
+#' @rdname named_region
 #' @export
-#' @rdname NamedRegion
-wb_delete_named_region <- function(wb, sheet, name) {
-
+wb_remove_named_region <- function(wb, sheet = NULL, name = NULL) {
   assert_workbook(wb)
-
-  # get all nown defined names
-  dn <- get_named_regions(wb)
-
-  if (missing(name) && !missing(sheet)) {
-    sheet <- wb_validate_sheet(wb, sheet)
-    del <- dn$id[dn$sheet == sheet]
-  } else if (!missing(name) && missing(sheet)) {
-    del <- dn$id[dn$name == name]
-  } else {
-    sheet <- wb_validate_sheet(wb, sheet)
-    del <- dn$id[dn$sheet == sheet & dn$name == name]
-  }
-
-  if (length(del)) {
-    wb$workbook$definedNames <- wb$workbook$definedNames[-del]
-  } else {
-    if (!missing(name))
-      warning(sprintf("Cannot find named region with name '%s'", name))
-    # do not warn if wb and sheet are selected. wb_delete_named_region is
-    # called with every wb_remove_worksheet and would throw meaningless
-    # warnings. For now simply assume if no name is defined, that the
-    # user does not care, as long as no defined name remains on a sheet.
-  }
-
-  invisible(0)
+  wb$clone()$remove_named_region(sheet = sheet, name = name)
 }
 
 # filters -----------------------------------------------------------------
@@ -1325,9 +1254,10 @@ wb_remove_filter <- function(wb, sheet) {
 
 # validations -------------------------------------------------------------
 
-#' @name data_validation
-#' @title Add data validation to cells
-#' @description Add Excel data validation to cells
+#' Add data validation to cells
+#'
+#' Add Excel data validation to cells
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Contiguous columns to apply conditional formatting to
@@ -1346,11 +1276,11 @@ wb_remove_filter <- function(wb, sheet) {
 #' wb$add_worksheet("Sheet 2")
 #'
 #' write_datatable(wb, 1, x = iris[1:30, ])
-#' wb_data_validation(wb, 1,
+#' wb$add_data_validation(1,
 #'   col = 1:3, rows = 2:31, type = "whole",
 #'   operator = "between", value = c(1, 9)
 #' )
-#' wb_data_validation(wb, 1,
+#' wb$add_data_validation(1,
 #'   col = 5, rows = 2:31, type = "textLength",
 #'   operator = "between", value = c(4, 6)
 #' )
@@ -1361,11 +1291,11 @@ wb_remove_filter <- function(wb, sheet) {
 #'   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 #' )
 #' write_datatable(wb, 2, x = df)
-#' wb_data_validation(wb, 2,
+#' wb$add_data_validation(2,
 #'   col = 1, rows = 2:12, type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
-#' wb_data_validation(wb, 2,
+#' wb$add_data_validation(2,
 #'   col = 2, rows = 2:12, type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
@@ -1386,133 +1316,44 @@ wb_remove_filter <- function(wb, sheet) {
 #' write_datatable(wb, sheet = 1, x = iris[1:30, ])
 #' write_data(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
-#' wb_data_validation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 #'
 #' \dontrun{
 #' wb_save(wb, "data_validationExample2.xlsx", overwrite = TRUE)
 #' }
-wb_data_validation <- function(wb, sheet, cols, rows, type, operator, value, allowBlank = TRUE, showInputMsg = TRUE, showErrorMsg = TRUE) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  ## rows and cols
-  if (!is.numeric(cols)) {
-    cols <- col2int(cols)
-  }
-  rows <- as.integer(rows)
-
-  ## check length of value
-  if (length(value) > 2) {
-    stop("value argument must be length < 2")
-  }
-
-  valid_types <- c(
-    "whole",
-    "decimal",
-    "date",
-    "time", ## need to conv
-    "textLength",
-    "list"
+wb_add_data_validation <- function(
+    wb,
+    sheet,
+    cols,
+    rows,
+    type,
+    operator,
+    value,
+    allowBlank = TRUE,
+    showInputMsg = TRUE,
+    showErrorMsg = TRUE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_data_validation(
+    sheet        = sheet,
+    cols         = cols,
+    rows         = rows,
+    type         = type,
+    operator     = operator,
+    value        = value,
+    allowBlank   = allowBlank,
+    showInputMsg = showInputMsg,
+    showErrorMsg = showErrorMsg
   )
-
-  if (!tolower(type) %in% tolower(valid_types)) {
-    stop("Invalid 'type' argument!")
-  }
-
-
-  ## operator == 'between' we leave out
-  valid_operators <- c(
-    "between",
-    "notBetween",
-    "equal",
-    "notEqual",
-    "greaterThan",
-    "lessThan",
-    "greaterThanOrEqual",
-    "lessThanOrEqual"
-  )
-
-  if (tolower(type) != "list") {
-    if (!tolower(operator) %in% tolower(valid_operators)) {
-      stop("Invalid 'operator' argument!")
-    }
-
-    operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
-  } else {
-    operator <- "between" ## ignored
-  }
-
-  if (!is.logical(allowBlank)) {
-    stop("Argument 'allowBlank' musts be logical!")
-  }
-
-  if (!is.logical(showInputMsg)) {
-    stop("Argument 'showInputMsg' musts be logical!")
-  }
-
-  if (!is.logical(showErrorMsg)) {
-    stop("Argument 'showErrorMsg' musts be logical!")
-  }
-
-  ## All inputs validated
-
-  type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
-
-  ## check input combinations
-  if ((type == "date") && !inherits(value, "Date")) {
-    stop("If type == 'date' value argument must be a Date vector.")
-  }
-
-  if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
-    stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
-  }
-
-
-  value <- head(value, 2)
-  allowBlank <- as.integer(allowBlank[1])
-  showInputMsg <- as.integer(showInputMsg[1])
-  showErrorMsg <- as.integer(showErrorMsg[1])
-
-  if (type == "list") {
-    invisible(wb$data_validation_list(
-      sheet = sheet,
-      startRow = min(rows),
-      endRow = max(rows),
-      startCol = min(cols),
-      endCol = max(cols),
-      value = value,
-      allowBlank = allowBlank,
-      showInputMsg = showInputMsg,
-      showErrorMsg = showErrorMsg
-    ))
-  } else {
-    invisible(wb$data_validation(
-      sheet = sheet,
-      startRow = min(rows),
-      endRow = max(rows),
-      startCol = min(cols),
-      endCol = max(cols),
-      type = type,
-      operator = operator,
-      value = value,
-      allowBlank = allowBlank,
-      showInputMsg = showInputMsg,
-      showErrorMsg = showErrorMsg
-    ))
-  }
-
-
-
-  invisible(0)
 }
 
 
 # visibility --------------------------------------------------------------
 
-#' @name wb_sheet_visibility
-#' @title Get/set worksheet visible state
-#' @description Get and set worksheet visible state
-#' @param wb A workbook object
+#' Get/set worksheet visible state
+#'
+#'Get and set worksheet visible state
+#'
 #' @return Character vector of worksheet names.
 #' @return  Vector of "hidden", "visible", "veryHidden"
 #' @examples
@@ -1522,71 +1363,39 @@ wb_data_validation <- function(wb, sheet, cols, rows, type, operator, value, all
 #' wb$add_worksheet(sheet = "S2", visible = TRUE)
 #' wb$add_worksheet(sheet = "S3", visible = FALSE)
 #'
-#' wb_sheet_visibility(wb)
-#' wb_sheet_visibility(wb)[1] <- TRUE ## show sheet 1
-#' wb_sheet_visibility(wb)[2] <- FALSE ## hide sheet 2
-#' wb_sheet_visibility(wb)[3] <- "hidden" ## hide sheet 3
-#' wb_sheet_visibility(wb)[3] <- "veryHidden" ## hide sheet 3 from UI
+#' wb$get_sheet_visibility()
+#' wb$set_sheet_visibility(1, TRUE)         ## show sheet 1
+#' wb$set_sheet_visibility(2, FALSE)        ## hide sheet 2
+#' wb$set_sheet_visibility(3, "hidden")     ## hide sheet 3
+#' wb$set_sheet_visibility(3, "veryHidden") ## hide sheet 3 from UI
+#' @name sheet_visibility
+NULL
+
+#' @rdname sheet_visibility
+#' @param wb A `wbWorkbook` object
 #' @export
-wb_sheet_visibility <- function(wb) {
+wb_get_sheet_visibility <- function(wb) {
   assert_workbook(wb)
-
-  state <- rep("visible", length(wb$workbook$sheets))
-  state[grepl("hidden", wb$workbook$sheets)] <- "hidden"
-  state[grepl("veryHidden", wb$workbook$sheets, ignore.case = TRUE)] <- "veryHidden"
-
-
-  return(state)
+  wb$get_sheet_visibility()
 }
 
-#' @rdname wb_sheet_visibility
-#' @param value a logical/character vector the same length as wb_sheet_visibility(wb)
+#' @rdname sheet_visibility
+#' @param sheet Worksheet identifier
+#' @param value a logical/character vector the same length as sheet
 #' @export
-`wb_sheet_visibility<-` <- function(wb, value) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  value <- tolower(as.character(value))
-  if (!any(value %in% c("true", "visible"))) {
-    stop("A workbook must have atleast 1 visible worksheet.")
-  }
-
-  value[value %in% "true"] <- "visible"
-  value[value %in% "false"] <- "hidden"
-  value[value %in% "veryhidden"] <- "veryHidden"
-
-
-  exState0 <- regmatches(wb$workbook$sheets, regexpr('(?<=state=")[^"]+', wb$workbook$sheets, perl = TRUE))
-  exState <- tolower(exState0)
-  exState[exState %in% "true"] <- "visible"
-  exState[exState %in% "hidden"] <- "hidden"
-  exState[exState %in% "false"] <- "hidden"
-  exState[exState %in% "veryhidden"] <- "veryHidden"
-
-  if (length(value) != length(wb$workbook$sheets)) {
-    stop(sprintf("value vector must have length equal to number of worksheets in Workbook [%s]", length(exState)))
-  }
-
-  inds <- which(value != exState)
-  if (length(inds) == 0) {
-    return(invisible(wb))
-  }
-
-  for (i in seq_along(wb$worksheets)) {
-    wb$workbook$sheets[i] <- gsub(exState0[i], value[i], wb$workbook$sheets[i], fixed = TRUE)
-  }
-
-  invisible(wb)
+wb_set_sheet_visibility <- function(wb, sheet, value) {
+  assert_workbook(wb)
+  wb$clone()$set_sheet_visibility(sheet = sheet, value = value)
 }
 
 
-#' @name wb_page_break
-#' @title add a page break to a worksheet
-#' @description insert page breaks into a worksheet
+#' Add a page break to a worksheet
+#'
+#' Insert page breaks into a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param i row or column number to insert page break.
-#' @param type One of "row" or "column" for a row break or column break.
+#' @param row,col Either a row number of column number.  One must be `NULL`
 #' @export
 #' @seealso [wb_add_worksheet()]
 #' @examples
@@ -1594,47 +1403,16 @@ wb_sheet_visibility <- function(wb) {
 #' wb$add_worksheet("Sheet 1")
 #' write_data(wb, sheet = 1, x = iris)
 #'
-#' wb_page_break(wb, sheet = 1, i = 10, type = "row")
-#' wb_page_break(wb, sheet = 1, i = 20, type = "row")
-#' wb_page_break(wb, sheet = 1, i = 2, type = "column")
+#' wb$add_page_break(sheet = 1, row = 10)
+#' wb$add_page_break(sheet = 1, row = 20)
+#' wb$add_page_break(sheet = 1, col = 2)
 #' \dontrun{
 #' wb_save(wb, "wb_page_breakExample.xlsx", TRUE)
 #' }
 #' ## In Excel: View tab -> Page Break Preview
-wb_page_break <- function(wb, sheet, i, type = "row") {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
+wb_add_page_break <- function(wb, sheet, row = NULL, col = NULL) {
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  type <- tolower(type)[1]
-  if (!type %in% c("row", "column")) {
-    stop("'type' argument must be 'row' or 'column'.")
-  }
-
-  if (!is.numeric(i)) {
-    stop("'i' must be numeric.")
-  }
-  i <- round(i)
-
-  if (type == "row") {
-    wb$worksheets[[sheet]]$rowBreaks <- c(
-      wb$worksheets[[sheet]]$rowBreaks,
-      sprintf('<brk id="%s" max="16383" man="1"/>', i)
-    )
-  } else if (type == "column") {
-    wb$worksheets[[sheet]]$colBreaks <- c(
-      wb$worksheets[[sheet]]$colBreaks,
-      sprintf('<brk id="%s" max="1048575" man="1"/>', i)
-    )
-  }
-
-
-  # wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
-
-  invisible(wb)
+  wb$clone()$add_page_break(sheet = sheet, row = row, col = col)
 }
 
 
@@ -1756,35 +1534,8 @@ wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
 #' @export
 #' @rdname workbook_grouping
 wb_ungroup_cols <- function(wb, sheet, cols) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # check if any rows are selected
-  if (any(cols) < 1L) {
-    stop("Invalid cols entered (<= 0).")
-  }
-
-  # fetch the cols_attr data.frame
-  col_attr <- wb$worksheets[[sheet]]$unfold_cols()
-
-  # get the selection based on the col_attr frame.
-  select <- col_attr$min %in% as.character(cols)
-  if (length(select)) {
-    col_attr$outlineLevel[select] <- ""
-    col_attr$collapsed[select] <- ""
-    # TODO only if unhide = TRUE
-    col_attr$hidden[select] <- ""
-    wb$worksheets[[sheet]]$fold_cols(col_attr)
-  }
-
-  # If all outlineLevels are missing: remove the outlineLevelCol attribute. Assigning "" will remove the attribute
-  if (all(col_attr$outlineLevel == "")) {
-    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = ""))
-  } else {
-    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
-  }
+  assert_workbook(wb)
+  wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
 }
 
 
@@ -1792,7 +1543,7 @@ wb_ungroup_cols <- function(wb, sheet, cols) {
 #' @rdname workbook_grouping
 wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-  wb$clone()$wb_group_rows(
+  wb$clone()$group_rows(
     sheet     = sheet,
     rows      = rows,
     collapsed = collapsed,
@@ -1803,35 +1554,8 @@ wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
 #' @export
 #' @rdname workbook_grouping
 wb_ungroup_rows <- function(wb, sheet, rows) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # check if any rows are selected
-  if (any(rows) < 1L) {
-    stop("Invalid rows entered (<= 0).")
-  }
-
-  # fetch the row_attr data.frame
-  row_attr <- wb$worksheets[[sheet]]$sheet_data$row_attr
-
-  # get the selection based on the row_attr frame.
-  select <- row_attr$r %in% as.character(rows)
-  if (length(select)) {
-    row_attr$outlineLevel[select] <- ""
-    row_attr$collapsed[select] <- ""
-    # TODO only if unhide = TRUE
-    row_attr$hidden[select] <- ""
-    wb$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
-  }
-
-  # If all outlineLevels are missing: remove the outlineLevelRow attribute. Assigning "" will remove the attribute
-  if (all(row_attr$outlineLevel == "")) {
-    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = ""))
-  } else {
-    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
-  }
+  assert_workbook(wb)
+  wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
 }
 
 
@@ -1976,4 +1700,27 @@ wb_add_image <- function(
     units     = units,
     dpi       = dpi
   )
+}
+
+#' clean sheet (remove all values)
+#'
+#' @param wb workbook
+#' @param sheet sheet to clean
+#' @param numbers remove all numbers
+#' @param characters remove all characters
+#' @param styles remove all styles
+#' @param merged_cells remove all merged_cells
+#' @name cleanup
+#' @export
+wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
+  sheet <- wb_validate_sheet(wb, sheet)
+  wb$worksheets[[sheet]] <- wb$worksheets[[sheet]]$clone()$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+  wb
+}
+
+#' little worksheet opener
+#' @param wb a workbook
+#' @export
+wb_open <- function(wb) {
+  wb$open()
 }
