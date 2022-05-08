@@ -62,31 +62,31 @@ test_that("write_data over tables", {
 
   ## Anywhere on row 5 is fine
   for (i in 1:10) {
-    write_data(wb = wb, sheet = 1, x = head(iris), startRow = 5, startCol = i)
+    wb$add_data((sheet = 1, x = head(iris), startRow = 5, startCol = i)
   }
 
   ## Anywhere on col i is fine
   for (i in 1:10) {
-    write_data(wb = wb, sheet = 1, x = head(iris), startRow = i, startCol = "i")
+    wb$add_data((sheet = 1, x = head(iris), startRow = i, startCol = "i")
   }
 
 
 
   ## Now errors on headers
-  expect_error(write_data(wb = wb, sheet = 1, x = head(iris), startCol = 4, startRow = 4), regexp = overwrite_table_error)
-  write_data(wb = wb, sheet = 1, x = head(iris), startCol = 4, startRow = 5)
-  write_data(wb = wb, sheet = 1, x = head(iris)[1:3])
-  write_data(wb = wb, sheet = 1, x = head(iris, 2), startCol = 4)
-  write_data(wb = wb, sheet = 1, x = head(iris, 2), startCol = 4, colNames = FALSE)
+  expect_error(wb$add_data((sheet = 1, x = head(iris), startCol = 4, startRow = 4), regexp = overwrite_table_error)
+  wb$add_data((sheet = 1, x = head(iris), startCol = 4, startRow = 5)
+  wb$add_data((sheet = 1, x = head(iris)[1:3])
+  wb$add_data((sheet = 1, x = head(iris, 2), startCol = 4)
+  wb$add_data((sheet = 1, x = head(iris, 2), startCol = 4, colNames = FALSE)
 
 
   ## Example of how this should be used
   write_datatable(wb = wb, sheet = 1, x = head(iris), startCol = 4, startRow = 30)
-  write_data(wb = wb, sheet = 1, x = head(iris), startCol = 4, startRow = 31, colNames = FALSE)
+  wb$add_data((sheet = 1, x = head(iris), startCol = 4, startRow = 31, colNames = FALSE)
 
   write_datatable(wb = wb, sheet = 1, x = head(iris), startCol = 10, startRow = 30)
-  write_data(wb = wb, sheet = 1, x = tail(iris), startCol = 10, startRow = 31, colNames = FALSE)
+  wb$add_data((sheet = 1, x = tail(iris), startCol = 10, startRow = 31, colNames = FALSE)
 
   write_datatable(wb = wb, sheet = 1, x = head(iris)[, 1:3], startCol = 1, startRow = 30)
-  write_data(wb = wb, sheet = 1, x = tail(iris), startCol = 1, startRow = 31, colNames = FALSE)
+  wb$add_data((sheet = 1, x = tail(iris), startCol = 1, startRow = 31, colNames = FALSE)
 })

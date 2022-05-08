@@ -9,7 +9,7 @@ test_that("Writing Posixct with write_data & write_datatable", {
   wb$add_worksheet("write_data")
   wb$add_worksheet("write_datatable")
 
-  write_data(wb, "write_data", df, startCol = 2, startRow = 3, rowNames = FALSE)
+  wb$add_data("write_data", df, startCol = 2, startRow = 3, rowNames = FALSE)
   write_datatable(wb, "write_datatable", df, startCol = 2, startRow = 3)
 
   # wb_open(wb)
@@ -41,7 +41,7 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   wb$add_worksheet("write_data")
   wb$add_worksheet("write_datatable")
 
-  write_data(wb, "write_data", df, startCol = 2, startRow = 3, rowNames = FALSE)
+  wb$add_data("write_data", df, startCol = 2, startRow = 3, rowNames = FALSE)
   write_datatable(wb, "write_datatable", df, startCol = 2, startRow = 3)
 
   # xlsx file is broken‚ <NA> where some missing value is expected.

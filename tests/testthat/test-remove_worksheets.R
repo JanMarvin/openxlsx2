@@ -29,14 +29,14 @@ test_that("Deleting worksheets", {
   wb <- wb_load(tempFile)
   expect_equal(names(wb), c("Sheet 3", "Sheet 1", "Sheet 2"))
 
-  write_data(wb, sheet = "Sheet 2", x = iris[1:10, 1:4], startRow = 5)
+  wb$add_data(sheet = "Sheet 2", x = iris[1:10, 1:4], startRow = 5)
   test <- read_xlsx(wb, "Sheet 2", startRow = 5)
   rownames(test) <- seq_len(nrow(test))
   attr(test, "tt") <- NULL
   attr(test, "types") <- NULL
   expect_equal(iris[1:10, 1:4], test)
 
-  write_data(wb, sheet = 1, x = iris[1:20, 1:4], startRow = 5)
+  wb$add_data(sheet = 1, x = iris[1:20, 1:4], startRow = 5)
   test <- read_xlsx(wb, "Sheet 3", startRow = 5)
   rownames(test) <- seq_len(nrow(test))
   attr(test, "tt") <- NULL

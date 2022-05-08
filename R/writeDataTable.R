@@ -269,7 +269,7 @@ write_datatable <- function(wb, sheet, x,
 
 
   ## write data to worksheet
-  # TODO write_data2 should be wb$write_data
+  # TODO write_data2 should be wb$add_data(
   wb <- write_data2(
     wb =  wb,
     sheet = sheet,

@@ -36,7 +36,7 @@ test_that("page_breaks", {
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  write_data(wb, sheet = 1, x = iris)
+  wb$add_data(sheet = 1, x = iris)
 
   wb$add_page_break(sheet = 1, row = 10)
   wb$add_page_break(sheet = 1, row = 20)
