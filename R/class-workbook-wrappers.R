@@ -130,6 +130,86 @@ wb_add_data <- function(
   )
 }
 
+#' Add data to a worksheet as an Excel table
+#'
+#' Add data to a worksheet and format as an Excel table
+#'
+#' @param wb A Workbook object containing a #' worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A dataframe.
+#' @param startCol A vector specifying the starting column to write df
+#' @param startRow A vector specifying the starting row to write df
+#' @param xy An alternative to specifying startCol and startRow individually. A
+#'   vector of the form c(startCol, startRow)
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, row names of x are written.
+#' @param tableStyle Any excel table style name or "none" (see "formatting"
+#'   vignette).
+#' @param tableName name of table in workbook. The table name must be unique.
+#' @param withFilter If `TRUE`, columns with have filters in the first row.
+#' @param sep Only applies to list columns. The separator used to collapse list
+#'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
+#'   sep).
+#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
+#' existing style is replaced by the new style.
+#' \cr\cr
+#' \cr**The below options correspond to Excel table options:**
+#' \cr
+#' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
+#' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
+#'
+#' @param firstColumn logical. If TRUE, the first column is bold
+#' @param lastColumn logical. If TRUE, the last column is bold
+#' @param bandedRows logical. If TRUE, rows are colour banded
+#' @param bandedCols logical. If TRUE, the columns are colour banded
+#'
+#' @details columns of x with class Date/POSIXt, currency, accounting,
+#' hyperlink, percentage are automatically styled as dates, currency,
+#' accounting, hyperlinks, percentages respectively. The string `"_openxlsx_NA"`
+#' is reserved for `openxlsx2`. If the data frame contains this string, the
+#' output will be broken.
+#' @export
+#' @examples
+wb_add_data_table <- function(
+    wb,
+    sheet,
+    x,
+    startCol    = 1,
+    startRow    = 1,
+    xy          = NULL,
+    colNames    = TRUE,
+    rowNames    = FALSE,
+    tableStyle  = "TableStyleLight9",
+    tableName   = NULL,
+    withFilter  = TRUE,
+    sep         = ", ",
+    stack       = FALSE,
+    firstColumn = FALSE,
+    lastColumn  = FALSE,
+    bandedRows  = TRUE,
+    bandedCols  = FALSE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_data_table(
+    sheet       = sheet,
+    x           = x,
+    startCol    = startCol,
+    startRow    = startRow,
+    xy          = xy,
+    colNames    = colNames,
+    rowNames    = rowNames,
+    tableStyle  = tableStyle,
+    tableName   = tableName,
+    withFilter  = withFilter,
+    sep         = sep,
+    stack       = stack,
+    firstColumn = firstColumn,
+    lastColumn  = lastColumn,
+    bandedRows  = bandedRows,
+    bandedCols  = bandedCols
+  )
+}
+
 #' Add a character vector as an Excel Formula
 #'
 #' Add a character vector containing Excel formula to a worksheet.

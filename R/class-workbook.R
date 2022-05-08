@@ -846,6 +846,64 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    #' @description add a data table
+    #' @param sheet sheet
+    #' @param x x
+    #' @param startCol startCol
+    #' @param startRow startRow
+    #' @param xy xy
+    #' @param colNames colNames
+    #' @param rowNames rowNames
+    #' @param tableStyle tableStyle
+    #' @param tableName tableName
+    #' @param withFilter withFilter
+    #' @param sep sep
+    #' @param stack stack
+    #' @param firstColumn firstColumn
+    #' @param lastColumn lastColumn
+    #' @param bandedRows bandedRows
+    #' @param bandedCols bandedCols
+    #' @returns The `wbWorkbook` object
+    add_data_table = function(
+        sheet,
+        x,
+        startCol    = 1,
+        startRow    = 1,
+        xy          = NULL,
+        colNames    = TRUE,
+        rowNames    = FALSE,
+        tableStyle  = "TableStyleLight9",
+        tableName   = NULL,
+        withFilter  = TRUE,
+        sep         = ", ",
+        stack       = FALSE,
+        firstColumn = FALSE,
+        lastColumn  = FALSE,
+        bandedRows  = TRUE,
+        bandedCols  = FALSE
+    ) {
+      write_datatable(
+        wb          = self,
+        sheet       = sheet,
+        x           = x,
+        startCol    = startCol,
+        startRow    = startRow,
+        xy          = xy,
+        colNames    = colNames,
+        rowNames    = rowNames,
+        tableStyle  = tableStyle,
+        tableName   = tableName,
+        withFilter  = withFilter,
+        sep         = sep,
+        stack       = stack,
+        firstColumn = firstColumn,
+        lastColumn  = lastColumn,
+        bandedRows  = bandedRows,
+        bandedCols  = bandedCols
+      )
+      self
+    },
+
     #' @description add formula
     #' @param sheet sheet
     #' @param x x

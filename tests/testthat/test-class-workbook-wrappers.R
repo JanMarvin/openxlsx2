@@ -267,7 +267,6 @@ test_that("wb_clean_sheet() is a wrapper", {
   expect_wrapper("clean_sheet", wb = wb, params = params)
 })
 
-
 # wb_open() ---------------------------------------------------------------
 
 test_that("wb_open() is a wrapper", {
@@ -279,10 +278,19 @@ test_that("wb_open() is a wrapper", {
   )
 })
 
-# wb_add_data(), wb_add_formula() -----------------------------------------
+# wb_add_data(), wb_add_data_table(), wb_add_formula() --------------------
 
-test_that("wb_add_data(), wb_add_formula() are wrappers", {
+test_that("wb_add_data() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  expect_wrapper("add_data", wb = wb, params = list(sheet = 1, x = data.frame(x = 1)))
-  expect_wrapper("add_formula", wb = wb, params = list(sheet = 1, x = "=TODAY()"))
+  expect_wrapper("add_data",       wb = wb, params = list(sheet = 1, x = data.frame(x = 1)))
+})
+
+test_that("wb_add_data_table() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  expect_wrapper("add_data_table", wb = wb, params = list(sheet = 1, x = data.frame(x = 1)))
+})
+
+test_that("wb_add_formula() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
 })
