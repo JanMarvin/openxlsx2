@@ -1284,9 +1284,21 @@ wbWorkbook <- R6::R6Class(
         workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>" )
       }
 
+      # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
+      # assured that the order of entries is still valid when we write the file. Functions can change the 
+      # workbook order, therefore we have to make sure that the expected order is written.
+      # Othterwise spreadsheet software will complain.
+      workbook_openxml281 <- c(
+        "fileVersion", "fileSharing", "workbookPr", "alternateContent", "absPath", "workbookProtection",
+        "bookViews", "sheets", "functionGroups", "externalReferences", "definedNames", "calcPr", 
+        "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr", "smartTagTypes", "webPublishing",
+        "fileRecoveryPr", "webPublishObjects", "extLst" 
+      )
+      
+
       write_file(
         head = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x15 xr xr6 xr10 xr2" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr6="http://schemas.microsoft.com/office/spreadsheetml/2016/revision6" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2">',
-        body = pxml(workbookXML),
+        body = pxml(workbookXML[workbook_openxml281]),
         tail = "</workbook>",
         fl = file.path(xlDir, "workbook.xml")
       )
