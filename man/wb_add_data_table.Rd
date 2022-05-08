@@ -5,6 +5,7 @@
 \title{Add data to a worksheet as an Excel table}
 \usage{
 wb_add_data_table(
+  wb,
   sheet,
   x,
   startCol = 1,
@@ -24,6 +25,8 @@ wb_add_data_table(
 )
 }
 \arguments{
+\item{wb}{A Workbook object containing a #' worksheet.}
+
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
 
 \item{x}{A dataframe.}
@@ -65,8 +68,6 @@ existing style is replaced by the new style.
 \item{bandedRows}{logical. If TRUE, rows are colour banded}
 
 \item{bandedCols}{logical. If TRUE, the columns are colour banded}
-
-\item{wb}{A Workbook object containing a #' worksheet.}
 }
 \description{
 Add data to a worksheet and format as an Excel table

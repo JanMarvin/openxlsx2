@@ -120,7 +120,7 @@ class(df$Percentage) <- c(class(df$Percentage), "percentage")
 class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 
 wb$add_data("S1", x = df, startRow = 4, rowNames = FALSE)
-write_datatable(wb, "S2", x = df, startRow = 4, rowNames = FALSE)
+wb$add_data_table("S2", x = df, startRow = 4, rowNames = FALSE)
 ```
 
 

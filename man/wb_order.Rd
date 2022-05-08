@@ -26,7 +26,7 @@ object, it simply shuffles the order when writing to file.
 ## setup a workbook with 3 worksheets
 wb <- wb_workbook()
 wb$add_worksheet("Sheet 1", gridLines = FALSE)
-write_datatable(wb = wb, sheet = 1, x = iris)
+wb$add_data_table(sheet = 1, x = iris)
 
 wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
 wb$add_data((sheet = 2, x = mtcars)

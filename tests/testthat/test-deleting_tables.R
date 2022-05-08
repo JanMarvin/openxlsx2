@@ -2,8 +2,8 @@ test_that("Deleting a Table Object", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_worksheet("Sheet 2")
-  write_datatable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
+  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
 
   # Get table ----
@@ -38,8 +38,8 @@ test_that("Deleting a Table Object", {
 
   ## write same tables again ----
 
-  write_datatable(wb, sheet = 1, x = iris, tableName = "iris")
-  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = 1, x = iris, tableName = "iris")
+  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
   expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "iris", "mtcars"))
   expect_equal(attr(wb$tables, "sheet"), c(0, 0, 1, 1))
@@ -76,7 +76,7 @@ test_that("Deleting a Table Object", {
   ))
 
   ## wb_remove_tables clears table object and all data
-  write_datatable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
+  wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
   temp <- temp_xlsx()
   wb_save(wb, temp)
   expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId4\"/>", "<tablePart r:id=\"rId5\"/>"), ignore_attr = TRUE)
@@ -108,8 +108,8 @@ test_that("Save and load Table Deletion", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_worksheet("Sheet 2")
-  write_datatable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
+  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
 
   ###################################################################################
@@ -138,8 +138,8 @@ test_that("Save and load Table Deletion", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_worksheet("Sheet 2")
-  write_datatable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
+  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
   ## remove iris and re-write it
   wb$remove_tables(sheet = 1, table = "iris")
@@ -163,9 +163,9 @@ test_that("Save and load Table Deletion", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_worksheet("Sheet 2")
-  write_datatable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
-  write_datatable(wb, sheet = 2, x = mtcars, tableName = "mtcars2", startCol = 3)
+  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
+  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = 2, x = mtcars, tableName = "mtcars2", startCol = 3)
 
   wb$remove_tables(sheet = 1, table = "iris")
   wb$remove_tables(sheet = 1, table = "mtcars")
@@ -184,8 +184,8 @@ test_that("Save and load Table Deletion", {
 
 
   ## write tables back in
-  write_datatable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
+  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
   expect_equal(length(wb$tables), 3L)
   expect_equal(unname(attr(wb$tables, "tableName")), c("mtcars2", "iris", "mtcars"))

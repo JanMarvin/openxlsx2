@@ -46,8 +46,8 @@ test_that("silent with numfmt option", {
   wb$add_worksheet("S1")
   wb$add_worksheet("S2")
 
-  write_datatable(wb, "S1", x = iris)
-  write_datatable(wb, "S2",
+  wb$add_data_table("S1", x = iris)
+  wb$add_data_table("S2",
                  x = mtcars, xy = c("B", 3), rowNames = TRUE,
                  tableStyle = "TableStyleLight9"
   )

@@ -36,7 +36,7 @@ wb$add_filter(1, row = 1, cols = seq_along(iris))
 wb$add_data(2, x = iris, withFilter = TRUE)
 
 ## Similarly
-write_datatable(wb, 3, iris)
+wb$add_data_table(3, iris)
 \dontrun{
 wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 }
