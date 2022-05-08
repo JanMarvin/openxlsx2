@@ -27,14 +27,14 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet1")
 wb$add_worksheet("Sheet2")
 wb$add_worksheet("Sheet 3")
-write_data(wb, sheet = 3, x = iris)
+wb$add_data(sheet = 3, x = iris)
 
 ## External Hyperlink
 x <- c("https://www.google.com", "https://www.google.com.au")
 names(x) <- c("google", "google Aus")
 class(x) <- "hyperlink"
 
-write_data(wb, sheet = 1, x = x, startCol = 10)
+wb$add_data(sheet = 1, x = x, startCol = 10)
 
 
 ## Internal Hyperlink - create hyperlink formula manually

@@ -29,15 +29,15 @@ wb$add_worksheet("Sheet 1", gridLines = FALSE)
 write_datatable(wb = wb, sheet = 1, x = iris)
 
 wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
-write_data(wb = wb, sheet = 2, x = mtcars)
+wb$add_data((sheet = 2, x = mtcars)
 
 wb$add_worksheet("Sheet 3", gridLines = FALSE)
-write_data(wb = wb, sheet = 3, x = Formaldehyde)
+wb$add_data((sheet = 3, x = Formaldehyde)
 
 wb_get_order(wb)
 names(wb)
 wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
-write_data(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
+wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 wb_get_order(wb)
 names(wb) ## ordering within workbook is not changed
 \dontrun{

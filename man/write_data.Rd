@@ -105,7 +105,7 @@ wb$add_worksheet("Formula")
 
 
 x <- mtcars[1:6, ]
-write_data(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 
 
 #####################################################################################
@@ -115,7 +115,7 @@ write_data(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 v <- rep("https://CRAN.R-project.org/", 4)
 names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
 class(v) <- "hyperlink"
-write_data(wb, "Cars", x = v, xy = c("B", 32))
+wb$add_data("Cars", x = v, xy = c("B", 32))
 
 
 #####################################################################################
@@ -130,7 +130,7 @@ df <- data.frame(
 
 class(df$z) <- c(class(df$z), "formula")
 
-write_data(wb, sheet = "Formula", x = df)
+wb$add_data(sheet = "Formula", x = df)
 
 ###########################################################################
 # update cell range and add mtcars

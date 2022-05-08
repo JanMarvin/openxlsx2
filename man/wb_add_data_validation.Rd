@@ -86,7 +86,7 @@ wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
 
 write_datatable(wb, sheet = 1, x = iris[1:30, ])
-write_data(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
+wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 
 wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 

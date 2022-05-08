@@ -35,6 +35,6 @@ example(write_data)
 wb <- wb_workbook()
 x <- mtcars[1:6, ]
 wb$add_worksheet("Cars")
-write_data(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 xl_open(wb)
 }
