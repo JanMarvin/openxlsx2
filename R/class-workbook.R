@@ -445,7 +445,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$sheet_names) == 0) {
         # TODO this should live wherever the other default values for an empty worksheet are initialized
         empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs) 
+        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
       }
 
       ##  Add sheet to workbook.xml
@@ -796,6 +796,82 @@ wbWorkbook <- R6::R6Class(
 
       # invisible(newSheetIndex)
       invisible(self)
+    },
+
+    ### add data ----
+
+    #' @description add data
+    #' @param sheet sheet
+    #' @param x x
+    #' @param startCol startCol
+    #' @param startRow startRow
+    #' @param array array
+    #' @param xy xy
+    #' @param colNames colNames
+    #' @param rowNames rowNames
+    #' @param withFilter withFilter
+    #' @param name name
+    #' @param sep sep
+    #' @param removeCellStyle removeCellStyle
+    #' @param return The `wbWorkbook` object
+    add_data = function(
+        sheet,
+        x,
+        startCol        = 1,
+        startRow        = 1,
+        array           = FALSE,
+        xy              = NULL,
+        colNames        = TRUE,
+        rowNames        = FALSE,
+        withFilter      = FALSE,
+        name            = NULL,
+        sep             = ", ",
+        removeCellStyle = TRUE
+      ) {
+      write_data(
+        wb              = self,
+        sheet           = sheet,
+        x               = x,
+        startCol        = startCol,
+        startRow        = startRow,
+        array           = array,
+        xy              = xy,
+        colNames        = colNames,
+        rowNames        = rowNames,
+        withFilter      = withFilter,
+        name            = name,
+        sep             = sep,
+        removeCellStyle = removeCellStyle
+      )
+      self
+    },
+
+    #' @description add formula
+    #' @param sheet sheet
+    #' @param x x
+    #' @param startCol startCol
+    #' @param startRow startRow
+    #' @param array array
+    #' @param xy xy
+    #' @returns The `wbWorkbook` object
+    add_formula = function(
+        sheet,
+        x,
+        startCol = 1,
+        startRow = 1,
+        array    = FALSE,
+        xy       = NULL
+    ) {
+      write_formula(
+        wb       = self,
+        sheet    = sheet,
+        x        = x,
+        startCol = startCol,
+        startRow = startRow,
+        array    = array,
+        xy       = xy
+      )
+      self
     },
 
     # TODO wb_save can be shortened a lot by some formatting and by using a
@@ -1285,16 +1361,16 @@ wbWorkbook <- R6::R6Class(
       }
 
       # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
-      # assured that the order of entries is still valid when we write the file. Functions can change the 
+      # assured that the order of entries is still valid when we write the file. Functions can change the
       # workbook order, therefore we have to make sure that the expected order is written.
       # Othterwise spreadsheet software will complain.
       workbook_openxml281 <- c(
         "fileVersion", "fileSharing", "workbookPr", "alternateContent", "absPath", "workbookProtection",
-        "bookViews", "sheets", "functionGroups", "externalReferences", "definedNames", "calcPr", 
+        "bookViews", "sheets", "functionGroups", "externalReferences", "definedNames", "calcPr",
         "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr", "smartTagTypes", "webPublishing",
-        "fileRecoveryPr", "webPublishObjects", "extLst" 
+        "fileRecoveryPr", "webPublishObjects", "extLst"
       )
-      
+
 
       write_file(
         head = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x15 xr xr6 xr10 xr2" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr6="http://schemas.microsoft.com/office/spreadsheetml/2016/revision6" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2">',
@@ -1334,7 +1410,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description open wbWorkbook in Excel. 
+    #' @description open wbWorkbook in Excel.
     #' @details minor helper wrapping xl_open which does the entire same thing
     #' @return The `wbWorksheetObject`, invisibly
     open = function() {

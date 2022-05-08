@@ -70,6 +70,113 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 }
 
 
+# add data ----------------------------------------------------------------
+
+
+#' Add data to a worksheet
+#'
+#' Add data to worksheet with optional styling.
+#'
+#' @param wb A Workbook object containing a worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x Object to be written. For classes supported look at the examples.
+#' @param startCol A vector specifying the starting column to write to.
+#' @param startRow A vector specifying the starting row to write to.
+#' @param array A bool if the function written is of type array
+#' @param xy An alternative to specifying `startCol` and
+#' `startRow` individually.  A vector of the form
+#' `c(startCol, startRow)`.
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, data.frame row names of x are written.
+#' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
+#' @param name If not NULL, a named region is defined.
+#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+#' @param removeCellStyle keep the cell style?
+#' @export
+#' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+#' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
+#' @rdname write_data
+#' @return A clone of `wb``
+wb_add_data <- function(
+    wb,
+    sheet,
+    x,
+    startCol        = 1,
+    startRow        = 1,
+    array           = FALSE,
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    withFilter      = FALSE,
+    name            = NULL,
+    sep             = ", ",
+    removeCellStyle = TRUE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_data(
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    array           = array,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    withFilter      = withFilter,
+    name            = name,
+    sep             = sep,
+    removeCellStyle = removeCellStyle
+  )
+}
+
+#' Add a character vector as an Excel Formula
+#'
+#' Add a character vector containing Excel formula to a worksheet.
+#'
+#' @details Currently only the English version of functions are supported. Please don't use the local translation.
+#' The examples below show a small list of possible formulas:
+#' \itemize{
+#'     \item{SUM(B2:B4)}
+#'     \item{AVERAGE(B2:B4)}
+#'     \item{MIN(B2:B4)}
+#'     \item{MAX(B2:B4)}
+#'     \item{...}
+#'
+#' }
+#' @param wb A Workbook object containing a worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A character vector.
+#' @param startCol A vector specifying the starting column to write to.
+#' @param startRow A vector specifying the starting row to write to.
+#' @param array A bool if the function written is of type array
+#' @param xy An alternative to specifying `startCol` and
+#' `startRow` individually.  A vector of the form
+#' `c(startCol, startRow)`.
+#' @seealso
+#' @export
+wb_add_formula <- function(
+    wb,
+    sheet,
+    x,
+    startCol = 1,
+    startRow = 1,
+    array    = FALSE,
+    xy       = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$add_formula(
+    sheet    = sheet,
+    x        = x,
+    startCol = startCol,
+    startRow = startRow,
+    array    = array,
+    xy       = xy
+  )
+}
+
+# merge cells -------------------------------------------------------------
+
 #' Worksheet cell merging
 #'
 #' Merge cells within a worksheet
@@ -116,7 +223,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @family workbook wrappers
 NULL
 
-# merge cells -------------------------------------------------------------
+
 
 #' @export
 #' @rdname ws_cell_merge
