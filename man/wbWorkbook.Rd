@@ -4,6 +4,8 @@
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
 \value{
+The integer position of the sheet
+
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
@@ -153,6 +155,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-new}{\code{wbWorkbook$new()}}
 \item \href{#method-append}{\code{wbWorkbook$append()}}
 \item \href{#method-append_sheets}{\code{wbWorkbook$append_sheets()}}
+\item \href{#method-validate_sheet}{\code{wbWorkbook$validate_sheet()}}
 \item \href{#method-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
@@ -270,6 +273,23 @@ Append to \code{self$workbook$sheets} This method is intended for internal use
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{value}}{A value for \code{self$workbook$sheets}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-validate_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-validate_sheet}{}}}
+\subsection{Method \code{validate_sheet()}}{
+validate sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validate_sheet(sheet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{A character sheet name or integer location}
 }
 \if{html}{\out{</div>}}
 }
