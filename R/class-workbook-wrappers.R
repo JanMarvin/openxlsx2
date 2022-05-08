@@ -903,130 +903,82 @@ wb_page_setup <- function(
 
 # protect -----------------------------------------------------------------
 
-#' @name ws_protect
-#' @title Protect a worksheet from modifications
-#' @description Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
+#' Protect a worksheet from modifications
+#'
+#' Protect or unprotect a worksheet from modifications by the user
+#'   in the graphical user interface. Replaces an existing protection.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the worksheet
-#' @param lockSelectingLockedCells Whether selecting locked cells is locked
-#' @param lockSelectingUnlockedCells Whether selecting unlocked cells is locked
-#' @param lockFormattingCells Whether formatting cells is locked
-#' @param lockFormattingColumns Whether formatting columns is locked
-#' @param lockFormattingRows Whether formatting rows is locked
-#' @param lockInsertingColumns Whether inserting columns is locked
-#' @param lockInsertingRows Whether inserting rows is locked
-#' @param lockInsertingHyperlinks Whether inserting hyperlinks is locked
-#' @param lockDeletingColumns Whether deleting columns is locked
-#' @param lockDeletingRows Whether deleting rows is locked
-#' @param lockSorting Whether sorting is locked
-#' @param lockAutoFilter Whether auto-filter is locked
-#' @param lockPivotTables Whether pivot tables are locked
-#' @param lockObjects Whether objects are locked
-#' @param lockScenarios Whether scenarios are locked
+#' @param properties A character vector of properties to lock.  Can be one or
+#'   more of the following: `"selectLockedCells"`, `"selectUnlockedCells"`,
+#'   `"formatCells"`, `"formatColumns"`, `"formatRows"`, `"insertColumns"`,
+#'   `"insertRows"`, `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`,
+#'   `"sort"`, `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
 #' @export
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' write_datatable(wb, 1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
-#' ws_protect(wb, "S1",
+#' wb$protect_worksheet("S1",
 #'   protect = TRUE,
-#'   lockFormattingCells = FALSE, lockFormattingColumns = FALSE,
-#'   lockInsertingColumns = TRUE, lockDeletingColumns = TRUE
+#'   properties = c("formatCells", "formatColumns", "insertColumns", "deleteColumns")
 #' )
 #'
 #' # Remove the protection
-#' ws_protect(wb, "S1", protect = FALSE)
+#' wb$protect_worksheet("S1", protect = FALSE)
 #' \dontrun{
 #' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
-  lockSelectingLockedCells = NULL, lockSelectingUnlockedCells = NULL,
-  lockFormattingCells = NULL, lockFormattingColumns = NULL, lockFormattingRows = NULL,
-  lockInsertingColumns = NULL, lockInsertingRows = NULL, lockInsertingHyperlinks = NULL,
-  lockDeletingColumns = NULL, lockDeletingRows = NULL,
-  lockSorting = NULL, lockAutoFilter = NULL, lockPivotTables = NULL,
-  lockObjects = NULL, lockScenarios = NULL) {
+wb_protect_worksheet <- function(
+    wb,
+    sheet,
+    protect    = TRUE,
+    password   = NULL,
+    properties = NULL
+) {
 
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  props <- c()
-
-  if (!missing(password) && !is.null(password)) {
-    props["password"] <- hashPassword(password)
-  }
-
-  if (!missing(lockSelectingLockedCells) && !is.null(lockSelectingLockedCells)) {
-    props["selectLockedCells"] <- toString(as.numeric(lockSelectingLockedCells))
-  }
-  if (!missing(lockSelectingUnlockedCells) && !is.null(lockSelectingUnlockedCells)) {
-    props["selectUnlockedCells"] <- toString(as.numeric(lockSelectingUnlockedCells))
-  }
-  if (!missing(lockFormattingCells) && !is.null(lockFormattingCells)) {
-    props["formatCells"] <- toString(as.numeric(lockFormattingCells))
-  }
-  if (!missing(lockFormattingColumns) && !is.null(lockFormattingColumns)) {
-    props["formatColumns"] <- toString(as.numeric(lockFormattingColumns))
-  }
-  if (!missing(lockFormattingRows) && !is.null(lockFormattingRows)) {
-    props["formatRows"] <- toString(as.numeric(lockFormattingRows))
-  }
-  if (!missing(lockInsertingColumns) && !is.null(lockInsertingColumns)) {
-    props["insertColumns"] <- toString(as.numeric(lockInsertingColumns))
-  }
-  if (!missing(lockInsertingRows) && !is.null(lockInsertingRows)) {
-    props["insertRows"] <- toString(as.numeric(lockInsertingRows))
-  }
-  if (!missing(lockInsertingHyperlinks) && !is.null(lockInsertingHyperlinks)) {
-    props["insertHyperlinks"] <- toString(as.numeric(lockInsertingHyperlinks))
-  }
-  if (!missing(lockDeletingColumns) && !is.null(lockDeletingColumns)) {
-    props["deleteColumns"] <- toString(as.numeric(lockDeletingColumns))
-  }
-  if (!missing(lockDeletingRows) && !is.null(lockDeletingRows)) {
-    props["deleteRows"] <- toString(as.numeric(lockDeletingRows))
-  }
-  if (!missing(lockSorting) && !is.null(lockSorting)) {
-    props["sort"] <- toString(as.numeric(lockSorting))
-  }
-  if (!missing(lockAutoFilter) && !is.null(lockAutoFilter)) {
-    props["autoFilter"] <- toString(as.numeric(lockAutoFilter))
-  }
-  if (!missing(lockPivotTables) && !is.null(lockPivotTables)) {
-    props["pivotTables"] <- toString(as.numeric(lockPivotTables))
-  }
-  if (!missing(lockObjects) && !is.null(lockObjects)) {
-    props["objects"] <- toString(as.numeric(lockObjects))
-  }
-  if (!missing(lockScenarios) && !is.null(lockScenarios)) {
-    props["scenarios"] <- toString(as.numeric(lockScenarios))
-  }
-
-  if (protect) {
-    props["sheet"] <- "1"
-    wb$worksheets[[sheet]]$sheetProtection <- sprintf("<sheetProtection %s/>", paste(names(props), '="', props, '"', collapse = " ", sep = ""))
-  } else {
-    wb$worksheets[[sheet]]$sheetProtection <- ""
-  }
+  wb$clone(deep = TRUE)$protect_worksheet(
+    sheet      = sheet,
+    protect    = protect,
+    password   = password,
+    properties = properties
+  )
 }
 
 
-#' @name wb_protect
-#' @title Protect a workbook from modifications
-#' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
+#' Protect a workbook from modifications
+#'
+#' Protect or unprotect a workbook from modifications by the user in the
+#' graphical user interface. Replaces an existing protection.
+#'
 #' @param wb A workbook object
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the workbook
 #' @param lockStructure Whether the workbook structure should be locked
-#' @param lockWindows Whether the window position of the spreadsheet should be locked
-#' @param type Lock type, default 1 - xlsx with password. 2 - xlsx recommends read-only. 4 - xlsx enforces read-only. 8 - xlsx is locked for annotation.
-#' @param fileSharing Whether to enable a popup requesting the unlock password is prompted
-#' @param username The username for the fileSharing popup
-#' @param readOnlyRecommended Whether or not a post unlock message appears stating that the workbook is recommended to be opened in readonly mode.
+#' @param lockWindows Whether the window position of the spreadsheet should be
+#'   locked
+#' @param type Lock type (see details)
+#' @param fileSharing Whether to enable a popup requesting the unlock password
+#'   is prompted
+#' @param username The username for the `fileSharing` popup
+#' @param readOnlyRecommended Whether or not a post unlock message appears
+#'   stating that the workbook is recommended to be opened in readonly mode.
+#'
+#' @details
+#' Lock types:
+#'
+#' \describe{
+#'   \item{`1` }{xlsx with password (default)}
+#'   \item{`2` }{xlsx recommends read-only}
+#'   \item{`4` }{xlsx enforces read-only}
+#'   \item{`8` }{xlsx is locked for annotation}
+#' }
+#'
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1041,7 +993,7 @@ ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
 #' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
 #'
-#' wb_protect(
+#' wb <- wb_protect(
 #'   wb,
 #'   protect = TRUE,
 #'   password = "Password",
@@ -1052,9 +1004,28 @@ ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
 #'   readOnlyRecommended = TRUE
 #' )
 #'
-wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
+wb_protect <- function(
+    wb,
+    protect             = TRUE,
+    password            = NULL,
+    lockStructure       = FALSE,
+    lockWindows         = FALSE,
+    type                = c("1", "2", "4", "8"),
+    fileSharing         = FALSE,
+    username            = unname(Sys.info()["user"]),
+    readOnlyRecommended = FALSE
+) {
   assert_workbook(wb)
-  invisible(wb$protect(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
+  wb$clone()$protect(
+    protect             = protect,
+    password            = password,
+    lockStructure       = lockStructure,
+    lockWindows         = lockWindows,
+    type                = type,
+    fileSharing         = fileSharing,
+    username            = username,
+    readOnlyRecommended = readOnlyRecommended
+  )
 }
 
 
@@ -1743,8 +1714,7 @@ wb_add_image <- function(
 #' @export
 wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
   sheet <- wb_validate_sheet(wb, sheet)
-  wb$worksheets[[sheet]] <- wb$worksheets[[sheet]]$clone()$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
-  wb
+  wb$clone()$clean_sheet(sheet = sheet, numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
 }
 
 #' little worksheet opener

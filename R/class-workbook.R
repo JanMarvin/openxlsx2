@@ -1284,9 +1284,21 @@ wbWorkbook <- R6::R6Class(
         workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>" )
       }
 
+      # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
+      # assured that the order of entries is still valid when we write the file. Functions can change the 
+      # workbook order, therefore we have to make sure that the expected order is written.
+      # Othterwise spreadsheet software will complain.
+      workbook_openxml281 <- c(
+        "fileVersion", "fileSharing", "workbookPr", "alternateContent", "absPath", "workbookProtection",
+        "bookViews", "sheets", "functionGroups", "externalReferences", "definedNames", "calcPr", 
+        "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr", "smartTagTypes", "webPublishing",
+        "fileRecoveryPr", "webPublishObjects", "extLst" 
+      )
+      
+
       write_file(
         head = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x15 xr xr6 xr10 xr2" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr6="http://schemas.microsoft.com/office/spreadsheetml/2016/revision6" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2">',
-        body = pxml(workbookXML),
+        body = pxml(workbookXML[workbook_openxml281]),
         tail = "</workbook>",
         fl = file.path(xlDir, "workbook.xml")
       )
@@ -3185,53 +3197,100 @@ wbWorkbook <- R6::R6Class(
     #' @param readOnlyRecommended readOnlyRecommended
     #' @return The `wbWorkbook` object, invisibly
     protect = function(
-      protect = TRUE,
-      lockStructure = FALSE,
-      lockWindows = FALSE,
-      password = NULL,
-      type = NULL,
-      fileSharing = FALSE,
-      username = unname(Sys.info()["user"]),
+      protect             = TRUE,
+      password            = NULL,
+      lockStructure       = FALSE,
+      lockWindows         = FALSE,
+      type                = c("1", "2", "4", "8"),
+      fileSharing         = FALSE,
+      username            = unname(Sys.info()["user"]),
       readOnlyRecommended = FALSE
     ) {
 
-      attr <- vector("character", 3L)
-      names(attr) <- c("workbookPassword", "lockStructure", "lockWindows")
-
-      if (!is.null(password)) {
-        attr["workbookPassword"] <- hashPassword(password)
-      }
-      if (!missing(lockStructure) && !is.null(lockStructure)) {
-        attr["lockStructure"] <- toString(as.numeric(lockStructure))
-      }
-      if (!missing(lockWindows) && !is.null(lockWindows)) {
-        attr["lockWindows"] <- toString(as.numeric(lockWindows))
+      if (!protect) {
+        self$workbook$workbookProtection <- NULL
+        return(self)
       }
 
-      # TODO: Shall we parse the existing protection settings and preserve all unchanged attributes?
-      if (protect) {
-        self$workbook$workbookProtection <-
-          xml_node_create("workbookProtection", xml_attributes = attr[attr != ""])
+      # match.arg() doesn't handle numbers too well
+      type <- if (!is.character(type)) as.character(type)
+      password <- if (is.null(password)) "" else hashPassword(password)
 
-        # TODO: use xml_node_create
-        if (fileSharing) {
-          if (type == 2L) readOnlyRecommended <- TRUE
-          fileSharingPassword <- function(x, username, readOnlyRecommended) {
-            readonly <- ifelse(readOnlyRecommended, 'readOnlyRecommended="1"', '')
-            sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x)
-          }
+      # TODO: Shall we parse the existing protection settings and preserve all
+      # unchanged attributes?
 
-          self$workbook$fileSharing <- fileSharingPassword(attr["workbookPassword"], username, readOnlyRecommended)
-        }
-
-        if (!is.null(type) | !is.null(password))
-          self$workbook$apps <- sprintf("<DocSecurity>%i</DocSecurity>", type)
-
-      } else {
-        self$workbook$workbookProtection <- ""
+      if (fileSharing) {
+        self$workbook$fileSharing <- xml_node_create(
+          "fileSharing",
+          xml_attributes = c(
+            userName = username,
+            readOnlyRecommended = if (readOnlyRecommended | type == "2") "1",
+            reservationPassword = password
+          )
+        )
       }
 
-      invisible(self)
+      self$workbook$workbookProtection <- xml_node_create(
+        "workbookProtection",
+        xml_attributes = c(
+          hashPassword = password,
+          lockStructure = toString(as.numeric(lockStructure)),
+          lockWindows = toString(as.numeric(lockWindows))
+        )
+      )
+
+      self$workbook$apps <- xml_node_create("DocSecurity", type)
+      self
+    },
+
+    #' @description protect worksheet
+    #' @param sheet sheet
+    #' @param protect protect
+    #' @param password password
+    #' @param properties A character vector of properties to lock.  Can be one
+    #'   or more of the following: `"selectLockedCells"`,
+    #'   `"selectUnlockedCells"`, `"formatCells"`, `"formatColumns"`,
+    #'   `"formatRows"`, `"insertColumns"`, `"insertRows"`,
+    #'   `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`, `"sort"`,
+    #'   `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
+    #' @returns The `wbWorkbook` object
+    protect_worksheet = function(
+        sheet,
+        protect    = TRUE,
+        password   = NULL,
+        properties = NULL
+    ) {
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (!protect) {
+        # initializes as character()
+        self$worksheets[[sheet]]$sheetProtection <- character()
+        return(self)
+      }
+
+      all_props <- worksheet_lock_properties()
+
+      if (!is.null(properties)) {
+        # ensure only valid properties are listed
+        properties <- match.arg(properties, all_props, several.ok = TRUE)
+      }
+
+      properties <- as.character(as.numeric(all_props %in% properties))
+      names(properties) <- all_props
+
+      if (!is.null(password))
+        properties <- c(properties, password = hashPassword(password))
+
+      self$worksheets[[sheet]]$sheetProtection <- xml_node_create(
+        "sheetProtection",
+        xml_attributes = c(
+          sheet = "1",
+          properties[properties != "0"]
+        )
+      )
+
+      self
     },
 
 
@@ -3858,6 +3917,28 @@ wbWorkbook <- R6::R6Class(
       sheet <- wb_validate_sheet(self, sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
       self
+    },
+
+    #' @description clean sheet (remove all values)
+    #' @param sheet sheet
+    #' @param numbers remove all numbers
+    #' @param characters remove all characters
+    #' @param styles remove all styles
+    #' @param merged_cells remove all merged_cells
+    #' @return The `wbWorksheetObject`, invisibly
+    clean_sheet = function(
+      sheet,
+      numbers = TRUE,
+      characters = TRUE,
+      styles = TRUE,
+      merged_cells = TRUE
+    ) {
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+
+      invisible(self)
     }
   ),
 
@@ -4591,4 +4672,26 @@ wb_get_sheet_name = function(wb, index = NULL) {
   }
 
   wb$sheet_names[index]
+}
+
+worksheet_lock_properties <- function() {
+  # provides a reference for the lock properties
+  c(
+    "selectLockedCells",
+    "selectUnlockedCells",
+    "formatCells",
+    "formatColumns",
+    "formatRows",
+    "insertColumns",
+    "insertRows",
+    "insertHyperlinks",
+    "deleteColumns",
+    "deleteRows",
+    "sort",
+    "autoFilter",
+    "pivotTables",
+    "objects",
+    "scenarios",
+    NULL
+  )
 }
