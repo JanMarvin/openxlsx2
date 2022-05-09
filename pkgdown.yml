@@ -1,0 +1,8 @@
+pandoc: 2.7.3
+pkgdown: 2.0.3
+pkgdown_sha: ~
+articles:
+  openxlsx2_basic_manual: openxlsx2_basic_manual.html
+  openxlsx2_style_manual: openxlsx2_style_manual.html
+last_built: 2022-05-09T07:14Z
+
