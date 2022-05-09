@@ -30,13 +30,13 @@ wb_to_df(wb)
 wb_save(wb, "new_wb.xlsx")
 
 ## or create one yourself
-wb <- wb_workbook()
-# add a worksheet
-wb$add_worksheet("sheet")
-# add some data
-write_data(df, "sheet")
-# open it in your default spreadsheet software
-wb_open(wb)
+wb <- wb_workbook()$
+  # add a worksheet
+  add_worksheet("sheet")$
+  # add some data
+  add_data("sheet", cars)$
+  # open it in your default spreadsheet software
+  open()
 ```
 
 
