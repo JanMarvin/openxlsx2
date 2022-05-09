@@ -29,10 +29,10 @@ wb$add_worksheet("Sheet 1", gridLines = FALSE)
 wb$add_data_table(sheet = 1, x = iris)
 
 wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
-wb$add_data((sheet = 2, x = mtcars)
+wb$add_data(sheet = 2, x = mtcars)
 
 wb$add_worksheet("Sheet 3", gridLines = FALSE)
-wb$add_data((sheet = 3, x = Formaldehyde)
+wb$add_data(sheet = 3, x = Formaldehyde)
 
 wb_get_order(wb)
 names(wb)

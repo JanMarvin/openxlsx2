@@ -8,8 +8,8 @@
 #' \itemize{
 #'   \item{[wb_workbook()]}
 #'   \item{[wb_add_worksheet()]}
-#'   \item{[write_data()]}
-#'   \item{[freezePane]}
+#'   \item{[wb_add_data()]}
+#'   \item{[wb_freeze_pane]}
 #'   \item{[wb_save()]}
 #' }
 #'

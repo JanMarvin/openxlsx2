@@ -97,6 +97,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
 #' @rdname write_data
+#' @family workbook wrappers
 #' @return A clone of `wb``
 wb_add_data <- function(
     wb,
@@ -168,6 +169,7 @@ wb_add_data <- function(
 #' accounting, hyperlinks, percentages respectively. The string `"_openxlsx_NA"`
 #' is reserved for `openxlsx2`. If the data frame contains this string, the
 #' output will be broken.
+#' @family workbook wrappers
 #' @export
 wb_add_data_table <- function(
     wb,
@@ -232,7 +234,7 @@ wb_add_data_table <- function(
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
-#' @seealso
+#' @family workbook wrappers
 #' @export
 wb_add_formula <- function(
     wb,
@@ -474,7 +476,7 @@ wb_clone_worksheet <- function(wb, old, new) {
 }
 
 
-#' @name freezePane
+#' @name wb_freeze_pane
 #' @title Freeze a worksheet pane
 #' @description Freeze a worksheet pane
 #' @param wb A workbook object
@@ -1258,10 +1260,10 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' wb$add_data_table(sheet = 1, x = iris)
 #'
 #' wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
-#' wb$add_data((sheet = 2, x = mtcars)
+#' wb$add_data(sheet = 2, x = mtcars)
 #'
 #' wb$add_worksheet("Sheet 3", gridLines = FALSE)
-#' wb$add_data((sheet = 3, x = Formaldehyde)
+#' wb$add_data(sheet = 3, x = Formaldehyde)
 #'
 #' wb_get_order(wb)
 #' names(wb)

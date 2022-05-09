@@ -1,4 +1,5 @@
 test_that("write_datatable over tables", {
+
   overwrite_table_error <- "Cannot overwrite existing table with another table"
   df1 <- data.frame("X" = 1:10)
 
@@ -62,31 +63,31 @@ test_that("write_data over tables", {
 
   ## Anywhere on row 5 is fine
   for (i in 1:10) {
-    wb$add_data((sheet = 1, x = head(iris), startRow = 5, startCol = i)
+    wb$add_data(sheet = 1, x = head(iris), startRow = 5, startCol = i)
   }
 
   ## Anywhere on col i is fine
   for (i in 1:10) {
-    wb$add_data((sheet = 1, x = head(iris), startRow = i, startCol = "i")
+    wb$add_data(sheet = 1, x = head(iris), startRow = i, startCol = "i")
   }
 
 
 
   ## Now errors on headers
-  expect_error(wb$add_data((sheet = 1, x = head(iris), startCol = 4, startRow = 4), regexp = overwrite_table_error)
-  wb$add_data((sheet = 1, x = head(iris), startCol = 4, startRow = 5)
-  wb$add_data((sheet = 1, x = head(iris)[1:3])
-  wb$add_data((sheet = 1, x = head(iris, 2), startCol = 4)
-  wb$add_data((sheet = 1, x = head(iris, 2), startCol = 4, colNames = FALSE)
+  expect_error(wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 4), regexp = overwrite_table_error)
+  wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 5)
+  wb$add_data(sheet = 1, x = head(iris)[1:3])
+  wb$add_data(sheet = 1, x = head(iris, 2), startCol = 4)
+  wb$add_data(sheet = 1, x = head(iris, 2), startCol = 4, colNames = FALSE)
 
 
   ## Example of how this should be used
   wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 30)
-  wb$add_data((sheet = 1, x = head(iris), startCol = 4, startRow = 31, colNames = FALSE)
+  wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 31, colNames = FALSE)
 
   wb$add_data_table(sheet = 1, x = head(iris), startCol = 10, startRow = 30)
-  wb$add_data((sheet = 1, x = tail(iris), startCol = 10, startRow = 31, colNames = FALSE)
+  wb$add_data(sheet = 1, x = tail(iris), startCol = 10, startRow = 31, colNames = FALSE)
 
   wb$add_data_table(sheet = 1, x = head(iris)[, 1:3], startCol = 1, startRow = 30)
-  wb$add_data((sheet = 1, x = tail(iris), startCol = 1, startRow = 31, colNames = FALSE)
+  wb$add_data(sheet = 1, x = tail(iris), startCol = 1, startRow = 31, colNames = FALSE)
 })
