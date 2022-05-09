@@ -5,7 +5,7 @@ openxlsx2
 
 This R package is a modern reinterpretation of the widely used popular `openxlsx` package. Similar to its predecessor, it simplifies the creation of xlsx files by providing a clean interface for writing, designing and editing worksheets. Based on a powerful XML library and focusing on modern programming flows in pipes or chains, `openxlsx2` allows to break many new ground.
 
-Even though the project is already well progressed and supports most of the features known and appreciated from the predecessor, there may still be open gaps in one or the other place. A quick warning: Until the stable version 1.0 there may still be some changes to the API.
+Even though the project is already well progressed and supports most of the features known and appreciated from the predecessor, there may still be open gaps in one or the other place. A quick warning: Until the stable version 1.0 there ~~may~~ will still be some changes to the API.
 
 ### Introduction
 Many examples are in our manual pages and in our vignettes. You can find them under:
