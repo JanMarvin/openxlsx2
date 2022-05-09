@@ -27,7 +27,7 @@ wb <- wb_add_worksheet(wb, "test")
 # add some dummy data to the worksheet
 mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
 colnames(mat) <- make.names(seq_len(ncol(mat)))
-write_data(wb, "test", mat, colNames = TRUE)
+wb$add_data("test", mat, colNames = TRUE)
 
 # create a border style and assign it to the workbook
 black <- c(rgb="FF000000")
@@ -119,8 +119,8 @@ class(df$hLink) <- "hyperlink"
 class(df$Percentage) <- c(class(df$Percentage), "percentage")
 class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 
-write_data(wb, "S1", x = df, startRow = 4, rowNames = FALSE)
-write_datatable(wb, "S2", x = df, startRow = 4, rowNames = FALSE)
+wb$add_data("S1", x = df, startRow = 4, rowNames = FALSE)
+wb$add_data_table("S2", x = df, startRow = 4, rowNames = FALSE)
 ```
 
 
@@ -152,7 +152,7 @@ class(df$hLink) <- "hyperlink"
 class(df$Percentage) <- c(class(df$Percentage), "percentage")
 class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 
-write_data(wb, "test", df)
+wb$add_data("test", df)
 ```
 
 ```{r include=FALSE}
@@ -170,7 +170,7 @@ wb <- wb_add_worksheet(wb, "test")
 mat <- matrix(1:4, ncol = 2, nrow = 2)
 
 colnames(mat) <- make.names(seq_len(ncol(mat)))
-write_data(wb, "test", mat, colNames = TRUE, startCol = 2, startRow = 2)
+wb$add_data("test", mat, colNames = TRUE, startCol = 2, startRow = 2)
 
 # create a border style and assign it to the workbook
 black <- c(rgb="FF000000")
@@ -210,7 +210,7 @@ set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
 sheet <- "mtcars"
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb, sheet)
-write_data(wb, sheet, mtcars, rowNames = TRUE)
+wb$add_data(sheet, mtcars, rowNames = TRUE)
 
 cols <- 1:12
 wb <- wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")

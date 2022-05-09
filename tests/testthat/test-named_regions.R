@@ -6,7 +6,7 @@ test_that("Maintaining Named Regions on Load", {
   wb$add_worksheet("Sheet 2")
 
   ## specify region
-  write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
+  wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
   wb$add_named_region(
     sheet = 1,
     name = "iris",
@@ -15,10 +15,10 @@ test_that("Maintaining Named Regions on Load", {
   )
 
   ## using write_data 'name' argument
-  write_data(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
+  wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
 
   ## Named region size 1
-  write_data(wb, sheet = 2, x = 99, name = "region1", startCol = 3, startRow = 3)
+  wb$add_data(sheet = 2, x = 99, name = "region1", startCol = 3, startRow = 3)
 
   ## save file for testing
   out_file <- temp_xlsx()
@@ -141,7 +141,7 @@ test_that("Missing rows in named regions", {
   wb$add_worksheet("Sheet 1")
 
   ## create region
-  write_data(wb, sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
+  wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
   delete_data(wb, sheet = 1, cols = 1:2, rows = c(6, 6))
 
   wb$add_named_region(
@@ -214,7 +214,7 @@ test_that("Missing columns in named regions", {
   wb$add_worksheet("Sheet 1")
 
   ## create region
-  write_data(wb, sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
+  wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
   delete_data(wb, sheet = 1, cols = 2, rows = 1:12, gridExpand = TRUE)
 
   wb$add_named_region(
@@ -291,11 +291,11 @@ test_that("Matching Substrings breaks reading named regions", {
   t1$Species <- as.character(t1$Species)
   t2 <- head(mtcars)
 
-  write_data(wb, sheet = "table", x = t1, name = "t", startCol = 3, startRow = 12)
-  write_data(wb, sheet = "table2", x = t2, name = "t2", startCol = 5, startRow = 24, rowNames = TRUE)
+  wb$add_data(sheet = "table", x = t1, name = "t", startCol = 3, startRow = 12)
+  wb$add_data(sheet = "table2", x = t2, name = "t2", startCol = 5, startRow = 24, rowNames = TRUE)
 
-  write_data(wb, sheet = "table", x = head(t1, 3), name = "t1", startCol = 9, startRow = 3)
-  write_data(wb, sheet = "table2", x = head(t2, 3), name = "t22", startCol = 15, startRow = 12, rowNames = TRUE)
+  wb$add_data(sheet = "table", x = head(t1, 3), name = "t1", startCol = 9, startRow = 3)
+  wb$add_data(sheet = "table2", x = head(t2, 3), name = "t22", startCol = 15, startRow = 12, rowNames = TRUE)
 
   wb_save(wb, temp_file)
 
@@ -356,7 +356,7 @@ test_that("Overwrite and delete named regions", {
   expect_null(get_named_regions(wb))
 
   ## create region
-  write_data(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris")
+  wb$add_data(1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris")
   exp <- data.frame(
     name   = "iris",
     value  = "'Sheet 1'!A1:E12",
@@ -369,7 +369,7 @@ test_that("Overwrite and delete named regions", {
   expect_identical(get_named_regions(wb), exp)
 
   # no overwrite
-  expect_error(write_data(wb, 1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris"))
+  expect_error(wb$add_data(1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris"))
 
   expect_error(wb$add_named_region(1, name = "iris", rows = 1:5, cols = 1:2))
 

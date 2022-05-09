@@ -20,7 +20,7 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 
 ## specify region
-write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
+wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
 wb_add_named_region(
   wb = wb,
   sheet = 1,
@@ -31,7 +31,7 @@ wb_add_named_region(
 
 
 ## using write_data 'name' argument to create a named region
-write_data(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
+wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
 \dontrun{
 out_file <- tempfile(fileext = ".xlsx")
 wb_save(wb, out_file, overwrite = TRUE)

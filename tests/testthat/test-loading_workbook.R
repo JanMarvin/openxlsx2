@@ -942,8 +942,8 @@ test_that("test headerFooter", {
     firstHeader = firstHeader,
     firstFooter = firstFooter
   )
-  write_data(wb, sheet = 1, 1:400)
-  write_data(wb, sheet = 2, 1:400)
+  wb$add_data(sheet = 1, 1:400)
+  wb$add_data(sheet = 2, 1:400)
 
   tmp1 <- temp_xlsx()
   # Save workbook

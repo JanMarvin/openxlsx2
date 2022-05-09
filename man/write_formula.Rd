@@ -52,7 +52,7 @@ The examples below show a small list of possible formulas:
 
 wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
-write_data(wb, "Sheet 1", x = iris)
+wb$add_data("Sheet 1", x = iris)
 
 ## SEE int2col() to convert int to Excel column label
 
@@ -77,7 +77,7 @@ class(df$z) <- c(class(df$z), "formula")
 class(df$z2) <- c(class(df$z2), "formula")
 
 wb$add_worksheet("Sheet 2")
-write_data(wb, sheet = 2, x = df)
+wb$add_data(sheet = 2, x = df)
 
 
 
@@ -86,7 +86,7 @@ write_data(wb, sheet = 2, x = df)
 v2 <- c("SUM(A2:A4)", "AVERAGE(B2:B4)", "MEDIAN(C2:C4)")
 class(v2) <- c(class(v2), "formula")
 
-write_data(wb, sheet = 2, x = v2, startCol = 10, startRow = 2)
+wb$add_data(sheet = 2, x = v2, startCol = 10, startRow = 2)
 
 ## Save workbook
 \dontrun{
@@ -113,7 +113,7 @@ df <- data.frame(C = rnorm(10), D = rnorm(10))
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb, "df")
 
-write_data(wb, "df", df, startCol = "C")
+wb$add_data("df", df, startCol = "C")
 
 write_formula(wb, "df", startCol = "E", startRow = "2",
              x = "SUM(C2:C11*D2:D11)",

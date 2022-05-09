@@ -12,6 +12,10 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -156,6 +160,9 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
+\item \href{#method-add_data}{\code{wbWorkbook$add_data()}}
+\item \href{#method-add_data_table}{\code{wbWorkbook$add_data_table()}}
+\item \href{#method-add_formula}{\code{wbWorkbook$add_formula()}}
 \item \href{#method-save}{\code{wbWorkbook$save()}}
 \item \href{#method-open}{\code{wbWorkbook$open()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
@@ -392,6 +399,158 @@ Add a chart sheet to the workbook
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_data"></a>}}
+\if{latex}{\out{\hypertarget{method-add_data}{}}}
+\subsection{Method \code{add_data()}}{
+add data
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  array = FALSE,
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  withFilter = FALSE,
+  name = NULL,
+  sep = ", ",
+  removeCellStyle = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{array}}{array}
+
+\item{\code{xy}}{xy}
+
+\item{\code{colNames}}{colNames}
+
+\item{\code{rowNames}}{rowNames}
+
+\item{\code{withFilter}}{withFilter}
+
+\item{\code{name}}{name}
+
+\item{\code{sep}}{sep}
+
+\item{\code{removeCellStyle}}{removeCellStyle}
+
+\item{\code{return}}{The \code{wbWorkbook} object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_data_table"></a>}}
+\if{latex}{\out{\hypertarget{method-add_data_table}{}}}
+\subsection{Method \code{add_data_table()}}{
+add a data table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  tableStyle = "TableStyleLight9",
+  tableName = NULL,
+  withFilter = TRUE,
+  sep = ", ",
+  stack = FALSE,
+  firstColumn = FALSE,
+  lastColumn = FALSE,
+  bandedRows = TRUE,
+  bandedCols = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{xy}}{xy}
+
+\item{\code{colNames}}{colNames}
+
+\item{\code{rowNames}}{rowNames}
+
+\item{\code{tableStyle}}{tableStyle}
+
+\item{\code{tableName}}{tableName}
+
+\item{\code{withFilter}}{withFilter}
+
+\item{\code{sep}}{sep}
+
+\item{\code{stack}}{stack}
+
+\item{\code{firstColumn}}{firstColumn}
+
+\item{\code{lastColumn}}{lastColumn}
+
+\item{\code{bandedRows}}{bandedRows}
+
+\item{\code{bandedCols}}{bandedCols}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_formula"></a>}}
+\if{latex}{\out{\hypertarget{method-add_formula}{}}}
+\subsection{Method \code{add_formula()}}{
+add formula
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  array = FALSE,
+  xy = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{array}}{array}
+
+\item{\code{xy}}{xy}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

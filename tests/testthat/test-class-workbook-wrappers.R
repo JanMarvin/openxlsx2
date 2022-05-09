@@ -180,8 +180,8 @@ test_that("wb_add_plot() is a wrapper", {
 test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
   wb <- wb_workbook()
   wb$add_worksheet(sheet = "Sheet 1")
-  write_datatable(wb, sheet = "Sheet 1", x = iris)
-  write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = "Sheet 1", x = iris)
+  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
   expect_wrapper("get_tables", wb = wb, params = list(sheet = 1))
   expect_wrapper("remove_tables", wb = wb, params = list(sheet = 1, table = "mtcars"))
 })
@@ -267,7 +267,7 @@ test_that("wb_clean_sheet() is a wrapper", {
   expect_wrapper("clean_sheet", wb = wb, params = params)
 })
 
-# wb_open() --------------------------------------------------------
+# wb_open() ---------------------------------------------------------------
 
 test_that("wb_open() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
@@ -276,4 +276,21 @@ test_that("wb_open() is a wrapper", {
     "wbWorkbook$open$path vs wb_open$path",
     fixed = TRUE
   )
+})
+
+# wb_add_data(), wb_add_data_table(), wb_add_formula() --------------------
+
+test_that("wb_add_data() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  expect_wrapper("add_data",       wb = wb, params = list(sheet = 1, x = data.frame(x = 1)))
+})
+
+test_that("wb_add_data_table() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  expect_wrapper("add_data_table", wb = wb, params = list(sheet = 1, x = data.frame(x = 1)))
+})
+
+test_that("wb_add_formula() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
 })

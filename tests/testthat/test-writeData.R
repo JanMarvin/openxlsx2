@@ -15,7 +15,7 @@ test_that("write_formula", {
   # write data add array formula later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
-  write_data(wb, "df", df, startCol = "C")
+  wb$add_data("df", df, startCol = "C")
   write_formula(wb, "df", startCol = "E", startRow = "2",
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
@@ -32,7 +32,7 @@ test_that("write_formula", {
   write_formula(wb, "df", startCol = "E", startRow = "2",
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
-  write_data(wb, "df", df, startCol = "C")
+  wb$add_data("df", df, startCol = "C")
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E",]
@@ -46,8 +46,8 @@ test_that("silent with numfmt option", {
   wb$add_worksheet("S1")
   wb$add_worksheet("S2")
 
-  write_datatable(wb, "S1", x = iris)
-  write_datatable(wb, "S2",
+  wb$add_data_table("S1", x = iris)
+  wb$add_data_table("S2",
                  x = mtcars, xy = c("B", 3), rowNames = TRUE,
                  tableStyle = "TableStyleLight9"
   )
