@@ -11,7 +11,6 @@
 #' @import R6
 #' @importFrom grDevices bmp col2rgb colours dev.copy dev.list dev.off jpeg png rgb tiff
 #' @importFrom magrittr %>%
-#' @importFrom stats na.omit pchisq
 #' @importFrom stringi stri_c stri_conv stri_isempty stri_join stri_match stri_match_all_regex stri_replace_all_fixed stri_split_fixed stri_split_regex stri_sub
 #' @importFrom utils download.file head menu read.csv unzip
 #' @importFrom zip zip

@@ -220,7 +220,7 @@ write_datatable <- function(wb, sheet, x,
     tableStyle <- grep(paste0("^", tableStyle, "$"), validNames, ignore.case = TRUE, value = TRUE)
   }
 
-  tableStyle <- na.omit(tableStyle)
+  tableStyle <- tableStyle[!is.na(tableStyle)]
   if (length(tableStyle) == 0) {
     stop("Unknown table style.")
   }

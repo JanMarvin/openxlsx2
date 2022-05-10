@@ -22,7 +22,6 @@ Imports:
     Rcpp,
     grDevices,
     magrittr,
-    stats,
     stringi,
     utils,
     zip
