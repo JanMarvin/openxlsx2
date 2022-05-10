@@ -19,3 +19,4 @@ cran-comments.md
 ^.covrignore$
 ^doc$
 ^Meta$
+^README\.Rmd$
