@@ -184,7 +184,22 @@ write_data <- function(wb,
   } ## this will go to coerce.default and rowNames will be ignored
 
   ## Coerce to data.frame
-  x <- openxlsx2Coerce(x = x, rowNames = rowNames)
+  if (inherits(x, "hyperlink")) { 
+    ## vector of hyperlinks
+    class(x) <- c("character", "hyperlink")
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+  } else if (!inherits(x, "data.frame")) {
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+  } else {
+    ## cbind rownames to x
+    if (rowNames) {
+      x <- cbind(
+        data.frame("row names" = rownames(x), stringsAsFactors = FALSE),
+        as.data.frame(x, stringsAsFactors = FALSE)
+      )
+      names(x)[[1]] <- ""
+    }
+  }
 
   nCol <- ncol(x)
   nRow <- nrow(x)
