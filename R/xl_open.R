@@ -64,7 +64,7 @@ xl_open.default <- function(x, file, interactive = NA) {
     return()
   }
 
-  # no cov start
+  # nocov start
 
   ## execution should be in background in order to not block R
   ## interpreter
