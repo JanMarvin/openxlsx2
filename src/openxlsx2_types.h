@@ -10,17 +10,20 @@
 const std::string openxlsxNA = "_openxlsx_NA_";
 
 typedef struct {
-  std::string row_r ;
-  std::string c_r;
-  std::string c_s;
-  std::string c_t;
-  std::string v;
-  std::string f;
+  std::string row_r;
+  std::string c_r;   // CellReference
+  std::string c_s;   // StyleIndex
+  std::string c_t;   // DataType
+  std::string c_cm;  // CellMetaIndex
+  std::string c_ph;  // ShowPhonetic
+  std::string c_vm;  // ValueMetaIndex
+  std::string v;     // CellValue
+  std::string f;     // CellFormula
   std::string f_t;
   std::string f_ref;
   std::string f_ca;
   std::string f_si;
-  std::string is;
+  std::string is;    // inlineStr
 } xml_col;
 
 
@@ -70,6 +73,9 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   Rcpp::CharacterVector c_r(no_init(n));       // col name: A, B, ..., ZZ
   Rcpp::CharacterVector c_s(no_init(n));       // cell style
   Rcpp::CharacterVector c_t(no_init(n));       // cell type
+  Rcpp::CharacterVector c_cm(no_init(n));
+  Rcpp::CharacterVector c_ph(no_init(n));
+  Rcpp::CharacterVector c_vm(no_init(n));
 
   Rcpp::CharacterVector v(no_init(n));         // <v> tag
   Rcpp::CharacterVector f(no_init(n));         // <f> tag
@@ -85,6 +91,9 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
     c_r[i]   = x[i].c_r;
     c_s[i]   = x[i].c_s;
     c_t[i]   = x[i].c_t;
+    c_cm[i]  = x[i].c_cm;
+    c_ph[i]  = x[i].c_ph;
+    c_vm[i]  = x[i].c_vm;
     v[i]     = x[i].v;
     f[i]     = x[i].f;
     f_t[i]   = x[i].f_t;
@@ -100,6 +109,9 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
       Rcpp::Named("c_r")   = c_r,
       Rcpp::Named("c_s")   = c_s,
       Rcpp::Named("c_t")   = c_t,
+      Rcpp::Named("c_cm")  = c_cm,
+      Rcpp::Named("c_ph")  = c_ph,
+      Rcpp::Named("c_vm")  = c_vm,
       Rcpp::Named("v")     = v,
       Rcpp::Named("f")     = f,
       Rcpp::Named("f_t")   = f_t,

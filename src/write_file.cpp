@@ -56,6 +56,9 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   Rcpp::CharacterVector cc_v     = cc["v"];
   Rcpp::CharacterVector cc_c_t   = cc["c_t"];
   Rcpp::CharacterVector cc_c_s   = cc["c_s"];
+  Rcpp::CharacterVector cc_c_cm  = cc["c_cm"];
+  Rcpp::CharacterVector cc_c_ph  = cc["c_ph"];
+  Rcpp::CharacterVector cc_c_vm  = cc["c_vm"];
   Rcpp::CharacterVector cc_f     = cc["f"];
   Rcpp::CharacterVector cc_f_t   = cc["f_t"];
   Rcpp::CharacterVector cc_f_ref = cc["f_ref"];
@@ -114,6 +117,18 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
     // assign type if not <v> aka numeric
     if (to_string(cc_c_t[i]).compare(openxlsxNA.c_str()) != 0)
       cell.append_attribute("t") = to_string(cc_c_t[i]).c_str();
+
+    // CellMetaIndex: suppress curly brackets in spreadsheet software
+    if (to_string(cc_c_cm[i]).compare(openxlsxNA.c_str()) != 0)
+      cell.append_attribute("cm") = to_string(cc_c_cm[i]).c_str();
+
+    // phonetics spelling
+    if (to_string(cc_c_ph[i]).compare(openxlsxNA.c_str()) != 0)
+      cell.append_attribute("ph") = to_string(cc_c_ph[i]).c_str();
+
+    // suppress curly brackets in spreadsheet software
+    if (to_string(cc_c_vm[i]).compare(openxlsxNA.c_str()) != 0)
+      cell.append_attribute("vm") = to_string(cc_c_vm[i]).c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
 

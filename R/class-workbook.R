@@ -66,6 +66,9 @@ wbWorkbook <- R6::R6Class(
     #' @field media media
     media = NULL,
 
+    #' @field metadata metadata
+    metadata = NULL,
+
     #' @field persons persons
     persons = NULL,
 
@@ -209,6 +212,7 @@ wbWorkbook <- R6::R6Class(
       self$headFoot <- NULL
 
       self$media <- list()
+      self$metadata <- NULL
 
       self$persons <- NULL
 
@@ -1407,6 +1411,16 @@ wbWorkbook <- R6::R6Class(
           body = pxml(self$calcChain),
           tail = "",
           fl = file.path(xlDir, "calcChain.xml")
+        )
+      }
+
+      # write metadata file. required if cm attribut is set.
+      if (length(self$metadata)) {
+        write_file(
+          head = '',
+          body = self$metadata,
+          tail = '',
+          fl = file.path(xlDir, "metadata.xml")
         )
       }
 
@@ -4318,7 +4332,7 @@ wbWorkbook <- R6::R6Class(
             ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])),]
 
             cc_rows <- ws$sheet_data$row_attr$r
-            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
+            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
 
             ws$sheet_data$cc_out <- cc_out[order(as.integer(cc_out[,"row_r"]), col2int(cc_out[, "c_r"])),]
           } else {
@@ -4636,6 +4650,15 @@ wbWorkbook <- R6::R6Class(
         )
 
       self$append("workbook.xml.rels", c(pivotNode, slicerNode))
+
+      if (length(self$metadata)) {
+        self$append("workbook.xml.rels",
+          sprintf(
+            '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sheetMetadata" Target="metadata.xml"/>',
+            1L + length(self$workbook.xml.rels)
+          )
+        )
+      }
 
       if (!is.null(self$vbaProject)) {
         self$append("workbook.xml.rels",

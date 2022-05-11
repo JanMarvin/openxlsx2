@@ -6,8 +6,10 @@ test_that("write_formula", {
   # array formula for a single cell
   exp <- structure(
     list(row_r = "2", c_r = "E", c_s = "_openxlsx_NA_",
-         c_t = "_openxlsx_NA_", v = "_openxlsx_NA_",
-         f = "SUM(C2:C11*D2:D11)",  f_t = "array", f_ref = "E2:E2",
+         c_t = "_openxlsx_NA_", c_cm = "_openxlsx_NA_",
+         c_ph = "_openxlsx_NA_", c_vm = "_openxlsx_NA_",
+         v = "_openxlsx_NA_", f = "SUM(C2:C11*D2:D11)",
+         f_t = "array", f_ref = "E2:E2",
          f_ca = "_openxlsx_NA_", f_si = "_openxlsx_NA_",
          is = "_openxlsx_NA_", typ = NA_character_, r = "E2"),
     row.names = "3", class = "data.frame")
@@ -22,7 +24,7 @@ test_that("write_formula", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E",]
-  expect_equal(exp[1:11], got[1:11])
+  expect_equal(exp[1:16], got[1:16])
 
 
   rownames(exp) <- "31"
