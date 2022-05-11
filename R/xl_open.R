@@ -3,8 +3,8 @@
 #' @description This function tries to open a Microsoft Excel (xls/xlsx) file or
 #'   an openxlsx Workbook with the proper application, in a portable manner.
 #'
-#'   In Windows it uses [base::shell.exec()] to determine the appropriate
-#'   program.
+#'   In Windows it uses `base::shell.exec()` (Windwos only function) to
+#'   determine the appropriate program.
 #'
 #'   In Mac (c) it uses system default handlers, given the file type.
 #'
