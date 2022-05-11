@@ -17,6 +17,7 @@
 #'   Sheets (`calligrasheets`).
 #'
 #' @param x A path to the Excel (xls/xlsx) file or Workbook object.
+#' @param file Deprecated
 #' @param interactive If `FALSE` will throw a warning and not open the path.
 #'   This can be manually set to `TRUE`, otherwise when `NA` (defualt) uses the
 #'   value returned from [base::interactive()]
