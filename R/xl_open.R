@@ -16,7 +16,7 @@
 #'   Libreoffice/Openoffice (`soffice` bin), Gnumeric (`gnumeric`) and Calligra
 #'   Sheets (`calligrasheets`).
 #'
-#' @param file path to the Excel (xls/xlsx) file or Workbook object.
+#' @param x A path to the Excel (xls/xlsx) file or Workbook object.
 #' @param interactive If `FALSE` will throw a warning and not open the path.
 #'   This can be manually set to `TRUE`, otherwise when `NA` (defualt) uses the
 #'   value returned from [base::interactive()]
@@ -32,34 +32,42 @@
 #' wb$add_worksheet("Cars")
 #' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #' xl_open(wb)
-xl_open <- function(file = NULL, interactive = NA) {
+xl_open <- function(x, file, interactive = NA) {
+  if (!missing(file))  {
+    warning("xl_open(file = .) is deprecated.  Use xl_open(x = .) instead")
+    x <- file
+  }
   UseMethod("xl_open")
 }
 
 #' @rdname xl_open
 #' @export
-xl_open.wbWorkbook <- function(file = NULL, interactive = NA) {
-  stopifnot(R6::is.R6(file))
-  xl_open(file$clone()$save(temp_xlsx())$path)
+xl_open.wbWorkbook <- function(x, file, interactive = NA) {
+  stopifnot(R6::is.R6(x))
+  xl_open(x$clone()$save(temp_xlsx())$path, interactive = interactive)
 }
 
 #' @rdname xl_open
 #' @export
-xl_open.default <- function(file = NULL, interactive = NA) {
+xl_open.default <- function(x, file, interactive = NA) {
+  stopifnot(file.exists(x))
+
+  # nocov start
   if (is.na(interactive)) {
     interactive <- interactive()
   }
+  # nocov end
 
   if (!isTRUE(interactive)) {
     warning("will not open file when not interactive")
     return()
   }
 
-  stopifnot(!is.null(file), file.exists(file))
+  # no cov start
 
   ## execution should be in background in order to not block R
   ## interpreter
-  file <- normalizePath(file, mustWork = TRUE)
+  file <- normalizePath(x, mustWork = TRUE)
   userSystem <- Sys.info()["sysname"]
 
   switch(
@@ -78,6 +86,7 @@ xl_open.default <- function(file = NULL, interactive = NA) {
     },
     stop("Operating system not handled: ", toString(userSystem))
   )
+  # nocov end
 }
 
 
@@ -108,6 +117,7 @@ chooseExcelApp <- function() {
     invisible(unnprog)
   }
 
+  # nocov start
   if (1 < nApps) {
     if (!interactive()) {
       stop(
@@ -123,6 +133,8 @@ chooseExcelApp <- function() {
     }
     invisible(unname(unnprog))
   }
+  # nocov end
 
-  stop("Unexpected error in openxlsx2::chooseExcelApp()")
+  stop("Unexpected error in openxlsx2::chooseExcelApp()") # nocov
+
 }
