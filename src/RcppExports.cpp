@@ -431,9 +431,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// xml_append_child
-SEXP xml_append_child(XPtrXML node, XPtrXML child, bool pointer, bool escapes);
-RcppExport SEXP _openxlsx2_xml_append_child(SEXP nodeSEXP, SEXP childSEXP, SEXP pointerSEXP, SEXP escapesSEXP) {
+// xml_append_child1
+SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes);
+RcppExport SEXP _openxlsx2_xml_append_child1(SEXP nodeSEXP, SEXP childSEXP, SEXP pointerSEXP, SEXP escapesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -441,7 +441,38 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< XPtrXML >::type child(childSEXP);
     Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_append_child(node, child, pointer, escapes));
+    rcpp_result_gen = Rcpp::wrap(xml_append_child1(node, child, pointer, escapes));
+    return rcpp_result_gen;
+END_RCPP
+}
+// xml_append_child2
+SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool pointer, bool escapes);
+RcppExport SEXP _openxlsx2_xml_append_child2(SEXP nodeSEXP, SEXP childSEXP, SEXP level1SEXP, SEXP pointerSEXP, SEXP escapesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
+    Rcpp::traits::input_parameter< XPtrXML >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
+    Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_append_child2(node, child, level1, pointer, escapes));
+    return rcpp_result_gen;
+END_RCPP
+}
+// xml_append_child3
+SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::string level2, bool pointer, bool escapes);
+RcppExport SEXP _openxlsx2_xml_append_child3(SEXP nodeSEXP, SEXP childSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP pointerSEXP, SEXP escapesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
+    Rcpp::traits::input_parameter< XPtrXML >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
+    Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
+    Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_append_child3(node, child, level1, level2, pointer, escapes));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -751,7 +782,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 3},
     {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 4},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
-    {"_openxlsx2_xml_append_child", (DL_FUNC) &_openxlsx2_xml_append_child, 4},
+    {"_openxlsx2_xml_append_child1", (DL_FUNC) &_openxlsx2_xml_append_child1, 4},
+    {"_openxlsx2_xml_append_child2", (DL_FUNC) &_openxlsx2_xml_append_child2, 5},
+    {"_openxlsx2_xml_append_child3", (DL_FUNC) &_openxlsx2_xml_append_child3, 6},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_txt_to_si", (DL_FUNC) &_openxlsx2_txt_to_si, 3},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},

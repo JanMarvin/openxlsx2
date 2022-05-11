@@ -2673,28 +2673,44 @@ wbWorkbook <- R6::R6Class(
             negColour <- "FFFF0000"
           }
 
+          extLst <- self$worksheets[[sheet]]$extLst
+
           guid <- stri_join(
             "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(self$worksheets[[sheet]]$extLst)
+            40000L + length(xml_node(extLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting"))
           )
 
           showValue <- as.integer(params$showValue %||% 1L)
           gradient  <- as.integer(params$gradient  %||% 1L)
           border    <- as.integer(params$border    %||% 1L)
 
-
-          self$worksheets[[sheet]]$extLst <- c(
-            self$worksheets[[sheet]]$extLst,
-            gen_databar_extlst(
-              guid      = guid,
-              sqref     = sqref,
-              posColour = posColour,
-              negColour = negColour,
-              values    = values,
-              border    = border,
-              gradient  = gradient
-            )
+          newExtLst <- gen_databar_extlst(
+            guid      = guid,
+            sqref     = sqref,
+            posColour = posColour,
+            negColour = negColour,
+            values    = values,
+            border    = border,
+            gradient  = gradient
           )
+
+          # check if any extLst availaible
+          if (length(extLst) == 0) {
+            self$worksheets[[sheet]]$extLst <- newExtLst
+          } else if (length(xml_node(extLst, "ext", "x14:conditionalFormattings")) == 0) {
+            # extLst is available, has no conditionalFormattings
+            extLst <- xml_add_child(extLst,
+                                    xml_node(newExtLst, "ext", "x14:conditionalFormattings"))
+            self$worksheets[[sheet]]$extLst <- extLst
+          } else {
+            # extLst is available, has conditionalFormattings
+            extLst <- xml_add_child(extLst,
+                                    xml_node(newExtLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting"),
+                                    level = "x14:conditionalFormattings")
+            self$worksheets[[sheet]]$extLst <- extLst
+          }
+          
+
 
           if (is.null(values)) {
             sprintf(

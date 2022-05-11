@@ -191,6 +191,18 @@ test_that("xml_add_child", {
   expect_error(xml_add_child(xml_node))
   expect_error(xml_add_child(xml_child = xml_child))
 
+  xml_node <- "<a><b/></a>"
+  xml_child <- "<c/>"
+
+  xml_node <- xml_add_child(xml_node, xml_child)
+  expect_equal("<a><b/><c/></a>", xml_node)
+
+  xml_node <- xml_add_child(xml_node, xml_child, level = c("b"))
+  expect_equal("<a><b><c/></b><c/></a>", xml_node)
+
+  xml_node <- xml_add_child(xml_node, "<d/>", level = c("b", "c"))
+  expect_equal("<a><b><c><d/></c></b><c/></a>", xml_node)
+
 })
 
 
