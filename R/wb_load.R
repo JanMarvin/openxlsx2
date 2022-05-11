@@ -59,6 +59,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
   workbookXML       <- grep_xml("workbook.xml$")
   stylesXML         <- grep_xml("styles.xml$")
   sharedStringsXML  <- grep_xml("sharedStrings.xml$")
+  metadataXML       <- grep_xml("metadata.xml$")
   themeXML          <- grep_xml("theme[0-9]+.xml$")
   drawingRelsXML    <- grep_xml("drawing[0-9]+.xml.rels$")
   sheetRelsXML      <- grep_xml("sheet[0-9]+.xml.rels$")
@@ -325,6 +326,17 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
     attr(vals, "uniqueCount") <- uniqueCount
     attr(vals, "text") <- text
     wb$sharedStrings <- vals
+  }
+
+
+  ## xl\sharedStrings
+  if (length(metadataXML)) {
+    wb$Content_Types <- c(
+      wb$Content_Types,
+      '<Override PartName="/xl/metadata.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheetMetadata+xml"/>'
+    )
+    metadata <- read_xml(metadataXML, pointer = FALSE)
+    wb$metadata <- metadata
   }
 
   ## xl\pivotTables & xl\pivotCache
@@ -1112,7 +1124,12 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
     #     wb$workbook.xml.rels <- wb$workbook.xml.rels[!grepl(toRemove, wb$workbook.xml.rels)]
     #   }
     # }
+  } else {
+    # If workbook contains no sheetRels, create empty workbook.xml.rels.
+    # Otherwise spreadsheet software will stumble over missing rels to drwaing.
+    wb$worksheets_rels <- lapply(seq_along(wb$sheet_names), FUN = function(x) character())
   } ## end of worksheetRels
+
 
   ## convert hyperliks to hyperlink objects
   for (i in seq_len(nSheets)) {
