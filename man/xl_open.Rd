@@ -2,29 +2,39 @@
 % Please edit documentation in R/xl_open.R
 \name{xl_open}
 \alias{xl_open}
+\alias{xl_open.wbWorkbook}
+\alias{xl_open.default}
 \title{Open a Microsoft Excel file (xls/xlsx) or an openxlsx Workbook}
 \usage{
-xl_open(file=NULL)
+xl_open(file = NULL, interactive = NA)
+
+\method{xl_open}{wbWorkbook}(file = NULL, interactive = NA)
+
+\method{xl_open}{default}(file = NULL, interactive = NA)
 }
 \arguments{
 \item{file}{path to the Excel (xls/xlsx) file or Workbook object.}
+
+\item{interactive}{If \code{FALSE} will throw a warning and not open the path.
+This can be manually set to \code{TRUE}, otherwise when \code{NA} (defualt) uses the
+value returned from \code{\link[base:interactive]{base::interactive()}}}
 }
 \description{
-This function tries to open a Microsoft Excel
-(xls/xlsx) file or an openxlsx Workbook with the proper
-application, in a portable manner.
+This function tries to open a Microsoft Excel (xls/xlsx) file or
+an openxlsx Workbook with the proper application, in a portable manner.
 
-In Windows (c) and Mac (c), it uses system default handlers,
-given the file type.
+In Windows it uses \code{\link[base:shell.exec]{base::shell.exec()}} to determine the appropriate
+program.
 
-In Linux it searches (via \code{which}) for available xls/xlsx
-reader applications (unless \code{options('openxlsx.excelApp')}
-is set to the app bin path), and if it finds anything, sets
-\code{options('openxlsx.excelApp')} to the program chosen by
-the user via a menu (if many are present, otherwise it will
-set the only available). Currently searched for apps are
-Libreoffice/Openoffice (\code{soffice} bin), Gnumeric
-(\code{gnumeric}) and Calligra Sheets (\code{calligrasheets}).
+In Mac (c) it uses system default handlers, given the file type.
+
+In Linux it searches (via \code{which}) for available xls/xlsx reader
+applications (unless \code{options('openxlsx.excelApp')} is set to the app bin
+path), and if it finds anything, sets \code{options('openxlsx.excelApp')} to the
+program chosen by the user via a menu (if many are present, otherwise it
+will set the only available). Currently searched for apps are
+Libreoffice/Openoffice (\code{soffice} bin), Gnumeric (\code{gnumeric}) and Calligra
+Sheets (\code{calligrasheets}).
 }
 \examples{
 # file example
