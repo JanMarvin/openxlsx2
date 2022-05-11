@@ -741,7 +741,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         c_s <- NULL
         if (removeCellStyle) c_s <- "c_s"
 
-        cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
+        cc[sel, c(c_s, "c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
         if ((data_class[m] == openxlsx2_celltype[["character"]]) || ((colNames == TRUE) && (n == 1))) {
@@ -947,9 +947,10 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 
     # original cc dataframe
     # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
-    nams <- c("row_r", "c_r", "c_s", "c_t", "v",
-              "f", "f_t", "f_ref", "f_ca", "f_si",
-              "is", "typ", "r")
+    nams <- c("row_r", "c_r", "c_s", "c_t", "c_cm",
+              "c_ph", "c_vm", "v", "f", "f_t",
+              "f_ref", "f_ca", "f_si", "is", "typ",
+              "r")
     cc <- as.data.frame(
       matrix(data = "_openxlsx_NA_",
              nrow = nrow(data) * ncol(data),

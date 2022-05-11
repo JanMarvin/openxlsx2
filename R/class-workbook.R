@@ -4318,7 +4318,7 @@ wbWorkbook <- R6::R6Class(
             ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])),]
 
             cc_rows <- ws$sheet_data$row_attr$r
-            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
+            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
 
             ws$sheet_data$cc_out <- cc_out[order(as.integer(cc_out[,"row_r"]), col2int(cc_out[, "c_r"])),]
           } else {
