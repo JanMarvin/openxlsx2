@@ -83,6 +83,8 @@ minor helper wrapping xl_open which does the entire same thing
 
 \item{\code{media}}{media}
 
+\item{\code{metadata}}{metadata}
+
 \item{\code{persons}}{persons}
 
 \item{\code{pivotTables}}{pivotTables}
