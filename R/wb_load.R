@@ -229,6 +229,11 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
       wb$workbook$calcPr <- calcPr
     }
 
+    extLst <- xml_node(workbook_xml, "workbook", "extLst")
+    if (length(extLst)) {
+      wb$workbook$extLst <- extLst
+    }
+
     workbookPr <- xml_node(workbook_xml, "workbook", "workbookPr")
     if (length(workbookPr)) {
       wb$workbook$workbookPr <- workbookPr
