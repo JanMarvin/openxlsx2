@@ -185,11 +185,8 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
-  size_t n = std::distance(ws.begin(), ws.end());
-
   // character
   Rcpp::DataFrame row_attributes;
-  Rcpp::Shield<SEXP> rownames(Rf_allocVector(STRSXP, n));
 
   std::vector<xml_col> xml_cols;
 
