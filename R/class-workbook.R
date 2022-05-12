@@ -1719,7 +1719,7 @@ wbWorkbook <- R6::R6Class(
     #' @param fontName fontName
     #' @return The `wbWorkbook` object
     set_base_font = function(fontSize = 11, fontColour = "black", fontName = "Calibri") {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       if (fontSize < 0) stop("Invalid fontSize")
@@ -1783,7 +1783,7 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
     set_row_heights = function(sheet, rows, heights) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -1831,7 +1831,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet, rows) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -1867,7 +1867,7 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_cols = function(sheet, cols, collapsed = FALSE, levels = NULL) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -1936,7 +1936,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols = cols
     #' @returns The `wbWorkbook` object
     ungroup_cols = function(sheet, cols) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -1976,7 +1976,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     remove_col_widths = function(sheet, cols) {
       sheet <- wb_validate_sheet(self, sheet)
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       if (!is.numeric(cols)) {
@@ -2119,7 +2119,7 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -2183,7 +2183,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object
     ungroup_rows = function(sheet, rows) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -2432,7 +2432,7 @@ wbWorkbook <- R6::R6Class(
       showInputMsg = TRUE,
       showErrorMsg = TRUE
     ) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       ## rows and cols
@@ -2951,7 +2951,7 @@ wbWorkbook <- R6::R6Class(
       firstCol = FALSE
     ) {
       # TODO rename to setFreezePanes?
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       # fine to do the validation before the actual check to prevent other errors
@@ -3060,7 +3060,7 @@ wbWorkbook <- R6::R6Class(
       units     = "in",
       dpi       = 300
     ) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       if (!file.exists(file)) {
@@ -3213,7 +3213,7 @@ wbWorkbook <- R6::R6Class(
       units     = "in",
       dpi       = 300
     ) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       if (is.null(dev.list()[[1]])) {
@@ -3694,7 +3694,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       sheet <- wb_validate_sheet(self, sheet)
 
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       if (!is.null(header) && length(header) != 3) {
@@ -3831,7 +3831,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols cols
     #' @returns The `wbWorkbook` object
     add_filter = function(sheet, rows, cols) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
       sheet <- wb_validate_sheet(self, sheet)
 
@@ -3867,7 +3867,7 @@ wbWorkbook <- R6::R6Class(
     #' @param show show
     #' @returns The `wbWorkbook` object
     grid_lines = function(sheet, show = FALSE) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -3907,7 +3907,7 @@ wbWorkbook <- R6::R6Class(
       localSheetId = NULL,
       overwrite = FALSE
     ) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- wb_validate_sheet(self, sheet)
@@ -4029,7 +4029,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
     set_sheet_visibility = function(sheet, value) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       if (length(value) != length(sheet)) {
@@ -4077,7 +4077,7 @@ wbWorkbook <- R6::R6Class(
     #' @param col col
     #' @returns The `wbWorkbook` object
     add_page_break = function(sheet, row = NULL, col = NULL) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
       sheet <- wb_validate_sheet(self, sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)

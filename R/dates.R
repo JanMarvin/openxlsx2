@@ -52,7 +52,7 @@ convert_date <- function(x, origin = "1900-01-01", ...) {
 #' convert_datetime(x, tz = "Australia/Perth")
 #' convert_datetime(x, tz = "UTC")
 convert_datetime <- function(x, origin = "1900-01-01", ...) {
-  op <- openxlsx_options()
+  op <- openxlsx2_options()
   on.exit(options(op), add = TRUE)
 
   x <- as.numeric(x)

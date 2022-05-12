@@ -9,7 +9,7 @@
 #' @examples
 #' int2col(1:10)
 int2col <- function(x) {
-  op <- openxlsx_options()
+  op <- openxlsx2_options()
   on.exit(options(op), add = TRUE)
 
   if (!is.numeric(x)) {
@@ -60,7 +60,7 @@ get_cell_refs <- function(cellCoords) {
   if (!all(vapply(cellCoords, is_integer_ish, NA))) {
     stop("cellCoords must only contain integers", call. = FALSE)
   }
-  op <- openxlsx_options()
+  op <- openxlsx2_options()
   on.exit(options(op), add = TRUE)
 
   l <- int2col(unlist(cellCoords[, 2]))
