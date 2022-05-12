@@ -250,15 +250,24 @@ write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE
 #' append xml child to node
 #' @param xml_node xml_node
 #' @param xml_child xml_child
+#' @param level optional level, if missing the first child is picked
 #' @param pointer pointer
 #' @param escapes escapes
 #' @examples
-#' xml_node <- "<node><child1/><child2/></node>"
-#' xml_child <- "<new_child/>"
+#' xml_node <- "<a><b/></a>"
+#' xml_child <- "<c/>"
 #'
+#' # add child to first level node
 #' xml_add_child(xml_node, xml_child)
+#'
+#' # add child to second level node as request
+#' xml_node <- xml_add_child(xml_node, xml_child, level = c("b"))
+#'
+#' # add child to third level node as request
+#' xml_node <- xml_add_child(xml_node, "<d/>", level = c("b", "c"))
+#'
 #' @export
-xml_add_child <- function(xml_node, xml_child, pointer = FALSE, escapes = FALSE) {
+xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, escapes = FALSE) {
 
   if (missing(xml_node))
     stop("need xml_node")
@@ -269,7 +278,17 @@ xml_add_child <- function(xml_node, xml_child, pointer = FALSE, escapes = FALSE)
   xml_node <- read_xml(xml_node)
   xml_child <- read_xml(xml_child)
 
-  z <- xml_append_child(xml_node, xml_child, pointer, escapes)
+  if (missing(level)) {
+    z <- xml_append_child1(xml_node, xml_child, pointer, escapes)
+  } else {
+
+    if (length(level) == 1)
+      z <- xml_append_child2(xml_node, xml_child, level[[1]], pointer, escapes)
+
+    if (length(level) == 2)
+      z <- xml_append_child3(xml_node, xml_child, level[[1]], level[[2]], pointer, escapes)
+ 
+  }
 
   return(z)
 }
