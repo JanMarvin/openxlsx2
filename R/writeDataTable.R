@@ -134,21 +134,48 @@
 #' wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
 #' }
 #'
-write_datatable <- function(wb, sheet, x,
-  startCol = 1,
-  startRow = 1,
-  xy = NULL,
-  colNames = TRUE,
-  rowNames = FALSE,
-  tableStyle = "TableStyleLight9",
-  tableName = NULL,
-  withFilter = TRUE,
-  sep = ", ",
-  stack = FALSE,
-  firstColumn = FALSE,
-  lastColumn = FALSE,
-  bandedRows = TRUE,
-  bandedCols = FALSE) {
+write_datatable <- function(
+    wb,
+    sheet,
+    x,
+    startCol = 1,
+    startRow = 1,
+    xy = NULL,
+    colNames = TRUE,
+    rowNames = FALSE,
+    tableStyle = "TableStyleLight9",
+    tableName = NULL,
+    withFilter = TRUE,
+    sep = ", ",
+    stack = FALSE,
+    firstColumn = FALSE,
+    lastColumn = FALSE,
+    bandedRows = TRUE,
+    bandedCols = FALSE
+) {
+
+  ## Input validating
+  assert_workbook(wb)
+  assert_class(colNames, "logical")
+  assert_class(rowNames, "logical")
+  assert_class(withFilter, "logical")
+  assert_class(x, "data.frame")
+  assert_class(firstColumn, "logical")
+  assert_class(lastColumn, "logical")
+  assert_class(bandedRows, "logical")
+  assert_class(bandedCols, "logical")
+
+  if ((!is.character(sep)) || (length(sep) != 1))
+    stop("sep must be a character vector of length 1")
+
+  sheet <- wb_validate_sheet(wb, sheet)
+
+  if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
+
+  op <- openxlsx2_options()
+  on.exit(options(op), add = TRUE)
+
+  ## All input conversions/validations
   if (!is.null(xy)) {
     if (length(xy) != 2) {
       stop("xy parameter must have length 2")
@@ -157,59 +184,66 @@ write_datatable <- function(wb, sheet, x,
     startRow <- xy[[2]]
   }
 
-  ## Input validating
-  assert_workbook(wb)
-  assert_class(x, "data.frame")
-
-  # TODO sipmlify these --
-  if (!is.logical(colNames)) stop("colNames must be a logical.")
-  if (!is.logical(rowNames)) stop("rowNames must be a logical.")
-
-  if (!is.logical(withFilter)) stop("withFilter must be a logical.")
-  if ((!is.character(sep)) || (length(sep) != 1)) stop("sep must be a character vector of length 1")
-
-  if (!is.logical(firstColumn)) stop("firstColumn must be a logical.")
-  if (!is.logical(lastColumn)) stop("lastColumn must be a logical.")
-  if (!is.logical(bandedRows)) stop("bandedRows must be a logical.")
-  if (!is.logical(bandedCols)) stop("bandedCols must be a logical.")
-
-  if (is.null(tableName)) {
-    tableName <- paste0("Table", as.character(length(wb$tables) + 1L))
-  } else {
-    tableName <- wb_validate_table_name(wb, tableName)
-  }
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
-
   ## convert startRow and startCol
   if (!is.numeric(startCol)) {
     startCol <- col2int(startCol)
   }
   startRow <- as.integer(startRow)
 
-
-  showColNames <- colNames
-
-  if (colNames) {
-    col_names <- colnames(x)
-    if (any(duplicated(tolower(col_names)))) {
-      stop("Column names of x must be case-insensitive unique.")
-    }
-
-    ## zero char names are invalid
-    char0 <- nchar(col_names) == 0
-    if (any(char0)) {
-      col_names[char0] <- colnames(x)[char0] <- paste0("Column", which(char0))
-    }
+  ## special case - vector of hyperlinks
+  is_hyperlink <- FALSE
+  if (is.null(dim(x))) {
+    is_hyperlink <- inherits(x, "hyperlink")
   } else {
-    col_names <- paste0("Column", seq_along(x))
-    names(x) <- col_names
+    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
   }
 
-  if (rowNames) {
-    nam <- names(x)
-    x <- cbind(rownames(x), x)
-    names(x) <- c("rownames", nam)
+  if (any(is_hyperlink)) {
+    # consider wbHyperlink?
+    # hlinkNames <- names(x)
+    if (is.null(dim(x))) {
+      colNames <- FALSE
+      x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
+      class(x[is_hyperlink]) <- c("character", "hyperlink")
+    } else {
+      # check should be in create_hyperlink and that apply should not be required either
+      if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
+        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
+      }
+      class(x[,is_hyperlink]) <- c("character", "hyperlink")
+    }
+  }
+
+  ## check not overwriting another table
+  wb_check_overwrite_tables(
+    wb,
+    sheet = sheet,
+    # header
+    new_rows = c(startRow, startRow + nrow(x) - 1L + 1L),
+    new_cols = c(startCol, startCol + ncol(x) - 1L)
+  )
+
+  ## actual driver, the rest should not create data used for writing
+  wb <- write_data2(
+    wb =  wb,
+    sheet = sheet,
+    data = x,
+    colNames = colNames,
+    rowNames = rowNames,
+    startRow = startRow,
+    startCol = startCol
+  )
+
+  ### Beg: Only in datatable ---------------------------------------------------
+
+  ## replace invalid XML characters
+  col_names <- replaceIllegalCharacters(colnames(x))
+
+  ## Table name validation
+  if (is.null(tableName)) {
+    tableName <- paste0("Table", as.character(length(wb$tables) + 1L))
+  } else {
+    tableName <- wb_validate_table_name(wb, tableName)
   }
 
   ## If 0 rows append a blank row
@@ -235,59 +269,12 @@ write_datatable <- function(wb, sheet, x,
   ref2 <- paste0(int2col(startCol + ncol(x) - 1), startRow + nrow(x))
   ref <- paste(ref1, ref2, sep = ":")
 
-  ## check not overwriting another table
-  wb_check_overwrite_tables(
-    wb,
-    sheet = sheet,
-    # header
-    new_rows = c(startRow, startRow + nrow(x) - 1L + 1L),
-    new_cols = c(startCol, startCol + ncol(x) - 1L)
-  )
-
-  is_hyperlink <- FALSE
-  if (is.null(dim(x))) {
-    is_hyperlink <- inherits(x, "hyperlink")
-  } else {
-    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
-  }
-
-  if (any(is_hyperlink)) {
-    # consider wbHyperlink?
-    # hlinkNames <- names(x)
-    if (is.null(dim(x))) {
-      colNames <- FALSE
-      x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
-      class(x[is_hyperlink]) <- c("character", "hyperlink")
-    } else {
-      # check should be in create_hyperlink and that apply should not be required either
-      if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
-        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
-      }
-      class(x[,is_hyperlink]) <- c("character", "hyperlink")
-    }
-  }
-
-
-  ## write data to worksheet
-  # TODO write_data2 should be wb$add_data(
-  wb <- write_data2(
-    wb =  wb,
-    sheet = sheet,
-    data = x,
-    colNames = TRUE,
-    startRow = startRow,
-    startCol = startCol
-  )
-
-  ## replace invalid XML characters
-  col_names <- replaceIllegalCharacters(colnames(x))
-
   ## create table.xml and assign an id to worksheet tables
   wb$buildTable(
     sheet = sheet,
     colNames = col_names,
     ref = ref,
-    showColNames = showColNames,
+    showColNames = colNames,
     tableStyle = tableStyle,
     tableName = tableName,
     withFilter = withFilter,
@@ -297,4 +284,8 @@ write_datatable <- function(wb, sheet, x,
     showRowStripes = bandedRows,
     showColumnStripes = bandedCols
   )
+
+  ### End: Only in datatable ---------------------------------------------------
+
+  invisible(0)
 }

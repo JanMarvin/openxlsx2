@@ -937,7 +937,18 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   # TODO writing defined name should handle global and local: localSheetId
   # this requires access to wb$workbook.
   # TODO The check for existing names is in write_data()
+  # TODO use wb$add_named_region()
   if (!is.null(name)) {
+
+    ## named region
+    ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
+    ex_names <- replaceXMLEntities(ex_names)
+
+    if (name %in% ex_names) {
+      stop(sprintf("Named region with name '%s' already exists!", name))
+    } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
+      stop("name cannot look like a cell reference.")
+    }
 
     sheet_name <- wb$sheet_names[[sheetno]]
     if (grepl(" ", sheet_name)) sheet_name <- shQuote(sheet_name, "sh")

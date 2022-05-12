@@ -92,25 +92,37 @@
 #' \dontrun{
 #' wb_save(wb, "write_dataExample.xlsx", overwrite = TRUE)
 #' }
-write_data <- function(wb,
-  sheet,
-  x,
-  startCol = 1,
-  startRow = 1,
-  array = FALSE,
-  xy = NULL,
-  colNames = TRUE,
-  rowNames = FALSE,
-  withFilter = FALSE,
-  name = NULL,
-  sep = ", ",
-  removeCellStyle = TRUE) {
-  op <- openxlsx_options()
-  on.exit(options(op), add = TRUE)
+write_data <- function(
+    wb,
+    sheet,
+    x,
+    startCol = 1,
+    startRow = 1,
+    array = FALSE,
+    xy = NULL,
+    colNames = TRUE,
+    rowNames = FALSE,
+    withFilter = FALSE,
+    name = NULL,
+    sep = ", ",
+    removeCellStyle = TRUE
+) {
 
-  if (is.null(x)) {
-    return(invisible(0))
-  }
+  ## Input validating
+  assert_workbook(wb)
+  assert_class(colNames, "logical")
+  assert_class(rowNames, "logical")
+  assert_class(withFilter, "logical")
+
+  if ((!is.character(sep)) || (length(sep) != 1))
+    stop("sep must be a character vector of length 1")
+
+  sheet <- wb_validate_sheet(wb, sheet)
+
+  if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
+
+  op <- openxlsx2_options()
+  on.exit(options(op), add = TRUE)
 
   ## All input conversions/validations
   if (!is.null(xy)) {
@@ -127,16 +139,7 @@ write_data <- function(wb,
   }
   startRow <- as.integer(startRow)
 
-  assert_workbook(wb)
-  assert_class(colNames, "logical")
-  assert_class(rowNames, "logical")
-
-  if ((!is.character(sep)) || (length(sep) != 1)) stop("sep must be a character vector of length 1")
-
   ## special case - vector of hyperlinks
-  # # hlinkNames not used?
-  # hlinkNames <- NULL
-
   is_hyperlink <- FALSE
   if (is.null(dim(x))) {
     is_hyperlink <- inherits(x, "hyperlink")
@@ -160,6 +163,8 @@ write_data <- function(wb,
     }
   }
 
+  ### Beg: Only in data --------------------------------------------------------
+
   ## special case - formula
   if (inherits(x, "formula")) {
     x <- data.frame("X" = x, stringsAsFactors = FALSE)
@@ -167,66 +172,45 @@ write_data <- function(wb,
     colNames <- FALSE
   }
 
-  ## named region
-  if (!is.null(name)) { ## validate name
-    ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
-    ex_names <- replaceXMLEntities(ex_names)
-
-    if (name %in% ex_names) {
-      stop(sprintf("Named region with name '%s' already exists!", name))
-    } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
-      stop("name cannot look like a cell reference.")
-    }
-  }
-
   if (is.vector(x) || is.factor(x) || inherits(x, "Date")) {
     colNames <- FALSE
   } ## this will go to coerce.default and rowNames will be ignored
 
   ## Coerce to data.frame
-  if (inherits(x, "hyperlink")) { 
+  if (inherits(x, "hyperlink")) {
     ## vector of hyperlinks
     class(x) <- c("character", "hyperlink")
     x <- as.data.frame(x, stringsAsFactors = FALSE)
   } else if (!inherits(x, "data.frame")) {
     x <- as.data.frame(x, stringsAsFactors = FALSE)
-  } else {
-    ## cbind rownames to x
-    if (rowNames) {
-      x <- cbind(
-        data.frame("row names" = rownames(x), stringsAsFactors = FALSE),
-        as.data.frame(x, stringsAsFactors = FALSE)
-      )
-      names(x)[[1]] <- ""
-    }
   }
 
   nCol <- ncol(x)
   nRow <- nrow(x)
 
-  ## If no rows and not writing column names return as nothing to write
-  if (nRow == 0 && !colNames) {
-    return(invisible(0))
+  ## write autoFilter, can only have a single filter per worksheet
+  if (withFilter) {
+    coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
+    ref <- stri_join(get_cell_refs(coords), collapse = ":")
+
+    wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
+
+    l <- int2col(unlist(coords[, 2]))
+    dfn <- sprintf("'%s'!%s", names(wb)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
+
+    dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
+
+    if (length(wb$workbook$definedNames) > 0) {
+      ind <- grepl('name="_xlnm._FilterDatabase"', wb$workbook$definedNames)
+      if (length(ind) > 0) {
+        wb$workbook$definedNames[ind] <- dn
+      }
+    } else {
+      wb$workbook$definedNames <- dn
+    }
   }
 
-  ## If no columns and not writing row names return as nothing to write
-  if (nCol == 0 && !rowNames) {
-    return(invisible(0))
-  }
-
-  if (is.numeric(sheet)) {
-    sheetX <- wb_validate_sheet(wb, sheet)
-  } else {
-    sheetX <- wb_validate_sheet(wb, replaceXMLEntities(sheet))
-    sheet <- replaceXMLEntities(sheet)
-  }
-
-  if (wb$isChartSheet[[sheetX]]) {
-    stop("Cannot write to chart sheet.")
-    return(NULL)
-  }
-
-
+  ### End: Only in data --------------------------------------------------------
 
   ## Check not overwriting existing table headers
   wb_check_overwrite_tables(
@@ -239,38 +223,14 @@ write_data <- function(wb,
       "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
   )
 
-
-
-  ## write autoFilter, can only have a single filter per worksheet
-  if (withFilter) {
-    coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
-    ref <- stri_join(get_cell_refs(coords), collapse = ":")
-
-    wb$worksheets[[sheetX]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
-
-    l <- int2col(unlist(coords[, 2]))
-    dfn <- sprintf("'%s'!%s", names(wb)[sheetX], stri_join("$", l, "$", coords[, 1], collapse = ":"))
-
-    dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheetX - 1L, dfn)
-
-    if (length(wb$workbook$definedNames) > 0) {
-      ind <- grepl('name="_xlnm._FilterDatabase"', wb$workbook$definedNames)
-      if (length(ind) > 0) {
-        wb$workbook$definedNames[ind] <- dn
-      }
-    } else {
-      wb$workbook$definedNames <- dn
-    }
-  }
-
-  # actual driver, the rest should not create data used for writing
+  ## actual driver, the rest should not create data used for writing
   wb <- write_data2(
     wb = wb,
     sheet = sheet,
     data = x,
     name = name,
     colNames = colNames,
-    rowNames = FALSE,
+    rowNames = rowNames,
     startRow = startRow,
     startCol = startCol,
     removeCellStyle = removeCellStyle
