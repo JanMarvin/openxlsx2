@@ -75,15 +75,13 @@ xl_open.default <- function(x, file, interactive = NA) {
     userSystem,
     Linux = {
       app <- getOption("openxlsx2.excelApp", chooseExcelApp())
-      myCommand <- paste(app, file, "&", sep = " ")
-      system(command = myCommand)
+      system2(app, c(file, "&"))
     },
     Windows = {
-      shell.exec(file)
+      shell.exec(file) # nolint
     },
     Darwin = {
-      myCommand <- paste0('open ', shQuote(file))
-      system(command = myCommand)
+      system2('open', shQuote(file))
     },
     stop("Operating system not handled: ", toString(userSystem))
   )
@@ -115,7 +113,7 @@ chooseExcelApp <- function() {
     unnprog <- unname(availProg)
     message(sprintf("Setting options(openxlsx2.excelApp = '%s')", unnprog))
     options(openxlsx2.excelApp = unnprog)
-    invisible(unnprog)
+    return(invisible(unnprog))
   }
 
   # nocov start
@@ -132,7 +130,7 @@ chooseExcelApp <- function() {
       message(sprintf("Setting options(openxlsx2.excelApp = '%s')", unnprog))
       options(openxlsx2.excelApp = unnprog)
     }
-    invisible(unname(unnprog))
+    return(invisible(unname(unnprog)))
   }
   # nocov end
 
