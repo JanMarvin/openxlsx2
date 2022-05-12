@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xml_add_child</span><span class="op">(</span><span class="va">xml_node</span>, <span class="va">xml_child</span>, pointer <span class="op">=</span> <span class="cn">FALSE</span>, escapes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xml_add_child</span><span class="op">(</span><span class="va">xml_node</span>, <span class="va">xml_child</span>, <span class="va">level</span>, pointer <span class="op">=</span> <span class="cn">FALSE</span>, escapes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -75,6 +75,8 @@
 <dd><p>xml_node</p></dd>
 <dt>xml_child</dt>
 <dd><p>xml_child</p></dd>
+<dt>level</dt>
+<dd><p>optional level, if missing the first child is picked</p></dd>
 <dt>pointer</dt>
 <dd><p>pointer</p></dd>
 <dt>escapes</dt>
@@ -83,11 +85,19 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">xml_node</span> <span class="op">&lt;-</span> <span class="st">"&lt;node&gt;&lt;child1/&gt;&lt;child2/&gt;&lt;/node&gt;"</span></span>
-<span class="r-in"><span class="va">xml_child</span> <span class="op">&lt;-</span> <span class="st">"&lt;new_child/&gt;"</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">xml_node</span> <span class="op">&lt;-</span> <span class="st">"&lt;a&gt;&lt;b/&gt;&lt;/a&gt;"</span></span>
+<span class="r-in"><span class="va">xml_child</span> <span class="op">&lt;-</span> <span class="st">"&lt;c/&gt;"</span></span>
 <span class="r-in"></span>
+<span class="r-in"><span class="co"># add child to first level node</span></span>
 <span class="r-in"><span class="fu">xml_add_child</span><span class="op">(</span><span class="va">xml_node</span>, <span class="va">xml_child</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "&lt;node&gt;&lt;child1/&gt;&lt;child2/&gt;&lt;new_child/&gt;&lt;/node&gt;"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "&lt;a&gt;&lt;b/&gt;&lt;c/&gt;&lt;/a&gt;"</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># add child to second level node as request</span></span>
+<span class="r-in"><span class="va">xml_node</span> <span class="op">&lt;-</span> <span class="fu">xml_add_child</span><span class="op">(</span><span class="va">xml_node</span>, <span class="va">xml_child</span>, level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># add child to third level node as request</span></span>
+<span class="r-in"><span class="va">xml_node</span> <span class="op">&lt;-</span> <span class="fu">xml_add_child</span><span class="op">(</span><span class="va">xml_node</span>, <span class="st">"&lt;d/&gt;"</span>, level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </div>
