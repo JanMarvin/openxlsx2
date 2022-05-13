@@ -34,7 +34,7 @@ test_that("wb_save() is a wrapper", {
 # wb_merge_cells(), wb_unmerge_cells() ------------------------------------
 
 test_that("wb_merge_cells(), wb_unmerge_cells() are wrappers", {
-  wb <- wbWorkbook$new()$add_worksheet("sheet")
+  wb <- wb_workbook()$add_worksheet("sheet")
   params <- list(sheet = "sheet", rows = 1:2, cols = 2)
   expect_wrapper("merge_cells", wb = wb, params = params)
   expect_wrapper("unmerge_cells", wb = wb, params = params)
