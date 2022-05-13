@@ -557,7 +557,7 @@ wbWorkbook <- R6::R6Class(
 
 
       ## copy visibility from cloned sheet!
-      visible <- reg_match0(self$workbook$sheets[[old]], '(?<=state=")[^"]+')
+      visible <- reg_match_all(self$workbook$sheets[[old]], '(?<=state=")[^"]+')
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -664,10 +664,10 @@ wbWorkbook <- R6::R6Class(
 
       for (t in tbls) {
         # Extract table name, displayName and ID from the xml
-        oldname     <- reg_match0(t, '(?<= name=")[^"]+')
-        olddispname <- reg_match0(t, '(?<= displayName=")[^"]+')
-        oldid       <- reg_match0(t, '(?<= id=")[^"]+')
-        ref         <- reg_match0(t, '(?<= ref=")[^"]+')
+        oldname     <- reg_match_all(t, '(?<= name=")[^"]+')
+        olddispname <- reg_match_all(t, '(?<= displayName=")[^"]+')
+        oldid       <- reg_match_all(t, '(?<= id=")[^"]+')
+        ref         <- reg_match_all(t, '(?<= ref=")[^"]+')
 
         # Find new, unused table names by appending _n, where n=1,2,...
         n <- 0
@@ -2317,7 +2317,7 @@ wbWorkbook <- R6::R6Class(
       if (length(removeRels)) {
         ## sheet rels links to a pivotTable file, the corresponding pivotTable_rels file links to the cacheDefn which is listing in workbook.xml.rels
         ## remove reference to this file from the workbook.xml.rels
-        fileNo <- reg_match0(removeRels, "(?<=pivotTable)[0-9]+(?=\\.xml)")
+        fileNo <- reg_match_all(removeRels, "(?<=pivotTable)[0-9]+(?=\\.xml)")
         fileNo <- as.integer(unlist(fileNo))
 
         toRemove <- stri_join(
@@ -2385,7 +2385,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## remove sheet
-      sn <- apply_reg_match0(self$workbook$sheets, pat = '(?<= name=")[^"]+')
+      sn <- apply_reg_match_all(self$workbook$sheets, pat = '(?<= name=")[^"]+')
       self$workbook$sheets <- self$workbook$sheets[!sn %in% sheet_names]
 
       ## Reset rIds
@@ -2579,7 +2579,7 @@ wbWorkbook <- R6::R6Class(
 
       ## Increment priority of conditional formatting rule
       for (i in rev(seq_along(self$worksheets[[sheet]]$conditionalFormatting))) {
-        priority <- reg_match0(
+        priority <- reg_match_all(
           self$worksheets[[sheet]]$conditionalFormatting[[i]],
           '(?<=priority=")[0-9]+'
         )
@@ -2852,7 +2852,7 @@ wbWorkbook <- R6::R6Class(
 
       # TODO If the cell merge specs were saved as a data.frame or matrix
       # this would be quicker to check
-      current <- reg_match0(self$worksheets[[sheet]]$mergeCells, "[A-Z0-9]+:[A-Z0-9]+")
+      current <- str_match_all(self$worksheets[[sheet]]$mergeCells, "[A-Z0-9]+:[A-Z0-9]+")
 
       # regmatch0 will return character(0) when x is NULL
       if (length(current)) {
@@ -2900,10 +2900,7 @@ wbWorkbook <- R6::R6Class(
       # sqref <- get_cell_refs(data.frame(x = rows, y = cols))
       sqref <- paste0(int2col(cols), rows)
 
-      current <- regmatches(
-        self$worksheets[[sheet]]$mergeCells,
-        regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
-      )
+      current <- str_match(self$worksheets[[sheet]]$mergeCells, "[A-Z0-9]+:[A-Z0-9]+")
 
       if (!is.null(current)) {
         comps <- lapply(current, function(x) unlist(strsplit(x, split = ":")))
@@ -3087,8 +3084,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- wb_validate_sheet(self, sheet)
 
       # TODO tools::file_ext() ...
-      imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
-      imageType <- gsub("^\\.", "", imageType)
+      imageType <- tools::file_ext(file)
 
       drawing_len <- 0
       if (length(self$drawings_rels[[sheet]]))
@@ -3228,16 +3224,13 @@ wbWorkbook <- R6::R6Class(
 
       fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
 
-      # TODO use switch()
-      if (fileType == "bmp") {
-        dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
-      } else if (fileType == "jpeg") {
-        dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100, res = dpi)
-      } else if (fileType == "png") {
-        dev.copy(png, filename = fileName, width = width, height = height, units = units, res = dpi)
-      } else if (fileType == "tiff") {
-        dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
-      }
+      switch(
+        fileType,
+        bmp  = dev.copy(bmp,  filename = fileName, width = width, height = height, units = units,                       res = dpi),
+        jpeg = dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100,        res = dpi),
+        png  = dev.copy(png,  filename = fileName, width = width, height = height, units = units,                       res = dpi),
+        tiff = dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
+      )
 
       ## write image
       invisible(dev.off())
@@ -3547,12 +3540,12 @@ wbWorkbook <- R6::R6Class(
         }
         paperSize <- as.integer(paperSize)
       } else {
-        paperSize <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
+        paperSize <- reg_match(xml, '(?<=paperSize=")[0-9]+')
       }
 
       ## Keep defaults on orientation, hdpi, vdpi, paperSize ----
-      hdpi <- regmatches(xml, regexpr('(?<=horizontalDpi=")[0-9]+', xml, perl = TRUE))
-      vdpi <- regmatches(xml, regexpr('(?<=verticalDpi=")[0-9]+', xml, perl = TRUE))
+      hdpi <- reg_match(xml, pat = '(?<=horizontalDpi=")[0-9]+')
+      vdpi <- reg_match(xml, pat = '(?<=verticalDpi=")[0-9]+')
 
       ## Update ----
       self$worksheets[[sheet]]$pageSetup <- sprintf(
@@ -3906,8 +3899,7 @@ wbWorkbook <- R6::R6Class(
       ## check name doesn't already exist
       ## named region
 
-      # TODO use reg_match0?
-      ex_names <- regmatches(self$workbook$definedNames, regexpr('(?<=name=")[^"]+', self$workbook$definedNames, perl = TRUE))
+      ex_names <- reg_match(self$workbook$definedNames, pat = '(?<=name=")[^"]+')
       ex_names <- tolower(replaceXMLEntities(ex_names))
 
       if (tolower(name) %in% ex_names) {
@@ -4026,7 +4018,7 @@ wbWorkbook <- R6::R6Class(
       value[value %in% "false"] <- "hidden"
       value[value %in% "veryhidden"] <- "veryHidden"
 
-      exState0 <- reg_match0(self$workbook$sheets[sheet], '(?<=state=")[^"]+')
+      exState0 <- reg_match_all(self$workbook$sheets[sheet], '(?<=state=")[^"]+')
       exState <- tolower(exState0)
       exState[exState %in% "true"] <- "visible"
       exState[exState %in% "hidden"] <- "hidden"
@@ -4726,7 +4718,7 @@ wbWorkbook <- R6::R6Class(
 
         ## sheets is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheets) - 1L
-        oldId <- as.integer(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
+        oldId <- as.integer(reg_match_all(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
 
         for (i in seq_along(self$workbook$definedNames)) {
           if (!is.na(newId[i])) {
@@ -4801,9 +4793,13 @@ get_r_id <- function(wb, index = NULL) {
   get_wb_sheet_id(wb, '(?<= r:id="rId)[0-9]+', i = index)
 }
 
-get_wb_sheet_id <- function(wb, pattern, i = NULL) {
+get_wb_sheet_id <- function(wb, pattern, i = NULL, perl = TRUE) {
   i <- i %||% seq_along(wb$workbook$sheets)
-  id <- reg_match0(wb$workbook$sheets[i], pattern)
+  id <- if (perl) {
+    reg_match_all(wb$workbook$sheets[i], pattern)
+  } else {
+    str_match_all(wb$workbook$sheets[i], pattern)
+  }
   as.integer(unlist(id))
 }
 

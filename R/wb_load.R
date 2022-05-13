@@ -41,9 +41,15 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
   wb <- wb_workbook()
 
-  grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
+  grep_xml <- function(pattern, invert = FALSE, ignore.case = FALSE) {
     # targets xmlFiles; has presents
-    grep(pattern, xmlFiles, perl = perl, value = value, ...)
+    stringi::stri_subset_regex(
+      str = xmlFiles,
+      pattern = pattern,
+      omit_na = TRUE,
+      negate = invert,
+      opts_regex = if (ignore.case) list(case_insensitive = TRUE)
+    )
   }
 
   ## Not used
@@ -131,13 +137,13 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
     workbookRelsXML <- grep("chartsheets/sheet", workbookRelsXML, fixed = TRUE, value = TRUE)
 
     chartSheetRIds <- unlist(getId(workbookRelsXML))
-    chartsheet_rId_mapping <- unlist(regmatches(workbookRelsXML, gregexpr("sheet[0-9]+\\.xml", workbookRelsXML, perl = TRUE, ignore.case = TRUE)))
+    chartsheet_rId_mapping <- unlist(reg_match_all(workbookRelsXML, "sheet[0-9]+\\.xml", ignore.case = TRUE))
 
-    sheetNo <- as.integer(regmatches(chartSheetsXML, regexpr("(?<=sheet)[0-9]+(?=\\.xml)", chartSheetsXML, perl = TRUE)))
+    sheetNo <- as.integer(reg_match(chartSheetsXML, "(?<=sheet)[0-9]+(?=\\.xml)"))
     chartSheetsXML <- chartSheetsXML[order(sheetNo)]
 
     chartSheetsRelsXML <- grep_xml("xl/chartsheets/_rels")
-    sheetNo2 <- as.integer(regmatches(chartSheetsRelsXML, regexpr("(?<=sheet)[0-9]+(?=\\.xml\\.rels)", chartSheetsRelsXML, perl = TRUE)))
+    sheetNo2 <- as.integer(reg_match(chartSheetsRelsXML, "(?<=sheet)[0-9]+(?=\\.xml\\.rels)", chartSheetsRelsXML))
     chartSheetsRelsXML <- chartSheetsRelsXML[order(sheetNo2)]
 
     chartSheetsRelsDir <- dirname(chartSheetsRelsXML[1])
@@ -182,8 +188,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
     ## order they appear here gives order of worksheets in xlsx file
     sheets$typ <- basename(sheets$Type)
     sheets$target <- stri_join(xmlDir, "/xl/", sheets$Target)
-    sheets$id <- rank(as.numeric(gsub("[^0-9.-]+", "", sheets$`r:id`)))
-    sheets <- sheets[order(sheets$id),]
+    sheets$id <- rank(as.numeric(stringi::stri_replace_all_regex(sheets$`r:id`, pattern = "[^0-9.-]+", replacement = "")))
+    sheets <- sheets[order(sheets$id), ]
 
     if (is.null(sheets$state)) sheets$state <- "visible"
     is_visible <- sheets$state %in% c("", "true", "visible")
@@ -193,7 +199,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
       if (sheets$typ[i] == "chartsheet") {
         txt <- read_xml(sheets$target[i], pointer = FALSE)
 
-        zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))
+        zoom <- reg_match(txt, '(?<=zoomScale=")[0-9]+')
         if (length(zoom) == 0) {
           zoom <- 100
         }
@@ -209,17 +215,17 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
         override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
-        drawings <- grep("drawing", xmls, value = TRUE)
+        drawings <- stringi::stri_detect_regex(xmls, "drawing")
         wb$add_worksheet(sheets$name[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
       }
     }
 
     ## replace sheetId
     for (i in seq_len(nSheets)) {
-      wb$workbook$sheets[[i]] <- gsub(
+      wb$workbook$sheets[[i]] <- stringi::stri_replace_all_regex(
+        wb$workbook$sheets[[i]],
         sprintf(' sheetId="%s"', i),
-        sprintf(' sheetId="%s"', sheets$sheetId[i]),
-        wb$workbook$sheets[[i]]
+        sprintf(' sheetId="%s"', sheets$sheetId[i])
       )
     }
 
@@ -372,21 +378,34 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
 
     # ## Check what caches are used
-    cache_keep <- unlist(regmatches(wb$pivotTables.xml.rels, gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9](?=\\.xml)",
+    cache_keep <- unlist(reg_match_all(
       wb$pivotTables.xml.rels,
-      perl = TRUE, ignore.case = TRUE
-    )))
+      "(?<=pivotCache/pivotCacheDefinition)[0-9](?=\\.xml)",
+      ignore.case = TRUE
+    ))
 
     ## pivot cache records
-    tmp <- unlist(regmatches(pivotCacheRecords, gregexpr("(?<=pivotCache/pivotCacheRecords)[0-9]+(?=\\.xml)", pivotCacheRecords, perl = TRUE, ignore.case = TRUE)))
+    tmp <- unlist(reg_match_all(
+      pivotCacheRecords,
+      "(?<=pivotCache/pivotCacheRecords)[0-9]+(?=\\.xml)",
+      ignore.case = TRUE
+    ))
     pivotCacheRecords <- pivotCacheRecords[tmp %in% cache_keep]
 
     ## pivot cache definitions rels
-    tmp <- unlist(regmatches(pivotDefRelsXML, gregexpr("(?<=_rels/pivotCacheDefinition)[0-9]+(?=\\.xml)", pivotDefRelsXML, perl = TRUE, ignore.case = TRUE)))
+    tmp <- unlist(reg_match_all(
+      pivotDefRelsXML,
+      "(?<=_rels/pivotCacheDefinition)[0-9]+(?=\\.xml)",
+      ignore.case = TRUE
+    ))
     pivotDefRelsXML <- pivotDefRelsXML[tmp %in% cache_keep]
 
     ## pivot cache definitions
-    tmp <- unlist(regmatches(pivotDefXML, gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9]+(?=\\.xml)", pivotDefXML, perl = TRUE, ignore.case = TRUE)))
+    tmp <- unlist(reg_match_all(
+      pivotDefXML,
+      "(?<=pivotCache/pivotCacheDefinition)[0-9]+(?=\\.xml)",
+      ignore.case = TRUE
+    ))
     pivotDefXML <- pivotDefXML[tmp %in% cache_keep]
 
 
@@ -436,16 +455,21 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
     caches <- xml_node(workbook_xml, "workbook", "pivotCaches", "pivotCache")
 
     for (i in seq_along(caches)) {
-      caches[i] <- gsub('"rId[0-9]+"', sprintf('"rId%s"', rIds[i]), caches[i])
+      caches[i] <- stringi::stri_replace_all_regex(
+        caches[i],
+        '"rId[0-9]+"',
+        sprintf('"rId%s"', rIds[i])
+      )
     }
 
+    # TODO use stringi
     wb$workbook$pivotCaches <- paste0("<pivotCaches>", paste(caches, collapse = ""), "</pivotCaches>")
   }
 
   ## xl\vbaProject
   if (length(vbaProject)) {
     wb$vbaProject <- vbaProject
-    wb$Content_Types[grepl('<Override PartName="/xl/workbook.xml" ', wb$Content_Types)] <- '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.ms-excel.sheet.macroEnabled.main+xml"/>'
+    wb$Content_Types[stringi::str_detect_regex(wb$Content_Types, '<Override PartName="/xl/workbook.xml" ')] <- '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.ms-excel.sheet.macroEnabled.main+xml"/>'
     wb$Content_Types <- c(wb$Content_Types, '<Override PartName="/xl/vbaProject.bin" ContentType="application/vnd.ms-office.vbaProject"/>')
   }
 
@@ -459,8 +483,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
   ## xl\media
   if (length(media)) {
-    mediaNames <- regmatches(media, regexpr("image[0-9]+\\.[a-z]+$", media))
-    fileTypes <- unique(gsub("image[0-9]+\\.", "", mediaNames))
+    mediaNames <- str_match(media, "image[0-9]+\\.[a-z]+$")
+    fileTypes <- unique(stringi::stri_replace_all_regex(mediaNames, "image[0-9]+\\.", ""))
 
     contentNodes <- sprintf('<Default Extension="%s" ContentType="image/%s"/>', fileTypes, fileTypes)
     contentNodes[fileTypes == "emf"] <- '<Default Extension="emf" ContentType="image/x-emf"/>'
@@ -475,9 +499,9 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
   ## xl\chart
   if (length(charts)) {
     chartNames <- basename(charts)
-    nCharts <- sum(grepl("chart[0-9]+.xml", chartNames))
-    nChartStyles <- sum(grepl("style[0-9]+.xml", chartNames))
-    nChartCol <- sum(grepl("colors[0-9]+.xml", chartNames))
+    nCharts <- sum(stringi::stri_detect_regex(chartNames, "chart[0-9]+.xml"))
+    nChartStyles <- sum(stringi::stri_detect_regex(chartNames, "style[0-9]+.xml"))
+    nChartCol <- sum(stringi::stri_detect_regex(chartNames, "colors[0-9]+.xml"))
 
     if (nCharts > 0) {
       wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/chart%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', seq_len(nCharts)))
@@ -653,13 +677,13 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
       if (length(wb$worksheets[[i]]$headerFooter)) {
 
         amp_split <- function(x) {
-          if (length(x) == 0) return (NULL)
+          if (length(x) == 0) return(NULL)
           # create output string of width 3
           res <- vector("character", 3)
           # Identify the names found in the string: returns them as matrix: strip the &amp;
-          nam <- gsub(pattern = "&amp;", "", unlist(stri_match_all_regex(x, "&amp;[LCR]")))
+          nam <- gsub(pattern = "&amp;", "", unlist(stringi::stri_match_all_regex(x, "&amp;[LCR]")), fixed = TRUE)
           # split the string and assign names to join
-          z <- unlist(stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
+          z <- unlist(stringi::stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
           names(z) <- as.character(nam)
           res[c("L", "C", "R") %in% names(z)] <- z
 
@@ -756,7 +780,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
     if (length(slicerXML)) {
       slicerXML <- slicerXML[order(nchar(slicerXML), slicerXML)]
-      slicersFiles <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=slicer)[0-9]+(?=\\.xml)", x, perl = TRUE))))
+      slicersFiles <- lapply(xml, function(x) as.integer(reg_match(x, "(?<=slicer)[0-9]+(?=\\.xml)")))
       inds <- lengths(slicersFiles)
 
 
@@ -815,7 +839,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
 
     if (length(tablesXML)) {
-      tables <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=table)[0-9]+(?=\\.xml)", x, perl = TRUE))))
+      tables <- lapply(xml, function(x) as.integer(reg_match(x, "(?<=table)[0-9]+(?=\\.xml)")))
       tableSheets <- unapply(seq_along(sheets$`r:id`), function(i) rep(i, length(tables[[i]])))
 
       if (length(unlist(tables))) {
@@ -827,7 +851,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
         wb$tables <- sapply(tablesXML, read_xml, pointer = FALSE)
 
         ## pull out refs and attach names
-        refs <- regmatches(wb$tables, regexpr('(?<=ref=")[0-9A-Z:]+', wb$tables, perl = TRUE))
+        refs <- reg_match(wb$tables, '(?<=ref=")[0-9A-Z:]+')
         names(wb$tables) <- refs
 
         wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', seq_along(wb$tables)))
@@ -838,7 +862,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
           wb$tables[[i]] <- sub(' id="[0-9]+" ', newId, wb$tables[[i]])
         }
 
-        displayNames <- unlist(regmatches(wb$tables, regexpr('(?<=displayName=").*?[^"]+', wb$tables, perl = TRUE)))
+        displayNames <- unlist(reg_match(wb$tables, '(?<=displayName=").*?[^"]+'))
         if (length(displayNames) != length(tablesXML)) {
           displayNames <- paste0("Table", seq_along(tablesXML))
         }
@@ -854,12 +878,10 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
     } ## if (length(tablesXML))
 
     ## might we have some external hyperlinks
-    # TODO use lengths()
-    if (any(vapply(wb$worksheets[sheets$typ == "worksheet"], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
+    if (any(lengths(sapply(wb$worksheets[sheets$typ == "worksheet"], function(x) x$hyperlinks)) > 0)) {
 
       ## Do we have external hyperlinks
       hlinks <- lapply(xml, function(x) x[grepl("hyperlink", x) & grepl("External", x)])
-      # TODO use lengths()
       hlinksInds <- which(lengths(hlinks) > 0)
 
       ## If it's an external hyperlink it will have a target in the sheet_rels
@@ -888,7 +910,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
     ## Not every sheet has a drawing.xml
 
     drawXMLrelationship <- lapply(xml, function(x) grep("drawings/drawing", x, value = TRUE))
-    # TODO use lengths()
     hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
 
     if (length(drawingRelsXML)) {
@@ -944,7 +965,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
       drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
 
-      # TODO use lengths()
       hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
 
       ## loop over all worksheets and assign drawing to sheet
@@ -1014,23 +1034,19 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
             txt <- read_xml(grep(target, commentsXML, value = TRUE))
 
-
             authors <- xml_node(txt, "comments", "authors", "author")
             authors <- gsub("<author>|</author>", "", authors)
 
             comments <- xml_node(txt, "comments", "commentList", "comment")
+            refs <- reg_match(comments, '(?<=ref=").*?[^"]+')
 
-            refs <- regmatches(comments, regexpr('(?<=ref=").*?[^"]+', comments, perl = TRUE))
-
-            authorsInds <- as.integer(regmatches(comments, regexpr('(?<=authorId=").*?[^"]+', comments, perl = TRUE))) + 1
+            authorsInds <- as.integer(reg_match(comments, pat = '(?<=authorId=").*?[^"]+')) + 1
             authors <- authors[authorsInds]
 
             style <- lapply(comments, function(x) unlist(xml_node(x, "comment", "text", "r", "rPr")) )
 
-            comments <- regmatches(comments,
-              gregexpr("(?<=<t( |>))[\\s\\S]+?(?=</t>)", comments, perl = TRUE))
+            comments <- reg_match_all(comments, "(?<=<t( |>))[\\s\\S]+?(?=</t>)")
             comments <- lapply(comments, function(x) gsub(".*?>", "", x, perl = TRUE))
-
 
             wb$comments[[i]] <- lapply(seq_along(comments), function(j) {
               list(
@@ -1081,8 +1097,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
         '<Relationship Id="rId5" Type="http://schemas.microsoft.com/office/2017/10/relationships/person" Target="persons/person.xml"/>')
     }
 
-
-
     ## Embedded docx
     if (length(embeddings) > 0) {
       # TODO only valid for docx. need to check xls and doc?
@@ -1090,51 +1104,11 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
       wb$embeddings <- embeddings
     }
 
-
-
-    # ## pivot tables
-    # if (length(pivotTableXML) > 0) {
-    #   pivotTableJ <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=pivotTable)[0-9]+(?=\\.xml)", x, perl = TRUE))))
-    #   sheetWithPivot <- which(lengths(pivotTableJ) > 0)
-
-    #   pivotRels <- lapply(xml, function(x) {
-    #     y <- grep("pivotTable", x, value = TRUE)
-    #     y[order(nchar(y), y)]
-    #   })
-    #   hasPivot <- lengths(pivotRels) > 0
-
-    #   ## Modify rIds
-    #   for (i in seq_along(pivotRels)) {
-    #     if (hasPivot[i]) {
-    #       for (j in seq_along(pivotRels[[i]])) {
-    #         pivotRels[[i]][j] <- gsub('"rId[0-9]+"', sprintf('"rId%s"', 20000L + j), pivotRels[[i]][j])
-    #       }
-
-    #       wb$worksheets_rels[[i]] <- c(wb$worksheets_rels[[i]], pivotRels[[i]])
-    #     }
-    #   }
-
-
-    #   ## remove any workbook_res references to pivot tables that are not being used in worksheet_rels
-    #   inds <- seq_along(wb$pivotTables.xml.rels)
-    #   fileNo <- as.integer(unlist(regmatches(unlist(wb$worksheets_rels), gregexpr("(?<=pivotTable)[0-9]+(?=\\.xml)", unlist(wb$worksheets_rels), perl = TRUE))))
-    #   inds <- inds[!inds %in% fileNo]
-
-    #   if (length(inds) > 0) {
-    #     toRemove <- paste(sprintf("(pivotCacheDefinition%s\\.xml)", inds), collapse = "|")
-    #     fileNo <- grep(toRemove, wb$pivotTables.xml.rels)
-    #     toRemove <- paste(sprintf("(pivotCacheDefinition%s\\.xml)", fileNo), collapse = "|")
-
-    #     ## remove reference to file from workbook.xml.res
-    #     wb$workbook.xml.rels <- wb$workbook.xml.rels[!grepl(toRemove, wb$workbook.xml.rels)]
-    #   }
-    # }
   } else {
     # If workbook contains no sheetRels, create empty workbook.xml.rels.
     # Otherwise spreadsheet software will stumble over missing rels to drwaing.
     wb$worksheets_rels <- lapply(seq_along(wb$sheet_names), FUN = function(x) character())
   } ## end of worksheetRels
-
 
   ## convert hyperliks to hyperlink objects
   for (i in seq_len(nSheets)) {
@@ -1145,7 +1119,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
   ## queryTables
   if (length(queryTablesXML) > 0) {
-    ids <- as.numeric(regmatches(queryTablesXML, regexpr("[0-9]+(?=\\.xml)", queryTablesXML, perl = TRUE)))
+    ids <- as.numeric(reg_match(queryTablesXML, pat = "[0-9]+(?=\\.xml)"))
     wb$queryTables <- unapply(queryTablesXML[order(ids)], read_xml, pointer = FALSE)
     wb$Content_Types <- c(
       wb$Content_Types,
@@ -1186,10 +1160,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
   } else if (length(tablesXML) > 0) {
     wb$tables.xml.rels <- rep("", length(tablesXML))
   }
-
-
-
-
 
   return(wb)
 }

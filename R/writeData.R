@@ -169,7 +169,7 @@ write_data <- function(wb,
 
   ## named region
   if (!is.null(name)) { ## validate name
-    ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
+    ex_names <- reg_match(wb$workbook$definedNames, pat = '(?<=name=")[^"]+')
     ex_names <- replaceXMLEntities(ex_names)
 
     if (name %in% ex_names) {
@@ -184,7 +184,7 @@ write_data <- function(wb,
   } ## this will go to coerce.default and rowNames will be ignored
 
   ## Coerce to data.frame
-  if (inherits(x, "hyperlink")) { 
+  if (inherits(x, "hyperlink")) {
     ## vector of hyperlinks
     class(x) <- c("character", "hyperlink")
     x <- as.data.frame(x, stringsAsFactors = FALSE)

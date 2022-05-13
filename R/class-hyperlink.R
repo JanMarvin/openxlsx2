@@ -95,15 +95,16 @@ xml_to_hyperlink <- function(xml) {
   xml <- unname(xml)
 
   # TODO a, names, and vals could be moved within the larger lapply()
-  a <- unapply(xml, function(i) regmatches(i, gregexpr('[a-zA-Z]+=".*?"', i)), .recurse = FALSE)
-  names <- lapply(a, function(i) regmatches(i, regexpr('[a-zA-Z]+(?=\\=".*?")', i, perl = TRUE)))
+  a <- unapply(xml, str_match_all, pat = '[a-zA-Z]+=".*?"', .recurse = FALSE)
+  names <- lapply(a, reg_match, pat = '[a-zA-Z]+(?=\\=".*?")')
   vals <- lapply(a, function(i) {
-    res <- regmatches(i, regexpr('(?<=").*?(?=")', i, perl = TRUE))
+    res <- reg_match(i, pat = '(?<=").*?(?=")')
     Encoding(res) <- "UTF-8"
     res
   })
 
-  lapply(seq_along(xml), function(i) {
+  stopifnot(length(names) == length(vals))
+  lapply(seq_along(names), function(i) {
     tmp_vals <- vals[[i]]
     tmp_nms <- names[[i]]
     names(tmp_vals) <- tmp_nms
@@ -113,7 +114,7 @@ xml_to_hyperlink <- function(xml) {
 
     ## location
     location <- if ("location" %in% tmp_nms) tmp_vals[["location"]]
-    display <- if ("display" %in% tmp_nms) tmp_vals[["display"]]
+    display  <- if ("display" %in% tmp_nms)  tmp_vals[["display"]]
 
     ## target/external
     if (is.na(targets[i])) {

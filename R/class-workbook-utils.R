@@ -110,13 +110,13 @@ wb_check_overwrite_tables <- function(
       rows <- lapply(
         names(exTable),
         function(rectCoords) {
-          as.numeric(unlist(regmatches(rectCoords, gregexpr("[0-9]+", rectCoords))))
+          as.numeric(unlist(str_match_all(rectCoords, pat = "[0-9]+")))
         }
       )
       cols <- lapply(
         names(exTable),
         function(rectCoords) {
-          col2int(unlist(regmatches(rectCoords, gregexpr("[A-Z]+", rectCoords))))
+          col2int(unlist(str_match_all(rectCoords, pat = "[A-Z]+")))
         }
       )
 
