@@ -21,7 +21,7 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
   org_style <- org_style[c("row_r", "c_r", "c_s")]
 
   merged_style <- merge(org_style, wb_style, all = TRUE)
-  merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
+  merged_style[is.na(merged_style)] <- ""
 
   # TODO order this as well?
   wb$worksheets[[id_new]]$sheet_data$cc <- merged_style

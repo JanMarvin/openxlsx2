@@ -111,23 +111,23 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
     // append attributes <c r="A1" ...>
     cell.append_attribute("r") = to_string(cc_r[i]).c_str();
 
-    if (to_string(cc_c_s[i]).compare(openxlsxNA.c_str()) != 0)
+    if (!to_string(cc_c_s[i]).empty())
       cell.append_attribute("s") = to_string(cc_c_s[i]).c_str();
 
     // assign type if not <v> aka numeric
-    if (to_string(cc_c_t[i]).compare(openxlsxNA.c_str()) != 0)
+    if (!to_string(cc_c_t[i]).empty())
       cell.append_attribute("t") = to_string(cc_c_t[i]).c_str();
 
     // CellMetaIndex: suppress curly brackets in spreadsheet software
-    if (to_string(cc_c_cm[i]).compare(openxlsxNA.c_str()) != 0)
+    if (!to_string(cc_c_cm[i]).empty())
       cell.append_attribute("cm") = to_string(cc_c_cm[i]).c_str();
 
     // phonetics spelling
-    if (to_string(cc_c_ph[i]).compare(openxlsxNA.c_str()) != 0)
+    if (!to_string(cc_c_ph[i]).empty())
       cell.append_attribute("ph") = to_string(cc_c_ph[i]).c_str();
 
     // suppress curly brackets in spreadsheet software
-    if (to_string(cc_c_vm[i]).compare(openxlsxNA.c_str()) != 0)
+    if (!to_string(cc_c_vm[i]).empty())
       cell.append_attribute("vm") = to_string(cc_c_vm[i]).c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>
@@ -136,18 +136,18 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
 
     // <f> ... </f>
     // f node: formula to be evaluated
-    if (to_string(cc_f[i]).compare(openxlsxNA.c_str()) != 0 || to_string(cc_f_t[i]).compare(openxlsxNA.c_str()) != 0 || to_string(cc_f_si[i]).compare(openxlsxNA.c_str()) != 0) {
+    if (!to_string(cc_f[i]).empty() || !to_string(cc_f_t[i]).empty() || !to_string(cc_f_si[i]).empty()) {
       pugi::xml_node f = cell.append_child("f");
-      if (to_string(cc_f_t[i]).compare(openxlsxNA.c_str()) != 0) {
+      if (!to_string(cc_f_t[i]).empty()) {
         f.append_attribute("t") = to_string(cc_f_t[i]).c_str();
       }
-      if (to_string(cc_f_ref[i]).compare(openxlsxNA.c_str()) != 0) {
+      if (!to_string(cc_f_ref[i]).empty()) {
         f.append_attribute("ref") = to_string(cc_f_ref[i]).c_str();
       }
-      if (to_string(cc_f_ca[i]).compare(openxlsxNA.c_str()) != 0) {
+      if (!to_string(cc_f_ca[i]).empty()) {
         f.append_attribute("ca") = to_string(cc_f_ca[i]).c_str();
       }
-      if (to_string(cc_f_si[i]).compare(openxlsxNA.c_str()) != 0) {
+      if (!to_string(cc_f_si[i]).empty()) {
         f.append_attribute("si") = to_string(cc_f_si[i]).c_str();
         f_si = true;
       }
@@ -156,7 +156,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
     }
 
     // v node: value stored from evaluated formula
-    if (to_string(cc_v[i]).compare(openxlsxNA.c_str()) != 0) {
+    if (!to_string(cc_v[i]).empty()) {
       if (!f_si & (to_string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
@@ -167,7 +167,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
 
     // <is><t> ... </t></is>
     if (to_string(cc_c_t[i]).compare("inlineStr") == 0) {
-      if (to_string(cc_is[i]).compare(openxlsxNA.c_str()) != 0) {
+      if (!to_string(cc_is[i]).empty()) {
 
         pugi::xml_document is_node;
         pugi::xml_parse_result result = is_node.load_string(to_string(cc_is[i]).c_str(), pugi_parse_flags);

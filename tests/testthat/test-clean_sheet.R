@@ -9,7 +9,7 @@ test_that("clean_sheet", {
 
   # remove styles
   wb <- wb_clean_sheet(wb = wb, sheet = 1, numbers = FALSE, characters = FALSE, styles = TRUE)
-  expect_true(all(wb$worksheets[[1]]$sheet_data$cc$c_s == "_openxlsx_NA_"))
+  expect_true(all(wb$worksheets[[1]]$sheet_data$cc$c_s == ""))
 
   # remove numbers
   wb$worksheets[[1]]$clean_sheet(numbers = TRUE)
