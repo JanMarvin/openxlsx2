@@ -65,11 +65,17 @@ unapply <- function(x, FUN, ..., .recurse = TRUE, .names = FALSE) {
   unlist(lapply(X = x, FUN = FUN, ...), recursive = .recurse, use.names = .names)
 }
 
-reg_match0 <- function(x, pat) regmatches(x, gregexpr(pat, x, perl = TRUE))
-reg_match  <- function(x, pat) regmatches(x, gregexpr(pat, x, perl = TRUE))[[1]]
+str_match     <- function(x, pat, ...) { stringi::stri_match_first_regex(x, pattern = pat, ...) }
+str_match_all <- function(x, pat, ...) { stringi::stri_match_all_regex(  x, pattern = pat, ...) }
 
-apply_reg_match  <- function(x, pat) unapply(x, reg_match,  pat = pat)
-apply_reg_match0 <- function(x, pat) unapply(x, reg_match0, pat = pat)
+reg_match     <- function(x, pat, ...) { regmatches(x,  regexpr(pat, x, perl = TRUE, ...)) }
+reg_match_all <- function(x, pat, ...) { regmatches(x, gregexpr(pat, x, perl = TRUE, ...)) }
+
+apply_reg_match     <- function(x, pat, ...) { unapply(x, reg_match,     pat = pat, ...) }
+apply_str_match     <- function(x, pat, ...) { unapply(x, str_match,     pat = pat, ...) }
+
+apply_reg_match_all <- function(x, pat, ...) { unapply(x, reg_match_all, pat = pat, ...) }
+apply_str_match_all <- function(x, pat, ...) { unapply(x, str_match_all, pat = pat, ...) }
 
 wapply <- function(x, FUN, ...) {
   FUN <- match.fun(FUN)
