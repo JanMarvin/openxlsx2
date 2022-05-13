@@ -457,8 +457,8 @@ wb_to_df <- function(
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
   # we need to create the correct col and row position as integer starting at 0.
-  zz$cols <- match(cc$c_r, colnames(z)) - 1
-  zz$rows <- match(cc$row_r, rownames(z)) - 1
+  zz$cols <- match(cc$c_r, colnames(z)) - 1L
+  zz$rows <- match(cc$row_r, rownames(z)) - 1L
 
   zz <- zz[order(zz[, "cols"], zz[,"rows"]),]
   zz <- zz[zz$val != "",]
