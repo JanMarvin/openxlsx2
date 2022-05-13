@@ -47,7 +47,7 @@ wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
 wb$add_worksheet("Sheet 2")
-write_data(wb, sheet = 2, x = iris)
+wb$add_data(sheet = 2, x = iris)
 wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 
 ## Save workbook
@@ -60,10 +60,13 @@ wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
 \code{\link[=wb_remove_col_widths]{wb_remove_col_widths()}}
 
 Other workbook wrappers: 
-\code{\link{freezePane}},
+\code{\link{wb_add_data_table}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_formula}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
+\code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},

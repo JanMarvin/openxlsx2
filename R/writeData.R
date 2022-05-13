@@ -43,7 +43,7 @@
 #'
 #'
 #' x <- mtcars[1:6, ]
-#' write_data(wb, "Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+#' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #'
 #'
 #' #####################################################################################
@@ -53,7 +53,7 @@
 #' v <- rep("https://CRAN.R-project.org/", 4)
 #' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
 #' class(v) <- "hyperlink"
-#' write_data(wb, "Cars", x = v, xy = c("B", 32))
+#' wb$add_data("Cars", x = v, xy = c("B", 32))
 #'
 #'
 #' #####################################################################################
@@ -68,7 +68,7 @@
 #'
 #' class(df$z) <- c(class(df$z), "formula")
 #'
-#' write_data(wb, sheet = "Formula", x = df)
+#' wb$add_data(sheet = "Formula", x = df)
 #'
 #' ###########################################################################
 #' # update cell range and add mtcars
@@ -184,7 +184,22 @@ write_data <- function(wb,
   } ## this will go to coerce.default and rowNames will be ignored
 
   ## Coerce to data.frame
-  x <- openxlsx2Coerce(x = x, rowNames = rowNames)
+  if (inherits(x, "hyperlink")) { 
+    ## vector of hyperlinks
+    class(x) <- c("character", "hyperlink")
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+  } else if (!inherits(x, "data.frame")) {
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+  } else {
+    ## cbind rownames to x
+    if (rowNames) {
+      x <- cbind(
+        data.frame("row names" = rownames(x), stringsAsFactors = FALSE),
+        as.data.frame(x, stringsAsFactors = FALSE)
+      )
+      names(x)[[1]] <- ""
+    }
+  }
 
   nCol <- ncol(x)
   nRow <- nrow(x)
@@ -297,7 +312,7 @@ write_data <- function(wb,
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
-#' write_data(wb, "Sheet 1", x = iris)
+#' wb$add_data("Sheet 1", x = iris)
 #'
 #' ## SEE int2col() to convert int to Excel column label
 #'
@@ -322,7 +337,7 @@ write_data <- function(wb,
 #' class(df$z2) <- c(class(df$z2), "formula")
 #'
 #' wb$add_worksheet("Sheet 2")
-#' write_data(wb, sheet = 2, x = df)
+#' wb$add_data(sheet = 2, x = df)
 #'
 #'
 #'
@@ -331,7 +346,7 @@ write_data <- function(wb,
 #' v2 <- c("SUM(A2:A4)", "AVERAGE(B2:B4)", "MEDIAN(C2:C4)")
 #' class(v2) <- c(class(v2), "formula")
 #'
-#' write_data(wb, sheet = 2, x = v2, startCol = 10, startRow = 2)
+#' wb$add_data(sheet = 2, x = v2, startCol = 10, startRow = 2)
 #'
 #' ## Save workbook
 #' \dontrun{
@@ -358,7 +373,7 @@ write_data <- function(wb,
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb, "df")
 #'
-#' write_data(wb, "df", df, startCol = "C")
+#' wb$add_data("df", df, startCol = "C")
 #'
 #' write_formula(wb, "df", startCol = "E", startRow = "2",
 #'              x = "SUM(C2:C11*D2:D11)",

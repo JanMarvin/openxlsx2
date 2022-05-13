@@ -55,10 +55,10 @@ wb$add_worksheet("S2")
 wb$add_worksheet("S3")
 wb$add_worksheet("S4")
 
-write_data(wb, 1, 1:400)
-write_data(wb, 2, 1:400)
-write_data(wb, 3, 3:400)
-write_data(wb, 4, 3:400)
+wb$add_data(1, 1:400)
+wb$add_data(2, 1:400)
+wb$add_data(3, 3:400)
+wb$add_data(4, 3:400)
 
 wb$set_header_footer(
   sheet = "S1",

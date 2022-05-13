@@ -1,59 +1,127 @@
-openxlsx2
-========
 
-![R-CMD-check](https://github.com/JanMarvin/openxlsx2/workflows/R-CMD-check/badge.svg?branch=main) [![codecov](https://codecov.io/gh/JanMarvin/openxlsx2/branch/main/graph/badge.svg?token=HEZ7rXcZNq)](https://app.codecov.io/gh/JanMarvin/openxlsx2)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-This R package is a modern reinterpretation of the widely used popular `openxlsx` package. Similar to its predecessor, it simplifies the creation of xlsx files by providing a clean interface for writing, designing and editing worksheets. Based on a powerful XML library and focusing on modern programming flows in pipes or chains, `openxlsx2` allows to break many new ground.
+# openxlsx2
 
-Even though the project is already well progressed and supports most of the features known and appreciated from the predecessor, there may still be open gaps in one or the other place. A quick warning: Until the stable version 1.0 there may still be some changes to the API.
+<!-- badges: start -->
 
-### Introduction
-Many examples are in our manual pages and in our vignettes. You can find them under:
+[![R-CMD-check](https://github.com/JanMarvin/openxlsx2/workflows/R-CMD-check/badge.svg)](https://github.com/JanMarvin/openxlsx2/actions)
+[![codecov](https://codecov.io/gh/JanMarvin/openxlsx2/branch/main/graph/badge.svg?token=HEZ7rXcZNq)](https://app.codecov.io/gh/JanMarvin/openxlsx2)
+<!-- badges: end -->
 
-```R
+This R package is a modern reinterpretation of the widely used popular
+`openxlsx` package. Similar to its predecessor, it simplifies the
+creation of xlsx files by providing a clean interface for writing,
+designing and editing worksheets. Based on a powerful XML library and
+focusing on modern programming flows in pipes or chains, `openxlsx2`
+allows to break many new ground.
+
+Even though the project is already well progressed and supports most of
+the features known and appreciated from the predecessor, there may still
+be open gaps in one or the other place. A quick warning: Until the
+stable version 1.0 there ~~may~~ will still be some changes to the API.
+
+## Installation
+
+You can install the development version of openxlsx2 from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools") # not yet available on CRAN
+devtools::install_github("JanMarvin/openxlsx2")
+```
+
+## Introduction
+
+Many examples are in our manual pages and in our vignettes. You can find
+them under:
+
+``` r
 vignette(package = "openxlsx2")
 ```
 
-For a quick introduction to the package, you can try the following:
+## Example
 
-```R
+This is a basic example which shows you how to solve a common problem:
+
+``` r
+library(openxlsx2)
 # read xlsx or xlsm files
-df <- read_xlsx("file.xlsx")
-# write xlsx files
-write_xlsx(df, "new.xlsx")
+path <- system.file("extdata/readTest.xlsx", package = "openxlsx2")
+read_xlsx(path)
+#>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7
+#> 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!
+#> 3   TRUE   NA NA #NUM!     b 2015-02-06         <NA>    <NA>
+#> 4   TRUE    2 NA  1.34     c 2015-02-05         <NA>   #NUM!
+#> 5  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>    <NA>
+#> 6  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>
+#> 7  FALSE    1 NA   1.7     f 2015-02-02         <NA>    <NA>
+#> 8     NA   NA NA  <NA>  <NA> 2015-02-01         <NA>    <NA>
+#> 9  FALSE    2 NA    23     h 2015-01-31         <NA>    <NA>
+#> 10 FALSE    3 NA  67.3     i 2015-01-30         <NA>    <NA>
+#> 11    NA    1 NA   123  <NA> 2015-01-29         <NA>    <NA>
 
 # or import workbooks
-wb <- wb_load("file.xlsx")
+wb <- wb_load(path)
+wb
+#> A Workbook object.
+#>  
+#> Worksheets:
+#>  
+#>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+
 # read a data frame
 wb_to_df(wb)
-# and save it
-wb_save(wb, "new_wb.xlsx")
+#>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7
+#> 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!
+#> 3   TRUE   NA NA #NUM!     b 2015-02-06         <NA>    <NA>
+#> 4   TRUE    2 NA  1.34     c 2015-02-05         <NA>   #NUM!
+#> 5  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>    <NA>
+#> 6  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>
+#> 7  FALSE    1 NA   1.7     f 2015-02-02         <NA>    <NA>
+#> 8     NA   NA NA  <NA>  <NA> 2015-02-01         <NA>    <NA>
+#> 9  FALSE    2 NA    23     h 2015-01-31         <NA>    <NA>
+#> 10 FALSE    3 NA  67.3     i 2015-01-30         <NA>    <NA>
+#> 11    NA    1 NA   123  <NA> 2015-01-29         <NA>    <NA>
+
+# and save
+if (interactive()) wb_save(wb, "new_wb.xlsx")
 
 ## or create one yourself
 wb <- wb_workbook()
 # add a worksheet
 wb$add_worksheet("sheet")
 # add some data
-write_data(df, "sheet")
+wb$add_data("sheet", cars)
+#> A Workbook object.
+#>  
+#> Worksheets:
+#>  
+#>  Worksheet write order: 1
 # open it in your default spreadsheet software
-wb_open(wb)
+if (interactive()) wb$open()
 ```
 
+## Authors and contributions
 
-### Development version
-The development version with all the latest code can be installed from inside R (it requires a compiler):
+For a full list of all authors that have made this package possible and
+for whom we are greatful, please see:
 
-```R
-remotes::install_github("JanMarvin/openxlsx2")
-```
-
-### Authors and contributions
-For a full list of all authors that have made this package possible and for whom we are greatful, please see
-```R
+``` r
 system.file("AUTHORS", package = "openxlsx2")
 ```
-If you feel like you should be included on this list, please let us know. If you have something to contribute, you are welcome. If something is not working as expected, open issues or if you have solved an issue, open a pull request. Please be respectful and be aware that we are volunteers doing this for fun in our unpaid free time. We will work on problems when we have time or need.
 
+If you feel like you should be included on this list, please let us
+know. If you have something to contribute, you are welcome. If something
+is not working as expected, open issues or if you have solved an issue,
+open a pull request. Please be respectful and be aware that we are
+volunteers doing this for fun in our unpaid free time. We will work on
+problems when we have time or need.
 
-### License
-This package is licensed under the MIT license and is based on `openxlsx` (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and `pugixml` (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
+## License
+
+This package is licensed under the MIT license and is based on
+[`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and
+Philipp Schauberger; COPYRIGHT 2014-2022) and
+[`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine;
+COPYRIGHT 2006-2022). Both released under the MIT license.

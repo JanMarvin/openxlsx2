@@ -92,9 +92,9 @@ wb$add_worksheet("S3")
 ## -- write data.frame as an Excel table with column filters
 ## -- default table style is "TableStyleMedium2"
 
-write_datatable(wb, "S1", x = iris)
+wb$add_data_table("S1", x = iris)
 
-write_datatable(wb, "S2",
+wb$add_data_table("S2",
   x = mtcars, xy = c("B", 3), rowNames = TRUE,
   tableStyle = "TableStyleLight9"
 )
@@ -116,7 +116,7 @@ class(df$hLink) <- "hyperlink"
 class(df$Percentage) <- c(class(df$Percentage), "percentage")
 class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 
-write_datatable(wb, "S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+wb$add_data_table("S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
 
 #####################################################################################
 ## Additional Header Styling and remove column filters

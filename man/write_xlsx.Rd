@@ -17,8 +17,8 @@ write_xlsx(x, file, asTable = FALSE, ...)
 \itemize{
 \item{\code{\link[=wb_workbook]{wb_workbook()}}}
 \item{\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}}
-\item{\code{\link[=write_data]{write_data()}}}
-\item{\link{freezePane}}
+\item{\code{\link[=wb_add_data]{wb_add_data()}}}
+\item{\link{wb_freeze_pane}}
 \item{\code{\link[=wb_save]{wb_save()}}}
 }
 

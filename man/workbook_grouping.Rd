@@ -41,7 +41,7 @@ dimnames(t2) <- dimnames(.preformat.ts(t1))
 
 wb <- wb_workbook()
 wb$add_worksheet("AirPass")
-write_data(wb, "AirPass", t2, rowNames = TRUE)
+wb$add_data("AirPass", t2, rowNames = TRUE)
 
 # groups will always end on/show the last row. in the example 1950, 1955, and 1960
 wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
@@ -58,10 +58,13 @@ wb <- wb_group_cols(wb, "AirPass", 11:13)
 }
 \seealso{
 Other workbook wrappers: 
-\code{\link{freezePane}},
+\code{\link{wb_add_data_table}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_formula}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
+\code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
 \code{\link{wb_set_col_widths}()},

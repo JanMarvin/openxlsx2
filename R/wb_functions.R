@@ -436,11 +436,11 @@ wb_to_df <- function(
       cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
 
     if (detectDates) {
-      sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string & cc$v != "_openxlsx_NA_"
+      sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string & cc$v != ""
       cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel])))
       cc$typ[sel]  <- "d"
 
-      sel <- (cc$c_s %in% xlsx_posix_style) & !cc$is_string & cc$v != "_openxlsx_NA_"
+      sel <- (cc$c_s %in% xlsx_posix_style) & !cc$is_string & cc$v != ""
       cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
       cc$typ[sel]  <- "p"
     }
@@ -461,7 +461,7 @@ wb_to_df <- function(
   zz$rows <- match(cc$row_r, rownames(z)) - 1
 
   zz <- zz[order(zz[, "cols"], zz[,"rows"]),]
-  zz <- zz[zz$val != "_openxlsx_NA_",]
+  zz <- zz[zz$val != "",]
   long_to_wide(z, tt, zz)
 
   # prepare colnames object
@@ -682,7 +682,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
       total_cols <- int2col(sort(col2int(total_cols)))
 
       # create candidate
-      cc_row_new <- data.frame(matrix("_openxlsx_NA_", nrow = length(total_cols), ncol = 2))
+      cc_row_new <- data.frame(matrix("", nrow = length(total_cols), ncol = 2))
       names(cc_row_new) <- names(cc)[1:2]
       cc_row_new$row_r <- row
       cc_row_new$c_r <- total_cols
@@ -702,7 +702,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   # update cc
   # TODO this was not supposed to happen, caused by delete? clean?
-  cc <- cc[cc$row_r != "_openxlsx_NA_" & cc$c_r != "_openxlsx_NA_",]
+  cc <- cc[cc$row_r != "" & cc$c_r != "",]
 
   # update dimensions
   cc$r <- paste0(cc$c_r, cc$row_r)
@@ -741,7 +741,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         c_s <- NULL
         if (removeCellStyle) c_s <- "c_s"
 
-        cc[sel, c(c_s, "c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
+        cc[sel, c(c_s, "c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
         # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
         if ((data_class[m] == openxlsx2_celltype[["character"]]) || ((colNames == TRUE) && (n == 1))) {
@@ -758,7 +758,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
           cc[sel, "f"] <- as.character(value)
           # FIXME assign the hyperlinkstyle if no style found. This might not be
           # desired. We should provide an option to prevent this.
-          if (cc[sel, "c_s"] == "_openxlsx_NA_")
+          if (cc[sel, "c_s"] == "")
             cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
         } else {
           cc[sel, "v"]   <- as.character(value)
@@ -947,11 +947,12 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 
     # original cc dataframe
     # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
-    nams <- c("row_r", "c_r", "c_s", "c_t", "v",
-              "f", "f_t", "f_ref", "f_ca", "f_si",
-              "is", "typ", "r")
+    nams <- c("row_r", "c_r", "c_s", "c_t", "c_cm",
+              "c_ph", "c_vm", "v", "f", "f_t",
+              "f_ref", "f_ca", "f_si", "is", "typ",
+              "r")
     cc <- as.data.frame(
-      matrix(data = "_openxlsx_NA_",
+      matrix(data = "",
              nrow = nrow(data) * ncol(data),
              ncol = length(nams))
     )
@@ -1147,7 +1148,7 @@ delete_data <- function(wb, sheet, cols, rows, gridExpand) {
     sel <- cc$row_r %in% as.character(rows) & cc$c_r %in% cols
   }
 
-  cc[sel, ] <- "_openxlsx_NA_"
+  cc[sel, ] <- ""
 
   wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
 

@@ -20,8 +20,8 @@ test_that("conditional formatting", {
   set.seed(123)
 
   ## rule applies to all each cell in range
-  write_data(wb, "cellIs", -5:5)
-  write_data(wb, "cellIs", LETTERS[1:11], startCol = 2)
+  wb$add_data("cellIs", -5:5)
+  wb$add_data("cellIs", LETTERS[1:11], startCol = 2)
   wb_conditional_formatting(wb, "cellIs",
                         cols = 1,
                         rows = 1:11, rule = "!=0", style = negStyle
@@ -40,8 +40,8 @@ test_that("conditional formatting", {
 
   wb$add_worksheet("Moving Row")
   ## highlight row dependent on first cell in row
-  write_data(wb, "Moving Row", -5:5)
-  write_data(wb, "Moving Row", LETTERS[1:11], startCol = 2)
+  wb$add_data("Moving Row", -5:5)
+  wb$add_data("Moving Row", LETTERS[1:11], startCol = 2)
   wb_conditional_formatting(wb, "Moving Row",
                         cols = 1:2,
                         rows = 1:11, rule = "$A1<0", style = negStyle
@@ -59,8 +59,8 @@ test_that("conditional formatting", {
 
   wb$add_worksheet("Moving Col")
   ## highlight column dependent on first cell in column
-  write_data(wb, "Moving Col", -5:5)
-  write_data(wb, "Moving Col", LETTERS[1:11], startCol = 2)
+  wb$add_data("Moving Col", -5:5)
+  wb$add_data("Moving Col", LETTERS[1:11], startCol = 2)
   wb_conditional_formatting(wb, "Moving Col",
                         cols = 1:2,
                         rows = 1:11, rule = "A$1<0", style = negStyle
@@ -79,8 +79,8 @@ test_that("conditional formatting", {
 
   wb$add_worksheet("Dependent on")
   ## highlight entire range cols X rows dependent only on cell A1
-  write_data(wb, "Dependent on", -5:5)
-  write_data(wb, "Dependent on", LETTERS[1:11], startCol = 2)
+  wb$add_data("Dependent on", -5:5)
+  wb$add_data("Dependent on", LETTERS[1:11], startCol = 2)
   wb_conditional_formatting(wb, "Dependent on",
                         cols = 1:2,
                         rows = 1:11, rule = "$A$1<0", style = negStyle
@@ -98,7 +98,7 @@ test_that("conditional formatting", {
 
 
   ## highlight cells in column 1 based on value in column 2
-  write_data(wb, "Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
+  wb$add_data("Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
   wb_conditional_formatting(wb, "Dependent on",
                         cols = 1,
                         rows = 16:25, rule = "B16<0.5", style = negStyle
@@ -118,7 +118,7 @@ test_that("conditional formatting", {
 
   wb$add_worksheet("Duplicates")
   ## highlight duplicates using default style
-  write_data(wb, "Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
+  wb$add_data("Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
   wb_conditional_formatting(wb, "Duplicates", cols = 1, rows = 1:10, type = "duplicates")
 
   exp <- c(`A1:A10` = "<cfRule type=\"duplicateValues\" dxfId=\"0\" priority=\"1\"/>")
@@ -127,7 +127,7 @@ test_that("conditional formatting", {
   wb$add_worksheet("containsText")
   ## cells containing text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-  write_data(wb, "containsText", sapply(1:10, fn))
+  wb$add_data("containsText", sapply(1:10, fn))
   wb_conditional_formatting(wb, "containsText", cols = 1, rows = 1:10, type = "contains", rule = "A")
 
   # TODO remove identing from xml
@@ -137,7 +137,7 @@ test_that("conditional formatting", {
   wb$add_worksheet("notcontainsText")
   ## cells not containing text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-  write_data(wb, "containsText", sapply(1:10, fn))
+  wb$add_data("containsText", sapply(1:10, fn))
   wb_conditional_formatting(wb, "notcontainsText", cols = 1,
                         rows = 1:10, type = "notcontains", rule = "A")
 
@@ -147,7 +147,7 @@ test_that("conditional formatting", {
   wb$add_worksheet("beginsWith")
   ## cells begins with text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-  write_data(wb, "beginsWith", sapply(1:100, fn))
+  wb$add_data("beginsWith", sapply(1:100, fn))
   wb_conditional_formatting(wb, "beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
 
   exp <- c(`A1:A100` = "<cfRule type=\"beginsWith\" dxfId=\"0\" priority=\"1\" operator=\"beginsWith\" text=\"A\">\n                        \t<formula>LEFT(A1,LEN(\"A\"))=\"A\"</formula>\n                       </cfRule>")
@@ -156,7 +156,7 @@ test_that("conditional formatting", {
   wb$add_worksheet("endsWith")
   ## cells ends with text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-  write_data(wb, "endsWith", sapply(1:100, fn))
+  wb$add_data("endsWith", sapply(1:100, fn))
   wb_conditional_formatting(wb, "endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
 
   exp <- c(`A1:A100` = "<cfRule type=\"endsWith\" dxfId=\"0\" priority=\"1\" operator=\"endsWith\" text=\"A\">\n                        \t<formula>RIGHT(A1,LEN(\"A\"))=\"A\"</formula>\n                       </cfRule>")
@@ -165,7 +165,7 @@ test_that("conditional formatting", {
   wb$add_worksheet("colourScale", zoom = 30)
   ## colourscale colours cells based on cell value
   df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
-  write_data(wb, "colourScale", df, colNames = FALSE) ## write data.frame
+  wb$add_data("colourScale", df, colNames = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb_conditional_formatting(wb, "colourScale",
@@ -182,7 +182,7 @@ test_that("conditional formatting", {
 
   wb$add_worksheet("databar")
   ## Databars
-  write_data(wb, "databar", -5:5)
+  wb$add_data("databar", -5:5)
   wb_conditional_formatting(wb, "databar", cols = 1, rows = 1:11, type = "databar") ## Default colours
 
   exp <- c(`A1:A11` = "<cfRule type=\"dataBar\" priority=\"1\"><dataBar showValue=\"1\">\n                          <cfvo type=\"min\"/><cfvo type=\"max\"/>\n                          <color rgb=\"FF638EC6\"/>\n                          </dataBar>\n                          <extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext>\n                        </extLst></cfRule>")
@@ -191,7 +191,7 @@ test_that("conditional formatting", {
   wb$add_worksheet("between")
   ## Between
   # Highlight cells in interval [-2, 2]
-  write_data(wb, "between", -5:5)
+  wb$add_data("between", -5:5)
   wb_conditional_formatting(wb, "between", cols = 1, rows = 1:11, type = "between", rule = c(-2, 2))
 
   exp <- c(`A1:A11` = "<cfRule type=\"cellIs\" dxfId=\"0\" priority=\"1\" operator=\"between\"><formula>-2</formula><formula>2</formula></cfRule>")
@@ -199,7 +199,7 @@ test_that("conditional formatting", {
 
   wb$add_worksheet("topN")
   ## Top N
-  write_data(wb, "topN", data.frame(x = 1:10, y = rnorm(10)))
+  wb$add_data("topN", data.frame(x = 1:10, y = rnorm(10)))
   # Highlight top 5 values in column x
   wb_conditional_formatting(wb, "topN", cols = 1, rows = 2:11,
                         style = posStyle, type = "topN", rank = 5)#'
@@ -216,7 +216,7 @@ test_that("conditional formatting", {
 
   wb$add_worksheet("bottomN")
   ## Bottom N
-  write_data(wb, "bottomN", data.frame(x = 1:10, y = rnorm(10)))
+  wb$add_data("bottomN", data.frame(x = 1:10, y = rnorm(10)))
   # Highlight bottom 5 values in column x
   wb_conditional_formatting(wb, "bottomN", cols = 1, rows = 2:11,
                         style = negStyle, type = "topN", rank = 5)
@@ -234,7 +234,7 @@ test_that("conditional formatting", {
   wb$add_worksheet("logical operators")
   ## Logical Operators
   # You can use Excels logical Operators
-  write_data(wb, "logical operators", 1:10)
+  wb$add_data("logical operators", 1:10)
   wb_conditional_formatting(wb, "logical operators",
                         cols = 1, rows = 1:10,
                         rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"

@@ -66,6 +66,9 @@ wbWorkbook <- R6::R6Class(
     #' @field media media
     media = NULL,
 
+    #' @field metadata metadata
+    metadata = NULL,
+
     #' @field persons persons
     persons = NULL,
 
@@ -209,6 +212,7 @@ wbWorkbook <- R6::R6Class(
       self$headFoot <- NULL
 
       self$media <- list()
+      self$metadata <- NULL
 
       self$persons <- NULL
 
@@ -820,6 +824,140 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    ### add data ----
+
+    #' @description add data
+    #' @param sheet sheet
+    #' @param x x
+    #' @param startCol startCol
+    #' @param startRow startRow
+    #' @param array array
+    #' @param xy xy
+    #' @param colNames colNames
+    #' @param rowNames rowNames
+    #' @param withFilter withFilter
+    #' @param name name
+    #' @param sep sep
+    #' @param removeCellStyle removeCellStyle
+    #' @param return The `wbWorkbook` object
+    add_data = function(
+        sheet,
+        x,
+        startCol        = 1,
+        startRow        = 1,
+        array           = FALSE,
+        xy              = NULL,
+        colNames        = TRUE,
+        rowNames        = FALSE,
+        withFilter      = FALSE,
+        name            = NULL,
+        sep             = ", ",
+        removeCellStyle = TRUE
+      ) {
+      write_data(
+        wb              = self,
+        sheet           = sheet,
+        x               = x,
+        startCol        = startCol,
+        startRow        = startRow,
+        array           = array,
+        xy              = xy,
+        colNames        = colNames,
+        rowNames        = rowNames,
+        withFilter      = withFilter,
+        name            = name,
+        sep             = sep,
+        removeCellStyle = removeCellStyle
+      )
+      self
+    },
+
+    #' @description add a data table
+    #' @param sheet sheet
+    #' @param x x
+    #' @param startCol startCol
+    #' @param startRow startRow
+    #' @param xy xy
+    #' @param colNames colNames
+    #' @param rowNames rowNames
+    #' @param tableStyle tableStyle
+    #' @param tableName tableName
+    #' @param withFilter withFilter
+    #' @param sep sep
+    #' @param stack stack
+    #' @param firstColumn firstColumn
+    #' @param lastColumn lastColumn
+    #' @param bandedRows bandedRows
+    #' @param bandedCols bandedCols
+    #' @returns The `wbWorkbook` object
+    add_data_table = function(
+        sheet,
+        x,
+        startCol    = 1,
+        startRow    = 1,
+        xy          = NULL,
+        colNames    = TRUE,
+        rowNames    = FALSE,
+        tableStyle  = "TableStyleLight9",
+        tableName   = NULL,
+        withFilter  = TRUE,
+        sep         = ", ",
+        stack       = FALSE,
+        firstColumn = FALSE,
+        lastColumn  = FALSE,
+        bandedRows  = TRUE,
+        bandedCols  = FALSE
+    ) {
+      write_datatable(
+        wb          = self,
+        sheet       = sheet,
+        x           = x,
+        startCol    = startCol,
+        startRow    = startRow,
+        xy          = xy,
+        colNames    = colNames,
+        rowNames    = rowNames,
+        tableStyle  = tableStyle,
+        tableName   = tableName,
+        withFilter  = withFilter,
+        sep         = sep,
+        stack       = stack,
+        firstColumn = firstColumn,
+        lastColumn  = lastColumn,
+        bandedRows  = bandedRows,
+        bandedCols  = bandedCols
+      )
+      self
+    },
+
+    #' @description add formula
+    #' @param sheet sheet
+    #' @param x x
+    #' @param startCol startCol
+    #' @param startRow startRow
+    #' @param array array
+    #' @param xy xy
+    #' @returns The `wbWorkbook` object
+    add_formula = function(
+        sheet,
+        x,
+        startCol = 1,
+        startRow = 1,
+        array    = FALSE,
+        xy       = NULL
+    ) {
+      write_formula(
+        wb       = self,
+        sheet    = sheet,
+        x        = x,
+        startCol = startCol,
+        startRow = startRow,
+        array    = array,
+        xy       = xy
+      )
+      self
+    },
+
     # TODO wb_save can be shortened a lot by some formatting and by using a
     # function that creates all the temporary directories and subdirectries as a
     # named list
@@ -1298,6 +1436,16 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
+      # write metadata file. required if cm attribut is set.
+      if (length(self$metadata)) {
+        write_file(
+          head = '',
+          body = self$metadata,
+          tail = '',
+          fl = file.path(xlDir, "metadata.xml")
+        )
+      }
+
       ## write workbook.xml
       workbookXML <- self$workbook
       workbookXML$sheets <- stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
@@ -1306,9 +1454,21 @@ wbWorkbook <- R6::R6Class(
         workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>" )
       }
 
+      # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
+      # assured that the order of entries is still valid when we write the file. Functions can change the
+      # workbook order, therefore we have to make sure that the expected order is written.
+      # Othterwise spreadsheet software will complain.
+      workbook_openxml281 <- c(
+        "fileVersion", "fileSharing", "workbookPr", "alternateContent", "absPath", "workbookProtection",
+        "bookViews", "sheets", "functionGroups", "externalReferences", "definedNames", "calcPr",
+        "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr", "smartTagTypes", "webPublishing",
+        "fileRecoveryPr", "webPublishObjects", "extLst"
+      )
+
+
       write_file(
         head = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x15 xr xr6 xr10 xr2" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr6="http://schemas.microsoft.com/office/spreadsheetml/2016/revision6" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2">',
-        body = pxml(workbookXML),
+        body = pxml(workbookXML[workbook_openxml281]),
         tail = "</workbook>",
         fl = file.path(xlDir, "workbook.xml")
       )
@@ -2527,24 +2687,50 @@ wbWorkbook <- R6::R6Class(
 
           guid <- stri_join(
             "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(self$worksheets[[sheet]]$extLst)
+            40000L + length(xml_node(
+              self$worksheets[[sheet]]$extLst,
+              "ext",
+              "x14:conditionalFormattings",
+              "x14:conditionalFormatting"
+            ))
           )
 
           showValue <- as.integer(params$showValue %||% 1L)
           gradient  <- as.integer(params$gradient  %||% 1L)
           border    <- as.integer(params$border    %||% 1L)
 
-          private$append_sheet_field(sheet, "extLst", {
-            gen_databar_extlst(
-              guid      = guid,
-              sqref     = sqref,
-              posColour = posColour,
-              negColour = negColour,
-              values    = values,
-              border    = border,
-              gradient  = gradient
+          newExtLst <- gen_databar_extlst(
+            guid      = guid,
+            sqref     = sqref,
+            posColour = posColour,
+            negColour = negColour,
+            values    = values,
+            border    = border,
+            gradient  = gradient
+          )
+
+          # check if any extLst availaible
+          if (length(self$worksheets[[sheet]]$extLst) == 0) {
+            self$worksheets[[sheet]]$extLst <- newExtLst
+          } else if (length(xml_node(self$worksheets[[sheet]]$extLst, "ext", "x14:conditionalFormattings")) == 0) {
+            # extLst is available, has no conditionalFormattings
+            self$worksheets[[sheet]]$extLst <- xml_add_child(
+              self$worksheets[[sheet]]$extLst,
+              xml_node(newExtLst, "ext", "x14:conditionalFormattings")
             )
-          })
+          } else {
+            # extLst is available, has conditionalFormattings
+            self$worksheets[[sheet]]$extLst <- xml_add_child(
+              self$worksheets[[sheet]]$extLst,
+              xml_node(
+                newExtLst,
+                "ext",
+                "x14:conditionalFormattings",
+                "x14:conditionalFormatting"
+              ),
+              level = "x14:conditionalFormattings"
+            )
+          }
 
           if (is.null(values)) {
             sprintf(
@@ -3191,53 +3377,100 @@ wbWorkbook <- R6::R6Class(
     #' @param readOnlyRecommended readOnlyRecommended
     #' @return The `wbWorkbook` object, invisibly
     protect = function(
-      protect = TRUE,
-      lockStructure = FALSE,
-      lockWindows = FALSE,
-      password = NULL,
-      type = NULL,
-      fileSharing = FALSE,
-      username = unname(Sys.info()["user"]),
+      protect             = TRUE,
+      password            = NULL,
+      lockStructure       = FALSE,
+      lockWindows         = FALSE,
+      type                = c("1", "2", "4", "8"),
+      fileSharing         = FALSE,
+      username            = unname(Sys.info()["user"]),
       readOnlyRecommended = FALSE
     ) {
 
-      attr <- vector("character", 3L)
-      names(attr) <- c("workbookPassword", "lockStructure", "lockWindows")
-
-      if (!is.null(password)) {
-        attr["workbookPassword"] <- hashPassword(password)
-      }
-      if (!missing(lockStructure) && !is.null(lockStructure)) {
-        attr["lockStructure"] <- toString(as.numeric(lockStructure))
-      }
-      if (!missing(lockWindows) && !is.null(lockWindows)) {
-        attr["lockWindows"] <- toString(as.numeric(lockWindows))
+      if (!protect) {
+        self$workbook$workbookProtection <- NULL
+        return(self)
       }
 
-      # TODO: Shall we parse the existing protection settings and preserve all unchanged attributes?
-      if (protect) {
-        self$workbook$workbookProtection <-
-          xml_node_create("workbookProtection", xml_attributes = attr[attr != ""])
+      # match.arg() doesn't handle numbers too well
+      type <- if (!is.character(type)) as.character(type)
+      password <- if (is.null(password)) "" else hashPassword(password)
 
-        # TODO: use xml_node_create
-        if (fileSharing) {
-          if (type == 2L) readOnlyRecommended <- TRUE
-          fileSharingPassword <- function(x, username, readOnlyRecommended) {
-            readonly <- ifelse(readOnlyRecommended, 'readOnlyRecommended="1"', '')
-            sprintf('<fileSharing userName="%s" %s reservationPassword="%s"/>', username, readonly, x)
-          }
+      # TODO: Shall we parse the existing protection settings and preserve all
+      # unchanged attributes?
 
-          self$workbook$fileSharing <- fileSharingPassword(attr["workbookPassword"], username, readOnlyRecommended)
-        }
-
-        if (!is.null(type) | !is.null(password))
-          self$workbook$apps <- sprintf("<DocSecurity>%i</DocSecurity>", type)
-
-      } else {
-        self$workbook$workbookProtection <- ""
+      if (fileSharing) {
+        self$workbook$fileSharing <- xml_node_create(
+          "fileSharing",
+          xml_attributes = c(
+            userName = username,
+            readOnlyRecommended = if (readOnlyRecommended | type == "2") "1",
+            reservationPassword = password
+          )
+        )
       }
 
-      invisible(self)
+      self$workbook$workbookProtection <- xml_node_create(
+        "workbookProtection",
+        xml_attributes = c(
+          hashPassword = password,
+          lockStructure = toString(as.numeric(lockStructure)),
+          lockWindows = toString(as.numeric(lockWindows))
+        )
+      )
+
+      self$workbook$apps <- xml_node_create("DocSecurity", type)
+      self
+    },
+
+    #' @description protect worksheet
+    #' @param sheet sheet
+    #' @param protect protect
+    #' @param password password
+    #' @param properties A character vector of properties to lock.  Can be one
+    #'   or more of the following: `"selectLockedCells"`,
+    #'   `"selectUnlockedCells"`, `"formatCells"`, `"formatColumns"`,
+    #'   `"formatRows"`, `"insertColumns"`, `"insertRows"`,
+    #'   `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`, `"sort"`,
+    #'   `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
+    #' @returns The `wbWorkbook` object
+    protect_worksheet = function(
+        sheet,
+        protect    = TRUE,
+        password   = NULL,
+        properties = NULL
+    ) {
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      if (!protect) {
+        # initializes as character()
+        self$worksheets[[sheet]]$sheetProtection <- character()
+        return(self)
+      }
+
+      all_props <- worksheet_lock_properties()
+
+      if (!is.null(properties)) {
+        # ensure only valid properties are listed
+        properties <- match.arg(properties, all_props, several.ok = TRUE)
+      }
+
+      properties <- as.character(as.numeric(all_props %in% properties))
+      names(properties) <- all_props
+
+      if (!is.null(password))
+        properties <- c(properties, password = hashPassword(password))
+
+      self$worksheets[[sheet]]$sheetProtection <- xml_node_create(
+        "sheetProtection",
+        xml_attributes = c(
+          sheet = "1",
+          properties[properties != "0"]
+        )
+      )
+
+      self
     },
 
 
@@ -3864,6 +4097,28 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
       self
+    },
+
+    #' @description clean sheet (remove all values)
+    #' @param sheet sheet
+    #' @param numbers remove all numbers
+    #' @param characters remove all characters
+    #' @param styles remove all styles
+    #' @param merged_cells remove all merged_cells
+    #' @return The `wbWorksheetObject`, invisibly
+    clean_sheet = function(
+      sheet,
+      numbers = TRUE,
+      characters = TRUE,
+      styles = TRUE,
+      merged_cells = TRUE
+    ) {
+
+      sheet <- wb_validate_sheet(self, sheet)
+
+      self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+
+      invisible(self)
     }
   ),
 
@@ -4185,7 +4440,7 @@ wbWorkbook <- R6::R6Class(
             ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])),]
 
             cc_rows <- ws$sheet_data$row_attr$r
-            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
+            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
 
             ws$sheet_data$cc_out <- cc_out[order(as.integer(cc_out[,"row_r"]), col2int(cc_out[, "c_r"])),]
           } else {
@@ -4492,6 +4747,15 @@ wbWorkbook <- R6::R6Class(
 
       self$append("workbook.xml.rels", c(pivotNode, slicerNode))
 
+      if (length(self$metadata)) {
+        self$append("workbook.xml.rels",
+          sprintf(
+            '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sheetMetadata" Target="metadata.xml"/>',
+            1L + length(self$workbook.xml.rels)
+          )
+        )
+      }
+
       if (!is.null(self$vbaProject)) {
         self$append("workbook.xml.rels",
           sprintf(
@@ -4661,4 +4925,26 @@ wb_get_sheet_name = function(wb, index = NULL) {
   }
 
   wb$sheet_names[index]
+}
+
+worksheet_lock_properties <- function() {
+  # provides a reference for the lock properties
+  c(
+    "selectLockedCells",
+    "selectUnlockedCells",
+    "formatCells",
+    "formatColumns",
+    "formatRows",
+    "insertColumns",
+    "insertRows",
+    "insertHyperlinks",
+    "deleteColumns",
+    "deleteRows",
+    "sort",
+    "autoFilter",
+    "pivotTables",
+    "objects",
+    "scenarios",
+    NULL
+  )
 }

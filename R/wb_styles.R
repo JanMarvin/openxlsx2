@@ -21,7 +21,7 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
   org_style <- org_style[c("row_r", "c_r", "c_s")]
 
   merged_style <- merge(org_style, wb_style, all = TRUE)
-  merged_style[is.na(merged_style)] <- "_openxlsx_NA_"
+  merged_style[is.na(merged_style)] <- ""
 
   # TODO order this as well?
   wb$worksheets[[id_new]]$sheet_data$cc <- merged_style
@@ -713,7 +713,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #' wb$add_worksheet("test")
 #'
 #' mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
-#' write_data(wb, "test", mat, colNames = FALSE)
+#' wb$add_data("test", mat, colNames = FALSE)
 #'
 #'
 #' x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",

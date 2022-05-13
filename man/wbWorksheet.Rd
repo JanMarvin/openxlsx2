@@ -262,10 +262,10 @@ The \code{wbWorksheetObject}, invisibly
 clean sheet (remove all values)
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$clean_sheet(
-  numbers = FALSE,
-  characters = FALSE,
-  styles = FALSE,
-  merged_cells = FALSE
+  numbers = TRUE,
+  characters = TRUE,
+  styles = TRUE,
+  merged_cells = TRUE
 )}\if{html}{\out{</div>}}
 }
 

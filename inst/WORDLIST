@@ -21,6 +21,8 @@ Textbox
 allowBlank
 attr
 autoFilter
+bandedCols
+bandedRows
 beginsWith
 bgFill
 bool
@@ -71,6 +73,7 @@ fileType
 firstActiveCol
 firstActiveRow
 firstCol
+firstColumn
 firstFooter
 firstHeader
 firstRow
@@ -94,6 +97,7 @@ headerFooter
 ignoredErrors
 isChartSheet
 keepNA
+lastColumn
 legacyDrawing
 legacyDrawingHF
 lessThan
@@ -143,6 +147,7 @@ readOnlyRecommended
 readonly
 reimported
 rels
+removeCellStyle
 rgb
 rowBreaks
 rowHeights
@@ -188,17 +193,20 @@ threadComments
 threadedComments
 topN
 totalsRowCount
+ungroup
 unprotect
 vbaProject
 vdpi
 veryHidden
 vml
 wb
+wbWorkbook
 webPublishItems
 withFilter
 workbooksheet
 ws
 xf
+xl
 xls
 xlsm
 xlsx

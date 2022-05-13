@@ -29,14 +29,14 @@ wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
 wb$add_worksheet("Sheet 3")
 
-write_data(wb, 1, iris)
+wb$add_data(1, iris)
 wb$add_filter(1, row = 1, cols = seq_along(iris))
 
 ## Equivalently
-write_data(wb, 2, x = iris, withFilter = TRUE)
+wb$add_data(2, x = iris, withFilter = TRUE)
 
 ## Similarly
-write_datatable(wb, 3, iris)
+wb$add_data_table(3, iris)
 \dontrun{
 wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 }

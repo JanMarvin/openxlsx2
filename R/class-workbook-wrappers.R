@@ -70,6 +70,194 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 }
 
 
+# add data ----------------------------------------------------------------
+
+
+#' Add data to a worksheet
+#'
+#' Add data to worksheet with optional styling.
+#'
+#' @param wb A Workbook object containing a worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x Object to be written. For classes supported look at the examples.
+#' @param startCol A vector specifying the starting column to write to.
+#' @param startRow A vector specifying the starting row to write to.
+#' @param array A bool if the function written is of type array
+#' @param xy An alternative to specifying `startCol` and
+#' `startRow` individually.  A vector of the form
+#' `c(startCol, startRow)`.
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, data.frame row names of x are written.
+#' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
+#' @param name If not NULL, a named region is defined.
+#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+#' @param removeCellStyle keep the cell style?
+#' @export
+#' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+#' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
+#' @rdname write_data
+#' @family workbook wrappers
+#' @return A clone of `wb``
+wb_add_data <- function(
+    wb,
+    sheet,
+    x,
+    startCol        = 1,
+    startRow        = 1,
+    array           = FALSE,
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    withFilter      = FALSE,
+    name            = NULL,
+    sep             = ", ",
+    removeCellStyle = TRUE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_data(
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    array           = array,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    withFilter      = withFilter,
+    name            = name,
+    sep             = sep,
+    removeCellStyle = removeCellStyle
+  )
+}
+
+#' Add data to a worksheet as an Excel table
+#'
+#' Add data to a worksheet and format as an Excel table
+#'
+#' @param wb A Workbook object containing a #' worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A dataframe.
+#' @param startCol A vector specifying the starting column to write df
+#' @param startRow A vector specifying the starting row to write df
+#' @param xy An alternative to specifying startCol and startRow individually. A
+#'   vector of the form c(startCol, startRow)
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, row names of x are written.
+#' @param tableStyle Any excel table style name or "none" (see "formatting"
+#'   vignette).
+#' @param tableName name of table in workbook. The table name must be unique.
+#' @param withFilter If `TRUE`, columns with have filters in the first row.
+#' @param sep Only applies to list columns. The separator used to collapse list
+#'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
+#'   sep).
+#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
+#' existing style is replaced by the new style.
+#' \cr\cr
+#' \cr**The below options correspond to Excel table options:**
+#' \cr
+#' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
+#' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
+#'
+#' @param firstColumn logical. If TRUE, the first column is bold
+#' @param lastColumn logical. If TRUE, the last column is bold
+#' @param bandedRows logical. If TRUE, rows are colour banded
+#' @param bandedCols logical. If TRUE, the columns are colour banded
+#'
+#' @details columns of x with class Date/POSIXt, currency, accounting,
+#' hyperlink, percentage are automatically styled as dates, currency,
+#' accounting, hyperlinks, percentages respectively. The string `"_openxlsx_NA"`
+#' is reserved for `openxlsx2`. If the data frame contains this string, the
+#' output will be broken.
+#' @family workbook wrappers
+#' @export
+wb_add_data_table <- function(
+    wb,
+    sheet,
+    x,
+    startCol    = 1,
+    startRow    = 1,
+    xy          = NULL,
+    colNames    = TRUE,
+    rowNames    = FALSE,
+    tableStyle  = "TableStyleLight9",
+    tableName   = NULL,
+    withFilter  = TRUE,
+    sep         = ", ",
+    stack       = FALSE,
+    firstColumn = FALSE,
+    lastColumn  = FALSE,
+    bandedRows  = TRUE,
+    bandedCols  = FALSE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_data_table(
+    sheet       = sheet,
+    x           = x,
+    startCol    = startCol,
+    startRow    = startRow,
+    xy          = xy,
+    colNames    = colNames,
+    rowNames    = rowNames,
+    tableStyle  = tableStyle,
+    tableName   = tableName,
+    withFilter  = withFilter,
+    sep         = sep,
+    stack       = stack,
+    firstColumn = firstColumn,
+    lastColumn  = lastColumn,
+    bandedRows  = bandedRows,
+    bandedCols  = bandedCols
+  )
+}
+
+#' Add a character vector as an Excel Formula
+#'
+#' Add a character vector containing Excel formula to a worksheet.
+#'
+#' @details Currently only the English version of functions are supported. Please don't use the local translation.
+#' The examples below show a small list of possible formulas:
+#' \itemize{
+#'     \item{SUM(B2:B4)}
+#'     \item{AVERAGE(B2:B4)}
+#'     \item{MIN(B2:B4)}
+#'     \item{MAX(B2:B4)}
+#'     \item{...}
+#'
+#' }
+#' @param wb A Workbook object containing a worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A character vector.
+#' @param startCol A vector specifying the starting column to write to.
+#' @param startRow A vector specifying the starting row to write to.
+#' @param array A bool if the function written is of type array
+#' @param xy An alternative to specifying `startCol` and
+#' `startRow` individually.  A vector of the form
+#' `c(startCol, startRow)`.
+#' @family workbook wrappers
+#' @export
+wb_add_formula <- function(
+    wb,
+    sheet,
+    x,
+    startCol = 1,
+    startRow = 1,
+    array    = FALSE,
+    xy       = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$add_formula(
+    sheet    = sheet,
+    x        = x,
+    startCol = startCol,
+    startRow = startRow,
+    array    = array,
+    xy       = xy
+  )
+}
+
+# merge cells -------------------------------------------------------------
+
 #' Worksheet cell merging
 #'
 #' Merge cells within a worksheet
@@ -116,7 +304,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @family workbook wrappers
 NULL
 
-# merge cells -------------------------------------------------------------
+
 
 #' @export
 #' @rdname ws_cell_merge
@@ -207,10 +395,10 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' )
 #'
 #' ## Need data on worksheet to see all headers and footers
-#' write_data(wb, sheet = 5, 1:400)
-#' write_data(wb, sheet = 6, 1:400)
-#' write_data(wb, sheet = 7, 1:400)
-#' write_data(wb, sheet = 8, 1:400)
+#' wb$add_data(sheet = 5, 1:400)
+#' wb$add_data(sheet = 6, 1:400)
+#' wb$add_data(sheet = 7, 1:400)
+#' wb$add_data(sheet = 8, 1:400)
 #'
 #' ## Save workbook
 #' \dontrun{
@@ -288,7 +476,7 @@ wb_clone_worksheet <- function(wb, old, new) {
 }
 
 
-#' @name freezePane
+#' @name wb_freeze_pane
 #' @title Freeze a worksheet pane
 #' @description Freeze a worksheet pane
 #' @param wb A workbook object
@@ -416,7 +604,7 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #'
 #' ## auto columns
 #' wb$add_worksheet("Sheet 2")
-#' write_data(wb, sheet = 2, x = iris)
+#' wb$add_data(sheet = 2, x = iris)
 #' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 #'
 #' ## Save workbook
@@ -612,8 +800,8 @@ wb_remove_worksheet <- function(wb, sheet) {
 #' ## modify base font to size 10 Arial Narrow in red
 #' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
-#' write_data(wb, "S1", iris)
-#' write_datatable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
+#' wb$add_data("S1", iris)
+#' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
 #' \dontrun{
 #' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 #' }
@@ -682,10 +870,10 @@ wb_get_base_font <- function(wb) {
 #' wb$add_worksheet("S3")
 #' wb$add_worksheet("S4")
 #'
-#' write_data(wb, 1, 1:400)
-#' write_data(wb, 2, 1:400)
-#' write_data(wb, 3, 3:400)
-#' write_data(wb, 4, 3:400)
+#' wb$add_data(1, 1:400)
+#' wb$add_data(2, 1:400)
+#' wb$add_data(3, 3:400)
+#' wb$add_data(4, 3:400)
 #'
 #' wb$set_header_footer(
 #'   sheet = "S1",
@@ -838,8 +1026,8 @@ wb_set_header_footer <- function(
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' wb$add_worksheet("S2")
-#' write_datatable(wb, 1, x = iris[1:30, ])
-#' write_datatable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
+#' wb$add_data_table(1, x = iris[1:30, ])
+#' wb$add_data_table(2, x = iris[1:30, ], xy = c("C", 5))
 #'
 #' ## landscape page scaled to 50%
 #' wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
@@ -852,8 +1040,8 @@ wb_set_header_footer <- function(
 #' wb$add_worksheet("print_title_rows")
 #' wb$add_worksheet("print_title_cols")
 #'
-#' write_data(wb, "print_title_rows", rbind(iris, iris, iris, iris))
-#' write_data(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
+#' wb$add_data("print_title_rows", rbind(iris, iris, iris, iris))
+#' wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 #'
 #' wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
 #' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
@@ -903,130 +1091,82 @@ wb_page_setup <- function(
 
 # protect -----------------------------------------------------------------
 
-#' @name ws_protect
-#' @title Protect a worksheet from modifications
-#' @description Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
+#' Protect a worksheet from modifications
+#'
+#' Protect or unprotect a worksheet from modifications by the user
+#'   in the graphical user interface. Replaces an existing protection.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the worksheet
-#' @param lockSelectingLockedCells Whether selecting locked cells is locked
-#' @param lockSelectingUnlockedCells Whether selecting unlocked cells is locked
-#' @param lockFormattingCells Whether formatting cells is locked
-#' @param lockFormattingColumns Whether formatting columns is locked
-#' @param lockFormattingRows Whether formatting rows is locked
-#' @param lockInsertingColumns Whether inserting columns is locked
-#' @param lockInsertingRows Whether inserting rows is locked
-#' @param lockInsertingHyperlinks Whether inserting hyperlinks is locked
-#' @param lockDeletingColumns Whether deleting columns is locked
-#' @param lockDeletingRows Whether deleting rows is locked
-#' @param lockSorting Whether sorting is locked
-#' @param lockAutoFilter Whether auto-filter is locked
-#' @param lockPivotTables Whether pivot tables are locked
-#' @param lockObjects Whether objects are locked
-#' @param lockScenarios Whether scenarios are locked
+#' @param properties A character vector of properties to lock.  Can be one or
+#'   more of the following: `"selectLockedCells"`, `"selectUnlockedCells"`,
+#'   `"formatCells"`, `"formatColumns"`, `"formatRows"`, `"insertColumns"`,
+#'   `"insertRows"`, `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`,
+#'   `"sort"`, `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
 #' @export
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
-#' write_datatable(wb, 1, x = iris[1:30, ])
+#' wb$add_data_table(1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
-#' ws_protect(wb, "S1",
+#' wb$protect_worksheet("S1",
 #'   protect = TRUE,
-#'   lockFormattingCells = FALSE, lockFormattingColumns = FALSE,
-#'   lockInsertingColumns = TRUE, lockDeletingColumns = TRUE
+#'   properties = c("formatCells", "formatColumns", "insertColumns", "deleteColumns")
 #' )
 #'
 #' # Remove the protection
-#' ws_protect(wb, "S1", protect = FALSE)
+#' wb$protect_worksheet("S1", protect = FALSE)
 #' \dontrun{
 #' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
-  lockSelectingLockedCells = NULL, lockSelectingUnlockedCells = NULL,
-  lockFormattingCells = NULL, lockFormattingColumns = NULL, lockFormattingRows = NULL,
-  lockInsertingColumns = NULL, lockInsertingRows = NULL, lockInsertingHyperlinks = NULL,
-  lockDeletingColumns = NULL, lockDeletingRows = NULL,
-  lockSorting = NULL, lockAutoFilter = NULL, lockPivotTables = NULL,
-  lockObjects = NULL, lockScenarios = NULL) {
+wb_protect_worksheet <- function(
+    wb,
+    sheet,
+    protect    = TRUE,
+    password   = NULL,
+    properties = NULL
+) {
 
   assert_workbook(wb)
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  props <- c()
-
-  if (!missing(password) && !is.null(password)) {
-    props["password"] <- hashPassword(password)
-  }
-
-  if (!missing(lockSelectingLockedCells) && !is.null(lockSelectingLockedCells)) {
-    props["selectLockedCells"] <- toString(as.numeric(lockSelectingLockedCells))
-  }
-  if (!missing(lockSelectingUnlockedCells) && !is.null(lockSelectingUnlockedCells)) {
-    props["selectUnlockedCells"] <- toString(as.numeric(lockSelectingUnlockedCells))
-  }
-  if (!missing(lockFormattingCells) && !is.null(lockFormattingCells)) {
-    props["formatCells"] <- toString(as.numeric(lockFormattingCells))
-  }
-  if (!missing(lockFormattingColumns) && !is.null(lockFormattingColumns)) {
-    props["formatColumns"] <- toString(as.numeric(lockFormattingColumns))
-  }
-  if (!missing(lockFormattingRows) && !is.null(lockFormattingRows)) {
-    props["formatRows"] <- toString(as.numeric(lockFormattingRows))
-  }
-  if (!missing(lockInsertingColumns) && !is.null(lockInsertingColumns)) {
-    props["insertColumns"] <- toString(as.numeric(lockInsertingColumns))
-  }
-  if (!missing(lockInsertingRows) && !is.null(lockInsertingRows)) {
-    props["insertRows"] <- toString(as.numeric(lockInsertingRows))
-  }
-  if (!missing(lockInsertingHyperlinks) && !is.null(lockInsertingHyperlinks)) {
-    props["insertHyperlinks"] <- toString(as.numeric(lockInsertingHyperlinks))
-  }
-  if (!missing(lockDeletingColumns) && !is.null(lockDeletingColumns)) {
-    props["deleteColumns"] <- toString(as.numeric(lockDeletingColumns))
-  }
-  if (!missing(lockDeletingRows) && !is.null(lockDeletingRows)) {
-    props["deleteRows"] <- toString(as.numeric(lockDeletingRows))
-  }
-  if (!missing(lockSorting) && !is.null(lockSorting)) {
-    props["sort"] <- toString(as.numeric(lockSorting))
-  }
-  if (!missing(lockAutoFilter) && !is.null(lockAutoFilter)) {
-    props["autoFilter"] <- toString(as.numeric(lockAutoFilter))
-  }
-  if (!missing(lockPivotTables) && !is.null(lockPivotTables)) {
-    props["pivotTables"] <- toString(as.numeric(lockPivotTables))
-  }
-  if (!missing(lockObjects) && !is.null(lockObjects)) {
-    props["objects"] <- toString(as.numeric(lockObjects))
-  }
-  if (!missing(lockScenarios) && !is.null(lockScenarios)) {
-    props["scenarios"] <- toString(as.numeric(lockScenarios))
-  }
-
-  if (protect) {
-    props["sheet"] <- "1"
-    wb$worksheets[[sheet]]$sheetProtection <- sprintf("<sheetProtection %s/>", paste(names(props), '="', props, '"', collapse = " ", sep = ""))
-  } else {
-    wb$worksheets[[sheet]]$sheetProtection <- ""
-  }
+  wb$clone(deep = TRUE)$protect_worksheet(
+    sheet      = sheet,
+    protect    = protect,
+    password   = password,
+    properties = properties
+  )
 }
 
 
-#' @name wb_protect
-#' @title Protect a workbook from modifications
-#' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
+#' Protect a workbook from modifications
+#'
+#' Protect or unprotect a workbook from modifications by the user in the
+#' graphical user interface. Replaces an existing protection.
+#'
 #' @param wb A workbook object
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the workbook
 #' @param lockStructure Whether the workbook structure should be locked
-#' @param lockWindows Whether the window position of the spreadsheet should be locked
-#' @param type Lock type, default 1 - xlsx with password. 2 - xlsx recommends read-only. 4 - xlsx enforces read-only. 8 - xlsx is locked for annotation.
-#' @param fileSharing Whether to enable a popup requesting the unlock password is prompted
-#' @param username The username for the fileSharing popup
-#' @param readOnlyRecommended Whether or not a post unlock message appears stating that the workbook is recommended to be opened in readonly mode.
+#' @param lockWindows Whether the window position of the spreadsheet should be
+#'   locked
+#' @param type Lock type (see details)
+#' @param fileSharing Whether to enable a popup requesting the unlock password
+#'   is prompted
+#' @param username The username for the `fileSharing` popup
+#' @param readOnlyRecommended Whether or not a post unlock message appears
+#'   stating that the workbook is recommended to be opened in readonly mode.
+#'
+#' @details
+#' Lock types:
+#'
+#' \describe{
+#'   \item{`1` }{xlsx with password (default)}
+#'   \item{`2` }{xlsx recommends read-only}
+#'   \item{`4` }{xlsx enforces read-only}
+#'   \item{`8` }{xlsx is locked for annotation}
+#' }
+#'
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1041,7 +1181,7 @@ ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
 #' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
 #'
-#' wb_protect(
+#' wb <- wb_protect(
 #'   wb,
 #'   protect = TRUE,
 #'   password = "Password",
@@ -1052,9 +1192,28 @@ ws_protect <- function(wb, sheet, protect = TRUE, password = NULL,
 #'   readOnlyRecommended = TRUE
 #' )
 #'
-wb_protect <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE, type = 1L, fileSharing = FALSE, username = unname(Sys.info()["user"]), readOnlyRecommended = FALSE) {
+wb_protect <- function(
+    wb,
+    protect             = TRUE,
+    password            = NULL,
+    lockStructure       = FALSE,
+    lockWindows         = FALSE,
+    type                = c("1", "2", "4", "8"),
+    fileSharing         = FALSE,
+    username            = unname(Sys.info()["user"]),
+    readOnlyRecommended = FALSE
+) {
   assert_workbook(wb)
-  invisible(wb$protect(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows, type = type, fileSharing = fileSharing, username = username, readOnlyRecommended = readOnlyRecommended))
+  wb$clone()$protect(
+    protect             = protect,
+    password            = password,
+    lockStructure       = lockStructure,
+    lockWindows         = lockWindows,
+    type                = type,
+    fileSharing         = fileSharing,
+    username            = username,
+    readOnlyRecommended = readOnlyRecommended
+  )
 }
 
 
@@ -1098,18 +1257,18 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' ## setup a workbook with 3 worksheets
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1", gridLines = FALSE)
-#' write_datatable(wb = wb, sheet = 1, x = iris)
+#' wb$add_data_table(sheet = 1, x = iris)
 #'
 #' wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
-#' write_data(wb = wb, sheet = 2, x = mtcars)
+#' wb$add_data(sheet = 2, x = mtcars)
 #'
 #' wb$add_worksheet("Sheet 3", gridLines = FALSE)
-#' write_data(wb = wb, sheet = 3, x = Formaldehyde)
+#' wb$add_data(sheet = 3, x = Formaldehyde)
 #'
 #' wb_get_order(wb)
 #' names(wb)
 #' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
-#' write_data(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
+#' wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 #' wb_get_order(wb)
 #' names(wb) ## ordering within workbook is not changed
 #' \dontrun{
@@ -1155,7 +1314,7 @@ wb_set_order <- function(wb, sheets) {
 #' wb$add_worksheet("Sheet 1")
 #'
 #' ## specify region
-#' write_data(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
+#' wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
 #' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
@@ -1165,7 +1324,7 @@ wb_set_order <- function(wb, sheets) {
 #'
 #'
 #' ## using write_data 'name' argument
-#' write_data(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
+#' wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
 #'
 #' out_file <- tempfile(fileext = ".xlsx")
 #' \dontrun{
@@ -1232,14 +1391,14 @@ wb_remove_named_region <- function(wb, sheet = NULL, name = NULL) {
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_worksheet("Sheet 3")
 #'
-#' write_data(wb, 1, iris)
+#' wb$add_data(1, iris)
 #' wb$add_filter(1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' write_data(wb, 2, x = iris, withFilter = TRUE)
+#' wb$add_data(2, x = iris, withFilter = TRUE)
 #'
 #' ## Similarly
-#' write_datatable(wb, 3, iris)
+#' wb$add_data_table(3, iris)
 #' \dontrun{
 #' wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 #' }
@@ -1260,14 +1419,14 @@ wb_add_filter <- function(wb, sheet, rows, cols) {
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_worksheet("Sheet 3")
 #'
-#' write_data(wb, 1, iris)
+#' wb$add_data(1, iris)
 #' wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' write_data(wb, 2, x = iris, withFilter = TRUE)
+#' wb$add_data(2, x = iris, withFilter = TRUE)
 #'
 #' ## Similarly
-#' write_datatable(wb, 3, iris)
+#' wb$add_data_table(3, iris)
 #'
 #' ## remove filters
 #' wb_remove_filter(wb, 1:2) ## remove filters
@@ -1304,7 +1463,7 @@ wb_remove_filter <- function(wb, sheet) {
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
 #'
-#' write_datatable(wb, 1, x = iris[1:30, ])
+#' wb$add_data_table(1, x = iris[1:30, ])
 #' wb$add_data_validation(1,
 #'   col = 1:3, rows = 2:31, type = "whole",
 #'   operator = "between", value = c(1, 9)
@@ -1319,7 +1478,7 @@ wb_remove_filter <- function(wb, sheet) {
 #'   "d" = as.Date("2016-01-01") + -5:5,
 #'   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 #' )
-#' write_datatable(wb, 2, x = df)
+#' wb$add_data_table(2, x = df)
 #' wb$add_data_validation(2,
 #'   col = 1, rows = 2:12, type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
@@ -1342,8 +1501,8 @@ wb_remove_filter <- function(wb, sheet) {
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
 #'
-#' write_datatable(wb, sheet = 1, x = iris[1:30, ])
-#' write_data(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
+#' wb$add_data_table(sheet = 1, x = iris[1:30, ])
+#' wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
 #' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
 #'
@@ -1430,7 +1589,7 @@ wb_set_sheet_visibility <- function(wb, sheet, value) {
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
-#' write_data(wb, sheet = 1, x = iris)
+#' wb$add_data(sheet = 1, x = iris)
 #'
 #' wb$add_page_break(sheet = 1, row = 10)
 #' wb$add_page_break(sheet = 1, row = 20)
@@ -1455,8 +1614,8 @@ wb_add_page_break <- function(wb, sheet, row = NULL, col = NULL) {
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet(sheet = "Sheet 1")
-#' write_datatable(wb, sheet = "Sheet 1", x = iris)
-#' write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb$add_data_table(sheet = "Sheet 1", x = iris)
+#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #' wb$get_tables(sheet = "Sheet 1")
 #' @export
@@ -1480,23 +1639,23 @@ wb_get_tables <- function(wb, sheet) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet(sheet = "Sheet 1")
 #' wb$add_worksheet(sheet = "Sheet 2")
-#' write_datatable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-#' write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
+#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #'
 #' wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
 #'
-#' write_datatable(wb, sheet = 1, x = iris, tableName = "iris")
-#' write_datatable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris")
+#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #' ## wb_remove_tables() deletes table object and all data
 #' wb_get_tables(wb, sheet = 1)
 #' wb$remove_tables(sheet = 1, table = "iris")
-#' write_datatable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
+#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #'
 #' wb_get_tables(wb, sheet = 1)
 #' wb$remove_tables(sheet = 1, table = "iris")
-#' write_datatable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
+#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' \dontrun{
 #' wb_save(wb, path = "wb_remove_tablesExample.xlsx", overwrite = TRUE)
 #' }
@@ -1530,7 +1689,7 @@ wb_remove_tables <- function(wb, sheet, table) {
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("AirPass")
-#' write_data(wb, "AirPass", t2, rowNames = TRUE)
+#' wb$add_data("AirPass", t2, rowNames = TRUE)
 #'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
 #' wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
@@ -1743,8 +1902,7 @@ wb_add_image <- function(
 #' @export
 wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
   sheet <- wb_validate_sheet(wb, sheet)
-  wb$worksheets[[sheet]] <- wb$worksheets[[sheet]]$clone()$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
-  wb
+  wb$clone()$clean_sheet(sheet = sheet, numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
 }
 
 #' little worksheet opener

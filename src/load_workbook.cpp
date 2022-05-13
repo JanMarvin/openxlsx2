@@ -185,11 +185,8 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
-  size_t n = std::distance(ws.begin(), ws.end());
-
   // character
   Rcpp::DataFrame row_attributes;
-  Rcpp::Shield<SEXP> rownames(Rf_allocVector(STRSXP, n));
 
   std::vector<xml_col> xml_cols;
 
@@ -199,9 +196,12 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   const std::string s_str = "s";
   const std::string t_str = "t";
   const std::string v_str = "v";
-  const std::string is_str = "is";
   const std::string ca_str = "ca";
+  const std::string cm_str = "cm";
+  const std::string is_str = "is";
+  const std::string ph_str = "ph";
   const std::string si_str = "si";
+  const std::string vm_str = "vm";
   const std::string ref_str = "ref";
 
 
@@ -227,19 +227,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     for (auto col : worksheet.children("c")) {
 
       // contains all values of a col
-      xml_col single_xml_col {
-        openxlsxNA, // row_r
-        openxlsxNA, // c_r
-        openxlsxNA, // c_s
-        openxlsxNA, // c_t
-        openxlsxNA, // v
-        openxlsxNA, // f
-        openxlsxNA, // f_t
-        openxlsxNA, // f_ref
-        openxlsxNA, // f_ca
-        openxlsxNA, // f_si
-        openxlsxNA  // is
-      };
+      xml_col single_xml_col;
 
       // get number of children and attributes
       auto nn = std::distance(col.children().begin(), col.children().end());
@@ -276,6 +264,9 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
         if (attr_name == s_str) single_xml_col.c_s = buffer;
         if (attr_name == t_str) single_xml_col.c_t = buffer;
+        if (attr_name == cm_str) single_xml_col.c_cm = buffer;
+        if (attr_name == ph_str) single_xml_col.c_ph = buffer;
+        if (attr_name == vm_str) single_xml_col.c_vm = buffer;
 
         ++attr_itr;
       }

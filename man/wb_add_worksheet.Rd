@@ -113,10 +113,10 @@ wb$add_worksheet("Sheet 8",
 )
 
 ## Need data on worksheet to see all headers and footers
-write_data(wb, sheet = 5, 1:400)
-write_data(wb, sheet = 6, 1:400)
-write_data(wb, sheet = 7, 1:400)
-write_data(wb, sheet = 8, 1:400)
+wb$add_data(sheet = 5, 1:400)
+wb$add_data(sheet = 6, 1:400)
+wb$add_data(sheet = 7, 1:400)
+wb$add_data(sheet = 8, 1:400)
 
 ## Save workbook
 \dontrun{
@@ -125,9 +125,12 @@ wb_save(wb, "add_worksheetExample.xlsx", overwrite = TRUE)
 }
 \seealso{
 Other workbook wrappers: 
-\code{\link{freezePane}},
+\code{\link{wb_add_data_table}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_formula}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_creators}},
+\code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},
 \code{\link{wb_save}()},
 \code{\link{wb_set_col_widths}()},

@@ -12,6 +12,12 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -31,8 +37,6 @@ Returns sheet visibility
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 \description{
 R6 class for a Workbook
@@ -80,6 +84,8 @@ minor helper wrapping xl_open which does the entire same thing
 \item{\code{headFoot}}{headFoot}
 
 \item{\code{media}}{media}
+
+\item{\code{metadata}}{metadata}
 
 \item{\code{persons}}{persons}
 
@@ -159,6 +165,9 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
+\item \href{#method-add_data}{\code{wbWorkbook$add_data()}}
+\item \href{#method-add_data_table}{\code{wbWorkbook$add_data_table()}}
+\item \href{#method-add_formula}{\code{wbWorkbook$add_formula()}}
 \item \href{#method-save}{\code{wbWorkbook$save()}}
 \item \href{#method-open}{\code{wbWorkbook$open()}}
 \item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
@@ -185,6 +194,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-print}{\code{wbWorkbook$print()}}
 \item \href{#method-protect}{\code{wbWorkbook$protect()}}
+\item \href{#method-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
 \item \href{#method-set_creators}{\code{wbWorkbook$set_creators()}}
 \item \href{#method-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
@@ -202,6 +212,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
 \item \href{#method-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
 \item \href{#method-add_page_break}{\code{wbWorkbook$add_page_break()}}
+\item \href{#method-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
 \item \href{#method-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -410,6 +421,158 @@ Add a chart sheet to the workbook
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_data"></a>}}
+\if{latex}{\out{\hypertarget{method-add_data}{}}}
+\subsection{Method \code{add_data()}}{
+add data
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  array = FALSE,
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  withFilter = FALSE,
+  name = NULL,
+  sep = ", ",
+  removeCellStyle = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{array}}{array}
+
+\item{\code{xy}}{xy}
+
+\item{\code{colNames}}{colNames}
+
+\item{\code{rowNames}}{rowNames}
+
+\item{\code{withFilter}}{withFilter}
+
+\item{\code{name}}{name}
+
+\item{\code{sep}}{sep}
+
+\item{\code{removeCellStyle}}{removeCellStyle}
+
+\item{\code{return}}{The \code{wbWorkbook} object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_data_table"></a>}}
+\if{latex}{\out{\hypertarget{method-add_data_table}{}}}
+\subsection{Method \code{add_data_table()}}{
+add a data table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  tableStyle = "TableStyleLight9",
+  tableName = NULL,
+  withFilter = TRUE,
+  sep = ", ",
+  stack = FALSE,
+  firstColumn = FALSE,
+  lastColumn = FALSE,
+  bandedRows = TRUE,
+  bandedCols = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{xy}}{xy}
+
+\item{\code{colNames}}{colNames}
+
+\item{\code{rowNames}}{rowNames}
+
+\item{\code{tableStyle}}{tableStyle}
+
+\item{\code{tableName}}{tableName}
+
+\item{\code{withFilter}}{withFilter}
+
+\item{\code{sep}}{sep}
+
+\item{\code{stack}}{stack}
+
+\item{\code{firstColumn}}{firstColumn}
+
+\item{\code{lastColumn}}{lastColumn}
+
+\item{\code{bandedRows}}{bandedRows}
+
+\item{\code{bandedCols}}{bandedCols}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_formula"></a>}}
+\if{latex}{\out{\hypertarget{method-add_formula}{}}}
+\subsection{Method \code{add_formula()}}{
+add formula
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  array = FALSE,
+  xy = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{array}}{array}
+
+\item{\code{xy}}{xy}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -1106,10 +1269,10 @@ Protect a workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect(
   protect = TRUE,
+  password = NULL,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  password = NULL,
-  type = NULL,
+  type = c("1", "2", "4", "8"),
   fileSharing = FALSE,
   username = unname(Sys.info()["user"]),
   readOnlyRecommended = FALSE
@@ -1121,11 +1284,11 @@ Protect a workbook
 \describe{
 \item{\code{protect}}{protect}
 
+\item{\code{password}}{password}
+
 \item{\code{lockStructure}}{lockStructure}
 
 \item{\code{lockWindows}}{lockWindows}
-
-\item{\code{password}}{password}
 
 \item{\code{type}}{type}
 
@@ -1139,6 +1302,39 @@ Protect a workbook
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-protect_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-protect_worksheet}{}}}
+\subsection{Method \code{protect_worksheet()}}{
+protect worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect_worksheet(
+  sheet,
+  protect = TRUE,
+  password = NULL,
+  properties = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{protect}}{protect}
+
+\item{\code{password}}{password}
+
+\item{\code{properties}}{A character vector of properties to lock.  Can be one
+or more of the following: \code{"selectLockedCells"},
+\code{"selectUnlockedCells"}, \code{"formatCells"}, \code{"formatColumns"},
+\code{"formatRows"}, \code{"insertColumns"}, \code{"insertRows"},
+\code{"insertHyperlinks"}, \code{"deleteColumns"}, \code{"deleteRows"}, \code{"sort"},
+\code{"autoFilter"}, \code{"pivotTables"}, \code{"objects"}, \code{"scenarios"}}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -1536,6 +1732,42 @@ Add a page break
 \item{\code{col}}{col}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clean_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-clean_sheet}{}}}
+\subsection{Method \code{clean_sheet()}}{
+clean sheet (remove all values)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clean_sheet(
+  sheet,
+  numbers = TRUE,
+  characters = TRUE,
+  styles = TRUE,
+  merged_cells = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{numbers}}{remove all numbers}
+
+\item{\code{characters}}{remove all characters}
+
+\item{\code{styles}}{remove all styles}
+
+\item{\code{merged_cells}}{remove all merged_cells}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+Deep cloning method for workbooks.  This method also accesses
+\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
 }
 \if{html}{\out{<hr>}}

@@ -509,20 +509,22 @@ wbWorksheet <- R6::R6Class(
     #' @param styles remove all styles
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
-    clean_sheet = function(numbers = FALSE, characters = FALSE, styles = FALSE, merged_cells = FALSE) {
+    clean_sheet = function(numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
 
       cc <- self$sheet_data$cc
 
+      if (NROW(cc) == 0) return (invisible(self))
+
       if (numbers)
-        cc[cc$c_t %in% c("n", "_openxlsx_NA_"), # imported values might be _NA_
-          c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- "_openxlsx_NA_"
+        cc[cc$c_t %in% c("n", ""),
+          c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (characters)
         cc[cc$c_t %in% c("inlineStr", "s"),
           c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (styles)
-        cc[c("c_s")] <- "_openxlsx_NA_"
+        cc[c("c_s")] <- ""
 
       self$sheet_data$cc <- cc
 
