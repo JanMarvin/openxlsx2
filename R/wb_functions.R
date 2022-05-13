@@ -393,75 +393,97 @@ wb_to_df <- function(
   keep_rows <- keep_rows[keep_rows %in% rnams]
 
   # reduce data to selected cases only
-  cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
+  if (!is.null(cols) && !is.null(rows) && !missing(dims))
+    cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
 
   # if (!nrow(cc)) browser()
 
   cc$val <- NA
   cc$typ <- NA
 
+  cc_tab <- table(cc$c_t)
+
   # bool
-  sel <- cc$c_t %in% c("b")
-  cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
-  cc$typ[sel] <- "b"
+  if (isTRUE(cc_tab[c("b")] > 0)) {
+    sel <- cc$c_t %in% c("b")
+    cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
+    cc$typ[sel] <- "b"
+  }
   # text in v
-  sel <- cc$c_t %in% c("str", "e")
-  cc$val[sel] <- cc$v[sel]
-  cc$typ[sel] <- "s"
-  if (showFormula) {
-    sel <- cc$c_t %in% c("e")
-    cc$val[sel] <- cc$f[sel]
+  if (isTRUE(any(cc_tab[c("str", "e")] > 0))) {
+    sel <- cc$c_t %in% c("str", "e")
+    cc$val[sel] <- cc$v[sel]
     cc$typ[sel] <- "s"
+    if (showFormula) {
+      sel <- cc$c_t %in% c("e")
+      cc$val[sel] <- cc$f[sel]
+      cc$typ[sel] <- "s"
+    }
   }
   # text in t
-  sel <- cc$c_t %in% c("inlineStr")
-  cc$val[sel] <- is_to_txt(cc$is[sel])
-  cc$typ[sel] <- "s"
+  if (isTRUE(cc_tab[c("inlineStr")] > 0)) {
+    sel <- cc$c_t %in% c("inlineStr")
+    cc$val[sel] <- is_to_txt(cc$is[sel])
+    cc$typ[sel] <- "s"
+  }
   # test is sst
-  sel <- cc$c_t %in% c("s")
-  cc$val[sel] <- sst[as.numeric(cc$v[sel])+1]
-  cc$typ[sel] <- "s"
+  if (isTRUE(cc_tab[c("s")] > 0)) {
+    sel <- cc$c_t %in% c("s")
+    cc$val[sel] <- sst[as.numeric(cc$v[sel])+1]
+    cc$typ[sel] <- "s"
+  }
+
+  has_na_string <- FALSE
   # convert missings
   if (!is.na(na.strings) || !missing(na.strings)) {
     sel <- cc$val %in% na.strings
-    cc$val[sel] <- NA_character_
-    cc$typ[sel] <- "na_string"
+    if (any(sel)) {
+      cc$val[sel] <- NA_character_
+      cc$typ[sel] <- "na_string"
+      has_na_string <- TRUE
+    }
   }
 
   # dates
   if (!is.null(cc$c_s)) {
     # if a cell is t="s" the content is a sst and not da date
-    cc$is_string <- FALSE
-    if (!is.null(cc$c_t))
-      cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
-
     if (detectDates) {
-      sel <- (cc$c_s %in% xlsx_date_style) & !cc$is_string & cc$v != ""
-      cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel])))
-      cc$typ[sel]  <- "d"
+      cc$is_string <- FALSE
+      if (!is.null(cc$c_t))
+        cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
 
-      sel <- (cc$c_s %in% xlsx_posix_style) & !cc$is_string & cc$v != ""
-      cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
-      cc$typ[sel]  <- "p"
+      if (any(sel <- cc$c_s %in% xlsx_date_style)) {
+        sel <- sel & !cc$is_string & cc$v != ""
+        cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel])))
+        cc$typ[sel]  <- "d"
+      }
+
+      if (any(sel <- cc$c_s %in% xlsx_posix_style)) {
+        sel <- sel & !cc$is_string & cc$v != ""
+        cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
+        cc$typ[sel]  <- "p"
+      }
     }
   }
 
   # remaining values are numeric?
   sel <- is.na(cc$typ)
-  cc$val[sel] <- cc$v[sel]
-  cc$typ[sel] <- "n"
+  if (any(sel)) {
+    cc$val[sel] <- cc$v[sel]
+    cc$typ[sel] <- "n"
+  }
 
   # convert "na_string" to missing
-  cc$typ[cc$typ == "na_string"] <- NA
+  if (has_na_string) cc$typ[cc$typ == "na_string"] <- NA
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
   # we need to create the correct col and row position as integer starting at 0.
-  zz$cols <- match(cc$c_r, colnames(z)) - 1
-  zz$rows <- match(cc$row_r, rownames(z)) - 1
+  zz$cols <- match(cc$c_r, colnames(z)) - 1L
+  zz$rows <- match(cc$row_r, rownames(z)) - 1L
 
   zz <- zz[order(zz[, "cols"], zz[,"rows"]),]
-  zz <- zz[zz$val != "",]
+  if (any(zz$val == "", na.rm = TRUE)) zz <- zz[zz$val != "",]
   long_to_wide(z, tt, zz)
 
   # prepare colnames object
@@ -534,10 +556,10 @@ wb_to_df <- function(
       logs <- names( which(types[sel] == 4) )
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
-      z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      z[dtes] <- lapply(z[dtes], as.Date)
-      z[poxs] <- lapply(z[poxs], as.POSIXct)
-      z[logs] <- lapply(z[logs], as.logical)
+      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
+      if (length(dtes)) z[dtes] <- lapply(z[dtes], as.Date)
+      if (length(poxs)) z[poxs] <- lapply(z[poxs], as.POSIXct)
+      if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }
