@@ -23,8 +23,8 @@ paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
   stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
 }
 
-`%||%` <- function(x, y) if (is.null(x)) y else x
-`%|||%` <- function(x, y) if (length(x)) x else y
+`%||%` <- function(x, y) { if (is.null(x)) y else x }
+`%|||%` <- function(x, y) { if (length(x)) x else y }
 
 na_to_null <- function(x) {
   if (is.null(x)) {
@@ -39,9 +39,7 @@ na_to_null <- function(x) {
 }
 
 # opposite of %in%
-`%out%` <- function(x, table) match(x, table, nomatch = 0L) == 0L
-
-
+`%out%` <- function(x, table) { match(x, table, nomatch = 0L) == 0L }
 
 #' helper function to create temporary directory for testing purpose
 #' @param name for the temp file
