@@ -7,8 +7,6 @@
 /* create custom Rcpp::wrap function to be used with std::vector<xml_col> */
 #include <RcppCommon.h>
 
-const std::string openxlsxNA = "_openxlsx_NA_";
-
 typedef struct {
   std::string row_r;
   std::string c_r;   // CellReference

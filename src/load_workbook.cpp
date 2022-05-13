@@ -227,22 +227,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     for (auto col : worksheet.children("c")) {
 
       // contains all values of a col
-      xml_col single_xml_col {
-        openxlsxNA, // row_r
-        openxlsxNA, // c_r
-        openxlsxNA, // c_s
-        openxlsxNA, // c_t
-        openxlsxNA, // c_cm
-        openxlsxNA, // c_ph
-        openxlsxNA, // c_vm
-        openxlsxNA, // v
-        openxlsxNA, // f
-        openxlsxNA, // f_t
-        openxlsxNA, // f_ref
-        openxlsxNA, // f_ca
-        openxlsxNA, // f_si
-        openxlsxNA  // is
-      };
+      xml_col single_xml_col;
 
       // get number of children and attributes
       auto nn = std::distance(col.children().begin(), col.children().end());
