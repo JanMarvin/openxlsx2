@@ -901,7 +901,7 @@ wbWorkbook <- R6::R6Class(
     #' @param bandedCols bandedCols
     #' @returns The `wbWorkbook` object
     add_data_table = function(
-        sheet,
+        sheet       = current_sheet(),
         x,
         startCol    = 1,
         startRow    = 1,

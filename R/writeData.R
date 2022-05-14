@@ -184,7 +184,7 @@ write_data <- function(wb,
   } ## this will go to coerce.default and rowNames will be ignored
 
   ## Coerce to data.frame
-  if (inherits(x, "hyperlink")) { 
+  if (inherits(x, "hyperlink")) {
     ## vector of hyperlinks
     class(x) <- c("character", "hyperlink")
     x <- as.data.frame(x, stringsAsFactors = FALSE)
@@ -214,12 +214,19 @@ write_data <- function(wb,
     return(invisible(0))
   }
 
-  if (is.numeric(sheet)) {
+  if (is_waiver(sheet)) {
+    if (sheet == "current_sheet") {
+      # TODO pull private$current_sheet instead
+      sheetX <- sheet <- wb$.__enclos_env__$private$current_sheet
+    }
+  } else if (is.numeric(sheet)) {
     sheetX <- wb_validate_sheet(wb, sheet)
   } else {
     sheetX <- wb_validate_sheet(wb, replaceXMLEntities(sheet))
     sheet <- replaceXMLEntities(sheet)
   }
+
+  # TODO add assignment to private$current_sheet
 
   if (wb$isChartSheet[[sheetX]]) {
     stop("Cannot write to chart sheet.")
