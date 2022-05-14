@@ -4127,6 +4127,11 @@ wbWorkbook <- R6::R6Class(
   # any functions that are not present elsewhere or are non-exported internal
   # functions that are used to make assignments
   private = list(
+    ### fields ----
+    current_sheet = 0L,
+
+    ### methods ----
+
     deep_clone = function(name, value) {
       #' Deep cloning method for workbooks.  This method also accesses
       #' `$clone(deep = TRUE)` methods for `R6` fields.
@@ -4144,6 +4149,11 @@ wbWorkbook <- R6::R6Class(
 
     validate_new_sheet = function(sheet) {
       # returns nothing, throws error if there's a problem.
+
+      if (is_waiver(sheet)) {
+        # should be safe
+        return()
+      }
 
       if (is.na(sheet)) {
         stop("sheet cannot be NA")
@@ -4177,9 +4187,24 @@ wbWorkbook <- R6::R6Class(
       if (tolower(sheet) %in% self$sheet_names) {
         stop("a sheet with name '", sheet, '"already exists"')
       }
+
+      private$current_sheet <- sheet
     },
 
     get_sheet = function(sheet) {
+      if (is_waiver(sheet)) {
+        # waivers shouldn't need additional validation
+        switch(
+          sheet,
+          current_sheet = NULL,
+          next_sheet = {
+            private$current_sheet <- length(self$sheet_names) + 1L
+          },
+          stop("not a valid waiver: ", sheet)
+        )
+        return(private$current_sheet)
+      }
+
       # returns the sheet index, or NA
       if (is.null(self$sheet_names)) {
         warning("Workbook has no sheets")
@@ -4205,6 +4230,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      private$current_sheet <- sheet
       sheet
     },
 
