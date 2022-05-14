@@ -590,7 +590,7 @@ open wbWorkbook in Excel.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{interactive}}{If \code{FALSE} will throw a warning and not open the path.
-This can be manually set to \code{TRUE}, otherwise when \code{NA} (defualt) uses
+This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses
 the value returned from \code{\link[base:interactive]{base::interactive()}}}
 }
 \if{html}{\out{</div>}}

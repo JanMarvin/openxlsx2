@@ -96,7 +96,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
   if (!any(cols %in% cells_in_wb)) {
-    # all rows are availabe in the dataframe
+    # all rows are availabe in the data frame
     for (row in rows) {
 
       # collect all wanted cols and order for excel
@@ -165,7 +165,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
         cc[sel, c(c_s, "c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
-        # for now convert all R-characters to inlineStr (e.g. names() of a dataframe)
+        # for now convert all R-characters to inlineStr (e.g. names() of a data frame)
         if ((data_class[m] == openxlsx2_celltype[["character"]]) || ((colNames == TRUE) && (n == 1))) {
           cc[sel, "c_t"] <- "inlineStr"
           cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
@@ -245,12 +245,6 @@ nmfmt_df <- function(x) {
 #'
 #' wb$add_worksheet("sheet4")
 #' write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
-#'
-#' \dontrun{
-#' file <- tempfile(fileext = ".xlsx")
-#' wb_save(wb, path = file, overwrite = TRUE)
-#' file.remove(file)
-#' }
 #'
 #' @export
 write_data2 <-function(wb, sheet, data, name = NULL,
@@ -378,7 +372,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
-    # original cc dataframe
+    # original cc data frame
     # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
     nams <- c("row_r", "c_r", "c_s", "c_t", "c_cm",
               "c_ph", "c_vm", "v", "f", "f_t",
@@ -566,10 +560,9 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @name write_datatable
 #' @title Write to a worksheet as an Excel table
 #' @description Write to a worksheet and format as an Excel table
-#' @param wb A Workbook object containing a
-#' worksheet.
+#' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param x A dataframe.
+#' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
 #' @param array A bool if the function written is of type array
@@ -581,8 +574,6 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @param tableName name of table in workbook. The table name must be unique.
 #' @param withFilter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
-#' existing style is replaced by the new style.
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
 #' @param bandedRows logical. If TRUE, rows are colour banded
@@ -605,7 +596,6 @@ write_data_table <- function(
     tableName = NULL,
     withFilter = TRUE,
     sep = ", ",
-    stack = FALSE,
     firstColumn = FALSE,
     lastColumn = FALSE,
     bandedRows = TRUE,
@@ -860,7 +850,6 @@ write_data_table <- function(
 #' options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 #' options("openxlsx2.numFmt" = NULL)
 #'
-#'
 #' #####################################################################################
 #' ## Create Workbook object and add worksheets
 #' wb <- wb_workbook()
@@ -869,10 +858,8 @@ write_data_table <- function(
 #' wb$add_worksheet("Cars")
 #' wb$add_worksheet("Formula")
 #'
-#'
 #' x <- mtcars[1:6, ]
 #' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
-#'
 #'
 #' #####################################################################################
 #' ## Hyperlinks
@@ -882,7 +869,6 @@ write_data_table <- function(
 #' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
 #' class(v) <- "hyperlink"
 #' wb$add_data("Cars", x = v, xy = c("B", 32))
-#'
 #'
 #' #####################################################################################
 #' ## Formulas
@@ -898,6 +884,13 @@ write_data_table <- function(
 #'
 #' wb$add_data(sheet = "Formula", x = df)
 #'
+#' #####################################################################################
+#' ## Save workbook
+#' ## Open in excel without saving file: xl_open(wb)
+#' \dontrun{
+#' wb_save(wb, "write_dataExample.xlsx", overwrite = TRUE)
+#' }
+#'
 #' ###########################################################################
 #' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
@@ -908,18 +901,6 @@ write_data_table <- function(
 #' # read_xlsx(wb2)
 #' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
 #' wb_to_df(wb2)
-#' \dontrun{
-#' file <- tempfile(fileext = ".xlsx")
-#' wb_save(wb2, file, overwrite = TRUE)
-#' file.remove(file)
-#' }
-#'
-#' #####################################################################################
-#' ## Save workbook
-#' ## Open in excel without saving file: xl_open(wb)
-#' \dontrun{
-#' wb_save(wb, "write_dataExample.xlsx", overwrite = TRUE)
-#' }
 write_data <- function(
     wb,
     sheet,
@@ -949,7 +930,6 @@ write_data <- function(
     tableName = NULL,
     withFilter = withFilter,
     sep = sep,
-    stack = FALSE,
     firstColumn = FALSE,
     lastColumn = FALSE,
     bandedRows = FALSE,
@@ -1091,10 +1071,9 @@ write_formula <- function(wb,
 #' @name write_datatable
 #' @title Write to a worksheet as an Excel table
 #' @description Write to a worksheet and format as an Excel table
-#' @param wb A Workbook object containing a
-#' worksheet.
+#' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param x A dataframe.
+#' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
 #' @param xy An alternative to specifying startCol and startRow individually.
@@ -1105,8 +1084,6 @@ write_formula <- function(wb,
 #' @param tableName name of table in workbook. The table name must be unique.
 #' @param withFilter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
-#' existing style is replaced by the new style.
 #' \cr\cr
 #' \cr**The below options correspond to Excel table options:**
 #' \cr
@@ -1171,9 +1148,14 @@ write_formula <- function(wb,
 #' ## Additional Header Styling and remove column filters
 #'
 #' write_datatable(wb,
-#'   # todo header styling not implemented
-#'   sheet = 1, x = iris, startCol = 7,
-#'   withFilter = FALSE
+#'   sheet = 1,
+#'   x = iris,
+#'   startCol = 7,
+#'   withFilter = FALSE,
+#'   firstColumn = TRUE,
+#'   lastColumn	= TRUE,
+#'   bandedRows = TRUE,
+#'   bandedCols = TRUE
 #' )
 #'
 #' #####################################################################################
@@ -1230,7 +1212,6 @@ write_datatable <- function(
     tableName = NULL,
     withFilter = TRUE,
     sep = ", ",
-    stack = FALSE,
     firstColumn = FALSE,
     lastColumn = FALSE,
     bandedRows = TRUE,
@@ -1250,7 +1231,6 @@ write_datatable <- function(
     tableName = tableName,
     withFilter = withFilter,
     sep = sep,
-    stack = stack,
     firstColumn = firstColumn,
     lastColumn = lastColumn,
     bandedRows = bandedRows,

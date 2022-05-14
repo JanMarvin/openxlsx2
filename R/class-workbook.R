@@ -1485,7 +1485,7 @@ wbWorkbook <- R6::R6Class(
     #' @description open wbWorkbook in Excel.
     #' @details minor helper wrapping xl_open which does the entire same thing
     #' @param interactive If `FALSE` will throw a warning and not open the path.
-    #'   This can be manually set to `TRUE`, otherwise when `NA` (defualt) uses
+    #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses
     #'   the value returned from [base::interactive()]
     #' @return The `wbWorkbook`, invisibly
     open = function(interactive = NA) {

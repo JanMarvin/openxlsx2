@@ -17,7 +17,6 @@ write_datatable(
   tableName = NULL,
   withFilter = TRUE,
   sep = ", ",
-  stack = FALSE,
   firstColumn = FALSE,
   lastColumn = FALSE,
   bandedRows = TRUE,
@@ -25,12 +24,11 @@ write_datatable(
 )
 }
 \arguments{
-\item{wb}{A Workbook object containing a
-worksheet.}
+\item{wb}{A Workbook object containing a worksheet.}
 
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
 
-\item{x}{A dataframe.}
+\item{x}{A data frame.}
 
 \item{startCol}{A vector specifying the starting column to write df}
 
@@ -49,10 +47,7 @@ A vector of the form c(startCol, startRow)}
 
 \item{withFilter}{If \code{TRUE}, columns with have filters in the first row.}
 
-\item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
-
-\item{stack}{If \code{TRUE} the new style is merged with any existing cell styles.  If FALSE, any
-existing style is replaced by the new style.
+\item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 \cr\cr
 \cr\strong{The below options correspond to Excel table options:}
 \cr
@@ -121,9 +116,14 @@ wb$add_data_table("S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "Tab
 ## Additional Header Styling and remove column filters
 
 write_datatable(wb,
-  # todo header styling not implemented
-  sheet = 1, x = iris, startCol = 7,
-  withFilter = FALSE
+  sheet = 1,
+  x = iris,
+  startCol = 7,
+  withFilter = FALSE,
+  firstColumn = TRUE,
+  lastColumn	= TRUE,
+  bandedRows = TRUE,
+  bandedCols = TRUE
 )
 
 #####################################################################################

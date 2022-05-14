@@ -58,10 +58,4 @@ write_data2(wb, "sheet3", letters)
 wb$add_worksheet("sheet4")
 write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
-\dontrun{
-file <- tempfile(fileext = ".xlsx")
-wb_save(wb, path = file, overwrite = TRUE)
-file.remove(file)
-}
-
 }
