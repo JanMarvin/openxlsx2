@@ -475,7 +475,6 @@ add a data table
   tableName = NULL,
   withFilter = TRUE,
   sep = ", ",
-  stack = FALSE,
   firstColumn = FALSE,
   lastColumn = FALSE,
   bandedRows = TRUE,
@@ -507,8 +506,6 @@ add a data table
 \item{\code{withFilter}}{withFilter}
 
 \item{\code{sep}}{sep}
-
-\item{\code{stack}}{stack}
 
 \item{\code{firstColumn}}{firstColumn}
 

@@ -862,7 +862,6 @@ wbWorkbook <- R6::R6Class(
     #' @param tableName tableName
     #' @param withFilter withFilter
     #' @param sep sep
-    #' @param stack stack
     #' @param firstColumn firstColumn
     #' @param lastColumn lastColumn
     #' @param bandedRows bandedRows
@@ -880,7 +879,6 @@ wbWorkbook <- R6::R6Class(
         tableName   = NULL,
         withFilter  = TRUE,
         sep         = ", ",
-        stack       = FALSE,
         firstColumn = FALSE,
         lastColumn  = FALSE,
         bandedRows  = TRUE,
@@ -899,7 +897,6 @@ wbWorkbook <- R6::R6Class(
         tableName   = tableName,
         withFilter  = withFilter,
         sep         = sep,
-        stack       = stack,
         firstColumn = firstColumn,
         lastColumn  = lastColumn,
         bandedRows  = bandedRows,
