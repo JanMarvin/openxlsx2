@@ -18,14 +18,14 @@ xl_open(x, file, interactive = NA)
 \item{file}{Deprecated}
 
 \item{interactive}{If \code{FALSE} will throw a warning and not open the path.
-This can be manually set to \code{TRUE}, otherwise when \code{NA} (defualt) uses the
+This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses the
 value returned from \code{\link[base:interactive]{base::interactive()}}}
 }
 \description{
 This function tries to open a Microsoft Excel (xls/xlsx) file or
 an openxlsx2 wbWorkbook with the proper application, in a portable manner.
 
-In Windows it uses \code{base::shell.exec()} (Windwos only function) to
+In Windows it uses \code{base::shell.exec()} (Windows only function) to
 determine the appropriate program.
 
 In Mac (c) it uses system default handlers, given the file type.
