@@ -282,7 +282,7 @@ wb_to_df <- function(
       sheet <- substitute()
 
     # possible false positive on current lintr runs
-    wb <- wb_load(xlsxFile, sheet = sheet) # nolint
+    wb <- wb_load(xlsxFile, sheet = sheet, data_only = TRUE) # nolint
   } else {
     wb <- xlsxFile
   }

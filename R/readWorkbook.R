@@ -87,15 +87,8 @@ read_xlsx <- function(
   if (missing(sheet))
     sheet <- substitute()
 
-  # TODO is.Workbook() would be better
-  if (inherits(xlsxFile, c("Workbook", "wbWorkbook"))) {
-    wb <- xlsxFile
-  } else {
-    wb <- wb_load(xlsxFile = xlsxFile, sheet = sheet)
-  }
-
   wb_to_df(
-    wb,
+    xlsxFile,
     sheet           = sheet,
     startRow        = startRow,
     colNames        = colNames,
@@ -141,6 +134,12 @@ wb_read <- function(
   namedRegion,
   na.strings    = "NA"
 ) {
+
+  # keep sheet missing // read_xlsx is the function to replace.
+  # dont mess with wb_to_df
+  if (missing(sheet))
+    sheet <- substitute()
+
   wb_to_df(
     xlsxFile      = xlsxFile,
     sheet         = sheet,
