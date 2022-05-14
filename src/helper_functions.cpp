@@ -251,7 +251,7 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
     row = rows[i];
 
     // need to check for missing values
-    if ((col <= z_cols) & (row <= z_rows)) {
+    if ((col <= z_cols) && (row <= z_rows)) {
       Rcpp::as<Rcpp::CharacterVector>(z[col])[row] = vals[i];
       Rcpp::as<Rcpp::CharacterVector>(tt[col])[row] = typs[i];
     }

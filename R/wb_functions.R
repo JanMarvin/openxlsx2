@@ -398,9 +398,8 @@ wb_to_df <- function(
 
   # if (!nrow(cc)) browser()
 
-  cc$val <- NA
-  cc$typ <- NA
-
+  cc[c("val", "typ")] <- NA_character_
+  
   cc_tab <- table(cc$c_t)
 
   # bool
@@ -467,8 +466,7 @@ wb_to_df <- function(
   }
 
   # remaining values are numeric?
-  sel <- is.na(cc$typ)
-  if (any(sel)) {
+  if (any(sel <- is.na(cc$typ))) {
     cc$val[sel] <- cc$v[sel]
     cc$typ[sel] <- "n"
   }
@@ -478,7 +476,11 @@ wb_to_df <- function(
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
-  # we need to create the correct col and row position as integer starting at 0.
+  zz$cols <- NA_integer_
+  zz$rows <- NA_integer_
+  # we need to create the correct col and row position as integer starting at 0. Because we allow
+  # to select specific rows and columns, we must make sure that our zz cols and rows matches the
+  # z data frame.
   zz$cols <- match(cc$c_r, colnames(z)) - 1L
   zz$rows <- match(cc$row_r, rownames(z)) - 1L
 
