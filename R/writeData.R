@@ -13,8 +13,8 @@
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
-#' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+#' @param name If not NULL, a named region is defined.
 #' @param removeCellStyle keep the cell style?
 #' @seealso [write_datatable()]
 #' @export write_data
@@ -103,140 +103,33 @@ write_data <- function(
     colNames = TRUE,
     rowNames = FALSE,
     withFilter = FALSE,
-    name = NULL,
     sep = ", ",
+    name = NULL,
     removeCellStyle = TRUE
 ) {
-
-  ## Input validating
-  assert_workbook(wb)
-  assert_class(colNames, "logical")
-  assert_class(rowNames, "logical")
-  assert_class(withFilter, "logical")
-
-  if ((!is.character(sep)) || (length(sep) != 1))
-    stop("sep must be a character vector of length 1")
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
-
-  op <- openxlsx2_options()
-  on.exit(options(op), add = TRUE)
-
-  ## All input conversions/validations
-  if (!is.null(xy)) {
-    if (length(xy) != 2) {
-      stop("xy parameter must have length 2")
-    }
-    startCol <- xy[[1]]
-    startRow <- xy[[2]]
-  }
-
-  ## convert startRow and startCol
-  if (!is.numeric(startCol)) {
-    startCol <- col2int(startCol)
-  }
-  startRow <- as.integer(startRow)
-
-  ## special case - vector of hyperlinks
-  is_hyperlink <- FALSE
-  if (is.null(dim(x))) {
-    is_hyperlink <- inherits(x, "hyperlink")
-  } else {
-    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
-  }
-
-  if (any(is_hyperlink)) {
-    # consider wbHyperlink?
-    # hlinkNames <- names(x)
-    if (is.null(dim(x))) {
-      colNames <- FALSE
-      x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
-      class(x[is_hyperlink]) <- c("character", "hyperlink")
-    } else {
-      # check should be in create_hyperlink and that apply should not be required either
-      if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
-        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
-      }
-      class(x[,is_hyperlink]) <- c("character", "hyperlink")
-    }
-  }
-
-  ### Beg: Only in data --------------------------------------------------------
-
-  ## special case - formula
-  if (inherits(x, "formula")) {
-    x <- data.frame("X" = x, stringsAsFactors = FALSE)
-    class(x[[1]]) <- if (array) "array_formula" else "formula"
-    colNames <- FALSE
-  }
-
-  if (is.vector(x) || is.factor(x) || inherits(x, "Date")) {
-    colNames <- FALSE
-  } ## this will go to coerce.default and rowNames will be ignored
-
-  ## Coerce to data.frame
-  if (inherits(x, "hyperlink")) {
-    ## vector of hyperlinks
-    class(x) <- c("character", "hyperlink")
-    x <- as.data.frame(x, stringsAsFactors = FALSE)
-  } else if (!inherits(x, "data.frame")) {
-    x <- as.data.frame(x, stringsAsFactors = FALSE)
-  }
-
-  nCol <- ncol(x)
-  nRow <- nrow(x)
-
-  ## write autoFilter, can only have a single filter per worksheet
-  if (withFilter) {
-    coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
-    ref <- stri_join(get_cell_refs(coords), collapse = ":")
-
-    wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
-
-    l <- int2col(unlist(coords[, 2]))
-    dfn <- sprintf("'%s'!%s", names(wb)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
-
-    dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
-
-    if (length(wb$workbook$definedNames) > 0) {
-      ind <- grepl('name="_xlnm._FilterDatabase"', wb$workbook$definedNames)
-      if (length(ind) > 0) {
-        wb$workbook$definedNames[ind] <- dn
-      }
-    } else {
-      wb$workbook$definedNames <- dn
-    }
-  }
-
-  ### End: Only in data --------------------------------------------------------
-
-  ## Check not overwriting existing table headers
-  wb_check_overwrite_tables(
-    wb,
-    sheet = sheet,
-    new_rows = c(startRow, startRow + nRow - 1L + colNames),
-    new_cols = c(startCol, startCol + nCol - 1L),
-    check_table_header_only = TRUE,
-    error_msg =
-      "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
-  )
-
-  ## actual driver, the rest should not create data used for writing
-  wb <- write_data2(
+  write_data_table(
     wb = wb,
     sheet = sheet,
-    data = x,
-    name = name,
+    x = x,
+    startCol = startCol,
+    startRow = startRow,
+    array = array,
+    xy = xy,
     colNames = colNames,
     rowNames = rowNames,
-    startRow = startRow,
-    startCol = startCol,
-    removeCellStyle = removeCellStyle
+    tableStyle = NULL,
+    tableName = NULL,
+    withFilter = withFilter,
+    sep = sep,
+    stack = FALSE,
+    firstColumn = FALSE,
+    lastColumn = FALSE,
+    bandedRows = FALSE,
+    bandedCols = FALSE,
+    name = name,
+    removeCellStyle = removeCellStyle,
+    data_table = FALSE
   )
-
-  invisible(0)
 }
 
 

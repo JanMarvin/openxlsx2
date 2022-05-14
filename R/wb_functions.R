@@ -1163,6 +1163,264 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   wb
 }
 
+#' internal driver function to write_data and write_data_table
+#' @name write_datatable
+#' @title Write to a worksheet as an Excel table
+#' @description Write to a worksheet and format as an Excel table
+#' @param wb A Workbook object containing a
+#' worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A dataframe.
+#' @param startCol A vector specifying the starting column to write df
+#' @param startRow A vector specifying the starting row to write df
+#' @param array A bool if the function written is of type array
+#' @param xy An alternative to specifying startCol and startRow individually.
+#' A vector of the form c(startCol, startRow)
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, row names of x are written.
+#' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
+#' @param tableName name of table in workbook. The table name must be unique.
+#' @param withFilter If `TRUE`, columns with have filters in the first row.
+#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
+#' existing style is replaced by the new style.
+#' @param firstColumn logical. If TRUE, the first column is bold
+#' @param lastColumn logical. If TRUE, the last column is bold
+#' @param bandedRows logical. If TRUE, rows are colour banded
+#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedCols logical. If TRUE, a data table is created
+#' @param name If not NULL, a named region is defined.
+#' @param removeCellStyle keep the cell style?
+#' @noRd
+write_data_table <- function(
+    wb,
+    sheet,
+    x,
+    startCol = 1,
+    startRow = 1,
+    array = FALSE,
+    xy = NULL,
+    colNames = TRUE,
+    rowNames = FALSE,
+    tableStyle = "TableStyleLight9",
+    tableName = NULL,
+    withFilter = TRUE,
+    sep = ", ",
+    stack = FALSE,
+    firstColumn = FALSE,
+    lastColumn = FALSE,
+    bandedRows = TRUE,
+    bandedCols = FALSE,
+    name = NULL,
+    removeCellStyle = TRUE,
+    data_table = FALSE
+) {
+
+  ## Input validating
+  assert_workbook(wb)
+  assert_class(colNames, "logical")
+  assert_class(rowNames, "logical")
+  assert_class(withFilter, "logical")
+  if (data_table) assert_class(x, "data.frame")
+  assert_class(firstColumn, "logical")
+  assert_class(lastColumn, "logical")
+  assert_class(bandedRows, "logical")
+  assert_class(bandedCols, "logical")
+
+
+  ## common part ---------------------------------------------------------------
+  if ((!is.character(sep)) || (length(sep) != 1))
+    stop("sep must be a character vector of length 1")
+
+  sheet <- wb_validate_sheet(wb, sheet)
+
+  if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
+
+  op <- openxlsx2_options()
+  on.exit(options(op), add = TRUE)
+
+  ## All input conversions/validations
+  if (!is.null(xy)) {
+    if (length(xy) != 2) {
+      stop("xy parameter must have length 2")
+    }
+    startCol <- xy[[1]]
+    startRow <- xy[[2]]
+  }
+
+  ## convert startRow and startCol
+  if (!is.numeric(startCol)) {
+    startCol <- col2int(startCol)
+  }
+  startRow <- as.integer(startRow)
+
+  ## special case - vector of hyperlinks
+  is_hyperlink <- FALSE
+  if (is.null(dim(x))) {
+    is_hyperlink <- inherits(x, "hyperlink")
+  } else {
+    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
+  }
+
+  if (any(is_hyperlink)) {
+    # consider wbHyperlink?
+    # hlinkNames <- names(x)
+    if (is.null(dim(x))) {
+      colNames <- FALSE
+      x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
+      class(x[is_hyperlink]) <- c("character", "hyperlink")
+    } else {
+      # check should be in create_hyperlink and that apply should not be required either
+      if (!any(grepl("^(=|)HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
+        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
+      }
+      class(x[,is_hyperlink]) <- c("character", "hyperlink")
+    }
+  }
+
+  ### Create data frame --------------------------------------------------------
+
+  ## special case - formula
+  if (inherits(x, "formula")) {
+    x <- data.frame("X" = x, stringsAsFactors = FALSE)
+    class(x[[1]]) <- if (array) "array_formula" else "formula"
+    colNames <- FALSE
+  }
+
+  if (is.vector(x) || is.factor(x) || inherits(x, "Date")) {
+    colNames <- FALSE
+  } ## this will go to coerce.default and rowNames will be ignored
+
+  ## Coerce to data.frame
+  if (inherits(x, "hyperlink")) {
+    ## vector of hyperlinks
+    class(x) <- c("character", "hyperlink")
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+  } else if (!inherits(x, "data.frame")) {
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+  }
+
+  nCol <- ncol(x)
+  nRow <- nrow(x)
+
+  ### Beg: Only in data --------------------------------------------------------
+  if (!data_table) {
+
+    ## write autoFilter, can only have a single filter per worksheet
+    if (withFilter) {
+      coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
+      ref <- stri_join(get_cell_refs(coords), collapse = ":")
+
+      wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
+
+      l <- int2col(unlist(coords[, 2]))
+      dfn <- sprintf("'%s'!%s", names(wb)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
+
+      dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
+
+      if (length(wb$workbook$definedNames) > 0) {
+        ind <- grepl('name="_xlnm._FilterDatabase"', wb$workbook$definedNames)
+        if (length(ind) > 0) {
+          wb$workbook$definedNames[ind] <- dn
+        }
+      } else {
+        wb$workbook$definedNames <- dn
+      }
+    }
+  }
+  ### End: Only in data --------------------------------------------------------
+
+  overwrite_nrows <- ifelse(data_table, 1L, colNames)
+  check_tab_head_only <- ifelse(data_table, FALSE, TRUE)
+  error_msg <- ifelse(
+    data_table,
+    "Cannot overwrite existing table with another table",
+    "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
+  )
+
+  ## Check not overwriting existing table headers
+  wb_check_overwrite_tables(
+    wb = wb,
+    sheet = sheet,
+    new_rows = c(startRow, startRow + nRow - 1L + overwrite_nrows),
+    new_cols = c(startCol, startCol + nCol - 1L),
+    check_table_header_only = check_tab_head_only,
+    error_msg = error_msg
+  )
+
+  ## actual driver, the rest should not create data used for writing
+  wb <- write_data2(
+    wb =  wb,
+    sheet = sheet,
+    data = x,
+    name = name,
+    colNames = colNames,
+    rowNames = rowNames,
+    startRow = startRow,
+    startCol = startCol,
+    removeCellStyle = removeCellStyle
+  )
+
+
+  ### Beg: Only in datatable ---------------------------------------------------
+
+  if (data_table) {
+    ## replace invalid XML characters
+    col_names <- replaceIllegalCharacters(colnames(x))
+
+    ## Table name validation
+    if (is.null(tableName)) {
+      tableName <- paste0("Table", as.character(length(wb$tables) + 1L))
+    } else {
+      tableName <- wb_validate_table_name(wb, tableName)
+    }
+
+    ## If 0 rows append a blank row
+    validNames <- c("none", paste0("TableStyleLight", 1:21), paste0("TableStyleMedium", 1:28), paste0("TableStyleDark", 1:11))
+    if (!tolower(tableStyle) %in% tolower(validNames)) {
+      stop("Invalid table style.")
+    } else {
+      tableStyle <- grep(paste0("^", tableStyle, "$"), validNames, ignore.case = TRUE, value = TRUE)
+    }
+
+    tableStyle <- tableStyle[!is.na(tableStyle)]
+    if (length(tableStyle) == 0) {
+      stop("Unknown table style.")
+    }
+
+    ## If zero rows, append an empty row (prevent XML from corrupting)
+    if (nrow(x) == 0) {
+      x <- rbind(as.data.frame(x), matrix("", nrow = 1, ncol = ncol(x), dimnames = list(character(), colnames(x))))
+      names(x) <- colNames
+    }
+
+    ref1 <- paste0(int2col(startCol), startRow)
+    ref2 <- paste0(int2col(startCol + ncol(x) - 1), startRow + nrow(x))
+    ref <- paste(ref1, ref2, sep = ":")
+
+    ## create table.xml and assign an id to worksheet tables
+    wb$buildTable(
+      sheet = sheet,
+      colNames = col_names,
+      ref = ref,
+      showColNames = colNames,
+      tableStyle = tableStyle,
+      tableName = tableName,
+      withFilter = withFilter,
+      totalsRowCount = 0L,
+      showFirstColumn = firstColumn,
+      showLastColumn = lastColumn,
+      showRowStripes = bandedRows,
+      showColumnStripes = bandedCols
+    )
+  }
+
+  ### End: Only in datatable ---------------------------------------------------
+
+  return(invisible(0))
+}
+
+
 
 #' @rdname cleanup
 #' @param wb workbook

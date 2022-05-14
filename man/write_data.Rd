@@ -32,8 +32,8 @@ write_data(
   colNames = TRUE,
   rowNames = FALSE,
   withFilter = FALSE,
-  name = NULL,
   sep = ", ",
+  name = NULL,
   removeCellStyle = TRUE
 )
 }

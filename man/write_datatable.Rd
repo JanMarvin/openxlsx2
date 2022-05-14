@@ -87,7 +87,6 @@ wb$add_worksheet("S1")
 wb$add_worksheet("S2")
 wb$add_worksheet("S3")
 
-
 #####################################################################################
 ## -- write data.frame as an Excel table with column filters
 ## -- default table style is "TableStyleMedium2"
@@ -127,17 +126,12 @@ write_datatable(wb,
   withFilter = FALSE
 )
 
-
 #####################################################################################
 ## Save workbook
 ## Open in excel without saving file: xl_open(wb)
 \dontrun{
 wb_save(wb, "write_datatableExample.xlsx", overwrite = TRUE)
 }
-
-
-
-
 
 #####################################################################################
 ## Pre-defined table styles gallery
