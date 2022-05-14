@@ -6,7 +6,7 @@
 \usage{
 wb_add_worksheet(
   wb,
-  sheet,
+  sheet = next_sheet(),
   gridLines = TRUE,
   tabColour = NULL,
   zoom = 100,

@@ -7,7 +7,7 @@
 \usage{
 wb_add_data(
   wb,
-  sheet,
+  sheet = current_sheet(),
   x,
   startCol = 1,
   startRow = 1,

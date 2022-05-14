@@ -312,7 +312,7 @@ validate sheet
 Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
-  sheet,
+  sheet = next_sheet(),
   gridLines = TRUE,
   tabColour = NULL,
   zoom = 100,
@@ -430,7 +430,7 @@ The \code{wbWorkbook} object, invisibly
 add data
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
-  sheet,
+  sheet = current_sheet(),
   x,
   startCol = 1,
   startRow = 1,
@@ -484,7 +484,7 @@ add data
 add a data table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
-  sheet,
+  sheet = current_sheet(),
   x,
   startCol = 1,
   startRow = 1,
