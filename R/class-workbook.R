@@ -269,6 +269,7 @@ wbWorkbook <- R6::R6Class(
       self$category        <- category
       self$datetimeCreated <- datetimeCreated
       private$generate_base_core()
+      private$current_sheet <- 0L
       self
     },
 
@@ -335,7 +336,7 @@ wbWorkbook <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return The `wbWorkbook` object, invisibly
     add_worksheet = function(
-      sheet,
+      sheet       = next_sheet(),
       gridLines   = TRUE,
       tabColour   = NULL,
       zoom        = 100,
@@ -841,7 +842,7 @@ wbWorkbook <- R6::R6Class(
     #' @param removeCellStyle removeCellStyle
     #' @param return The `wbWorkbook` object
     add_data = function(
-        sheet,
+        sheet           = current_sheet(),
         x,
         startCol        = 1,
         startRow        = 1,

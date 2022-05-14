@@ -101,7 +101,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @return A clone of `wb``
 wb_add_data <- function(
     wb,
-    sheet,
+    sheet           = current_sheet(),
     x,
     startCol        = 1,
     startRow        = 1,
@@ -173,7 +173,7 @@ wb_add_data <- function(
 #' @export
 wb_add_data_table <- function(
     wb,
-    sheet,
+    sheet       = current_sheet(),
     x,
     startCol    = 1,
     startRow    = 1,
@@ -238,7 +238,7 @@ wb_add_data_table <- function(
 #' @export
 wb_add_formula <- function(
     wb,
-    sheet,
+    sheet    = current_sheet(),
     x,
     startCol = 1,
     startRow = 1,
@@ -406,7 +406,7 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' }
 wb_add_worksheet <- function(
   wb,
-  sheet,
+  sheet       = next_sheet(),
   gridLines   = TRUE,
   tabColour   = NULL,
   zoom        = 100,
@@ -470,7 +470,7 @@ wb_add_worksheet <- function(
 #' \dontrun{
 #' wb_save(wb, "clone_worksheetExample.xlsx", overwrite = TRUE)
 #' }
-wb_clone_worksheet <- function(wb, old, new) {
+wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
   assert_workbook(wb)
   wb$clone()$clone_worksheet(old = old, new = new)
 }
