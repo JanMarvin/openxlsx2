@@ -729,13 +729,15 @@ write_data_table <- function(
   }
   ### End: Only in data --------------------------------------------------------
 
-  overwrite_nrows <- ifelse(data_table, 1L, colNames)
-  check_tab_head_only <- ifelse(data_table, FALSE, TRUE)
-  error_msg <- ifelse(
-    data_table,
-    "Cannot overwrite existing table with another table",
-    "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
-  )
+  if (data_table) {
+    overwrite_nrows <- 1L
+    check_tab_head_only <- FALSE
+    error_msg <- "Cannot overwrite existing table with another table"
+  } else {
+    overwrite_nrows <- colNames
+    check_tab_head_only <- TRUE
+    error_msg <- "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
+  }
 
   ## Check not overwriting existing table headers
   wb_check_overwrite_tables(
@@ -775,7 +777,7 @@ write_data_table <- function(
     }
 
     ## If 0 rows append a blank row
-    validNames <- c("none", paste0("TableStyleLight", 1:21), paste0("TableStyleMedium", 1:28), paste0("TableStyleDark", 1:11))
+    validNames <- c("none", paste0("TableStyleLight", seq_len(21)), paste0("TableStyleMedium", seq_len(28)), paste0("TableStyleDark", seq_len(11)))
     if (!tolower(tableStyle) %in% tolower(validNames)) {
       stop("Invalid table style.")
     } else {
@@ -789,12 +791,12 @@ write_data_table <- function(
 
     ## If zero rows, append an empty row (prevent XML from corrupting)
     if (nrow(x) == 0) {
-      x <- rbind(as.data.frame(x), matrix("", nrow = 1, ncol = ncol(x), dimnames = list(character(), colnames(x))))
+      x <- rbind(as.data.frame(x), matrix("", nrow = 1, ncol = nCol, dimnames = list(character(), colnames(x))))
       names(x) <- colNames
     }
 
     ref1 <- paste0(int2col(startCol), startRow)
-    ref2 <- paste0(int2col(startCol + ncol(x) - 1), startRow + nrow(x))
+    ref2 <- paste0(int2col(startCol + nCol - 1), startRow + nRow)
     ref <- paste(ref1, ref2, sep = ":")
 
     ## create table.xml and assign an id to worksheet tables
