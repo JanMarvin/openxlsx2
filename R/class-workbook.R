@@ -364,6 +364,14 @@ wbWorkbook <- R6::R6Class(
       msg <- NULL
 
       private$validate_new_sheet(sheet)
+      if (is_waiver(sheet)) {
+        if (sheet == "current_sheet") {
+          stop("cannot add worksheet to current sheet")
+        }
+
+        sheet <- paste("Sheet ", length(self$sheet_names) + 1L)
+      }
+
       sheet <- as.character(sheet)
 
       if (tolower(sheet) %in% tolower(self$sheet_names)) {
@@ -546,6 +554,7 @@ wbWorkbook <- R6::R6Class(
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", sheet)
+      private$current_sheet <- newSheetIndex
 
       invisible(self)
     },
