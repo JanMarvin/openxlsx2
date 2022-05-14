@@ -765,9 +765,13 @@ write_data_table <- function(
 
   ### Beg: Only in datatable ---------------------------------------------------
 
+  # if rowNames is set, write_data2 has added a rowNames column to the sheet.
+  # This has to be handled in colnames and in ref.
   if (data_table) {
+
     ## replace invalid XML characters
     col_names <- replaceIllegalCharacters(colnames(x))
+    if (rowNames) col_names <- c("1", col_names)
 
     ## Table name validation
     if (is.null(tableName)) {
@@ -796,7 +800,7 @@ write_data_table <- function(
     }
 
     ref1 <- paste0(int2col(startCol), startRow)
-    ref2 <- paste0(int2col(startCol + nCol - 1), startRow + nRow)
+    ref2 <- paste0(int2col(startCol + nCol - !rowNames), startRow + nRow)
     ref <- paste(ref1, ref2, sep = ":")
 
     ## create table.xml and assign an id to worksheet tables
