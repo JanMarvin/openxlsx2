@@ -180,14 +180,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// getXMLXPtrName
-SEXP getXMLXPtrName(XPtrXML doc);
-RcppExport SEXP _openxlsx2_getXMLXPtrName(SEXP docSEXP) {
+// getXMLXPtrName1
+SEXP getXMLXPtrName1(XPtrXML doc);
+RcppExport SEXP _openxlsx2_getXMLXPtrName1(SEXP docSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLXPtrName(doc));
+    rcpp_result_gen = Rcpp::wrap(getXMLXPtrName1(doc));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getXMLXPtrName2
+SEXP getXMLXPtrName2(XPtrXML doc, std::string level1);
+RcppExport SEXP _openxlsx2_getXMLXPtrName2(SEXP docSEXP, SEXP level1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    rcpp_result_gen = Rcpp::wrap(getXMLXPtrName2(doc, level1));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getXMLXPtrName3
+SEXP getXMLXPtrName3(XPtrXML doc, std::string level1, std::string level2);
+RcppExport SEXP _openxlsx2_getXMLXPtrName3(SEXP docSEXP, SEXP level1SEXP, SEXP level2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
+    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
+    rcpp_result_gen = Rcpp::wrap(getXMLXPtrName3(doc, level1, level2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -763,7 +788,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 4},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 4},
-    {"_openxlsx2_getXMLXPtrName", (DL_FUNC) &_openxlsx2_getXMLXPtrName, 1},
+    {"_openxlsx2_getXMLXPtrName1", (DL_FUNC) &_openxlsx2_getXMLXPtrName1, 1},
+    {"_openxlsx2_getXMLXPtrName2", (DL_FUNC) &_openxlsx2_getXMLXPtrName2, 2},
+    {"_openxlsx2_getXMLXPtrName3", (DL_FUNC) &_openxlsx2_getXMLXPtrName3, 3},
     {"_openxlsx2_getXMLXPtr0", (DL_FUNC) &_openxlsx2_getXMLXPtr0, 1},
     {"_openxlsx2_getXMLXPtr1", (DL_FUNC) &_openxlsx2_getXMLXPtr1, 2},
     {"_openxlsx2_getXMLXPtr2", (DL_FUNC) &_openxlsx2_getXMLXPtr2, 3},

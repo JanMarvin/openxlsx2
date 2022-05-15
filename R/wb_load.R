@@ -806,7 +806,13 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
       wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds))
       wb$slicerCaches <- sapply(slicerCachesXML[order(nchar(slicerCachesXML), slicerCachesXML)], read_xml, pointer = FALSE)
       wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds, inds))
-      wb$workbook$extLst <- c(wb$workbook$extLst, genSlicerCachesExtLst(1E5 + inds))
+
+      # get extLst object. select the silcerCaches and replace it
+      ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")
+      is_slicer <- which(ext_nams == "x14:slicerCaches")
+      ext <- xml_node(wb$workbook$extLst, "extLst", "ext")
+      ext[is_slicer] <- genSlicerCachesExtLst(1E5 + inds)
+      wb$workbook$extLst <- xml_node_create("extLst", xml_children = ext)
     }
 
 

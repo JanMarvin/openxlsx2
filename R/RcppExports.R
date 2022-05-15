@@ -57,8 +57,16 @@ readXML <- function(path, isfile, escapes, declaration) {
     .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration)
 }
 
-getXMLXPtrName <- function(doc) {
-    .Call(`_openxlsx2_getXMLXPtrName`, doc)
+getXMLXPtrName1 <- function(doc) {
+    .Call(`_openxlsx2_getXMLXPtrName1`, doc)
+}
+
+getXMLXPtrName2 <- function(doc, level1) {
+    .Call(`_openxlsx2_getXMLXPtrName2`, doc, level1)
+}
+
+getXMLXPtrName3 <- function(doc, level1, level2) {
+    .Call(`_openxlsx2_getXMLXPtrName3`, doc, level1, level2)
 }
 
 getXMLXPtr0 <- function(doc) {
