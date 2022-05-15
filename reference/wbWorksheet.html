@@ -250,17 +250,17 @@ R6 class for a Workbook Worksheet"><!-- mathjax --><script src="https://cdnjs.cl
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>wbWorksheet$new()</code></a></p></li>
-<li><p><a href="#method-get_prior_sheet_data"><code>wbWorksheet$get_prior_sheet_data()</code></a></p></li>
-<li><p><a href="#method-get_post_sheet_data"><code>wbWorksheet$get_post_sheet_data()</code></a></p></li>
-<li><p><a href="#method-order_sheetdata"><code>wbWorksheet$order_sheetdata()</code></a></p></li>
-<li><p><a href="#method-unfold_cols"><code>wbWorksheet$unfold_cols()</code></a></p></li>
-<li><p><a href="#method-fold_cols"><code>wbWorksheet$fold_cols()</code></a></p></li>
-<li><p><a href="#method-clean_sheet"><code>wbWorksheet$clean_sheet()</code></a></p></li>
-<li><p><a href="#method-add_page_break"><code>wbWorksheet$add_page_break()</code></a></p></li>
-<li><p><a href="#method-append"><code>wbWorksheet$append()</code></a></p></li>
-<li><p><a href="#method-clone"><code>wbWorksheet$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-wbWorksheet-new"><code>wbWorksheet$new()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-get_prior_sheet_data"><code>wbWorksheet$get_prior_sheet_data()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-get_post_sheet_data"><code>wbWorksheet$get_post_sheet_data()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-order_sheetdata"><code>wbWorksheet$order_sheetdata()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-unfold_cols"><code>wbWorksheet$unfold_cols()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-fold_cols"><code>wbWorksheet$fold_cols()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-clean_sheet"><code>wbWorksheet$clean_sheet()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-add_page_break"><code>wbWorksheet$add_page_break()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-append"><code>wbWorksheet$append()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-clone"><code>wbWorksheet$clone()</code></a></p></li>
+</ul></div><p></p><hr><a id="method-wbWorksheet-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new <code>wbWorksheet</code> object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -347,7 +347,7 @@ R6 class for a Workbook Worksheet"><!-- mathjax --><script src="https://cdnjs.cl
 <p>a <code>wbWorksheet</code> object</p>
 </div>
 
-</div><p></p><hr><a id="method-get_prior_sheet_data"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-get_prior_sheet_data"></a><div class="section">
 <h3 id="method-get-prior-sheet-data-">Method <code>get_prior_sheet_data()</code><a class="anchor" aria-label="anchor" href="#method-get-prior-sheet-data-"></a></h3>
 <p>Get prior sheet data</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
@@ -359,7 +359,7 @@ R6 class for a Workbook Worksheet"><!-- mathjax --><script src="https://cdnjs.cl
 <p>A character vector of xml</p>
 </div>
 
-</div><p></p><hr><a id="method-get_post_sheet_data"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-get_post_sheet_data"></a><div class="section">
 <h3 id="method-get-post-sheet-data-">Method <code>get_post_sheet_data()</code><a class="anchor" aria-label="anchor" href="#method-get-post-sheet-data-"></a></h3>
 <p>Get post sheet data</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
@@ -371,7 +371,7 @@ R6 class for a Workbook Worksheet"><!-- mathjax --><script src="https://cdnjs.cl
 <p>A character vector of xml</p>
 </div>
 
-</div><p></p><hr><a id="method-order_sheetdata"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-order_sheetdata"></a><div class="section">
 <h3 id="method-order-sheetdata-">Method <code>order_sheetdata()</code><a class="anchor" aria-label="anchor" href="#method-order-sheetdata-"></a></h3>
 <p>order sheet data</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
@@ -383,7 +383,7 @@ R6 class for a Workbook Worksheet"><!-- mathjax --><script src="https://cdnjs.cl
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
-</div><p></p><hr><a id="method-unfold_cols"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-unfold_cols"></a><div class="section">
 <h3 id="method-unfold-cols-">Method <code>unfold_cols()</code><a class="anchor" aria-label="anchor" href="#method-unfold-cols-"></a></h3>
 <p>unfold <code>&lt;cols ..&gt;</code> node to dataframe. <code>&lt;cols&gt;&lt;col ..&gt;</code> are compressed.
 Only columns with attributes are written to the file. This function
@@ -401,7 +401,7 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 <p>The column data frame</p>
 </div>
 
-</div><p></p><hr><a id="method-fold_cols"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-fold_cols"></a><div class="section">
 <h3 id="method-fold-cols-">Method <code>fold_cols()</code><a class="anchor" aria-label="anchor" href="#method-fold-cols-"></a></h3>
 <p>fold the column dataframe back into a node.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
@@ -421,7 +421,7 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
-</div><p></p><hr><a id="method-clean_sheet"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-clean_sheet"></a><div class="section">
 <h3 id="method-clean-sheet-">Method <code>clean_sheet()</code><a class="anchor" aria-label="anchor" href="#method-clean-sheet-"></a></h3>
 <p>clean sheet (remove all values)</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
@@ -458,7 +458,7 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
-</div><p></p><hr><a id="method-add_page_break"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-add_page_break"></a><div class="section">
 <h3 id="method-add-page-break-">Method <code>add_page_break()</code><a class="anchor" aria-label="anchor" href="#method-add-page-break-"></a></h3>
 <p>add page break</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
@@ -478,7 +478,7 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-append"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-append"></a><div class="section">
 <h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
 <p>append a field.  Intended for internal use only.  Not
 guaranteed to remain a public method.</p><div class="section">
@@ -499,7 +499,7 @@ guaranteed to remain a public method.</p><div class="section">
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-clone"></a><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
