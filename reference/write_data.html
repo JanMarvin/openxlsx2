@@ -58,7 +58,7 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Add data to a worksheet</h1>
-    <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a>, <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/writeData.R" class="external-link"><code>R/writeData.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a>, <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/write.R" class="external-link"><code>R/write.R</code></a></small>
     <div class="hidden name"><code>write_data.Rd</code></div>
     </div>
 
@@ -95,8 +95,8 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
   colNames <span class="op">=</span> <span class="cn">TRUE</span>,
   rowNames <span class="op">=</span> <span class="cn">FALSE</span>,
   withFilter <span class="op">=</span> <span class="cn">FALSE</span>,
-  name <span class="op">=</span> <span class="cn">NULL</span>,
   sep <span class="op">=</span> <span class="st">", "</span>,
+  name <span class="op">=</span> <span class="cn">NULL</span>,
   removeCellStyle <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -176,7 +176,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"openxlsx2.datetimeFormat"</span> <span class="op">=</span> <span class="st">"yyyy-mm-dd hh:mm:ss"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"openxlsx2.numFmt"</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"></span>
 <span class="r-in"><span class="co">#####################################################################################</span></span>
 <span class="r-in"><span class="co">## Create Workbook object and add worksheets</span></span>
 <span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -185,7 +184,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Cars"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Formula"</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span></span>
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Cars"</span>, <span class="va">x</span>, startCol <span class="op">=</span> <span class="fl">2</span>, startRow <span class="op">=</span> <span class="fl">3</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
@@ -193,7 +191,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
-<span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#####################################################################################</span></span>
 <span class="r-in"><span class="co">## Hyperlinks</span></span>
@@ -208,7 +205,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
-<span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#####################################################################################</span></span>
 <span class="r-in"><span class="co">## Formulas</span></span>
@@ -228,6 +224,13 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">#####################################################################################</span></span>
+<span class="r-in"><span class="co">## Save workbook</span></span>
+<span class="r-in"><span class="co">## Open in excel without saving file: xl_open(wb)</span></span>
+<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in"><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"write_dataExample.xlsx"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">}</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">###########################################################################</span></span>
 <span class="r-in"><span class="co"># update cell range and add mtcars</span></span>
@@ -249,6 +252,11 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11         2   abc   def 10000    10 -0.7857811       nM</span>
 <span class="r-in"><span class="co"># read_xlsx(wb2)</span></span>
 <span class="r-in"><span class="fu">write_data</span><span class="op">(</span><span class="va">wb2</span>, <span class="fl">1</span>, <span class="va">mtcars</span>, startCol <span class="op">=</span> <span class="fl">4</span>, startRow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
 <span class="r-in"><span class="fu"><a href="wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb2</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    PairIndex Drug1 Drug2 Conc1 Conc2           Response ConcUnit   NA    NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          1   abc   def 10000 10000 -1.796071094480823       nM &lt;NA&gt;  &lt;NA&gt;</span>
@@ -322,18 +330,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34  15.5    0    1    5    6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 35  14.6    0    1    5    8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 36  18.6    1    1    4    2</span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xlsx"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb2</span>, <span class="va">file</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#####################################################################################</span></span>
-<span class="r-in"><span class="co">## Save workbook</span></span>
-<span class="r-in"><span class="co">## Open in excel without saving file: xl_open(wb)</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"write_dataExample.xlsx"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
 </code></pre></div>
     </div>
   </div>

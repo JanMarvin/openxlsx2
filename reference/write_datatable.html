@@ -57,7 +57,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write to a worksheet as an Excel table</h1>
-    <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/writeDataTable.R" class="external-link"><code>R/writeDataTable.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/write.R" class="external-link"><code>R/write.R</code></a></small>
     <div class="hidden name"><code>write_datatable.Rd</code></div>
     </div>
 
@@ -79,7 +79,6 @@
   tableName <span class="op">=</span> <span class="cn">NULL</span>,
   withFilter <span class="op">=</span> <span class="cn">TRUE</span>,
   sep <span class="op">=</span> <span class="st">", "</span>,
-  stack <span class="op">=</span> <span class="cn">FALSE</span>,
   firstColumn <span class="op">=</span> <span class="cn">FALSE</span>,
   lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,
   bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -90,12 +89,11 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>wb</dt>
-<dd><p>A Workbook object containing a
-worksheet.</p></dd>
+<dd><p>A Workbook object containing a worksheet.</p></dd>
 <dt>sheet</dt>
 <dd><p>The worksheet to write to. Can be the worksheet index or name.</p></dd>
 <dt>x</dt>
-<dd><p>A dataframe.</p></dd>
+<dd><p>A data frame.</p></dd>
 <dt>startCol</dt>
 <dd><p>A vector specifying the starting column to write df</p></dd>
 <dt>startRow</dt>
@@ -114,10 +112,7 @@ A vector of the form c(startCol, startRow)</p></dd>
 <dt>withFilter</dt>
 <dd><p>If <code>TRUE</code>, columns with have filters in the first row.</p></dd>
 <dt>sep</dt>
-<dd><p>Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).</p></dd>
-<dt>stack</dt>
-<dd><p>If <code>TRUE</code> the new style is merged with any existing cell styles.  If FALSE, any
-existing style is replaced by the new style.
+<dd><p>Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 <br><br><br><strong>The below options correspond to Excel table options:</strong>
 <br><img src="figures/tableoptions.png" width="40%" alt="Figure: table_options.png"></p></dd>
 <dt>firstColumn</dt>
@@ -155,7 +150,6 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S2"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S3"</span><span class="op">)</span></span>
-<span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#####################################################################################</span></span>
 <span class="r-in"><span class="co">## -- write data.frame as an Excel table with column filters</span></span>
@@ -206,11 +200,20 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span class="co">## Additional Header Styling and remove column filters</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">write_datatable</span><span class="op">(</span><span class="va">wb</span>,</span>
-<span class="r-in">  <span class="co"># todo header styling not implemented</span></span>
-<span class="r-in">  sheet <span class="op">=</span> <span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span>, startCol <span class="op">=</span> <span class="fl">7</span>,</span>
-<span class="r-in">  withFilter <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span class="r-in">  sheet <span class="op">=</span> <span class="fl">1</span>,</span>
+<span class="r-in">  x <span class="op">=</span> <span class="va">iris</span>,</span>
+<span class="r-in">  startCol <span class="op">=</span> <span class="fl">7</span>,</span>
+<span class="r-in">  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span class="r-in">  firstColumn <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span class="r-in">  lastColumn  <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span class="r-in">  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span class="r-in">  bandedCols <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#####################################################################################</span></span>
 <span class="r-in"><span class="co">## Save workbook</span></span>
@@ -218,10 +221,6 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"write_datatableExample.xlsx"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#####################################################################################</span></span>
 <span class="r-in"><span class="co">## Pre-defined table styles gallery</span></span>
