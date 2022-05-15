@@ -790,7 +790,7 @@ create_dxfs_style <- function(
     text_italic    = NULL,
     text_underline = NULL # "true" or "double"
 ) {
-  op <- openxlsx_options()
+  op <- openxlsx2_options()
   on.exit(options(op), add = TRUE)
 
   if (is.null(text_bold)) text_bold = ""

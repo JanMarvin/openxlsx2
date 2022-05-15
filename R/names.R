@@ -23,7 +23,7 @@ names.wbWorkbook <- function(x) {
 #' @param value a character vector the same length as `x`
 #' @export
 `names<-.wbWorkbook` <- function(x, value) {
-  op <- openxlsx_options()
+  op <- openxlsx2_options()
   on.exit(options(op), add = TRUE)
 
   if (any(duplicated(tolower(value)))) {

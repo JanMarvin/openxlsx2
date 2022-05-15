@@ -2,7 +2,7 @@ test_that("Deleting worksheets", {
   tempFile <- temp_xlsx()
   genWS <- function(wb, sheetName) {
     wb$add_worksheet(sheetName)
-    wb$add_data_table(sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), colNames = FALSE)
+    wb$add_data_table(sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), colNames = TRUE)
   }
 
   wb <- wb_workbook()
