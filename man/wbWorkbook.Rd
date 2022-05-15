@@ -156,66 +156,66 @@ is created, not when the Excel files are saved.}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{wbWorkbook$new()}}
-\item \href{#method-append}{\code{wbWorkbook$append()}}
-\item \href{#method-append_sheets}{\code{wbWorkbook$append_sheets()}}
-\item \href{#method-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
-\item \href{#method-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
-\item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
-\item \href{#method-add_data}{\code{wbWorkbook$add_data()}}
-\item \href{#method-add_data_table}{\code{wbWorkbook$add_data_table()}}
-\item \href{#method-add_formula}{\code{wbWorkbook$add_formula()}}
-\item \href{#method-save}{\code{wbWorkbook$save()}}
-\item \href{#method-open}{\code{wbWorkbook$open()}}
-\item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
-\item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
-\item \href{#method-get_base_font}{\code{wbWorkbook$get_base_font()}}
-\item \href{#method-set_base_font}{\code{wbWorkbook$set_base_font()}}
-\item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
-\item \href{#method-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
-\item \href{#method-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
-\item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
-\item \href{#method-group_cols}{\code{wbWorkbook$group_cols()}}
-\item \href{#method-ungroup_cols}{\code{wbWorkbook$ungroup_cols()}}
-\item \href{#method-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
-\item \href{#method-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
-\item \href{#method-group_rows}{\code{wbWorkbook$group_rows()}}
-\item \href{#method-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
-\item \href{#method-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
-\item \href{#method-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
-\item \href{#method-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
-\item \href{#method-merge_cells}{\code{wbWorkbook$merge_cells()}}
-\item \href{#method-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
-\item \href{#method-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
-\item \href{#method-add_image}{\code{wbWorkbook$add_image()}}
-\item \href{#method-add_plot}{\code{wbWorkbook$add_plot()}}
-\item \href{#method-print}{\code{wbWorkbook$print()}}
-\item \href{#method-protect}{\code{wbWorkbook$protect()}}
-\item \href{#method-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
-\item \href{#method-set_creators}{\code{wbWorkbook$set_creators()}}
-\item \href{#method-add_creators}{\code{wbWorkbook$add_creators()}}
-\item \href{#method-remove_creators}{\code{wbWorkbook$remove_creators()}}
-\item \href{#method-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
-\item \href{#method-page_setup}{\code{wbWorkbook$page_setup()}}
-\item \href{#method-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
-\item \href{#method-get_tables}{\code{wbWorkbook$get_tables()}}
-\item \href{#method-remove_tables}{\code{wbWorkbook$remove_tables()}}
-\item \href{#method-add_filter}{\code{wbWorkbook$add_filter()}}
-\item \href{#method-remove_filter}{\code{wbWorkbook$remove_filter()}}
-\item \href{#method-grid_lines}{\code{wbWorkbook$grid_lines()}}
-\item \href{#method-add_named_region}{\code{wbWorkbook$add_named_region()}}
-\item \href{#method-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
-\item \href{#method-set_order}{\code{wbWorkbook$set_order()}}
-\item \href{#method-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
-\item \href{#method-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
-\item \href{#method-add_page_break}{\code{wbWorkbook$add_page_break()}}
-\item \href{#method-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
-\item \href{#method-clone}{\code{wbWorkbook$clone()}}
+\item \href{#method-wbWorkbook-new}{\code{wbWorkbook$new()}}
+\item \href{#method-wbWorkbook-append}{\code{wbWorkbook$append()}}
+\item \href{#method-wbWorkbook-append_sheets}{\code{wbWorkbook$append_sheets()}}
+\item \href{#method-wbWorkbook-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
+\item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
+\item \href{#method-wbWorkbook-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
+\item \href{#method-wbWorkbook-add_data}{\code{wbWorkbook$add_data()}}
+\item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
+\item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
+\item \href{#method-wbWorkbook-save}{\code{wbWorkbook$save()}}
+\item \href{#method-wbWorkbook-open}{\code{wbWorkbook$open()}}
+\item \href{#method-wbWorkbook-buildTable}{\code{wbWorkbook$buildTable()}}
+\item \href{#method-wbWorkbook-createFontNode}{\code{wbWorkbook$createFontNode()}}
+\item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
+\item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
+\item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
+\item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
+\item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
+\item \href{#method-wbWorkbook-createCols}{\code{wbWorkbook$createCols()}}
+\item \href{#method-wbWorkbook-group_cols}{\code{wbWorkbook$group_cols()}}
+\item \href{#method-wbWorkbook-ungroup_cols}{\code{wbWorkbook$ungroup_cols()}}
+\item \href{#method-wbWorkbook-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
+\item \href{#method-wbWorkbook-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
+\item \href{#method-wbWorkbook-group_rows}{\code{wbWorkbook$group_rows()}}
+\item \href{#method-wbWorkbook-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
+\item \href{#method-wbWorkbook-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
+\item \href{#method-wbWorkbook-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
+\item \href{#method-wbWorkbook-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
+\item \href{#method-wbWorkbook-merge_cells}{\code{wbWorkbook$merge_cells()}}
+\item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
+\item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
+\item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
+\item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
+\item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
+\item \href{#method-wbWorkbook-protect}{\code{wbWorkbook$protect()}}
+\item \href{#method-wbWorkbook-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
+\item \href{#method-wbWorkbook-set_creators}{\code{wbWorkbook$set_creators()}}
+\item \href{#method-wbWorkbook-add_creators}{\code{wbWorkbook$add_creators()}}
+\item \href{#method-wbWorkbook-remove_creators}{\code{wbWorkbook$remove_creators()}}
+\item \href{#method-wbWorkbook-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
+\item \href{#method-wbWorkbook-page_setup}{\code{wbWorkbook$page_setup()}}
+\item \href{#method-wbWorkbook-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
+\item \href{#method-wbWorkbook-get_tables}{\code{wbWorkbook$get_tables()}}
+\item \href{#method-wbWorkbook-remove_tables}{\code{wbWorkbook$remove_tables()}}
+\item \href{#method-wbWorkbook-add_filter}{\code{wbWorkbook$add_filter()}}
+\item \href{#method-wbWorkbook-remove_filter}{\code{wbWorkbook$remove_filter()}}
+\item \href{#method-wbWorkbook-grid_lines}{\code{wbWorkbook$grid_lines()}}
+\item \href{#method-wbWorkbook-add_named_region}{\code{wbWorkbook$add_named_region()}}
+\item \href{#method-wbWorkbook-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
+\item \href{#method-wbWorkbook-set_order}{\code{wbWorkbook$set_order()}}
+\item \href{#method-wbWorkbook-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
+\item \href{#method-wbWorkbook-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
+\item \href{#method-wbWorkbook-add_page_break}{\code{wbWorkbook$add_page_break()}}
+\item \href{#method-wbWorkbook-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
+\item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-new"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbWorkbook} object
 \subsection{Usage}{
@@ -250,8 +250,8 @@ a \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-append"></a>}}
-\if{latex}{\out{\hypertarget{method-append}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-append"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-append}{}}}
 \subsection{Method \code{append()}}{
 Append a field. This method is intended for internal use
 \subsection{Usage}{
@@ -269,8 +269,8 @@ Append a field. This method is intended for internal use
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-append_sheets"></a>}}
-\if{latex}{\out{\hypertarget{method-append_sheets}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-append_sheets"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-append_sheets}{}}}
 \subsection{Method \code{append_sheets()}}{
 Append to \code{self$workbook$sheets} This method is intended for internal use
 \subsection{Usage}{
@@ -286,8 +286,8 @@ Append to \code{self$workbook$sheets} This method is intended for internal use
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_worksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-add_worksheet}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_worksheet}{}}}
 \subsection{Method \code{add_worksheet()}}{
 Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
@@ -361,8 +361,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone_worksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-clone_worksheet}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-clone_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone_worksheet}{}}}
 \subsection{Method \code{clone_worksheet()}}{
 Clone a workbooksheet
 \subsection{Usage}{
@@ -380,8 +380,8 @@ Clone a workbooksheet
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addChartSheet"></a>}}
-\if{latex}{\out{\hypertarget{method-addChartSheet}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-addChartSheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-addChartSheet}{}}}
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
@@ -404,8 +404,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_data"></a>}}
-\if{latex}{\out{\hypertarget{method-add_data}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_data"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_data}{}}}
 \subsection{Method \code{add_data()}}{
 add data
 \subsection{Usage}{
@@ -458,8 +458,8 @@ add data
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_data_table"></a>}}
-\if{latex}{\out{\hypertarget{method-add_data_table}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_data_table"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_data_table}{}}}
 \subsection{Method \code{add_data_table()}}{
 add a data table
 \subsection{Usage}{
@@ -519,8 +519,8 @@ add a data table
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_formula"></a>}}
-\if{latex}{\out{\hypertarget{method-add_formula}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_formula"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_formula}{}}}
 \subsection{Method \code{add_formula()}}{
 add formula
 \subsection{Usage}{
@@ -553,8 +553,8 @@ add formula
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-save"></a>}}
-\if{latex}{\out{\hypertarget{method-save}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-save"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-save}{}}}
 \subsection{Method \code{save()}}{
 Save the workbook
 \subsection{Usage}{
@@ -575,8 +575,8 @@ The \code{wbWorkbook} object invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-open"></a>}}
-\if{latex}{\out{\hypertarget{method-open}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-open"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-open}{}}}
 \subsection{Method \code{open()}}{
 open wbWorkbook in Excel.
 \subsection{Usage}{
@@ -597,8 +597,8 @@ The \code{wbWorkbook}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-buildTable"></a>}}
-\if{latex}{\out{\hypertarget{method-buildTable}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-buildTable"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-buildTable}{}}}
 \subsection{Method \code{buildTable()}}{
 Build table
 \subsection{Usage}{
@@ -652,8 +652,8 @@ The \code{wbWorksheet} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-createFontNode"></a>}}
-\if{latex}{\out{\hypertarget{method-createFontNode}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-createFontNode"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-createFontNode}{}}}
 \subsection{Method \code{createFontNode()}}{
 Create a font node from a style
 \subsection{Usage}{
@@ -672,8 +672,8 @@ The font node as xml?
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_base_font"></a>}}
-\if{latex}{\out{\hypertarget{method-get_base_font}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-get_base_font"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_base_font}{}}}
 \subsection{Method \code{get_base_font()}}{
 Get the base font
 \subsection{Usage}{
@@ -685,8 +685,8 @@ A list of of the font
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_base_font"></a>}}
-\if{latex}{\out{\hypertarget{method-set_base_font}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_base_font"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_base_font}{}}}
 \subsection{Method \code{set_base_font()}}{
 Get the base font
 \subsection{Usage}{
@@ -713,8 +713,8 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setSheetName"></a>}}
-\if{latex}{\out{\hypertarget{method-setSheetName}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-setSheetName"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-setSheetName}{}}}
 \subsection{Method \code{setSheetName()}}{
 Sets a sheet name
 \subsection{Usage}{
@@ -735,8 +735,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_row_heights"></a>}}
-\if{latex}{\out{\hypertarget{method-set_row_heights}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_row_heights"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_row_heights}{}}}
 \subsection{Method \code{set_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
@@ -759,8 +759,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_row_heights"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_row_heights}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_row_heights"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_row_heights}{}}}
 \subsection{Method \code{remove_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
@@ -783,8 +783,8 @@ creates column object for worksheet
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-createCols"></a>}}
-\if{latex}{\out{\hypertarget{method-createCols}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-createCols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-createCols}{}}}
 \subsection{Method \code{createCols()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n, beg, end)}\if{html}{\out{</div>}}
@@ -805,8 +805,8 @@ creates column object for worksheet
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-group_cols"></a>}}
-\if{latex}{\out{\hypertarget{method-group_cols}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-group_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-group_cols}{}}}
 \subsection{Method \code{group_cols()}}{
 Group cols
 \subsection{Usage}{
@@ -831,8 +831,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ungroup_cols"></a>}}
-\if{latex}{\out{\hypertarget{method-ungroup_cols}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-ungroup_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-ungroup_cols}{}}}
 \subsection{Method \code{ungroup_cols()}}{
 ungroup cols
 \subsection{Usage}{
@@ -850,8 +850,8 @@ ungroup cols
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_col_widths"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_col_widths}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_col_widths}{}}}
 \subsection{Method \code{remove_col_widths()}}{
 Remove row heights from a worksheet
 \subsection{Usage}{
@@ -872,8 +872,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_col_widths"></a>}}
-\if{latex}{\out{\hypertarget{method-set_col_widths}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_col_widths}{}}}
 \subsection{Method \code{set_col_widths()}}{
 Group cols
 \subsection{Usage}{
@@ -899,8 +899,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-group_rows"></a>}}
-\if{latex}{\out{\hypertarget{method-group_rows}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-group_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-group_rows}{}}}
 \subsection{Method \code{group_rows()}}{
 Group rows
 \subsection{Usage}{
@@ -925,8 +925,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ungroup_rows"></a>}}
-\if{latex}{\out{\hypertarget{method-ungroup_rows}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-ungroup_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-ungroup_rows}{}}}
 \subsection{Method \code{ungroup_rows()}}{
 ungroup rows
 \subsection{Usage}{
@@ -947,8 +947,8 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_worksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_worksheet}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_worksheet}{}}}
 \subsection{Method \code{remove_worksheet()}}{
 Remove a worksheet
 \subsection{Usage}{
@@ -967,8 +967,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_data_validation"></a>}}
-\if{latex}{\out{\hypertarget{method-add_data_validation}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_data_validation"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_data_validation}{}}}
 \subsection{Method \code{add_data_validation()}}{
 Adds data validation
 \subsection{Usage}{
@@ -1010,8 +1010,8 @@ Adds data validation
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-conditional_formatting"></a>}}
-\if{latex}{\out{\hypertarget{method-conditional_formatting}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-conditional_formatting"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-conditional_formatting}{}}}
 \subsection{Method \code{conditional_formatting()}}{
 Set conditional formatting for a sheet
 \subsection{Usage}{
@@ -1059,8 +1059,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-merge_cells"></a>}}
-\if{latex}{\out{\hypertarget{method-merge_cells}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-merge_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-merge_cells}{}}}
 \subsection{Method \code{merge_cells()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
@@ -1081,8 +1081,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-unmerge_cells"></a>}}
-\if{latex}{\out{\hypertarget{method-unmerge_cells}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-unmerge_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-unmerge_cells}{}}}
 \subsection{Method \code{unmerge_cells()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
@@ -1103,8 +1103,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-freeze_pane"></a>}}
-\if{latex}{\out{\hypertarget{method-freeze_pane}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-freeze_pane"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-freeze_pane}{}}}
 \subsection{Method \code{freeze_pane()}}{
 Set freeze panes for a sheet
 \subsection{Usage}{
@@ -1137,8 +1137,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_image"></a>}}
-\if{latex}{\out{\hypertarget{method-add_image}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_image"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_image}{}}}
 \subsection{Method \code{add_image()}}{
 Insert an image into a sheet
 \subsection{Usage}{
@@ -1186,8 +1186,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_plot"></a>}}
-\if{latex}{\out{\hypertarget{method-add_plot}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_plot"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_plot}{}}}
 \subsection{Method \code{add_plot()}}{
 Add plot. A wrapper for add_image()
 \subsection{Usage}{
@@ -1235,8 +1235,8 @@ Add plot. A wrapper for add_image()
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-print"></a>}}
-\if{latex}{\out{\hypertarget{method-print}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-print"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-print}{}}}
 \subsection{Method \code{print()}}{
 Prints the \code{wbWorkbook} object
 \subsection{Usage}{
@@ -1248,8 +1248,8 @@ The \code{wbWorkbook} object, invisibly; called for its side-effects
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-protect"></a>}}
-\if{latex}{\out{\hypertarget{method-protect}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-protect"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-protect}{}}}
 \subsection{Method \code{protect()}}{
 Protect a workbook
 \subsection{Usage}{
@@ -1291,8 +1291,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-protect_worksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-protect_worksheet}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-protect_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-protect_worksheet}{}}}
 \subsection{Method \code{protect_worksheet()}}{
 protect worksheet
 \subsection{Usage}{
@@ -1324,8 +1324,8 @@ or more of the following: \code{"selectLockedCells"},
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_creators"></a>}}
-\if{latex}{\out{\hypertarget{method-set_creators}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_creators}{}}}
 \subsection{Method \code{set_creators()}}{
 Set creator(s)
 \subsection{Usage}{
@@ -1342,8 +1342,8 @@ ignored.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_creators"></a>}}
-\if{latex}{\out{\hypertarget{method-add_creators}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_creators}{}}}
 \subsection{Method \code{add_creators()}}{
 Add creator(s)
 \subsection{Usage}{
@@ -1360,8 +1360,8 @@ ignored.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_creators"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_creators}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_creators}{}}}
 \subsection{Method \code{remove_creators()}}{
 Remove creator(s)
 \subsection{Usage}{
@@ -1378,8 +1378,8 @@ are removed.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_last_modified_by"></a>}}
-\if{latex}{\out{\hypertarget{method-set_last_modified_by}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_last_modified_by"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_last_modified_by}{}}}
 \subsection{Method \code{set_last_modified_by()}}{
 Change the last modified by
 \subsection{Usage}{
@@ -1398,8 +1398,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-page_setup"></a>}}
-\if{latex}{\out{\hypertarget{method-page_setup}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-page_setup"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-page_setup}{}}}
 \subsection{Method \code{page_setup()}}{
 page_setup()
 \subsection{Usage}{
@@ -1465,8 +1465,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_header_footer"></a>}}
-\if{latex}{\out{\hypertarget{method-set_header_footer}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_header_footer"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_header_footer}{}}}
 \subsection{Method \code{set_header_footer()}}{
 Sets headers and footers
 \subsection{Usage}{
@@ -1505,8 +1505,8 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_tables"></a>}}
-\if{latex}{\out{\hypertarget{method-get_tables}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-get_tables"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_tables}{}}}
 \subsection{Method \code{get_tables()}}{
 get tables
 \subsection{Usage}{
@@ -1522,8 +1522,8 @@ get tables
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_tables"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_tables}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_tables"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_tables}{}}}
 \subsection{Method \code{remove_tables()}}{
 remove tables
 \subsection{Usage}{
@@ -1541,8 +1541,8 @@ remove tables
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_filter"></a>}}
-\if{latex}{\out{\hypertarget{method-add_filter}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_filter"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_filter}{}}}
 \subsection{Method \code{add_filter()}}{
 add filters
 \subsection{Usage}{
@@ -1562,8 +1562,8 @@ add filters
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_filter"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_filter}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_filter"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_filter}{}}}
 \subsection{Method \code{remove_filter()}}{
 remove filters
 \subsection{Usage}{
@@ -1579,8 +1579,8 @@ remove filters
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-grid_lines"></a>}}
-\if{latex}{\out{\hypertarget{method-grid_lines}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-grid_lines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-grid_lines}{}}}
 \subsection{Method \code{grid_lines()}}{
 grid lines
 \subsection{Usage}{
@@ -1598,8 +1598,8 @@ grid lines
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_named_region"></a>}}
-\if{latex}{\out{\hypertarget{method-add_named_region}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_named_region}{}}}
 \subsection{Method \code{add_named_region()}}{
 add a named region
 \subsection{Usage}{
@@ -1632,8 +1632,8 @@ add a named region
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_named_region"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_named_region}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_named_region}{}}}
 \subsection{Method \code{remove_named_region()}}{
 remove a named region
 \subsection{Usage}{
@@ -1651,8 +1651,8 @@ remove a named region
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_order"></a>}}
-\if{latex}{\out{\hypertarget{method-set_order}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_order"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_order}{}}}
 \subsection{Method \code{set_order()}}{
 set worksheet order
 \subsection{Usage}{
@@ -1671,8 +1671,8 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_sheet_visibility"></a>}}
-\if{latex}{\out{\hypertarget{method-get_sheet_visibility}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-get_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_sheet_visibility}{}}}
 \subsection{Method \code{get_sheet_visibility()}}{
 Get sheet visibility
 \subsection{Usage}{
@@ -1681,8 +1681,8 @@ Get sheet visibility
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_sheet_visibility"></a>}}
-\if{latex}{\out{\hypertarget{method-set_sheet_visibility}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-set_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_sheet_visibility}{}}}
 \subsection{Method \code{set_sheet_visibility()}}{
 Set sheet visibility
 \subsection{Usage}{
@@ -1700,8 +1700,8 @@ Set sheet visibility
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_page_break"></a>}}
-\if{latex}{\out{\hypertarget{method-add_page_break}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-add_page_break"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_page_break}{}}}
 \subsection{Method \code{add_page_break()}}{
 Add a page break
 \subsection{Usage}{
@@ -1721,8 +1721,8 @@ Add a page break
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clean_sheet"></a>}}
-\if{latex}{\out{\hypertarget{method-clean_sheet}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-clean_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clean_sheet}{}}}
 \subsection{Method \code{clean_sheet()}}{
 clean sheet (remove all values)
 \subsection{Usage}{
@@ -1757,8 +1757,8 @@ Deep cloning method for workbooks.  This method also accesses
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
