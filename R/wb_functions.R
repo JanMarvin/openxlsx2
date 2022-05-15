@@ -398,7 +398,8 @@ wb_to_df <- function(
 
   # if (!nrow(cc)) browser()
 
-  cc[c("val", "typ")] <- NA_character_
+  cc$val <- NA_character_
+  cc$typ <- NA_character_
 
   cc_tab <- table(cc$c_t)
 
