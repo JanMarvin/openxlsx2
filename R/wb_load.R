@@ -652,6 +652,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
 
       # load the data. This function reads sheet_data and returns cc and row_attr
       loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
+      assign("cc", wb$worksheets[[1]]$sheet_data$cc, globalenv())
     }
   }
 
