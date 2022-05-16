@@ -491,6 +491,7 @@ void write_xml_file(std::string xml_content, std::string fl, bool escapes) {
 
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  pugi_format_flags |= pugi::format_no_empty_element_tags;
 
   // load and validate node
   if (xml_content != "") {
