@@ -4171,7 +4171,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (nchar(sheet) > 31) {
-        stop("sheet names must be <= 32 chars")
+        stop("sheet names must be <= 31 chars")
       }
 
       if (tolower(sheet) %in% self$sheet_names) {
