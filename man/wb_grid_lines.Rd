@@ -4,7 +4,7 @@
 \alias{wb_grid_lines}
 \title{Set worksheet gridlines to show or hide.}
 \usage{
-wb_grid_lines(wb, sheet, show = FALSE)
+wb_grid_lines(wb, sheet = current_sheet(), show = FALSE)
 }
 \arguments{
 \item{wb}{A workbook object}

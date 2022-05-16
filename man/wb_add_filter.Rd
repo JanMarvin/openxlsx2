@@ -4,7 +4,7 @@
 \alias{wb_add_filter}
 \title{Add column filters}
 \usage{
-wb_add_filter(wb, sheet, rows, cols)
+wb_add_filter(wb, sheet = current_sheet(), rows, cols)
 }
 \arguments{
 \item{wb}{A workbook object}

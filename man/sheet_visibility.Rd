@@ -8,7 +8,7 @@
 \usage{
 wb_get_sheet_visibility(wb)
 
-wb_set_sheet_visibility(wb, sheet, value)
+wb_set_sheet_visibility(wb, sheet = current_sheet(), value)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object}

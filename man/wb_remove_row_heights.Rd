@@ -4,7 +4,7 @@
 \alias{wb_remove_row_heights}
 \title{Remove custom row heights from a worksheet}
 \usage{
-wb_remove_row_heights(wb, sheet, rows)
+wb_remove_row_heights(wb, sheet = current_sheet(), rows)
 }
 \arguments{
 \item{wb}{A workbook object}

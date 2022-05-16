@@ -6,7 +6,7 @@
 \usage{
 wb_freeze_pane(
   wb,
-  sheet,
+  sheet = current_sheet(),
   firstActiveRow = NULL,
   firstActiveCol = NULL,
   firstRow = FALSE,

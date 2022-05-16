@@ -7,7 +7,7 @@
 \usage{
 wb_page_setup(
   wb,
-  sheet,
+  sheet = current_sheet(),
   orientation = NULL,
   scale = 100,
   left = 0.7,

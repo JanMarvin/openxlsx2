@@ -6,7 +6,7 @@
 \usage{
 wb_add_data_validation(
   wb,
-  sheet,
+  sheet = current_sheet(),
   cols,
   rows,
   type,
