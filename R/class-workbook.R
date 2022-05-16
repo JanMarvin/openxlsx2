@@ -565,26 +565,9 @@ wbWorkbook <- R6::R6Class(
     #' Clone a workbooksheet
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
-    clone_worksheet = function(old, new) {
+    clone_worksheet = function(old = current_sheet(), new = next_sheet()) {
       old <- private$get_sheet(old)
-
-      if (tolower(new) %in% tolower(self$sheet_names)) {
-        stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
-      }
-
-      if (nchar(new) > 31) {
-        stop("sheet too long! Max length is 31 characters.")
-      }
-
-      if (!is.character(new)) {
-        new <- as.character(new)
-      }
-
-      ## Invalid XML characters
-      new <- replaceIllegalCharacters(new)
-      if (grepl(pattern = ":", x = new)) {
-        stop("colon not allowed in sheet names in Excel")
-      }
+      new <- private$validate_new_sheet(new)
 
       newSheetIndex <- length(self$worksheets) + 1L
       sheetId <- max_sheet_id(self) # checks for length of worksheets
@@ -770,7 +753,7 @@ wbWorkbook <- R6::R6Class(
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheet, tabColour = NULL, zoom = 100) {
+    addChartSheet = function(sheet = current_sheet(), tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
       sheetId <- max_sheet_id(self) # checks for length of worksheets
@@ -949,7 +932,7 @@ wbWorkbook <- R6::R6Class(
     #' @param xy xy
     #' @returns The `wbWorkbook` object
     add_formula = function(
-        sheet,
+        sheet    = current_sheet(),
         x,
         startCol = 1,
         startRow = 1,
@@ -1540,7 +1523,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showColumnStripes showColumnStripes
     #' @return The `wbWorksheet` object, invisibly
     buildTable = function(
-      sheet,
+      sheet = current_sheet(),
       colNames,
       ref,
       showColNames,
@@ -1759,7 +1742,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet Old sheet name
     #' @param name New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    setSheetName = function(sheet, name) {
+    setSheetName = function(sheet = current_sheet(), name) {
       # TODO assert sheet class?
       if (name %in% self$sheet_names) {
         stop(sprintf("Sheet %s already exists!", name))
@@ -1803,7 +1786,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
-    set_row_heights = function(sheet, rows, heights) {
+    set_row_heights = function(sheet = current_sheet(), rows, heights) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1851,7 +1834,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
-    remove_row_heights = function(sheet, rows) {
+    remove_row_heights = function(sheet = current_sheet(), rows) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1875,7 +1858,7 @@ wbWorkbook <- R6::R6Class(
     #' @param n n
     #' @param beg beg
     #' @param end end
-    createCols = function(sheet, n, beg, end) {
+    createCols = function(sheet = current_sheet(), n, beg, end) {
        sheet <- private$get_sheet(sheet)
        self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
     },
@@ -1887,7 +1870,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    group_cols = function(sheet, cols, collapsed = FALSE, levels = NULL) {
+    group_cols = function(sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1956,7 +1939,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param cols = cols
     #' @returns The `wbWorkbook` object
-    ungroup_cols = function(sheet, cols) {
+    ungroup_cols = function(sheet = current_sheet(), cols) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -1995,7 +1978,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet A name or index of a worksheet
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
-    remove_col_widths = function(sheet, cols) {
+    remove_col_widths = function(sheet = current_sheet(), cols) {
       sheet <- private$get_sheet(sheet)
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
@@ -2029,7 +2012,7 @@ wbWorkbook <- R6::R6Class(
     #' @param hidden A logical vector to determine which cols are hidden; values
     #'   are repeated across length of `cols`
     #' @return The `wbWorkbook` object, invisibly
-    set_col_widths = function(sheet, cols, widths = 8.43, hidden = FALSE) {
+    set_col_widths = function(sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
       sheet <- private$get_sheet(sheet)
 
       # should do nothing if the cols' length is zero
@@ -2139,7 +2122,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
+    group_rows = function(sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -2203,7 +2186,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object
-    ungroup_rows = function(sheet, rows) {
+    ungroup_rows = function(sheet = current_sheet(), rows) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -2241,7 +2224,7 @@ wbWorkbook <- R6::R6Class(
     #' Remove a worksheet
     #' @param sheet The worksheet to delete
     #' @return The `wbWorkbook` object, invisibly
-    remove_worksheet = function(sheet) {
+    remove_worksheet = function(sheet = current_sheet()) {
       # To delete a worksheet
       # Remove colwidths element
       # Remove drawing partname from Content_Types (drawing(sheet).xml)
@@ -2443,7 +2426,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showErrorMsg showErrorMsg
     #' @returns The `wbWorkbook` object
     add_data_validation = function(
-      sheet,
+      sheet = current_sheet(),
       cols,
       rows,
       type,
@@ -2579,7 +2562,7 @@ wbWorkbook <- R6::R6Class(
     #' @param params params
     #' @return The `wbWorkbook` object, invisibly
     conditional_formatting = function(
-      sheet,
+      sheet = current_sheet(),
       startRow,
       endRow,
       startCol,
@@ -2883,7 +2866,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(sheet, rows = NULL, cols = NULL) {
+    merge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
       sheet <- private$get_sheet(sheet)
 
       # TODO send to wbWorksheet() method
@@ -2935,7 +2918,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    unmerge_cells = function(sheet, rows = NULL, cols = NULL) {
+    unmerge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
       sheet <- private$get_sheet(sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
@@ -2969,7 +2952,7 @@ wbWorkbook <- R6::R6Class(
     #' @param firstCol firstCol
     #' @return The `wbWorkbook` object, invisibly
     freeze_pane = function(
-      sheet,
+      sheet = current_sheet(),
       firstActiveRow = NULL,
       firstActiveCol = NULL,
       firstRow = FALSE,
@@ -3074,7 +3057,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dpi dpi
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
-      sheet,
+      sheet = current_sheet(),
       file,
       width     = 6,
       height    = 3,
@@ -3226,7 +3209,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dpi dpi
     #' @returns The `wbWorkbook` object
     add_plot = function(
-      sheet,
+      sheet = current_sheet(),
       width     = 6,
       height    = 4,
       xy        = NULL,
@@ -3445,7 +3428,7 @@ wbWorkbook <- R6::R6Class(
     #'   `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
     #' @returns The `wbWorkbook` object
     protect_worksheet = function(
-        sheet,
+        sheet = current_sheet(),
         protect    = TRUE,
         password   = NULL,
         properties = NULL
@@ -3549,7 +3532,7 @@ wbWorkbook <- R6::R6Class(
     #' @param summaryCol summaryCol
     #' @return The `wbWorkbook` object, invisibly
     page_setup = function(
-      sheet,
+      sheet = current_sheet(),
       orientation    = NULL,
       scale          = 100,
       left           = 0.7,
@@ -3709,7 +3692,7 @@ wbWorkbook <- R6::R6Class(
     #' @param firstFooter firstFooter
     #' @return The `wbWorkbook` object, invisibly
     set_header_footer = function(
-      sheet,
+      sheet = current_sheet(),
       header      = NULL,
       footer      = NULL,
       evenHeader  = NULL,
@@ -3774,7 +3757,7 @@ wbWorkbook <- R6::R6Class(
     #' @description get tables
     #' @param sheet sheet
     #' @returns The sheet tables.  `character()` if empty
-    get_tables = function(sheet) {
+    get_tables = function(sheet = current_sheet()) {
       if (length(sheet) != 1) {
         stop("sheet argument must be length 1")
       }
@@ -3805,7 +3788,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param table table
     #' @returns The `wbWorkbook` object
-    remove_tables = function(sheet, table) {
+    remove_tables = function(sheet = current_sheet(), table) {
       if (length(table) != 1) {
         stop("table argument must be length 1")
       }
@@ -3855,7 +3838,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @param cols cols
     #' @returns The `wbWorkbook` object
-    add_filter = function(sheet, rows, cols) {
+    add_filter = function(sheet = current_sheet(), rows, cols) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
       sheet <- private$get_sheet(sheet)
@@ -3879,7 +3862,7 @@ wbWorkbook <- R6::R6Class(
     #' @description remove filters
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
-    remove_filter = function(sheet) {
+    remove_filter = function(sheet = current_sheet()) {
       for (s in private$get_sheet(sheet)) {
         self$worksheets[[s]]$autoFilter <- character()
       }
@@ -3891,7 +3874,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param show show
     #' @returns The `wbWorkbook` object
-    grid_lines = function(sheet, show = FALSE) {
+    grid_lines = function(sheet = current_sheet(), show = FALSE) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -3925,7 +3908,7 @@ wbWorkbook <- R6::R6Class(
     #' @param overwrite overwrite
     #' @returns The `wbWorkbook` object
     add_named_region = function(
-      sheet,
+      sheet = current_sheet(),
       cols,
       rows,
       name,
@@ -3988,7 +3971,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param name name
     #' @returns The `wbWorkbook` object
-    remove_named_region = function(sheet = NULL, name = NULL) {
+    remove_named_region = function(sheet = current_sheet(), name = NULL) {
       # get all nown defined names
       dn <- get_named_regions(self)
 
@@ -4053,7 +4036,7 @@ wbWorkbook <- R6::R6Class(
     #' @param value value
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
-    set_sheet_visibility = function(sheet, value) {
+    set_sheet_visibility = function(sheet = current_sheet(), value) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
 
@@ -4101,7 +4084,7 @@ wbWorkbook <- R6::R6Class(
     #' @param row row
     #' @param col col
     #' @returns The `wbWorkbook` object
-    add_page_break = function(sheet, row = NULL, col = NULL) {
+    add_page_break = function(sheet = current_sheet(), row = NULL, col = NULL) {
       op <- openxlsx_options()
       on.exit(options(op), add = TRUE)
       sheet <- private$get_sheet(sheet)
@@ -4117,7 +4100,7 @@ wbWorkbook <- R6::R6Class(
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
-      sheet,
+      sheet = current_sheet(),
       numbers = TRUE,
       characters = TRUE,
       styles = TRUE,
@@ -4202,6 +4185,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     get_sheet = function(sheet) {
+      # Get/validate `sheet` and set as the current sheet
       if (is_waiver(sheet)) {
         # waivers shouldn't need additional validation
         switch(
@@ -4244,7 +4228,7 @@ wbWorkbook <- R6::R6Class(
       sheet
     },
 
-    append_sheet_field = function(sheet, field, value = NULL) {
+    append_sheet_field = function(sheet = current_sheet(), field, value = NULL) {
       # if using this we should consider adding a method into the wbWorksheet
       # object.  wbWorksheet$append() is currently public. _Currently_.
       sheet <- private$get_sheet(sheet)
@@ -4257,7 +4241,7 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
-    append_sheet_rels = function(sheet, value = NULL) {
+    append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
       self
@@ -4554,7 +4538,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     data_validation = function(
-      sheet,
+      sheet = current_sheet(),
       startRow,
       endRow,
       startCol,
@@ -4644,7 +4628,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     data_validation_list = function(
-      sheet,
+      sheet = current_sheet(),
       startRow,
       endRow,
       startCol,
@@ -4681,7 +4665,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     # old add_named_region()
-    create_named_region = function(ref1, ref2, name, sheet, localSheetId = NULL) {
+    create_named_region = function(ref1, ref2, name, sheet = current_sheet(), localSheetId = NULL) {
       name <- replaceIllegalCharacters(name)
       value <- if (is.null(localSheetId)) {
         sprintf(

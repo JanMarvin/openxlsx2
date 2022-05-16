@@ -308,16 +308,16 @@ NULL
 
 #' @export
 #' @rdname ws_cell_merge
-wb_merge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
+wb_merge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
-  wb$clone()$merge_cells(sheet, rows = rows, cols = cols)
+  wb$clone()$merge_cells(sheet = sheet, rows = rows, cols = cols)
 }
 
 #' @export
 #' @rdname ws_cell_merge
-wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
+wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
-  wb$clone()$unmerge_cells(sheet, rows = rows, cols = cols)
+  wb$clone()$unmerge_cells(sheet = sheet, rows = rows, cols = cols)
 }
 
 
@@ -509,10 +509,10 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' \dontrun{
 #' wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 #' }
-wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
+wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
   assert_workbook(wb)
   wb$clone()$freeze_pane(
-    sheet,
+    sheet          = sheet,
     firstActiveRow = firstActiveRow,
     firstActiveCol = firstActiveCol,
     firstRow       = firstRow,
@@ -559,9 +559,9 @@ wb_freeze_pane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NU
 #' \dontrun{
 #' wb_save(wb, "set_row_heightsExample.xlsx", overwrite = TRUE)
 #' }
-wb_set_row_heights <- function(wb, sheet, rows, heights) {
+wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights) {
   assert_workbook(wb)
-  wb$clone()$set_row_heights(sheet, rows, heights)
+  wb$clone()$set_row_heights(sheet = sheet, rows, heights)
 }
 
 
@@ -612,7 +612,7 @@ wb_set_row_heights <- function(wb, sheet, rows, heights) {
 #' wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
-wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
+wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
   wb$clone()$set_col_widths(
     sheet  = sheet,
@@ -641,7 +641,7 @@ wb_set_col_widths <- function(wb, sheet, cols, widths = 8.43, hidden = FALSE) {
 #' \dontrun{
 #' wb_save(wb, "wb_remove_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
-wb_remove_col_widths <- function(wb, sheet, cols) {
+wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
 }
@@ -666,7 +666,7 @@ wb_remove_col_widths <- function(wb, sheet, cols) {
 #' \dontrun{
 #' wb_save(wb, "remove_row_heightsExample.xlsx", overwrite = TRUE)
 #' }
-wb_remove_row_heights <- function(wb, sheet, rows) {
+wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$remove_row_heights(sheet = sheet, rows = rows)
 }
@@ -729,7 +729,7 @@ wb_remove_row_heights <- function(wb, sheet, rows) {
 #' }
 wb_add_plot <- function(
   wb,
-  sheet,
+  sheet = current_sheet(),
   width     = 6,
   height    = 4,
   xy        = NULL,
@@ -775,9 +775,9 @@ wb_add_plot <- function(
 #' \dontrun{
 #' wb_save(wb, "remove_worksheetExample.xlsx", overwrite = TRUE)
 #' }
-wb_remove_worksheet <- function(wb, sheet) {
+wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
-  wb$clone()$remove_worksheet(sheet)
+  wb$clone()$remove_worksheet(sheet = sheet)
 }
 
 
@@ -909,7 +909,7 @@ wb_get_base_font <- function(wb) {
 #' }
 wb_set_header_footer <- function(
   wb,
-  sheet,
+  sheet = current_sheet(),
   header = NULL,
   footer = NULL,
   evenHeader = NULL,
@@ -1050,7 +1050,7 @@ wb_set_header_footer <- function(
 #' }
 wb_page_setup <- function(
   wb,
-  sheet,
+  sheet          = current_sheet(),
   orientation    = NULL,
   scale          = 100,
   left           = 0.7,
@@ -1123,7 +1123,7 @@ wb_page_setup <- function(
 #' }
 wb_protect_worksheet <- function(
     wb,
-    sheet,
+    sheet      = current_sheet(),
     protect    = TRUE,
     password   = NULL,
     properties = NULL
@@ -1235,7 +1235,7 @@ wb_protect <- function(
 #' \dontrun{
 #' wb_save(wb, "ws_grid_linesExample.xlsx", overwrite = TRUE)
 #' }
-wb_grid_lines <- function(wb, sheet, show = FALSE) {
+wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE) {
   assert_workbook(wb)
   wb$clone()$grid_lines(sheet = sheet, show = show)
 }
@@ -1350,7 +1350,7 @@ NULL
 
 #' @rdname named_region
 #' @export
-wb_add_named_region <- function(wb, sheet, cols, rows, name, localSheetId = NULL, overwrite = FALSE) {
+wb_add_named_region <- function(wb, sheet = current_sheet(), cols, rows, name, localSheetId = NULL, overwrite = FALSE) {
   assert_workbook(wb)
   wb$clone()$add_named_region(
     sheet        = sheet,
@@ -1364,7 +1364,7 @@ wb_add_named_region <- function(wb, sheet, cols, rows, name, localSheetId = NULL
 
 #' @rdname named_region
 #' @export
-wb_remove_named_region <- function(wb, sheet = NULL, name = NULL) {
+wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
   assert_workbook(wb)
   wb$clone()$remove_named_region(sheet = sheet, name = name)
 }
@@ -1402,7 +1402,7 @@ wb_remove_named_region <- function(wb, sheet = NULL, name = NULL) {
 #' \dontrun{
 #' wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 #' }
-wb_add_filter <- function(wb, sheet, rows, cols) {
+wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
   assert_workbook(wb)
   wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
 }
@@ -1434,7 +1434,7 @@ wb_add_filter <- function(wb, sheet, rows, cols) {
 #' \dontrun{
 #' wb_save(wb, path = "wb_remove_filterExample.xlsx", overwrite = TRUE)
 #' }
-wb_remove_filter <- function(wb, sheet) {
+wb_remove_filter <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
   wb$clone()$remove_filter(sheet = sheet)
 }
@@ -1511,7 +1511,7 @@ wb_remove_filter <- function(wb, sheet) {
 #' }
 wb_add_data_validation <- function(
     wb,
-    sheet,
+    sheet = current_sheet(),
     cols,
     rows,
     type,
@@ -1571,7 +1571,7 @@ wb_get_sheet_visibility <- function(wb) {
 #' @param sheet Worksheet identifier
 #' @param value a logical/character vector the same length as sheet
 #' @export
-wb_set_sheet_visibility <- function(wb, sheet, value) {
+wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
   assert_workbook(wb)
   wb$clone()$set_sheet_visibility(sheet = sheet, value = value)
 }
@@ -1598,7 +1598,7 @@ wb_set_sheet_visibility <- function(wb, sheet, value) {
 #' wb_save(wb, "wb_page_breakExample.xlsx", TRUE)
 #' }
 #' ## In Excel: View tab -> Page Break Preview
-wb_add_page_break <- function(wb, sheet, row = NULL, col = NULL) {
+wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)
   wb$clone()$add_page_break(sheet = sheet, row = row, col = col)
 }
@@ -1619,7 +1619,7 @@ wb_add_page_break <- function(wb, sheet, row = NULL, col = NULL) {
 #'
 #' wb$get_tables(sheet = "Sheet 1")
 #' @export
-wb_get_tables <- function(wb, sheet) {
+wb_get_tables <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
   wb$clone()$get_tables(sheet = sheet)
 }
@@ -1661,7 +1661,7 @@ wb_get_tables <- function(wb, sheet) {
 #' }
 #'
 #' @export
-wb_remove_tables <- function(wb, sheet, table) {
+wb_remove_tables <- function(wb, sheet = current_sheet(), table) {
   assert_workbook(wb)
   wb$clone()$remove_tables(sheet = sheet, table = table)
 }
@@ -1709,7 +1709,7 @@ NULL
 
 #' @export
 #' @rdname workbook_grouping
-wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
+wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_cols(
     sheet     = sheet,
@@ -1721,7 +1721,7 @@ wb_group_cols <- function(wb, sheet, cols, collapsed = FALSE, levels = NULL) {
 
 #' @export
 #' @rdname workbook_grouping
-wb_ungroup_cols <- function(wb, sheet, cols) {
+wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
 }
@@ -1729,7 +1729,7 @@ wb_ungroup_cols <- function(wb, sheet, cols) {
 
 #' @export
 #' @rdname workbook_grouping
-wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
+wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_rows(
     sheet     = sheet,
@@ -1741,7 +1741,7 @@ wb_group_rows <- function(wb, sheet, rows, collapsed = FALSE, levels = NULL) {
 
 #' @export
 #' @rdname workbook_grouping
-wb_ungroup_rows <- function(wb, sheet, rows) {
+wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
 }
@@ -1864,7 +1864,7 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #' }
 wb_add_image <- function(
   wb,
-  sheet,
+  sheet     = current_sheet(),
   file,
   width     = 6,
   height    = 3,
@@ -1900,7 +1900,7 @@ wb_add_image <- function(
 #' @param merged_cells remove all merged_cells
 #' @name cleanup
 #' @export
-wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
+wb_clean_sheet <- function(wb, sheet = current_sheet(), numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
   sheet <- wb_validate_sheet(wb, sheet)
   wb$clone()$clean_sheet(sheet = sheet, numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
 }
