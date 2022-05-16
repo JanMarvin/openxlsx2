@@ -64,7 +64,8 @@
 <h2 class="page-header" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li><p>fix loading and writing xlsx files with with <code>workbook$extLst</code>. Previously if the loaded sheet contains a slicer, a second <code>extLst</code> was added which confused spreadsheet software. Now both are combined into a single node.</p></li>
+<ul><li><p>remove reference to <code>printerSettings.bin</code> when loading. This binary blob is not included and the reference caused file corruption warnings<a href="https://github.com/JanMarvin/openxlsx2/pull/185" class="external-link">185</a></p></li>
+<li><p>fix loading and writing xlsx files with with <code>workbook$extLst</code>. Previously if the loaded sheet contains a slicer, a second <code>extLst</code> was added which confused spreadsheet software. Now both are combined into a single node.</p></li>
 <li><p>fix writing xlsx file with multiple entries of conditional formatting type databar on any sheet. <a href="https://github.com/JanMarvin/openxlsx2/pull/174" class="external-link">174</a></p></li>
 <li><p>Cell fields cm, ph and vm are now implemented for reading and writing. This is the first step to handle functions that use metadata. <a href="https://github.com/JanMarvin/openxlsx2/pull/173" class="external-link">173</a></p></li>
 <li><p><code>wbWorkbook</code>: <code>$open()</code> no longer overwrites the <code>$path</code> field to the temporary file <a href="https://github.com/JanMarvin/openxlsx2/pull/171" class="external-link">171</a></p></li>
