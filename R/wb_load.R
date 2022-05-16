@@ -594,7 +594,16 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
       # wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells")
       wb$worksheets[[i]]$oleObjects <- xml_node(worksheet_xml, "worksheet", "oleObjects")
       wb$worksheets[[i]]$pageMargins <- xml_node(worksheet_xml, "worksheet", "pageMargins")
+      # Keep pageSetup, but remove r:Id. This r:Id references the entry in
+      # worksheets/_rels/ which points to printerSetup_.bin. We do not ship
+      # this printer specific binary. Excel does not seem to complain if we keep
+      # the reference, but it is pointing to a non existing file.
       wb$worksheets[[i]]$pageSetup <- xml_node(worksheet_xml, "worksheet", "pageSetup")
+      if (length(wb$worksheets[[i]]$pageSetup))
+          wb$worksheets[[i]]$pageSetup <- xml_attr_mod(
+            wb$worksheets[[i]]$pageSetup,
+            xml_attributes = c(`r:id`="")
+          )
       wb$worksheets[[i]]$phoneticPr <- xml_node(worksheet_xml, "worksheet", "phoneticPr")
       wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
       wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")
@@ -730,7 +739,14 @@ wb_load <- function(file, xlsxFile = NULL, sheet) {
         xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
 
         if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
-        xml <- df_to_xml("Relationship", xml_relship[c("Id", "Type", "Target", "TargetMode")])
+
+        # we do not ship this binary blob, therefore spreadsheet software may
+        # stumble over this non existent reference. In the future we might want
+        # to check if the references are valid pre file saving.
+        sel_row <- !grepl("printerSettings", basename(xml_relship$Target))
+        sel_col <- c("Id", "Type", "Target", "TargetMode")
+        # return as xml
+        xml <- df_to_xml("Relationship", xml_relship[sel_row, sel_col])
       } else {
         xml <- character()
       }
