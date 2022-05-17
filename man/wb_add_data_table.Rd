@@ -17,7 +17,6 @@ wb_add_data_table(
   tableName = NULL,
   withFilter = TRUE,
   sep = ", ",
-  stack = FALSE,
   firstColumn = FALSE,
   lastColumn = FALSE,
   bandedRows = TRUE,
@@ -51,10 +50,7 @@ vignette).}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list
 columns to a character vector e.g. sapply(x$list_column, paste, collapse =
-sep).}
-
-\item{stack}{If \code{TRUE} the new style is merged with any existing cell styles.  If FALSE, any
-existing style is replaced by the new style.
+sep).
 \cr\cr
 \cr\strong{The below options correspond to Excel table options:}
 \cr

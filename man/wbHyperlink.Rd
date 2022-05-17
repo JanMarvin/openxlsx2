@@ -32,15 +32,15 @@ A hyperlink
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{wbHyperlink$new()}}
-\item \href{#method-to_xml}{\code{wbHyperlink$to_xml()}}
-\item \href{#method-to_target_xml}{\code{wbHyperlink$to_target_xml()}}
-\item \href{#method-clone}{\code{wbHyperlink$clone()}}
+\item \href{#method-wbHyperlink-new}{\code{wbHyperlink$new()}}
+\item \href{#method-wbHyperlink-to_xml}{\code{wbHyperlink$to_xml()}}
+\item \href{#method-wbHyperlink-to_target_xml}{\code{wbHyperlink$to_target_xml()}}
+\item \href{#method-wbHyperlink-clone}{\code{wbHyperlink$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-wbHyperlink-new"></a>}}
+\if{latex}{\out{\hypertarget{method-wbHyperlink-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbHyperlink} object
 \subsection{Usage}{
@@ -67,8 +67,8 @@ a \code{wbHyperlink} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-to_xml"></a>}}
-\if{latex}{\out{\hypertarget{method-to_xml}{}}}
+\if{html}{\out{<a id="method-wbHyperlink-to_xml"></a>}}
+\if{latex}{\out{\hypertarget{method-wbHyperlink-to_xml}{}}}
 \subsection{Method \code{to_xml()}}{
 Convert to xml
 \subsection{Usage}{
@@ -87,8 +87,8 @@ A character vector of xml
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-to_target_xml"></a>}}
-\if{latex}{\out{\hypertarget{method-to_target_xml}{}}}
+\if{html}{\out{<a id="method-wbHyperlink-to_target_xml"></a>}}
+\if{latex}{\out{\hypertarget{method-wbHyperlink-to_target_xml}{}}}
 \subsection{Method \code{to_target_xml()}}{
 Convert to target xml
 \subsection{Usage}{
@@ -104,8 +104,8 @@ Convert to target xml
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-wbHyperlink-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-wbHyperlink-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

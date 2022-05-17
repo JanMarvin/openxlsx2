@@ -273,8 +273,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // some files have no colnames. in this case we need to add c_r and row_r
       // if the file provides dimensions, they could be fixed later
       if (!has_colname) {
-        std::string tmp_colname= int_to_col(itr_cols);
-        single_xml_col.c_r = tmp_colname;
+        single_xml_col.c_r = int_to_col(itr_cols + 1);
         single_xml_col.row_r = std::to_string(itr_rows + 1);
       }
 

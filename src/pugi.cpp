@@ -66,13 +66,48 @@ unsigned int pugi_format(XPtrXML doc){
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtrName(XPtrXML doc) {
+SEXP getXMLXPtrName1(XPtrXML doc) {
 
   std::vector<std::string> res;
 
-  for (auto worksheet : doc->children())
+  for (auto lvl0 : doc->children())
   {
-    res.push_back(worksheet.name());
+    res.push_back(lvl0.name());
+  }
+
+  return  Rcpp::wrap(res);
+}
+
+// [[Rcpp::export]]
+SEXP getXMLXPtrName2(XPtrXML doc, std::string level1) {
+
+  std::vector<std::string> res;
+
+  for (auto lvl0 : doc->children(level1.c_str()))
+  {
+    for (auto lvl1 : lvl0.children())
+    {
+      res.push_back(lvl1.name());
+    }
+  }
+
+  return  Rcpp::wrap(res);
+}
+
+// [[Rcpp::export]]
+SEXP getXMLXPtrName3(XPtrXML doc, std::string level1, std::string level2) {
+
+  std::vector<std::string> res;
+
+  for (auto lvl0 : doc->children(level1.c_str()))
+  {
+    for (auto lvl1 : lvl0.children())
+    {
+      for (auto lvl2 : lvl1.children())
+      {
+        res.push_back(lvl2.name());
+      }
+    }
   }
 
   return  Rcpp::wrap(res);

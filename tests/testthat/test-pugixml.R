@@ -54,6 +54,11 @@ test_that("xml_node", {
   xml_str <- "<a><b><c><d><e/></d></c></b></a>"
   xml <- read_xml(xml_str)
 
+  expect_equal("b", xml_node_name(xml_str, "a"))
+  expect_equal("c", xml_node_name(xml_str, "a", "b"))
+  expect_equal("b", xml_node_name(xml, "a"))
+  expect_equal("c", xml_node_name(xml, "a", "b"))
+
   exp <- xml_str
   expect_equal(exp, xml_node(xml, "a"))
 
