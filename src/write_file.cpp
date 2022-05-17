@@ -46,7 +46,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   std::string xml_preserver = "";
 
   // non optional: treat input as valid at this stage
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   // unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // we cannot access rows directly in the dataframe.

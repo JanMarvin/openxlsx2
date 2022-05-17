@@ -29,6 +29,16 @@ test_that("read_xml", {
   # read declaration
   expect_equal(xml, read_xml(xml, declaration = TRUE, pointer = FALSE))
 
+  exp <- '<t xml:space="preserve"> </t>'
+  expect_equal(exp, read_xml(exp, pointer = FALSE))
+
+  tmp <- tempfile(fileext = ".xml")
+  write_file(body = exp, fl = tmp)
+
+  exp <- "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><t xml:space=\"preserve\"> </t>"
+  got <- readLines(tmp, warn = FALSE)
+  expect_equal(exp, got)
+
 })
 
 test_that("xml_node", {

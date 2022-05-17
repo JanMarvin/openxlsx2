@@ -7,7 +7,7 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration) {
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata| pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
 
@@ -34,7 +34,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration) {
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
 
@@ -486,7 +486,7 @@ void write_xml_file(std::string xml_content, std::string fl, bool escapes) {
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
 
   unsigned int pugi_format_flags = pugi::format_raw;
@@ -549,7 +549,7 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
 
@@ -625,7 +625,7 @@ Rcpp::CharacterVector xml_node_create(
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
 
