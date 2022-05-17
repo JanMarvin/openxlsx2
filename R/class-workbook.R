@@ -556,7 +556,7 @@ wbWorkbook <- R6::R6Class(
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
     clone_worksheet = function(old, new) {
-      old <- private$get_sheet(old)
+      old <- private$get_sheet_index(old)
 
       if (tolower(new) %in% tolower(self$sheet_names)) {
         stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
@@ -1555,7 +1555,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       id <- as.character(last_table_id() + 1) # otherwise will start at 0 for table 1 length indicates the last known
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) + 1
 
       nms <- names(self$tables)
@@ -1753,7 +1753,7 @@ wbWorkbook <- R6::R6Class(
         stop(sprintf("Sheet %s already exists!", name))
       }
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       oldName <- self$sheet_names[[sheet]]
       self$sheet_names[[sheet]] <- name
@@ -1795,7 +1795,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       # TODO move to wbWorksheet method
       # TODO consider reworking rowHeights
       # self$worksheets[[sheet]]$set_row_heights(rows = rows, heights = heights)
@@ -1843,7 +1843,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       customRows <- as.integer(names(self$rowHeights[[sheet]]))
       removeInds <- which(customRows %in% rows)
@@ -1864,7 +1864,7 @@ wbWorkbook <- R6::R6Class(
     #' @param beg beg
     #' @param end end
     createCols = function(sheet, n, beg, end) {
-       sheet <- private$get_sheet(sheet)
+       sheet <- private$get_sheet_index(sheet)
        self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
     },
 
@@ -1879,7 +1879,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(cols)) {
         stop("Collapses argument is of greater length than number of cols.")
@@ -1948,7 +1948,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
       if (any(cols < 1L)) {
@@ -1984,7 +1984,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
     remove_col_widths = function(sheet, cols) {
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
@@ -2018,7 +2018,7 @@ wbWorkbook <- R6::R6Class(
     #'   are repeated across length of `cols`
     #' @return The `wbWorkbook` object, invisibly
     set_col_widths = function(sheet, cols, widths = 8.43, hidden = FALSE) {
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # should do nothing if the cols' length is zero
       # TODO why would cols ever be 0?  Can we just signal this as an error?
@@ -2131,7 +2131,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(rows)) {
         stop("Collapses argument is of greater length than number of rows.")
@@ -2154,7 +2154,7 @@ wbWorkbook <- R6::R6Class(
       collapsed <- collapsed[ok]
       levels <- levels[ok]
       rows <- rows[ok]
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
@@ -2195,7 +2195,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
       if (any(rows < 1L)) {
@@ -2256,7 +2256,7 @@ wbWorkbook <- R6::R6Class(
         stop("sheet must have length 1.")
       }
 
-      sheet       <- private$get_sheet(sheet)
+      sheet       <- private$get_sheet_index(sheet)
       sheet_names <- self$sheet_names
       nSheets     <- length(sheet_names)
       sheet_names <- sheet_names[[sheet]]
@@ -2581,7 +2581,7 @@ wbWorkbook <- R6::R6Class(
       # TODO consider defaults for logicals
       # TODO rename: setConditionFormatting?  Or addConditionalFormatting
       # TODO can this be moved to the sheet data?
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       sqref <- stri_join(
         get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
         collapse = ":"
@@ -2872,7 +2872,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(sheet, rows = NULL, cols = NULL) {
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # TODO send to wbWorksheet() method
       # self$worksheets[[sheet]]$merge_cells(rows = rows, cols = cols)
@@ -2924,7 +2924,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
     unmerge_cells = function(sheet, rows = NULL, cols = NULL) {
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
       # sqref <- get_cell_refs(data.frame(x = rows, y = cols))
@@ -2968,7 +2968,7 @@ wbWorkbook <- R6::R6Class(
       on.exit(options(op), add = TRUE)
 
       # fine to do the validation before the actual check to prevent other errors
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (is.null(firstActiveRow) & is.null(firstActiveCol) & !firstRow & !firstCol) {
         return(invisible(self))
@@ -3114,7 +3114,7 @@ wbWorkbook <- R6::R6Class(
       ## drawing rels reference an image in the media folder
       ## worksheetRels(sheet(i)) references drawings(j)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # TODO tools::file_ext() ...
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
@@ -3554,7 +3554,7 @@ wbWorkbook <- R6::R6Class(
       summaryRow     = NULL,
       summaryCol     = NULL
     ) {
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
 
       if (!is.null(orientation)) {
@@ -3705,7 +3705,7 @@ wbWorkbook <- R6::R6Class(
       firstHeader = NULL,
       firstFooter = NULL
     ) {
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
@@ -3771,7 +3771,7 @@ wbWorkbook <- R6::R6Class(
         return(character())
       }
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       if (is.na(sheet)) stop("No such sheet in workbook")
 
       table_sheets <- attr(self$tables, "sheet")
@@ -3799,7 +3799,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## delete table object and all data in it
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!table %in% attr(self$tables, "tableName")) {
         stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
@@ -3846,7 +3846,7 @@ wbWorkbook <- R6::R6Class(
     add_filter = function(sheet, rows, cols) {
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (length(rows) != 1) {
         stop("row must be a numeric of length 1.")
@@ -3868,7 +3868,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
     remove_filter = function(sheet) {
-      for (s in private$get_sheet(sheet)) {
+      for (s in private$get_sheet_index(sheet)) {
         self$worksheets[[s]]$autoFilter <- character()
       }
 
@@ -3883,7 +3883,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!is.logical(show)) {
         stop("show must be a logical")
@@ -3923,7 +3923,7 @@ wbWorkbook <- R6::R6Class(
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!is.numeric(rows)) {
         stop("rows argument must be a numeric/integer vector")
@@ -3981,12 +3981,12 @@ wbWorkbook <- R6::R6Class(
       dn <- get_named_regions(self)
 
       if (is.null(name) && !is.null(sheet)) {
-        sheet <- private$get_sheet(sheet)
+        sheet <- private$get_sheet_index(sheet)
         del <- dn$id[dn$sheet == sheet]
       } else if (!is.null(name) && is.null(sheet)) {
         del <- dn$id[dn$name == name]
       } else {
-        sheet <- private$get_sheet(sheet)
+        sheet <- private$get_sheet_index(sheet)
         del <- dn$id[dn$sheet == sheet & dn$name == name]
       }
 
@@ -4008,7 +4008,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheets sheets
     #' @return The `wbWorkbook` object
     set_order = function(sheets) {
-      sheets <- private$get_sheet(sheet = sheets)
+      sheets <- private$get_sheet_index(sheet = sheets)
 
       if (anyDuplicated(sheets)) {
         stop("`sheets` cannot have duplicates")
@@ -4049,7 +4049,7 @@ wbWorkbook <- R6::R6Class(
         stop("`value` and `sheet` must be the same length")
       }
 
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       value <- tolower(as.character(value))
       value[value %in% "true"] <- "visible"
@@ -4092,7 +4092,7 @@ wbWorkbook <- R6::R6Class(
     add_page_break = function(sheet, row = NULL, col = NULL) {
       op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
       self
     },
@@ -4177,7 +4177,7 @@ wbWorkbook <- R6::R6Class(
       }
     },
 
-    get_sheet = function(sheet) {
+    get_sheet_index = function(sheet) {
       # returns the sheet index, or NA
       if (is.null(self$sheet_names)) {
         warning("Workbook has no sheets")
@@ -4206,10 +4206,14 @@ wbWorkbook <- R6::R6Class(
       sheet
     },
 
+    get_sheet_name = function(sheet) {
+      self$sheet_names[private$get_sheet_index(sheet)]
+    },
+
     append_sheet_field = function(sheet, field, value = NULL) {
       # if using this we should consider adding a method into the wbWorksheet
       # object.  wbWorksheet$append() is currently public. _Currently_.
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$append(field, value)
       self
     },
@@ -4220,7 +4224,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     append_sheet_rels = function(sheet, value = NULL) {
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
       self
     },
@@ -4279,7 +4283,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     ws = function(sheet) {
-      self$worksheets[[private$get_sheet(sheet)]]
+      self$worksheets[[private$get_sheet_index(sheet)]]
     },
 
     # this may ahve been removes
@@ -4530,7 +4534,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO rename: setDataValidation?
       # TODO can this be moved to the worksheet class?
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       sqref <-
         stri_join(get_cell_refs(data.frame(
           "x" = c(startRow, endRow),
@@ -4618,7 +4622,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO consider some defaults to logicals
       # TODO rename: setDataValidationList?
-      sheet <- private$get_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       sqref <-
         stri_join(get_cell_refs(data.frame(
           "x" = c(startRow, endRow),
