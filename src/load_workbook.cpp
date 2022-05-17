@@ -159,7 +159,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
     // some files have no row name in this case, we add one
     if (!has_rowname) {
-      std::string attr_name = {"r"};
+      std::string attr_name = "r";
       auto find_res = row_nams.find(attr_name);
       auto mtc = std::distance(row_nams.begin(), find_res);
       Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::to_string(itr + 1);
@@ -234,7 +234,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
       // typ: attribute ------------------------------------------------------
       bool has_colname = false;
-      auto attr_itr = 0;
       for (auto attr : col.attributes()) {
 
         buffer = attr.value();
@@ -260,6 +259,10 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
                                       colrow.end());
           single_xml_col.row_r = colrow;
 
+          // if some cells of the workbook have colnames but other dont,
+          // this will increase itr_cols and avoid duplicates in cc
+          itr_cols = uint_col_to_int(single_xml_col.c_r) - 1;
+
         }
 
         if (attr_name == s_str) single_xml_col.c_s = buffer;
@@ -268,7 +271,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         if (attr_name == ph_str) single_xml_col.c_ph = buffer;
         if (attr_name == vm_str) single_xml_col.c_vm = buffer;
 
-        ++attr_itr;
       }
       // some files have no colnames. in this case we need to add c_r and row_r
       // if the file provides dimensions, they could be fixed later
