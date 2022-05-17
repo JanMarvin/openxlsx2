@@ -95,6 +95,21 @@ std::string int_to_col(uint32_t cell) {
   return col_name;
 }
 
+// driver function for col_to_int
+uint32_t uint_col_to_int(std::string& a) {
+  
+  char A = 'A';
+  int aVal = (int)A - 1;
+  int sum = 0;
+  int k = a.length();
+
+  for (int j = 0; j < k; j++) {
+    sum *= 26;
+    sum += (a[j] - aVal);
+  }
+
+  return sum;
+}
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
@@ -103,12 +118,9 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
 
   std::vector<std::string> r = Rcpp::as<std::vector<std::string> >(x);
   int n = r.size();
-  int k;
 
   std::string a;
   Rcpp::IntegerVector colNums(n);
-  char A = 'A';
-  int aVal = (int)A - 1;
 
   for (int i = 0; i < n; i++) {
     a = r[i];
@@ -126,15 +138,8 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
     a.erase(std::remove_if(a.begin()+1, a.end(), ::isdigit), a.end());
     transform(a.begin(), a.end(), a.begin(), ::toupper);
 
-    int sum = 0;
-    k = a.length();
-
-    for (int j = 0; j < k; j++) {
-      sum *= 26;
-      sum += (a[j] - aVal);
-
-    }
-    colNums[i] = sum;
+    // return index from column name
+    colNums[i] = uint_col_to_int(a);
   }
 
   return colNums;

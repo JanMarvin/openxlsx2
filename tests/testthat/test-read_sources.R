@@ -63,4 +63,9 @@ test_that("read html source without r attribute on cell", {
   expect_equal(c(31564, 52), dim(wb_to_df(wb, sheet = 2)))
   expect_equal("PRÉSENTATION DU DOCUMENT", names(wb_to_df(wb, sheet = 1)))
 
+  # This file has a few cells with row names, the majority has none. check that
+  # we did not create duplicates while loading
+  expect_true(!any(duplicated(wb$worksheets[[1]]$sheet_data$cc)))
+  expect_true(!any(duplicated(wb$worksheets[[2]]$sheet_data$cc)))
+
 })
