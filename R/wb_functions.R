@@ -626,13 +626,24 @@ delete_data <- function(wb, sheet, cols, rows, gridExpand) {
 }
 
 
-#' little worksheet helper
-#' @param wb a workbook
-#' @param sheet a worksheet either id or character
+#' Get a worksheet from a `wbWorkbook` object
+#'
+#' @param wb a [wbWorkbook] object
+#' @param sheet A sheet name or index
+#' @returns A `wbWorksheet` object
+#' @name wb_worksheet
+NULL
+
+#' @rdname wb_worksheet
 #' @export
-wb_ws <- function(wb, sheet) {
-  wb$ws(sheet)
+wb_worksheet <- function(wb, sheet) {
+  assert_wb(wb)
+  wb$get_worksheet(sheet)
 }
+
+#' @rdname wb_worksheet
+#' @export
+wb_ws <- wb_worksheet
 
 #' get and set table of sheets and their state as selected and active
 #' @description Multiple sheets can be selected, but only a single one can be

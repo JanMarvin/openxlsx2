@@ -4282,7 +4282,7 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
-    ws = function(sheet) {
+    get_worksheet = function(sheet) {
       self$worksheets[[private$get_sheet_index(sheet)]]
     },
 
