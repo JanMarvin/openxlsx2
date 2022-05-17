@@ -43,7 +43,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   pugi::xml_document doc;
   pugi::xml_node row;
 
-  std::string xml_preserver = "";
+  std::string xml_preserver = " ";
 
   // non optional: treat input as valid at this stage
   unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
