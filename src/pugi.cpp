@@ -7,7 +7,7 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration) {
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata| pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
 
@@ -34,7 +34,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration) {
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
 
@@ -491,7 +491,6 @@ void write_xml_file(std::string xml_content, std::string fl, bool escapes) {
 
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
-  pugi_format_flags |= pugi::format_no_empty_element_tags;
 
   // load and validate node
   if (xml_content != "") {
