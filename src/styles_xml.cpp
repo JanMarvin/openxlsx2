@@ -368,7 +368,7 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
 
   auto n = df_font.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
@@ -589,7 +589,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
 
   auto n = df_border.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
@@ -733,7 +733,7 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
 
   auto n = df_fill.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
@@ -862,7 +862,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
 
   auto n = df_cellstyle.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
@@ -1028,7 +1028,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
   auto n = df_tablestyle.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
@@ -1175,7 +1175,7 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
 
   auto n = df_dxf.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
@@ -1282,7 +1282,7 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
 
   auto n = df_colors.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
