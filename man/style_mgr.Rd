@@ -93,29 +93,29 @@ set_cell_style(wb, "SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-wbStylesMgr-new}{\code{style_mgr$new()}}
-\item \href{#method-wbStylesMgr-get_numfmt}{\code{style_mgr$get_numfmt()}}
-\item \href{#method-wbStylesMgr-get_font}{\code{style_mgr$get_font()}}
-\item \href{#method-wbStylesMgr-get_fill}{\code{style_mgr$get_fill()}}
-\item \href{#method-wbStylesMgr-get_border}{\code{style_mgr$get_border()}}
-\item \href{#method-wbStylesMgr-get_xf}{\code{style_mgr$get_xf()}}
-\item \href{#method-wbStylesMgr-get_numfmt_id}{\code{style_mgr$get_numfmt_id()}}
-\item \href{#method-wbStylesMgr-get_font_id}{\code{style_mgr$get_font_id()}}
-\item \href{#method-wbStylesMgr-get_fill_id}{\code{style_mgr$get_fill_id()}}
-\item \href{#method-wbStylesMgr-get_border_id}{\code{style_mgr$get_border_id()}}
-\item \href{#method-wbStylesMgr-get_xf_id}{\code{style_mgr$get_xf_id()}}
-\item \href{#method-wbStylesMgr-next_numfmt_id}{\code{style_mgr$next_numfmt_id()}}
-\item \href{#method-wbStylesMgr-next_font_id}{\code{style_mgr$next_font_id()}}
-\item \href{#method-wbStylesMgr-next_fill_id}{\code{style_mgr$next_fill_id()}}
-\item \href{#method-wbStylesMgr-next_border_id}{\code{style_mgr$next_border_id()}}
-\item \href{#method-wbStylesMgr-next_xf_id}{\code{style_mgr$next_xf_id()}}
-\item \href{#method-wbStylesMgr-add}{\code{style_mgr$add()}}
-\item \href{#method-wbStylesMgr-clone}{\code{style_mgr$clone()}}
+\item \href{#method-new}{\code{style_mgr$new()}}
+\item \href{#method-get_numfmt}{\code{style_mgr$get_numfmt()}}
+\item \href{#method-get_font}{\code{style_mgr$get_font()}}
+\item \href{#method-get_fill}{\code{style_mgr$get_fill()}}
+\item \href{#method-get_border}{\code{style_mgr$get_border()}}
+\item \href{#method-get_xf}{\code{style_mgr$get_xf()}}
+\item \href{#method-get_numfmt_id}{\code{style_mgr$get_numfmt_id()}}
+\item \href{#method-get_font_id}{\code{style_mgr$get_font_id()}}
+\item \href{#method-get_fill_id}{\code{style_mgr$get_fill_id()}}
+\item \href{#method-get_border_id}{\code{style_mgr$get_border_id()}}
+\item \href{#method-get_xf_id}{\code{style_mgr$get_xf_id()}}
+\item \href{#method-next_numfmt_id}{\code{style_mgr$next_numfmt_id()}}
+\item \href{#method-next_font_id}{\code{style_mgr$next_font_id()}}
+\item \href{#method-next_fill_id}{\code{style_mgr$next_fill_id()}}
+\item \href{#method-next_border_id}{\code{style_mgr$next_border_id()}}
+\item \href{#method-next_xf_id}{\code{style_mgr$next_xf_id()}}
+\item \href{#method-add}{\code{style_mgr$add()}}
+\item \href{#method-clone}{\code{style_mgr$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-new"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-new}{}}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbStylesMgr} object
 \subsection{Usage}{
@@ -151,8 +151,8 @@ a \code{wbStylesMgr} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_numfmt"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_numfmt}{}}}
+\if{html}{\out{<a id="method-get_numfmt"></a>}}
+\if{latex}{\out{\hypertarget{method-get_numfmt}{}}}
 \subsection{Method \code{get_numfmt()}}{
 get numfmt ids
 \subsection{Usage}{
@@ -161,8 +161,8 @@ get numfmt ids
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_font"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_font}{}}}
+\if{html}{\out{<a id="method-get_font"></a>}}
+\if{latex}{\out{\hypertarget{method-get_font}{}}}
 \subsection{Method \code{get_font()}}{
 get font ids
 \subsection{Usage}{
@@ -171,8 +171,8 @@ get font ids
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_fill"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_fill}{}}}
+\if{html}{\out{<a id="method-get_fill"></a>}}
+\if{latex}{\out{\hypertarget{method-get_fill}{}}}
 \subsection{Method \code{get_fill()}}{
 get fill ids
 \subsection{Usage}{
@@ -181,8 +181,8 @@ get fill ids
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_border"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_border}{}}}
+\if{html}{\out{<a id="method-get_border"></a>}}
+\if{latex}{\out{\hypertarget{method-get_border}{}}}
 \subsection{Method \code{get_border()}}{
 get borer ids
 \subsection{Usage}{
@@ -191,8 +191,8 @@ get borer ids
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_xf"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_xf}{}}}
+\if{html}{\out{<a id="method-get_xf"></a>}}
+\if{latex}{\out{\hypertarget{method-get_xf}{}}}
 \subsection{Method \code{get_xf()}}{
 get xf ids
 \subsection{Usage}{
@@ -201,8 +201,8 @@ get xf ids
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_numfmt_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_numfmt_id}{}}}
+\if{html}{\out{<a id="method-get_numfmt_id"></a>}}
+\if{latex}{\out{\hypertarget{method-get_numfmt_id}{}}}
 \subsection{Method \code{get_numfmt_id()}}{
 get numfmt id by name
 \subsection{Usage}{
@@ -218,8 +218,8 @@ get numfmt id by name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_font_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_font_id}{}}}
+\if{html}{\out{<a id="method-get_font_id"></a>}}
+\if{latex}{\out{\hypertarget{method-get_font_id}{}}}
 \subsection{Method \code{get_font_id()}}{
 get font id by name
 \subsection{Usage}{
@@ -235,8 +235,8 @@ get font id by name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_fill_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_fill_id}{}}}
+\if{html}{\out{<a id="method-get_fill_id"></a>}}
+\if{latex}{\out{\hypertarget{method-get_fill_id}{}}}
 \subsection{Method \code{get_fill_id()}}{
 get fill id by name
 \subsection{Usage}{
@@ -252,8 +252,8 @@ get fill id by name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_border_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_border_id}{}}}
+\if{html}{\out{<a id="method-get_border_id"></a>}}
+\if{latex}{\out{\hypertarget{method-get_border_id}{}}}
 \subsection{Method \code{get_border_id()}}{
 get border id by name
 \subsection{Usage}{
@@ -269,8 +269,8 @@ get border id by name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_xf_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_xf_id}{}}}
+\if{html}{\out{<a id="method-get_xf_id"></a>}}
+\if{latex}{\out{\hypertarget{method-get_xf_id}{}}}
 \subsection{Method \code{get_xf_id()}}{
 get xf id by name
 \subsection{Usage}{
@@ -286,8 +286,8 @@ get xf id by name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-next_numfmt_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_numfmt_id}{}}}
+\if{html}{\out{<a id="method-next_numfmt_id"></a>}}
+\if{latex}{\out{\hypertarget{method-next_numfmt_id}{}}}
 \subsection{Method \code{next_numfmt_id()}}{
 get next numfmt id
 \subsection{Usage}{
@@ -296,8 +296,8 @@ get next numfmt id
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-next_font_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_font_id}{}}}
+\if{html}{\out{<a id="method-next_font_id"></a>}}
+\if{latex}{\out{\hypertarget{method-next_font_id}{}}}
 \subsection{Method \code{next_font_id()}}{
 get next font id
 \subsection{Usage}{
@@ -306,8 +306,8 @@ get next font id
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-next_fill_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_fill_id}{}}}
+\if{html}{\out{<a id="method-next_fill_id"></a>}}
+\if{latex}{\out{\hypertarget{method-next_fill_id}{}}}
 \subsection{Method \code{next_fill_id()}}{
 get next fill id
 \subsection{Usage}{
@@ -316,8 +316,8 @@ get next fill id
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-next_border_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_border_id}{}}}
+\if{html}{\out{<a id="method-next_border_id"></a>}}
+\if{latex}{\out{\hypertarget{method-next_border_id}{}}}
 \subsection{Method \code{next_border_id()}}{
 get next border id
 \subsection{Usage}{
@@ -326,8 +326,8 @@ get next border id
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-next_xf_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_xf_id}{}}}
+\if{html}{\out{<a id="method-next_xf_id"></a>}}
+\if{latex}{\out{\hypertarget{method-next_xf_id}{}}}
 \subsection{Method \code{next_xf_id()}}{
 get next xf id
 \subsection{Usage}{
@@ -336,8 +336,8 @@ get next xf id
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-add"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-add}{}}}
+\if{html}{\out{<a id="method-add"></a>}}
+\if{latex}{\out{\hypertarget{method-add}{}}}
 \subsection{Method \code{add()}}{
 add entry
 \subsection{Usage}{
@@ -355,8 +355,8 @@ add entry
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-clone}{}}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

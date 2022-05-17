@@ -104,21 +104,21 @@ A Worksheet
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-wbWorksheet-new}{\code{wbWorksheet$new()}}
-\item \href{#method-wbWorksheet-get_prior_sheet_data}{\code{wbWorksheet$get_prior_sheet_data()}}
-\item \href{#method-wbWorksheet-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
-\item \href{#method-wbWorksheet-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
-\item \href{#method-wbWorksheet-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
-\item \href{#method-wbWorksheet-fold_cols}{\code{wbWorksheet$fold_cols()}}
-\item \href{#method-wbWorksheet-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
-\item \href{#method-wbWorksheet-add_page_break}{\code{wbWorksheet$add_page_break()}}
-\item \href{#method-wbWorksheet-append}{\code{wbWorksheet$append()}}
-\item \href{#method-wbWorksheet-clone}{\code{wbWorksheet$clone()}}
+\item \href{#method-new}{\code{wbWorksheet$new()}}
+\item \href{#method-get_prior_sheet_data}{\code{wbWorksheet$get_prior_sheet_data()}}
+\item \href{#method-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
+\item \href{#method-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
+\item \href{#method-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
+\item \href{#method-fold_cols}{\code{wbWorksheet$fold_cols()}}
+\item \href{#method-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
+\item \href{#method-add_page_break}{\code{wbWorksheet$add_page_break()}}
+\item \href{#method-append}{\code{wbWorksheet$append()}}
+\item \href{#method-clone}{\code{wbWorksheet$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-new"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-new}{}}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
@@ -178,8 +178,8 @@ a \code{wbWorksheet} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-get_prior_sheet_data"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-get_prior_sheet_data}{}}}
+\if{html}{\out{<a id="method-get_prior_sheet_data"></a>}}
+\if{latex}{\out{\hypertarget{method-get_prior_sheet_data}{}}}
 \subsection{Method \code{get_prior_sheet_data()}}{
 Get prior sheet data
 \subsection{Usage}{
@@ -191,8 +191,8 @@ A character vector of xml
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-get_post_sheet_data"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-get_post_sheet_data}{}}}
+\if{html}{\out{<a id="method-get_post_sheet_data"></a>}}
+\if{latex}{\out{\hypertarget{method-get_post_sheet_data}{}}}
 \subsection{Method \code{get_post_sheet_data()}}{
 Get post sheet data
 \subsection{Usage}{
@@ -204,8 +204,8 @@ A character vector of xml
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-order_sheetdata"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-order_sheetdata}{}}}
+\if{html}{\out{<a id="method-order_sheetdata"></a>}}
+\if{latex}{\out{\hypertarget{method-order_sheetdata}{}}}
 \subsection{Method \code{order_sheetdata()}}{
 order sheet data
 \subsection{Usage}{
@@ -217,8 +217,8 @@ The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-unfold_cols"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-unfold_cols}{}}}
+\if{html}{\out{<a id="method-unfold_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-unfold_cols}{}}}
 \subsection{Method \code{unfold_cols()}}{
 unfold \verb{<cols ..>} node to dataframe. \verb{<cols><col ..>} are compressed.
 Only columns with attributes are written to the file. This function
@@ -236,8 +236,8 @@ The column data frame
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-fold_cols"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-fold_cols}{}}}
+\if{html}{\out{<a id="method-fold_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-fold_cols}{}}}
 \subsection{Method \code{fold_cols()}}{
 fold the column dataframe back into a node.
 \subsection{Usage}{
@@ -256,8 +256,8 @@ The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-clean_sheet"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-clean_sheet}{}}}
+\if{html}{\out{<a id="method-clean_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-clean_sheet}{}}}
 \subsection{Method \code{clean_sheet()}}{
 clean sheet (remove all values)
 \subsection{Usage}{
@@ -287,8 +287,8 @@ The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-add_page_break"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-add_page_break}{}}}
+\if{html}{\out{<a id="method-add_page_break"></a>}}
+\if{latex}{\out{\hypertarget{method-add_page_break}{}}}
 \subsection{Method \code{add_page_break()}}{
 add page break
 \subsection{Usage}{
@@ -306,8 +306,8 @@ add page break
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-append"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-append}{}}}
+\if{html}{\out{<a id="method-append"></a>}}
+\if{latex}{\out{\hypertarget{method-append}{}}}
 \subsection{Method \code{append()}}{
 append a field.  Intended for internal use only.  Not
 guaranteed to remain a public method.
@@ -326,8 +326,8 @@ guaranteed to remain a public method.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-clone}{}}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

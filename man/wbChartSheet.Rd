@@ -32,14 +32,14 @@ A chart sheet
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-wbChartSheet-new}{\code{wbChartSheet$new()}}
-\item \href{#method-wbChartSheet-get_prior_sheet_data}{\code{wbChartSheet$get_prior_sheet_data()}}
-\item \href{#method-wbChartSheet-clone}{\code{wbChartSheet$clone()}}
+\item \href{#method-new}{\code{wbChartSheet$new()}}
+\item \href{#method-get_prior_sheet_data}{\code{wbChartSheet$get_prior_sheet_data()}}
+\item \href{#method-clone}{\code{wbChartSheet$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbChartSheet-new"></a>}}
-\if{latex}{\out{\hypertarget{method-wbChartSheet-new}{}}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new workbook chart sheet object
 \subsection{Usage}{
@@ -62,8 +62,8 @@ The \code{wbChartSheet} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbChartSheet-get_prior_sheet_data"></a>}}
-\if{latex}{\out{\hypertarget{method-wbChartSheet-get_prior_sheet_data}{}}}
+\if{html}{\out{<a id="method-get_prior_sheet_data"></a>}}
+\if{latex}{\out{\hypertarget{method-get_prior_sheet_data}{}}}
 \subsection{Method \code{get_prior_sheet_data()}}{
 get (prior) sheet data
 \subsection{Usage}{
@@ -72,8 +72,8 @@ get (prior) sheet data
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbChartSheet-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-wbChartSheet-clone}{}}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

@@ -29,13 +29,13 @@ A hyperlink
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-wbSheetData-new}{\code{wbSheetData$new()}}
-\item \href{#method-wbSheetData-clone}{\code{wbSheetData$clone()}}
+\item \href{#method-new}{\code{wbSheetData$new()}}
+\item \href{#method-clone}{\code{wbSheetData$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbSheetData-new"></a>}}
-\if{latex}{\out{\hypertarget{method-wbSheetData-new}{}}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbSheetData} object
 \subsection{Usage}{
@@ -47,8 +47,8 @@ a \code{wbSheetData} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbSheetData-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-wbSheetData-clone}{}}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
