@@ -497,12 +497,9 @@ genBaseSlicerXML <- function() {
 
 genSlicerCachesExtLst <- function(i) {
   paste0(
-    '<extLst>
-    <ext uri=\"{BBE1A952-AA13-448e-AADC-164F8A28A991}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">
+    '<ext uri=\"{BBE1A952-AA13-448e-AADC-164F8A28A991}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">
     <x14:slicerCaches>',
-
     paste(sprintf('<x14:slicerCache r:id="rId%s"/>', i), collapse = ""),
-
-    "</x14:slicerCaches></ext></extLst>"
+    "</x14:slicerCaches></ext>"
   )
 }

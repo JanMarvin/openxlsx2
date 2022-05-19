@@ -51,3 +51,21 @@ test_that("get_date_origin from different sources", {
   expect_equal(origin_url, origin_file)
   expect_equal(origin_url, "1900-01-01")
 })
+
+
+test_that("read html source without r attribute on cell", {
+
+  # sheet without row attribute
+  # original from https://www.atih.sante.fr/sites/default/files/public/content/3968/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx2/files/8702731/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx")
+
+  expect_equal(c(46, 1), dim(wb_to_df(wb, sheet = 1)))
+  expect_equal(c(31564, 52), dim(wb_to_df(wb, sheet = 2)))
+  expect_equal("PRÉSENTATION DU DOCUMENT", names(wb_to_df(wb, sheet = 1)))
+
+  # This file has a few cells with row names, the majority has none. check that
+  # we did not create duplicates while loading
+  expect_true(!any(duplicated(wb$worksheets[[1]]$sheet_data$cc)))
+  expect_true(!any(duplicated(wb$worksheets[[2]]$sheet_data$cc)))
+
+})

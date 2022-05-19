@@ -151,8 +151,6 @@ wb_add_data <- function(
 #' @param sep Only applies to list columns. The separator used to collapse list
 #'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
 #'   sep).
-#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
-#' existing style is replaced by the new style.
 #' \cr\cr
 #' \cr**The below options correspond to Excel table options:**
 #' \cr
@@ -184,7 +182,6 @@ wb_add_data_table <- function(
     tableName   = NULL,
     withFilter  = TRUE,
     sep         = ", ",
-    stack       = FALSE,
     firstColumn = FALSE,
     lastColumn  = FALSE,
     bandedRows  = TRUE,
@@ -203,7 +200,6 @@ wb_add_data_table <- function(
     tableName   = tableName,
     withFilter  = withFilter,
     sep         = sep,
-    stack       = stack,
     firstColumn = firstColumn,
     lastColumn  = lastColumn,
     bandedRows  = bandedRows,

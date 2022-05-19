@@ -86,7 +86,7 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
     std::string tmp = Rcpp::as<std::string>(is_vec[i]);
 
     pugi::xml_document doc;
-    pugi::xml_parse_result result = doc.load_string(tmp.c_str(), pugi::parse_default | pugi::parse_escapes);
+    pugi::xml_parse_result result = doc.load_string(tmp.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
 
     if (!result) {
       Rcpp::stop("inlineStr xml import unsuccessfull");
