@@ -68,7 +68,7 @@ formatting of the original .xlsx file.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_load</span><span class="op">(</span><span class="va">file</span>, xlsxFile <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">sheet</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_load</span><span class="op">(</span><span class="va">file</span>, xlsxFile <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">sheet</span>, data_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -80,6 +80,9 @@ formatting of the original .xlsx file.</p>
 <dt>sheet</dt>
 <dd><p>optional sheet parameter. if this is applied, only the selected
 sheet will be loaded.</p></dd>
+<dt>data_only</dt>
+<dd><p>mode to import if only a data frame should be returned. This
+strips the wbWorkbook to a bare minimum.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -103,18 +106,18 @@ sheet will be loaded.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Images:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 1: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/media/image2.jpeg"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 2: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/media/image1.jpeg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 1: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/media/image2.jpeg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 2: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/media/image1.jpeg"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Charts:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 1: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/colors2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 2: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/style2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 3: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/chart2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 4: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/chart1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 5: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/style1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 6: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/colors1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 7: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/_rels/chart2.xml.rels"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 8: "/tmp/RtmpvaRT86/_openxlsx_wb_load2d5a5fa1806a/xl/charts/_rels/chart1.xml.rels"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 1: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/colors2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 2: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/style2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 3: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/chart2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 4: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/chart1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 5: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/style1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 6: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/colors1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 7: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/_rels/chart2.xml.rels"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 8: "/tmp/RtmpTRJ65Q/_openxlsx_wb_load2dc17a833758/xl/charts/_rels/chart1.xml.rels"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
 <span class="r-in"><span class="co">## Add a worksheet</span></span>
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"A new worksheet"</span><span class="op">)</span></span>
