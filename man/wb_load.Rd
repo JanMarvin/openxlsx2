@@ -4,7 +4,7 @@
 \alias{wb_load}
 \title{Load an existing .xlsx file}
 \usage{
-wb_load(file, xlsxFile = NULL, sheet)
+wb_load(file, xlsxFile = NULL, sheet, data_only = FALSE)
 }
 \arguments{
 \item{file}{A path to an existing .xlsx or .xlsm file}
@@ -13,6 +13,9 @@ wb_load(file, xlsxFile = NULL, sheet)
 
 \item{sheet}{optional sheet parameter. if this is applied, only the selected
 sheet will be loaded.}
+
+\item{data_only}{mode to import if only a data frame should be returned. This
+strips the wbWorkbook to a bare minimum.}
 }
 \value{
 Workbook object.
