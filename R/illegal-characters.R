@@ -18,8 +18,8 @@ any_illegal_chars <- function(x) {
 }
 
 
-illegal_chars <- function() { c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f") }
-legal_chars   <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   "") }
+illegal_chars <- function() { c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f") } # nolint
+legal_chars   <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   "") }   # nolint
 
 #' converts & to &amp;
 #' @param v some xml string
@@ -41,11 +41,10 @@ replaceIllegalCharacters <- function(v) {
 #' @keywords internal
 #' @noRd
 replaceXMLEntities <- function(v) {
-  v <- gsub("&amp;", "&", v, fixed = TRUE)
+  v <- gsub("&amp;",  "&", v, fixed = TRUE)
   v <- gsub("&quot;", '"', v, fixed = TRUE)
   v <- gsub("&apos;", "'", v, fixed = TRUE)
-  v <- gsub("&lt;", "<", v, fixed = TRUE)
-  v <- gsub("&gt;", ">", v, fixed = TRUE)
+  v <- gsub("&lt;",   "<", v, fixed = TRUE)
+  v <- gsub("&gt;",   ">", v, fixed = TRUE)
   return(v)
 }
-
