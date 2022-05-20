@@ -725,8 +725,8 @@ wbWorkbook <- R6::R6Class(
         attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")        <- c(attr(oldparts, "tableName"), newname)
         names(attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <- c(names(attr(oldparts, "tableName")), ref)
 
-        self$append("Content_Types", sprintf('
-          <Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
+        self$append("Content_Types", sprintf(
+          '<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>',
           newid
         ))
 
@@ -4208,7 +4208,7 @@ wbWorkbook <- R6::R6Class(
         bad <- is.na(m)
 
         if (any(bad)) {
-          stop("Sheet names not found: ", toString(sheet[bad]))
+          stop("Sheet name(s) not found: ", toString(sheet[bad]))
         }
 
         sheet <- m
