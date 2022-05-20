@@ -9,8 +9,10 @@ test_that("waivers works with $add_worksheet()", {
 
 test_that("waivers work with $add_data()", {
   # wbWorkbook$undebug("add_data")
-  # debugonce(write_data)
+  # debugonce(write_data_table)
   wb <- wb_workbook()
   expect_error(wb$add_worksheet()$add_data(x = data.frame(a = 1)), NA)
   expect_identical(wb$.__enclos_env__$private$current_sheet, 1L)
+  expect_error(wb$add_worksheet()$add_data(x = data.frame(a = 1)), NA)
+  expect_identical(wb$.__enclos_env__$private$current_sheet, 2L)
 })
