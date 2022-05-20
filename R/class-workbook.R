@@ -1785,7 +1785,7 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
     set_row_heights = function(sheet = current_sheet(), rows, heights) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- private$get_sheet(sheet)
@@ -1833,7 +1833,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet = current_sheet(), rows) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- private$get_sheet(sheet)
@@ -1869,7 +1869,7 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_cols = function(sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- private$get_sheet(sheet)
@@ -1938,7 +1938,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols = cols
     #' @returns The `wbWorkbook` object
     ungroup_cols = function(sheet = current_sheet(), cols) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- private$get_sheet(sheet)
@@ -1978,7 +1978,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     remove_col_widths = function(sheet = current_sheet(), cols) {
       sheet <- private$get_sheet(sheet)
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       if (!is.numeric(cols)) {
@@ -2121,7 +2121,7 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_rows = function(sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
-      op <- openxlsx_options()
+      op <- openxlsx2_options()
       on.exit(options(op), add = TRUE)
 
       sheet <- private$get_sheet(sheet)
