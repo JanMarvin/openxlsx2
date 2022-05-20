@@ -4214,7 +4214,7 @@ wbWorkbook <- R6::R6Class(
         sheet <- m
       } else {
         sheet <- as.integer(sheet)
-        bad <- which(sheet > length(self$sheet_names))
+        bad <- which(sheet > length(self$sheet_names) || sheet < 1)
 
         if (length(bad)) {
           stop("Invalid sheet position(s): ", toString(sheet[bad]))
