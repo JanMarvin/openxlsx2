@@ -1174,7 +1174,7 @@ wbWorkbook <- R6::R6Class(
       override$typ <- NULL
 
       # TODO remove length() check since we have seq_along()
-      if (NROW(self$tables <- subset(self$tables, self$tables$tab_act == 1))) {
+      if (any(self$tables$tab_act == 1)) {
 
         # TODO get table Id from table entry
         table_ids <- function() {
@@ -1187,12 +1187,13 @@ wbWorkbook <- R6::R6Class(
         tab_ids <- table_ids()
         for (i in seq_along(tab_ids)) {
 
-          idx <- self$tables$tab_sheet > 0
+          # select only active tabs. in future there should only be active tabs
+          tabs <- self$tables[self$tables$tab_act == 1,]
 
-          if (self$tables$tab_act[i] == 1) {
+          if (NROW(tabs)) {
             write_file(
-              body = pxml(self$tables$tab_xml[i]),
-              fl = file.path(xlTablesDir, sprintf("table%s.xml", tab_ids[[i]]))
+              body = pxml(tabs$tab_xml[i]),
+              fl = file.path(xlTablesDir, sprintf("table%s.xml", tab_ids[i]))
             )
 
             ## add entry to content_types as well
@@ -1200,13 +1201,13 @@ wbWorkbook <- R6::R6Class(
               override,
               # new entry for table
               c("application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml",
-                sprintf("/xl/tables/table%s.xml", tab_ids[[i]]))
+                sprintf("/xl/tables/table%s.xml", tab_ids[i]))
             )
 
             if (self$tables.xml.rels[[i]] != "") {
               write_file(
                 body = self$tables.xml.rels[[i]],
-                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", tab_ids[[i]]))
+                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", tab_ids[i]))
               )
             }
           }
@@ -1547,7 +1548,7 @@ wbWorkbook <- R6::R6Class(
         tSheets <- NULL
         tNames <- NULL
         tActive <- NULL
-      } else {   
+      } else {
         nms <- self$tables$tab_ref
         tSheets <- self$tables$tab_sheet
         tNames <- self$tables$tab_name
@@ -2363,18 +2364,19 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]] <- NULL
       self$worksheets_rels[[sheet]] <- NULL
 
+      sel <- self$tables$tab_sheet == sheet
       # tableName is a character Vector with an attached name Vector.
-      if (!is.null(self$tables)) {
-        self$tables$tab_name[table_id] <- paste0(self$tables$tab_name[table_id], "_openxlsx_deleted")
+      if (any(sel)) {
+        self$tables$tab_name[sel] <- paste0(self$tables$tab_name[sel], "_openxlsx_deleted")
         tab_sheet <- self$tables$tab_sheet
-        tab_sheet[table_id] <- 0
+        tab_sheet[sel] <- 0
         tab_sheet[tab_sheet > sheet] <- tab_sheet[tab_sheet > sheet] - 1L
         self$tables$tab_sheet <- tab_sheet
-        self$tables$tab_ref[table_id] <- ""
-        self$tables$tab_xml[table_id] <- ""
+        self$tables$tab_ref[sel] <- ""
+        self$tables$tab_xml[sel] <- ""
 
         # deactivate sheet
-        self$tables$tab_act[table_id] <- 0
+        self$tables$tab_act[sel] <- 0
       }
 
       ## drawing will always be the first relationship
@@ -2720,7 +2722,7 @@ wbWorkbook <- R6::R6Class(
                                     level = "x14:conditionalFormattings")
             self$worksheets[[sheet]]$extLst <- extLst
           }
-          
+
 
 
           if (is.null(values)) {
