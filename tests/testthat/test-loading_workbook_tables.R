@@ -3,9 +3,9 @@
 test_that("Tables loaded correctly", {
   wb <- wb_load(system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 
-  expect_equal(unname(attr(wb$tables, "tableName")), c("Table2", "Table3"))
-  expect_equal(names(attr(wb$tables, "tableName")), c("A1:E51", "A1:K30"))
-  expect_equal(attr(wb$tables, "sheet"), c(1, 3))
+  expect_equal(wb$tables$tab_name, c("Table2", "Table3"))
+  expect_equal(wb$tables$tab_ref, c("A1:E51", "A1:K30"))
+  expect_equal(wb$tables$tab_sheet, c(1, 3))
 
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId3\"/>", ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), "Table2")
