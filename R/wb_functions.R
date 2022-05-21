@@ -282,7 +282,7 @@ wb_to_df <- function(
       sheet <- substitute()
 
     # possible false positive on current lintr runs
-    wb <- wb_load(xlsxFile, sheet = sheet) # nolint
+    wb <- wb_load(xlsxFile, sheet = sheet, data_only = TRUE) # nolint
   } else {
     wb <- xlsxFile
   }
@@ -398,7 +398,8 @@ wb_to_df <- function(
 
   # if (!nrow(cc)) browser()
 
-  cc[c("val", "typ")] <- NA_character_
+  cc$val <- NA_character_
+  cc$typ <- NA_character_
 
   cc_tab <- table(cc$c_t)
 
