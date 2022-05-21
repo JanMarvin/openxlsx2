@@ -605,6 +605,9 @@ write_data_table <- function(
     data_table = FALSE
 ) {
 
+  op <- openxlsx2_options()
+  on.exit(op, add = TRUE)
+
   ## Input validating
   assert_workbook(wb)
   assert_class(colNames, "logical")
