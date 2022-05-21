@@ -1541,8 +1541,9 @@ wbWorkbook <- R6::R6Class(
 
       id <- as.character(last_table_id() + 1) # otherwise will start at 0 for table 1 length indicates the last known
       sheet <- wb_validate_sheet(self, sheet)
-      rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) + 1
-
+      # get the next highest rid
+      rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))[["Id"]]))) + 1
+      
       if (is.null(self$tables)) {
         nms <- NULL
         tSheets <- NULL
@@ -3816,6 +3817,13 @@ wbWorkbook <- R6::R6Class(
       worksheet_table_names <- attr(self$worksheets[[sheet]]$tableParts, "tableName")
       to_remove <- which(worksheet_table_names == table_name_original)
 
+      # (1) remove the rId from worksheet_rels
+      rm_tab_rId <- rbindlist(xml_attr(self$worksheets[[sheet]]$tableParts[to_remove], "tablePart"))["r:id"]
+      ws_rels <- self$worksheets_rels[[sheet]]
+      is_rm_table <- grepl(rm_tab_rId, ws_rels)
+      self$worksheets_rels[[sheet]] <- ws_rels[!is_rm_table]
+
+      # (2) remove the rId from tableParts
       self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
       attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
 
@@ -4399,21 +4407,14 @@ wbWorkbook <- R6::R6Class(
 
             ## Check if any tables were deleted - remove these from rels
             # TODO a relship manager should take care of this
-            if (!is.null(self$tables)) {
+            tabs <- self$tables[self$tables$tab_act == 1,]
+            if (NROW(tabs)) {
               table_inds <- grep("tables/table[0-9].xml", ws_rels)
 
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               relship$typ <- basename(relship$Type)
-              relship$tid <- gsub("\\D+", "", relship$Target)
+              relship$tid <- as.integer(gsub("\\D+", "", relship$Target))
 
-              table_nms <- self$tables$tab_name
-
-              is_deleted <- which(self$tables$tab_act == 0)
-              delete <- relship$typ == "table" & relship$tid %in% is_deleted
-
-              if (any(delete)) {
-                relship <- relship[!delete,]
-              }
               relship$typ <- relship$tid <- NULL
               if (is.null(relship$TargetMode)) relship$TargetMode <- ""
               ws_rels <- df_to_xml("Relationship", df_col = relship[c("Id", "Type", "Target", "TargetMode")])
