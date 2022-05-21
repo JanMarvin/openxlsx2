@@ -251,7 +251,7 @@
 #'                       rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 #' )
 #'
-wb_conditional_formatting <- 
+wb_conditional_formatting <-
   function(wb,
            sheet,
            cols,
@@ -260,8 +260,6 @@ wb_conditional_formatting <-
            style = NULL,
            type = "expression",
            ...) {
-    op <- openxlsx2_options()
-    on.exit(options(op), add = TRUE)
 
     type <- tolower(type)
     params <- list(...)

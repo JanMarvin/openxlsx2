@@ -625,9 +625,6 @@ write_data_table <- function(
 
   if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
 
-  op <- openxlsx2_options()
-  on.exit(options(op), add = TRUE)
-
   ## All input conversions/validations
   if (!is.null(xy)) {
     if (length(xy) != 2) {
