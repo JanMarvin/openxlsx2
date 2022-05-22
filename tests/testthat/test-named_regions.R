@@ -402,3 +402,29 @@ test_that("Overwrite and delete named regions", {
   wb <- wb_remove_worksheet(wb, 1)
   expect_null(get_named_regions(wb))
 })
+
+
+test_that("load table", {
+
+  wb <- wb_workbook()
+  # add a table
+  wb$add_worksheet("Sheet 1")
+  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris_tab")
+  # add a named region
+  wb$add_worksheet("Sheet 2")
+  wb$add_data(sheet = "Sheet 2", x = iris, startCol = 1, startRow = 1)
+  wb$add_named_region(
+    sheet = 2,
+    name = "iris",
+    rows = seq_len(nrow(iris) + 1),
+    cols = seq_along(iris)
+  )
+
+  expect_equal(c("iris", "iris_tab"), get_named_regions(wb)$name)
+
+  expect_equal(
+    wb_to_df(wb, definedName = "iris_tab"),
+    wb_to_df(wb, definedName = "iris")
+  )
+
+})

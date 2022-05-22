@@ -4726,7 +4726,8 @@ wbWorkbook <- R6::R6Class(
         # TODO consider self$get_sheet_names() which orders the sheet names?
         sheets <- self$sheet_names[self$sheetOrder]
 
-        belongTo <- get_named_regions(self)$sheets
+        belongTo <- get_named_regions(self)
+        belongTo <- belongTo$sheets[belongTo$value != "table"]
 
         ## sheets is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheets) - 1L
@@ -4832,7 +4833,10 @@ wb_get_sheet_name = function(wb, index = NULL) {
     stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
   }
 
-  wb$sheet_names[index]
+  # keep index 0 as ""
+  z <- vector("character", length(index))
+  z[index] <- wb$sheet_names[index]
+  z
 }
 
 worksheet_lock_properties <- function() {
