@@ -23,16 +23,16 @@ test_that("Deleting a Table Object", {
   expect_equal(attr(wb_get_tables(wb, sheet = 1), "refs"), c("A1:E151", "J1:T33"))
   expect_equal(attr(wb_get_tables(wb, sheet = "Sheet 1"), "refs"), c("A1:E151", "J1:T33"))
 
-  expect_equal(length(wb$tables), 2L)
+  expect_equal(nrow(wb$tables), 2L)
 
   ## Deleting a worksheet ----
 
   wb$remove_worksheet(1)
-  expect_equal(length(wb$tables), 2L)
+  expect_equal(nrow(wb$tables), 2L)
   expect_equal(length(wb_get_tables(wb, sheet = 1)), 0)
 
-  expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
-  expect_equal(attr(wb$tables, "sheet"), c(0, 0))
+  expect_equal(wb$tables$tab_name, c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
+  expect_equal(wb$tables$tab_sheet, c(0, 0))
 
   # wb$save(temp_xlsx())
 
@@ -41,8 +41,8 @@ test_that("Deleting a Table Object", {
   wb$add_data_table(sheet = 1, x = iris, tableName = "iris")
   wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
-  expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "iris", "mtcars"))
-  expect_equal(attr(wb$tables, "sheet"), c(0, 0, 1, 1))
+  expect_equal(wb$tables$tab_name, c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "iris", "mtcars"))
+  expect_equal(wb$tables$tab_sheet, c(0, 0, 1, 1))
 
   expect_equal(length(wb_get_tables(wb, sheet = 1)), 2L)
   expect_equal(length(wb_get_tables(wb, sheet = "Sheet 2")), 2L)
@@ -56,7 +56,7 @@ test_that("Deleting a Table Object", {
   expect_equal(attr(wb_get_tables(wb, sheet = 1), "refs"), c("A1:E151", "J1:T33"))
   expect_equal(attr(wb_get_tables(wb, sheet = "Sheet 2"), "refs"), c("A1:E151", "J1:T33"))
 
-  expect_equal(length(wb$tables), 4L)
+  expect_equal(nrow(wb$tables), 4L)
 
 
   ## wb_remove_tables ----
@@ -64,11 +64,11 @@ test_that("Deleting a Table Object", {
   ## remove iris and re-write it
   wb$remove_tables(sheet = 1, table = "iris")
 
-  expect_equal(length(wb$tables), 4L)
+  expect_equal(nrow(wb$tables), 4L)
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), "mtcars")
 
-  expect_equal(attr(wb$tables, "tableName"), c(
+  expect_equal(wb$tables$tab_name, c(
     "iris_openxlsx_deleted",
     "mtcars_openxlsx_deleted",
     "iris_openxlsx_deleted",
@@ -85,11 +85,11 @@ test_that("Deleting a Table Object", {
 
   wb$remove_tables(sheet = 1, table = "iris")
 
-  expect_equal(length(wb$tables), 5L)
+  expect_equal(nrow(wb$tables), 5L)
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), "mtcars")
 
-  expect_equal(attr(wb$tables, "tableName"), c(
+  expect_equal(wb$tables$tab_name, c(
     "iris_openxlsx_deleted",
     "mtcars_openxlsx_deleted",
     "iris_openxlsx_deleted",
@@ -116,11 +116,11 @@ test_that("Save and load Table Deletion", {
   ## Deleting a worksheet
 
   wb$remove_worksheet(1)
-  expect_equal(length(wb$tables), 2L)
+  expect_equal(nrow(wb$tables), 2L)
   expect_equal(length(wb_get_tables(wb, sheet = 1)), 0)
 
-  expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
-  expect_equal(attr(wb$tables, "sheet"), c(0, 0))
+  expect_equal(wb$tables$tab_name, c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted"))
+  expect_equal(wb$tables$tab_sheet, c(0, 0))
 
 
   ## both table were written to sheet 1 and are expected to not exist after load
@@ -143,15 +143,14 @@ test_that("Save and load Table Deletion", {
 
   ## remove iris and re-write it
   wb$remove_tables(sheet = 1, table = "iris")
-  expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars"))
+  expect_equal(wb$tables$tab_name, c("iris_openxlsx_deleted", "mtcars"))
 
   temp_file <- temp_xlsx()
-  # why does this fail?
   wb$save(temp_file)
   wb <- wb_load(file = temp_file)
 
-  expect_equal(length(wb$tables), 1L)
-  expect_equal(unname(attr(wb$tables, "tableName")), "mtcars")
+  expect_equal(nrow(wb$tables), 1L)
+  expect_equal(wb$tables$tab_name, "mtcars")
 
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE) ## rId reset
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), "mtcars")
@@ -169,14 +168,14 @@ test_that("Save and load Table Deletion", {
 
   wb$remove_tables(sheet = 1, table = "iris")
   wb$remove_tables(sheet = 1, table = "mtcars")
-  expect_equal(attr(wb$tables, "tableName"), c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "mtcars2"))
+  expect_equal(wb$tables$tab_name, c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "mtcars2"))
 
   temp_file <- temp_xlsx()
   wb_save(wb, temp_file)
   wb <- wb_load(file = temp_file)
 
-  expect_equal(length(wb$tables), 1L)
-  expect_equal(unname(attr(wb$tables, "tableName")), "mtcars2")
+  expect_equal(nrow(wb$tables), 1L)
+  expect_equal(wb$tables$tab_name, "mtcars2")
   expect_length(wb$worksheets[[1]]$tableParts, 0)
   expect_equal(wb$worksheets[[2]]$tableParts, "<tablePart r:id=\"rId3\"/>", ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[2]]$tableParts, "tableName")), "mtcars2")
@@ -187,8 +186,8 @@ test_that("Save and load Table Deletion", {
   wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
   wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 
-  expect_equal(length(wb$tables), 3L)
-  expect_equal(unname(attr(wb$tables, "tableName")), c("mtcars2", "iris", "mtcars"))
+  expect_equal(nrow(wb$tables), 3L)
+  expect_equal(wb$tables$tab_name, c("mtcars2", "iris", "mtcars"))
 
   expect_length(wb$worksheets[[1]]$tableParts, 2)
   expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId3\"/>", "<tablePart r:id=\"rId4\"/>"), ignore_attr = TRUE)
@@ -204,8 +203,8 @@ test_that("Save and load Table Deletion", {
   ## Ids should get reset after load
   wb <- wb_load(file = temp_file)
 
-  expect_equal(length(wb$tables), 3L)
-  expect_equal(unname(attr(wb$tables, "tableName")), c("iris", "mtcars", "mtcars2"))
+  expect_equal(nrow(wb$tables), 3L)
+  expect_equal(wb$tables$tab_name, c("iris", "mtcars", "mtcars2"))
 
   expect_length(wb$worksheets[[1]]$tableParts, 2)
   expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId3\"/>", "<tablePart r:id=\"rId4\"/>"), ignore_attr = TRUE)

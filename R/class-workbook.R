@@ -575,6 +575,8 @@ wbWorkbook <- R6::R6Class(
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
+      # FIXME only add what is needed. If no previous drawing is found, don't
+      # add a new one
       self$append("Content_Types", c(
         sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex),
         sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', newSheetIndex)
@@ -660,65 +662,47 @@ wbWorkbook <- R6::R6Class(
       ## and in the worksheets[]$tableParts list. We also need to adjust the
       ## worksheets_rels and set the content type for the new table
 
-      tbls <- self$tables[attr(self$tables, "sheet") == old]
+      # make this the new sheets object
+      tbls <- self$tables[self$tables$tab_sheet == old,]
+      if (NROW(tbls)) {
 
-      for (t in tbls) {
-        # Extract table name, displayName and ID from the xml
-        oldname     <- reg_match0(t, '(?<= name=")[^"]+')
-        olddispname <- reg_match0(t, '(?<= displayName=")[^"]+')
-        oldid       <- reg_match0(t, '(?<= id=")[^"]+')
-        ref         <- reg_match0(t, '(?<= ref=")[^"]+')
+        # newid and rid can be different
+        newid <- nrow(self$tables) + seq_len(nrow(tbls))
+        rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))[["Id"]]))) + seq_along(newid)
 
-        # Find new, unused table names by appending _n, where n=1,2,...
-        n <- 0
-        while (stri_join(oldname, "_", n) %in% attr(self$tables, "tableName")) {
-          n <- n + 1
-        }
-
-        newname <- stri_join(oldname, "_", n)
-        newdispname <- stri_join(olddispname, "_", n)
-        newid <- as.character(length(self$tables) + 3L)
-
-        # Use the table definition from the cloned sheet and simply replace the names
-        newt <- t
-        newt <- gsub(
-          stri_join(' name="', oldname, '"'),
-          stri_join(' name="', newname, '"'),
-          newt
-        )
-        newt <- gsub(
-          stri_join(' displayName="', olddispname, '"'),
-          stri_join(' displayName="', newdispname, '"'),
-          newt
-        )
-        newt <- gsub(
-          stri_join('(<table [^<]* id=")', oldid, '"'),
-          stri_join("\\1", newid, '"'),
-          newt
+        # add _n to all table names found
+        tbls$tab_name <- stri_join(tbls$tab_name, "_n")
+        tbls$tab_sheet <- newSheetIndex
+        # modify tab_xml with updated name, displayName and id
+        tbls$tab_xml <- vapply(seq_len(nrow(tbls)), function(x)
+          xml_attr_mod(tbls$tab_xml[x],
+                       xml_attributes = c(name = tbls$tab_name[x],
+                                          displayName = tbls$tab_name[x],
+                                          id = newid[x])
+          ),
+          NA_character_
         )
 
-        oldtables <- self$tables
-        self$append("tables", newt)
-        names(self$tables)             <- c(names(oldtables), ref)
-        attr(self$tables, "sheet")     <- c(attr(oldtables, "sheet"), newSheetIndex)
-        attr(self$tables, "tableName") <- c(attr(oldtables, "tableName"), newname)
-
-        oldparts                                                              <- self$worksheets[[newSheetIndex]]$tableParts
-        self$worksheets[[newSheetIndex]]$tableParts                           <- c(oldparts, sprintf('<tablePart r:id="rId%s"/>', newid))
-        attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")        <- c(attr(oldparts, "tableName"), newname)
-        names(attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <- c(names(attr(oldparts, "tableName")), ref)
-
-        self$append("Content_Types",
-          sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', newid)
+        # add new tables to old tables
+        self$tables <- rbind(
+          self$tables,
+          tbls
         )
 
-        self$append("tables.xml.rels", "")
+        self$worksheets[[newSheetIndex]]$tableParts                    <- sprintf('<tablePart r:id="rId%s"/>', rid)
+        attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName") <- tbls$tab_name
 
+        ## hint: Content_Types will be created once the sheet is written. no need to add tables there
+
+        # increase tables.xml.rels
+        self$append("tables.xml.rels", rep("", nrow(tbls)))
+
+        # add table.xml to worksheet relationship
         self$worksheets_rels[[newSheetIndex]] <- c(
           self$worksheets_rels[[newSheetIndex]],
           sprintf(
             '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-            newid,
+            rid,
             newid
           )
         )
@@ -1168,7 +1152,7 @@ wbWorkbook <- R6::R6Class(
       override$typ <- NULL
 
       # TODO remove length() check since we have seq_along()
-      if (length(unlist(self$tables, use.names = FALSE))) {
+      if (any(self$tables$tab_act == 1)) {
 
         # TODO get table Id from table entry
         table_ids <- function() {
@@ -1181,12 +1165,13 @@ wbWorkbook <- R6::R6Class(
         tab_ids <- table_ids()
         for (i in seq_along(tab_ids)) {
 
-          idx <- attr(self$tables, "sheet") > 0
+          # select only active tabs. in future there should only be active tabs
+          tabs <- self$tables[self$tables$tab_act == 1,]
 
-          if (!grepl("openxlsx_deleted", attr(self$tables, "tableName")[idx][i], fixed = TRUE)) {
+          if (NROW(tabs)) {
             write_file(
-              body = pxml(unlist(self$tables[idx], use.names = FALSE)[[i]]),
-              fl = file.path(xlTablesDir, sprintf("table%s.xml", tab_ids[[i]]))
+              body = pxml(tabs$tab_xml[i]),
+              fl = file.path(xlTablesDir, sprintf("table%s.xml", tab_ids[i]))
             )
 
             ## add entry to content_types as well
@@ -1194,13 +1179,13 @@ wbWorkbook <- R6::R6Class(
               override,
               # new entry for table
               c("application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml",
-                sprintf("/xl/tables/table%s.xml", tab_ids[[i]]))
+                sprintf("/xl/tables/table%s.xml", tab_ids[i]))
             )
 
             if (self$tables.xml.rels[[i]] != "") {
               write_file(
                 body = self$tables.xml.rels[[i]],
-                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", tab_ids[[i]]))
+                fl = file.path(xlTablesRelsDir, sprintf("table%s.xml.rels", tab_ids[i]))
               )
             }
           }
@@ -1534,11 +1519,20 @@ wbWorkbook <- R6::R6Class(
 
       id <- as.character(last_table_id() + 1) # otherwise will start at 0 for table 1 length indicates the last known
       sheet <- wb_validate_sheet(self, sheet)
-      rid <- length(xml_node(self$worksheets_rels[[sheet]], "Relationship")) + 1
+      # get the next highest rid
+      rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))[["Id"]]))) + 1
 
-      nms <- names(self$tables)
-      tSheets <- attr(self$tables, "sheet")
-      tNames <- attr(self$tables, "tableName")
+      if (is.null(self$tables)) {
+        nms <- NULL
+        tSheets <- NULL
+        tNames <- NULL
+        tActive <- NULL
+      } else {
+        nms <- self$tables$tab_ref
+        tSheets <- self$tables$tab_sheet
+        tNames <- self$tables$tab_name
+        tActive <- self$tables$tab_act
+      }
 
 
       ### autofilter
@@ -1584,25 +1578,27 @@ wbWorkbook <- R6::R6Class(
         #headerRowDxfId="1"
       )
 
-      self$append("tables",
-        xml_node_create(
+      tab_xml_new <- xml_node_create(
           xml_name = "table",
           xml_children = c(autofilter, tableColumns, tableStyleXML),
           xml_attributes = table_attrs
-        )
       )
 
-      names(self$tables) <- c(nms, ref)
-      attr(self$tables, "sheet") <- c(tSheets, sheet)
-      attr(self$tables, "tableName") <- c(tNames, tableName)
+      self$tables <- data.frame(
+        tab_name = c(tNames, tableName),
+        tab_sheet = c(tSheets, sheet),
+        tab_ref = c(nms, ref),
+        tab_xml = c(self$tables$tab_xml, tab_xml_new),
+        tab_act = c(self$tables$tab_act, 1),
+        stringsAsFactors = FALSE
+      )
 
       self$worksheets[[sheet]]$tableParts <- c(
         self$worksheets[[sheet]]$tableParts,
           sprintf('<tablePart r:id="rId%s"/>', rid)
       )
       attr(self$worksheets[[sheet]]$tableParts, "tableName") <- c(
-        tNames[tSheets == sheet &
-        !grepl("openxlsx_deleted", tNames, fixed = TRUE)],
+        tNames[tSheets == sheet & tActive == 1],
         tableName
       )
 
@@ -2347,21 +2343,19 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]] <- NULL
       self$worksheets_rels[[sheet]] <- NULL
 
+      sel <- self$tables$tab_sheet == sheet
       # tableName is a character Vector with an attached name Vector.
-      if (length(self$tables)) {
-        nams <- names(self$tables)
-        self$tables[table_id] <- ""
-        nams[table_id] <- ""
-        names(self$tables) <- nams
-
-        tab_sheet <- attr(self$tables, "sheet")
-        tab_sheet[table_id] <- 0
+      if (any(sel)) {
+        self$tables$tab_name[sel] <- paste0(self$tables$tab_name[sel], "_openxlsx_deleted")
+        tab_sheet <- self$tables$tab_sheet
+        tab_sheet[sel] <- 0
         tab_sheet[tab_sheet > sheet] <- tab_sheet[tab_sheet > sheet] - 1L
-        attr(self$tables, "sheet") <- tab_sheet
+        self$tables$tab_sheet <- tab_sheet
+        self$tables$tab_ref[sel] <- ""
+        self$tables$tab_xml[sel] <- ""
 
-        tab_name <- attr(self$tables, "tableName")
-        tab_name[table_id] <- paste0(tab_name[table_id], "_openxlsx_deleted")
-        attr(self$tables, "tableName") <- tab_name
+        # deactivate sheet
+        self$tables$tab_act[sel] <- 0
       }
 
       ## drawing will always be the first relationship
@@ -2707,7 +2701,7 @@ wbWorkbook <- R6::R6Class(
                                     level = "x14:conditionalFormattings")
             self$worksheets[[sheet]]$extLst <- extLst
           }
-          
+
 
 
           if (is.null(values)) {
@@ -3751,19 +3745,16 @@ wbWorkbook <- R6::R6Class(
         stop("sheet argument must be length 1")
       }
 
-      if (length(self$tables) == 0) {
+      if (is.null(self$tables)) {
         return(character())
       }
 
       sheet <- wb_validate_sheet(self, sheet)
       if (is.na(sheet)) stop("No such sheet in workbook")
 
-      table_sheets <- attr(self$tables, "sheet")
-      tables <- attr(self$tables, "tableName")
-      refs <- names(self$tables)
-
-      refs <- refs[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
-      tables <- tables[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
+      sel <- self$tables$tab_sheet == sheet & self$tables$tab_act == 1
+      tables <- self$tables$tab_name[sel]
+      refs <- self$tables$tab_ref[sel]
 
       if (length(tables)) {
         attr(tables, "refs") <- refs
@@ -3785,32 +3776,38 @@ wbWorkbook <- R6::R6Class(
       ## delete table object and all data in it
       sheet <- wb_validate_sheet(self, sheet)
 
-      if (!table %in% attr(self$tables, "tableName")) {
+      if (!table %in% self$tables$tab_name) {
         stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
       }
 
-      ## get existing tables
-      table_sheets <- attr(self$tables, "sheet")
-      table_names <- attr(self$tables, "tableName")
-      refs <- names(self$tables)
-
       ## delete table object (by flagging as deleted)
-      inds <- which(table_sheets %in% sheet & table_names %in% table)
-      table_name_original <- table_names[inds]
+      inds <- self$tables$tab_sheet %in% sheet & self$tables$tab_name %in% table
+      table_name_original <- self$tables$tab_name[inds]
+      refs <- self$tables$tab_ref[inds]
 
-      table_names[inds] <- paste0(table_name_original, "_openxlsx_deleted")
-      attr(self$tables, "tableName") <- table_names
+      self$tables$tab_name[inds] <- paste0(table_name_original, "_openxlsx_deleted")
+      self$tables$tab_ref[inds] <- ""
+      self$tables$tab_sheet[inds] <- 0
+      self$tables$tab_xml[inds] <- ""
+      self$tables$tab_act[inds] <- 0
 
       ## delete reference from worksheet to table
       worksheet_table_names <- attr(self$worksheets[[sheet]]$tableParts, "tableName")
       to_remove <- which(worksheet_table_names == table_name_original)
 
+      # (1) remove the rId from worksheet_rels
+      rm_tab_rId <- rbindlist(xml_attr(self$worksheets[[sheet]]$tableParts[to_remove], "tablePart"))["r:id"]
+      ws_rels <- self$worksheets_rels[[sheet]]
+      is_rm_table <- grepl(rm_tab_rId, ws_rels)
+      self$worksheets_rels[[sheet]] <- ws_rels[!is_rm_table]
+
+      # (2) remove the rId from tableParts
       self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
       attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
 
 
       ## Now delete data from the worksheet
-      refs <- strsplit(refs[[inds]], split = ":")[[1]]
+      refs <- strsplit(refs, split = ":")[[1]]
       rows <- as.integer(gsub("[A-Z]", "", refs))
       rows <- seq(from = rows[1], to = rows[2], by = 1)
 
@@ -4388,21 +4385,14 @@ wbWorkbook <- R6::R6Class(
 
             ## Check if any tables were deleted - remove these from rels
             # TODO a relship manager should take care of this
-            if (length(self$tables)) {
+            tabs <- self$tables[self$tables$tab_act == 1,]
+            if (NROW(tabs)) {
               table_inds <- grep("tables/table[0-9].xml", ws_rels)
 
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               relship$typ <- basename(relship$Type)
-              relship$tid <- gsub("\\D+", "", relship$Target)
+              relship$tid <- as.integer(gsub("\\D+", "", relship$Target))
 
-              table_nms <- attr(self$tables, "tableName")
-
-              is_deleted <- which(grepl("_openxlsx_deleted", table_nms, fixed = TRUE))
-              delete <- relship$typ == "table" & relship$tid %in% is_deleted
-
-              if (any(delete)) {
-                relship <- relship[!delete,]
-              }
               relship$typ <- relship$tid <- NULL
               if (is.null(relship$TargetMode)) relship$TargetMode <- ""
               ws_rels <- df_to_xml("Relationship", df_col = relship[c("Id", "Type", "Target", "TargetMode")])
