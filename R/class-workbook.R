@@ -575,6 +575,8 @@ wbWorkbook <- R6::R6Class(
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
+      # FIXME only add what is needed. If no previous drawing is found, don't
+      # add a new one
       self$append("Content_Types", c(
         sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex),
         sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', newSheetIndex)
@@ -660,71 +662,47 @@ wbWorkbook <- R6::R6Class(
       ## and in the worksheets[]$tableParts list. We also need to adjust the
       ## worksheets_rels and set the content type for the new table
 
+      # make this the new sheets object
       tbls <- self$tables[self$tables$tab_sheet == old,]
+      if (NROW(tbls)) {
 
-      for (t in seq_len(NROW(tbls))) {
-        # Extract table name, displayName and ID from the xml
-        oldname     <- reg_match0(t$tab_xml, '(?<= name=")[^"]+')
-        olddispname <- reg_match0(t$tab_xml, '(?<= displayName=")[^"]+')
-        oldid       <- reg_match0(t$tab_xml, '(?<= id=")[^"]+')
-        ref         <- reg_match0(t$tab_xml, '(?<= ref=")[^"]+')
+        # newid and rid can be different
+        newid <- nrow(self$tables) + seq_len(nrow(tbls))
+        rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))[["Id"]]))) + seq_along(newid)
 
-        # Find new, unused table names by appending _n, where n=1,2,...
-        n <- 0
-        while (stri_join(oldname, "_", n) %in% self$tables$tab_name) {
-          n <- n + 1
-        }
-
-        newname <- stri_join(oldname, "_", n)
-        newdispname <- stri_join(olddispname, "_", n)
-        newid <- as.character(nrow(self$tables) + 3L)
-
-        # Use the table definition from the cloned sheet and simply replace the names
-        newt <- t
-        newt <- gsub(
-          stri_join(' name="', oldname, '"'),
-          stri_join(' name="', newname, '"'),
-          newt
-        )
-        newt <- gsub(
-          stri_join(' displayName="', olddispname, '"'),
-          stri_join(' displayName="', newdispname, '"'),
-          newt
-        )
-        newt <- gsub(
-          stri_join('(<table [^<]* id=")', oldid, '"'),
-          stri_join("\\1", newid, '"'),
-          newt
+        # add _n to all table names found
+        tbls$tab_name <- stri_join(tbls$tab_name, "_n")
+        tbls$tab_sheet <- newSheetIndex
+        # modify tab_xml with updated name, displayName and id
+        tbls$tab_xml <- vapply(seq_len(nrow(tbls)), function(x)
+          xml_attr_mod(tbls$tab_xml[x],
+                       xml_attributes = c(name = tbls$tab_name[x],
+                                          displayName = tbls$tab_name[x],
+                                          id = newid[x])
+          ),
+          NA_character_
         )
 
-        self$append("tables", newt)
+        # add new tables to old tables
         self$tables <- rbind(
           self$tables,
-          c(
-            newName,
-            newSheetIndex,
-            ref,
-            newt,
-            t$tab_act
-          )
+          tbls
         )
 
-        oldparts                                                              <- self$worksheets[[newSheetIndex]]$tableParts
-        self$worksheets[[newSheetIndex]]$tableParts                           <- c(oldparts, sprintf('<tablePart r:id="rId%s"/>', newid))
-        attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")        <- c(attr(oldparts, "tableName"), newname)
-        names(attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName")) <- c(names(attr(oldparts, "tableName")), ref)
+        self$worksheets[[newSheetIndex]]$tableParts                    <- sprintf('<tablePart r:id="rId%s"/>', rid)
+        attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName") <- tbls$tab_name
 
-        self$append("Content_Types",
-          sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', newid)
-        )
+        ## hint: Content_Types will be created once the sheet is written. no need to add tables there
 
-        self$append("tables.xml.rels", "")
+        # increase tables.xml.rels
+        self$append("tables.xml.rels", rep("", nrow(tbls)))
 
+        # add table.xml to worksheet relationship
         self$worksheets_rels[[newSheetIndex]] <- c(
           self$worksheets_rels[[newSheetIndex]],
           sprintf(
             '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-            newid,
+            rid,
             newid
           )
         )
@@ -1543,7 +1521,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- wb_validate_sheet(self, sheet)
       # get the next highest rid
       rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))[["Id"]]))) + 1
-      
+
       if (is.null(self$tables)) {
         nms <- NULL
         tSheets <- NULL
