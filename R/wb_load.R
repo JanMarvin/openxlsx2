@@ -822,10 +822,10 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         stringsAsFactors = FALSE
       )
 
-      ## relabel ids
-      for (i in seq_len(nrow(wb$tables))) {
-        wb$tables$tab_xml[i] <- xml_attr_mod(wb$tables$tab_xml[i], xml_attributes = c(id = as.character(i + 2)))
-      }
+      # ## relabel ids
+      # for (i in seq_len(nrow(wb$tables))) {
+      #   wb$tables$tab_xml[i] <- xml_attr_mod(wb$tables$tab_xml[i], xml_attributes = c(id = as.character(i + 2)))
+      # }
 
       ## every worksheet containing a table, has a table part. this references
       ## the display name, so that we know which tables are still around.
