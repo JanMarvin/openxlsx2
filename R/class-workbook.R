@@ -4367,7 +4367,8 @@ wbWorkbook <- R6::R6Class(
             post = post,
             sheet_data = ws$sheet_data,
             cols_attr = ws$cols_attr,
-            R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
+            R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)),
+            is_utf8 = l10n_info()[["UTF-8"]]
           )
 
           ## write worksheet rels
