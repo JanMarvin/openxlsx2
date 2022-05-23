@@ -85,20 +85,20 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
 
   // struct to vector
   for (size_t i = 0; i < n; ++i) {
-    row_r[i] = x[i].row_r;
-    c_r[i]   = x[i].c_r;
-    c_s[i]   = x[i].c_s;
-    c_t[i]   = x[i].c_t;
-    c_cm[i]  = x[i].c_cm;
-    c_ph[i]  = x[i].c_ph;
-    c_vm[i]  = x[i].c_vm;
-    v[i]     = x[i].v;
-    f[i]     = x[i].f;
-    f_t[i]   = x[i].f_t;
-    f_ref[i] = x[i].f_ref;
-    f_ca[i]  = x[i].f_ca;
-    f_si[i]  = x[i].f_si;
-    is[i]     = x[i].is;
+    row_r[i] = Rcpp::String(x[i].row_r);
+    c_r[i]   = Rcpp::String(x[i].c_r);
+    c_s[i]   = Rcpp::String(x[i].c_s);
+    c_t[i]   = Rcpp::String(x[i].c_t);
+    c_cm[i]  = Rcpp::String(x[i].c_cm);
+    c_ph[i]  = Rcpp::String(x[i].c_ph);
+    c_vm[i]  = Rcpp::String(x[i].c_vm);
+    v[i]     = Rcpp::String(x[i].v);
+    f[i]     = Rcpp::String(x[i].f);
+    f_t[i]   = Rcpp::String(x[i].f_t);
+    f_ref[i] = Rcpp::String(x[i].f_ref);
+    f_ca[i]  = Rcpp::String(x[i].f_ca);
+    f_si[i]  = Rcpp::String(x[i].f_si);
+    is[i]    = Rcpp::String(x[i].is);
   }
 
   // Assign and return a dataframe
