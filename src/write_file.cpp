@@ -33,7 +33,7 @@ std::string to_string(Rcpp::Vector<16>::Proxy x) {
 // the column data used in this row. This function uses both to create a single
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
-std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
+std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc, bool is_utf8) {
 
   auto lastrow = 0; // integer value of the last row with column data
   auto thisrow = 0; // integer value of the current row with column data
@@ -67,6 +67,28 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   Rcpp::CharacterVector cc_is    = cc["is"];
 
   Rcpp::CharacterVector row_r    = row_attr["r"];
+
+  /* on non utf8 systems we need to convert to utf8. Otherwise we will write
+   * strange looking characters to the xml files and no software will be able
+   * to read the imports.
+   */
+
+  if (!is_utf8) {
+    // cc_row_r = Riconv(cc_row_r); // ASCI only
+    // cc_r = Riconv(cc_r);
+    cc_v = Riconv(cc_v);
+    // cc_c_t = Riconv(cc_c_t);
+    // cc_c_s = Riconv(cc_c_s);
+    // cc_c_cm = Riconv(cc_c_cm);
+    // cc_c_ph = Riconv(cc_c_ph);
+    // cc_c_vm = Riconv(cc_c_vm);
+    cc_f = Riconv(cc_f);
+    // cc_f_t = Riconv(cc_f_t);
+    // cc_f_ref = Riconv(cc_f_ref);
+    // cc_f_ca = Riconv(cc_f_ca);
+    // cc_f_si = Riconv(cc_f_si);
+    cc_is = Riconv(cc_is);
+  }
 
   for (auto i = 0; i < cc.nrow(); ++i) {
 
@@ -197,7 +219,8 @@ void write_worksheet(std::string prior,
                      std::string post,
                      Rcpp::Environment sheet_data,
                      Rcpp::CharacterVector cols_attr, // currently unused
-                     std::string R_fileName = "output") {
+                     std::string R_fileName,
+                     bool is_utf8) {
 
 
   // open file and write header XML
@@ -220,7 +243,7 @@ void write_worksheet(std::string prior,
     xmlFile << "<sheetData>";
 
     // cc to sheet_data
-    xmlFile << xml_sheet_data(row_attr, cc);
+    xmlFile << xml_sheet_data(row_attr, cc, is_utf8);
 
     // write closing tag and XML post data
     xmlFile << "</sheetData>";

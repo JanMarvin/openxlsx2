@@ -759,8 +759,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_worksheet
-void write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName);
-RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP) {
+void write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName, bool is_utf8);
+RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP, SEXP is_utf8SEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type prior(priorSEXP);
@@ -768,7 +768,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cols_attr(cols_attrSEXP);
     Rcpp::traits::input_parameter< std::string >::type R_fileName(R_fileNameSEXP);
-    write_worksheet(prior, post, sheet_data, cols_attr, R_fileName);
+    Rcpp::traits::input_parameter< bool >::type is_utf8(is_utf8SEXP);
+    write_worksheet(prior, post, sheet_data, cols_attr, R_fileName, is_utf8);
     return R_NilValue;
 END_RCPP
 }
@@ -835,7 +836,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_read_colors", (DL_FUNC) &_openxlsx2_read_colors, 1},
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
-    {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 5},
+    {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 6},
     {NULL, NULL, 0}
 };
 
