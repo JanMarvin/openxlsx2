@@ -64,7 +64,8 @@
 <h2 class="page-header" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li><p>Instruct parser to import nodes with whitespaces. This fixes a complaint in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/189" class="external-link">189</a></p></li>
+<ul><li><p>Fix reading and writing on non UTF-8 systems <a href="https://github.com/JanMarvin/openxlsx2/pull/198" class="external-link">198</a> <a href="https://github.com/JanMarvin/openxlsx2/pull/199" class="external-link">199</a></p></li>
+<li><p>Instruct parser to import nodes with whitespaces. This fixes a complaint in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/189" class="external-link">189</a></p></li>
 <li><p>Fix reading file without row attribute. <a href="https://github.com/JanMarvin/openxlsx2/pull/187" class="external-link">187</a> <a href="https://github.com/JanMarvin/openxlsx2/pull/190" class="external-link">190</a></p></li>
 <li><p>Remove reference to <code>printerSettings.bin</code> when loading. This binary blob is not included and the reference caused file corruption warnings. <a href="https://github.com/JanMarvin/openxlsx2/pull/185" class="external-link">185</a></p></li>
 <li><p>Fix loading and writing xlsx files with with <code>workbook$extLst</code>. Previously if the loaded sheet contains a slicer, a second <code>extLst</code> was added which confused spreadsheet software. Now both are combined into a single node.</p></li>
