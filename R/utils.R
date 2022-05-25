@@ -45,6 +45,7 @@ na_to_null <- function(x) {
 
 #' helper function to create temporary directory for testing purpose
 #' @param name for the temp file
+#' @param macros logical if the file extension is xlsm or xlsx
 #' @export
 temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
   fileext <- ifelse(macros, ".xlsm", ".xlsx")
