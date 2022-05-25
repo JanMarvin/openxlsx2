@@ -932,7 +932,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
             if (any(ind)) {
               vml <- paste(readLines(vmlDrawingXML[ind], encoding = "UTF-8", warn = FALSE), sep = "", collapse = "")
-              wb$vml[[i]] <- read_xml(vml, pointer = FALSE)
+              wb$vml[[i]] <- read_xml(gsub("<br>", "<br/>", vml), pointer = FALSE)
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {
