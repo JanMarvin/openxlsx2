@@ -944,7 +944,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
 
   // openxml 2.8.1
-  std::set<std::string> nam_attrs {"count", "name", "pivot", "table"};
+  std::set<std::string> nam_attrs {"count", "name", "pivot", "table", "xr9:uid"};
 
   std::set<std::string> nam_chlds {"tableStyleElement"};
 
@@ -990,6 +990,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
       }
     }
 
+    std::string cld_value;
     for (auto cld : xml_tableStyle.children()) {
 
       std::string cld_name = cld.name();
@@ -1001,7 +1002,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
       } else {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
-        std::string cld_value = oss.str();
+        cld_value += oss.str();
 
         auto mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
@@ -1034,7 +1035,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
   // openxml 2.8.1
   Rcpp::CharacterVector attrnams = df_tablestyle.names();
-  Rcpp::CharacterVector nam_attrs = {"count", "name", "pivot", "table"};
+  Rcpp::CharacterVector nam_attrs = {"count", "name", "pivot", "table", "xr9:uid"};
 
   Rcpp::CharacterVector nam_chlds = {"tableStyleElement"};
 
@@ -1079,11 +1080,12 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
           std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
-          pugi::xml_document border_node;
-          pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi_parse_flags);
+          pugi::xml_document tableStyleElement;
+          pugi::xml_parse_result result = tableStyleElement.load_string(font_i.c_str(), pugi_parse_flags);
           if (!result) Rcpp::stop("loading df_tablestyle node fail: %s", cv_s);
 
-          tablestyle.append_copy(border_node.first_child());
+          for (auto chld: tableStyleElement.children())
+            tablestyle.append_copy(chld);
 
         }
       }
