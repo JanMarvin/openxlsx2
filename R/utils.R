@@ -46,10 +46,10 @@ na_to_null <- function(x) {
 #' helper function to create temporary directory for testing purpose
 #' @param name for the temp file
 #' @export
-temp_xlsx <- function(name = "temp_xlsx") {
-  tempfile(pattern = paste0(name, "_"), fileext = ".xlsx")
+temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
+  fileext <- ifelse(macros, ".xlsm", ".xlsx")
+  tempfile(pattern = paste0(name, "_"), fileext = fileext)
 }
-
 
 openxlsx2_options <- function() {
   # op <- openxlsx2_options()
