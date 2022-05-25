@@ -607,9 +607,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
           nms <- unlist(xml_attr(cfs, "conditionalFormatting"))
           cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
           names(cf) <- nms
-          conditionalFormatting <- unlist(cf)
-          names(conditionalFormatting) <- unapply(nms, function(x) rep(x, length(cf[[x]])))
-
           wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
         }
 
@@ -934,7 +931,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
             ind <- grepl(target, vmlDrawingXML)
 
             if (any(ind)) {
-              wb$vml[[i]] <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
+              vml <- paste(readLines(vmlDrawingXML[ind], encoding = "UTF-8", warn = FALSE), sep = "", collapse = "")
+              wb$vml[[i]] <- read_xml(vml, pointer = FALSE)
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {
