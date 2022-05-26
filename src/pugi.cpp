@@ -503,7 +503,7 @@ Rcpp::String write_xml_file(std::string xml_content, bool escapes) {
   decl.append_attribute("standalone") = "yes";
 
   std::ostringstream oss;
-  doc.print(oss, "\t", pugi_format_flags, pugi::encoding_latin1);
+  doc.print(oss, "\t", pugi_format_flags);
 
   return oss.str();
 }

@@ -24,7 +24,7 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 
 // helper function to access element from Rcpp::Character Vector as string
 std::string to_string(Rcpp::Vector<16>::Proxy x) {
-  return Rcpp::as<std::string>(x);
+  return Rcpp::String(x);
 }
 
 
@@ -182,7 +182,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   }
 
   std::ostringstream oss;
-  doc.print(oss, " ", pugi::format_raw | pugi::format_no_escapes, pugi::encoding_latin1);
+  doc.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
   return oss.str();
 }
 
