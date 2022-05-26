@@ -65,14 +65,14 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
     "locked"
   };
 
-  auto nn = std::distance(xml_doc_xf->begin(), xml_doc_xf->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_xf->begin(), xml_doc_xf->end());
+  size_t kk = nams.size();
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -310,15 +310,15 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
     "vertAlign"
   };
 
-  auto nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
+  size_t kk = nams.size();
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -417,14 +417,14 @@ Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
     "numFmtId"
   };
 
-  auto nn = std::distance(xml_doc_numfmt->begin(), xml_doc_numfmt->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_numfmt->begin(), xml_doc_numfmt->end());
+  size_t kk = nams.size();
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -519,15 +519,15 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
                              std::make_move_iterator(all_names.end()));
 
 
-  auto nn = std::distance(xml_doc_border->begin(), xml_doc_border->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_border->begin(), xml_doc_border->end());
+  size_t kk = nams.size();
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -676,15 +676,15 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
     "patternFill"
   };
 
-  auto nn = std::distance(xml_doc_fill->begin(), xml_doc_fill->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_fill->begin(), xml_doc_fill->end());
+  size_t kk = nams.size();
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -792,15 +792,15 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
                              std::make_move_iterator(all_names.end()));
 
 
-  auto nn = std::distance(xml_doc_cellStyle->begin(), xml_doc_cellStyle->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_cellStyle->begin(), xml_doc_cellStyle->end());
+  size_t kk = nams.size();
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -958,15 +958,15 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
                              std::make_move_iterator(all_names.end()));
 
 
-  auto nn = std::distance(xml_doc_tableStyle->begin(), xml_doc_tableStyle->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_tableStyle->begin(), xml_doc_tableStyle->end());
+  size_t kk = nams.size();
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -1120,15 +1120,15 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
     "protection"
   };
 
-  auto nn = std::distance(xml_doc_dxf->begin(), xml_doc_dxf->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_dxf->begin(), xml_doc_dxf->end());
+  size_t kk = nams.size();
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -1227,15 +1227,15 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
     "mruColors"
   };
 
-  auto nn = std::distance(xml_doc_colors->begin(), xml_doc_colors->end());
-  auto kk = nams.size();
+  size_t nn = std::distance(xml_doc_colors->begin(), xml_doc_colors->end());
+  size_t kk = nams.size();
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
