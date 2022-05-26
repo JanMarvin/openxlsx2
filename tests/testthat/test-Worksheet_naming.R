@@ -6,11 +6,21 @@ test_that("Worksheet names", {
   expect_identical(sheetname, names(wb))
 })
 
-test_that("worksheet names with illegal characters not allowed", {
-  pat <- "[Ii]llegal characters"
+test_that("legal characters are allowed", {
   wb <- wb_workbook()
-  expect_error(wb$add_worksheet("S&P 500"),  pat)
-  expect_error(wb$add_worksheet("<24 h"),    pat)
-  expect_error(wb$add_worksheet(">24 h"),    pat)
-  expect_error(wb$add_worksheet('test "A"'), pat)
+  expect_error(wb$add_worksheet("S&P 500"),  NA)
+  expect_error(wb$add_worksheet("<24 h"),    NA)
+  expect_error(wb$add_worksheet(">24 h"),    NA)
+  expect_error(wb$add_worksheet('test "A"'), NA)
+})
+
+test_that("illegal characters are not allowed", {
+  wb <- wb_workbook()
+  expect_error(wb$add_worksheet("forward\\slash"), "illegal")
+  expect_error(wb$add_worksheet("back/slash"),     "illegal")
+  expect_error(wb$add_worksheet("question?mark"),  "illegal")
+  expect_error(wb$add_worksheet("asterik:"),       "illegal")
+  expect_error(wb$add_worksheet("colon:"),         "illegal")
+  expect_error(wb$add_worksheet("open[bracket"),   "illegal")
+  expect_error(wb$add_worksheet("closed]bracket"), "illegal")
 })

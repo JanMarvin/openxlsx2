@@ -440,16 +440,6 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "hdpi must be numeric")
       }
 
-      ## Invalid XML characters
-      sheet <- replaceIllegalCharacters(sheet)
-
-      if (!missing(sheet)) {
-        if (grepl(":", sheet)) {
-          fail <- TRUE
-          msg <- c(msg, "colon not allowed in sheet names in Excel")
-        }
-      }
-
       if (fail) {
         stop(msg, call. = FALSE)
       }
@@ -4169,8 +4159,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       sheet <- as.character(sheet)
-      if (any_illegal_chars(sheet)) {
-        stop("Illegal characters found in sheet. Please remove. See ?openxlsx::clean_worksheet_name")
+      if (has_illegal_chars(sheet)) {
+        stop("illegal characters found in sheet. Please remove. See ?openxlsx::clean_worksheet_name")
       }
 
       if (nchar(sheet) > 31) {
