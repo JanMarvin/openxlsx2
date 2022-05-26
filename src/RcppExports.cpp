@@ -416,15 +416,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_xml_file
-void write_xml_file(std::string xml_content, std::string fl, bool escapes);
-RcppExport SEXP _openxlsx2_write_xml_file(SEXP xml_contentSEXP, SEXP flSEXP, SEXP escapesSEXP) {
+Rcpp::String write_xml_file(std::string xml_content, bool escapes);
+RcppExport SEXP _openxlsx2_write_xml_file(SEXP xml_contentSEXP, SEXP escapesSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type xml_content(xml_contentSEXP);
-    Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
-    write_xml_file(xml_content, fl, escapes);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(write_xml_file(xml_content, escapes));
+    return rcpp_result_gen;
 END_RCPP
 }
 // xml_attr_mod
@@ -759,18 +759,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_worksheet
-void write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data, Rcpp::CharacterVector cols_attr, std::string R_fileName, bool is_utf8);
-RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP, SEXP cols_attrSEXP, SEXP R_fileNameSEXP, SEXP is_utf8SEXP) {
+std::string write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data);
+RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type prior(priorSEXP);
     Rcpp::traits::input_parameter< std::string >::type post(postSEXP);
     Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cols_attr(cols_attrSEXP);
-    Rcpp::traits::input_parameter< std::string >::type R_fileName(R_fileNameSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_utf8(is_utf8SEXP);
-    write_worksheet(prior, post, sheet_data, cols_attr, R_fileName, is_utf8);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(write_worksheet(prior, post, sheet_data));
+    return rcpp_result_gen;
 END_RCPP
 }
 
@@ -807,7 +805,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr3attr", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr, 4},
     {"_openxlsx2_getXMLXPtr4attr", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr, 5},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 3},
-    {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 3},
+    {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
     {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 4},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
     {"_openxlsx2_xml_append_child1", (DL_FUNC) &_openxlsx2_xml_append_child1, 4},
@@ -836,7 +834,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_read_colors", (DL_FUNC) &_openxlsx2_read_colors, 1},
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
-    {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 6},
+    {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
     {NULL, NULL, 0}
 };
 

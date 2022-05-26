@@ -8,16 +8,3 @@ SEXP si_to_txt(XPtrXML doc);
 SEXP is_to_txt(Rcpp::CharacterVector is_vec);
 
 std::string txt_to_is(std::string txt, bool no_escapes, bool raw);
-
-
-template <typename T>
-inline T Riconv(T &mystring) {
-  Rcpp::Environment base("package:base");
-  Rcpp::Function iconv = base["iconv"];
-
-  mystring = Rcpp::as<T>(
-    iconv(mystring, Rcpp::Named("from", ""), Rcpp::Named("to","UTF-8"))
-  );
-
-  return(mystring);
-}
