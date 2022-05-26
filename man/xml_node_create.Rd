@@ -9,8 +9,7 @@ xml_node_create(
   xml_children = NULL,
   xml_attributes = NULL,
   escapes = FALSE,
-  declaration = FALSE,
-  utf8 = FALSE
+  declaration = FALSE
 )
 }
 \arguments{
@@ -23,8 +22,6 @@ xml_node_create(
 \item{escapes}{bool if escapes should be used}
 
 \item{declaration}{bool if declaration should be imported}
-
-\item{utf8}{print as utf8 or latin1}
 }
 \description{
 takes xml_name, xml_children and xml_attributes to create a new

@@ -530,7 +530,6 @@ Rcpp::String write_xml_file(std::string xml_content, bool escapes) {
 //' @param xml_attributes R vector of named attributes
 //' @param escapes bool if escapes should be used
 //' @param declaration bool if declaration should be imported
-//' @param utf8 print as utf8 or latin1
 //'
 //' @examples
 //'   # add single node
@@ -553,7 +552,7 @@ Rcpp::String write_xml_file(std::string xml_content, bool escapes) {
 //' @export
 // [[Rcpp::export]]
 Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes,
-                                   bool escapes = false, bool declaration = false, bool utf8 = false) {
+                                   bool escapes = false, bool declaration = false) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
@@ -593,7 +592,7 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
   }
 
   std::ostringstream oss;
-  doc.print(oss, "", pugi_format_flags, is_utf8(utf8));
+  doc.print(oss, "", pugi_format_flags);
 
   return oss.str();
 }
@@ -606,7 +605,6 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
 //' @param xml_attributes named character vector of attributes for the xml_node
 //' @param escapes bool if escapes should be used
 //' @param declaration bool if declaration should be imported
-//' @param utf8 print as utf8 or latin1
 //' @details if xml_children or xml_attributes should be empty, use NULL
 //'
 //' @examples
@@ -630,7 +628,7 @@ Rcpp::CharacterVector xml_node_create(
     std::string xml_name,
     Rcpp::Nullable<Rcpp::CharacterVector> xml_children = R_NilValue,
     Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes = R_NilValue,
-    bool escapes = false, bool declaration = false, bool utf8 = false) {
+    bool escapes = false, bool declaration = false) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
@@ -651,7 +649,7 @@ Rcpp::CharacterVector xml_node_create(
 
     for (auto i = 0; i < xml_child.size(); ++i) {
 
-      std::string xml_cld = Rcpp::as<std::string>(xml_child[i]);
+      std::string xml_cld = Rcpp::String(xml_child[i]);
 
       pugi::xml_document is_node;
       pugi::xml_parse_result result = is_node.load_string(xml_cld.c_str(), pugi_parse_flags);
@@ -679,7 +677,7 @@ Rcpp::CharacterVector xml_node_create(
   }
 
   std::ostringstream oss;
-  doc.print(oss, "", pugi_format_flags, is_utf8(utf8));
+  doc.print(oss, "", pugi_format_flags);
   std::string xml_return = oss.str();
 
   return xml_return;

@@ -147,7 +147,6 @@ write_xml_file <- function(xml_content, escapes) {
 #' @param xml_attributes R vector of named attributes
 #' @param escapes bool if escapes should be used
 #' @param declaration bool if declaration should be imported
-#' @param utf8 print as utf8 or latin1
 #'
 #' @examples
 #'   # add single node
@@ -168,8 +167,8 @@ write_xml_file <- function(xml_content, escapes) {
 #'     # "<a qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
 #'     xml_attr_mod(xml_node, xml_attr)
 #' @export
-xml_attr_mod <- function(xml_content, xml_attributes, escapes = FALSE, declaration = FALSE, utf8 = FALSE) {
-    .Call(`_openxlsx2_xml_attr_mod`, xml_content, xml_attributes, escapes, declaration, utf8)
+xml_attr_mod <- function(xml_content, xml_attributes, escapes = FALSE, declaration = FALSE) {
+    .Call(`_openxlsx2_xml_attr_mod`, xml_content, xml_attributes, escapes, declaration)
 }
 
 #' create xml_node from R objects
@@ -180,7 +179,6 @@ xml_attr_mod <- function(xml_content, xml_attributes, escapes = FALSE, declarati
 #' @param xml_attributes named character vector of attributes for the xml_node
 #' @param escapes bool if escapes should be used
 #' @param declaration bool if declaration should be imported
-#' @param utf8 print as utf8 or latin1
 #' @details if xml_children or xml_attributes should be empty, use NULL
 #'
 #' @examples
@@ -199,8 +197,8 @@ xml_attr_mod <- function(xml_content, xml_attributes, escapes = FALSE, declarati
 #' # "<a foo=\"baz\" qux=\"quux\">openxlsx</a>"
 #' xml_node_create(xml_name, xml_children = xml_child, xml_attributes = xml_attr)
 #' @export
-xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL, escapes = FALSE, declaration = FALSE, utf8 = FALSE) {
-    .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes, escapes, declaration, utf8)
+xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL, escapes = FALSE, declaration = FALSE) {
+    .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes, escapes, declaration)
 }
 
 xml_append_child1 <- function(node, child, pointer, escapes) {
