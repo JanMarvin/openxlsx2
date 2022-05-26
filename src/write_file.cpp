@@ -228,3 +228,25 @@ std::string write_worksheet(
 
   return xmlFile;
 }
+
+// [[Rcpp::export]]
+void write_xml(
+    std::string xml,
+    std::string fl
+  ) {
+
+  pugi::xml_document doc;
+  pugi::xml_parse_result result;
+
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol | pugi::parse_declaration;
+
+  unsigned int pugi_format_flags = pugi::format_raw;
+
+  result = doc.load_string(xml.c_str(), pugi_parse_flags);
+
+  if (!result) {
+    Rcpp::stop("xml import unsuccessfull");
+  }
+
+  doc.save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
+}

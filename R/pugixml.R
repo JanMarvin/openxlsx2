@@ -257,7 +257,8 @@ as_xml <- function(x) {
 write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   xml_content <- stringi::stri_join(head, body, tail, collapse = "")
   xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes)
-  stringi::stri_write_lines(xml_content, con = fl, encoding = "UTF-8")
+  write_xml(xml_content, fl)
+  # stringi::stri_write_lines(xml_content, con = fl, encoding = "UTF-8")
 }
 
 #' append xml child to node

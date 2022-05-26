@@ -309,3 +309,7 @@ write_worksheet <- function(prior, post, sheet_data) {
     .Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data)
 }
 
+write_xml <- function(xml, fl) {
+    invisible(.Call(`_openxlsx2_write_xml`, xml, fl))
+}
+

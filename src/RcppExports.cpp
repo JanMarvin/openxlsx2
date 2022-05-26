@@ -771,6 +771,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// write_xml
+void write_xml(std::string xml, std::string fl);
+RcppExport SEXP _openxlsx2_write_xml(SEXP xmlSEXP, SEXP flSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type xml(xmlSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
+    write_xml(xml, fl);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_openxlsx2_type", (DL_FUNC) &_openxlsx2_openxlsx2_type, 1},
@@ -835,6 +846,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
+    {"_openxlsx2_write_xml", (DL_FUNC) &_openxlsx2_write_xml, 2},
     {NULL, NULL, 0}
 };
 
