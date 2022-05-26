@@ -4923,32 +4923,6 @@ lcr <- function(var) {
 }
 
 
-max_sheet_id <- function(wb) {
-  .Deprecated("private$get_sheet_id_max()")
-  if (!length(wb$workbook$sheets)) {
-    return(1L)
-  }
-
-  max(get_sheet_id(wb), 0L, na.rm = TRUE) + 1L
-}
-
-get_sheet_id <- function(wb, index = NULL) {
-  .Deprecated("private$get_sheet_id(type = 'sheetId')")
-  get_wb_sheet_id(wb, '(?<=sheetId=")[0-9]+', i = index)
-}
-
-get_r_id <- function(wb, index = NULL) {
-  .Deprecated("private$get_sheet_id(type = 'rId')")
-  get_wb_sheet_id(wb, '(?<= r:id="rId)[0-9]+', i = index)
-}
-
-get_wb_sheet_id <- function(wb, pattern, i = NULL) {
-  .Deprecated("private$get_sheet_id()")
-  i <- i %||% seq_along(wb$workbook$sheets)
-  id <- reg_match0(wb$workbook$sheets[i], pattern)
-  as.integer(unlist(id))
-}
-
 # TODO Does this need to be checked?  No sheet name can be NA right?
 # res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
 
