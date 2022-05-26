@@ -153,8 +153,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // readXMLPtr
-SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration);
-RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool utf8);
+RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP utf8SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -162,13 +162,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile, escapes, declaration));
+    Rcpp::traits::input_parameter< bool >::type utf8(utf8SEXP);
+    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile, escapes, declaration, utf8));
     return rcpp_result_gen;
 END_RCPP
 }
 // readXML
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool utf8);
+RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP utf8SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -176,7 +177,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration));
+    Rcpp::traits::input_parameter< bool >::type utf8(utf8SEXP);
+    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration, utf8));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -428,8 +430,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // xml_attr_mod
-Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes, bool escapes, bool declaration);
-RcppExport SEXP _openxlsx2_xml_attr_mod(SEXP xml_contentSEXP, SEXP xml_attributesSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
+Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes, bool escapes, bool declaration, bool utf8);
+RcppExport SEXP _openxlsx2_xml_attr_mod(SEXP xml_contentSEXP, SEXP xml_attributesSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP utf8SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -437,13 +439,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type xml_attributes(xml_attributesSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_attr_mod(xml_content, xml_attributes, escapes, declaration));
+    Rcpp::traits::input_parameter< bool >::type utf8(utf8SEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_attr_mod(xml_content, xml_attributes, escapes, declaration, utf8));
     return rcpp_result_gen;
 END_RCPP
 }
 // xml_node_create
-Rcpp::CharacterVector xml_node_create(std::string xml_name, Rcpp::Nullable<Rcpp::CharacterVector> xml_children, Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes, bool escapes, bool declaration);
-RcppExport SEXP _openxlsx2_xml_node_create(SEXP xml_nameSEXP, SEXP xml_childrenSEXP, SEXP xml_attributesSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
+Rcpp::CharacterVector xml_node_create(std::string xml_name, Rcpp::Nullable<Rcpp::CharacterVector> xml_children, Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes, bool escapes, bool declaration, bool utf8);
+RcppExport SEXP _openxlsx2_xml_node_create(SEXP xml_nameSEXP, SEXP xml_childrenSEXP, SEXP xml_attributesSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP utf8SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -452,7 +455,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type xml_attributes(xml_attributesSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_node_create(xml_name, xml_children, xml_attributes, escapes, declaration));
+    Rcpp::traits::input_parameter< bool >::type utf8(utf8SEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_node_create(xml_name, xml_children, xml_attributes, escapes, declaration, utf8));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -796,8 +800,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
-    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 4},
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 4},
+    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 5},
+    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 5},
     {"_openxlsx2_getXMLXPtrName1", (DL_FUNC) &_openxlsx2_getXMLXPtrName1, 1},
     {"_openxlsx2_getXMLXPtrName2", (DL_FUNC) &_openxlsx2_getXMLXPtrName2, 2},
     {"_openxlsx2_getXMLXPtrName3", (DL_FUNC) &_openxlsx2_getXMLXPtrName3, 3},
@@ -817,8 +821,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr4attr", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr, 5},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 3},
     {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
-    {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 4},
-    {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
+    {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 5},
+    {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 6},
     {"_openxlsx2_xml_append_child1", (DL_FUNC) &_openxlsx2_xml_append_child1, 4},
     {"_openxlsx2_xml_append_child2", (DL_FUNC) &_openxlsx2_xml_append_child2, 5},
     {"_openxlsx2_xml_append_child3", (DL_FUNC) &_openxlsx2_xml_append_child3, 6},

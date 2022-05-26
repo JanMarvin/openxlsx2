@@ -92,7 +92,7 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
+    doc.print(oss, "", pugi::format_raw);
 
     z[i] = oss.str();
   }
@@ -184,6 +184,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
+  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   // character
   Rcpp::DataFrame row_attributes;
@@ -289,7 +290,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           // <is>
           if (val_name == is_str) {
             std::ostringstream oss;
-            val.print(oss, "", pugi::format_raw, pugi::encoding_latin1);
+            val.print(oss, "", pugi::format_raw, is_utf8(utf8));
             single_xml_col.is = oss.str();
           } // </is>
 

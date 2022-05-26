@@ -13,7 +13,7 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
     si.append_child("si").append_child("t").append_child(pugi::node_pcdata).set_value(sharedString.c_str());
 
     std::ostringstream oss;
-    si.print(oss, " ", pugi::format_raw);
+    si.print(oss, "", pugi::format_raw);
 
     sst[i] = oss.str();
   }
@@ -182,7 +182,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
   }
 
   std::ostringstream oss;
-  doc.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
+  doc.print(oss, "", pugi::format_raw | pugi::format_no_escapes);
   return oss.str();
 }
 

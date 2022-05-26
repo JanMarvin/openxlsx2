@@ -52,16 +52,13 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
     xml <- "<NA_character_ />"
 
 
-  # # for non utf8 systems, read xml input files as utf8
-  # if (isfile && stringi::stri_enc_get() != "UTF-8") {
-  #   xml <- stringi::stri_join(stringi::stri_read_lines(con = xml, encoding = "UTF-8"), collapse = "")
-  #   isfile <- FALSE
-  # }
+  # for non utf8 systems, read xml input files as utf8
+  utf8 <- isTRUE(l10n_info()[["UTF-8"]])
 
   if (pointer) {
-    z <- readXMLPtr(xml, isfile, escapes, declaration)
+    z <- readXMLPtr(xml, isfile, escapes, declaration, utf8)
   } else {
-    z <- readXML(xml, isfile, escapes, declaration)
+    z <- readXML(xml, isfile, escapes, declaration, utf8)
   }
 
   z
@@ -258,7 +255,6 @@ write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE
   xml_content <- stringi::stri_join(head, body, tail, collapse = "")
   xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes)
   write_xml(xml_content, fl)
-  # stringi::stri_write_lines(xml_content, con = fl, encoding = "UTF-8")
 }
 
 #' append xml child to node

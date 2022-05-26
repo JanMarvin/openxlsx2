@@ -276,7 +276,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -340,7 +340,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
       } else {
         // TODO why is this needed here?
         std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        cld.print(oss, "", pugi_format_flags);
 
         auto mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = oss.str();
@@ -397,7 +397,7 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -489,7 +489,7 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -561,7 +561,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
         Rcpp::warning("%s: not found in border name table", cld_name);
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        cld.print(oss, "", pugi_format_flags);
         std::string cld_value = oss.str();
 
         auto mtc = std::distance(nams.begin(), find_res);
@@ -657,7 +657,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
     z[i] = oss.str();
   }
 
@@ -705,7 +705,7 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
       } else {
         // TODO why is this needed here?
         std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        cld.print(oss, "", pugi_format_flags);
 
         auto mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = oss.str();
@@ -762,7 +762,7 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -834,7 +834,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
         Rcpp::warning("%s: not found in cellstyle name table", cld_name);
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        cld.print(oss, "", pugi_format_flags);
         std::string cld_value = oss.str();
 
         auto mtc = std::distance(nams.begin(), find_res);
@@ -930,7 +930,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
     z[i] = oss.str();
   }
 
@@ -1001,7 +1001,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
         Rcpp::warning("%s: not found in tablestyle name table", cld_name);
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        cld.print(oss, "", pugi_format_flags);
         cld_value += oss.str();
 
         auto mtc = std::distance(nams.begin(), find_res);
@@ -1095,7 +1095,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
     z[i] = oss.str();
   }
 
@@ -1148,7 +1148,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
         Rcpp::warning("%s: not found in dxf name table", name);
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        cld.print(oss, "", pugi_format_flags);
         std::string value = oss.str();
 
         auto mtc = std::distance(nams.begin(), find_res);
@@ -1206,7 +1206,7 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
 
     z[i] = oss.str();
   }
@@ -1255,7 +1255,7 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
         Rcpp::warning("%s: not found in color name table", name);
       } else {
         std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        cld.print(oss, "", pugi_format_flags);
         std::string cld_value = oss.str();
 
         auto mtc = std::distance(nams.begin(), find_res);
@@ -1313,7 +1313,7 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
     }
 
     std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
+    doc.print(oss, "", pugi_format_flags);
 
     z[i] = oss.str();
   }
