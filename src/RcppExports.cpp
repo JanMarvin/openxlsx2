@@ -761,7 +761,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_worksheet
-std::string write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data);
+XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data);
 RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -781,6 +781,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type xml(xmlSEXP);
     Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
     write_xml(xml, fl);
+    return R_NilValue;
+END_RCPP
+}
+// write_xmlPtr
+void write_xmlPtr(XPtrXML doc, std::string fl);
+RcppExport SEXP _openxlsx2_write_xmlPtr(SEXP docSEXP, SEXP flSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
+    write_xmlPtr(doc, fl);
     return R_NilValue;
 END_RCPP
 }
@@ -849,6 +860,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
     {"_openxlsx2_write_xml", (DL_FUNC) &_openxlsx2_write_xml, 2},
+    {"_openxlsx2_write_xmlPtr", (DL_FUNC) &_openxlsx2_write_xmlPtr, 2},
     {NULL, NULL, 0}
 };
 
