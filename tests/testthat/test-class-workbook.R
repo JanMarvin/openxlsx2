@@ -7,7 +7,7 @@ test_that("wb_set_col_widths", {
 # TODO use wb$wb_set_col_widths()
 
   wb <- wbWorkbook$new()
-  wb <- wb$add_worksheet("test")
+  wb$add_worksheet("test")
   wb$add_data("test", mtcars)
 
   # set column width to 12
