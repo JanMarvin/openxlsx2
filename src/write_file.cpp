@@ -240,7 +240,7 @@ void write_xml(
 
   unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol | pugi::parse_declaration;
 
-  unsigned int pugi_format_flags = pugi::format_raw;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   result = doc.load_string(xml.c_str(), pugi_parse_flags);
 
