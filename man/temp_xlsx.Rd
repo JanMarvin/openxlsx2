@@ -4,10 +4,12 @@
 \alias{temp_xlsx}
 \title{helper function to create temporary directory for testing purpose}
 \usage{
-temp_xlsx(name = "temp_xlsx")
+temp_xlsx(name = "temp_xlsx", macros = FALSE)
 }
 \arguments{
 \item{name}{for the temp file}
+
+\item{macros}{logical if the file extension is xlsm or xlsx}
 }
 \description{
 helper function to create temporary directory for testing purpose
