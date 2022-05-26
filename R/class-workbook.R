@@ -144,7 +144,8 @@ wbWorkbook <- R6::R6Class(
     #' @field worksheets_rels worksheets_rels
     worksheets_rels = list(),
 
-    #' @field sheetOrder sheetOrder
+    #' @field sheetOrder The sheet order.  Controls ordering for worksheets and
+    #'   worksheet names.
     sheetOrder = integer(),
 
     #' @field path path
@@ -445,7 +446,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- max_sheet_id(self) # checks for self$worksheet length
+      sheetId <- private$get_sheet_id_max() # checks for self$worksheet length
 
       # check for errors ----
 
@@ -467,10 +468,12 @@ wbWorkbook <- R6::R6Class(
       }
 
       ##  Add sheet to workbook.xml
+      sheet_name <- replace_legal_chars(sheet)
+
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-          sheet,
+          sheet_name,
           sheetId,
           visible,
           newSheetIndex
@@ -534,7 +537,7 @@ wbWorkbook <- R6::R6Class(
       self$rowHeights[[newSheetIndex]]       <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
-      self$append("sheet_names", sheet)
+      private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
 
       invisible(self)
     },
@@ -567,7 +570,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- max_sheet_id(self) # checks for length of worksheets
+      sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
 
       ## copy visibility from cloned sheet!
@@ -739,7 +742,7 @@ wbWorkbook <- R6::R6Class(
     addChartSheet = function(sheet, tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- max_sheet_id(self) # checks for length of worksheets
+      sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -1736,25 +1739,36 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    get_sheet_names = function() {
+      self$sheet_names[self$sheetOrder]
+    },
+
     #' @description
     #' Sets a sheet name
     #' @param sheet Old sheet name
     #' @param name New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    setSheetName = function(sheet, name) {
-      # TODO assert sheet class?
-      if (name %in% self$sheet_names) {
-        stop(sprintf("Sheet %s already exists!", name))
+    set_sheet_names = function(old, new) {
+      if (identical(old, new)) {
+        return(self)
       }
 
-      sheet <- private$get_sheet_index(sheet)
+      pos <- private$get_sheet_index(old)
+      new_raw <- as.character(new)
+      new_name <- replace_legal_chars(new_raw)
 
-      oldName <- self$sheet_names[[sheet]]
-      self$sheet_names[[sheet]] <- name
+      if (identical(self$sheet_names[[pos]], new_name)) {
+        return(self)
+      }
+
+      private$validate_new_sheet_name(new_name)
+      private$set_single_sheet_name(pos, new_name, name_raw)
+
+      # TODO move this work into private$set_single_sheet_name()
 
       ## Rename in workbook
-      sheetId <- get_sheet_id(self, sheet)
-      rId <- get_r_id(self, sheet)
+      sheetId <- private$get_sheet_id(type = "sheetId", sheet)
+      rId <- private$get_sheet_id(type = 'rId', sheet)
       self$workbook$sheets[[sheet]] <-
         sprintf(
           '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
@@ -4120,6 +4134,11 @@ wbWorkbook <- R6::R6Class(
   # any functions that are not present elsewhere or are non-exported internal
   # functions that are used to make assignments
   private = list(
+    # original sheet name values
+    ### fields ----
+    original_sheet_names = character(),
+
+    ### methods ----
     deep_clone = function(name, value) {
       #' Deep cloning method for workbooks.  This method also accesses
       #' `$clone(deep = TRUE)` methods for `R6` fields.
@@ -4133,6 +4152,11 @@ wbWorkbook <- R6::R6Class(
       }
 
       value
+    },
+
+    pappend = function(field, value = NULL) {
+      # private append
+      private[[field]] <- c(private[[field]], value)
     },
 
     validate_new_sheet = function(sheet) {
@@ -4203,6 +4227,17 @@ wbWorkbook <- R6::R6Class(
 
     get_sheet_name = function(sheet) {
       self$sheet_names[private$get_sheet_index(sheet)]
+    },
+
+    set_single_sheet_name = function(pos, clean, raw) {
+      pos <- as.integer(pos)
+      stopifnot(
+        length(pos)   == 1, !is.na(pos),
+        length(clean) == 1, !is.na(clean),
+        length(raw)   == 1, !is.na(raw)
+      )
+      self$sheet_names[self$sheetOrder[pos]] <- clean
+      private$original_sheet_names[self$sheetOrder[pos]] <- raw
     },
 
     append_sheet_field = function(sheet, field, value = NULL) {
@@ -4660,6 +4695,22 @@ wbWorkbook <- R6::R6Class(
       private$append_workbook_field("definedNames", value)
     },
 
+    get_sheet_id = function(type = c("rId", "sheetId"), i = NULL) {
+      pattern <-
+        switch(
+          match.arg(type),
+          sheetId = '(?<=sheetId=")[0-9]+',
+          rId = '(?<= r:id="rId)[0-9]+'
+        )
+
+      i <- i %||% seq_along(self$workbook$sheets)
+      as.integer(unlist(reg_match0(self$workbook$sheets[i], pattern)))
+    },
+
+    get_sheet_id_max = function(i = NULL) {
+      max(private$get_sheet_id(type = "sheetId", i = i), 0L, na.rm = TRUE) + 1L
+    },
+
     preSaveCleanUp = function() {
       # TODO consider name self$workbook_validate() ?
 
@@ -4679,7 +4730,7 @@ wbWorkbook <- R6::R6Class(
 
       # browser()
 
-      sheetRIds <- get_r_id(self)
+      sheetRIds <- private$get_sheet_id("rId")
       nSheets   <- length(sheetRIds)
       nExtRefs  <- length(self$externalLinks)
       nPivots   <- length(self$pivotDefinitions)
@@ -4873,6 +4924,7 @@ lcr <- function(var) {
 
 
 max_sheet_id <- function(wb) {
+  .Deprecated("private$get_sheet_id_max()")
   if (!length(wb$workbook$sheets)) {
     return(1L)
   }
@@ -4881,14 +4933,17 @@ max_sheet_id <- function(wb) {
 }
 
 get_sheet_id <- function(wb, index = NULL) {
+  .Deprecated("private$get_sheet_id(type = 'sheetId')")
   get_wb_sheet_id(wb, '(?<=sheetId=")[0-9]+', i = index)
 }
 
 get_r_id <- function(wb, index = NULL) {
+  .Deprecated("private$get_sheet_id(type = 'rId')")
   get_wb_sheet_id(wb, '(?<= r:id="rId)[0-9]+', i = index)
 }
 
 get_wb_sheet_id <- function(wb, pattern, i = NULL) {
+  .Deprecated("private$get_sheet_id()")
   i <- i %||% seq_along(wb$workbook$sheets)
   id <- reg_match0(wb$workbook$sheets[i], pattern)
   as.integer(unlist(id))

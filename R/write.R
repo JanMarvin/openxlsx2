@@ -621,7 +621,7 @@ write_data_table <- function(
   if ((!is.character(sep)) || (length(sep) != 1))
     stop("sep must be a character vector of length 1")
 
-  sheet <- wb_validate_sheet(wb, sheet)
+  sheet <- wb$validate_sheet(sheet)
 
   if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
 
