@@ -486,34 +486,33 @@ std::string printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
 
 
 // [[Rcpp::export]]
-Rcpp::String write_xml_file(std::string xml_content, bool escapes) {
+XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 
-  pugi::xml_document doc;
-  pugi::xml_parse_result result;
+  xmldoc *doc = new xmldoc;
 
   // pugi::parse_default without escapes flag
   unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
-
   // load and validate node
   if (xml_content != "") {
-    result = doc.load_string(xml_content.c_str(), pugi_parse_flags);
+    pugi::xml_parse_result result;
+    result = doc->load_string(xml_content.c_str(), pugi_parse_flags);
     if (!result) Rcpp::stop("Loading xml_content node failed: \n %s", xml_content);
   }
 
   // Needs to be added after the node has been loaded and validated
-  pugi::xml_node decl = doc.prepend_child(pugi::node_declaration);
+  pugi::xml_node decl = doc->prepend_child(pugi::node_declaration);
   decl.append_attribute("version") = "1.0";
   decl.append_attribute("encoding") = "UTF-8";
   decl.append_attribute("standalone") = "yes";
 
-  std::ostringstream oss;
-  doc.print(oss, "\t", pugi_format_flags);
+  XPtrXML ptr(doc, true);
+  ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
+  // ptr.attr("escapes") = escapes;
+  // ptr.attr("is_utf8") = utf8;
 
-  return oss.str();
+  return ptr;
 }
 
 //' adds or updates attribute(s) in existing xml node

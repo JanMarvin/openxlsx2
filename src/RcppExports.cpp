@@ -418,7 +418,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_xml_file
-Rcpp::String write_xml_file(std::string xml_content, bool escapes);
+XPtrXML write_xml_file(std::string xml_content, bool escapes);
 RcppExport SEXP _openxlsx2_write_xml_file(SEXP xml_contentSEXP, SEXP escapesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
