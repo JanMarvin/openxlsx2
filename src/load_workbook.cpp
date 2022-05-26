@@ -289,7 +289,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           // <is>
           if (val_name == is_str) {
             std::ostringstream oss;
-            val.print(oss, " ", pugi::format_raw);
+            val.print(oss, "", pugi::format_raw, pugi::encoding_latin1);
             single_xml_col.is = oss.str();
           } // </is>
 

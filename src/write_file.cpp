@@ -217,7 +217,7 @@ std::string write_worksheet(
     xmlFile += "<sheetData>";
 
     // cc to sheet_data
-    xmlFile += Rcpp::String(xml_sheet_data(row_attr, cc));
+    xmlFile += xml_sheet_data(row_attr, cc);
 
     // write closing tag and XML post data
     xmlFile += "</sheetData>";
