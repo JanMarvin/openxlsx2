@@ -121,14 +121,14 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
     "thickTop"
   };
 
-  auto nn = std::distance(ws.children("row").begin(), ws.children("row").end());
-  auto kk = row_nams.size();
+  size_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
+  size_t kk = row_nams.size();
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
