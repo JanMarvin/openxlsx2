@@ -364,7 +364,10 @@ wbWorkbook <- R6::R6Class(
       msg <- NULL
 
       private$validate_new_sheet(sheet)
+      ##  Add sheet to workbook.xml
       sheet <- as.character(sheet)
+      sheet_name <- replace_legal_chars(sheet)
+      private$validate_new_sheet(sheet_name)
 
       if (tolower(sheet) %in% tolower(self$sheet_names)) {
         fail <- TRUE
@@ -466,9 +469,6 @@ wbWorkbook <- R6::R6Class(
         empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
         self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
       }
-
-      ##  Add sheet to workbook.xml
-      sheet_name <- replace_legal_chars(sheet)
 
       self$append_sheets(
         sprintf(
@@ -4161,6 +4161,9 @@ wbWorkbook <- R6::R6Class(
 
     validate_new_sheet = function(sheet) {
       # returns nothing, throws error if there's a problem.
+      if (length(sheet) != 1) {
+        stop("sheet name must be length 1")
+      }
 
       if (is.na(sheet)) {
         stop("sheet cannot be NA")
@@ -4185,6 +4188,10 @@ wbWorkbook <- R6::R6Class(
       sheet <- as.character(sheet)
       if (has_illegal_chars(sheet)) {
         stop("illegal characters found in sheet. Please remove. See ?openxlsx::clean_worksheet_name")
+      }
+
+      if (!nzchar(sheet)) {
+        stop("sheet name must contain at least 1 character")
       }
 
       if (nchar(sheet) > 31) {
