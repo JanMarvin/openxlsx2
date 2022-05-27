@@ -137,7 +137,8 @@ minor helper wrapping xl_open which does the entire same thing
 
 \item{\code{worksheets_rels}}{worksheets_rels}
 
-\item{\code{sheetOrder}}{sheetOrder}
+\item{\code{sheetOrder}}{The sheet order.  Controls ordering for worksheets and
+worksheet names.}
 
 \item{\code{path}}{path}
 
@@ -174,7 +175,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
-\item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
+\item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
+\item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
 \item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-wbWorkbook-createCols}{\code{wbWorkbook$createCols()}}
@@ -733,12 +735,21 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-setSheetName"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-setSheetName}{}}}
-\subsection{Method \code{setSheetName()}}{
+\if{html}{\out{<a id="method-wbWorkbook-get_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_sheet_names}{}}}
+\subsection{Method \code{get_sheet_names()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_sheet_names}{}}}
+\subsection{Method \code{set_sheet_names()}}{
 Sets a sheet name
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old, new)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
