@@ -19,7 +19,7 @@ test_that("illegal characters are not allowed", {
   expect_error(wb$add_worksheet("forward\\slash"), "illegal")
   expect_error(wb$add_worksheet("back/slash"),     "illegal")
   expect_error(wb$add_worksheet("question?mark"),  "illegal")
-  expect_error(wb$add_worksheet("asterik:"),       "illegal")
+  expect_error(wb$add_worksheet("asterik*"),       "illegal")
   expect_error(wb$add_worksheet("colon:"),         "illegal")
   expect_error(wb$add_worksheet("open[bracket"),   "illegal")
   expect_error(wb$add_worksheet("closed]bracket"), "illegal")
