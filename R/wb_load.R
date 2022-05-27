@@ -745,32 +745,16 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         ## read in slicer[j].XML sheets into sheet[i]
         if (inds[i]) {
           wb$slicers[[i]] <- slicerXML[k]
-          k <- k + 1L
 
-          # wb$worksheets_rels[[i]] <- unlist(c(
-          #   wb$worksheets_rels[[i]],
-          #   sprintf('<Relationship Id="rId0" Type="http://schemas.microsoft.com/office/2007/relationships/slicer" Target="../slicers/slicer%s.xml"/>', i)
-          # ))
+          # this will add slicers to Content_Types. Ergo if worksheets with
+          # slicers are removed, the slicer needs to remain in the worksheet
           wb$Content_Types <- c(
             wb$Content_Types,
-            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', i)
+            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', k)
           )
 
+          k <- k + 1L
 
-          # # not sure if I want this. At least we do not create slicers?
-          # slicer_xml_exists <- FALSE
-          # ## Append slicer to worksheet extLst
-
-          # if (length(wb$worksheets[[i]]$extLst)) {
-          #   if (grepl('x14:slicer r:id="rId[0-9]+"', wb$worksheets[[i]]$extLst)) {
-          #     wb$worksheets[[i]]$extLst <- sub('x14:slicer r:id="rId[0-9]+"', 'x14:slicer r:id="rId0"', wb$worksheets[[i]]$extLst)
-          #     slicer_xml_exists <- TRUE
-          #   }
-          # }
-
-          # if (!slicer_xml_exists) {
-          #   wb$worksheets[[i]]$extLst <- c(wb$worksheets[[i]]$extLst, genBaseSlicerXML())
-          # }
         }
       }
     }
