@@ -1081,7 +1081,7 @@ wbWorkbook <- R6::R6Class(
 
         slicer <- self$slicers[self$slicers != ""]
         for (i in seq_along(slicer)) {
-          file.copy(self$slicers[i], file.path(slicersDir, sprintf("slicer%s.xml", i)), overwrite = TRUE, copy.date = TRUE)
+          file.copy(slicer[i], file.path(slicersDir, sprintf("slicer%s.xml", i)), overwrite = TRUE, copy.date = TRUE)
         }
 
         for (i in seq_along(self$slicerCaches)) {
