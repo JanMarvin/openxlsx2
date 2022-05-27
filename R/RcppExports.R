@@ -313,3 +313,7 @@ write_xml <- function(xml, fl) {
     invisible(.Call(`_openxlsx2_write_xml`, xml, fl))
 }
 
+write_xmlPtr <- function(doc, fl) {
+    invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
+}
+

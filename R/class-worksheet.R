@@ -252,6 +252,7 @@ wbWorksheet <- R6::R6Class(
         if (length(self$cols_attr)) {
           paste(c("<cols>", self$cols_attr, "</cols>"), collapse = "")
         },
+        '</worksheet>',
         sep = ""
       )
     },
@@ -373,8 +374,6 @@ wbWorksheet <- R6::R6Class(
             )
           )
         },
-
-        "</worksheet>",
 
         # end
         sep = ""
