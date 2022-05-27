@@ -151,7 +151,6 @@ wb_add_data <- function(
 #' @param sep Only applies to list columns. The separator used to collapse list
 #'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
 #'   sep).
-#' existing style is replaced by the new style.
 #' \cr\cr
 #' \cr**The below options correspond to Excel table options:**
 #' \cr
