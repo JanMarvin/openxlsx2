@@ -216,15 +216,18 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
   }
 
   # check if relationships for this sheet already has comment entry and get next free rId
-  if (length(wb$worksheets_rels[[sheet]]) == 0) 
-    wb$worksheets_rels[[sheet]] <- genBaseSheetRels(sheet)
+  if (length(wb$worksheets_rels[[sheet]]) == 0) wb$worksheets_rels[[sheet]] <- genBaseSheetRels(sheet)
   rels <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
   rels$typ <- basename(rels$Type)
   rels$id <- as.integer(gsub("\\D+", "", rels$Id))
   next_rid <- iterator(rels$id)
 
   # check Content_Types for comment entries and get next free comment id
-  next_id <- sum(vapply(wb$comments, function(x) length(x) > 0, NA), na.rm = TRUE) + 1
+  cmts <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
+  cmts$typ <- basename(cmts$Type)
+  cmts <- cmts[cmts$typ == "comment", ]
+  cmts$id <- as.integer(gsub("\\D+", "", cmts$Id))
+  next_id <- iterator(cmts$id)
 
   # if this sheet has no comment entry in relationships, add a new relationship
   # 1) to Content_Types
