@@ -608,8 +608,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
           cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
           names(cf) <- nms
           conditionalFormatting <- unlist(cf)
-          names(conditionalFormatting) <- unapply(nms, function(x) rep(x, length(cf[[x]])))
-
           wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
         }
 
@@ -747,32 +745,16 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         ## read in slicer[j].XML sheets into sheet[i]
         if (inds[i]) {
           wb$slicers[[i]] <- slicerXML[k]
-          k <- k + 1L
 
-          # wb$worksheets_rels[[i]] <- unlist(c(
-          #   wb$worksheets_rels[[i]],
-          #   sprintf('<Relationship Id="rId0" Type="http://schemas.microsoft.com/office/2007/relationships/slicer" Target="../slicers/slicer%s.xml"/>', i)
-          # ))
+          # this will add slicers to Content_Types. Ergo if worksheets with
+          # slicers are removed, the slicer needs to remain in the worksheet
           wb$Content_Types <- c(
             wb$Content_Types,
-            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', i)
+            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', k)
           )
 
+          k <- k + 1L
 
-          # # not sure if I want this. At least we do not create slicers?
-          # slicer_xml_exists <- FALSE
-          # ## Append slicer to worksheet extLst
-
-          # if (length(wb$worksheets[[i]]$extLst)) {
-          #   if (grepl('x14:slicer r:id="rId[0-9]+"', wb$worksheets[[i]]$extLst)) {
-          #     wb$worksheets[[i]]$extLst <- sub('x14:slicer r:id="rId[0-9]+"', 'x14:slicer r:id="rId0"', wb$worksheets[[i]]$extLst)
-          #     slicer_xml_exists <- TRUE
-          #   }
-          # }
-
-          # if (!slicer_xml_exists) {
-          #   wb$worksheets[[i]]$extLst <- c(wb$worksheets[[i]]$extLst, genBaseSlicerXML())
-          # }
         }
       }
     }
@@ -798,39 +780,42 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       tables <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=table)[0-9]+(?=\\.xml)", x, perl = TRUE))))
       tableSheets <- unapply(seq_along(sheets$`r:id`), function(i) rep(i, length(tables[[i]])))
 
-      if (length(unlist(tables))) {
+      ## sort the tables into the order they appear in the xml and tables variables
+      names(tablesXML) <- basename(tablesXML)
+      tablesXML <- tablesXML[sprintf("table%s.xml", unlist(tables))]
+      ## tables are now in correct order so we can read them in as they are
 
-        ## sort the tables into the order they appear in the xml and tables variables
-        names(tablesXML) <- basename(tablesXML)
-        tablesXML <- tablesXML[sprintf("table%s.xml", unlist(tables))]
-        ## tables are now in correct order so we can read them in as they are
-        wb$tables <- sapply(tablesXML, read_xml, pointer = FALSE)
+      tables_xml <- vapply(tablesXML, FUN = read_xml, pointer = FALSE, FUN.VALUE = NA_character_)
+      tabs <- rbindlist(xml_attr(tables_xml, "table"))
 
-        ## pull out refs and attach names
-        refs <- regmatches(wb$tables, regexpr('(?<=ref=")[0-9A-Z:]+', wb$tables, perl = TRUE))
-        names(wb$tables) <- refs
+      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', nrow(wb$tables)))
 
-        wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', seq_along(wb$tables)))
+      # # TODO When does this happen?
+      # if (length(tabs["displayName"]) != length(tablesXML)) {
+      #   tabs[["displayName"]] <- paste0("Table", seq_along(tablesXML))
+      # }
 
-        ## relabel ids
-        for (i in seq_along(wb$tables)) {
-          newId <- sprintf(' id="%s" ', i + 2)
-          wb$tables[[i]] <- sub(' id="[0-9]+" ', newId, wb$tables[[i]])
-        }
+      wb$tables <- data.frame(
+        tab_name = tabs[["displayName"]],
+        tab_sheet = tableSheets,
+        tab_ref = tabs[["ref"]],
+        tab_xml = as.character(tables_xml),
+        tab_act = 1,
+        stringsAsFactors = FALSE
+      )
 
-        displayNames <- unlist(regmatches(wb$tables, regexpr('(?<=displayName=").*?[^"]+', wb$tables, perl = TRUE)))
-        if (length(displayNames) != length(tablesXML)) {
-          displayNames <- paste0("Table", seq_along(tablesXML))
-        }
+      # ## relabel ids
+      # for (i in seq_len(nrow(wb$tables))) {
+      #   wb$tables$tab_xml[i] <- xml_attr_mod(wb$tables$tab_xml[i], xml_attributes = c(id = as.character(i + 2)))
+      # }
 
-        attr(wb$tables, "sheet") <- tableSheets
-        attr(wb$tables, "tableName") <- displayNames
-
-        for (i in seq_along(tableSheets)) {
-          table_sheet_i <- tableSheets[i]
-          attr(wb$worksheets[[table_sheet_i]]$tableParts, "tableName") <- c(attr(wb$worksheets[[table_sheet_i]]$tableParts, "tableName"), displayNames[i])
-        }
+      ## every worksheet containing a table, has a table part. this references
+      ## the display name, so that we know which tables are still around.
+      for (i in seq_along(tableSheets)) {
+        table_sheet_i <- tableSheets[i]
+        attr(wb$worksheets[[table_sheet_i]]$tableParts, "tableName") <- c(attr(wb$worksheets[[table_sheet_i]]$tableParts, "tableName"), tabs[["displayName"]][i])
       }
+
     } ## if (length(tablesXML))
 
     ## might we have some external hyperlinks
@@ -931,7 +916,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
             ind <- grepl(target, vmlDrawingXML)
 
             if (any(ind)) {
-              wb$vml[[i]] <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
+              vml <- paste(readLines(vmlDrawingXML[ind], encoding = "UTF-8", warn = FALSE), sep = "", collapse = "")
+              wb$vml[[i]] <- read_xml(gsub("<br>", "<br/>", vml), pointer = FALSE)
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {

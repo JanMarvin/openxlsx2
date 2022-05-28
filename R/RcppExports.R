@@ -305,7 +305,7 @@ set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
-write_worksheet <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
-    invisible(.Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data, cols_attr, R_fileName))
+write_worksheet <- function(prior, post, sheet_data, cols_attr, R_fileName, is_utf8) {
+    invisible(.Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data, cols_attr, R_fileName, is_utf8))
 }
 

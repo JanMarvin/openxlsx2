@@ -13,7 +13,7 @@ citEntry(
   note = vers,
   url = strsplit(meta$URL, ',')[[1]][1],
   textVersion = paste0(
-    paste(auth, collapse = ' and '), ' (', year, '). rmarkdown: ', meta$Title, '. ', vers, '.',
+    paste(auth, collapse = ' and '), ' (', year, '). openxlsx2: ', meta$Title, '. ', vers, '.',
     ' URL https://github.com/JanMarvin/openxlsx2.'
   )
 )

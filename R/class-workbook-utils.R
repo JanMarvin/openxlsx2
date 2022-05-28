@@ -67,7 +67,7 @@ wb_validate_table_name <- function(wb, tableName) {
   }
 
   # only place where self is needed
-  if (tableName %in% attr(wb$tables, "tableName")) {
+  if (tableName %in% wb$tables$tab_name) {
     stop(sprintf("table with name '%s' already exists", tableName), call. = FALSE)
   }
 
@@ -94,41 +94,39 @@ wb_check_overwrite_tables <- function(
 ) {
   # TODO pull out -- no assignemnts made
   ## check not overwriting another table
-  if (length(wb$tables)) {
-    tableSheets <- attr(wb$tables, "sheet")
+  if (!is.null(wb$tables)) {
+    tableSheets <- wb$tables$tab_sheet
     sheetNo <- wb_validate_sheet(wb, sheet)
 
-    to_check <-
-      which(tableSheets %in% sheetNo &
-          !grepl("openxlsx_deleted", attr(wb$tables, "tableName"), fixed = TRUE))
+    to_check <- tableSheets %in% sheetNo & wb$tables$tab_act == 1
 
     if (length(to_check)) {
       ## only look at tables on this sheet
 
-      exTable <- wb$tables[to_check]
+      exTable <- wb$tables[to_check,]
 
-      rows <- lapply(
-        names(exTable),
+      exTable$rows <- lapply(
+        exTable$tab_ref,
         function(rectCoords) {
           as.numeric(unlist(regmatches(rectCoords, gregexpr("[0-9]+", rectCoords))))
         }
       )
-      cols <- lapply(
-        names(exTable),
+      exTable$cols <- lapply(
+        exTable$tab_ref,
         function(rectCoords) {
           col2int(unlist(regmatches(rectCoords, gregexpr("[A-Z]+", rectCoords))))
         }
       )
 
       if (check_table_header_only) {
-        rows <- lapply(rows, function(x) c(x[1], x[1]))
+        exTable$rows <- lapply(exTable$rows, function(x) c(x[1], x[1]))
       }
 
 
       ## loop through existing tables checking if any over lap with new table
-      for (i in seq_along(exTable)) {
-        existing_cols <- cols[[i]]
-        existing_rows <- rows[[i]]
+      for (i in seq_len(NROW(exTable))) {
+        existing_cols <- exTable$cols[[i]]
+        existing_rows <- exTable$rows[[i]]
 
         if ((min(new_cols) <= max(existing_cols)) &&
             (max(new_cols) >= min(existing_cols)) &&

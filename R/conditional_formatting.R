@@ -318,7 +318,7 @@ wb_conditional_formatting <-
         stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
       }
 
-      if (class(style) != "character") {
+      if (!inherits(style, "character")) {
         stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
       }
 
@@ -347,7 +347,7 @@ wb_conditional_formatting <-
       }
 
       # TODO use inherits() not class()
-      if (class(style) != "character") {
+      if (!inherits(style, "character")) {
         stop("If type == 'dataBar', style must be a vector of colours of length 1 or 2.")
       }
 

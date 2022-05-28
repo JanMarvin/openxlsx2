@@ -153,11 +153,11 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
 
-  auto nn = x.length();
+  size_t nn = x.size();
   std::vector<std::string> all_names;
 
   // get unique names and create set
-  for (auto i = 0; i < nn; ++i) {
+  for (size_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
     std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
     std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
@@ -171,18 +171,18 @@ SEXP rbindlist(Rcpp::List x) {
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
 
-  for (auto i = 0; i < nn; ++i) {
+  for (size_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
 
     std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
     std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
 
-    for (auto j = 0; j < names.size(); ++j) {
+    for (size_t j = 0; j < names.size(); ++j) {
       auto find_res = unique_names.find(names[j]);
       auto mtc = std::distance(unique_names.begin(), find_res);
 
@@ -210,12 +210,12 @@ SEXP copy(SEXP x) {
 // [[Rcpp::export]]
 SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fill) {
 
-  auto kk = cols.size();
-  auto nn = rows.size();
+  size_t kk = cols.size();
+  size_t nn = rows.size();
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     if (fill)
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
@@ -223,8 +223,8 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fi
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  for (auto i = 0; i < nn; ++i) {
-    for (auto j = 0; j < kk; ++j) {
+  for (size_t i = 0; i < nn; ++i) {
+    for (size_t j = 0; j < kk; ++j) {
       if (fill)
         Rcpp::as<Rcpp::CharacterVector>(df[j])[i] = cols[j] + std::to_string(rows[i]);
     }
@@ -251,7 +251,7 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   Rcpp::CharacterVector vals = zz["val"];
   Rcpp::CharacterVector typs = zz["typ"];
 
-  for (auto i = 0; i < n; ++i) {
+  for (size_t i = 0; i < n; ++i) {
     col = cols[i];
     row = rows[i];
 
