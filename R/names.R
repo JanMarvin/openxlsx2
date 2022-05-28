@@ -47,7 +47,7 @@ names.wbWorkbook <- function(x) {
   }
 
   for (i in inds) {
-    invisible(x$setSheetName(i, value[[i]]))
+    invisible(x$set_sheet_names(i, value[[i]]))
   }
 
   invisible(x)
