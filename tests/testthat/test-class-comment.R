@@ -54,3 +54,19 @@ test_that("comments", {
   expect_silent(wb_save(wb, tmp))
 
 })
+
+
+test_that("load comments", {
+
+  fl <- system.file("extdata", "pivot_notes.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)
+
+  temp <- temp_xlsx()
+  wb$save(temp)
+
+  unzip(temp)
+  comments <- dir(path = "xl", pattern = "comment")
+
+  expect_equal(c("comments1.xml", "comments2.xml"), comments)
+
+})
