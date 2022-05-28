@@ -10,6 +10,8 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+A character vector of sheet names in their order
+
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
@@ -738,6 +740,7 @@ The \code{wbWorkbook} object
 \if{html}{\out{<a id="method-wbWorkbook-get_sheet_names"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-get_sheet_names}{}}}
 \subsection{Method \code{get_sheet_names()}}{
+Get sheet names
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
 }
@@ -749,15 +752,15 @@ The \code{wbWorkbook} object
 \subsection{Method \code{set_sheet_names()}}{
 Sets a sheet name
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old, new)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old = seq_along(self$sheet_names), new)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{Old sheet name}
+\item{\code{old}}{Old sheet name}
 
-\item{\code{name}}{New sheet name}
+\item{\code{new}}{New sheet name}
 }
 \if{html}{\out{</div>}}
 }
