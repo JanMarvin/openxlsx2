@@ -1739,16 +1739,18 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    #' @description Get sheet names
+    #' @returns A character vector of sheet names in their order
     get_sheet_names = function() {
       self$sheet_names[self$sheetOrder]
     },
 
     #' @description
     #' Sets a sheet name
-    #' @param sheet Old sheet name
-    #' @param name New sheet name
+    #' @param old Old sheet name
+    #' @param new New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    set_sheet_names = function(old, new) {
+    set_sheet_names = function(old = seq_along(self$sheet_names), new) {
       if (identical(old, new)) {
         return(self)
       }
@@ -1757,38 +1759,40 @@ wbWorkbook <- R6::R6Class(
       new_raw <- as.character(new)
       new_name <- replace_legal_chars(new_raw)
 
-      if (identical(self$sheet_names[[pos]], new_name)) {
+      if (identical(self$sheet_names[pos], new_name)) {
         return(self)
       }
 
-      private$validate_new_sheet_name(new_name)
-      private$set_single_sheet_name(pos, new_name, name_raw)
+      # should be able to pull this out into a single private function
+      for (i in seq_along(pos)) {
+        private$validate_new_sheet(new_name[i])
+        private$set_single_sheet_name(pos[i], new_name[i], new_raw[i])
+        # TODO move this work into private$set_single_sheet_name()
 
-      # TODO move this work into private$set_single_sheet_name()
+        ## Rename in workbook
+        sheetId <- private$get_sheet_id(type = "sheetId", old[i])
+        rId <- private$get_sheet_id(type = 'rId', old[i])
+        self$workbook$sheets[[old[i]]] <-
+          sprintf(
+            '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
+            new_name[i],
+            sheetId,
+            rId
+          )
 
-      ## Rename in workbook
-      sheetId <- private$get_sheet_id(type = "sheetId", sheet)
-      rId <- private$get_sheet_id(type = 'rId', sheet)
-      self$workbook$sheets[[sheet]] <-
-        sprintf(
-          '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          name,
-          sheetId,
-          rId
-        )
-
-      ## rename defined names
-      if (length(self$workbook$definedNames)) {
-        belongTo <- get_named_regions(self)$sheets
-        toChange <- belongTo == oldName
-        if (any(toChange)) {
-          name <- sprintf("'%s'", name)
-          tmp <-
-            gsub(oldName, name, self$workbook$definedName[toChange], fixed = TRUE)
-          tmp <- gsub("'+", "'", tmp)
-          self$workbook$definedNames[toChange] <- tmp
+        ## rename defined names
+        if (length(self$workbook$definedNames)) {
+          ind <- get_named_regions(self)$sheets == old
+          if (any(ind)) {
+            nn <- sprintf("'%s'", new_name[i])
+            nn <- stringi::stri_replace_all_fixed(self$workbook$definedName[ind], old, nn)
+            nn <- stringi::stri_replace_all(nn, "'+", "'" )
+            self$workbook$definedNames[ind] <- nn
+          }
         }
       }
+
+
 
       invisible(self)
     },
