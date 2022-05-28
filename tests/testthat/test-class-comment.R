@@ -73,4 +73,17 @@ test_that("load comments", {
   expect_equal(c("comments1.xml", "comments2.xml"), comments)
   unlink(temp_dir, recursive = TRUE)
 
+  ## add a new comment to a workbook that has comments
+  c1 <- create_comment(text = "this is a comment", author = "")
+  expect_silent(write_comment(wb, 5, col = "B", row = 10, comment = c1))
+
+  wb$save(temp)
+
+  dir.create(temp_dir)
+  unzip(temp, exdir = temp_dir)
+  comments <- dir(path = paste0(temp_dir, "/xl"), pattern = "comment")
+
+  expect_equal(c("comments1.xml", "comments2.xml", "comments3.xml"), comments)
+  unlink(temp_dir, recursive = TRUE)
+
 })
