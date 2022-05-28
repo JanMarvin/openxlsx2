@@ -1006,7 +1006,6 @@ wbWorkbook <- R6::R6Class(
       if (nComments > 0 | nVML > 0) {
 
         cmts <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
-        assign("cmts", cmts, globalenv())
         cmts$target <- basename(cmts$Target)
         cmts$typ <- basename(cmts$Type)
         cmts <- cmts[cmts$typ == "comments", ]

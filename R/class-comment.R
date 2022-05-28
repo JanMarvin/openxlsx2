@@ -144,16 +144,24 @@ create_comment <- function(text,
   width <- round(width)
   height <- round(height)
 
-  author <- author[1]
-  visible <- visible[1]
+  author <- replaceIllegalCharacters(author)
+  text <- replaceIllegalCharacters(text)
 
   if (is.null(style)) {
     style <- create_font()
   }
 
-  author <- replaceIllegalCharacters(author)
-  text <- replaceIllegalCharacters(text)
-
+  if (author != "") {
+    # if author is provided, we write additional lines with the author name as well as an empty line
+    text <- c(paste0(author, ":"), "\n", text)
+    style <- c(
+      # default node consist of these two styles for the author name and the empty line.
+      # values are default in MS365
+      '<rPr><b/><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr>',
+      '<rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr>',
+      style
+    )
+  }
 
   invisible(wbComment$new(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1]))
 }
