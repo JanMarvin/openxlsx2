@@ -224,9 +224,10 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
   # check Content_Types for comment entries and get next free comment id
   cmts <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
+  cmts$target <- basename(cmts$Target)
   cmts$typ <- basename(cmts$Type)
-  cmts <- cmts[cmts$typ == "comment", ]
-  cmts$id <- as.integer(gsub("\\D+", "", cmts$Id))
+  cmts <- cmts[cmts$typ == "comments", ]
+  cmts$id <- as.integer(gsub("\\D+", "", cmts$target))
   next_id <- iterator(cmts$id)
 
   # if this sheet has no comment entry in relationships, add a new relationship
