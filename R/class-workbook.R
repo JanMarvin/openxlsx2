@@ -1004,7 +1004,7 @@ wbWorkbook <- R6::R6Class(
 
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
-        sel <- vapply(wb$comments, function(x) length(x) > 0, NA)
+        sel <- vapply(self$comments, function(x) length(x) > 0, NA)
         comments <- self$comments[sel]
         # TODO use seq_len() or seq_along()?
         for (i in seq_along(comments)) {

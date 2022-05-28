@@ -208,42 +208,56 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
     "clientData" = genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
   )
 
-  fn <- sprintf("comments%s.xml", sheet)
+  # guard against integer(0) which is returned if no comment is found
+  iterator <- function(x) {
+    assert_class(x, "integer")
+    if (length(x) == 0) x <- 0
+    max(x) + 1
+  }
 
-  if (!any(grepl(fn, wb$Content_Types))) {
+  # check if relationships for this sheet already has comment entry and get next free rId
+  rels <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
+  rels$typ <- basename(rels$Type)
+  rels$id <- as.integer(gsub("\\D+", "", rels$Id))
+  next_rid <- iterator(rels$id)
+
+  # check Content_Types for comment entries and get next free comment id
+  ct <- rbindlist(xml_attr(wb$Content_Types, "Override"))
+  ct$parts <- basename(ct$PartName)
+  comments <- grepl("comments", ct$parts)
+  ct <- ct[comments,]
+  ct$commentsId <- as.integer(gsub("\\D+", "", ct$parts))
+  next_id <- iterator(ct$commentsId)
+
+  # if this sheet has no comment entry in relationships, add a new relationship
+  # 1) to Content_Types
+  # 2) to worksheets_rels
+  if (all(rels$typ != "comments")) {
     wb$Content_Types <- c(
       wb$Content_Types,
       sprintf(
-        '<Override PartName="/xl/%s" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
-        fn
+        '<Override PartName="/xl/comments%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>',
+        next_id
+      )
+    )
+
+    wb$worksheets_rels[[sheet]] <- c(
+      wb$worksheets_rels[[sheet]],
+      sprintf(
+        '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../comments%s.xml"/>',
+        next_rid,
+        next_id
       )
     )
   }
 
   wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
 
-  relship <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
-  relship$typ <- basename(relship$Type)
-  relship$id  <- as.integer(gsub("\\D+", "", relship$Id))
-
-  next_rid <- max(relship$id) + 1
-  if (any(relship$typ == "comments"))
-    next_rid <- relship$id[relship$typ == "comments"]
-
   # unique? keep prev legacyDrawing?
   #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
   # TODO hardcoded 2. Marvin fears that this is not good enough
-  wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', 2)
+  wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_id)
 
-
-  wb$worksheets_rels[[sheet]] <- unique(c(
-    wb$worksheets_rels[[sheet]],
-    sprintf(
-      '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../%s"/>',
-      next_rid,
-      fn
-    )
-  ))
 
   invisible(wb)
 }
