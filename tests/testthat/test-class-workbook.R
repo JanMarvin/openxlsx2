@@ -40,3 +40,20 @@ test_that("wb_set_col_widths", {
   expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
 })
+
+
+# order -------------------------------------------------------------------
+
+test_that("$set_order() works", {
+  wb <- wb_workbook()
+  wb$add_worksheet("a")
+  wb$add_worksheet("b")
+  wb$add_worksheet("c")
+
+  expect_identical(wb$sheetOrder, 1:3)
+  expect_identical(wb$get_sheet_names(), letters[1:3])
+
+  wb$set_order(3:1)
+  expect_identical(wb$sheetOrder, 3:1)
+  expect_identical(wb$get_sheet_names(), letters[3:1])
+})
