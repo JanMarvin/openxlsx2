@@ -64,9 +64,13 @@ test_that("load comments", {
   temp <- temp_xlsx()
   wb$save(temp)
 
-  unzip(temp)
-  comments <- dir(path = "xl", pattern = "comment")
+  temp_dir <- "comment_ext"
+
+  dir.create(temp_dir)
+  unzip(temp, exdir = temp_dir)
+  comments <- dir(path = paste0(temp_dir, "/xl"), pattern = "comment")
 
   expect_equal(c("comments1.xml", "comments2.xml"), comments)
+  unlink(temp_dir, recursive = TRUE)
 
 })
