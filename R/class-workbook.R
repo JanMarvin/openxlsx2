@@ -1004,16 +1004,27 @@ wbWorkbook <- R6::R6Class(
 
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
-        # TODO use seq_len() or seq_along()?
-        for (i in seq_len(nSheets)) {
-          if (length(self$comments[[i]])) {
-            fn <- sprintf("comments%s.xml", i)
 
-            write_comment_xml(
-              comment_list = self$comments[[i]],
-              file_name = file.path(tmpDir, "xl", fn)
-            )
-          }
+        cmts <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
+        cmts$target <- basename(cmts$Target)
+        cmts$typ <- basename(cmts$Type)
+        cmts <- cmts[cmts$typ == "comments", ]
+        cmts$id <- as.integer(gsub("\\D+", "", cmts$target))
+
+        sel <- vapply(self$comments, function(x) length(x) > 0, NA)
+        comments <- self$comments[sel]
+
+        if (length(cmts$id) != length(comments))
+          warning("comments length != comments ids")
+
+        # TODO use seq_len() or seq_along()?
+        for (i in seq_along(comments)) {
+          fn <- sprintf("comments%s.xml", cmts$id[i])
+
+          write_comment_xml(
+            comment_list = comments[[i]],
+            file_name = file.path(tmpDir, "xl", fn)
+          )
         }
 
         private$writeDrawingVML(xldrawingsDir)
