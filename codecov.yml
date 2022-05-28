@@ -1,2 +1,15 @@
 codecov:
   token: 7b8cbf77-2ed6-4b1b-95b3-2a7eca741817
+
+# configuration related to pull request comments
+comment: no # do not comment PR with the result
+
+coverage:
+  status:
+    project: # settings affecting project coverage
+      default:
+        target: auto # auto % coverage target
+        threshold: 5%  # allow for 5% reduction of coverage without failing
+
+    # do not run coverage on patch nor changes
+    patch: false
