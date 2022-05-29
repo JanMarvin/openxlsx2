@@ -223,11 +223,13 @@ XPtrXML write_worksheet(
       sheetData.append_copy(sd);
   }
 
-  pugi::xml_document xml_po;
-  result = xml_po.load_string(post.c_str(), pugi_parse_flags);
-  if (!result) Rcpp::stop("loading post while writing failed");
-  for (auto po : xml_po.children())
-    worksheet.append_copy(po);
+  if (!post.empty()) {
+    pugi::xml_document xml_po;
+    result = xml_po.load_string(post.c_str(), pugi_parse_flags);
+    if (!result) Rcpp::stop("loading post while writing failed");
+    for (auto po : xml_po.children())
+      worksheet.append_copy(po);
+  }
 
 
   // doc->load_string(post.c_str());

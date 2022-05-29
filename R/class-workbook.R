@@ -1382,21 +1382,21 @@ wbWorkbook <- R6::R6Class(
         }
 
       ## write styles.xml
-      #if (class(self$styles_xml) == "uninitializedField") {
-      write_file(
-        head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr9="http://schemas.microsoft.com/office/spreadsheetml/2016/revision9" mc:Ignorable="x14ac x16r2 xr xr9">',
-        body = pxml(styleXML),
-        tail = "</styleSheet>",
-        fl = file.path(xlDir, "styles.xml")
-      )
-      #} else {
-      #  write_file(
-      #    head = '',
-      #    body = self$styles_xml,
-      #    tail = '',
-      #    fl = file.path(xlDir, "styles.xml")
-      #  )
-      #}
+      if (length(unlist(self$styles_mgr$styles))) {
+        write_file(
+          head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr9="http://schemas.microsoft.com/office/spreadsheetml/2016/revision9" mc:Ignorable="x14ac x16r2 xr xr9">',
+          body = pxml(styleXML),
+          tail = "</styleSheet>",
+          fl = file.path(xlDir, "styles.xml")
+        )
+      } else {
+       write_file(
+         head = '',
+         body = '<styleSheet xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>',
+         tail = '',
+         fl = file.path(xlDir, "styles.xml")
+       )
+      }
 
       if (length(self$calcChain)) {
         write_file(
