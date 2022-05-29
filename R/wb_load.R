@@ -176,16 +176,20 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     sheets <- merge(
       sheets, wb_rels_xml,
       by.x = "r:id", by.y = "Id",
-      all.x = TRUE, all.y = FALSE
+      all.x = TRUE,
+      all.y = FALSE,
+      sort = FALSE
     )
 
-    ## sheetId is meaningless
+    # if /xl/ is not in the path add it
+    xl_path <- ifelse(grepl("/xl/",sheets$Target), "", "/xl/")
+
+    ## sheetId does not mean sheet order. Sheet order is defined in the index position here
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
     sheets$typ <- basename(sheets$Type)
-    sheets$target <- stri_join(xmlDir, "/xl/", sheets$Target)
-    sheets$id <- rank(as.numeric(gsub("[^0-9.-]+", "", sheets$`r:id`)))
-    sheets <- sheets[order(sheets$id),]
+    sheets$target <- stri_join(xmlDir, xl_path, sheets$Target)
+    sheets$id <- as.numeric(sheets$sheetId)
 
     if (is.null(sheets$state)) sheets$state <- "visible"
     is_visible <- sheets$state %in% c("", "true", "visible")
