@@ -60,14 +60,12 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
       stringi::stri_read_lines(xml, encoding = "UTF-8"),
       collapse = "")
 
-    if (grepl("x:", xml)) {
+    if (grepl('xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', xml)) {
       xml <- stringi::stri_replace_all_fixed(xml, "<x:", "<")
       xml <- stringi::stri_replace_all_fixed(xml, "</x:", "</")
     }
 
     isfile <- FALSE
-  } else {
-    assign("xml", xml, globalenv())
   }
 
   if (pointer) {
