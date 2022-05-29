@@ -51,9 +51,24 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
   if (identical(xml, ""))
     xml <- "<NA_character_ />"
 
-
   # for non utf8 systems, read xml input files as utf8
   utf8 <- isTRUE(l10n_info()[["UTF-8"]])
+
+  if (isfile) {
+
+    xml <- stringi::stri_join(
+      stringi::stri_read_lines(xml, encoding = "UTF-8"),
+      collapse = "")
+
+    if (grepl("x:", xml)) {
+      xml <- stringi::stri_replace_all_fixed(xml, "<x:", "<")
+      xml <- stringi::stri_replace_all_fixed(xml, "</x:", "</")
+    }
+
+    isfile <- FALSE
+  } else {
+    assign("xml", xml, globalenv())
+  }
 
   if (pointer) {
     z <- readXMLPtr(xml, isfile, escapes, declaration, utf8)

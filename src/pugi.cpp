@@ -18,6 +18,7 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, b
   }
 
   if (!result) {
+    Rcpp::Rcout << path << std::endl;
     Rcpp::stop("xml import unsuccessfull");
   }
 
@@ -49,6 +50,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   }
 
   if (!result) {
+    Rcpp::Rcout << path << std::endl;
     Rcpp::stop("xml import unsuccessfull");
   }
 
