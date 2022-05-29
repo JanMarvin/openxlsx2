@@ -14,7 +14,7 @@ test_that("strings_xml", {
     txt_to_si(txt, raw = TRUE)
   )
   expect_equal(
-    "<si>\n<t>foo</t>\n</si>\n",
+    "<si>\n <t>foo</t>\n</si>\n",
     txt_to_si(txt, raw = FALSE)
   )
 
@@ -24,7 +24,7 @@ test_that("strings_xml", {
     txt_to_si(txt, raw = TRUE, no_escapes = FALSE)
   )
   expect_equal(
-    "<si>\n<t xml:space=\"preserve\">foo </t>\n</si>\n",
+    "<si>\n <t xml:space=\"preserve\">foo </t>\n</si>\n",
     txt_to_si(txt, raw = FALSE, no_escapes = FALSE)
   )
 
@@ -54,7 +54,7 @@ test_that("strings_xml", {
     txt_to_is(txt, raw = TRUE, no_escapes = FALSE)
   )
   expect_equal(
-    "<is>\n<t>foo</t>\n</is>\n",
+    "<is>\n <t>foo</t>\n</is>\n",
     txt_to_is(txt, raw = FALSE, no_escapes = FALSE)
   )
 
@@ -64,7 +64,7 @@ test_that("strings_xml", {
     txt_to_is(txt, raw = TRUE, no_escapes = FALSE)
   )
   expect_equal(
-    "<is>\n<t xml:space=\"preserve\">foo </t>\n</is>\n",
+    "<is>\n <t xml:space=\"preserve\">foo </t>\n</is>\n",
     txt_to_is(txt, raw = FALSE, no_escapes = FALSE)
   )
 

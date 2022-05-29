@@ -67,7 +67,7 @@ std::string txt_to_si(Rcpp::CharacterVector txt,
   }
 
   std::ostringstream oss;
-  doc.print(oss, "", pugi_format_flags);
+  doc.print(oss, " ", pugi_format_flags);
   std::string xml_return = oss.str();
 
   return xml_return;
@@ -147,7 +147,7 @@ std::string txt_to_is(std::string text,
   t_node.append_child(pugi::node_pcdata).set_value(text.c_str());
 
   std::ostringstream oss;
-  doc.print(oss, "", pugi_format_flags);
+  doc.print(oss, " ", pugi_format_flags);
   std::string xml_return = oss.str();
 
   return xml_return;
