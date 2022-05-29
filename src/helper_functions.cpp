@@ -97,7 +97,7 @@ std::string int_to_col(uint32_t cell) {
 
 // driver function for col_to_int
 uint32_t uint_col_to_int(std::string& a) {
-  
+
   char A = 'A';
   int aVal = (int)A - 1;
   int sum = 0;
@@ -186,7 +186,7 @@ SEXP rbindlist(Rcpp::List x) {
       auto find_res = unique_names.find(names[j]);
       auto mtc = std::distance(unique_names.begin(), find_res);
 
-      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = values[j];
+      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = Rcpp::String(values[j]);
     }
 
   }

@@ -1436,7 +1436,6 @@ wbWorkbook <- R6::R6Class(
         "fileRecoveryPr", "webPublishObjects", "extLst"
       )
 
-
       write_file(
         head = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x15 xr xr6 xr10 xr2" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr6="http://schemas.microsoft.com/office/spreadsheetml/2016/revision6" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2">',
         body = pxml(workbookXML[workbook_openxml281]),
@@ -4373,14 +4372,13 @@ wbWorkbook <- R6::R6Class(
           # # restore order
           # ws$sheet_data$row_attr <- row_attr[wanted]
 
-          write_worksheet(
+          # create entire sheet prior to writing it
+          sheet_xml <- write_worksheet(
             prior = prior,
             post = post,
-            sheet_data = ws$sheet_data,
-            cols_attr = ws$cols_attr,
-            R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)),
-            is_utf8 = l10n_info()[["UTF-8"]]
+            sheet_data = ws$sheet_data
           )
+          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {

@@ -78,3 +78,19 @@ test_that("read <br> node in vml", {
   expect_silent(wb <- wb_load("macro2.xlsm"))
 
 })
+
+test_that("encoding", {
+
+  fl <- "https://github.com/JanMarvin/openxlsx2/files/8779041/umlauts.xlsx"
+  wb <- wb_load(fl)
+  expect_equal("äöüß", names(wb))
+
+  exp <- structure(list(hähä = "ÄÖÜ", höhö = "äöüß"),
+                   row.names = 2L, class = "data.frame",
+                   tt = structure(list(hähä = "s", höhö = "s"),
+                                  row.names = 2L, class = "data.frame"),
+                   types = c(A = 0, B = 0))
+
+  expect_equal(exp, wb_to_df(wb))
+
+})
