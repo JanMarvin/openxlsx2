@@ -190,12 +190,6 @@ write_comment_xml <- function(comment_list, file_name) {
 
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
-      # write author to top of node. will be written in bold
-      if ((j == 1) && (comment_list[[i]]$author != ""))
-        xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
-          gsub("font>", "rPr>", create_font(b = "true")),
-          paste0(comment_list[[i]]$author, ":\n")))
-
       # write styles and comments
       xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
         comment_list[[i]]$style[[j]],

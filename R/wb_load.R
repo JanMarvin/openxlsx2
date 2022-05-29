@@ -968,23 +968,19 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
             target <- apply_reg_match(commentXMLrelationship[[i]], '(?<=Target=").*?"')
             target <- basename(gsub('"$', "", target))
 
+            # read xml and split into authors and comments
             txt <- read_xml(grep(target, commentsXML, value = TRUE))
-
-            authors <- xml_node(txt, "comments", "authors", "author")
-            authors <- gsub("<author>|</author>", "", authors)
-
+            authors <- xml_value(txt, "comments", "authors", "author")
             comments <- xml_node(txt, "comments", "commentList", "comment")
 
-            refs <- regmatches(comments, regexpr('(?<=ref=").*?[^"]+', comments, perl = TRUE))
+            comments_attr <- rbindlist(xml_attr(comments, "comment"))
 
-            authorsInds <- as.integer(regmatches(comments, regexpr('(?<=authorId=").*?[^"]+', comments, perl = TRUE))) + 1
+            refs <- comments_attr$ref
+            authorsInds <- as.integer(comments_attr$authorId) + 1
             authors <- authors[authorsInds]
 
             style <- lapply(comments, function(x) unlist(xml_node(x, "comment", "text", "r", "rPr")) )
-
-            comments <- regmatches(comments,
-                                   gregexpr("(?<=<t( |>))[\\s\\S]+?(?=</t>)", comments, perl = TRUE))
-            comments <- lapply(comments, function(x) gsub(".*?>", "", x, perl = TRUE))
+            comments <- lapply(comments, function(x) unlist(xml_value(x, "comment", "text", "r", "t")) )
 
             wb$comments[[i]] <- lapply(seq_along(comments), function(j) {
               list(
