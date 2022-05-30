@@ -369,27 +369,10 @@ wbWorkbook <- R6::R6Class(
       sheet_name <- replace_legal_chars(sheet)
       private$validate_new_sheet(sheet_name)
 
-      if (tolower(sheet) %in% tolower(self$sheet_names)) {
-        fail <- TRUE
-        msg <- c(
-          msg,
-          sprintf("A worksheet by the name \"%s\" already exists.", sheet),
-          "Sheet names must be unique case-insensitive."
-        )
-      }
 
       if (!is.logical(gridLines) | length(gridLines) > 1) {
         fail <- TRUE
         msg <- c(msg, "gridLines must be a logical of length 1.")
-      }
-
-      if (nchar(sheet) > 31) {
-        fail <- TRUE
-        msg <- c(
-          msg,
-          sprintf("sheet \"sheet\" too long.", sheet),
-          "Max length is 31 characters."
-        )
       }
 
       if (!is.null(tabColour)) {
@@ -549,29 +532,15 @@ wbWorkbook <- R6::R6Class(
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
     clone_worksheet = function(old, new) {
+      private$validate_new_sheet(new)
       old <- private$get_sheet_index(old)
-
-      if (tolower(new) %in% tolower(self$sheet_names)) {
-        stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
-      }
-
-      if (nchar(new) > 31) {
-        stop("sheet too long! Max length is 31 characters.")
-      }
-
-      if (!is.character(new)) {
-        new <- as.character(new)
-      }
-
-      ## Invalid XML characters
-      new <- replace_legal_chars(new)
-      if (grepl(pattern = ":", x = new)) {
-        stop("colon not allowed in sheet names in Excel")
-      }
 
       newSheetIndex <- length(self$worksheets) + 1L
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
+      # not the best but a quick fix
+      new_raw <- new
+      new <- replace_legal_chars(new)
 
       ## copy visibility from cloned sheet!
       visible <- reg_match0(self$workbook$sheets[[old]], '(?<=state=")[^"]+')
@@ -671,7 +640,7 @@ wbWorkbook <- R6::R6Class(
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
-
+      private$set_single_sheet_name(pos = newSheetIndex, clean = new, raw = new_raw)
 
       ############################
       ## TABLES
@@ -1767,12 +1736,25 @@ wbWorkbook <- R6::R6Class(
         return(self)
       }
 
+      if (!length(self$worksheets)) {
+        stop("workbook does not contain any sheets")
+      }
+
+      if (length(old) != length(new)) {
+        stop("`old` and `new` must be the same length")
+      }
+
       pos <- private$get_sheet_index(old)
       new_raw <- as.character(new)
       new_name <- replace_legal_chars(new_raw)
 
       if (identical(self$sheet_names[pos], new_name)) {
         return(self)
+      }
+
+      bad <- duplicated(tolower(new))
+      if (any(bad)) {
+        stop("Sheet names cannot have duplicates: ", toString(new[bad]))
       }
 
       # should be able to pull this out into a single private function
@@ -2305,6 +2287,7 @@ wbWorkbook <- R6::R6Class(
 
       self$remove_named_region(sheet)
       self$sheet_names <- self$sheet_names[-sheet]
+      private$original_sheet_names <- private$original_sheet_names[-sheet]
 
       xml_rels <- rbindlist(
          xml_attr(self$worksheets_rels[[sheet]], "Relationship")
@@ -3675,7 +3658,7 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", min(printTitleRows)),
           ref2 = paste0("$", max(printTitleRows)),
           name = "_xlnm.Print_Titles",
-          sheet = names(self)[[sheet]],
+          sheet = self$get_sheet_names()[[sheet]],
           localSheetId = sheet - 1L
         )
       } else if (!is.null(printTitleCols) && is.null(printTitleRows)) {
@@ -3706,7 +3689,7 @@ wbWorkbook <- R6::R6Class(
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
         localSheetId <- sheet - 1L
-        sheet <- names(self)[[sheet]]
+        sheet <- self$get_sheet_names()[[sheet]]
 
         self$workbook$definedNames <- c(
           self$workbook$definedNames,

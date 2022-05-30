@@ -699,7 +699,7 @@ wb_get_selected <- function(wb) {
 
   # print(sv)
   z <- rbindlist(xml_attr(sv, "sheetView"))
-  z$names <- names(wb)
+  z$names <- wb$get_sheet_names()
 
   z
 }

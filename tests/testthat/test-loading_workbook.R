@@ -762,7 +762,7 @@ test_that("Read and save file with inlineStr", {
   rownames(df) <- c(2L, 3L)
 
   # compare file imported with inlineStr
-  expect_true(all.equal(df, wb_df, compare.attributes = FALSE))
+  expect_equal(df, wb_df)
 
   df_read_xlsx <- read_xlsx(fl)
   attr(df_read_xlsx, "tt") <- NULL
@@ -772,16 +772,16 @@ test_that("Read and save file with inlineStr", {
   attr(df_wb_read, "tt") <- NULL
   attr(df_wb_read, "types") <- NULL
 
-  expect_true(all.equal(df, df_read_xlsx, compare.attributes = FALSE))
-  expect_true(all.equal(df, df_wb_read, compare.attributes = FALSE))
+  expect_equal(df, df_read_xlsx)
+  expect_equal(df, df_wb_read)
 
   tmp_xlsx <- temp_xlsx()
   # Check that wb can be saved without error and reimported
-  expect_equal(tmp_xlsx, wb_save(wb, path = tmp_xlsx))
+  expect_identical(tmp_xlsx, wb_save(wb, path = tmp_xlsx))
   wb_df_re <- wb_read(wb_load(tmp_xlsx))
   attr(wb_df_re, "tt") <- NULL
   attr(wb_df_re, "types") <- NULL
-  expect_true(all.equal(wb_df, wb_df_re, compare.attributes = FALSE))
+  expect_equal(wb_df, wb_df_re)
 
 })
 
@@ -847,7 +847,7 @@ test_that("sheet visibility", {
 
   # after load
   wb <- wb_load(fl)
-  wb_sheets <- names(wb)
+  wb_sheets <- wb$get_sheet_names()
   wb_vis <- wb_get_sheet_visibility(wb)
 
   # save
@@ -855,15 +855,14 @@ test_that("sheet visibility", {
 
   # re-import
   wb2 <- wb_load(tmp_dir)
-  wb2_sheets <- names(wb)
+  wb2_sheets <- wb$get_sheet_names()
   wb2_vis <- wb_get_sheet_visibility(wb)
 
-  expect_equal(exp_sheets, wb_sheets)
+  expect_equal(exp_sheets, names(wb_sheets))
   expect_equal(exp_vis, wb_vis)
 
-  expect_equal(exp_sheets, wb2_sheets)
+  expect_equal(exp_sheets, names(wb2_sheets))
   expect_equal(exp_vis, wb2_vis)
-
 })
 
 
@@ -873,7 +872,7 @@ test_that("additional wb tests", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
 
-  expect_equal(NULL, wb_to_df(wb, sheet = "Sheet 1"))
+  expect_message(expect_null(wb_to_df(wb, sheet = "Sheet 1")), "no data")
 
   # wb_to_df
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
@@ -899,7 +898,6 @@ test_that("additional wb tests", {
                   types = c("Var1" = 0, "Var3" = 1))[seq_len(4),]
   expect_equal(exp, got, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
-
 })
 
 test_that("test headerFooter", {

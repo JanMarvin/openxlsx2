@@ -3,7 +3,7 @@ test_that("Worksheet names", {
   ### test for names without special character
   sheetname <- "test"
   wb <- wb_add_worksheet(wb_workbook(), sheetname)
-  expect_identical(sheetname, names(wb))
+  expect_identical(sheetname, names(wb$get_sheet_names()))
 })
 
 test_that("legal characters are allowed", {
