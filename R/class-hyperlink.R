@@ -99,7 +99,6 @@ xml_to_hyperlink <- function(xml) {
   names <- lapply(a, function(i) regmatches(i, regexpr('[a-zA-Z]+(?=\\=".*?")', i, perl = TRUE)))
   vals <- lapply(a, function(i) {
     res <- regmatches(i, regexpr('(?<=").*?(?=")', i, perl = TRUE))
-    Encoding(res) <- "UTF-8"
     res
   })
 

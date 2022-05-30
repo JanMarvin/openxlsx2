@@ -990,16 +990,27 @@ wbWorkbook <- R6::R6Class(
 
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
-        # TODO use seq_len() or seq_along()?
-        for (i in seq_len(nSheets)) {
-          if (length(self$comments[[i]])) {
-            fn <- sprintf("comments%s.xml", i)
 
-            write_comment_xml(
-              comment_list = self$comments[[i]],
-              file_name = file.path(tmpDir, "xl", fn)
-            )
-          }
+        cmts <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
+        cmts$target <- basename(cmts$Target)
+        cmts$typ <- basename(cmts$Type)
+        cmts <- cmts[cmts$typ == "comments", ]
+        cmts$id <- as.integer(gsub("\\D+", "", cmts$target))
+
+        sel <- vapply(self$comments, function(x) length(x) > 0, NA)
+        comments <- self$comments[sel]
+
+        if (length(cmts$id) != length(comments))
+          warning("comments length != comments ids")
+
+        # TODO use seq_len() or seq_along()?
+        for (i in seq_along(comments)) {
+          fn <- sprintf("comments%s.xml", cmts$id[i])
+
+          write_comment_xml(
+            comment_list = comments[[i]],
+            file_name = file.path(tmpDir, "xl", fn)
+          )
         }
 
         private$writeDrawingVML(xldrawingsDir)
@@ -1065,9 +1076,9 @@ wbWorkbook <- R6::R6Class(
         slicersDir      <- dir_create(tmpDir, "xl", "slicers")
         slicerCachesDir <- dir_create(tmpDir, "xl", "slicerCaches")
 
-        # for (i in which(nchar(self$slicers > 1))) {
-        for (i in which(nzchar(self$slicers))) {
-          file.copy(self$slicers[i], file.path(slicersDir, sprintf("slicer%s.xml", i)), overwrite = TRUE, copy.date = TRUE)
+        slicer <- self$slicers[self$slicers != ""]
+        for (i in seq_along(slicer)) {
+          file.copy(slicer[i], file.path(slicersDir, sprintf("slicer%s.xml", i)), overwrite = TRUE, copy.date = TRUE)
         }
 
         for (i in seq_along(self$slicerCaches)) {
@@ -1357,21 +1368,21 @@ wbWorkbook <- R6::R6Class(
         }
 
       ## write styles.xml
-      #if (class(self$styles_xml) == "uninitializedField") {
-      write_file(
-        head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr9="http://schemas.microsoft.com/office/spreadsheetml/2016/revision9" mc:Ignorable="x14ac x16r2 xr xr9">',
-        body = pxml(styleXML),
-        tail = "</styleSheet>",
-        fl = file.path(xlDir, "styles.xml")
-      )
-      #} else {
-      #  write_file(
-      #    head = '',
-      #    body = self$styles_xml,
-      #    tail = '',
-      #    fl = file.path(xlDir, "styles.xml")
-      #  )
-      #}
+      if (length(unlist(self$styles_mgr$styles))) {
+        write_file(
+          head = '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr9="http://schemas.microsoft.com/office/spreadsheetml/2016/revision9" mc:Ignorable="x14ac x16r2 xr xr9">',
+          body = pxml(styleXML),
+          tail = "</styleSheet>",
+          fl = file.path(xlDir, "styles.xml")
+        )
+      } else {
+       write_file(
+         head = '',
+         body = '<styleSheet xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>',
+         tail = '',
+         fl = file.path(xlDir, "styles.xml")
+       )
+      }
 
       if (length(self$calcChain)) {
         write_file(
@@ -1410,7 +1421,6 @@ wbWorkbook <- R6::R6Class(
         "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr", "smartTagTypes", "webPublishing",
         "fileRecoveryPr", "webPublishObjects", "extLst"
       )
-
 
       write_file(
         head = '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x15 xr xr6 xr10 xr2" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr6="http://schemas.microsoft.com/office/spreadsheetml/2016/revision6" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2">',
@@ -1696,9 +1706,6 @@ wbWorkbook <- R6::R6Class(
     #' @param fontName fontName
     #' @return The `wbWorkbook` object
     set_base_font = function(fontSize = 11, fontColour = "black", fontName = "Calibri") {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       if (fontSize < 0) stop("Invalid fontSize")
       fontColour <- validateColour(fontColour)
 
@@ -1809,10 +1816,8 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
     set_row_heights = function(sheet, rows, heights) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
+
       # TODO move to wbWorksheet method
       # TODO consider reworking rowHeights
       # self$worksheets[[sheet]]$set_row_heights(rows = rows, heights = heights)
@@ -1857,11 +1862,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet, rows) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
-
       customRows <- as.integer(names(self$rowHeights[[sheet]]))
       removeInds <- which(customRows %in% rows)
 
@@ -1893,9 +1894,6 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_cols = function(sheet, cols, collapsed = FALSE, levels = NULL) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(cols)) {
@@ -1962,9 +1960,6 @@ wbWorkbook <- R6::R6Class(
     #' @param cols = cols
     #' @returns The `wbWorkbook` object
     ungroup_cols = function(sheet, cols) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
@@ -2002,8 +1997,6 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     remove_col_widths = function(sheet, cols) {
       sheet <- private$get_sheet_index(sheet)
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
 
       if (!is.numeric(cols)) {
         cols <- col2int(cols)
@@ -2145,9 +2138,6 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(rows)) {
@@ -2209,9 +2199,6 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object
     ungroup_rows = function(sheet, rows) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
@@ -2457,9 +2444,6 @@ wbWorkbook <- R6::R6Class(
       showInputMsg = TRUE,
       showErrorMsg = TRUE
     ) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       ## rows and cols
       if (!is.numeric(cols)) {
         cols <- col2int(cols)
@@ -2980,8 +2964,6 @@ wbWorkbook <- R6::R6Class(
       firstCol = FALSE
     ) {
       # TODO rename to setFreezePanes?
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
 
       # fine to do the validation before the actual check to prevent other errors
       sheet <- private$get_sheet_index(sheet)
@@ -3089,9 +3071,6 @@ wbWorkbook <- R6::R6Class(
       units     = "in",
       dpi       = 300
     ) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       if (!file.exists(file)) {
         stop("File does not exist.")
       }
@@ -3242,9 +3221,6 @@ wbWorkbook <- R6::R6Class(
       units     = "in",
       dpi       = 300
     ) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       if (is.null(dev.list()[[1]])) {
         warning("No plot to insert.")
         return(self)
@@ -3723,9 +3699,6 @@ wbWorkbook <- R6::R6Class(
     ) {
       sheet <- private$get_sheet_index(sheet)
 
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       if (!is.null(header) && length(header) != 3) {
         stop("header must have length 3 where elements correspond to positions: left, center, right.")
       }
@@ -3863,8 +3836,6 @@ wbWorkbook <- R6::R6Class(
     #' @param cols cols
     #' @returns The `wbWorkbook` object
     add_filter = function(sheet, rows, cols) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
       if (length(rows) != 1) {
@@ -3899,9 +3870,6 @@ wbWorkbook <- R6::R6Class(
     #' @param show show
     #' @returns The `wbWorkbook` object
     grid_lines = function(sheet, show = FALSE) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
 
       if (!is.logical(show)) {
@@ -3939,9 +3907,6 @@ wbWorkbook <- R6::R6Class(
       localSheetId = NULL,
       overwrite = FALSE
     ) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       sheet <- private$get_sheet_index(sheet)
 
       if (!is.numeric(rows)) {
@@ -4061,9 +4026,6 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
     set_sheet_visibility = function(sheet, value) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
-
       if (length(value) != length(sheet)) {
         stop("`value` and `sheet` must be the same length")
       }
@@ -4109,8 +4071,6 @@ wbWorkbook <- R6::R6Class(
     #' @param col col
     #' @returns The `wbWorkbook` object
     add_page_break = function(sheet, row = NULL, col = NULL) {
-      op <- openxlsx2_options()
-      on.exit(options(op), add = TRUE)
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
       self
@@ -4512,14 +4472,13 @@ wbWorkbook <- R6::R6Class(
           # # restore order
           # ws$sheet_data$row_attr <- row_attr[wanted]
 
-          write_worksheet(
+          # create entire sheet prior to writing it
+          sheet_xml <- write_worksheet(
             prior = prior,
             post = post,
-            sheet_data = ws$sheet_data,
-            cols_attr = ws$cols_attr,
-            R_fileName = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)),
-            is_utf8 = l10n_info()[["UTF-8"]]
+            sheet_data = ws$sheet_data
           )
+          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {

@@ -24,7 +24,7 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 
 // helper function to access element from Rcpp::Character Vector as string
 std::string to_string(Rcpp::Vector<16>::Proxy x) {
-  return Rcpp::as<std::string>(x);
+  return Rcpp::String(x);
 }
 
 
@@ -33,7 +33,7 @@ std::string to_string(Rcpp::Vector<16>::Proxy x) {
 // the column data used in this row. This function uses both to create a single
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
-std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc, bool is_utf8) {
+pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
 
   auto lastrow = 0; // integer value of the last row with column data
   auto thisrow = 0; // integer value of the current row with column data
@@ -67,28 +67,6 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc, bool is
   Rcpp::CharacterVector cc_is    = cc["is"];
 
   Rcpp::CharacterVector row_r    = row_attr["r"];
-
-  /* on non utf8 systems we need to convert to utf8. Otherwise we will write
-   * strange looking characters to the xml files and no software will be able
-   * to read the imports.
-   */
-
-  if (!is_utf8) {
-    // cc_row_r = Riconv(cc_row_r); // ASCI only
-    // cc_r = Riconv(cc_r);
-    cc_v = Riconv(cc_v);
-    // cc_c_t = Riconv(cc_c_t);
-    // cc_c_s = Riconv(cc_c_s);
-    // cc_c_cm = Riconv(cc_c_cm);
-    // cc_c_ph = Riconv(cc_c_ph);
-    // cc_c_vm = Riconv(cc_c_vm);
-    cc_f = Riconv(cc_f);
-    // cc_f_t = Riconv(cc_f_t);
-    // cc_f_ref = Riconv(cc_f_ref);
-    // cc_f_ca = Riconv(cc_f_ca);
-    // cc_f_si = Riconv(cc_f_si);
-    cc_is = Riconv(cc_is);
-  }
 
   for (auto i = 0; i < cc.nrow(); ++i) {
 
@@ -203,9 +181,7 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc, bool is
     lastrow = thisrow;
   }
 
-  std::ostringstream oss;
-  doc.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
-  return oss.str();
+  return doc;
 }
 
 
@@ -215,44 +191,67 @@ std::string xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc, bool is
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-void write_worksheet(std::string prior,
-                     std::string post,
-                     Rcpp::Environment sheet_data,
-                     Rcpp::CharacterVector cols_attr, // currently unused
-                     std::string R_fileName,
-                     bool is_utf8) {
+XPtrXML write_worksheet(
+    std::string prior,
+    std::string post,
+    Rcpp::Environment sheet_data
+) {
 
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
-  // open file and write header XML
-  const char * s = R_fileName.c_str();
-  std::ofstream xmlFile;
-  xmlFile.open (s);
-  xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
-  xmlFile << prior;
 
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
   Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc_out"]);
 
-  // TODO prev. this was Rf_isNull() no we have a zero col, zero row dataframe?
-  if ((row_attr.nrow() == 0) || (cc.nrow() == 0)) {
-    xmlFile << "<sheetData />";
-  } else {
 
-    xmlFile << "<sheetData>";
+  xmldoc *doc = new xmldoc;
+  pugi::xml_parse_result result;
 
-    // cc to sheet_data
-    xmlFile << xml_sheet_data(row_attr, cc, is_utf8);
+  pugi::xml_document xml_pr;
+  result = xml_pr.load_string(prior.c_str(), pugi_parse_flags);
+  if (!result) Rcpp::stop("loading prior while writing failed");
+  pugi::xml_node worksheet = doc->append_copy(xml_pr.child("worksheet"));
 
-    // write closing tag and XML post data
-    xmlFile << "</sheetData>";
+  pugi::xml_node sheetData = worksheet.append_child("sheetData");
 
+  if (cc.size() > 0) {
+    pugi::xml_document xml_sd;
+    xml_sd = xml_sheet_data(row_attr, cc);
+    for (auto sd : xml_sd.children())
+      sheetData.append_copy(sd);
   }
 
-  xmlFile << post;
+  if (!post.empty()) {
+    pugi::xml_document xml_po;
+    result = xml_po.load_string(post.c_str(), pugi_parse_flags);
+    if (!result) Rcpp::stop("loading post while writing failed");
+    for (auto po : xml_po.children())
+      worksheet.append_copy(po);
+  }
 
-  //close file
-  xmlFile.close();
 
+  // doc->load_string(post.c_str());
+
+  pugi::xml_node decl = doc->prepend_child(pugi::node_declaration);
+  decl.append_attribute("version") = "1.0";
+  decl.append_attribute("encoding") = "UTF-8";
+  decl.append_attribute("standalone") = "yes";
+
+  XPtrXML ptr(doc, true);
+  ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
+  // ptr.attr("escapes") = escapes;
+  // ptr.attr("is_utf8") = utf8;
+
+  return ptr;
+}
+
+// [[Rcpp::export]]
+void write_xmlPtr(
+    XPtrXML doc,
+    std::string fl
+) {
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
 }

@@ -176,16 +176,20 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     sheets <- merge(
       sheets, wb_rels_xml,
       by.x = "r:id", by.y = "Id",
-      all.x = TRUE, all.y = FALSE
+      all.x = TRUE,
+      all.y = FALSE,
+      sort = FALSE
     )
 
-    ## sheetId is meaningless
+    # if /xl/ is not in the path add it
+    xl_path <- ifelse(grepl("/xl/",sheets$Target), "", "/xl/")
+
+    ## sheetId does not mean sheet order. Sheet order is defined in the index position here
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
     sheets$typ <- basename(sheets$Type)
-    sheets$target <- stri_join(xmlDir, "/xl/", sheets$Target)
-    sheets$id <- rank(as.numeric(gsub("[^0-9.-]+", "", sheets$`r:id`)))
-    sheets <- sheets[order(sheets$id),]
+    sheets$target <- stri_join(xmlDir, xl_path, sheets$Target)
+    sheets$id <- as.numeric(sheets$sheetId)
 
     if (is.null(sheets$state)) sheets$state <- "visible"
     is_visible <- sheets$state %in% c("", "true", "visible")
@@ -608,8 +612,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
           cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
           names(cf) <- nms
           conditionalFormatting <- unlist(cf)
-          names(conditionalFormatting) <- unapply(nms, function(x) rep(x, length(cf[[x]])))
-
           wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
         }
 
@@ -747,32 +749,16 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         ## read in slicer[j].XML sheets into sheet[i]
         if (inds[i]) {
           wb$slicers[[i]] <- slicerXML[k]
-          k <- k + 1L
 
-          # wb$worksheets_rels[[i]] <- unlist(c(
-          #   wb$worksheets_rels[[i]],
-          #   sprintf('<Relationship Id="rId0" Type="http://schemas.microsoft.com/office/2007/relationships/slicer" Target="../slicers/slicer%s.xml"/>', i)
-          # ))
+          # this will add slicers to Content_Types. Ergo if worksheets with
+          # slicers are removed, the slicer needs to remain in the worksheet
           wb$Content_Types <- c(
             wb$Content_Types,
-            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', i)
+            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', k)
           )
 
+          k <- k + 1L
 
-          # # not sure if I want this. At least we do not create slicers?
-          # slicer_xml_exists <- FALSE
-          # ## Append slicer to worksheet extLst
-
-          # if (length(wb$worksheets[[i]]$extLst)) {
-          #   if (grepl('x14:slicer r:id="rId[0-9]+"', wb$worksheets[[i]]$extLst)) {
-          #     wb$worksheets[[i]]$extLst <- sub('x14:slicer r:id="rId[0-9]+"', 'x14:slicer r:id="rId0"', wb$worksheets[[i]]$extLst)
-          #     slicer_xml_exists <- TRUE
-          #   }
-          # }
-
-          # if (!slicer_xml_exists) {
-          #   wb$worksheets[[i]]$extLst <- c(wb$worksheets[[i]]$extLst, genBaseSlicerXML())
-          # }
         }
       }
     }
@@ -934,7 +920,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
             ind <- grepl(target, vmlDrawingXML)
 
             if (any(ind)) {
-              wb$vml[[i]] <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
+              vml <- paste(stringi::stri_read_lines(vmlDrawingXML[ind], encoding = "UTF-8"), sep = "", collapse = "")
+              wb$vml[[i]] <- read_xml(gsub("<br>", "<br/>", vml), pointer = FALSE)
 
               relsInd <- grepl(target, vmlDrawingRelsXML)
               if (any(relsInd)) {
@@ -985,23 +972,19 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
             target <- apply_reg_match(commentXMLrelationship[[i]], '(?<=Target=").*?"')
             target <- basename(gsub('"$', "", target))
 
+            # read xml and split into authors and comments
             txt <- read_xml(grep(target, commentsXML, value = TRUE))
-
-            authors <- xml_node(txt, "comments", "authors", "author")
-            authors <- gsub("<author>|</author>", "", authors)
-
+            authors <- xml_value(txt, "comments", "authors", "author")
             comments <- xml_node(txt, "comments", "commentList", "comment")
 
-            refs <- regmatches(comments, regexpr('(?<=ref=").*?[^"]+', comments, perl = TRUE))
+            comments_attr <- rbindlist(xml_attr(comments, "comment"))
 
-            authorsInds <- as.integer(regmatches(comments, regexpr('(?<=authorId=").*?[^"]+', comments, perl = TRUE))) + 1
+            refs <- comments_attr$ref
+            authorsInds <- as.integer(comments_attr$authorId) + 1
             authors <- authors[authorsInds]
 
             style <- lapply(comments, function(x) unlist(xml_node(x, "comment", "text", "r", "rPr")) )
-
-            comments <- regmatches(comments,
-                                   gregexpr("(?<=<t( |>))[\\s\\S]+?(?=</t>)", comments, perl = TRUE))
-            comments <- lapply(comments, function(x) gsub(".*?>", "", x, perl = TRUE))
+            comments <- lapply(comments, function(x) unlist(xml_value(x, "comment", "text", "r", "t")) )
 
             wb$comments[[i]] <- lapply(seq_along(comments), function(j) {
               list(

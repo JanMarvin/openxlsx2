@@ -47,7 +47,8 @@ xl_open <- function(x, file, interactive = NA) {
 #' @export
 xl_open.wbWorkbook <- function(x, file, interactive = NA) {
   stopifnot(R6::is.R6(x))
-  xl_open(x$clone()$save(temp_xlsx())$path, interactive = interactive)
+  has_macros <- isTRUE(length(x$vbaProject) > 0)
+  xl_open(x$clone()$save(temp_xlsx(macros = has_macros))$path, interactive = interactive)
 }
 
 #' @rdname xl_open

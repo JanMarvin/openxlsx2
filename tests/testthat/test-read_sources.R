@@ -69,3 +69,28 @@ test_that("read html source without r attribute on cell", {
   expect_true(!any(duplicated(wb$worksheets[[2]]$sheet_data$cc)))
 
 })
+
+
+test_that("read <br> node in vml", {
+
+  download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", "macro2.xlsm.zip")
+  unzip("macro2.xlsm.zip")
+  expect_silent(wb <- wb_load("macro2.xlsm"))
+
+})
+
+test_that("encoding", {
+
+  fl <- "https://github.com/JanMarvin/openxlsx2/files/8779041/umlauts.xlsx"
+  wb <- wb_load(fl)
+  expect_equal("äöüß", names(wb))
+
+  exp <- structure(list(hähä = "ÄÖÜ", höhö = "äöüß"),
+                   row.names = 2L, class = "data.frame",
+                   tt = structure(list(hähä = "s", höhö = "s"),
+                                  row.names = 2L, class = "data.frame"),
+                   types = c(A = 0, B = 0))
+
+  expect_equal(exp, wb_to_df(wb))
+
+})

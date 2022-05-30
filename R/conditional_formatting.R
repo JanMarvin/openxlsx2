@@ -260,8 +260,6 @@ wb_conditional_formatting <-
            style = NULL,
            type = "expression",
            ...) {
-    op <- openxlsx2_options()
-    on.exit(options(op), add = TRUE)
 
     type <- tolower(type)
     params <- list(...)
