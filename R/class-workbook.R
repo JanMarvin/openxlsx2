@@ -1683,6 +1683,8 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    ### base font ----
+
     #' @description
     #' Get the base font
     #' @return A list of of the font
@@ -1814,6 +1816,9 @@ wbWorkbook <- R6::R6Class(
       .Deprecated("wbWorkbook$set_sheet_names()")
       self$set_sheet_names(old = sheet, new = name)
     },
+
+
+    ### row heights ----
 
     #' @description
     #' Sets a row height for a sheet
