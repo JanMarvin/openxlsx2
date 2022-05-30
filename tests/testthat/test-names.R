@@ -1,6 +1,4 @@
 test_that("names", {
-  skip("not allowing invalid names")
-
   tmp <- temp_xlsx()
 
   wb <- wb_workbook()
@@ -10,9 +8,9 @@ test_that("names", {
   got <- names(wb)
   expect_equal(exp, got)
 
-  wb_save(wb, tmp)
+  expect_error(wb_save(wb, tmp), NA)
 
-  wb <- wb_load(tmp)
+  expect_error(wb <- wb_load(tmp), NA)
   got <- names(wb)
   expect_equal(exp, got)
 
@@ -34,5 +32,5 @@ test_that("names", {
 
   wb$add_worksheet("S1")
   expect_warning(names(wb) <- paste0(letters, letters, collapse = ""), "Worksheet names must less than 32 characters. Truncating names...")
-
+  file.remove(tmp)
 })
