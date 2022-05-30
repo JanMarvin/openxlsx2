@@ -783,9 +783,9 @@ Deprecated.  Use \code{set_sheet_names()} instead
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{old}}{Old sheet name}
+\item{\code{sheet}}{Old sheet name}
 
-\item{\code{new}}{New sheet name}
+\item{\code{name}}{New sheet name}
 }
 \if{html}{\out{</div>}}
 }
