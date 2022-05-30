@@ -4,7 +4,7 @@
 \alias{clean_worksheet_name}
 \title{Clean worksheet name}
 \usage{
-clean_worksheet_name(x, replace = " ")
+clean_worksheet_name(x, replacement = " ")
 }
 \arguments{
 \item{x}{A vector, coherced to \code{character}}

@@ -10,7 +10,7 @@
 #' @param x A vector, coherced to `character`
 #' @param replacement A single value to replace illegal characters by.
 #' @returns x with bad characters removed
-clean_worksheet_name <- function(x, replace = " ") {
+clean_worksheet_name <- function(x, replacement = " ") {
   stopifnot(length(replacement) == 1, !has_illegal_chars(replacement))
   replace_illegal_chars(x, replacement = replacement)
 }
