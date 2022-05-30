@@ -10,7 +10,9 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
-A character vector of sheet names in their order
+A \code{named} \code{character} vector of sheet names in their order.  The
+names represent the original value of the worksheet prior to any
+character substitutions.
 
 The \code{wbWorkbook} object
 
@@ -179,6 +181,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
 \item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
 \item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
+\item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-wbWorkbook-createCols}{\code{wbWorkbook$createCols()}}
@@ -752,7 +755,29 @@ Get sheet names
 \subsection{Method \code{set_sheet_names()}}{
 Sets a sheet name
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old = seq_along(self$sheet_names), new)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old = NULL, new)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{old}}{Old sheet name}
+
+\item{\code{new}}{New sheet name}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-setSheetName"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-setSheetName}{}}}
+\subsection{Method \code{setSheetName()}}{
+Deprecated.  Use \code{set_sheet_names()} instead
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
