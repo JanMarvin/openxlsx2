@@ -72,7 +72,7 @@ test_that("read html source without r attribute on cell", {
 
 
 test_that("read <br> node in vml", {
-  zip_temp <- basename(tempfile("macro2", fileext = ".xlsm.zip"))
+  temp <- basename(tempfile("macro2", fileext = ".xlsm.zip"))
   download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp)
   unzip(temp)
   expect_silent(wb <- wb_load("macro2.xlsm"))
