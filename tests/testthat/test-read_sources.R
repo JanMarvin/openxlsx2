@@ -72,18 +72,22 @@ test_that("read html source without r attribute on cell", {
 
 
 test_that("read <br> node in vml", {
-
-  download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", "macro2.xlsm.zip")
-  unzip("macro2.xlsm.zip")
+  zip_temp <- basename(tempfile("macro2", fileext = ".xlsm.zip"))
+  download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp)
+  unzip(temp)
   expect_silent(wb <- wb_load("macro2.xlsm"))
-
+  unlink(temp, recursive = TRUE, force = TRUE)
+  file.remove("macro2.xlsm")
+  if (.Platform$OS.type == "windows") {
+    try(unlink("__MACOSX", recursive = TRUE, force = TRUE))
+  }
 })
 
 test_that("encoding", {
 
   fl <- "https://github.com/JanMarvin/openxlsx2/files/8779041/umlauts.xlsx"
   wb <- wb_load(fl)
-  expect_equal("äöüß", names(wb))
+  expect_equal("äöüß", names(wb$get_sheet_names()))
 
   exp <- structure(list(hähä = "ÄÖÜ", höhö = "äöüß"),
                    row.names = 2L, class = "data.frame",
