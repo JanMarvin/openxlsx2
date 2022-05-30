@@ -32,8 +32,8 @@ test_that("wb_load from different sources", {
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb_file <- wb_load(xlsxFile)
 
-  ## check
-  expect_true(all.equal(wb_url, wb_file), "Loading from URL vs local not equal")
+  # Loading from URL vs local not equal
+  expect_equal_workbooks(wb_url, wb_file, ignore_fields = "datetimeCreated")
 })
 
 
