@@ -1792,9 +1792,17 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-
-
       invisible(self)
+    },
+
+    #' @description
+    #' Deprecated.  Use `set_sheet_names()` instead
+    #' @param old Old sheet name
+    #' @param new New sheet name
+    #' @return The `wbWorkbook` object, invisibly
+    setSheetName = function(sheet, name) {
+      .Deprecated("wbWorkbook$set_sheet_names()")
+      self$set_sheet_names(old = sheet, new = name)
     },
 
     #' @description

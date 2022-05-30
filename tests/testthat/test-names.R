@@ -34,3 +34,7 @@ test_that("names", {
   expect_warning(names(wb) <- paste0(letters, letters, collapse = ""), "Worksheet names must less than 32 characters. Truncating names...")
   file.remove(tmp)
 })
+
+test_that("setSheetNames is deprecated", {
+  expect_warning(wb_workbook()$add_worksheet(1)$setSheetName(1, "a"), "deprecated")
+})

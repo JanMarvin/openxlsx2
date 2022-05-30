@@ -1,5 +1,7 @@
 # openxlsx2 (development version)
 
+* `wbWorkbook$setSheetName()` has been renamed to `$set_sheet_names()`
+
 ## Fixes
 
 * Fix reading and writing on non UTF-8 systems [198](https://github.com/JanMarvin/openxlsx2/pull/198) [199](https://github.com/JanMarvin/openxlsx2/pull/199)
