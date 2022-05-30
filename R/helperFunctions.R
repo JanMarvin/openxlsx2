@@ -86,9 +86,6 @@
 #' }
 #'
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
-  # op <- get_set_options()
-  # on.exit(options(op), add = TRUE)
-
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
 
@@ -211,7 +208,7 @@ illegalcharsreplace <- c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "", "", ""
 #' converts & to &amp;
 #' @param v some xml string
 #' @keywords internal
-#' @noRd 
+#' @noRd
 replaceIllegalCharacters <- function(v) {
   v <- as.character(v)
 
@@ -223,7 +220,7 @@ replaceIllegalCharacters <- function(v) {
 #' converts &amp; to &
 #' @param v some xml string
 #' @keywords internal
-#' @noRd 
+#' @noRd
 replaceXMLEntities <- function(v) {
   v <- gsub("&amp;", "&", v, fixed = TRUE)
   v <- gsub("&quot;", '"', v, fixed = TRUE)

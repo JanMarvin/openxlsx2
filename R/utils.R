@@ -53,8 +53,6 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 }
 
 openxlsx2_options <- function() {
-  # op <- openxlsx2_options()
-  # on.exit(options(op), add = TRUE)
   options(
     # increase scipen to avoid writing in scientific
     scipen = 200,
