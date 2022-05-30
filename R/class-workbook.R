@@ -4223,14 +4223,18 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.character(sheet)) {
-        m <- match(tolower(sheet), tolower(self$sheet_names))
-        bad <- is.na(m)
+        sheet <- tolower(sheet)
+        m1 <- match(sheet, tolower(self$sheet_names))
+        m2 <- match(sheet, tolower(private$original_sheet_names))
+
+        bad <- is.na(m1) & is.na(m2)
 
         if (any(bad)) {
           stop("Sheet names not found: ", toString(sheet[bad]))
         }
 
-        sheet <- m
+        # need the vectorized
+        sheet <- ifelse(is.na(m1), m2, m1)
       } else {
         sheet <- as.integer(sheet)
         bad <- which(sheet > length(self$sheet_names))

@@ -51,9 +51,30 @@ test_that("$set_order() works", {
   wb$add_worksheet("c")
 
   expect_identical(wb$sheetOrder, 1:3)
-  expect_identical(wb$get_sheet_names(), letters[1:3])
+  exp <- letters[1:3]
+  names(exp) <- exp
+  expect_identical(wb$get_sheet_names(), exp)
 
   wb$set_order(3:1)
   expect_identical(wb$sheetOrder, 3:1)
-  expect_identical(wb$get_sheet_names(), letters[3:1])
+  exp <- letters[3:1]
+  names(exp) <- exp
+  expect_identical(wb$get_sheet_names(), exp)
+})
+
+
+# sheet names -------------------------------------------------------------
+
+test_that("$set_sheet_names() and $get_sheet_names() work", {
+  wb <- wb_workbook()$add_worksheet(1)$add_worksheet(2)
+  wb$set_sheet_names(new = c("a", "b & c"))
+
+  # return a names character vector
+  res <- wb$get_sheet_names()
+  exp <- c(a = "a", "b & c" = replace_legal_chars("b & c"))
+  expect_identical(res, exp)
+
+  # should be able to check the original values, too
+  res <- wb$.__enclos_env__$private$get_sheet_index("b & c")
+  expect_identical(res, 2L)
 })
