@@ -1739,10 +1739,16 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    ### sheet names ----
+
     #' @description Get sheet names
-    #' @returns A character vector of sheet names in their order
+    #' @returns A `named` `character` vector of sheet names in their order.  The
+    #'   names represent the original value of the worksheet prior to any
+    #'   character substitutions.
     get_sheet_names = function() {
-      self$sheet_names[self$sheetOrder]
+      res <- self$sheet_names
+      names(res) <- private$original_sheet_names
+      res[self$sheetOrder]
     },
 
     #' @description
