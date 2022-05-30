@@ -564,7 +564,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Invalid XML characters
-      new <- replaceIllegalCharacters(new)
+      new <- replace_legal_chars(new)
       if (grepl(pattern = ":", x = new)) {
         stop("colon not allowed in sheet names in Excel")
       }
@@ -4289,9 +4289,9 @@ wbWorkbook <- R6::R6Class(
           sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(self$datetimeCreated, "%Y-%m-%dT%H:%M:%SZ")),
 
           # optional
-          if (!is.null(self$title))    sprintf("<dc:title>%s</dc:title>",       replaceIllegalCharacters(self$title)),
-          if (!is.null(self$subject))  sprintf("<dc:subject>%s</dc:subject>",   replaceIllegalCharacters(self$subject)),
-          if (!is.null(self$category)) sprintf("<cp:category>%s</cp:category>", replaceIllegalCharacters(self$category)),
+          if (!is.null(self$title))    sprintf("<dc:title>%s</dc:title>",       replace_legal_chars(self$title)),
+          if (!is.null(self$subject))  sprintf("<dc:subject>%s</dc:subject>",   replace_legal_chars(self$subject)),
+          if (!is.null(self$category)) sprintf("<cp:category>%s</cp:category>", replace_legal_chars(self$category)),
 
           # end
           "</coreProperties>",
@@ -4683,7 +4683,7 @@ wbWorkbook <- R6::R6Class(
 
     # old add_named_region()
     create_named_region = function(ref1, ref2, name, sheet, localSheetId = NULL) {
-      name <- replaceIllegalCharacters(name)
+      name <- replace_legal_chars(name)
       value <- if (is.null(localSheetId)) {
         sprintf(
           '<definedName name="%s">\'%s\'!%s:%s</definedName>',

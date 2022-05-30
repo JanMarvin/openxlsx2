@@ -251,7 +251,7 @@
 #'                       rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 #' )
 #'
-wb_conditional_formatting <- 
+wb_conditional_formatting <-
   function(wb,
            sheet,
            cols,
@@ -394,7 +394,7 @@ wb_conditional_formatting <-
     } else if (type == "expression") {
 
       # rule <- gsub(" ", "", rule)
-      rule <- replaceIllegalCharacters(rule)
+      rule <- replace_legal_chars(rule)
       rule <- gsub("!=", "&lt;&gt;", rule)
       rule <- gsub("==", "=", rule)
 

@@ -760,7 +760,7 @@ write_data_table <- function(
   if (data_table) {
 
     ## replace invalid XML characters
-    col_names <- replaceIllegalCharacters(colnames(x))
+    col_names <- replace_legal_chars(colnames(x))
     if (rowNames) col_names <- c("1", col_names)
 
     ## Table name validation

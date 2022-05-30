@@ -165,7 +165,7 @@ col2hex <- function(my.col) {
 ## header and footer replacements
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
-    x <- replaceIllegalCharacters(x)
+    x <- replace_illegal_chars(x)
     x <- gsub("\\[Page\\]", "P", x)
     x <- gsub("\\[Pages\\]", "N", x)
     x <- gsub("\\[Date\\]", "D", x)

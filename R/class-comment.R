@@ -151,8 +151,8 @@ create_comment <- function(text,
     style <- create_font()
   }
 
-  author <- replaceIllegalCharacters(author)
-  text <- replaceIllegalCharacters(text)
+  author <- replace_legal_chars(author)
+  text <- replace_legal_chars(text)
 
 
   invisible(wbComment$new(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1]))
