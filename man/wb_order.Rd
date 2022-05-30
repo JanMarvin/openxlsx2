@@ -35,11 +35,11 @@ wb$add_worksheet("Sheet 3", gridLines = FALSE)
 wb$add_data(sheet = 3, x = Formaldehyde)
 
 wb_get_order(wb)
-names(wb)
+wb$get_sheet_na
 wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 wb_get_order(wb)
-names(wb) ## ordering within workbook is not changed
+wb$get_sheet_names() ## ordering within workbook is not changed
 \dontrun{
 wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 }

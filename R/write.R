@@ -703,7 +703,7 @@ write_data_table <- function(
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
       l <- int2col(unlist(coords[, 2]))
-      dfn <- sprintf("'%s'!%s", names(wb)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
+      dfn <- sprintf("'%s'!%s", wb$get_sheet_names()[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
       dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
 

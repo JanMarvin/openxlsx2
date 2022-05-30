@@ -1225,7 +1225,7 @@ wb_protect <- function(
 #' @export
 #' @examples
 #' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#' names(wb) ## list worksheets in workbook
+#' wb$get_sheet_names() ## list worksheets in workbook
 #' wb$grid_lines(1, show = FALSE)
 #' wb$grid_lines("testing", show = FALSE)
 #' \dontrun{
@@ -1262,11 +1262,11 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' wb$add_data(sheet = 3, x = Formaldehyde)
 #'
 #' wb_get_order(wb)
-#' names(wb)
+#' wb$get_sheet_na
 #' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 #' wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 #' wb_get_order(wb)
-#' names(wb) ## ordering within workbook is not changed
+#' wb$get_sheet_names() ## ordering within workbook is not changed
 #' \dontrun{
 #' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 #' }
