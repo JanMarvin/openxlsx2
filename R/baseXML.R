@@ -345,10 +345,10 @@ genBaseTheme <- function() {
   <a:latin typeface="Calibri Light" panose="020F0302020204030204"/>
   <a:ea typeface=""/>
   <a:cs typeface=""/>
-  <a:font script="Jpan" typeface="游ゴシック Light"/>
-  <a:font script="Hang" typeface="맑은 고딕"/>
-  <a:font script="Hans" typeface="等线 Light"/>
-  <a:font script="Hant" typeface="新細明體"/>
+  <a:font script="Jpan" typeface="\\u6e38\\u30b4\\u30b7\\u30c3\\u30af Light"/>
+  <a:font script="Hang" typeface="\\ub9d1\\uc740 \\uace0\\ub515"/>
+  <a:font script="Hans" typeface="\\u7b49\\u7ebf Light"/>
+  <a:font script="Hant" typeface="\\u65b0\\u7d30\\u660e\\u9ad4"/>
   <a:font script="Arab" typeface="Times New Roman"/>
   <a:font script="Hebr" typeface="Times New Roman"/>
   <a:font script="Thai" typeface="Tahoma"/>
@@ -397,10 +397,10 @@ genBaseTheme <- function() {
   <a:latin typeface="Calibri" panose="020F0502020204030204"/>
   <a:ea typeface=""/>
   <a:cs typeface=""/>
-  <a:font script="Jpan" typeface="游ゴシック"/>
-  <a:font script="Hang" typeface="맑은 고딕"/>
-  <a:font script="Hans" typeface="等线"/>
-  <a:font script="Hant" typeface="新細明體"/>
+  <a:font script="Jpan" typeface="\\u6e38\\u30b4\\u30b7\\u30c3\\u30af"/>
+  <a:font script="Hang" typeface="\\ub9d1\\uc740 \\uace0\\ub515"/>
+  <a:font script="Hans" typeface="\\u7b49\\u7ebf"/>
+  <a:font script="Hant" typeface="\\u65b0\\u7d30\\u660e\\u9ad4"/>
   <a:font script="Arab" typeface="Arial"/>
   <a:font script="Hebr" typeface="Arial"/>
   <a:font script="Thai" typeface="Tahoma"/>
