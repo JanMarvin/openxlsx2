@@ -1756,7 +1756,11 @@ wbWorkbook <- R6::R6Class(
     #' @param old Old sheet name
     #' @param new New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    set_sheet_names = function(old = seq_along(self$sheet_names), new) {
+    set_sheet_names = function(old = NULL, new) {
+      # assume all names.  Default values makes the test check for wrappers a
+      # little weird
+      old <- old %||% seq_along(self$sheet_names)
+
       if (identical(old, new)) {
         return(self)
       }
