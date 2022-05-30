@@ -296,7 +296,7 @@ wbWorkbook <- R6::R6Class(
     validate_sheet = function(sheet) {
 
       # workbook has no sheets
-      if (is.null(self$sheet_names)) {
+      if (!length(self$sheet_names)) {
         return(NA_integer_)
       }
 
