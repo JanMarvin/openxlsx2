@@ -11,8 +11,8 @@
 #' @param replacement A single value to replace illegal characters by.
 #' @returns x with bad characters removed
 clean_worksheet_name <- function(x, replace = " ") {
-  stopifnot(length(replace) == 1, !has_illegal_chars(replace))
-  replace_illegal_chars(x, replace = replace)
+  stopifnot(length(replacement) == 1, !has_illegal_chars(replacement))
+  replace_illegal_chars(x, replacement = replacement)
 }
 
 
@@ -55,10 +55,10 @@ replace_legal_chars <- function(x) {
   stringi::stri_replace_all_fixed(x, legal_chars(), legal_sub(), vectorize_all = FALSE)
 }
 
-replace_illegal_chars <- function(x, replace = " ") {
+replace_illegal_chars <- function(x, replacement = " ") {
   x <- as.character(x)
   Encoding(x) <- "UTF-8"
-  stringi::stri_replace_all_fixed(x, illegal_chars(), replace, vectorize_all = FALSE)
+  stringi::stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
 }
 
 #' converts &amp; to &
