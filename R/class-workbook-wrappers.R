@@ -1802,6 +1802,38 @@ wb_get_creators <- function(wb) {
 }
 
 
+
+# names -------------------------------------------------------------------
+
+#' Set worksheet names for a workbook
+#'
+#' Sets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @param old The name (or index) of the old sheet name. If `NULL` will assume
+#'   all worksheets are to be renamed.
+#' @param new The name of the new sheet
+#' @returns The [wbWorkbook] object
+#' @export
+wb_set_sheet_names <- function(wb, old = NULL, new) {
+  assert_workbook(wb)
+  wb$clone()$set_sheet_names(old = old, new = new)
+}
+
+#' Get wokrhseet names for a workbook
+#'
+#' Gets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @returns A `named` `character` vector of sheet names in their order.  The
+#'   names represent the original value of the worksheet prior to any character
+#'   substitutions.
+#' @export
+wb_get_sheet_names <- function(wb) {
+  assert_workbook(wb)
+  wb$get_sheet_names()
+}
+
 # others? -----------------------------------------------------------------
 
 #' Add another author to the meta data of the file.
