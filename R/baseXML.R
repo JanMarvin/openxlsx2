@@ -300,7 +300,8 @@ genBasePic <- function(imageNo) {
 
 
 genBaseTheme <- function() {
-  '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">
+  stringi::stri_unescape_unicode(
+    '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">
   <a:themeElements>
   <a:clrScheme name="Office">
   <a:dk1>
@@ -592,6 +593,7 @@ genBaseTheme <- function() {
   </a:ext>
   </a:extLst>
   </a:theme>'
+  )
 }
 
 gen_databar_extlst <- function(guid, sqref, posColour, negColour, values, border, gradient) {

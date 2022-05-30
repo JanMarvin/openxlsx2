@@ -30,6 +30,8 @@
 
 ## Internal changes
 
+* Switch to modern xlsx template, when creating workbooks. Imported workbooks will use the imported template
+
 * Rewrite `wb$tables` to use a data frame approach. This simplifies the code a bit and makes it easier to implement more upcoming changes [191](https://github.com/JanMarvin/openxlsx2/pull/191)
 
 * Update of internal pugixml library
