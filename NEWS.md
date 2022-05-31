@@ -2,6 +2,8 @@
 
 ## Fixes
 
+* Fix an issue with broken pageSetup reference causing corupt excel files [216](https://github.com/JanMarvin/openxlsx2/issues/216)
+
 * Fix reading and writing comments from workbooks that already provide comments [209](https://github.com/JanMarvin/openxlsx2/pull/209)
 
 * Fix an issue with broken xml in Excels vml files and enable opening xlsm files with `wb$open()` [202](https://github.com/JanMarvin/openxlsx2/pull/202)
