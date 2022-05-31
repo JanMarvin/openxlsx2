@@ -27,6 +27,9 @@ wbWorkbook <- R6::R6Class(
     #' @field charts charts
     charts = list(),
 
+    #' @field charts_rels charts_rels
+    charts_rels = list(),
+
     #' @field isChartSheet isChartSheet
     isChartSheet = logical(),
 
@@ -187,6 +190,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       self$apps <- character()
       self$charts <- list()
+      self$charts_rels <- list()
       self$isChartSheet <- logical()
 
       self$connections <- NULL
@@ -1031,15 +1035,17 @@ wbWorkbook <- R6::R6Class(
       xlworksheetsRelsDir <- dir_create(tmpDir, "xl", "worksheets", "_rels")
       xldrawingsDir       <- dir_create(tmpDir, "xl", "drawings")
       xldrawingsRelsDir   <- dir_create(tmpDir, "xl", "drawings", "_rels")
+      xlchartsDir         <- dir_create(tmpDir, "xl", "charts")
+      xlchartsRelsDir     <- dir_create(tmpDir, "xl", "charts", "_rels")
 
-      ## charts
-      if (length(self$charts)) {
-        file.copy(
-          from = dirname(self$charts[1]),
-          to = file.path(tmpDir, "xl"),
-          recursive = TRUE
-        )
-      }
+      # ## charts
+      # if (length(self$charts)) {
+      #   file.copy(
+      #     from = dirname(self$charts[1]),
+      #     to = file.path(tmpDir, "xl"),
+      #     recursive = TRUE
+      #   )
+      # }
 
 
       ## xl/comments.xml
@@ -1306,6 +1312,8 @@ wbWorkbook <- R6::R6Class(
       private$writeSheetDataXML(
         xldrawingsDir,
         xldrawingsRelsDir,
+        xlchartsDir,
+        xlchartsRelsDir,
         xlworksheetsDir,
         xlworksheetsRelsDir
       )
@@ -5139,6 +5147,8 @@ wbWorkbook <- R6::R6Class(
     writeSheetDataXML = function(
       xldrawingsDir,
       xldrawingsRelsDir,
+      xlchartsDir,
+      xlchartsRelsDir,
       xlworksheetsDir,
       xlworksheetsRelsDir
     ) {
@@ -5166,6 +5176,37 @@ wbWorkbook <- R6::R6Class(
           }
         } else {
           self$worksheets[[i]]$drawing <- character()
+        }
+
+        if (length(self$charts_rels)) {
+
+          if (!file.exists(xlchartsDir)) {
+            dir.create(xlchartsDir, recursive = TRUE)
+            dir.create(xlchartsRelsDir, recursive = TRUE)
+          }
+
+          for (i in seq_along(self$charts)) {
+            write_file(
+              body = self$charts[[i]][1],
+              fl = file.path(xlchartsDir, stri_join("chart", i, ".xml"))
+            )
+
+            write_file(
+              body = self$charts[[i]][2],
+              fl = file.path(xlchartsDir, stri_join("colors", i, ".xml"))
+            )
+
+            write_file(
+              body = self$charts[[i]][3],
+              fl = file.path(xlchartsDir, stri_join("style", i, ".xml"))
+            )
+
+            write_file(
+              body = self$charts_rels[[i]],
+              fl = file.path(xlchartsRelsDir, stri_join("chart", i, ".xml.rels"))
+            )
+          }
+
         }
 
         ## vml drawing
