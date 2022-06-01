@@ -606,7 +606,7 @@ write_data_table <- function(
 ) {
 
   op <- openxlsx2_options()
-  on.exit(op, add = TRUE)
+  on.exit(options(op), add = TRUE)
 
   ## Input validating
   assert_workbook(wb)
