@@ -2702,6 +2702,8 @@ wbWorkbook <- R6::R6Class(
 
     ## conditional formatting ----
 
+    # TODO remove_conditional_formatting?
+
     add_conditional_formatting = function(
         wb,
         sheet,
@@ -2709,9 +2711,12 @@ wbWorkbook <- R6::R6Class(
         rows,
         rule = NULL,
         style = NULL,
+        # TODO add vector of possible values
         type = "expression",
+        # Turn ... into "params"
         ...
     ) {
+      # TODO include match.arg() for type
       type <- tolower(type)
       params <- list(...)
 
@@ -2759,7 +2764,7 @@ wbWorkbook <- R6::R6Class(
 
       # print(dxfId)
 
-      # use switch() instead
+      # TODO use switch() instead
       if (type == "colorScale") {
         # type == "colourScale"
         # - style is a vector of colours with length 2 or 3
