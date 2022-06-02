@@ -90,23 +90,22 @@ test_that("cellStyle", {
 
 test_that("tableStyle", {
 
-  skip("no test for tableStyle")
-  # there seems to be no example with tableStyle entries :-\
-  xlsxFile <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  # tableStyle elements exist only with custom tableStyles
+  xlsxFile <- system.file("extdata", "tableStyles.xlsx", package = "openxlsx2")
   wb <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
-  exp <- c("count", "name", "pivot", "table", "tableStyleElement")
+  exp <- c("name", "pivot", "count", "xr9:uid", "table", "tableStyleElement")
 
-  input <- wb$styles_mgr$styles$tableStyles
+  input <- xml_node(wb$styles_mgr$styles$tableStyles, "tableStyles", "tableStyle")
   got <- read_tableStyle(as_xml(input))
   expect_equal(sort(exp), sort(names(got)))
 
-  exp_dim <- c(1, 5)
+  exp_dim <- c(1, 6)
   expect_equal(exp_dim, dim(got))
 
-  # expect_equal(xml_node(input, "tableStyles", "tableStyle"),
-  #              write_tableStyle(got[exp]))
+  expect_equal(input,
+               write_tableStyle(got[exp]))
 
   expect_warning(
     got <- read_tableStyle(read_xml('<tableStyle foo="0"/>')),

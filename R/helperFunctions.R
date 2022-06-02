@@ -86,9 +86,6 @@
 #' }
 #'
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
-  # op <- get_set_options()
-  # on.exit(options(op), add = TRUE)
-
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
 
@@ -190,12 +187,6 @@ write_comment_xml <- function(comment_list, file_name) {
 
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
-      # write author to top of node. will be written in bold
-      if ((j == 1) && (comment_list[[i]]$author != ""))
-        xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
-          gsub("font>", "rPr>", create_font(b = "true")),
-          paste0(comment_list[[i]]$author, ":\n")))
-
       # write styles and comments
       xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
         comment_list[[i]]$style[[j]],
@@ -217,15 +208,9 @@ illegalcharsreplace <- c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "", "", ""
 #' converts & to &amp;
 #' @param v some xml string
 #' @keywords internal
-#' @noRd 
+#' @noRd
 replaceIllegalCharacters <- function(v) {
-  vEnc <- Encoding(v)
   v <- as.character(v)
-
-  flg <- vEnc != "UTF-8"
-  if (any(flg)) {
-    v[flg] <- stri_conv(v[flg], from = "", to = "UTF-8")
-  }
 
   v <- stri_replace_all_fixed(v, illegalchars, illegalcharsreplace, vectorize_all = FALSE)
 
@@ -235,7 +220,7 @@ replaceIllegalCharacters <- function(v) {
 #' converts &amp; to &
 #' @param v some xml string
 #' @keywords internal
-#' @noRd 
+#' @noRd
 replaceXMLEntities <- function(v) {
   v <- gsub("&amp;", "&", v, fixed = TRUE)
   v <- gsub("&quot;", '"', v, fixed = TRUE)

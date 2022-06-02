@@ -605,6 +605,9 @@ write_data_table <- function(
     data_table = FALSE
 ) {
 
+  op <- openxlsx2_options()
+  on.exit(options(op), add = TRUE)
+
   ## Input validating
   assert_workbook(wb)
   assert_class(colNames, "logical")
@@ -624,9 +627,6 @@ write_data_table <- function(
   sheet <- wb_validate_sheet(wb, sheet)
 
   if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
-
-  op <- openxlsx2_options()
-  on.exit(options(op), add = TRUE)
 
   ## All input conversions/validations
   if (!is.null(xy)) {

@@ -66,3 +66,16 @@ test_that("silent with numfmt option", {
   expect_equal(rownames(mtcars), rownames(got))
 
 })
+
+
+test_that("test options", {
+
+  ops <- options()
+  tmp <- temp_xlsx()
+  wb_workbook()$add_worksheet("Sheet 1")$add_data("Sheet 1", cars)
+  ops2 <- options()
+
+  # adding data to the worksheet should not alter the global options
+  expect_equal(ops, ops2)
+
+})

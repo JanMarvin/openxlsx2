@@ -49,12 +49,12 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
-readXMLPtr <- function(path, isfile, escapes, declaration) {
-    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration)
+readXMLPtr <- function(path, isfile, escapes, declaration, utf8) {
+    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, utf8)
 }
 
-readXML <- function(path, isfile, escapes, declaration) {
-    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration)
+readXML <- function(path, isfile, escapes, declaration, utf8) {
+    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, utf8)
 }
 
 getXMLXPtrName1 <- function(doc) {
@@ -129,8 +129,8 @@ printXPtr <- function(doc, no_escapes, raw) {
     .Call(`_openxlsx2_printXPtr`, doc, no_escapes, raw)
 }
 
-write_xml_file <- function(xml_content, fl, escapes) {
-    invisible(.Call(`_openxlsx2_write_xml_file`, xml_content, fl, escapes))
+write_xml_file <- function(xml_content, escapes) {
+    .Call(`_openxlsx2_write_xml_file`, xml_content, escapes)
 }
 
 #' adds or updates attribute(s) in existing xml node
@@ -305,7 +305,11 @@ set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
-write_worksheet <- function(prior, post, sheet_data, cols_attr, R_fileName = "output") {
-    invisible(.Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data, cols_attr, R_fileName))
+write_worksheet <- function(prior, post, sheet_data) {
+    .Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data)
+}
+
+write_xmlPtr <- function(doc, fl) {
+    invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
 }
 
