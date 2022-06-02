@@ -21,7 +21,8 @@ wb_to_df(
   showFormula = FALSE,
   convert = TRUE,
   types,
-  definedName
+  definedName,
+  named_region
 )
 }
 \arguments{
@@ -57,7 +58,9 @@ wb_to_df(
 
 \item{types}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created}
 
-\item{definedName}{Character string with a definedName. If no sheet is selected, the first appearance will be selected.}
+\item{definedName}{(deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.}
+
+\item{named_region}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
 }
 \description{
 Simple function to create a dataframe from a workbook. Simple as in simply
@@ -124,14 +127,14 @@ written down and not optimized etc. The goal was to have something working.
   # read_xlsx(wb2)
 
   ###########################################################################
-  # definedName // namedRegion
+  # named_region // namedRegion
   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
   wb3 <- wb_load(xlsxFile)
 
-  # read dataset with definedName (returns global first)
-  wb_to_df(wb3, definedName = "MyRange", colNames = FALSE)
+  # read dataset with named_region (returns global first)
+  wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
 
-  # read definedName from sheet
-  wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
+  # read named_region from sheet
+  wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
 
 }

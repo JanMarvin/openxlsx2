@@ -423,8 +423,8 @@ test_that("load table", {
   expect_equal(c("iris", "iris_tab"), get_named_regions(wb)$name)
 
   expect_equal(
-    wb_to_df(wb, definedName = "iris_tab"),
-    wb_to_df(wb, definedName = "iris")
+    wb_to_df(wb, named_region = "iris_tab"),
+    wb_to_df(wb, named_region = "iris")
   )
 
 })

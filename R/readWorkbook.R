@@ -98,7 +98,7 @@ read_xlsx <- function(
     skipEmptyCols   = skipEmptyCols,
     rows            = rows,
     cols            = cols,
-    definedName     = namedRegion,
+    named_region    = namedRegion,
     na.strings      = na.strings,
     fillMergedCells = fillMergedCells
   )
@@ -151,7 +151,7 @@ wb_read <- function(
     skipEmptyCols = skipEmptyCols,
     rows          = rows,
     cols          = cols,
-    definedName   = namedRegion,
+    named_region  = namedRegion,
     na.strings    = na.strings
   )
 

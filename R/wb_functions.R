@@ -175,7 +175,8 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param startRow first row to begin looking for data.
 #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
 #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
-#' @param definedName Character string with a definedName. If no sheet is selected, the first appearance will be selected.
+#' @param definedName (deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.
+#' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
 #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
@@ -240,15 +241,15 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'   # read_xlsx(wb2)
 #'
 #'   ###########################################################################
-#'   # definedName // namedRegion
+#'   # named_region // namedRegion
 #'   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 #'   wb3 <- wb_load(xlsxFile)
 #'
-#'   # read dataset with definedName (returns global first)
-#'   wb_to_df(wb3, definedName = "MyRange", colNames = FALSE)
+#'   # read dataset with named_region (returns global first)
+#'   wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
 #'
-#'   # read definedName from sheet
-#'   wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
+#'   # read named_region from sheet
+#'   wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
 #'
 #' @export
 wb_to_df <- function(
@@ -268,7 +269,8 @@ wb_to_df <- function(
   showFormula     = FALSE,
   convert         = TRUE,
   types,
-  definedName
+  definedName,
+  named_region
 ) {
 
   # .mc <- match.call() # not (yet) used?
@@ -287,23 +289,27 @@ wb_to_df <- function(
     wb <- xlsxFile
   }
 
-
   if (!missing(definedName)) {
+    warning("wb_to_df(definedName = .) is deprecated.  Use wb_to_df(named_region = .) instead")
+    named_region <- definedName
+  }
+
+  if (!missing(named_region)) {
 
     nr <- get_named_regions(wb)
 
-    if ((definedName %in% nr$name) && missing(sheet)) {
-      sel   <- nr[nr$name == definedName, ][1,]
+    if ((named_region %in% nr$name) && missing(sheet)) {
+      sel   <- nr[nr$name == named_region, ][1,]
       sheet <- sel$sheet
       dims  <- sel$coords
-    } else if (definedName %in% nr$name) {
-      sel <- nr[nr$name == definedName & nr$sheet == wb_validate_sheet(wb, sheet), ]
+    } else if (named_region %in% nr$name) {
+      sel <- nr[nr$name == named_region & nr$sheet == wb_validate_sheet(wb, sheet), ]
       if (NROW(sel) == 0) {
-        stop("no such definedName on selected sheet")
+        stop("no such named_region on selected sheet")
       }
       dims <- sel$coords
     } else {
-      stop("no such definedName")
+      stop("no such named_region")
     }
   }
 
@@ -332,10 +338,10 @@ wb_to_df <- function(
   #                           "dimension",
   #                           "ref")
 
-  # If no dims are requested via definedName, simply construct them from min
+  # If no dims are requested via named_region, simply construct them from min
   # and max columns and row found on worksheet
-  # in theory it could be useful to have both definedName and dims?
-  if (missing(definedName) && missing(dims)) {
+  # TODO it would be useful to have both named_region and dims?
+  if (missing(named_region) && missing(dims)) {
 
     sd <- wb$worksheets[[sheet]]$sheet_data$cc[c("row_r", "c_r")]
     sd$row <- as.integer(sd$row_r)
@@ -596,7 +602,7 @@ wb_to_df <- function(
   attr(z, "tt") <- tt
   attr(z, "types") <- types
   # attr(z, "sd") <- sd
-  if (!missing(definedName)) attr(z, "dn") <- nr
+  if (!missing(named_region)) attr(z, "dn") <- nr
   z
 }
 
