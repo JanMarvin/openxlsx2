@@ -2235,7 +2235,9 @@ wbWorkbook <- R6::R6Class(
       if (length(self$workbook$definedNames)) {
         # wb_validate_sheet() makes sheet an integer
         # so we need to remove this before getting rid of the sheet names
-        self$workbook$definedNames <- self$workbook$definedNames[!get_named_regions(self)$sheets %in% self$sheet_names[sheet]]
+        self$workbook$definedNames <- self$workbook$definedNames[
+          !get_named_regions_from_definedName(self)$sheets %in% self$sheet_names[sheet]
+        ]
       }
 
       self$remove_named_region(sheet)
