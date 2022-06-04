@@ -27,7 +27,7 @@ formatting of the original .xlsx file.
 \examples{
 ## load existing workbook from package folder
 wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-names(wb) # list worksheets
+wb$get_sheet_names() # list worksheets
 wb ## view object
 ## Add a worksheet
 wb$add_worksheet("A new worksheet")

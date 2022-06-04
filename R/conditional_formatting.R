@@ -392,7 +392,7 @@ wb_conditional_formatting <-
     } else if (type == "expression") {
 
       # rule <- gsub(" ", "", rule)
-      rule <- replaceIllegalCharacters(rule)
+      rule <- replace_legal_chars(rule)
       rule <- gsub("!=", "&lt;&gt;", rule)
       rule <- gsub("==", "=", rule)
 

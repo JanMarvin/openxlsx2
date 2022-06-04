@@ -734,7 +734,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #'
 #' \dontrun{
 #' # look at the beauty you've created
-#' wb_open(wb)
+#' if (interactive()) wb_open(wb)
 #' }
 #' @export
 set_cell_style <- function(wb, sheet, cell, value) {
