@@ -91,15 +91,21 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of openxlsx2 from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>You can install the development version of <code>openxlsx2</code> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools") # not yet available on CRAN</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"JanMarvin/openxlsx2"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="co"># openxlsx2 is not yet available on CRAN</span>
+<span class="co"># install.packages("remotes")</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"JanMarvin/openxlsx2"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Many examples are in our manual pages and in our vignettes. You can find them under:</p>
+<p><code>openxlsx2</code> aims to be the swiss knife for working with the openxml spreadsheet formats xlsx and xlsm (other formats of other spreadsheet software are not supported). We offer two different variants how to work with <code>openxlsx2</code>.</p>
+<ul>
+<li>The first one is to simply work with R objects. It is possible to read (<a href="https://janmarvin.github.io/openxlsx2/reference/read_xlsx.html" class="external-link"><code>read_xlsx()</code></a>) and write (<a href="https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html" class="external-link"><code>write_xlsx()</code></a>) data from and to files. We offer a number of options in the commands to support various features of the openxml format, including reading and writing named ranges and tables. Furthermore, there are several ways to read certain information of an openxml spreadsheet without having opened it in a spreadsheet software before, e.g. to get the contained sheet names or tables.</li>
+<li>As a second variant <code>openxlsx2</code> offers the work with so called <a href="https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html" class="external-link"><code>wbWorkbook</code></a> objects. Here an openxml file is read into a corresponding <code>wbWorkbook</code> object (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_load.html" class="external-link"><code>wb_load()</code></a>) or a new one is created (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html" class="external-link"><code>wb_workbook()</code></a>). Afterwards the object can be further modified using various functions. For example, worksheets can be added or removed, the layout of cells or entire worksheets can be changed, and cells can be modified (overwritten or rewritten). Afterwards the <code>wbWorkbook</code> objects can be written as openxml files and processed by suitable spreadsheet software.</li>
+</ul>
+<p>Many examples how to work with <code>openxlsx2</code> are in our <a href="https://janmarvin.github.io/openxlsx2/reference/index.html" class="external-link">manual pages</a> and in our <a href="https://janmarvin.github.io/openxlsx2/articles/" class="external-link">vignettes</a>. You can find them under:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></code></pre></div>
 </div>
