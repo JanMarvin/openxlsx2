@@ -34,6 +34,9 @@
     <loc>/reference/as_xml.html</loc>
   </url>
   <url>
+    <loc>/reference/clean_worksheet_name.html</loc>
+  </url>
+  <url>
     <loc>/reference/cleanup.html</loc>
   </url>
   <url>
@@ -235,7 +238,13 @@
     <loc>/reference/wb_get_sheet_name.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_get_sheet_names.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_get_tables.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_get_worksheet.html</loc>
   </url>
   <url>
     <loc>/reference/wb_grid_lines.html</loc>
@@ -292,13 +301,13 @@
     <loc>/reference/wb_set_row_heights.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_set_sheet_names.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_to_df.html</loc>
   </url>
   <url>
     <loc>/reference/wb_workbook.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wb_ws.html</loc>
   </url>
   <url>
     <loc>/reference/workbook_grouping.html</loc>

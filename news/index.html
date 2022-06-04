@@ -63,6 +63,19 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>Several enhancements have been added for checking and validation worksheet names <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a><ul><li>When adding a new worksheet via <code>wbWorkbook$add_worksheet()</code> the provided name is checked for illegal characters (see note in <strong>Breaking changes</strong>)</li>
+<li>
+<code>wbWorkbook$get_sheet_names()</code> (<code><a href="../reference/wb_get_sheet_names.html">wb_get_sheet_names()</a></code> wrapper) added. These return both the <em>formatted</em> and original sheet names</li>
+<li>
+<code>wbWorkbook$set_sheet_names()</code> (<code><a href="../reference/wb_set_sheet_names.html">wb_set_sheet_names()</a></code>) added<ul><li>these make <code><a href="../reference/names.wbWorkbook.html">names.wbWorkbook()</a></code> and <code>names&lt;-.wbWorkbook()</code> deprecated</li>
+<li>
+<code>wbWorkbook$setSheetName()</code> deprecated</li>
+</ul></li>
+<li>
+<code>clean_worksheet_names()</code> added to support removing characters that are not allowed in worksheet names</li>
+</ul></li></ul></div>
+<div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li><p>Fix an issue with broken pageSetup reference causing corupt excel files <a href="https://github.com/JanMarvin/openxlsx2/issues/216" class="external-link">216</a></p></li>
 <li><p>Fix reading and writing comments from workbooks that already provide comments <a href="https://github.com/JanMarvin/openxlsx2/pull/209" class="external-link">209</a></p></li>
@@ -79,12 +92,9 @@
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>
-<code>openxlsx2Coerce()</code> (which was called on <code>x</code> objects when adding data to a workbook) has been removed. Users can no longer pass some arbitrary objects and will need to format these objects appropriately or rely on <code>as.data.frame</code> methods <a href="https://github.com/JanMarvin/openxlsx2/issues/167" class="external-link">167</a>
-</li>
-<li>
-<code>xl_open(file = )</code> is no longer valid and will throw a warning; first argument has been changes to <code>x</code> to highlight that <code><a href="../reference/xl_open.html">xl_open()</a></code> can be called on a file path or a <code>wbWorkbook</code> object <a href="https://github.com/JanMarvin/openxlsx2/pull/171" class="external-link">171</a>
-</li>
+<ul><li><p>Assigning a new worksheet with an illegal character now prompts an error <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a>. See <code><a href="../reference/clean_worksheet_name.html">?clean_worksheet_name</a></code> for an easy method of replacing bad characters.</p></li>
+<li><p><code>openxlsx2Coerce()</code> (which was called on <code>x</code> objects when adding data to a workbook) has been removed. Users can no longer pass some arbitrary objects and will need to format these objects appropriately or rely on <code>as.data.frame</code> methods <a href="https://github.com/JanMarvin/openxlsx2/issues/167" class="external-link">167</a></p></li>
+<li><p><code>xl_open(file = )</code> is no longer valid and will throw a warning; first argument has been changes to <code>x</code> to highlight that <code><a href="../reference/xl_open.html">xl_open()</a></code> can be called on a file path or a <code>wbWorkbook</code> object <a href="https://github.com/JanMarvin/openxlsx2/pull/171" class="external-link">171</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
@@ -92,6 +102,30 @@
 <li><p>Rewrite <code>wb$tables</code> to use a data frame approach. This simplifies the code a bit and makes it easier to implement more upcoming changes <a href="https://github.com/JanMarvin/openxlsx2/pull/191" class="external-link">191</a></p></li>
 <li><p>Update of internal pugixml library</p></li>
 <li><p>The two functions <code><a href="../reference/write_data.html">write_data()</a></code> and <code><a href="../reference/write_datatable.html">write_datatable()</a></code> now use the same internal function <code>write_data_table()</code> to add data to the sheet. This simplifies the code and ensures that both functions are tested. In the same pull request, the documentation has been updated and the <code>stack=</code> option, which was not present before, has been removed <a href="https://github.com/JanMarvin/openxlsx2/pull/175" class="external-link">175</a></p></li>
+<li><p><code>wbWorkbook$validate_sheet()</code> added as an object methods</p></li>
+<li><p>private <code>wbWorkbook</code> field <code>original_sheet_names</code> added to track the original names passed to sheets</p></li>
+<li>
+<p>private <code>wbWorkbook</code> methods added:</p>
+<ul><li>
+<code>$get_sheet_id_max()</code>, <code>$get_sheet_index()</code> for getting ids</li>
+<li>
+<code>$get_sheet_name()</code> for getting a sheet name</li>
+<li>
+<code>$set_single_sheet_name()</code> for setting sheet names</li>
+<li>
+<code>$pappend()</code> general private appending</li>
+<li>
+<code>$validate_new_sheet()</code> for checking new sheet names</li>
+<li>
+<code>$append_workbook_field()</code> for <code>self$workbook[[field]]</code>
+</li>
+<li>
+<code>$append_sheet_rels()</code> for <code>self$worksheet_rels[[sheet]]</code>
+</li>
+<li>
+<code>$get_worksheet()</code> to replace <code>$ws()</code>
+</li>
+</ul></li>
 </ul></div>
 </div>
     <div class="section level2">
