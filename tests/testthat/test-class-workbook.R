@@ -7,7 +7,7 @@ test_that("wb_set_col_widths", {
 # TODO use wb$wb_set_col_widths()
 
   wb <- wbWorkbook$new()
-  wb <- wb$add_worksheet("test")
+  wb$add_worksheet("test")
   wb$add_data("test", mtcars)
 
   # set column width to 12
@@ -39,4 +39,42 @@ test_that("wb_set_col_widths", {
   # a few more errors
   expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
+})
+
+
+# order -------------------------------------------------------------------
+
+test_that("$set_order() works", {
+  wb <- wb_workbook()
+  wb$add_worksheet("a")
+  wb$add_worksheet("b")
+  wb$add_worksheet("c")
+
+  expect_identical(wb$sheetOrder, 1:3)
+  exp <- letters[1:3]
+  names(exp) <- exp
+  expect_identical(wb$get_sheet_names(), exp)
+
+  wb$set_order(3:1)
+  expect_identical(wb$sheetOrder, 3:1)
+  exp <- letters[3:1]
+  names(exp) <- exp
+  expect_identical(wb$get_sheet_names(), exp)
+})
+
+
+# sheet names -------------------------------------------------------------
+
+test_that("$set_sheet_names() and $get_sheet_names() work", {
+  wb <- wb_workbook()$add_worksheet(1)$add_worksheet(2)
+  wb$set_sheet_names(new = c("a", "b & c"))
+
+  # return a names character vector
+  res <- wb$get_sheet_names()
+  exp <- c(a = "a", "b & c" = replace_legal_chars("b & c"))
+  expect_identical(res, exp)
+
+  # should be able to check the original values, too
+  res <- wb$.__enclos_env__$private$get_sheet_index("b & c")
+  expect_identical(res, 2L)
 })

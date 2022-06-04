@@ -4,9 +4,15 @@
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
 \value{
+The integer position of the sheet
+
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
+
+A \code{named} \code{character} vector of sheet names in their order.  The
+names represent the original value of the worksheet prior to any
+character substitutions.
 
 The \code{wbWorkbook} object
 
@@ -135,7 +141,8 @@ minor helper wrapping xl_open which does the entire same thing
 
 \item{\code{worksheets_rels}}{worksheets_rels}
 
-\item{\code{sheetOrder}}{sheetOrder}
+\item{\code{sheetOrder}}{The sheet order.  Controls ordering for worksheets and
+worksheet names.}
 
 \item{\code{path}}{path}
 
@@ -159,6 +166,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-new}{\code{wbWorkbook$new()}}
 \item \href{#method-wbWorkbook-append}{\code{wbWorkbook$append()}}
 \item \href{#method-wbWorkbook-append_sheets}{\code{wbWorkbook$append_sheets()}}
+\item \href{#method-wbWorkbook-validate_sheet}{\code{wbWorkbook$validate_sheet()}}
 \item \href{#method-wbWorkbook-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-wbWorkbook-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
@@ -171,6 +179,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
+\item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
+\item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
 \item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
@@ -281,6 +291,23 @@ Append to \code{self$workbook$sheets} This method is intended for internal use
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{value}}{A value for \code{self$workbook$sheets}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-validate_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-validate_sheet}{}}}
+\subsection{Method \code{validate_sheet()}}{
+validate sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validate_sheet(sheet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{A character sheet name or integer location}
 }
 \if{html}{\out{</div>}}
 }
@@ -713,10 +740,42 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_sheet_names}{}}}
+\subsection{Method \code{get_sheet_names()}}{
+Get sheet names
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_sheet_names}{}}}
+\subsection{Method \code{set_sheet_names()}}{
+Sets a sheet name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old = NULL, new)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{old}}{Old sheet name}
+
+\item{\code{new}}{New sheet name}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-setSheetName"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-setSheetName}{}}}
 \subsection{Method \code{setSheetName()}}{
-Sets a sheet name
+Deprecated.  Use \code{set_sheet_names()} instead
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, name)}\if{html}{\out{</div>}}
 }

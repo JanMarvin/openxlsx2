@@ -144,12 +144,14 @@ create_comment <- function(text,
   width <- round(width)
   height <- round(height)
 
-  author <- replaceIllegalCharacters(author)
-  text <- replaceIllegalCharacters(text)
 
   if (is.null(style)) {
     style <- create_font()
   }
+
+  author <- replace_legal_chars(author)
+  text <- replace_legal_chars(text)
+
 
   if (author != "") {
     # if author is provided, we write additional lines with the author name as well as an empty line

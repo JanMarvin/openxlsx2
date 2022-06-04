@@ -34,7 +34,7 @@ test_that("wb_save() is a wrapper", {
 # wb_merge_cells(), wb_unmerge_cells() ------------------------------------
 
 test_that("wb_merge_cells(), wb_unmerge_cells() are wrappers", {
-  wb <- wbWorkbook$new()$add_worksheet("sheet")
+  wb <- wb_workbook()$add_worksheet("sheet")
   params <- list(sheet = "sheet", rows = 1:2, cols = 2)
   expect_wrapper("merge_cells", wb = wb, params = params)
   expect_wrapper("unmerge_cells", wb = wb, params = params)
@@ -294,4 +294,19 @@ test_that("wb_add_data_table() is a wrapper", {
 test_that("wb_add_formula() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
+})
+
+
+# wb_set_sheet_names() ----------------------------------------------------
+
+test_that("wb_set_sheet_names() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")
+  expect_wrapper("set_sheet_names", wb = wb, params = list(new = c("c", "d")))
+})
+
+# wb_get_sheet_names() ----------------------------------------------------
+
+test_that("wb_get_sheet_names() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")
+  expect_wrapper("get_sheet_names", wb = wb)
 })

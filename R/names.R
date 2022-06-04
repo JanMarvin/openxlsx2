@@ -4,49 +4,17 @@
 #'
 #' @param x A `wbWorkbook` object
 #' @export
-#' @examples
-#'
-#' wb <- wb_workbook()
-#' wb$add_worksheet("S1")
-#' wb$add_worksheet("S2")
-#' wb$add_worksheet("S3")
-#'
-#' names(wb)
-#' names(wb)[[2]] <- "S2a"
-#' names(wb)
-#' names(wb) <- paste("Sheet", 1:3)
 names.wbWorkbook <- function(x) {
-  replaceXMLEntities(x$sheet_names)
+  .Deprecated("$get_sheet_names()")
+  assert_workbook(x)
+  x$get_sheet_names()
 }
 
 #' @rdname names.wbWorkbook
 #' @param value a character vector the same length as `x`
 #' @export
 `names<-.wbWorkbook` <- function(x, value) {
-
-  if (any(duplicated(tolower(value)))) {
-    stop("Worksheet names must be unique.")
-  }
-
-  existing_sheets <- x$sheet_names
-  inds <- which(value != existing_sheets)
-
-  if (length(inds) == 0) {
-    return(invisible(x))
-  }
-
-  if (length(value) != length(x$worksheets)) {
-    stop(sprintf("names vector must have length equal to number of worksheets in Workbook [%s]", length(existing_sheets)))
-  }
-
-  if (any(nchar(value) > 31)) {
-    warning("Worksheet names must less than 32 characters. Truncating names...")
-    value[nchar(value) > 31] <- vapply(value[nchar(value) > 31], substr, NA_character_, start = 1, stop = 31)
-  }
-
-  for (i in inds) {
-    invisible(x$setSheetName(i, value[[i]]))
-  }
-
-  invisible(x)
+  .Deprecated("$set_sheet_names()")
+  assert_workbook(x)
+  x$clone()$set_sheet_names(new = value)
 }

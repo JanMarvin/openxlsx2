@@ -162,7 +162,7 @@ col2hex <- function(my.col) {
 ## header and footer replacements
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
-    x <- replaceIllegalCharacters(x)
+    x <- replace_illegal_chars(x)
     x <- gsub("\\[Page\\]", "P", x)
     x <- gsub("\\[Pages\\]", "N", x)
     x <- gsub("\\[Date\\]", "D", x)
@@ -200,37 +200,6 @@ write_comment_xml <- function(comment_list, file_name) {
 
   NULL
 }
-
-
-illegalchars <- c("&", '"', "'", "<", ">", "\a", "\b", "\v", "\f")
-illegalcharsreplace <- c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "", "", "", "")
-
-#' converts & to &amp;
-#' @param v some xml string
-#' @keywords internal
-#' @noRd
-replaceIllegalCharacters <- function(v) {
-  v <- as.character(v)
-
-  v <- stri_replace_all_fixed(v, illegalchars, illegalcharsreplace, vectorize_all = FALSE)
-
-  return(v)
-}
-
-#' converts &amp; to &
-#' @param v some xml string
-#' @keywords internal
-#' @noRd
-replaceXMLEntities <- function(v) {
-  v <- gsub("&amp;", "&", v, fixed = TRUE)
-  v <- gsub("&quot;", '"', v, fixed = TRUE)
-  v <- gsub("&apos;", "'", v, fixed = TRUE)
-  v <- gsub("&lt;", "<", v, fixed = TRUE)
-  v <- gsub("&gt;", ">", v, fixed = TRUE)
-
-  return(v)
-}
-
 
 pxml <- function(x) {
   ## TODO does this break anything? Why is unique called? lengths are off, if non unique values are found.

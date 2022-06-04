@@ -624,7 +624,7 @@ write_data_table <- function(
   if ((!is.character(sep)) || (length(sep) != 1))
     stop("sep must be a character vector of length 1")
 
-  sheet <- wb_validate_sheet(wb, sheet)
+  sheet <- wb$validate_sheet(sheet)
 
   if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
 
@@ -703,7 +703,7 @@ write_data_table <- function(
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
       l <- int2col(unlist(coords[, 2]))
-      dfn <- sprintf("'%s'!%s", names(wb)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
+      dfn <- sprintf("'%s'!%s", wb$get_sheet_names()[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
       dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
 
@@ -760,7 +760,7 @@ write_data_table <- function(
   if (data_table) {
 
     ## replace invalid XML characters
-    col_names <- replaceIllegalCharacters(colnames(x))
+    col_names <- replace_legal_chars(colnames(x))
     if (rowNames) col_names <- c("1", col_names)
 
     ## Table name validation
