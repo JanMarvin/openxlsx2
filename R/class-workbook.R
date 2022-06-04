@@ -5185,25 +5185,25 @@ wbWorkbook <- R6::R6Class(
             dir.create(xlchartsRelsDir, recursive = TRUE)
           }
 
-          for (i in seq_along(self$charts)) {
+          for (crt in seq_along(self$charts)) {
             write_file(
-              body = self$charts[[i]][1],
-              fl = file.path(xlchartsDir, stri_join("chart", i, ".xml"))
+              body = self$charts[[crt]][1],
+              fl = file.path(xlchartsDir, stri_join("chart", crt, ".xml"))
             )
 
             write_file(
-              body = self$charts[[i]][2],
-              fl = file.path(xlchartsDir, stri_join("colors", i, ".xml"))
+              body = self$charts[[crt]][2],
+              fl = file.path(xlchartsDir, stri_join("colors", crt, ".xml"))
             )
 
             write_file(
-              body = self$charts[[i]][3],
-              fl = file.path(xlchartsDir, stri_join("style", i, ".xml"))
+              body = self$charts[[crt]][3],
+              fl = file.path(xlchartsDir, stri_join("style", crt, ".xml"))
             )
 
             write_file(
-              body = self$charts_rels[[i]],
-              fl = file.path(xlchartsRelsDir, stri_join("chart", i, ".xml.rels"))
+              body = self$charts_rels[[crt]],
+              fl = file.path(xlchartsRelsDir, stri_join("chart", crt, ".xml.rels"))
             )
           }
 
