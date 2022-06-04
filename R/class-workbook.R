@@ -3086,7 +3086,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       self
-    }
+    },
 
     ## plots and images ----
 
