@@ -111,18 +111,18 @@ test_that("wb_to_df", {
 
 
   ###########################################################################
-  # definedName // namedRegion
+  # named_region // namedRegion
   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
   expect_silent(wb3 <- wb_load(xlsxFile))
 
-  # read dataset with definedName (returns global first)
+  # read dataset with named_region (returns global first)
   exp <- data.frame(A = "S2A1", B = "S2B1")
-  got <- wb_to_df(wb3, definedName = "MyRange", colNames = FALSE)
+  got <- wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
-  # read definedName from sheet
+  # read named_region from sheet
   exp <- data.frame(A = "S3A1", B = "S3B1")
-  got <- wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
+  got <- wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
 })

@@ -208,38 +208,6 @@ pxml <- function(x) {
 }
 
 
-get_named_regions_from_string <- function(wb, dn) {
-  dn <- cbind(
-    rbindlist(xml_attr(dn, "definedName")),
-    value =  xml_value(dn, "definedName")
-  )
-
-  if (!is.null(dn$value)) {
-    dn_pos <- dn$value
-    dn_pos <- gsub("[$']", "", dn_pos)
-    # for ws_page_setup we can have multiple defined names for column and row
-    # separated by a colon. This keeps only the first and drops the second.
-    # This will allow saving, but changes get_named_regions()
-    dn_pos <- vapply(strsplit(dn_pos, ","), FUN = function(x) x[1], NA_character_)
-
-    has_bang <- grepl("!", dn_pos, fixed = TRUE)
-    dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
-    dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
-  }
-
-  dn$id <- seq_len(nrow(dn))
-
-  if (!is.null(dn$localSheetId)) {
-    dn$local <- as.integer(dn$localSheetId != "")
-  } else {
-    dn$local <- 0
-  }
-  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
-
-  dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]),]
-}
-
-
 genHeaderFooterNode <- function(x) {
   # TODO is x some class of something?
 

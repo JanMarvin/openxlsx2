@@ -2,6 +2,8 @@
 
 ## New features
 
+* Enable reading tables with `wb_to_df()`. Tables are handled similar to defined names. [193](https://github.com/JanMarvin/openxlsx2/pull/193)
+
 * Several enhancements have been added for checking and validation worksheet names
 [165](https://github.com/JanMarvin/openxlsx2/issues/165)
   * When adding a new worksheet via `wbWorkbook$add_worksheet()` the provided name is checked for illegal characters (see note in **Breaking changes**)
