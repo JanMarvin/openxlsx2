@@ -216,3 +216,23 @@ cols <- 1:12
 wb <- wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")
 wb
 ```
+
+
+## add borders
+```{r}
+wb <- wb_workbook()
+# full inner grid
+wb$add_worksheet("S1", gridLines = FALSE, zoom = 50)$add_data("S1", mtcars)
+wb$add_border("S1", dims = "A2:K33",
+              inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"),
+              inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+# only vertical grid
+wb$add_worksheet("S2", gridLines = FALSE)$add_data("S2", mtcars)
+wb$add_border("S2", dims = "A2:K33", inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"))
+# only horizontal grid
+wb$add_worksheet("S3", gridLines = FALSE)$add_data("S3", mtcars)
+wb$add_border("S3", dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+# no inner grid
+wb$add_worksheet("S4", gridLines = FALSE)$add_data("S4", mtcars)
+wb$add_border("S4", dims = "A2:K33")
+```

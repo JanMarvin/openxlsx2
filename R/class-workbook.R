@@ -4101,8 +4101,8 @@ wbWorkbook <- R6::R6Class(
     #' @description create borders for cell region
     #' @param sheet a worksheet
     #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
-    #' @param bottom_color,left_color,right_color,top_color,inner_color a color, either something openxml knows or some RGB color
-    #' @param left_border,right_border,top_border,bottom_border,inner_grid the border style, if NULL no border is drawn. See create_border for possible border styles
+    #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
+    #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
     #' @seealso create_border
     #' @examples
     #'
@@ -4141,8 +4141,10 @@ wbWorkbook <- R6::R6Class(
     left_border   = "thin",
     right_border  = "thin",
     top_border    = "thin",
-    inner_grid    = NULL,
-    inner_color   = NULL
+    inner_hgrid    = NULL,
+    inner_hcolor   = NULL,
+    inner_vgrid    = NULL,
+    inner_vcolor   = NULL
     ) {
 
       # TODO merge styles and if a style is already present, only add the newly
@@ -4156,115 +4158,115 @@ wbWorkbook <- R6::R6Class(
 
       ### beg border creation
       full_single <- create_border(
-        bottom = bottom_border, bottom_color = bottom_color,
         top = top_border, top_color = top_color,
+        bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
       )
 
       top_single <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
         top = top_border, top_color = top_color,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
       )
 
       middle_single <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
-        top = inner_grid, top_color = inner_color,
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
       )
 
       bottom_single <- create_border(
-        top = inner_grid, top_color = inner_color,
+        top = inner_vgrid, top_color = inner_vcolor,
         bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
       )
 
       left_single <- create_border(
-        bottom = bottom_border, bottom_color = bottom_color,
         top = top_border, top_color = top_color,
+        bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
-        right = inner_grid, right_color = inner_color
+        right = inner_hgrid, right_color = inner_hcolor
       )
 
       right_single <- create_border(
-        bottom = bottom_border, bottom_color = bottom_color,
         top = top_border, top_color = top_color,
-        left = inner_grid, left_color = inner_color,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = inner_hgrid, left_color = inner_hcolor,
         right = right_border, right_color = right_color
       )
 
       center_single <- create_border(
-        bottom = bottom_border, bottom_color = bottom_color,
         top = top_border, top_color = top_color,
-        left = inner_grid, left_color = inner_color,
-        right = inner_grid, right_color = inner_color
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
       )
 
       top_left <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
         top = top_border, top_color = top_color,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
         left = left_border, left_color = left_color,
-        right = inner_grid, right_color = inner_color
+        right = inner_hgrid, right_color = inner_hcolor
       )
 
       top_right <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
         top = top_border, top_color = top_color,
-        left = inner_grid, left_color = inner_color,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
         right = left_border, right_color = right_color
       )
 
       bottom_left <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
         bottom = bottom_border, bottom_color = bottom_color,
-        top = inner_grid, top_color = inner_color,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
       )
 
       bottom_right <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
         bottom = bottom_border, bottom_color = bottom_color,
-        top = inner_grid, top_color = inner_color,
-        left = inner_grid, left_color = inner_color,
+        left = inner_hgrid, left_color = inner_hcolor,
         right = left_border, right_color = right_color
       )
 
       top_center <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
         top = top_border, top_color = top_color,
-        left = inner_grid, left_color = inner_color,
-        right = inner_grid, right_color = inner_color
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
       )
 
       bottom_center <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
         bottom = bottom_border, bottom_color = bottom_color,
-        top = inner_grid, top_color = inner_color,
-        left = inner_grid, left_color = inner_color,
-        right = inner_grid, right_color = inner_color
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
       )
 
       middle_left <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
-        top = inner_grid, top_color = inner_color,
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
         left = left_border, left_color = left_color,
-        right = inner_grid, right_color = inner_color
+        right = inner_hgrid, right_color = inner_hcolor
       )
 
       middle_right <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
-        top = inner_grid, top_color = inner_color,
-        left = inner_grid, left_color = inner_color,
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
         right = right_border, right_color = right_color
       )
 
       inner_cell <- create_border(
-        bottom = inner_grid, bottom_color = inner_color,
-        top = inner_grid, top_color = inner_color,
-        left = inner_grid, left_color = inner_color,
-        right = inner_grid, right_color = inner_color
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
       )
       ### end border creation
 

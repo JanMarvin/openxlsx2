@@ -1946,8 +1946,8 @@ wb_open <- function(wb) {
 #' @param wb workbook
 #' @param sheet a worksheet
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
-#' @param bottom_color,left_color,right_color,top_color,inner_color a color, either something openxml knows or some RGB color
-#' @param left_border,right_border,top_border,bottom_border,inner_grid the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
+#' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
 #' @seealso create_border
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
@@ -1980,21 +1980,26 @@ wb_add_border <- function(
     left_border   = "thin",
     right_border  = "thin",
     top_border    = "thin",
-    inner_grid    = NULL,
-    inner_color   = NULL) {
+    inner_hgrid    = NULL,
+    inner_hcolor   = NULL,
+    inner_vgrid    = NULL,
+    inner_vcolor   = NULL) {
   sheet <- wb_validate_sheet(wb, sheet)
-  wb$clone()$add_border(sheet = sheet,
-                        dims = dims,
-                        bottom_color = bottom_color,
-                        left_color = left_color,
-                        right_color = right_color,
-                        top_color = top_color,
-                        bottom_border = bottom_border,
-                        left_border = left_border,
-                        right_border = right_border,
-                        top_border = top_border,
-                        inner_grid = inner_grid,
-                        inner_color = inner_color
-                        )
+  wb$clone()$add_border(
+    sheet = sheet,
+    dims = dims,
+    bottom_color = bottom_color,
+    left_color = left_color,
+    right_color = right_color,
+    top_color = top_color,
+    bottom_border = bottom_border,
+    left_border = left_border,
+    right_border = right_border,
+    top_border = top_border,
+    inner_hgrid = inner_hgrid,
+    inner_hcolor = inner_hcolor,
+    inner_vgrid = inner_vgrid,
+    inner_vcolor = inner_vcolor
+  )
 
 }

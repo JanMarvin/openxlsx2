@@ -16,8 +16,10 @@ wb_add_border(
   left_border = "thin",
   right_border = "thin",
   top_border = "thin",
-  inner_grid = NULL,
-  inner_color = NULL
+  inner_hgrid = NULL,
+  inner_hcolor = NULL,
+  inner_vgrid = NULL,
+  inner_vcolor = NULL
 )
 }
 \arguments{
@@ -27,9 +29,9 @@ wb_add_border(
 
 \item{dims}{dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"}
 
-\item{bottom_color, left_color, right_color, top_color, inner_color}{a color, either something openxml knows or some RGB color}
+\item{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}{a color, either something openxml knows or some RGB color}
 
-\item{left_border, right_border, top_border, bottom_border, inner_grid}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+\item{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}{the border style, if NULL no border is drawn. See create_border for possible border styles}
 }
 \description{
 wb wrapper to create borders for cell region

@@ -124,6 +124,7 @@ Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
   gridLines = TRUE,
+  rowColHeaders = FALSE,
   tabSelected = FALSE,
   tabColour = NULL,
   zoom = 100,
@@ -144,6 +145,8 @@ Creates a new \code{wbWorksheet} object
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{gridLines}}{gridLines}
+
+\item{\code{rowColHeaders}}{rowColHeaders}
 
 \item{\code{tabSelected}}{tabSelected}
 
