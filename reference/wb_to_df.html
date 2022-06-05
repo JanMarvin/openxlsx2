@@ -85,7 +85,8 @@ written down and not optimized etc. The goal was to have something working.</p>
   showFormula <span class="op">=</span> <span class="cn">FALSE</span>,
   convert <span class="op">=</span> <span class="cn">TRUE</span>,
   <span class="va">types</span>,
-  <span class="va">definedName</span>
+  <span class="va">definedName</span>,
+  <span class="va">named_region</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -124,7 +125,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <dt>types</dt>
 <dd><p>A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created</p></dd>
 <dt>definedName</dt>
-<dd><p>Character string with a definedName. If no sheet is selected, the first appearance will be selected.</p></dd>
+<dd><p>(deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.</p></dd>
+<dt>named_region</dt>
+<dd><p>Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.</p></dd>
 </dl></div>
 
     <div id="ref-examples">
@@ -2404,17 +2407,17 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-in">  <span class="co"># read_xlsx(wb2)</span></span>
 <span class="r-in"></span>
 <span class="r-in">  <span class="co">###########################################################################</span></span>
-<span class="r-in">  <span class="co"># definedName // namedRegion</span></span>
+<span class="r-in">  <span class="co"># named_region // namedRegion</span></span>
 <span class="r-in">  <span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"namedRegions3.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
 <span class="r-in">  <span class="va">wb3</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in">  <span class="co"># read dataset with definedName (returns global first)</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, definedName <span class="op">=</span> <span class="st">"MyRange"</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in">  <span class="co"># read dataset with named_region (returns global first)</span></span>
+<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, named_region <span class="op">=</span> <span class="st">"MyRange"</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      A    B</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 S2A1 S2B1</span>
 <span class="r-in"></span>
-<span class="r-in">  <span class="co"># read definedName from sheet</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, definedName <span class="op">=</span> <span class="st">"MyRange"</span>, sheet <span class="op">=</span> <span class="fl">4</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in">  <span class="co"># read named_region from sheet</span></span>
+<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, named_region <span class="op">=</span> <span class="st">"MyRange"</span>, sheet <span class="op">=</span> <span class="fl">4</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      A    B</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 S3A1 S3B1</span>
 <span class="r-in"></span>

@@ -94,8 +94,7 @@ Workbook object</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="fu"><a href="named_region.html">wb_add_named_region</a></span><span class="op">(</span></span>
-<span class="r-in">  wb <span class="op">=</span> <span class="va">wb</span>,</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span></span>
 <span class="r-in">  sheet <span class="op">=</span> <span class="fl">1</span>,</span>
 <span class="r-in">  name <span class="op">=</span> <span class="st">"iris"</span>,</span>
 <span class="r-in">  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -117,7 +116,7 @@ Workbook object</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xlsx"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="va">out_file</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="va">out_file</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## see named regions</span></span>
 <span class="r-in"><span class="fu">get_named_regions</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span> <span class="co">## From Workbook object</span></span>

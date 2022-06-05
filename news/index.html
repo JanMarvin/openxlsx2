@@ -64,7 +64,10 @@
 <h2 class="page-header" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>Several enhancements have been added for checking and validation worksheet names <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a><ul><li>When adding a new worksheet via <code>wbWorkbook$add_worksheet()</code> the provided name is checked for illegal characters (see note in <strong>Breaking changes</strong>)</li>
+<ul><li><p>Enable reading tables with <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>. Tables are handled similar to defined names. <a href="https://github.com/JanMarvin/openxlsx2/pull/193" class="external-link">193</a></p></li>
+<li>
+<p>Several enhancements have been added for checking and validation worksheet names <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a></p>
+<ul><li>When adding a new worksheet via <code>wbWorkbook$add_worksheet()</code> the provided name is checked for illegal characters (see note in <strong>Breaking changes</strong>)</li>
 <li>
 <code>wbWorkbook$get_sheet_names()</code> (<code><a href="../reference/wb_get_sheet_names.html">wb_get_sheet_names()</a></code> wrapper) added. These return both the <em>formatted</em> and original sheet names</li>
 <li>
@@ -74,7 +77,8 @@
 </ul></li>
 <li>
 <code>clean_worksheet_names()</code> added to support removing characters that are not allowed in worksheet names</li>
-</ul></li></ul></div>
+</ul></li>
+</ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li><p>Fix an issue with broken pageSetup reference causing corupt excel files <a href="https://github.com/JanMarvin/openxlsx2/issues/216" class="external-link">216</a></p></li>
