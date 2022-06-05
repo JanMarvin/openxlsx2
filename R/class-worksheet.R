@@ -199,7 +199,7 @@ wbWorksheet <- R6::R6Class(
       ## list of all possible children
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
-      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" gridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(tabSelected))
+      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(tabSelected))
       self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
