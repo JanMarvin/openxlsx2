@@ -41,12 +41,14 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   ## Unzip files to temp directory
   xmlFiles <- unzip(file, exdir = xmlDir)
+  ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))
+  xmlFiles <- xmlFiles[ordr]
 
   wb <- wb_workbook()
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
     # targets xmlFiles; has presents
-    grep(pattern, xmlFiles, perl = perl, value = value, ...)
+    z <- grep(pattern, xmlFiles, perl = perl, value = value, ...)
   }
 
   ## Not used
@@ -76,7 +78,9 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   commentsrelXML    <- grep_xml("xl/worksheets/_rels/sheet[0-9]+\\.xml")
   embeddings        <- grep_xml("xl/embeddings")
 
-  charts            <- grep_xml("xl/charts/.*xml$")
+  chartsXML         <- grep_xml("xl/charts/chart[0-9]+\\.xml$")
+  chartsXML_colors  <- grep_xml("xl/charts/colors[0-9]+\\.xml$")
+  chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
   chartsRels        <- grep_xml("xl/charts/_rels")
   chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+\\.xml")
 
@@ -105,7 +109,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   ## remove all EXCEPT media and charts
   on.exit(
     unlink(
-      grep_xml("charts|media|vmlDrawing|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
+      grep_xml("media|vmlDrawing|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
       recursive = TRUE, force = TRUE
     ),
     add = TRUE
@@ -467,31 +471,26 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   }
 
   ## xl\chart
-  if (!data_only && length(charts)) {
-    chartNames <- basename(charts)
-    nCharts <- sum(grepl("chart[0-9]+.xml", chartNames))
-    nChartStyles <- sum(grepl("style[0-9]+.xml", chartNames))
-    nChartCol <- sum(grepl("colors[0-9]+.xml", chartNames))
+  if (!data_only && length(chartsXML)) {
 
-    if (nCharts > 0) {
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/chart%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', seq_len(nCharts)))
+    # assume that every chart has chart, color, style and rels
+    empty_chr <- vector("character", length(chartsXML))
+    charts <- data.frame(
+      chart = empty_chr,
+      colors = empty_chr,
+      style = empty_chr,
+      rels = empty_chr
+    )
+
+    for (crt in seq_along(chartsXML)) {
+      charts$chart[crt]  <- read_xml(chartsXML[crt], pointer = FALSE)
+      charts$colors[crt] <- read_xml(chartsXML_colors[crt], pointer = FALSE)
+      charts$style[crt]  <- read_xml(chartsXML_styles[crt], pointer = FALSE)
+      charts$rels[crt]   <- read_xml(chartsRels[crt], pointer = FALSE)
     }
 
-    if (nChartStyles > 0) {
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/style%s.xml" ContentType="application/vnd.ms-office.chartstyle+xml"/>', seq_len(nChartStyles)))
-    }
-
-    if (nChartCol > 0) {
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/charts/colors%s.xml" ContentType="application/vnd.ms-office.chartcolorstyle+xml"/>', seq_len(nChartCol)))
-    }
-
-    if (length(chartsRels)) {
-      charts <- c(charts, chartsRels)
-      chartNames <- c(chartNames, file.path("_rels", basename(chartsRels)))
-    }
-
-    names(charts) <- chartNames
     wb$charts <- charts
+
   }
 
   ## xl\theme
