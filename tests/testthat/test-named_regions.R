@@ -404,6 +404,15 @@ test_that("Overwrite and delete named regions", {
 })
 
 
+test_that("deprecation test", {
+
+    filename <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
+    expect_warning(wb_to_df(filename, definedName = "MyRange"),
+                   "wb_to_df(definedName = .) is deprecated.  Use wb_to_df(named_region = .) instead",
+                   fixed = TRUE)
+
+})
+
 test_that("load table", {
 
   wb <- wb_workbook()
