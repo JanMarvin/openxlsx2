@@ -359,6 +359,7 @@ Add worksheet to the \code{wbWorkbook} object
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
   sheet,
   gridLines = TRUE,
+  rowColHeaders = TRUE,
   tabColour = NULL,
   zoom = 100,
   header = NULL,
@@ -386,6 +387,8 @@ Add worksheet to the \code{wbWorkbook} object
 \item{\code{sheet}}{sheet}
 
 \item{\code{gridLines}}{gridLines}
+
+\item{\code{rowColHeaders}}{rowColHeaders}
 
 \item{\code{tabColour}}{tabColour}
 

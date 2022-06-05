@@ -318,6 +318,7 @@ wbWorkbook <- R6::R6Class(
     #' Add worksheet to the `wbWorkbook` object
     #' @param sheet sheet
     #' @param gridLines gridLines
+    #' @param rowColHeaders rowColHeaders
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @param header header
@@ -338,6 +339,7 @@ wbWorkbook <- R6::R6Class(
     add_worksheet = function(
       sheet,
       gridLines   = TRUE,
+      rowColHeaders = TRUE,
       tabColour   = NULL,
       zoom        = 100,
       header      = NULL,
@@ -467,6 +469,7 @@ wbWorkbook <- R6::R6Class(
       self$append("worksheets",
         wbWorksheet$new(
           gridLines   = gridLines,
+          rowColHeaders = rowColHeaders,
           tabSelected = newSheetIndex == 1,
           tabColour   = tabColour,
           zoom        = zoom,

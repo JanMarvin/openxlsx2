@@ -325,6 +325,8 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' @param sheet A name for the new worksheet
 #' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
 #'   hidden.
+#' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
+#'   hidden.
 #' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
 #'   colours()) or a valid hex colour beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
@@ -404,6 +406,7 @@ wb_add_worksheet <- function(
   wb,
   sheet,
   gridLines   = TRUE,
+  rowColHeaders = TRUE,
   tabColour   = NULL,
   zoom        = 100,
   header      = NULL,
@@ -425,6 +428,7 @@ wb_add_worksheet <- function(
   wb$clone()$add_worksheet(
     sheet       = sheet,
     gridLines   = gridLines,
+    rowColHeaders = rowColHeaders,
     tabColour   = tabColour,
     zoom        = zoom,
     oddHeader   = headerFooterSub(oddHeader),

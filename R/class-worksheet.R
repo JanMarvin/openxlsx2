@@ -158,7 +158,7 @@ wbWorksheet <- R6::R6Class(
     #' @return a `wbWorksheet` object
     initialize = function(
       gridLines   = TRUE,
-      rowColHeaders = FALSE,
+      rowColHeaders = TRUE,
       tabSelected = FALSE,
       tabColour   = NULL,
       zoom        = 100,

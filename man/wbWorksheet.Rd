@@ -124,7 +124,7 @@ Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
   gridLines = TRUE,
-  rowColHeaders = FALSE,
+  rowColHeaders = TRUE,
   tabSelected = FALSE,
   tabColour = NULL,
   zoom = 100,

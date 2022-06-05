@@ -222,7 +222,7 @@ wb
 ```{r}
 wb <- wb_workbook()
 # full inner grid
-wb$add_worksheet("S1", gridLines = FALSE, zoom = 50)$add_data("S1", mtcars)
+wb$add_worksheet("S1", gridLines = FALSE, rowColHeaders = FALSE)$add_data("S1", mtcars)
 wb$add_border("S1", dims = "A2:K33",
               inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"),
               inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
