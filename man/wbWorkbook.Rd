@@ -83,8 +83,6 @@ wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
 wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
 
-Deep cloning method for workbooks.  This method also accesses
-`$clone(deep = TRUE)` methods for `R6` fields.
 }
 \seealso{
 create_border
@@ -1918,8 +1916,6 @@ wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
 wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
 
-Deep cloning method for workbooks.  This method also accesses
-`$clone(deep = TRUE)` methods for `R6` fields.
 }
 \if{html}{\out{</div>}}
 

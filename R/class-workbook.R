@@ -4569,8 +4569,8 @@ wbWorkbook <- R6::R6Class(
 
     ### methods ----
     deep_clone = function(name, value) {
-      #' Deep cloning method for workbooks.  This method also accesses
-      #' `$clone(deep = TRUE)` methods for `R6` fields.
+      # Deep cloning method for workbooks.  This method also accesses
+      # `$clone(deep = TRUE)` methods for `R6` fields.
       if (R6::is.R6(value)) {
         value <- value$clone(deep = TRUE)
       } else if (is.list(value)) {
