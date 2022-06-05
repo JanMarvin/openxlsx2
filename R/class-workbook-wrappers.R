@@ -1946,8 +1946,8 @@ wb_open <- function(wb) {
 #' @param wb workbook
 #' @param sheet a worksheet
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
-#' @param bottom_color,left_color,right_color,top_color a color, either something openxml knows or some RGB color
-#' @param left_border,right_border,top_border,bottom_border the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @param bottom_color,left_color,right_color,top_color,inner_color a color, either something openxml knows or some RGB color
+#' @param left_border,right_border,top_border,bottom_border,inner_grid the border style, if NULL no border is drawn. See create_border for possible border styles
 #' @seealso create_border
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
@@ -1972,7 +1972,6 @@ wb_add_border <- function(
     wb,
     sheet,
     dims = "A1",
-
     bottom_color  = c(rgb = "FF000000"),
     left_color    = c(rgb = "FF000000"),
     right_color   = c(rgb = "FF000000"),
@@ -1980,7 +1979,9 @@ wb_add_border <- function(
     bottom_border = "thin",
     left_border   = "thin",
     right_border  = "thin",
-    top_border    = "thin") {
+    top_border    = "thin",
+    inner_grid    = NULL,
+    inner_color   = NULL) {
   sheet <- wb_validate_sheet(wb, sheet)
   wb$clone()$add_border(sheet = sheet,
                         dims = dims,
@@ -1991,7 +1992,9 @@ wb_add_border <- function(
                         bottom_border = bottom_border,
                         left_border = left_border,
                         right_border = right_border,
-                        top_border = top_border
+                        top_border = top_border,
+                        inner_grid = inner_grid,
+                        inner_color = inner_color
                         )
 
 }

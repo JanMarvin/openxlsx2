@@ -4101,8 +4101,8 @@ wbWorkbook <- R6::R6Class(
     #' @description create borders for cell region
     #' @param sheet a worksheet
     #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
-    #' @param bottom_color,left_color,right_color,top_color a color, either something openxml knows or some RGB color
-    #' @param left_border,right_border,top_border,bottom_border the border style, if NULL no border is drawn. See create_border for possible border styles
+    #' @param bottom_color,left_color,right_color,top_color,inner_color a color, either something openxml knows or some RGB color
+    #' @param left_border,right_border,top_border,bottom_border,inner_grid the border style, if NULL no border is drawn. See create_border for possible border styles
     #' @seealso create_border
     #' @examples
     #'
@@ -4124,7 +4124,12 @@ wbWorkbook <- R6::R6Class(
     #'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
     #'  bottom_color = c(rgb ="FFFF0000"))
     #' wb$add_border(1, dims = "D28:E28")
-    #' if (interactive()) wb$open()
+    #' # if (interactive()) wb$open()
+    #'
+    #' wb <- wb_workbook()
+    #' wb$add_worksheet("S1")$add_data("S1", mtcars)
+    #' wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
+    #'
     add_border = function(
     sheet         = 1,
     dims          = "A1",
@@ -4135,7 +4140,9 @@ wbWorkbook <- R6::R6Class(
     bottom_border = "thin",
     left_border   = "thin",
     right_border  = "thin",
-    top_border    = "thin"
+    top_border    = "thin",
+    inner_grid    = NULL,
+    inner_color   = NULL
     ) {
 
       # TODO merge styles and if a style is already present, only add the newly
@@ -4156,17 +4163,21 @@ wbWorkbook <- R6::R6Class(
       )
 
       top_single <- create_border(
+        bottom = inner_grid, bottom_color = inner_color,
         top = top_border, top_color = top_color,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
       )
 
       middle_single <- create_border(
+        bottom = inner_grid, bottom_color = inner_color,
+        top = inner_grid, top_color = inner_color,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
       )
 
       bottom_single <- create_border(
+        top = inner_grid, top_color = inner_color,
         bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
         right = left_border, right_color = right_color
@@ -4175,54 +4186,85 @@ wbWorkbook <- R6::R6Class(
       left_single <- create_border(
         bottom = bottom_border, bottom_color = bottom_color,
         top = top_border, top_color = top_color,
-        left = left_border, left_color = left_color
+        left = left_border, left_color = left_color,
+        right = inner_grid, right_color = inner_color
       )
 
       right_single <- create_border(
         bottom = bottom_border, bottom_color = bottom_color,
         top = top_border, top_color = top_color,
+        left = inner_grid, left_color = inner_color,
         right = right_border, right_color = right_color
       )
 
       center_single <- create_border(
         bottom = bottom_border, bottom_color = bottom_color,
-        top = top_border, top_color = top_color
+        top = top_border, top_color = top_color,
+        left = inner_grid, left_color = inner_color,
+        right = inner_grid, right_color = inner_color
       )
 
       top_left <- create_border(
+        bottom = inner_grid, bottom_color = inner_color,
         top = top_border, top_color = top_color,
-        left = left_border, left_color = left_color
+        left = left_border, left_color = left_color,
+        right = inner_grid, right_color = inner_color
       )
 
       top_right <- create_border(
+        bottom = inner_grid, bottom_color = inner_color,
         top = top_border, top_color = top_color,
+        left = inner_grid, left_color = inner_color,
         right = left_border, right_color = right_color
       )
 
       bottom_left <- create_border(
         bottom = bottom_border, bottom_color = bottom_color,
-        left = left_border, left_color = left_color
+        top = inner_grid, top_color = inner_color,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
       )
 
       bottom_right <- create_border(
         bottom = bottom_border, bottom_color = bottom_color,
+        top = inner_grid, top_color = inner_color,
+        left = inner_grid, left_color = inner_color,
         right = left_border, right_color = right_color
       )
 
       top_center <- create_border(
-        top = top_border, top_color = top_color
+        bottom = inner_grid, bottom_color = inner_color,
+        top = top_border, top_color = top_color,
+        left = inner_grid, left_color = inner_color,
+        right = inner_grid, right_color = inner_color
       )
 
       bottom_center <- create_border(
-        bottom = bottom_border, bottom_color = bottom_color
+        bottom = bottom_border, bottom_color = bottom_color,
+        top = inner_grid, top_color = inner_color,
+        left = inner_grid, left_color = inner_color,
+        right = inner_grid, right_color = inner_color
       )
 
       middle_left <- create_border(
-        left = left_border, left_color = left_color
+        bottom = inner_grid, bottom_color = inner_color,
+        top = inner_grid, top_color = inner_color,
+        left = left_border, left_color = left_color,
+        right = inner_grid, right_color = inner_color
       )
 
       middle_right <- create_border(
-        right = left_border, right_color = right_color
+        bottom = inner_grid, bottom_color = inner_color,
+        top = inner_grid, top_color = inner_color,
+        left = inner_grid, left_color = inner_color,
+        right = right_border, right_color = right_color
+      )
+
+      inner_cell <- create_border(
+        bottom = inner_grid, bottom_color = inner_color,
+        top = inner_grid, top_color = inner_color,
+        left = inner_grid, left_color = inner_color,
+        right = inner_grid, right_color = inner_color
       )
       ### end border creation
 
@@ -4289,6 +4331,14 @@ wbWorkbook <- R6::R6Class(
           dim_top_center <- top_ctr[!top_ctr %in% c(dim_top_left, dim_top_right)]
           dim_bottom_center <- bottom_ctr[!bottom_ctr %in% c(dim_bottom_left, dim_bottom_right)]
         }
+
+        if (ncol(df) > 2 && nrow(df) > 2) {
+          t_row <- 1
+          b_row <- nrow(df)
+          l_row <- 1
+          r_row <- ncol(df)
+          dim_inner_cell <- as.character(unlist(df[c(-t_row, -b_row), c(-l_row, -r_row)]))
+        }
       }
       ### end cell references
 
@@ -4327,6 +4377,8 @@ wbWorkbook <- R6::R6Class(
       sxf_top_center <- paste0(smp, "xf_top_center")
       sbottom_center <- paste0(smp, "bottom_center")
       sxf_bottom_center <- paste0(smp, "xf_bottom_center")
+      sinner_cell <- paste0(smp, "inner_cell")
+      sxf_inner_cell <- paste0(smp, "xf_inner_cell")
 
       # ncol == 1
       if (ncol(df) == 1) {
@@ -4483,6 +4535,17 @@ wbWorkbook <- R6::R6Class(
         )
         self$styles_mgr$add(xf_bottom_center, sxf_bottom_center)
         set_cell_style(self, sheet, dim_bottom_center, self$styles_mgr$get_xf_id(sxf_bottom_center))
+      }
+
+      if (nrow(df) > 2 && ncol(df) > 2) {
+
+        # inner cells
+        self$styles_mgr$add(inner_cell, sinner_cell)
+        xf_inner_cell <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(sinner_cell)
+        )
+        self$styles_mgr$add(xf_inner_cell, sxf_inner_cell)
+        set_cell_style(self, sheet, dim_inner_cell, self$styles_mgr$get_xf_id(sxf_inner_cell))
       }
 
       return(self)

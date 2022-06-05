@@ -77,7 +77,12 @@ wb$add_border(1, dims = "B12:D14",
  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
  bottom_color = c(rgb ="FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
-if (interactive()) wb$open()
+# if (interactive()) wb$open()
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
+
 Deep cloning method for workbooks.  This method also accesses
 `$clone(deep = TRUE)` methods for `R6` fields.
 }
@@ -1862,7 +1867,9 @@ create borders for cell region
   bottom_border = "thin",
   left_border = "thin",
   right_border = "thin",
-  top_border = "thin"
+  top_border = "thin",
+  inner_grid = NULL,
+  inner_color = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -1873,9 +1880,9 @@ create borders for cell region
 
 \item{\code{dims}}{dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"}
 
-\item{\code{bottom_color, left_color, right_color, top_color}}{a color, either something openxml knows or some RGB color}
+\item{\code{bottom_color, left_color, right_color, top_color, inner_color}}{a color, either something openxml knows or some RGB color}
 
-\item{\code{left_border, right_border, top_border, bottom_border}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+\item{\code{left_border, right_border, top_border, bottom_border, inner_grid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
 }
 \if{html}{\out{</div>}}
 }
@@ -1900,7 +1907,12 @@ wb$add_border(1, dims = "B12:D14",
  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
  bottom_color = c(rgb ="FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
-if (interactive()) wb$open()
+# if (interactive()) wb$open()
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
+
 Deep cloning method for workbooks.  This method also accesses
 `$clone(deep = TRUE)` methods for `R6` fields.
 }
