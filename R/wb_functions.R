@@ -838,3 +838,64 @@ wb_set_selected <- function(wb, sheet) {
 
   wb
 }
+
+
+#' dummy function to add a chart to an existing workbook
+#' currently only a barplot is possible
+#' @param wb a workbook
+#' @param sheet the sheet on which the graph will appear
+#' @param srhc a somewhat complex created list object containing data
+#' @param dims the dimensions where the sheet will appear
+#' @param type the chart type, currently only "barplot"
+#' @export
+#' @examples
+#' wb <- wb_workbook()
+#' wb$add_worksheet("S1")$add_data("S1", cars)
+#' wb$add_worksheet("S2")$add_data("S2", mtcars, rowNames = TRUE)
+#'
+#' # remove unneeded default worksheet_rels
+#' wb$worksheets_rels <- lapply(seq_along(wb$worksheets), function(x) NULL)
+#'
+#' # create Chart input
+#' srhc <- list(
+#'   list(sheet = "'S2'",
+#'        head = "$B$1",
+#'        body = "$B$2:$B$33",
+#'        cat = "$A$2:$A$33")
+#'   ,list(sheet = "'S2'",
+#'         head = "$C$1",
+#'         body = "$C$2:$C33",
+#'         cat = "$A$2:$A$33")
+#' )
+#'
+#' wb <- wb_add_chart(wb, sheet = 2, srhc, dims = "A1:H18")
+#'
+wb_add_chart <- function(wb, sheet, srhc, dims, type = "barplot") {
+  ## get sheet id
+  # sheet <- wb$...
+
+  dims_list <- strsplit(dims, ":")[[1]]
+  from <- col2int(dims_list)
+  to <- as.numeric(gsub("\\D+", "", dims_list))
+
+  next_drawing <- max(sapply(wb$drawings, length), na.rm = TRUE) + 1
+  next_chart <- NROW(wb$charts) + 1
+
+  chart <- data.frame(
+    chart = barchart(srhc),
+    colors = colors1_xml,
+    style = stylebarplot_xml,
+    rels = chart1_rels_xml(next_chart)
+  )
+
+  wb$charts <- rbind(wb$charts, chart)
+
+  # create Drawing
+  wb$drawings[[sheet]] <- drawings(from = c(from[1]+1, to[1]+1), to = c(from[2] + 1, to[2] + 1))
+  wb$drawings_rels[[sheet]] <- drawings_rels(next_chart)
+
+  wb$worksheets[[sheet]]$drawing <- "<drawing r:id=\"rId1\"/>"
+  wb$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
+
+  invisible(wb)
+}
