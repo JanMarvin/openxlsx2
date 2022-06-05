@@ -143,7 +143,7 @@ styles_on_sheet <- function(wb, sheet) {
 
 # TODO guessing here
 #' create border
-#' @description 
+#' @description
 #' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
 #' Border colors are of the following type: c(rgb="FF000000")
 #' @param diagonalDown x
@@ -744,7 +744,7 @@ set_cell_style <- function(wb, sheet, cell, value) {
   sheet <- wb_validate_sheet(wb, sheet)
 
   # pass multiple characters
-  cell <- vapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))), NA_character_)
+  cell <- sapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc
 
   cc$cell <- paste0(cc$c_r, cc$row_r)

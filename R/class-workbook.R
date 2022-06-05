@@ -4108,15 +4108,23 @@ wbWorkbook <- R6::R6Class(
     #'
     #' wb <- wb_workbook()
     #' wb$add_worksheet("S1")$add_data("S1", mtcars)
-    #' wb$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double")
-    #' wb$add_border(1, dims = "A5", left_border = "dotted", right_border = "dotted", top_border = "hair", bottom_border = "thick")
+    #' wb$add_border(1, dims = "A1:K1",
+    #'  left_border = NULL, right_border = NULL,
+    #'  top_border = NULL, bottom_border = "double")
+    #' wb$add_border(1, dims = "A5",
+    #'  left_border = "dotted", right_border = "dotted",
+    #'  top_border = "hair", bottom_border = "thick")
     #' wb$add_border(1, dims = "C2:C5")
     #' wb$add_border(1, dims = "G2:H3")
-    #' wb$add_border(1, dims = "G12:H13", left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"), top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+    #' wb$add_border(1, dims = "G12:H13",
+    #'  left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+    #'  top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
     #' wb$add_border(1, dims = "A20:C23")
-    #' wb$add_border(1, dims = "B12:D14", left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"), bottom_color = c(rgb ="FFFF0000"))
+    #' wb$add_border(1, dims = "B12:D14",
+    #'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+    #'  bottom_color = c(rgb ="FFFF0000"))
     #' wb$add_border(1, dims = "D28:E28")
-    #' wb$open()
+    #' if (interactive()) wb$open()
     add_border = function(
     sheet         = 1,
     dims          = "A1",
@@ -4137,7 +4145,7 @@ wbWorkbook <- R6::R6Class(
       # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
 
       df <- dims_to_dataframe(dims, fill = TRUE)
-      sheet <- self$get_sheet_index(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       ### beg border creation
       full_single <- create_border(

@@ -61,15 +61,23 @@ minor helper wrapping xl_open which does the entire same thing
 
 wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double")
-wb$add_border(1, dims = "A5", left_border = "dotted", right_border = "dotted", top_border = "hair", bottom_border = "thick")
+wb$add_border(1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb$add_border(1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
-wb$add_border(1, dims = "G12:H13", left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"), top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+wb$add_border(1, dims = "G12:H13",
+ left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+ top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
-wb$add_border(1, dims = "B12:D14", left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"), bottom_color = c(rgb ="FFFF0000"))
+wb$add_border(1, dims = "B12:D14",
+ left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+ bottom_color = c(rgb ="FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
-wb$open()
+if (interactive()) wb$open()
 Deep cloning method for workbooks.  This method also accesses
 `$clone(deep = TRUE)` methods for `R6` fields.
 }
@@ -1876,15 +1884,23 @@ create borders for cell region
 \preformatted{
 wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double")
-wb$add_border(1, dims = "A5", left_border = "dotted", right_border = "dotted", top_border = "hair", bottom_border = "thick")
+wb$add_border(1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb$add_border(1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
-wb$add_border(1, dims = "G12:H13", left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"), top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+wb$add_border(1, dims = "G12:H13",
+ left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+ top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
-wb$add_border(1, dims = "B12:D14", left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"), bottom_color = c(rgb ="FFFF0000"))
+wb$add_border(1, dims = "B12:D14",
+ left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+ bottom_color = c(rgb ="FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
-wb$open()
+if (interactive()) wb$open()
 Deep cloning method for workbooks.  This method also accesses
 `$clone(deep = TRUE)` methods for `R6` fields.
 }
