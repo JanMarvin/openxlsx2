@@ -141,6 +141,7 @@ wbWorksheet <- R6::R6Class(
     #' @description
     #' Creates a new `wbWorksheet` object
     #' @param gridLines gridLines
+    #' @param rowColHeaders rowColHeaders
     #' @param tabSelected tabSelected
     #' @param tabColour tabColour
     #' @param zoom zoom
@@ -157,6 +158,7 @@ wbWorksheet <- R6::R6Class(
     #' @return a `wbWorksheet` object
     initialize = function(
       gridLines   = TRUE,
+      rowColHeaders = FALSE,
       tabSelected = FALSE,
       tabColour   = NULL,
       zoom        = 100,
@@ -199,7 +201,7 @@ wbWorksheet <- R6::R6Class(
       ## list of all possible children
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
-      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(tabSelected))
+      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" showRowColHeaders="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(rowColHeaders), as.integer(tabSelected))
       self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
