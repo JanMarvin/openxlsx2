@@ -4096,7 +4096,390 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
 
       invisible(self)
+    },
+
+    #' @description create borders for cell region
+    #' @param sheet a worksheet
+    #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
+    #' @param bottom_color,left_color,right_color,top_color a color, either something openxml knows or some RGB color
+    #' @param left_border,right_border,top_border,bottom_border the border style, if NULL no border is drawn. See create_border for possible border styles
+    #' @seealso create_border
+    #' @examples
+    #'
+    #' wb <- wb_workbook()
+    #' wb$add_worksheet("S1")$add_data("S1", mtcars)
+    #' wb$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double")
+    #' wb$add_border(1, dims = "A5", left_border = "dotted", right_border = "dotted", top_border = "hair", bottom_border = "thick")
+    #' wb$add_border(1, dims = "C2:C5")
+    #' wb$add_border(1, dims = "G2:H3")
+    #' wb$add_border(1, dims = "G12:H13", left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"), top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+    #' wb$add_border(1, dims = "A20:C23")
+    #' wb$add_border(1, dims = "B12:D14", left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"), bottom_color = c(rgb ="FFFF0000"))
+    #' wb$add_border(1, dims = "D28:E28")
+    #' wb$open()
+    add_border = function(
+    sheet         = 1,
+    dims          = "A1",
+    bottom_color  = c(rgb = "FF000000"),
+    left_color    = c(rgb = "FF000000"),
+    right_color   = c(rgb = "FF000000"),
+    top_color     = c(rgb = "FF000000"),
+    bottom_border = "thin",
+    left_border   = "thin",
+    right_border  = "thin",
+    top_border    = "thin"
+    ) {
+
+      # TODO merge styles and if a style is already present, only add the newly
+      # created border style
+
+      # cc <- wb$worksheets[[sheet]]$sheet_data$cc
+      # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
+
+      df <- dims_to_dataframe(dims, fill = TRUE)
+      sheet <- self$get_sheet_index(sheet)
+
+      ### beg border creation
+      full_single <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color,
+        top = top_border, top_color = top_color,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      top_single <- create_border(
+        top = top_border, top_color = top_color,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      middle_single <- create_border(
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      bottom_single <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      left_single <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color,
+        top = top_border, top_color = top_color,
+        left = left_border, left_color = left_color
+      )
+
+      right_single <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color,
+        top = top_border, top_color = top_color,
+        right = right_border, right_color = right_color
+      )
+
+      center_single <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color,
+        top = top_border, top_color = top_color
+      )
+
+      top_left <- create_border(
+        top = top_border, top_color = top_color,
+        left = left_border, left_color = left_color
+      )
+
+      top_right <- create_border(
+        top = top_border, top_color = top_color,
+        right = left_border, right_color = right_color
+      )
+
+      bottom_left <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = left_border, left_color = left_color
+      )
+
+      bottom_right <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color,
+        right = left_border, right_color = right_color
+      )
+
+      top_center <- create_border(
+        top = top_border, top_color = top_color
+      )
+
+      bottom_center <- create_border(
+        bottom = bottom_border, bottom_color = bottom_color
+      )
+
+      middle_left <- create_border(
+        left = left_border, left_color = left_color
+      )
+
+      middle_right <- create_border(
+        right = left_border, right_color = right_color
+      )
+      ### end border creation
+
+      #
+      # /* top_single    */
+      # /* middle_single */
+      # /* bottom_single */
+      #
+
+      # /* left_single --- center_single --- right_single */
+
+      #
+      # /* top_left   --- top_center   ---  top_right */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /* left_middle                   right_middle */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /* left_bottom - bottom_center - bottom_right */
+      #
+
+      ## beg cell references
+      if (ncol(df) == 1 && nrow(df) == 1)
+        dim_full_single <- df[1, 1]
+
+      if (ncol(df) == 1 && nrow(df) >= 2) {
+        dim_top_single <- df[1,1]
+        dim_bottom_single <- df[nrow(df), 1]
+        if (nrow(df) >= 3) {
+          mid <- df[,1]
+          dim_middle_single <- mid[!mid %in% c(dim_top_single, dim_bottom_single)]
+        }
+      }
+
+      if (ncol(df) >= 2 && nrow(df) == 1) {
+        dim_left_single <- df[1,1]
+        dim_right_single <- df[1, ncol(df)]
+        if (ncol(df) >= 3) {
+          ctr <- df[1,]
+          dim_center_single <- ctr[!ctr %in% c(dim_left_single, dim_right_single)]
+        }
+      }
+
+      if (ncol(df) >= 2 && nrow(df) >= 2) {
+        dim_top_left     <- df[1, 1]
+        dim_bottom_left  <- df[nrow(df), 1]
+        dim_top_right    <- df[1, ncol(df)]
+        dim_bottom_right <- df[nrow(df), ncol(df)]
+
+        if (nrow(df) >= 3) {
+          top_mid <- df[,1]
+          bottom_mid <- df[,ncol(df)]
+
+          dim_middle_left <- top_mid[!top_mid %in% c(dim_top_left, dim_bottom_left)]
+          dim_middle_right <- bottom_mid[!bottom_mid %in% c(dim_top_right, dim_bottom_right)]
+        }
+
+        if (ncol(df) >= 3) {
+          top_ctr <- df[1,]
+          bottom_ctr <- df[nrow(df),]
+
+          dim_top_center <- top_ctr[!top_ctr %in% c(dim_top_left, dim_top_right)]
+          dim_bottom_center <- bottom_ctr[!bottom_ctr %in% c(dim_bottom_left, dim_bottom_right)]
+        }
+      }
+      ### end cell references
+
+      # add some random string to the name. if called multiple times, new
+      # styles will be created. We do not look for identical styles, therefor
+      # we might create duplicates, but if a single style changes, the rest of
+      # the workbook remains valid.
+      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      sfull_single <- paste0(smp, "full_single")
+      sxf_full_single <- paste0(smp, "xf_full_single")
+      stop_single <- paste0(smp, "full_single")
+      sxf_top_single <- paste0(smp, "xf_full_single")
+      sbottom_single <- paste0(smp, "bottom_single")
+      sxf_bottom_single <- paste0(smp, "xf_bottom_single")
+      smiddle_single <- paste0(smp, "middle_single")
+      sxf_middle_single <- paste0(smp, "xf_middle_single")
+      sleft_single <- paste0(smp, "left_single")
+      sxf_left_single <- paste0(smp, "xf_left_single")
+      sright_single <- paste0(smp, "right_single")
+      sxf_right_single <- paste0(smp, "xf_right_single")
+      scenter_single <- paste0(smp, "center_single")
+      sxf_center_single <- paste0(smp, "xf_center_single")
+      stop_left <- paste0(smp, "top_left")
+      sxf_top_left <- paste0(smp, "xf_top_left")
+      stop_right <- paste0(smp, "top_right")
+      sxf_top_right<- paste0(smp, "xf_top_right")
+      sbottom_left <- paste0(smp, "bottom_left")
+      sxf_bottom_left<- paste0(smp, "xf_bottom_left")
+      sbottom_right <- paste0(smp, "bottom_right")
+      sxf_bottom_right<- paste0(smp, "xf_bottom_right")
+      smiddle_left <- paste0(smp, "middle_left")
+      sxf_middle_left <- paste0(smp, "xf_middle_left")
+      smiddle_right <- paste0(smp, "middle_right")
+      sxf_middle_right <- paste0(smp, "xf_middle_right")
+      stop_center <- paste0(smp, "top_center")
+      sxf_top_center <- paste0(smp, "xf_top_center")
+      sbottom_center <- paste0(smp, "bottom_center")
+      sxf_bottom_center <- paste0(smp, "xf_bottom_center")
+
+      # ncol == 1
+      if (ncol(df) == 1) {
+
+        # single cell
+        if (nrow(df) == 1) {
+
+          self$styles_mgr$add(full_single, sfull_single)
+          xf_full_single <- create_cell_style(
+            borderId = self$styles_mgr$get_border_id(sfull_single)
+          )
+          self$styles_mgr$add(xf_full_single, sxf_full_single)
+          set_cell_style(self, sheet, dims, self$styles_mgr$get_xf_id(sxf_full_single))
+        }
+
+        # create top & bottom piece
+        if (nrow(df) >= 2) {
+
+          # top single
+          self$styles_mgr$add(top_single, stop_single)
+          xf_top_single <- create_cell_style(
+            borderId = self$styles_mgr$get_border_id(stop_single)
+          )
+          self$styles_mgr$add(xf_top_single, sxf_top_single)
+          set_cell_style(self, sheet, dim_top_single, self$styles_mgr$get_xf_id(sxf_top_single))
+
+          # bottom single
+          self$styles_mgr$add(bottom_single, sbottom_single)
+          xf_bottom_single <- create_cell_style(
+            borderId = self$styles_mgr$get_border_id(sbottom_single)
+          )
+          self$styles_mgr$add(xf_bottom_single, sxf_bottom_single)
+          set_cell_style(self, sheet, dim_bottom_single, self$styles_mgr$get_xf_id(sxf_bottom_single))
+        }
+
+        # create middle piece(s)
+        if (nrow(df) >= 3) {
+
+          # middle single
+          self$styles_mgr$add(middle_single, smiddle_single)
+          xf_middle_single <- create_cell_style(
+            borderId = self$styles_mgr$get_border_id(smiddle_single)
+          )
+          self$styles_mgr$add(xf_middle_single, sxf_middle_single)
+          set_cell_style(self, sheet, dim_middle_single, self$styles_mgr$get_xf_id(sxf_middle_single))
+        }
+
+      }
+
+      # create left and right single row pieces
+      if (ncol(df) >= 2 && nrow(df) == 1) {
+
+        # left single
+        self$styles_mgr$add(left_single, sleft_single)
+        xf_left_single <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(sleft_single)
+        )
+        self$styles_mgr$add(xf_left_single, sxf_left_single)
+        set_cell_style(self, sheet, dim_left_single, self$styles_mgr$get_xf_id(sxf_left_single))
+
+        # right single
+        self$styles_mgr$add(right_single, sright_single)
+        xf_right_single <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(sright_single)
+        )
+        self$styles_mgr$add(xf_right_single, sxf_right_single)
+        set_cell_style(self, sheet, dim_right_single, self$styles_mgr$get_xf_id(sxf_right_single))
+
+        # add single center piece(s)
+        if (ncol(df) >= 3) {
+
+          # center single
+          self$styles_mgr$add(center_single, scenter_single)
+          xf_center_single <- create_cell_style(
+            borderId = self$styles_mgr$get_border_id(scenter_single)
+          )
+          self$styles_mgr$add(xf_center_single, sxf_center_single)
+          set_cell_style(self, sheet, dim_center_single, self$styles_mgr$get_xf_id(sxf_center_single))
+        }
+
+      }
+
+      # create left & right - top & bottom corners pieces
+      if (ncol(df) >= 2 && nrow(df) >= 2) {
+
+        # top left
+        self$styles_mgr$add(top_left, stop_left)
+        xf_top_left <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(stop_left)
+        )
+        self$styles_mgr$add(xf_top_left, sxf_top_left)
+        set_cell_style(self, sheet, dim_top_left, self$styles_mgr$get_xf_id(sxf_top_left))
+
+        # top right
+        self$styles_mgr$add(top_right, stop_right)
+        xf_top_right <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(stop_right)
+        )
+        self$styles_mgr$add(xf_top_right, sxf_top_right)
+        set_cell_style(self, sheet, dim_top_right, self$styles_mgr$get_xf_id(sxf_top_right))
+
+        # bottom left
+        self$styles_mgr$add(bottom_left, sbottom_left)
+        xf_bottom_left <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(sbottom_left)
+        )
+        self$styles_mgr$add(xf_bottom_left, sxf_bottom_left)
+        set_cell_style(self, sheet, dim_bottom_left, self$styles_mgr$get_xf_id(sxf_bottom_left))
+
+        # bottom right
+        self$styles_mgr$add(bottom_right, sbottom_right)
+        xf_bottom_right <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(sbottom_right)
+        )
+        self$styles_mgr$add(xf_bottom_right, sxf_bottom_right)
+        set_cell_style(self, sheet, dim_bottom_right, self$styles_mgr$get_xf_id(sxf_bottom_right))
+      }
+
+      # create left and right middle pieces
+      if (ncol(df) >= 2 && nrow(df) >= 3) {
+
+        # middle left
+        self$styles_mgr$add(middle_left, smiddle_left)
+        xf_middle_left <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(smiddle_left)
+        )
+        self$styles_mgr$add(xf_middle_left, sxf_middle_left)
+        set_cell_style(self, sheet, dim_middle_left, self$styles_mgr$get_xf_id(sxf_middle_left))
+
+        # middle right
+        self$styles_mgr$add(middle_right, smiddle_right)
+        xf_middle_right <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(smiddle_right)
+        )
+        self$styles_mgr$add(xf_middle_right, sxf_middle_right)
+        set_cell_style(self, sheet, dim_middle_right, self$styles_mgr$get_xf_id(sxf_middle_right))
+      }
+
+      # create top and bottom center pieces
+      if (ncol(df) >= 3 & nrow(df) >= 2) {
+
+        # top center
+        self$styles_mgr$add(top_center, stop_center)
+        xf_top_center <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(stop_center)
+        )
+        self$styles_mgr$add(xf_top_center, sxf_top_center)
+        set_cell_style(self, sheet, dim_top_center, self$styles_mgr$get_xf_id(sxf_top_center))
+
+        # bottom center
+        self$styles_mgr$add(bottom_center, sbottom_center)
+        xf_bottom_center <- create_cell_style(
+          borderId = self$styles_mgr$get_border_id(sbottom_center)
+        )
+        self$styles_mgr$add(xf_bottom_center, sxf_bottom_center)
+        set_cell_style(self, sheet, dim_bottom_center, self$styles_mgr$get_xf_id(sxf_bottom_center))
+      }
+
+      return(self)
     }
+
   ),
 
   ## private ----

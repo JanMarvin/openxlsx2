@@ -1939,3 +1939,41 @@ wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles 
 wb_open <- function(wb) {
   wb$open()
 }
+
+#' add border for cell region
+#'
+#' @description wb wrapper to create borders for cell region
+#' @param wb workbook
+#' @param sheet a worksheet
+#' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
+#' @param bottom_color,left_color,right_color,top_color a color, either something openxml knows or some RGB color
+#' @param left_border,right_border,top_border,bottom_border the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @seealso create_border
+#' @export
+wb_add_border <- function(
+    wb,
+    sheet,
+    dims = "A1",
+
+    bottom_color  = c(rgb = "FF000000"),
+    left_color    = c(rgb = "FF000000"),
+    right_color   = c(rgb = "FF000000"),
+    top_color     = c(rgb = "FF000000"),
+    bottom_border = "thin",
+    left_border   = "thin",
+    right_border  = "thin",
+    top_border    = "thin") {
+  sheet <- wb_validate_sheet(wb, sheet)
+  wb$clone()$add_border(sheet = sheet,
+                        dims = dims,
+                        bottom_color = bottom_color,
+                        left_color = left_color,
+                        right_color = right_color,
+                        top_color = top_color,
+                        bottom_border = bottom_border,
+                        left_border = left_border,
+                        right_border = right_border,
+                        top_border = top_border
+                        )
+
+}
