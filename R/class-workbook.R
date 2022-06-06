@@ -4131,23 +4131,23 @@ wbWorkbook <- R6::R6Class(
     #'
     #' wb <- wb_workbook()
     #' wb$add_worksheet("S1")$add_data("S1", mtcars)
-    #' wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
+    #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #'
     add_border = function(
-    sheet         = 1,
-    dims          = "A1",
-    bottom_color  = c(rgb = "FF000000"),
-    left_color    = c(rgb = "FF000000"),
-    right_color   = c(rgb = "FF000000"),
-    top_color     = c(rgb = "FF000000"),
-    bottom_border = "thin",
-    left_border   = "thin",
-    right_border  = "thin",
-    top_border    = "thin",
-    inner_hgrid    = NULL,
-    inner_hcolor   = NULL,
-    inner_vgrid    = NULL,
-    inner_vcolor   = NULL
+      sheet         = 1,
+      dims          = "A1",
+      bottom_color  = c(rgb = "FF000000"),
+      left_color    = c(rgb = "FF000000"),
+      right_color   = c(rgb = "FF000000"),
+      top_color     = c(rgb = "FF000000"),
+      bottom_border = "thin",
+      left_border   = "thin",
+      right_border  = "thin",
+      top_border    = "thin",
+      inner_hgrid   = NULL,
+      inner_hcolor  = NULL,
+      inner_vgrid   = NULL,
+      inner_vcolor  = NULL
     ) {
 
       # TODO merge styles and if a style is already present, only add the newly

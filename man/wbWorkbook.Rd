@@ -81,7 +81,7 @@ wb$add_border(1, dims = "D28:E28")
 
 wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
+wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
 
 }
 \seealso{
@@ -1914,7 +1914,7 @@ wb$add_border(1, dims = "D28:E28")
 
 wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A2:K33", inner_grid = "thin", inner_color = c(rgb="FF808080"))
+wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
 
 }
 \if{html}{\out{</div>}}
