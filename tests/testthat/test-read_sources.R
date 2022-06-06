@@ -32,8 +32,8 @@ test_that("wb_load from different sources", {
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   wb_file <- wb_load(xlsxFile)
 
-  ## check
-  expect_true(all.equal(wb_url, wb_file), "Loading from URL vs local not equal")
+  # Loading from URL vs local not equal
+  expect_equal_workbooks(wb_url, wb_file, ignore_fields = "datetimeCreated")
 })
 
 
@@ -67,5 +67,34 @@ test_that("read html source without r attribute on cell", {
   # we did not create duplicates while loading
   expect_true(!any(duplicated(wb$worksheets[[1]]$sheet_data$cc)))
   expect_true(!any(duplicated(wb$worksheets[[2]]$sheet_data$cc)))
+
+})
+
+
+test_that("read <br> node in vml", {
+  temp <- basename(tempfile("macro2", fileext = ".xlsm.zip"))
+  download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp)
+  unzip(temp)
+  expect_silent(wb <- wb_load("macro2.xlsm"))
+  unlink(temp, recursive = TRUE, force = TRUE)
+  file.remove("macro2.xlsm")
+  if (.Platform$OS.type == "windows") {
+    try(unlink("__MACOSX", recursive = TRUE, force = TRUE))
+  }
+})
+
+test_that("encoding", {
+
+  fl <- "https://github.com/JanMarvin/openxlsx2/files/8779041/umlauts.xlsx"
+  wb <- wb_load(fl)
+  expect_equal("äöüß", names(wb$get_sheet_names()))
+
+  exp <- structure(list(hähä = "ÄÖÜ", höhö = "äöüß"),
+                   row.names = 2L, class = "data.frame",
+                   tt = structure(list(hähä = "s", höhö = "s"),
+                                  row.names = 2L, class = "data.frame"),
+                   types = c(A = 0, B = 0))
+
+  expect_equal(exp, wb_to_df(wb))
 
 })

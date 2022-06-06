@@ -30,7 +30,7 @@ SEXP si_to_txt(XPtrXML doc) {
     }
 
     // push everything back
-    res[i] = text;
+    res[i] = Rcpp::String(text);
     ++i;
   }
 
@@ -56,7 +56,7 @@ std::string txt_to_si(Rcpp::CharacterVector txt,
   {
     // text to export
     std::string text = Rcpp::as<std::string>(txt(si));
-    pugi::xml_node t_node = si_node.append_child("t");;
+    pugi::xml_node t_node = si_node.append_child("t");
 
     if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size()-1)))) {
       t_node.append_attribute("xml:space").set_value("preserve");

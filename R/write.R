@@ -605,6 +605,9 @@ write_data_table <- function(
     data_table = FALSE
 ) {
 
+  op <- openxlsx2_options()
+  on.exit(options(op), add = TRUE)
+
   ## Input validating
   assert_workbook(wb)
   assert_class(colNames, "logical")
@@ -623,11 +626,9 @@ write_data_table <- function(
 
   # TODO clean up when moved into wbWorkbook
   sheet <- wb$.__enclos_env__$private$get_sheet(sheet)
+  # sheet <- wb$validate_sheet(sheet)
 
   if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
-
-  op <- openxlsx2_options()
-  on.exit(options(op), add = TRUE)
 
   ## All input conversions/validations
   if (!is.null(xy)) {
@@ -704,7 +705,7 @@ write_data_table <- function(
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
       l <- int2col(unlist(coords[, 2]))
-      dfn <- sprintf("'%s'!%s", names(wb)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
+      dfn <- sprintf("'%s'!%s", wb$get_sheet_names()[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
       dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
 
@@ -761,12 +762,12 @@ write_data_table <- function(
   if (data_table) {
 
     ## replace invalid XML characters
-    col_names <- replaceIllegalCharacters(colnames(x))
+    col_names <- replace_legal_chars(colnames(x))
     if (rowNames) col_names <- c("1", col_names)
 
     ## Table name validation
     if (is.null(tableName)) {
-      tableName <- paste0("Table", as.character(length(wb$tables) + 1L))
+      tableName <- paste0("Table", as.character(NROW(wb$tables) + 1L))
     } else {
       tableName <- wb_validate_table_name(wb, tableName)
     }

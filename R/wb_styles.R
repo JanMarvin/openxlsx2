@@ -734,7 +734,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #'
 #' \dontrun{
 #' # look at the beauty you've created
-#' wb_open(wb)
+#' if (interactive()) wb_open(wb)
 #' }
 #' @export
 set_cell_style <- function(wb, sheet, cell, value) {
@@ -790,8 +790,6 @@ create_dxfs_style <- function(
     text_italic    = NULL,
     text_underline = NULL # "true" or "double"
 ) {
-  op <- openxlsx2_options()
-  on.exit(options(op), add = TRUE)
 
   if (is.null(text_bold)) text_bold = ""
   if (is.null(text_strike)) text_strike = ""

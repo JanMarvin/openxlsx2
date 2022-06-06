@@ -44,6 +44,6 @@ for (i in wb_styles) {
 
 \dontrun{
 # look at the beauty you've created
-wb_open(wb)
+if (interactive()) wb_open(wb)
 }
 }

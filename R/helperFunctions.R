@@ -86,9 +86,6 @@
 #' }
 #'
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
-  # op <- get_set_options()
-  # on.exit(options(op), add = TRUE)
-
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
 
@@ -165,7 +162,7 @@ col2hex <- function(my.col) {
 ## header and footer replacements
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
-    x <- replaceIllegalCharacters(x)
+    x <- replace_illegal_chars(x)
     x <- gsub("\\[Page\\]", "P", x)
     x <- gsub("\\[Pages\\]", "N", x)
     x <- gsub("\\[Date\\]", "D", x)
@@ -190,12 +187,6 @@ write_comment_xml <- function(comment_list, file_name) {
 
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
-      # write author to top of node. will be written in bold
-      if ((j == 1) && (comment_list[[i]]$author != ""))
-        xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
-          gsub("font>", "rPr>", create_font(b = "true")),
-          paste0(comment_list[[i]]$author, ":\n")))
-
       # write styles and comments
       xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
         comment_list[[i]]$style[[j]],
@@ -214,38 +205,6 @@ pxml <- function(x) {
   ## TODO does this break anything? Why is unique called? lengths are off, if non unique values are found.
   # paste(unique(unlist(x)), collapse = "")
     paste(unlist(x), collapse = "")
-}
-
-
-get_named_regions_from_string <- function(wb, dn) {
-  dn <- cbind(
-    rbindlist(xml_attr(dn, "definedName")),
-    value =  xml_value(dn, "definedName")
-  )
-
-  if (!is.null(dn$value)) {
-    dn_pos <- dn$value
-    dn_pos <- gsub("[$']", "", dn_pos)
-    # for ws_page_setup we can have multiple defined names for column and row
-    # separated by a colon. This keeps only the first and drops the second.
-    # This will allow saving, but changes get_named_regions()
-    dn_pos <- vapply(strsplit(dn_pos, ","), FUN = function(x) x[1], NA_character_)
-
-    has_bang <- grepl("!", dn_pos, fixed = TRUE)
-    dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
-    dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
-  }
-
-  dn$id <- seq_len(nrow(dn))
-
-  if (!is.null(dn$localSheetId)) {
-    dn$local <- as.integer(dn$localSheetId != "")
-  } else {
-    dn$local <- 0
-  }
-  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
-
-  dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]),]
 }
 
 

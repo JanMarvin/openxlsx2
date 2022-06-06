@@ -23,16 +23,18 @@
 #'   value returned from [base::interactive()]
 #' @export
 #' @examples
-#' # file example
-#' example(write_data)
-#' # xl_open("write_dataExample.xlsx")
+#' \dontrun{
+#' if (interactive()) {
+#'   # xl_open("write_dataExample.xlsx")
 #'
-#' # (not yet saved) Workbook example
-#' wb <- wb_workbook()
-#' x <- mtcars[1:6, ]
-#' wb$add_worksheet("Cars")
-#' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
-#' xl_open(wb)
+#'   # (not yet saved) Workbook example
+#'   wb <- wb_workbook()
+#'   x <- mtcars[1:6, ]
+#'   wb$add_worksheet("Cars")
+#'   wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+#'   xl_open(wb)
+#' }
+#' }
 xl_open <- function(x, file, interactive = NA) {
   if (!missing(file))  {
     warning("xl_open(file = .) is deprecated.  Use xl_open(x = .) instead")
@@ -45,7 +47,8 @@ xl_open <- function(x, file, interactive = NA) {
 #' @export
 xl_open.wbWorkbook <- function(x, file, interactive = NA) {
   stopifnot(R6::is.R6(x))
-  xl_open(x$clone()$save(temp_xlsx())$path, interactive = interactive)
+  has_macros <- isTRUE(length(x$vbaProject) > 0)
+  xl_open(x$clone()$save(temp_xlsx(macros = has_macros))$path, interactive = interactive)
 }
 
 #' @rdname xl_open

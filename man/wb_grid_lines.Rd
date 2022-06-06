@@ -18,7 +18,7 @@ Set worksheet gridlines to show or hide.
 }
 \examples{
 wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-names(wb) ## list worksheets in workbook
+wb$get_sheet_names() ## list worksheets in workbook
 wb$grid_lines(1, show = FALSE)
 wb$grid_lines("testing", show = FALSE)
 \dontrun{

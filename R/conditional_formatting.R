@@ -251,7 +251,7 @@
 #'                       rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 #' )
 #'
-wb_conditional_formatting <- 
+wb_conditional_formatting <-
   function(wb,
            sheet,
            cols,
@@ -260,8 +260,6 @@ wb_conditional_formatting <-
            style = NULL,
            type = "expression",
            ...) {
-    op <- openxlsx2_options()
-    on.exit(options(op), add = TRUE)
 
     type <- tolower(type)
     params <- list(...)
@@ -320,7 +318,7 @@ wb_conditional_formatting <-
         stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
       }
 
-      if (class(style) != "character") {
+      if (!inherits(style, "character")) {
         stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
       }
 
@@ -349,7 +347,7 @@ wb_conditional_formatting <-
       }
 
       # TODO use inherits() not class()
-      if (class(style) != "character") {
+      if (!inherits(style, "character")) {
         stop("If type == 'dataBar', style must be a vector of colours of length 1 or 2.")
       }
 
@@ -394,7 +392,7 @@ wb_conditional_formatting <-
     } else if (type == "expression") {
 
       # rule <- gsub(" ", "", rule)
-      rule <- replaceIllegalCharacters(rule)
+      rule <- replace_legal_chars(rule)
       rule <- gsub("!=", "&lt;&gt;", rule)
       rule <- gsub("==", "=", rule)
 

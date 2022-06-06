@@ -1225,7 +1225,7 @@ wb_protect <- function(
 #' @export
 #' @examples
 #' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#' names(wb) ## list worksheets in workbook
+#' wb$get_sheet_names() ## list worksheets in workbook
 #' wb$grid_lines(1, show = FALSE)
 #' wb$grid_lines("testing", show = FALSE)
 #' \dontrun{
@@ -1262,11 +1262,11 @@ wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE) {
 #' wb$add_data(sheet = 3, x = Formaldehyde)
 #'
 #' wb_get_order(wb)
-#' names(wb)
+#' wb$get_sheet_na
 #' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 #' wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 #' wb_get_order(wb)
-#' names(wb) ## ordering within workbook is not changed
+#' wb$get_sheet_names() ## ordering within workbook is not changed
 #' \dontrun{
 #' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 #' }
@@ -1801,6 +1801,38 @@ wb_get_creators <- function(wb) {
   wb[["creator"]]
 }
 
+
+
+# names -------------------------------------------------------------------
+
+#' Set worksheet names for a workbook
+#'
+#' Sets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @param old The name (or index) of the old sheet name. If `NULL` will assume
+#'   all worksheets are to be renamed.
+#' @param new The name of the new sheet
+#' @returns The [wbWorkbook] object
+#' @export
+wb_set_sheet_names <- function(wb, old = NULL, new) {
+  assert_workbook(wb)
+  wb$clone()$set_sheet_names(old = old, new = new)
+}
+
+#' Get wokrhseet names for a workbook
+#'
+#' Gets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @returns A `named` `character` vector of sheet names in their order.  The
+#'   names represent the original value of the worksheet prior to any character
+#'   substitutions.
+#' @export
+wb_get_sheet_names <- function(wb) {
+  assert_workbook(wb)
+  wb$get_sheet_names()
+}
 
 # others? -----------------------------------------------------------------
 

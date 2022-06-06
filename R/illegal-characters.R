@@ -1,50 +1,75 @@
 
 #' Clean worksheet name
 #'
+#' Cleans a worksheet name by removing legal characters.
+#'
+#' @details Illegal characters are considered `\\`, `/`, `?`, `*`, `:`, `[`, and
+#' `]`.  These must be intentionally removed from worksheet names prior to
+#' creating a new worksheet.
+#'
 #' @param x A vector, coherced to `character`
+#' @param replacement A single value to replace illegal characters by.
 #' @returns x with bad characters removed
-#' @export
-clean_worksheet_name <- function(x) {
-  replaceIllegalCharacters(x)
+clean_worksheet_name <- function(x, replacement = " ") {
+  stopifnot(length(replacement) == 1, !has_illegal_chars(replacement))
+  replace_illegal_chars(x, replacement = replacement)
 }
+
 
 #' Detect illegal characters
 #' @param x A vector, coerced to character
 #' @returns A `logical` vector
 #' @noRd
-any_illegal_chars <- function(x) {
-  x <- as.character(x)
-  any(vapply(illegal_chars(), grepl, logical(length(x)), x = x, fixed = TRUE))
+has_illegal_chars <- function(x) {
+  res <- vapply(
+    illegal_chars(),
+    function(i) stringi::stri_detect_fixed(x, i),
+    logical(length(x)),
+    USE.NAMES = FALSE
+  )
+
+  if (is.null(dim(res))) {
+    any(res)
+  } else {
+    as.logical(apply(res, 1, any))
+  }
 }
 
-
-illegal_chars <- function() { c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f") } # nolint
-legal_chars   <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   "") }   # nolint
+# vectors for character types
+illegal_chars <- function() { c("\\", "/", "?", "*", ":", "[", "]") } # nolint
+legal_chars   <- function() { c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f") } # nolint
+legal_sub     <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   ""  ) } # nolint
 
 #' converts & to &amp;
-#' @param v some xml string
+#' @param x some xml string
 #' @keywords internal
 #' @noRd
-replaceIllegalCharacters <- function(v) {
-  v <- as.character(v)
-  bad <- Encoding(v) != "UTF-8"
+replace_legal_chars <- function(x) {
+  x <- as.character(x)
+  bad <- Encoding(x) != "UTF-8"
 
   if (any(bad)) {
-    v[bad] <- stringi::stri_conv(v[bad], from = "", to = "UTF-8")
+    x[bad] <- stringi::stri_conv(x[bad], from = "", to = "UTF-8")
   }
 
-  stringi::stri_replace_all_fixed(v, illegal_chars(), legal_chars(), vectorize_all = FALSE)
+  stringi::stri_replace_all_fixed(x, legal_chars(), legal_sub(), vectorize_all = FALSE)
+}
+
+replace_illegal_chars <- function(x, replacement = " ") {
+  x <- as.character(x)
+  Encoding(x) <- "UTF-8"
+  stringi::stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
 }
 
 #' converts &amp; to &
-#' @param v some xml string
+#' @param x some xml string
 #' @keywords internal
 #' @noRd
-replaceXMLEntities <- function(v) {
-  v <- gsub("&amp;",  "&", v, fixed = TRUE)
-  v <- gsub("&quot;", '"', v, fixed = TRUE)
-  v <- gsub("&apos;", "'", v, fixed = TRUE)
-  v <- gsub("&lt;",   "<", v, fixed = TRUE)
-  v <- gsub("&gt;",   ">", v, fixed = TRUE)
-  return(v)
+replaceXMLEntities <- function(x) {
+  stringi::stri_replace_all_fixed(
+    x,
+    c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;"),
+    c("&",     '"',      "'",      "<",    ">"),
+    vectorize_all = FALSE
+  )
 }

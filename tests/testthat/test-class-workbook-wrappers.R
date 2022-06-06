@@ -295,3 +295,18 @@ test_that("wb_add_formula() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
 })
+
+
+# wb_set_sheet_names() ----------------------------------------------------
+
+test_that("wb_set_sheet_names() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")
+  expect_wrapper("set_sheet_names", wb = wb, params = list(new = c("c", "d")))
+})
+
+# wb_get_sheet_names() ----------------------------------------------------
+
+test_that("wb_get_sheet_names() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")
+  expect_wrapper("get_sheet_names", wb = wb)
+})

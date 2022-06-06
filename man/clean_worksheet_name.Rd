@@ -4,14 +4,21 @@
 \alias{clean_worksheet_name}
 \title{Clean worksheet name}
 \usage{
-clean_worksheet_name(x)
+clean_worksheet_name(x, replacement = " ")
 }
 \arguments{
 \item{x}{A vector, coherced to \code{character}}
+
+\item{replacement}{A single value to replace illegal characters by.}
 }
 \value{
 x with bad characters removed
 }
 \description{
-Clean worksheet name
+Cleans a worksheet name by removing legal characters.
+}
+\details{
+Illegal characters are considered \verb{\\\\}, \code{/}, \verb{?}, \code{*}, \code{:}, \code{[}, and
+\verb{]}.  These must be intentionally removed from worksheet names prior to
+creating a new worksheet.
 }

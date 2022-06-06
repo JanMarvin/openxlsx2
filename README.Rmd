@@ -29,17 +29,22 @@ A quick warning: Until the stable version 1.0 there ~~may~~ will still be some c
 
 ## Installation
 
-You can install the development version of openxlsx2 from [GitHub](https://github.com/) with:
+You can install the development version of `openxlsx2` from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools") # not yet available on CRAN
-devtools::install_github("JanMarvin/openxlsx2")
+# openxlsx2 is not yet available on CRAN
+# install.packages("remotes")
+remotes::install_github("JanMarvin/openxlsx2")
 ```
 
 ## Introduction
 
-Many examples are in our manual pages and in our vignettes.
-You can find them under:
+`openxlsx2` aims to be the swiss knife for working with the openxml spreadsheet formats xlsx and xlsm (other formats of other spreadsheet software are not supported). We offer two different variants how to work with `openxlsx2`.
+
+* The first one is to simply work with R objects. It is possible to read ([`read_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/read_xlsx.html)) and write ([`write_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html)) data from and to files. We offer a number of options in the commands to support various features of the openxml format, including reading and writing named ranges and tables. Furthermore, there are several ways to read certain information of an openxml spreadsheet without having opened it in a spreadsheet software before, e.g. to get the contained sheet names or tables.
+* As a second variant `openxlsx2` offers the work with so called [`wbWorkbook`](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html) objects. Here an openxml file is read into a corresponding `wbWorkbook` object ([`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.html)) or a new one is created ([`wb_workbook()`](https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html)). Afterwards the object can be further modified using various functions. For example, worksheets can be added or removed, the layout of cells or entire worksheets can be changed, and cells can be modified (overwritten or rewritten). Afterwards the `wbWorkbook` objects can be written as openxml files and processed by suitable spreadsheet software.
+
+Many examples how to work with `openxlsx2` are in our [manual pages](https://janmarvin.github.io/openxlsx2/reference/index.html) and in our [vignettes](https://janmarvin.github.io/openxlsx2/articles/). You can find them under:
 
 ```r
 vignette(package = "openxlsx2")
