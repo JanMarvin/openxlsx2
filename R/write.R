@@ -390,7 +390,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     short_date_fmt <- long_date_fmt <- accounting_fmt <- percentage_fmt <-
       comma_fmt <- scientific_fmt <- NULL
 
-    hash_id          <- as.integer(Sys.time())
+    hash_id          <- round(as.numeric(Sys.time()), digits = 3)
     numeric_fmtid    <- paste0("numeric_fmt", hash_id)
     short_date_fmtid <- paste0("short_date_fmt", hash_id)
     long_date_fmtid  <- paste0("long_date_fmt", hash_id)
@@ -418,8 +418,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
         cust_dateFormat <- create_numfmt(
           numFmtId = wb$styles_mgr$next_numfmt_id(),
           formatCode = unlist(options("openxlsx2.dateFormat")))
-        wb$styles_mgr$add(cust_dateFormat, "dateFormat")
-        numfmt_dt <- wb$styles_mgr$get_numfmt_id("dateFormat")
+        wb$styles_mgr$add(cust_dateFormat, short_date_fmtid)
+        numfmt_dt <- wb$styles_mgr$get_numfmt_id(short_date_fmtid)
       }
       short_date_fmt <- write_xf(nmfmt_df(numfmt_dt))
       wb$styles_mgr$add(short_date_fmt, short_date_fmtid)
@@ -431,8 +431,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
         cust_datetimeFormat <- create_numfmt(
           numFmtId = wb$styles_mgr$next_numfmt_id(),
           formatCode = unlist(options("openxlsx2.datetimeFormat")))
-        wb$styles_mgr$add(cust_datetimeFormat, "datetimeFormat")
-        numfmt_posix <- wb$styles_mgr$get_numfmt_id("datetimeFormat")
+        wb$styles_mgr$add(cust_datetimeFormat, long_date_fmtid)
+        numfmt_posix <- wb$styles_mgr$get_numfmt_id(long_date_fmtid)
       }
       long_date_fmt  <- write_xf(nmfmt_df(numfmt_posix))
       wb$styles_mgr$add(long_date_fmt, long_date_fmtid)
@@ -444,8 +444,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
         cust_accountingFormat <- create_numfmt(
           numFmtId = wb$styles_mgr$next_numfmt_id(),
           formatCode = unlist(options("openxlsx2.accountingFormat")))
-        wb$styles_mgr$add(cust_accountingFormat, "accounting")
-        numfmt_accounting <- wb$styles_mgr$get_numfmt_id("accounting")
+        wb$styles_mgr$add(cust_accountingFormat, accounting_fmtid)
+        numfmt_accounting <- wb$styles_mgr$get_numfmt_id(accounting_fmtid)
       }
       accounting_fmt <- write_xf(nmfmt_df(numfmt_accounting))
       wb$styles_mgr$add(accounting_fmt, accounting_fmtid)
@@ -457,8 +457,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
         cust_percentageFormat <- create_numfmt(
           numFmtId = wb$styles_mgr$next_numfmt_id(),
           formatCode = unlist(options("openxlsx2.percentageFormat")))
-        wb$styles_mgr$add(cust_percentageFormat, "percentage")
-        numfmt_percentage <- wb$styles_mgr$get_numfmt_id("percentage")
+        wb$styles_mgr$add(cust_percentageFormat, percentage_fmtid)
+        numfmt_percentage <- wb$styles_mgr$get_numfmt_id(percentage_fmtid)
       }
       percentage_fmt <- write_xf(nmfmt_df(numfmt_percentage))
       wb$styles_mgr$add(percentage_fmt, percentage_fmtid)
@@ -470,8 +470,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
         cust_scientificFormat <- create_numfmt(
           numFmtId = wb$styles_mgr$next_numfmt_id(),
           formatCode = unlist(options("openxlsx2.scientificFormat")))
-        wb$styles_mgr$add(cust_scientificFormat, "scientific")
-        numfmt_scientific <- wb$styles_mgr$get_numfmt_id("scientific")
+        wb$styles_mgr$add(cust_scientificFormat, scientific_fmtid)
+        numfmt_scientific <- wb$styles_mgr$get_numfmt_id(scientific_fmtid)
       }
       scientific_fmt <- write_xf(nmfmt_df(numfmt_scientific))
       wb$styles_mgr$add(scientific_fmt, scientific_fmtid)
@@ -483,8 +483,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
         cust_scientificFormat <- create_numfmt(
           numFmtId = wb$styles_mgr$next_numfmt_id(),
           formatCode = unlist(options("openxlsx2.commaFormat")))
-        wb$styles_mgr$add(cust_scientificFormat, "comma")
-        numfmt_comma <- wb$styles_mgr$get_numfmt_id("comma")
+        wb$styles_mgr$add(cust_scientificFormat, comma_fmtid)
+        numfmt_comma <- wb$styles_mgr$get_numfmt_id(comma_fmtid)
       }
       comma_fmt <- write_xf(nmfmt_df(numfmt_comma))
       wb$styles_mgr$add(comma_fmt, comma_fmtid)
