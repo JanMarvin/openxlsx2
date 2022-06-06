@@ -4135,7 +4135,7 @@ wbWorkbook <- R6::R6Class(
     #' wb <- wb_workbook()
     #' wb$add_worksheet("S1")$add_data("S1", mtcars)
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
-    #'
+    #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
       sheet         = 1,
       dims          = "A1",
@@ -4522,6 +4522,57 @@ wbWorkbook <- R6::R6Class(
         xf_inner_cell <- set_border(xf_prev, self$styles_mgr$get_border_id(sinner_cell))
         self$styles_mgr$add(xf_inner_cell, s(xf_inner_cell))
         set_cell_style(self, sheet, dim_inner_cell, self$styles_mgr$get_xf_id(s(xf_inner_cell)))
+      }
+
+      return(self)
+    },
+
+    #' @description provide simple fill function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param color the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")
+    #' @param pattern various default "none" but others are possible:
+    #'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+    #'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+    #'  "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+    #'  "lightTrellis", "gray125", "gray0625"
+    #' @param gradient_fill a gradient fill xml pattern.
+    #' @examples
+    #'  # example from the gradient fill manual page
+    #'  gradient_fill <- "<gradientFill degree=\"90\">
+    #'    <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+    #'    <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+    #'   </gradientFill>"
+    #' @return The `wbWorksheetObject`, invisibly
+    add_fill = function(
+      sheet,
+      dims,
+      color = "",
+      pattern = "solid",
+      gradient_fill = ""
+    ) {
+
+      new_fill <- create_fill(
+        gradientFill = gradient_fill,
+        patternType = pattern,
+        fgColor = color
+      )
+
+      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      snew_fill <- paste0(smp, "new_fill")
+      sxf_new_fill <- paste0(smp, "xf_new_fill")
+
+
+      self$styles_mgr$add(new_fill, snew_fill)
+
+      # dims can contain various styles. go cell by cell.
+      dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+      for (dim in dims) {
+        sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim))
+        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
+        self$styles_mgr$add(xf_new_fill, sxf_new_fill_x)
+        set_cell_style(self, sheet, dim, self$styles_mgr$get_xf_id(sxf_new_fill_x))
       }
 
       return(self)
@@ -5354,7 +5405,7 @@ wb_get_sheet_name = function(wb, index = NULL) {
   if (any(index > n)) {
     stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
   }
-  
+
   # keep index 0 as ""
   z <- vector("character", length(index))
   names(z) <- index
