@@ -663,13 +663,14 @@ wbWorkbook <- R6::R6Class(
         tbls$tab_name <- stri_join(tbls$tab_name, "_n")
         tbls$tab_sheet <- newSheetIndex
         # modify tab_xml with updated name, displayName and id
-        tbls$tab_xml <- vapply(seq_len(nrow(tbls)), function(x)
+        tbls$tab_xml <- vapply(seq_len(nrow(tbls)), function(x) {
           xml_attr_mod(tbls$tab_xml[x],
                        xml_attributes = c(name = tbls$tab_name[x],
                                           displayName = tbls$tab_name[x],
                                           id = newid[x])
-          ),
-          NA_character_
+          )
+        },
+        NA_character_
         )
 
         # add new tables to old tables

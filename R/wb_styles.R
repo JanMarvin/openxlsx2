@@ -701,7 +701,6 @@ styles_on_sheet <- function(wb, sheet) {
 #' @param cell
 #' @noRd
 get_cell_styles <- function(wb, sheet, cell) {
-  sheet_id <- wb_validate_sheet(wb, sheet)
   z <- get_cell_style(wb, sheet, cell)
   id <- which(wb$styles_mgr$get_xf()$id %in% z)
   wb$styles_mgr$styles$cellXfs[id+1]

@@ -1,7 +1,7 @@
 test_that("names.wbWorkbook is deprecated", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_warning(names(wb), "deprecated")
-  expect_warning({names(wb) <- 1}, "deprecated")
+  expect_warning({names(wb) <- 1}, "deprecated") # nolint
 })
 
 test_that("names", {

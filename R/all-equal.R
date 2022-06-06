@@ -253,4 +253,3 @@ expect_equal_workbooks <- function(object, expected, ..., ignore_fields = NULL) 
   testthat::succeed()
   return(invisible())
 }
-
