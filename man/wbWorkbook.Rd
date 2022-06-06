@@ -1940,7 +1940,13 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 \subsection{Method \code{add_fill()}}{
 provide simple fill function
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(sheet, dims, color = "", pattern = "", gradient_fill = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
+  sheet,
+  dims,
+  color = "",
+  pattern = "solid",
+  gradient_fill = ""
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
