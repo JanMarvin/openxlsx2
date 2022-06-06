@@ -2273,7 +2273,9 @@ wbWorkbook <- R6::R6Class(
       if (length(self$workbook$definedNames)) {
         # wb_validate_sheet() makes sheet an integer
         # so we need to remove this before getting rid of the sheet names
-        self$workbook$definedNames <- self$workbook$definedNames[!get_named_regions(self)$sheets %in% self$sheet_names[sheet]]
+        self$workbook$definedNames <- self$workbook$definedNames[
+          !get_named_regions_from_definedName(self)$sheets %in% self$sheet_names[sheet]
+        ]
       }
 
       self$remove_named_region(sheet)
@@ -5284,7 +5286,8 @@ wbWorkbook <- R6::R6Class(
         # TODO consider self$get_sheet_names() which orders the sheet names?
         sheets <- self$sheet_names[self$sheetOrder]
 
-        belongTo <- get_named_regions(self)$sheets
+        belongTo <- get_named_regions(self)
+        belongTo <- belongTo$sheets[belongTo$value != "table"]
 
         ## sheets is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheets) - 1L
@@ -5367,8 +5370,12 @@ wb_get_sheet_name = function(wb, index = NULL) {
   if (any(index > n)) {
     stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
   }
-
-  wb$sheet_names[index]
+  
+  # keep index 0 as ""
+  z <- vector("character", length(index))
+  names(z) <- index
+  z[index > 0] <- wb$sheet_names[index]
+  z
 }
 
 worksheet_lock_properties <- function() {
