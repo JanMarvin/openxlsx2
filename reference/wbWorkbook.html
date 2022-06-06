@@ -96,6 +96,10 @@ The <code>wbWorkbook</code> object</p>
     <p>A Workbook</p>
 <p>minor helper wrapping xl_open which does the entire same thing</p>
     </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p>create_border</p></div>
+    </div>
     <div id="public-fields">
     <h2>Public fields</h2>
     <p></p><div class="r6-fields"><dl><dt><code>sheet_names</code></dt>
@@ -366,6 +370,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-set_sheet_visibility"><code>wbWorkbook$set_sheet_visibility()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_page_break"><code>wbWorkbook$add_page_break()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clean_sheet"><code>wbWorkbook$clean_sheet()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_border"><code>wbWorkbook$add_border()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorkbook-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -470,6 +475,7 @@ is created, not when the Excel files are saved.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span>
   <span class="va">sheet</span>,
   gridLines <span class="op">=</span> <span class="cn">TRUE</span>,
+  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,
   tabColour <span class="op">=</span> <span class="cn">NULL</span>,
   zoom <span class="op">=</span> <span class="fl">100</span>,
   header <span class="op">=</span> <span class="cn">NULL</span>,
@@ -499,6 +505,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>gridLines</code></dt>
 <dd><p>gridLines</p></dd>
+
+
+<dt><code>rowColHeaders</code></dt>
+<dd><p>rowColHeaders</p></dd>
 
 
 <dt><code>tabColour</code></dt>
@@ -2286,20 +2296,88 @@ are removed.</p></dd>
 </div>
 <div class="section">
 <h4 id="returns-30">Returns<a class="anchor" aria-label="anchor" href="#returns-30"></a></h4>
-<p>The <code>wbWorksheetObject</code>, invisibly
-Deep cloning method for workbooks.  This method also accesses
-<code>$clone(deep = TRUE)</code> methods for <code>R6</code> fields.</p>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
-</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-add_border"></a><div class="section">
+<h3 id="method-add-border-">Method <code>add_border()</code><a class="anchor" aria-label="anchor" href="#method-add-border-"></a></h3>
+<p>create borders for cell region</p><div class="section">
 <h4 id="usage-57">Usage<a class="anchor" aria-label="anchor" href="#usage-57"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span>
+  sheet <span class="op">=</span> <span class="fl">1</span>,
+  dims <span class="op">=</span> <span class="st">"A1"</span>,
+  bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
+  left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
+  right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
+  top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
+  bottom_border <span class="op">=</span> <span class="st">"thin"</span>,
+  left_border <span class="op">=</span> <span class="st">"thin"</span>,
+  right_border <span class="op">=</span> <span class="st">"thin"</span>,
+  top_border <span class="op">=</span> <span class="st">"thin"</span>,
+  inner_hgrid <span class="op">=</span> <span class="cn">NULL</span>,
+  inner_hcolor <span class="op">=</span> <span class="cn">NULL</span>,
+  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,
+  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-53">Arguments<a class="anchor" aria-label="anchor" href="#arguments-53"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>a worksheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"</p></dd>
+
+
+<dt><code>bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor</code></dt>
+<dd><p>a color, either something openxml knows or some RGB color</p></dd>
+
+
+<dt><code>left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid</code></dt>
+<dd><p>the border style, if NULL no border is drawn. See create_border for possible border styles</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h4>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,
+ left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,
+ top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,
+ left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,
+ top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,
+ left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,
+ top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,
+ left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,
+ bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span>
+<span class="co"># if (interactive()) wb$open()</span>
+
+<span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-58">Usage<a class="anchor" aria-label="anchor" href="#usage-58"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-54">Arguments<a class="anchor" aria-label="anchor" href="#arguments-54"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -2311,6 +2389,95 @@ Deep cloning method for workbooks.  This method also accesses
 
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"><span class="co">## Method `wbWorkbook$add_border`</span></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span>
+<span class="r-in"> left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span class="r-in"> top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,</span>
+<span class="r-in"> left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,</span>
+<span class="r-in"> top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span>
+<span class="r-in"> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span>
+<span class="r-in"> top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span>
+<span class="r-in"> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span>
+<span class="r-in"> bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="co"># if (interactive()) wb$open()</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

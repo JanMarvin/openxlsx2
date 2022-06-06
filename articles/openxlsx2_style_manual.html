@@ -317,6 +317,66 @@
 <span class="co">#&gt;  </span>
 <span class="co">#&gt;  Worksheet write order: 1</span></code></pre></div>
 </div>
+<div class="section level2">
+<h2 id="add-borders">add borders<a class="anchor" aria-label="anchor" href="#add-borders"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co"># full inner grid</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span>, rowColHeaders <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S1"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>,
+              inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_hcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span>,
+              inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1</span>
+<span class="co"># only vertical grid</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S2"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S2"</span>, <span class="va">mtcars</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1, 2</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S2"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_hcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1, 2</span>
+<span class="co"># only horizontal grid</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S3"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S3"</span>, <span class="va">mtcars</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1, 2, 3</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S3"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1, 2, 3</span>
+<span class="co"># no inner grid</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S4"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S4"</span>, <span class="va">mtcars</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1, 2, 3, 4</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S4"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span><span class="op">)</span>
+<span class="co">#&gt; A Workbook object.</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; Worksheets:</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Worksheet write order: 1, 2, 3, 4</span></code></pre></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
