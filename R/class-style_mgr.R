@@ -224,7 +224,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param name name
     get_xf_id = function(name) {
       xf <- self$xf
-      xf$id[xf$name == name]
+      xf$id[xf$name %in% name]
     },
 
     #' @description get next numfmt id
@@ -260,60 +260,68 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param style_name a unique name identifying the style
     add = function(style, style_name) {
 
-      typ <- NULL
-      id  <- NULL
+      # make sure that style and style_name length are equal
+      if (length(style) != length(style_name))
+        stop("style length and name do not match")
 
-      is_numfmt <- any(ifelse(xml_node_name(style) == "numFmt", TRUE, FALSE))
-      is_font   <- any(ifelse(xml_node_name(style) == "font", TRUE, FALSE))
-      is_fill   <- any(ifelse(xml_node_name(style) == "fill", TRUE, FALSE))
-      is_border <- any(ifelse(xml_node_name(style) == "border", TRUE, FALSE))
-      is_xf     <- any(ifelse(xml_node_name(style) == "xf", TRUE, FALSE))
+      for (sty in seq_along(style)) {
 
-      if (is_numfmt) {
-        typ <- "numFmt"
-        id  <- unname(unlist(xml_attr(style, "numFmt"))["numFmtId"])
-        self$styles$numFmts <- c(self$styles$numFmts, style)
+        typ <- NULL
+        id  <- NULL
+
+        is_numfmt <- any(ifelse(xml_node_name(style[sty]) == "numFmt", TRUE, FALSE))
+        is_font   <- any(ifelse(xml_node_name(style[sty]) == "font", TRUE, FALSE))
+        is_fill   <- any(ifelse(xml_node_name(style[sty]) == "fill", TRUE, FALSE))
+        is_border <- any(ifelse(xml_node_name(style[sty]) == "border", TRUE, FALSE))
+        is_xf     <- any(ifelse(xml_node_name(style[sty]) == "xf", TRUE, FALSE))
+
+        if (is_numfmt) {
+          typ <- "numFmt"
+          id  <- unname(unlist(xml_attr(style[sty], "numFmt"))["numFmtId"])
+          self$styles$numFmts <- c(self$styles$numFmts, style[sty])
+        }
+
+        if (is_font) {
+          typ <- "font"
+          fonts <- c(self$styles$fonts, style[sty])
+          id  <- rownames(read_font(read_xml(fonts)))
+          self$styles$fonts <- fonts
+        }
+
+        if (is_fill) {
+          typ <- "fill"
+          fills <- c(self$styles$fills, style[sty])
+          id  <- rownames(read_fill(read_xml(fills)))
+          self$styles$fills <- fills
+        }
+
+        if (is_border) {
+          typ <- "border"
+          borders <- c(self$styles$borders, style[sty])
+          id  <- rownames(read_border(read_xml(borders)))
+          self$styles$borders <- borders
+        }
+
+        if (is_xf) {
+          typ <- "xf"
+          xfs <- c(self$styles$cellXfs, style[sty])
+          id  <- rownames(read_xf(read_xml(xfs)))
+          self$styles$cellXfs <- xfs
+        }
+
+        new_entry <- data.frame(
+          typ = typ,
+          id = id[length(id)],
+          name = style_name[sty]
+        )
+
+        if (is_numfmt) self$numfmt <- rbind(self$numfmt, new_entry)
+        if (is_font)   self$font   <- rbind(self$font, new_entry)
+        if (is_fill)   self$fill   <- rbind(self$fill, new_entry)
+        if (is_border) self$border <- rbind(self$border, new_entry)
+        if (is_xf)     self$xf     <- rbind(self$xf, new_entry)
+
       }
-
-      if (is_font) {
-        typ <- "font"
-        fonts <- c(self$styles$fonts, style)
-        id  <- rownames(read_font(read_xml(fonts)))
-        self$styles$fonts <- fonts
-      }
-
-      if (is_fill) {
-        typ <- "fill"
-        fills <- c(self$styles$fills, style)
-        id  <- rownames(read_fill(read_xml(fills)))
-        self$styles$fills <- fills
-      }
-
-      if (is_border) {
-        typ <- "border"
-        borders <- c(self$styles$borders, style)
-        id  <- rownames(read_border(read_xml(borders)))
-        self$styles$borders <- borders
-      }
-
-      if (is_xf) {
-        typ <- "xf"
-        xfs <- c(self$styles$cellXfs, style)
-        id  <- rownames(read_xf(read_xml(xfs)))
-        self$styles$cellXfs <- xfs
-      }
-
-      new_entry <- data.frame(
-        typ = typ,
-        id = id[length(id)],
-        name = style_name
-      )
-
-      if (is_numfmt) self$numfmt <- rbind(self$numfmt, new_entry)
-      if (is_font)   self$font   <- rbind(self$font, new_entry)
-      if (is_fill)   self$fill   <- rbind(self$fill, new_entry)
-      if (is_border) self$border <- rbind(self$border, new_entry)
-      if (is_xf)     self$xf     <- rbind(self$xf, new_entry)
 
       invisible(self)
     }
