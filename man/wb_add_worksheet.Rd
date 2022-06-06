@@ -8,6 +8,7 @@ wb_add_worksheet(
   wb,
   sheet,
   gridLines = TRUE,
+  rowColHeaders = TRUE,
   tabColour = NULL,
   zoom = 100,
   header = NULL,
@@ -34,6 +35,9 @@ wb_add_worksheet(
 \item{sheet}{A name for the new worksheet}
 
 \item{gridLines}{A logical. If \code{FALSE}, the worksheet grid lines will be
+hidden.}
+
+\item{rowColHeaders}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
 hidden.}
 
 \item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to

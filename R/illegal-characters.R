@@ -73,4 +73,3 @@ replaceXMLEntities <- function(x) {
     vectorize_all = FALSE
   )
 }
-
