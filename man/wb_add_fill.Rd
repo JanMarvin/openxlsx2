@@ -4,7 +4,16 @@
 \alias{wb_add_fill}
 \title{add fill for fill region}
 \usage{
-wb_add_fill(wb, sheet, dims, color = "", pattern = "solid", gradient_fill = "")
+wb_add_fill(
+  wb,
+  sheet,
+  dims,
+  color = "",
+  pattern = "solid",
+  gradient_fill = "",
+  every_nth_col = 1,
+  every_nth_row = 1
+)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -22,6 +31,10 @@ wb_add_fill(wb, sheet, dims, color = "", pattern = "solid", gradient_fill = "")
 "lightTrellis", "gray125", "gray0625"}
 
 \item{gradient_fill}{a gradient fill xml pattern.}
+
+\item{every_nth_col}{which col should be filled}
+
+\item{every_nth_row}{which row should be filled}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly

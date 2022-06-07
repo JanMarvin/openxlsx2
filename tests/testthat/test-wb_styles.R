@@ -49,4 +49,34 @@ test_that("test add_fill()", {
 
   expect_equal(exp, got)
 
+  # every_nth_col/row
+  wb <- wb_workbook()
+  wb$add_worksheet("S1", gridLines = FALSE)$add_data("S1", matrix(1:20, 4, 5))
+  wb$add_fill("S1", dims = "A1:E6", color = c(rgb = "FFFFFF00"), every_nth_col = 2)
+  wb$add_fill("S1", dims = "A1:E6", color = c(rgb = "FF00FF00"), every_nth_row = 2)
+
+  exp <- c("<fill><patternFill patternType=\"none\"/></fill>", "<fill><patternFill patternType=\"gray125\"/></fill>",
+           "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFFF00\"/></patternFill></fill>",
+           "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF00FF00\"/></patternFill></fill>"
+  )
+  got <- wb$styles_mgr$styles$fills
+
+  expect_equal(exp, got)
+
+  exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
+           "<xf applyFill=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
+           "<xf applyFill=\"1\" fillId=\"2\"/>",
+           "<xf applyFill=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
+           "<xf applyFill=\"1\" fillId=\"3\"/>")
+  got <- wb$styles_mgr$styles$cellXfs
+
+  expect_equal(exp, got)
+
+  # check the actual styles
+  exp <- c("", "1", "", "1", "", "3", "3", "3", "3", "3", "", "1", "",
+           "1", "", "3", "3", "3", "3", "3", "", "1", "", "1", "")
+  got <- wb$worksheets[[1]]$sheet_data$cc$c_s
+  expect_equal(exp, got)
+
+
 })

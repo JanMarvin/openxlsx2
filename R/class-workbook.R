@@ -4537,6 +4537,8 @@ wbWorkbook <- R6::R6Class(
     #'  "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
     #'  "lightTrellis", "gray125", "gray0625"
     #' @param gradient_fill a gradient fill xml pattern.
+    #' @param every_nth_col which col should be filled
+    #' @param every_nth_row which row should be filled
     #' @examples
     #'  # example from the gradient fill manual page
     #'  gradient_fill <- "<gradientFill degree=\"90\">
@@ -4549,7 +4551,9 @@ wbWorkbook <- R6::R6Class(
       dims,
       color = "",
       pattern = "solid",
-      gradient_fill = ""
+      gradient_fill = "",
+      every_nth_col = 1,
+      every_nth_row = 1
     ) {
 
       new_fill <- create_fill(
@@ -4565,19 +4569,20 @@ wbWorkbook <- R6::R6Class(
 
       self$styles_mgr$add(new_fill, snew_fill)
 
-      # dims can contain various styles. go cell by cell.
-      dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+      # dim in dataframe can contain various styles. go cell by cell.
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      # select a few cols and rows to fill
+      cols <- (seq_len(ncol(did)) %% every_nth_col) == 0
+      rows <- (seq_len(nrow(did)) %% every_nth_row) == 0
+
+      dims <- unname(unlist(did[rows, cols, drop = FALSE]))
+
       for (dim in dims) {
         sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim))
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
-        # check if xf node is already available, if so do not add new node
-        if (xf_new_fill %in% self$styles_mgr$styles$cellXfs) {
-          s_id <- max(which(self$styles_mgr$styles$cellXfs %in% xf_new_fill)) - 1
-        } else {
-          self$styles_mgr$add(xf_new_fill, sxf_new_fill_x)
-          s_id <- self$styles_mgr$get_xf_id(sxf_new_fill_x)
-        }
+        self$styles_mgr$add(xf_new_fill, xf_new_fill)
+        s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
         set_cell_style(self, sheet, dim, s_id)
       }
 

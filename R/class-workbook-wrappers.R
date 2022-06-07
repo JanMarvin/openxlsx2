@@ -2021,6 +2021,8 @@ wb_add_border <- function(
 #'  "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
 #'  "lightTrellis", "gray125", "gray0625"
 #' @param gradient_fill a gradient fill xml pattern.
+#' @param every_nth_col which col should be filled
+#' @param every_nth_row which row should be filled
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = c(rgb = "FFFFFF00"))
@@ -2047,12 +2049,18 @@ wb_add_fill <- function(
     dims,
     color = "",
     pattern = "solid",
-    gradient_fill = "") {
+    gradient_fill = "",
+    every_nth_col = 1,
+    every_nth_row = 1
+) {
   sheet <- wb_validate_sheet(wb, sheet)
   wb$clone()$add_fill(
     sheet = sheet,
     dims = dims,
     color = color,
     pattern = pattern,
-    gradient_fill = gradient_fill)
+    gradient_fill = gradient_fill,
+    every_nth_col = every_nth_col,
+    every_nth_row = every_nth_row
+  )
 }

@@ -1945,7 +1945,9 @@ provide simple fill function
   dims,
   color = "",
   pattern = "solid",
-  gradient_fill = ""
+  gradient_fill = "",
+  every_nth_col = 1,
+  every_nth_row = 1
 )}\if{html}{\out{</div>}}
 }
 
@@ -1965,6 +1967,10 @@ provide simple fill function
 "lightTrellis", "gray125", "gray0625"}
 
 \item{\code{gradient_fill}}{a gradient fill xml pattern.}
+
+\item{\code{every_nth_col}}{which col should be filled}
+
+\item{\code{every_nth_row}}{which row should be filled}
 }
 \if{html}{\out{</div>}}
 }
