@@ -34,7 +34,7 @@ test_that("test add_border()", {
 
 })
 
-test_that("test add_border()", {
+test_that("test add_fill()", {
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_data("S1", mtcars)
