@@ -4571,8 +4571,14 @@ wbWorkbook <- R6::R6Class(
         sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim))
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
-        self$styles_mgr$add(xf_new_fill, sxf_new_fill_x)
-        set_cell_style(self, sheet, dim, self$styles_mgr$get_xf_id(sxf_new_fill_x))
+        # check if xf node is already available, if so do not add new node
+        if (xf_new_fill %in% self$styles_mgr$styles$cellXfs) {
+          s_id <- max(which(self$styles_mgr$styles$cellXfs %in% xf_new_fill)) - 1
+        } else {
+          self$styles_mgr$add(xf_new_fill, sxf_new_fill_x)
+          s_id <- self$styles_mgr$get_xf_id(sxf_new_fill_x)
+        }
+        set_cell_style(self, sheet, dim, s_id)
       }
 
       return(self)
