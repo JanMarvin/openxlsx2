@@ -341,7 +341,7 @@ get next xf id
 \subsection{Method \code{add()}}{
 add entry
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{style_mgr$add(style, style_name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$add(style, style_name, skip_duplicates = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -350,6 +350,8 @@ add entry
 \item{\code{style}}{new_style}
 
 \item{\code{style_name}}{a unique name identifying the style}
+
+\item{\code{skip_duplicates}}{should duplicates be added?}
 }
 \if{html}{\out{</div>}}
 }

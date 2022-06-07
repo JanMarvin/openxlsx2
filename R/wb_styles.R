@@ -786,7 +786,8 @@ set_cell_style <- function(wb, sheet, cell, value) {
   sheet <- wb_validate_sheet(wb, sheet)
 
   # pass multiple characters
-  cell <- sapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))))
+  if (length(cell) == 1 && grepl(":", cell))
+    cell <- sapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc
 
   cc$cell <- paste0(cc$c_r, cc$row_r)

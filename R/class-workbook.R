@@ -4381,8 +4381,8 @@ wbWorkbook <- R6::R6Class(
           self$styles_mgr$add(full_single, sfull_single)
           xf_prev <- get_cell_styles(self, sheet, dims)
           xf_full_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sfull_single))
-          self$styles_mgr$add(xf_full_single, s(xf_full_single))
-          set_cell_style(self, sheet, dims, self$styles_mgr$get_xf_id(s(xf_full_single)))
+          self$styles_mgr$add(xf_full_single, xf_full_single)
+          set_cell_style(self, sheet, dims, self$styles_mgr$get_xf_id(xf_full_single))
         }
 
         # create top & bottom piece
@@ -4392,15 +4392,15 @@ wbWorkbook <- R6::R6Class(
           self$styles_mgr$add(top_single, stop_single)
           xf_prev <- get_cell_styles(self, sheet, dim_top_single)
           xf_top_single <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_single))
-          self$styles_mgr$add(xf_top_single, s(xf_top_single))
-          set_cell_style(self, sheet, dim_top_single, self$styles_mgr$get_xf_id(s(xf_top_single)))
+          self$styles_mgr$add(xf_top_single, xf_top_single)
+          set_cell_style(self, sheet, dim_top_single, self$styles_mgr$get_xf_id(xf_top_single))
 
           # bottom single
           self$styles_mgr$add(bottom_single, sbottom_single)
           xf_prev <- get_cell_styles(self, sheet, dim_bottom_single)
           xf_bottom_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_single))
-          self$styles_mgr$add(xf_bottom_single, s(xf_bottom_single))
-          set_cell_style(self, sheet, dim_bottom_single, self$styles_mgr$get_xf_id(s(xf_bottom_single)))
+          self$styles_mgr$add(xf_bottom_single, xf_bottom_single)
+          set_cell_style(self, sheet, dim_bottom_single, self$styles_mgr$get_xf_id(xf_bottom_single))
         }
 
         # create middle piece(s)
@@ -4410,8 +4410,8 @@ wbWorkbook <- R6::R6Class(
           self$styles_mgr$add(middle_single, smiddle_single)
           xf_prev <- get_cell_styles(self, sheet, dim_middle_single)
           xf_middle_single <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_single))
-          self$styles_mgr$add(xf_middle_single, s(xf_middle_single))
-          set_cell_style(self, sheet, dim_middle_single, self$styles_mgr$get_xf_id(s(xf_middle_single)))
+          self$styles_mgr$add(xf_middle_single, xf_middle_single)
+          set_cell_style(self, sheet, dim_middle_single, self$styles_mgr$get_xf_id(xf_middle_single))
         }
 
       }
@@ -4423,15 +4423,15 @@ wbWorkbook <- R6::R6Class(
         self$styles_mgr$add(left_single, sleft_single)
         xf_prev <- get_cell_styles(self, sheet, dim_left_single)
         xf_left_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sleft_single))
-        self$styles_mgr$add(xf_left_single, s(xf_left_single))
-        set_cell_style(self, sheet, dim_left_single, self$styles_mgr$get_xf_id(s(xf_left_single)))
+        self$styles_mgr$add(xf_left_single, xf_left_single)
+        set_cell_style(self, sheet, dim_left_single, self$styles_mgr$get_xf_id(xf_left_single))
 
         # right single
         self$styles_mgr$add(right_single, sright_single)
         xf_prev <- get_cell_styles(self, sheet, dim_right_single)
         xf_right_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sright_single))
-        self$styles_mgr$add(xf_right_single, s(xf_right_single))
-        set_cell_style(self, sheet, dim_right_single, self$styles_mgr$get_xf_id(s(xf_right_single)))
+        self$styles_mgr$add(xf_right_single, xf_right_single)
+        set_cell_style(self, sheet, dim_right_single, self$styles_mgr$get_xf_id(xf_right_single))
 
         # add single center piece(s)
         if (ncol(df) >= 3) {
@@ -4440,8 +4440,8 @@ wbWorkbook <- R6::R6Class(
           self$styles_mgr$add(center_single, scenter_single)
           xf_prev <- get_cell_styles(self, sheet, dim_center_single)
           xf_center_single <- set_border(xf_prev, self$styles_mgr$get_border_id(scenter_single))
-          self$styles_mgr$add(xf_center_single, s(xf_center_single))
-          set_cell_style(self, sheet, dim_center_single, self$styles_mgr$get_xf_id(s(xf_center_single)))
+          self$styles_mgr$add(xf_center_single, xf_center_single)
+          set_cell_style(self, sheet, dim_center_single, self$styles_mgr$get_xf_id(xf_center_single))
         }
 
       }
@@ -4453,29 +4453,29 @@ wbWorkbook <- R6::R6Class(
         self$styles_mgr$add(top_left, stop_left)
         xf_prev <- get_cell_styles(self, sheet, dim_top_left)
         xf_top_left <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_left))
-        self$styles_mgr$add(xf_top_left, s(xf_top_left))
-        set_cell_style(self, sheet, dim_top_left, self$styles_mgr$get_xf_id(s(xf_top_left)))
+        self$styles_mgr$add(xf_top_left, xf_top_left)
+        set_cell_style(self, sheet, dim_top_left, self$styles_mgr$get_xf_id(xf_top_left))
 
         # top right
         self$styles_mgr$add(top_right, stop_right)
         xf_prev <- get_cell_styles(self, sheet, dim_top_right)
         xf_top_right <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_right))
-        self$styles_mgr$add(xf_top_right, s(xf_top_right))
-        set_cell_style(self, sheet, dim_top_right, self$styles_mgr$get_xf_id(s(xf_top_right)))
+        self$styles_mgr$add(xf_top_right, xf_top_right)
+        set_cell_style(self, sheet, dim_top_right, self$styles_mgr$get_xf_id(xf_top_right))
 
         # bottom left
         self$styles_mgr$add(bottom_left, sbottom_left)
         xf_prev <- get_cell_styles(self, sheet, dim_bottom_left)
         xf_bottom_left <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_left))
-        self$styles_mgr$add(xf_bottom_left, s(xf_bottom_left))
-        set_cell_style(self, sheet, dim_bottom_left, self$styles_mgr$get_xf_id(s(xf_bottom_left)))
+        self$styles_mgr$add(xf_bottom_left, xf_bottom_left)
+        set_cell_style(self, sheet, dim_bottom_left, self$styles_mgr$get_xf_id(xf_bottom_left))
 
         # bottom right
         self$styles_mgr$add(bottom_right, sbottom_right)
         xf_prev <- get_cell_styles(self, sheet, dim_bottom_right)
         xf_bottom_right <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_right))
-        self$styles_mgr$add(xf_bottom_right, s(xf_bottom_right))
-        set_cell_style(self, sheet, dim_bottom_right, self$styles_mgr$get_xf_id(s(xf_bottom_right)))
+        self$styles_mgr$add(xf_bottom_right, xf_bottom_right)
+        set_cell_style(self, sheet, dim_bottom_right, self$styles_mgr$get_xf_id(xf_bottom_right))
       }
 
       # create left and right middle pieces
@@ -4485,15 +4485,15 @@ wbWorkbook <- R6::R6Class(
         self$styles_mgr$add(middle_left, smiddle_left)
         xf_prev <- get_cell_styles(self, sheet, dim_middle_left)
         xf_middle_left <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_left))
-        self$styles_mgr$add(xf_middle_left, s(xf_middle_left))
-        set_cell_style(self, sheet, dim_middle_left, self$styles_mgr$get_xf_id(s(xf_middle_left)))
+        self$styles_mgr$add(xf_middle_left, xf_middle_left)
+        set_cell_style(self, sheet, dim_middle_left, self$styles_mgr$get_xf_id(xf_middle_left))
 
         # middle right
         self$styles_mgr$add(middle_right, smiddle_right)
         xf_prev <- get_cell_styles(self, sheet, dim_middle_right)
         xf_middle_right <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_right))
-        self$styles_mgr$add(xf_middle_right, s(xf_middle_right))
-        set_cell_style(self, sheet, dim_middle_right, self$styles_mgr$get_xf_id(s(xf_middle_right)))
+        self$styles_mgr$add(xf_middle_right, xf_middle_right)
+        set_cell_style(self, sheet, dim_middle_right, self$styles_mgr$get_xf_id(xf_middle_right))
       }
 
       # create top and bottom center pieces
@@ -4503,15 +4503,15 @@ wbWorkbook <- R6::R6Class(
         self$styles_mgr$add(top_center, stop_center)
         xf_prev <- get_cell_styles(self, sheet, dim_top_center)
         xf_top_center <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_center))
-        self$styles_mgr$add(xf_top_center, s(xf_top_center))
-        set_cell_style(self, sheet, dim_top_center, self$styles_mgr$get_xf_id(s(xf_top_center)))
+        self$styles_mgr$add(xf_top_center, xf_top_center)
+        set_cell_style(self, sheet, dim_top_center, self$styles_mgr$get_xf_id(xf_top_center))
 
         # bottom center
         self$styles_mgr$add(bottom_center, sbottom_center)
         xf_prev <- get_cell_styles(self, sheet, dim_bottom_center)
         xf_bottom_center <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_center))
-        self$styles_mgr$add(xf_bottom_center, s(xf_bottom_center))
-        set_cell_style(self, sheet, dim_bottom_center, self$styles_mgr$get_xf_id(s(xf_bottom_center)))
+        self$styles_mgr$add(xf_bottom_center, xf_bottom_center)
+        set_cell_style(self, sheet, dim_bottom_center, self$styles_mgr$get_xf_id(xf_bottom_center))
       }
 
       if (nrow(df) > 2 && ncol(df) > 2) {
@@ -4520,8 +4520,8 @@ wbWorkbook <- R6::R6Class(
         self$styles_mgr$add(inner_cell, sinner_cell)
         xf_prev <- get_cell_styles(self, sheet, dim_inner_cell)
         xf_inner_cell <- set_border(xf_prev, self$styles_mgr$get_border_id(sinner_cell))
-        self$styles_mgr$add(xf_inner_cell, s(xf_inner_cell))
-        set_cell_style(self, sheet, dim_inner_cell, self$styles_mgr$get_xf_id(s(xf_inner_cell)))
+        self$styles_mgr$add(xf_inner_cell, xf_inner_cell)
+        set_cell_style(self, sheet, dim_inner_cell, self$styles_mgr$get_xf_id(xf_inner_cell))
       }
 
       return(self)

@@ -224,7 +224,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param name name
     get_xf_id = function(name) {
       xf <- self$xf
-      xf$id[xf$name %in% name]
+      xf$id[match(name, xf$name)]
     },
 
     #' @description get next numfmt id
@@ -258,11 +258,14 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' add entry
     #' @param style new_style
     #' @param style_name a unique name identifying the style
-    add = function(style, style_name) {
+    #' @param skip_duplicates should duplicates be added?
+    add = function(style, style_name, skip_duplicates = TRUE) {
 
       # make sure that style and style_name length are equal
       if (length(style) != length(style_name))
         stop("style length and name do not match")
+
+
 
       for (sty in seq_along(style)) {
 
@@ -274,6 +277,13 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         is_fill   <- any(ifelse(xml_node_name(style[sty]) == "fill", TRUE, FALSE))
         is_border <- any(ifelse(xml_node_name(style[sty]) == "border", TRUE, FALSE))
         is_xf     <- any(ifelse(xml_node_name(style[sty]) == "xf", TRUE, FALSE))
+
+
+        if (skip_duplicates && is_numfmt && style_name[sty] %in% self$numfmt$name) next
+        if (skip_duplicates && is_font   && style_name[sty] %in% self$font$name) next
+        if (skip_duplicates && is_fill   && style_name[sty] %in% self$fill$name) next
+        if (skip_duplicates && is_border && style_name[sty] %in% self$border$name) next
+        if (skip_duplicates && is_xf     && style_name[sty] %in% self$xf$name) next
 
         if (is_numfmt) {
           typ <- "numFmt"
