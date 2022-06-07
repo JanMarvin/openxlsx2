@@ -58,4 +58,3 @@ test_that("test add_fill()", {
   expect_equal(exp, got)
 
 })
-
