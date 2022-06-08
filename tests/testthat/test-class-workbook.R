@@ -66,7 +66,7 @@ test_that("$set_order() works", {
 # sheet names -------------------------------------------------------------
 
 test_that("$set_sheet_names() and $get_sheet_names() work", {
-  wb <- wb_workbook()$add_worksheet(1)$add_worksheet(2)
+  wb <- wb_workbook()$add_worksheet()$add_worksheet()
   wb$set_sheet_names(new = c("a", "b & c"))
 
   # return a names character vector
