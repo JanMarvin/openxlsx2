@@ -4159,7 +4159,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.numeric(sheet)) {
-        if (sheet %% 1 != 0) {
+        if (!is_integer_ish(sheet)) {
           stop("If sheet is numeric it must be an integer")
         }
 
