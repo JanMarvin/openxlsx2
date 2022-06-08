@@ -125,25 +125,11 @@ import_styles <- function(x) {
 }
 
 
-#' get all styles on a sheet
-#'
-#' @param wb workbook
-#' @param sheet worksheet
-#'
-#' @export
-styles_on_sheet <- function(wb, sheet) {
-
-  sheet_id <- wb_validate_sheet(wb, sheet)
-
-  z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
-
-  as.numeric(z)
-
-}
-
 # TODO guessing here
 #' create border
-#'
+#' @description
+#' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
+#' Border colors are of the following type: c(rgb="FF000000")
 #' @param diagonalDown x
 #' @param diagonalUp x
 #' @param outline x
@@ -483,9 +469,15 @@ create_fill <- function(
     fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
-  patternFill <- xml_node_create("patternFill",
-                                 xml_children = c(bgColor, fgColor),
-                                 xml_attributes = c(patternType = patternType))
+  # if gradient fill is specified we can not have patternFill too. otherwise
+  # we end up with a solid black fill
+  if (gradientFill == "") {
+    patternFill <- xml_node_create("patternFill",
+                                   xml_children = c(bgColor, fgColor),
+                                   xml_attributes = c(patternType = patternType))
+  } else {
+    patternFill <- ""
+  }
 
   df_fill <- data.frame(
     gradientFill = gradientFill,
@@ -684,6 +676,58 @@ merge_cellXfs <- function(wb, new_cellxfs) {
 }
 
 
+#' internal function to set border to a style
+#' @param xf_node some xf node
+#' @param border_id some numeric value as character
+#' @noRd
+set_border <- function(xf_node, border_id) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyBorder <- "1"
+  z$borderId <- border_id
+  write_xf(z)
+}
+
+#' internal function to set fill to a style
+#' @param xf_node some xf node
+#' @param fill_id some numeric value as character
+#' @noRd
+set_fill <- function(xf_node, fill_id) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFill <- "1"
+  z$fillId <- fill_id
+  write_xf(z)
+}
+
+#' get all styles on a sheet
+#'
+#' @param wb workbook
+#' @param sheet worksheet
+#'
+#' @export
+styles_on_sheet <- function(wb, sheet) {
+  sheet_id <- wb_validate_sheet(wb, sheet)
+  z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
+  as.numeric(z)
+}
+
+
+#' get xml node for a specific style of a cell. function for internal use
+#' @param wb workbook
+#' @param sheet worksheet
+#' @param cell cell
+#' @noRd
+get_cell_styles <- function(wb, sheet, cell) {
+  z <- get_cell_style(wb, sheet, cell)
+  id <- vapply(z, function(x) {
+    out <- which(wb$styles_mgr$get_xf()$id %in% x)
+    if (identical(out,integer())) out <- 0L
+    out
+  },
+  NA_integer_)
+  wb$styles_mgr$styles$cellXfs[id+1]
+}
+
+
 #' helper get_cell_style
 #' @param wb a workbook
 #' @param sheet a worksheet
@@ -693,13 +737,13 @@ get_cell_style <- function(wb, sheet, cell) {
 
   sheet <- wb_validate_sheet(wb, sheet)
 
-  cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
-  cc <- wb$worksheets[[sheet]]$sheet_data$cc
+  # if a range is passed (e.g. "A1:B2") we need to get every cell
+  if (length(cell) == 1 && grepl(":", cell))
+    cell <- unname(unlist(dims_to_dataframe(cell, fill = TRUE)))
 
-  cc$cell <- paste0(cc$c_r, cc$row_r)
-
-  sel <- cc$cell %in% cell
-  cc$c_s[sel]
+  # TODO check that cc$r is alway valid. not sure atm
+  sel <- wb$worksheets[[sheet]]$sheet_data$cc$r %in% cell
+  wb$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
 }
 
 
@@ -741,7 +785,9 @@ set_cell_style <- function(wb, sheet, cell, value) {
 
   sheet <- wb_validate_sheet(wb, sheet)
 
-  cell <- as.character(unlist(dims_to_dataframe(cell, fill = TRUE)))
+  # pass multiple characters
+  if (length(cell) == 1 && grepl(":", cell))
+    cell <- sapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc
 
   cc$cell <- paste0(cc$c_r, cc$row_r)
