@@ -4193,7 +4193,7 @@ wbWorkbook <- R6::R6Class(
       private$current_sheet <- sheet
     },
 
-    get_sheet = function(sheet) {
+    get_sheet_index = function(sheet) {
       # Get/validate `sheet` and set as the current sheet
       if (is_waiver(sheet)) {
         # waivers shouldn't need additional validation
@@ -4206,9 +4206,8 @@ wbWorkbook <- R6::R6Class(
           stop("not a valid waiver: ", sheet)
         )
         return(private$current_sheet)
-      },
+      }
 
-    get_sheet_index = function(sheet) {
       # returns the sheet index, or NA
       if (is.null(self$sheet_names)) {
         warning("Workbook has no sheets")
