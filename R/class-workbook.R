@@ -440,6 +440,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       newSheetIndex <- length(self$worksheets) + 1L
+      private$set_current_sheet(newSheetIndex)
       sheetId <- private$get_sheet_id_max() # checks for self$worksheet length
 
       # check for errors ----
@@ -540,11 +541,11 @@ wbWorkbook <- R6::R6Class(
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
     clone_worksheet = function(old = current_sheet(), new = next_sheet()) {
+      private$validate_new_sheet(new)
       old <- private$get_sheet_index(old)
-      # private$validate_new_sheet(new)
-      new <- private$validate_new_sheet(new)
 
       newSheetIndex <- length(self$worksheets) + 1L
+      private$set_current_sheet(newSheetIndex)
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
       # not the best but a quick fix
@@ -4189,8 +4190,11 @@ wbWorkbook <- R6::R6Class(
       if (tolower(sheet) %in% self$sheet_names) {
         stop("a sheet with name '", sheet, '"already exists"')
       }
+    },
 
-      private$current_sheet <- sheet
+    set_current_sheet = function(sheet_index) {
+      stopifnot(is_integer_ish(sheet_index), length(sheet_index) == 1)
+      private$current_sheet <- sheet_index
     },
 
     get_sheet_index = function(sheet) {
