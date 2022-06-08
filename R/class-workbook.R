@@ -3869,7 +3869,7 @@ wbWorkbook <- R6::R6Class(
     #' @description remove filters
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
-    remove_filter = function(sheet) {
+    remove_filter = function(sheet = current_sheet()) {
       for (s in private$get_sheet_index(sheet)) {
         self$worksheets[[s]]$autoFilter <- character()
       }
