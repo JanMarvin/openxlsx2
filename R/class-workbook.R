@@ -365,6 +365,7 @@ wbWorkbook <- R6::R6Class(
       msg <- NULL
 
       private$validate_new_sheet(sheet)
+
       if (is_waiver(sheet)) {
         if (sheet == "current_sheet") {
           stop("cannot add worksheet to current sheet")
@@ -376,7 +377,6 @@ wbWorkbook <- R6::R6Class(
       sheet <- as.character(sheet)
       sheet_name <- replace_legal_chars(sheet)
       private$validate_new_sheet(sheet_name)
-
 
       if (!is.logical(gridLines) | length(gridLines) > 1) {
         fail <- TRUE

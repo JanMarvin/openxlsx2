@@ -60,8 +60,8 @@
 * `wbWorkbook$validate_sheet()` added as an object methods
 
 * private `wbWorkbook` field `original_sheet_names` added to track the original names passed to sheets
-
-* private `wbWorkbook` methods added:
+* private `$get_sheet()` removed in favor of more explicit
+* private `wbWorkbook` methods additions:  
   * `$get_sheet_id_max()`, `$get_sheet_index()` for getting ids
   * `$get_sheet_name()` for getting a sheet name
   * `$set_single_sheet_name()` for setting sheet names
