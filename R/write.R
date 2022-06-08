@@ -625,7 +625,7 @@ write_data_table <- function(
     stop("sep must be a character vector of length 1")
 
   # TODO clean up when moved into wbWorkbook
-  sheet <- wb$.__enclos_env__$private$get_sheet(sheet)
+  sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
   # sheet <- wb$validate_sheet(sheet)
 
   if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
