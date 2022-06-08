@@ -371,6 +371,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-add_page_break"><code>wbWorkbook$add_page_break()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clean_sheet"><code>wbWorkbook$clean_sheet()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_border"><code>wbWorkbook$add_border()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_fill"><code>wbWorkbook$add_fill()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorkbook-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -2342,6 +2343,10 @@ are removed.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
+<h4 id="returns-31">Returns<a class="anchor" aria-label="anchor" href="#returns-31"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+<div class="section">
 <h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
@@ -2369,15 +2374,80 @@ are removed.</p></dd>
 </div>
 
 
-</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-add_fill"></a><div class="section">
+<h3 id="method-add-fill-">Method <code>add_fill()</code><a class="anchor" aria-label="anchor" href="#method-add-fill-"></a></h3>
+<p>provide simple fill function</p><div class="section">
 <h4 id="usage-58">Usage<a class="anchor" aria-label="anchor" href="#usage-58"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_fill</span><span class="op">(</span>
+  <span class="va">sheet</span>,
+  <span class="va">dims</span>,
+  color <span class="op">=</span> <span class="st">""</span>,
+  pattern <span class="op">=</span> <span class="st">"solid"</span>,
+  gradient_fill <span class="op">=</span> <span class="st">""</span>,
+  every_nth_col <span class="op">=</span> <span class="fl">1</span>,
+  every_nth_row <span class="op">=</span> <span class="fl">1</span>
+<span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-54">Arguments<a class="anchor" aria-label="anchor" href="#arguments-54"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>the worksheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>the cell range</p></dd>
+
+
+<dt><code>color</code></dt>
+<dd><p>the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")</p></dd>
+
+
+<dt><code>pattern</code></dt>
+<dd><p>various default "none" but others are possible:
+"solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+"darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+"lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+"lightTrellis", "gray125", "gray0625"</p></dd>
+
+
+<dt><code>gradient_fill</code></dt>
+<dd><p>a gradient fill xml pattern.</p></dd>
+
+
+<dt><code>every_nth_col</code></dt>
+<dd><p>which col should be filled</p></dd>
+
+
+<dt><code>every_nth_row</code></dt>
+<dd><p>which row should be filled</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-32">Returns<a class="anchor" aria-label="anchor" href="#returns-32"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+<div class="section">
+<h4 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a></h4>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="co"># example from the gradient fill manual page</span>
+ <span class="va">gradient_fill</span> <span class="op">&lt;-</span> <span class="st">"&lt;gradientFill degree=\"90\"&gt;
+   &lt;stop position=\"0\"&gt;&lt;color rgb=\"FF92D050\"/&gt;&lt;/stop&gt;
+   &lt;stop position=\"1\"&gt;&lt;color rgb=\"FF0070C0\"/&gt;&lt;/stop&gt;
+  &lt;/gradientFill&gt;"</span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-59">Usage<a class="anchor" aria-label="anchor" href="#usage-59"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-55">Arguments<a class="anchor" aria-label="anchor" href="#arguments-55"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -2476,6 +2546,15 @@ are removed.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
 <span class="r-in"></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"><span class="co">## Method `wbWorkbook$add_fill`</span></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"></span>
+<span class="r-in"> <span class="co"># example from the gradient fill manual page</span></span>
+<span class="r-in"> <span class="va">gradient_fill</span> <span class="op">&lt;-</span> <span class="st">"&lt;gradientFill degree=\"90\"&gt;</span>
+<span class="r-in">   &lt;stop position=\"0\"&gt;&lt;color rgb=\"FF92D050\"/&gt;&lt;/stop&gt;</span>
+<span class="r-in">   &lt;stop position=\"1\"&gt;&lt;color rgb=\"FF0070C0\"/&gt;&lt;/stop&gt;</span>
+<span class="r-in">  &lt;/gradientFill&gt;"</span></span>
 </code></pre></div>
     </div>
   </div>
