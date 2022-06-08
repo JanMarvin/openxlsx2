@@ -469,9 +469,15 @@ create_fill <- function(
     fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
-  patternFill <- xml_node_create("patternFill",
-                                 xml_children = c(bgColor, fgColor),
-                                 xml_attributes = c(patternType = patternType))
+  # if gradient fill is specified we can not have patternFill too. otherwise
+  # we end up with a solid black fill
+  if (gradientFill == "") {
+    patternFill <- xml_node_create("patternFill",
+                                   xml_children = c(bgColor, fgColor),
+                                   xml_attributes = c(patternType = patternType))
+  } else {
+    patternFill <- ""
+  }
 
   df_fill <- data.frame(
     gradientFill = gradientFill,
@@ -681,6 +687,16 @@ set_border <- function(xf_node, border_id) {
   write_xf(z)
 }
 
+#' internal function to set fill to a style
+#' @param xf_node some xf node
+#' @param fill_id some numeric value as character
+#' @noRd
+set_fill <- function(xf_node, fill_id) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFill <- "1"
+  z$fillId <- fill_id
+  write_xf(z)
+}
 
 #' get all styles on a sheet
 #'
@@ -698,7 +714,7 @@ styles_on_sheet <- function(wb, sheet) {
 #' get xml node for a specific style of a cell. function for internal use
 #' @param wb workbook
 #' @param sheet worksheet
-#' @param cell
+#' @param cell cell
 #' @noRd
 get_cell_styles <- function(wb, sheet, cell) {
   z <- get_cell_style(wb, sheet, cell)
@@ -770,7 +786,8 @@ set_cell_style <- function(wb, sheet, cell, value) {
   sheet <- wb_validate_sheet(wb, sheet)
 
   # pass multiple characters
-  cell <- sapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))))
+  if (length(cell) == 1 && grepl(":", cell))
+    cell <- sapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))))
   cc <- wb$worksheets[[sheet]]$sheet_data$cc
 
   cc$cell <- paste0(cc$c_r, cc$row_r)

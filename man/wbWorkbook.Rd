@@ -83,6 +83,15 @@ wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
 wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
 
+## ------------------------------------------------
+## Method `wbWorkbook$add_fill`
+## ------------------------------------------------
+
+ # example from the gradient fill manual page
+ gradient_fill <- "<gradientFill degree=\"90\">
+   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+  </gradientFill>"
 }
 \seealso{
 create_border
@@ -256,6 +265,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_page_break}{\code{wbWorkbook$add_page_break()}}
 \item \href{#method-wbWorkbook-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
 \item \href{#method-wbWorkbook-add_border}{\code{wbWorkbook$add_border()}}
+\item \href{#method-wbWorkbook-add_fill}{\code{wbWorkbook$add_fill()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1889,6 +1899,9 @@ create borders for cell region
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{
@@ -1915,7 +1928,62 @@ wb$add_border(1, dims = "D28:E28")
 wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
 wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+}
+\if{html}{\out{</div>}}
 
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_fill"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_fill}{}}}
+\subsection{Method \code{add_fill()}}{
+provide simple fill function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
+  sheet,
+  dims,
+  color = "",
+  pattern = "solid",
+  gradient_fill = "",
+  every_nth_col = 1,
+  every_nth_row = 1
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{color}}{the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")}
+
+\item{\code{pattern}}{various default "none" but others are possible:
+"solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+"darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+"lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+"lightTrellis", "gray125", "gray0625"}
+
+\item{\code{gradient_fill}}{a gradient fill xml pattern.}
+
+\item{\code{every_nth_col}}{which col should be filled}
+
+\item{\code{every_nth_row}}{which row should be filled}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ # example from the gradient fill manual page
+ gradient_fill <- "<gradientFill degree=\"90\">
+   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+  </gradientFill>"
 }
 \if{html}{\out{</div>}}
 
