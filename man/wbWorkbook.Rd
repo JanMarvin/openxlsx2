@@ -92,6 +92,13 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
    <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
    <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
   </gradientFill>"
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_font`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
 }
 \seealso{
 create_border
@@ -266,6 +273,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
 \item \href{#method-wbWorkbook-add_border}{\code{wbWorkbook$add_border()}}
 \item \href{#method-wbWorkbook-add_fill}{\code{wbWorkbook$add_fill()}}
+\item \href{#method-wbWorkbook-add_font}{\code{wbWorkbook$add_font()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1984,6 +1992,85 @@ The \code{wbWorksheetObject}, invisibly
    <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
    <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
   </gradientFill>"
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_font"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_font}{}}}
+\subsection{Method \code{add_font()}}{
+provide simple font function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_font(
+  sheet,
+  dims,
+  name = "Calibri",
+  color = c(rgb = "FF000000"),
+  size = "11",
+  bold = "",
+  italic = "",
+  outline = "",
+  strike = "",
+  underline = "",
+  charset = "",
+  condense = "",
+  extend = "",
+  family = "",
+  scheme = "",
+  shadow = "",
+  vertAlign = ""
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{name}}{font name: default "Calibri"}
+
+\item{\code{color}}{rgb color: default "FF000000"}
+
+\item{\code{size}}{font size: default "11",}
+
+\item{\code{bold}}{bold}
+
+\item{\code{italic}}{italic}
+
+\item{\code{outline}}{outline}
+
+\item{\code{strike}}{strike}
+
+\item{\code{underline}}{underline}
+
+\item{\code{charset}}{charset}
+
+\item{\code{condense}}{condense}
+
+\item{\code{extend}}{extend}
+
+\item{\code{family}}{font family}
+
+\item{\code{scheme}}{font scheme}
+
+\item{\code{shadow}}{shadow}
+
+\item{\code{vertAlign}}{vertical alignment}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
 }
 \if{html}{\out{</div>}}
 

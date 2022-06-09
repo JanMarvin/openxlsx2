@@ -286,7 +286,7 @@ merge_numFmts <- function(wb, new_numfmts) {
   return(wb)
 }
 
-#' create number format
+#' create font format
 #' @param b bold
 #' @param charset charset
 #' @param color rgb color: default "FF000000"
@@ -695,6 +695,17 @@ set_fill <- function(xf_node, fill_id) {
   z <- read_xf(read_xml(xf_node))
   z$applyFill <- "1"
   z$fillId <- fill_id
+  write_xf(z)
+}
+
+#' internal function to set font to a style
+#' @param xf_node some xf node
+#' @param font_id some numeric value as character
+#' @noRd
+set_font <- function(xf_node, font_id) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFont <- "1"
+  z$fontId <- font_id
   write_xf(z)
 }
 
