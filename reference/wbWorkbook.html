@@ -372,6 +372,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-clean_sheet"><code>wbWorkbook$clean_sheet()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_border"><code>wbWorkbook$add_border()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_fill"><code>wbWorkbook$add_fill()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_font"><code>wbWorkbook$add_font()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorkbook-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -2439,15 +2440,123 @@ are removed.</p></dd>
 </div>
 
 
-</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-add_font"></a><div class="section">
+<h3 id="method-add-font-">Method <code>add_font()</code><a class="anchor" aria-label="anchor" href="#method-add-font-"></a></h3>
+<p>provide simple font function</p><div class="section">
 <h4 id="usage-59">Usage<a class="anchor" aria-label="anchor" href="#usage-59"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span>
+  <span class="va">sheet</span>,
+  <span class="va">dims</span>,
+  name <span class="op">=</span> <span class="st">"Calibri"</span>,
+  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
+  size <span class="op">=</span> <span class="st">"11"</span>,
+  bold <span class="op">=</span> <span class="st">""</span>,
+  italic <span class="op">=</span> <span class="st">""</span>,
+  outline <span class="op">=</span> <span class="st">""</span>,
+  strike <span class="op">=</span> <span class="st">""</span>,
+  underline <span class="op">=</span> <span class="st">""</span>,
+  charset <span class="op">=</span> <span class="st">""</span>,
+  condense <span class="op">=</span> <span class="st">""</span>,
+  extend <span class="op">=</span> <span class="st">""</span>,
+  family <span class="op">=</span> <span class="st">""</span>,
+  scheme <span class="op">=</span> <span class="st">""</span>,
+  shadow <span class="op">=</span> <span class="st">""</span>,
+  vertAlign <span class="op">=</span> <span class="st">""</span>
+<span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-55">Arguments<a class="anchor" aria-label="anchor" href="#arguments-55"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>the worksheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>the cell range</p></dd>
+
+
+<dt><code>name</code></dt>
+<dd><p>font name: default "Calibri"</p></dd>
+
+
+<dt><code>color</code></dt>
+<dd><p>rgb color: default "FF000000"</p></dd>
+
+
+<dt><code>size</code></dt>
+<dd><p>font size: default "11",</p></dd>
+
+
+<dt><code>bold</code></dt>
+<dd><p>bold</p></dd>
+
+
+<dt><code>italic</code></dt>
+<dd><p>italic</p></dd>
+
+
+<dt><code>outline</code></dt>
+<dd><p>outline</p></dd>
+
+
+<dt><code>strike</code></dt>
+<dd><p>strike</p></dd>
+
+
+<dt><code>underline</code></dt>
+<dd><p>underline</p></dd>
+
+
+<dt><code>charset</code></dt>
+<dd><p>charset</p></dd>
+
+
+<dt><code>condense</code></dt>
+<dd><p>condense</p></dd>
+
+
+<dt><code>extend</code></dt>
+<dd><p>extend</p></dd>
+
+
+<dt><code>family</code></dt>
+<dd><p>font family</p></dd>
+
+
+<dt><code>scheme</code></dt>
+<dd><p>font scheme</p></dd>
+
+
+<dt><code>shadow</code></dt>
+<dd><p>shadow</p></dd>
+
+
+<dt><code>vertAlign</code></dt>
+<dd><p>vertical alignment</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-33">Returns<a class="anchor" aria-label="anchor" href="#returns-33"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+<div class="section">
+<h4 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a></h4>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
+ <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-60">Usage<a class="anchor" aria-label="anchor" href="#usage-60"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-56">Arguments<a class="anchor" aria-label="anchor" href="#arguments-56"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -2555,6 +2664,18 @@ are removed.</p></dd>
 <span class="r-in">   &lt;stop position=\"0\"&gt;&lt;color rgb=\"FF92D050\"/&gt;&lt;/stop&gt;</span>
 <span class="r-in">   &lt;stop position=\"1\"&gt;&lt;color rgb=\"FF0070C0\"/&gt;&lt;/stop&gt;</span>
 <span class="r-in">  &lt;/gradientFill&gt;"</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"><span class="co">## Method `wbWorkbook$add_font`</span></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"></span>
+<span class="r-in"> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span class="r-in"> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
 </code></pre></div>
     </div>
   </div>
