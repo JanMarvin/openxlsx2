@@ -698,6 +698,17 @@ set_fill <- function(xf_node, fill_id) {
   write_xf(z)
 }
 
+#' internal function to set font to a style
+#' @param xf_node some xf node
+#' @param font_id some numeric value as character
+#' @noRd
+set_font <- function(xf_node, font_id) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFont <- "1"
+  z$fontId <- font_id
+  write_xf(z)
+}
+
 #' get all styles on a sheet
 #'
 #' @param wb workbook

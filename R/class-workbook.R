@@ -4587,6 +4587,85 @@ wbWorkbook <- R6::R6Class(
       }
 
       return(self)
+    },
+
+    #' @description provide simple font function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param name font name: default "Calibri"
+    #' @param color rgb color: default "FF000000"
+    #' @param size font size: default "11",
+    #' @param bold bold
+    #' @param italic italic
+    #' @param outline outline
+    #' @param strike strike
+    #' @param underline underline
+    #' @param family font family
+    #' @param charset charset
+    #' @param condense condense
+    #' @param scheme font scheme
+    #' @param shadow shadow
+    #' @param extend extend
+    #' @param vertAlign vertical alignment
+    #' @examples
+    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+    #'  wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+    #' @return The `wbWorksheetObject`, invisibly
+    add_font = function(
+      sheet,
+      dims,
+      name = "Calibri",
+      color = c(rgb = "FF000000"),
+      size = "11",
+      bold = "",
+      italic = "",
+      outline = "",
+      strike = "",
+      underline = "",
+      # fine tuning
+      charset = "",
+      condense = "",
+      extend = "",
+      family = "",
+      scheme = "",
+      shadow = "",
+      vertAlign = ""
+    ) {
+
+      new_font <- create_font(
+        b = bold,
+        charset = charset,
+        color = color,
+        condense = condense,
+        extend = extend,
+        family = family,
+        i = italic,
+        name = name,
+        outline = outline,
+        scheme = scheme,
+        shadow = shadow,
+        strike = strike,
+        sz = size,
+        u = underline,
+        vertAlign = vertAlign
+      )
+
+      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      snew_font <- paste0(smp, "new_font")
+      sxf_new_font <- paste0(smp, "xf_new_font")
+
+      self$styles_mgr$add(new_font, snew_font)
+
+      for (dim in dims) {
+        sxf_new_font_x <- paste0(sxf_new_font, which(dims %in% dim))
+        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(snew_font))
+        self$styles_mgr$add(xf_new_font, xf_new_font)
+        s_id <- self$styles_mgr$get_xf_id(xf_new_font)
+        set_cell_style(self, sheet, dim, s_id)
+      }
+
+      return(self)
     }
 
   ),
