@@ -4,9 +4,15 @@
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
 \value{
+The integer position of the sheet
+
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
+
+A \code{named} \code{character} vector of sheet names in their order.  The
+names represent the original value of the worksheet prior to any
+character substitutions.
 
 The \code{wbWorkbook} object
 
@@ -45,6 +51,50 @@ R6 class for a Workbook
 A Workbook
 
 minor helper wrapping xl_open which does the entire same thing
+}
+\examples{
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_border`
+## ------------------------------------------------
+
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb$add_border(1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
+wb$add_border(1, dims = "C2:C5")
+wb$add_border(1, dims = "G2:H3")
+wb$add_border(1, dims = "G12:H13",
+ left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+ top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+wb$add_border(1, dims = "A20:C23")
+wb$add_border(1, dims = "B12:D14",
+ left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+ bottom_color = c(rgb ="FFFF0000"))
+wb$add_border(1, dims = "D28:E28")
+# if (interactive()) wb$open()
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_fill`
+## ------------------------------------------------
+
+ # example from the gradient fill manual page
+ gradient_fill <- "<gradientFill degree=\"90\">
+   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+  </gradientFill>"
+}
+\seealso{
+create_border
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -135,7 +185,8 @@ minor helper wrapping xl_open which does the entire same thing
 
 \item{\code{worksheets_rels}}{worksheets_rels}
 
-\item{\code{sheetOrder}}{sheetOrder}
+\item{\code{sheetOrder}}{The sheet order.  Controls ordering for worksheets and
+worksheet names.}
 
 \item{\code{path}}{path}
 
@@ -159,6 +210,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-new}{\code{wbWorkbook$new()}}
 \item \href{#method-wbWorkbook-append}{\code{wbWorkbook$append()}}
 \item \href{#method-wbWorkbook-append_sheets}{\code{wbWorkbook$append_sheets()}}
+\item \href{#method-wbWorkbook-validate_sheet}{\code{wbWorkbook$validate_sheet()}}
 \item \href{#method-wbWorkbook-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-wbWorkbook-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
@@ -171,6 +223,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
+\item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
+\item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
 \item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
@@ -210,6 +264,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
 \item \href{#method-wbWorkbook-add_page_break}{\code{wbWorkbook$add_page_break()}}
 \item \href{#method-wbWorkbook-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
+\item \href{#method-wbWorkbook-add_border}{\code{wbWorkbook$add_border()}}
+\item \href{#method-wbWorkbook-add_fill}{\code{wbWorkbook$add_fill()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -286,6 +342,23 @@ Append to \code{self$workbook$sheets} This method is intended for internal use
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-validate_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-validate_sheet}{}}}
+\subsection{Method \code{validate_sheet()}}{
+validate sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validate_sheet(sheet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{A character sheet name or integer location}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_worksheet"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_worksheet}{}}}
 \subsection{Method \code{add_worksheet()}}{
@@ -294,6 +367,7 @@ Add worksheet to the \code{wbWorkbook} object
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
   sheet,
   gridLines = TRUE,
+  rowColHeaders = TRUE,
   tabColour = NULL,
   zoom = 100,
   header = NULL,
@@ -321,6 +395,8 @@ Add worksheet to the \code{wbWorkbook} object
 \item{\code{sheet}}{sheet}
 
 \item{\code{gridLines}}{gridLines}
+
+\item{\code{rowColHeaders}}{rowColHeaders}
 
 \item{\code{tabColour}}{tabColour}
 
@@ -713,10 +789,42 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_sheet_names}{}}}
+\subsection{Method \code{get_sheet_names()}}{
+Get sheet names
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_sheet_names}{}}}
+\subsection{Method \code{set_sheet_names()}}{
+Sets a sheet name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old = NULL, new)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{old}}{Old sheet name}
+
+\item{\code{new}}{New sheet name}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-setSheetName"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-setSheetName}{}}}
 \subsection{Method \code{setSheetName()}}{
-Sets a sheet name
+Deprecated.  Use \code{set_sheet_names()} instead
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, name)}\if{html}{\out{</div>}}
 }
@@ -1752,9 +1860,135 @@ clean sheet (remove all values)
 }
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
-Deep cloning method for workbooks.  This method also accesses
-\verb{$clone(deep = TRUE)} methods for \code{R6} fields.
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_border"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_border}{}}}
+\subsection{Method \code{add_border()}}{
+create borders for cell region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_border(
+  sheet = 1,
+  dims = "A1",
+  bottom_color = c(rgb = "FF000000"),
+  left_color = c(rgb = "FF000000"),
+  right_color = c(rgb = "FF000000"),
+  top_color = c(rgb = "FF000000"),
+  bottom_border = "thin",
+  left_border = "thin",
+  right_border = "thin",
+  top_border = "thin",
+  inner_hgrid = NULL,
+  inner_hcolor = NULL,
+  inner_vgrid = NULL,
+  inner_vcolor = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"}
+
+\item{\code{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}}{a color, either something openxml knows or some RGB color}
+
+\item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb$add_border(1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
+wb$add_border(1, dims = "C2:C5")
+wb$add_border(1, dims = "G2:H3")
+wb$add_border(1, dims = "G12:H13",
+ left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+ top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+wb$add_border(1, dims = "A20:C23")
+wb$add_border(1, dims = "B12:D14",
+ left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+ bottom_color = c(rgb ="FFFF0000"))
+wb$add_border(1, dims = "D28:E28")
+# if (interactive()) wb$open()
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_fill"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_fill}{}}}
+\subsection{Method \code{add_fill()}}{
+provide simple fill function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
+  sheet,
+  dims,
+  color = "",
+  pattern = "solid",
+  gradient_fill = "",
+  every_nth_col = 1,
+  every_nth_row = 1
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{color}}{the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")}
+
+\item{\code{pattern}}{various default "none" but others are possible:
+"solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+"darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+"lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+"lightTrellis", "gray125", "gray0625"}
+
+\item{\code{gradient_fill}}{a gradient fill xml pattern.}
+
+\item{\code{every_nth_col}}{which col should be filled}
+
+\item{\code{every_nth_row}}{which row should be filled}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ # example from the gradient fill manual page
+ gradient_fill <- "<gradientFill degree=\"90\">
+   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+  </gradientFill>"
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-clone"></a>}}

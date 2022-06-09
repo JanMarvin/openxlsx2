@@ -6,25 +6,7 @@
 #' @noRd
 wb_validate_sheet <- function(wb, sheet) {
   assert_workbook(wb)
-
-  # workbook has no sheets
-  if (is.null(wb$sheet_names)) {
-    return(NA_integer_)
-  }
-
-  # input is number
-  if (is.numeric(sheet)) {
-    badsheet <- !sheet %in% seq_along(wb$sheet_names)
-    if (any(badsheet)) sheet[badsheet] <- NA_integer_
-    return(sheet)
-  }
-
-  if (!sheet %in% replaceXMLEntities(wb$sheet_names)) {
-    return(NA_integer_)
-  }
-
-
-  which(replaceXMLEntities(wb$sheet_names) == sheet)
+  wb$validate_sheet(sheet)
 }
 
 

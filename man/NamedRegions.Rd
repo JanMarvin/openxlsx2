@@ -21,8 +21,7 @@ wb$add_worksheet("Sheet 1")
 
 ## specify region
 wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
-wb_add_named_region(
-  wb = wb,
+wb$add_named_region(
   sheet = 1,
   name = "iris",
   rows = seq_len(nrow(iris) + 1),
@@ -34,7 +33,7 @@ wb_add_named_region(
 wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
 \dontrun{
 out_file <- tempfile(fileext = ".xlsx")
-wb_save(wb, out_file, overwrite = TRUE)
+wb$save(out_file, overwrite = TRUE)
 
 ## see named regions
 get_named_regions(wb) ## From Workbook object

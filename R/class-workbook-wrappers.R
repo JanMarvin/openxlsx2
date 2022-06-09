@@ -325,6 +325,8 @@ wb_unmerge_cells <- function(wb, sheet, rows = NULL, cols = NULL) {
 #' @param sheet A name for the new worksheet
 #' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
 #'   hidden.
+#' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
+#'   hidden.
 #' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
 #'   colours()) or a valid hex colour beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
@@ -404,6 +406,7 @@ wb_add_worksheet <- function(
   wb,
   sheet,
   gridLines   = TRUE,
+  rowColHeaders = TRUE,
   tabColour   = NULL,
   zoom        = 100,
   header      = NULL,
@@ -425,6 +428,7 @@ wb_add_worksheet <- function(
   wb$clone()$add_worksheet(
     sheet       = sheet,
     gridLines   = gridLines,
+    rowColHeaders = rowColHeaders,
     tabColour   = tabColour,
     zoom        = zoom,
     oddHeader   = headerFooterSub(oddHeader),
@@ -1225,7 +1229,7 @@ wb_protect <- function(
 #' @export
 #' @examples
 #' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#' names(wb) ## list worksheets in workbook
+#' wb$get_sheet_names() ## list worksheets in workbook
 #' wb$grid_lines(1, show = FALSE)
 #' wb$grid_lines("testing", show = FALSE)
 #' \dontrun{
@@ -1262,11 +1266,11 @@ wb_grid_lines <- function(wb, sheet, show = FALSE) {
 #' wb$add_data(sheet = 3, x = Formaldehyde)
 #'
 #' wb_get_order(wb)
-#' names(wb)
+#' wb$get_sheet_na
 #' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 #' wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 #' wb_get_order(wb)
-#' names(wb) ## ordering within workbook is not changed
+#' wb$get_sheet_names() ## ordering within workbook is not changed
 #' \dontrun{
 #' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 #' }
@@ -1802,6 +1806,38 @@ wb_get_creators <- function(wb) {
 }
 
 
+
+# names -------------------------------------------------------------------
+
+#' Set worksheet names for a workbook
+#'
+#' Sets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @param old The name (or index) of the old sheet name. If `NULL` will assume
+#'   all worksheets are to be renamed.
+#' @param new The name of the new sheet
+#' @returns The [wbWorkbook] object
+#' @export
+wb_set_sheet_names <- function(wb, old = NULL, new) {
+  assert_workbook(wb)
+  wb$clone()$set_sheet_names(old = old, new = new)
+}
+
+#' Get wokrhseet names for a workbook
+#'
+#' Gets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @returns A `named` `character` vector of sheet names in their order.  The
+#'   names represent the original value of the worksheet prior to any character
+#'   substitutions.
+#' @export
+wb_get_sheet_names <- function(wb) {
+  assert_workbook(wb)
+  wb$get_sheet_names()
+}
+
 # others? -----------------------------------------------------------------
 
 #' Add another author to the meta data of the file.
@@ -1906,4 +1942,125 @@ wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles 
 #' @export
 wb_open <- function(wb) {
   wb$open()
+}
+
+#' add border for cell region
+#'
+#' @description wb wrapper to create borders for cell region
+#' @param wb workbook
+#' @param sheet a worksheet
+#' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
+#' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
+#' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @seealso create_border
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
+#' wb <- wb_add_border(wb, 1, dims = "A1:K1",
+#'  left_border = NULL, right_border = NULL,
+#'  top_border = NULL, bottom_border = "double")
+#' wb <- wb_add_border(wb, 1, dims = "A5",
+#'  left_border = "dotted", right_border = "dotted",
+#'  top_border = "hair", bottom_border = "thick")
+#' wb <- wb_add_border(wb, 1, dims = "C2:C5")
+#' wb <- wb_add_border(wb, 1, dims = "G2:H3")
+#' wb <- wb_add_border(wb, 1, dims = "G12:H13",
+#'  left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+#'  top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+#' wb <- wb_add_border(wb, 1, dims = "A20:C23")
+#' wb <- wb_add_border(wb, 1, dims = "B12:D14",
+#'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+#'  bottom_color = c(rgb ="FFFF0000"))
+#' wb <- wb_add_border(wb, 1, dims = "D28:E28")
+#' @export
+wb_add_border <- function(
+    wb,
+    sheet,
+    dims = "A1",
+    bottom_color  = c(rgb = "FF000000"),
+    left_color    = c(rgb = "FF000000"),
+    right_color   = c(rgb = "FF000000"),
+    top_color     = c(rgb = "FF000000"),
+    bottom_border = "thin",
+    left_border   = "thin",
+    right_border  = "thin",
+    top_border    = "thin",
+    inner_hgrid    = NULL,
+    inner_hcolor   = NULL,
+    inner_vgrid    = NULL,
+    inner_vcolor   = NULL) {
+  sheet <- wb_validate_sheet(wb, sheet)
+  wb$clone()$add_border(
+    sheet = sheet,
+    dims = dims,
+    bottom_color = bottom_color,
+    left_color = left_color,
+    right_color = right_color,
+    top_color = top_color,
+    bottom_border = bottom_border,
+    left_border = left_border,
+    right_border = right_border,
+    top_border = top_border,
+    inner_hgrid = inner_hgrid,
+    inner_hcolor = inner_hcolor,
+    inner_vgrid = inner_vgrid,
+    inner_vcolor = inner_vcolor
+  )
+
+}
+
+#' add fill for fill region
+#'
+#' @description wb wrapper to create fill for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param color the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")
+#' @param pattern various default "none" but others are possible:
+#'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+#'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+#'  "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+#'  "lightTrellis", "gray125", "gray0625"
+#' @param gradient_fill a gradient fill xml pattern.
+#' @param every_nth_col which col should be filled
+#' @param every_nth_row which row should be filled
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = c(rgb = "FFFFFF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = c(rgb = "FF00FF00"))
+#'
+#' wb <- wb %>%  wb_add_worksheet("S2") %>% wb_add_data("S2", mtcars)
+#'
+#' gradient_fill1 <- '<gradientFill degree="90">
+#' <stop position="0"><color rgb="FF92D050"/></stop>
+#' <stop position="1"><color rgb="FF0070C0"/></stop>
+#' </gradientFill>'
+#' wb <- wb %>% wb_add_fill("S2", dims = "A2:K5", gradient_fill = gradient_fill1)
+#'
+#' gradient_fill2 <- '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
+#' <stop position="0"><color theme="0"/></stop>
+#' <stop position="1"><color theme="4"/></stop>
+#' </gradientFill>'
+#' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_fill <- function(
+    wb,
+    sheet,
+    dims,
+    color = "",
+    pattern = "solid",
+    gradient_fill = "",
+    every_nth_col = 1,
+    every_nth_row = 1
+) {
+  sheet <- wb_validate_sheet(wb, sheet)
+  wb$clone()$add_fill(
+    sheet = sheet,
+    dims = dims,
+    color = color,
+    pattern = pattern,
+    gradient_fill = gradient_fill,
+    every_nth_col = every_nth_col,
+    every_nth_row = every_nth_row
+  )
 }

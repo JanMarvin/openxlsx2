@@ -162,7 +162,7 @@ col2hex <- function(my.col) {
 ## header and footer replacements
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
-    x <- replaceIllegalCharacters(x)
+    x <- replace_illegal_chars(x)
     x <- gsub("\\[Page\\]", "P", x)
     x <- gsub("\\[Pages\\]", "N", x)
     x <- gsub("\\[Date\\]", "D", x)
@@ -201,73 +201,10 @@ write_comment_xml <- function(comment_list, file_name) {
   NULL
 }
 
-
-illegalchars <- c("&", '"', "'", "<", ">", "\a", "\b", "\v", "\f")
-illegalcharsreplace <- c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "", "", "", "")
-
-#' converts & to &amp;
-#' @param v some xml string
-#' @keywords internal
-#' @noRd
-replaceIllegalCharacters <- function(v) {
-  v <- as.character(v)
-
-  v <- stri_replace_all_fixed(v, illegalchars, illegalcharsreplace, vectorize_all = FALSE)
-
-  return(v)
-}
-
-#' converts &amp; to &
-#' @param v some xml string
-#' @keywords internal
-#' @noRd
-replaceXMLEntities <- function(v) {
-  v <- gsub("&amp;", "&", v, fixed = TRUE)
-  v <- gsub("&quot;", '"', v, fixed = TRUE)
-  v <- gsub("&apos;", "'", v, fixed = TRUE)
-  v <- gsub("&lt;", "<", v, fixed = TRUE)
-  v <- gsub("&gt;", ">", v, fixed = TRUE)
-
-  return(v)
-}
-
-
 pxml <- function(x) {
   ## TODO does this break anything? Why is unique called? lengths are off, if non unique values are found.
   # paste(unique(unlist(x)), collapse = "")
     paste(unlist(x), collapse = "")
-}
-
-
-get_named_regions_from_string <- function(wb, dn) {
-  dn <- cbind(
-    rbindlist(xml_attr(dn, "definedName")),
-    value =  xml_value(dn, "definedName")
-  )
-
-  if (!is.null(dn$value)) {
-    dn_pos <- dn$value
-    dn_pos <- gsub("[$']", "", dn_pos)
-    # for ws_page_setup we can have multiple defined names for column and row
-    # separated by a colon. This keeps only the first and drops the second.
-    # This will allow saving, but changes get_named_regions()
-    dn_pos <- vapply(strsplit(dn_pos, ","), FUN = function(x) x[1], NA_character_)
-
-    has_bang <- grepl("!", dn_pos, fixed = TRUE)
-    dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
-    dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
-  }
-
-  dn$id <- seq_len(nrow(dn))
-
-  if (!is.null(dn$localSheetId)) {
-    dn$local <- as.integer(dn$localSheetId != "")
-  } else {
-    dn$local <- 0
-  }
-  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
-
-  dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]),]
 }
 
 

@@ -60,5 +60,6 @@ create_border(
 \item{vertical}{x}
 }
 \description{
-create border
+Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
+Border colors are of the following type: c(rgb="FF000000")
 }

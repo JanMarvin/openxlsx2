@@ -144,7 +144,8 @@ wbWorkbook <- R6::R6Class(
     #' @field worksheets_rels worksheets_rels
     worksheets_rels = list(),
 
-    #' @field sheetOrder sheetOrder
+    #' @field sheetOrder The sheet order.  Controls ordering for worksheets and
+    #'   worksheet names.
     sheetOrder = integer(),
 
     #' @field path path
@@ -289,11 +290,35 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
+    #' @description validate sheet
+    #' @param sheet A character sheet name or integer location
+    #' @returns The integer position of the sheet
+    validate_sheet = function(sheet) {
+
+      # workbook has no sheets
+      if (!length(self$sheet_names)) {
+        return(NA_integer_)
+      }
+
+      # input is number
+      if (is.numeric(sheet)) {
+        badsheet <- !sheet %in% seq_along(self$sheet_names)
+        if (any(badsheet)) sheet[badsheet] <- NA_integer_
+        return(sheet)
+      }
+
+      if (!sheet %in% replaceXMLEntities(self$sheet_names)) {
+        return(NA_integer_)
+      }
+
+      which(replaceXMLEntities(self$sheet_names) == sheet)
+    },
 
     #' @description
     #' Add worksheet to the `wbWorkbook` object
     #' @param sheet sheet
     #' @param gridLines gridLines
+    #' @param rowColHeaders rowColHeaders
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @param header header
@@ -314,6 +339,7 @@ wbWorkbook <- R6::R6Class(
     add_worksheet = function(
       sheet,
       gridLines   = TRUE,
+      rowColHeaders = TRUE,
       tabColour   = NULL,
       zoom        = 100,
       header      = NULL,
@@ -339,29 +365,16 @@ wbWorkbook <- R6::R6Class(
       fail <- FALSE
       msg <- NULL
 
+      private$validate_new_sheet(sheet)
+      ##  Add sheet to workbook.xml
       sheet <- as.character(sheet)
+      sheet_name <- replace_legal_chars(sheet)
+      private$validate_new_sheet(sheet_name)
 
-      if (tolower(sheet) %in% tolower(self$sheet_names)) {
-        fail <- TRUE
-        msg <- c(
-          msg,
-          sprintf("A worksheet by the name \"%s\" already exists.", sheet),
-          "Sheet names must be unique case-insensitive."
-        )
-      }
 
       if (!is.logical(gridLines) | length(gridLines) > 1) {
         fail <- TRUE
         msg <- c(msg, "gridLines must be a logical of length 1.")
-      }
-
-      if (nchar(sheet) > 31) {
-        fail <- TRUE
-        msg <- c(
-          msg,
-          sprintf("sheet \"sheet\" too long.", sheet),
-          "Max length is 31 characters."
-        )
       }
 
       if (!is.null(tabColour)) {
@@ -416,22 +429,12 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "hdpi must be numeric")
       }
 
-      ## Invalid XML characters
-      sheet <- replaceIllegalCharacters(sheet)
-
-      if (!missing(sheet)) {
-        if (grepl(":", sheet)) {
-          fail <- TRUE
-          msg <- c(msg, "colon not allowed in sheet names in Excel")
-        }
-      }
-
       if (fail) {
         stop(msg, call. = FALSE)
       }
 
       newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- max_sheet_id(self) # checks for self$worksheet length
+      sheetId <- private$get_sheet_id_max() # checks for self$worksheet length
 
       # check for errors ----
 
@@ -452,11 +455,10 @@ wbWorkbook <- R6::R6Class(
         self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
       }
 
-      ##  Add sheet to workbook.xml
       self$append_sheets(
         sprintf(
           '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-          sheet,
+          sheet_name,
           sheetId,
           visible,
           newSheetIndex
@@ -467,6 +469,7 @@ wbWorkbook <- R6::R6Class(
       self$append("worksheets",
         wbWorksheet$new(
           gridLines   = gridLines,
+          rowColHeaders = rowColHeaders,
           tabSelected = newSheetIndex == 1,
           tabColour   = tabColour,
           zoom        = zoom,
@@ -520,7 +523,7 @@ wbWorkbook <- R6::R6Class(
       self$rowHeights[[newSheetIndex]]       <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
-      self$append("sheet_names", sheet)
+      private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
 
       invisible(self)
     },
@@ -532,29 +535,15 @@ wbWorkbook <- R6::R6Class(
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
     clone_worksheet = function(old, new) {
-      old <- wb_validate_sheet(self, old)
-
-      if (tolower(new) %in% tolower(self$sheet_names)) {
-        stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
-      }
-
-      if (nchar(new) > 31) {
-        stop("sheet too long! Max length is 31 characters.")
-      }
-
-      if (!is.character(new)) {
-        new <- as.character(new)
-      }
-
-      ## Invalid XML characters
-      new <- replaceIllegalCharacters(new)
-      if (grepl(pattern = ":", x = new)) {
-        stop("colon not allowed in sheet names in Excel")
-      }
+      private$validate_new_sheet(new)
+      old <- private$get_sheet_index(old)
 
       newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- max_sheet_id(self) # checks for length of worksheets
+      sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
+      # not the best but a quick fix
+      new_raw <- new
+      new <- replace_legal_chars(new)
 
       ## copy visibility from cloned sheet!
       visible <- reg_match0(self$workbook$sheets[[old]], '(?<=state=")[^"]+')
@@ -654,7 +643,7 @@ wbWorkbook <- R6::R6Class(
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
-
+      private$set_single_sheet_name(pos = newSheetIndex, clean = new, raw = new_raw)
 
       ############################
       ## TABLES
@@ -674,13 +663,14 @@ wbWorkbook <- R6::R6Class(
         tbls$tab_name <- stri_join(tbls$tab_name, "_n")
         tbls$tab_sheet <- newSheetIndex
         # modify tab_xml with updated name, displayName and id
-        tbls$tab_xml <- vapply(seq_len(nrow(tbls)), function(x)
+        tbls$tab_xml <- vapply(seq_len(nrow(tbls)), function(x) {
           xml_attr_mod(tbls$tab_xml[x],
                        xml_attributes = c(name = tbls$tab_name[x],
                                           displayName = tbls$tab_name[x],
                                           id = newid[x])
-          ),
-          NA_character_
+          )
+        },
+        NA_character_
         )
 
         # add new tables to old tables
@@ -725,7 +715,7 @@ wbWorkbook <- R6::R6Class(
     addChartSheet = function(sheet, tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- max_sheet_id(self) # checks for length of worksheets
+      sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -1617,15 +1607,11 @@ wbWorkbook <- R6::R6Class(
 
       ## update worksheets_rels
       # TODO do we have to worry about exisiting table relationships?
-      self$worksheets_rels[[sheet]] <- c(
-        self$worksheets_rels[[sheet]],
-        sprintf(
-          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-          rid,
-          id
-        )
-      )
-
+      private$append_sheet_rels(sheet, sprintf(
+        '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
+        rid,
+        id
+      ))
       invisible(self)
     },
 
@@ -1680,6 +1666,8 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    ### base font ----
+
     #' @description
     #' Get the base font
     #' @return A list of of the font
@@ -1733,48 +1721,97 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    ### sheet names ----
+
+    #' @description Get sheet names
+    #' @returns A `named` `character` vector of sheet names in their order.  The
+    #'   names represent the original value of the worksheet prior to any
+    #'   character substitutions.
+    get_sheet_names = function() {
+      res <- self$sheet_names
+      names(res) <- private$original_sheet_names
+      res[self$sheetOrder]
+    },
+
     #' @description
     #' Sets a sheet name
-    #' @param sheet Old sheet name
-    #' @param name New sheet name
+    #' @param old Old sheet name
+    #' @param new New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    setSheetName = function(sheet, name) {
-      # TODO assert sheet class?
-      if (name %in% self$sheet_names) {
-        stop(sprintf("Sheet %s already exists!", name))
+    set_sheet_names = function(old = NULL, new) {
+      # assume all names.  Default values makes the test check for wrappers a
+      # little weird
+      old <- old %||% seq_along(self$sheet_names)
+
+      if (identical(old, new)) {
+        return(self)
       }
 
-      sheet <- wb_validate_sheet(self, sheet)
+      if (!length(self$worksheets)) {
+        stop("workbook does not contain any sheets")
+      }
 
-      oldName <- self$sheet_names[[sheet]]
-      self$sheet_names[[sheet]] <- name
+      if (length(old) != length(new)) {
+        stop("`old` and `new` must be the same length")
+      }
 
-      ## Rename in workbook
-      sheetId <- get_sheet_id(self, sheet)
-      rId <- get_r_id(self, sheet)
-      self$workbook$sheets[[sheet]] <-
-        sprintf(
-          '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          name,
-          sheetId,
-          rId
-        )
+      pos <- private$get_sheet_index(old)
+      new_raw <- as.character(new)
+      new_name <- replace_legal_chars(new_raw)
 
-      ## rename defined names
-      if (length(self$workbook$definedNames)) {
-        belongTo <- get_named_regions(self)$sheets
-        toChange <- belongTo == oldName
-        if (any(toChange)) {
-          name <- sprintf("'%s'", name)
-          tmp <-
-            gsub(oldName, name, self$workbook$definedName[toChange], fixed = TRUE)
-          tmp <- gsub("'+", "'", tmp)
-          self$workbook$definedNames[toChange] <- tmp
+      if (identical(self$sheet_names[pos], new_name)) {
+        return(self)
+      }
+
+      bad <- duplicated(tolower(new))
+      if (any(bad)) {
+        stop("Sheet names cannot have duplicates: ", toString(new[bad]))
+      }
+
+      # should be able to pull this out into a single private function
+      for (i in seq_along(pos)) {
+        private$validate_new_sheet(new_name[i])
+        private$set_single_sheet_name(pos[i], new_name[i], new_raw[i])
+        # TODO move this work into private$set_single_sheet_name()
+
+        ## Rename in workbook
+        sheetId <- private$get_sheet_id(type = "sheetId", old[i])
+        rId <- private$get_sheet_id(type = 'rId', old[i])
+        self$workbook$sheets[[old[i]]] <-
+          sprintf(
+            '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
+            new_name[i],
+            sheetId,
+            rId
+          )
+
+        ## rename defined names
+        if (length(self$workbook$definedNames)) {
+          ind <- get_named_regions(self)$sheets == old
+          if (any(ind)) {
+            nn <- sprintf("'%s'", new_name[i])
+            nn <- stringi::stri_replace_all_fixed(self$workbook$definedName[ind], old, nn)
+            nn <- stringi::stri_replace_all(nn, "'+", "'" )
+            self$workbook$definedNames[ind] <- nn
+          }
         }
       }
 
       invisible(self)
     },
+
+    #' @description
+    #' Deprecated.  Use `set_sheet_names()` instead
+    #' @param sheet Old sheet name
+    #' @param name New sheet name
+    #' @return The `wbWorkbook` object, invisibly
+    setSheetName = function(sheet, name) {
+      .Deprecated("wbWorkbook$set_sheet_names()")
+      self$set_sheet_names(old = sheet, new = name)
+    },
+
+
+    ### row heights ----
 
     #' @description
     #' Sets a row height for a sheet
@@ -1783,7 +1820,8 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
     set_row_heights = function(sheet, rows, heights) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
+
       # TODO move to wbWorksheet method
       # TODO consider reworking rowHeights
       # self$worksheets[[sheet]]$set_row_heights(rows = rows, heights = heights)
@@ -1828,7 +1866,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet, rows) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       customRows <- as.integer(names(self$rowHeights[[sheet]]))
       removeInds <- which(customRows %in% rows)
 
@@ -1848,7 +1886,7 @@ wbWorkbook <- R6::R6Class(
     #' @param beg beg
     #' @param end end
     createCols = function(sheet, n, beg, end) {
-       sheet <- wb_validate_sheet(self, sheet)
+       sheet <- private$get_sheet_index(sheet)
        self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
     },
 
@@ -1860,7 +1898,7 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_cols = function(sheet, cols, collapsed = FALSE, levels = NULL) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(cols)) {
         stop("Collapses argument is of greater length than number of cols.")
@@ -1926,7 +1964,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols = cols
     #' @returns The `wbWorkbook` object
     ungroup_cols = function(sheet, cols) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
       if (any(cols < 1L)) {
@@ -1962,7 +2000,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
     remove_col_widths = function(sheet, cols) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!is.numeric(cols)) {
         cols <- col2int(cols)
@@ -1994,7 +2032,7 @@ wbWorkbook <- R6::R6Class(
     #'   are repeated across length of `cols`
     #' @return The `wbWorkbook` object, invisibly
     set_col_widths = function(sheet, cols, widths = 8.43, hidden = FALSE) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # should do nothing if the cols' length is zero
       # TODO why would cols ever be 0?  Can we just signal this as an error?
@@ -2104,7 +2142,7 @@ wbWorkbook <- R6::R6Class(
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
     group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(rows)) {
         stop("Collapses argument is of greater length than number of rows.")
@@ -2127,7 +2165,7 @@ wbWorkbook <- R6::R6Class(
       collapsed <- collapsed[ok]
       levels <- levels[ok]
       rows <- rows[ok]
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
@@ -2165,7 +2203,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object
     ungroup_rows = function(sheet, rows) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
       if (any(rows < 1L)) {
@@ -2226,7 +2264,7 @@ wbWorkbook <- R6::R6Class(
         stop("sheet must have length 1.")
       }
 
-      sheet       <- wb_validate_sheet(self, sheet)
+      sheet       <- private$get_sheet_index(sheet)
       sheet_names <- self$sheet_names
       nSheets     <- length(sheet_names)
       sheet_names <- sheet_names[[sheet]]
@@ -2235,11 +2273,14 @@ wbWorkbook <- R6::R6Class(
       if (length(self$workbook$definedNames)) {
         # wb_validate_sheet() makes sheet an integer
         # so we need to remove this before getting rid of the sheet names
-        self$workbook$definedNames <- self$workbook$definedNames[!get_named_regions(self)$sheets %in% self$sheet_names[sheet]]
+        self$workbook$definedNames <- self$workbook$definedNames[
+          !get_named_regions_from_definedName(self)$sheets %in% self$sheet_names[sheet]
+        ]
       }
 
       self$remove_named_region(sheet)
       self$sheet_names <- self$sheet_names[-sheet]
+      private$original_sheet_names <- private$original_sheet_names[-sheet]
 
       xml_rels <- rbindlist(
          xml_attr(self$worksheets_rels[[sheet]], "Relationship")
@@ -2524,7 +2565,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(sheet, rows = NULL, cols = NULL) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # TODO send to wbWorksheet() method
       # self$worksheets[[sheet]]$merge_cells(rows = rows, cols = cols)
@@ -2563,14 +2604,10 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      self$worksheets[[sheet]]$mergeCells <- c(
-        self$worksheets[[sheet]]$mergeCells,
         # TODO does this have to be xml?  Can we just save the data.frame or
         # matrix and then check that?  This would also simplify removing the
         # merge specifications
-        sprintf('<mergeCell ref="%s"/>', stri_join(sqref, collapse = ":", sep = " " ))
-      )
-
+      private$append_sheet_field(sheet, "mergeCells", sprintf('<mergeCell ref="%s"/>', stri_join(sqref, collapse = ":", sep = " " )))
       invisible(self)
     },
 
@@ -2580,7 +2617,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
     unmerge_cells = function(sheet, rows = NULL, cols = NULL) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
       # sqref <- get_cell_refs(data.frame(x = rows, y = cols))
@@ -2622,7 +2659,7 @@ wbWorkbook <- R6::R6Class(
       # TODO rename to setFreezePanes?
 
       # fine to do the validation before the actual check to prevent other errors
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (is.null(firstActiveRow) & is.null(firstActiveCol) & !firstRow & !firstCol) {
         return(invisible(self))
@@ -3153,7 +3190,7 @@ wbWorkbook <- R6::R6Class(
       ## drawing rels reference an image in the media folder
       ## worksheetRels(sheet(i)) references drawings(j)
 
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # TODO tools::file_ext() ...
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
@@ -3590,7 +3627,7 @@ wbWorkbook <- R6::R6Class(
       summaryRow     = NULL,
       summaryCol     = NULL
     ) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
 
       if (!is.null(orientation)) {
@@ -3678,7 +3715,7 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", min(printTitleRows)),
           ref2 = paste0("$", max(printTitleRows)),
           name = "_xlnm.Print_Titles",
-          sheet = names(self)[[sheet]],
+          sheet = self$get_sheet_names()[[sheet]],
           localSheetId = sheet - 1L
         )
       } else if (!is.null(printTitleCols) && is.null(printTitleRows)) {
@@ -3709,7 +3746,7 @@ wbWorkbook <- R6::R6Class(
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
         localSheetId <- sheet - 1L
-        sheet <- names(self)[[sheet]]
+        sheet <- self$get_sheet_names()[[sheet]]
 
         self$workbook$definedNames <- c(
           self$workbook$definedNames,
@@ -3741,7 +3778,7 @@ wbWorkbook <- R6::R6Class(
       firstHeader = NULL,
       firstFooter = NULL
     ) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!is.null(header) && length(header) != 3) {
         stop("header must have length 3 where elements correspond to positions: left, center, right.")
@@ -3804,7 +3841,7 @@ wbWorkbook <- R6::R6Class(
         return(character())
       }
 
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       if (is.na(sheet)) stop("No such sheet in workbook")
 
       sel <- self$tables$tab_sheet == sheet & self$tables$tab_act == 1
@@ -3829,7 +3866,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## delete table object and all data in it
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!table %in% self$tables$tab_name) {
         stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
@@ -3880,7 +3917,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols cols
     #' @returns The `wbWorkbook` object
     add_filter = function(sheet, rows, cols) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (length(rows) != 1) {
         stop("row must be a numeric of length 1.")
@@ -3902,7 +3939,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
     remove_filter = function(sheet) {
-      for (s in wb_validate_sheet(self, sheet)) {
+      for (s in private$get_sheet_index(sheet)) {
         self$worksheets[[s]]$autoFilter <- character()
       }
 
@@ -3914,7 +3951,7 @@ wbWorkbook <- R6::R6Class(
     #' @param show show
     #' @returns The `wbWorkbook` object
     grid_lines = function(sheet, show = FALSE) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!is.logical(show)) {
         stop("show must be a logical")
@@ -3951,7 +3988,7 @@ wbWorkbook <- R6::R6Class(
       localSheetId = NULL,
       overwrite = FALSE
     ) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!is.numeric(rows)) {
         stop("rows argument must be a numeric/integer vector")
@@ -4009,12 +4046,12 @@ wbWorkbook <- R6::R6Class(
       dn <- get_named_regions(self)
 
       if (is.null(name) && !is.null(sheet)) {
-        sheet <- wb_validate_sheet(self, sheet)
+        sheet <- private$get_sheet_index(sheet)
         del <- dn$id[dn$sheet == sheet]
       } else if (!is.null(name) && is.null(sheet)) {
         del <- dn$id[dn$name == name]
       } else {
-        sheet <- wb_validate_sheet(self, sheet)
+        sheet <- private$get_sheet_index(sheet)
         del <- dn$id[dn$sheet == sheet & dn$name == name]
       }
 
@@ -4036,7 +4073,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheets sheets
     #' @return The `wbWorkbook` object
     set_order = function(sheets) {
-      sheets <- wb_validate_sheet(self, sheet = sheets)
+      sheets <- private$get_sheet_index(sheet = sheets)
 
       if (anyDuplicated(sheets)) {
         stop("`sheets` cannot have duplicates")
@@ -4074,7 +4111,7 @@ wbWorkbook <- R6::R6Class(
         stop("`value` and `sheet` must be the same length")
       }
 
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       value <- tolower(as.character(value))
       value[value %in% "true"] <- "visible"
@@ -4115,7 +4152,7 @@ wbWorkbook <- R6::R6Class(
     #' @param col col
     #' @returns The `wbWorkbook` object
     add_page_break = function(sheet, row = NULL, col = NULL) {
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
       self
     },
@@ -4140,7 +4177,493 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
 
       invisible(self)
+    },
+
+    #' @description create borders for cell region
+    #' @param sheet a worksheet
+    #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
+    #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
+    #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+    #' @seealso create_border
+    #' @examples
+    #'
+    #' wb <- wb_workbook()
+    #' wb$add_worksheet("S1")$add_data("S1", mtcars)
+    #' wb$add_border(1, dims = "A1:K1",
+    #'  left_border = NULL, right_border = NULL,
+    #'  top_border = NULL, bottom_border = "double")
+    #' wb$add_border(1, dims = "A5",
+    #'  left_border = "dotted", right_border = "dotted",
+    #'  top_border = "hair", bottom_border = "thick")
+    #' wb$add_border(1, dims = "C2:C5")
+    #' wb$add_border(1, dims = "G2:H3")
+    #' wb$add_border(1, dims = "G12:H13",
+    #'  left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+    #'  top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+    #' wb$add_border(1, dims = "A20:C23")
+    #' wb$add_border(1, dims = "B12:D14",
+    #'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+    #'  bottom_color = c(rgb ="FFFF0000"))
+    #' wb$add_border(1, dims = "D28:E28")
+    #' # if (interactive()) wb$open()
+    #'
+    #' wb <- wb_workbook()
+    #' wb$add_worksheet("S1")$add_data("S1", mtcars)
+    #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+    #' @return The `wbWorksheetObject`, invisibly
+    add_border = function(
+      sheet         = 1,
+      dims          = "A1",
+      bottom_color  = c(rgb = "FF000000"),
+      left_color    = c(rgb = "FF000000"),
+      right_color   = c(rgb = "FF000000"),
+      top_color     = c(rgb = "FF000000"),
+      bottom_border = "thin",
+      left_border   = "thin",
+      right_border  = "thin",
+      top_border    = "thin",
+      inner_hgrid   = NULL,
+      inner_hcolor  = NULL,
+      inner_vgrid   = NULL,
+      inner_vcolor  = NULL
+    ) {
+
+      # TODO merge styles and if a style is already present, only add the newly
+      # created border style
+
+      # cc <- wb$worksheets[[sheet]]$sheet_data$cc
+      # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
+
+      df <- dims_to_dataframe(dims, fill = TRUE)
+      sheet <- private$get_sheet_index(sheet)
+
+      ### beg border creation
+      full_single <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      top_single <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      middle_single <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      bottom_single <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = left_border, left_color = left_color,
+        right = left_border, right_color = right_color
+      )
+
+      left_single <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = left_border, left_color = left_color,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+
+      right_single <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = right_border, right_color = right_color
+      )
+
+      center_single <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+
+      top_left <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = left_border, left_color = left_color,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+
+      top_right <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = left_border, right_color = right_color
+      )
+
+      bottom_left <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = left_border, left_color = left_color,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+
+      bottom_right <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = left_border, right_color = right_color
+      )
+
+      top_center <- create_border(
+        top = top_border, top_color = top_color,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+
+      bottom_center <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = bottom_border, bottom_color = bottom_color,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+
+      middle_left <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = left_border, left_color = left_color,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+
+      middle_right <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = right_border, right_color = right_color
+      )
+
+      inner_cell <- create_border(
+        top = inner_vgrid, top_color = inner_vcolor,
+        bottom = inner_vgrid, bottom_color = inner_vcolor,
+        left = inner_hgrid, left_color = inner_hcolor,
+        right = inner_hgrid, right_color = inner_hcolor
+      )
+      ### end border creation
+
+      #
+      # /* top_single    */
+      # /* middle_single */
+      # /* bottom_single */
+      #
+
+      # /* left_single --- center_single --- right_single */
+
+      #
+      # /* top_left   --- top_center   ---  top_right */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /* left_middle                   right_middle */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /*  -                                    -    */
+      # /* left_bottom - bottom_center - bottom_right */
+      #
+
+      ## beg cell references
+      if (ncol(df) == 1 && nrow(df) == 1)
+        dim_full_single <- df[1, 1]
+
+      if (ncol(df) == 1 && nrow(df) >= 2) {
+        dim_top_single <- df[1,1]
+        dim_bottom_single <- df[nrow(df), 1]
+        if (nrow(df) >= 3) {
+          mid <- df[,1]
+          dim_middle_single <- mid[!mid %in% c(dim_top_single, dim_bottom_single)]
+        }
+      }
+
+      if (ncol(df) >= 2 && nrow(df) == 1) {
+        dim_left_single <- df[1,1]
+        dim_right_single <- df[1, ncol(df)]
+        if (ncol(df) >= 3) {
+          ctr <- df[1,]
+          dim_center_single <- ctr[!ctr %in% c(dim_left_single, dim_right_single)]
+        }
+      }
+
+      if (ncol(df) >= 2 && nrow(df) >= 2) {
+        dim_top_left     <- df[1, 1]
+        dim_bottom_left  <- df[nrow(df), 1]
+        dim_top_right    <- df[1, ncol(df)]
+        dim_bottom_right <- df[nrow(df), ncol(df)]
+
+        if (nrow(df) >= 3) {
+          top_mid <- df[,1]
+          bottom_mid <- df[,ncol(df)]
+
+          dim_middle_left <- top_mid[!top_mid %in% c(dim_top_left, dim_bottom_left)]
+          dim_middle_right <- bottom_mid[!bottom_mid %in% c(dim_top_right, dim_bottom_right)]
+        }
+
+        if (ncol(df) >= 3) {
+          top_ctr <- df[1,]
+          bottom_ctr <- df[nrow(df),]
+
+          dim_top_center <- top_ctr[!top_ctr %in% c(dim_top_left, dim_top_right)]
+          dim_bottom_center <- bottom_ctr[!bottom_ctr %in% c(dim_bottom_left, dim_bottom_right)]
+        }
+
+        if (ncol(df) > 2 && nrow(df) > 2) {
+          t_row <- 1
+          b_row <- nrow(df)
+          l_row <- 1
+          r_row <- ncol(df)
+          dim_inner_cell <- as.character(unlist(df[c(-t_row, -b_row), c(-l_row, -r_row)]))
+        }
+      }
+      ### end cell references
+
+      # add some random string to the name. if called multiple times, new
+      # styles will be created. We do not look for identical styles, therefor
+      # we might create duplicates, but if a single style changes, the rest of
+      # the workbook remains valid.
+      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      s <- function(x) paste0(smp, "s", deparse(substitute(x)), seq_along(x))
+      sfull_single <- paste0(smp, "full_single")
+      stop_single <- paste0(smp, "full_single")
+      sbottom_single <- paste0(smp, "bottom_single")
+      smiddle_single <- paste0(smp, "middle_single")
+      sleft_single <- paste0(smp, "left_single")
+      sright_single <- paste0(smp, "right_single")
+      scenter_single <- paste0(smp, "center_single")
+      stop_left <- paste0(smp, "top_left")
+      stop_right <- paste0(smp, "top_right")
+      sbottom_left <- paste0(smp, "bottom_left")
+      sbottom_right <- paste0(smp, "bottom_right")
+      smiddle_left <- paste0(smp, "middle_left")
+      smiddle_right <- paste0(smp, "middle_right")
+      stop_center <- paste0(smp, "top_center")
+      sbottom_center <- paste0(smp, "bottom_center")
+      sinner_cell <- paste0(smp, "inner_cell")
+
+      # ncol == 1
+      if (ncol(df) == 1) {
+
+        # single cell
+        if (nrow(df) == 1) {
+          self$styles_mgr$add(full_single, sfull_single)
+          xf_prev <- get_cell_styles(self, sheet, dims)
+          xf_full_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sfull_single))
+          self$styles_mgr$add(xf_full_single, xf_full_single)
+          set_cell_style(self, sheet, dims, self$styles_mgr$get_xf_id(xf_full_single))
+        }
+
+        # create top & bottom piece
+        if (nrow(df) >= 2) {
+
+          # top single
+          self$styles_mgr$add(top_single, stop_single)
+          xf_prev <- get_cell_styles(self, sheet, dim_top_single)
+          xf_top_single <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_single))
+          self$styles_mgr$add(xf_top_single, xf_top_single)
+          set_cell_style(self, sheet, dim_top_single, self$styles_mgr$get_xf_id(xf_top_single))
+
+          # bottom single
+          self$styles_mgr$add(bottom_single, sbottom_single)
+          xf_prev <- get_cell_styles(self, sheet, dim_bottom_single)
+          xf_bottom_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_single))
+          self$styles_mgr$add(xf_bottom_single, xf_bottom_single)
+          set_cell_style(self, sheet, dim_bottom_single, self$styles_mgr$get_xf_id(xf_bottom_single))
+        }
+
+        # create middle piece(s)
+        if (nrow(df) >= 3) {
+
+          # middle single
+          self$styles_mgr$add(middle_single, smiddle_single)
+          xf_prev <- get_cell_styles(self, sheet, dim_middle_single)
+          xf_middle_single <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_single))
+          self$styles_mgr$add(xf_middle_single, xf_middle_single)
+          set_cell_style(self, sheet, dim_middle_single, self$styles_mgr$get_xf_id(xf_middle_single))
+        }
+
+      }
+
+      # create left and right single row pieces
+      if (ncol(df) >= 2 && nrow(df) == 1) {
+
+        # left single
+        self$styles_mgr$add(left_single, sleft_single)
+        xf_prev <- get_cell_styles(self, sheet, dim_left_single)
+        xf_left_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sleft_single))
+        self$styles_mgr$add(xf_left_single, xf_left_single)
+        set_cell_style(self, sheet, dim_left_single, self$styles_mgr$get_xf_id(xf_left_single))
+
+        # right single
+        self$styles_mgr$add(right_single, sright_single)
+        xf_prev <- get_cell_styles(self, sheet, dim_right_single)
+        xf_right_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sright_single))
+        self$styles_mgr$add(xf_right_single, xf_right_single)
+        set_cell_style(self, sheet, dim_right_single, self$styles_mgr$get_xf_id(xf_right_single))
+
+        # add single center piece(s)
+        if (ncol(df) >= 3) {
+
+          # center single
+          self$styles_mgr$add(center_single, scenter_single)
+          xf_prev <- get_cell_styles(self, sheet, dim_center_single)
+          xf_center_single <- set_border(xf_prev, self$styles_mgr$get_border_id(scenter_single))
+          self$styles_mgr$add(xf_center_single, xf_center_single)
+          set_cell_style(self, sheet, dim_center_single, self$styles_mgr$get_xf_id(xf_center_single))
+        }
+
+      }
+
+      # create left & right - top & bottom corners pieces
+      if (ncol(df) >= 2 && nrow(df) >= 2) {
+
+        # top left
+        self$styles_mgr$add(top_left, stop_left)
+        xf_prev <- get_cell_styles(self, sheet, dim_top_left)
+        xf_top_left <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_left))
+        self$styles_mgr$add(xf_top_left, xf_top_left)
+        set_cell_style(self, sheet, dim_top_left, self$styles_mgr$get_xf_id(xf_top_left))
+
+        # top right
+        self$styles_mgr$add(top_right, stop_right)
+        xf_prev <- get_cell_styles(self, sheet, dim_top_right)
+        xf_top_right <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_right))
+        self$styles_mgr$add(xf_top_right, xf_top_right)
+        set_cell_style(self, sheet, dim_top_right, self$styles_mgr$get_xf_id(xf_top_right))
+
+        # bottom left
+        self$styles_mgr$add(bottom_left, sbottom_left)
+        xf_prev <- get_cell_styles(self, sheet, dim_bottom_left)
+        xf_bottom_left <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_left))
+        self$styles_mgr$add(xf_bottom_left, xf_bottom_left)
+        set_cell_style(self, sheet, dim_bottom_left, self$styles_mgr$get_xf_id(xf_bottom_left))
+
+        # bottom right
+        self$styles_mgr$add(bottom_right, sbottom_right)
+        xf_prev <- get_cell_styles(self, sheet, dim_bottom_right)
+        xf_bottom_right <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_right))
+        self$styles_mgr$add(xf_bottom_right, xf_bottom_right)
+        set_cell_style(self, sheet, dim_bottom_right, self$styles_mgr$get_xf_id(xf_bottom_right))
+      }
+
+      # create left and right middle pieces
+      if (ncol(df) >= 2 && nrow(df) >= 3) {
+
+        # middle left
+        self$styles_mgr$add(middle_left, smiddle_left)
+        xf_prev <- get_cell_styles(self, sheet, dim_middle_left)
+        xf_middle_left <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_left))
+        self$styles_mgr$add(xf_middle_left, xf_middle_left)
+        set_cell_style(self, sheet, dim_middle_left, self$styles_mgr$get_xf_id(xf_middle_left))
+
+        # middle right
+        self$styles_mgr$add(middle_right, smiddle_right)
+        xf_prev <- get_cell_styles(self, sheet, dim_middle_right)
+        xf_middle_right <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_right))
+        self$styles_mgr$add(xf_middle_right, xf_middle_right)
+        set_cell_style(self, sheet, dim_middle_right, self$styles_mgr$get_xf_id(xf_middle_right))
+      }
+
+      # create top and bottom center pieces
+      if (ncol(df) >= 3 & nrow(df) >= 2) {
+
+        # top center
+        self$styles_mgr$add(top_center, stop_center)
+        xf_prev <- get_cell_styles(self, sheet, dim_top_center)
+        xf_top_center <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_center))
+        self$styles_mgr$add(xf_top_center, xf_top_center)
+        set_cell_style(self, sheet, dim_top_center, self$styles_mgr$get_xf_id(xf_top_center))
+
+        # bottom center
+        self$styles_mgr$add(bottom_center, sbottom_center)
+        xf_prev <- get_cell_styles(self, sheet, dim_bottom_center)
+        xf_bottom_center <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_center))
+        self$styles_mgr$add(xf_bottom_center, xf_bottom_center)
+        set_cell_style(self, sheet, dim_bottom_center, self$styles_mgr$get_xf_id(xf_bottom_center))
+      }
+
+      if (nrow(df) > 2 && ncol(df) > 2) {
+
+        # inner cells
+        self$styles_mgr$add(inner_cell, sinner_cell)
+        xf_prev <- get_cell_styles(self, sheet, dim_inner_cell)
+        xf_inner_cell <- set_border(xf_prev, self$styles_mgr$get_border_id(sinner_cell))
+        self$styles_mgr$add(xf_inner_cell, xf_inner_cell)
+        set_cell_style(self, sheet, dim_inner_cell, self$styles_mgr$get_xf_id(xf_inner_cell))
+      }
+
+      return(self)
+    },
+
+    #' @description provide simple fill function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param color the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")
+    #' @param pattern various default "none" but others are possible:
+    #'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+    #'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+    #'  "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+    #'  "lightTrellis", "gray125", "gray0625"
+    #' @param gradient_fill a gradient fill xml pattern.
+    #' @param every_nth_col which col should be filled
+    #' @param every_nth_row which row should be filled
+    #' @examples
+    #'  # example from the gradient fill manual page
+    #'  gradient_fill <- "<gradientFill degree=\"90\">
+    #'    <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+    #'    <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+    #'   </gradientFill>"
+    #' @return The `wbWorksheetObject`, invisibly
+    add_fill = function(
+      sheet,
+      dims,
+      color = "",
+      pattern = "solid",
+      gradient_fill = "",
+      every_nth_col = 1,
+      every_nth_row = 1
+    ) {
+
+      new_fill <- create_fill(
+        gradientFill = gradient_fill,
+        patternType = pattern,
+        fgColor = color
+      )
+
+      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      snew_fill <- paste0(smp, "new_fill")
+      sxf_new_fill <- paste0(smp, "xf_new_fill")
+
+
+      self$styles_mgr$add(new_fill, snew_fill)
+
+      # dim in dataframe can contain various styles. go cell by cell.
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      # select a few cols and rows to fill
+      cols <- (seq_len(ncol(did)) %% every_nth_col) == 0
+      rows <- (seq_len(nrow(did)) %% every_nth_row) == 0
+
+      dims <- unname(unlist(did[rows, cols, drop = FALSE]))
+
+      for (dim in dims) {
+        sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim))
+        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
+        self$styles_mgr$add(xf_new_fill, xf_new_fill)
+        s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
+        set_cell_style(self, sheet, dim, s_id)
+      }
+
+      return(self)
     }
+
   ),
 
   ## private ----
@@ -4148,9 +4671,14 @@ wbWorkbook <- R6::R6Class(
   # any functions that are not present elsewhere or are non-exported internal
   # functions that are used to make assignments
   private = list(
+    # original sheet name values
+    ### fields ----
+    original_sheet_names = character(),
+
+    ### methods ----
     deep_clone = function(name, value) {
-      #' Deep cloning method for workbooks.  This method also accesses
-      #' `$clone(deep = TRUE)` methods for `R6` fields.
+      # Deep cloning method for workbooks.  This method also accesses
+      # `$clone(deep = TRUE)` methods for `R6` fields.
       if (R6::is.R6(value)) {
         value <- value$clone(deep = TRUE)
       } else if (is.list(value)) {
@@ -4163,11 +4691,119 @@ wbWorkbook <- R6::R6Class(
       value
     },
 
+    pappend = function(field, value = NULL) {
+      # private append
+      private[[field]] <- c(private[[field]], value)
+    },
+
+    validate_new_sheet = function(sheet) {
+      # returns nothing, throws error if there's a problem.
+      if (length(sheet) != 1) {
+        stop("sheet name must be length 1")
+      }
+
+      if (is.na(sheet)) {
+        stop("sheet cannot be NA")
+      }
+
+      if (is.numeric(sheet)) {
+        if (sheet %% 1 != 0) {
+          stop("If sheet is numeric it must be an integer")
+        }
+
+        if (sheet <= 0) {
+          stop("if sheet is an integer it must be a positive number")
+        }
+
+        if (sheet <= length(self$sheet_names)) {
+          stop("there is already a sheet at index ", sheet)
+        }
+
+        return()
+      }
+
+      sheet <- as.character(sheet)
+      if (has_illegal_chars(sheet)) {
+        stop("illegal characters found in sheet. Please remove. See ?openxlsx::clean_worksheet_name")
+      }
+
+      if (!nzchar(sheet)) {
+        stop("sheet name must contain at least 1 character")
+      }
+
+      if (nchar(sheet) > 31) {
+        stop("sheet names must be <= 31 chars")
+      }
+
+      if (tolower(sheet) %in% self$sheet_names) {
+        stop("a sheet with name '", sheet, '"already exists"')
+      }
+    },
+
+    get_sheet_index = function(sheet) {
+      # returns the sheet index, or NA
+      if (is.null(self$sheet_names)) {
+        warning("Workbook has no sheets")
+        return(NA_integer_)
+      }
+
+      if (is.character(sheet)) {
+        sheet <- tolower(sheet)
+        m1 <- match(sheet, tolower(self$sheet_names))
+        m2 <- match(sheet, tolower(private$original_sheet_names))
+
+        bad <- is.na(m1) & is.na(m2)
+
+        if (any(bad)) {
+          stop("Sheet names not found: ", toString(sheet[bad]))
+        }
+
+        # need the vectorized
+        sheet <- ifelse(is.na(m1), m2, m1)
+      } else {
+        sheet <- as.integer(sheet)
+        bad <- which(sheet > length(self$sheet_names))
+
+        if (length(bad)) {
+          stop("Invalid sheet position(s): ", toString(sheet[bad]))
+          # sheet[bad] <- NA_integer_
+        }
+      }
+
+      sheet
+    },
+
+    get_sheet_name = function(sheet) {
+      self$sheet_names[private$get_sheet_index(sheet)]
+    },
+
+    set_single_sheet_name = function(pos, clean, raw) {
+      pos <- as.integer(pos)
+      stopifnot(
+        length(pos)   == 1, !is.na(pos),
+        length(clean) == 1, !is.na(clean),
+        length(raw)   == 1, !is.na(raw)
+      )
+      self$sheet_names[self$sheetOrder[pos]] <- clean
+      private$original_sheet_names[self$sheetOrder[pos]] <- raw
+    },
+
     append_sheet_field = function(sheet, field, value = NULL) {
       # if using this we should consider adding a method into the wbWorksheet
       # object.  wbWorksheet$append() is currently public. _Currently_.
-      sheet <- wb_validate_sheet(self, sheet)
-      self$worksheet[[sheet]]$append(value)
+      sheet <- private$get_sheet_index(sheet)
+      self$worksheets[[sheet]]$append(field, value)
+      self
+    },
+
+    append_workbook_field = function(field, value = NULL) {
+      self$workbook[[field]] <- c(self$workbook[[field]], value)
+      self
+    },
+
+    append_sheet_rels = function(sheet, value = NULL) {
+      sheet <- private$get_sheet_index(sheet)
+      self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
       self
     },
 
@@ -4190,9 +4826,9 @@ wbWorkbook <- R6::R6Class(
           sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(self$datetimeCreated, "%Y-%m-%dT%H:%M:%SZ")),
 
           # optional
-          if (!is.null(self$title))    sprintf("<dc:title>%s</dc:title>",       replaceIllegalCharacters(self$title)),
-          if (!is.null(self$subject))  sprintf("<dc:subject>%s</dc:subject>",   replaceIllegalCharacters(self$subject)),
-          if (!is.null(self$category)) sprintf("<cp:category>%s</cp:category>", replaceIllegalCharacters(self$category)),
+          if (!is.null(self$title))    sprintf("<dc:title>%s</dc:title>",       replace_legal_chars(self$title)),
+          if (!is.null(self$subject))  sprintf("<dc:subject>%s</dc:subject>",   replace_legal_chars(self$subject)),
+          if (!is.null(self$category)) sprintf("<cp:category>%s</cp:category>", replace_legal_chars(self$category)),
 
           # end
           "</coreProperties>",
@@ -4224,9 +4860,8 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
-    ws = function(sheet) {
-      sheet_id <- wb_validate_sheet(self, sheet)
-      self$worksheets[[sheet_id]]
+    get_worksheet = function(sheet) {
+      self$worksheets[[private$get_sheet_index(sheet)]]
     },
 
     # this may ahve been removes
@@ -4470,7 +5105,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO rename: setDataValidation?
       # TODO can this be moved to the worksheet class?
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       sqref <-
         stri_join(get_cell_refs(data.frame(
           "x" = c(startRow, endRow),
@@ -4541,11 +5176,7 @@ wbWorkbook <- R6::R6Class(
         }
       )
 
-      self$worksheets[[sheet]]$dataValidations <- c(
-        self$worksheets[[sheet]]$dataValidations,
-        stri_join(header, stri_join(form, collapse = ""), "</dataValidation>")
-      )
-
+      private$append_sheet_field(sheet, "dataValidations", stri_join(header, stri_join(form, collapse = ""), "</dataValidation>"))
       invisible(self)
     },
 
@@ -4562,7 +5193,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       # TODO consider some defaults to logicals
       # TODO rename: setDataValidationList?
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       sqref <-
         stri_join(get_cell_refs(data.frame(
           "x" = c(startRow, endRow),
@@ -4582,41 +5213,49 @@ wbWorkbook <- R6::R6Class(
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
       xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
-      self$worksheets[[sheet]]$dataValidationsLst <- c(self$worksheets[[sheet]]$dataValidationsLst, xmlData)
-
+      private$append_sheet_field(sheet, "dataValidationsLst", xmlData)
       invisible(self)
     },
 
     # old add_named_region()
     create_named_region = function(ref1, ref2, name, sheet, localSheetId = NULL) {
-      name <- replaceIllegalCharacters(name)
-
-      if (is.null(localSheetId)) {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            sheet,
-            ref1,
-            ref2
-          )
+      name <- replace_legal_chars(name)
+      value <- if (is.null(localSheetId)) {
+        sprintf(
+          '<definedName name="%s">\'%s\'!%s:%s</definedName>',
+          name,
+          sheet,
+          ref1,
+          ref2
         )
       } else {
-        self$workbook$definedNames <- c(
-          self$workbook$definedNames,
-          sprintf(
-            '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
-            name,
-            localSheetId,
-            sheet,
-            ref1,
-            ref2
-          )
+        sprintf(
+          '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
+          name,
+          localSheetId,
+          sheet,
+          ref1,
+          ref2
         )
       }
 
-      self
+      private$append_workbook_field("definedNames", value)
+    },
+
+    get_sheet_id = function(type = c("rId", "sheetId"), i = NULL) {
+      pattern <-
+        switch(
+          match.arg(type),
+          sheetId = '(?<=sheetId=")[0-9]+',
+          rId = '(?<= r:id="rId)[0-9]+'
+        )
+
+      i <- i %||% seq_along(self$workbook$sheets)
+      as.integer(unlist(reg_match0(self$workbook$sheets[i], pattern)))
+    },
+
+    get_sheet_id_max = function(i = NULL) {
+      max(private$get_sheet_id(type = "sheetId", i = i), 0L, na.rm = TRUE) + 1L
     },
 
     do_conditional_formatting = function(
@@ -4930,7 +5569,7 @@ wbWorkbook <- R6::R6Class(
 
       # browser()
 
-      sheetRIds <- get_r_id(self)
+      sheetRIds <- private$get_sheet_id("rId")
       nSheets   <- length(sheetRIds)
       nExtRefs  <- length(self$externalLinks)
       nPivots   <- length(self$pivotDefinitions)
@@ -5060,7 +5699,8 @@ wbWorkbook <- R6::R6Class(
         # TODO consider self$get_sheet_names() which orders the sheet names?
         sheets <- self$sheet_names[self$sheetOrder]
 
-        belongTo <- get_named_regions(self)$sheets
+        belongTo <- get_named_regions(self)
+        belongTo <- belongTo$sheets[belongTo$value != "table"]
 
         ## sheets is in re-ordered order (order it will be displayed)
         newId <- match(belongTo, sheets) - 1L
@@ -5123,28 +5763,6 @@ lcr <- function(var) {
 }
 
 
-max_sheet_id <- function(wb) {
-  if (!length(wb$workbook$sheets)) {
-    return(1L)
-  }
-
-  max(get_sheet_id(wb), 0L, na.rm = TRUE) + 1L
-}
-
-get_sheet_id <- function(wb, index = NULL) {
-  get_wb_sheet_id(wb, '(?<=sheetId=")[0-9]+', i = index)
-}
-
-get_r_id <- function(wb, index = NULL) {
-  get_wb_sheet_id(wb, '(?<= r:id="rId)[0-9]+', i = index)
-}
-
-get_wb_sheet_id <- function(wb, pattern, i = NULL) {
-  i <- i %||% seq_along(wb$workbook$sheets)
-  id <- reg_match0(wb$workbook$sheets[i], pattern)
-  as.integer(unlist(id))
-}
-
 # TODO Does this need to be checked?  No sheet name can be NA right?
 # res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
 
@@ -5166,7 +5784,11 @@ wb_get_sheet_name = function(wb, index = NULL) {
     stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
   }
 
-  wb$sheet_names[index]
+  # keep index 0 as ""
+  z <- vector("character", length(index))
+  names(z) <- index
+  z[index > 0] <- wb$sheet_names[index]
+  z
 }
 
 worksheet_lock_properties <- function() {
