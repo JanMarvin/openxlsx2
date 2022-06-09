@@ -182,7 +182,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       invisible(self$fill)
     },
 
-    #' @description get borer ids
+    #' @description get border ids
     get_border = function() {
       invisible(self$border)
     },

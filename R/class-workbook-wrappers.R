@@ -2008,7 +2008,7 @@ wb_add_border <- function(
 
 }
 
-#' add fill for fill region
+#' add fill for cell region
 #'
 #' @description wb wrapper to create fill for cell region
 #' @param wb a workbook

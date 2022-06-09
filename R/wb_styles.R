@@ -286,7 +286,7 @@ merge_numFmts <- function(wb, new_numfmts) {
   return(wb)
 }
 
-#' create number format
+#' create font format
 #' @param b bold
 #' @param charset charset
 #' @param color rgb color: default "FF000000"
