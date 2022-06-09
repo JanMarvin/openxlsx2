@@ -2089,6 +2089,7 @@ wb_add_fill <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
 #' @return The `wbWorksheetObject`, invisibly
+#' @export
 wb_add_font <- function(
       wb,
       sheet,
