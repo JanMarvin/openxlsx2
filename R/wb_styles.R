@@ -720,6 +720,68 @@ set_numfmt <- function(xf_node, numfmt) {
   write_xf(z)
 }
 
+#' internal function to set cellstyle
+#' @noRd
+set_cellstyle <- function(
+  xf_node,
+  applyAlignment,
+  applyBorder,
+  applyFill,
+  applyFont,
+  applyNumberFormat,
+  applyProtection,
+  borderId,
+  extLst,
+  fillId,
+  fontId,
+  hidden,
+  horizontal,
+  indent,
+  justifyLastLine,
+  locked,
+  numFmtId,
+  pivotButton,
+  quotePrefix,
+  readingOrder,
+  relativeIndent,
+  shrinkToFit,
+  textRotation,
+  vertical,
+  wrapText,
+  xfId
+) {
+  z <- read_xf(read_xml(xf_node))
+
+  if (!is.null(applyAlignment))    z$applyAlignment <- applyAlignment
+  if (!is.null(applyBorder))       z$applyBorder <- applyBorder
+  if (!is.null(applyFill))         z$applyFill <- applyFill
+  if (!is.null(applyFont))         z$applyFont <- applyFont
+  if (!is.null(applyNumberFormat)) z$applyNumberFormat <- applyNumberFormat
+  if (!is.null(applyProtection))   z$applyProtection <- applyProtection
+  if (!is.null(borderId))          z$borderId <- borderId
+  if (!is.null(extLst))            z$extLst <- extLst
+  if (!is.null(fillId))            z$fillId <- fillId
+  if (!is.null(fontId))            z$fontId <- fontId
+  if (!is.null(hidden))            z$hidden <- hidden
+  if (!is.null(horizontal))        z$horizontal <- horizontal
+  if (!is.null(indent))            z$indent <- indent
+  if (!is.null(justifyLastLine))   z$justifyLastLine <- justifyLastLine
+  if (!is.null(locked))            z$locked <- locked
+  if (!is.null(numFmtId))          z$numFmtId <- numFmtId
+  if (!is.null(pivotButton))       z$pivotButton <- pivotButton
+  if (!is.null(quotePrefix))       z$quotePrefix <- quotePrefix
+  if (!is.null(readingOrder))      z$readingOrder <- readingOrder
+  if (!is.null(relativeIndent))    z$relativeIndent <- relativeIndent
+  if (!is.null(shrinkToFit))       z$shrinkToFit <- shrinkToFit
+  if (!is.null(textRotation))      z$textRotation <- textRotation
+  if (!is.null(vertical))          z$vertical <- vertical
+  if (!is.null(wrapText))          z$wrapText <- wrapText
+  if (!is.null(xfId))              z$xfId <- xfId 
+
+  write_xf(z)
+}
+
+
 #' get all styles on a sheet
 #'
 #' @param wb workbook
