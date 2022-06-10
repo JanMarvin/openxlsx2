@@ -4578,7 +4578,6 @@ wbWorkbook <- R6::R6Class(
       dims <- unname(unlist(did[rows, cols, drop = FALSE]))
 
       for (dim in dims) {
-        sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim))
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
@@ -4657,12 +4656,63 @@ wbWorkbook <- R6::R6Class(
       self$styles_mgr$add(new_font, snew_font)
 
       for (dim in dims) {
-        sxf_new_font_x <- paste0(sxf_new_font, which(dims %in% dim))
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(snew_font))
         self$styles_mgr$add(xf_new_font, xf_new_font)
         s_id <- self$styles_mgr$get_xf_id(xf_new_font)
         set_cell_style(self, sheet, dim, s_id)
+      }
+
+      return(self)
+    },
+
+
+
+    #' @description provide simple number format function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param numfmt number format id or a character of the format
+    #' @examples
+    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+    #'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
+    #' @return The `wbWorksheetObject`, invisibly
+    add_numfmt = function(
+      sheet,
+      dims,
+      numfmt
+    ) {
+
+      if (inherits(numfmt, "character")) {
+
+        new_numfmt <- create_numfmt(
+          numFmtId = self$styles_mgr$next_numfmt_id(),
+          formatCode = numfmt
+        )
+
+        smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+        snew_numfmt <- paste0(smp, "new_numfmt")
+        sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
+
+        self$styles_mgr$add(new_numfmt, snew_numfmt)
+
+        for (dim in dims) {
+          xf_prev <- get_cell_styles(self, sheet, dim)
+          xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(snew_numfmt))
+          self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
+          s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
+          set_cell_style(self, sheet, dim, s_id)
+        }
+        
+      } else { # format is numeric
+
+        for (dim in dims) {
+          xf_prev <- get_cell_styles(self, sheet, dim)
+          xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
+          self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
+          s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
+          set_cell_style(self, sheet, dim, s_id)
+        }
+
       }
 
       return(self)

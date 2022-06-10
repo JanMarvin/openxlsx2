@@ -99,6 +99,13 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
  wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_numfmt`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_numfmt("S1", "A1:A33", numfmt = 1)
 }
 \seealso{
 create_border
@@ -274,6 +281,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_border}{\code{wbWorkbook$add_border()}}
 \item \href{#method-wbWorkbook-add_fill}{\code{wbWorkbook$add_fill()}}
 \item \href{#method-wbWorkbook-add_font}{\code{wbWorkbook$add_font()}}
+\item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -2071,6 +2079,39 @@ The \code{wbWorksheetObject}, invisibly
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
  wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_numfmt"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_numfmt}{}}}
+\subsection{Method \code{add_numfmt()}}{
+provide simple number format function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet, dims, numfmt)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{numfmt}}{number format id or a character of the format}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_numfmt("S1", "A1:A33", numfmt = 1)
 }
 \if{html}{\out{</div>}}
 

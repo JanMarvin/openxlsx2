@@ -111,3 +111,34 @@ test_that("test add_font()", {
   expect_equal(exp, got)
 
 })
+
+test_that("test add_numfmt()", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("S1")$add_data("S1", mtcars)
+  expect_silent(wb$add_numfmt("S1", dims = "A1:A33", numfmt = 2))
+  expect_silent(wb$add_numfmt("S1", dims = "F1:F33", numfmt = "#.0"))
+
+  # check xf
+  exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
+           "<xf applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"2\" xfId=\"0\"/>",
+           "<xf applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"165\" xfId=\"0\"/>"
+  )
+  got <- wb$styles_mgr$styles$cellXfs
+
+  expect_equal(exp, got)
+
+
+  # check numfmt
+  exp <- "<numFmt numFmtId=\"165\" formatCode=\"#.0\"/>"
+  got <- wb$styles_mgr$styles$numFmts
+
+  expect_equal(exp, got)
+
+  # check the actual styles
+  exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
+           "", "", "2", "", "", "")
+  got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
+  expect_equal(exp, got)
+
+})
