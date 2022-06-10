@@ -2132,3 +2132,25 @@ wb_add_font <- function(
       vertAlign = vertAlign
     )
 }
+#' add numfmt for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param numfmt either an id or a character
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_numfmt <- function(
+      wb,
+      sheet,
+      dims,
+      numfmt
+) {
+    wb$clone()$add_numfmt(
+      sheet = sheet,
+      dims = dims,
+      numfmt = numfmt
+    )
+}
