@@ -89,13 +89,22 @@ dir_create <- function(..., warn = TRUE, recurse = TRUE) {
   path
 }
 
-safe_sample <- function(x, n = length(x), replace = FALSE) {
-  # sample without changing the random seed.  Trying to be sensitive to
-  # potential issues/complaints
+random_string <- function(size = NULL) {
+  # creates a random string using tempfile() which does better to not affect the
+  # random seed
   # https://github.com/ycphs/openxlsx/issues/183
   # https://github.com/ycphs/openxlsx/pull/224
-  seed <- .Random.seed
-  on.exit(set.seed(seed))
-  set.seed(Sys.time())
-  sample(x = x, size = n, replace = replace)
+  res <- basename(tempfile(""))
+
+  if (is.null(size)) {
+    return(res)
+  }
+
+  size <- as.integer(size)
+  stopifnot(size >= 0L)
+  while (nchar(res) < size) {
+    res <- paste0(res, random_string())
+  }
+
+  substr(res, 1L, size)
 }

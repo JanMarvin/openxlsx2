@@ -4351,7 +4351,7 @@ wbWorkbook <- R6::R6Class(
       # styles will be created. We do not look for identical styles, therefor
       # we might create duplicates, but if a single style changes, the rest of
       # the workbook remains valid.
-      smp <- paste0(safe_sample(letters, n = 6, replace = TRUE), collapse = "")
+      smp <- random_string()
       s <- function(x) paste0(smp, "s", deparse(substitute(x)), seq_along(x))
       sfull_single <- paste0(smp, "full_single")
       stop_single <- paste0(smp, "full_single")
@@ -4561,7 +4561,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       # sample() will change the random seed
-      smp <- paste0(safe_sample(letters, n = 6, replace = TRUE), collapse = "")
+      smp <- random_string()
       snew_fill <- paste0(smp, "new_fill")
       # sxf_new_fill <- paste0(smp, "xf_new_fill") # not used?
 
@@ -4647,7 +4647,7 @@ wbWorkbook <- R6::R6Class(
         vertAlign = vertAlign
       )
 
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      smp <- random_string()
       snew_font <- paste0(smp, "new_font")
       sxf_new_font <- paste0(smp, "xf_new_font")
 
@@ -4687,9 +4687,9 @@ wbWorkbook <- R6::R6Class(
           formatCode = numfmt
         )
 
-        smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+        smp <- random_string()
         snew_numfmt <- paste0(smp, "new_numfmt")
-        sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
+        # sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
 
         self$styles_mgr$add(new_numfmt, snew_numfmt)
 
