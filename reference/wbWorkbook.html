@@ -374,6 +374,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-add_fill"><code>wbWorkbook$add_fill()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_font"><code>wbWorkbook$add_font()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_numfmt"><code>wbWorkbook$add_numfmt()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_cell_style"><code>wbWorkbook$add_cell_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorkbook-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -2583,15 +2584,173 @@ are removed.</p></dd>
 </div>
 
 
-</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-add_cell_style"></a><div class="section">
+<h3 id="method-add-cell-style-">Method <code>add_cell_style()</code><a class="anchor" aria-label="anchor" href="#method-add-cell-style-"></a></h3>
+<p>provide simple cell style format function</p><div class="section">
 <h4 id="usage-61">Usage<a class="anchor" aria-label="anchor" href="#usage-61"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span>
+  <span class="va">sheet</span>,
+  <span class="va">dims</span>,
+  applyAlignment <span class="op">=</span> <span class="cn">NULL</span>,
+  applyBorder <span class="op">=</span> <span class="cn">NULL</span>,
+  applyFill <span class="op">=</span> <span class="cn">NULL</span>,
+  applyFont <span class="op">=</span> <span class="cn">NULL</span>,
+  applyNumberFormat <span class="op">=</span> <span class="cn">NULL</span>,
+  applyProtection <span class="op">=</span> <span class="cn">NULL</span>,
+  borderId <span class="op">=</span> <span class="cn">NULL</span>,
+  extLst <span class="op">=</span> <span class="cn">NULL</span>,
+  fillId <span class="op">=</span> <span class="cn">NULL</span>,
+  fontId <span class="op">=</span> <span class="cn">NULL</span>,
+  hidden <span class="op">=</span> <span class="cn">NULL</span>,
+  horizontal <span class="op">=</span> <span class="cn">NULL</span>,
+  indent <span class="op">=</span> <span class="cn">NULL</span>,
+  justifyLastLine <span class="op">=</span> <span class="cn">NULL</span>,
+  locked <span class="op">=</span> <span class="cn">NULL</span>,
+  numFmtId <span class="op">=</span> <span class="cn">NULL</span>,
+  pivotButton <span class="op">=</span> <span class="cn">NULL</span>,
+  quotePrefix <span class="op">=</span> <span class="cn">NULL</span>,
+  readingOrder <span class="op">=</span> <span class="cn">NULL</span>,
+  relativeIndent <span class="op">=</span> <span class="cn">NULL</span>,
+  shrinkToFit <span class="op">=</span> <span class="cn">NULL</span>,
+  textRotation <span class="op">=</span> <span class="cn">NULL</span>,
+  vertical <span class="op">=</span> <span class="cn">NULL</span>,
+  wrapText <span class="op">=</span> <span class="cn">NULL</span>,
+  xfId <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-57">Arguments<a class="anchor" aria-label="anchor" href="#arguments-57"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>the worksheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>the cell range</p></dd>
+
+
+<dt><code>applyAlignment</code></dt>
+<dd><p>logical apply alignment</p></dd>
+
+
+<dt><code>applyBorder</code></dt>
+<dd><p>logical apply border</p></dd>
+
+
+<dt><code>applyFill</code></dt>
+<dd><p>logical apply fill</p></dd>
+
+
+<dt><code>applyFont</code></dt>
+<dd><p>logical apply font</p></dd>
+
+
+<dt><code>applyNumberFormat</code></dt>
+<dd><p>logical apply number format</p></dd>
+
+
+<dt><code>applyProtection</code></dt>
+<dd><p>logical apply protection</p></dd>
+
+
+<dt><code>borderId</code></dt>
+<dd><p>border ID to apply</p></dd>
+
+
+<dt><code>extLst</code></dt>
+<dd><p>extension list something like <code>&lt;extLst&gt;...&lt;/extLst&gt;</code></p></dd>
+
+
+<dt><code>fillId</code></dt>
+<dd><p>fill ID to apply</p></dd>
+
+
+<dt><code>fontId</code></dt>
+<dd><p>font ID to apply</p></dd>
+
+
+<dt><code>hidden</code></dt>
+<dd><p>logical cell is hidden</p></dd>
+
+
+<dt><code>horizontal</code></dt>
+<dd><p>align content horizontal ('left', 'center', 'right')</p></dd>
+
+
+<dt><code>indent</code></dt>
+<dd><p>logical indent content</p></dd>
+
+
+<dt><code>justifyLastLine</code></dt>
+<dd><p>logical justify last line</p></dd>
+
+
+<dt><code>locked</code></dt>
+<dd><p>logical cell is locked</p></dd>
+
+
+<dt><code>numFmtId</code></dt>
+<dd><p>number format ID to apply</p></dd>
+
+
+<dt><code>pivotButton</code></dt>
+<dd><p>unknown</p></dd>
+
+
+<dt><code>quotePrefix</code></dt>
+<dd><p>unknown</p></dd>
+
+
+<dt><code>readingOrder</code></dt>
+<dd><p>reading order left to right</p></dd>
+
+
+<dt><code>relativeIndent</code></dt>
+<dd><p>relative indentation</p></dd>
+
+
+<dt><code>shrinkToFit</code></dt>
+<dd><p>logical shrink to fit</p></dd>
+
+
+<dt><code>textRotation</code></dt>
+<dd><p>degrees of text rotation</p></dd>
+
+
+<dt><code>vertical</code></dt>
+<dd><p>vertical alignment of content ('top', 'center', 'bottom')</p></dd>
+
+
+<dt><code>wrapText</code></dt>
+<dd><p>wrap text in cell</p></dd>
+
+
+<dt><code>xfId</code></dt>
+<dd><p>xf ID to apply</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-35">Returns<a class="anchor" aria-label="anchor" href="#returns-35"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+<div class="section">
+<h4 id="examples-4">Examples<a class="anchor" aria-label="anchor" href="#examples-4"></a></h4>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
+ <span class="va">wb</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, textRotation <span class="op">=</span> <span class="st">"45"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, vertical <span class="op">=</span> <span class="st">"center"</span>, wrapText <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-62">Usage<a class="anchor" aria-label="anchor" href="#usage-62"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-58">Arguments<a class="anchor" aria-label="anchor" href="#arguments-58"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -2718,6 +2877,18 @@ are removed.</p></dd>
 <span class="r-in"></span>
 <span class="r-in"> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
 <span class="r-in"> <span class="va">wb</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:A33"</span>, numfmt <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"><span class="co">## Method `wbWorkbook$add_cell_style`</span></span>
+<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
+<span class="r-in"></span>
+<span class="r-in"> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span class="r-in"> <span class="va">wb</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, textRotation <span class="op">=</span> <span class="st">"45"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, vertical <span class="op">=</span> <span class="st">"center"</span>, wrapText <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
