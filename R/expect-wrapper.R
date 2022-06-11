@@ -15,15 +15,18 @@
 #' @param ignore Names of params to ignore
 #' @param ignore_attr Passed to `waldo::compare()` for the result of the
 #'   executed functions
+#' @param ignore_fields Ignore immediate fields by removing them from the
+#'   objects for comparison
 #' @returns Nothing, called for its side-effects
 #' @noRd
 expect_wrapper <- function(
   method,
-  fun         = paste0("wb_", method),
-  wb          = wb_workbook(),
-  params      = list(),
-  ignore      = NULL,
-  ignore_attr = "waldo_opts"
+  fun           = paste0("wb_", method),
+  wb            = wb_workbook(),
+  params        = list(),
+  ignore        = NULL,
+  ignore_attr   = "waldo_opts",
+  ignore_fields = NULL
 ) {
   stopifnot(
     requireNamespace("waldo", quietly = TRUE),
@@ -138,6 +141,12 @@ expect_wrapper <- function(
       bad <- c("Failed to get results", msg)
       testthat::fail(bad)
       return(invisible())
+    }
+
+    for (i in ignore_fields) {
+      # remove the fields we don't want to check
+      res_method[[i]] <- NULL
+      res_fun[[i]]    <- NULL
     }
 
     # expectation that the results are the same

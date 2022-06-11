@@ -4090,17 +4090,14 @@ wbWorkbook <- R6::R6Class(
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
-      sheet,
-      numbers = TRUE,
-      characters = TRUE,
-      styles = TRUE,
-      merged_cells = TRUE
+        sheet,
+        numbers      = TRUE,
+        characters   = TRUE,
+        styles       = TRUE,
+        merged_cells = TRUE
     ) {
-
-      sheet <- wb_validate_sheet(self, sheet)
-
+      sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
-
       invisible(self)
     },
 
@@ -4137,7 +4134,7 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
-      sheet         = 1,
+      sheet,
       dims          = "A1",
       bottom_color  = c(rgb = "FF000000"),
       left_color    = c(rgb = "FF000000"),
@@ -4354,7 +4351,7 @@ wbWorkbook <- R6::R6Class(
       # styles will be created. We do not look for identical styles, therefor
       # we might create duplicates, but if a single style changes, the rest of
       # the workbook remains valid.
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      smp <- random_string()
       s <- function(x) paste0(smp, "s", deparse(substitute(x)), seq_along(x))
       sfull_single <- paste0(smp, "full_single")
       stop_single <- paste0(smp, "full_single")
@@ -4547,14 +4544,15 @@ wbWorkbook <- R6::R6Class(
     #'   </gradientFill>"
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
-      sheet,
-      dims,
-      color = "",
-      pattern = "solid",
-      gradient_fill = "",
-      every_nth_col = 1,
-      every_nth_row = 1
+        sheet,
+        dims,
+        color         = "",
+        pattern       = "solid",
+        gradient_fill = "",
+        every_nth_col = 1,
+        every_nth_row = 1
     ) {
+      sheet <- private$get_sheet_index(sheet)
 
       new_fill <- create_fill(
         gradientFill = gradient_fill,
@@ -4562,10 +4560,10 @@ wbWorkbook <- R6::R6Class(
         fgColor = color
       )
 
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      # sample() will change the random seed
+      smp <- random_string()
       snew_fill <- paste0(smp, "new_fill")
-      sxf_new_fill <- paste0(smp, "xf_new_fill")
-
+      # sxf_new_fill <- paste0(smp, "xf_new_fill") # not used?
 
       self$styles_mgr$add(new_fill, snew_fill)
 
@@ -4649,7 +4647,7 @@ wbWorkbook <- R6::R6Class(
         vertAlign = vertAlign
       )
 
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      smp <- random_string()
       snew_font <- paste0(smp, "new_font")
       sxf_new_font <- paste0(smp, "xf_new_font")
 
@@ -4687,9 +4685,9 @@ wbWorkbook <- R6::R6Class(
           formatCode = numfmt
         )
 
-        smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+        smp <- random_string()
         snew_numfmt <- paste0(smp, "new_numfmt")
-        sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
+        # sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
 
         self$styles_mgr$add(new_numfmt, snew_numfmt)
 
@@ -4700,7 +4698,7 @@ wbWorkbook <- R6::R6Class(
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
           set_cell_style(self, sheet, dim, s_id)
         }
-        
+
       } else { # format is numeric
 
         for (dim in dims) {

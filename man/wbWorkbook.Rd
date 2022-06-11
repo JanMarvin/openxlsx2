@@ -1893,7 +1893,7 @@ The \code{wbWorksheetObject}, invisibly
 create borders for cell region
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_border(
-  sheet = 1,
+  sheet,
   dims = "A1",
   bottom_color = c(rgb = "FF000000"),
   left_color = c(rgb = "FF000000"),
