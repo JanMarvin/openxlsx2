@@ -4664,8 +4664,6 @@ wbWorkbook <- R6::R6Class(
       return(self)
     },
 
-
-
     #' @description provide simple number format function
     #' @param sheet the worksheet
     #' @param dims the cell range
@@ -4711,6 +4709,108 @@ wbWorkbook <- R6::R6Class(
           set_cell_style(self, sheet, dim, s_id)
         }
 
+      }
+
+      return(self)
+    },
+
+    #' @description provide simple cell style format function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param extLst extension list something like `<extLst>...</extLst>`
+    #' @param hidden logical cell is hidden
+    #' @param horizontal align content horizontal ('left', 'center', 'right')
+    #' @param indent logical indent content
+    #' @param justifyLastLine logical justify last line
+    #' @param locked logical cell is locked
+    #' @param pivotButton unknown
+    #' @param quotePrefix unknown
+    #' @param readingOrder reading order left to right
+    #' @param relativeIndent relative indentation
+    #' @param shrinkToFit logical shrink to fit
+    #' @param textRotation degrees of text rotation
+    #' @param vertical vertical alignment of content ('top', 'center', 'bottom')
+    #' @param wrapText wrap text in cell
+    # alignments
+    #' @param applyAlignment logical apply alignment
+    #' @param applyBorder logical apply border
+    #' @param applyFill logical apply fill
+    #' @param applyFont logical apply font
+    #' @param applyNumberFormat logical apply number format
+    #' @param applyProtection logical apply protection
+    # ids
+    #' @param borderId border ID to apply
+    #' @param fillId fill ID to apply
+    #' @param fontId font ID to apply
+    #' @param numFmtId number format ID to apply
+    #' @param xfId xf ID to apply
+    #' @examples
+    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+    #'  wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+    #' @return The `wbWorksheetObject`, invisibly
+    add_cell_style = function(
+      sheet,
+      dims,
+      applyAlignment    = NULL,
+      applyBorder       = NULL,
+      applyFill         = NULL,
+      applyFont         = NULL,
+      applyNumberFormat = NULL,
+      applyProtection   = NULL,
+      borderId          = NULL,
+      extLst            = NULL,
+      fillId            = NULL,
+      fontId            = NULL,
+      hidden            = NULL,
+      horizontal        = NULL,
+      indent            = NULL,
+      justifyLastLine   = NULL,
+      locked            = NULL,
+      numFmtId          = NULL,
+      pivotButton       = NULL,
+      quotePrefix       = NULL,
+      readingOrder      = NULL,
+      relativeIndent    = NULL,
+      shrinkToFit       = NULL,
+      textRotation      = NULL,
+      vertical          = NULL,
+      wrapText          = NULL,
+      xfId              = NULL
+    ) {
+
+      for (dim in dims) {
+        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_new_cellstyle <- set_cellstyle(
+          xf_node           = xf_prev,
+          applyAlignment    = applyAlignment,
+          applyBorder       = applyBorder,
+          applyFill         = applyFill, 
+          applyFont         = applyFont, 
+          applyNumberFormat = applyNumberFormat,
+          applyProtection   = applyProtection,
+          borderId          = borderId,
+          extLst            = extLst, 
+          fillId            = fillId,
+          fontId            = fontId,
+          hidden            = hidden,
+          horizontal        = horizontal,
+          indent            = indent,
+          justifyLastLine   = justifyLastLine, 
+          locked            = locked, 
+          numFmtId          = numFmtId, 
+          pivotButton       = pivotButton,
+          quotePrefix       = quotePrefix,
+          readingOrder      = readingOrder,
+          relativeIndent    = relativeIndent,
+          shrinkToFit       = shrinkToFit,
+          textRotation      = textRotation,
+          vertical          = vertical,
+          wrapText          = wrapText,
+          xfId              = xfId
+        )
+        self$styles_mgr$add(xf_new_cellstyle, xf_new_cellstyle)
+        s_id <- self$styles_mgr$get_xf_id(xf_new_cellstyle)
+        set_cell_style(self, sheet, dim, s_id)
       }
 
       return(self)
