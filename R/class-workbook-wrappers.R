@@ -2023,7 +2023,7 @@ wb_add_border <- function(
 
 }
 
-#' add fill for fill region
+#' add fill for cell region
 #'
 #' @description wb wrapper to create fill for cell region
 #' @param wb a workbook
@@ -2078,4 +2078,94 @@ wb_add_fill <- function(
     every_nth_col = every_nth_col,
     every_nth_row = every_nth_row
   )
+}
+
+#' add font for cell region
+#' @details add_font provides all the options openxml accepts for a font node, not all have to be set. Usually name, size and color should be what the user wants.
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param name font name: default "Calibri"
+#' @param color rgb color: default "FF000000"
+#' @param size font size: default "11",
+#' @param bold bold, "single" or "double", default: ""
+#' @param italic italic
+#' @param outline outline
+#' @param strike strike
+#' @param underline underline
+#' @param family font family
+#' @param charset charset
+#' @param condense condense
+#' @param scheme font scheme
+#' @param shadow shadow
+#' @param extend extend
+#' @param vertAlign vertical alignment
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_font <- function(
+      wb,
+      sheet,
+      dims,
+      name = "Calibri",
+      color = c(rgb = "FF000000"),
+      size = "11",
+      bold = "",
+      italic = "",
+      outline = "",
+      strike = "",
+      underline = "",
+      # fine tuning
+      charset = "",
+      condense = "",
+      extend = "",
+      family = "",
+      scheme = "",
+      shadow = "",
+      vertAlign = ""
+) {
+    wb$clone()$add_font(
+      sheet = sheet,
+      dims = dims,
+      name = name,
+      color = color,
+      size = size,
+      bold = bold,
+      italic = italic,
+      outline = outline,
+      strike = strike,
+      underline = underline,
+      # fine tuning
+      charset = charset,
+      condense = condense,
+      extend = extend,
+      family = family,
+      scheme = scheme,
+      shadow = shadow,
+      vertAlign = vertAlign
+    )
+}
+#' add numfmt for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param numfmt either an id or a character
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_numfmt <- function(
+      wb,
+      sheet,
+      dims,
+      numfmt
+) {
+    wb$clone()$add_numfmt(
+      sheet = sheet,
+      dims = dims,
+      numfmt = numfmt
+    )
 }
