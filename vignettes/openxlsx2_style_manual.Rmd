@@ -161,15 +161,79 @@ options("openxlsx2.numFmt" = NULL)
 ```
 
 
-## styled table
+## wb_set_col_widths
 ```{r}
+sheet <- "mtcars"
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, sheet)
+wb$add_data(sheet, mtcars, rowNames = TRUE)
+
+cols <- 1:12
+wb <- wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")
+wb
+```
+
+
+## add borders
+```{r}
+wb <- wb_workbook()
+# full inner grid
+wb$add_worksheet("S1", gridLines = FALSE, rowColHeaders = FALSE)$add_data("S1", mtcars)
+wb$add_border("S1", dims = "A2:K33",
+              inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"),
+              inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+# only vertical grid
+wb$add_worksheet("S2", gridLines = FALSE)$add_data("S2", mtcars)
+wb$add_border("S2", dims = "A2:K33", inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"))
+# only horizontal grid
+wb$add_worksheet("S3", gridLines = FALSE)$add_data("S3", mtcars)
+wb$add_border("S3", dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+# no inner grid
+wb$add_worksheet("S4", gridLines = FALSE)$add_data("S4", mtcars)
+wb$add_border("S4", dims = "A2:K33")
+```
+
+
+## styled table
+
+Below we show you two ways how to create styled tables with `openxlsx2` one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table.
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("styled_table.png")
+```
+
+### the quick way: using high level functions
+```{r}
+# add some dummy data to the worksheet
+mat <- matrix(1:4, ncol = 2, nrow = 2)
+colnames(mat) <- make.names(seq_len(ncol(mat)))
+
+wb <- wb_workbook() %>% 
+  wb_add_worksheet("test") %>% 
+  wb_add_data("test", mat, colNames = TRUE, startCol = 2, startRow = 2) %>% 
+  # center first row
+  wb_add_cell_style("test", dims = "B2:C2", horizontal = "center") %>% 
+  # add border for first row
+  wb_add_border("test", dims = "B2:C2",
+                     bottom_color = c(theme = "1"), bottom_border = "thin",
+                     top_color = c(theme = "1"), top_border = "double",
+                     left_border = "", right_border = "") %>% 
+  # add border for last row
+  wb_add_border("test", dims = "B4:C4", 
+                     bottom_color = c(theme = "1"), bottom_border = "double",
+                     top_border = "", left_border = "", right_border = "")
+
+```
+
+### the long way: creating everything from the bone
+```{r}
+# add some dummy data to the worksheet
+mat <- matrix(1:4, ncol = 2, nrow = 2)
+colnames(mat) <- make.names(seq_len(ncol(mat)))
+
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb, "test")
 
-# add some dummy data to the worksheet
-mat <- matrix(1:4, ncol = 2, nrow = 2)
-
-colnames(mat) <- make.names(seq_len(ncol(mat)))
 wb$add_data("test", mat, colNames = TRUE, startCol = 2, startRow = 2)
 
 # create a border style and assign it to the workbook
@@ -202,37 +266,4 @@ cell <- "B2:C2"
 set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("top_styles"))
 cell <- "B4:C4"
 set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
-```
-
-
-## wb_set_col_widths
-```{r}
-sheet <- "mtcars"
-wb <- wb_workbook()
-wb <- wb_add_worksheet(wb, sheet)
-wb$add_data(sheet, mtcars, rowNames = TRUE)
-
-cols <- 1:12
-wb <- wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")
-wb
-```
-
-
-## add borders
-```{r}
-wb <- wb_workbook()
-# full inner grid
-wb$add_worksheet("S1", gridLines = FALSE, rowColHeaders = FALSE)$add_data("S1", mtcars)
-wb$add_border("S1", dims = "A2:K33",
-              inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"),
-              inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
-# only vertical grid
-wb$add_worksheet("S2", gridLines = FALSE)$add_data("S2", mtcars)
-wb$add_border("S2", dims = "A2:K33", inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"))
-# only horizontal grid
-wb$add_worksheet("S3", gridLines = FALSE)$add_data("S3", mtcars)
-wb$add_border("S3", dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
-# no inner grid
-wb$add_worksheet("S4", gridLines = FALSE)$add_data("S4", mtcars)
-wb$add_border("S4", dims = "A2:K33")
 ```
