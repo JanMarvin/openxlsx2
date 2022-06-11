@@ -4354,7 +4354,7 @@ wbWorkbook <- R6::R6Class(
       # styles will be created. We do not look for identical styles, therefor
       # we might create duplicates, but if a single style changes, the rest of
       # the workbook remains valid.
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      smp <- paste0(safe_sample(letters, n = 6, replace = TRUE), collapse = "")
       s <- function(x) paste0(smp, "s", deparse(substitute(x)), seq_along(x))
       sfull_single <- paste0(smp, "full_single")
       stop_single <- paste0(smp, "full_single")
@@ -4562,7 +4562,8 @@ wbWorkbook <- R6::R6Class(
         fgColor = color
       )
 
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      # sample() will change the random seed
+      smp <- paste0(safe_sample(letters, n = 6, replace = TRUE), collapse = "")
       snew_fill <- paste0(smp, "new_fill")
       sxf_new_fill <- paste0(smp, "xf_new_fill")
 

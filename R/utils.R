@@ -88,3 +88,14 @@ dir_create <- function(..., warn = TRUE, recurse = TRUE) {
   dir.create(path, showWarnings = warn, recursive = recurse)
   path
 }
+
+safe_sample <- function(x, n = length(x), replace = FALSE) {
+  # sample without changing the random seed.  Trying to be sensitive to
+  # potential issues/complaints
+  # https://github.com/ycphs/openxlsx/issues/183
+  # https://github.com/ycphs/openxlsx/pull/224
+  seed <- .Random.seed
+  on.exit(set.seed(seed))
+  set.seed(Sys.time())
+  sample(x = x, size = n, replace = replace)
+}
