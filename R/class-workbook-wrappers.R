@@ -2126,27 +2126,29 @@ wb_add_font <- function(
       shadow = "",
       vertAlign = ""
 ) {
-    wb$clone()$add_font(
-      sheet = sheet,
-      dims = dims,
-      name = name,
-      color = color,
-      size = size,
-      bold = bold,
-      italic = italic,
-      outline = outline,
-      strike = strike,
-      underline = underline,
-      # fine tuning
-      charset = charset,
-      condense = condense,
-      extend = extend,
-      family = family,
-      scheme = scheme,
-      shadow = shadow,
-      vertAlign = vertAlign
-    )
+  assert_workbook(wb)
+  wb$clone()$add_font(
+    sheet     = sheet,
+    dims      = dims,
+    name      = name,
+    color     = color,
+    size      = size,
+    bold      = bold,
+    italic    = italic,
+    outline   = outline,
+    strike    = strike,
+    underline = underline,
+    # fine tuning
+    charset   = charset,
+    condense  = condense,
+    extend    = extend,
+    family    = family,
+    scheme    = scheme,
+    shadow    = shadow,
+    vertAlign = vertAlign
+  )
 }
+
 #' add numfmt for cell region
 #' @param wb a workbook
 #' @param sheet the worksheet
@@ -2163,9 +2165,108 @@ wb_add_numfmt <- function(
       dims,
       numfmt
 ) {
-    wb$clone()$add_numfmt(
-      sheet = sheet,
-      dims = dims,
-      numfmt = numfmt
-    )
+  assert_workbook(wb)
+  wb$clone()$add_numfmt(
+    sheet  = sheet,
+    dims   = dims,
+    numfmt = numfmt
+  )
+}
+
+#' add cell style for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param extLst extension list something like `<extLst>...</extLst>`
+#' @param hidden logical cell is hidden
+#' @param horizontal align content horizontal ('left', 'center', 'right')
+#' @param indent logical indent content
+#' @param justifyLastLine logical justify last line
+#' @param locked logical cell is locked
+#' @param pivotButton unknown
+#' @param quotePrefix unknown
+#' @param readingOrder reading order left to right
+#' @param relativeIndent relative indentation
+#' @param shrinkToFit logical shrink to fit
+#' @param textRotation degrees of text rotation
+#' @param vertical vertical alignment of content ('top', 'center', 'bottom')
+#' @param wrapText wrap text in cell
+# alignments
+#' @param applyAlignment logical apply alignment
+#' @param applyBorder logical apply border
+#' @param applyFill logical apply fill
+#' @param applyFont logical apply font
+#' @param applyNumberFormat logical apply number format
+#' @param applyProtection logical apply protection
+# ids
+#' @param borderId border ID to apply
+#' @param fillId fill ID to apply
+#' @param fontId font ID to apply
+#' @param numFmtId number format ID to apply
+#' @param xfId xf ID to apply
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb_add_cell_style(wb, "S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_cell_style <- function(
+      wb,
+      sheet,
+      dims,
+      applyAlignment    = NULL,
+      applyBorder       = NULL,
+      applyFill         = NULL,
+      applyFont         = NULL,
+      applyNumberFormat = NULL,
+      applyProtection   = NULL,
+      borderId          = NULL,
+      extLst            = NULL,
+      fillId            = NULL,
+      fontId            = NULL,
+      hidden            = NULL,
+      horizontal        = NULL,
+      indent            = NULL,
+      justifyLastLine   = NULL,
+      locked            = NULL,
+      numFmtId          = NULL,
+      pivotButton       = NULL,
+      quotePrefix       = NULL,
+      readingOrder      = NULL,
+      relativeIndent    = NULL,
+      shrinkToFit       = NULL,
+      textRotation      = NULL,
+      vertical          = NULL,
+      wrapText          = NULL,
+      xfId              = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$add_cell_style(
+    sheet             = sheet,
+    dims              = dims,
+    applyAlignment    = applyAlignment,
+    applyBorder       = applyBorder,
+    applyFill         = applyFill, 
+    applyFont         = applyFont, 
+    applyNumberFormat = applyNumberFormat,
+    applyProtection   = applyProtection,
+    borderId          = borderId,
+    extLst            = extLst, 
+    fillId            = fillId,
+    fontId            = fontId,
+    hidden            = hidden,
+    horizontal        = horizontal,
+    indent            = indent,
+    justifyLastLine   = justifyLastLine, 
+    locked            = locked, 
+    numFmtId          = numFmtId, 
+    pivotButton       = pivotButton,
+    quotePrefix       = quotePrefix,
+    readingOrder      = readingOrder,
+    relativeIndent    = relativeIndent,
+    shrinkToFit       = shrinkToFit,
+    textRotation      = textRotation,
+    vertical          = vertical,
+    wrapText          = wrapText,
+    xfId              = xfId
+  )
 }

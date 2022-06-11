@@ -4780,7 +4780,34 @@ wbWorkbook <- R6::R6Class(
 
       for (dim in dims) {
         xf_prev <- get_cell_styles(self, sheet, dim)
-        xf_new_cellstyle <- set_cellstyle(xf_prev, applyAlignment, applyBorder, applyFill, applyFont, applyNumberFormat, applyProtection, borderId, extLst, fillId, fontId, hidden, horizontal, indent, justifyLastLine, locked, numFmtId, pivotButton, quotePrefix, readingOrder, relativeIndent, shrinkToFit, textRotation, vertical, wrapText, xfId)
+        xf_new_cellstyle <- set_cellstyle(
+          xf_node           = xf_prev,
+          applyAlignment    = applyAlignment,
+          applyBorder       = applyBorder,
+          applyFill         = applyFill, 
+          applyFont         = applyFont, 
+          applyNumberFormat = applyNumberFormat,
+          applyProtection   = applyProtection,
+          borderId          = borderId,
+          extLst            = extLst, 
+          fillId            = fillId,
+          fontId            = fontId,
+          hidden            = hidden,
+          horizontal        = horizontal,
+          indent            = indent,
+          justifyLastLine   = justifyLastLine, 
+          locked            = locked, 
+          numFmtId          = numFmtId, 
+          pivotButton       = pivotButton,
+          quotePrefix       = quotePrefix,
+          readingOrder      = readingOrder,
+          relativeIndent    = relativeIndent,
+          shrinkToFit       = shrinkToFit,
+          textRotation      = textRotation,
+          vertical          = vertical,
+          wrapText          = wrapText,
+          xfId              = xfId
+        )
         self$styles_mgr$add(xf_new_cellstyle, xf_new_cellstyle)
         s_id <- self$styles_mgr$get_xf_id(xf_new_cellstyle)
         set_cell_style(self, sheet, dim, s_id)
