@@ -42,7 +42,8 @@ test_that("test add_fill()", {
 
 
   # check fill
-  exp <- c("<fill><patternFill patternType=\"none\"/></fill>", "<fill><patternFill patternType=\"gray125\"/></fill>",
+  exp <- c("<fill><patternFill patternType=\"none\"/></fill>",
+           "<fill><patternFill patternType=\"gray125\"/></fill>",
            "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFFF00\"/></patternFill></fill>"
   )
   got <- wb$styles_mgr$styles$fills
@@ -55,7 +56,8 @@ test_that("test add_fill()", {
   wb$add_fill("S1", dims = "A1:E6", color = c(rgb = "FFFFFF00"), every_nth_col = 2)
   wb$add_fill("S1", dims = "A1:E6", color = c(rgb = "FF00FF00"), every_nth_row = 2)
 
-  exp <- c("<fill><patternFill patternType=\"none\"/></fill>", "<fill><patternFill patternType=\"gray125\"/></fill>",
+  exp <- c("<fill><patternFill patternType=\"none\"/></fill>",
+           "<fill><patternFill patternType=\"gray125\"/></fill>",
            "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFFF00\"/></patternFill></fill>",
            "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF00FF00\"/></patternFill></fill>"
   )
@@ -142,3 +144,4 @@ test_that("test add_numfmt()", {
   expect_equal(exp, got)
 
 })
+
