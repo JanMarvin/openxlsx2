@@ -1932,15 +1932,29 @@ wb_add_image <- function(
 #' @param merged_cells remove all merged_cells
 #' @name cleanup
 #' @export
-wb_clean_sheet <- function(wb, sheet, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
-  sheet <- wb_validate_sheet(wb, sheet)
-  wb$clone()$clean_sheet(sheet = sheet, numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+wb_clean_sheet <- function(
+    wb,
+    sheet,
+    numbers      = TRUE,
+    characters   = TRUE,
+    styles       = TRUE,
+    merged_cells = TRUE
+) {
+  assert_workbook(wb)
+  wb$clone()$clean_sheet(
+    sheet        = sheet,
+    numbers      = numbers,
+    characters   = characters,
+    styles       = styles,
+    merged_cells = merged_cells
+  )
 }
 
 #' little worksheet opener
 #' @param wb a workbook
 #' @export
 wb_open <- function(wb) {
+  assert_workbook(wb)
   wb$open()
 }
 
@@ -1975,35 +1989,36 @@ wb_open <- function(wb) {
 wb_add_border <- function(
     wb,
     sheet,
-    dims = "A1",
-    bottom_color  = c(rgb = "FF000000"),
-    left_color    = c(rgb = "FF000000"),
-    right_color   = c(rgb = "FF000000"),
-    top_color     = c(rgb = "FF000000"),
-    bottom_border = "thin",
-    left_border   = "thin",
-    right_border  = "thin",
-    top_border    = "thin",
+    dims           = "A1",
+    bottom_color   = c(rgb = "FF000000"),
+    left_color     = c(rgb = "FF000000"),
+    right_color    = c(rgb = "FF000000"),
+    top_color      = c(rgb = "FF000000"),
+    bottom_border  = "thin",
+    left_border    = "thin",
+    right_border   = "thin",
+    top_border     = "thin",
     inner_hgrid    = NULL,
     inner_hcolor   = NULL,
     inner_vgrid    = NULL,
-    inner_vcolor   = NULL) {
-  sheet <- wb_validate_sheet(wb, sheet)
+    inner_vcolor   = NULL
+) {
+  assert_workbook(wb)
   wb$clone()$add_border(
-    sheet = sheet,
-    dims = dims,
-    bottom_color = bottom_color,
-    left_color = left_color,
-    right_color = right_color,
-    top_color = top_color,
+    sheet         = sheet,
+    dims          = dims,
+    bottom_color  = bottom_color,
+    left_color    = left_color,
+    right_color   = right_color,
+    top_color     = top_color,
     bottom_border = bottom_border,
-    left_border = left_border,
-    right_border = right_border,
-    top_border = top_border,
-    inner_hgrid = inner_hgrid,
-    inner_hcolor = inner_hcolor,
-    inner_vgrid = inner_vgrid,
-    inner_vcolor = inner_vcolor
+    left_border   = left_border,
+    right_border  = right_border,
+    top_border    = top_border,
+    inner_hgrid   = inner_hgrid,
+    inner_hcolor  = inner_hcolor,
+    inner_vgrid   = inner_vgrid,
+    inner_vcolor  = inner_vcolor
   )
 
 }
@@ -2047,18 +2062,18 @@ wb_add_fill <- function(
     wb,
     sheet,
     dims,
-    color = "",
-    pattern = "solid",
+    color         = "",
+    pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,
     every_nth_row = 1
 ) {
-  sheet <- wb_validate_sheet(wb, sheet)
+  assert_workbook(wb)
   wb$clone()$add_fill(
-    sheet = sheet,
-    dims = dims,
-    color = color,
-    pattern = pattern,
+    sheet         = sheet,
+    dims          = dims,
+    color         = color,
+    pattern       = pattern,
     gradient_fill = gradient_fill,
     every_nth_col = every_nth_col,
     every_nth_row = every_nth_row

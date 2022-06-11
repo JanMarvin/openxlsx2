@@ -4090,17 +4090,14 @@ wbWorkbook <- R6::R6Class(
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
-      sheet,
-      numbers = TRUE,
-      characters = TRUE,
-      styles = TRUE,
-      merged_cells = TRUE
+        sheet,
+        numbers      = TRUE,
+        characters   = TRUE,
+        styles       = TRUE,
+        merged_cells = TRUE
     ) {
-
-      sheet <- wb_validate_sheet(self, sheet)
-
+      sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
-
       invisible(self)
     },
 
@@ -4137,7 +4134,7 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
-      sheet         = 1,
+      sheet,
       dims          = "A1",
       bottom_color  = c(rgb = "FF000000"),
       left_color    = c(rgb = "FF000000"),
@@ -4547,14 +4544,15 @@ wbWorkbook <- R6::R6Class(
     #'   </gradientFill>"
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
-      sheet,
-      dims,
-      color = "",
-      pattern = "solid",
-      gradient_fill = "",
-      every_nth_col = 1,
-      every_nth_row = 1
+        sheet,
+        dims,
+        color         = "",
+        pattern       = "solid",
+        gradient_fill = "",
+        every_nth_col = 1,
+        every_nth_row = 1
     ) {
+      sheet <- private$get_sheet_index(sheet)
 
       new_fill <- create_fill(
         gradientFill = gradient_fill,
@@ -4565,8 +4563,7 @@ wbWorkbook <- R6::R6Class(
       # sample() will change the random seed
       smp <- paste0(safe_sample(letters, n = 6, replace = TRUE), collapse = "")
       snew_fill <- paste0(smp, "new_fill")
-      sxf_new_fill <- paste0(smp, "xf_new_fill")
-
+      # sxf_new_fill <- paste0(smp, "xf_new_fill") # not used?
 
       self$styles_mgr$add(new_fill, snew_fill)
 
@@ -4579,7 +4576,7 @@ wbWorkbook <- R6::R6Class(
       dims <- unname(unlist(did[rows, cols, drop = FALSE]))
 
       for (dim in dims) {
-        sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim))
+        # sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim)) # not used?
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
