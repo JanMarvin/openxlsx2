@@ -2741,8 +2741,16 @@ wbWorkbook <- R6::R6Class(
 
     # TODO remove_conditional_formatting?
 
+    #' @description Add conditional formatting
+    #' @param sheet sheet
+    #' @param cols cols
+    #' @param rows rows
+    #' @param rule rule
+    #' @param style style
+    #' @param type type
+    #' @param ... Additional parameters
+    #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
-        wb,
         sheet,
         cols,
         rows,
@@ -3110,7 +3118,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       private$do_conditional_formatting(
-        sheet,
+        sheet    = sheet,
         startRow = min(rows),
         endRow   = max(rows),
         startCol = min(cols),
