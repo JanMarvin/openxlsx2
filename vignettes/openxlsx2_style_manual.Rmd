@@ -19,12 +19,62 @@ knitr::opts_chunk$set(
 
 Welcome to the styling manual for `openxlsx2`. In this manual you will learn how to use `openxlsx2` to style your worksheets. data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these openxml workbooks in R. 
 
+# Styling showcase
+
+## Colors, text rotation and number formats
+
+Below we show you two ways how to create styled tables with `openxlsx2` one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table. We show both ways to create styles in `openxlsx2` to show how you could build on our functions or create your very own functions.
+
+```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="The example below, with increased column width."}
+knitr::include_graphics("worksheet_styling.png")
+```
+
+### the quick way: using high level functions
+
+```{r}
+# add some dummy data
+set.seed(123)
+mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
+colnames(mat) <- make.names(seq_len(ncol(mat)))
+border_col <- c(theme = "1")
+border_sty <- "thin"
+
+# prepare workbook with data and formated first row
+wb <- wb_workbook() %>% 
+  wb_add_worksheet("test") %>% 
+  wb_add_data("test", mat) %>% 
+  wb_add_border("test", "A1:AB1",
+                top_color = border_col, top_border = border_sty,
+                bottom_color = border_col, bottom_border = border_sty,
+                left_color = border_col, left_border = border_sty,
+                right_color = border_col, right_border = border_sty,
+                inner_hcolor = border_col, inner_hgrid = border_sty) %>% 
+  wb_add_fill("test", "A1:AB1", color = c(rgb = "FF334E6F")) %>% 
+  wb_add_font("test", "A1:AB1", name = "Arial", bold = "1", color= c(rgb = "FFFFFFFF"), size = "20") %>%
+  wb_add_cell_style("test", "A1:AB1", horizontal = "center", textRotation = "45")
+
+# create various number formats
+x <- c(0, 1, 2, 3, 4, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+       37, 38, 39, 40, 45, 46, 47, 48, 49)
+
+# apply the styles
+for (i in seq_along(x)) {
+  cell <- sprintf("%s2:%s29", int2col(i), int2col(i))
+  wb <- wb_add_numfmt(wb, "test", cell, x[i])
+}
+
+# wb$open()
+
+```
+
+### the long way: using bare metal functions
 ```{r}
 # create workbook
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb, "test")
 
 # add some dummy data to the worksheet
+set.seed(123)
 mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
 colnames(mat) <- make.names(seq_len(ncol(mat)))
 wb$add_data("test", mat, colNames = TRUE)
@@ -94,6 +144,9 @@ wb$worksheets[[1]]$sheetPr <- xml_node_create(
 # wb_open(wb)
 ```
 
+# Working with number formats
+
+Per default `openxlsx2` will pick up number formats for selected R classes.
 
 ## numfmts
 ```{r}
@@ -125,6 +178,8 @@ wb$add_data_table("S2", x = df, startRow = 4, rowNames = FALSE)
 
 
 ## numfmts2
+
+In addition, you can set the style to be picked up using `openxlsx2` options.
 
 ```{r}
 wb <- wb_workbook()
@@ -160,6 +215,7 @@ wb$add_data("test", df)
 options("openxlsx2.numFmt" = NULL)
 ```
 
+# Modifiying the column widths
 
 ## wb_set_col_widths
 ```{r}
@@ -173,6 +229,7 @@ wb <- wb_set_col_widths(wb, sheet, cols = cols, widths = "auto")
 wb
 ```
 
+# Adding borders
 
 ## add borders
 ```{r}
