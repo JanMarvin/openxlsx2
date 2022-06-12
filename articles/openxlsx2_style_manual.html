@@ -92,12 +92,65 @@
     
     
 <p>Welcome to the styling manual for <code>openxlsx2</code>. In this manual you will learn how to use <code>openxlsx2</code> to style your worksheets. data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these openxml workbooks in R.</p>
+<div class="section level2">
+<h2 id="styling-showcase">Styling showcase<a class="anchor" aria-label="anchor" href="#styling-showcase"></a>
+</h2>
+<div class="section level3">
+<h3 id="colors-text-rotation-and-number-formats">Colors, text rotation and number formats<a class="anchor" aria-label="anchor" href="#colors-text-rotation-and-number-formats"></a>
+</h3>
+<p>Below we show you two ways how to create styled tables with <code>openxlsx2</code> one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table. We show both ways to create styles in <code>openxlsx2</code> to show how you could build on our functions or create your very own functions.</p>
+<div class="figure">
+<img src="worksheet_styling.png" alt="The example below, with increased column width." width="100%"><p class="caption">
+The example below, with increased column width.
+</p>
+</div>
+<div class="section level4">
+<h4 id="the-quick-way-using-high-level-functions">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions"></a>
+</h4>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># add some dummy data</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">28</span><span class="op">*</span><span class="fl">28</span>, mean <span class="op">=</span> <span class="fl">44444</span>, sd <span class="op">=</span> <span class="fl">555</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">28</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">border_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span>
+<span class="va">border_sty</span> <span class="op">&lt;-</span> <span class="st">"thin"</span>
+
+<span class="co"># prepare workbook with data and formated first row</span>
+<span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"test"</span>, <span class="va">mat</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/wb_add_border.html">wb_add_border</a></span><span class="op">(</span><span class="st">"test"</span>, <span class="st">"A1:AB1"</span>,
+                top_color <span class="op">=</span> <span class="va">border_col</span>, top_border <span class="op">=</span> <span class="va">border_sty</span>,
+                bottom_color <span class="op">=</span> <span class="va">border_col</span>, bottom_border <span class="op">=</span> <span class="va">border_sty</span>,
+                left_color <span class="op">=</span> <span class="va">border_col</span>, left_border <span class="op">=</span> <span class="va">border_sty</span>,
+                right_color <span class="op">=</span> <span class="va">border_col</span>, right_border <span class="op">=</span> <span class="va">border_sty</span>,
+                inner_hcolor <span class="op">=</span> <span class="va">border_col</span>, inner_hgrid <span class="op">=</span> <span class="va">border_sty</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span><span class="st">"test"</span>, <span class="st">"A1:AB1"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF334E6F"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/wb_add_font.html">wb_add_font</a></span><span class="op">(</span><span class="st">"test"</span>, <span class="st">"A1:AB1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, bold <span class="op">=</span> <span class="st">"1"</span>, color<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFFFF"</span><span class="op">)</span>, size <span class="op">=</span> <span class="st">"20"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/wb_add_cell_style.html">wb_add_cell_style</a></span><span class="op">(</span><span class="st">"test"</span>, <span class="st">"A1:AB1"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, textRotation <span class="op">=</span> <span class="st">"45"</span><span class="op">)</span>
+
+<span class="co"># create various number formats</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">9</span>, <span class="fl">10</span>, <span class="fl">11</span>, <span class="fl">12</span>, <span class="fl">13</span>, <span class="fl">14</span>, <span class="fl">15</span>, <span class="fl">16</span>, <span class="fl">17</span>, <span class="fl">18</span>, <span class="fl">19</span>, <span class="fl">20</span>, <span class="fl">21</span>, <span class="fl">22</span>,
+       <span class="fl">37</span>, <span class="fl">38</span>, <span class="fl">39</span>, <span class="fl">40</span>, <span class="fl">45</span>, <span class="fl">46</span>, <span class="fl">47</span>, <span class="fl">48</span>, <span class="fl">49</span><span class="op">)</span>
+
+<span class="co"># apply the styles</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">cell</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s2:%s29"</span>, <span class="fu"><a href="../reference/int2col.html">int2col</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span>, <span class="fu"><a href="../reference/int2col.html">int2col</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_numfmt.html">wb_add_numfmt</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span>, <span class="va">cell</span>, <span class="va">x</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
+<span class="op">}</span>
+
+<span class="co"># wb$open()</span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="the-long-way-using-bare-metal-functions">the long way: using bare metal functions<a class="anchor" aria-label="anchor" href="#the-long-way-using-bare-metal-functions"></a>
+</h4>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create workbook</span>
 <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span><span class="op">)</span>
 
 <span class="co"># add some dummy data to the worksheet</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">28</span><span class="op">*</span><span class="fl">28</span>, mean <span class="op">=</span> <span class="fl">44444</span>, sd <span class="op">=</span> <span class="fl">555</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">28</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"test"</span>, <span class="va">mat</span>, colNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -170,10 +223,17 @@
 
 <span class="co"># # look at the beauty you've created</span>
 <span class="co"># wb_open(wb)</span></code></pre></div>
+</div>
+</div>
+</div>
 <div class="section level2">
-<h2 id="numfmts">numfmts<a class="anchor" aria-label="anchor" href="#numfmts"></a>
+<h2 id="working-with-number-formats">Working with number formats<a class="anchor" aria-label="anchor" href="#working-with-number-formats"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>Per default <code>openxlsx2</code> will pick up number formats for selected R classes.</p>
+<div class="section level3">
+<h3 id="numfmts">numfmts<a class="anchor" aria-label="anchor" href="#numfmts"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Create Workbook object and add worksheets</span>
 <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span>
@@ -209,10 +269,11 @@
 <span class="co">#&gt;  </span>
 <span class="co">#&gt;  Worksheet write order: 1, 2</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="numfmts2">numfmts2<a class="anchor" aria-label="anchor" href="#numfmts2"></a>
-</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="numfmts2">numfmts2<a class="anchor" aria-label="anchor" href="#numfmts2"></a>
+</h3>
+<p>In addition, you can set the style to be picked up using <code>openxlsx2</code> options.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span><span class="op">)</span>
 
@@ -245,10 +306,14 @@
 <span class="co">#&gt;  </span>
 <span class="co">#&gt;  Worksheet write order: 1</span></code></pre></div>
 </div>
+</div>
 <div class="section level2">
-<h2 id="wb_set_col_widths">wb_set_col_widths<a class="anchor" aria-label="anchor" href="#wb_set_col_widths"></a>
+<h2 id="modifiying-the-column-widths">Modifiying the column widths<a class="anchor" aria-label="anchor" href="#modifiying-the-column-widths"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="wb_set_col_widths">wb_set_col_widths<a class="anchor" aria-label="anchor" href="#wb_set_col_widths"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sheet</span> <span class="op">&lt;-</span> <span class="st">"mtcars"</span>
 <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span><span class="op">)</span>
@@ -268,10 +333,14 @@
 <span class="co">#&gt;  </span>
 <span class="co">#&gt;  Worksheet write order: 1</span></code></pre></div>
 </div>
+</div>
 <div class="section level2">
-<h2 id="add-borders">add borders<a class="anchor" aria-label="anchor" href="#add-borders"></a>
+<h2 id="adding-borders">Adding borders<a class="anchor" aria-label="anchor" href="#adding-borders"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="add-borders">add borders<a class="anchor" aria-label="anchor" href="#add-borders"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># full inner grid</span>
 <span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span>, rowColHeaders <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
@@ -328,15 +397,15 @@
 <span class="co">#&gt;  </span>
 <span class="co">#&gt;  Worksheet write order: 1, 2, 3, 4</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="styled-table">styled table<a class="anchor" aria-label="anchor" href="#styled-table"></a>
-</h2>
+<div class="section level3">
+<h3 id="styled-table">styled table<a class="anchor" aria-label="anchor" href="#styled-table"></a>
+</h3>
 <p>Below we show you two ways how to create styled tables with <code>openxlsx2</code> one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table.</p>
 <p><img src="styled_table.png"><!-- --></p>
-<div class="section level3">
-<h3 id="the-quick-way-using-high-level-functions">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions"></a>
-</h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="section level4">
+<h4 id="the-quick-way-using-high-level-functions-1">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions-1"></a>
+</h4>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># add some dummy data to the worksheet</span>
 <span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -356,10 +425,10 @@
                      bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span>,
                      top_border <span class="op">=</span> <span class="st">""</span>, left_border <span class="op">=</span> <span class="st">""</span>, right_border <span class="op">=</span> <span class="st">""</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="the-long-way-creating-everything-from-the-bone">the long way: creating everything from the bone<a class="anchor" aria-label="anchor" href="#the-long-way-creating-everything-from-the-bone"></a>
-</h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="section level4">
+<h4 id="the-long-way-creating-everything-from-the-bone">the long way: creating everything from the bone<a class="anchor" aria-label="anchor" href="#the-long-way-creating-everything-from-the-bone"></a>
+</h4>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># add some dummy data to the worksheet</span>
 <span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -404,6 +473,7 @@
 <span class="fu"><a href="../reference/set_cell_style.html">set_cell_style</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span>, <span class="va">cell</span>, <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_xf_id</span><span class="op">(</span><span class="st">"top_styles"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">cell</span> <span class="op">&lt;-</span> <span class="st">"B4:C4"</span>
 <span class="fu"><a href="../reference/set_cell_style.html">set_cell_style</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span>, <span class="va">cell</span>, <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_xf_id</span><span class="op">(</span><span class="st">"bottom_styles"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
 </div>
 </div>
   </div>
