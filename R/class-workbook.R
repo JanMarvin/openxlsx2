@@ -2785,312 +2785,320 @@ wbWorkbook <- R6::R6Class(
       # print(dxfId)
 
       # TODO use switch() instead
-      if (type == "colorScale") {
-        # type == "colourScale"
-        # - style is a vector of colours with length 2 or 3
-        # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
+      switch(
+        type,
 
-        if (is.null(style)) {
-          stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
-        }
+        expression = {
+          # rule <- gsub(" ", "", rule)
+          rule <- replace_legal_chars(rule)
+          rule <- gsub("!=", "&lt;&gt;", rule)
+          rule <- gsub("==", "=", rule)
 
-        if (!inherits(style, "character")) {
-          stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
-        }
+          if (!grepl("[A-Z]", substr(rule, 1, 2))) {
+            ## formula looks like "operatorX" , attach top left cell to rule
+            rule <-
+              paste0(get_cell_refs(data.frame(
+                "x" = min(rows), "y" = min(cols)
+              )), rule)
+          } ## else, there is a letter in the formula and apply as is
 
-        if (!length(style) %in% 2:3) {
-          stop("If type == 'colourScale', style must be a vector of length 2 or 3.")
-        }
 
-        if (!is.null(rule)) {
-          if (length(rule) != length(style)) {
-            stop("If type == 'colourScale', rule and style must have equal lengths.")
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
           }
-        }
 
-        style <-
-          validateColour(style, errorMsg = "Invalid colour specified in style.")
-
-        values <- rule
-        rule <- style
-      } else if (type == "dataBar") {
-        # type == "databar"
-        # - style is a vector of colours of length 2 or 3
-        # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
-
-        if (is.null(style)) {
-          style <- "#638EC6"
-        }
-
-        # TODO use inherits() not class()
-        if (!inherits(style, "character")) {
-          stop("If type == 'dataBar', style must be a vector of colours of length 1 or 2.")
-        }
-
-        if (!length(style) %in% 1:2) {
-          stop("If type == 'dataBar', style must be a vector of length 1 or 2.")
-        }
-
-        if (!is.null(rule)) {
-          if (length(rule) != length(style)) {
-            stop("If type == 'dataBar', rule and style must have equal lengths.")
+          # # TODO check type up front and validate selections there...
+          # # or only use style class...
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'expression', style must be a Style object.")
           }
-        }
 
+        },
 
-        ## Additional parameters passed by ...
-        if ("showValue" %in% names(params)) {
-          params$showValue <- as.integer(params$showValue)
-          if (is.na(params$showValue)) {
-            stop("showValue must be 0/1 or TRUE/FALSE")
+        colorScale = {
+          # - style is a vector of colours with length 2 or 3
+          # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
+          if (is.null(style)) {
+            stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
           }
-        }
 
-        if ("gradient" %in% names(params)) {
-          params$gradient <- as.integer(params$gradient)
-          if (is.na(params$gradient)) {
-            stop("gradient must be 0/1 or TRUE/FALSE")
+          if (!inherits(style, "character")) {
+            stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
           }
-        }
 
-        if ("border" %in% names(params)) {
-          params$border <- as.integer(params$border)
-          if (is.na(params$border)) {
-            stop("border must be 0/1 or TRUE/FALSE")
+          if (!length(style) %in% 2:3) {
+            stop("If type == 'colourScale', style must be a vector of length 2 or 3.")
           }
-        }
 
-        style <-
-          validateColour(style, errorMsg = "Invalid colour specified in style.")
-
-        values <- rule
-        rule <- style
-      } else if (type == "expression") {
-
-        # rule <- gsub(" ", "", rule)
-        rule <- replace_legal_chars(rule)
-        rule <- gsub("!=", "&lt;&gt;", rule)
-        rule <- gsub("==", "=", rule)
-
-        if (!grepl("[A-Z]", substr(rule, 1, 2))) {
-          ## formula looks like "operatorX" , attach top left cell to rule
-          rule <-
-            paste0(get_cell_refs(data.frame(
-              "x" = min(rows), "y" = min(cols)
-            )), rule)
-        } ## else, there is a letter in the formula and apply as is
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-        # # TODO check type up front and validate selections there...
-        # # or only use style class...
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'expression', style must be a Style object.")
-        }
-
-      } else if (type == "duplicatedValues") {
-        # type == "duplicatedValues"
-        # - style is a Style object
-        # - rule is ignored
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'duplicates', style must be a Style object.")
-        }
-
-        rule <- style
-      } else if (type == "containsText") {
-        # type == "contains"
-        # - style is Style object
-        # - rule is text to look for
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-        if (!inherits(rule, "character")) {
-          stop("If type == 'contains', rule must be a character vector of length 1.")
-        }
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'contains', style must be a Style object.")
-        }
-
-        values <- rule
-        rule <- style
-      } else if (type == "notContainsText") {
-        # type == "contains"
-        # - style is Style object
-        # - rule is text to look for
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-
-        if (!inherits(rule, "character")) {
-          stop("If type == 'notContains', rule must be a character vector of length 1.")
-        }
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'notContains', style must be a Style object.")
-        }
-
-        values <- rule
-        rule <- style
-      } else if (type == "beginsWith") {
-        # type == "contains"
-        # - style is Style object
-        # - rule is text to look for
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-
-        if (!inherits(rule, "character")) {
-          stop("If type == 'beginsWith', rule must be a character vector of length 1.")
-        }
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'beginsWith', style must be a Style object.")
-        }
-
-        values <- rule
-        rule <- style
-      } else if (type == "endsWith") {
-        # type == "contains"
-        # - style is Style object
-        # - rule is text to look for
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-
-        if (!inherits(rule, "character")) {
-          stop("If type == 'endsWith', rule must be a character vector of length 1.")
-        }
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'endsWith', style must be a Style object.")
-        }
-
-        values <- rule
-        rule <- style
-      } else if (type == "between") {
-        rule <- range(rule)
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'between', style must be a Style object.")
-        }
-
-      } else if (type == "topN") {
-        # type == "topN"
-        # - rule is ignored
-        # - 'rank' and 'percent' are named params
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'topN', style must be a Style object.")
-        }
-
-        ## Additional parameters passed by ...
-        if ("percent" %in% names(params)) {
-          params$percent <- as.integer(params$percent)
-          if (is.na(params$percent)) {
-            stop("percent must be 0/1 or TRUE/FALSE")
+          if (!is.null(rule)) {
+            if (length(rule) != length(style)) {
+              stop("If type == 'colourScale', rule and style must have equal lengths.")
+            }
           }
-        }
 
-        if ("rank" %in% names(params)) {
-          params$rank <- as.integer(params$rank)
-          if (is.na(params$rank)) {
-            stop("rank must be a number")
+          style <-
+            validateColour(style, errorMsg = "Invalid colour specified in style.")
+
+          values <- rule
+          rule <- style
+        },
+
+        dataBar = {
+          # - style is a vector of colours of length 2 or 3
+          # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
+
+          if (is.null(style)) {
+            style <- "#638EC6"
           }
-        }
 
-        values <- params
-        rule <- style
-      } else if (type == "bottomN") {
-        # type == "bottomN"
-        # - rule is ignored
-        # - 'rank' and 'percent' are named params
-
-
-        if (is.null(style)) {
-          style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
-          self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-          dxfId <- which(dxf == style) - 1
-        }
-
-        if (!grepl("^<dxf>", style)) {
-          stop("If type == 'bottomN', style must be a Style object.")
-        }
-
-        ## Additional parameters passed by ...
-        if ("percent" %in% names(params)) {
-          params$percent <- as.integer(params$percent)
-          if (is.na(params$percent)) {
-            stop("percent must be 0/1 or TRUE/FALSE")
+          # TODO use inherits() not class()
+          if (!inherits(style, "character")) {
+            stop("If type == 'dataBar', style must be a vector of colours of length 1 or 2.")
           }
-        }
 
-        if ("rank" %in% names(params)) {
-          params$rank <- as.integer(params$rank)
-          if (is.na(params$rank)) {
-            stop("rank must be a number")
+          if (!length(style) %in% 1:2) {
+            stop("If type == 'dataBar', style must be a vector of length 1 or 2.")
           }
-        }
 
-        values <- params
-        rule <- style
-      }
+          if (!is.null(rule)) {
+            if (length(rule) != length(style)) {
+              stop("If type == 'dataBar', rule and style must have equal lengths.")
+            }
+          }
+
+
+          ## Additional parameters passed by ...
+          if ("showValue" %in% names(params)) {
+            params$showValue <- as.integer(params$showValue)
+            if (is.na(params$showValue)) {
+              stop("showValue must be 0/1 or TRUE/FALSE")
+            }
+          }
+
+          if ("gradient" %in% names(params)) {
+            params$gradient <- as.integer(params$gradient)
+            if (is.na(params$gradient)) {
+              stop("gradient must be 0/1 or TRUE/FALSE")
+            }
+          }
+
+          if ("border" %in% names(params)) {
+            params$border <- as.integer(params$border)
+            if (is.na(params$border)) {
+              stop("border must be 0/1 or TRUE/FALSE")
+            }
+          }
+
+          style <-
+            validateColour(style, errorMsg = "Invalid colour specified in style.")
+
+          values <- rule
+          rule <- style
+        },
+
+        duplicatedValues = {
+
+          # type == "duplicatedValues"
+          # - style is a Style object
+          # - rule is ignored
+
+
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'duplicates', style must be a Style object.")
+          }
+
+          rule <- style
+        },
+
+        containsText = {
+          # - style is Style object
+          # - rule is text to look for
+
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+          if (!inherits(rule, "character")) {
+            stop("If type == 'contains', rule must be a character vector of length 1.")
+          }
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'contains', style must be a Style object.")
+          }
+
+          values <- rule
+          rule <- style
+        },
+
+        notContainsText = {
+          # - style is Style object
+          # - rule is text to look for
+
+
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+
+          if (!inherits(rule, "character")) {
+            stop("If type == 'notContains', rule must be a character vector of length 1.")
+          }
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'notContains', style must be a Style object.")
+          }
+
+          values <- rule
+          rule <- style
+        },
+
+        beginsWith = {
+          # - style is Style object
+          # - rule is text to look for
+
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+
+          if (!inherits(rule, "character")) {
+            stop("If type == 'beginsWith', rule must be a character vector of length 1.")
+          }
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'beginsWith', style must be a Style object.")
+          }
+
+          values <- rule
+          rule <- style
+        },
+
+        endsWith = {
+          # - style is Style object
+          # - rule is text to look for
+
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+
+          if (!inherits(rule, "character")) {
+            stop("If type == 'endsWith', rule must be a character vector of length 1.")
+          }
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'endsWith', style must be a Style object.")
+          }
+
+          values <- rule
+          rule <- style
+        },
+
+        between = {
+          rule <- range(rule)
+
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'between', style must be a Style object.")
+          }
+        },
+
+        topN = {
+          # - rule is ignored
+          # - 'rank' and 'percent' are named params
+
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'topN', style must be a Style object.")
+          }
+
+          ## Additional parameters passed by ...
+          if ("percent" %in% names(params)) {
+            params$percent <- as.integer(params$percent)
+            if (is.na(params$percent)) {
+              stop("percent must be 0/1 or TRUE/FALSE")
+            }
+          }
+
+          if ("rank" %in% names(params)) {
+            params$rank <- as.integer(params$rank)
+            if (is.na(params$rank)) {
+              stop("rank must be a number")
+            }
+          }
+
+          values <- params
+          rule <- style
+        },
+
+        bottomN = {
+          # - rule is ignored
+          # - 'rank' and 'percent' are named params
+          if (is.null(style)) {
+            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+
+            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
+            dxfId <- which(dxf == style) - 1
+          }
+
+          if (!grepl("^<dxf>", style)) {
+            stop("If type == 'bottomN', style must be a Style object.")
+          }
+
+          ## Additional parameters passed by ...
+          if ("percent" %in% names(params)) {
+            params$percent <- as.integer(params$percent)
+            if (is.na(params$percent)) {
+              stop("percent must be 0/1 or TRUE/FALSE")
+            }
+          }
+
+          if ("rank" %in% names(params)) {
+            params$rank <- as.integer(params$rank)
+            if (is.na(params$rank)) {
+              stop("rank must be a number")
+            }
+          }
+
+          values <- params
+          rule <- style
+        }
+      )
 
       private$do_conditional_formatting(
         sheet    = sheet,
