@@ -22,6 +22,8 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -237,10 +239,10 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
 \item \href{#method-wbWorkbook-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-wbWorkbook-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
-\item \href{#method-wbWorkbook-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
 \item \href{#method-wbWorkbook-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
+\item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
@@ -1118,55 +1120,6 @@ Adds data validation
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-conditional_formatting"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-conditional_formatting}{}}}
-\subsection{Method \code{conditional_formatting()}}{
-Set conditional formatting for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditional_formatting(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  dxfId,
-  formula,
-  type,
-  values,
-  params
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{dxfId}}{dxfId}
-
-\item{\code{formula}}{formula}
-
-\item{\code{type}}{type}
-
-\item{\code{values}}{values}
-
-\item{\code{params}}{params}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-merge_cells"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-merge_cells}{}}}
 \subsection{Method \code{merge_cells()}}{
@@ -1242,6 +1195,44 @@ Set freeze panes for a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_conditional_formatting"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_conditional_formatting}{}}}
+\subsection{Method \code{add_conditional_formatting()}}{
+Add conditional formatting
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_conditional_formatting(
+  sheet,
+  cols,
+  rows,
+  rule = NULL,
+  style = NULL,
+  type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
+    "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
+  ...
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{rows}}{rows}
+
+\item{\code{rule}}{rule}
+
+\item{\code{style}}{style}
+
+\item{\code{type}}{type}
+
+\item{\code{...}}{Additional parameters}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
