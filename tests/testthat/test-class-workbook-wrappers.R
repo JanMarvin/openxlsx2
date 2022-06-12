@@ -301,6 +301,7 @@ test_that("wb_add_formula() is a wrapper", {
 test_that("wb_add_conditional_formatting() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_wrapper("add_conditional_formatting", wb = wb, params = list(sheet = 1, cols = 1, rows = 1))
+})
 
 # wb_set_sheet_names() ----------------------------------------------------
 

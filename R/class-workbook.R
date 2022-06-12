@@ -2885,7 +2885,7 @@ wbWorkbook <- R6::R6Class(
       } else if (type == "expression") {
 
         # rule <- gsub(" ", "", rule)
-        rule <- replaceIllegalCharacters(rule)
+        rule <- replace_legal_chars(rule)
         rule <- gsub("!=", "&lt;&gt;", rule)
         rule <- gsub("==", "=", rule)
 
@@ -5273,7 +5273,7 @@ wbWorkbook <- R6::R6Class(
       # TODO consider defaults for logicals
       # TODO rename: setConditionFormatting?  Or addConditionalFormatting
       # TODO can this be moved to the sheet data?
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       sqref <- stri_join(
         get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
         collapse = ":"
