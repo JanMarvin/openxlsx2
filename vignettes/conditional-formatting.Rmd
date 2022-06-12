@@ -21,7 +21,6 @@ library(openxlsx2)
 
 ```{r}
 wb <- wb_workbook()
-wb$add_worksheet("cellIs")
 negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
 wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs, c(negStyle, posStyle))
@@ -30,6 +29,7 @@ wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs, c(negStyle, posStyle))
 ## Rule applies to all each cell in range
 
 ```{r}
+wb$add_worksheet("cellIs")
 wb$add_data("cellIs", -5:5)
 wb$add_data("cellIs", LETTERS[1:11], startCol = 2)
 wb$add_conditional_formatting("cellIs",
@@ -40,12 +40,12 @@ wb$add_conditional_formatting("cellIs",
                      cols = 1,
                      rows = 1:11, rule = "==0", style = posStyle
 )
-wb$add_worksheet("Moving Row")
 ```
 
 ## Highlight row dependent on first cell in row
 
 ```{r}
+wb$add_worksheet("Moving Row")
 wb$add_data("Moving Row", -5:5)
 wb$add_data("Moving Row", LETTERS[1:11], startCol = 2)
 wb$add_conditional_formatting("Moving Row",
@@ -56,12 +56,12 @@ wb$add_conditional_formatting("Moving Row",
                      cols = 1:2,
                      rows = 1:11, rule = "$A1>0", style = posStyle
 )
-wb$add_worksheet("Moving Col")
 ```
 
 ## Highlight column dependent on first cell in column
 
 ```{r}
+wb$add_worksheet("Moving Col")
 wb$add_data("Moving Col", -5:5)
 wb$add_data("Moving Col", LETTERS[1:11], startCol = 2)
 wb$add_conditional_formatting("Moving Col",
@@ -72,12 +72,12 @@ wb$add_conditional_formatting("Moving Col",
                      cols = 1:2,
                      rows = 1:11, rule = "A$1>0", style = posStyle
 )
-wb$add_worksheet("Dependent on")
 ```
 
 ## Highlight entire range cols X rows dependent only on cell A1
 
 ```{r}
+wb$add_worksheet("Dependent on")
 wb$add_data("Dependent on", -5:5)
 wb$add_data("Dependent on", LETTERS[1:11], startCol = 2)
 wb$add_conditional_formatting("Dependent on",
@@ -102,21 +102,21 @@ wb$add_conditional_formatting("Dependent on",
                      cols = 1,
                      rows = 16:25, rule = "B16>=0.5", style = posStyle
 )
-wb$add_worksheet("Duplicates")
 ```
 
 ## Highlight duplicates using default style
 
 ```{r}
+wb$add_worksheet("Duplicates")
 wb$add_data("Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
 wb$add_conditional_formatting("Duplicates", cols = 1, rows = 1:10, type = "duplicatedValues")
-wb$add_worksheet("containsText")
 ```
 
 ## Cells containing text
 
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
+wb$add_worksheet("containsText")
 wb$add_data("containsText", sapply(1:10, fn))
 wb$add_conditional_formatting("containsText", cols = 1, rows = 1:10, type = "contains", rule = "A")
 wb$add_worksheet("notcontainsText")
@@ -129,31 +129,31 @@ fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 wb$add_data("containsText", sapply(1:10, fn))
 wb$add_conditional_formatting("notcontainsText", cols = 1,
                      rows = 1:10, type = "notContainsText", rule = "A")
-wb$add_worksheet("beginsWith")
 ```
 
 ## Cells begins with text
 
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
+wb$add_worksheet("beginsWith")
 wb$add_data("beginsWith", sapply(1:100, fn))
 wb$add_conditional_formatting("beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
-wb$add_worksheet("endsWith")
 ```
 
 ## Cells ends with text
 
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
+wb$add_worksheet("endsWith")
 wb$add_data("endsWith", sapply(1:100, fn))
 wb$add_conditional_formatting("endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
-wb$add_worksheet("colorScale", zoom = 30)
 ```
 
 ## Colorscale colors cells based on cell value
 
 ```{r}
 df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
+wb$add_worksheet("colorScale", zoom = 30)
 wb$add_data("colorScale", df, colNames = FALSE) ## write data.frame
 ```
 
@@ -169,15 +169,14 @@ wb$add_conditional_formatting("colorScale",
 )
 wb_set_col_widths(wb, "colorScale", cols = seq_along(df), widths = 1.07)
 wb <- wb_set_row_heights(wb, "colorScale", rows = seq_len(nrow(df)), heights = 7.5)
-wb$add_worksheet("databar")
 ```
 
 ## Databars
 
 ```{r}
+wb$add_worksheet("databar")
 wb$add_data("databar", -5:5)
 wb$add_conditional_formatting("databar", cols = 1, rows = 1:11, type = "dataBar") ## Default ours
-wb$add_worksheet("between")
 ```
 
 ## Between
@@ -185,8 +184,9 @@ wb$add_worksheet("between")
 Highlight cells in interval [-2, 2]
 
 ```{r}
+wb$add_worksheet("between")
 wb$add_data("between", -5:5)
-wb$add_conditional_formatting("between", cols = 1, rows = 1:11, type = "between", rule = 2, 2)
+wb$add_conditional_formatting("between", cols = 1, rows = 1:11, type = "between", rule = 2)
 wb$add_worksheet("topN")
 ```
 
