@@ -2757,40 +2757,15 @@ wbWorkbook <- R6::R6Class(
         rule = NULL,
         style = NULL,
         # TODO add vector of possible values
-        type = "expression",
+        type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+                 "containsText", "notContainsText", "beginsWith", "endsWith",
+                 "between", "topN", "bottomN"),
         # Turn ... into "params"
         ...
     ) {
       # TODO include match.arg() for type
-      type <- tolower(type)
+      type <- match.arg(type)
       params <- list(...)
-
-      # TODO use switch() instead
-      if (type %in% c("colorscale", "colourscale")) {
-        type <- "colorScale"
-      } else if (type == "databar") {
-        type <- "dataBar"
-      } else if (type == "duplicates") {
-        type <- "duplicatedValues"
-      } else if (type == "contains") {
-        type <- "containsText"
-      } else if (type == "notcontains") {
-        type <- "notContainsText"
-      } else if (type == "beginswith") {
-        type <- "beginsWith"
-      } else if (type == "endswith") {
-        type <- "endsWith"
-      } else if (type == "between") {
-        type <- "between"
-      } else if (type == "topn") {
-        type <- "topN"
-      } else if (type == "bottomn") {
-        type <- "bottomN"
-      } else if (type != "expression") {
-        stop(
-          "Invalid type argument.  Type must be one of 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith', 'endsWith', 'contains' or 'notContains'"
-        )
-      }
 
       ## rows and cols
       if (!is.numeric(cols)) {

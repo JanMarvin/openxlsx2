@@ -8,8 +8,7 @@
 #' @param rows Rows to apply conditional formatting to
 #' @param rule The condition under which to apply the formatting. See examples.
 #' @param style A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'
-#' @param type Either 'expression', 'colourScale', 'databar', 'duplicates', 'beginsWith',
-#' 'endsWith', 'topN', 'bottomN', 'contains' or 'notContains' (case insensitive).
+#' @param type The type of conditional formatting rule to apply.
 #' @param ... See below
 #' @details See Examples.
 #'
@@ -93,7 +92,9 @@ wb_add_conditional_formatting <- function(
     rows,
     rule = NULL,
     style = NULL,
-    type = "expression",
+    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+             "containsText", "notContainsText", "beginsWith", "endsWith",
+             "between", "topN", "bottomN"),
     ...
 ) {
     assert_workbook(wb)
@@ -118,7 +119,9 @@ wb_conditional_formatting <- function(
     rows,
     rule = NULL,
     style = NULL,
-    type = "expression",
+    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+             "containsText", "notContainsText", "beginsWith", "endsWith",
+             "between", "topN", "bottomN"),
     ...
 ) {
   .Deprecated("wb_add_conditional_formatting()")

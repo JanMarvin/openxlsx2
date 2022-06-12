@@ -109,7 +109,7 @@ wb$add_worksheet("Duplicates")
 
 ```{r}
 wb$add_data("Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
-wb$add_conditional_formatting("Duplicates", cols = 1, rows = 1:10, type = "duplicates")
+wb$add_conditional_formatting("Duplicates", cols = 1, rows = 1:10, type = "duplicatedValues")
 wb$add_worksheet("containsText")
 ```
 
@@ -128,7 +128,7 @@ wb$add_worksheet("notcontainsText")
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 wb$add_data("containsText", sapply(1:10, fn))
 wb$add_conditional_formatting("notcontainsText", cols = 1,
-                     rows = 1:10, type = "notcontains", rule = "A")
+                     rows = 1:10, type = "notContainsText", rule = "A")
 wb$add_worksheet("beginsWith")
 ```
 
@@ -147,28 +147,28 @@ wb$add_worksheet("endsWith")
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 wb$add_data("endsWith", sapply(1:100, fn))
 wb$add_conditional_formatting("endsWith", cols = 1, rows = 1:100, type = "endsWith", rule = "A")
-wb$add_worksheet("colourScale", zoom = 30)
+wb$add_worksheet("colorScale", zoom = 30)
 ```
 
-## Colourscale colours cells based on cell value
+## Colorscale colors cells based on cell value
 
 ```{r}
 df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
-wb$add_data("colourScale", df, colNames = FALSE) ## write data.frame
+wb$add_data("colorScale", df, colNames = FALSE) ## write data.frame
 ```
 
-Rule is a vector or colours of length 2 or 3 (any hex colour or any of `colours()`).
+Rule is a vector or colors of length 2 or 3 (any hex color or any of `colors()`).
 If rule is `NULL`, min and max of cells is used. Rule must be the same length as style or L.
 
 ```{r}
-wb$add_conditional_formatting("colourScale",
+wb$add_conditional_formatting("colorScale",
                      cols = seq_along(df), rows = 1:nrow(df),
                      style = c("black", "white"),
                      rule = c(0, 255),
-                     type = "colourScale"
+                     type = "colorScale"
 )
-wb_set_col_widths(wb, "colourScale", cols = seq_along(df), widths = 1.07)
-wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
+wb_set_col_widths(wb, "colorScale", cols = seq_along(df), widths = 1.07)
+wb <- wb_set_row_heights(wb, "colorScale", rows = seq_len(nrow(df)), heights = 7.5)
 wb$add_worksheet("databar")
 ```
 
@@ -176,7 +176,7 @@ wb$add_worksheet("databar")
 
 ```{r}
 wb$add_data("databar", -5:5)
-wb$add_conditional_formatting("databar", cols = 1, rows = 1:11, type = "databar") ## Default ours
+wb$add_conditional_formatting("databar", cols = 1, rows = 1:11, type = "dataBar") ## Default ours
 wb$add_worksheet("between")
 ```
 
