@@ -5286,32 +5286,30 @@ wbWorkbook <- R6::R6Class(
                 formula[[3]]
               )
             }
-          } else {
-            if (length(formula) == 2L) {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
+          } else if (length(formula) == 2L) {
+            sprintf(
+              '<cfRule type="colorScale" priority="1"><colorScale>
                             <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
                             <color rgb="%s"/><color rgb="%s"/>
                            </colorScale></cfRule>',
-                values[[1]],
-                values[[2]],
-                formula[[1]],
-                formula[[2]]
-              )
-            } else {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
+              values[[1]],
+              values[[2]],
+              formula[[1]],
+              formula[[2]]
+            )
+          } else {
+            sprintf(
+              '<cfRule type="colorScale" priority="1"><colorScale>
                             <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
                             <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
                            </colorScale></cfRule>',
-                values[[1]],
-                values[[2]],
-                values[[3]],
-                formula[[1]],
-                formula[[2]],
-                formula[[3]]
-              )
-            }
+              values[[1]],
+              values[[2]],
+              values[[3]],
+              formula[[1]],
+              formula[[2]],
+              formula[[3]]
+            )
           }
         },
 
@@ -5495,7 +5493,7 @@ wbWorkbook <- R6::R6Class(
         stop("type `", type, "` is not a valid formatting rule")
       )
 
-      self$worksheets[[sheet]]$conditionalFormatting <- c(self$worksheets[[sheet]]$conditionalFormatting, cfRule)
+      private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
       names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
       invisible(self)
     },
