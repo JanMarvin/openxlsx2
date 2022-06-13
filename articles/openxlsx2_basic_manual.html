@@ -340,6 +340,42 @@
 <span class="co">#&gt; 10 FALSE    3 NA  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="co">#&gt; 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="importing-as-workbook">Importing as workbook<a class="anchor" aria-label="anchor" href="#importing-as-workbook"></a>
+</h3>
+<p>In addition to importing directly from xlsx or xlsm files, <code>openxlsx2</code> provides the <code>wbWorkbook</code> class used for importing and modifying entire the openxml files in <code>R</code>. This <code>workbook</code> class is the heart of <code>openxlsx2</code> and probably the reason why you are reading this manual in the first place.</p>
+<p>Importing a file into a workbook looks like this:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># the file we are going to load</span>
+<span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"loadExample.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span>
+<span class="co"># loading the file into the workbook</span>
+<span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">xlsxFile</span><span class="op">)</span></code></pre></div>
+<p>The additional options <code><a href="../reference/wb_load.html">wb_load()</a></code> provides are for internal use: <code>sheet</code> loads only a selected sheet from the workbook and <code>data_only</code> reads only the data parts from a workbook and ignores any additional graphics or pivot tables. Both functions create workbook objects that can only be used to read data, and we do not recommend end users to use them. Especially not if they intend to re-export the workbook afterwards.</p>
+<p>Once a workbook is imported, we provide several functions to interact with and modify it (the <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> function mentioned above works the same way for an imported workbook). It is possible to add new sheets and remove sheets, as well as to add or remove data. R-plots can be inserted and also the style of the workbook can be changed, new fonts, background colors and number formats. There is a wealth of options explained in the man pages and the additional style vignette (more vignettes to follow).</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="exporting-data">Exporting data<a class="anchor" aria-label="anchor" href="#exporting-data"></a>
+</h2>
+<div class="section level3">
+<h3 id="exporting-data-frames-or-vectors">Exporting data frames or vectors<a class="anchor" aria-label="anchor" href="#exporting-data-frames-or-vectors"></a>
+</h3>
+<p>If you want to export a data frame from R, you can use <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> which will create an xlsx file. This file can be tweaked further. The man page provides various options (further explanation and examples will follow).</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/write_xlsx.html">write_xlsx</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.xlsx"</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="exporting-wbworkbooks">Exporting <code>wbWorkbooks</code><a class="anchor" aria-label="anchor" href="#exporting-wbworkbooks"></a>
+</h3>
+<p>Imported workbooks can be saved as xlsx or xlsm files with the wrapper <code><a href="../reference/wb_save.html">wb_save()</a></code> or with <code>wb$save()</code>. Both functions take the filename and an optional <code>Overwrite</code> option. If the latter is set, an optional guard is provided to check if the file you want to write already exists. But be careful, this is optional. The default is to save the file and replace an existing file. Of course, in Windows, files that are locked (for example, if they were opened by another process) will not be replaced.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># replace the existing file</span>
+<span class="va">wb</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="st">"mtcars.xlsx"</span><span class="op">)</span>
+
+<span class="co"># do not overwrite the exisisting file</span>
+<span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="va">wb</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="st">"mtcars.xlsx"</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; Error in wb$save("mtcars.xlsx", overwrite = FALSE) : File already exists!</span></code></pre></div>
+</div>
 </div>
   </div>
 
@@ -360,7 +396,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer>

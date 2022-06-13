@@ -75,18 +75,27 @@ formatting of the original .xlsx file.</p>
     <h2>Arguments</h2>
     <dl><dt>file</dt>
 <dd><p>A path to an existing .xlsx or .xlsm file</p></dd>
+
+
 <dt>xlsxFile</dt>
 <dd><p>alias for file</p></dd>
+
+
 <dt>sheet</dt>
 <dd><p>optional sheet parameter. if this is applied, only the selected
 sheet will be loaded.</p></dd>
+
+
 <dt>data_only</dt>
 <dd><p>mode to import if only a data frame should be returned. This
 strips the wbWorkbook to a bare minimum.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Workbook object.</p>
+    
+
+<p>Workbook object.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -107,18 +116,18 @@ strips the wbWorkbook to a bare minimum.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Images:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 1: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/media/image2.jpeg"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 2: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/media/image1.jpeg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 1: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/media/image2.jpeg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 2: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/media/image1.jpeg"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Charts:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 1: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/colors2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 2: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/style2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 3: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/chart2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 4: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/chart1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 5: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/style1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 6: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/colors1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 7: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/_rels/chart2.xml.rels"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 8: "/tmp/RtmpaIqzsb/_openxlsx_wb_load270e3da1a3d8/xl/charts/_rels/chart1.xml.rels"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 1: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/colors2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 2: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/style2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 3: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/chart2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 4: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/chart1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 5: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/style1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 6: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/colors1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 7: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/_rels/chart2.xml.rels"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 8: "/tmp/RtmpArd578/_openxlsx_wb_load27b935ffe0f1/xl/charts/_rels/chart1.xml.rels"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
 <span class="r-in"><span class="co">## Add a worksheet</span></span>
 <span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"A new worksheet"</span><span class="op">)</span></span>
@@ -142,7 +151,7 @@ strips the wbWorkbook to a bare minimum.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

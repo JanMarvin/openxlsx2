@@ -94,40 +94,75 @@ written down and not optimized etc. The goal was to have something working.</p>
     <h2>Arguments</h2>
     <dl><dt>xlsxFile</dt>
 <dd><p>An xlsx file, Workbook object or URL to xlsx file.</p></dd>
+
+
 <dt>sheet</dt>
 <dd><p>Either sheet name or index. When missing the first sheet in the workbook is selected.</p></dd>
+
+
 <dt>startRow</dt>
 <dd><p>first row to begin looking for data.</p></dd>
+
+
 <dt>colNames</dt>
 <dd><p>If TRUE, the first row of data will be used as column names.</p></dd>
+
+
 <dt>rowNames</dt>
 <dd><p>If TRUE, the first col of data will be used as row names.</p></dd>
+
+
 <dt>detectDates</dt>
 <dd><p>If TRUE, attempt to recognize dates and perform conversion.</p></dd>
+
+
 <dt>skipEmptyCols</dt>
 <dd><p>If TRUE, empty columns are skipped.</p></dd>
+
+
 <dt>skipEmptyRows</dt>
 <dd><p>If TRUE, empty rows are skipped.</p></dd>
+
+
 <dt>rows</dt>
 <dd><p>A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.</p></dd>
+
+
 <dt>cols</dt>
 <dd><p>A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.</p></dd>
+
+
 <dt>na.strings</dt>
 <dd><p>A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.</p></dd>
+
+
 <dt>fillMergedCells</dt>
 <dd><p>If TRUE, the value in a merged cell is given to all cells within the merge.</p></dd>
+
+
 <dt>dims</dt>
 <dd><p>Character string of type "A1:B2" as optional dimensions to be imported.</p></dd>
+
+
 <dt>showFormula</dt>
 <dd><p>If TRUE, the underlying Excel formulas are shown.</p></dd>
+
+
 <dt>convert</dt>
 <dd><p>If TRUE, a conversion to dates and numerics is attempted.</p></dd>
+
+
 <dt>types</dt>
 <dd><p>A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created</p></dd>
+
+
 <dt>definedName</dt>
 <dd><p>(deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.</p></dd>
+
+
 <dt>named_region</dt>
 <dd><p>Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
@@ -2435,7 +2470,7 @@ written down and not optimized etc. The goal was to have something working.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

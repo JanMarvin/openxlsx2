@@ -86,36 +86,61 @@
     <h2>Arguments</h2>
     <dl><dt>xlsxFile</dt>
 <dd><p>An xlsx file, Workbook object or URL to xlsx file.</p></dd>
+
+
 <dt>sheet</dt>
 <dd><p>The name or index of the sheet to read data from.</p></dd>
+
+
 <dt>startRow</dt>
 <dd><p>first row to begin looking for data.  Empty rows at the top of a file are always skipped,
 regardless of the value of startRow.</p></dd>
+
+
 <dt>colNames</dt>
 <dd><p>If <code>TRUE</code>, the first row of data will be used as column names.</p></dd>
+
+
 <dt>rowNames</dt>
 <dd><p>If <code>TRUE</code>, first column of data will be used as row names.</p></dd>
+
+
 <dt>detectDates</dt>
 <dd><p>If <code>TRUE</code>, attempt to recognize dates and perform conversion.</p></dd>
+
+
 <dt>skipEmptyRows</dt>
 <dd><p>If <code>TRUE</code>, empty rows are skipped else empty rows after the first row containing data
 will return a row of NAs.</p></dd>
+
+
 <dt>skipEmptyCols</dt>
 <dd><p>If <code>TRUE</code>, empty columns are skipped.</p></dd>
+
+
 <dt>rows</dt>
 <dd><p>A numeric vector specifying which rows in the Excel file to read.
 If NULL, all rows are read.</p></dd>
+
+
 <dt>cols</dt>
 <dd><p>A numeric vector specifying which columns in the Excel file to read.
 If NULL, all columns are read.</p></dd>
+
+
 <dt>namedRegion</dt>
 <dd><p>A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.</p></dd>
+
+
 <dt>na.strings</dt>
 <dd><p>A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>data.frame</p>
+    
+
+<p>data.frame</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -148,7 +173,7 @@ If NULL, all columns are read.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
