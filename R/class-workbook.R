@@ -2748,7 +2748,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rule rule
     #' @param style style
     #' @param type type
-    #' @param ... Additional parameters
+    #' @param params Additional parameters
     #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
         sheet,
@@ -2760,12 +2760,15 @@ wbWorkbook <- R6::R6Class(
         type = c("expression", "colorScale", "dataBar", "duplicatedValues",
                  "containsText", "notContainsText", "beginsWith", "endsWith",
                  "between", "topN", "bottomN"),
-        # Turn ... into "params"
-        ...
+        params = list(
+          showValues = NULL,
+          gradient = NULL,
+          border = NULL,
+          percent = NULL,
+          rank = NULL
+        )
     ) {
-      # TODO include match.arg() for type
       type <- match.arg(type)
-      params <- list(...)
 
       ## rows and cols
       if (!is.numeric(cols)) {
