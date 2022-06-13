@@ -2771,8 +2771,8 @@ wbWorkbook <- R6::R6Class(
       if (!is.numeric(cols)) {
         cols <- col2int(cols)
       }
-      rows <- as.integer(rows)
 
+      rows <- as.integer(rows)
 
       ## check valid rule
       values <- NULL
@@ -2782,30 +2782,27 @@ wbWorkbook <- R6::R6Class(
       dxf <- xml_node(dxfs, "dxf")
       dxfId <- which(dxf == style) - 1
 
-      # print(dxfId)
-
-      # TODO use switch() instead
       switch(
         type,
 
         expression = {
-          # rule <- gsub(" ", "", rule)
-          rule <- replace_legal_chars(rule)
-          rule <- gsub("!=", "&lt;&gt;", rule)
+          # TODO should we bother to do any conversions or require the text
+          # entered to be exactly as an Excel expression would be written?
+          rule <- gsub("!=", "<>", rule)
           rule <- gsub("==", "=", rule)
+          rule <- replace_legal_chars(rule) # replaces <>
 
           if (!grepl("[A-Z]", substr(rule, 1, 2))) {
             ## formula looks like "operatorX" , attach top left cell to rule
-            rule <-
-              paste0(get_cell_refs(data.frame(
-                "x" = min(rows), "y" = min(cols)
-              )), rule)
+            rule <- paste0(
+              get_cell_refs(data.frame(min(rows), min(cols))),
+              rule
+            )
           } ## else, there is a letter in the formula and apply as is
 
 
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
@@ -2813,29 +2810,25 @@ wbWorkbook <- R6::R6Class(
           # # TODO check type up front and validate selections there...
           # # or only use style class...
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'expression', style must be a Style object.")
+            stop("When type == 'expression', style must be a Style object.")
           }
-
         },
 
         colorScale = {
+          msg <- "When type == 'colourScale', "
           # - style is a vector of colours with length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
-          if (is.null(style)) {
-            stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
-          }
-
-          if (!inherits(style, "character")) {
-            stop("If type == 'colourScale', style must be a vector of colours of length 2 or 3.")
+          if (!is.character(style)) {
+            stop(msg, "style must be a vector of colours of length 2 or 3.")
           }
 
           if (!length(style) %in% 2:3) {
-            stop("If type == 'colourScale', style must be a vector of length 2 or 3.")
+            stop(msg, "style must be a vector of length 2 or 3.")
           }
 
           if (!is.null(rule)) {
             if (length(rule) != length(style)) {
-              stop("If type == 'colourScale', rule and style must have equal lengths.")
+              stop(msg, "rule and style must have equal lengths.")
             }
           }
 
@@ -2850,6 +2843,7 @@ wbWorkbook <- R6::R6Class(
         },
 
         dataBar = {
+          msg <- "When type == 'dataBar', "
           # - style is a vector of colours of length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
 
@@ -2859,44 +2853,25 @@ wbWorkbook <- R6::R6Class(
 
           # TODO use inherits() not class()
           if (!inherits(style, "character")) {
-            stop("If type == 'dataBar', style must be a vector of colours of length 1 or 2.")
+            stop(msg, "style must be a vector of colours of length 1 or 2.")
           }
 
           if (!length(style) %in% 1:2) {
-            stop("If type == 'dataBar', style must be a vector of length 1 or 2.")
+            stop(msg, "style must be a vector of length 1 or 2.")
           }
 
           if (!is.null(rule)) {
             if (length(rule) != length(style)) {
-              stop("If type == 'dataBar', rule and style must have equal lengths.")
+              stop(msg, "rule and style must have equal lengths.")
             }
           }
-
 
           ## Additional parameters passed by ...
-          if ("showValue" %in% names(params)) {
-            params$showValue <- as.integer(params$showValue)
-            if (is.na(params$showValue)) {
-              stop("showValue must be 0/1 or TRUE/FALSE")
-            }
-          }
           # showValue, gradient, border
           style <- check_valid_colour(style)
 
-          if ("gradient" %in% names(params)) {
-            params$gradient <- as.integer(params$gradient)
-            if (is.na(params$gradient)) {
-              stop("gradient must be 0/1 or TRUE/FALSE")
-            }
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
-          }
-
-          if ("border" %in% names(params)) {
-            params$border <- as.integer(params$border)
-            if (is.na(params$border)) {
-              stop("border must be 0/1 or TRUE/FALSE")
-            }
           }
 
           values <- rule
@@ -2919,7 +2894,7 @@ wbWorkbook <- R6::R6Class(
 
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'duplicates', style must be a Style object.")
+            stop("When type == 'duplicates', style must be a Style object.")
           }
 
           rule <- style
@@ -2929,6 +2904,7 @@ wbWorkbook <- R6::R6Class(
           # - style is Style object
           # - rule is text to look for
 
+          msg <- "When type == 'contains', "
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
@@ -2937,11 +2913,11 @@ wbWorkbook <- R6::R6Class(
           }
 
           if (!inherits(rule, "character")) {
-            stop("If type == 'contains', rule must be a character vector of length 1.")
+            stop(msg, "rule must be a character vector of length 1.")
           }
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'contains', style must be a Style object.")
+            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -2951,8 +2927,7 @@ wbWorkbook <- R6::R6Class(
         notContainsText = {
           # - style is Style object
           # - rule is text to look for
-
-
+          msg <- "When type == 'notContains', "
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
@@ -2962,11 +2937,11 @@ wbWorkbook <- R6::R6Class(
 
 
           if (!inherits(rule, "character")) {
-            stop("If type == 'notContains', rule must be a character vector of length 1.")
+            stop(msg, "rule must be a character vector of length 1.")
           }
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'notContains', style must be a Style object.")
+            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -2976,7 +2951,7 @@ wbWorkbook <- R6::R6Class(
         beginsWith = {
           # - style is Style object
           # - rule is text to look for
-
+          msg <- "When type == 'beginsWith', "
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 
@@ -2985,12 +2960,12 @@ wbWorkbook <- R6::R6Class(
           }
 
 
-          if (!inherits(rule, "character")) {
-            stop("If type == 'beginsWith', rule must be a character vector of length 1.")
+          if (!is.character("character")) {
+            stop(msg, "rule must be a character vector of length 1.")
           }
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'beginsWith', style must be a Style object.")
+            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3000,6 +2975,7 @@ wbWorkbook <- R6::R6Class(
         endsWith = {
           # - style is Style object
           # - rule is text to look for
+          msg <- "When type == 'endsWith', "
 
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
@@ -3010,11 +2986,11 @@ wbWorkbook <- R6::R6Class(
 
 
           if (!inherits(rule, "character")) {
-            stop("If type == 'endsWith', rule must be a character vector of length 1.")
+            stop(msg, "rule must be a character vector of length 1.")
           }
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'endsWith', style must be a Style object.")
+            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3032,7 +3008,7 @@ wbWorkbook <- R6::R6Class(
           }
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'between', style must be a Style object.")
+            stop("When type == 'between', style must be a Style object.")
           }
         },
 
@@ -3048,23 +3024,11 @@ wbWorkbook <- R6::R6Class(
           }
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'topN', style must be a Style object.")
+            stop("when type == 'topN', style must be a Style object.")
           }
 
           ## Additional parameters passed by ...
-          if ("percent" %in% names(params)) {
-            params$percent <- as.integer(params$percent)
-            if (is.na(params$percent)) {
-              stop("percent must be 0/1 or TRUE/FALSE")
-            }
-          }
-
-          if ("rank" %in% names(params)) {
-            params$rank <- as.integer(params$rank)
-            if (is.na(params$rank)) {
-              stop("rank must be a number")
-            }
-          }
+          # percent, rank
 
           values <- params
           rule <- style
@@ -3081,23 +3045,11 @@ wbWorkbook <- R6::R6Class(
           }
 
           if (!grepl("^<dxf>", style)) {
-            stop("If type == 'bottomN', style must be a Style object.")
+            stop("When type == 'bottomN', style must be a Style object.")
           }
 
           ## Additional parameters passed by ...
-          if ("percent" %in% names(params)) {
-            params$percent <- as.integer(params$percent)
-            if (is.na(params$percent)) {
-              stop("percent must be 0/1 or TRUE/FALSE")
-            }
-          }
-
-          if ("rank" %in% names(params)) {
-            params$rank <- as.integer(params$rank)
-            if (is.na(params$rank)) {
-              stop("rank must be a number")
-            }
-          }
+          # percent, rank
 
           values <- params
           rule <- style
