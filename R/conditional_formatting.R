@@ -12,71 +12,47 @@
 #' @param params Additional parameters passed.  See **Details** for more
 #' @details See Examples.
 #'
-#' If type == "expression"
-#' \itemize{
-#'   \item{style is a Style object.}
-#'   \item{rule is an expression. Valid operators are "<", "<=", ">", ">=", "==", "!=".}
-#' }
+#' @details
+#' Conditional formatting types accept different parameters.  Unless noted,
+#' unlisted parameters are ignored.
 #'
-#' If type == "colourScale"
-#' \itemize{
-#'   \item{style is a vector of colours with length 2 or 3}
-#'   \item{rule can be NULL or a vector of colours of equal length to styles}
-#' }
-#'
-#' If type == "databar"
-#' \itemize{
-#'   \item{style is a vector of colours with length 2 or 3}
-#'   \item{rule is a numeric vector specifying the range of the databar colours. Must be equal length to style}
-#'   \item{...
-#'   \itemize{
-#'     \item{**showvalue** If FALSE the cell value is hidden. Default TRUE.}
-#'     \item{**gradient** If FALSE colour gradient is removed. Default TRUE.}
-#'     \item{**border** If FALSE the border around the database is hidden. Default TRUE.}
-#'      }
-#'    }
-#' }
-#'
-#' If type == "duplicates"
-#' \itemize{
-#'   \item{style is a Style object.}
-#'   \item{rule is ignored.}
-#' }
-#'
-#' If type == "contains"
-#' \itemize{
-#'   \item{style is a Style object.}
-#'   \item{rule is the text to look for within cells}
-#' }
-#'
-#' If type == "between"
-#' \itemize{
-#'   \item{style is a Style object.}
-#'   \item{rule is a numeric vector of length 2 specifying lower and upper bound (Inclusive)}
-#' }
-#'
-#' If type == "topN"
-#' \itemize{
-#'   \item{style is a Style object.}
-#'   \item{rule is ignored}
-#'   \item{...
-#'   \itemize{
-#'     \item{**rank** numeric vector of length 1 indicating number of highest values.}
-#'     \item{**percent** TRUE if you want top N percentage.}
-#'      }
-#'    }
-#' }
-#'
-#' If type == "bottomN"
-#' \itemize{
-#'   \item{style is a Style object.}
-#'   \item{rule is ignored}
-#'   \item{...
-#'   \itemize{
-#'     \item{**rank** numeric vector of length 1 indicating number of lowest values.}
-#'     \item{**percent** TRUE if you want bottom N percentage.}
-#'      }
-#'    }
+#' \describe{
+#'   \item{`expression`}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[rule]`\cr An Excel expression (as a character). Valid operators are: `<`, `<=`, `>`, `>=`, `==`, `!=`
+#'   }
+#'   \item{colorScale}{
+#'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
+#'     `[rule]`\cr `NULL` or a `character` vector of valid colors of equal length to `styles`
+#'   }
+#'   \item{dataBar}{
+#'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
+#'     `[rule]`\cr A `numeric` vector specifying the range of the databar colors. Must be equal length to `style`\cr\cr
+#'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
+#'     `[params$gradient]`\cr If `FALSE` colour gradient is removed. Default `TRUE`\cr\cr
+#'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE`
+#'   }
+#'   \item{duplicated}{
+#'     `[style]`\cr A `Style` object
+#'   }
+#'   \item{contains}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[rule]`\cr The text to look for within cells
+#'   }
+#'   \item{between}{
+#'     `[style]`\cr A Style object.\cr\cr
+#'     `[rule]`\cr A `numeric` vector of length `2` specifying lower and upper bound (Inclusive)
+#'   }
+#'   \item{topN}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of highest values\cr\cr
+#'     `[params$percent]` If `TRUE` uses percentage
+#'   }
+#'   \item{bottomN}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of lowest values\cr\cr
+#'     `[params$percent]`\cr If `TRUE` uses percentage
+#'   }
 #' }
 #'
 #' @export
@@ -84,7 +60,6 @@
 #' wb <- wb_workbook()
 #' wb$add_worksheet("a")
 #' wb$add_conditional_formatting("a", 1, 1, )
-#'
 wb_add_conditional_formatting <- function(
     wb,
     sheet,
