@@ -80,7 +80,6 @@ wb_add_conditional_formatting <- function(
 ) {
     assert_workbook(wb)
     wb$add_conditional_formatting(
-      wb    = wb,
       sheet = sheet,
       cols  = cols,
       rows  = rows,
