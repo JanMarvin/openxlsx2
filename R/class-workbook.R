@@ -2791,6 +2791,12 @@ wbWorkbook <- R6::R6Class(
         expression = {
           # TODO should we bother to do any conversions or require the text
           # entered to be exactly as an Excel expression would be written?
+          msg <- "When type == 'expression', "
+
+          if (!is.character(rule) || length(rule) != 1L) {
+            stop(msg, "rule must be a single length character vector")
+          }
+
           rule <- gsub("!=", "<>", rule)
           rule <- gsub("==", "=", rule)
           rule <- replace_legal_chars(rule) # replaces <>
@@ -2813,7 +2819,7 @@ wbWorkbook <- R6::R6Class(
           # # TODO check type up front and validate selections there...
           # # or only use style class...
           if (!grepl("^<dxf>", style)) {
-            stop("When type == 'expression', style must be a Style object.")
+            stop(msg, "style must be a Style object.")
           }
         },
 
