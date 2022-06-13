@@ -39,9 +39,9 @@ na_to_null <- function(x) {
 }
 
 # opposite of %in%
-`%out%` <- function(x, table) match(x, table, nomatch = 0L) == 0L
-
-
+`%out%` <- function(x, table) {
+  match(x, table, nomatch = 0L) == 0L
+}
 
 #' helper function to create temporary directory for testing purpose
 #' @param name for the temp file
