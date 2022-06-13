@@ -1211,7 +1211,7 @@ Add conditional formatting
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
     "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
-  params = list(showValues = NULL, gradient = NULL, border = NULL, percent = NULL, rank
+  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank
     = NULL)
 )}\if{html}{\out{</div>}}
 }
