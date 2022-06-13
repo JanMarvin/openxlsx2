@@ -2761,11 +2761,11 @@ wbWorkbook <- R6::R6Class(
                  "containsText", "notContainsText", "beginsWith", "endsWith",
                  "between", "topN", "bottomN"),
         params = list(
-          showValues = NULL,
-          gradient = NULL,
-          border = NULL,
-          percent = NULL,
-          rank = NULL
+          showValue = TRUE,
+          gradient  = TRUE,
+          border    = TRUE,
+          percent   = FALSE,
+          rank      = NULL
         )
     ) {
       type <- match.arg(type)
@@ -5324,10 +5324,6 @@ wbWorkbook <- R6::R6Class(
             "F7189283-14F7-4DE0-9601-54DE9DB",
             40000L + length(xml_node(extLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting"))
           )
-
-          showValue <- as.integer(params$showValue %||% 1L)
-          gradient  <- as.integer(params$gradient  %||% 1L)
-          border    <- as.integer(params$border    %||% 1L)
 
           newExtLst <- gen_databar_extlst(
             guid      = guid,

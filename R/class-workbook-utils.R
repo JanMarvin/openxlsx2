@@ -133,21 +133,10 @@ validate_conditional_formatting_params <- function(params) {
     )
   )
 
-  if (!is.null(params$showValue)) {
-    params$showValue <- as_binary(params$showValue)
-  }
-
-  if (!is.null(params$gradient)) {
-    params$gradient <- as_binary(params$gradient)
-  }
-
-  if (!is.null(params$border)) {
-    params$border <- as_binary(params$border)
-  }
-
-  if (!is.null(params$percent)) {
-    params$percent <- as_binary(params$percent)
-  }
+  params$showValue <- as_binary(params$showValue)
+  params$gradient  <- as_binary(params$gradient)
+  params$border    <- as_binary(params$border)
+  params$percent   <- as_binary(params$percent)
 
   if (!is.null(params$rank)) {
     if (!is_integer_ish(params$rank)) {

@@ -71,11 +71,11 @@ wb_add_conditional_formatting <- function(
              "containsText", "notContainsText", "beginsWith", "endsWith",
              "between", "topN", "bottomN"),
     params = list(
-      showValues = NULL,
-      gradient = NULL,
-      border = NULL,
-      percent = NULL,
-      rank = NULL
+      showValues = TRUE,
+      gradient   = TRUE,
+      border     = TRUE,
+      percent    = FALSE,
+      rank       = NULL
     )
 ) {
     assert_workbook(wb)
@@ -107,14 +107,22 @@ wb_conditional_formatting <- function(
     ...
 ) {
   .Deprecated("wb_add_conditional_formatting()")
+
+  params <- list(...)
+  params$showValue <- params$showValue %||% TRUE
+  params$gradient  <- params$gradient  %||% TRUE
+  params$border    <- params$border    %||% TRUE
+  params$percent   <- params$percent   %||% FALSE
+  params$percent   <- params$percent   %||% NULL
+
   wb_add_conditional_formatting(
-    wb    = wb,
-    sheet = sheet,
-    cols  = cols,
-    rows  = rows,
-    rule  = rule,
-    style = style,
-    type  = type,
-    params = list(...)
+    wb     = wb,
+    sheet  = sheet,
+    cols   = cols,
+    rows   = rows,
+    rule   = rule,
+    style  = style,
+    type   = type,
+    params = params
   )
 }
