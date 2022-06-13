@@ -14,7 +14,8 @@ wb_add_conditional_formatting(
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
     "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
-  ...
+  params = list(showValues = NULL, gradient = NULL, border = NULL, percent = NULL, rank
+    = NULL)
 )
 
 wb_conditional_formatting(
@@ -44,7 +45,9 @@ wb_conditional_formatting(
 
 \item{type}{The type of conditional formatting rule to apply.}
 
-\item{...}{See below}
+\item{params}{Additional parameters passed.  See \strong{Details} for more}
+
+\item{...}{passed to \code{params}}
 }
 \description{
 Add conditional formatting to cells
@@ -52,70 +55,45 @@ Add conditional formatting to cells
 \details{
 See Examples.
 
-If type == "expression"
-\itemize{
-\item{style is a Style object.}
-\item{rule is an expression. Valid operators are "<", "<=", ">", ">=", "==", "!=".}
-}
+Conditional formatting types accept different parameters.  Unless noted,
+unlisted parameters are ignored.
 
-If type == "colourScale"
-\itemize{
-\item{style is a vector of colours with length 2 or 3}
-\item{rule can be NULL or a vector of colours of equal length to styles}
+\describe{
+\item{\code{expression}}{
+\verb{[style]}\cr A \code{Style} object\cr\cr
+\verb{[rule]}\cr An Excel expression (as a character). Valid operators are: \code{<}, \code{<=}, \code{>}, \code{>=}, \code{==}, \code{!=}
 }
-
-If type == "databar"
-\itemize{
-\item{style is a vector of colours with length 2 or 3}
-\item{rule is a numeric vector specifying the range of the databar colours. Must be equal length to style}
-\item{...
-\itemize{
-\item{\strong{showvalue} If FALSE the cell value is hidden. Default TRUE.}
-\item{\strong{gradient} If FALSE colour gradient is removed. Default TRUE.}
-\item{\strong{border} If FALSE the border around the database is hidden. Default TRUE.}
+\item{colorScale}{
+\verb{[style]}\cr A \code{character} vector of valid colors with length \code{2} or \code{3}\cr\cr
+\verb{[rule]}\cr \code{NULL} or a \code{character} vector of valid colors of equal length to \code{styles}
 }
+\item{dataBar}{
+\verb{[style]}\cr A \code{character} vector of valid colors with length \code{2} or \code{3}\cr\cr
+\verb{[rule]}\cr A \code{numeric} vector specifying the range of the databar colors. Must be equal length to \code{style}\cr\cr
+\verb{[params$showValue]}\cr If \code{FALSE} the cell value is hidden. Default \code{TRUE}\cr\cr
+\verb{[params$gradient]}\cr If \code{FALSE} colour gradient is removed. Default \code{TRUE}\cr\cr
+\verb{[params$border]}\cr If \code{FALSE} the border around the database is hidden. Default \code{TRUE}
 }
+\item{duplicated}{
+\verb{[style]}\cr A \code{Style} object
 }
-
-If type == "duplicates"
-\itemize{
-\item{style is a Style object.}
-\item{rule is ignored.}
+\item{contains}{
+\verb{[style]}\cr A \code{Style} object\cr\cr
+\verb{[rule]}\cr The text to look for within cells
 }
-
-If type == "contains"
-\itemize{
-\item{style is a Style object.}
-\item{rule is the text to look for within cells}
+\item{between}{
+\verb{[style]}\cr A Style object.\cr\cr
+\verb{[rule]}\cr A \code{numeric} vector of length \code{2} specifying lower and upper bound (Inclusive)
 }
-
-If type == "between"
-\itemize{
-\item{style is a Style object.}
-\item{rule is a numeric vector of length 2 specifying lower and upper bound (Inclusive)}
+\item{topN}{
+\verb{[style]}\cr A \code{Style} object\cr\cr
+\verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of highest values\cr\cr
+\verb{[params$percent]} If \code{TRUE} uses percentage
 }
-
-If type == "topN"
-\itemize{
-\item{style is a Style object.}
-\item{rule is ignored}
-\item{...
-\itemize{
-\item{\strong{rank} numeric vector of length 1 indicating number of highest values.}
-\item{\strong{percent} TRUE if you want top N percentage.}
-}
-}
-}
-
-If type == "bottomN"
-\itemize{
-\item{style is a Style object.}
-\item{rule is ignored}
-\item{...
-\itemize{
-\item{\strong{rank} numeric vector of length 1 indicating number of lowest values.}
-\item{\strong{percent} TRUE if you want bottom N percentage.}
-}
+\item{bottomN}{
+\verb{[style]}\cr A \code{Style} object\cr\cr
+\verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of lowest values\cr\cr
+\verb{[params$percent]}\cr If \code{TRUE} uses percentage
 }
 }
 }
@@ -123,5 +101,4 @@ If type == "bottomN"
 wb <- wb_workbook()
 wb$add_worksheet("a")
 wb$add_conditional_formatting("a", 1, 1, )
-
 }
