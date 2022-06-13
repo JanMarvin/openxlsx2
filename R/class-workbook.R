@@ -2779,11 +2779,10 @@ wbWorkbook <- R6::R6Class(
 
       ## check valid rule
       values <- NULL
-      dxfId <- NULL
-
       dxfs <- self$styles_mgr$styles$dxfs
       dxf <- xml_node(dxfs, "dxf")
       dxfId <- which(dxf == style) - 1
+      params <- validate_conditional_formatting_params(params)
 
       switch(
         type,
@@ -2809,11 +2808,10 @@ wbWorkbook <- R6::R6Class(
             )
           } ## else, there is a letter in the formula and apply as is
 
-
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
+            dxfId <- which(dxf == style) - 1L
           }
 
           # # TODO check type up front and validate selections there...
@@ -2856,10 +2854,7 @@ wbWorkbook <- R6::R6Class(
           # - style is a vector of colours of length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
           msg <- "When type == 'dataBar', "
-
-          if (is.null(style)) {
-            style <- "#638EC6"
-          }
+          style <- style %||% "#638EC6"
 
           # TODO use inherits() not class()
           if (!inherits(style, "character")) {
@@ -5244,13 +5239,12 @@ wbWorkbook <- R6::R6Class(
       }
 
       nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
-
+      dxfId <- min(dxfId, 0L)
 
       # big switch statement
       cfRule <- switch(
         type,
 
-        ## colourScale ----
         colorScale = {
 
           ## formula contains the colours
@@ -5308,7 +5302,6 @@ wbWorkbook <- R6::R6Class(
           }
         },
 
-        ## dataBar ----
         dataBar = {
           if (length(formula) == 2L) {
             negColour <- formula[[1]]
@@ -5331,8 +5324,8 @@ wbWorkbook <- R6::R6Class(
             posColour = posColour,
             negColour = negColour,
             values    = values,
-            border    = border,
-            gradient  = gradient
+            border    = params$border,
+            gradient  = params$gradient
           )
 
           # check if any extLst availaible
@@ -5361,7 +5354,7 @@ wbWorkbook <- R6::R6Class(
                           </dataBar>
                           <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{%s}</x14:id></ext>
                         </extLst></cfRule>',
-              showValue,
+              params$showValue,
               posColour,
               guid
             )
@@ -5373,7 +5366,7 @@ wbWorkbook <- R6::R6Class(
                             </dataBar>
                             <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
                             <x14:id>{%s}</x14:id></ext></extLst></cfRule>',
-              showValue,
+              params$showValue,
               values[[1]],
               values[[2]],
               posColour,
@@ -5382,7 +5375,6 @@ wbWorkbook <- R6::R6Class(
           }
         },
 
-        ## expression ----
         expression = {
           sprintf(
             '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
@@ -5391,7 +5383,6 @@ wbWorkbook <- R6::R6Class(
           )
         },
 
-        ## duplicatedValues ----
         duplicatedValues = {
           sprintf(
             '<cfRule type="duplicateValues" dxfId="%s" priority="1"/>',
@@ -5399,7 +5390,6 @@ wbWorkbook <- R6::R6Class(
           )
         },
 
-        ## containsText ----
         containsText = {
           sprintf(
             '<cfRule type="containsText" dxfId="%s" priority="1" operator="containsText" text="%s">
@@ -5414,7 +5404,6 @@ wbWorkbook <- R6::R6Class(
           )
         },
 
-        ## notContainsText ----
         notContainsText = {
           sprintf(
             '<cfRule type="notContainsText" dxfId="%s" priority="1" operator="notContains" text="%s">
@@ -5427,7 +5416,6 @@ wbWorkbook <- R6::R6Class(
           )
         },
 
-        ## beginsWith ----
         beginsWith = {
           sprintf(
             '<cfRule type="beginsWith" dxfId="%s" priority="1" operator="beginsWith" text="%s">
@@ -5442,7 +5430,6 @@ wbWorkbook <- R6::R6Class(
           )
         },
 
-        ## endsWith ----
         endsWith = sprintf(
           '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
                         	<formula>RIGHT(%s,LEN("%s"))="%s"</formula>
@@ -5455,7 +5442,6 @@ wbWorkbook <- R6::R6Class(
           values
         ),
 
-        ## between ----
         between = sprintf(
           '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
           dxfId,
@@ -5463,7 +5449,6 @@ wbWorkbook <- R6::R6Class(
           formula[2]
         ),
 
-        ## topN ----
         topN = sprintf(
           '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
           dxfId,
@@ -5471,7 +5456,6 @@ wbWorkbook <- R6::R6Class(
           values[2]
         ),
 
-        ## bottomN ----
         bottomN = {
           sprintf(
             '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
