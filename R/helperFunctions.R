@@ -128,8 +128,18 @@ getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 #' @keywords internal
 #' @noRd
 validateColour <- function(colour, errorMsg = "Invalid colour!") {
+  colour <- check_valid_colour(colour)
 
-  ## check if
+  if (isFALSE(colour)) {
+    stop(errorMsg)
+  }
+
+  colour
+}
+
+check_valid_colour <- function(colour) {
+  # Not proud of this.  Returns FALSE if not a vaild, otherwise  cleans up.
+  # Probably not the best, but working within the functions we alreayd have.
   if (is.null(colour)) {
     colour <- "black"
   }
@@ -140,13 +150,11 @@ validateColour <- function(colour, errorMsg = "Invalid colour!") {
     colour[colour %in% validColours] <- col2hex(colour[colour %in% validColours])
   }
 
-  if (any(!grepl("^#[A-Fa-f0-9]{6}$", colour))) {
-    stop(errorMsg, call. = FALSE)
+  if (all(grepl("^#[A-Fa-f0-9]{6}$", colour))) {
+    gsub("^#", "FF", toupper(colour))
+  } else {
+    FALSE
   }
-
-  colour <- gsub("^#", "FF", toupper(colour))
-
-  return(colour)
 }
 
 #' @name col2hex

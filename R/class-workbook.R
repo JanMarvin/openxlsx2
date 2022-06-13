@@ -2839,8 +2839,11 @@ wbWorkbook <- R6::R6Class(
             }
           }
 
-          style <-
-            validateColour(style, errorMsg = "Invalid colour specified in style.")
+          style <- check_valid_colour(style)
+
+          if (isFALSE(style)) {
+            stop(msg, "style must be valid colors")
+          }
 
           values <- rule
           rule <- style
@@ -2877,12 +2880,16 @@ wbWorkbook <- R6::R6Class(
               stop("showValue must be 0/1 or TRUE/FALSE")
             }
           }
+          # showValue, gradient, border
+          style <- check_valid_colour(style)
 
           if ("gradient" %in% names(params)) {
             params$gradient <- as.integer(params$gradient)
             if (is.na(params$gradient)) {
               stop("gradient must be 0/1 or TRUE/FALSE")
             }
+          if (isFALSE(style)) {
+            stop(msg, "style must be valid colors")
           }
 
           if ("border" %in% names(params)) {
@@ -2891,9 +2898,6 @@ wbWorkbook <- R6::R6Class(
               stop("border must be 0/1 or TRUE/FALSE")
             }
           }
-
-          style <-
-            validateColour(style, errorMsg = "Invalid colour specified in style.")
 
           values <- rule
           rule <- style
