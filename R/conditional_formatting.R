@@ -71,11 +71,11 @@ wb_add_conditional_formatting <- function(
              "containsText", "notContainsText", "beginsWith", "endsWith",
              "between", "topN", "bottomN"),
     params = list(
-      showValues = TRUE,
-      gradient   = TRUE,
-      border     = TRUE,
-      percent    = FALSE,
-      rank       = NULL
+      showValue = TRUE,
+      gradient  = TRUE,
+      border    = TRUE,
+      percent   = FALSE,
+      rank      = NULL
     )
 ) {
     assert_workbook(wb)

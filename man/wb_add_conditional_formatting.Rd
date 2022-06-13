@@ -14,8 +14,8 @@ wb_add_conditional_formatting(
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
     "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
-  params = list(showValues = TRUE, gradient = TRUE, border = TRUE, percent = FALSE,
-    rank = NULL)
+  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank
+    = NULL)
 )
 
 wb_conditional_formatting(
