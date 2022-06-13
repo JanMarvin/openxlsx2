@@ -122,3 +122,40 @@ wb_check_overwrite_tables <- function(
 
   invisible(wb)
 }
+
+
+validate_conditional_formatting_params <- function(params) {
+  stopifnot(
+    # only valid parameters
+    setequal(
+      names(params),
+      c("showValue", "gradient", "border", "percent", "rank")
+    )
+  )
+
+  if (!is.null(params$showValue)) {
+    params$showValue <- as_binary(params$showValue)
+  }
+
+  if (!is.null(params$gradient)) {
+    params$gradient <- as_binary(params$gradient)
+  }
+
+  if (!is.null(params$border)) {
+    params$border <- as_binary(params$border)
+  }
+
+  if (!is.null(params$percent)) {
+    params$percent <- as_binary(params$percent)
+  }
+
+  if (!is.null(params$rank)) {
+    if (!is_integer_ish(params$rank)) {
+      stop("params$rank must be an integer")
+    }
+
+    params$rank <- as.integer(params$rank)
+  }
+
+  params
+}
