@@ -125,26 +125,30 @@ wb_check_overwrite_tables <- function(
 
 
 validate_conditional_formatting_params <- function(params) {
-  stopifnot(
-    # only valid parameters
-    setequal(
-      names(params),
-      c("showValue", "gradient", "border", "percent", "rank")
-    )
-  )
+  # assign default values
+  params$showValue <- with(params, if (is.null(showValue)) TRUE  else as_binary(showValue))
+  params$gradient  <- with(params, if (is.null(gradient))  TRUE  else as_binary(gradient))
+  params$border    <- with(params, if (is.null(border))    FALSE else as_binary(border))
+  params$percent   <- with(params, if (is.null(percent))   NULL  else as_binary(percent))
 
-  params$showValue <- as_binary(params$showValue)
-  params$gradient  <- as_binary(params$gradient)
-  params$border    <- as_binary(params$border)
-  params$percent   <- as_binary(params$percent)
-
+  # special check for rank
   if (!is.null(params$rank)) {
     if (!is_integer_ish(params$rank)) {
       stop("params$rank must be an integer")
     }
 
     params$rank <- as.integer(params$rank)
+  } else {
+    params$rank <- NULL
   }
+
+  # ensure that no other params were passed
+  stopifnot(
+    setequal(
+      names(params),
+      c("showValue", "gradient", "border", "percent", "rank")
+    )
+  )
 
   params
 }
