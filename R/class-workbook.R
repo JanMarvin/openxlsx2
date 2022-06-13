@@ -2824,9 +2824,10 @@ wbWorkbook <- R6::R6Class(
         },
 
         colorScale = {
-          msg <- "When type == 'colourScale', "
           # - style is a vector of colours with length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
+          msg <- "When type == 'colourScale', "
+
           if (!is.character(style)) {
             stop(msg, "style must be a vector of colours of length 2 or 3.")
           }
@@ -2852,9 +2853,9 @@ wbWorkbook <- R6::R6Class(
         },
 
         dataBar = {
-          msg <- "When type == 'dataBar', "
           # - style is a vector of colours of length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
+          msg <- "When type == 'dataBar', "
 
           if (is.null(style)) {
             style <- "#638EC6"
@@ -2888,15 +2889,11 @@ wbWorkbook <- R6::R6Class(
         },
 
         duplicatedValues = {
-
           # type == "duplicatedValues"
           # - style is a Style object
           # - rule is ignored
-
-
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
@@ -2912,11 +2909,10 @@ wbWorkbook <- R6::R6Class(
         containsText = {
           # - style is Style object
           # - rule is text to look for
-
           msg <- "When type == 'contains', "
+
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
@@ -2937,9 +2933,9 @@ wbWorkbook <- R6::R6Class(
           # - style is Style object
           # - rule is text to look for
           msg <- "When type == 'notContains', "
+
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
@@ -2961,13 +2957,12 @@ wbWorkbook <- R6::R6Class(
           # - style is Style object
           # - rule is text to look for
           msg <- "When type == 'beginsWith', "
+
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
-
 
           if (!is.character("character")) {
             stop(msg, "rule must be a character vector of length 1.")
@@ -2988,11 +2983,9 @@ wbWorkbook <- R6::R6Class(
 
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
-
 
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
@@ -3011,7 +3004,6 @@ wbWorkbook <- R6::R6Class(
 
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
@@ -3024,10 +3016,8 @@ wbWorkbook <- R6::R6Class(
         topN = {
           # - rule is ignored
           # - 'rank' and 'percent' are named params
-
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
@@ -3048,7 +3038,6 @@ wbWorkbook <- R6::R6Class(
           # - 'rank' and 'percent' are named params
           if (is.null(style)) {
             style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-
             self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
             dxfId <- which(dxf == style) - 1
           }
