@@ -87,7 +87,7 @@ wb_add_conditional_formatting <- function(
       rule  = rule,
       style = style,
       type  = type,
-      ...
+      params = params
     )
   }
 
