@@ -184,7 +184,7 @@ get fill ids
 \if{html}{\out{<a id="method-wbStylesMgr-get_border"></a>}}
 \if{latex}{\out{\hypertarget{method-wbStylesMgr-get_border}{}}}
 \subsection{Method \code{get_border()}}{
-get borer ids
+get border ids
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_border()}\if{html}{\out{</div>}}
 }

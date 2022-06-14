@@ -4105,17 +4105,14 @@ wbWorkbook <- R6::R6Class(
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
-      sheet,
-      numbers = TRUE,
-      characters = TRUE,
-      styles = TRUE,
-      merged_cells = TRUE
+        sheet,
+        numbers      = TRUE,
+        characters   = TRUE,
+        styles       = TRUE,
+        merged_cells = TRUE
     ) {
-
-      sheet <- wb_validate_sheet(self, sheet)
-
+      sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
-
       invisible(self)
     },
 
@@ -4152,7 +4149,7 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
-      sheet         = 1,
+      sheet,
       dims          = "A1",
       bottom_color  = c(rgb = "FF000000"),
       left_color    = c(rgb = "FF000000"),
@@ -4369,7 +4366,7 @@ wbWorkbook <- R6::R6Class(
       # styles will be created. We do not look for identical styles, therefor
       # we might create duplicates, but if a single style changes, the rest of
       # the workbook remains valid.
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      smp <- random_string()
       s <- function(x) paste0(smp, "s", deparse(substitute(x)), seq_along(x))
       sfull_single <- paste0(smp, "full_single")
       stop_single <- paste0(smp, "full_single")
@@ -4562,14 +4559,15 @@ wbWorkbook <- R6::R6Class(
     #'   </gradientFill>"
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
-      sheet,
-      dims,
-      color = "",
-      pattern = "solid",
-      gradient_fill = "",
-      every_nth_col = 1,
-      every_nth_row = 1
+        sheet,
+        dims,
+        color         = "",
+        pattern       = "solid",
+        gradient_fill = "",
+        every_nth_col = 1,
+        every_nth_row = 1
     ) {
+      sheet <- private$get_sheet_index(sheet)
 
       new_fill <- create_fill(
         gradientFill = gradient_fill,
@@ -4577,10 +4575,10 @@ wbWorkbook <- R6::R6Class(
         fgColor = color
       )
 
-      smp <- paste0(sample(letters, size = 6, replace = TRUE), collapse = "")
+      # sample() will change the random seed
+      smp <- random_string()
       snew_fill <- paste0(smp, "new_fill")
-      sxf_new_fill <- paste0(smp, "xf_new_fill")
-
+      # sxf_new_fill <- paste0(smp, "xf_new_fill") # not used?
 
       self$styles_mgr$add(new_fill, snew_fill)
 
@@ -4593,11 +4591,240 @@ wbWorkbook <- R6::R6Class(
       dims <- unname(unlist(did[rows, cols, drop = FALSE]))
 
       for (dim in dims) {
-        sxf_new_fill_x <- paste0(sxf_new_fill, which(dims %in% dim))
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
         s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
+        set_cell_style(self, sheet, dim, s_id)
+      }
+
+      return(self)
+    },
+
+    #' @description provide simple font function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param name font name: default "Calibri"
+    #' @param color rgb color: default "FF000000"
+    #' @param size font size: default "11",
+    #' @param bold bold
+    #' @param italic italic
+    #' @param outline outline
+    #' @param strike strike
+    #' @param underline underline
+    #' @param family font family
+    #' @param charset charset
+    #' @param condense condense
+    #' @param scheme font scheme
+    #' @param shadow shadow
+    #' @param extend extend
+    #' @param vertAlign vertical alignment
+    #' @examples
+    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+    #'  wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+    #' @return The `wbWorksheetObject`, invisibly
+    add_font = function(
+      sheet,
+      dims,
+      name = "Calibri",
+      color = c(rgb = "FF000000"),
+      size = "11",
+      bold = "",
+      italic = "",
+      outline = "",
+      strike = "",
+      underline = "",
+      # fine tuning
+      charset = "",
+      condense = "",
+      extend = "",
+      family = "",
+      scheme = "",
+      shadow = "",
+      vertAlign = ""
+    ) {
+
+      new_font <- create_font(
+        b = bold,
+        charset = charset,
+        color = color,
+        condense = condense,
+        extend = extend,
+        family = family,
+        i = italic,
+        name = name,
+        outline = outline,
+        scheme = scheme,
+        shadow = shadow,
+        strike = strike,
+        sz = size,
+        u = underline,
+        vertAlign = vertAlign
+      )
+
+      smp <- random_string()
+      snew_font <- paste0(smp, "new_font")
+      sxf_new_font <- paste0(smp, "xf_new_font")
+
+      self$styles_mgr$add(new_font, snew_font)
+
+      for (dim in dims) {
+        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(snew_font))
+        self$styles_mgr$add(xf_new_font, xf_new_font)
+        s_id <- self$styles_mgr$get_xf_id(xf_new_font)
+        set_cell_style(self, sheet, dim, s_id)
+      }
+
+      return(self)
+    },
+
+    #' @description provide simple number format function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param numfmt number format id or a character of the format
+    #' @examples
+    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+    #'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
+    #' @return The `wbWorksheetObject`, invisibly
+    add_numfmt = function(
+      sheet,
+      dims,
+      numfmt
+    ) {
+
+      if (inherits(numfmt, "character")) {
+
+        new_numfmt <- create_numfmt(
+          numFmtId = self$styles_mgr$next_numfmt_id(),
+          formatCode = numfmt
+        )
+
+        smp <- random_string()
+        snew_numfmt <- paste0(smp, "new_numfmt")
+        # sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
+
+        self$styles_mgr$add(new_numfmt, snew_numfmt)
+
+        for (dim in dims) {
+          xf_prev <- get_cell_styles(self, sheet, dim)
+          xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(snew_numfmt))
+          self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
+          s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
+          set_cell_style(self, sheet, dim, s_id)
+        }
+
+      } else { # format is numeric
+
+        for (dim in dims) {
+          xf_prev <- get_cell_styles(self, sheet, dim)
+          xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
+          self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
+          s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
+          set_cell_style(self, sheet, dim, s_id)
+        }
+
+      }
+
+      return(self)
+    },
+
+    #' @description provide simple cell style format function
+    #' @param sheet the worksheet
+    #' @param dims the cell range
+    #' @param extLst extension list something like `<extLst>...</extLst>`
+    #' @param hidden logical cell is hidden
+    #' @param horizontal align content horizontal ('left', 'center', 'right')
+    #' @param indent logical indent content
+    #' @param justifyLastLine logical justify last line
+    #' @param locked logical cell is locked
+    #' @param pivotButton unknown
+    #' @param quotePrefix unknown
+    #' @param readingOrder reading order left to right
+    #' @param relativeIndent relative indentation
+    #' @param shrinkToFit logical shrink to fit
+    #' @param textRotation degrees of text rotation
+    #' @param vertical vertical alignment of content ('top', 'center', 'bottom')
+    #' @param wrapText wrap text in cell
+    # alignments
+    #' @param applyAlignment logical apply alignment
+    #' @param applyBorder logical apply border
+    #' @param applyFill logical apply fill
+    #' @param applyFont logical apply font
+    #' @param applyNumberFormat logical apply number format
+    #' @param applyProtection logical apply protection
+    # ids
+    #' @param borderId border ID to apply
+    #' @param fillId fill ID to apply
+    #' @param fontId font ID to apply
+    #' @param numFmtId number format ID to apply
+    #' @param xfId xf ID to apply
+    #' @examples
+    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+    #'  wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+    #' @return The `wbWorksheetObject`, invisibly
+    add_cell_style = function(
+      sheet,
+      dims,
+      applyAlignment    = NULL,
+      applyBorder       = NULL,
+      applyFill         = NULL,
+      applyFont         = NULL,
+      applyNumberFormat = NULL,
+      applyProtection   = NULL,
+      borderId          = NULL,
+      extLst            = NULL,
+      fillId            = NULL,
+      fontId            = NULL,
+      hidden            = NULL,
+      horizontal        = NULL,
+      indent            = NULL,
+      justifyLastLine   = NULL,
+      locked            = NULL,
+      numFmtId          = NULL,
+      pivotButton       = NULL,
+      quotePrefix       = NULL,
+      readingOrder      = NULL,
+      relativeIndent    = NULL,
+      shrinkToFit       = NULL,
+      textRotation      = NULL,
+      vertical          = NULL,
+      wrapText          = NULL,
+      xfId              = NULL
+    ) {
+
+      for (dim in dims) {
+        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_new_cellstyle <- set_cellstyle(
+          xf_node           = xf_prev,
+          applyAlignment    = applyAlignment,
+          applyBorder       = applyBorder,
+          applyFill         = applyFill, 
+          applyFont         = applyFont, 
+          applyNumberFormat = applyNumberFormat,
+          applyProtection   = applyProtection,
+          borderId          = borderId,
+          extLst            = extLst, 
+          fillId            = fillId,
+          fontId            = fontId,
+          hidden            = hidden,
+          horizontal        = horizontal,
+          indent            = indent,
+          justifyLastLine   = justifyLastLine, 
+          locked            = locked, 
+          numFmtId          = numFmtId, 
+          pivotButton       = pivotButton,
+          quotePrefix       = quotePrefix,
+          readingOrder      = readingOrder,
+          relativeIndent    = relativeIndent,
+          shrinkToFit       = shrinkToFit,
+          textRotation      = textRotation,
+          vertical          = vertical,
+          wrapText          = wrapText,
+          xfId              = xfId
+        )
+        self$styles_mgr$add(xf_new_cellstyle, xf_new_cellstyle)
+        s_id <- self$styles_mgr$get_xf_id(xf_new_cellstyle)
         set_cell_style(self, sheet, dim, s_id)
       }
 

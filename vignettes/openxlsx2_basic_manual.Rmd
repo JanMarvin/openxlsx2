@@ -130,3 +130,45 @@ There is the "#N/A" string, but often the user will be faced with custom missing
 # na string
 wb_to_df(xlsxFile, na.strings = "")
 ```
+
+### Importing as workbook
+
+In addition to importing directly from xlsx or xlsm files, `openxlsx2` provides the `wbWorkbook` class used for importing and modifying entire the openxml files in `R`. This `workbook` class is the heart of `openxlsx2` and probably the reason why you are reading this manual in the first place.
+
+Importing a file into a workbook looks like this:
+```{r}
+# the file we are going to load
+xlsxFile <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+# loading the file into the workbook
+wb <- wb_load(file = xlsxFile)
+```
+
+The additional options `wb_load()` provides are for internal use: `sheet` loads only a selected sheet from the workbook and `data_only` reads only the data parts from a workbook and ignores any additional graphics or pivot tables. Both functions create workbook objects that can only be used to read data, and we do not recommend end users to use them. Especially not if they intend to re-export the workbook afterwards.
+
+Once a workbook is imported, we provide several functions to interact with and modify it (the `wb_to_df()` function mentioned above works the same way for an imported workbook). It is possible to add new sheets and remove sheets, as well as to add or remove data. R-plots can be inserted and also the style of the workbook can be changed, new fonts, background colors and number formats. There is a wealth of options explained in the man pages and the additional style vignette (more vignettes to follow).
+
+## Exporting data
+
+### Exporting data frames or vectors
+
+If you want to export a data frame from R, you can use `write_xlsx()` which will create an xlsx file. This file can be tweaked further. The man page provides various options (further explanation and examples will follow).
+
+```{r}
+write_xlsx(mtcars, "mtcars.xlsx")
+```
+
+### Exporting `wbWorkbooks`
+
+Imported workbooks can be saved as xlsx or xlsm files with the wrapper `wb_save()` or with `wb$save()`. Both functions take the filename and an optional `Overwrite` option. If the latter is set, an optional guard is provided to check if the file you want to write already exists. But be careful, this is optional. The default is to save the file and replace an existing file. Of course, in Windows, files that are locked (for example, if they were opened by another process) will not be replaced.
+
+```{r}
+# replace the existing file
+wb$save("mtcars.xlsx")
+
+# do not overwrite the exisisting file
+try(wb$save("mtcars.xlsx", overwrite = FALSE))
+```
+
+```{r post, include = FALSE}
+unlink("mtcars.xlsx")
+```

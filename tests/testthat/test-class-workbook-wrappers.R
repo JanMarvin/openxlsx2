@@ -317,3 +317,23 @@ test_that("wb_get_sheet_names() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")
   expect_wrapper("get_sheet_names", wb = wb)
 })
+
+# wb_clean_sheet() --------------------------------------------------------
+
+test_that("wb_clean_sheet() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  expect_wrapper("clean_sheet", wb = wb, params = list(sheet = 1))
+})
+
+# wb_add_border() ---------------------------------------------------------
+
+test_that("wb_add_border() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  # the border names are generated at random
+  expect_wrapper(
+    "add_border",
+    wb = wb,
+    params = list(sheet = 1),
+    ignore_fields = "styles_mgr"
+  )
+})
