@@ -100,5 +100,6 @@ unlisted parameters are ignored.
 \examples{
 wb <- wb_workbook()
 wb$add_worksheet("a")
-wb$add_conditional_formatting("a", 1, 1, )
+wb$add_data("a", 1:4, colNames = FALSE)
+wb$add_conditional_formatting("a", 1, 1:4, ">2")
 }
