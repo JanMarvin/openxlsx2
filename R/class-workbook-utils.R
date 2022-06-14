@@ -131,21 +131,19 @@ validate_conditional_formatting_params <- function(params) {
   }
 
   # assign default values
-  params$showValue <- with(params, if (is.null(showValue)) TRUE  else as_binary(showValue))
-  params$gradient  <- with(params, if (is.null(gradient))  TRUE  else as_binary(gradient))
-  params$border    <- with(params, if (is.null(border))    TRUE  else as_binary(border))
-  params$percent   <- with(params, if (is.null(percent))   FALSE else as_binary(percent))
+  params$showValue <- if (is.null(params$showValue)) 1L else as_binary(params$showValue)
+  params$gradient  <- if (is.null(params$gradient))  1L else as_binary(params$gradient)
+  params$border    <- if (is.null(params$border))    1L else as_binary(params$border)
+  params$percent   <- if (is.null(params$percent))   0L else as_binary(params$percent)
 
   # special check for rank
-  if (!is.null(params$rank)) {
-    if (!is_integer_ish(params$rank)) {
-      stop("params$rank must be an integer")
-    }
+  params$rank <- params$rank %||% 5L
 
-    params$rank <- as.integer(params$rank)
-  } else {
-    params$rank <- NULL
+  if (!is_integer_ish(params$rank)) {
+    stop("params$rank must be an integer")
   }
+
+  params$rank <- as.integer(params$rank)
 
   params
 }
