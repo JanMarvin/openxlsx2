@@ -45,12 +45,12 @@
 #'   }
 #'   \item{topN}{
 #'     `[style]`\cr A `Style` object\cr\cr
-#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of highest values\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of highest values. Default `5L`\cr\cr
 #'     `[params$percent]` If `TRUE` uses percentage
 #'   }
 #'   \item{bottomN}{
 #'     `[style]`\cr A `Style` object\cr\cr
-#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of lowest values\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of lowest values. Default `5L`\cr\cr
 #'     `[params$percent]`\cr If `TRUE` uses percentage
 #'   }
 #' }
@@ -75,7 +75,7 @@ wb_add_conditional_formatting <- function(
       gradient  = TRUE,
       border    = TRUE,
       percent   = FALSE,
-      rank      = NULL
+      rank      = 5L
     )
 ) {
     assert_workbook(wb)
@@ -112,7 +112,7 @@ wb_conditional_formatting <- function(
   params$gradient  <- params$gradient  %||% TRUE
   params$border    <- params$border    %||% TRUE
   params$percent   <- params$percent   %||% FALSE
-  params$percent   <- params$percent   %||% NULL
+  params$percent   <- params$percent   %||% 5L
 
   wb_add_conditional_formatting(
     wb     = wb,

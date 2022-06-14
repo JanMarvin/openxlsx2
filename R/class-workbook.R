@@ -2765,7 +2765,7 @@ wbWorkbook <- R6::R6Class(
           gradient  = TRUE,
           border    = TRUE,
           percent   = FALSE,
-          rank      = NULL
+          rank      = 5L
         )
     ) {
       type <- match.arg(type)
@@ -5239,7 +5239,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
-      dxfId <- min(dxfId, 0L)
+      dxfId <- max(dxfId, 0L)
 
       # big switch statement
       cfRule <- switch(
@@ -5452,16 +5452,16 @@ wbWorkbook <- R6::R6Class(
         topN = sprintf(
           '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
           dxfId,
-          values[1],
-          values[2]
+          values$rank,
+          if (values$percent == 1) 1 else "NULL"
         ),
 
         bottomN = {
           sprintf(
             '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
             dxfId,
-            values[1],
-            values[2]
+            values$rank,
+            if (values$percent == 1) 1 else "NULL"
           )
         },
         # do we have a match.arg() anywhere or will it just be showned in this switch()?
