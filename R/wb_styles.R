@@ -1,18 +1,22 @@
 
 # functions interacting with styles
 
+cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
+  .Deprecated("use wb_clone_sheet_style")
+  wb_clone_sheet_style(wb, from_sheet, to_sheet)
+}
 
 #' clone sheets style
 #'
 #' @param wb workbook
-#' @param from_sheet sheet we select the style from
-#' @param to_sheet sheet we apply the style from
+#' @param from sheet we select the style from
+#' @param to sheet we apply the style from
 #' @export
-cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
+wb_clone_sheet_style <- function(wb, from, to) {
 
   # check if sheets exist in wb
-  id_org <- wb_validate_sheet(wb, from_sheet)
-  id_new <- wb_validate_sheet(wb, to_sheet)
+  id_org <- wb_validate_sheet(wb, from)
+  id_new <- wb_validate_sheet(wb, to)
 
   org_style <- wb$worksheets[[id_org]]$sheet_data$cc
   wb_style <- wb$worksheets[[id_new]]$sheet_data$cc
@@ -46,6 +50,7 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
   wb$worksheets[[id_new]]$mergeCells <-
     wb$worksheets[[id_org]]$mergeCells
 
+  return(wb)
 }
 
 

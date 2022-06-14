@@ -1,3 +1,20 @@
+test_that("wb_clone_sheet_style", {
+
+  mat <- matrix(1, nrow = 21, ncol = col2int("j"))
+
+
+  fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
+  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb <- wb_clone_sheet_style(wb, "SUM", "clone")
+
+  wb$open()
+
+
+
+})
+
+
 test_that("test add_border()", {
 
   wb <- wb_workbook()
