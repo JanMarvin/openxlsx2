@@ -560,7 +560,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## append to worksheets list
-      self$append("worksheets", self$worksheets[[old]]$clone())
+      self$append("worksheets", self$worksheets[[old]]$clone(deep = TRUE))
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
