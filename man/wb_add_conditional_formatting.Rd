@@ -15,7 +15,7 @@ wb_add_conditional_formatting(
   type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
     "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank
-    = NULL)
+    = 5L)
 )
 
 wb_conditional_formatting(
@@ -87,12 +87,12 @@ unlisted parameters are ignored.
 }
 \item{topN}{
 \verb{[style]}\cr A \code{Style} object\cr\cr
-\verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of highest values\cr\cr
+\verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of highest values. Default \code{5L}\cr\cr
 \verb{[params$percent]} If \code{TRUE} uses percentage
 }
 \item{bottomN}{
 \verb{[style]}\cr A \code{Style} object\cr\cr
-\verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of lowest values\cr\cr
+\verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of lowest values. Default \code{5L}\cr\cr
 \verb{[params$percent]}\cr If \code{TRUE} uses percentage
 }
 }

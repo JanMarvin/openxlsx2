@@ -1212,7 +1212,7 @@ Add conditional formatting
   type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
     "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank
-    = NULL)
+    = 5L)
 )}\if{html}{\out{</div>}}
 }
 
