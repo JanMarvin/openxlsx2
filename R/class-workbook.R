@@ -5680,7 +5680,7 @@ wbWorkbook <- R6::R6Class(
           '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
           dxfId,
           values$rank,
-          if (values$percent == 1) 1 else "NULL"
+          values$percent
         ),
 
         bottomN = {
@@ -5688,7 +5688,7 @@ wbWorkbook <- R6::R6Class(
             '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
             dxfId,
             values$rank,
-            if (values$percent == 1) 1 else "NULL"
+            values$percent
           )
         },
         # do we have a match.arg() anywhere or will it just be showned in this switch()?

@@ -334,7 +334,7 @@ test_that("type = 'topN' works", {
   )
 
   exp <- c(
-    `A2:A11` = '<cfRule type="top10" dxfId="1" priority="2" rank="5" percent="NULL"></cfRule>',
+    `A2:A11` = '<cfRule type="top10" dxfId="1" priority="2" rank="5" percent="0"></cfRule>',
     `B2:B11` = '<cfRule type="top10" dxfId="1" priority="1" rank="20" percent="1"></cfRule>'
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -367,7 +367,7 @@ test_that("type = 'bottomN' works", {
   )
 
   exp <- c(
-    `A2:A11` = '<cfRule type="top10" dxfId="0" priority="2" rank="5" percent="NULL"></cfRule>',
+    `A2:A11` = '<cfRule type="top10" dxfId="0" priority="2" rank="5" percent="0"></cfRule>',
     `B2:B11` = '<cfRule type="top10" dxfId="0" priority="1" rank="20" percent="1"></cfRule>'
   )
 
