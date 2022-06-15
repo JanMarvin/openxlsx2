@@ -40,7 +40,7 @@ get_named_regions_from_definedName <- function(wb) {
 #' @param a workbook
 #' @returns a data frame in named_region format
 #' @noRd
-get_named_regions_from_table <- function(wb)
+get_named_regions_from_table <- function(wb) {
   data.frame(
     #localSheetId is not always available
     name = wb$tables$tab_nam,
@@ -52,6 +52,7 @@ get_named_regions_from_table <- function(wb)
     sheet = wb$tables$tab_sheet,
     stringsAsFactors = FALSE
   )
+}
 
 #' @name NamedRegions
 #' @title Get create or remove named regions
