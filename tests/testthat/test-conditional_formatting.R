@@ -15,11 +15,11 @@ expect_save <- function(wb) {
   assert_workbook(wb)
   path <- temp_xlsx()
 
-  expect_silent(wb_save(wb, path))
-  expect_silent(wb1 <- wb_load(path))
+  testthat::expect_silent(wb_save(wb, path))
+  testthat::expect_silent(wb1 <- wb_load(path))
 
   for (sheet in seq_along(wb$sheet_names))
-    expect_identical(
+    testthat::expect_identical(
       read_xml(wb$worksheets[[sheet]]$conditionalFormatting, pointer = FALSE),
       read_xml(wb1$worksheets[[sheet]]$conditionalFormatting, pointer = FALSE)
     )
