@@ -4,7 +4,7 @@
 \alias{wb_get_tables}
 \title{List Excel tables in a workbook}
 \usage{
-wb_get_tables(wb, sheet)
+wb_get_tables(wb, sheet = current_sheet())
 }
 \arguments{
 \item{wb}{A workbook object}

@@ -4,7 +4,7 @@
 \alias{wb_clone_worksheet}
 \title{Clone a worksheet to a workbook}
 \usage{
-wb_clone_worksheet(wb, old, new)
+wb_clone_worksheet(wb, old = current_sheet(), new = next_sheet())
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}

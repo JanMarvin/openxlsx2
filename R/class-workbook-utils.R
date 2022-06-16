@@ -147,3 +147,17 @@ validate_conditional_formatting_params <- function(params) {
 
   params
 }
+
+# waivers -----------------------------------------------------------------
+
+current_sheet <- function() {
+  structure("current_sheet", class = "openxlsx2_waiver")
+}
+
+next_sheet <- function() {
+  structure("next_sheet", class = "openxlsx2_waiver")
+}
+
+is_waiver <- function(x) {
+  inherits(x, "openxlsx2_waiver")
+}

@@ -4,7 +4,7 @@
 \alias{wb_remove_tables}
 \title{Remove an Excel table in a workbook}
 \usage{
-wb_remove_tables(wb, sheet, table)
+wb_remove_tables(wb, sheet = current_sheet(), table)
 }
 \arguments{
 \item{wb}{A workbook object}

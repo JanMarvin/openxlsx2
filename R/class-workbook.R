@@ -270,6 +270,7 @@ wbWorkbook <- R6::R6Class(
       self$category        <- category
       self$datetimeCreated <- datetimeCreated
       private$generate_base_core()
+      private$current_sheet <- 0L
       self
     },
 
@@ -337,7 +338,7 @@ wbWorkbook <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return The `wbWorkbook` object, invisibly
     add_worksheet = function(
-      sheet,
+      sheet       = next_sheet(),
       gridLines   = TRUE,
       rowColHeaders = TRUE,
       tabColour   = NULL,
@@ -366,11 +367,18 @@ wbWorkbook <- R6::R6Class(
       msg <- NULL
 
       private$validate_new_sheet(sheet)
-      ##  Add sheet to workbook.xml
+
+      if (is_waiver(sheet)) {
+        if (sheet == "current_sheet") {
+          stop("cannot add worksheet to current sheet")
+        }
+
+        sheet <- paste("Sheet ", length(self$sheet_names) + 1L)
+      }
+
       sheet <- as.character(sheet)
       sheet_name <- replace_legal_chars(sheet)
       private$validate_new_sheet(sheet_name)
-
 
       if (!is.logical(gridLines) | length(gridLines) > 1) {
         fail <- TRUE
@@ -434,6 +442,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       newSheetIndex <- length(self$worksheets) + 1L
+      private$set_current_sheet(newSheetIndex)
       sheetId <- private$get_sheet_id_max() # checks for self$worksheet length
 
       # check for errors ----
@@ -534,11 +543,12 @@ wbWorkbook <- R6::R6Class(
     #' Clone a workbooksheet
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
-    clone_worksheet = function(old, new) {
+    clone_worksheet = function(old = current_sheet(), new = next_sheet()) {
       private$validate_new_sheet(new)
       old <- private$get_sheet_index(old)
 
       newSheetIndex <- length(self$worksheets) + 1L
+      private$set_current_sheet(newSheetIndex)
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
       # not the best but a quick fix
@@ -712,7 +722,7 @@ wbWorkbook <- R6::R6Class(
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheet, tabColour = NULL, zoom = 100) {
+    addChartSheet = function(sheet = current_sheet(), tabColour = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
@@ -793,7 +803,7 @@ wbWorkbook <- R6::R6Class(
     #' @param removeCellStyle removeCellStyle
     #' @param return The `wbWorkbook` object
     add_data = function(
-        sheet,
+        sheet           = current_sheet(),
         x,
         startCol        = 1,
         startRow        = 1,
@@ -842,7 +852,7 @@ wbWorkbook <- R6::R6Class(
     #' @param bandedCols bandedCols
     #' @returns The `wbWorkbook` object
     add_data_table = function(
-        sheet,
+        sheet       = current_sheet(),
         x,
         startCol    = 1,
         startRow    = 1,
@@ -888,7 +898,7 @@ wbWorkbook <- R6::R6Class(
     #' @param xy xy
     #' @returns The `wbWorkbook` object
     add_formula = function(
-        sheet,
+        sheet    = current_sheet(),
         x,
         startCol = 1,
         startRow = 1,
@@ -1491,7 +1501,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showColumnStripes showColumnStripes
     #' @return The `wbWorksheet` object, invisibly
     buildTable = function(
-      sheet,
+      sheet = current_sheet(),
       colNames,
       ref,
       showColNames,
@@ -1805,7 +1815,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet Old sheet name
     #' @param name New sheet name
     #' @return The `wbWorkbook` object, invisibly
-    setSheetName = function(sheet, name) {
+    setSheetName = function(sheet = current_sheet(), name) {
       .Deprecated("wbWorkbook$set_sheet_names()")
       self$set_sheet_names(old = sheet, new = name)
     },
@@ -1819,7 +1829,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
-    set_row_heights = function(sheet, rows, heights) {
+    set_row_heights = function(sheet = current_sheet(), rows, heights) {
       sheet <- private$get_sheet_index(sheet)
 
       # TODO move to wbWorksheet method
@@ -1865,7 +1875,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
-    remove_row_heights = function(sheet, rows) {
+    remove_row_heights = function(sheet = current_sheet(), rows) {
       sheet <- private$get_sheet_index(sheet)
       customRows <- as.integer(names(self$rowHeights[[sheet]]))
       removeInds <- which(customRows %in% rows)
@@ -1885,7 +1895,7 @@ wbWorkbook <- R6::R6Class(
     #' @param n n
     #' @param beg beg
     #' @param end end
-    createCols = function(sheet, n, beg, end) {
+    createCols = function(sheet = current_sheet(), n, beg, end) {
        sheet <- private$get_sheet_index(sheet)
        self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
     },
@@ -1897,7 +1907,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    group_cols = function(sheet, cols, collapsed = FALSE, levels = NULL) {
+    group_cols = function(sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(cols)) {
@@ -1963,7 +1973,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param cols = cols
     #' @returns The `wbWorkbook` object
-    ungroup_cols = function(sheet, cols) {
+    ungroup_cols = function(sheet = current_sheet(), cols) {
       sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
@@ -1999,7 +2009,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet A name or index of a worksheet
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
-    remove_col_widths = function(sheet, cols) {
+    remove_col_widths = function(sheet = current_sheet(), cols) {
       sheet <- private$get_sheet_index(sheet)
 
       if (!is.numeric(cols)) {
@@ -2031,7 +2041,7 @@ wbWorkbook <- R6::R6Class(
     #' @param hidden A logical vector to determine which cols are hidden; values
     #'   are repeated across length of `cols`
     #' @return The `wbWorkbook` object, invisibly
-    set_col_widths = function(sheet, cols, widths = 8.43, hidden = FALSE) {
+    set_col_widths = function(sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
       sheet <- private$get_sheet_index(sheet)
 
       # should do nothing if the cols' length is zero
@@ -2141,7 +2151,7 @@ wbWorkbook <- R6::R6Class(
     #' @param collapsed collapsed
     #' @param levels levels
     #' @return The `wbWorkbook` object, invisibly
-    group_rows = function(sheet, rows, collapsed = FALSE, levels = NULL) {
+    group_rows = function(sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
       if (length(collapsed) > length(rows)) {
@@ -2202,7 +2212,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object
-    ungroup_rows = function(sheet, rows) {
+    ungroup_rows = function(sheet = current_sheet(), rows) {
       sheet <- private$get_sheet_index(sheet)
 
       # check if any rows are selected
@@ -2237,7 +2247,7 @@ wbWorkbook <- R6::R6Class(
     #' Remove a worksheet
     #' @param sheet The worksheet to delete
     #' @return The `wbWorkbook` object, invisibly
-    remove_worksheet = function(sheet) {
+    remove_worksheet = function(sheet = current_sheet()) {
       # To delete a worksheet
       # Remove colwidths element
       # Remove drawing partname from Content_Types (drawing(sheet).xml)
@@ -2440,7 +2450,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showErrorMsg showErrorMsg
     #' @returns The `wbWorkbook` object
     add_data_validation = function(
-      sheet,
+      sheet = current_sheet(),
       cols,
       rows,
       type,
@@ -2560,11 +2570,324 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
+    #' Set conditional formatting for a sheet
+    #' @param sheet sheet
+    #' @param startRow startRow
+    #' @param endRow endRow
+    #' @param startCol startCol
+    #' @param endCol endCol
+    #' @param dxfId dxfId
+    #' @param formula formula
+    #' @param type type
+    #' @param values values
+    #' @param params params
+    #' @return The `wbWorkbook` object, invisibly
+    conditional_formatting = function(
+      sheet = current_sheet(),
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      dxfId,
+      formula,
+      type,
+      values,
+      params
+    ) {
+      # TODO consider defaults for logicals
+      # TODO rename: setConditionFormatting?  Or addConditionalFormatting
+      # TODO can this be moved to the sheet data?
+      sheet <- private$get_sheet_index(sheet)
+      sqref <- stri_join(
+        get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
+        collapse = ":"
+      )
+
+      ## Increment priority of conditional formatting rule
+      for (i in rev(seq_along(self$worksheets[[sheet]]$conditionalFormatting))) {
+        priority <- reg_match0(
+          self$worksheets[[sheet]]$conditionalFormatting[[i]],
+          '(?<=priority=")[0-9]+'
+        )
+        priority_new <- as.integer(priority) + 1L
+        priority_pattern <- sprintf('priority="%s"', priority)
+        priority_new <- sprintf('priority="%s"', priority_new)
+
+        ## now replace
+        self$worksheets[[sheet]]$conditionalFormatting[[i]] <- gsub(
+          priority_pattern,
+          priority_new,
+          self$worksheets[[sheet]]$conditionalFormatting[[i]],
+          fixed = TRUE
+        )
+      }
+
+      nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
+
+
+      # big switch statement
+      cfRule <- switch(
+        type,
+
+        ## colourScale ----
+        colorScale = {
+
+          ## formula contains the colours
+          ## values contains numerics or is NULL
+          ## dxfId is ignored
+
+          if (is.null(values)) {
+          # could use a switch() here for length to also check against other
+          # lengths, if these aren't checked somewhere already?
+            if (length(formula) == 2L) {
+              sprintf(
+                # TODO is this indentation necessary?
+                '<cfRule type="colorScale" priority="1"><colorScale>
+                             <cfvo type="min"/><cfvo type="max"/>
+                             <color rgb="%s"/><color rgb="%s"/>
+                           </colorScale></cfRule>',
+                formula[[1]],
+                formula[[2]]
+              )
+            } else {
+              sprintf(
+                '<cfRule type="colorScale" priority="1"><colorScale>
+                             <cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/>
+                             <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
+                           </colorScale></cfRule>',
+                formula[[1]],
+                formula[[2]],
+                formula[[3]]
+              )
+            }
+          } else {
+            if (length(formula) == 2L) {
+              sprintf(
+                '<cfRule type="colorScale" priority="1"><colorScale>
+                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
+                            <color rgb="%s"/><color rgb="%s"/>
+                           </colorScale></cfRule>',
+                values[[1]],
+                values[[2]],
+                formula[[1]],
+                formula[[2]]
+              )
+            } else {
+              sprintf(
+                '<cfRule type="colorScale" priority="1"><colorScale>
+                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
+                            <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
+                           </colorScale></cfRule>',
+                values[[1]],
+                values[[2]],
+                values[[3]],
+                formula[[1]],
+                formula[[2]],
+                formula[[3]]
+              )
+            }
+          }
+        },
+
+        ## dataBar ----
+        dataBar = {
+          if (length(formula) == 2L) {
+            negColour <- formula[[1]]
+            posColour <- formula[[2]]
+          } else {
+            posColour <- formula
+            negColour <- "FFFF0000"
+          }
+
+          guid <- stri_join(
+            "F7189283-14F7-4DE0-9601-54DE9DB",
+            40000L + length(xml_node(
+              self$worksheets[[sheet]]$extLst,
+              "ext",
+              "x14:conditionalFormattings",
+              "x14:conditionalFormatting"
+            ))
+          )
+
+          showValue <- as.integer(params$showValue %||% 1L)
+          gradient  <- as.integer(params$gradient  %||% 1L)
+          border    <- as.integer(params$border    %||% 1L)
+
+          newExtLst <- gen_databar_extlst(
+            guid      = guid,
+            sqref     = sqref,
+            posColour = posColour,
+            negColour = negColour,
+            values    = values,
+            border    = border,
+            gradient  = gradient
+          )
+
+          # check if any extLst availaible
+          if (length(self$worksheets[[sheet]]$extLst) == 0) {
+            self$worksheets[[sheet]]$extLst <- newExtLst
+          } else if (length(xml_node(self$worksheets[[sheet]]$extLst, "ext", "x14:conditionalFormattings")) == 0) {
+            # extLst is available, has no conditionalFormattings
+            self$worksheets[[sheet]]$extLst <- xml_add_child(
+              self$worksheets[[sheet]]$extLst,
+              xml_node(newExtLst, "ext", "x14:conditionalFormattings")
+            )
+          } else {
+            # extLst is available, has conditionalFormattings
+            self$worksheets[[sheet]]$extLst <- xml_add_child(
+              self$worksheets[[sheet]]$extLst,
+              xml_node(
+                newExtLst,
+                "ext",
+                "x14:conditionalFormattings",
+                "x14:conditionalFormatting"
+              ),
+              level = "x14:conditionalFormattings"
+            )
+          }
+
+          if (is.null(values)) {
+            sprintf(
+              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
+                          <cfvo type="min"/><cfvo type="max"/>
+                          <color rgb="%s"/>
+                          </dataBar>
+                          <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{%s}</x14:id></ext>
+                        </extLst></cfRule>',
+              showValue,
+              posColour,
+              guid
+            )
+          } else {
+            sprintf(
+              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
+                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
+                            <color rgb="%s"/>
+                            </dataBar>
+                            <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
+                            <x14:id>{%s}</x14:id></ext></extLst></cfRule>',
+              showValue,
+              values[[1]],
+              values[[2]],
+              posColour,
+              guid
+            )
+          }
+        },
+
+        ## expression ----
+        expression = {
+          sprintf(
+            '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
+            dxfId,
+            formula
+          )
+        },
+
+        ## duplicatedValues ----
+        duplicatedValues = {
+          sprintf(
+            '<cfRule type="duplicateValues" dxfId="%s" priority="1"/>',
+            dxfId
+          )
+        },
+
+        ## containsText ----
+        containsText = {
+          sprintf(
+            '<cfRule type="containsText" dxfId="%s" priority="1" operator="containsText" text="%s">
+                        	<formula>NOT(ISERROR(SEARCH("%s", %s)))</formula>
+                       </cfRule>',
+            dxfId,
+            values,
+            values,
+            # is this unlist correct?  Would this not work?
+            # > strsplit(sqref, split = ":")[[1]]
+            unlist(strsplit(sqref, split = ":"))[[1]]
+          )
+        },
+
+        ## notContainsText ----
+        notContainsText = {
+          sprintf(
+            '<cfRule type="notContainsText" dxfId="%s" priority="1" operator="notContains" text="%s">
+                        	<formula>ISERROR(SEARCH("%s", %s))</formula>
+                       </cfRule>',
+            dxfId,
+            values,
+            values,
+            unlist(strsplit(sqref, split = ":"))[[1]]
+          )
+        },
+
+        ## beginsWith ----
+        beginsWith = {
+          sprintf(
+            '<cfRule type="beginsWith" dxfId="%s" priority="1" operator="beginsWith" text="%s">
+                        	<formula>LEFT(%s,LEN("%s"))="%s"</formula>
+                       </cfRule>',
+            dxfId,
+            values,
+
+            unlist(strsplit(sqref, split = ":"))[[1]],
+            values,
+            values
+          )
+        },
+
+        ## endsWith ----
+        endsWith = sprintf(
+          '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
+                        	<formula>RIGHT(%s,LEN("%s"))="%s"</formula>
+                       </cfRule>',
+          dxfId,
+          values,
+
+          unlist(strsplit(sqref, split = ":"))[[1]],
+          values,
+          values
+        ),
+
+        ## between ----
+        between = sprintf(
+          '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
+          dxfId,
+          formula[1],
+          formula[2]
+        ),
+
+        ## topN ----
+        topN = sprintf(
+          '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
+          dxfId,
+          values[1],
+          values[2]
+        ),
+
+        ## bottomN ----
+        bottomN = {
+          sprintf(
+            '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
+            dxfId,
+            values[1],
+            values[2]
+          )
+        },
+        # do we have a match.arg() anywhere or will it just be showned in this switch()?
+        stop("type `", type, "` is not a valid formatting rule")
+      )
+
+      private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
+      names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
+      invisible(self)
+    },
+
+    #' @description
     #' Set cell merging for a sheet
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(sheet, rows = NULL, cols = NULL) {
+    merge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
       # TODO send to wbWorksheet() method
@@ -2616,7 +2939,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
-    unmerge_cells = function(sheet, rows = NULL, cols = NULL) {
+    unmerge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
       sheet <- private$get_sheet_index(sheet)
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
@@ -2650,7 +2973,7 @@ wbWorkbook <- R6::R6Class(
     #' @param firstCol firstCol
     #' @return The `wbWorkbook` object, invisibly
     freeze_pane = function(
-      sheet,
+      sheet = current_sheet(),
       firstActiveRow = NULL,
       firstActiveCol = NULL,
       firstRow = FALSE,
@@ -3081,7 +3404,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dpi dpi
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
-      sheet,
+      sheet = current_sheet(),
       file,
       width     = 6,
       height    = 3,
@@ -3230,7 +3553,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dpi dpi
     #' @returns The `wbWorkbook` object
     add_plot = function(
-      sheet,
+      sheet = current_sheet(),
       width     = 6,
       height    = 4,
       xy        = NULL,
@@ -3446,7 +3769,7 @@ wbWorkbook <- R6::R6Class(
     #'   `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
     #' @returns The `wbWorkbook` object
     protect_worksheet = function(
-        sheet,
+        sheet = current_sheet(),
         protect    = TRUE,
         password   = NULL,
         properties = NULL
@@ -3550,7 +3873,7 @@ wbWorkbook <- R6::R6Class(
     #' @param summaryCol summaryCol
     #' @return The `wbWorkbook` object, invisibly
     page_setup = function(
-      sheet,
+      sheet = current_sheet(),
       orientation    = NULL,
       scale          = 100,
       left           = 0.7,
@@ -3710,7 +4033,7 @@ wbWorkbook <- R6::R6Class(
     #' @param firstFooter firstFooter
     #' @return The `wbWorkbook` object, invisibly
     set_header_footer = function(
-      sheet,
+      sheet = current_sheet(),
       header      = NULL,
       footer      = NULL,
       evenHeader  = NULL,
@@ -3772,7 +4095,7 @@ wbWorkbook <- R6::R6Class(
     #' @description get tables
     #' @param sheet sheet
     #' @returns The sheet tables.  `character()` if empty
-    get_tables = function(sheet) {
+    get_tables = function(sheet = current_sheet()) {
       if (length(sheet) != 1) {
         stop("sheet argument must be length 1")
       }
@@ -3800,7 +4123,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param table table
     #' @returns The `wbWorkbook` object
-    remove_tables = function(sheet, table) {
+    remove_tables = function(sheet = current_sheet(), table) {
       if (length(table) != 1) {
         stop("table argument must be length 1")
       }
@@ -3856,7 +4179,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @param cols cols
     #' @returns The `wbWorkbook` object
-    add_filter = function(sheet, rows, cols) {
+    add_filter = function(sheet = current_sheet(), rows, cols) {
       sheet <- private$get_sheet_index(sheet)
 
       if (length(rows) != 1) {
@@ -3878,7 +4201,7 @@ wbWorkbook <- R6::R6Class(
     #' @description remove filters
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
-    remove_filter = function(sheet) {
+    remove_filter = function(sheet = current_sheet()) {
       for (s in private$get_sheet_index(sheet)) {
         self$worksheets[[s]]$autoFilter <- character()
       }
@@ -3890,7 +4213,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param show show
     #' @returns The `wbWorkbook` object
-    grid_lines = function(sheet, show = FALSE) {
+    grid_lines = function(sheet = current_sheet(), show = FALSE) {
       sheet <- private$get_sheet_index(sheet)
 
       if (!is.logical(show)) {
@@ -3921,7 +4244,7 @@ wbWorkbook <- R6::R6Class(
     #' @param overwrite overwrite
     #' @returns The `wbWorkbook` object
     add_named_region = function(
-      sheet,
+      sheet = current_sheet(),
       cols,
       rows,
       name,
@@ -3981,7 +4304,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param name name
     #' @returns The `wbWorkbook` object
-    remove_named_region = function(sheet = NULL, name = NULL) {
+    remove_named_region = function(sheet = current_sheet(), name = NULL) {
       # get all nown defined names
       dn <- get_named_regions(self)
 
@@ -4046,7 +4369,7 @@ wbWorkbook <- R6::R6Class(
     #' @param value value
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
-    set_sheet_visibility = function(sheet, value) {
+    set_sheet_visibility = function(sheet = current_sheet(), value) {
       if (length(value) != length(sheet)) {
         stop("`value` and `sheet` must be the same length")
       }
@@ -4091,7 +4414,7 @@ wbWorkbook <- R6::R6Class(
     #' @param row row
     #' @param col col
     #' @returns The `wbWorkbook` object
-    add_page_break = function(sheet, row = NULL, col = NULL) {
+    add_page_break = function(sheet = current_sheet(), row = NULL, col = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
       self
@@ -4105,14 +4428,17 @@ wbWorkbook <- R6::R6Class(
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
-        sheet,
+        sheet        = current_sheet(),
         numbers      = TRUE,
         characters   = TRUE,
         styles       = TRUE,
         merged_cells = TRUE
     ) {
       sheet <- private$get_sheet_index(sheet)
-      self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+      self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters,
+        styles       = styles,
+        merged_cells = merged_cells
+      )
       invisible(self)
     },
 
@@ -4838,8 +5164,10 @@ wbWorkbook <- R6::R6Class(
   # any functions that are not present elsewhere or are non-exported internal
   # functions that are used to make assignments
   private = list(
-    # original sheet name values
     ### fields ----
+    current_sheet = 0L,
+
+    # original sheet name values
     original_sheet_names = character(),
 
     ### methods ----
@@ -4869,12 +5197,17 @@ wbWorkbook <- R6::R6Class(
         stop("sheet name must be length 1")
       }
 
+      if (is_waiver(sheet)) {
+        # should be safe
+        return()
+      }
+
       if (is.na(sheet)) {
         stop("sheet cannot be NA")
       }
 
       if (is.numeric(sheet)) {
-        if (sheet %% 1 != 0) {
+        if (!is_integer_ish(sheet)) {
           stop("If sheet is numeric it must be an integer")
         }
 
@@ -4907,7 +5240,26 @@ wbWorkbook <- R6::R6Class(
       }
     },
 
+    set_current_sheet = function(sheet_index) {
+      stopifnot(is_integer_ish(sheet_index), length(sheet_index) == 1)
+      private$current_sheet <- sheet_index
+    },
+
     get_sheet_index = function(sheet) {
+      # Get/validate `sheet` and set as the current sheet
+      if (is_waiver(sheet)) {
+        # waivers shouldn't need additional validation
+        switch(
+          sheet,
+          current_sheet = NULL,
+          next_sheet = {
+            private$current_sheet <- length(self$sheet_names) + 1L
+          },
+          stop("not a valid waiver: ", sheet)
+        )
+        return(private$current_sheet)
+      }
+
       # returns the sheet index, or NA
       if (is.null(self$sheet_names)) {
         warning("Workbook has no sheets")
@@ -4922,14 +5274,14 @@ wbWorkbook <- R6::R6Class(
         bad <- is.na(m1) & is.na(m2)
 
         if (any(bad)) {
-          stop("Sheet names not found: ", toString(sheet[bad]))
+          stop("Sheet name(s) not found: ", toString(sheet[bad]))
         }
 
         # need the vectorized
         sheet <- ifelse(is.na(m1), m2, m1)
       } else {
         sheet <- as.integer(sheet)
-        bad <- which(sheet > length(self$sheet_names))
+        bad <- which(sheet > length(self$sheet_names) | sheet < 1)
 
         if (length(bad)) {
           stop("Invalid sheet position(s): ", toString(sheet[bad]))
@@ -4937,6 +5289,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      private$current_sheet <- sheet
       sheet
     },
 
@@ -4955,7 +5308,7 @@ wbWorkbook <- R6::R6Class(
       private$original_sheet_names[self$sheetOrder[pos]] <- raw
     },
 
-    append_sheet_field = function(sheet, field, value = NULL) {
+    append_sheet_field = function(sheet = current_sheet(), field, value = NULL) {
       # if using this we should consider adding a method into the wbWorksheet
       # object.  wbWorksheet$append() is currently public. _Currently_.
       sheet <- private$get_sheet_index(sheet)
@@ -4968,7 +5321,7 @@ wbWorkbook <- R6::R6Class(
       self
     },
 
-    append_sheet_rels = function(sheet, value = NULL) {
+    append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
       self
@@ -5258,7 +5611,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     data_validation = function(
-      sheet,
+      sheet = current_sheet(),
       startRow,
       endRow,
       startCol,
@@ -5348,7 +5701,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     data_validation_list = function(
-      sheet,
+      sheet = current_sheet(),
       startRow,
       endRow,
       startCol,
@@ -5385,7 +5738,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     # old add_named_region()
-    create_named_region = function(ref1, ref2, name, sheet, localSheetId = NULL) {
+    create_named_region = function(ref1, ref2, name, sheet = current_sheet(), localSheetId = NULL) {
       name <- replace_legal_chars(name)
       value <- if (is.null(localSheetId)) {
         sprintf(

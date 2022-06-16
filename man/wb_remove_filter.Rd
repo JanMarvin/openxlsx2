@@ -4,7 +4,7 @@
 \alias{wb_remove_filter}
 \title{Remove a worksheet filter}
 \usage{
-wb_remove_filter(wb, sheet)
+wb_remove_filter(wb, sheet = current_sheet())
 }
 \arguments{
 \item{wb}{A workbook object}

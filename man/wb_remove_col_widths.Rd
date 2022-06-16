@@ -4,7 +4,7 @@
 \alias{wb_remove_col_widths}
 \title{Remove column widths from a worksheet}
 \usage{
-wb_remove_col_widths(wb, sheet, cols)
+wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 }
 \arguments{
 \item{wb}{A workbook object}

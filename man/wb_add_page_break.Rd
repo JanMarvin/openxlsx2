@@ -4,7 +4,7 @@
 \alias{wb_add_page_break}
 \title{Add a page break to a worksheet}
 \usage{
-wb_add_page_break(wb, sheet, row = NULL, col = NULL)
+wb_add_page_break(wb, sheet = current_sheet(), row = NULL, col = NULL)
 }
 \arguments{
 \item{wb}{A workbook object}
