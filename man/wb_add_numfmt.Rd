@@ -4,7 +4,7 @@
 \alias{wb_add_numfmt}
 \title{add numfmt for cell region}
 \usage{
-wb_add_numfmt(wb, sheet, dims, numfmt)
+wb_add_numfmt(wb, sheet = current_sheet(), dims, numfmt)
 }
 \arguments{
 \item{wb}{a workbook}

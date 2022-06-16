@@ -1626,56 +1626,6 @@ wbWorkbook <- R6::R6Class(
     },
 
 
-    #' @description
-    #' Create a font node from a style
-    #' @param style style
-    #' @return The font node as xml?
-    createFontNode = function(style) {
-      # Nothing is assigned to self, so this is fine to not return self
-      # TODO pull out from public methods
-      # assert_style(style)
-      baseFont <- self$get_base_font()
-
-      # Create font name
-      paste_c(
-        "<font>",
-
-        ## size
-        if (is.null(style$fontSize[[1]])) {
-          sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size)
-        } else {
-          sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize)
-        },
-
-        # colour
-        if (is.null(style$fontColour[[1]])) {
-          sprintf('<color %s="%s"/>', names(baseFont$colour), baseFont$colour)
-        } else {
-          new <- sprintf('%s="%s"', names(style$fontColour), style$fontColour)
-          sprintf("<color %s/>", stri_join(new, sep = " ", collapse = " "))
-        },
-
-        # font name
-        if (is.null(style$fontName[[1]])) {
-          sprintf('<name %s="%s"/>', names(baseFont$name), baseFont$name)
-        } else {
-          sprintf('<name %s="%s"/>', names(style$fontName), style$fontName)
-        },
-
-        # new font name and return id
-        sprintf('<family val = "%s"/>', style$fontFamily),
-        sprintf('<scheme val = "%s"/>', style$fontScheme),
-
-        if ("BOLD"       %in% style$fontDecoration) "<b/>",
-        if ("ITALIC"     %in% style$fontDecoration) "<i/>",
-        if ("UNDERLINE"  %in% style$fontDecoration) '<u val="single"/>',
-        if ("UNDERLINE2" %in% style$fontDecoration) '<u val="double"/>',
-        if ("STRIKEOUT"  %in% style$fontDecoration) "<strike/>",
-
-        "</font>"
-      )
-    },
-
     ### base font ----
 
     #' @description
@@ -4475,7 +4425,7 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
-      sheet,
+      sheet         = current_sheet(),
       dims          = "A1",
       bottom_color  = c(rgb = "FF000000"),
       left_color    = c(rgb = "FF000000"),
@@ -4885,7 +4835,7 @@ wbWorkbook <- R6::R6Class(
     #'   </gradientFill>"
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
-        sheet,
+        sheet         = current_sheet(),
         dims,
         color         = "",
         pattern       = "solid",
@@ -4950,24 +4900,24 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
-      sheet,
-      dims,
-      name = "Calibri",
-      color = c(rgb = "FF000000"),
-      size = "11",
-      bold = "",
-      italic = "",
-      outline = "",
-      strike = "",
-      underline = "",
-      # fine tuning
-      charset = "",
-      condense = "",
-      extend = "",
-      family = "",
-      scheme = "",
-      shadow = "",
-      vertAlign = ""
+        sheet     = current_sheet(),
+        dims,
+        name      = "Calibri",
+        color     = c(rgb = "FF000000"),
+        size      = "11",
+        bold      = "",
+        italic    = "",
+        outline   = "",
+        strike    = "",
+        underline = "",
+        # fine tuning
+        charset   = "",
+        condense  = "",
+        extend    = "",
+        family    = "",
+        scheme    = "",
+        shadow    = "",
+        vertAlign = ""
     ) {
 
       new_font <- create_font(
@@ -5014,9 +4964,9 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
     #' @return The `wbWorksheetObject`, invisibly
     add_numfmt = function(
-      sheet,
-      dims,
-      numfmt
+        sheet = current_sheet(),
+        dims,
+        numfmt
     ) {
 
       if (inherits(numfmt, "character")) {
@@ -5090,33 +5040,33 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
     #' @return The `wbWorksheetObject`, invisibly
     add_cell_style = function(
-      sheet,
-      dims,
-      applyAlignment    = NULL,
-      applyBorder       = NULL,
-      applyFill         = NULL,
-      applyFont         = NULL,
-      applyNumberFormat = NULL,
-      applyProtection   = NULL,
-      borderId          = NULL,
-      extLst            = NULL,
-      fillId            = NULL,
-      fontId            = NULL,
-      hidden            = NULL,
-      horizontal        = NULL,
-      indent            = NULL,
-      justifyLastLine   = NULL,
-      locked            = NULL,
-      numFmtId          = NULL,
-      pivotButton       = NULL,
-      quotePrefix       = NULL,
-      readingOrder      = NULL,
-      relativeIndent    = NULL,
-      shrinkToFit       = NULL,
-      textRotation      = NULL,
-      vertical          = NULL,
-      wrapText          = NULL,
-      xfId              = NULL
+        sheet             = current_sheet(),
+        dims,
+        applyAlignment    = NULL,
+        applyBorder       = NULL,
+        applyFill         = NULL,
+        applyFont         = NULL,
+        applyNumberFormat = NULL,
+        applyProtection   = NULL,
+        borderId          = NULL,
+        extLst            = NULL,
+        fillId            = NULL,
+        fontId            = NULL,
+        hidden            = NULL,
+        horizontal        = NULL,
+        indent            = NULL,
+        justifyLastLine   = NULL,
+        locked            = NULL,
+        numFmtId          = NULL,
+        pivotButton       = NULL,
+        quotePrefix       = NULL,
+        readingOrder      = NULL,
+        relativeIndent    = NULL,
+        shrinkToFit       = NULL,
+        textRotation      = NULL,
+        vertical          = NULL,
+        wrapText          = NULL,
+        xfId              = NULL
     ) {
 
       for (dim in dims) {
