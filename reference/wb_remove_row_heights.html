@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_remove_row_heights</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span>, <span class="va">rows</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_remove_row_heights</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,18 +101,18 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Images:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 1: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/media/image2.jpeg"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 2: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/media/image1.jpeg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 1: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/media/image2.jpeg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Image 2: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/media/image1.jpeg"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Charts:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 1: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/colors2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 2: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/style2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 3: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/chart2.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 4: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/chart1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 5: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/style1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 6: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/colors1.xml"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 7: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/_rels/chart2.xml.rels"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 8: "/tmp/Rtmpf8q1Dl/_openxlsx_wb_load27fe2e0ddc30/xl/charts/_rels/chart1.xml.rels"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 1: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/colors2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 2: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/style2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 3: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/chart2.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 4: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/chart1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 5: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/style1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 6: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/colors1.xml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 7: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/_rels/chart2.xml.rels"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Chart 8: "/tmp/RtmprdnEWa/_openxlsx_wb_load275d32e8c85e/xl/charts/_rels/chart1.xml.rels"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"remove_row_heightsExample.xlsx"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>

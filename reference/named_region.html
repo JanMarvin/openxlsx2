@@ -68,7 +68,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_add_named_region</span><span class="op">(</span>
   <span class="va">wb</span>,
-  <span class="va">sheet</span>,
+  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
   <span class="va">cols</span>,
   <span class="va">rows</span>,
   <span class="va">name</span>,
@@ -76,7 +76,7 @@
   overwrite <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 
-<span class="fu">wb_remove_named_region</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<span class="fu">wb_remove_named_region</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
