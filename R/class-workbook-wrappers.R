@@ -1932,15 +1932,29 @@ wb_add_image <- function(
 #' @param merged_cells remove all merged_cells
 #' @name cleanup
 #' @export
-wb_clean_sheet <- function(wb, sheet = current_sheet(), numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
-  sheet <- wb_validate_sheet(wb, sheet)
-  wb$clone()$clean_sheet(sheet = sheet, numbers = numbers, characters = characters, styles = styles, merged_cells = merged_cells)
+wb_clean_sheet <- function(
+    wb,
+    sheet        = current_sheet(),
+    numbers      = TRUE,
+    characters   = TRUE,
+    styles       = TRUE,
+    merged_cells = TRUE
+) {
+  assert_workbook(wb)
+  wb$clone()$clean_sheet(
+    sheet        = sheet,
+    numbers      = numbers,
+    characters   = characters,
+    styles       = styles,
+    merged_cells = merged_cells
+  )
 }
 
 #' little worksheet opener
 #' @param wb a workbook
 #' @export
 wb_open <- function(wb) {
+  assert_workbook(wb)
   wb$open()
 }
 
@@ -1975,40 +1989,41 @@ wb_open <- function(wb) {
 wb_add_border <- function(
     wb,
     sheet,
-    dims = "A1",
-    bottom_color  = c(rgb = "FF000000"),
-    left_color    = c(rgb = "FF000000"),
-    right_color   = c(rgb = "FF000000"),
-    top_color     = c(rgb = "FF000000"),
-    bottom_border = "thin",
-    left_border   = "thin",
-    right_border  = "thin",
-    top_border    = "thin",
+    dims           = "A1",
+    bottom_color   = c(rgb = "FF000000"),
+    left_color     = c(rgb = "FF000000"),
+    right_color    = c(rgb = "FF000000"),
+    top_color      = c(rgb = "FF000000"),
+    bottom_border  = "thin",
+    left_border    = "thin",
+    right_border   = "thin",
+    top_border     = "thin",
     inner_hgrid    = NULL,
     inner_hcolor   = NULL,
     inner_vgrid    = NULL,
-    inner_vcolor   = NULL) {
-  sheet <- wb_validate_sheet(wb, sheet)
+    inner_vcolor   = NULL
+) {
+  assert_workbook(wb)
   wb$clone()$add_border(
-    sheet = sheet,
-    dims = dims,
-    bottom_color = bottom_color,
-    left_color = left_color,
-    right_color = right_color,
-    top_color = top_color,
+    sheet         = sheet,
+    dims          = dims,
+    bottom_color  = bottom_color,
+    left_color    = left_color,
+    right_color   = right_color,
+    top_color     = top_color,
     bottom_border = bottom_border,
-    left_border = left_border,
-    right_border = right_border,
-    top_border = top_border,
-    inner_hgrid = inner_hgrid,
-    inner_hcolor = inner_hcolor,
-    inner_vgrid = inner_vgrid,
-    inner_vcolor = inner_vcolor
+    left_border   = left_border,
+    right_border  = right_border,
+    top_border    = top_border,
+    inner_hgrid   = inner_hgrid,
+    inner_hcolor  = inner_hcolor,
+    inner_vgrid   = inner_vgrid,
+    inner_vcolor  = inner_vcolor
   )
 
 }
 
-#' add fill for fill region
+#' add fill for cell region
 #'
 #' @description wb wrapper to create fill for cell region
 #' @param wb a workbook
@@ -2047,20 +2062,211 @@ wb_add_fill <- function(
     wb,
     sheet,
     dims,
-    color = "",
-    pattern = "solid",
+    color         = "",
+    pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,
     every_nth_row = 1
 ) {
-  sheet <- wb_validate_sheet(wb, sheet)
+  assert_workbook(wb)
   wb$clone()$add_fill(
-    sheet = sheet,
-    dims = dims,
-    color = color,
-    pattern = pattern,
+    sheet         = sheet,
+    dims          = dims,
+    color         = color,
+    pattern       = pattern,
     gradient_fill = gradient_fill,
     every_nth_col = every_nth_col,
     every_nth_row = every_nth_row
+  )
+}
+
+#' add font for cell region
+#' @details add_font provides all the options openxml accepts for a font node, not all have to be set. Usually name, size and color should be what the user wants.
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param name font name: default "Calibri"
+#' @param color rgb color: default "FF000000"
+#' @param size font size: default "11",
+#' @param bold bold, "single" or "double", default: ""
+#' @param italic italic
+#' @param outline outline
+#' @param strike strike
+#' @param underline underline
+#' @param family font family
+#' @param charset charset
+#' @param condense condense
+#' @param scheme font scheme
+#' @param shadow shadow
+#' @param extend extend
+#' @param vertAlign vertical alignment
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_font <- function(
+      wb,
+      sheet,
+      dims,
+      name = "Calibri",
+      color = c(rgb = "FF000000"),
+      size = "11",
+      bold = "",
+      italic = "",
+      outline = "",
+      strike = "",
+      underline = "",
+      # fine tuning
+      charset = "",
+      condense = "",
+      extend = "",
+      family = "",
+      scheme = "",
+      shadow = "",
+      vertAlign = ""
+) {
+  assert_workbook(wb)
+  wb$clone()$add_font(
+    sheet     = sheet,
+    dims      = dims,
+    name      = name,
+    color     = color,
+    size      = size,
+    bold      = bold,
+    italic    = italic,
+    outline   = outline,
+    strike    = strike,
+    underline = underline,
+    # fine tuning
+    charset   = charset,
+    condense  = condense,
+    extend    = extend,
+    family    = family,
+    scheme    = scheme,
+    shadow    = shadow,
+    vertAlign = vertAlign
+  )
+}
+
+#' add numfmt for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param numfmt either an id or a character
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_numfmt <- function(
+      wb,
+      sheet,
+      dims,
+      numfmt
+) {
+  assert_workbook(wb)
+  wb$clone()$add_numfmt(
+    sheet  = sheet,
+    dims   = dims,
+    numfmt = numfmt
+  )
+}
+
+#' add cell style for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param extLst extension list something like `<extLst>...</extLst>`
+#' @param hidden logical cell is hidden
+#' @param horizontal align content horizontal ('left', 'center', 'right')
+#' @param indent logical indent content
+#' @param justifyLastLine logical justify last line
+#' @param locked logical cell is locked
+#' @param pivotButton unknown
+#' @param quotePrefix unknown
+#' @param readingOrder reading order left to right
+#' @param relativeIndent relative indentation
+#' @param shrinkToFit logical shrink to fit
+#' @param textRotation degrees of text rotation
+#' @param vertical vertical alignment of content ('top', 'center', 'bottom')
+#' @param wrapText wrap text in cell
+# alignments
+#' @param applyAlignment logical apply alignment
+#' @param applyBorder logical apply border
+#' @param applyFill logical apply fill
+#' @param applyFont logical apply font
+#' @param applyNumberFormat logical apply number format
+#' @param applyProtection logical apply protection
+# ids
+#' @param borderId border ID to apply
+#' @param fillId fill ID to apply
+#' @param fontId font ID to apply
+#' @param numFmtId number format ID to apply
+#' @param xfId xf ID to apply
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb_add_cell_style(wb, "S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_add_cell_style <- function(
+      wb,
+      sheet,
+      dims,
+      applyAlignment    = NULL,
+      applyBorder       = NULL,
+      applyFill         = NULL,
+      applyFont         = NULL,
+      applyNumberFormat = NULL,
+      applyProtection   = NULL,
+      borderId          = NULL,
+      extLst            = NULL,
+      fillId            = NULL,
+      fontId            = NULL,
+      hidden            = NULL,
+      horizontal        = NULL,
+      indent            = NULL,
+      justifyLastLine   = NULL,
+      locked            = NULL,
+      numFmtId          = NULL,
+      pivotButton       = NULL,
+      quotePrefix       = NULL,
+      readingOrder      = NULL,
+      relativeIndent    = NULL,
+      shrinkToFit       = NULL,
+      textRotation      = NULL,
+      vertical          = NULL,
+      wrapText          = NULL,
+      xfId              = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$add_cell_style(
+    sheet             = sheet,
+    dims              = dims,
+    applyAlignment    = applyAlignment,
+    applyBorder       = applyBorder,
+    applyFill         = applyFill,
+    applyFont         = applyFont,
+    applyNumberFormat = applyNumberFormat,
+    applyProtection   = applyProtection,
+    borderId          = borderId,
+    extLst            = extLst,
+    fillId            = fillId,
+    fontId            = fontId,
+    hidden            = hidden,
+    horizontal        = horizontal,
+    indent            = indent,
+    justifyLastLine   = justifyLastLine,
+    locked            = locked,
+    numFmtId          = numFmtId,
+    pivotButton       = pivotButton,
+    quotePrefix       = quotePrefix,
+    readingOrder      = readingOrder,
+    relativeIndent    = relativeIndent,
+    shrinkToFit       = shrinkToFit,
+    textRotation      = textRotation,
+    vertical          = vertical,
+    wrapText          = wrapText,
+    xfId              = xfId
   )
 }

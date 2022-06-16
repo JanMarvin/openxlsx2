@@ -92,6 +92,27 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
    <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
    <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
   </gradientFill>"
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_font`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_numfmt`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_numfmt("S1", "A1:A33", numfmt = 1)
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_cell_style`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
 }
 \seealso{
 create_border
@@ -266,6 +287,9 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
 \item \href{#method-wbWorkbook-add_border}{\code{wbWorkbook$add_border()}}
 \item \href{#method-wbWorkbook-add_fill}{\code{wbWorkbook$add_fill()}}
+\item \href{#method-wbWorkbook-add_font}{\code{wbWorkbook$add_font()}}
+\item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
+\item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1884,7 +1908,7 @@ The \code{wbWorksheetObject}, invisibly
 create borders for cell region
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_border(
-  sheet = 1,
+  sheet,
   dims = "A1",
   bottom_color = c(rgb = "FF000000"),
   left_color = c(rgb = "FF000000"),
@@ -1999,6 +2023,227 @@ The \code{wbWorksheetObject}, invisibly
    <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
    <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
   </gradientFill>"
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_font"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_font}{}}}
+\subsection{Method \code{add_font()}}{
+provide simple font function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_font(
+  sheet,
+  dims,
+  name = "Calibri",
+  color = c(rgb = "FF000000"),
+  size = "11",
+  bold = "",
+  italic = "",
+  outline = "",
+  strike = "",
+  underline = "",
+  charset = "",
+  condense = "",
+  extend = "",
+  family = "",
+  scheme = "",
+  shadow = "",
+  vertAlign = ""
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{name}}{font name: default "Calibri"}
+
+\item{\code{color}}{rgb color: default "FF000000"}
+
+\item{\code{size}}{font size: default "11",}
+
+\item{\code{bold}}{bold}
+
+\item{\code{italic}}{italic}
+
+\item{\code{outline}}{outline}
+
+\item{\code{strike}}{strike}
+
+\item{\code{underline}}{underline}
+
+\item{\code{charset}}{charset}
+
+\item{\code{condense}}{condense}
+
+\item{\code{extend}}{extend}
+
+\item{\code{family}}{font family}
+
+\item{\code{scheme}}{font scheme}
+
+\item{\code{shadow}}{shadow}
+
+\item{\code{vertAlign}}{vertical alignment}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_numfmt"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_numfmt}{}}}
+\subsection{Method \code{add_numfmt()}}{
+provide simple number format function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet, dims, numfmt)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{numfmt}}{number format id or a character of the format}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_numfmt("S1", "A1:A33", numfmt = 1)
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_cell_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_cell_style}{}}}
+\subsection{Method \code{add_cell_style()}}{
+provide simple cell style format function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_cell_style(
+  sheet,
+  dims,
+  applyAlignment = NULL,
+  applyBorder = NULL,
+  applyFill = NULL,
+  applyFont = NULL,
+  applyNumberFormat = NULL,
+  applyProtection = NULL,
+  borderId = NULL,
+  extLst = NULL,
+  fillId = NULL,
+  fontId = NULL,
+  hidden = NULL,
+  horizontal = NULL,
+  indent = NULL,
+  justifyLastLine = NULL,
+  locked = NULL,
+  numFmtId = NULL,
+  pivotButton = NULL,
+  quotePrefix = NULL,
+  readingOrder = NULL,
+  relativeIndent = NULL,
+  shrinkToFit = NULL,
+  textRotation = NULL,
+  vertical = NULL,
+  wrapText = NULL,
+  xfId = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{applyAlignment}}{logical apply alignment}
+
+\item{\code{applyBorder}}{logical apply border}
+
+\item{\code{applyFill}}{logical apply fill}
+
+\item{\code{applyFont}}{logical apply font}
+
+\item{\code{applyNumberFormat}}{logical apply number format}
+
+\item{\code{applyProtection}}{logical apply protection}
+
+\item{\code{borderId}}{border ID to apply}
+
+\item{\code{extLst}}{extension list something like \verb{<extLst>...</extLst>}}
+
+\item{\code{fillId}}{fill ID to apply}
+
+\item{\code{fontId}}{font ID to apply}
+
+\item{\code{hidden}}{logical cell is hidden}
+
+\item{\code{horizontal}}{align content horizontal ('left', 'center', 'right')}
+
+\item{\code{indent}}{logical indent content}
+
+\item{\code{justifyLastLine}}{logical justify last line}
+
+\item{\code{locked}}{logical cell is locked}
+
+\item{\code{numFmtId}}{number format ID to apply}
+
+\item{\code{pivotButton}}{unknown}
+
+\item{\code{quotePrefix}}{unknown}
+
+\item{\code{readingOrder}}{reading order left to right}
+
+\item{\code{relativeIndent}}{relative indentation}
+
+\item{\code{shrinkToFit}}{logical shrink to fit}
+
+\item{\code{textRotation}}{degrees of text rotation}
+
+\item{\code{vertical}}{vertical alignment of content ('top', 'center', 'bottom')}
+
+\item{\code{wrapText}}{wrap text in cell}
+
+\item{\code{xfId}}{xf ID to apply}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
 }
 \if{html}{\out{</div>}}
 

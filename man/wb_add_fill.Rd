@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_fill}
 \alias{wb_add_fill}
-\title{add fill for fill region}
+\title{add fill for cell region}
 \usage{
 wb_add_fill(
   wb,

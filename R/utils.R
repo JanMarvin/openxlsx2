@@ -88,3 +88,23 @@ dir_create <- function(..., warn = TRUE, recurse = TRUE) {
   dir.create(path, showWarnings = warn, recursive = recurse)
   path
 }
+
+random_string <- function(size = NULL) {
+  # creates a random string using tempfile() which does better to not affect the
+  # random seed
+  # https://github.com/ycphs/openxlsx/issues/183
+  # https://github.com/ycphs/openxlsx/pull/224
+  res <- basename(tempfile(""))
+
+  if (is.null(size)) {
+    return(res)
+  }
+
+  size <- as.integer(size)
+  stopifnot(size >= 0L)
+  while (nchar(res) < size) {
+    res <- paste0(res, random_string())
+  }
+
+  substr(res, 1L, size)
+}
