@@ -109,7 +109,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
-<ul><li><p>Switch to modern xlsx template, when creating workbooks. Imported workbooks will use the imported template</p></li>
+<ul><li><p>Remove <code>wb$createFontNode()</code> which was never used.</p></li>
+<li><p>Switch to modern xlsx template, when creating workbooks. Imported workbooks will use the imported template</p></li>
 <li><p>Rewrite <code>wb$tables</code> to use a data frame approach. This simplifies the code a bit and makes it easier to implement more upcoming changes <a href="https://github.com/JanMarvin/openxlsx2/pull/191" class="external-link">191</a></p></li>
 <li><p>Update of internal pugixml library</p></li>
 <li><p>The two functions <code><a href="../reference/write_data.html">write_data()</a></code> and <code><a href="../reference/write_datatable.html">write_datatable()</a></code> now use the same internal function <code>write_data_table()</code> to add data to the sheet. This simplifies the code and ensures that both functions are tested. In the same pull request, the documentation has been updated and the <code>stack=</code> option, which was not present before, has been removed <a href="https://github.com/JanMarvin/openxlsx2/pull/175" class="external-link">175</a></p></li>
