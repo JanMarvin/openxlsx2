@@ -1626,56 +1626,6 @@ wbWorkbook <- R6::R6Class(
     },
 
 
-    #' @description
-    #' Create a font node from a style
-    #' @param style style
-    #' @return The font node as xml?
-    createFontNode = function(style) {
-      # Nothing is assigned to self, so this is fine to not return self
-      # TODO pull out from public methods
-      # assert_style(style)
-      baseFont <- self$get_base_font()
-
-      # Create font name
-      paste_c(
-        "<font>",
-
-        ## size
-        if (is.null(style$fontSize[[1]])) {
-          sprintf('<sz %s="%s"/>', names(baseFont$size), baseFont$size)
-        } else {
-          sprintf('<sz %s="%s"/>', names(style$fontSize), style$fontSize)
-        },
-
-        # colour
-        if (is.null(style$fontColour[[1]])) {
-          sprintf('<color %s="%s"/>', names(baseFont$colour), baseFont$colour)
-        } else {
-          new <- sprintf('%s="%s"', names(style$fontColour), style$fontColour)
-          sprintf("<color %s/>", stri_join(new, sep = " ", collapse = " "))
-        },
-
-        # font name
-        if (is.null(style$fontName[[1]])) {
-          sprintf('<name %s="%s"/>', names(baseFont$name), baseFont$name)
-        } else {
-          sprintf('<name %s="%s"/>', names(style$fontName), style$fontName)
-        },
-
-        # new font name and return id
-        sprintf('<family val = "%s"/>', style$fontFamily),
-        sprintf('<scheme val = "%s"/>', style$fontScheme),
-
-        if ("BOLD"       %in% style$fontDecoration) "<b/>",
-        if ("ITALIC"     %in% style$fontDecoration) "<i/>",
-        if ("UNDERLINE"  %in% style$fontDecoration) '<u val="single"/>',
-        if ("UNDERLINE2" %in% style$fontDecoration) '<u val="double"/>',
-        if ("STRIKEOUT"  %in% style$fontDecoration) "<strike/>",
-
-        "</font>"
-      )
-    },
-
     ### base font ----
 
     #' @description

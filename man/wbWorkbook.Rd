@@ -241,7 +241,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-save}{\code{wbWorkbook$save()}}
 \item \href{#method-wbWorkbook-open}{\code{wbWorkbook$open()}}
 \item \href{#method-wbWorkbook-buildTable}{\code{wbWorkbook$buildTable()}}
-\item \href{#method-wbWorkbook-createFontNode}{\code{wbWorkbook$createFontNode()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
 \item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
@@ -749,26 +748,6 @@ Build table
 }
 \subsection{Returns}{
 The \code{wbWorksheet} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-createFontNode"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-createFontNode}{}}}
-\subsection{Method \code{createFontNode()}}{
-Create a font node from a style
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createFontNode(style)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{style}}{style}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The font node as xml?
 }
 }
 \if{html}{\out{<hr>}}
