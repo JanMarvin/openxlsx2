@@ -185,7 +185,6 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
   assert_workbook(wb)
   assert_comment(comment)
 
-  # rPr <- wb$createFontNode(NULL) # TODO not yet possible
   if (is.null(comment$style)) {
     rPr <- create_font()
     } else {
