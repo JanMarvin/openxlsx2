@@ -3074,10 +3074,10 @@ wbWorkbook <- R6::R6Class(
     #' @param params Additional parameters
     #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
-        sheet,
+        sheet = current_sheet(),
         cols,
         rows,
-        rule = NULL,
+        rule  = NULL,
         style = NULL,
         # TODO add vector of possible values
         type = c("expression", "colorScale", "dataBar", "duplicatedValues",
