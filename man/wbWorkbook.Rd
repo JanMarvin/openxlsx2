@@ -1272,7 +1272,7 @@ The \code{wbWorkbook} object, invisibly
 Add conditional formatting
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_conditional_formatting(
-  sheet,
+  sheet = current_sheet(),
   cols,
   rows,
   rule = NULL,

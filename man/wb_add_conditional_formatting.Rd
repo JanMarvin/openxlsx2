@@ -7,7 +7,7 @@
 \usage{
 wb_add_conditional_formatting(
   wb,
-  sheet,
+  sheet = current_sheet(),
   cols,
   rows,
   rule = NULL,

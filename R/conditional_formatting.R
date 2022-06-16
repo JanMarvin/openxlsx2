@@ -63,7 +63,7 @@
 #' wb$add_conditional_formatting("a", 1, 1:4, ">2")
 wb_add_conditional_formatting <- function(
     wb,
-    sheet,
+    sheet = current_sheet(),
     cols,
     rows,
     rule = NULL,
