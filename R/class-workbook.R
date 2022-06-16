@@ -4147,7 +4147,7 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
-      sheet,
+      sheet         = current_sheet(),
       dims          = "A1",
       bottom_color  = c(rgb = "FF000000"),
       left_color    = c(rgb = "FF000000"),
@@ -4557,7 +4557,7 @@ wbWorkbook <- R6::R6Class(
     #'   </gradientFill>"
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
-        sheet,
+        sheet         = current_sheet(),
         dims,
         color         = "",
         pattern       = "solid",
@@ -4622,24 +4622,24 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
-      sheet,
-      dims,
-      name = "Calibri",
-      color = c(rgb = "FF000000"),
-      size = "11",
-      bold = "",
-      italic = "",
-      outline = "",
-      strike = "",
-      underline = "",
-      # fine tuning
-      charset = "",
-      condense = "",
-      extend = "",
-      family = "",
-      scheme = "",
-      shadow = "",
-      vertAlign = ""
+        sheet     = current_sheet(),
+        dims,
+        name      = "Calibri",
+        color     = c(rgb = "FF000000"),
+        size      = "11",
+        bold      = "",
+        italic    = "",
+        outline   = "",
+        strike    = "",
+        underline = "",
+        # fine tuning
+        charset   = "",
+        condense  = "",
+        extend    = "",
+        family    = "",
+        scheme    = "",
+        shadow    = "",
+        vertAlign = ""
     ) {
 
       new_font <- create_font(
@@ -4686,9 +4686,9 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
     #' @return The `wbWorksheetObject`, invisibly
     add_numfmt = function(
-      sheet,
-      dims,
-      numfmt
+        sheet = current_sheet(),
+        dims,
+        numfmt
     ) {
 
       if (inherits(numfmt, "character")) {
@@ -4762,33 +4762,33 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
     #' @return The `wbWorksheetObject`, invisibly
     add_cell_style = function(
-      sheet,
-      dims,
-      applyAlignment    = NULL,
-      applyBorder       = NULL,
-      applyFill         = NULL,
-      applyFont         = NULL,
-      applyNumberFormat = NULL,
-      applyProtection   = NULL,
-      borderId          = NULL,
-      extLst            = NULL,
-      fillId            = NULL,
-      fontId            = NULL,
-      hidden            = NULL,
-      horizontal        = NULL,
-      indent            = NULL,
-      justifyLastLine   = NULL,
-      locked            = NULL,
-      numFmtId          = NULL,
-      pivotButton       = NULL,
-      quotePrefix       = NULL,
-      readingOrder      = NULL,
-      relativeIndent    = NULL,
-      shrinkToFit       = NULL,
-      textRotation      = NULL,
-      vertical          = NULL,
-      wrapText          = NULL,
-      xfId              = NULL
+        sheet             = current_sheet(),
+        dims,
+        applyAlignment    = NULL,
+        applyBorder       = NULL,
+        applyFill         = NULL,
+        applyFont         = NULL,
+        applyNumberFormat = NULL,
+        applyProtection   = NULL,
+        borderId          = NULL,
+        extLst            = NULL,
+        fillId            = NULL,
+        fontId            = NULL,
+        hidden            = NULL,
+        horizontal        = NULL,
+        indent            = NULL,
+        justifyLastLine   = NULL,
+        locked            = NULL,
+        numFmtId          = NULL,
+        pivotButton       = NULL,
+        quotePrefix       = NULL,
+        readingOrder      = NULL,
+        relativeIndent    = NULL,
+        shrinkToFit       = NULL,
+        textRotation      = NULL,
+        vertical          = NULL,
+        wrapText          = NULL,
+        xfId              = NULL
     ) {
 
       for (dim in dims) {

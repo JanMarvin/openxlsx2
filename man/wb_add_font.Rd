@@ -6,7 +6,7 @@
 \usage{
 wb_add_font(
   wb,
-  sheet,
+  sheet = current_sheet(),
   dims,
   name = "Calibri",
   color = c(rgb = "FF000000"),

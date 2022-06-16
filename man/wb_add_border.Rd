@@ -6,7 +6,7 @@
 \usage{
 wb_add_border(
   wb,
-  sheet,
+  sheet = current_sheet(),
   dims = "A1",
   bottom_color = c(rgb = "FF000000"),
   left_color = c(rgb = "FF000000"),

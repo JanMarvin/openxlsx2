@@ -6,7 +6,7 @@
 \usage{
 wb_add_cell_style(
   wb,
-  sheet,
+  sheet = current_sheet(),
   dims,
   applyAlignment = NULL,
   applyBorder = NULL,

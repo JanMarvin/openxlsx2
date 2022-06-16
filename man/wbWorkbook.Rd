@@ -1908,7 +1908,7 @@ The \code{wbWorksheetObject}, invisibly
 create borders for cell region
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_border(
-  sheet,
+  sheet = current_sheet(),
   dims = "A1",
   bottom_color = c(rgb = "FF000000"),
   left_color = c(rgb = "FF000000"),
@@ -1980,7 +1980,7 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 provide simple fill function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
-  sheet,
+  sheet = current_sheet(),
   dims,
   color = "",
   pattern = "solid",
@@ -2036,7 +2036,7 @@ The \code{wbWorksheetObject}, invisibly
 provide simple font function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_font(
-  sheet,
+  sheet = current_sheet(),
   dims,
   name = "Calibri",
   color = c(rgb = "FF000000"),
@@ -2114,7 +2114,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Method \code{add_numfmt()}}{
 provide simple number format function
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet, dims, numfmt)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet = current_sheet(), dims, numfmt)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -2148,7 +2148,7 @@ The \code{wbWorksheetObject}, invisibly
 provide simple cell style format function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_cell_style(
-  sheet,
+  sheet = current_sheet(),
   dims,
   applyAlignment = NULL,
   applyBorder = NULL,

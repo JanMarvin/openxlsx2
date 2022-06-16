@@ -728,18 +728,18 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
 wb_add_plot <- function(
-  wb,
-  sheet = current_sheet(),
-  width     = 6,
-  height    = 4,
-  xy        = NULL,
-  startRow  = 1,
-  startCol  = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  fileType  = "png",
-  units     = "in",
-  dpi       = 300
+    wb,
+    sheet     = current_sheet(),
+    width     = 6,
+    height    = 4,
+    xy        = NULL,
+    startRow  = 1,
+    startCol  = 1,
+    rowOffset = 0,
+    colOffset = 0,
+    fileType  = "png",
+    units     = "in",
+    dpi       = 300
 ) {
   assert_workbook(wb)
   wb$clone()$add_plot(
@@ -908,14 +908,14 @@ wb_get_base_font <- function(wb) {
 #' wb_save(wb, "wb_set_header_footerExample.xlsx", overwrite = TRUE)
 #' }
 wb_set_header_footer <- function(
-  wb,
-  sheet = current_sheet(),
-  header = NULL,
-  footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL
+    wb,
+    sheet       = current_sheet(),
+    header      = NULL,
+    footer      = NULL,
+    evenHeader  = NULL,
+    evenFooter  = NULL,
+    firstHeader = NULL,
+    firstFooter = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$set_header_footer(
@@ -1049,23 +1049,23 @@ wb_set_header_footer <- function(
 #' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
 wb_page_setup <- function(
-  wb,
-  sheet          = current_sheet(),
-  orientation    = NULL,
-  scale          = 100,
-  left           = 0.7,
-  right          = 0.7,
-  top            = 0.75,
-  bottom         = 0.75,
-  header         = 0.3,
-  footer         = 0.3,
-  fitToWidth     = FALSE,
-  fitToHeight    = FALSE,
-  paperSize      = NULL,
-  printTitleRows = NULL,
-  printTitleCols = NULL,
-  summaryRow     = NULL,
-  summaryCol     = NULL
+    wb,
+    sheet          = current_sheet(),
+    orientation    = NULL,
+    scale          = 100,
+    left           = 0.7,
+    right          = 0.7,
+    top            = 0.75,
+    bottom         = 0.75,
+    header         = 0.3,
+    footer         = 0.3,
+    fitToWidth     = FALSE,
+    fitToHeight    = FALSE,
+    paperSize      = NULL,
+    printTitleRows = NULL,
+    printTitleCols = NULL,
+    summaryRow     = NULL,
+    summaryCol     = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$page_setup(
@@ -1988,7 +1988,7 @@ wb_open <- function(wb) {
 #' @export
 wb_add_border <- function(
     wb,
-    sheet,
+    sheet          = current_sheet(),
     dims           = "A1",
     bottom_color   = c(rgb = "FF000000"),
     left_color     = c(rgb = "FF000000"),
@@ -2107,23 +2107,23 @@ wb_add_fill <- function(
 #' @export
 wb_add_font <- function(
       wb,
-      sheet,
+      sheet     = current_sheet(),
       dims,
-      name = "Calibri",
-      color = c(rgb = "FF000000"),
-      size = "11",
-      bold = "",
-      italic = "",
-      outline = "",
-      strike = "",
+      name      = "Calibri",
+      color     = c(rgb = "FF000000"),
+      size      = "11",
+      bold      = "",
+      italic    = "",
+      outline   = "",
+      strike    = "",
       underline = "",
       # fine tuning
-      charset = "",
-      condense = "",
-      extend = "",
-      family = "",
-      scheme = "",
-      shadow = "",
+      charset   = "",
+      condense  = "",
+      extend    = "",
+      family    = "",
+      scheme    = "",
+      shadow    = "",
       vertAlign = ""
 ) {
   assert_workbook(wb)
@@ -2160,10 +2160,10 @@ wb_add_font <- function(
 #' @return The `wbWorksheetObject`, invisibly
 #' @export
 wb_add_numfmt <- function(
-      wb,
-      sheet,
-      dims,
-      numfmt
+    wb,
+    sheet = current_sheet(),
+    dims,
+    numfmt
 ) {
   assert_workbook(wb)
   wb$clone()$add_numfmt(
@@ -2210,34 +2210,34 @@ wb_add_numfmt <- function(
 #' @return The `wbWorksheetObject`, invisibly
 #' @export
 wb_add_cell_style <- function(
-      wb,
-      sheet,
-      dims,
-      applyAlignment    = NULL,
-      applyBorder       = NULL,
-      applyFill         = NULL,
-      applyFont         = NULL,
-      applyNumberFormat = NULL,
-      applyProtection   = NULL,
-      borderId          = NULL,
-      extLst            = NULL,
-      fillId            = NULL,
-      fontId            = NULL,
-      hidden            = NULL,
-      horizontal        = NULL,
-      indent            = NULL,
-      justifyLastLine   = NULL,
-      locked            = NULL,
-      numFmtId          = NULL,
-      pivotButton       = NULL,
-      quotePrefix       = NULL,
-      readingOrder      = NULL,
-      relativeIndent    = NULL,
-      shrinkToFit       = NULL,
-      textRotation      = NULL,
-      vertical          = NULL,
-      wrapText          = NULL,
-      xfId              = NULL
+    wb,
+    sheet             = current_sheet(),
+    dims,
+    applyAlignment    = NULL,
+    applyBorder       = NULL,
+    applyFill         = NULL,
+    applyFont         = NULL,
+    applyNumberFormat = NULL,
+    applyProtection   = NULL,
+    borderId          = NULL,
+    extLst            = NULL,
+    fillId            = NULL,
+    fontId            = NULL,
+    hidden            = NULL,
+    horizontal        = NULL,
+    indent            = NULL,
+    justifyLastLine   = NULL,
+    locked            = NULL,
+    numFmtId          = NULL,
+    pivotButton       = NULL,
+    quotePrefix       = NULL,
+    readingOrder      = NULL,
+    relativeIndent    = NULL,
+    shrinkToFit       = NULL,
+    textRotation      = NULL,
+    vertical          = NULL,
+    wrapText          = NULL,
+    xfId              = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$add_cell_style(
