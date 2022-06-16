@@ -99,6 +99,18 @@ The \code{wbWorksheetObject}, invisibly
 add cell style for cell region
 }
 \examples{
- wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
- wb_add_cell_style(wb, "S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+ wb <-
+   wb_workbook() \%>\%
+   wb_add_worksheet("S1") \%>\%
+   wb_add_data("S1", mtcars)
+
+ wb \%>\%
+   wb_add_cell_style(
+     "S1",
+     "A1:K1",
+     textRotation = "45",
+     horizontal = "center",
+     vertical = "center",
+     wrapText = "1"
+   )
 }
