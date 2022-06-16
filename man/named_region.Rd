@@ -8,7 +8,7 @@
 \usage{
 wb_add_named_region(
   wb,
-  sheet,
+  sheet = current_sheet(),
   cols,
   rows,
   name,
@@ -16,7 +16,7 @@ wb_add_named_region(
   overwrite = FALSE
 )
 
-wb_remove_named_region(wb, sheet = NULL, name = NULL)
+wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 }
 \arguments{
 \item{wb}{A workbook object}

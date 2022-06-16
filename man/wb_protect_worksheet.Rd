@@ -6,7 +6,7 @@
 \usage{
 wb_protect_worksheet(
   wb,
-  sheet,
+  sheet = current_sheet(),
   protect = TRUE,
   password = NULL,
   properties = NULL

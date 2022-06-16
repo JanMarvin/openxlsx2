@@ -4,7 +4,13 @@
 \alias{wb_set_col_widths}
 \title{Set worksheet column widths}
 \usage{
-wb_set_col_widths(wb, sheet, cols, widths = 8.43, hidden = FALSE)
+wb_set_col_widths(
+  wb,
+  sheet = current_sheet(),
+  cols,
+  widths = 8.43,
+  hidden = FALSE
+)
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}

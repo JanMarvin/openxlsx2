@@ -4,7 +4,7 @@
 \alias{wb_set_row_heights}
 \title{Set worksheet row heights}
 \usage{
-wb_set_row_heights(wb, sheet, rows, heights)
+wb_set_row_heights(wb, sheet = current_sheet(), rows, heights)
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}

@@ -6,7 +6,7 @@
 \usage{
 wb_add_formula(
   wb,
-  sheet,
+  sheet = current_sheet(),
   x,
   startCol = 1,
   startRow = 1,

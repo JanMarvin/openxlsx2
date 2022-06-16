@@ -6,7 +6,7 @@
 \usage{
 wb_add_image(
   wb,
-  sheet,
+  sheet = current_sheet(),
   file,
   width = 6,
   height = 3,

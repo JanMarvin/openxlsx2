@@ -8,7 +8,7 @@
 \usage{
 wb_clean_sheet(
   wb,
-  sheet,
+  sheet = current_sheet(),
   numbers = TRUE,
   characters = TRUE,
   styles = TRUE,

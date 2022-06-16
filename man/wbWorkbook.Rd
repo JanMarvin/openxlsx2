@@ -389,7 +389,7 @@ validate sheet
 Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
-  sheet,
+  sheet = next_sheet(),
   gridLines = TRUE,
   rowColHeaders = TRUE,
   tabColour = NULL,
@@ -466,7 +466,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{clone_worksheet()}}{
 Clone a workbooksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_worksheet(old, new)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_worksheet(old = current_sheet(), new = next_sheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -485,7 +485,7 @@ Clone a workbooksheet
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet, tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet = current_sheet(), tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -510,7 +510,7 @@ The \code{wbWorkbook} object, invisibly
 add data
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
-  sheet,
+  sheet = current_sheet(),
   x,
   startCol = 1,
   startRow = 1,
@@ -564,7 +564,7 @@ add data
 add a data table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
-  sheet,
+  sheet = current_sheet(),
   x,
   startCol = 1,
   startRow = 1,
@@ -625,7 +625,7 @@ add a data table
 add formula
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
-  sheet,
+  sheet = current_sheet(),
   x,
   startCol = 1,
   startRow = 1,
@@ -703,7 +703,7 @@ The \code{wbWorkbook}, invisibly
 Build table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$buildTable(
-  sheet,
+  sheet = current_sheet(),
   colNames,
   ref,
   showColNames,
@@ -850,7 +850,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{setSheetName()}}{
 Deprecated.  Use \code{set_sheet_names()} instead
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet = current_sheet(), name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -872,7 +872,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{set_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(sheet, rows, heights)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(sheet = current_sheet(), rows, heights)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -896,7 +896,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{remove_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_row_heights(sheet, rows)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_row_heights(sheet = current_sheet(), rows)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -919,7 +919,7 @@ creates column object for worksheet
 \if{latex}{\out{\hypertarget{method-wbWorkbook-createCols}{}}}
 \subsection{Method \code{createCols()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n, beg, end)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet = current_sheet(), n, beg, end)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -942,7 +942,12 @@ creates column object for worksheet
 \subsection{Method \code{group_cols()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(sheet, cols, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(
+  sheet = current_sheet(),
+  cols,
+  collapsed = FALSE,
+  levels = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -968,7 +973,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{ungroup_cols()}}{
 ungroup cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_cols(sheet, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_cols(sheet = current_sheet(), cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -987,7 +992,7 @@ ungroup cols
 \subsection{Method \code{remove_col_widths()}}{
 Remove row heights from a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_col_widths(sheet, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_col_widths(sheet = current_sheet(), cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1009,7 +1014,12 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{set_col_widths()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(sheet, cols, widths = 8.43, hidden = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(
+  sheet = current_sheet(),
+  cols,
+  widths = 8.43,
+  hidden = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1036,7 +1046,12 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{group_rows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_rows(sheet, rows, collapsed = FALSE, levels = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_rows(
+  sheet = current_sheet(),
+  rows,
+  collapsed = FALSE,
+  levels = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1062,7 +1077,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{ungroup_rows()}}{
 ungroup rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_rows(sheet, rows)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_rows(sheet = current_sheet(), rows)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1084,7 +1099,7 @@ The \code{wbWorkbook} object
 \subsection{Method \code{remove_worksheet()}}{
 Remove a worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_worksheet(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_worksheet(sheet = current_sheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1105,7 +1120,7 @@ The \code{wbWorkbook} object, invisibly
 Adds data validation
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_validation(
-  sheet,
+  sheet = current_sheet(),
   cols,
   rows,
   type,
@@ -1148,7 +1163,7 @@ Adds data validation
 Set conditional formatting for a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditional_formatting(
-  sheet,
+  sheet = current_sheet(),
   startRow,
   endRow,
   startCol,
@@ -1196,7 +1211,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{merge_cells()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet = current_sheet(), rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1218,7 +1233,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{unmerge_cells()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$unmerge_cells(sheet, rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$unmerge_cells(sheet = current_sheet(), rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1241,7 +1256,7 @@ The \code{wbWorkbook} object, invisibly
 Set freeze panes for a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$freeze_pane(
-  sheet,
+  sheet = current_sheet(),
   firstActiveRow = NULL,
   firstActiveCol = NULL,
   firstRow = FALSE,
@@ -1275,7 +1290,7 @@ The \code{wbWorkbook} object, invisibly
 Insert an image into a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_image(
-  sheet,
+  sheet = current_sheet(),
   file,
   width = 6,
   height = 3,
@@ -1324,7 +1339,7 @@ The \code{wbWorkbook} object, invisibly
 Add plot. A wrapper for add_image()
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_plot(
-  sheet,
+  sheet = current_sheet(),
   width = 6,
   height = 4,
   xy = NULL,
@@ -1429,7 +1444,7 @@ The \code{wbWorkbook} object, invisibly
 protect worksheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect_worksheet(
-  sheet,
+  sheet = current_sheet(),
   protect = TRUE,
   password = NULL,
   properties = NULL
@@ -1536,7 +1551,7 @@ The \code{wbWorkbook} object, invisibly
 page_setup()
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$page_setup(
-  sheet,
+  sheet = current_sheet(),
   orientation = NULL,
   scale = 100,
   left = 0.7,
@@ -1603,7 +1618,7 @@ The \code{wbWorkbook} object, invisibly
 Sets headers and footers
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_header_footer(
-  sheet,
+  sheet = current_sheet(),
   header = NULL,
   footer = NULL,
   evenHeader = NULL,
@@ -1642,7 +1657,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{get_tables()}}{
 get tables
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_tables(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_tables(sheet = current_sheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1659,7 +1674,7 @@ get tables
 \subsection{Method \code{remove_tables()}}{
 remove tables
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_tables(sheet, table)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_tables(sheet = current_sheet(), table)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1678,7 +1693,7 @@ remove tables
 \subsection{Method \code{add_filter()}}{
 add filters
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_filter(sheet, rows, cols)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_filter(sheet = current_sheet(), rows, cols)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1699,7 +1714,7 @@ add filters
 \subsection{Method \code{remove_filter()}}{
 remove filters
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_filter(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_filter(sheet = current_sheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1716,7 +1731,7 @@ remove filters
 \subsection{Method \code{grid_lines()}}{
 grid lines
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$grid_lines(sheet, show = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$grid_lines(sheet = current_sheet(), show = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1736,7 +1751,7 @@ grid lines
 add a named region
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
-  sheet,
+  sheet = current_sheet(),
   cols,
   rows,
   name,
@@ -1769,7 +1784,7 @@ add a named region
 \subsection{Method \code{remove_named_region()}}{
 remove a named region
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_named_region(sheet = NULL, name = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_named_region(sheet = current_sheet(), name = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1818,7 +1833,7 @@ Get sheet visibility
 \subsection{Method \code{set_sheet_visibility()}}{
 Set sheet visibility
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_visibility(sheet, value)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_visibility(sheet = current_sheet(), value)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1837,7 +1852,7 @@ Set sheet visibility
 \subsection{Method \code{add_page_break()}}{
 Add a page break
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_page_break(sheet, row = NULL, col = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_page_break(sheet = current_sheet(), row = NULL, col = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1859,7 +1874,7 @@ Add a page break
 clean sheet (remove all values)
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clean_sheet(
-  sheet,
+  sheet = current_sheet(),
   numbers = TRUE,
   characters = TRUE,
   styles = TRUE,

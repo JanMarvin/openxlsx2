@@ -8,13 +8,25 @@
 \alias{wb_ungroup_rows}
 \title{Group Rows and Columns}
 \usage{
-wb_group_cols(wb, sheet, cols, collapsed = FALSE, levels = NULL)
+wb_group_cols(
+  wb,
+  sheet = current_sheet(),
+  cols,
+  collapsed = FALSE,
+  levels = NULL
+)
 
-wb_ungroup_cols(wb, sheet, cols)
+wb_ungroup_cols(wb, sheet = current_sheet(), cols)
 
-wb_group_rows(wb, sheet, rows, collapsed = FALSE, levels = NULL)
+wb_group_rows(
+  wb,
+  sheet = current_sheet(),
+  rows,
+  collapsed = FALSE,
+  levels = NULL
+)
 
-wb_ungroup_rows(wb, sheet, rows)
+wb_ungroup_rows(wb, sheet = current_sheet(), rows)
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}

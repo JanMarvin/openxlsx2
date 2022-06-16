@@ -225,7 +225,6 @@ test_that("wb_set_order() is a wrapper", {
 
 test_that("wb_get_sheet_visibility(), wb_set_sheet_visibility() are wrappers", {
   wb <- wb_workbook()$add_worksheet("a")$add_worksheet("b")$add_worksheet("c")
-  # debugonce(expect_wrapper)
   expect_wrapper("get_sheet_visibility", wb = wb)
   expect_wrapper("set_sheet_visibility", wb = wb, params = list(sheet = 2:3, value = c(FALSE, FALSE)))
 })
@@ -247,8 +246,6 @@ test_that("wb_protect() is a wrapper", {
 test_that("wb_protect_worksheet() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
   params <- list(sheet = "a", properties = c("deleteRows", "autoFilter"))
-  # wbWorkbook$undebug("protect_worksheet")
-  # wb$protect_worksheet("a")
   expect_wrapper("protect_worksheet", wb = wb, params = params)
 })
 

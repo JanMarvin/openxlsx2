@@ -6,7 +6,7 @@
 \usage{
 wb_add_plot(
   wb,
-  sheet,
+  sheet = current_sheet(),
   width = 6,
   height = 4,
   xy = NULL,

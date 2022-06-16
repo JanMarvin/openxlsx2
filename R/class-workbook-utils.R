@@ -122,3 +122,18 @@ wb_check_overwrite_tables <- function(
 
   invisible(wb)
 }
+
+
+# waivers -----------------------------------------------------------------
+
+current_sheet <- function() {
+  structure("current_sheet", class = "openxlsx2_waiver")
+}
+
+next_sheet <- function() {
+  structure("next_sheet", class = "openxlsx2_waiver")
+}
+
+is_waiver <- function(x) {
+  inherits(x, "openxlsx2_waiver")
+}

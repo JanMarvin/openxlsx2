@@ -4,7 +4,7 @@
 \alias{wb_remove_worksheet}
 \title{Remove a worksheet from a workbook}
 \usage{
-wb_remove_worksheet(wb, sheet)
+wb_remove_worksheet(wb, sheet = current_sheet())
 }
 \arguments{
 \item{wb}{A workbook object}

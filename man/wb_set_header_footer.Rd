@@ -6,7 +6,7 @@
 \usage{
 wb_set_header_footer(
   wb,
-  sheet,
+  sheet = current_sheet(),
   header = NULL,
   footer = NULL,
   evenHeader = NULL,
