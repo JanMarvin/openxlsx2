@@ -791,6 +791,7 @@ wbWorkbook <- R6::R6Class(
     #' @description add data
     #' @param sheet sheet
     #' @param x x
+    #' @param dims dims
     #' @param startCol startCol
     #' @param startRow startRow
     #' @param array array
@@ -805,6 +806,7 @@ wbWorkbook <- R6::R6Class(
     add_data = function(
         sheet           = current_sheet(),
         x,
+        dims            = NULL,
         startCol        = 1,
         startRow        = 1,
         array           = FALSE,
@@ -820,6 +822,7 @@ wbWorkbook <- R6::R6Class(
         wb              = self,
         sheet           = sheet,
         x               = x,
+        dims            = dims,
         startCol        = startCol,
         startRow        = startRow,
         array           = array,
@@ -837,6 +840,7 @@ wbWorkbook <- R6::R6Class(
     #' @description add a data table
     #' @param sheet sheet
     #' @param x x
+    #' @param dims dims
     #' @param startCol startCol
     #' @param startRow startRow
     #' @param xy xy
@@ -854,6 +858,7 @@ wbWorkbook <- R6::R6Class(
     add_data_table = function(
         sheet       = current_sheet(),
         x,
+        dims        = NULL,
         startCol    = 1,
         startRow    = 1,
         xy          = NULL,
@@ -872,6 +877,7 @@ wbWorkbook <- R6::R6Class(
         wb          = self,
         sheet       = sheet,
         x           = x,
+        dims        = dims,
         startCol    = startCol,
         startRow    = startRow,
         xy          = xy,
@@ -892,6 +898,7 @@ wbWorkbook <- R6::R6Class(
     #' @description add formula
     #' @param sheet sheet
     #' @param x x
+    #' @param dims dims
     #' @param startCol startCol
     #' @param startRow startRow
     #' @param array array
@@ -900,6 +907,7 @@ wbWorkbook <- R6::R6Class(
     add_formula = function(
         sheet    = current_sheet(),
         x,
+        dims     = NULL,
         startCol = 1,
         startRow = 1,
         array    = FALSE,
@@ -909,6 +917,7 @@ wbWorkbook <- R6::R6Class(
         wb       = self,
         sheet    = sheet,
         x        = x,
+        dims     = dims,
         startCol = startCol,
         startRow = startRow,
         array    = array,

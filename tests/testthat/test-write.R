@@ -79,3 +79,26 @@ test_that("test options", {
   expect_equal(ops, ops2)
 
 })
+
+
+test_that("write dims", {
+
+  # create a workbook
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(dims = "B2:C3", x = matrix(1:4, 2, 2), colNames = FALSE)$
+    add_worksheet()$add_data_table(dims = "B:C", x = as.data.frame(matrix(1:4, 2, 2)))$
+    add_worksheet()$add_formula(dims = "B3", x = "42")
+
+  s1 <- wb_to_df(wb, 1, colNames = FALSE)
+  s2 <- wb_to_df(wb, 2, colNames = FALSE)
+  s3 <- wb_to_df(wb, 3, colNames = FALSE)
+
+  expect_equal(rownames(s1), c("2", "3"))
+  expect_equal(rownames(s2), c("1", "2", "3"))
+  expect_equal(rownames(s3), c("3"))
+
+  expect_equal(colnames(s1), c("B", "C"))
+  expect_equal(colnames(s2), c("B", "C"))
+  expect_equal(colnames(s3), c("B"))
+
+})

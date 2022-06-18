@@ -108,3 +108,35 @@ random_string <- function(size = NULL) {
 
   substr(res, 1L, size)
 }
+
+dims_to_rowcol <- function(x, as_integer = FALSE) {
+  dimensions <- unlist(strsplit(x, ":"))
+  cols <- gsub("[[:digit:]]","", dimensions)
+  rows <- gsub("[[:upper:]]","", dimensions)
+
+  # if "A:B"
+  has_row <- TRUE
+  if (any(rows == "")) {
+    has_row <- FALSE
+    rows[rows == ""] <- "1"
+  }
+
+  # convert cols to integer
+  cols_int <- col2int(cols)
+  rows_int <- as.integer(rows)
+
+  if (length(dimensions) == 2) {
+    # needs integer to create sequence
+    cols <- int2col(seq(cols_int[1], cols_int[2]))
+    rows_int <- seq(rows_int[1], rows_int[2])
+  }
+
+  if (as_integer) {
+    cols <- cols_int
+    rows <- rows_int
+  } else {
+    rows <- as.character(rows)
+  }
+
+  list(cols, rows)
+}

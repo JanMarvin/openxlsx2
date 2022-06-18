@@ -8,6 +8,7 @@
 wb_add_data(
   wb,
   sheet = current_sheet(),
+  dims = NULL,
   x,
   startCol = 1,
   startRow = 1,
@@ -24,6 +25,7 @@ wb_add_data(
 write_data(
   wb,
   sheet,
+  dims = NULL,
   x,
   startCol = 1,
   startRow = 1,
@@ -41,6 +43,8 @@ write_data(
 \item{wb}{A Workbook object containing a worksheet.}
 
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
+
+\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{x}{Object to be written. For classes supported look at the examples.}
 

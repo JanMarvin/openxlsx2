@@ -80,6 +80,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
@@ -103,6 +104,7 @@ wb_add_data <- function(
     wb,
     sheet           = current_sheet(),
     x,
+    dims            = NULL,
     startCol        = 1,
     startRow        = 1,
     array           = FALSE,
@@ -117,6 +119,7 @@ wb_add_data <- function(
   assert_workbook(wb)
   wb$clone()$add_data(
     sheet           = sheet,
+    dims            = dims,
     x               = x,
     startCol        = startCol,
     startRow        = startRow,
@@ -138,6 +141,7 @@ wb_add_data <- function(
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A dataframe.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
 #' @param xy An alternative to specifying startCol and startRow individually. A
@@ -173,6 +177,7 @@ wb_add_data_table <- function(
     wb,
     sheet       = current_sheet(),
     x,
+    dims        = NULL,
     startCol    = 1,
     startRow    = 1,
     xy          = NULL,
@@ -191,6 +196,7 @@ wb_add_data_table <- function(
   wb$clone()$add_data_table(
     sheet       = sheet,
     x           = x,
+    dims        = dims,
     startCol    = startCol,
     startRow    = startRow,
     xy          = xy,
@@ -224,6 +230,7 @@ wb_add_data_table <- function(
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A character vector.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
@@ -236,6 +243,7 @@ wb_add_formula <- function(
     wb,
     sheet    = current_sheet(),
     x,
+    dims     = NULL,
     startCol = 1,
     startRow = 1,
     array    = FALSE,
@@ -245,6 +253,7 @@ wb_add_formula <- function(
   wb$clone()$add_formula(
     sheet    = sheet,
     x        = x,
+    dims     = dims,
     startCol = startCol,
     startRow = startRow,
     array    = array,
