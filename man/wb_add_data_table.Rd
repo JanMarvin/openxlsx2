@@ -7,8 +7,8 @@
 wb_add_data_table(
   wb,
   sheet = current_sheet(),
-  dims = NULL,
   x,
+  dims = NULL,
   startCol = 1,
   startRow = 1,
   xy = NULL,
@@ -29,9 +29,9 @@ wb_add_data_table(
 
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
 
-\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
-
 \item{x}{A dataframe.}
+
+\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{startCol}{A vector specifying the starting column to write df}
 

@@ -119,8 +119,8 @@ wb_add_data <- function(
   assert_workbook(wb)
   wb$clone()$add_data(
     sheet           = sheet,
-    dims            = dims,
     x               = x,
+    dims            = dims,
     startCol        = startCol,
     startRow        = startRow,
     array           = array,

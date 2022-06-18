@@ -7,8 +7,8 @@
 write_datatable(
   wb,
   sheet,
-  dims = NULL,
   x,
+  dims = NULL,
   startCol = 1,
   startRow = 1,
   xy = NULL,
@@ -29,9 +29,9 @@ write_datatable(
 
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
 
-\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
-
 \item{x}{A data frame.}
+
+\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{startCol}{A vector specifying the starting column to write df}
 
