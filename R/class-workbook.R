@@ -2751,9 +2751,7 @@ wbWorkbook <- R6::R6Class(
             dxfId,
             values,
             values,
-            # is this unlist correct?  Would this not work?
-            # > strsplit(sqref, split = ":")[[1]]
-            unlist(strsplit(sqref, split = ":"))[[1]]
+            strsplit(sqref, split = ":")[[1]][1]
           )
         },
 
@@ -2766,7 +2764,7 @@ wbWorkbook <- R6::R6Class(
             dxfId,
             values,
             values,
-            unlist(strsplit(sqref, split = ":"))[[1]]
+            strsplit(sqref, split = ":")[[1]][1]
           )
         },
 
@@ -2779,7 +2777,7 @@ wbWorkbook <- R6::R6Class(
             dxfId,
             values,
 
-            unlist(strsplit(sqref, split = ":"))[[1]],
+            strsplit(sqref, split = ":")[[1]][1],
             values,
             values
           )
@@ -2793,7 +2791,7 @@ wbWorkbook <- R6::R6Class(
           dxfId,
           values,
 
-          unlist(strsplit(sqref, split = ":"))[[1]],
+          strsplit(sqref, split = ":")[[1]][1],
           values,
           values
         ),
@@ -5928,9 +5926,7 @@ wbWorkbook <- R6::R6Class(
             dxfId,
             values,
             values,
-            # is this unlist correct?  Would this not work?
-            # > strsplit(sqref, split = ":")[[1]]
-            unlist(strsplit(sqref, split = ":"))[[1]]
+            strsplit(sqref, split = ":")[[1]][1]
           )
         },
 
@@ -5942,7 +5938,7 @@ wbWorkbook <- R6::R6Class(
             dxfId,
             values,
             values,
-            unlist(strsplit(sqref, split = ":"))[[1]]
+            strsplit(sqref, split = ":")[[1]][1]
           )
         },
 
@@ -5953,8 +5949,7 @@ wbWorkbook <- R6::R6Class(
                        </cfRule>',
             dxfId,
             values,
-
-            unlist(strsplit(sqref, split = ":"))[[1]],
+            strsplit(sqref, split = ":")[[1]][1],
             values,
             values
           )
@@ -5966,8 +5961,7 @@ wbWorkbook <- R6::R6Class(
                        </cfRule>',
           dxfId,
           values,
-
-          unlist(strsplit(sqref, split = ":"))[[1]],
+          strsplit(sqref, split = ":")[[1]][1],
           values,
           values
         ),

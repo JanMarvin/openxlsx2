@@ -305,8 +305,8 @@ getFile <- function(xlsxFile) {
 hashPassword <- function(password) {
   # password limited to 15 characters
   # TODO add warning about password length
-  # TODO use substr(password, 1, 15) instead
-  chars <- head(strsplit(password, "")[[1]], 15)
+  chars <- strsplit(substr(password, 1L, 15L), "")[[1]]
+
   # See OpenOffice's documentation of the Excel format: http://www.openoffice.org/sc/excelfileformat.pdf
   # Start from the last character and for each character
   # - XOR hash with the ASCII character code
