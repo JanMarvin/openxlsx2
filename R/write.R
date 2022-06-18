@@ -34,6 +34,11 @@
 update_cell <- function(x, wb, sheet, cell, data_class,
                         colNames = FALSE, removeCellStyle = FALSE) {
 
+  ## not sure why this does not work
+  # dims <- dims_to_rowcol(cell)
+  # cols <- dims[[1]]
+  # rows <- dims[[2]]
+
   dimensions <- unlist(strsplit(cell, ":"))
   rows <- gsub("[[:upper:]]","", dimensions)
   cols <- gsub("[[:digit:]]","", dimensions)
@@ -563,6 +568,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @description Write to a worksheet and format as an Excel table
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
@@ -586,6 +592,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 write_data_table <- function(
     wb,
     sheet,
+    dims,
     x,
     startCol = 1,
     startRow = 1,
@@ -619,6 +626,12 @@ write_data_table <- function(
   assert_class(lastColumn, "logical")
   assert_class(bandedRows, "logical")
   assert_class(bandedCols, "logical")
+
+  if (!is.null(dims)) {
+    dims <- dims_to_rowcol(dims, as_integer = TRUE)
+    startCol <- min(dims[[1]])
+    startRow <- min(dims[[2]])
+  }
 
 
   ## common part ---------------------------------------------------------------
@@ -824,6 +837,7 @@ write_data_table <- function(
 #' @description Write an object to worksheet with optional styling.
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x Object to be written. For classes supported look at the examples.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
@@ -908,6 +922,7 @@ write_data <- function(
     wb,
     sheet,
     x,
+    dims = NULL,
     startCol = 1,
     startRow = 1,
     array = FALSE,
@@ -922,6 +937,7 @@ write_data <- function(
   write_data_table(
     wb = wb,
     sheet = sheet,
+    dims = dims,
     x = x,
     startCol = startCol,
     startRow = startRow,
@@ -959,6 +975,7 @@ write_data <- function(
 #' }
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x A character vector.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
@@ -1045,6 +1062,7 @@ write_data <- function(
 write_formula <- function(wb,
   sheet,
   x,
+  dims = NULL,
   startCol = 1,
   startRow = 1,
   array = FALSE,
@@ -1060,6 +1078,7 @@ write_formula <- function(wb,
   write_data(
     wb = wb,
     sheet = sheet,
+    dims = dims,
     x = dfx,
     startCol = startCol,
     startRow = startRow,
@@ -1076,6 +1095,7 @@ write_formula <- function(wb,
 #' @description Write to a worksheet and format as an Excel table
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
@@ -1206,6 +1226,7 @@ write_datatable <- function(
     wb,
     sheet,
     x,
+    dims = NULL,
     startCol = 1,
     startRow = 1,
     xy = NULL,
@@ -1223,6 +1244,7 @@ write_datatable <- function(
   write_data_table(
     wb = wb,
     sheet = sheet,
+    dims = dims,
     x = x,
     startCol = startCol,
     startRow = startRow,

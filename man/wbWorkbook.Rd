@@ -510,6 +510,7 @@ add data
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
   sheet = current_sheet(),
+  dims = NULL,
   x,
   startCol = 1,
   startRow = 1,
@@ -528,6 +529,8 @@ add data
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 
 \item{\code{x}}{x}
 
@@ -564,6 +567,7 @@ add a data table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
   sheet = current_sheet(),
+  dims = NULL,
   x,
   startCol = 1,
   startRow = 1,
@@ -585,6 +589,8 @@ add a data table
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 
 \item{\code{x}}{x}
 
@@ -625,6 +631,7 @@ add formula
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
+  dims = dims,
   x,
   startCol = 1,
   startRow = 1,
@@ -637,6 +644,8 @@ add formula
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 
 \item{\code{x}}{x}
 
