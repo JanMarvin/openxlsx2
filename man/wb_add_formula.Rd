@@ -7,8 +7,8 @@
 wb_add_formula(
   wb,
   sheet = current_sheet(),
-  dims = NULL,
   x,
+  dims = NULL,
   startCol = 1,
   startRow = 1,
   array = FALSE,
@@ -20,9 +20,9 @@ wb_add_formula(
 
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
 
-\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
-
 \item{x}{A character vector.}
+
+\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{startCol}{A vector specifying the starting column to write to.}
 
