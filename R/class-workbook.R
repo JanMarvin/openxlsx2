@@ -5988,8 +5988,8 @@ wbWorkbook <- R6::R6Class(
             values$percent
           )
         },
-        # do we have a match.arg() anywhere or will it just be showned in this switch()?
-        stop("type `", type, "` is not a valid formatting rule")
+        # match.arg() from call should take care of this
+        stop("[internal error] type : ", toString(type)) # nocov
       )
 
       private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
