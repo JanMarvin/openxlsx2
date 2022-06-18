@@ -115,11 +115,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
   rows <- gsub("[[:upper:]]","", dimensions)
 
   # if "A:B"
-  has_row <- TRUE
-  if (any(rows == "")) {
-    has_row <- FALSE
-    rows[rows == ""] <- "1"
-  }
+  if (any(rows == "")) rows[rows == ""] <- "1"
 
   # convert cols to integer
   cols_int <- col2int(cols)
