@@ -5612,35 +5612,6 @@ lcr <- function(var) {
   paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
 }
 
-
-# TODO Does this need to be checked?  No sheet name can be NA right?
-# res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
-
-#' Get sheet name
-#'
-#' @param wb a [wbWorkbook] object
-#' @param index Sheet name index
-#' @return The sheet index
-#' @export
-wb_get_sheet_name = function(wb, index = NULL) {
-  index <- index %||% seq_along(wb$sheet_names)
-
-  # index should be integer like
-  stopifnot(is_integer_ish(index))
-
-  n <- length(wb$sheet_names)
-
-  if (any(index > n)) {
-    stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
-  }
-
-  # keep index 0 as ""
-  z <- vector("character", length(index))
-  names(z) <- index
-  z[index > 0] <- wb$sheet_names[index]
-  z
-}
-
 worksheet_lock_properties <- function() {
   # provides a reference for the lock properties
   c(
