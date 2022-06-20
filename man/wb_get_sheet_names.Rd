@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_get_sheet_names}
 \alias{wb_get_sheet_names}
-\title{Get worksheet names for a workbook}
+\title{Get wokrhseet names for a workbook}
 \usage{
 wb_get_sheet_names(wb)
 }
