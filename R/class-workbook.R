@@ -3613,7 +3613,7 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
           name = "_xlnm.Print_Titles",
-          sheet = names(self)[[sheet]],
+          sheet = self$get_sheet_names()[[sheet]],
           localSheetId = sheet - 1L
         )
       } else if (!is.null(printTitleCols) && !is.null(printTitleRows)) {
