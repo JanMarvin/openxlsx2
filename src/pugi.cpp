@@ -55,7 +55,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags, is_utf8(utf8));
 
-  return  Rcpp::wrap(oss.str());
+  return  Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
 unsigned int pugi_format(XPtrXML doc){
@@ -69,7 +69,7 @@ unsigned int pugi_format(XPtrXML doc){
 // [[Rcpp::export]]
 SEXP getXMLXPtrName1(XPtrXML doc) {
 
-  std::vector<std::string> res;
+  vec_string res;
 
   for (auto lvl0 : doc->children())
   {
@@ -82,7 +82,7 @@ SEXP getXMLXPtrName1(XPtrXML doc) {
 // [[Rcpp::export]]
 SEXP getXMLXPtrName2(XPtrXML doc, std::string level1) {
 
-  std::vector<std::string> res;
+  vec_string res;
 
   for (auto lvl0 : doc->children(level1.c_str()))
   {
@@ -98,7 +98,7 @@ SEXP getXMLXPtrName2(XPtrXML doc, std::string level1) {
 // [[Rcpp::export]]
 SEXP getXMLXPtrName3(XPtrXML doc, std::string level1, std::string level2) {
 
-  std::vector<std::string> res;
+  vec_string res;
 
   for (auto lvl0 : doc->children(level1.c_str()))
   {
@@ -117,7 +117,7 @@ SEXP getXMLXPtrName3(XPtrXML doc, std::string level1, std::string level2) {
 // [[Rcpp::export]]
 SEXP getXMLXPtr0(XPtrXML doc) {
 
-  std::vector<std::string> res;
+  vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
   bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
@@ -134,7 +134,7 @@ SEXP getXMLXPtr0(XPtrXML doc) {
 // [[Rcpp::export]]
 SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
 
-  std::vector<std::string> res;
+  vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
   bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
@@ -152,7 +152,7 @@ SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
 // [[Rcpp::export]]
 SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
 
-  std::vector<std::string> res;
+  vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
   bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
@@ -169,7 +169,7 @@ SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
 // [[Rcpp::export]]
 SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::string child) {
 
-  std::vector<std::string> res;
+  vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
   bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
@@ -188,7 +188,7 @@ SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::strin
 // [[Rcpp::export]]
 SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
 
-  std::vector<std::string> res;
+  vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
   bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 

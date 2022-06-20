@@ -38,6 +38,8 @@ typedef struct {
   std::string r;
 } celltyp;
 
+typedef std::vector<std::string> vec_string;
+
 // matches openxlsx2_celltype in openxlsx2.R
 enum celltype {
   short_date     = 0,
@@ -124,6 +126,21 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   )
   );
 }
+
+template <>
+inline SEXP wrap(const vec_string &x) {
+
+  size_t n = x.size();
+
+  Rcpp::CharacterVector z(no_init(n));
+
+  for (size_t i = 0; i < n; ++i) {
+    z[i] = Rcpp::String(x[i]);
+  }
+
+  return Rcpp::wrap(z);
+}
+
 }
 
 // pugixml defines. This creates the xmlptr
