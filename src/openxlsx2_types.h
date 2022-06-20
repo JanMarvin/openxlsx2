@@ -8,6 +8,7 @@
 #include <RcppCommon.h>
 
 typedef struct {
+  std::string r;
   std::string row_r;
   std::string c_r;   // CellReference
   std::string c_s;   // StyleIndex
@@ -66,6 +67,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   size_t n = x.size();
 
   // Vector structure identical to xml_col from openxlsx2_types.h
+  Rcpp::CharacterVector r(no_init(n));         // cell name: A1, A2 ...
   Rcpp::CharacterVector row_r(no_init(n));     // row name: 1, 2, ..., 9999
 
   Rcpp::CharacterVector c_r(no_init(n));       // col name: A, B, ..., ZZ
@@ -85,6 +87,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
 
   // struct to vector
   for (size_t i = 0; i < n; ++i) {
+    r[i] = Rcpp::String(x[i].r);
     row_r[i] = Rcpp::String(x[i].row_r);
     c_r[i]   = Rcpp::String(x[i].c_r);
     c_s[i]   = Rcpp::String(x[i].c_s);
@@ -103,6 +106,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
 
   // Assign and return a dataframe
   return Rcpp::wrap(Rcpp::DataFrame::create(
+      Rcpp::Named("r")     = r,
       Rcpp::Named("row_r") = row_r,
       Rcpp::Named("c_r")   = c_r,
       Rcpp::Named("c_s")   = c_s,

@@ -70,7 +70,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # workbooks contain only entries for values currently present.
   # if A1 is filled, B1 is not filled and C1 is filled the sheet will only
   # contain fields A1 and C1.
-  cc$r <- paste0(cc$c_r, cc$row_r)
+  # cc$r <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$rw
   rows_in_wb <- row_attr$r
 
@@ -104,10 +104,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
       total_cols <- int2col(sort(col2int(total_cols)))
 
       # create candidate
-      cc_row_new <- data.frame(matrix("", nrow = length(total_cols), ncol = 2))
-      names(cc_row_new) <- names(cc)[1:2]
+      cc_row_new <- data.frame(matrix("", nrow = length(total_cols), ncol = 3))
+      names(cc_row_new) <- names(cc)[1:3]
       cc_row_new$row_r <- row
       cc_row_new$c_r <- total_cols
+      cc_row_new$r <- stringi::stri_join(cc_row_new$c_r, cc_row_new$row_r)
 
       # extract row (easier or maybe only way to change order?)
       cc_row <- cc[cc$row_r == row, ]
