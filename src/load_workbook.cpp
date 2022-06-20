@@ -241,7 +241,10 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         attr_name = attr.name();
 
         if (attr_name == r_str) {
+
           // get r attr e.g. "A1" and return colnames "A"
+          single_xml_col.r = buffer;
+
           // get col name
           std::string colrow = buffer;
           colrow.erase(std::remove_if(colrow.begin(),
@@ -273,11 +276,13 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         if (attr_name == vm_str) single_xml_col.c_vm = buffer;
 
       }
+
       // some files have no colnames. in this case we need to add c_r and row_r
       // if the file provides dimensions, they could be fixed later
       if (!has_colname) {
         single_xml_col.c_r = int_to_col(itr_cols + 1);
         single_xml_col.row_r = std::to_string(itr_rows + 1);
+        single_xml_col.r = single_xml_col.c_r + single_xml_col.row_r;
       }
 
       // val ------------------------------------------------------------------
