@@ -45,7 +45,7 @@ get_named_regions_from_table <- function(wb) {
     #localSheetId is not always available
     name = wb$tables$tab_nam,
     value = "table",
-    sheets = wb_get_sheet_names(wb)[wb$tables$tab_sheet],
+    sheets = wb_get_sheet_name(wb, wb$tables$tab_sheet),
     coords = wb$tables$tab_ref,
     id = NA_integer_,
     local = NA_integer_,
