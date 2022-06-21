@@ -89,9 +89,9 @@ test_that("encoding", {
   wb <- wb_load(fl)
   expect_equal("äöüß", names(wb$get_sheet_names()))
 
-  exp <- structure(list(`hähä` = "ÄÖÜ", `höhö` = "äöüß"),
+  exp <- structure(list(hähä = "ÄÖÜ", höhö = "äöüß"),
                    row.names = 2L, class = "data.frame",
-                   tt = structure(list(`hähä` = "s", `höhö` = "s"),
+                   tt = structure(list(hähä = "s", höhö = "s"),
                                   row.names = 2L, class = "data.frame"),
                    types = c(A = 0, B = 0))
 
