@@ -100,14 +100,22 @@ test_that("encoding", {
   fl <- system.file("extdata", "eurosymbol.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
   got <- wb$sharedStrings
-  exp <- structure(
-    c("<si><t xml:space=\"preserve\">\200</t></si>",
-      "<si><t xml:space=\"preserve\">ä</t></si>"),
-    uniqueCount = "2", text = c("\200", "ä")
-  )
 
-  # # needs a fix. in Unicode it's "€" not "\200"
-  # expect_equal(exp, got)
+  if (isTRUE(l10n_info()[["UTF-8"]])) {
+    exp <- structure(
+      c("<si><t xml:space=\"preserve\">€</t></si>",
+        "<si><t xml:space=\"preserve\">ä</t></si>"),
+      uniqueCount = "2", text = c("€", "ä")
+    )
+  } else {
+    exp <- structure(
+      c("<si><t xml:space=\"preserve\">\200</t></si>",
+        "<si><t xml:space=\"preserve\">ä</t></si>"),
+      uniqueCount = "2", text = c("\200", "ä")
+    )
+  }
+
+  expect_equal(exp, got)
 
 
   exp <- "<xml>\n<a0>äöüß</a0>\n<A0>ÄÖÜ</A0>\n<a1>€</a1>\n</xml>"
@@ -121,3 +129,4 @@ test_that("encoding", {
   expect_equal(exp, got)
 
 })
+
