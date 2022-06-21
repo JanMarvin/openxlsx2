@@ -637,7 +637,7 @@ Rcpp::CharacterVector xml_node_create(
 
     for (auto i = 0; i < xml_child.size(); ++i) {
 
-      std::string xml_cld = Rcpp::String(xml_child[i]);
+      std::string xml_cld = std::string(xml_child[i]);
 
       pugi::xml_document is_node;
       pugi::xml_parse_result result = is_node.load_string(xml_cld.c_str(), pugi_parse_flags);
@@ -667,7 +667,7 @@ Rcpp::CharacterVector xml_node_create(
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags);
 
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  return Rcpp::wrap(oss.str());
 }
 
 // xml_append_child1
@@ -690,7 +690,7 @@ SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes) 
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
+    return Rcpp::wrap(oss.str());
   }
 }
 
@@ -715,7 +715,7 @@ SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool poi
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
+    return Rcpp::wrap(oss.str());
   }
 }
 
@@ -741,6 +741,6 @@ SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::str
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
+    return Rcpp::wrap(oss.str());
   }
 }
