@@ -5,10 +5,10 @@ test_that("read_xml", {
   # TODO add test for isfile
   # and do some actual tests
 
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, utf8 = FALSE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, utf8 = FALSE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, utf8 = FALSE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, utf8 = FALSE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE))
 
   exp <- "<a>A & B</a>"
   expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE))
