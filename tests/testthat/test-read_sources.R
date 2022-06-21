@@ -108,4 +108,15 @@ test_that("encoding", {
 
   expect_equal(exp, got)
 
+
+  exp <- "<xml>\n<a0>äöüß</a0>\n<A0>ÄÖÜ</A0>\n<a1>€</a1>\n</xml>"
+  got <- paste(capture.output(
+    read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2")
+    )), collapse = "\n")
+  expect_equal(exp, got)
+
+  got <- read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2"),
+                  pointer = FALSE)
+  expect_equal(exp, got)
+
 })
