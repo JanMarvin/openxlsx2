@@ -89,12 +89,23 @@ test_that("encoding", {
   wb <- wb_load(fl)
   expect_equal("äöüß", names(wb$get_sheet_names()))
 
-  exp <- structure(list(hähä = "ÄÖÜ", höhö = "äöüß"),
+  exp <- structure(list(`hähä` = "ÄÖÜ", `höhö` = "äöüß"),
                    row.names = 2L, class = "data.frame",
-                   tt = structure(list(hähä = "s", höhö = "s"),
+                   tt = structure(list(`hähä` = "s", `höhö` = "s"),
                                   row.names = 2L, class = "data.frame"),
                    types = c(A = 0, B = 0))
 
   expect_equal(exp, wb_to_df(wb))
+
+  fl <- system.file("extdata", "eurosymbol.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)
+  got <- wb$sharedStrings
+  exp <- structure(
+    c("<si><t xml:space=\"preserve\">\200</t></si>",
+      "<si><t xml:space=\"preserve\">ä</t></si>"),
+    uniqueCount = "2", text = c("\200", "ä")
+  )
+
+  expect_equal(exp, got)
 
 })

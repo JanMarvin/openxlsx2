@@ -1,7 +1,7 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool utf8) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
@@ -24,12 +24,11 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, b
   XPtrXML ptr(doc, true);
   ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
   ptr.attr("escapes") = escapes;
-  ptr.attr("is_utf8") = utf8;
   return ptr;
 }
 
 // [[Rcpp::export]]
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool utf8) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
@@ -53,8 +52,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   }
 
   std::ostringstream oss;
-  doc.print(oss, " ", pugi_format_flags, is_utf8(utf8));
-
+  doc.print(oss, " ", pugi_format_flags);
   return  Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
@@ -119,13 +117,12 @@ SEXP getXMLXPtr0(XPtrXML doc) {
 
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
-  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   for (auto worksheet : doc->children())
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags, is_utf8(utf8));
-    res.push_back(oss.str());
+    worksheet.print(oss, " ", pugi_format_flags);
+    res.push_back(Rcpp::String(oss.str()));
   }
 
   return  Rcpp::wrap(res);
@@ -136,13 +133,12 @@ SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
 
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
-  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   for (auto worksheet : doc->children(child.c_str()))
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags, is_utf8(utf8));
-    res.push_back(oss.str());
+    worksheet.print(oss, " ", pugi_format_flags);
+    res.push_back(Rcpp::String(oss.str()));
   }
 
   return  Rcpp::wrap(res);
@@ -154,13 +150,12 @@ SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
 
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
-  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   for (auto worksheet : doc->child(level1.c_str()).children(child.c_str()))
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags, is_utf8(utf8));
-    res.push_back(oss.str());
+    worksheet.print(oss, " ", pugi_format_flags);
+    res.push_back(Rcpp::String(oss.str()));
   }
 
   return  Rcpp::wrap(res);
@@ -171,13 +166,12 @@ SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::strin
 
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
-  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str()))
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags, is_utf8(utf8));
-    res.push_back(oss.str());
+    worksheet.print(oss, " ", pugi_format_flags);
+    res.push_back(Rcpp::String(oss.str()));
   }
 
   return  Rcpp::wrap(res);
@@ -190,14 +184,13 @@ SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
 
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
-  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   for (auto worksheet : doc->child(level1.c_str()).children()) {
     for (auto cld : worksheet.children(child.c_str()))
     {
       std::ostringstream oss;
-      cld.print(oss, " ", pugi_format_flags, is_utf8(utf8));
-      res.push_back(oss.str());
+      cld.print(oss, " ", pugi_format_flags);
+      res.push_back(Rcpp::String(oss.str()));
     }
   }
 
@@ -222,7 +215,6 @@ SEXP getXMLXPtr4(XPtrXML doc, std::string level1, std::string level2, std::strin
 
   std::vector<std::vector<std::string>> x;
   unsigned int  pugi_format_flags = pugi_format(doc);
-  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(level3.c_str()))
   {
@@ -231,9 +223,9 @@ SEXP getXMLXPtr4(XPtrXML doc, std::string level1, std::string level2, std::strin
     for (auto col : worksheet.children(child.c_str()))
     {
       std::ostringstream oss;
-      col.print(oss, " ", pugi_format_flags, is_utf8(utf8));
+      col.print(oss, " ", pugi_format_flags);
 
-      y.push_back(oss.str());
+      y.push_back(Rcpp::String(oss.str()));
     }
 
     x.push_back(y);
@@ -470,18 +462,17 @@ Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, 
 
 
 // [[Rcpp::export]]
-std::string printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
+SEXP printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
 
   // pugi::parse_default without escapes flag
   unsigned int pugi_format_flags = pugi::format_indent;
   if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
   if (raw)  pugi_format_flags |= pugi::format_raw;
-  bool utf8 = Rcpp::as<bool>(doc.attr("is_utf8"));
 
   std::ostringstream oss;
-  doc->print(oss, " ", pugi_format_flags, is_utf8(utf8));
+  doc->print(oss, " ", pugi_format_flags);
 
-  return  oss.str();
+  return Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
 
@@ -591,7 +582,7 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags);
 
-  return oss.str();
+  return Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
 //' create xml_node from R objects
@@ -675,9 +666,8 @@ Rcpp::CharacterVector xml_node_create(
 
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags);
-  std::string xml_return = oss.str();
 
-  return xml_return;
+  return Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
 // xml_append_child1
@@ -690,7 +680,6 @@ SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes) 
 
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
-  bool utf8 = Rcpp::as<bool>(node.attr("is_utf8"));
 
   for (auto cld: child->children()) {
     node->first_child().append_copy(cld);
@@ -700,10 +689,8 @@ SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes) 
     return (node);
   } else {
     std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags, is_utf8(utf8));
-    std::string xml_return = oss.str();
-
-    return Rcpp::wrap(xml_return);
+    node->print(oss, " ", pugi_format_flags);
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
@@ -718,7 +705,6 @@ SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool poi
 
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
-  bool utf8 = Rcpp::as<bool>(node.attr("is_utf8"));
 
   for (auto cld: child->children()) {
     node->first_child().child(level1.c_str()).append_copy(cld);
@@ -728,10 +714,8 @@ SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool poi
     return (node);
   } else {
     std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags, is_utf8(utf8));
-    std::string xml_return = oss.str();
-
-    return Rcpp::wrap(xml_return);
+    node->print(oss, " ", pugi_format_flags);
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
@@ -747,7 +731,6 @@ SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::str
 
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
-  bool utf8 = Rcpp::as<bool>(node.attr("is_utf8"));
 
   for (auto cld: child->children()) {
     node->first_child().child(level1.c_str()).child(level2.c_str()).append_copy(cld);
@@ -757,9 +740,7 @@ SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::str
     return (node);
   } else {
     std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags, is_utf8(utf8));
-    std::string xml_return = oss.str();
-
-    return Rcpp::wrap(xml_return);
+    node->print(oss, " ", pugi_format_flags);
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
