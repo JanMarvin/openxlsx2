@@ -80,9 +80,9 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -104,9 +104,9 @@ wb_add_data <- function(
     wb,
     sheet           = current_sheet(),
     x,
-    dims            = NULL,
     startCol        = 1,
     startRow        = 1,
+    dims            = NULL,
     array           = FALSE,
     xy              = NULL,
     colNames        = TRUE,
@@ -120,9 +120,9 @@ wb_add_data <- function(
   wb$clone()$add_data(
     sheet           = sheet,
     x               = x,
-    dims            = dims,
     startCol        = startCol,
     startRow        = startRow,
+    dims            = dims,
     array           = array,
     xy              = xy,
     colNames        = colNames,
@@ -141,9 +141,9 @@ wb_add_data <- function(
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A dataframe.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param xy An alternative to specifying startCol and startRow individually. A
 #'   vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
@@ -177,9 +177,9 @@ wb_add_data_table <- function(
     wb,
     sheet       = current_sheet(),
     x,
-    dims        = NULL,
     startCol    = 1,
     startRow    = 1,
+    dims        = NULL,
     xy          = NULL,
     colNames    = TRUE,
     rowNames    = FALSE,
@@ -196,9 +196,9 @@ wb_add_data_table <- function(
   wb$clone()$add_data_table(
     sheet       = sheet,
     x           = x,
-    dims        = dims,
     startCol    = startCol,
     startRow    = startRow,
+    dims        = dims,
     xy          = xy,
     colNames    = colNames,
     rowNames    = rowNames,
@@ -230,9 +230,9 @@ wb_add_data_table <- function(
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A character vector.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -243,9 +243,9 @@ wb_add_formula <- function(
     wb,
     sheet    = current_sheet(),
     x,
-    dims     = NULL,
     startCol = 1,
     startRow = 1,
+    dims     = NULL,
     array    = FALSE,
     xy       = NULL
 ) {
@@ -253,9 +253,9 @@ wb_add_formula <- function(
   wb$clone()$add_formula(
     sheet    = sheet,
     x        = x,
-    dims     = dims,
     startCol = startCol,
     startRow = startRow,
+    dims     = dims,
     array    = array,
     xy       = xy
   )

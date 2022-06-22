@@ -8,9 +8,9 @@ write_formula(
   wb,
   sheet,
   x,
-  dims = NULL,
   startCol = 1,
   startRow = 1,
+  dims = NULL,
   array = FALSE,
   xy = NULL
 )
@@ -22,11 +22,11 @@ write_formula(
 
 \item{x}{A character vector.}
 
-\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
-
 \item{startCol}{A vector specifying the starting column to write to.}
 
 \item{startRow}{A vector specifying the starting row to write to.}
+
+\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{array}{A bool if the function written is of type array}
 

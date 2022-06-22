@@ -511,9 +511,9 @@ add data
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
   sheet = current_sheet(),
   x,
-  dims = NULL,
   startCol = 1,
   startRow = 1,
+  dims = NULL,
   array = FALSE,
   xy = NULL,
   colNames = TRUE,
@@ -532,11 +532,11 @@ add data
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{dims}
-
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
 
@@ -568,9 +568,9 @@ add a data table
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
   sheet = current_sheet(),
   x,
-  dims = NULL,
   startCol = 1,
   startRow = 1,
+  dims = NULL,
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
@@ -592,11 +592,11 @@ add a data table
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{dims}
-
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{xy}}{xy}
 
@@ -632,9 +632,9 @@ add formula
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
   x,
-  dims = NULL,
   startCol = 1,
   startRow = 1,
+  dims = NULL,
   array = FALSE,
   xy = NULL
 )}\if{html}{\out{</div>}}
@@ -647,11 +647,11 @@ add formula
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{dims}
-
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
 
