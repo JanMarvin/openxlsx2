@@ -49,9 +49,10 @@ test_that("silent with numfmt option", {
   wb$add_worksheet("S2")
 
   wb$add_data_table("S1", x = iris)
-  wb$add_data_table("S2",
+  expect_warning(
+    wb$add_data_table("S2",
                  x = mtcars, xy = c("B", 3), rowNames = TRUE,
-                 tableStyle = "TableStyleLight9"
+                 tableStyle = "TableStyleLight9")
   )
 
   # [1:4] to ignore factor
