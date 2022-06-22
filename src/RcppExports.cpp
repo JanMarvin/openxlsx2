@@ -153,8 +153,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // readXMLPtr
-SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool utf8);
-RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP utf8SEXP) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration);
+RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -162,14 +162,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    Rcpp::traits::input_parameter< bool >::type utf8(utf8SEXP);
-    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile, escapes, declaration, utf8));
+    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile, escapes, declaration));
     return rcpp_result_gen;
 END_RCPP
 }
 // readXML
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool utf8);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP utf8SEXP) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration);
+RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -177,8 +176,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    Rcpp::traits::input_parameter< bool >::type utf8(utf8SEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration, utf8));
+    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -405,7 +403,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // printXPtr
-std::string printXPtr(XPtrXML doc, bool no_escapes, bool raw);
+SEXP printXPtr(XPtrXML doc, bool no_escapes, bool raw);
 RcppExport SEXP _openxlsx2_printXPtr(SEXP docSEXP, SEXP no_escapesSEXP, SEXP rawSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -798,8 +796,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
-    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 5},
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 5},
+    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 4},
+    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 4},
     {"_openxlsx2_getXMLXPtrName1", (DL_FUNC) &_openxlsx2_getXMLXPtrName1, 1},
     {"_openxlsx2_getXMLXPtrName2", (DL_FUNC) &_openxlsx2_getXMLXPtrName2, 2},
     {"_openxlsx2_getXMLXPtrName3", (DL_FUNC) &_openxlsx2_getXMLXPtrName3, 3},

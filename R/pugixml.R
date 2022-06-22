@@ -51,14 +51,10 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
   if (identical(xml, ""))
     xml <- "<NA_character_ />"
 
-
-  # for non utf8 systems, read xml input files as utf8
-  utf8 <- isTRUE(l10n_info()[["UTF-8"]])
-
   if (pointer) {
-    z <- readXMLPtr(xml, isfile, escapes, declaration, utf8)
+    z <- readXMLPtr(xml, isfile, escapes, declaration)
   } else {
-    z <- readXML(xml, isfile, escapes, declaration, utf8)
+    z <- readXML(xml, isfile, escapes, declaration)
   }
 
   z

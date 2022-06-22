@@ -49,12 +49,12 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
-readXMLPtr <- function(path, isfile, escapes, declaration, utf8) {
-    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, utf8)
+readXMLPtr <- function(path, isfile, escapes, declaration) {
+    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration)
 }
 
-readXML <- function(path, isfile, escapes, declaration, utf8) {
-    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, utf8)
+readXML <- function(path, isfile, escapes, declaration) {
+    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration)
 }
 
 getXMLXPtrName1 <- function(doc) {

@@ -33,6 +33,8 @@
 
 ## Fixes
 
+* Various fixes to enable handling of non unicode R environments [243](https://github.com/JanMarvin/openxlsx2/issues/243)
+
 * Fix an issue with broken pageSetup reference causing corupt excel files [216](https://github.com/JanMarvin/openxlsx2/issues/216)
 
 * Fix reading and writing comments from workbooks that already provide comments [209](https://github.com/JanMarvin/openxlsx2/pull/209)
