@@ -791,9 +791,9 @@ wbWorkbook <- R6::R6Class(
     #' @description add data
     #' @param sheet sheet
     #' @param x x
-    #' @param dims dims
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param array array
     #' @param xy xy
     #' @param colNames colNames
@@ -806,9 +806,9 @@ wbWorkbook <- R6::R6Class(
     add_data = function(
         sheet           = current_sheet(),
         x,
-        dims            = NULL,
         startCol        = 1,
         startRow        = 1,
+        dims            = NULL,
         array           = FALSE,
         xy              = NULL,
         colNames        = TRUE,
@@ -822,9 +822,9 @@ wbWorkbook <- R6::R6Class(
         wb              = self,
         sheet           = sheet,
         x               = x,
-        dims            = dims,
         startCol        = startCol,
         startRow        = startRow,
+        dims            = dims,
         array           = array,
         xy              = xy,
         colNames        = colNames,
@@ -840,9 +840,9 @@ wbWorkbook <- R6::R6Class(
     #' @description add a data table
     #' @param sheet sheet
     #' @param x x
-    #' @param dims dims
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param xy xy
     #' @param colNames colNames
     #' @param rowNames rowNames
@@ -858,9 +858,9 @@ wbWorkbook <- R6::R6Class(
     add_data_table = function(
         sheet       = current_sheet(),
         x,
-        dims        = NULL,
         startCol    = 1,
         startRow    = 1,
+        dims        = NULL,
         xy          = NULL,
         colNames    = TRUE,
         rowNames    = FALSE,
@@ -898,18 +898,18 @@ wbWorkbook <- R6::R6Class(
     #' @description add formula
     #' @param sheet sheet
     #' @param x x
-    #' @param dims dims
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param array array
     #' @param xy xy
     #' @returns The `wbWorkbook` object
     add_formula = function(
         sheet    = current_sheet(),
         x,
-        dims     = NULL,
         startCol = 1,
         startRow = 1,
+        dims     = NULL,
         array    = FALSE,
         xy       = NULL
     ) {
@@ -917,9 +917,9 @@ wbWorkbook <- R6::R6Class(
         wb       = self,
         sheet    = sheet,
         x        = x,
-        dims     = dims,
         startCol = startCol,
         startRow = startRow,
+        dims     = dims,
         array    = array,
         xy       = xy
       )

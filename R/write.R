@@ -568,10 +568,10 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @description Write to a worksheet and format as an Excel table
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying startCol and startRow individually.
 #' A vector of the form c(startCol, startRow)
@@ -592,10 +592,10 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 write_data_table <- function(
     wb,
     sheet,
-    dims,
     x,
     startCol = 1,
     startRow = 1,
+    dims,
     array = FALSE,
     xy = NULL,
     colNames = TRUE,
@@ -837,10 +837,10 @@ write_data_table <- function(
 #' @description Write an object to worksheet with optional styling.
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x Object to be written. For classes supported look at the examples.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -922,9 +922,9 @@ write_data <- function(
     wb,
     sheet,
     x,
-    dims = NULL,
     startCol = 1,
     startRow = 1,
+    dims = NULL,
     array = FALSE,
     xy = NULL,
     colNames = TRUE,
@@ -937,10 +937,10 @@ write_data <- function(
   write_data_table(
     wb = wb,
     sheet = sheet,
-    dims = dims,
     x = x,
     startCol = startCol,
     startRow = startRow,
+    dims = dims,
     array = array,
     xy = xy,
     colNames = colNames,
@@ -975,10 +975,10 @@ write_data <- function(
 #' }
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x A character vector.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -1062,9 +1062,9 @@ write_data <- function(
 write_formula <- function(wb,
   sheet,
   x,
-  dims = NULL,
   startCol = 1,
   startRow = 1,
+  dims = NULL,
   array = FALSE,
   xy = NULL) {
   assert_class(x, "character")
@@ -1078,10 +1078,10 @@ write_formula <- function(wb,
   write_data(
     wb = wb,
     sheet = sheet,
-    dims = dims,
     x = dfx,
     startCol = startCol,
     startRow = startRow,
+    dims = dims,
     array = array,
     xy = xy,
     colNames = FALSE,
@@ -1095,10 +1095,10 @@ write_formula <- function(wb,
 #' @description Write to a worksheet and format as an Excel table
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param xy An alternative to specifying startCol and startRow individually.
 #' A vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
@@ -1226,9 +1226,9 @@ write_datatable <- function(
     wb,
     sheet,
     x,
-    dims = NULL,
     startCol = 1,
     startRow = 1,
+    dims = NULL,
     xy = NULL,
     colNames = TRUE,
     rowNames = FALSE,
@@ -1244,10 +1244,10 @@ write_datatable <- function(
   write_data_table(
     wb = wb,
     sheet = sheet,
-    dims = dims,
     x = x,
     startCol = startCol,
     startRow = startRow,
+    dims = dims,
     array = FALSE,
     xy = xy,
     colNames = colNames,
