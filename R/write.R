@@ -646,6 +646,7 @@ write_data_table <- function(
 
   ## All input conversions/validations
   if (!is.null(xy)) {
+    warning("xy is deprecated. Please use dims instead.")
     if (length(xy) != 2) {
       stop("xy parameter must have length 2")
     }
