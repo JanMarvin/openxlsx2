@@ -1,4 +1,3 @@
-
 test_that("test return values for wb_save", {
   tempFile <- temp_xlsx()
   wb <- wb_add_worksheet(wb_workbook(), "name")
