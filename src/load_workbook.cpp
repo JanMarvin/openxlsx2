@@ -4,21 +4,21 @@
 // [[Rcpp::export]]
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
 
-  Rcpp::CharacterVector col_nams= {
-    "min",
-    "max",
-    "width",
+  std::set<std::string> col_nams= {
     "bestFit",
-    "customWidth",
     "collapsed",
+    "customWidth",
     "hidden",
+    "max",
+    "min",
     "outlineLevel",
     "phonetic",
-    "style"
+    "style",
+    "width"
   };
 
   auto nn = std::distance(doc->begin(), doc->end());
-  auto kk = col_nams.length();
+  auto kk = col_nams.size();
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -35,19 +35,16 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   for (auto col : doc->children("col")) {
     for (auto attrs : col.attributes()) {
 
-      Rcpp::CharacterVector attr_name = attrs.name();
+      std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
-
-      // mimic which
-      Rcpp::IntegerVector mtc = Rcpp::match(col_nams, attr_name);
-      Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+      auto find_res = col_nams.find(attr_name);
 
       // check if name is already known
-      if (all(Rcpp::is_na(mtc))) {
+      if (col_nams.count(attr_name) == 0) {
         Rcpp::Rcout << attr_name << ": not found in col name table" << std::endl;
       } else {
-        size_t ii = Rcpp::as<size_t>(idx[!Rcpp::is_na(mtc)]);
-        Rcpp::as<Rcpp::CharacterVector>(df[ii])[itr] = attr_value;
+        auto mtc = std::distance(col_nams.begin(), find_res);
+        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
 
     }
