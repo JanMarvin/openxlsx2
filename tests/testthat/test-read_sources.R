@@ -55,6 +55,9 @@ test_that("get_date_origin from different sources", {
 
 test_that("read html source without r attribute on cell", {
 
+  if (.Platform$r_arch == "i386" && .Platform$OS.type == "windows")
+    skip("Skip test on Windows i386")
+
   # sheet without row attribute
   # original from https://www.atih.sante.fr/sites/default/files/public/content/3968/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx
   wb <- wb_load("https://github.com/JanMarvin/openxlsx2/files/8702731/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx")
