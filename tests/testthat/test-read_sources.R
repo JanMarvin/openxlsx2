@@ -75,16 +75,21 @@ test_that("read html source without r attribute on cell", {
 
 
 test_that("read <br> node in vml", {
-  temp <- basename(tempfile("macro2", fileext = ".xlsm.zip"))
-  download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp)
-  unzip(temp)
-  expect_silent(wb <- wb_load("macro2.xlsm"))
-  unlink(temp, recursive = TRUE, force = TRUE)
-  file.remove("macro2.xlsm")
-  if (.Platform$OS.type == "windows") {
-    try(unlink("__MACOSX", recursive = TRUE, force = TRUE))
-  }
+  # prepare test
+  temp_dir  <- "macro2_test"
+  temp_file <- paste0(temp_dir, "/macro2.xlsm")
+  temp_zip  <- paste0(temp_file, ".zip")
+  if (!dir.exists(temp_dir)) dir.create(temp_dir, recursive = TRUE)
+  download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp_zip)
+  zip::unzip(temp_zip, exdir = temp_dir)
+
+  # test
+  expect_silent(wb <- wb_load(temp_file))
+
+  # clean up
+  unlink(temp_dir, recursive = TRUE, force = TRUE)
 })
+
 
 test_that("encoding", {
 
