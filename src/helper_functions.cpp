@@ -192,8 +192,7 @@ SEXP rbindlist(Rcpp::List x) {
   }
 
   // 3. Create a data.frame
-  R_xlen_t nrows = Rf_length(df[0]);
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, nrows);
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, nn);
   df.attr("names") = unique_names;
   df.attr("class") = "data.frame";
 
