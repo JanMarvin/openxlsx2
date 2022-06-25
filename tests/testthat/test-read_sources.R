@@ -73,10 +73,10 @@ test_that("read html source without r attribute on cell", {
 
 test_that("read <br> node in vml", {
   # prepare test
-  temp_dir  <- "macro2_test"
-  temp_file <- paste0(temp_dir, "/macro2.xlsm")
+  temp_dir <- tempfile()
+  temp_file <- file.path(temp_dir, "macro2.xlsm")
   temp_zip  <- paste0(temp_file, ".zip")
-  if (!dir.exists(temp_dir)) dir.create(temp_dir, recursive = TRUE)
+  dir.create(temp_dir, recursive = TRUE, showWarnings = FALSE)
   download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp_zip)
   zip::unzip(temp_zip, exdir = temp_dir)
 
