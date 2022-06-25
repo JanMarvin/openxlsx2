@@ -707,6 +707,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' wb$add_worksheet("Sheet 1", gridLines = FALSE)
 #'
 #' ## create plot objects
+#' if (find.packages("ggplot2", quiet = TRUE)) {
 #' require(ggplot2)
 #' p1 <- qplot(mpg,
 #'   data = mtcars, geom = "density",
@@ -726,6 +727,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' ## Save workbook
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
+#' }
 #' }
 wb_add_plot <- function(
     wb,
