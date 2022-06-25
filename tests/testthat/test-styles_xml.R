@@ -60,7 +60,6 @@ test_that("border", {
     "foo: not found in border name table"
   )
 
-
 })
 
 test_that("cellStyle", {
