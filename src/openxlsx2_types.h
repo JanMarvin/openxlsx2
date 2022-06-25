@@ -57,7 +57,12 @@ enum celltype {
   factor         = 12
 };
 
+// check for 1.0.8.0
+#if RCPP_DEV_VERSION >= 1000800
+#include <Rcpp/Lightest>
+#else
 #include <Rcpp.h>
+#endif
 
 // custom wrap function
 // Converts the imported values from c++ std::vector<xml_col> to an R dataframe.
