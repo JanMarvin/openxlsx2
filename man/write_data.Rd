@@ -34,7 +34,7 @@ write_data(
   withFilter = FALSE,
   sep = ", ",
   name = NULL,
-  removeCellStyle = TRUE
+  removeCellStyle = FALSE
 )
 }
 \arguments{
@@ -64,7 +64,7 @@ write_data(
 
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
 
-\item{removeCellStyle}{keep the cell style?}
+\item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 }
 \value{
 A clone of `wb``

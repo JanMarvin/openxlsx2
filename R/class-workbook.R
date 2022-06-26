@@ -814,7 +814,7 @@ wbWorkbook <- R6::R6Class(
         withFilter      = FALSE,
         name            = NULL,
         sep             = ", ",
-        removeCellStyle = TRUE
+        removeCellStyle = FALSE
       ) {
       write_data(
         wb              = self,

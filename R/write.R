@@ -578,7 +578,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @param bandedCols logical. If TRUE, the columns are colour banded
 #' @param bandedCols logical. If TRUE, a data table is created
 #' @param name If not NULL, a named region is defined.
-#' @param removeCellStyle keep the cell style?
+#' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @noRd
 write_data_table <- function(
     wb,
@@ -599,7 +599,7 @@ write_data_table <- function(
     bandedRows = TRUE,
     bandedCols = FALSE,
     name = NULL,
-    removeCellStyle = TRUE,
+    removeCellStyle = FALSE,
     data_table = FALSE
 ) {
 
@@ -833,7 +833,7 @@ write_data_table <- function(
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param name If not NULL, a named region is defined.
-#' @param removeCellStyle keep the cell style?
+#' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_datatable()]
 #' @export write_data
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -914,7 +914,7 @@ write_data <- function(
     withFilter = FALSE,
     sep = ", ",
     name = NULL,
-    removeCellStyle = TRUE
+    removeCellStyle = FALSE
 ) {
   write_data_table(
     wb = wb,

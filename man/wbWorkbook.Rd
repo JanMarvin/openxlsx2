@@ -520,7 +520,7 @@ add data
   withFilter = FALSE,
   name = NULL,
   sep = ", ",
-  removeCellStyle = TRUE
+  removeCellStyle = FALSE
 )}\if{html}{\out{</div>}}
 }
 
