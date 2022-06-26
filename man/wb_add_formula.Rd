@@ -10,7 +10,7 @@ wb_add_formula(
   x,
   startCol = 1,
   startRow = 1,
-  dims = NULL,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL
 )

@@ -106,7 +106,7 @@ wb_add_data <- function(
     x,
     startCol        = 1,
     startRow        = 1,
-    dims            = NULL,
+    dims            = rowcol_to_dims(startRow, startCol),
     array           = FALSE,
     xy              = NULL,
     colNames        = TRUE,
@@ -179,7 +179,7 @@ wb_add_data_table <- function(
     x,
     startCol    = 1,
     startRow    = 1,
-    dims        = NULL,
+    dims        = rowcol_to_dims(startRow, startCol),
     xy          = NULL,
     colNames    = TRUE,
     rowNames    = FALSE,
@@ -245,7 +245,7 @@ wb_add_formula <- function(
     x,
     startCol = 1,
     startRow = 1,
-    dims     = NULL,
+    dims     = rowcol_to_dims(startRow, startCol),
     array    = FALSE,
     xy       = NULL
 ) {
