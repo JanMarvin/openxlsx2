@@ -707,27 +707,27 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' wb$add_worksheet("Sheet 1", gridLines = FALSE)
 #'
 #' ## create plot objects
-#' if (find.packages("ggplot2", quiet = TRUE)) {
-#' require(ggplot2)
-#' p1 <- qplot(mpg,
-#'   data = mtcars, geom = "density",
-#'   fill = as.factor(gear), alpha = I(.5), main = "Distribution of Gas Mileage"
-#' )
-#' p2 <- qplot(age, circumference,
-#'   data = Orange, geom = c("point", "line"), colour = Tree
-#' )
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   library(ggplot2)
+#'   p1 <- qplot(mpg,
+#'     data = mtcars, geom = "density",
+#'     fill = as.factor(gear), alpha = I(.5), main = "Distribution of Gas Mileage"
+#'   )
+#'   p2 <- qplot(age, circumference,
+#'     data = Orange, geom = c("point", "line"), colour = Tree
+#'   )
 #'
-#' ## Insert currently displayed plot to sheet 1, row 1, column 1
-#' print(p1) # plot needs to be showing
-#' wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
+#'   ## Insert currently displayed plot to sheet 1, row 1, column 1
+#'   print(p1) # plot needs to be showing
+#'   wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
 #'
-#' ## Insert plot 2
-#' print(p2)
-#' wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+#'   ## Insert plot 2
+#'   print(p2)
+#'   wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
-#' ## Save workbook
-#' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
-#' }
+#'   ## Save workbook
+#'   wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
+#'   }
 #' }
 wb_add_plot <- function(
     wb,
