@@ -104,8 +104,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
       total_cols <- int2col(sort(col2int(total_cols)))
 
       # create candidate
-      cc_row_new <- data.frame(matrix("", nrow = length(total_cols), ncol = 3))
-      names(cc_row_new) <- names(cc)[1:3]
+      cc_row_new <- create_char_dataframe(names(cc)[1:3], length(total_cols))
       cc_row_new$row_r <- row
       cc_row_new$c_r <- total_cols
       cc_row_new$r <- stringi::stri_join(cc_row_new$c_r, cc_row_new$row_r)
@@ -196,6 +195,9 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
   cc$ordered_cols <- NULL
   cc$ordered_rows <- NULL
+
+  # FIXME reduce cc to non duplicated version
+  cc <- cc[!duplicated(cc$r), ]
 
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
