@@ -34,24 +34,9 @@
 update_cell <- function(x, wb, sheet, cell, data_class,
                         colNames = FALSE, removeCellStyle = FALSE) {
 
-  ## not sure why this does not work
-  # dims <- dims_to_rowcol(cell)
-  # cols <- dims[[1]]
-  # rows <- dims[[2]]
-
-  dimensions <- unlist(strsplit(cell, ":"))
-  rows <- gsub("[[:upper:]]","", dimensions)
-  cols <- gsub("[[:digit:]]","", dimensions)
-
-  if (length(dimensions) == 2) {
-    # cols
-    cols <- col2int(cols)
-    cols <- seq(cols[1], cols[2])
-    cols <- int2col(cols)
-
-    rows <- as.character(seq(rows[1], rows[2]))
-  }
-
+  dims <- dims_to_rowcol(cell)
+  cols <- dims[[1]]
+  rows <- dims[[2]]
 
   if (is.character(sheet)) {
     sheet_id <- which(sheet == wb$sheet_names)
@@ -925,7 +910,7 @@ write_data <- function(
     x,
     startCol = 1,
     startRow = 1,
-    dims = NULL,
+    dims = rowcol_to_dims(startRow, startCol),
     array = FALSE,
     xy = NULL,
     colNames = TRUE,
@@ -1065,7 +1050,7 @@ write_formula <- function(wb,
   x,
   startCol = 1,
   startRow = 1,
-  dims = NULL,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL) {
   assert_class(x, "character")
@@ -1229,7 +1214,7 @@ write_datatable <- function(
     x,
     startCol = 1,
     startRow = 1,
-    dims = NULL,
+    dims = rowcol_to_dims(startRow, startCol),
     xy = NULL,
     colNames = TRUE,
     rowNames = FALSE,

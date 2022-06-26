@@ -10,7 +10,7 @@ write_datatable(
   x,
   startCol = 1,
   startRow = 1,
-  dims = NULL,
+  dims = rowcol_to_dims(startRow, startCol),
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,

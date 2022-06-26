@@ -13,3 +13,36 @@ test_that("rbindlist", {
   expect_equal(data.frame(), rbindlist(character()))
 
 })
+
+
+test_that("dims to col & row and back", {
+
+  exp <- list(c("A", "B"), c("1", "2"))
+  got <- dims_to_rowcol("A1:B2")
+  expect_equal(exp, got)
+
+  exp <- list(1:2, 1:2)
+  got <- dims_to_rowcol("A1:B2", as_integer = TRUE)
+  expect_equal(exp, got)
+
+  exp <- list(1:2, c(1L))
+  got <- dims_to_rowcol("A:B", as_integer = TRUE)
+  expect_equal(exp, got)
+
+  exp <- list("A", c("1"))
+  got <- dims_to_rowcol("A:A", as_integer = FALSE)
+  expect_equal(exp, got)
+
+  exp <- "A1:A1"
+  got <- rowcol_to_dims(1, "A")
+  expect_equal(exp, got)
+
+  exp <- "A1:A10"
+  got <- rowcol_to_dims(1:10, 1)
+  expect_equal(exp, got)
+
+  exp <- "E2:J8"
+  got <- rowcol_to_dims(2:8, 5:10)
+  expect_equal(exp, got)
+
+})
