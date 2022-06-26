@@ -22,6 +22,8 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -261,6 +263,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
+\item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
@@ -1260,6 +1263,45 @@ Set freeze panes for a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_conditional_formatting"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_conditional_formatting}{}}}
+\subsection{Method \code{add_conditional_formatting()}}{
+Add conditional formatting
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_conditional_formatting(
+  sheet = current_sheet(),
+  cols,
+  rows,
+  rule = NULL,
+  style = NULL,
+  type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
+    "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
+  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank
+    = 5L)
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{rows}}{rows}
+
+\item{\code{rule}}{rule}
+
+\item{\code{style}}{style}
+
+\item{\code{type}}{type}
+
+\item{\code{params}}{Additional parameters}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

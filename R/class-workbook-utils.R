@@ -124,6 +124,30 @@ wb_check_overwrite_tables <- function(
 }
 
 
+validate_conditional_formatting_params <- function(params) {
+  bad <- names(params) %out% c("showValue", "gradient", "border", "percent", "rank")
+  if (any(bad)) {
+    stop("Invalid parameters: ", toString(names(params)[bad]))
+  }
+
+  # assign default values
+  params$showValue <- if (is.null(params$showValue)) 1L else as_binary(params$showValue)
+  params$gradient  <- if (is.null(params$gradient))  1L else as_binary(params$gradient)
+  params$border    <- if (is.null(params$border))    1L else as_binary(params$border)
+  params$percent   <- if (is.null(params$percent))   0L else as_binary(params$percent)
+
+  # special check for rank
+  params$rank <- params$rank %||% 5L
+
+  if (!is_integer_ish(params$rank)) {
+    stop("params$rank must be an integer")
+  }
+
+  params$rank <- as.integer(params$rank)
+
+  params
+}
+
 # waivers -----------------------------------------------------------------
 
 current_sheet <- function() {

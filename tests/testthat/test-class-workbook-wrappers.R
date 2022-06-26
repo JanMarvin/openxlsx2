@@ -293,6 +293,14 @@ test_that("wb_add_formula() is a wrapper", {
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
 })
 
+# wb_add_conditional_formatting() -----------------------------------------
+
+test_that("wb_add_conditional_formatting() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  params <- list(sheet = 1, cols = 1, rows = 1, type = "topN")
+  expect_wrapper("add_conditional_formatting", wb = wb, params = params)
+})
+
 # wb_set_sheet_names() ----------------------------------------------------
 
 test_that("wb_set_sheet_names() is a wrapper", {
