@@ -392,3 +392,28 @@ Rcpp::List build_cell_merges(Rcpp::List comps) {
   return wrap(res) ;
 
 }
+
+
+// simple helper function to create a data frame of type character
+//' @param colnames a vector of the names of the data frame
+//' @param n the length of the data frame
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
+
+  auto kk = colnames.size();
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (size_t i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, n);
+  df.attr("names") = colnames;
+  df.attr("class") = "data.frame";
+
+  return df;
+}

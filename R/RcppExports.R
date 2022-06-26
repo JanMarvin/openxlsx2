@@ -37,6 +37,13 @@ build_cell_merges <- function(comps) {
     .Call(`_openxlsx2_build_cell_merges`, comps)
 }
 
+#' @param colnames a vector of the names of the data frame
+#' @param n the length of the data frame
+#' @noRd
+create_char_dataframe <- function(colnames, n) {
+    .Call(`_openxlsx2_create_char_dataframe`, colnames, n)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
