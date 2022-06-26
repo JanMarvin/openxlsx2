@@ -176,11 +176,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
           cc[sel, "f"] <- as.character(value)
           cc[sel, "f_t"] <- "array"
           cc[sel, "f_ref"] <- cell
-        }else if (data_class[m] == openxlsx2_celltype[["hyperlink"]]) {
+        } else if (data_class[m] == openxlsx2_celltype[["hyperlink"]]) {
           cc[sel, "f"] <- as.character(value)
           # FIXME assign the hyperlinkstyle if no style found. This might not be
           # desired. We should provide an option to prevent this.
-          if (cc[sel, "c_s"] == "")
+          if (cc[sel, "c_s"] == "" || is.na(cc[sel, "c_s"]))
             cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
         } else {
           if (is.na(value)) {
