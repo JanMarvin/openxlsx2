@@ -808,7 +808,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol        = 1,
         startRow        = 1,
-        dims            = NULL,
+        dims            = rowcol_to_dims(startRow, startCol),
         array           = FALSE,
         xy              = NULL,
         colNames        = TRUE,
@@ -860,7 +860,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol    = 1,
         startRow    = 1,
-        dims        = NULL,
+        dims        = rowcol_to_dims(startRow, startCol),
         xy          = NULL,
         colNames    = TRUE,
         rowNames    = FALSE,
@@ -909,7 +909,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol = 1,
         startRow = 1,
-        dims     = NULL,
+        dims     = rowcol_to_dims(startRow, startCol),
         array    = FALSE,
         xy       = NULL
     ) {

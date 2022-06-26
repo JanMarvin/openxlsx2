@@ -516,7 +516,7 @@ add data
   x,
   startCol = 1,
   startRow = 1,
-  dims = NULL,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL,
   colNames = TRUE,
@@ -573,7 +573,7 @@ add a data table
   x,
   startCol = 1,
   startRow = 1,
-  dims = NULL,
+  dims = rowcol_to_dims(startRow, startCol),
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
@@ -637,7 +637,7 @@ add formula
   x,
   startCol = 1,
   startRow = 1,
-  dims = NULL,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL
 )}\if{html}{\out{</div>}}
