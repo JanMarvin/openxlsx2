@@ -112,7 +112,7 @@ wb_add_data <- function(
     withFilter      = FALSE,
     name            = NULL,
     sep             = ", ",
-    removeCellStyle = TRUE
+    removeCellStyle = FALSE
 ) {
   assert_workbook(wb)
   wb$clone()$add_data(

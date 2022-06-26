@@ -18,7 +18,7 @@ wb_add_data(
   withFilter = FALSE,
   name = NULL,
   sep = ", ",
-  removeCellStyle = TRUE
+  removeCellStyle = FALSE
 )
 
 write_data(
