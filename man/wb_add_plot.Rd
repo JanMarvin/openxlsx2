@@ -80,7 +80,6 @@ wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units 
 
 ## Save workbook
 wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
-
 }
 }
 \seealso{

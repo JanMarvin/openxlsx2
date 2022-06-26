@@ -726,7 +726,6 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' ## Save workbook
 #' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
-#'
 #' }
 wb_add_plot <- function(
     wb,
