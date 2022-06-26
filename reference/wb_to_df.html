@@ -68,26 +68,26 @@ written down and not optimized etc. The goal was to have something working.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_to_df</span><span class="op">(</span>
-  <span class="va">xlsxFile</span>,
-  <span class="va">sheet</span>,
-  startRow <span class="op">=</span> <span class="fl">1</span>,
-  colNames <span class="op">=</span> <span class="cn">TRUE</span>,
-  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,
-  detectDates <span class="op">=</span> <span class="cn">TRUE</span>,
-  skipEmptyCols <span class="op">=</span> <span class="cn">FALSE</span>,
-  skipEmptyRows <span class="op">=</span> <span class="cn">FALSE</span>,
-  rows <span class="op">=</span> <span class="cn">NULL</span>,
-  cols <span class="op">=</span> <span class="cn">NULL</span>,
-  na.strings <span class="op">=</span> <span class="st">"#N/A"</span>,
-  fillMergedCells <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">dims</span>,
-  showFormula <span class="op">=</span> <span class="cn">FALSE</span>,
-  convert <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">types</span>,
-  <span class="va">definedName</span>,
-  <span class="va">named_region</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_to_df</span><span class="op">(</span></span>
+<span>  <span class="va">xlsxFile</span>,</span>
+<span>  <span class="va">sheet</span>,</span>
+<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  detectDates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  skipEmptyCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  skipEmptyRows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  na.strings <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
+<span>  fillMergedCells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">dims</span>,</span>
+<span>  showFormula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  convert <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">types</span>,</span>
+<span>  <span class="va">definedName</span>,</span>
+<span>  <span class="va">named_region</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -167,14 +167,14 @@ written down and not optimized etc. The goal was to have something working.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in">  <span class="co">###########################################################################</span></span>
-<span class="r-in">  <span class="co"># numerics, dates, missings, bool and string</span></span>
-<span class="r-in">  <span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">wb1</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># import workbook</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co">###########################################################################</span></span></span>
+<span class="r-in"><span>  <span class="co"># numerics, dates, missings, bool and string</span></span></span>
+<span class="r-in"><span>  <span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">wb1</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># import workbook</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA NA #NUM!     b 2015-02-06         &lt;NA&gt;    &lt;NA&gt;</span>
@@ -186,9 +186,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 NA    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 NA  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># do not convert first row to colNames</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># do not convert first row to colNames</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        A    B  C     D     E          F            G       H</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     NA Var2 NA  Var3  Var4       Var5         Var6    Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!</span>
@@ -201,9 +201,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 NA    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 NA  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># do not try to identify dates in the data</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, detectDates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># do not try to identify dates in the data</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, detectDates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4  Var5         Var6    Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 NA     1     a 42042 3209324 This #DIV/0!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA NA #NUM!     b 42041         &lt;NA&gt;    &lt;NA&gt;</span>
@@ -215,9 +215,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 NA    23     h 42035         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 NA  67.3     i 42034         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1 NA   123  &lt;NA&gt; 42033         &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># return the underlying Excel formula instead of their values</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, showFormula <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># return the underlying Excel formula instead of their values</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, showFormula <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA   Var3 Var4       Var5         Var6 Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 NA   1.00    a 2015-02-07 3209324 This  1/0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA NA     NA    b 2015-02-06         &lt;NA&gt; &lt;NA&gt;</span>
@@ -229,17 +229,17 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 NA  23.00    h 2015-01-31         &lt;NA&gt; &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 NA  67.30    i 2015-01-30         &lt;NA&gt; &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1 NA 123.00 &lt;NA&gt; 2015-01-29         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># read dimension withot colNames</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># read dimension withot colNames</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       A  B  C</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  TRUE  1 NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3  TRUE NA NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  TRUE  2 NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 FALSE  2 NA</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># read selected cols</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># read selected cols</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2         Var6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 3209324 This</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA         &lt;NA&gt;</span>
@@ -251,15 +251,15 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2         &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3         &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1         &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># read selected rows</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># read selected rows</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Var1 Var2 NA Var3 Var4       Var5 Var6  Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  TRUE    2 NA 1.34    c 2015-02-05   NA #NUM!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 FALSE    3 NA 1.56    e       &lt;NA&gt;   NA  &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># convert characters to numerics and date (logical too?)</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># convert characters to numerics and date (logical too?)</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2   NA  Var3  Var4       Var5         Var6    Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 &lt;NA&gt;     1     a 2015-02-07 3209324 This #DIV/0!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE &lt;NA&gt; &lt;NA&gt; #NUM!     b 2015-02-06         &lt;NA&gt;    &lt;NA&gt;</span>
@@ -271,9 +271,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 &lt;NA&gt;    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 &lt;NA&gt;  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11  &lt;NA&gt;    1 &lt;NA&gt;   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># erase empty Rows from dataset</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, sheet <span class="op">=</span> <span class="fl">3</span>, skipEmptyRows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># erase empty Rows from dataset</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, sheet <span class="op">=</span> <span class="fl">3</span>, skipEmptyRows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Date        value      word  bool  wordZ2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    2014-04-28 8.390764e-01 N-U-B-R-A FALSE FALSE-Z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8    2014-04-27 8.863800e-01 N-Z-P-S-Y  TRUE  TRUE-Z</span>
@@ -2358,9 +2358,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2087 2008-08-17 5.522673e-01 F-M-A-H-N  TRUE  TRUE-Z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2088 2008-08-16 1.850300e-01 Y-Z-I-W-A  TRUE  TRUE-Z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2089 2008-08-15 6.155422e-01 P-M-R-C-Z  TRUE  TRUE-Z</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># erase rmpty Cols from dataset</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, skipEmptyCols <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># erase rmpty Cols from dataset</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, skipEmptyCols <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2  Var3  Var4       Var5         Var6    Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1     1     a 2015-02-07 3209324 This #DIV/0!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA #NUM!     b 2015-02-06         &lt;NA&gt;    &lt;NA&gt;</span>
@@ -2372,16 +2372,16 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># convert first row to rownames</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, sheet <span class="op">=</span> <span class="fl">3</span>, dims <span class="op">=</span> <span class="st">"C6:G9"</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># convert first row to rownames</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, sheet <span class="op">=</span> <span class="fl">3</span>, dims <span class="op">=</span> <span class="st">"C6:G9"</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                value      word  bool  wordZ2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2014-04-28 0.8390764 N-U-B-R-A FALSE FALSE-Z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2014-04-27 0.8863800 N-Z-P-S-Y  TRUE  TRUE-Z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2014-04-26 0.5741314 C-G-D-X-H  TRUE  TRUE-Z</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># define type of the data.frame</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Var1"</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">"Var3"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># define type of the data.frame</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Var1"</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">"Var3"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1   Var3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE   1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    NaN</span>
@@ -2393,9 +2393,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE  23.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE  67.30</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11  &lt;NA&gt; 123.00</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># start in row 5</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, startRow <span class="op">=</span> <span class="fl">5</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># start in row 5</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, startRow <span class="op">=</span> <span class="fl">5</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        A  B  C      D     E          F  G  H</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  FALSE  2 NA     NA #NUM!       &lt;NA&gt; NA NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE  3 NA   1.56     e       &lt;NA&gt; NA NA</span>
@@ -2404,9 +2404,9 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE  2 NA  23.00     h 2015-01-31 NA NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE  3 NA  67.30     i 2015-01-30 NA NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA  1 NA 123.00  &lt;NA&gt; 2015-01-29 NA NA</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># na string</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, na.strings <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># na string</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, na.strings <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA NA #NUM!     b 2015-02-06         &lt;NA&gt;    #N/A</span>
@@ -2418,16 +2418,16 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 NA    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 NA  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># read_xlsx(wb1)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co">###########################################################################</span></span>
-<span class="r-in">  <span class="co"># inlinestr</span></span>
-<span class="r-in">  <span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"inline_str.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">wb2</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># read dataset with inlinestr</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb2</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># read_xlsx(wb1)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co">###########################################################################</span></span></span>
+<span class="r-in"><span>  <span class="co"># inlinestr</span></span></span>
+<span class="r-in"><span>  <span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"inline_str.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">wb2</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># read dataset with inlinestr</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    PairIndex Drug1 Drug2 Conc1 Conc2   Response ConcUnit</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          1   abc   def 10000 10000 -1.7960711       nM</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3          1   abc   def 10000  3000  1.0102900       nM</span>
@@ -2439,23 +2439,23 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9          1   abc   def 10000     0  1.4593078       nM</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10         2   abc   def 10000     0  1.6838167       nM</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11         2   abc   def 10000    10 -0.7857811       nM</span>
-<span class="r-in">  <span class="co"># read_xlsx(wb2)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co">###########################################################################</span></span>
-<span class="r-in">  <span class="co"># named_region // namedRegion</span></span>
-<span class="r-in">  <span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"namedRegions3.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">wb3</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># read dataset with named_region (returns global first)</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, named_region <span class="op">=</span> <span class="st">"MyRange"</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span>  <span class="co"># read_xlsx(wb2)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co">###########################################################################</span></span></span>
+<span class="r-in"><span>  <span class="co"># named_region // namedRegion</span></span></span>
+<span class="r-in"><span>  <span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"namedRegions3.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">wb3</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># read dataset with named_region (returns global first)</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, named_region <span class="op">=</span> <span class="st">"MyRange"</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      A    B</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 S2A1 S2B1</span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="co"># read named_region from sheet</span></span>
-<span class="r-in">  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, named_region <span class="op">=</span> <span class="st">"MyRange"</span>, sheet <span class="op">=</span> <span class="fl">4</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># read named_region from sheet</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb3</span>, named_region <span class="op">=</span> <span class="st">"MyRange"</span>, sheet <span class="op">=</span> <span class="fl">4</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      A    B</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 S3A1 S3B1</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -2470,7 +2470,7 @@ written down and not optimized etc. The goal was to have something working.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

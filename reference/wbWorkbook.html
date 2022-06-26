@@ -417,13 +417,13 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new <code>wbWorkbook</code> object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/wbWorkbook.html">wbWorkbook</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
-  creator <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  subject <span class="op">=</span> <span class="cn">NULL</span>,
-  category <span class="op">=</span> <span class="cn">NULL</span>,
-  datetimeCreated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/wbWorkbook.html">wbWorkbook</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  creator <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  datetimeCreated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -461,7 +461,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
 <p>Append a field. This method is intended for internal use</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">field</span>, <span class="va">value</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">field</span>, <span class="va">value</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -481,7 +481,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-append-sheets-">Method <code>append_sheets()</code><a class="anchor" aria-label="anchor" href="#method-append-sheets-"></a></h3>
 <p>Append to <code>self$workbook$sheets</code> This method is intended for internal use</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">append_sheets</span><span class="op">(</span><span class="va">value</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">append_sheets</span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -497,7 +497,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-validate-sheet-">Method <code>validate_sheet()</code><a class="anchor" aria-label="anchor" href="#method-validate-sheet-"></a></h3>
 <p>validate sheet</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">validate_sheet</span><span class="op">(</span><span class="va">sheet</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">validate_sheet</span><span class="op">(</span><span class="va">sheet</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -513,29 +513,29 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-add-worksheet-">Method <code>add_worksheet()</code><a class="anchor" aria-label="anchor" href="#method-add-worksheet-"></a></h3>
 <p>Add worksheet to the <code>wbWorkbook</code> object</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,
-  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,
-  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,
-  tabColour <span class="op">=</span> <span class="cn">NULL</span>,
-  zoom <span class="op">=</span> <span class="fl">100</span>,
-  header <span class="op">=</span> <span class="cn">NULL</span>,
-  footer <span class="op">=</span> <span class="cn">NULL</span>,
-  oddHeader <span class="op">=</span> <span class="va">header</span>,
-  oddFooter <span class="op">=</span> <span class="va">footer</span>,
-  evenHeader <span class="op">=</span> <span class="va">header</span>,
-  evenFooter <span class="op">=</span> <span class="va">footer</span>,
-  firstHeader <span class="op">=</span> <span class="va">header</span>,
-  firstFooter <span class="op">=</span> <span class="va">footer</span>,
-  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,
-  hasDrawing <span class="op">=</span> <span class="cn">FALSE</span>,
-  paperSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.paperSize"</span>, default <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,
-  orientation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.orientation"</span>, default <span class="op">=</span> <span class="st">"portrait"</span><span class="op">)</span>,
-  hdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.hdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span>
-    <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,
-  vdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.vdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span>
-    <span class="fl">300</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  oddHeader <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  oddFooter <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  evenHeader <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  evenFooter <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  firstHeader <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  firstFooter <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,</span>
+<span>  hasDrawing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  paperSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.paperSize"</span>, default <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
+<span>  orientation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.orientation"</span>, default <span class="op">=</span> <span class="st">"portrait"</span><span class="op">)</span>,</span>
+<span>  hdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.hdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span></span>
+<span>    <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  vdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.vdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span></span>
+<span>    <span class="fl">300</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -627,7 +627,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-clone-worksheet-">Method <code>clone_worksheet()</code><a class="anchor" aria-label="anchor" href="#method-clone-worksheet-"></a></h3>
 <p>Clone a workbooksheet</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone_worksheet</span><span class="op">(</span>old <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, new <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone_worksheet</span><span class="op">(</span>old <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, new <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -647,7 +647,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-addchartsheet-">Method <code>addChartSheet()</code><a class="anchor" aria-label="anchor" href="#method-addchartsheet-"></a></h3>
 <p>Add a chart sheet to the workbook</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">addChartSheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, tabColour <span class="op">=</span> <span class="cn">NULL</span>, zoom <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">addChartSheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, tabColour <span class="op">=</span> <span class="cn">NULL</span>, zoom <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -675,20 +675,20 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-add-data-">Method <code>add_data()</code><a class="anchor" aria-label="anchor" href="#method-add-data-"></a></h3>
 <p>add data</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">x</span>,
-  startCol <span class="op">=</span> <span class="fl">1</span>,
-  startRow <span class="op">=</span> <span class="fl">1</span>,
-  array <span class="op">=</span> <span class="cn">FALSE</span>,
-  xy <span class="op">=</span> <span class="cn">NULL</span>,
-  colNames <span class="op">=</span> <span class="cn">TRUE</span>,
-  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,
-  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,
-  name <span class="op">=</span> <span class="cn">NULL</span>,
-  sep <span class="op">=</span> <span class="st">", "</span>,
-  removeCellStyle <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
+<span>  removeCellStyle <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -752,23 +752,23 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-add-data-table-">Method <code>add_data_table()</code><a class="anchor" aria-label="anchor" href="#method-add-data-table-"></a></h3>
 <p>add a data table</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">x</span>,
-  startCol <span class="op">=</span> <span class="fl">1</span>,
-  startRow <span class="op">=</span> <span class="fl">1</span>,
-  xy <span class="op">=</span> <span class="cn">NULL</span>,
-  colNames <span class="op">=</span> <span class="cn">TRUE</span>,
-  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,
-  tableStyle <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,
-  tableName <span class="op">=</span> <span class="cn">NULL</span>,
-  withFilter <span class="op">=</span> <span class="cn">TRUE</span>,
-  sep <span class="op">=</span> <span class="st">", "</span>,
-  firstColumn <span class="op">=</span> <span class="cn">FALSE</span>,
-  lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,
-  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,
-  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  tableStyle <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,</span>
+<span>  tableName <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  withFilter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
+<span>  firstColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -840,14 +840,14 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-add-formula-">Method <code>add_formula()</code><a class="anchor" aria-label="anchor" href="#method-add-formula-"></a></h3>
 <p>add formula</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">x</span>,
-  startCol <span class="op">=</span> <span class="fl">1</span>,
-  startRow <span class="op">=</span> <span class="fl">1</span>,
-  array <span class="op">=</span> <span class="cn">FALSE</span>,
-  xy <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  xy <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -883,7 +883,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-save-">Method <code><a href="https://rdrr.io/r/base/save.html" class="external-link">save()</a></code><a class="anchor" aria-label="anchor" href="#method-save-"></a></h3>
 <p>Save the workbook</p><div class="section">
 <h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>path <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>path <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -907,7 +907,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h3 id="method-open-">Method <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">open()</a></code><a class="anchor" aria-label="anchor" href="#method-open-"></a></h3>
 <p>open wbWorkbook in Excel.</p><div class="section">
 <h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>interactive <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>interactive <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -929,20 +929,20 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-buildtable-">Method <code>buildTable()</code><a class="anchor" aria-label="anchor" href="#method-buildtable-"></a></h3>
 <p>Build table</p><div class="section">
 <h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">buildTable</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">colNames</span>,
-  <span class="va">ref</span>,
-  <span class="va">showColNames</span>,
-  <span class="va">tableStyle</span>,
-  <span class="va">tableName</span>,
-  <span class="va">withFilter</span>,
-  totalsRowCount <span class="op">=</span> <span class="fl">0</span>,
-  showFirstColumn <span class="op">=</span> <span class="fl">0</span>,
-  showLastColumn <span class="op">=</span> <span class="fl">0</span>,
-  showRowStripes <span class="op">=</span> <span class="fl">1</span>,
-  showColumnStripes <span class="op">=</span> <span class="fl">0</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">buildTable</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">colNames</span>,</span>
+<span>  <span class="va">ref</span>,</span>
+<span>  <span class="va">showColNames</span>,</span>
+<span>  <span class="va">tableStyle</span>,</span>
+<span>  <span class="va">tableName</span>,</span>
+<span>  <span class="va">withFilter</span>,</span>
+<span>  totalsRowCount <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  showFirstColumn <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  showLastColumn <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  showRowStripes <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  showColumnStripes <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1006,7 +1006,7 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-get-base-font-">Method <code>get_base_font()</code><a class="anchor" aria-label="anchor" href="#method-get-base-font-"></a></h3>
 <p>Get the base font</p><div class="section">
 <h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_base_font</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_base_font</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1018,11 +1018,11 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-set-base-font-">Method <code>set_base_font()</code><a class="anchor" aria-label="anchor" href="#method-set-base-font-"></a></h3>
 <p>Get the base font</p><div class="section">
 <h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_base_font</span><span class="op">(</span>
-  fontSize <span class="op">=</span> <span class="fl">11</span>,
-  fontColour <span class="op">=</span> <span class="st">"black"</span>,
-  fontName <span class="op">=</span> <span class="st">"Calibri"</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_base_font</span><span class="op">(</span></span>
+<span>  fontSize <span class="op">=</span> <span class="fl">11</span>,</span>
+<span>  fontColour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  fontName <span class="op">=</span> <span class="st">"Calibri"</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1050,7 +1050,7 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-get-sheet-names-">Method <code>get_sheet_names()</code><a class="anchor" aria-label="anchor" href="#method-get-sheet-names-"></a></h3>
 <p>Get sheet names</p><div class="section">
 <h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_sheet_names</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_sheet_names</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -1058,7 +1058,7 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-set-sheet-names-">Method <code>set_sheet_names()</code><a class="anchor" aria-label="anchor" href="#method-set-sheet-names-"></a></h3>
 <p>Sets a sheet name</p><div class="section">
 <h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheet_names</span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">new</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheet_names</span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">new</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1082,7 +1082,7 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-setsheetname-">Method <code>setSheetName()</code><a class="anchor" aria-label="anchor" href="#method-setsheetname-"></a></h3>
 <p>Deprecated.  Use <code>set_sheet_names()</code> instead</p><div class="section">
 <h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">setSheetName</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">name</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">setSheetName</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1106,7 +1106,7 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-set-row-heights-">Method <code>set_row_heights()</code><a class="anchor" aria-label="anchor" href="#method-set-row-heights-"></a></h3>
 <p>Sets a row height for a sheet</p><div class="section">
 <h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_row_heights</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span>, <span class="va">heights</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_row_heights</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span>, <span class="va">heights</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1134,7 +1134,7 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-remove-row-heights-">Method <code>remove_row_heights()</code><a class="anchor" aria-label="anchor" href="#method-remove-row-heights-"></a></h3>
 <p>Sets a row height for a sheet</p><div class="section">
 <h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_row_heights</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_row_heights</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1161,7 +1161,7 @@ creates column object for worksheet</p>
 
 <div class="section">
 <h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">createCols</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">n</span>, <span class="va">beg</span>, <span class="va">end</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">createCols</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">n</span>, <span class="va">beg</span>, <span class="va">end</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1189,12 +1189,12 @@ creates column object for worksheet</p>
 <h3 id="method-group-cols-">Method <code>group_cols()</code><a class="anchor" aria-label="anchor" href="#method-group-cols-"></a></h3>
 <p>Group cols</p><div class="section">
 <h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">group_cols</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">cols</span>,
-  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,
-  levels <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">group_cols</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  levels <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1226,7 +1226,7 @@ creates column object for worksheet</p>
 <h3 id="method-ungroup-cols-">Method <code>ungroup_cols()</code><a class="anchor" aria-label="anchor" href="#method-ungroup-cols-"></a></h3>
 <p>ungroup cols</p><div class="section">
 <h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">ungroup_cols</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">cols</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">ungroup_cols</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">cols</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1246,7 +1246,7 @@ creates column object for worksheet</p>
 <h3 id="method-remove-col-widths-">Method <code>remove_col_widths()</code><a class="anchor" aria-label="anchor" href="#method-remove-col-widths-"></a></h3>
 <p>Remove row heights from a worksheet</p><div class="section">
 <h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_col_widths</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">cols</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_col_widths</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">cols</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1270,12 +1270,12 @@ creates column object for worksheet</p>
 <h3 id="method-set-col-widths-">Method <code>set_col_widths()</code><a class="anchor" aria-label="anchor" href="#method-set-col-widths-"></a></h3>
 <p>Group cols</p><div class="section">
 <h4 id="usage-24">Usage<a class="anchor" aria-label="anchor" href="#usage-24"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_col_widths</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">cols</span>,
-  widths <span class="op">=</span> <span class="fl">8.43</span>,
-  hidden <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_col_widths</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  widths <span class="op">=</span> <span class="fl">8.43</span>,</span>
+<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1308,12 +1308,12 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-group-rows-">Method <code>group_rows()</code><a class="anchor" aria-label="anchor" href="#method-group-rows-"></a></h3>
 <p>Group rows</p><div class="section">
 <h4 id="usage-25">Usage<a class="anchor" aria-label="anchor" href="#usage-25"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">group_rows</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">rows</span>,
-  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,
-  levels <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">group_rows</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  levels <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1345,7 +1345,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-ungroup-rows-">Method <code>ungroup_rows()</code><a class="anchor" aria-label="anchor" href="#method-ungroup-rows-"></a></h3>
 <p>ungroup rows</p><div class="section">
 <h4 id="usage-26">Usage<a class="anchor" aria-label="anchor" href="#usage-26"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">ungroup_rows</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">ungroup_rows</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1369,7 +1369,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-remove-worksheet-">Method <code>remove_worksheet()</code><a class="anchor" aria-label="anchor" href="#method-remove-worksheet-"></a></h3>
 <p>Remove a worksheet</p><div class="section">
 <h4 id="usage-27">Usage<a class="anchor" aria-label="anchor" href="#usage-27"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_worksheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_worksheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1389,17 +1389,17 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-data-validation-">Method <code>add_data_validation()</code><a class="anchor" aria-label="anchor" href="#method-add-data-validation-"></a></h3>
 <p>Adds data validation</p><div class="section">
 <h4 id="usage-28">Usage<a class="anchor" aria-label="anchor" href="#usage-28"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data_validation</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">cols</span>,
-  <span class="va">rows</span>,
-  <span class="va">type</span>,
-  <span class="va">operator</span>,
-  <span class="va">value</span>,
-  allowBlank <span class="op">=</span> <span class="cn">TRUE</span>,
-  showInputMsg <span class="op">=</span> <span class="cn">TRUE</span>,
-  showErrorMsg <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data_validation</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  <span class="va">type</span>,</span>
+<span>  <span class="va">operator</span>,</span>
+<span>  <span class="va">value</span>,</span>
+<span>  allowBlank <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  showInputMsg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  showErrorMsg <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1447,18 +1447,18 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-conditional-formatting-">Method <code>conditional_formatting()</code><a class="anchor" aria-label="anchor" href="#method-conditional-formatting-"></a></h3>
 <p>Set conditional formatting for a sheet</p><div class="section">
 <h4 id="usage-29">Usage<a class="anchor" aria-label="anchor" href="#usage-29"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">conditional_formatting</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">startRow</span>,
-  <span class="va">endRow</span>,
-  <span class="va">startCol</span>,
-  <span class="va">endCol</span>,
-  <span class="va">dxfId</span>,
-  <span class="va">formula</span>,
-  <span class="va">type</span>,
-  <span class="va">values</span>,
-  <span class="va">params</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">conditional_formatting</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">startRow</span>,</span>
+<span>  <span class="va">endRow</span>,</span>
+<span>  <span class="va">startCol</span>,</span>
+<span>  <span class="va">endCol</span>,</span>
+<span>  <span class="va">dxfId</span>,</span>
+<span>  <span class="va">formula</span>,</span>
+<span>  <span class="va">type</span>,</span>
+<span>  <span class="va">values</span>,</span>
+<span>  <span class="va">params</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1514,7 +1514,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-merge-cells-">Method <code>merge_cells()</code><a class="anchor" aria-label="anchor" href="#method-merge-cells-"></a></h3>
 <p>Set cell merging for a sheet</p><div class="section">
 <h4 id="usage-30">Usage<a class="anchor" aria-label="anchor" href="#usage-30"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">merge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">merge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1538,7 +1538,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-unmerge-cells-">Method <code>unmerge_cells()</code><a class="anchor" aria-label="anchor" href="#method-unmerge-cells-"></a></h3>
 <p>Removes cell merging for a sheet</p><div class="section">
 <h4 id="usage-31">Usage<a class="anchor" aria-label="anchor" href="#usage-31"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">unmerge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">unmerge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1562,13 +1562,13 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-freeze-pane-">Method <code>freeze_pane()</code><a class="anchor" aria-label="anchor" href="#method-freeze-pane-"></a></h3>
 <p>Set freeze panes for a sheet</p><div class="section">
 <h4 id="usage-32">Usage<a class="anchor" aria-label="anchor" href="#usage-32"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">freeze_pane</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  firstActiveRow <span class="op">=</span> <span class="cn">NULL</span>,
-  firstActiveCol <span class="op">=</span> <span class="cn">NULL</span>,
-  firstRow <span class="op">=</span> <span class="cn">FALSE</span>,
-  firstCol <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">freeze_pane</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  firstActiveRow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  firstActiveCol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  firstRow <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  firstCol <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1604,18 +1604,18 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-image-">Method <code>add_image()</code><a class="anchor" aria-label="anchor" href="#method-add-image-"></a></h3>
 <p>Insert an image into a sheet</p><div class="section">
 <h4 id="usage-33">Usage<a class="anchor" aria-label="anchor" href="#usage-33"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_image</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">file</span>,
-  width <span class="op">=</span> <span class="fl">6</span>,
-  height <span class="op">=</span> <span class="fl">3</span>,
-  startRow <span class="op">=</span> <span class="fl">1</span>,
-  startCol <span class="op">=</span> <span class="fl">1</span>,
-  rowOffset <span class="op">=</span> <span class="fl">0</span>,
-  colOffset <span class="op">=</span> <span class="fl">0</span>,
-  units <span class="op">=</span> <span class="st">"in"</span>,
-  dpi <span class="op">=</span> <span class="fl">300</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_image</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">file</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  height <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rowOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
+<span>  dpi <span class="op">=</span> <span class="fl">300</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1671,19 +1671,19 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-plot-">Method <code>add_plot()</code><a class="anchor" aria-label="anchor" href="#method-add-plot-"></a></h3>
 <p>Add plot. A wrapper for add_image()</p><div class="section">
 <h4 id="usage-34">Usage<a class="anchor" aria-label="anchor" href="#usage-34"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_plot</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  width <span class="op">=</span> <span class="fl">6</span>,
-  height <span class="op">=</span> <span class="fl">4</span>,
-  xy <span class="op">=</span> <span class="cn">NULL</span>,
-  startRow <span class="op">=</span> <span class="fl">1</span>,
-  startCol <span class="op">=</span> <span class="fl">1</span>,
-  rowOffset <span class="op">=</span> <span class="fl">0</span>,
-  colOffset <span class="op">=</span> <span class="fl">0</span>,
-  fileType <span class="op">=</span> <span class="st">"png"</span>,
-  units <span class="op">=</span> <span class="st">"in"</span>,
-  dpi <span class="op">=</span> <span class="fl">300</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_plot</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  height <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rowOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  fileType <span class="op">=</span> <span class="st">"png"</span>,</span>
+<span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
+<span>  dpi <span class="op">=</span> <span class="fl">300</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1739,7 +1739,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Prints the <code>wbWorkbook</code> object</p><div class="section">
 <h4 id="usage-35">Usage<a class="anchor" aria-label="anchor" href="#usage-35"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1751,16 +1751,16 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-protect-">Method <code>protect()</code><a class="anchor" aria-label="anchor" href="#method-protect-"></a></h3>
 <p>Protect a workbook</p><div class="section">
 <h4 id="usage-36">Usage<a class="anchor" aria-label="anchor" href="#usage-36"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">protect</span><span class="op">(</span>
-  protect <span class="op">=</span> <span class="cn">TRUE</span>,
-  password <span class="op">=</span> <span class="cn">NULL</span>,
-  lockStructure <span class="op">=</span> <span class="cn">FALSE</span>,
-  lockWindows <span class="op">=</span> <span class="cn">FALSE</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"4"</span>, <span class="st">"8"</span><span class="op">)</span>,
-  fileSharing <span class="op">=</span> <span class="cn">FALSE</span>,
-  username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.info.html" class="external-link">Sys.info</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="st">"user"</span><span class="op">]</span><span class="op">)</span>,
-  readOnlyRecommended <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">protect</span><span class="op">(</span></span>
+<span>  protect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lockStructure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  lockWindows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"4"</span>, <span class="st">"8"</span><span class="op">)</span>,</span>
+<span>  fileSharing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.info.html" class="external-link">Sys.info</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="st">"user"</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  readOnlyRecommended <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1808,12 +1808,12 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-protect-worksheet-">Method <code>protect_worksheet()</code><a class="anchor" aria-label="anchor" href="#method-protect-worksheet-"></a></h3>
 <p>protect worksheet</p><div class="section">
 <h4 id="usage-37">Usage<a class="anchor" aria-label="anchor" href="#usage-37"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">protect_worksheet</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  protect <span class="op">=</span> <span class="cn">TRUE</span>,
-  password <span class="op">=</span> <span class="cn">NULL</span>,
-  properties <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">protect_worksheet</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  protect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  properties <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1846,7 +1846,7 @@ or more of the following: <code>"selectLockedCells"</code>,
 <h3 id="method-set-creators-">Method <code>set_creators()</code><a class="anchor" aria-label="anchor" href="#method-set-creators-"></a></h3>
 <p>Set creator(s)</p><div class="section">
 <h4 id="usage-38">Usage<a class="anchor" aria-label="anchor" href="#usage-38"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1863,7 +1863,7 @@ ignored.</p></dd>
 <h3 id="method-add-creators-">Method <code>add_creators()</code><a class="anchor" aria-label="anchor" href="#method-add-creators-"></a></h3>
 <p>Add creator(s)</p><div class="section">
 <h4 id="usage-39">Usage<a class="anchor" aria-label="anchor" href="#usage-39"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1880,7 +1880,7 @@ ignored.</p></dd>
 <h3 id="method-remove-creators-">Method <code>remove_creators()</code><a class="anchor" aria-label="anchor" href="#method-remove-creators-"></a></h3>
 <p>Remove creator(s)</p><div class="section">
 <h4 id="usage-40">Usage<a class="anchor" aria-label="anchor" href="#usage-40"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1897,7 +1897,7 @@ are removed.</p></dd>
 <h3 id="method-set-last-modified-by-">Method <code>set_last_modified_by()</code><a class="anchor" aria-label="anchor" href="#method-set-last-modified-by-"></a></h3>
 <p>Change the last modified by</p><div class="section">
 <h4 id="usage-41">Usage<a class="anchor" aria-label="anchor" href="#usage-41"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_last_modified_by</span><span class="op">(</span>LastModifiedBy <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_last_modified_by</span><span class="op">(</span>LastModifiedBy <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1917,24 +1917,24 @@ are removed.</p></dd>
 <h3 id="method-page-setup-">Method <code>page_setup()</code><a class="anchor" aria-label="anchor" href="#method-page-setup-"></a></h3>
 <p>page_setup()</p><div class="section">
 <h4 id="usage-42">Usage<a class="anchor" aria-label="anchor" href="#usage-42"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">page_setup</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  orientation <span class="op">=</span> <span class="cn">NULL</span>,
-  scale <span class="op">=</span> <span class="fl">100</span>,
-  left <span class="op">=</span> <span class="fl">0.7</span>,
-  right <span class="op">=</span> <span class="fl">0.7</span>,
-  top <span class="op">=</span> <span class="fl">0.75</span>,
-  bottom <span class="op">=</span> <span class="fl">0.75</span>,
-  header <span class="op">=</span> <span class="fl">0.3</span>,
-  footer <span class="op">=</span> <span class="fl">0.3</span>,
-  fitToWidth <span class="op">=</span> <span class="cn">FALSE</span>,
-  fitToHeight <span class="op">=</span> <span class="cn">FALSE</span>,
-  paperSize <span class="op">=</span> <span class="cn">NULL</span>,
-  printTitleRows <span class="op">=</span> <span class="cn">NULL</span>,
-  printTitleCols <span class="op">=</span> <span class="cn">NULL</span>,
-  summaryRow <span class="op">=</span> <span class="cn">NULL</span>,
-  summaryCol <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">page_setup</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  orientation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scale <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  left <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>  right <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>  top <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  bottom <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  header <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  footer <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  fitToWidth <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fitToHeight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  paperSize <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  printTitleRows <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  printTitleCols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  summaryRow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  summaryCol <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2014,15 +2014,15 @@ are removed.</p></dd>
 <h3 id="method-set-header-footer-">Method <code>set_header_footer()</code><a class="anchor" aria-label="anchor" href="#method-set-header-footer-"></a></h3>
 <p>Sets headers and footers</p><div class="section">
 <h4 id="usage-43">Usage<a class="anchor" aria-label="anchor" href="#usage-43"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_header_footer</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  header <span class="op">=</span> <span class="cn">NULL</span>,
-  footer <span class="op">=</span> <span class="cn">NULL</span>,
-  evenHeader <span class="op">=</span> <span class="cn">NULL</span>,
-  evenFooter <span class="op">=</span> <span class="cn">NULL</span>,
-  firstHeader <span class="op">=</span> <span class="cn">NULL</span>,
-  firstFooter <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_header_footer</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  evenHeader <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  evenFooter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  firstHeader <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  firstFooter <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2066,7 +2066,7 @@ are removed.</p></dd>
 <h3 id="method-get-tables-">Method <code>get_tables()</code><a class="anchor" aria-label="anchor" href="#method-get-tables-"></a></h3>
 <p>get tables</p><div class="section">
 <h4 id="usage-44">Usage<a class="anchor" aria-label="anchor" href="#usage-44"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2082,7 +2082,7 @@ are removed.</p></dd>
 <h3 id="method-remove-tables-">Method <code>remove_tables()</code><a class="anchor" aria-label="anchor" href="#method-remove-tables-"></a></h3>
 <p>remove tables</p><div class="section">
 <h4 id="usage-45">Usage<a class="anchor" aria-label="anchor" href="#usage-45"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_tables</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">table</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_tables</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">table</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2102,7 +2102,7 @@ are removed.</p></dd>
 <h3 id="method-add-filter-">Method <code>add_filter()</code><a class="anchor" aria-label="anchor" href="#method-add-filter-"></a></h3>
 <p>add filters</p><div class="section">
 <h4 id="usage-46">Usage<a class="anchor" aria-label="anchor" href="#usage-46"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_filter</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span>, <span class="va">cols</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_filter</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span>, <span class="va">cols</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2126,7 +2126,7 @@ are removed.</p></dd>
 <h3 id="method-remove-filter-">Method <code>remove_filter()</code><a class="anchor" aria-label="anchor" href="#method-remove-filter-"></a></h3>
 <p>remove filters</p><div class="section">
 <h4 id="usage-47">Usage<a class="anchor" aria-label="anchor" href="#usage-47"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_filter</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_filter</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2142,7 +2142,7 @@ are removed.</p></dd>
 <h3 id="method-grid-lines-">Method <code>grid_lines()</code><a class="anchor" aria-label="anchor" href="#method-grid-lines-"></a></h3>
 <p>grid lines</p><div class="section">
 <h4 id="usage-48">Usage<a class="anchor" aria-label="anchor" href="#usage-48"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">grid_lines</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, show <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">grid_lines</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, show <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2162,14 +2162,14 @@ are removed.</p></dd>
 <h3 id="method-add-named-region-">Method <code>add_named_region()</code><a class="anchor" aria-label="anchor" href="#method-add-named-region-"></a></h3>
 <p>add a named region</p><div class="section">
 <h4 id="usage-49">Usage<a class="anchor" aria-label="anchor" href="#usage-49"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">cols</span>,
-  <span class="va">rows</span>,
-  <span class="va">name</span>,
-  localSheetId <span class="op">=</span> <span class="cn">NULL</span>,
-  overwrite <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  <span class="va">name</span>,</span>
+<span>  localSheetId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2205,7 +2205,7 @@ are removed.</p></dd>
 <h3 id="method-remove-named-region-">Method <code>remove_named_region()</code><a class="anchor" aria-label="anchor" href="#method-remove-named-region-"></a></h3>
 <p>remove a named region</p><div class="section">
 <h4 id="usage-50">Usage<a class="anchor" aria-label="anchor" href="#usage-50"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_named_region</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_named_region</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2225,7 +2225,7 @@ are removed.</p></dd>
 <h3 id="method-set-order-">Method <code>set_order()</code><a class="anchor" aria-label="anchor" href="#method-set-order-"></a></h3>
 <p>set worksheet order</p><div class="section">
 <h4 id="usage-51">Usage<a class="anchor" aria-label="anchor" href="#usage-51"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_order</span><span class="op">(</span><span class="va">sheets</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_order</span><span class="op">(</span><span class="va">sheets</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2245,7 +2245,7 @@ are removed.</p></dd>
 <h3 id="method-get-sheet-visibility-">Method <code>get_sheet_visibility()</code><a class="anchor" aria-label="anchor" href="#method-get-sheet-visibility-"></a></h3>
 <p>Get sheet visibility</p><div class="section">
 <h4 id="usage-52">Usage<a class="anchor" aria-label="anchor" href="#usage-52"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_sheet_visibility</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_sheet_visibility</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -2253,7 +2253,7 @@ are removed.</p></dd>
 <h3 id="method-set-sheet-visibility-">Method <code>set_sheet_visibility()</code><a class="anchor" aria-label="anchor" href="#method-set-sheet-visibility-"></a></h3>
 <p>Set sheet visibility</p><div class="section">
 <h4 id="usage-53">Usage<a class="anchor" aria-label="anchor" href="#usage-53"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheet_visibility</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">value</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheet_visibility</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">value</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2273,7 +2273,7 @@ are removed.</p></dd>
 <h3 id="method-add-page-break-">Method <code>add_page_break()</code><a class="anchor" aria-label="anchor" href="#method-add-page-break-"></a></h3>
 <p>Add a page break</p><div class="section">
 <h4 id="usage-54">Usage<a class="anchor" aria-label="anchor" href="#usage-54"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_page_break</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, row <span class="op">=</span> <span class="cn">NULL</span>, col <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_page_break</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, row <span class="op">=</span> <span class="cn">NULL</span>, col <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2297,13 +2297,13 @@ are removed.</p></dd>
 <h3 id="method-clean-sheet-">Method <code>clean_sheet()</code><a class="anchor" aria-label="anchor" href="#method-clean-sheet-"></a></h3>
 <p>clean sheet (remove all values)</p><div class="section">
 <h4 id="usage-55">Usage<a class="anchor" aria-label="anchor" href="#usage-55"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clean_sheet</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  numbers <span class="op">=</span> <span class="cn">TRUE</span>,
-  characters <span class="op">=</span> <span class="cn">TRUE</span>,
-  styles <span class="op">=</span> <span class="cn">TRUE</span>,
-  merged_cells <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clean_sheet</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  characters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  styles <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  merged_cells <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2339,22 +2339,22 @@ are removed.</p></dd>
 <h3 id="method-add-border-">Method <code>add_border()</code><a class="anchor" aria-label="anchor" href="#method-add-border-"></a></h3>
 <p>create borders for cell region</p><div class="section">
 <h4 id="usage-56">Usage<a class="anchor" aria-label="anchor" href="#usage-56"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  dims <span class="op">=</span> <span class="st">"A1"</span>,
-  bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  bottom_border <span class="op">=</span> <span class="st">"thin"</span>,
-  left_border <span class="op">=</span> <span class="st">"thin"</span>,
-  right_border <span class="op">=</span> <span class="st">"thin"</span>,
-  top_border <span class="op">=</span> <span class="st">"thin"</span>,
-  inner_hgrid <span class="op">=</span> <span class="cn">NULL</span>,
-  inner_hcolor <span class="op">=</span> <span class="cn">NULL</span>,
-  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,
-  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
+<span>  bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  bottom_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  left_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  right_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  top_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  inner_hgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_hcolor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2383,29 +2383,30 @@ are removed.</p></dd>
 </div>
 <div class="section">
 <h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h4>
-<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,
- left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,
- top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,
- left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,
- top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,
- left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,
- top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,
- left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,
- bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span>
-<span class="co"># if (interactive()) wb$open()</span>
-
-<span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
-<span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span>
+<span> left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span> top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,</span>
+<span> left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,</span>
+<span> top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span>
+<span> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span>
+<span> top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span>
+<span> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span>
+<span> bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span>
+<span><span class="co"># if (interactive()) wb$open()</span></span>
+<span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -2413,15 +2414,15 @@ are removed.</p></dd>
 <h3 id="method-add-fill-">Method <code>add_fill()</code><a class="anchor" aria-label="anchor" href="#method-add-fill-"></a></h3>
 <p>provide simple fill function</p><div class="section">
 <h4 id="usage-57">Usage<a class="anchor" aria-label="anchor" href="#usage-57"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_fill</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">dims</span>,
-  color <span class="op">=</span> <span class="st">""</span>,
-  pattern <span class="op">=</span> <span class="st">"solid"</span>,
-  gradient_fill <span class="op">=</span> <span class="st">""</span>,
-  every_nth_col <span class="op">=</span> <span class="fl">1</span>,
-  every_nth_row <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_fill</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">dims</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="st">"solid"</span>,</span>
+<span>  gradient_fill <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  every_nth_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  every_nth_row <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2466,11 +2467,11 @@ are removed.</p></dd>
 </div>
 <div class="section">
 <h4 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a></h4>
-<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="co"># example from the gradient fill manual page</span>
- <span class="va">gradient_fill</span> <span class="op">&lt;-</span> <span class="st">"&lt;gradientFill degree=\"90\"&gt;
-   &lt;stop position=\"0\"&gt;&lt;color rgb=\"FF92D050\"/&gt;&lt;/stop&gt;
-   &lt;stop position=\"1\"&gt;&lt;color rgb=\"FF0070C0\"/&gt;&lt;/stop&gt;
-  &lt;/gradientFill&gt;"</span></code></pre></div><p></p></div>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span> <span class="co"># example from the gradient fill manual page</span></span>
+<span> <span class="va">gradient_fill</span> <span class="op">&lt;-</span> <span class="st">"&lt;gradientFill degree=\"90\"&gt;</span></span>
+<span><span class="st">   &lt;stop position=\"0\"&gt;&lt;color rgb=\"FF92D050\"/&gt;&lt;/stop&gt;</span></span>
+<span><span class="st">   &lt;stop position=\"1\"&gt;&lt;color rgb=\"FF0070C0\"/&gt;&lt;/stop&gt;</span></span>
+<span><span class="st">  &lt;/gradientFill&gt;"</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -2478,25 +2479,25 @@ are removed.</p></dd>
 <h3 id="method-add-font-">Method <code>add_font()</code><a class="anchor" aria-label="anchor" href="#method-add-font-"></a></h3>
 <p>provide simple font function</p><div class="section">
 <h4 id="usage-58">Usage<a class="anchor" aria-label="anchor" href="#usage-58"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">dims</span>,
-  name <span class="op">=</span> <span class="st">"Calibri"</span>,
-  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  size <span class="op">=</span> <span class="st">"11"</span>,
-  bold <span class="op">=</span> <span class="st">""</span>,
-  italic <span class="op">=</span> <span class="st">""</span>,
-  outline <span class="op">=</span> <span class="st">""</span>,
-  strike <span class="op">=</span> <span class="st">""</span>,
-  underline <span class="op">=</span> <span class="st">""</span>,
-  charset <span class="op">=</span> <span class="st">""</span>,
-  condense <span class="op">=</span> <span class="st">""</span>,
-  extend <span class="op">=</span> <span class="st">""</span>,
-  family <span class="op">=</span> <span class="st">""</span>,
-  scheme <span class="op">=</span> <span class="st">""</span>,
-  shadow <span class="op">=</span> <span class="st">""</span>,
-  vertAlign <span class="op">=</span> <span class="st">""</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">dims</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"Calibri"</span>,</span>
+<span>  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  size <span class="op">=</span> <span class="st">"11"</span>,</span>
+<span>  bold <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  italic <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  outline <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  strike <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  underline <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  charset <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  condense <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  extend <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  scheme <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  shadow <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  vertAlign <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2577,8 +2578,8 @@ are removed.</p></dd>
 </div>
 <div class="section">
 <h4 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a></h4>
-<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
- <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -2586,7 +2587,7 @@ are removed.</p></dd>
 <h3 id="method-add-numfmt-">Method <code>add_numfmt()</code><a class="anchor" aria-label="anchor" href="#method-add-numfmt-"></a></h3>
 <p>provide simple number format function</p><div class="section">
 <h4 id="usage-59">Usage<a class="anchor" aria-label="anchor" href="#usage-59"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, <span class="va">numfmt</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, <span class="va">numfmt</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2611,8 +2612,8 @@ are removed.</p></dd>
 </div>
 <div class="section">
 <h4 id="examples-3">Examples<a class="anchor" aria-label="anchor" href="#examples-3"></a></h4>
-<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
- <span class="va">wb</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:A33"</span>, numfmt <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:A33"</span>, numfmt <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -2620,35 +2621,35 @@ are removed.</p></dd>
 <h3 id="method-add-cell-style-">Method <code>add_cell_style()</code><a class="anchor" aria-label="anchor" href="#method-add-cell-style-"></a></h3>
 <p>provide simple cell style format function</p><div class="section">
 <h4 id="usage-60">Usage<a class="anchor" aria-label="anchor" href="#usage-60"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span>
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">dims</span>,
-  applyAlignment <span class="op">=</span> <span class="cn">NULL</span>,
-  applyBorder <span class="op">=</span> <span class="cn">NULL</span>,
-  applyFill <span class="op">=</span> <span class="cn">NULL</span>,
-  applyFont <span class="op">=</span> <span class="cn">NULL</span>,
-  applyNumberFormat <span class="op">=</span> <span class="cn">NULL</span>,
-  applyProtection <span class="op">=</span> <span class="cn">NULL</span>,
-  borderId <span class="op">=</span> <span class="cn">NULL</span>,
-  extLst <span class="op">=</span> <span class="cn">NULL</span>,
-  fillId <span class="op">=</span> <span class="cn">NULL</span>,
-  fontId <span class="op">=</span> <span class="cn">NULL</span>,
-  hidden <span class="op">=</span> <span class="cn">NULL</span>,
-  horizontal <span class="op">=</span> <span class="cn">NULL</span>,
-  indent <span class="op">=</span> <span class="cn">NULL</span>,
-  justifyLastLine <span class="op">=</span> <span class="cn">NULL</span>,
-  locked <span class="op">=</span> <span class="cn">NULL</span>,
-  numFmtId <span class="op">=</span> <span class="cn">NULL</span>,
-  pivotButton <span class="op">=</span> <span class="cn">NULL</span>,
-  quotePrefix <span class="op">=</span> <span class="cn">NULL</span>,
-  readingOrder <span class="op">=</span> <span class="cn">NULL</span>,
-  relativeIndent <span class="op">=</span> <span class="cn">NULL</span>,
-  shrinkToFit <span class="op">=</span> <span class="cn">NULL</span>,
-  textRotation <span class="op">=</span> <span class="cn">NULL</span>,
-  vertical <span class="op">=</span> <span class="cn">NULL</span>,
-  wrapText <span class="op">=</span> <span class="cn">NULL</span>,
-  xfId <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">dims</span>,</span>
+<span>  applyAlignment <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  applyBorder <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  applyFill <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  applyFont <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  applyNumberFormat <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  applyProtection <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  borderId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  extLst <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fillId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fontId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hidden <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  horizontal <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  indent <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  justifyLastLine <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  locked <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  numFmtId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pivotButton <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quotePrefix <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  readingOrder <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  relativeIndent <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shrinkToFit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  textRotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vertical <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  wrapText <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xfId <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2769,8 +2770,8 @@ are removed.</p></dd>
 </div>
 <div class="section">
 <h4 id="examples-4">Examples<a class="anchor" aria-label="anchor" href="#examples-4"></a></h4>
-<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span>
- <span class="va">wb</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, textRotation <span class="op">=</span> <span class="st">"45"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, vertical <span class="op">=</span> <span class="st">"center"</span>, wrapText <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, textRotation <span class="op">=</span> <span class="st">"45"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, vertical <span class="op">=</span> <span class="st">"center"</span>, wrapText <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -2778,7 +2779,7 @@ are removed.</p></dd>
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-61">Usage<a class="anchor" aria-label="anchor" href="#usage-61"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2796,131 +2797,131 @@ are removed.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## Method `wbWorkbook$add_border`</span></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Method `wbWorkbook$add_border`</span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span>
-<span class="r-in"> left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span class="r-in"> top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span></span>
+<span class="r-in"><span> left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span> top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,</span>
-<span class="r-in"> left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,</span>
-<span class="r-in"> top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,</span></span>
+<span class="r-in"><span> left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,</span></span>
+<span class="r-in"><span> top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span>
-<span class="r-in"> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span>
-<span class="r-in"> top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span>
-<span class="r-in"> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span>
-<span class="r-in"> bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="co"># if (interactive()) wb$open()</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># if (interactive()) wb$open()</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## Method `wbWorkbook$add_fill`</span></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co"># example from the gradient fill manual page</span></span>
-<span class="r-in"> <span class="va">gradient_fill</span> <span class="op">&lt;-</span> <span class="st">"&lt;gradientFill degree=\"90\"&gt;</span>
-<span class="r-in">   &lt;stop position=\"0\"&gt;&lt;color rgb=\"FF92D050\"/&gt;&lt;/stop&gt;</span>
-<span class="r-in">   &lt;stop position=\"1\"&gt;&lt;color rgb=\"FF0070C0\"/&gt;&lt;/stop&gt;</span>
-<span class="r-in">  &lt;/gradientFill&gt;"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## Method `wbWorkbook$add_font`</span></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in"> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Method `wbWorkbook$add_fill`</span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="co"># example from the gradient fill manual page</span></span></span>
+<span class="r-in"><span> <span class="va">gradient_fill</span> <span class="op">&lt;-</span> <span class="st">"&lt;gradientFill degree=\"90\"&gt;</span></span></span>
+<span class="r-in"><span><span class="st">   &lt;stop position=\"0\"&gt;&lt;color rgb=\"FF92D050\"/&gt;&lt;/stop&gt;</span></span></span>
+<span class="r-in"><span><span class="st">   &lt;stop position=\"1\"&gt;&lt;color rgb=\"FF0070C0\"/&gt;&lt;/stop&gt;</span></span></span>
+<span class="r-in"><span><span class="st">  &lt;/gradientFill&gt;"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Method `wbWorkbook$add_font`</span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## Method `wbWorkbook$add_numfmt`</span></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in"> <span class="va">wb</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:A33"</span>, numfmt <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Method `wbWorkbook$add_numfmt`</span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:A33"</span>, numfmt <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## Method `wbWorkbook$add_cell_style`</span></span>
-<span class="r-in"><span class="co">## ------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in"> <span class="va">wb</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, textRotation <span class="op">=</span> <span class="st">"45"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, vertical <span class="op">=</span> <span class="st">"center"</span>, wrapText <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Method `wbWorkbook$add_cell_style`</span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, textRotation <span class="op">=</span> <span class="st">"45"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, vertical <span class="op">=</span> <span class="st">"center"</span>, wrapText <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
@@ -2940,7 +2941,7 @@ are removed.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

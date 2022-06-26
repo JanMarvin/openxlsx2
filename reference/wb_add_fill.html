@@ -66,16 +66,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_add_fill</span><span class="op">(</span>
-  <span class="va">wb</span>,
-  <span class="va">sheet</span>,
-  <span class="va">dims</span>,
-  color <span class="op">=</span> <span class="st">""</span>,
-  pattern <span class="op">=</span> <span class="st">"solid"</span>,
-  gradient_fill <span class="op">=</span> <span class="st">""</span>,
-  every_nth_col <span class="op">=</span> <span class="fl">1</span>,
-  every_nth_row <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_fill</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="va">sheet</span>,</span>
+<span>  <span class="va">dims</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="st">"solid"</span>,</span>
+<span>  gradient_fill <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  every_nth_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  every_nth_row <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -125,23 +125,23 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="write_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S1"</span>, dims <span class="op">=</span> <span class="st">"D5:J23"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S1"</span>, dims <span class="op">=</span> <span class="st">"B22:D27"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span>  <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S2"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="write_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S2"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">gradient_fill1</span> <span class="op">&lt;-</span> <span class="st">'&lt;gradientFill degree="90"&gt;</span>
-<span class="r-in">&lt;stop position="0"&gt;&lt;color rgb="FF92D050"/&gt;&lt;/stop&gt;</span>
-<span class="r-in">&lt;stop position="1"&gt;&lt;color rgb="FF0070C0"/&gt;&lt;/stop&gt;</span>
-<span class="r-in">&lt;/gradientFill&gt;'</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S2"</span>, dims <span class="op">=</span> <span class="st">"A2:K5"</span>, gradient_fill <span class="op">=</span> <span class="va">gradient_fill1</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">gradient_fill2</span> <span class="op">&lt;-</span> <span class="st">'&lt;gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8"&gt;</span>
-<span class="r-in">&lt;stop position="0"&gt;&lt;color theme="0"/&gt;&lt;/stop&gt;</span>
-<span class="r-in">&lt;stop position="1"&gt;&lt;color theme="4"/&gt;&lt;/stop&gt;</span>
-<span class="r-in">&lt;/gradientFill&gt;'</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S2"</span>, dims <span class="op">=</span> <span class="st">"A7:K10"</span>, gradient_fill <span class="op">=</span> <span class="va">gradient_fill2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="write_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S1"</span>, dims <span class="op">=</span> <span class="st">"D5:J23"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S1"</span>, dims <span class="op">=</span> <span class="st">"B22:D27"</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span>  <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S2"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="write_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S2"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">gradient_fill1</span> <span class="op">&lt;-</span> <span class="st">'&lt;gradientFill degree="90"&gt;</span></span></span>
+<span class="r-in"><span><span class="st">&lt;stop position="0"&gt;&lt;color rgb="FF92D050"/&gt;&lt;/stop&gt;</span></span></span>
+<span class="r-in"><span><span class="st">&lt;stop position="1"&gt;&lt;color rgb="FF0070C0"/&gt;&lt;/stop&gt;</span></span></span>
+<span class="r-in"><span><span class="st">&lt;/gradientFill&gt;'</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S2"</span>, dims <span class="op">=</span> <span class="st">"A2:K5"</span>, gradient_fill <span class="op">=</span> <span class="va">gradient_fill1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">gradient_fill2</span> <span class="op">&lt;-</span> <span class="st">'&lt;gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8"&gt;</span></span></span>
+<span class="r-in"><span><span class="st">&lt;stop position="0"&gt;&lt;color theme="0"/&gt;&lt;/stop&gt;</span></span></span>
+<span class="r-in"><span><span class="st">&lt;stop position="1"&gt;&lt;color theme="4"/&gt;&lt;/stop&gt;</span></span></span>
+<span class="r-in"><span><span class="st">&lt;/gradientFill&gt;'</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_fill</span><span class="op">(</span><span class="st">"S2"</span>, dims <span class="op">=</span> <span class="st">"A7:K10"</span>, gradient_fill <span class="op">=</span> <span class="va">gradient_fill2</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -156,7 +156,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -66,25 +66,25 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_group_cols</span><span class="op">(</span>
-  <span class="va">wb</span>,
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">cols</span>,
-  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,
-  levels <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="fu">wb_ungroup_cols</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">cols</span><span class="op">)</span>
-
-<span class="fu">wb_group_rows</span><span class="op">(</span>
-  <span class="va">wb</span>,
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">rows</span>,
-  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,
-  levels <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="fu">wb_ungroup_rows</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_group_cols</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  levels <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_ungroup_cols</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">cols</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_group_rows</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  collapsed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  levels <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_ungroup_rows</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -134,32 +134,32 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># create matrix</span></span>
-<span class="r-in"><span class="va">t1</span> <span class="op">&lt;-</span> <span class="va">AirPassengers</span></span>
-<span class="r-in"><span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">t1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">cycle</a></span><span class="op">(</span><span class="va">t1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">t2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/print.ts.html" class="external-link">.preformat.ts</a></span><span class="op">(</span><span class="va">t1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"AirPass"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"AirPass"</span>, <span class="va">t2</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># create matrix</span></span></span>
+<span class="r-in"><span><span class="va">t1</span> <span class="op">&lt;-</span> <span class="va">AirPassengers</span></span></span>
+<span class="r-in"><span><span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">t1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">cycle</a></span><span class="op">(</span><span class="va">t1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">t2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/print.ts.html" class="external-link">.preformat.ts</a></span><span class="op">(</span><span class="va">t1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"AirPass"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"AirPass"</span>, <span class="va">t2</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># groups will always end on/show the last row. in the example 1950, 1955, and 1960</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_rows</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># group years &lt; 1950</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_rows</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">8</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># group years 1951-1955</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_rows</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">9</span><span class="op">:</span><span class="fl">13</span><span class="op">)</span>                  <span class="co"># group years 1956-1960</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">createCols</span><span class="op">(</span><span class="st">"AirPass"</span>, <span class="fl">13</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">7</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">10</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">11</span><span class="op">:</span><span class="fl">13</span><span class="op">)</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># groups will always end on/show the last row. in the example 1950, 1955, and 1960</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_rows</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># group years &lt; 1950</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_rows</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">8</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># group years 1951-1955</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_rows</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">9</span><span class="op">:</span><span class="fl">13</span><span class="op">)</span>                  <span class="co"># group years 1956-1960</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">createCols</span><span class="op">(</span><span class="st">"AirPass"</span>, <span class="fl">13</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">7</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">10</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">11</span><span class="op">:</span><span class="fl">13</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -174,7 +174,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

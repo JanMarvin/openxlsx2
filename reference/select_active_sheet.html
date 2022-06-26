@@ -70,13 +70,13 @@ sheet.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_get_active_sheet</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span>
-
-<span class="fu">wb_set_active_sheet</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span><span class="op">)</span>
-
-<span class="fu">wb_get_selected</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span>
-
-<span class="fu">wb_set_selected</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_get_active_sheet</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_set_active_sheet</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_get_selected</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_set_selected</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -98,21 +98,21 @@ sheet.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in">  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"loadExample.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># testing is the selected sheet</span></span>
-<span class="r-in">  <span class="fu">wb_get_selected</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"loadExample.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># testing is the selected sheet</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_get_selected</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tabSelected workbookViewId        names</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0   IrisSample</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2           1              0      testing</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                          0       mtcars</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4                          0 mtCars Pivot</span>
-<span class="r-in">  <span class="co"># change the selected sheet to IrisSample</span></span>
-<span class="r-in">  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_set_selected</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"IrisSample"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># get the active sheet</span></span>
-<span class="r-in">  <span class="fu">wb_get_active_sheet</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span class="r-in"><span>  <span class="co"># change the selected sheet to IrisSample</span></span></span>
+<span class="r-in"><span>  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_set_selected</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"IrisSample"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># get the active sheet</span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_get_active_sheet</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-in">  <span class="co"># change the selected sheet to IrisSample</span></span>
-<span class="r-in">  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_set_active_sheet</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="st">"IrisSample"</span><span class="op">)</span></span>
+<span class="r-in"><span>  <span class="co"># change the selected sheet to IrisSample</span></span></span>
+<span class="r-in"><span>  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_set_active_sheet</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="st">"IrisSample"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -127,7 +127,7 @@ sheet.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

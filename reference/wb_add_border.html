@@ -66,23 +66,23 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_add_border</span><span class="op">(</span>
-  <span class="va">wb</span>,
-  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,
-  dims <span class="op">=</span> <span class="st">"A1"</span>,
-  bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,
-  bottom_border <span class="op">=</span> <span class="st">"thin"</span>,
-  left_border <span class="op">=</span> <span class="st">"thin"</span>,
-  right_border <span class="op">=</span> <span class="st">"thin"</span>,
-  top_border <span class="op">=</span> <span class="st">"thin"</span>,
-  inner_hgrid <span class="op">=</span> <span class="cn">NULL</span>,
-  inner_hcolor <span class="op">=</span> <span class="cn">NULL</span>,
-  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,
-  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_border</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
+<span>  bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  bottom_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  left_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  right_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  top_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  inner_hgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_hcolor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -114,23 +114,23 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span>  <span class="fu"><a href="write_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span>
-<span class="r-in"> left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span class="r-in"> top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,</span>
-<span class="r-in"> left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,</span>
-<span class="r-in"> top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span>
-<span class="r-in"> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span>
-<span class="r-in"> top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span>
-<span class="r-in"> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span>
-<span class="r-in"> bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span>  <span class="fu"><a href="write_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span></span>
+<span class="r-in"><span> left_border <span class="op">=</span> <span class="cn">NULL</span>, right_border <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span> top_border <span class="op">=</span> <span class="cn">NULL</span>, bottom_border <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A5"</span>,</span></span>
+<span class="r-in"><span> left_border <span class="op">=</span> <span class="st">"dotted"</span>, right_border <span class="op">=</span> <span class="st">"dotted"</span>,</span></span>
+<span class="r-in"><span> top_border <span class="op">=</span> <span class="st">"hair"</span>, bottom_border <span class="op">=</span> <span class="st">"thick"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> top_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> bottom_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span><span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -145,7 +145,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

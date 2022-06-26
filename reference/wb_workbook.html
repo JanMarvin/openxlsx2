@@ -66,13 +66,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_workbook</span><span class="op">(</span>
-  creator <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  subject <span class="op">=</span> <span class="cn">NULL</span>,
-  category <span class="op">=</span> <span class="cn">NULL</span>,
-  datetimeCreated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_workbook</span><span class="op">(</span></span>
+<span>  creator <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  datetimeCreated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -124,21 +124,21 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Create a new workbook</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_workbook</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Save workbook to working directory</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, path <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Set Workbook properties</span></span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_workbook</span><span class="op">(</span></span>
-<span class="r-in">  creator  <span class="op">=</span> <span class="st">"Me"</span>,</span>
-<span class="r-in">  title    <span class="op">=</span> <span class="st">"Expense Report"</span>,</span>
-<span class="r-in">  subject  <span class="op">=</span> <span class="st">"Expense Report - 2022 Q1"</span>,</span>
-<span class="r-in">  category <span class="op">=</span> <span class="st">"sales"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Create a new workbook</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_workbook</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Save workbook to working directory</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, path <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Set Workbook properties</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_workbook</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  creator  <span class="op">=</span> <span class="st">"Me"</span>,</span></span>
+<span class="r-in"><span>  title    <span class="op">=</span> <span class="st">"Expense Report"</span>,</span></span>
+<span class="r-in"><span>  subject  <span class="op">=</span> <span class="st">"Expense Report - 2022 Q1"</span>,</span></span>
+<span class="r-in"><span>  category <span class="op">=</span> <span class="st">"sales"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -153,7 +153,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -66,16 +66,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wb_conditional_formatting</span><span class="op">(</span>
-  <span class="va">wb</span>,
-  <span class="va">sheet</span>,
-  <span class="va">cols</span>,
-  <span class="va">rows</span>,
-  rule <span class="op">=</span> <span class="cn">NULL</span>,
-  style <span class="op">=</span> <span class="cn">NULL</span>,
-  type <span class="op">=</span> <span class="st">"expression"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="va">sheet</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  rule <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  style <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"expression"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -149,218 +149,218 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"cellIs"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">negStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span>font_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9C0006"</span><span class="op">)</span>, bgFill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFC7CE"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">posStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span>font_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF006100"</span><span class="op">)</span>, bgFill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFC6EFCE"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="va">styles</span><span class="op">$</span><span class="va">dxfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="va">styles</span><span class="op">$</span><span class="va">dxfs</span>,</span>
-<span class="r-in">                                <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">negStyle</span>, <span class="va">posStyle</span><span class="op">)</span></span>
-<span class="r-in">                             <span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## rule applies to all each cell in range</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"cellIs"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"cellIs"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">negStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span>font_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF9C0006"</span><span class="op">)</span>, bgFill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFFFC7CE"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">posStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span>font_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FF006100"</span><span class="op">)</span>, bgFill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb <span class="op">=</span> <span class="st">"FFC6EFCE"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="va">styles</span><span class="op">$</span><span class="va">dxfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="va">styles</span><span class="op">$</span><span class="va">dxfs</span>,</span></span>
+<span class="r-in"><span>                                <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">negStyle</span>, <span class="va">posStyle</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                             <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## rule applies to all each cell in range</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"cellIs"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"cellIs"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"cellIs"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"cellIs"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"!=0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"cellIs"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"==0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Row"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## highlight row dependent on first cell in row</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Row"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"cellIs"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"!=0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"cellIs"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"==0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Row"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## highlight row dependent on first cell in row</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Row"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Row"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Row"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Row"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A1&lt;0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Row"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A1&gt;0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Col"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## highlight column dependent on first cell in column</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Col"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Row"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A1&lt;0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Row"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A1&gt;0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Col"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## highlight column dependent on first cell in column</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Col"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Col"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Col"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Col"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"A$1&lt;0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Col"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"A$1&gt;0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Dependent on"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## highlight entire range cols X rows dependent only on cell A1</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Col"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"A$1&lt;0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Moving Col"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"A$1&gt;0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Dependent on"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## highlight entire range cols X rows dependent only on cell A1</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, startCol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A$1&lt;0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A$1&gt;0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## highlight cells in column 1 based on value in column 2</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>, startRow <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A$1&lt;0"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, rule <span class="op">=</span> <span class="st">"$A$1&gt;0"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## highlight cells in column 1 based on value in column 2</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>, startRow <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>, rule <span class="op">=</span> <span class="st">"B16&lt;0.5"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>, rule <span class="op">=</span> <span class="st">"B16&gt;=0.5"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Duplicates"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## highlight duplicates using default style</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Duplicates"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>, size <span class="op">=</span> <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>, rule <span class="op">=</span> <span class="st">"B16&lt;0.5"</span>, style <span class="op">=</span> <span class="va">negStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Dependent on"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>, rule <span class="op">=</span> <span class="st">"B16&gt;=0.5"</span>, style <span class="op">=</span> <span class="va">posStyle</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Duplicates"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## highlight duplicates using default style</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Duplicates"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>, size <span class="op">=</span> <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Duplicates"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, type <span class="op">=</span> <span class="st">"duplicates"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"containsText"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## cells containing text</span></span>
-<span class="r-in"><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"containsText"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Duplicates"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, type <span class="op">=</span> <span class="st">"duplicates"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"containsText"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## cells containing text</span></span></span>
+<span class="r-in"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"containsText"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"containsText"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, type <span class="op">=</span> <span class="st">"contains"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"notcontainsText"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## cells not containing text</span></span>
-<span class="r-in"><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"containsText"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"containsText"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, type <span class="op">=</span> <span class="st">"contains"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"notcontainsText"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## cells not containing text</span></span></span>
+<span class="r-in"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"containsText"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"notcontainsText"</span>, cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, type <span class="op">=</span> <span class="st">"notcontains"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"beginsWith"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## cells begins with text</span></span>
-<span class="r-in"><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"beginsWith"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"notcontainsText"</span>, cols <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                      rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, type <span class="op">=</span> <span class="st">"notcontains"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"beginsWith"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## cells begins with text</span></span></span>
+<span class="r-in"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"beginsWith"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"beginsWith"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, type <span class="op">=</span> <span class="st">"beginsWith"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"endsWith"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## cells ends with text</span></span>
-<span class="r-in"><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"endsWith"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"beginsWith"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, type <span class="op">=</span> <span class="st">"beginsWith"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"endsWith"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## cells ends with text</span></span></span>
+<span class="r-in"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"endsWith"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"endsWith"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, type <span class="op">=</span> <span class="st">"endsWith"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"colourScale"</span>, zoom <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## colourscale colours cells based on cell value</span></span>
-<span class="r-in"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"colourScale"</span>, <span class="va">df</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co">## write data.frame</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"endsWith"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, type <span class="op">=</span> <span class="st">"endsWith"</span>, rule <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"colourScale"</span>, zoom <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## colourscale colours cells based on cell value</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"colourScale"</span>, <span class="va">df</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co">## write data.frame</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10</span>
-<span class="r-in"><span class="co">## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())</span></span>
-<span class="r-in"><span class="co">## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"colourScale"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>,</span>
-<span class="r-in">                      style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
-<span class="r-in">                      rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>,</span>
-<span class="r-in">                      type <span class="op">=</span> <span class="st">"colourScale"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="wb_set_col_widths.html">wb_set_col_widths</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"colourScale"</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, widths <span class="op">=</span> <span class="fl">1.07</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())</span></span></span>
+<span class="r-in"><span><span class="co">## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"colourScale"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"white"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      type <span class="op">=</span> <span class="st">"colourScale"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="wb_set_col_widths.html">wb_set_col_widths</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"colourScale"</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, widths <span class="op">=</span> <span class="fl">1.07</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10</span>
-<span class="r-in"><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_set_row_heights.html">wb_set_row_heights</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"colourScale"</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>, heights <span class="op">=</span> <span class="fl">7.5</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"databar"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Databars</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_set_row_heights.html">wb_set_row_heights</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"colourScale"</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>, heights <span class="op">=</span> <span class="fl">7.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"databar"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Databars</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
@@ -369,12 +369,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Custom row heights (row: height)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 1: 7.5, 2: 7.5, 3: 7.5, 4: 7.5, 5: 7.5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"databar"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, type <span class="op">=</span> <span class="st">"databar"</span><span class="op">)</span> <span class="co">## Default colours</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"between"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Between</span></span>
-<span class="r-in"><span class="co"># Highlight cells in interval [-2, 2]</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"between"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"databar"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, type <span class="op">=</span> <span class="st">"databar"</span><span class="op">)</span> <span class="co">## Default colours</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"between"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Between</span></span></span>
+<span class="r-in"><span><span class="co"># Highlight cells in interval [-2, 2]</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"between"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
@@ -383,11 +383,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Custom row heights (row: height)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 1: 7.5, 2: 7.5, 3: 7.5, 4: 7.5, 5: 7.5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"between"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, type <span class="op">=</span> <span class="st">"between"</span>, rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"topN"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Top N</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"topN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"between"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, type <span class="op">=</span> <span class="st">"between"</span>, rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"topN"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Top N</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"topN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
@@ -396,16 +396,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Custom row heights (row: height)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 1: 7.5, 2: 7.5, 3: 7.5, 4: 7.5, 5: 7.5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13</span>
-<span class="r-in"><span class="co"># Highlight top 5 values in column x</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"topN"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span class="r-in">                      style <span class="op">=</span> <span class="va">posStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="co">#'</span></span>
-<span class="r-in"><span class="co"># Highlight top 20 percentage in column y</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"topN"</span>, cols <span class="op">=</span> <span class="fl">2</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span class="r-in">                      style <span class="op">=</span> <span class="va">posStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"bottomN"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Bottom N</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"bottomN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># Highlight top 5 values in column x</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"topN"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span></span>
+<span class="r-in"><span>                      style <span class="op">=</span> <span class="va">posStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="co">#'</span></span></span>
+<span class="r-in"><span><span class="co"># Highlight top 20 percentage in column y</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"topN"</span>, cols <span class="op">=</span> <span class="fl">2</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span></span>
+<span class="r-in"><span>                      style <span class="op">=</span> <span class="va">posStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"bottomN"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Bottom N</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"bottomN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
@@ -414,17 +414,17 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Custom row heights (row: height)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 1: 7.5, 2: 7.5, 3: 7.5, 4: 7.5, 5: 7.5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14</span>
-<span class="r-in"><span class="co"># Highlight bottom 5 values in column x</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"bottomN"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span class="r-in">                      style <span class="op">=</span> <span class="va">negStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Highlight bottom 20 percentage in column y</span></span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"bottomN"</span>, cols <span class="op">=</span> <span class="fl">2</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span class="r-in">                      style <span class="op">=</span> <span class="va">negStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"logical operators"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Logical Operators</span></span>
-<span class="r-in"><span class="co"># You can use Excels logical Operators</span></span>
-<span class="r-in"><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"logical operators"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># Highlight bottom 5 values in column x</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"bottomN"</span>, cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span></span>
+<span class="r-in"><span>                      style <span class="op">=</span> <span class="va">negStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Highlight bottom 20 percentage in column y</span></span></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"bottomN"</span>, cols <span class="op">=</span> <span class="fl">2</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span></span>
+<span class="r-in"><span>                      style <span class="op">=</span> <span class="va">negStyle</span>, type <span class="op">=</span> <span class="st">"topN"</span>, rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"logical operators"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Logical Operators</span></span></span>
+<span class="r-in"><span><span class="co"># You can use Excels logical Operators</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"logical operators"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
@@ -433,11 +433,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Custom row heights (row: height)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 1: 7.5, 2: 7.5, 3: 7.5, 4: 7.5, 5: 7.5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15</span>
-<span class="r-in"><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"logical operators"</span>,</span>
-<span class="r-in">                      cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
-<span class="r-in">                      rule <span class="op">=</span> <span class="st">"OR($A1=1,$A1=3,$A1=5,$A1=7)"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="fu">wb_conditional_formatting</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"logical operators"</span>,</span></span>
+<span class="r-in"><span>                      cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>                      rule <span class="op">=</span> <span class="st">"OR($A1=1,$A1=3,$A1=5,$A1=7)"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -452,7 +452,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
