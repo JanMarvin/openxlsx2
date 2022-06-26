@@ -11,7 +11,7 @@ test_that("write_formula", {
          v = "", f = "SUM(C2:C11*D2:D11)",
          f_t = "array", f_ref = "E2:E2",
          f_ca = "", f_si = "",
-         is = "", typ = NA_character_),
+         is = "", typ = ""),
     row.names = "3", class = "data.frame")
 
   # write data add array formula later

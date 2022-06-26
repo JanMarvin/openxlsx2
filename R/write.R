@@ -183,11 +183,19 @@ update_cell <- function(x, wb, sheet, cell, data_class,
           if (cc[sel, "c_s"] == "")
             cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
         } else {
-          cc[sel, "v"]   <- as.character(value)
+          if (is.na(value)) {
+            cc[sel, "v"] <- "#N/A"
+            cc[sel, "c_t"] <- "e"
+          } else {
+            cc[sel, "v"]   <- as.character(value)
+          }
         }
 
       }
     }
+
+    # avoid missings in cc
+    cc[is.na(cc)] <- ""
 
   }
 
