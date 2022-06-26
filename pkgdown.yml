@@ -2,7 +2,8 @@ pandoc: 2.14.2
 pkgdown: 2.0.5
 pkgdown_sha: ~
 articles:
+  conditional-formatting: conditional-formatting.html
   openxlsx2_basic_manual: openxlsx2_basic_manual.html
   openxlsx2_style_manual: openxlsx2_style_manual.html
-last_built: 2022-06-26T08:43Z
+last_built: 2022-06-26T14:51Z
 

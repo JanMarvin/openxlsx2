@@ -32,6 +32,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/conditional-formatting.html">Conditional Formatting</a>
+    </li>
+    <li>
       <a href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     </li>
     <li>
@@ -104,7 +107,12 @@
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li><p>Assigning a new worksheet with an illegal character now prompts an error <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a>. See <code><a href="../reference/clean_worksheet_name.html">?clean_worksheet_name</a></code> for an easy method of replacing bad characters.</p></li>
+<ul><li>
+<p><code><a href="../reference/wb_add_conditional_formatting.html">wb_conditional_formatting()</a></code> is deprecated in favor of <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> and <code>wbWorkbook$add_conditional_formatting()</code>.</p>
+<ul><li>
+<code>type</code> must now match exactly one of: <code>"expression"</code>, <code>"colorScale"</code>, <code>"dataBar"</code>, <code>"duplicatedValues"</code>, <code>"containsText"</code>, <code>"notContainsText"</code>, <code>"beginsWith"</code>, <code>"endsWith"</code>, <code>"between"</code>, <code>"topN"</code>, <code>"bottomN"</code>
+</li></ul></li>
+<li><p>Assigning a new worksheet with an illegal character now prompts an error <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a>. See <code><a href="../reference/clean_worksheet_name.html">?clean_worksheet_name</a></code> for an easy method of replacing bad characters.</p></li>
 <li><p><code>openxlsx2Coerce()</code> (which was called on <code>x</code> objects when adding data to a workbook) has been removed. Users can no longer pass some arbitrary objects and will need to format these objects appropriately or rely on <code>as.data.frame</code> methods <a href="https://github.com/JanMarvin/openxlsx2/issues/167" class="external-link">167</a></p></li>
 <li><p><code>xl_open(file = )</code> is no longer valid and will throw a warning; first argument has been changes to <code>x</code> to highlight that <code><a href="../reference/xl_open.html">xl_open()</a></code> can be called on a file path or a <code>wbWorkbook</code> object <a href="https://github.com/JanMarvin/openxlsx2/pull/171" class="external-link">171</a></p></li>
 </ul></div>

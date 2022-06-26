@@ -7,6 +7,9 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/articles/conditional-formatting.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -47,9 +50,6 @@
   </url>
   <url>
     <loc>/reference/comment.html</loc>
-  </url>
-  <url>
-    <loc>/reference/conditionalFormatting.html</loc>
   </url>
   <url>
     <loc>/reference/convertToExcelDate.html</loc>
@@ -200,6 +200,9 @@
   </url>
   <url>
     <loc>/reference/wb_add_cell_style.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_add_conditional_formatting.html</loc>
   </url>
   <url>
     <loc>/reference/wb_add_data_table.html</loc>

@@ -33,6 +33,9 @@ R6 class for a Workbook"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/conditional-formatting.html">Conditional Formatting</a>
+    </li>
+    <li>
       <a href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     </li>
     <li>
@@ -86,6 +89,9 @@ R6 class for a Workbook"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
 <p><code>character</code> vector of sheet names in their order.  The
 names represent the original value of the worksheet prior to any
 character substitutions.</p>
+
+
+<p>The <code>wbWorkbook</code> object</p>
 
 
 <p>The <code>wbWorkbook</code> object</p>
@@ -384,6 +390,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-merge_cells"><code>wbWorkbook$merge_cells()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-unmerge_cells"><code>wbWorkbook$unmerge_cells()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-freeze_pane"><code>wbWorkbook$freeze_pane()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_conditional_formatting"><code>wbWorkbook$add_conditional_formatting()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_image"><code>wbWorkbook$add_image()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_plot"><code>wbWorkbook$add_plot()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-print"><code>wbWorkbook$print()</code></a></p></li>
@@ -1600,10 +1607,60 @@ are repeated across length of <code>cols</code></p></dd>
 <p>The <code>wbWorkbook</code> object, invisibly</p>
 </div>
 
+</div><p></p><hr><a id="method-wbWorkbook-add_conditional_formatting"></a><div class="section">
+<h3 id="method-add-conditional-formatting-">Method <code>add_conditional_formatting()</code><a class="anchor" aria-label="anchor" href="#method-add-conditional-formatting-"></a></h3>
+<p>Add conditional formatting</p><div class="section">
+<h4 id="usage-33">Usage<a class="anchor" aria-label="anchor" href="#usage-33"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  rule <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  style <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expression"</span>, <span class="st">"colorScale"</span>, <span class="st">"dataBar"</span>, <span class="st">"duplicatedValues"</span>, <span class="st">"containsText"</span>,</span>
+<span>    <span class="st">"notContainsText"</span>, <span class="st">"beginsWith"</span>, <span class="st">"endsWith"</span>, <span class="st">"between"</span>, <span class="st">"topN"</span>, <span class="st">"bottomN"</span><span class="op">)</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">TRUE</span>, percent <span class="op">=</span> <span class="cn">FALSE</span>, rank</span>
+<span>    <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-31">Arguments<a class="anchor" aria-label="anchor" href="#arguments-31"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>sheet</p></dd>
+
+
+<dt><code>cols</code></dt>
+<dd><p>cols</p></dd>
+
+
+<dt><code>rows</code></dt>
+<dd><p>rows</p></dd>
+
+
+<dt><code>rule</code></dt>
+<dd><p>rule</p></dd>
+
+
+<dt><code>style</code></dt>
+<dd><p>style</p></dd>
+
+
+<dt><code>type</code></dt>
+<dd><p>type</p></dd>
+
+
+<dt><code>params</code></dt>
+<dd><p>Additional parameters</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
 </div><p></p><hr><a id="method-wbWorkbook-add_image"></a><div class="section">
 <h3 id="method-add-image-">Method <code>add_image()</code><a class="anchor" aria-label="anchor" href="#method-add-image-"></a></h3>
 <p>Insert an image into a sheet</p><div class="section">
-<h4 id="usage-33">Usage<a class="anchor" aria-label="anchor" href="#usage-33"></a></h4>
+<h4 id="usage-34">Usage<a class="anchor" aria-label="anchor" href="#usage-34"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_image</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">file</span>,</span>
@@ -1619,7 +1676,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-31">Arguments<a class="anchor" aria-label="anchor" href="#arguments-31"></a></h4>
+<h4 id="arguments-32">Arguments<a class="anchor" aria-label="anchor" href="#arguments-32"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -1670,7 +1727,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_plot"></a><div class="section">
 <h3 id="method-add-plot-">Method <code>add_plot()</code><a class="anchor" aria-label="anchor" href="#method-add-plot-"></a></h3>
 <p>Add plot. A wrapper for add_image()</p><div class="section">
-<h4 id="usage-34">Usage<a class="anchor" aria-label="anchor" href="#usage-34"></a></h4>
+<h4 id="usage-35">Usage<a class="anchor" aria-label="anchor" href="#usage-35"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_plot</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
@@ -1687,7 +1744,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-32">Arguments<a class="anchor" aria-label="anchor" href="#arguments-32"></a></h4>
+<h4 id="arguments-33">Arguments<a class="anchor" aria-label="anchor" href="#arguments-33"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -1738,7 +1795,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-print"></a><div class="section">
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Prints the <code>wbWorkbook</code> object</p><div class="section">
-<h4 id="usage-35">Usage<a class="anchor" aria-label="anchor" href="#usage-35"></a></h4>
+<h4 id="usage-36">Usage<a class="anchor" aria-label="anchor" href="#usage-36"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -1750,7 +1807,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-protect"></a><div class="section">
 <h3 id="method-protect-">Method <code>protect()</code><a class="anchor" aria-label="anchor" href="#method-protect-"></a></h3>
 <p>Protect a workbook</p><div class="section">
-<h4 id="usage-36">Usage<a class="anchor" aria-label="anchor" href="#usage-36"></a></h4>
+<h4 id="usage-37">Usage<a class="anchor" aria-label="anchor" href="#usage-37"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">protect</span><span class="op">(</span></span>
 <span>  protect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1764,7 +1821,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-33">Arguments<a class="anchor" aria-label="anchor" href="#arguments-33"></a></h4>
+<h4 id="arguments-34">Arguments<a class="anchor" aria-label="anchor" href="#arguments-34"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>protect</code></dt>
 <dd><p>protect</p></dd>
 
@@ -1807,7 +1864,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-protect_worksheet"></a><div class="section">
 <h3 id="method-protect-worksheet-">Method <code>protect_worksheet()</code><a class="anchor" aria-label="anchor" href="#method-protect-worksheet-"></a></h3>
 <p>protect worksheet</p><div class="section">
-<h4 id="usage-37">Usage<a class="anchor" aria-label="anchor" href="#usage-37"></a></h4>
+<h4 id="usage-38">Usage<a class="anchor" aria-label="anchor" href="#usage-38"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">protect_worksheet</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  protect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1817,7 +1874,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-34">Arguments<a class="anchor" aria-label="anchor" href="#arguments-34"></a></h4>
+<h4 id="arguments-35">Arguments<a class="anchor" aria-label="anchor" href="#arguments-35"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -1845,12 +1902,12 @@ or more of the following: <code>"selectLockedCells"</code>,
 </div><p></p><hr><a id="method-wbWorkbook-set_creators"></a><div class="section">
 <h3 id="method-set-creators-">Method <code>set_creators()</code><a class="anchor" aria-label="anchor" href="#method-set-creators-"></a></h3>
 <p>Set creator(s)</p><div class="section">
-<h4 id="usage-38">Usage<a class="anchor" aria-label="anchor" href="#usage-38"></a></h4>
+<h4 id="usage-39">Usage<a class="anchor" aria-label="anchor" href="#usage-39"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-35">Arguments<a class="anchor" aria-label="anchor" href="#arguments-35"></a></h4>
+<h4 id="arguments-36">Arguments<a class="anchor" aria-label="anchor" href="#arguments-36"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>creators</code></dt>
 <dd><p>A character vector of creators to set.  Duplicates are
 ignored.</p></dd>
@@ -1862,12 +1919,12 @@ ignored.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_creators"></a><div class="section">
 <h3 id="method-add-creators-">Method <code>add_creators()</code><a class="anchor" aria-label="anchor" href="#method-add-creators-"></a></h3>
 <p>Add creator(s)</p><div class="section">
-<h4 id="usage-39">Usage<a class="anchor" aria-label="anchor" href="#usage-39"></a></h4>
+<h4 id="usage-40">Usage<a class="anchor" aria-label="anchor" href="#usage-40"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-36">Arguments<a class="anchor" aria-label="anchor" href="#arguments-36"></a></h4>
+<h4 id="arguments-37">Arguments<a class="anchor" aria-label="anchor" href="#arguments-37"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>creators</code></dt>
 <dd><p>A character vector of creators to add.  Duplicates are
 ignored.</p></dd>
@@ -1879,12 +1936,12 @@ ignored.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-remove_creators"></a><div class="section">
 <h3 id="method-remove-creators-">Method <code>remove_creators()</code><a class="anchor" aria-label="anchor" href="#method-remove-creators-"></a></h3>
 <p>Remove creator(s)</p><div class="section">
-<h4 id="usage-40">Usage<a class="anchor" aria-label="anchor" href="#usage-40"></a></h4>
+<h4 id="usage-41">Usage<a class="anchor" aria-label="anchor" href="#usage-41"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_creators</span><span class="op">(</span><span class="va">creators</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-37">Arguments<a class="anchor" aria-label="anchor" href="#arguments-37"></a></h4>
+<h4 id="arguments-38">Arguments<a class="anchor" aria-label="anchor" href="#arguments-38"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>creators</code></dt>
 <dd><p>A character vector of creators to remove.  All duplicated
 are removed.</p></dd>
@@ -1896,12 +1953,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-set_last_modified_by"></a><div class="section">
 <h3 id="method-set-last-modified-by-">Method <code>set_last_modified_by()</code><a class="anchor" aria-label="anchor" href="#method-set-last-modified-by-"></a></h3>
 <p>Change the last modified by</p><div class="section">
-<h4 id="usage-41">Usage<a class="anchor" aria-label="anchor" href="#usage-41"></a></h4>
+<h4 id="usage-42">Usage<a class="anchor" aria-label="anchor" href="#usage-42"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_last_modified_by</span><span class="op">(</span>LastModifiedBy <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-38">Arguments<a class="anchor" aria-label="anchor" href="#arguments-38"></a></h4>
+<h4 id="arguments-39">Arguments<a class="anchor" aria-label="anchor" href="#arguments-39"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>LastModifiedBy</code></dt>
 <dd><p>A new value</p></dd>
 
@@ -1916,7 +1973,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-page_setup"></a><div class="section">
 <h3 id="method-page-setup-">Method <code>page_setup()</code><a class="anchor" aria-label="anchor" href="#method-page-setup-"></a></h3>
 <p>page_setup()</p><div class="section">
-<h4 id="usage-42">Usage<a class="anchor" aria-label="anchor" href="#usage-42"></a></h4>
+<h4 id="usage-43">Usage<a class="anchor" aria-label="anchor" href="#usage-43"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">page_setup</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1938,7 +1995,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-39">Arguments<a class="anchor" aria-label="anchor" href="#arguments-39"></a></h4>
+<h4 id="arguments-40">Arguments<a class="anchor" aria-label="anchor" href="#arguments-40"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2013,7 +2070,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-set_header_footer"></a><div class="section">
 <h3 id="method-set-header-footer-">Method <code>set_header_footer()</code><a class="anchor" aria-label="anchor" href="#method-set-header-footer-"></a></h3>
 <p>Sets headers and footers</p><div class="section">
-<h4 id="usage-43">Usage<a class="anchor" aria-label="anchor" href="#usage-43"></a></h4>
+<h4 id="usage-44">Usage<a class="anchor" aria-label="anchor" href="#usage-44"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_header_footer</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -2026,7 +2083,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-40">Arguments<a class="anchor" aria-label="anchor" href="#arguments-40"></a></h4>
+<h4 id="arguments-41">Arguments<a class="anchor" aria-label="anchor" href="#arguments-41"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2065,12 +2122,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-get_tables"></a><div class="section">
 <h3 id="method-get-tables-">Method <code>get_tables()</code><a class="anchor" aria-label="anchor" href="#method-get-tables-"></a></h3>
 <p>get tables</p><div class="section">
-<h4 id="usage-44">Usage<a class="anchor" aria-label="anchor" href="#usage-44"></a></h4>
+<h4 id="usage-45">Usage<a class="anchor" aria-label="anchor" href="#usage-45"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-41">Arguments<a class="anchor" aria-label="anchor" href="#arguments-41"></a></h4>
+<h4 id="arguments-42">Arguments<a class="anchor" aria-label="anchor" href="#arguments-42"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2081,12 +2138,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-remove_tables"></a><div class="section">
 <h3 id="method-remove-tables-">Method <code>remove_tables()</code><a class="anchor" aria-label="anchor" href="#method-remove-tables-"></a></h3>
 <p>remove tables</p><div class="section">
-<h4 id="usage-45">Usage<a class="anchor" aria-label="anchor" href="#usage-45"></a></h4>
+<h4 id="usage-46">Usage<a class="anchor" aria-label="anchor" href="#usage-46"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_tables</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">table</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-42">Arguments<a class="anchor" aria-label="anchor" href="#arguments-42"></a></h4>
+<h4 id="arguments-43">Arguments<a class="anchor" aria-label="anchor" href="#arguments-43"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2101,12 +2158,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_filter"></a><div class="section">
 <h3 id="method-add-filter-">Method <code>add_filter()</code><a class="anchor" aria-label="anchor" href="#method-add-filter-"></a></h3>
 <p>add filters</p><div class="section">
-<h4 id="usage-46">Usage<a class="anchor" aria-label="anchor" href="#usage-46"></a></h4>
+<h4 id="usage-47">Usage<a class="anchor" aria-label="anchor" href="#usage-47"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_filter</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span>, <span class="va">cols</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-43">Arguments<a class="anchor" aria-label="anchor" href="#arguments-43"></a></h4>
+<h4 id="arguments-44">Arguments<a class="anchor" aria-label="anchor" href="#arguments-44"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2125,12 +2182,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-remove_filter"></a><div class="section">
 <h3 id="method-remove-filter-">Method <code>remove_filter()</code><a class="anchor" aria-label="anchor" href="#method-remove-filter-"></a></h3>
 <p>remove filters</p><div class="section">
-<h4 id="usage-47">Usage<a class="anchor" aria-label="anchor" href="#usage-47"></a></h4>
+<h4 id="usage-48">Usage<a class="anchor" aria-label="anchor" href="#usage-48"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_filter</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-44">Arguments<a class="anchor" aria-label="anchor" href="#arguments-44"></a></h4>
+<h4 id="arguments-45">Arguments<a class="anchor" aria-label="anchor" href="#arguments-45"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2141,12 +2198,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-grid_lines"></a><div class="section">
 <h3 id="method-grid-lines-">Method <code>grid_lines()</code><a class="anchor" aria-label="anchor" href="#method-grid-lines-"></a></h3>
 <p>grid lines</p><div class="section">
-<h4 id="usage-48">Usage<a class="anchor" aria-label="anchor" href="#usage-48"></a></h4>
+<h4 id="usage-49">Usage<a class="anchor" aria-label="anchor" href="#usage-49"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">grid_lines</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, show <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-45">Arguments<a class="anchor" aria-label="anchor" href="#arguments-45"></a></h4>
+<h4 id="arguments-46">Arguments<a class="anchor" aria-label="anchor" href="#arguments-46"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2161,7 +2218,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_named_region"></a><div class="section">
 <h3 id="method-add-named-region-">Method <code>add_named_region()</code><a class="anchor" aria-label="anchor" href="#method-add-named-region-"></a></h3>
 <p>add a named region</p><div class="section">
-<h4 id="usage-49">Usage<a class="anchor" aria-label="anchor" href="#usage-49"></a></h4>
+<h4 id="usage-50">Usage<a class="anchor" aria-label="anchor" href="#usage-50"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">cols</span>,</span>
@@ -2173,7 +2230,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-46">Arguments<a class="anchor" aria-label="anchor" href="#arguments-46"></a></h4>
+<h4 id="arguments-47">Arguments<a class="anchor" aria-label="anchor" href="#arguments-47"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2204,12 +2261,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-remove_named_region"></a><div class="section">
 <h3 id="method-remove-named-region-">Method <code>remove_named_region()</code><a class="anchor" aria-label="anchor" href="#method-remove-named-region-"></a></h3>
 <p>remove a named region</p><div class="section">
-<h4 id="usage-50">Usage<a class="anchor" aria-label="anchor" href="#usage-50"></a></h4>
+<h4 id="usage-51">Usage<a class="anchor" aria-label="anchor" href="#usage-51"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_named_region</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-47">Arguments<a class="anchor" aria-label="anchor" href="#arguments-47"></a></h4>
+<h4 id="arguments-48">Arguments<a class="anchor" aria-label="anchor" href="#arguments-48"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2224,12 +2281,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-set_order"></a><div class="section">
 <h3 id="method-set-order-">Method <code>set_order()</code><a class="anchor" aria-label="anchor" href="#method-set-order-"></a></h3>
 <p>set worksheet order</p><div class="section">
-<h4 id="usage-51">Usage<a class="anchor" aria-label="anchor" href="#usage-51"></a></h4>
+<h4 id="usage-52">Usage<a class="anchor" aria-label="anchor" href="#usage-52"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_order</span><span class="op">(</span><span class="va">sheets</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-48">Arguments<a class="anchor" aria-label="anchor" href="#arguments-48"></a></h4>
+<h4 id="arguments-49">Arguments<a class="anchor" aria-label="anchor" href="#arguments-49"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheets</code></dt>
 <dd><p>sheets</p></dd>
 
@@ -2244,7 +2301,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-get_sheet_visibility"></a><div class="section">
 <h3 id="method-get-sheet-visibility-">Method <code>get_sheet_visibility()</code><a class="anchor" aria-label="anchor" href="#method-get-sheet-visibility-"></a></h3>
 <p>Get sheet visibility</p><div class="section">
-<h4 id="usage-52">Usage<a class="anchor" aria-label="anchor" href="#usage-52"></a></h4>
+<h4 id="usage-53">Usage<a class="anchor" aria-label="anchor" href="#usage-53"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_sheet_visibility</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2252,12 +2309,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-set_sheet_visibility"></a><div class="section">
 <h3 id="method-set-sheet-visibility-">Method <code>set_sheet_visibility()</code><a class="anchor" aria-label="anchor" href="#method-set-sheet-visibility-"></a></h3>
 <p>Set sheet visibility</p><div class="section">
-<h4 id="usage-53">Usage<a class="anchor" aria-label="anchor" href="#usage-53"></a></h4>
+<h4 id="usage-54">Usage<a class="anchor" aria-label="anchor" href="#usage-54"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheet_visibility</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">value</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-49">Arguments<a class="anchor" aria-label="anchor" href="#arguments-49"></a></h4>
+<h4 id="arguments-50">Arguments<a class="anchor" aria-label="anchor" href="#arguments-50"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2272,12 +2329,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_page_break"></a><div class="section">
 <h3 id="method-add-page-break-">Method <code>add_page_break()</code><a class="anchor" aria-label="anchor" href="#method-add-page-break-"></a></h3>
 <p>Add a page break</p><div class="section">
-<h4 id="usage-54">Usage<a class="anchor" aria-label="anchor" href="#usage-54"></a></h4>
+<h4 id="usage-55">Usage<a class="anchor" aria-label="anchor" href="#usage-55"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_page_break</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, row <span class="op">=</span> <span class="cn">NULL</span>, col <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-50">Arguments<a class="anchor" aria-label="anchor" href="#arguments-50"></a></h4>
+<h4 id="arguments-51">Arguments<a class="anchor" aria-label="anchor" href="#arguments-51"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2296,7 +2353,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-clean_sheet"></a><div class="section">
 <h3 id="method-clean-sheet-">Method <code>clean_sheet()</code><a class="anchor" aria-label="anchor" href="#method-clean-sheet-"></a></h3>
 <p>clean sheet (remove all values)</p><div class="section">
-<h4 id="usage-55">Usage<a class="anchor" aria-label="anchor" href="#usage-55"></a></h4>
+<h4 id="usage-56">Usage<a class="anchor" aria-label="anchor" href="#usage-56"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clean_sheet</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -2307,7 +2364,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-51">Arguments<a class="anchor" aria-label="anchor" href="#arguments-51"></a></h4>
+<h4 id="arguments-52">Arguments<a class="anchor" aria-label="anchor" href="#arguments-52"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -2338,7 +2395,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_border"></a><div class="section">
 <h3 id="method-add-border-">Method <code>add_border()</code><a class="anchor" aria-label="anchor" href="#method-add-border-"></a></h3>
 <p>create borders for cell region</p><div class="section">
-<h4 id="usage-56">Usage<a class="anchor" aria-label="anchor" href="#usage-56"></a></h4>
+<h4 id="usage-57">Usage<a class="anchor" aria-label="anchor" href="#usage-57"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
@@ -2358,7 +2415,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-52">Arguments<a class="anchor" aria-label="anchor" href="#arguments-52"></a></h4>
+<h4 id="arguments-53">Arguments<a class="anchor" aria-label="anchor" href="#arguments-53"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>a worksheet</p></dd>
 
@@ -2413,7 +2470,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_fill"></a><div class="section">
 <h3 id="method-add-fill-">Method <code>add_fill()</code><a class="anchor" aria-label="anchor" href="#method-add-fill-"></a></h3>
 <p>provide simple fill function</p><div class="section">
-<h4 id="usage-57">Usage<a class="anchor" aria-label="anchor" href="#usage-57"></a></h4>
+<h4 id="usage-58">Usage<a class="anchor" aria-label="anchor" href="#usage-58"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_fill</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">dims</span>,</span>
@@ -2426,7 +2483,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-53">Arguments<a class="anchor" aria-label="anchor" href="#arguments-53"></a></h4>
+<h4 id="arguments-54">Arguments<a class="anchor" aria-label="anchor" href="#arguments-54"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>the worksheet</p></dd>
 
@@ -2478,7 +2535,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_font"></a><div class="section">
 <h3 id="method-add-font-">Method <code>add_font()</code><a class="anchor" aria-label="anchor" href="#method-add-font-"></a></h3>
 <p>provide simple font function</p><div class="section">
-<h4 id="usage-58">Usage<a class="anchor" aria-label="anchor" href="#usage-58"></a></h4>
+<h4 id="usage-59">Usage<a class="anchor" aria-label="anchor" href="#usage-59"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">dims</span>,</span>
@@ -2501,7 +2558,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-54">Arguments<a class="anchor" aria-label="anchor" href="#arguments-54"></a></h4>
+<h4 id="arguments-55">Arguments<a class="anchor" aria-label="anchor" href="#arguments-55"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>the worksheet</p></dd>
 
@@ -2586,12 +2643,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_numfmt"></a><div class="section">
 <h3 id="method-add-numfmt-">Method <code>add_numfmt()</code><a class="anchor" aria-label="anchor" href="#method-add-numfmt-"></a></h3>
 <p>provide simple number format function</p><div class="section">
-<h4 id="usage-59">Usage<a class="anchor" aria-label="anchor" href="#usage-59"></a></h4>
+<h4 id="usage-60">Usage<a class="anchor" aria-label="anchor" href="#usage-60"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_numfmt</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, <span class="va">numfmt</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-55">Arguments<a class="anchor" aria-label="anchor" href="#arguments-55"></a></h4>
+<h4 id="arguments-56">Arguments<a class="anchor" aria-label="anchor" href="#arguments-56"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>the worksheet</p></dd>
 
@@ -2620,7 +2677,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_cell_style"></a><div class="section">
 <h3 id="method-add-cell-style-">Method <code>add_cell_style()</code><a class="anchor" aria-label="anchor" href="#method-add-cell-style-"></a></h3>
 <p>provide simple cell style format function</p><div class="section">
-<h4 id="usage-60">Usage<a class="anchor" aria-label="anchor" href="#usage-60"></a></h4>
+<h4 id="usage-61">Usage<a class="anchor" aria-label="anchor" href="#usage-61"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">dims</span>,</span>
@@ -2653,7 +2710,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-56">Arguments<a class="anchor" aria-label="anchor" href="#arguments-56"></a></h4>
+<h4 id="arguments-57">Arguments<a class="anchor" aria-label="anchor" href="#arguments-57"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>the worksheet</p></dd>
 
@@ -2778,12 +2835,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-61">Usage<a class="anchor" aria-label="anchor" href="#usage-61"></a></h4>
+<h4 id="usage-62">Usage<a class="anchor" aria-label="anchor" href="#usage-62"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-57">Arguments<a class="anchor" aria-label="anchor" href="#arguments-57"></a></h4>
+<h4 id="arguments-58">Arguments<a class="anchor" aria-label="anchor" href="#arguments-58"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
