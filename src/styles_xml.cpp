@@ -1,24 +1,45 @@
 #include "openxlsx2.h"
 
-
 // helper function to check if row contains any of the expected types
-bool has_it(Rcpp::DataFrame df_xf, Rcpp::CharacterVector xf_nams, size_t row) {
+bool has_it(Rcpp::DataFrame df_xf, std::set<std::string> xf_nams, size_t row) {
 
   bool has_it = false;
-  Rcpp::CharacterVector attrnams = df_xf.names();
 
+  // names as vector and set. because set is ordered, we have to change the
+  // order of the data frame columns as well.
+  std::vector<std::string> df_nms = df_xf.names();
+  std::set<std::string> df_names(df_nms.begin(), df_nms.end());
+  std::vector<std::string> xf_names(xf_nams.begin(), xf_nams.end());
+
+  Rcpp::CharacterVector sel_chr;
+  Rcpp::IntegerVector sel_int;
   Rcpp::DataFrame df_tmp;
-  Rcpp::CharacterVector cv_tmp;
 
-  Rcpp::IntegerVector mtc = Rcpp::match(attrnams, xf_nams);
-  Rcpp::IntegerVector idx = Rcpp::seq(0, mtc.length()-1);
+  sel_chr = Rcpp::wrap(df_names);
+  df_tmp = df_xf[sel_chr];
 
-  idx = idx[!Rcpp::is_na(mtc)];
-  df_tmp = df_xf[idx];
+  // get the position of the xf_nams in the sorted df_xf data frame
+  std::vector<int32_t> idx;
+  for (auto i = 0; i < xf_names.size(); ++i) {
+    std::string xf_name = xf_names[i];
+    if (df_names.count(xf_name) > 0) {
+      auto res = df_names.find(xf_name);
+      auto mtc = std::distance(df_names.begin(), res);
+      idx.push_back(mtc);
+    }
+  }
 
+  // get a subset of the original data frame
+  sel_int = Rcpp::wrap(idx);
+  df_tmp = df_tmp[sel_int];
+
+  // check every column of the selected row
   for (auto ii = 0; ii < df_tmp.ncol(); ++ii) {
+    std::string cv_tmp;
     cv_tmp = Rcpp::as<Rcpp::CharacterVector>(df_tmp[ii])[row];
-    if (cv_tmp[0] != "") has_it = true;
+    if (!cv_tmp.empty()) {
+      has_it = true;
+    }
   }
 
   return has_it;
@@ -149,7 +170,9 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector xf_nams = {
+  std::vector<std::string> attrnams = df_xf.names();
+
+  std::set<std::string> xf_nams = {
     "numFmtId",
     "fontId",
     "fillId",
@@ -165,7 +188,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
     "quotePrefix"
   };
 
-  Rcpp::CharacterVector xf_nams_alignment = {
+  std::set<std::string> xf_nams_alignment = {
     "horizontal",
     "indent",
     "justifyLastLine",
@@ -177,11 +200,11 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
     "wrapText"
   };
 
-  Rcpp::CharacterVector xf_nams_extLst = {
+  std::set<std::string> xf_nams_extLst = {
     "extLst"
   };
 
-  Rcpp::CharacterVector xf_nams_protection = {
+  std::set<std::string> xf_nams_protection = {
     "hidden",
     "locked"
   };
@@ -190,7 +213,6 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
     pugi::xml_document doc;
 
     pugi::xml_node xf = doc.append_child("xf");
-    Rcpp::CharacterVector attrnams = df_xf.names();
 
     // check if alignment node is required
     bool has_alignment = false;
@@ -221,13 +243,13 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
     for (auto j = 0; j < df_xf.ncol(); ++j) {
 
-      Rcpp::CharacterVector attrnam = Rcpp::as<Rcpp::CharacterVector>(attrnams[j]);
+      std::string attrnam = attrnams[j];
 
       // not all missing in match: ergo they are
-      bool is_xf = !Rcpp::as<bool>(Rcpp::all(Rcpp::is_na(Rcpp::match(xf_nams, attrnam))));
-      bool is_alignment = !Rcpp::as<bool>(Rcpp::all(Rcpp::is_na(Rcpp::match(xf_nams_alignment, attrnam))));
-      bool is_extLst = !Rcpp::as<bool>(Rcpp::all(Rcpp::is_na(Rcpp::match(xf_nams_extLst, attrnam))));
-      bool is_protection = !Rcpp::as<bool>(Rcpp::all(Rcpp::is_na(Rcpp::match(xf_nams_protection, attrnam))));
+      bool is_xf = xf_nams.count(attrnam) > 0;
+      bool is_alignment = xf_nams_alignment.count(attrnam) > 0;
+      bool is_extLst = xf_nams_extLst.count(attrnam) > 0;
+      bool is_protection = xf_nams_protection.count(attrnam) > 0;
 
       // <xf ...>
       if (is_xf) {
@@ -238,7 +260,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
         if (cv_s[0] != "") {
           // Rf_PrintValue(cv_s);
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          xf.append_attribute(attrnams[j]) = val_strl.c_str();
+          xf.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
         }
       }
 
@@ -248,7 +270,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
         if (cv_s[0] != "") {
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          xf_alignment.append_attribute(attrnams[j]) = val_strl.c_str();
+          xf_alignment.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
         }
       }
 
@@ -259,7 +281,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
         if (cv_s[0] != "") {
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          xf_extLst.append_attribute(attrnams[j]) = val_strl.c_str();
+          xf_extLst.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
         }
       }
 
@@ -269,7 +291,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
         if (cv_s[0] != "") {
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          xf_protection.append_attribute(attrnams[j]) = val_strl.c_str();
+          xf_protection.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
         }
       }
 
@@ -594,35 +616,35 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
 
 
   // openxml 2.8.1
-  Rcpp::CharacterVector attrnams = df_border.names();
-  Rcpp::CharacterVector nam_attrs = {"diagonalDown", "diagonalUp", "outline"};
-
-  Rcpp::CharacterVector nam_chlds = {"bottom", "diagonal", "end", "horizontal",
+  std::vector<std::string> attrnams = df_border.names();
+  std::set<std::string> nam_attrs = {"diagonalDown", "diagonalUp", "outline"};
+  std::set<std::string> nam_chlds = {"bottom", "diagonal", "end", "horizontal",
                                      "left", "right", "start", "top",
                                      "vertical"};
-
-  Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
     pugi::xml_node border = doc.append_child("border");
 
-
-
     for (auto j = 0; j < df_border.ncol(); ++j) {
 
-      Rcpp::CharacterVector attr_j = Rcpp::as<Rcpp::CharacterVector>(attrnams[j]);
+      std::string attr_j = attrnams[j];
 
       // mimic which
-      mtc1 = Rcpp::match(attr_j, nam_attrs);
-      idx1 = Rcpp::seq(0, mtc1.length()-1);
+      auto res1 = nam_attrs.find(attr_j);
+      auto mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      mtc2 = Rcpp::match(attr_j, nam_chlds);
-      idx2 = Rcpp::seq(0, mtc2.length()-1);
+      std::vector<int> idx1(mtc1 + 1);
+      std::iota(idx1.begin(), idx1.end(), 0);
+
+      auto res2 = nam_chlds.find(attr_j);
+      auto mtc2 = std::distance(nam_chlds.begin(), res2);
+
+      std::vector<int> idx2(mtc2 + 1);
+      std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
-      if (all(Rcpp::is_na(mtc1))) {
-      } else {
+      if (nam_attrs.count(attr_j) != 0) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_border[j])[i];
 
@@ -630,12 +652,11 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
         if (cv_s[0] != "") {
           // Rf_PrintValue(cv_s);
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          border.append_attribute(attrnams[j]) = val_strl.c_str();
+          border.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
         }
       }
 
-      if (all(Rcpp::is_na(mtc2))) {
-      } else {
+      if (nam_chlds.count(attr_j) != 0) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_border[j])[i];
 
@@ -652,7 +673,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
         }
       }
 
-      if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
+      if (idx1.empty() && idx2.empty())
         Rcpp::warning("%s: not found in border name table", attr_j);
     }
 
@@ -867,11 +888,9 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
 
 
   // openxml 2.8.1
-  Rcpp::CharacterVector attrnams = df_cellstyle.names();
-  Rcpp::CharacterVector nam_attrs = {"builtinId", "customBuiltin", "hidden",
-                                     "iLevel", "name", "xfId"};
-
-  Rcpp::CharacterVector nam_chlds = {"extLst"};
+  std::vector<std::string>  attrnams = df_cellstyle.names();
+  std::set<std::string> nam_attrs = {"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId"};
+  std::set<std::string> nam_chlds = {"extLst"};
 
 
   Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
@@ -880,22 +899,25 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
     pugi::xml_document doc;
     pugi::xml_node cellstyle = doc.append_child("cellStyle");
 
-
-
     for (auto j = 0; j < df_cellstyle.ncol(); ++j) {
 
-      Rcpp::CharacterVector attr_j = Rcpp::as<Rcpp::CharacterVector>(attrnams[j]);
+      std::string attr_j = attrnams[j];
 
       // mimic which
-      mtc1 = Rcpp::match(attr_j, nam_attrs);
-      idx1 = Rcpp::seq(0, mtc1.length()-1);
+      auto res1 = nam_attrs.find(attr_j);
+      auto mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      mtc2 = Rcpp::match(attr_j, nam_chlds);
-      idx2 = Rcpp::seq(0, mtc2.length()-1);
+      std::vector<int> idx1(mtc1 + 1);
+      std::iota(idx1.begin(), idx1.end(), 0);
+
+      auto res2 = nam_chlds.find(attr_j);
+      auto mtc2 = std::distance(nam_chlds.begin(), res2);
+
+      std::vector<int> idx2(mtc2 + 1);
+      std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
-      if (all(Rcpp::is_na(mtc1))) {
-      } else {
+      if (nam_attrs.count(attr_j) != 0) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
 
@@ -903,12 +925,11 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
         if (cv_s[0] != "") {
           // Rf_PrintValue(cv_s);
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          cellstyle.append_attribute(attrnams[j]) = val_strl.c_str();
+          cellstyle.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
         }
       }
 
-      if (all(Rcpp::is_na(mtc2))) {
-      } else {
+      if (nam_chlds.count(attr_j) != 0) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
 
@@ -925,7 +946,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
         }
       }
 
-      if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
+      if (idx1.empty() && idx2.empty())
         Rcpp::warning("%s: not found in cellStyle name table", attr_j);
     }
 
@@ -1034,13 +1055,11 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
 
   // openxml 2.8.1
-  Rcpp::CharacterVector attrnams = df_tablestyle.names();
-  Rcpp::CharacterVector nam_attrs = {"count", "name", "pivot", "table", "xr9:uid"};
+  std::vector<std::string> attrnams = df_tablestyle.names();
 
-  Rcpp::CharacterVector nam_chlds = {"tableStyleElement"};
+  std::set<std::string> nam_attrs = {"count", "name", "pivot", "table", "xr9:uid"};
+  std::set<std::string> nam_chlds = {"tableStyleElement"};
 
-
-  Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -1048,18 +1067,23 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
     for (auto j = 0; j < df_tablestyle.ncol(); ++j) {
 
-      Rcpp::CharacterVector attr_j = Rcpp::as<Rcpp::CharacterVector>(attrnams[j]);
+      std::string attr_j = attrnams[j];
 
       // mimic which
-      mtc1 = Rcpp::match(attr_j, nam_attrs);
-      idx1 = Rcpp::seq(0, mtc1.length()-1);
+      auto res1 = nam_attrs.find(attr_j);
+      auto mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      mtc2 = Rcpp::match(attr_j, nam_chlds);
-      idx2 = Rcpp::seq(0, mtc2.length()-1);
+      std::vector<int> idx1(mtc1 + 1);
+      std::iota(idx1.begin(), idx1.end(), 0);
+
+      auto res2 = nam_chlds.find(attr_j);
+      auto mtc2 = std::distance(nam_chlds.begin(), res2);
+
+      std::vector<int> idx2(mtc2 + 1);
+      std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
-      if (all(Rcpp::is_na(mtc1))) {
-      } else {
+      if (nam_attrs.count(attr_j) != 0) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_tablestyle[j])[i];
 
@@ -1067,12 +1091,11 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
         if (cv_s[0] != "") {
           // Rf_PrintValue(cv_s);
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          tablestyle.append_attribute(attrnams[j]) = val_strl.c_str();
+          tablestyle.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
         }
       }
 
-      if (all(Rcpp::is_na(mtc2))) {
-      } else {
+      if (nam_chlds.count(attr_j) != 0) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_tablestyle[j])[i];
 
@@ -1090,7 +1113,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
         }
       }
 
-      if (all(Rcpp::is_na(mtc1)) & all(Rcpp::is_na(mtc2)))
+      if (idx1.empty() && idx2.empty())
         Rcpp::warning("%s: not found in df_tablestyle name table", attr_j);
     }
 

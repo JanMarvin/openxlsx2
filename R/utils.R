@@ -39,9 +39,9 @@ na_to_null <- function(x) {
 }
 
 # opposite of %in%
-`%out%` <- function(x, table) match(x, table, nomatch = 0L) == 0L
-
-
+`%out%` <- function(x, table) {
+  match(x, table, nomatch = 0L) == 0L
+}
 
 #' helper function to create temporary directory for testing purpose
 #' @param name for the temp file
@@ -87,6 +87,15 @@ dir_create <- function(..., warn = TRUE, recurse = TRUE) {
   path <- file.path(...)
   dir.create(path, showWarnings = warn, recursive = recurse)
   path
+}
+
+as_binary <- function(x) {
+  # To be used within a function
+  if (any(x %out% list(0, 1, FALSE, TRUE))) {
+    stop(deparse(x), " must be 0, 1, FALSE, or TRUE", call. = FALSE)
+  }
+
+  as.integer(x)
 }
 
 random_string <- function(size = NULL) {

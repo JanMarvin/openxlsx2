@@ -62,6 +62,9 @@
 
 ## Breaking changes
 
+* `wb_conditional_formatting()` is deprecated in favor of `wb_add_conditional_formatting()` and `wbWorkbook$add_conditional_formatting()`.
+  * `type` must now match exactly one of: `"expression"`, `"colorScale"`, `"dataBar"`, `"duplicatedValues"`, `"containsText"`, `"notContainsText"`, `"beginsWith"`, `"endsWith"`, `"between"`, `"topN"`, `"bottomN"`
+
 * Assigning a new worksheet with an illegal character now prompts an error [165](https://github.com/JanMarvin/openxlsx2/issues/165).  See `?clean_worksheet_name` for an easy method of replacing bad characters.
 
 * `openxlsx2Coerce()` (which was called on `x` objects when adding data to a workbook) has been removed.  Users can no longer pass some arbitrary objects and will need to format these objects appropriately or rely on `as.data.frame` methods  [167](https://github.com/JanMarvin/openxlsx2/issues/167)
