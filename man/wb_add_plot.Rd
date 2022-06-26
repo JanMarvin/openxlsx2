@@ -61,7 +61,6 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1", gridLines = FALSE)
 
 ## create plot objects
-if (find.packages("ggplot2", quiet = TRUE)) {
 require(ggplot2)
 p1 <- qplot(mpg,
   data = mtcars, geom = "density",
@@ -81,7 +80,7 @@ wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units 
 
 ## Save workbook
 wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
-}
+
 }
 }
 \seealso{
