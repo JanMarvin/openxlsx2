@@ -401,11 +401,11 @@ Rcpp::List build_cell_merges(Rcpp::List comps) {
 // [[Rcpp::export]]
 Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
 
-  auto kk = colnames.size();
+  R_xlen_t kk = colnames.size();
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (size_t i = 0; i < kk; ++i)
+  for (R_xlen_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
   }
