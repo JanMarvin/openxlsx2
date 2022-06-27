@@ -204,9 +204,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   cc$ordered_cols <- NULL
   cc$ordered_rows <- NULL
 
-  # FIXME reduce cc to non duplicated version
-  cc <- cc[!duplicated(cc$r), ]
-
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
 
