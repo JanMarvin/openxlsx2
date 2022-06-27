@@ -107,7 +107,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>
+<ul><li><p>When writing to existing workbooks, the default value for <code>removeCellStyle</code> is now <code>FALSE</code>. Therefore if a cell contains a style, it is attempted to replace the value, but not the style of the cell itself.</p></li>
+<li>
 <p><code><a href="../reference/wb_add_conditional_formatting.html">wb_conditional_formatting()</a></code> is deprecated in favor of <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> and <code>wbWorkbook$add_conditional_formatting()</code>.</p>
 <ul><li>
 <code>type</code> must now match exactly one of: <code>"expression"</code>, <code>"colorScale"</code>, <code>"dataBar"</code>, <code>"duplicatedValues"</code>, <code>"containsText"</code>, <code>"notContainsText"</code>, <code>"beginsWith"</code>, <code>"endsWith"</code>, <code>"between"</code>, <code>"topN"</code>, <code>"bottomN"</code>
