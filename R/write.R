@@ -104,8 +104,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
       total_cols <- int2col(sort(col2int(total_cols)))
 
       # create candidate
-      cc_row_new <- data.frame(matrix("", nrow = length(total_cols), ncol = 3))
-      names(cc_row_new) <- names(cc)[1:3]
+      cc_row_new <- create_char_dataframe(names(cc)[1:3], length(total_cols))
       cc_row_new$row_r <- row
       cc_row_new$c_r <- total_cols
       cc_row_new$r <- stringi::stri_join(cc_row_new$c_r, cc_row_new$row_r)
@@ -177,18 +176,26 @@ update_cell <- function(x, wb, sheet, cell, data_class,
           cc[sel, "f"] <- as.character(value)
           cc[sel, "f_t"] <- "array"
           cc[sel, "f_ref"] <- cell
-        }else if (data_class[m] == openxlsx2_celltype[["hyperlink"]]) {
+        } else if (data_class[m] == openxlsx2_celltype[["hyperlink"]]) {
           cc[sel, "f"] <- as.character(value)
           # FIXME assign the hyperlinkstyle if no style found. This might not be
           # desired. We should provide an option to prevent this.
-          if (cc[sel, "c_s"] == "")
+          if (cc[sel, "c_s"] == "" || is.na(cc[sel, "c_s"]))
             cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
         } else {
-          cc[sel, "v"]   <- as.character(value)
+          if (is.na(value)) {
+            cc[sel, "v"] <- "#N/A"
+            cc[sel, "c_t"] <- "e"
+          } else {
+            cc[sel, "v"]   <- as.character(value)
+          }
         }
 
       }
     }
+
+    # avoid missings in cc
+    cc[is.na(cc)] <- ""
 
   }
 
@@ -375,16 +382,11 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 
     # original cc data frame
     # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
-    nams <- c("row_r", "c_r", "c_s", "c_t", "c_cm",
-              "c_ph", "c_vm", "v", "f", "f_t",
-              "f_ref", "f_ca", "f_si", "is", "typ",
-              "r")
-    cc <- as.data.frame(
-      matrix(data = "",
-             nrow = nrow(data) * ncol(data),
-             ncol = length(nams))
-    )
-    names(cc) <- nams
+    nams <- c("r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
+              "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
+
+    cc <- create_char_dataframe(colnames = nams,
+                                n = nrow(data) * ncol(data))
 
     ## create a cell style format for specific types at the end of the existing
     # styles. gets the reference an passes it on.
@@ -581,7 +583,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @param bandedCols logical. If TRUE, the columns are colour banded
 #' @param bandedCols logical. If TRUE, a data table is created
 #' @param name If not NULL, a named region is defined.
-#' @param removeCellStyle keep the cell style?
+#' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @noRd
 write_data_table <- function(
     wb,
@@ -602,7 +604,7 @@ write_data_table <- function(
     bandedRows = TRUE,
     bandedCols = FALSE,
     name = NULL,
-    removeCellStyle = TRUE,
+    removeCellStyle = FALSE,
     data_table = FALSE
 ) {
 
@@ -836,7 +838,7 @@ write_data_table <- function(
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param name If not NULL, a named region is defined.
-#' @param removeCellStyle keep the cell style?
+#' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_datatable()]
 #' @export write_data
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -917,7 +919,7 @@ write_data <- function(
     withFilter = FALSE,
     sep = ", ",
     name = NULL,
-    removeCellStyle = TRUE
+    removeCellStyle = FALSE
 ) {
   write_data_table(
     wb = wb,

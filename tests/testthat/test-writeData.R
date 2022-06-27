@@ -5,13 +5,13 @@ test_that("write_formula", {
 
   # array formula for a single cell
   exp <- structure(
-    list(row_r = "2", c_r = "E", c_s = "",
+    list(r = "E2", row_r = "2", c_r = "E", c_s = "",
          c_t = "", c_cm = "",
          c_ph = "", c_vm = "",
          v = "", f = "SUM(C2:C11*D2:D11)",
          f_t = "array", f_ref = "E2:E2",
          f_ca = "", f_si = "",
-         is = "", typ = NA_character_, r = "E2"),
+         is = "", typ = ""),
     row.names = "3", class = "data.frame")
 
   # write data add array formula later

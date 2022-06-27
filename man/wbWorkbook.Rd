@@ -523,7 +523,7 @@ add data
   withFilter = FALSE,
   name = NULL,
   sep = ", ",
-  removeCellStyle = TRUE
+  removeCellStyle = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -552,7 +552,7 @@ add data
 
 \item{\code{sep}}{sep}
 
-\item{\code{removeCellStyle}}{removeCellStyle}
+\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
 \item{\code{return}}{The \code{wbWorkbook} object}
 }

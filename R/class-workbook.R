@@ -800,7 +800,7 @@ wbWorkbook <- R6::R6Class(
     #' @param withFilter withFilter
     #' @param name name
     #' @param sep sep
-    #' @param removeCellStyle removeCellStyle
+    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @param return The `wbWorkbook` object
     add_data = function(
         sheet           = current_sheet(),
@@ -814,7 +814,7 @@ wbWorkbook <- R6::R6Class(
         withFilter      = FALSE,
         name            = NULL,
         sep             = ", ",
-        removeCellStyle = TRUE
+        removeCellStyle = FALSE
       ) {
       write_data(
         wb              = self,
