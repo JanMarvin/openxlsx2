@@ -167,8 +167,13 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
         # for now convert all R-characters to inlineStr (e.g. names() of a data frame)
         if ((data_class[m] == openxlsx2_celltype[["character"]]) || ((colNames == TRUE) && (n == 1))) {
-          cc[sel, "c_t"] <- "inlineStr"
-          cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
+          if (is.na(value)) {
+            cc[sel, "v"] <- "#N/A"
+            cc[sel, "c_t"] <- "e"
+          } else {
+            cc[sel, "c_t"] <- "inlineStr"
+            cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
+          }
         } else if (data_class[m] == openxlsx2_celltype[["formula"]]) {
           cc[sel, "c_t"] <- "str"
           cc[sel, "f"] <- as.character(value)
@@ -185,6 +190,12 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         } else {
           if (is.na(value)) {
             cc[sel, "v"] <- "#N/A"
+            cc[sel, "c_t"] <- "e"
+          } else if (value == "NaN") {
+            cc[sel, "v"] <- "#VALUE!"
+            cc[sel, "c_t"] <- "e"
+          } else if (value == "-Inf" | value == "Inf") {
+            cc[sel, "v"] <- "#NUM!"
             cc[sel, "c_t"] <- "e"
           } else {
             cc[sel, "v"]   <- as.character(value)
@@ -503,7 +514,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     }
 
     sel <- which(dc == openxlsx2_celltype[["character"]]) # character
-    for (i in sel) {
+    if (length(sel)) {
       data[sel][is.na(data[sel])] <- "_openxlsx_NA"
     }
 
@@ -521,13 +532,25 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     # values, but contains a string. To avoid issues, set it to the missing
     # value expression
 
-    ## fix missing characters (Otherwise NA cannot be differentiated from "NA")
-    sel <- cc$is == "<is><t>_openxlsx_NA</t></is>"
-    cc$v[sel] <- "NA"
-    cc$is[sel] <- "_openxlsx_NA"
+    ## replace NA, NaN, and Inf
+    is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
+    if (length(is_na)) {
+      cc[is_na, "v"]   <- "#N/A"
+      cc[is_na, "c_t"] <- "e"
+      cc[is_na, "is"]  <- ""
+    }
 
-    cc$v[cc$v == "NA"] <- "#N/A"
-    cc$c_t[cc$v == "#N/A"] <- "e"
+    is_nan <- which(cc$v == "NaN")
+    if (length(is_nan)) {
+      cc[is_nan, "v"]   <- "#VALUE!"
+      cc[is_nan, "c_t"] <- "e"
+    }
+
+    is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+    if (length(is_inf)) {
+      cc[is_inf, "v"]   <- "#NUM!"
+      cc[is_inf, "c_t"] <- "e"
+    }
 
     cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id(short_date_fmtid)
     cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id(long_date_fmtid)
