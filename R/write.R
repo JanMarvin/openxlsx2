@@ -194,7 +194,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
           } else if (value == "NaN") {
             cc[sel, "v"] <- "#VALUE!"
             cc[sel, "c_t"] <- "e"
-          } else if (value == "-Inf" | value == "Inf") {
+          } else if (value == "-Inf" || value == "Inf") {
             cc[sel, "v"] <- "#NUM!"
             cc[sel, "c_t"] <- "e"
           } else {
