@@ -174,3 +174,34 @@ test_that("example", {
   expect_silent(write_xlsx(l, tmp, colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5))))
 
 })
+
+test_that("writing NA, NaN and Inf", {
+
+  tmp <- temp_xlsx()
+  wb <- wb_workbook()
+
+  x <- data.frame(x = c(NA, Inf, -Inf, NaN))
+  wb$add_worksheet("Test1")$add_data(x = x)$save(tmp)
+
+  # we wont get the same input back
+  exp <- c(NA_character_, "#NUM!", "#NUM!", "#VALUE!")
+  got <- unname(unlist(wb_to_df(tmp)))
+  expect_equal(exp, got)
+
+  wb$clone_worksheet(old = "Test1", new = "Clone1")$add_data(x = x)$save(tmp)
+  got <- unname(unlist(wb_to_df(tmp, "Clone1")))
+  expect_equal(exp, got)
+
+  # distinguish between "NA" and NA_character_
+  x <- data.frame(x = c(NA, "NA"))
+  wb$add_worksheet("Test2")$add_data(x = x)$save(tmp)
+
+  exp <- c(NA_character_, "NA")
+  got <- unname(unlist(wb_to_df(tmp, "Test2")))
+  expect_equal(exp, got)
+
+  wb$clone_worksheet(old = "Test2", new = "Clone2")$add_data(x = x)$save(tmp)
+  got <- unname(unlist(wb_to_df(tmp, "Clone2")))
+  expect_equal(exp, got)
+
+})
