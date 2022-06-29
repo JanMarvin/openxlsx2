@@ -133,7 +133,7 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   ## colNames = TRUE,
   ## rowNames = FALSE,
   ## keepNA = FALSE
-  ## na.string = NULL
+  ## na.strings = NULL
 
   #----write_datatable---#
   ## startCol = 1
