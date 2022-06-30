@@ -85,7 +85,8 @@
 <span>  firstColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">na.strings</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -156,6 +157,10 @@ A vector of the form c(startCol, startRow)</p></dd>
 
 <dt>bandedCols</dt>
 <dd><p>logical. If TRUE, the columns are colour banded</p></dd>
+
+
+<dt>na.strings</dt>
+<dd><p>optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)</p></dd>
 
 </dl></div>
     <div id="details">

@@ -84,7 +84,8 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
 <span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">na.strings</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">write_data</span><span class="op">(</span></span>
@@ -100,7 +101,8 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
 <span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">na.strings</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -158,6 +160,10 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
 
 <dt>removeCellStyle</dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
+
+
+<dt>na.strings</dt>
+<dd><p>optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)</p></dd>
 
 </dl></div>
     <div id="value">

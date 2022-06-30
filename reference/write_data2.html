@@ -78,7 +78,8 @@
 <span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">na.strings</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -118,6 +119,10 @@
 
 <dt>removeCellStyle</dt>
 <dd><p>keep the cell style?</p></dd>
+
+
+<dt>na.strings</dt>
+<dd><p>optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)</p></dd>
 
 </dl></div>
     <div id="details">
