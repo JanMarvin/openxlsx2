@@ -523,7 +523,8 @@ add data
   withFilter = FALSE,
   name = NULL,
   sep = ", ",
-  removeCellStyle = FALSE
+  removeCellStyle = FALSE,
+  na.strings
 )}\if{html}{\out{</div>}}
 }
 
@@ -554,6 +555,8 @@ add data
 
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
+\item{\code{na.strings}}{na.strings}
+
 \item{\code{return}}{The \code{wbWorkbook} object}
 }
 \if{html}{\out{</div>}}
@@ -580,7 +583,8 @@ add a data table
   firstColumn = FALSE,
   lastColumn = FALSE,
   bandedRows = TRUE,
-  bandedCols = FALSE
+  bandedCols = FALSE,
+  na.strings
 )}\if{html}{\out{</div>}}
 }
 
@@ -616,6 +620,8 @@ add a data table
 \item{\code{bandedRows}}{bandedRows}
 
 \item{\code{bandedCols}}{bandedCols}
+
+\item{\code{na.strings}}{na.strings}
 }
 \if{html}{\out{</div>}}
 }

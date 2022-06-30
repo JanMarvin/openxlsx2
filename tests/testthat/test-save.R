@@ -205,3 +205,35 @@ test_that("writing NA, NaN and Inf", {
   expect_equal(exp, got)
 
 })
+
+
+test_that("writing NA, NaN and Inf", {
+
+  tmp <- temp_xlsx()
+  wb <- wb_workbook()
+
+  x <- data.frame(x = c(NA, Inf, -Inf, NaN))
+  wb$add_worksheet("Test1")$add_data(x = x, na.strings = NULL)$save(tmp)
+  wb$add_worksheet("Test2")$add_data_table(x = x, na.strings = "N/A")$save(tmp)
+  wb$add_worksheet("Test3")$add_data(x = x, na.strings = "N/A")$save(tmp)
+
+  exp <- c(NA, "s", "s", "s")
+  got <- unname(unlist(attr(wb_to_df(tmp, "Test1"), "tt")))
+  expect_equal(exp, got)
+
+  exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
+  got <- unname(unlist(wb_to_df(tmp, "Test2")))
+  expect_equal(exp, got)
+
+  wb$clone_worksheet("Test1", "Clone1")$add_data(x = x, na.strings = NULL)$save(tmp)
+  wb$clone_worksheet("Test3", "Clone3")$add_data(x = x, na.strings = "N/A")$save(tmp)
+
+  exp <- c(NA, "s", "s", "s")
+  got <- unname(unlist(attr(wb_to_df(tmp, "Test1"), "tt")))
+  expect_equal(exp, got)
+
+  exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
+  got <- unname(unlist(wb_to_df(tmp, "Test2")))
+  expect_equal(exp, got)
+
+})

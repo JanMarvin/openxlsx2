@@ -2,7 +2,9 @@
 
 ## New features
 
-* Improve writing `NA`, `NaN`, and `-Inf`/`Inf`. `NA` will be converted to `#N/A`; `NaN` will be converted to `#VALUE!`; `Inf` will be converted to `#NUM!`. The same conversion is not applied when reading from a workbook.
+* Provide optional `na.strings` argument when writing data to sheets. It can be used to add a custom character string when writing numeric data.
+
+* Improve writing `NA`, `NaN`, and `-Inf`/`Inf`. `NA` will be converted to `#N/A`; `NaN` will be converted to `#VALUE!`; `Inf` will be converted to `#NUM!`. The same conversion is not applied when reading from a workbook. [256](https://github.com/JanMarvin/openxlsx2/pull/256)
 
 * Many `wbWorkbook` methods now contain default sheet values of `current_sheet()` or `next_sheet()` (e.g., `$add_worksheet(sheet = next_sheet())`, `$write_data(sheet = curret_sheet()`).  These internal waiver functions allow the `wbWorkbook` object to use default expectations for what sheet to interact with.  This allows the easier workflow of `wb$add_worksheet()$add_data(x = data.frame())` where `$add_worksheet()` knows to add a new worksheet (with a default name), sets that new worksheet to the current worksheet, and then `$add_data()` picks up the new sheet and places the data there. [165](https://github.com/JanMarvin/openxlsx2/issues/165), [179](https://github.com/JanMarvin/openxlsx2/pull/179)
 

@@ -801,6 +801,7 @@ wbWorkbook <- R6::R6Class(
     #' @param name name
     #' @param sep sep
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+    #' @param na.strings na.strings
     #' @param return The `wbWorkbook` object
     add_data = function(
         sheet           = current_sheet(),
@@ -814,8 +815,12 @@ wbWorkbook <- R6::R6Class(
         withFilter      = FALSE,
         name            = NULL,
         sep             = ", ",
-        removeCellStyle = FALSE
+        removeCellStyle = FALSE,
+        na.strings
       ) {
+
+      if (missing(na.strings)) na.strings <- substitute()
+
       write_data(
         wb              = self,
         sheet           = sheet,
@@ -829,7 +834,8 @@ wbWorkbook <- R6::R6Class(
         withFilter      = withFilter,
         name            = name,
         sep             = sep,
-        removeCellStyle = removeCellStyle
+        removeCellStyle = removeCellStyle,
+        na.strings      = na.strings
       )
       self
     },
@@ -850,6 +856,7 @@ wbWorkbook <- R6::R6Class(
     #' @param lastColumn lastColumn
     #' @param bandedRows bandedRows
     #' @param bandedCols bandedCols
+    #' @param na.strings na.strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
         sheet       = current_sheet(),
@@ -866,8 +873,12 @@ wbWorkbook <- R6::R6Class(
         firstColumn = FALSE,
         lastColumn  = FALSE,
         bandedRows  = TRUE,
-        bandedCols  = FALSE
+        bandedCols  = FALSE,
+        na.strings
     ) {
+
+      if (missing(na.strings)) na.strings <- substitute()
+
       write_datatable(
         wb          = self,
         sheet       = sheet,
@@ -884,7 +895,8 @@ wbWorkbook <- R6::R6Class(
         firstColumn = firstColumn,
         lastColumn  = lastColumn,
         bandedRows  = bandedRows,
-        bandedCols  = bandedCols
+        bandedCols  = bandedCols,
+        na.strings  = na.strings
       )
       self
     },

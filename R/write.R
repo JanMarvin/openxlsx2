@@ -9,6 +9,7 @@
 #' @param data_class optional data class object
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
+#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #'
 #' @examples
 #'    xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
@@ -32,7 +33,8 @@
 #'
 #' @export
 update_cell <- function(x, wb, sheet, cell, data_class,
-                        colNames = FALSE, removeCellStyle = FALSE) {
+                        colNames = FALSE, removeCellStyle = FALSE,
+                        na.strings) {
 
   dimensions <- unlist(strsplit(cell, ":"))
   rows <- gsub("[[:upper:]]","", dimensions)
@@ -189,8 +191,18 @@ update_cell <- function(x, wb, sheet, cell, data_class,
             cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
         } else {
           if (is.na(value)) {
-            cc[sel, "v"] <- "#N/A"
-            cc[sel, "c_t"] <- "e"
+            if (missing(na.strings)) {
+              cc[sel, "v"] <- "#N/A"
+              cc[sel, "c_t"] <- "e"
+            } else {
+              if (is.null(na.strings)) {
+                next # do not add any value: <c/>
+              } else {
+               cc[sel, "c_t"] <- "inlineStr"
+               cc[sel, "is"] <- txt_to_is(as.character(na.strings),
+                                          no_escapes = TRUE, raw = TRUE)
+              }
+            }
           } else if (value == "NaN") {
             cc[sel, "v"] <- "#VALUE!"
             cc[sel, "c_t"] <- "e"
@@ -245,6 +257,7 @@ nmfmt_df <- function(x) {
 #' @param startRow row to place it
 #' @param startCol col to place it
 #' @param removeCellStyle keep the cell style?
+#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -269,8 +282,10 @@ nmfmt_df <- function(x) {
 write_data2 <-function(wb, sheet, data, name = NULL,
                        colNames = TRUE, rowNames = FALSE,
                        startRow = 1, startCol = 1,
-                       removeCellStyle = FALSE) {
+                       removeCellStyle = FALSE,
+                       na.strings) {
 
+  if (missing(na.strings)) na.strings <- substitute()
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
@@ -535,9 +550,20 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     ## replace NA, NaN, and Inf
     is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
     if (length(is_na)) {
-      cc[is_na, "v"]   <- "#N/A"
-      cc[is_na, "c_t"] <- "e"
-      cc[is_na, "is"]  <- ""
+      if (missing(na.strings)) {
+        cc[is_na, "v"]   <- "#N/A"
+        cc[is_na, "c_t"] <- "e"
+        cc[is_na, "is"]  <- ""
+      } else {
+        cc[is_na, "v"]  <- ""
+        if (is.null(na.strings)) {
+          # do nothing
+        } else {
+          cc[is_na, "c_t"] <- "inlineStr"
+          cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
+                                        no_escapes = TRUE, raw = TRUE)
+        }
+      }
     }
 
     is_nan <- which(cc$v == "NaN")
@@ -574,7 +600,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
       dims,
       dc,
       colNames,
-      removeCellStyle
+      removeCellStyle,
+      na.strings
     )
   }
 
@@ -607,6 +634,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @param bandedCols logical. If TRUE, a data table is created
 #' @param name If not NULL, a named region is defined.
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @noRd
 write_data_table <- function(
     wb,
@@ -628,7 +656,8 @@ write_data_table <- function(
     bandedCols = FALSE,
     name = NULL,
     removeCellStyle = FALSE,
-    data_table = FALSE
+    data_table = FALSE,
+    na.strings
 ) {
 
   op <- openxlsx2_options()
@@ -645,6 +674,7 @@ write_data_table <- function(
   assert_class(bandedRows, "logical")
   assert_class(bandedCols, "logical")
 
+  if (missing(na.strings)) na.strings <- substitute()
 
   ## common part ---------------------------------------------------------------
   if ((!is.character(sep)) || (length(sep) != 1))
@@ -777,7 +807,8 @@ write_data_table <- function(
     rowNames = rowNames,
     startRow = startRow,
     startCol = startCol,
-    removeCellStyle = removeCellStyle
+    removeCellStyle = removeCellStyle,
+    na.strings = na.strings
   )
 
 
@@ -862,6 +893,7 @@ write_data_table <- function(
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param name If not NULL, a named region is defined.
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @seealso [write_datatable()]
 #' @export write_data
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -942,8 +974,12 @@ write_data <- function(
     withFilter = FALSE,
     sep = ", ",
     name = NULL,
-    removeCellStyle = FALSE
+    removeCellStyle = FALSE,
+    na.strings
 ) {
+
+  if (missing(na.strings)) na.strings <- substitute()
+
   write_data_table(
     wb = wb,
     sheet = sheet,
@@ -964,7 +1000,8 @@ write_data <- function(
     bandedCols = FALSE,
     name = name,
     removeCellStyle = removeCellStyle,
-    data_table = FALSE
+    data_table = FALSE,
+    na.strings = na.strings
   )
 }
 
@@ -1122,6 +1159,7 @@ write_formula <- function(wb,
 #' @param lastColumn logical. If TRUE, the last column is bold
 #' @param bandedRows logical. If TRUE, rows are colour banded
 #' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.
@@ -1243,8 +1281,12 @@ write_datatable <- function(
     firstColumn = FALSE,
     lastColumn = FALSE,
     bandedRows = TRUE,
-    bandedCols = FALSE
+    bandedCols = FALSE,
+    na.strings
 ) {
+
+  if (missing(na.strings)) na.strings <- substitute()
+
   write_data_table(
     wb = wb,
     sheet = sheet,
@@ -1265,6 +1307,7 @@ write_datatable <- function(
     bandedCols = bandedCols,
     name = NULL,
     removeCellStyle = FALSE,
-    data_table = TRUE
+    data_table = TRUE,
+    na.strings = na.strings
   )
 }

@@ -18,7 +18,8 @@ wb_add_data(
   withFilter = FALSE,
   name = NULL,
   sep = ", ",
-  removeCellStyle = FALSE
+  removeCellStyle = FALSE,
+  na.strings
 )
 
 write_data(
@@ -34,7 +35,8 @@ write_data(
   withFilter = FALSE,
   sep = ", ",
   name = NULL,
-  removeCellStyle = FALSE
+  removeCellStyle = FALSE,
+  na.strings
 )
 }
 \arguments{
@@ -65,6 +67,8 @@ write_data(
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
+
+\item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
 }
 \value{
 A clone of `wb``
