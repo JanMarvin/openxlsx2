@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.1</span>
       </span>
     </div>
 
@@ -64,9 +64,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+<h2 class="page-header" data-toc-text="0.2.1" id="openxlsx2-021">openxlsx2 0.2.1<a class="anchor" aria-label="anchor" href="#openxlsx2-021"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-0-2-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-1"></a></h3>
 <ul><li><p>Provide optional <code>na.strings</code> argument when writing data to sheets. It can be used to add a custom character string when writing numeric data.</p></li>
 <li><p>Improve writing <code>NA</code>, <code>NaN</code>, and <code>-Inf</code>/<code>Inf</code>. <code>NA</code> will be converted to <code>#N/A</code>; <code>NaN</code> will be converted to <code>#VALUE!</code>; <code>Inf</code> will be converted to <code>#NUM!</code>. The same conversion is not applied when reading from a workbook. <a href="https://github.com/JanMarvin/openxlsx2/pull/256" class="external-link">256</a></p></li>
 <li><p>Many <code>wbWorkbook</code> methods now contain default sheet values of <code>current_sheet()</code> or <code>next_sheet()</code> (e.g., <code>$add_worksheet(sheet = next_sheet())</code>, <code>$write_data(sheet = curret_sheet()</code>). These internal waiver functions allow the <code>wbWorkbook</code> object to use default expectations for what sheet to interact with. This allows the easier workflow of <code>wb$add_worksheet()$add_data(x = data.frame())</code> where <code>$add_worksheet()</code> knows to add a new worksheet (with a default name), sets that new worksheet to the current worksheet, and then <code>$add_data()</code> picks up the new sheet and places the data there. <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/179" class="external-link">179</a></p></li>
@@ -92,7 +92,7 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-0-2-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-2-1"></a></h3>
 <ul><li><p>Various fixes to enable handling of non unicode R environments <a href="https://github.com/JanMarvin/openxlsx2/issues/243" class="external-link">243</a></p></li>
 <li><p>Fix an issue with broken pageSetup reference causing corupt excel files <a href="https://github.com/JanMarvin/openxlsx2/issues/216" class="external-link">216</a></p></li>
 <li><p>Fix reading and writing comments from workbooks that already provide comments <a href="https://github.com/JanMarvin/openxlsx2/pull/209" class="external-link">209</a></p></li>
@@ -108,7 +108,7 @@
 <li><p><code><a href="../reference/xl_open.html">xl_open()</a></code> works (better) on Windows <a href="https://github.com/JanMarvin/openxlsx2/issues/170" class="external-link">170</a></p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-0-2-1">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-1"></a></h3>
 <ul><li><p>When writing to existing workbooks, the default value for <code>removeCellStyle</code> is now <code>FALSE</code>. Therefore if a cell contains a style, it is attempted to replace the value, but not the style of the cell itself.</p></li>
 <li>
 <p><code><a href="../reference/wb_add_conditional_formatting.html">wb_conditional_formatting()</a></code> is deprecated in favor of <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> and <code>wbWorkbook$add_conditional_formatting()</code>.</p>
@@ -120,7 +120,7 @@
 <li><p><code>xl_open(file = )</code> is no longer valid and will throw a warning; first argument has been changes to <code>x</code> to highlight that <code><a href="../reference/xl_open.html">xl_open()</a></code> can be called on a file path or a <code>wbWorkbook</code> object <a href="https://github.com/JanMarvin/openxlsx2/pull/171" class="external-link">171</a></p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<h3 id="internal-changes-0-2-1">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-0-2-1"></a></h3>
 <ul><li><p>Remove <code>wb$createFontNode()</code> which was never used.</p></li>
 <li><p>Switch to modern xlsx template, when creating workbooks. Imported workbooks will use the imported template</p></li>
 <li><p>Rewrite <code>wb$tables</code> to use a data frame approach. This simplifies the code a bit and makes it easier to implement more upcoming changes <a href="https://github.com/JanMarvin/openxlsx2/pull/191" class="external-link">191</a></p></li>
