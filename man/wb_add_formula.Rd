@@ -10,6 +10,7 @@ wb_add_formula(
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL
 )
@@ -24,6 +25,8 @@ wb_add_formula(
 \item{startCol}{A vector specifying the starting column to write to.}
 
 \item{startRow}{A vector specifying the starting row to write to.}
+
+\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{array}{A bool if the function written is of type array}
 

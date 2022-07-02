@@ -793,6 +793,7 @@ wbWorkbook <- R6::R6Class(
     #' @param x x
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param array array
     #' @param xy xy
     #' @param colNames colNames
@@ -808,6 +809,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol        = 1,
         startRow        = 1,
+        dims            = rowcol_to_dims(startRow, startCol),
         array           = FALSE,
         xy              = NULL,
         colNames        = TRUE,
@@ -827,6 +829,7 @@ wbWorkbook <- R6::R6Class(
         x               = x,
         startCol        = startCol,
         startRow        = startRow,
+        dims            = dims,
         array           = array,
         xy              = xy,
         colNames        = colNames,
@@ -845,6 +848,7 @@ wbWorkbook <- R6::R6Class(
     #' @param x x
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param xy xy
     #' @param colNames colNames
     #' @param rowNames rowNames
@@ -863,6 +867,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol    = 1,
         startRow    = 1,
+        dims        = rowcol_to_dims(startRow, startCol),
         xy          = NULL,
         colNames    = TRUE,
         rowNames    = FALSE,
@@ -883,6 +888,7 @@ wbWorkbook <- R6::R6Class(
         wb          = self,
         sheet       = sheet,
         x           = x,
+        dims        = dims,
         startCol    = startCol,
         startRow    = startRow,
         xy          = xy,
@@ -906,6 +912,7 @@ wbWorkbook <- R6::R6Class(
     #' @param x x
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param array array
     #' @param xy xy
     #' @returns The `wbWorkbook` object
@@ -914,6 +921,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol = 1,
         startRow = 1,
+        dims     = rowcol_to_dims(startRow, startCol),
         array    = FALSE,
         xy       = NULL
     ) {
@@ -923,6 +931,7 @@ wbWorkbook <- R6::R6Class(
         x        = x,
         startCol = startCol,
         startRow = startRow,
+        dims     = dims,
         array    = array,
         xy       = xy
       )

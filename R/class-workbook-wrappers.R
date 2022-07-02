@@ -82,6 +82,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param x Object to be written. For classes supported look at the examples.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -106,6 +107,7 @@ wb_add_data <- function(
     x,
     startCol        = 1,
     startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
     array           = FALSE,
     xy              = NULL,
     colNames        = TRUE,
@@ -125,6 +127,7 @@ wb_add_data <- function(
     x               = x,
     startCol        = startCol,
     startRow        = startRow,
+    dims            = dims,
     array           = array,
     xy              = xy,
     colNames        = colNames,
@@ -146,6 +149,7 @@ wb_add_data <- function(
 #' @param x A dataframe.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param xy An alternative to specifying startCol and startRow individually. A
 #'   vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
@@ -182,6 +186,7 @@ wb_add_data_table <- function(
     x,
     startCol    = 1,
     startRow    = 1,
+    dims        = rowcol_to_dims(startRow, startCol),
     xy          = NULL,
     colNames    = TRUE,
     rowNames    = FALSE,
@@ -203,6 +208,7 @@ wb_add_data_table <- function(
     x           = x,
     startCol    = startCol,
     startRow    = startRow,
+    dims        = dims,
     xy          = xy,
     colNames    = colNames,
     rowNames    = rowNames,
@@ -237,6 +243,7 @@ wb_add_data_table <- function(
 #' @param x A character vector.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -249,6 +256,7 @@ wb_add_formula <- function(
     x,
     startCol = 1,
     startRow = 1,
+    dims     = rowcol_to_dims(startRow, startCol),
     array    = FALSE,
     xy       = NULL
 ) {
@@ -258,6 +266,7 @@ wb_add_formula <- function(
     x        = x,
     startCol = startCol,
     startRow = startRow,
+    dims     = dims,
     array    = array,
     xy       = xy
   )

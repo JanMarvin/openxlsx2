@@ -10,6 +10,7 @@ wb_add_data_table(
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
@@ -34,6 +35,8 @@ wb_add_data_table(
 \item{startCol}{A vector specifying the starting column to write df}
 
 \item{startRow}{A vector specifying the starting row to write df}
+
+\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{xy}{An alternative to specifying startCol and startRow individually. A
 vector of the form c(startCol, startRow)}

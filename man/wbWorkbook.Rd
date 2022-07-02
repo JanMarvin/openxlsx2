@@ -516,6 +516,7 @@ add data
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL,
   colNames = TRUE,
@@ -538,6 +539,8 @@ add data
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
 
@@ -573,6 +576,7 @@ add a data table
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
@@ -598,6 +602,8 @@ add a data table
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{xy}}{xy}
 
@@ -637,6 +643,7 @@ add formula
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL
 )}\if{html}{\out{</div>}}
@@ -652,6 +659,8 @@ add formula
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
 
