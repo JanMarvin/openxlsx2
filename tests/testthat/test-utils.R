@@ -46,3 +46,14 @@ test_that("dims to col & row and back", {
   expect_equal(exp, got)
 
 })
+
+
+test_that("create_char_dataframe", {
+
+  exp <- data.frame(x1 = rep("", 5), z1 = rep("", 5), stringsAsFactors = FALSE)
+
+  got <- create_char_dataframe(colnames = c("x1", "z1"), n = 5)
+
+  expect_equal(exp, got)
+
+})

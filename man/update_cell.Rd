@@ -11,7 +11,8 @@ update_cell(
   cell,
   data_class,
   colNames = FALSE,
-  removeCellStyle = FALSE
+  removeCellStyle = FALSE,
+  na.strings
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ update_cell(
 \item{colNames}{if TRUE colNames are passed down}
 
 \item{removeCellStyle}{keep the cell style?}
+
+\item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
 }
 \description{
 Minimal invasive update of cell(s) inside of imported workbooks.

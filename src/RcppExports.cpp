@@ -118,6 +118,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// create_char_dataframe
+Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n);
+RcppExport SEXP _openxlsx2_create_char_dataframe(SEXP colnamesSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type colnames(colnamesSEXP);
+    Rcpp::traits::input_parameter< R_xlen_t >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_char_dataframe(colnames, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // col_to_df
 Rcpp::DataFrame col_to_df(XPtrXML doc);
 RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
@@ -793,6 +805,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 7},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
+    {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},

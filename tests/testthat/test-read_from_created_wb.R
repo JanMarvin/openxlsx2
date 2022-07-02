@@ -40,8 +40,10 @@ test_that("Reading NAs and NaN values", {
   fileName <- file.path(tempdir(), "NaN.xlsx")
   na.string <- "*"
 
+  wb <- wb_workbook()
+
   ## data
-  a <- data.frame(
+  A <- data.frame(
     X  = c(-pi / 0, NA, NaN),
     Y  = letters[1:3],
     Z  = c(pi / 0, 99, NaN),
@@ -49,30 +51,36 @@ test_that("Reading NAs and NaN values", {
     stringsAsFactors = FALSE
   )
 
-  b <- a
-  b[b == -Inf] <- NaN
-  b[b == Inf] <- NaN
+  wb$add_worksheet("Sheet 1")$add_data(1, A)
 
-  c <- b
-  is_na <- sapply(c, is.na)
-  is_nan <- sapply(c, is.nan)
-  c[is_na & !is_nan] <- na.string
-  is_nan_after <- sapply(c, is.nan)
-  c[is_nan & !is_nan_after] <- NA
+  # not used
+  B <- A
+  B[B == -Inf] <- NaN
+  B[B == Inf] <- NaN
 
-  wb <- wb_workbook()
+  wb$add_worksheet("Sheet 2")$add_data(2, B)
 
-  wb$add_worksheet("Sheet 1")
-  wb$add_data(1, a)
+  # not used
+  C <- B
+  is_na <- sapply(C, is.na)
+  is_nan <- sapply(C, is.nan)
+  C[is_na & !is_nan] <- na.string
+  is_nan_after <- sapply(C, is.nan)
+  C[is_nan & !is_nan_after] <- NA
 
-  wb$add_worksheet("Sheet 2")
-  wb$add_data(2, a)
+  wb$add_worksheet("Sheet 3")$add_data(3, C)
 
-  wb$add_worksheet("Sheet 3")
-  wb$add_data(3, a)
-
+  # write file
   wb_save(wb, path = fileName, overwrite = TRUE)
 
-  expect_equal(read_xlsx(fileName), a, ignore_attr = TRUE)
+  exp <- data.frame(
+    X  = c("#NUM!", NA, "#VALUE!"),
+    Y  = letters[1:3],
+    Z  = c("#NUM!", 99, "#VALUE!"),
+    Z2 = c(1, "#VALUE!", "#VALUE!"),
+    stringsAsFactors = FALSE
+  )
+
+  expect_equal(read_xlsx(fileName), exp, ignore_attr = TRUE)
   unlink(fileName, recursive = TRUE, force = TRUE)
 })

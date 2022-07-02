@@ -93,6 +93,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param removeCellStyle keep the cell style?
+#' @param na.strings na.strings
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
@@ -114,9 +115,13 @@ wb_add_data <- function(
     withFilter      = FALSE,
     name            = NULL,
     sep             = ", ",
-    removeCellStyle = TRUE
+    removeCellStyle = FALSE,
+    na.strings
 ) {
   assert_workbook(wb)
+
+  if (missing(na.strings)) na.strings <- substitute()
+
   wb$clone()$add_data(
     sheet           = sheet,
     x               = x,
@@ -130,7 +135,8 @@ wb_add_data <- function(
     withFilter      = withFilter,
     name            = name,
     sep             = sep,
-    removeCellStyle = removeCellStyle
+    removeCellStyle = removeCellStyle,
+    na.strings      = na.strings
   )
 }
 
@@ -165,6 +171,7 @@ wb_add_data <- function(
 #' @param lastColumn logical. If TRUE, the last column is bold
 #' @param bandedRows logical. If TRUE, rows are colour banded
 #' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param na.strings optional
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,
@@ -190,9 +197,12 @@ wb_add_data_table <- function(
     firstColumn = FALSE,
     lastColumn  = FALSE,
     bandedRows  = TRUE,
-    bandedCols  = FALSE
+    bandedCols  = FALSE,
+    na.strings
 ) {
   assert_workbook(wb)
+  if (missing(na.strings)) na.strings <- substitute()
+
   wb$clone()$add_data_table(
     sheet       = sheet,
     x           = x,
@@ -209,7 +219,8 @@ wb_add_data_table <- function(
     firstColumn = firstColumn,
     lastColumn  = lastColumn,
     bandedRows  = bandedRows,
-    bandedCols  = bandedCols
+    bandedCols  = bandedCols,
+    na.strings  = na.strings
   )
 }
 

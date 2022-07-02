@@ -17,14 +17,14 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
     "width"
   };
 
-  auto nn = std::distance(doc->begin(), doc->end());
-  auto kk = col_nams.size();
+  R_xlen_t nn = std::distance(doc->begin(), doc->end());
+  R_xlen_t kk = col_nams.size();
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (auto i = 0; i < kk; ++i)
+  for (R_xlen_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }

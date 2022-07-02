@@ -21,7 +21,8 @@ wb_add_data_table(
   firstColumn = FALSE,
   lastColumn = FALSE,
   bandedRows = TRUE,
-  bandedCols = FALSE
+  bandedCols = FALSE,
+  na.strings
 )
 }
 \arguments{
@@ -67,6 +68,8 @@ sep).
 \item{bandedRows}{logical. If TRUE, rows are colour banded}
 
 \item{bandedCols}{logical. If TRUE, the columns are colour banded}
+
+\item{na.strings}{optional}
 }
 \description{
 Add data to a worksheet and format as an Excel table
