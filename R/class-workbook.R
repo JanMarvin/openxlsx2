@@ -271,7 +271,7 @@ wbWorkbook <- R6::R6Class(
       self$datetimeCreated <- datetimeCreated
       private$generate_base_core()
       private$current_sheet <- 0L
-      self
+      invisible(self)
     },
 
     #' @description
@@ -280,7 +280,7 @@ wbWorkbook <- R6::R6Class(
     #' @param value A value for the field
     append = function(field, value) {
       self[[field]] <- c(self[[field]], value)
-      self
+      invisible(self)
     },
 
     #' @description
@@ -288,7 +288,7 @@ wbWorkbook <- R6::R6Class(
     #' @param value A value for `self$workbook$sheets`
     append_sheets = function(value) {
       self$workbook$sheets <- c(self$workbook$sheets, value)
-      self
+      invisible(self)
     },
 
     #' @description validate sheet
@@ -837,7 +837,7 @@ wbWorkbook <- R6::R6Class(
         removeCellStyle = removeCellStyle,
         na.strings      = na.strings
       )
-      self
+      invisible(self)
     },
 
     #' @description add a data table
@@ -898,7 +898,7 @@ wbWorkbook <- R6::R6Class(
         bandedCols  = bandedCols,
         na.strings  = na.strings
       )
-      self
+      invisible(self)
     },
 
     #' @description add formula
@@ -926,7 +926,7 @@ wbWorkbook <- R6::R6Class(
         array    = array,
         xy       = xy
       )
-      self
+      invisible(self)
     },
 
     # TODO wb_save can be shortened a lot by some formatting and by using a
@@ -1846,7 +1846,7 @@ wbWorkbook <- R6::R6Class(
         self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][-removeInds]
       }
 
-      self
+      invisible(self)
     },
 
     ## columns ----
@@ -1964,7 +1964,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
       }
 
-      self
+      invisible(self)
     },
 
     #' @description Remove row heights from a worksheet
@@ -2098,7 +2098,7 @@ wbWorkbook <- R6::R6Class(
       col_df$bestFit[select] <- bestFit
       col_df$customWidth[select] <- customWidth
       self$worksheets[[sheet]]$fold_cols(col_df)
-      self
+      invisible(self)
     },
 
     ## rows ----
@@ -2202,7 +2202,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
       }
 
-      self
+      invisible(self)
     },
 
     #' @description
@@ -2528,7 +2528,7 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
-      self
+      invisible(self)
     },
 
     #' @description
@@ -3345,7 +3345,7 @@ wbWorkbook <- R6::R6Class(
         params   = params
       )
 
-      self
+      invisible(self)
     },
 
     ## plots and images ----
@@ -3527,7 +3527,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       if (is.null(dev.list()[[1]])) {
         warning("No plot to insert.")
-        return(self)
+        return(invisible(self))
       }
 
       if (!is.null(xy)) {
@@ -3673,7 +3673,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$workbook$apps <- xml_node_create("DocSecurity", type)
-      self
+      invisible(self)
     },
 
     #' @description protect worksheet
@@ -3723,7 +3723,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      self
+      invisible(self)
     },
 
 
@@ -3937,7 +3937,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      self
+      invisible(self)
     },
 
     ## header footer ----
@@ -4008,7 +4008,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$worksheets[[sheet]]$headerFooter <- hf
-      self
+      invisible(self)
     },
 
     #' @description get tables
@@ -4090,7 +4090,7 @@ wbWorkbook <- R6::R6Class(
 
       ## now delete data
       delete_data(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
-      self
+      invisible(self)
     },
 
     #' @description add filters
@@ -4114,7 +4114,7 @@ wbWorkbook <- R6::R6Class(
         paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
       )
 
-      self
+      invisible(self)
     },
 
     #' @description remove filters
@@ -4125,7 +4125,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[s]]$autoFilter <- character()
       }
 
-      self
+      invisible(self)
     },
 
     #' @description grid lines
@@ -4149,7 +4149,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$worksheets[[sheet]]$sheetViews <- sv
-      self
+      invisible(self)
     },
 
     ### named region ----
@@ -4216,7 +4216,7 @@ wbWorkbook <- R6::R6Class(
         localSheetId = localSheetId
       )
 
-      self
+      invisible(self)
     },
 
     #' @description remove a named region
@@ -4248,7 +4248,7 @@ wbWorkbook <- R6::R6Class(
         # user does not care, as long as no defined name remains on a sheet.
       }
 
-      self
+      invisible(self)
     },
 
     #' @description set worksheet order
@@ -4270,7 +4270,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$sheetOrder <- sheets
-      self
+      invisible(self)
     },
 
     ## sheet visibility ----
@@ -4311,7 +4311,7 @@ wbWorkbook <- R6::R6Class(
       inds <- which(value != exState)
 
       if (length(inds) == 0) {
-        return(self)
+        return(invisible(self))
       }
 
       for (i in seq_along(self$worksheets)) {
@@ -4323,7 +4323,7 @@ wbWorkbook <- R6::R6Class(
         self$set_sheet_visibility(1, TRUE)
       }
 
-      self
+      invisible(self)
     },
 
     ## page breaks ----
@@ -4336,7 +4336,7 @@ wbWorkbook <- R6::R6Class(
     add_page_break = function(sheet = current_sheet(), row = NULL, col = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
-      self
+      invisible(self)
     },
 
     #' @description clean sheet (remove all values)
@@ -4781,7 +4781,7 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim_inner_cell, self$styles_mgr$get_xf_id(xf_inner_cell))
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple fill function
@@ -4843,7 +4843,7 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim, s_id)
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple font function
@@ -4921,7 +4921,7 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim, s_id)
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple number format function
@@ -4971,7 +4971,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple cell style format function
@@ -5073,7 +5073,7 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim, s_id)
       }
 
-      return(self)
+      invisible(self)
     }
 
   ),
@@ -5232,18 +5232,18 @@ wbWorkbook <- R6::R6Class(
       # object.  wbWorksheet$append() is currently public. _Currently_.
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$append(field, value)
-      self
+      invisible(self)
     },
 
     append_workbook_field = function(field, value = NULL) {
       self$workbook[[field]] <- c(self$workbook[[field]], value)
-      self
+      invisible(self)
     },
 
     append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
-      self
+      invisible(self)
     },
 
     generate_base_core = function() {
@@ -5296,7 +5296,7 @@ wbWorkbook <- R6::R6Class(
       self$creator <- value
       # core is made on initialization
       private$generate_base_core()
-      self
+      invisible(self)
     },
 
     get_worksheet = function(sheet) {

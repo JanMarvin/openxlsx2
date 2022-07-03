@@ -22,7 +22,7 @@ wbSheetData <- R6::R6Class(
     #' Creates a new `wbSheetData` object
     #' @return a `wbSheetData` object
     initialize = function() {
-      self
+      invisible(self)
     }
   )
 )

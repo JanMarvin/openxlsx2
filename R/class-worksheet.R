@@ -553,7 +553,7 @@ wbWorksheet <- R6::R6Class(
         self$append("colBreaks", sprintf('<brk id="%i" max="1048575" man="1"/>', round(col)))
       }
 
-      self
+      invisible(self)
     },
 
     #' @description append a field.  Intended for internal use only.  Not
@@ -562,7 +562,7 @@ wbWorksheet <- R6::R6Class(
     #' @param value a new value
     append = function(field, value = NULL) {
       self[[field]] <- c(self[[field]], value)
-      self
+      invisible(self)
     }
   ),
 
