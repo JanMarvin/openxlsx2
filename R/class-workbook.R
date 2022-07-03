@@ -3587,39 +3587,17 @@ wbWorkbook <- R6::R6Class(
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
-      exSheets <- self$sheet_names
+      exSheets <- self$get_sheet_names()
       nSheets <- length(exSheets)
       nImages <- length(self$media)
       nCharts <- length(self$charts)
 
-      exSheets <- replaceXMLEntities(exSheets)
       showText <- "A Workbook object.\n"
 
       ## worksheets
       if (nSheets > 0) {
         showText <- c(showText, "\nWorksheets:\n")
-
-        # TODO use seq_along()
-        sheetTxt <- lapply(seq_len(nSheets), function(i) {
-          tmpTxt <- sprintf('Sheet %s: "%s"\n', i, exSheets[[i]])
-
-          if (length(self$rowHeights[[i]])) {
-            tmpTxt <-
-              c(
-                tmpTxt,
-                c(
-                  "\n\tCustom row heights (row: height)\n\t",
-                  stri_join(
-                    sprintf("%s: %s", names(self$rowHeights[[i]]), round(as.numeric(
-                      self$rowHeights[[i]]
-                    ), 2)),
-                    collapse = ", ",
-                    sep = " "
-                  )
-                )
-              )
-          }
-        })
+        sheetTxt <- sprintf("Sheets: %s", paste(names(exSheets), collapse = " "))
 
         showText <- c(showText, sheetTxt, "\n")
       } else {
@@ -3627,29 +3605,10 @@ wbWorkbook <- R6::R6Class(
           c(showText, "\nWorksheets:\n", "No worksheets attached\n")
       }
 
-      ## images
-      if (nImages > 0) {
-        showText <-
-          c(
-            showText,
-            "\nImages:\n",
-            sprintf('Image %s: "%s"\n', seq_len(nImages), self$media)
-          )
-      }
-
-      if (nCharts > 0) {
-        showText <-
-          c(
-            showText,
-            "\nCharts:\n",
-            sprintf('Chart %s: "%s"\n', seq_len(nCharts), self$charts)
-          )
-      }
-
       if (nSheets > 0) {
         showText <-
           c(showText, sprintf(
-            "Worksheet write order: %s",
+            "Write order: %s",
             stri_join(self$sheetOrder, sep = " ", collapse = ", ")
           ))
       }
