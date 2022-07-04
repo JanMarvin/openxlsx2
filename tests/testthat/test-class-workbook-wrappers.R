@@ -326,7 +326,7 @@ test_that("wb_clean_sheet() is a wrapper", {
 
 test_that("wb_add_border() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the border names are generated at random
+  # the style names are generated at random
   expect_wrapper(
     "add_border",
     wb = wb,
@@ -339,7 +339,7 @@ test_that("wb_add_border() is a wrapper", {
 
 test_that("wb_add_fill() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the border names are generated at random
+  # the style names are generated at random
   expect_wrapper(
     "add_fill",
     wb = wb,
@@ -352,7 +352,7 @@ test_that("wb_add_fill() is a wrapper", {
 
 test_that("wb_add_font() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the border names are generated at random
+  # the style names are generated at random
   expect_wrapper(
     "add_font",
     wb = wb,
@@ -365,7 +365,7 @@ test_that("wb_add_font() is a wrapper", {
 
 test_that("wb_add_numfmt() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the border names are generated at random
+  # the style names are generated at random
   expect_wrapper(
     "add_numfmt",
     wb = wb,
@@ -378,7 +378,7 @@ test_that("wb_add_numfmt() is a wrapper", {
 
 test_that("wb_add_cell_style() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the border names are generated at random
+  # the style names are generated at random
   expect_wrapper(
     "add_cell_style",
     wb = wb,

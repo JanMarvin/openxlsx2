@@ -7,7 +7,7 @@
 wb_add_font(
   wb,
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   name = "Calibri",
   color = c(rgb = "FF000000"),
   size = "11",

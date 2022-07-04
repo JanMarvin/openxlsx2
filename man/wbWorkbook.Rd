@@ -2008,7 +2008,7 @@ provide simple fill function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   color = "",
   pattern = "solid",
   gradient_fill = "",
@@ -2064,7 +2064,7 @@ provide simple font function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_font(
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   name = "Calibri",
   color = c(rgb = "FF000000"),
   size = "11",
@@ -2141,7 +2141,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Method \code{add_numfmt()}}{
 provide simple number format function
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet = current_sheet(), dims, numfmt)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet = current_sheet(), dims = "A1", numfmt)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -2176,7 +2176,7 @@ provide simple cell style format function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_cell_style(
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   applyAlignment = NULL,
   applyBorder = NULL,
   applyFill = NULL,

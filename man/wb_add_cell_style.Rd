@@ -7,7 +7,7 @@
 wb_add_cell_style(
   wb,
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   applyAlignment = NULL,
   applyBorder = NULL,
   applyFill = NULL,
