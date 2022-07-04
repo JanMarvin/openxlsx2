@@ -2071,8 +2071,8 @@ wb_add_border <- function(
 #' @export
 wb_add_fill <- function(
     wb,
-    sheet,
-    dims,
+    sheet         = current_sheet(),
+    dims          = "A1",
     color         = "",
     pattern       = "solid",
     gradient_fill = "",
@@ -2119,7 +2119,7 @@ wb_add_fill <- function(
 wb_add_font <- function(
       wb,
       sheet     = current_sheet(),
-      dims,
+      dims      = "A1",
       name      = "Calibri",
       color     = c(rgb = "FF000000"),
       size      = "11",
@@ -2173,7 +2173,7 @@ wb_add_font <- function(
 wb_add_numfmt <- function(
     wb,
     sheet = current_sheet(),
-    dims,
+    dims  = "A1",
     numfmt
 ) {
   assert_workbook(wb)
@@ -2235,7 +2235,7 @@ wb_add_numfmt <- function(
 wb_add_cell_style <- function(
     wb,
     sheet             = current_sheet(),
-    dims,
+    dims              = "A1",
     applyAlignment    = NULL,
     applyBorder       = NULL,
     applyFill         = NULL,

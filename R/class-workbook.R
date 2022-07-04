@@ -4846,7 +4846,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
         sheet         = current_sheet(),
-        dims,
+        dims          = "A1",
         color         = "",
         pattern       = "solid",
         gradient_fill = "",
@@ -4911,7 +4911,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
         sheet     = current_sheet(),
-        dims,
+        dims      = "A1",
         name      = "Calibri",
         color     = c(rgb = "FF000000"),
         size      = "11",
@@ -4975,7 +4975,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     add_numfmt = function(
         sheet = current_sheet(),
-        dims,
+        dims  = "A1",
         numfmt
     ) {
 
@@ -5051,7 +5051,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     add_cell_style = function(
         sheet             = current_sheet(),
-        dims,
+        dims              = "A1",
         applyAlignment    = NULL,
         applyBorder       = NULL,
         applyFill         = NULL,

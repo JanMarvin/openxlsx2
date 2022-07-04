@@ -6,8 +6,8 @@
 \usage{
 wb_add_fill(
   wb,
-  sheet,
-  dims,
+  sheet = current_sheet(),
+  dims = "A1",
   color = "",
   pattern = "solid",
   gradient_fill = "",
