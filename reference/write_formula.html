@@ -134,11 +134,6 @@ The examples below show a small list of possible formulas:</p><ul><li><p>SUM(B2:
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 1"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Sheet 1"</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## SEE int2col() to convert int to Excel column label</span></span></span>
 <span class="r-in"><span></span></span>
@@ -149,14 +144,14 @@ The examples below show a small list of possible formulas:</p><ul><li><p>SUM(B2:
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1</span>
 <span class="r-in"><span><span class="fu">write_formula</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, x <span class="op">=</span> <span class="st">"A2 + B2"</span>, startCol <span class="op">=</span> <span class="fl">10</span>, startRow <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. - As a data.frame column with class "formula" using write_data</span></span></span>
@@ -174,11 +169,6 @@ The examples below show a small list of possible formulas:</p><ul><li><p>SUM(B2:
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">2</span>, x <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -188,11 +178,6 @@ The examples below show a small list of possible formulas:</p><ul><li><p>SUM(B2:
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">v2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">v2</span><span class="op">)</span>, <span class="st">"formula"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">2</span>, x <span class="op">=</span> <span class="va">v2</span>, startCol <span class="op">=</span> <span class="fl">10</span>, startRow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Save workbook</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -209,8 +194,8 @@ The examples below show a small list of possible formulas:</p><ul><li><p>SUM(B2:
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Save workbook</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -225,11 +210,6 @@ The examples below show a small list of possible formulas:</p><ul><li><p>SUM(B2:
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"df"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"df"</span>, <span class="va">df</span>, startCol <span class="op">=</span> <span class="st">"C"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">write_formula</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"df"</span>, startCol <span class="op">=</span> <span class="st">"E"</span>, startRow <span class="op">=</span> <span class="st">"2"</span>,</span></span>
 <span class="r-in"><span>             x <span class="op">=</span> <span class="st">"SUM(C2:C11*D2:D11)"</span>,</span></span>
@@ -237,8 +217,8 @@ The examples below show a small list of possible formulas:</p><ul><li><p>SUM(B2:
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: df </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

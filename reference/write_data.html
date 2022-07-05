@@ -224,11 +224,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Cars"</span>, <span class="va">x</span>, startCol <span class="op">=</span> <span class="fl">2</span>, startRow <span class="op">=</span> <span class="fl">3</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#####################################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Hyperlinks</span></span></span>
@@ -238,11 +233,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Hyperlink"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="co"># Optional: names will be used as display text</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"hyperlink"</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Cars"</span>, x <span class="op">=</span> <span class="va">v</span>, xy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="fl">32</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#####################################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Formulas</span></span></span>
@@ -257,11 +247,6 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">z</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">z</span><span class="op">)</span>, <span class="st">"formula"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Formula"</span>, x <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#####################################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Save workbook</span></span></span>
@@ -293,8 +278,8 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Synergy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1</span>
 <span class="r-in"><span><span class="fu"><a href="wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    PairIndex Drug1 Drug2 Conc1 Conc2           Response ConcUnit   NA    NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          1   abc   def 10000 10000 -1.796071094480823       nM &lt;NA&gt;  &lt;NA&gt;</span>

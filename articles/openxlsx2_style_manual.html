@@ -157,11 +157,6 @@ The example below, with increased column width.
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">28</span><span class="op">*</span><span class="fl">28</span>, mean <span class="op">=</span> <span class="fl">44444</span>, sd <span class="op">=</span> <span class="fl">555</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">28</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"test"</span>, <span class="va">mat</span>, colNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1</span></span>
 <span></span>
 <span><span class="co"># create a border style and assign it to the workbook</span></span>
 <span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF000000"</span><span class="op">)</span></span>
@@ -260,17 +255,7 @@ The example below, with increased column width.
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span>, <span class="st">"scientific"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, x <span class="op">=</span> <span class="va">df</span>, startRow <span class="op">=</span> <span class="fl">4</span>, rowNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S2"</span>, x <span class="op">=</span> <span class="va">df</span>, startRow <span class="op">=</span> <span class="fl">4</span>, rowNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2</span></span></code></pre></div>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S2"</span>, x <span class="op">=</span> <span class="va">df</span>, startRow <span class="op">=</span> <span class="fl">4</span>, rowNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="numfmts2">numfmts2<a class="anchor" aria-label="anchor" href="#numfmts2"></a>
@@ -302,12 +287,7 @@ The example below, with increased column width.
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">Percentage</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">Percentage</span><span class="op">)</span>, <span class="st">"percentage"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span>, <span class="st">"scientific"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"test"</span>, <span class="va">df</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1</span></span></code></pre></div>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"test"</span>, <span class="va">df</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -321,11 +301,6 @@ The example below, with increased column width.
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="va">sheet</span>, <span class="va">mtcars</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1</span></span>
 <span></span>
 <span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_set_col_widths.html">wb_set_col_widths</a></span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span>, cols <span class="op">=</span> <span class="va">cols</span>, widths <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span>
@@ -333,8 +308,8 @@ The example below, with increased column width.
 <span><span class="co">#&gt; A Workbook object.</span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1</span></span></code></pre></div>
+<span><span class="co">#&gt;  Sheets: mtcars </span></span>
+<span><span class="co">#&gt;  Write order: 1</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -347,58 +322,18 @@ The example below, with increased column width.
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># full inner grid</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span>, rowColHeaders <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S1"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>,</span>
 <span>              inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_hcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span>,</span>
 <span>              inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1</span></span>
 <span><span class="co"># only vertical grid</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S2"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S2"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S2"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_hcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2</span></span>
 <span><span class="co"># only horizontal grid</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S3"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S3"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2, 3</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S3"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2, 3</span></span>
 <span><span class="co"># no inner grid</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S4"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S4"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2, 3, 4</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S4"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1, 2, 3, 4</span></span></code></pre></div>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S4"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="styled-table">styled table<a class="anchor" aria-label="anchor" href="#styled-table"></a>
@@ -440,11 +375,6 @@ The example below, with increased column width.
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"test"</span>, <span class="va">mat</span>, colNames <span class="op">=</span> <span class="cn">TRUE</span>, startCol <span class="op">=</span> <span class="fl">2</span>, startRow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A Workbook object.</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;  Worksheet write order: 1</span></span>
 <span></span>
 <span><span class="co"># create a border style and assign it to the workbook</span></span>
 <span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>rgb<span class="op">=</span><span class="st">"FF000000"</span><span class="op">)</span></span>

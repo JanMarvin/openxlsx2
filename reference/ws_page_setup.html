@@ -236,33 +236,13 @@
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="fl">2</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span>, xy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## landscape page scaled to 50%</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">page_setup</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">1</span>, orientation <span class="op">=</span> <span class="st">"landscape"</span>, scale <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## portrait page scales to 300% with 0.5in left and right margins</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">page_setup</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">2</span>, orientation <span class="op">=</span> <span class="st">"portrait"</span>, scale <span class="op">=</span> <span class="fl">300</span>, left <span class="op">=</span> <span class="fl">0.5</span>, right <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## print titles</span></span></span>
@@ -270,30 +250,10 @@
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"print_title_cols"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"print_title_rows"</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">iris</span>, <span class="va">iris</span>, <span class="va">iris</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"print_title_cols"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">mtcars</span>, <span class="va">mtcars</span><span class="op">)</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">page_setup</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"print_title_rows"</span>, printTitleRows <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co">## first row</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">page_setup</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"print_title_cols"</span>, printTitleCols <span class="op">=</span> <span class="fl">1</span>, printTitleRows <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Worksheet write order: 1, 2, 3, 4</span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"ws_page_setupExample.xlsx"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
