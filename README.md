@@ -100,8 +100,8 @@ wb
 #> A Workbook object.
 #>  
 #> Worksheets:
-#>  
-#>  Worksheet write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+#>  Sheets: Sheet1 Sheet2 Sheet 3 Sheet 4 Sheet 5 Sheet 6 1 11 111 1111 11111 111111 
+#>  Write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 
 # read a data frame
 wb_to_df(wb)
@@ -126,11 +126,6 @@ wb <- wb_workbook()
 wb$add_worksheet("sheet")
 # add some data
 wb$add_data("sheet", cars)
-#> A Workbook object.
-#>  
-#> Worksheets:
-#>  
-#>  Worksheet write order: 1
 # open it in your default spreadsheet software
 if (interactive()) wb$open()
 ```
