@@ -236,40 +236,54 @@ genHeaderFooterNode <- function(x) {
   # return nothing if there is no length
   if (!length(x)) return(NULL)
 
+  lcr <- function(x) {
+    list(
+      left   = ifelse(x[[1]] == "", "", sprintf("&amp;L%s", x[[1]])),
+      center = ifelse(x[[2]] == "", "", sprintf("&amp;C%s", x[[2]])),
+      right  = ifelse(x[[3]] == "", "", sprintf("&amp;R%s", x[[3]]))
+    )
+  }
+
   if (length(x$oddHeader)) {
-    oddHeader <- paste0("<oddHeader>", sprintf("&amp;L%s", x$oddHeader[[1]]), sprintf("&amp;C%s", x$oddHeader[[2]]), sprintf("&amp;R%s", x$oddHeader[[3]]), "</oddHeader>", collapse = "")
+    odd_header <- lcr(x$oddHeader)
+    oddHeader <- paste0("<oddHeader>", odd_header[["left"]], odd_header[["center"]], odd_header[["right"]], "</oddHeader>", collapse = "")
   } else {
     oddHeader <- NULL
   }
 
   if (length(x$oddFooter)) {
-    oddFooter <- paste0("<oddFooter>", sprintf("&amp;L%s", x$oddFooter[[1]]), sprintf("&amp;C%s", x$oddFooter[[2]]), sprintf("&amp;R%s", x$oddFooter[[3]]), "</oddFooter>", collapse = "")
+    odd_footer <- lcr(x$oddFooter)
+    oddFooter <- paste0("<oddFooter>", odd_footer[["left"]], odd_footer[["center"]], odd_footer[["right"]], "</oddFooter>", collapse = "")
   } else {
     oddFooter <- NULL
   }
 
   ## EVEN
   if (length(x$evenHeader)) {
-    evenHeader <- paste0("<evenHeader>", sprintf("&amp;L%s", x$evenHeader[[1]]), sprintf("&amp;C%s", x$evenHeader[[2]]), sprintf("&amp;R%s", x$evenHeader[[3]]), "</evenHeader>", collapse = "")
+    even_header <- lcr(x$evenHeader)
+    evenHeader <- paste0("<evenHeader>", even_header[["left"]], even_header[["center"]], even_header[["right"]], "</evenHeader>", collapse = "")
   } else {
     evenHeader <- NULL
   }
 
   if (length(x$evenFooter)) {
-    evenFooter <- paste0("<evenFooter>", sprintf("&amp;L%s", x$evenFooter[[1]]), sprintf("&amp;C%s", x$evenFooter[[2]]), sprintf("&amp;R%s", x$evenFooter[[3]]), "</evenFooter>", collapse = "")
+    even_footer <- lcr(x$evenFooter)
+    evenFooter <- paste0("<evenFooter>", even_footer[["left"]], even_footer[["center"]], even_footer[["right"]], "</evenFooter>", collapse = "")
   } else {
     evenFooter <- NULL
   }
 
   ## FIRST
   if (length(x$firstHeader)) {
-    firstHeader <- paste0("<firstHeader>", sprintf("&amp;L%s", x$firstHeader[[1]]), sprintf("&amp;C%s", x$firstHeader[[2]]), sprintf("&amp;R%s", x$firstHeader[[3]]), "</firstHeader>", collapse = "")
+    first_header <- lcr(x$firstHeader)
+    firstHeader <- paste0("<firstHeader>", first_header[["left"]], first_header[["center"]], first_header[["right"]], "</firstHeader>", collapse = "")
   } else {
     firstHeader <- NULL
   }
 
   if (length(x$firstFooter)) {
-    firstFooter <- paste0("<firstFooter>", sprintf("&amp;L%s", x$firstFooter[[1]]), sprintf("&amp;C%s", x$firstFooter[[2]]), sprintf("&amp;R%s", x$firstFooter[[3]]), "</firstFooter>", collapse = "")
+    first_footer <- lcr(x$firstFooter)
+    firstFooter <- paste0("<firstFooter>", first_footer[["left"]], first_footer[["center"]], first_footer[["right"]], "</firstFooter>", collapse = "")
   } else {
     firstFooter <- NULL
   }

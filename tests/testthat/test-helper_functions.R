@@ -94,3 +94,15 @@ test_that("ws_page_setup example", {
 
 
 })
+
+test_that("genHeaderFooterNode", {
+
+  x <- list(
+    oddHeader = c("", "&amp;&quot;Times New Roman,Standard&quot;&amp;12&amp;A", ""),
+    oddFooter = c("", "&amp;&quot;Times New Roman,Standard&quot;&amp;12Seite &amp;P", "")
+  )
+  exp <- "<headerFooter differentOddEven=\"0\" differentFirst=\"0\" scaleWithDoc=\"0\" alignWithMargins=\"0\"><oddHeader>&amp;C&amp;&quot;Times New Roman,Standard&quot;&amp;12&amp;A</oddHeader><oddFooter>&amp;C&amp;&quot;Times New Roman,Standard&quot;&amp;12Seite &amp;P</oddFooter></headerFooter>"
+  got <- genHeaderFooterNode(x)
+  expect_equal(exp, got)
+
+})
