@@ -95,14 +95,24 @@ test_that("ws_page_setup example", {
 
 })
 
-test_that("genHeaderFooterNode", {
+test_that("amp_split & genHeaderFooterNode", {
 
-  x <- list(
+  xml <- paste0(
+    "<headerFooter differentOddEven=\"0\" differentFirst=\"0\" scaleWithDoc=\"0\" alignWithMargins=\"0\">",
+    "<oddHeader>&amp;C&amp;&quot;Times New Roman,Standard&quot;&amp;12&amp;A</oddHeader>",
+    "<oddFooter>&amp;C&amp;&quot;Times New Roman,Standard&quot;&amp;12Seite &amp;P</oddFooter>",
+    "</headerFooter>"
+  )
+
+  exp <- list(
     oddHeader = c("", "&amp;&quot;Times New Roman,Standard&quot;&amp;12&amp;A", ""),
     oddFooter = c("", "&amp;&quot;Times New Roman,Standard&quot;&amp;12Seite &amp;P", "")
   )
-  exp <- "<headerFooter differentOddEven=\"0\" differentFirst=\"0\" scaleWithDoc=\"0\" alignWithMargins=\"0\"><oddHeader>&amp;C&amp;&quot;Times New Roman,Standard&quot;&amp;12&amp;A</oddHeader><oddFooter>&amp;C&amp;&quot;Times New Roman,Standard&quot;&amp;12Seite &amp;P</oddFooter></headerFooter>"
-  got <- genHeaderFooterNode(x)
+  got <- getHeaderFooterNode(xml)
+  expect_equal(exp, got)
+
+  exp <- xml
+  got <- genHeaderFooterNode(got)
   expect_equal(exp, got)
 
 })

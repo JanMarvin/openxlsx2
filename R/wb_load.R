@@ -630,34 +630,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   for (i in seq_len(nSheets)) {
     if (sheets$typ[i] == "worksheet") {
       if (length(wb$worksheets[[i]]$headerFooter)) {
-
-        amp_split <- function(x) {
-          if (length(x) == 0) return (NULL)
-          # create output string of width 3
-          res <- vector("character", 3)
-          # Identify the names found in the string: returns them as matrix: strip the &amp;
-          nam <- gsub(pattern = "&amp;", "", unlist(stri_match_all_regex(x, "&amp;[LCR]")))
-          # split the string and assign names to join
-          z <- unlist(stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
-          names(z) <- as.character(nam)
-          res[c("L", "C", "R") %in% names(z)] <- z
-
-          # return the string vector
-          unname(res)
-        }
-
-        head_foot <- c("oddHeader", "oddFooter",
-                       "evenHeader", "evenFooter",
-                       "firstHeader", "firstFooter")
-
-        headerFooter <- vector("list", length = length(head_foot))
-        names(headerFooter) <- head_foot
-
-        for (hf in head_foot) {
-          headerFooter[[hf]] <- amp_split(xml_value(wb$worksheets[[i]]$headerFooter, "headerFooter", hf))
-        }
-
-        wb$worksheets[[i]]$headerFooter <- headerFooter
+        wb$worksheets[[i]]$headerFooter <- getHeaderFooterNode(wb$worksheets[[i]]$headerFooter)
       }
     }
   }
