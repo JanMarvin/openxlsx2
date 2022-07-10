@@ -1,12 +1,10 @@
-
-negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
-
 my_workbook <- function() {
   # Make the workbook each time so wbWorkbook$debug() is easier to access within
   # each test
   wb <- wb_workbook()
+  negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
   wb$styles_mgr$add(negStyle, "negStyle")
+  posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
   wb$styles_mgr$add(posStyle, "posStyle")
   invisible(wb)
 }
