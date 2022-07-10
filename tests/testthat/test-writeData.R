@@ -79,3 +79,10 @@ test_that("test options", {
   expect_equal(ops, ops2)
 
 })
+
+test_that("missing x is caught early [246]", {
+  expect_error(
+    wb_workbook()$add_data(mtcars),
+    "`x` is missing"
+  )
+})

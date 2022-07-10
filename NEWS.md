@@ -1,5 +1,7 @@
 # openxlsx2 (in development)
 
+* `wb$add_data()` now checks earlier for missing `x` argument [246](https://github.com/JanMarvin/openxlsx2/issues/165)
+
 # openxlsx2 0.2.1
 
 ## New features

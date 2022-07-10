@@ -665,6 +665,7 @@ write_data_table <- function(
 
   ## Input validating
   assert_workbook(wb)
+  if (missing(x)) stop("`x` is missing")
   assert_class(colNames, "logical")
   assert_class(rowNames, "logical")
   assert_class(withFilter, "logical")
