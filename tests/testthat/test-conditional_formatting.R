@@ -197,7 +197,7 @@ test_that("type = 'containsText' works", {
   )
 
   # TODO remove identing from xml
-  exp <- c(`A1:A10` = '<cfRule type="containsText" dxfId="0" priority="1" operator="containsText" text="A">\n                        \t<formula>NOT(ISERROR(SEARCH("A", A1)))</formula>\n                       </cfRule>')
+  exp <- c(`A1:A10` = '<cfRule type="containsText" dxfId="0" priority="1" operator="containsText" text="A"><formula>NOT(ISERROR(SEARCH("A", A1)))</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -216,7 +216,7 @@ test_that("type = 'notContainsText' works", {
     rule = "A"
   )
 
-  exp <- c(`A1:A10` = '<cfRule type="notContainsText" dxfId="0" priority="1" operator="notContains" text="A">\n                        \t<formula>ISERROR(SEARCH("A", A1))</formula>\n                       </cfRule>')
+  exp <- c(`A1:A10` = '<cfRule type="notContainsText" dxfId="0" priority="1" operator="notContains" text="A"><formula>ISERROR(SEARCH("A", A1))</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -229,7 +229,7 @@ test_that("type = 'beginsWith' works", {
   wb$add_data("beginsWith", sapply(1:100, fn))
   wb$add_conditional_formatting("beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
 
-  exp <- c(`A1:A100` = '<cfRule type="beginsWith" dxfId="0" priority="1" operator="beginsWith" text="A">\n                        \t<formula>LEFT(A1,LEN("A"))="A"</formula>\n                       </cfRule>')
+  exp <- c(`A1:A100` = '<cfRule type="beginsWith" dxfId="0" priority="1" operator="beginsWith" text="A"><formula>LEFT(A1,LEN("A"))="A"</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -248,7 +248,7 @@ test_that("type = 'endsWith' works", {
     rule = "A"
   )
 
-  exp <- c(`A1:A100` = '<cfRule type="endsWith" dxfId="0" priority="1" operator="endsWith" text="A">\n                        \t<formula>RIGHT(A1,LEN("A"))="A"</formula>\n                       </cfRule>')
+  exp <- c(`A1:A100` = '<cfRule type="endsWith" dxfId="0" priority="1" operator="endsWith" text="A"><formula>RIGHT(A1,LEN("A"))="A"</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -272,7 +272,7 @@ test_that("type = 'colorScale' works", {
   wb$set_col_widths("colourScale", cols = seq_along(df), widths = 1.07)
   wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
-  exp <- c(`A1:E5` = '<cfRule type="colorScale" priority="1"><colorScale>\n                            <cfvo type="num" val="0"/><cfvo type="num" val="255"/>\n                            <color rgb="FF000000"/><color rgb="FFFFFFFF"/>\n                           </colorScale></cfRule>')
+  exp <- c(`A1:E5` = '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="num" val="0"/><cfvo type="num" val="255"/><color rgb="FF000000"/><color rgb="FFFFFFFF"/></colorScale></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -284,7 +284,7 @@ test_that("type = 'databar' works", {
   wb$add_data("databar", -5:5)
   wb$add_conditional_formatting("databar", cols = 1, rows = 1:11, type = "dataBar") ## Default colours
 
-  exp <- c(`A1:A11` = '<cfRule type="dataBar" priority="1"><dataBar showValue="1">\n                          <cfvo type="min"/><cfvo type="max"/>\n                          <color rgb="FF638EC6"/>\n                          </dataBar>\n                          <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext>\n                        </extLst></cfRule>')
+  exp <- c(`A1:A11` = '<cfRule type="dataBar" priority="1"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FF638EC6"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -334,8 +334,8 @@ test_that("type = 'topN' works", {
   )
 
   exp <- c(
-    `A2:A11` = '<cfRule type="top10" dxfId="1" priority="2" rank="5" percent="0"></cfRule>',
-    `B2:B11` = '<cfRule type="top10" dxfId="1" priority="1" rank="20" percent="1"></cfRule>'
+    `A2:A11` = '<cfRule type="top10" dxfId="1" priority="2" rank="5" percent="0"/>',
+    `B2:B11` = '<cfRule type="top10" dxfId="1" priority="1" rank="20" percent="1"/>'
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
@@ -367,8 +367,8 @@ test_that("type = 'bottomN' works", {
   )
 
   exp <- c(
-    `A2:A11` = '<cfRule type="top10" dxfId="0" priority="2" rank="5" percent="0"></cfRule>',
-    `B2:B11` = '<cfRule type="top10" dxfId="0" priority="1" rank="20" percent="1"></cfRule>'
+    `A2:A11` = '<cfRule type="top10" dxfId="0" priority="2" rank="5" percent="0"/>',
+    `B2:B11` = '<cfRule type="top10" dxfId="0" priority="1" rank="20" percent="1"/>'
   )
 
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
