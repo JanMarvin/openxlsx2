@@ -31,11 +31,7 @@ knitr::include_graphics("img/worksheet_styling.jpg")
 
 ### the quick way: using high level functions
 
-<<<<<<< HEAD
 ```{r}
-=======
-````{r}
->>>>>>> 30cb2a5b ([vignettes] update styling manual with high level functions and another image)
 # add some dummy data
 set.seed(123)
 mat <- matrix(rnorm(28 * 28, mean = 44444, sd = 555), ncol = 28)
