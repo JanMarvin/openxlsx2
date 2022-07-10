@@ -417,15 +417,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // printXPtr
-SEXP printXPtr(XPtrXML doc, bool no_escapes, bool raw);
-RcppExport SEXP _openxlsx2_printXPtr(SEXP docSEXP, SEXP no_escapesSEXP, SEXP rawSEXP) {
+SEXP printXPtr(XPtrXML doc, std::string indent, bool no_escapes, bool raw);
+RcppExport SEXP _openxlsx2_printXPtr(SEXP docSEXP, SEXP indentSEXP, SEXP no_escapesSEXP, SEXP rawSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    Rcpp::traits::input_parameter< std::string >::type indent(indentSEXP);
     Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
-    rcpp_result_gen = Rcpp::wrap(printXPtr(doc, no_escapes, raw));
+    rcpp_result_gen = Rcpp::wrap(printXPtr(doc, indent, no_escapes, raw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -830,7 +831,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr2attr", (DL_FUNC) &_openxlsx2_getXMLXPtr2attr, 3},
     {"_openxlsx2_getXMLXPtr3attr", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr, 4},
     {"_openxlsx2_getXMLXPtr4attr", (DL_FUNC) &_openxlsx2_getXMLXPtr4attr, 5},
-    {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 3},
+    {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 4},
     {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
     {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 4},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},

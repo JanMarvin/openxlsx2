@@ -191,6 +191,7 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #' print pugi_xml
 #' @method print pugi_xml
 #' @param x something to print
+#' @param indent indent used default is " "
 #' @param raw print as raw text
 #' @param ... to please check
 #' @examples
@@ -199,11 +200,11 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #'   print(x)
 #'   print(x, raw = TRUE)
 #' @export
-print.pugi_xml <- function(x, raw = FALSE, ...) {
+print.pugi_xml <- function(x, indent = " ", raw = FALSE, ...) {
 
   escapes <- attr(x, "escapes")
 
-  cat(printXPtr(x, !escapes, raw))
+  cat(printXPtr(x, indent, !escapes, raw))
   if (raw) cat("\n")
 }
 

@@ -466,7 +466,7 @@ Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, 
 
 
 // [[Rcpp::export]]
-SEXP printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
+SEXP printXPtr(XPtrXML doc, std::string indent, bool no_escapes, bool raw) {
 
   // pugi::parse_default without escapes flag
   unsigned int pugi_format_flags = pugi::format_indent;
@@ -474,7 +474,7 @@ SEXP printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
   if (raw)  pugi_format_flags |= pugi::format_raw;
 
   std::ostringstream oss;
-  doc->print(oss, " ", pugi_format_flags);
+  doc->print(oss, indent.c_str(), pugi_format_flags);
 
   return Rcpp::wrap(Rcpp::String(oss.str()));
 }
