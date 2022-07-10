@@ -2032,7 +2032,7 @@ wbWorkbook <- R6::R6Class(
       # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
       # assured that the order of entries is still valid when we write the file. Functions can change the
       # workbook order, therefore we have to make sure that the expected order is written.
-      # Othterwise spreadsheet software will complain.
+      # Otherwise spreadsheet software will complain.
       workbook_openxml281 <- c(
         "fileVersion", "fileSharing", "workbookPr", "alternateContent", "revisionPtr", "absPath",
         "workbookProtection", "bookViews", "sheets", "functionGroups", "externalReferences",
@@ -2051,6 +2051,16 @@ wbWorkbook <- R6::R6Class(
       self$workbook$sheets <- self$workbook$sheets[order(self$sheetOrder)]
 
       ## compress to xlsx
+
+      CT <- read_xml(paste0(tmpDir, "/[Content_Types].xml"))
+      CT <- rbindlist(xml_attr(CT, "Types", "Override"))
+      CT$tmpDirPartName <- paste0(tmpDir, CT$PartName)
+      CT$fileExists <- file.exists(CT$tmpDirPartName)
+
+      if (any(CT$fileExists == FALSE)) {
+        missing_in_tmp <- CT$PartName[CT$tmpDirPartName == FALSE]
+        warning("file expected to be in output is missing: ", paste(missing_in_tmp, collapse = " "))
+      }
 
       # TODO make self$vbaProject be TRUE/FALSE
       tmpFile <- tempfile(tmpdir = tmpDir, fileext = if (isTRUE(self$vbaProject)) ".xlsm" else ".xlsx")
