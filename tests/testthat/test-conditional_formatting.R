@@ -392,3 +392,88 @@ test_that("type as logical operators work", {
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
+
+test_that("colorScale", {
+
+  wb <- wb_workbook()
+
+  ### two colors
+  wb$add_worksheet("colourScale1", zoom = 30)
+  ## colourscale colours cells based on cell value
+  df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 5)
+  wb$add_data("colourScale1", df, colNames = FALSE) ## write data.frame
+  ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
+  ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
+  wb$add_conditional_formatting(
+    "colourScale1",
+    cols = seq_along(df),
+    rows = seq_len(nrow(df)),
+    style = c("black", "white"),
+    type = "colorScale"
+  )
+  wb$set_col_widths("colourScale1", cols = seq_along(df), widths = 2)
+  wb <- wb_set_row_heights(wb, "colourScale1", rows = seq_len(nrow(df)), heights = 7.5)
+
+  exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF000000\"/><color rgb=\"FFFFFFFF\"/></colorScale></cfRule>")
+  expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
+
+  ### two colors and rule
+  wb$add_worksheet("colourScale2", zoom = 30)
+  wb$add_data("colourScale2", df, colNames = FALSE) ## write data.frame
+  ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
+  ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
+  wb$add_conditional_formatting(
+    "colourScale2",
+    cols = seq_along(df),
+    rows = seq_len(nrow(df)),
+    style = c("blue", "red"),
+    rule = c(1, 255),
+    type = "colorScale"
+  )
+  wb$set_col_widths("colourScale2", cols = seq_along(df), widths = 2)
+  wb <- wb_set_row_heights(wb, "colourScale2", rows = seq_len(nrow(df)), heights = 7.5)
+
+  exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"num\" val=\"1\"/><cfvo type=\"num\" val=\"255\"/><color rgb=\"FF0000FF\"/><color rgb=\"FFFF0000\"/></colorScale></cfRule>")
+  expect_identical(exp, wb$worksheets[[2]]$conditionalFormatting)
+
+  ### three colors
+  wb$add_worksheet("colourScale3", zoom = 30)
+  wb$add_data("colourScale3", df, colNames = FALSE) ## write data.frame
+  ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
+  ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
+  wb$add_conditional_formatting(
+    "colourScale3",
+    cols = seq_along(df),
+    rows = seq_len(nrow(df)),
+    style = c("red", "green", "blue"),
+    type = "colorScale"
+  )
+  wb$set_col_widths("colourScale3", cols = seq_along(df), widths = 2)
+  wb <- wb_set_row_heights(wb, "colourScale3", rows = seq_len(nrow(df)), heights = 7.5)
+
+  exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"min\"/><cfvo type=\"percentile\" val=\"50\"/><cfvo type=\"max\"/><color rgb=\"FFFF0000\"/><color rgb=\"FF00FF00\"/><color rgb=\"FF0000FF\"/></colorScale></cfRule>")
+  expect_identical(exp, wb$worksheets[[3]]$conditionalFormatting)
+
+  wb$set_col_widths("colourScale3", cols = seq_along(df), widths = 2)
+  wb <- wb_set_row_heights(wb, "colourScale3", rows = seq_len(nrow(df)), heights = 7.5)
+
+  ### three colors and rule
+  wb$add_worksheet("colourScale4", zoom = 30)
+  wb$add_data("colourScale4", df, colNames = FALSE) ## write data.frame
+  ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
+  ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
+  wb$add_conditional_formatting(
+    "colourScale4",
+    cols = seq_along(df),
+    rows = seq_len(nrow(df)),
+    style = c("red", "green", "blue"),
+    rule = c(1, 155, 255),
+    type = "colorScale"
+  )
+  wb$set_col_widths("colourScale4", cols = seq_along(df), widths = 2)
+  wb <- wb_set_row_heights(wb, "colourScale4", rows = seq_len(nrow(df)), heights = 7.5)
+
+  exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"num\" val=\"1\"/><cfvo type=\"num\" val=\"155\"/><cfvo type=\"num\" val=\"255\"/><color rgb=\"FFFF0000\"/><color rgb=\"FF00FF00\"/><color rgb=\"FF0000FF\"/></colorScale></cfRule>")
+  expect_identical(exp, wb$worksheets[[4]]$conditionalFormatting)
+
+})

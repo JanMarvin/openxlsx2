@@ -2753,7 +2753,9 @@ wbWorkbook <- R6::R6Class(
       values <- NULL
       dxfs <- self$styles_mgr$styles$dxfs
       dxf <- xml_node(dxfs, "dxf")
-      dxfId <- which(dxf == style) - 1
+      dxfId <- 0
+      if (length(dxf) == length(style))
+        dxfId <- which(dxf == style) - 1
       params <- validate_conditional_formatting_params(params)
 
       switch(
