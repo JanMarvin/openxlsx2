@@ -15,6 +15,14 @@ test_that("read_xml", {
   got <- read_xml(xml, whitespace = FALSE, pointer = FALSE)
   expect_equal("<a/>", got)
 
+  xml <- "<a> <b> </b> </a>"
+  got <- read_xml(xml, pointer = FALSE)
+  expect_equal("<a><b> </b></a>", got)
+
+  xml <- "<a> <b> </b> </a>"
+  got <- paste(capture.output(read_xml(xml)), collapse = "\n")
+  expect_equal("<a>\n <b> </b>\n</a>", got)
+
   # #does this even work?
   # expect_equal(cat(exp), print(x))
 

@@ -5472,9 +5472,9 @@ wbWorkbook <- R6::R6Class(
 
       # dataBar needs additional extLst
       if (!is.null(attr(cfRule, "extLst")))
-        self$worksheets[[sheet]]$extLst <- read_xml(attr(cfRule, "extLst"), pointer = FALSE, whitespace = FALSE)
+        self$worksheets[[sheet]]$extLst <- read_xml(attr(cfRule, "extLst"), pointer = FALSE)
 
-      private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE, whitespace = FALSE))
+      private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE))
       names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
       invisible(self)
     },
