@@ -84,6 +84,9 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @field xf xf-ids
     xf = NULL,
 
+    #' @filed dxf dxf-ids
+    dxf = NULL,
+
     #' @field styles styles as xml
     styles = NULL,
 
@@ -94,9 +97,10 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param fill fill
     #' @param border border
     #' @param xf xf
+    #' @param dxf dxf
     #' @param styles styles
     #' @return a `wbStylesMgr` object
-    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA, styles = NA) {
+    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA, dxf = NA, styles = NA) {
 
       numfmts <- self$styles$numFmts
       if (length(numfmts)) {
@@ -163,6 +167,18 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
+      dxfs <- self$styles$dxf
+      if (length(dxfs)) {
+        typ <- xml_node_name(dxfs)
+        id  <- rownames(read_xf(read_xml(dxfs)))
+        name <- paste0(typ, "-", id)
+
+        self$dxf <- data.frame(
+          typ,
+          id,
+          name
+        )
+      }
 
       invisible(self)
     },
@@ -190,6 +206,11 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @description get xf ids
     get_xf = function() {
       invisible(self$xf)
+    },
+
+    #' @description get dxf ids
+    get_dxf = function() {
+      invisible(self$dxf)
     },
 
     #' @description get numfmt id by name
@@ -227,6 +248,13 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       xf$id[match(name, xf$name)]
     },
 
+    #' @description get dxf id by name
+    #' @param name name
+    get_dxf_id = function(name) {
+      dxf <- self$dxf
+      dxf$id[match(name, dxf$name)]
+    },
+
     #' @description get next numfmt id
     next_numfmt_id = function() {
       # TODO check: first free custom format begins at 165?
@@ -253,6 +281,11 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       invisible(as.character(max(as.numeric(self$xf$id), -1) + 1))
     },
 
+    #' @description get next xf id
+    next_dxf_id = function() {
+      invisible(as.character(max(as.numeric(self$dxf$id), -1) + 1))
+    },
+
     ### adds
     #' @description
     #' add entry
@@ -265,8 +298,6 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       if (length(style) != length(style_name))
         stop("style length and name do not match")
 
-
-
       for (sty in seq_along(style)) {
 
         typ <- NULL
@@ -277,13 +308,14 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         is_fill   <- any(ifelse(xml_node_name(style[sty]) == "fill", TRUE, FALSE))
         is_border <- any(ifelse(xml_node_name(style[sty]) == "border", TRUE, FALSE))
         is_xf     <- any(ifelse(xml_node_name(style[sty]) == "xf", TRUE, FALSE))
-
+        is_dxf    <- any(ifelse(xml_node_name(style[sty]) == "dxf", TRUE, FALSE))
 
         if (skip_duplicates && is_numfmt && style_name[sty] %in% self$numfmt$name) next
         if (skip_duplicates && is_font   && style_name[sty] %in% self$font$name) next
         if (skip_duplicates && is_fill   && style_name[sty] %in% self$fill$name) next
         if (skip_duplicates && is_border && style_name[sty] %in% self$border$name) next
         if (skip_duplicates && is_xf     && style_name[sty] %in% self$xf$name) next
+        if (skip_duplicates && is_dxf    && style_name[sty] %in% self$dxf$name) next
 
         if (is_numfmt) {
           typ <- "numFmt"
@@ -319,6 +351,13 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
           self$styles$cellXfs <- xfs
         }
 
+        if (is_dxf) {
+          typ <- "dxf"
+          dxfs <- c(self$styles$dxfs, style[sty])
+          id  <- rownames(read_dxf(read_xml(dxfs)))
+          self$styles$dxfs <- dxfs
+        }
+
         new_entry <- data.frame(
           typ = typ,
           id = id[length(id)],
@@ -330,6 +369,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         if (is_fill)   self$fill   <- rbind(self$fill, new_entry)
         if (is_border) self$border <- rbind(self$border, new_entry)
         if (is_xf)     self$xf     <- rbind(self$xf, new_entry)
+        if (is_dxf)    self$dxf    <- rbind(self$dxf, new_entry)
 
       }
 
