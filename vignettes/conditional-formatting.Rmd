@@ -210,7 +210,7 @@ wb$add_conditional_formatting(
 ## Colorscale colors cells based on cell value
 
 ```{r}
-df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 4)
+df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 5)
 wb$add_worksheet("colorScale", zoom = 30)
 wb$add_data("colorScale", df, colNames = FALSE) ## write data.frame
 ```
