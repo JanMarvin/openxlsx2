@@ -1003,16 +1003,8 @@ wbWorkbook <- R6::R6Class(
       xlworksheetsRelsDir <- dir_create(tmpDir, "xl", "worksheets", "_rels")
       xldrawingsDir       <- dir_create(tmpDir, "xl", "drawings")
       xldrawingsRelsDir   <- dir_create(tmpDir, "xl", "drawings", "_rels")
-
-      ## charts
-      if (length(self$charts)) {
-        file.copy(
-          from = dirname(self$charts[1]),
-          to = file.path(tmpDir, "xl"),
-          recursive = TRUE
-        )
-      }
-
+      xlchartsDir         <- dir_create(tmpDir, "xl", "charts")
+      xlchartsRelsDir     <- dir_create(tmpDir, "xl", "charts", "_rels")
 
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
@@ -1275,9 +1267,12 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## write worksheet, worksheet_rels, drawings, drawing_rels
-      private$writeSheetDataXML(
+      ct <- private$writeSheetDataXML(
+        ct,
         xldrawingsDir,
         xldrawingsRelsDir,
+        xlchartsDir,
+        xlchartsRelsDir,
         xlworksheetsDir,
         xlworksheetsRelsDir
       )
@@ -1318,7 +1313,8 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
-      self$Content_Types <- ct
+      ## do not write updated content types to self
+      # self$Content_Types <- ct
 
       ## write [Content_type]
       write_file(
@@ -5372,8 +5368,11 @@ wbWorkbook <- R6::R6Class(
     },
 
     writeSheetDataXML = function(
+      ct,
       xldrawingsDir,
       xldrawingsRelsDir,
+      xlchartsDir,
+      xlchartsRelsDir,
       xlworksheetsDir,
       xlworksheetsRelsDir
     ) {
@@ -5401,6 +5400,42 @@ wbWorkbook <- R6::R6Class(
           }
         } else {
           self$worksheets[[i]]$drawing <- character()
+        }
+
+        if (NROW(self$charts)) {
+
+          if (!file.exists(xlchartsDir)) {
+            dir.create(xlchartsDir, recursive = TRUE)
+            dir.create(xlchartsRelsDir, recursive = TRUE)
+          }
+
+          for (crt in seq_len(nrow(self$charts))) {
+
+            ct <- c(ct, sprintf('<Override PartName="/xl/charts/chart%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', crt))
+            ct <- c(ct, sprintf('<Override PartName="/xl/charts/style%s.xml" ContentType="application/vnd.ms-office.chartstyle+xml"/>', crt))
+            ct <- c(ct, sprintf('<Override PartName="/xl/charts/colors%s.xml" ContentType="application/vnd.ms-office.chartcolorstyle+xml"/>', crt))
+
+            write_file(
+              body = self$charts$chart[crt],
+              fl = file.path(xlchartsDir, stri_join("chart", crt, ".xml"))
+            )
+
+            write_file(
+              body = self$charts$colors[crt],
+              fl = file.path(xlchartsDir, stri_join("colors", crt, ".xml"))
+            )
+
+            write_file(
+              body = self$charts$style[crt],
+              fl = file.path(xlchartsDir, stri_join("style", crt, ".xml"))
+            )
+
+            write_file(
+              body = self$charts$rels[crt],
+              fl = file.path(xlchartsRelsDir, stri_join("chart", crt, ".xml.rels"))
+            )
+          }
+
         }
 
         ## vml drawing
@@ -5526,7 +5561,7 @@ wbWorkbook <- R6::R6Class(
         } ## end of isChartSheet[i]
       } ## end of loop through nSheets
 
-      invisible(self)
+      return(ct)
     },
 
     data_validation = function(

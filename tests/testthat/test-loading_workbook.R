@@ -270,3 +270,16 @@ test_that("load workbook with chartsheet", {
   expect_error(read_xlsx(fl, sheet = "Chart1"), "Requested sheet is a chartsheet. No data to return")
   expect_error(read_xlsx(fl, sheet = 1), "Requested sheet is a chartsheet. No data to return")
 })
+
+
+test_that("Content Types is not modified", {
+
+  # Content Types should remain identical during saving. All modifications should remain
+  # temporary because otherwise they are applied over and over and over again during saving
+  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  pre <- wb$Content_Types
+  wb$save(temp_xlsx())
+  post <- wb$Content_Types
+  expect_equal(pre, post)
+
+})
