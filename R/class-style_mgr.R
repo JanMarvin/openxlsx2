@@ -84,7 +84,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @field xf xf-ids
     xf = NULL,
 
-    #' @filed dxf dxf-ids
+    #' @field dxf dxf-ids
     dxf = NULL,
 
     #' @field styles styles as xml
