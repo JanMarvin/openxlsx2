@@ -524,7 +524,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
       if (colNames) {
         data[-1, i] <- as.integer(as.logical(data[-1, i]))
       } else {
-        data[i] <- as.integer(as.logical(data[i]))
+        data[,i] <- as.integer(as.logical(data[,i]))
       }
     }
 
