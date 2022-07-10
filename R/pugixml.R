@@ -4,6 +4,7 @@
 #' @param declaration should the declaration be imported
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escapes. Assuming that the input already provides valid information.
+#' @param whitespace should whitespace pcdata be imported
 #' @details Read xml files or strings to pointer and checks if the input is
 #' valid XML.
 #' If the input is read into a character object, it will be reevaluated every
@@ -37,7 +38,7 @@
 #'   read_xml(xml, declaration = TRUE)
 #'
 #' @export
-read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) {
+read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE) {
 
   z <- NULL
 
@@ -52,9 +53,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE) 
     xml <- "<NA_character_ />"
 
   if (pointer) {
-    z <- readXMLPtr(xml, isfile, escapes, declaration)
+    z <- readXMLPtr(xml, isfile, escapes, declaration, whitespace)
   } else {
-    z <- readXML(xml, isfile, escapes, declaration)
+    z <- readXML(xml, isfile, escapes, declaration, whitespace)
   }
 
   z

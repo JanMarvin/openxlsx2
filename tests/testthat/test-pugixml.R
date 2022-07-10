@@ -7,6 +7,14 @@ test_that("read_xml", {
 
   expect_true(inherits(x, "pugi_xml"))
 
+  xml <- "<a> </a>"
+  got <- read_xml(xml, whitespace = TRUE, pointer = FALSE)
+  expect_equal(xml, got)
+
+  xml <- "<a> </a>"
+  got <- read_xml(xml, whitespace = FALSE, pointer = FALSE)
+  expect_equal("<a/>", got)
+
   # #does this even work?
   # expect_equal(cat(exp), print(x))
 

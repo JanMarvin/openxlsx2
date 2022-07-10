@@ -165,8 +165,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // readXMLPtr
-SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration);
-RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace);
+RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP whitespaceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -174,13 +174,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile, escapes, declaration));
+    Rcpp::traits::input_parameter< bool >::type whitespace(whitespaceSEXP);
+    rcpp_result_gen = Rcpp::wrap(readXMLPtr(path, isfile, escapes, declaration, whitespace));
     return rcpp_result_gen;
 END_RCPP
 }
 // readXML
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace);
+RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP whitespaceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -188,7 +189,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type isfile(isfileSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration));
+    Rcpp::traits::input_parameter< bool >::type whitespace(whitespaceSEXP);
+    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration, whitespace));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -809,8 +811,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
-    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 4},
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 4},
+    {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 5},
+    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 5},
     {"_openxlsx2_getXMLXPtrName1", (DL_FUNC) &_openxlsx2_getXMLXPtrName1, 1},
     {"_openxlsx2_getXMLXPtrName2", (DL_FUNC) &_openxlsx2_getXMLXPtrName2, 2},
     {"_openxlsx2_getXMLXPtrName3", (DL_FUNC) &_openxlsx2_getXMLXPtrName3, 3},
