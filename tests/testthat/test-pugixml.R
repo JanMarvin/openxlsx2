@@ -24,7 +24,7 @@ test_that("read_xml", {
   expect_equal("<a>\n <b> </b>\n</a>", got)
 
   xml <- "<a> <b> </b> </a>"
-  got <- paste(capture.output(print(read_xml(xml)), indent = "\t"), collapse = "\n")
+  got <- paste(capture.output(print(read_xml(xml), indent = "\t")), collapse = "\n")
   expect_equal("<a>\n\t<b> </b>\n</a>", got)
 
   # #does this even work?
