@@ -2760,6 +2760,14 @@ wbWorkbook <- R6::R6Class(
       params <- validate_conditional_formatting_params(params)
       values <- NULL
 
+      sel <- c("expression", "duplicatedValues", "containsText", "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN")
+      if (is.null(style) && type %in% sel) {
+        smp <- random_string()
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+        self$styles_mgr$add(style, smp)
+        dxfId <- self$styles_mgr$get_dxf_id(smp)
+      }
+
       switch(
         type,
 
@@ -2784,12 +2792,6 @@ wbWorkbook <- R6::R6Class(
             )
           } ## else, there is a letter in the formula and apply as is
 
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
         },
 
         colorScale = {
@@ -2858,12 +2860,6 @@ wbWorkbook <- R6::R6Class(
           # type == "duplicatedValues"
           # - style is a Style object
           # - rule is ignored
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
 
           rule <- style
         },
@@ -2872,13 +2868,6 @@ wbWorkbook <- R6::R6Class(
           # - style is Style object
           # - rule is text to look for
           msg <- "When type == 'contains', "
-
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
 
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
@@ -2893,14 +2882,6 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'notContains', "
 
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
-
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
           }
@@ -2913,13 +2894,6 @@ wbWorkbook <- R6::R6Class(
           # - style is Style object
           # - rule is text to look for
           msg <- "When type == 'beginsWith', "
-
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
 
           if (!is.character("character")) {
             stop(msg, "rule must be a character vector of length 1.")
@@ -2934,13 +2908,6 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'endsWith', "
 
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
           }
@@ -2951,25 +2918,11 @@ wbWorkbook <- R6::R6Class(
 
         between = {
           rule <- range(rule)
-
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
-
         },
 
         topN = {
           # - rule is ignored
           # - 'rank' and 'percent' are named params
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
 
           ## Additional parameters passed by ...
           # percent, rank
@@ -2981,12 +2934,6 @@ wbWorkbook <- R6::R6Class(
         bottomN = {
           # - rule is ignored
           # - 'rank' and 'percent' are named params
-          if (is.null(style)) {
-            smp <- random_string()
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$add(style, smp)
-            dxfId <- self$styles_mgr$get_dxf_id(smp)
-          }
 
           ## Additional parameters passed by ...
           # percent, rank
