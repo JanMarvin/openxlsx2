@@ -114,7 +114,11 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 ## ------------------------------------------------
 
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
 }
 \seealso{
 create_border
@@ -2220,7 +2224,11 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
 }
 \if{html}{\out{</div>}}
 

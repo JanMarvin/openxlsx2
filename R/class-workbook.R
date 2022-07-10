@@ -4665,7 +4665,11 @@ wbWorkbook <- R6::R6Class(
     #' @param xfId xf ID to apply
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+    #'  wb$add_cell_style("S1", "A1:K1",
+    #'                    textRotation = "45",
+    #'                    horizontal = "center",
+    #'                    vertical = "center",
+    #'                    wrapText = "1")
     #' @return The `wbWorksheetObject`, invisibly
     add_cell_style = function(
         sheet             = current_sheet(),
