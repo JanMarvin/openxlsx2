@@ -6,7 +6,8 @@ my_workbook <- function() {
   # Make the workbook each time so wbWorkbook$debug() is easier to access within
   # each test
   wb <- wb_workbook()
-  wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs, c(negStyle, posStyle))
+  wb$styles_mgr$add(negStyle, "negStyle")
+  wb$styles_mgr$add(posStyle, "posStyle")
   invisible(wb)
 }
 
@@ -48,14 +49,14 @@ test_that("type = 'expression' work", {
     cols = 1,
     rows = 1:11,
     rule = "!=0",
-    style = negStyle
+    style = "negStyle"
   )
   wb$add_conditional_formatting(
     sheet = "cellIs",
     cols = 1,
     rows = 1:11,
     rule = "==0",
-    style = posStyle
+    style = "posStyle"
   )
 
   exp <- c(
@@ -75,14 +76,14 @@ test_that("type = 'expression' work", {
     cols = 1:2,
     rows = 1:11,
     rule = "$A1<0",
-    style = negStyle
+    style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Moving Row",
     cols = 1:2,
     rows = 1:11,
     rule = "$A1>0",
-    style = posStyle
+    style = "posStyle"
   )
 
   exp <- c(
@@ -100,14 +101,14 @@ test_that("type = 'expression' work", {
     cols = 1:2,
     rows = 1:11,
     rule = "A$1<0",
-    style = negStyle
+    style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Moving Col",
     cols = 1:2,
     rows = 1:11,
     rule = "A$1>0",
-    style = posStyle
+    style = "posStyle"
   )
 
   exp <- c(
@@ -125,14 +126,14 @@ test_that("type = 'expression' work", {
     cols = 1:2,
     rows = 1:11,
     rule = "$A$1<0",
-    style = negStyle
+    style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Dependent on",
     cols = 1:2,
     rows = 1:11,
     rule = "$A$1>0",
-    style = posStyle
+    style = "posStyle"
   )
 
   exp <- c(
@@ -149,14 +150,14 @@ test_that("type = 'expression' work", {
     cols = 1,
     rows = 16:25,
     rule = "B16<0.5",
-    style = negStyle
+    style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Dependent on",
     cols = 1,
     rows = 16:25,
     rule = "B16>=0.5",
-    style = posStyle
+    style = "posStyle"
   )
 
   exp <- c(
@@ -177,7 +178,7 @@ test_that("type = 'duplicated' works", {
   wb$add_data("Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
   wb$add_conditional_formatting("Duplicates", cols = 1, rows = 1:10, type = "duplicated")
 
-  exp <- c(`A1:A10` = '<cfRule type="duplicateValues" dxfId="0" priority="1"/>')
+  exp <- c(`A1:A10` = '<cfRule type="duplicateValues" dxfId="2" priority="1"/>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -197,7 +198,7 @@ test_that("type = 'containsText' works", {
   )
 
   # TODO remove identing from xml
-  exp <- c(`A1:A10` = '<cfRule type="containsText" dxfId="0" priority="1" operator="containsText" text="A"><formula>NOT(ISERROR(SEARCH("A", A1)))</formula></cfRule>')
+  exp <- c(`A1:A10` = '<cfRule type="containsText" dxfId="2" priority="1" operator="containsText" text="A"><formula>NOT(ISERROR(SEARCH("A", A1)))</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -216,7 +217,7 @@ test_that("type = 'notContainsText' works", {
     rule = "A"
   )
 
-  exp <- c(`A1:A10` = '<cfRule type="notContainsText" dxfId="0" priority="1" operator="notContains" text="A"><formula>ISERROR(SEARCH("A", A1))</formula></cfRule>')
+  exp <- c(`A1:A10` = '<cfRule type="notContainsText" dxfId="2" priority="1" operator="notContains" text="A"><formula>ISERROR(SEARCH("A", A1))</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -229,7 +230,7 @@ test_that("type = 'beginsWith' works", {
   wb$add_data("beginsWith", sapply(1:100, fn))
   wb$add_conditional_formatting("beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
 
-  exp <- c(`A1:A100` = '<cfRule type="beginsWith" dxfId="0" priority="1" operator="beginsWith" text="A"><formula>LEFT(A1,LEN("A"))="A"</formula></cfRule>')
+  exp <- c(`A1:A100` = '<cfRule type="beginsWith" dxfId="2" priority="1" operator="beginsWith" text="A"><formula>LEFT(A1,LEN("A"))="A"</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -248,7 +249,7 @@ test_that("type = 'endsWith' works", {
     rule = "A"
   )
 
-  exp <- c(`A1:A100` = '<cfRule type="endsWith" dxfId="0" priority="1" operator="endsWith" text="A"><formula>RIGHT(A1,LEN("A"))="A"</formula></cfRule>')
+  exp <- c(`A1:A100` = '<cfRule type="endsWith" dxfId="2" priority="1" operator="endsWith" text="A"><formula>RIGHT(A1,LEN("A"))="A"</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -303,7 +304,7 @@ test_that("type = 'between' works", {
     rule = c(-2, 2)
   )
 
-  exp <- c(`A1:A11` = '<cfRule type="cellIs" dxfId="0" priority="1" operator="between"><formula>-2</formula><formula>2</formula></cfRule>')
+  exp <- c(`A1:A11` = '<cfRule type="cellIs" dxfId="2" priority="1" operator="between"><formula>-2</formula><formula>2</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })
@@ -318,7 +319,7 @@ test_that("type = 'topN' works", {
     "topN",
     cols = 1,
     rows = 2:11,
-    style = posStyle,
+    style = "posStyle",
     type = "topN",
     params = list(rank = 5)
   )
@@ -328,7 +329,7 @@ test_that("type = 'topN' works", {
     "topN",
     cols = 2,
     rows = 2:11,
-    style = posStyle,
+    style = "posStyle",
     type = "topN",
     params = list(rank = 20, percent = TRUE)
   )
@@ -351,7 +352,7 @@ test_that("type = 'bottomN' works", {
     "bottomN",
     cols = 1,
     rows = 2:11,
-    style = negStyle,
+    style = "negStyle",
     type = "topN",
     params = list(rank = 5)
   )
@@ -361,7 +362,7 @@ test_that("type = 'bottomN' works", {
     "bottomN",
     cols = 2,
     rows = 2:11,
-    style = negStyle,
+    style = "negStyle",
     type = "topN",
     params = list(rank = 20, percent = TRUE)
   )
@@ -388,7 +389,7 @@ test_that("type as logical operators work", {
     rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
   )
 
-  exp <- c(`A1:A10` = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"1\"><formula>OR($A1=1,$A1=3,$A1=5,$A1=7)</formula></cfRule>")
+  exp <- c(`A1:A10` = "<cfRule type=\"expression\" dxfId=\"2\" priority=\"1\"><formula>OR($A1=1,$A1=3,$A1=5,$A1=7)</formula></cfRule>")
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
 })

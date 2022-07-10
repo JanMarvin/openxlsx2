@@ -23,7 +23,8 @@ library(openxlsx2)
 wb <- wb_workbook()
 negStyle <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
 posStyle <- create_dxfs_style(font_color = c(rgb = "FF006100"), bgFill = c(rgb = "FFC6EFCE"))
-wb$styles_mgr$styles$dxfs <- c(wb$styles_mgr$styles$dxfs, c(negStyle, posStyle))
+wb$styles_mgr$add(negStyle, "negStyle")
+wb$styles_mgr$add(posStyle, "posStyle")
 ```
 
 ## Rule applies to all each cell in range
@@ -37,14 +38,14 @@ wb$add_conditional_formatting(
   cols = 1,
   rows = 1:11,
   rule = "!=0",
-  style = negStyle
+  style = "negStyle"
 )
 wb$add_conditional_formatting(
   "cellIs",
   cols = 1,
   rows = 1:11,
   rule = "==0",
-  style = posStyle
+  style = "posStyle"
 )
 ```
 
@@ -59,14 +60,14 @@ wb$add_conditional_formatting(
   cols = 1:2,
   rows = 1:11,
   rule = "$A1<0",
-  style = negStyle
+  style = "negStyle"
 )
 wb$add_conditional_formatting(
   "Moving Row",
   cols = 1:2,
   rows = 1:11,
   rule = "$A1>0",
-  style = posStyle
+  style = "posStyle"
 )
 ```
 
@@ -81,14 +82,14 @@ wb$add_conditional_formatting(
   cols = 1:2,
   rows = 1:11,
   rule = "A$1<0",
-  style = negStyle
+  style = "negStyle"
 )
 wb$add_conditional_formatting(
   "Moving Col",
   cols = 1:2,
   rows = 1:11, 
   rule = "A$1>0",
-  style = posStyle
+  style = "posStyle"
 )
 ```
 
@@ -103,14 +104,14 @@ wb$add_conditional_formatting(
   cols = 1:2,
   rows = 1:11, 
   rule = "$A$1 < 0",
-  style = negStyle
+  style = "negStyle"
 )
 wb$add_conditional_formatting(
   "Dependent on",
   cols = 1:2,
   rows = 1:11,
   rule = "$A$1>0",
-  style = posStyle
+  style = "posStyle"
 )
 ```
 
@@ -123,14 +124,14 @@ wb$add_conditional_formatting(
   cols = 1,
   rows = 16:25, 
   rule = "B16<0.5", 
-  style = negStyle
+  style = "negStyle"
 )
 wb$add_conditional_formatting(
   "Dependent on",
   cols = 1,
   rows = 16:25, 
   rule = "B16>=0.5", 
-  style = posStyle
+  style = "posStyle"
 )
 ```
 
@@ -274,7 +275,7 @@ wb$add_conditional_formatting(
   "topN", 
   cols = 1,
   rows = 2:11,
-  style = posStyle,
+  style = "posStyle",
   type = "topN",
   params = list(rank = 5)
 )
@@ -287,7 +288,7 @@ wb$add_conditional_formatting(
   "topN", 
   cols = 2,
   rows = 2:11,
-  style = posStyle, 
+  style = "posStyle", 
   type = "topN",
   params = list(rank = 20, percent = TRUE)
 )
@@ -307,7 +308,7 @@ wb$add_conditional_formatting(
   "bottomN",
   cols = 1,
   rows = 2:11,
-  style = negStyle, 
+  style = "negStyle", 
   type = "topN",
   params = list(rank = 5)
 )
@@ -320,7 +321,7 @@ wb$add_conditional_formatting(
   "bottomN", 
   cols = 2,
   rows = 2:11,
-  style = negStyle, 
+  style = "negStyle", 
   type = "topN",
   params = list(rank = 20, percent = TRUE)
 )
