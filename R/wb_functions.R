@@ -868,7 +868,6 @@ wb_add_chart <- function(wb, sheet, srhc, dims, type = "barplot") {
   from <- col2int(dims_list)
   to <- as.numeric(gsub("\\D+", "", dims_list))
 
-  next_drawing <- max(sapply(wb$drawings, length), na.rm = TRUE) + 1
   next_chart <- NROW(wb$charts) + 1
 
   chart <- data.frame(
