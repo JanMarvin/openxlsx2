@@ -2740,6 +2740,11 @@ wbWorkbook <- R6::R6Class(
           rank      = 5L
         )
     ) {
+
+      if (!is.null(style)) assert_class(style, "character")
+      assert_class(type, "character")
+      assert_class(params, "list")
+
       type <- match.arg(type)
 
       ## rows and cols
