@@ -337,8 +337,8 @@ cf_top_n <- function(dxfId, values) {
     '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"/>',
     # cfRule
     dxfId,
-    values[1],
-    values[2]
+    values$rank,
+    values$percent
   )
 
   cf_rule
@@ -352,8 +352,8 @@ cf_bottom_n <- function(dxfId, values) {
     '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"/>',
     # cfRule
     dxfId,
-    values[1],
-    values[2]
+    values$rank,
+    values$percent
   )
 
   cf_rule
