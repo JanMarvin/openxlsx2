@@ -4,7 +4,13 @@
 \alias{read_xml}
 \title{read xml file}
 \usage{
-read_xml(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE)
+read_xml(
+  xml,
+  pointer = TRUE,
+  escapes = FALSE,
+  declaration = FALSE,
+  whitespace = TRUE
+)
 }
 \arguments{
 \item{xml}{something to read character string or file}
@@ -15,6 +21,8 @@ read_xml(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE)
 no escapes. Assuming that the input already provides valid information.}
 
 \item{declaration}{should the declaration be imported}
+
+\item{whitespace}{should whitespace pcdata be imported}
 }
 \description{
 read xml file
