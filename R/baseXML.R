@@ -1364,7 +1364,7 @@ stylebarplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.co
 </cs:chartStyle>')
 
 
-drawings <- function(from, to)
+drawings <- function(from, to) {
   sprintf(
     '<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">
 <xdr:twoCellAnchor>
@@ -1392,6 +1392,7 @@ drawings <- function(from, to)
     from[1], from[2],
     to[1], to[2]
   )
+}
 
 worksheet_rels <- function(x) sprintf("<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", x)
 chart1_rels_xml <- function(x) {
@@ -1401,6 +1402,6 @@ chart1_rels_xml <- function(x) {
 </Relationships>",
           x,
           x
-  )}
+  )
+}
 drawings_rels <- function(x) sprintf("<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart%s.xml\"/>", x)
-
