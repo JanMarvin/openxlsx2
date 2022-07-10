@@ -47,7 +47,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
     # targets xmlFiles; has presents
-    z <- grep(pattern, xmlFiles, perl = perl, value = value, ...)
+    grep(pattern, xmlFiles, perl = perl, value = value, ...)
   }
 
   ## Not used
