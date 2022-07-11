@@ -351,7 +351,7 @@ test_that("type = 'bottomN' works", {
     cols = 1,
     rows = 2:11,
     style = "negStyle",
-    type = "topN",
+    type = "bottomN",
     params = list(rank = 5)
   )
 
@@ -361,13 +361,13 @@ test_that("type = 'bottomN' works", {
     cols = 2,
     rows = 2:11,
     style = "negStyle",
-    type = "topN",
+    type = "bottomN",
     params = list(rank = 20, percent = TRUE)
   )
 
   exp <- c(
-    `A2:A11` = '<cfRule type="top10" dxfId="0" priority="2" rank="5" percent="0"/>',
-    `B2:B11` = '<cfRule type="top10" dxfId="0" priority="1" rank="20" percent="1"/>'
+    `A2:A11` = "<cfRule type=\"top10\" dxfId=\"0\" priority=\"2\" rank=\"5\" percent=\"0\" bottom=\"1\"/>",
+    `B2:B11` = "<cfRule type=\"top10\" dxfId=\"0\" priority=\"1\" rank=\"20\" percent=\"1\" bottom=\"1\"/>"
   )
 
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)

@@ -309,7 +309,7 @@ wb$add_conditional_formatting(
   cols = 1,
   rows = 2:11,
   style = "negStyle", 
-  type = "topN",
+  type = "bottomN",
   params = list(rank = 5)
 )
 ```
@@ -322,7 +322,7 @@ wb$add_conditional_formatting(
   cols = 2,
   rows = 2:11,
   style = "negStyle", 
-  type = "topN",
+  type = "bottomN",
   params = list(rank = 20, percent = TRUE)
 )
 wb$add_worksheet("logical operators")
