@@ -1,15 +1,17 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata| pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
+  if (whitespace) pugi_parse_flags |= pugi::parse_ws_pcdata_single;
+  if (!whitespace) pugi_parse_flags |= pugi::parse_trim_pcdata;
 
   if (isfile) {
     result = doc->load_file(path.c_str(), pugi_parse_flags, pugi::encoding_utf8);
@@ -28,15 +30,17 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration) {
 }
 
 // [[Rcpp::export]]
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
+  if (whitespace) pugi_parse_flags |= pugi::parse_ws_pcdata_single;
+  if (!whitespace) pugi_parse_flags |= pugi::parse_trim_pcdata;
 
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
@@ -462,7 +466,7 @@ Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, 
 
 
 // [[Rcpp::export]]
-SEXP printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
+SEXP printXPtr(XPtrXML doc, std::string indent, bool no_escapes, bool raw) {
 
   // pugi::parse_default without escapes flag
   unsigned int pugi_format_flags = pugi::format_indent;
@@ -470,7 +474,7 @@ SEXP printXPtr(XPtrXML doc, bool no_escapes, bool raw) {
   if (raw)  pugi_format_flags |= pugi::format_raw;
 
   std::ostringstream oss;
-  doc->print(oss, " ", pugi_format_flags);
+  doc->print(oss, indent.c_str(), pugi_format_flags);
 
   return Rcpp::wrap(Rcpp::String(oss.str()));
 }

@@ -114,7 +114,11 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 ## ------------------------------------------------
 
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
 }
 \seealso{
 create_border
@@ -259,7 +263,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
 \item \href{#method-wbWorkbook-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-wbWorkbook-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
-\item \href{#method-wbWorkbook-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
 \item \href{#method-wbWorkbook-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
@@ -1142,55 +1145,6 @@ Adds data validation
 \item{\code{showErrorMsg}}{showErrorMsg}
 }
 \if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-conditional_formatting"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-conditional_formatting}{}}}
-\subsection{Method \code{conditional_formatting()}}{
-Set conditional formatting for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditional_formatting(
-  sheet = current_sheet(),
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  dxfId,
-  formula,
-  type,
-  values,
-  params
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{dxfId}}{dxfId}
-
-\item{\code{formula}}{formula}
-
-\item{\code{type}}{type}
-
-\item{\code{values}}{values}
-
-\item{\code{params}}{params}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
@@ -2270,7 +2224,11 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
 }
 \if{html}{\out{</div>}}
 

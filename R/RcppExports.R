@@ -56,12 +56,12 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
-readXMLPtr <- function(path, isfile, escapes, declaration) {
-    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration)
+readXMLPtr <- function(path, isfile, escapes, declaration, whitespace) {
+    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, whitespace)
 }
 
-readXML <- function(path, isfile, escapes, declaration) {
-    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration)
+readXML <- function(path, isfile, escapes, declaration, whitespace) {
+    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace)
 }
 
 getXMLXPtrName1 <- function(doc) {
@@ -132,8 +132,8 @@ getXMLXPtr4attr <- function(doc, level1, level2, level3, child) {
     .Call(`_openxlsx2_getXMLXPtr4attr`, doc, level1, level2, level3, child)
 }
 
-printXPtr <- function(doc, no_escapes, raw) {
-    .Call(`_openxlsx2_printXPtr`, doc, no_escapes, raw)
+printXPtr <- function(doc, indent, no_escapes, raw) {
+    .Call(`_openxlsx2_printXPtr`, doc, indent, no_escapes, raw)
 }
 
 write_xml_file <- function(xml_content, escapes) {

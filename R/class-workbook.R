@@ -2532,317 +2532,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
-    #' Set conditional formatting for a sheet
-    #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
-    #' @param dxfId dxfId
-    #' @param formula formula
-    #' @param type type
-    #' @param values values
-    #' @param params params
-    #' @return The `wbWorkbook` object, invisibly
-    conditional_formatting = function(
-      sheet = current_sheet(),
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      dxfId,
-      formula,
-      type,
-      values,
-      params
-    ) {
-      # TODO consider defaults for logicals
-      # TODO rename: setConditionFormatting?  Or addConditionalFormatting
-      # TODO can this be moved to the sheet data?
-      sheet <- private$get_sheet_index(sheet)
-      sqref <- stri_join(
-        get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
-        collapse = ":"
-      )
-
-      ## Increment priority of conditional formatting rule
-      for (i in rev(seq_along(self$worksheets[[sheet]]$conditionalFormatting))) {
-        priority <- reg_match0(
-          self$worksheets[[sheet]]$conditionalFormatting[[i]],
-          '(?<=priority=")[0-9]+'
-        )
-        priority_new <- as.integer(priority) + 1L
-        priority_pattern <- sprintf('priority="%s"', priority)
-        priority_new <- sprintf('priority="%s"', priority_new)
-
-        ## now replace
-        self$worksheets[[sheet]]$conditionalFormatting[[i]] <- gsub(
-          priority_pattern,
-          priority_new,
-          self$worksheets[[sheet]]$conditionalFormatting[[i]],
-          fixed = TRUE
-        )
-      }
-
-      nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
-
-
-      # big switch statement
-      cfRule <- switch(
-        type,
-
-        ## colourScale ----
-        colorScale = {
-
-          ## formula contains the colours
-          ## values contains numerics or is NULL
-          ## dxfId is ignored
-
-          if (is.null(values)) {
-          # could use a switch() here for length to also check against other
-          # lengths, if these aren't checked somewhere already?
-            if (length(formula) == 2L) {
-              sprintf(
-                # TODO is this indentation necessary?
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]]
-              )
-            } else {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]],
-                formula[[3]]
-              )
-            }
-          } else {
-            if (length(formula) == 2L) {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                values[[1]],
-                values[[2]],
-                formula[[1]],
-                formula[[2]]
-              )
-            } else {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                values[[1]],
-                values[[2]],
-                values[[3]],
-                formula[[1]],
-                formula[[2]],
-                formula[[3]]
-              )
-            }
-          }
-        },
-
-        ## dataBar ----
-        dataBar = {
-          if (length(formula) == 2L) {
-            negColour <- formula[[1]]
-            posColour <- formula[[2]]
-          } else {
-            posColour <- formula
-            negColour <- "FFFF0000"
-          }
-
-          guid <- stri_join(
-            "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(xml_node(
-              self$worksheets[[sheet]]$extLst,
-              "ext",
-              "x14:conditionalFormattings",
-              "x14:conditionalFormatting"
-            ))
-          )
-
-          showValue <- as.integer(params$showValue %||% 1L)
-          gradient  <- as.integer(params$gradient  %||% 1L)
-          border    <- as.integer(params$border    %||% 1L)
-
-          newExtLst <- gen_databar_extlst(
-            guid      = guid,
-            sqref     = sqref,
-            posColour = posColour,
-            negColour = negColour,
-            values    = values,
-            border    = border,
-            gradient  = gradient
-          )
-
-          # check if any extLst availaible
-          if (length(self$worksheets[[sheet]]$extLst) == 0) {
-            self$worksheets[[sheet]]$extLst <- newExtLst
-          } else if (length(xml_node(self$worksheets[[sheet]]$extLst, "ext", "x14:conditionalFormattings")) == 0) {
-            # extLst is available, has no conditionalFormattings
-            self$worksheets[[sheet]]$extLst <- xml_add_child(
-              self$worksheets[[sheet]]$extLst,
-              xml_node(newExtLst, "ext", "x14:conditionalFormattings")
-            )
-          } else {
-            # extLst is available, has conditionalFormattings
-            self$worksheets[[sheet]]$extLst <- xml_add_child(
-              self$worksheets[[sheet]]$extLst,
-              xml_node(
-                newExtLst,
-                "ext",
-                "x14:conditionalFormattings",
-                "x14:conditionalFormatting"
-              ),
-              level = "x14:conditionalFormattings"
-            )
-          }
-
-          if (is.null(values)) {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                          <cfvo type="min"/><cfvo type="max"/>
-                          <color rgb="%s"/>
-                          </dataBar>
-                          <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{%s}</x14:id></ext>
-                        </extLst></cfRule>',
-              showValue,
-              posColour,
-              guid
-            )
-          } else {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/>
-                            </dataBar>
-                            <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-                            <x14:id>{%s}</x14:id></ext></extLst></cfRule>',
-              showValue,
-              values[[1]],
-              values[[2]],
-              posColour,
-              guid
-            )
-          }
-        },
-
-        ## expression ----
-        expression = {
-          sprintf(
-            '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
-            dxfId,
-            formula
-          )
-        },
-
-        ## duplicatedValues ----
-        duplicatedValues = {
-          sprintf(
-            '<cfRule type="duplicateValues" dxfId="%s" priority="1"/>',
-            dxfId
-          )
-        },
-
-        ## containsText ----
-        containsText = {
-          sprintf(
-            '<cfRule type="containsText" dxfId="%s" priority="1" operator="containsText" text="%s">
-                        	<formula>NOT(ISERROR(SEARCH("%s", %s)))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        ## notContainsText ----
-        notContainsText = {
-          sprintf(
-            '<cfRule type="notContainsText" dxfId="%s" priority="1" operator="notContains" text="%s">
-                        	<formula>ISERROR(SEARCH("%s", %s))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        ## beginsWith ----
-        beginsWith = {
-          sprintf(
-            '<cfRule type="beginsWith" dxfId="%s" priority="1" operator="beginsWith" text="%s">
-                        	<formula>LEFT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-
-            strsplit(sqref, split = ":")[[1]][1],
-            values,
-            values
-          )
-        },
-
-        ## endsWith ----
-        endsWith = sprintf(
-          '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
-                        	<formula>RIGHT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-          dxfId,
-          values,
-
-          strsplit(sqref, split = ":")[[1]][1],
-          values,
-          values
-        ),
-
-        ## between ----
-        between = sprintf(
-          '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
-          dxfId,
-          formula[1],
-          formula[2]
-        ),
-
-        ## topN ----
-        topN = sprintf(
-          '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
-          dxfId,
-          values[1],
-          values[2]
-        ),
-
-        ## bottomN ----
-        bottomN = {
-          sprintf(
-            '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
-            dxfId,
-            values[1],
-            values[2]
-          )
-        },
-        # do we have a match.arg() anywhere or will it just be showned in this switch()?
-        stop("type `", type, "` is not a valid formatting rule")
-      )
-
-      private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
-      names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
-      invisible(self)
-    },
-
-    #' @description
     #' Set cell merging for a sheet
     #' @param sheet sheet
     #' @param rows,cols Row and column specifications.
@@ -3051,6 +2740,11 @@ wbWorkbook <- R6::R6Class(
           rank      = 5L
         )
     ) {
+
+      if (!is.null(style)) assert_class(style, "character")
+      assert_class(type, "character")
+      assert_class(params, "list")
+
       type <- match.arg(type)
 
       ## rows and cols
@@ -3061,11 +2755,18 @@ wbWorkbook <- R6::R6Class(
       rows <- as.integer(rows)
 
       ## check valid rule
-      values <- NULL
-      dxfs <- self$styles_mgr$styles$dxfs
-      dxf <- xml_node(dxfs, "dxf")
-      dxfId <- which(dxf == style) - 1
+      dxfId <- NULL
+      if (!is.null(style)) dxfId <- self$styles_mgr$get_dxf_id(style)
       params <- validate_conditional_formatting_params(params)
+      values <- NULL
+
+      sel <- c("expression", "duplicatedValues", "containsText", "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN")
+      if (is.null(style) && type %in% sel) {
+        smp <- random_string()
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+        self$styles_mgr$add(style, smp)
+        dxfId <- self$styles_mgr$get_dxf_id(smp)
+      }
 
       switch(
         type,
@@ -3091,17 +2792,6 @@ wbWorkbook <- R6::R6Class(
             )
           } ## else, there is a letter in the formula and apply as is
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1L
-          }
-
-          # # TODO check type up front and validate selections there...
-          # # or only use style class...
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
-          }
         },
 
         colorScale = {
@@ -3170,16 +2860,6 @@ wbWorkbook <- R6::R6Class(
           # type == "duplicatedValues"
           # - style is a Style object
           # - rule is ignored
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-
-          if (!grepl("^<dxf>", style)) {
-            stop("When type == 'duplicates', style must be a Style object.")
-          }
 
           rule <- style
         },
@@ -3189,18 +2869,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'contains', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3212,19 +2882,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'notContains', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3236,18 +2895,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'beginsWith', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
           if (!is.character("character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3259,18 +2908,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'endsWith', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3279,30 +2918,11 @@ wbWorkbook <- R6::R6Class(
 
         between = {
           rule <- range(rule)
-
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop("When type == 'between', style must be a Style object.")
-          }
         },
 
         topN = {
           # - rule is ignored
           # - 'rank' and 'percent' are named params
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop("when type == 'topN', style must be a Style object.")
-          }
 
           ## Additional parameters passed by ...
           # percent, rank
@@ -3314,15 +2934,6 @@ wbWorkbook <- R6::R6Class(
         bottomN = {
           # - rule is ignored
           # - 'rank' and 'percent' are named params
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop("When type == 'bottomN', style must be a Style object.")
-          }
 
           ## Additional parameters passed by ...
           # percent, rank
@@ -5006,7 +4617,11 @@ wbWorkbook <- R6::R6Class(
     #' @param xfId xf ID to apply
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+    #'  wb$add_cell_style("S1", "A1:K1",
+    #'                    textRotation = "45",
+    #'                    horizontal = "center",
+    #'                    vertical = "center",
+    #'                    wrapText = "1")
     #' @return The `wbWorksheetObject`, invisibly
     add_cell_style = function(
         sheet             = current_sheet(),
@@ -5744,226 +5359,48 @@ wbWorkbook <- R6::R6Class(
       cfRule <- switch(
         type,
 
-        colorScale = {
+        ## colourScale ----
+        colorScale = cf_create_colorscale(formula, values),
 
-          ## formula contains the colours
-          ## values contains numerics or is NULL
-          ## dxfId is ignored
+        ## dataBar ----
+        dataBar = cf_create_databar(self$worksheets[[sheet]]$extLst, formula, params, sqref, values),
 
-          if (is.null(values)) {
-            # could use a switch() here for length to also check against other
-            # lengths, if these aren't checked somewhere already?
-            if (length(formula) == 2L) {
-              sprintf(
-                # TODO is this indentation necessary?
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]]
-              )
-            } else {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]],
-                formula[[3]]
-              )
-            }
-          } else if (length(formula) == 2L) {
-            sprintf(
-              '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-              values[[1]],
-              values[[2]],
-              formula[[1]],
-              formula[[2]]
-            )
-          } else {
-            sprintf(
-              '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-              values[[1]],
-              values[[2]],
-              values[[3]],
-              formula[[1]],
-              formula[[2]],
-              formula[[3]]
-            )
-          }
-        },
+        ## expression ----
+        expression = cf_create_expression(dxfId, formula),
 
-        dataBar = {
-          if (length(formula) == 2L) {
-            negColour <- formula[[1]]
-            posColour <- formula[[2]]
-          } else {
-            posColour <- formula
-            negColour <- "FFFF0000"
-          }
+        ## duplicatedValues ----
+        duplicatedValues = cf_create_duplicated_values(dxfId),
 
-          extLst <- self$worksheets[[sheet]]$extLst
+        ## containsText ----
+        containsText = cf_create_contains_text(dxfId, sqref, values),
 
-          guid <- stri_join(
-            "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(xml_node(extLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting"))
-          )
+        ## notContainsText ----
+        notContainsText = cf_create_not_contains_text(dxfId, sqref, values),
 
-          newExtLst <- gen_databar_extlst(
-            guid      = guid,
-            sqref     = sqref,
-            posColour = posColour,
-            negColour = negColour,
-            values    = values,
-            border    = params$border,
-            gradient  = params$gradient
-          )
+        ## beginsWith ----
+        beginsWith = cf_begins_with(dxfId, sqref, values),
 
-          # check if any extLst availaible
-          if (length(extLst) == 0) {
-            self$worksheets[[sheet]]$extLst <- newExtLst
-          } else if (length(xml_node(extLst, "ext", "x14:conditionalFormattings")) == 0) {
-            # extLst is available, has no conditionalFormattings
-            extLst <- xml_add_child(extLst,
-                                    xml_node(newExtLst, "ext", "x14:conditionalFormattings"))
-            self$worksheets[[sheet]]$extLst <- extLst
-          } else {
-            # extLst is available, has conditionalFormattings
-            extLst <- xml_add_child(extLst,
-                                    xml_node(newExtLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting"),
-                                    level = "x14:conditionalFormattings")
-            self$worksheets[[sheet]]$extLst <- extLst
-          }
+        ## endsWith ----
+        endsWith = cf_ends_with(dxfId, sqref, values),
 
+        ## between ----
+        between = cf_between(dxfId, formula),
 
+        ## topN ----
+        topN = cf_top_n(dxfId, values),
 
-          if (is.null(values)) {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                          <cfvo type="min"/><cfvo type="max"/>
-                          <color rgb="%s"/>
-                          </dataBar>
-                          <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{%s}</x14:id></ext>
-                        </extLst></cfRule>',
-              params$showValue,
-              posColour,
-              guid
-            )
-          } else {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/>
-                            </dataBar>
-                            <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-                            <x14:id>{%s}</x14:id></ext></extLst></cfRule>',
-              params$showValue,
-              values[[1]],
-              values[[2]],
-              posColour,
-              guid
-            )
-          }
-        },
+        ## bottomN ----
+        bottomN = cf_bottom_n(dxfId, values),
 
-        expression = {
-          sprintf(
-            '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
-            dxfId,
-            formula
-          )
-        },
-
-        duplicatedValues = {
-          sprintf(
-            '<cfRule type="duplicateValues" dxfId="%s" priority="1"/>',
-            dxfId
-          )
-        },
-
-        containsText = {
-          sprintf(
-            '<cfRule type="containsText" dxfId="%s" priority="1" operator="containsText" text="%s">
-                        	<formula>NOT(ISERROR(SEARCH("%s", %s)))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        notContainsText = {
-          sprintf(
-            '<cfRule type="notContainsText" dxfId="%s" priority="1" operator="notContains" text="%s">
-                        	<formula>ISERROR(SEARCH("%s", %s))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        beginsWith = {
-          sprintf(
-            '<cfRule type="beginsWith" dxfId="%s" priority="1" operator="beginsWith" text="%s">
-                        	<formula>LEFT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            strsplit(sqref, split = ":")[[1]][1],
-            values,
-            values
-          )
-        },
-
-        endsWith = sprintf(
-          '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
-                        	<formula>RIGHT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-          dxfId,
-          values,
-          strsplit(sqref, split = ":")[[1]][1],
-          values,
-          values
-        ),
-
-        between = sprintf(
-          '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
-          dxfId,
-          formula[1],
-          formula[2]
-        ),
-
-        topN = sprintf(
-          '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
-          dxfId,
-          values$rank,
-          values$percent
-        ),
-
-        bottomN = {
-          sprintf(
-            '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
-            dxfId,
-            values$rank,
-            values$percent
-          )
-        },
-        # match.arg() from call should take care of this
-        stop("[internal error] type : ", toString(type)) # nocov
+        # do we have a match.arg() anywhere or will it just be showned in this switch()?
+        stop("type `", type, "` is not a valid formatting rule")
       )
 
-      private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
+      # dataBar needs additional extLst
+      if (!is.null(attr(cfRule, "extLst")))
+        self$worksheets[[sheet]]$extLst <- read_xml(attr(cfRule, "extLst"), pointer = FALSE)
+
+      private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE))
       names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
       invisible(self)
     },
