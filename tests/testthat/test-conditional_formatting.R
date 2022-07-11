@@ -476,3 +476,88 @@ test_that("colorScale", {
   expect_identical(exp, wb$worksheets[[4]]$conditionalFormatting)
 
 })
+
+test_that("extend dataBar tests", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("databar")
+  ## Databars
+  wb$add_data("databar", -5:5, startCol = 1)
+  wb <- wb_add_conditional_formatting(
+    wb,
+    "databar",
+    cols = 1,
+    rows = 1:11,
+    type = "dataBar"
+  ) ## Default colours
+
+  wb$add_data("databar", -5:5, startCol = 3)
+  wb <- wb_add_conditional_formatting(
+    wb,
+    "databar",
+    cols = 3,
+    rows = 1:11,
+    type = "dataBar",
+    params = list(
+      showValue = FALSE,
+      gradient = FALSE
+    )
+  ) ## Default colours
+
+  wb$add_data("databar", -5:5, startCol = 5)
+  wb <- wb_add_conditional_formatting(
+    wb,
+    "databar",
+    cols = 5,
+    rows = 1:11,
+    type = "dataBar",
+    style = c("#a6a6a6"),
+    params = list(showValue = FALSE)
+  )
+
+  wb$add_data("databar", -5:5, startCol = 7)
+  wb <- wb_add_conditional_formatting(
+    wb,
+    "databar",
+    cols = 7,
+    rows = 1:11,
+    type = "dataBar",
+    style = c("red"),
+    params = list(
+      showValue = TRUE,
+      gradient = FALSE
+    )
+  )
+
+  wb$add_data("databar", -5:5, startCol = 9)
+  wb <- wb_add_conditional_formatting(
+    wb,
+    "databar",
+    cols = 9,
+    rows = 1:11,
+    type = "dataBar",
+    style = c("#a6a6a6", "#a6a6a6"),
+    params = list(showValue = TRUE, gradient = FALSE)
+  )
+
+  exp <- c(`A1:A11` = "<cfRule type=\"dataBar\" priority=\"5\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF638EC6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>",
+           `C1:C11` = "<cfRule type=\"dataBar\" priority=\"4\"><dataBar showValue=\"0\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF638EC6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40001}</x14:id></ext></extLst></cfRule>",
+           `E1:E11` = "<cfRule type=\"dataBar\" priority=\"3\"><dataBar showValue=\"0\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40002}</x14:id></ext></extLst></cfRule>",
+           `G1:G11` = "<cfRule type=\"dataBar\" priority=\"2\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFFF0000\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40003}</x14:id></ext></extLst></cfRule>",
+           `I1:I11` = "<cfRule type=\"dataBar\" priority=\"1\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40004}</x14:id></ext></extLst></cfRule>"
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  exp <- read_xml("<ext uri=\"{78C0D931-6437-407d-A8EE-F0AAD7539E65}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">
+  <x14:conditionalFormattings>
+  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40000}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"1\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FF638EC6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>A1:A11</xm:sqref></x14:conditionalFormatting>
+  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40001}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FF638EC6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>C1:C11</xm:sqref></x14:conditionalFormatting>
+  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40002}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"1\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>E1:E11</xm:sqref></x14:conditionalFormatting>
+  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40003}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFFF0000\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>G1:G11</xm:sqref></x14:conditionalFormatting>
+  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40004}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFA6A6A6\"/><x14:negativeBorderColor rgb=\"FFA6A6A6\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>I1:I11</xm:sqref></x14:conditionalFormatting>
+  </x14:conditionalFormattings></ext>", pointer = FALSE)
+  got <- wb$worksheets[[1]]$extLst
+  expect_equal(exp, got)
+
+})
