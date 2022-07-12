@@ -4689,6 +4689,54 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(self)
+    },
+
+
+    #' @description clone style from one sheet to another
+    #' @param from the worksheet you are cloning
+    #' @param to the worksheet the style is applied to
+    clone_sheet_style = function(from, to) {
+      # check if sheets exist in wb
+      id_org <- self$validate_sheet(from)
+      id_new <- self$validate_sheet(to)
+
+      org_style <- self$worksheets[[id_org]]$sheet_data$cc
+      wb_style  <- self$worksheets[[id_new]]$sheet_data$cc
+
+      # remove all values
+      org_style <- org_style[c("r", "row_r", "c_r", "c_s")]
+
+      # do not merge c_s and do not create duplicates
+      merged_style <- merge(org_style,
+                            wb_style[-which(names(org_style) == "c_s")],
+                            all = TRUE)
+      merged_style[is.na(merged_style)] <- ""
+      merged_style <- merged_style[!duplicated(merged_style[1:4]), ]
+
+      # TODO order this as well?
+      self$worksheets[[id_new]]$sheet_data$cc <- merged_style
+
+      # copy entire attributes from original sheet to new sheet
+      org_rows <- self$worksheets[[id_org]]$sheet_data$row_attr
+      new_rows <- self$worksheets[[id_new]]$sheet_data$row_attr
+
+      merged_rows <- merge(org_rows[c("r")], new_rows, all = TRUE)
+      merged_rows[is.na(merged_rows)] <- ""
+      ordr <- ordered(order(as.integer(merged_rows$r)))
+      merged_rows <- merged_rows[ordr,]
+
+      self$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
+
+      self$worksheets[[id_new]]$cols_attr <-
+        self$worksheets[[id_org]]$cols_attr
+
+      self$worksheets[[id_new]]$dimension <-
+        self$worksheets[[id_org]]$dimension
+
+      self$worksheets[[id_new]]$mergeCells <-
+        self$worksheets[[id_org]]$mergeCells
+
+      invisible(self)
     }
 
   ),
