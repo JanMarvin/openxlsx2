@@ -196,7 +196,7 @@ knitr::include_graphics("cf_contains_no_text.png")
 
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-wb$add_data("containsText", sapply(1:10, fn))
+wb$add_data("notcontainsText", sapply(1:10, fn))
 wb$add_conditional_formatting(
   "notcontainsText", 
   cols = 1,
