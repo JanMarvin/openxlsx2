@@ -4711,7 +4711,7 @@ wbWorkbook <- R6::R6Class(
                             wb_style[-which(names(org_style) == "c_s")],
                             all = TRUE)
       merged_style[is.na(merged_style)] <- ""
-      merged_style <- merged_style[!duplicated(merged_style[1:4]), ]
+      merged_style <- merged_style[!duplicated(merged_style["r"]), ]
 
       # TODO order this as well?
       self$worksheets[[id_new]]$sheet_data$cc <- merged_style
