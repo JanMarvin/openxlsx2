@@ -105,6 +105,7 @@
 <div class="section level2">
 <h2 id="rule-applies-to-all-each-cell-in-range">Rule applies to all each cell in range<a class="anchor" aria-label="anchor" href="#rule-applies-to-all-each-cell-in-range"></a>
 </h2>
+<p><img src="cf_cells.png"><!-- --></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"cellIs"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"cellIs"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -127,6 +128,7 @@
 <div class="section level2">
 <h2 id="highlight-row-dependent-on-first-cell-in-row">Highlight row dependent on first cell in row<a class="anchor" aria-label="anchor" href="#highlight-row-dependent-on-first-cell-in-row"></a>
 </h2>
+<p><img src="cf_moving_row.png"><!-- --></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Row"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Row"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -149,6 +151,7 @@
 <div class="section level2">
 <h2 id="highlight-column-dependent-on-first-cell-in-column">Highlight column dependent on first cell in column<a class="anchor" aria-label="anchor" href="#highlight-column-dependent-on-first-cell-in-column"></a>
 </h2>
+<p><img src="cf_moving_col.png"><!-- --></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Col"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Col"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -171,6 +174,7 @@
 <div class="section level2">
 <h2 id="highlight-entire-range-cols-x-rows-dependent-only-on-cell-a1">Highlight entire range cols X rows dependent only on cell A1<a class="anchor" aria-label="anchor" href="#highlight-entire-range-cols-x-rows-dependent-only-on-cell-a1"></a>
 </h2>
+<p><img src="cf_dependent_on.png"><!-- --></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Dependent on"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -213,6 +217,7 @@
 <div class="section level2">
 <h2 id="highlight-duplicates-using-default-style">Highlight duplicates using default style<a class="anchor" aria-label="anchor" href="#highlight-duplicates-using-default-style"></a>
 </h2>
+<p><img src="cf_duplicates.png"><!-- --></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Duplicates"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Duplicates"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>, size <span class="op">=</span> <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
@@ -226,6 +231,7 @@
 <div class="section level2">
 <h2 id="cells-containing-text">Cells containing text<a class="anchor" aria-label="anchor" href="#cells-containing-text"></a>
 </h2>
+<p><img src="cf_contains_text.png"><!-- --></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"containsText"</span><span class="op">)</span></span>
@@ -242,9 +248,10 @@
 <div class="section level2">
 <h2 id="cells-not-containing-text">Cells not containing text<a class="anchor" aria-label="anchor" href="#cells-not-containing-text"></a>
 </h2>
+<p><img src="cf_contains_no_text.png"><!-- --></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"containsText"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"notcontainsText"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"notcontainsText"</span>, </span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -256,6 +263,7 @@
 <div class="section level2">
 <h2 id="cells-begins-with-text">Cells begins with text<a class="anchor" aria-label="anchor" href="#cells-begins-with-text"></a>
 </h2>
+<p><img src="cf_begins_with.png"><!-- --></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"beginsWith"</span><span class="op">)</span></span>
@@ -271,6 +279,7 @@
 <div class="section level2">
 <h2 id="cells-ends-with-text">Cells ends with text<a class="anchor" aria-label="anchor" href="#cells-ends-with-text"></a>
 </h2>
+<p><img src="cf_ends_with.png"><!-- --></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"endsWith"</span><span class="op">)</span></span>
@@ -286,6 +295,11 @@
 <div class="section level2">
 <h2 id="colorscale-colors-cells-based-on-cell-value">Colorscale colors cells based on cell value<a class="anchor" aria-label="anchor" href="#colorscale-colors-cells-based-on-cell-value"></a>
 </h2>
+<div class="figure">
+<img src="cf_color_scale.png" alt="Yep, that is a color scale image." width="100%"><p class="caption">
+Yep, that is a color scale image.
+</p>
+</div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"colorScale"</span>, zoom <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
@@ -306,19 +320,86 @@
 <div class="section level2">
 <h2 id="databars">Databars<a class="anchor" aria-label="anchor" href="#databars"></a>
 </h2>
+<p><img src="cf_databar.png" width="100%"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"databar"</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"databar"</span>, </span>
+<span><span class="co">## Databars</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span>, startCol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="st">"databar"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"dataBar"</span></span>
+<span><span class="op">)</span> <span class="co">## Default colours</span></span>
+<span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span>, startCol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="st">"databar"</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"dataBar"</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    showValue <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    gradient <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span> <span class="co">## Default colours</span></span>
+<span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span>, startCol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="st">"databar"</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"dataBar"</span>,</span>
+<span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#a6a6a6"</span><span class="op">)</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span>, startCol <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="st">"databar"</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"dataBar"</span>,</span>
+<span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span><span class="op">)</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    showValue <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    gradient <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># custom color</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"databar"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span>, startCol <span class="op">=</span> <span class="fl">9</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="st">"databar"</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"dataBar"</span>,</span>
+<span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#a6a6a6"</span>, <span class="st">"#a6a6a6"</span><span class="op">)</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># with rule</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span>, startCol <span class="op">=</span> <span class="fl">11</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="st">"databar"</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fl">11</span>,</span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"dataBar"</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#a6a6a6"</span>, <span class="st">"#a6a6a6"</span><span class="op">)</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="between">Between<a class="anchor" aria-label="anchor" href="#between"></a>
 </h2>
+<p><img src="cf_between.png"><!-- --></p>
 <p>Highlight cells in interval [-2, 2]</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"between"</span><span class="op">)</span></span>
@@ -328,13 +409,14 @@
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"between"</span>, </span>
-<span>  rule <span class="op">=</span> <span class="fl">2</span></span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"topN"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="top-n">Top N<a class="anchor" aria-label="anchor" href="#top-n"></a>
 </h2>
+<p><img src="cf_top_n.png"><!-- --></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"topN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Highlight top 5 values in column x</p>
@@ -358,7 +440,11 @@
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"bottomN"</span><span class="op">)</span></span></code></pre></div>
-<p>Bottom N</p>
+</div>
+<div class="section level2">
+<h2 id="bottom-n">Bottom N<a class="anchor" aria-label="anchor" href="#bottom-n"></a>
+</h2>
+<p><img src="cf_bottom_n.png"><!-- --></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"bottomN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Highlight bottom 5 values in column x</p>
@@ -386,6 +472,7 @@
 <div class="section level2">
 <h2 id="logical-operators">Logical Operators<a class="anchor" aria-label="anchor" href="#logical-operators"></a>
 </h2>
+<p><img src="cf_logical_operators.png"><!-- --></p>
 <p>You can use Excels logical Operators</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"logical operators"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
