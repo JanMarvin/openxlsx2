@@ -29,6 +29,10 @@ wb$styles_mgr$add(posStyle, "posStyle")
 
 ## Rule applies to all each cell in range
 
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_cells.png")
+```
+
 ```{r}
 wb$add_worksheet("cellIs")
 wb$add_data("cellIs", -5:5)
@@ -50,6 +54,10 @@ wb$add_conditional_formatting(
 ```
 
 ## Highlight row dependent on first cell in row
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_moving_row.png")
+```
 
 ```{r}
 wb$add_worksheet("Moving Row")
@@ -73,6 +81,10 @@ wb$add_conditional_formatting(
 
 ## Highlight column dependent on first cell in column
 
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_moving_col.png")
+```
+
 ```{r}
 wb$add_worksheet("Moving Col")
 wb$add_data("Moving Col", -5:5)
@@ -94,6 +106,10 @@ wb$add_conditional_formatting(
 ```
 
 ## Highlight entire range cols X rows dependent only on cell A1
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_dependent_on.png")
+```
 
 ```{r}
 wb$add_worksheet("Dependent on")
@@ -137,6 +153,10 @@ wb$add_conditional_formatting(
 
 ## Highlight duplicates using default style
 
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_duplicates.png")
+```
+
 ```{r}
 wb$add_worksheet("Duplicates")
 wb$add_data("Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
@@ -149,6 +169,10 @@ wb$add_conditional_formatting(
 ```
 
 ## Cells containing text
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_contains_text.png")
+```
 
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
@@ -166,9 +190,13 @@ wb$add_worksheet("notcontainsText")
 
 ## Cells not containing text
 
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_contains_no_text.png")
+```
+
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
-wb$add_data("containsText", sapply(1:10, fn))
+wb$add_data("notcontainsText", sapply(1:10, fn))
 wb$add_conditional_formatting(
   "notcontainsText", 
   cols = 1,
@@ -179,6 +207,10 @@ wb$add_conditional_formatting(
 ```
 
 ## Cells begins with text
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_begins_with.png")
+```
 
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
@@ -195,6 +227,10 @@ wb$add_conditional_formatting(
 
 ## Cells ends with text
 
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_ends_with.png")
+```
+
 ```{r}
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 wb$add_worksheet("endsWith")
@@ -209,6 +245,10 @@ wb$add_conditional_formatting(
 ```
 
 ## Colorscale colors cells based on cell value
+
+```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="Yep, that is a color scale image."}
+knitr::include_graphics("cf_color_scale.png")
+```
 
 ```{r}
 df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 5)
@@ -234,18 +274,91 @@ wb$set_row_heights("colorScale", rows = seq_len(nrow(df)), heights = 7.5)
 
 ## Databars
 
+```{r echo=FALSE, warning=FALSE, out.width="100%"}
+knitr::include_graphics("cf_databar.png")
+```
+
 ```{r}
 wb$add_worksheet("databar")
-wb$add_data("databar", -5:5)
-wb$add_conditional_formatting(
-  "databar", 
+## Databars
+wb$add_data("databar", -5:5, startCol = 1)
+wb <- wb_add_conditional_formatting(
+  wb,
+  "databar",
   cols = 1,
   rows = 1:11,
   type = "dataBar"
+) ## Default colours
+
+wb$add_data("databar", -5:5, startCol = 3)
+wb <- wb_add_conditional_formatting(
+  wb,
+  "databar",
+  cols = 3,
+  rows = 1:11,
+  type = "dataBar",
+  params = list(
+    showValue = FALSE,
+    gradient = FALSE
+  )
+) ## Default colours
+
+wb$add_data("databar", -5:5, startCol = 5)
+wb <- wb_add_conditional_formatting(
+  wb,
+  "databar",
+  cols = 5,
+  rows = 1:11,
+  type = "dataBar",
+  style = c("#a6a6a6"),
+  params = list(showValue = FALSE)
+)
+
+wb$add_data("databar", -5:5, startCol = 7)
+wb <- wb_add_conditional_formatting(
+  wb,
+  "databar",
+  cols = 7,
+  rows = 1:11,
+  type = "dataBar",
+  style = c("red"),
+  params = list(
+    showValue = TRUE,
+    gradient = FALSE
+  )
+)
+
+# custom color
+wb$add_data("databar", -5:5, startCol = 9)
+wb <- wb_add_conditional_formatting(
+  wb,
+  "databar",
+  cols = 9,
+  rows = 1:11,
+  type = "dataBar",
+  style = c("#a6a6a6", "#a6a6a6"),
+  params = list(showValue = TRUE, gradient = FALSE)
+)
+
+# with rule
+wb$add_data(x = -5:5, startCol = 11)
+wb <- wb_add_conditional_formatting(
+  wb,
+  "databar",
+  cols = 11,
+  rows = 1:11,
+  type = "dataBar",
+  rule = c(0, 5),
+  style = c("#a6a6a6", "#a6a6a6"),
+  params = list(showValue = TRUE, gradient = FALSE)
 )
 ```
 
 ## Between
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_between.png")
+```
 
 Highlight cells in interval [-2, 2]
 
@@ -257,12 +370,16 @@ wb$add_conditional_formatting(
   cols = 1,
   rows = 1:11,
   type = "between", 
-  rule = 2
+  rule = c(-2,2)
 )
 wb$add_worksheet("topN")
 ```
 
 ## Top N
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_top_n.png")
+```
 
 ```{r}
 wb$add_data("topN", data.frame(x = 1:10, y = rnorm(10)))
@@ -295,7 +412,11 @@ wb$add_conditional_formatting(
 wb$add_worksheet("bottomN")
 ```
 
-Bottom N
+## Bottom N
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_bottom_n.png")
+```
 
 ```{r}
 wb$add_data("bottomN", data.frame(x = 1:10, y = rnorm(10)))
@@ -329,6 +450,10 @@ wb$add_worksheet("logical operators")
 ```
 
 ## Logical Operators
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics("cf_logical_operators.png")
+```
 
 You can use Excels logical Operators
 
