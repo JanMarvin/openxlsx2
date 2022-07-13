@@ -295,6 +295,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_font}{\code{wbWorkbook$add_font()}}
 \item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
 \item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
+\item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -2234,6 +2235,25 @@ The \code{wbWorksheetObject}, invisibly
 
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-clone_sheet_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone_sheet_style}{}}}
+\subsection{Method \code{clone_sheet_style()}}{
+clone style from one sheet to another
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_sheet_style(from, to)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{the worksheet you are cloning}
+
+\item{\code{to}}{the worksheet the style is applied to}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-clone"></a>}}

@@ -391,3 +391,19 @@ test_that("wb_add_cell_style() is a wrapper", {
     ignore_fields = "styles_mgr"
   )
 })
+
+
+# wb_clone_sheet_style() --------------------------------------------------
+
+test_that("wb_clone_sheet_style() is a wrapper", {
+  wb <- wb_workbook()$
+    add_worksheet(1)$add_data(x = mtcars)$
+    add_worksheet(2)$add_data(x = mtcars)
+  wb$add_fill(sheet = 1, dims = "D5:J23", color = c(rgb = "FFFFFF00"))
+  # the style names are generated at random
+  expect_wrapper(
+    "clone_sheet_style",
+    wb = wb,
+    params = list(from = 1, to = 2)
+  )
+})
