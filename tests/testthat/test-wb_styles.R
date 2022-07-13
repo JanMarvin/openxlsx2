@@ -1,7 +1,28 @@
 test_that("wb_clone_sheet_style", {
 
-  mat <- matrix(1, nrow = 21, ncol = col2int("j"))
+  fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
+  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb <- wb_clone_sheet_style(wb, "SUM", "clone")
 
+  expect_warning(cloneSheetStyle(wb, "SUM", "clone"), "deprecated")
+
+  # clone style to empty sheet (creates cells and style)
+  fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)$add_worksheet("copy")
+  wb <- wb_clone_sheet_style(wb, "SUM", "copy")
+  expect_equal(dim(wb$worksheets[[1]]$sheet_data$cc),
+               dim(wb$worksheets[[1]]$sheet_data$cc))
+  expect_equal(dim(wb$worksheets[[1]]$sheet_data$row_attr),
+               dim(wb$worksheets[[2]]$sheet_data$row_attr))
+
+  # clone style to sheet with data
+  fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)$add_worksheet("copy")$add_data(x = mtcars, startRow = 5, startCol = 2)
+  wb <- wb_clone_sheet_style(wb, "SUM", "copy")
+  expect_equal(c(36, 13), dim(wb$worksheets[[2]]$sheet_data$row_attr))
+
+  # clone style on cloned and cleaned worksheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
   wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
@@ -16,6 +37,17 @@ test_that("wb_clone_sheet_style", {
   expect_equal(
     wb$worksheets[[1]]$sheet_data$cc$c_s,
     wb$worksheets[[2]]$sheet_data$cc$c_s[ord]
+  )
+
+  # output if copying from empty sheet
+  fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)$add_worksheet("copy")
+  expect_message(
+    expect_message(
+      wb <- wb_clone_sheet_style(wb, "copy", "SUM"),
+      "'from' has no sheet data styles to clone"
+    ),
+    "'from' has no row styles to clone"
   )
 
 })

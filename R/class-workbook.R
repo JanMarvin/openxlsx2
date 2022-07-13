@@ -4696,36 +4696,59 @@ wbWorkbook <- R6::R6Class(
     #' @param from the worksheet you are cloning
     #' @param to the worksheet the style is applied to
     clone_sheet_style = function(from, to) {
-      # check if sheets exist in wb
+
       id_org <- self$validate_sheet(from)
       id_new <- self$validate_sheet(to)
 
       org_style <- self$worksheets[[id_org]]$sheet_data$cc
       wb_style  <- self$worksheets[[id_new]]$sheet_data$cc
 
-      # remove all values
-      org_style <- org_style[c("r", "row_r", "c_r", "c_s")]
+      # only clone styles from sheets with cc
+      if (is.null(org_style)) {
+        message("'from' has no sheet data styles to clone")
+      } else {
 
-      # do not merge c_s and do not create duplicates
-      merged_style <- merge(org_style,
-                            wb_style[-which(names(org_style) == "c_s")],
-                            all = TRUE)
-      merged_style[is.na(merged_style)] <- ""
-      merged_style <- merged_style[!duplicated(merged_style["r"]), ]
+        if (is.null(wb_style)) # if null, create empty dataframe
+          wb_style <- create_char_dataframe(names(org_style), n = 0)
 
-      # TODO order this as well?
-      self$worksheets[[id_new]]$sheet_data$cc <- merged_style
+        # remove all values
+        org_style <- org_style[c("r", "row_r", "c_r", "c_s")]
+
+        # do not merge c_s and do not create duplicates
+        merged_style <- merge(org_style,
+                              wb_style[-which(names(wb_style) == "c_s")],
+                              all = TRUE)
+        merged_style[is.na(merged_style)] <- ""
+        merged_style <- merged_style[!duplicated(merged_style["r"]), ]
+
+        # will be ordere on save
+        self$worksheets[[id_new]]$sheet_data$cc <- merged_style
+
+      }
+
 
       # copy entire attributes from original sheet to new sheet
       org_rows <- self$worksheets[[id_org]]$sheet_data$row_attr
       new_rows <- self$worksheets[[id_new]]$sheet_data$row_attr
 
-      merged_rows <- merge(org_rows[c("r")], new_rows, all = TRUE)
-      merged_rows[is.na(merged_rows)] <- ""
-      ordr <- ordered(order(as.integer(merged_rows$r)))
-      merged_rows <- merged_rows[ordr,]
+      if (is.null(org_style)) {
+        message("'from' has no row styles to clone")
+      } else {
 
-      self$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
+        if (is.null(new_rows))
+          new_rows <- create_char_dataframe(names(org_rows), n = 0)
+
+        # only add the row information, nothing else
+        merged_rows <- merge(org_rows,
+                             new_rows["r"],
+                             all = TRUE)
+        merged_rows[is.na(merged_rows)] <- ""
+        merged_rows <- merged_rows[!duplicated(merged_rows["r"]), ]
+        ordr <- ordered(order(as.integer(merged_rows$r)))
+        merged_rows <- merged_rows[ordr,]
+
+        self$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
+      }
 
       self$worksheets[[id_new]]$cols_attr <-
         self$worksheets[[id_org]]$cols_attr
