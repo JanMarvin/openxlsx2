@@ -142,4 +142,65 @@ test_that("data validation", {
   got <- wb$worksheets[[3]]$dataValidationsLst
   expect_equal(exp, got)
 
+  ### tests if conditions
+
+  # test col2int
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data_table(x = head(iris))$
+    # whole numbers are fine
+    add_data_validation(col = "A", rows = 2:151, type = "whole",
+                        operator = "between", value = c(1, 9)
+    )
+
+  exp <- "<dataValidation type=\"whole\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:A151\"><formula1>1</formula1><formula2>9</formula2></dataValidation>"
+  got <- wb$worksheets[[1]]$dataValidations
+
+
+  # to many values
+  expect_error(
+    wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data_table(x = head(iris))$
+    add_data_validation(col = "A", rows = 2:151, type = "whole",
+                        operator = "between", value = c(1, 9, 19)
+    ),
+    "length <= 2"
+  )
+
+  # wrong type
+  expect_error(
+    wb <- wb_workbook()$
+      add_worksheet("Sheet 1")$
+      add_data_table(x = head(iris))$
+      add_data_validation(col = "A", rows = 2:151, type = "even",
+                          operator = "between", value = c(1, 9)
+      ),
+    "Invalid 'type' argument!"
+  )
+
+  # wrong value for date
+  expect_error(
+    wb <- wb_workbook()$
+      add_worksheet("Sheet 1")$
+      add_data_table(x = head(iris))$
+      # whole numbers are fine
+      add_data_validation(col = 1, rows = 2:12, type = "date",
+                          operator = "greaterThanOrEqual", value = 7
+      ),
+    "If type == 'date' value argument must be a Date vector"
+  )
+
+  # wrong value for time
+  expect_error(
+    wb <- wb_workbook()$
+      add_worksheet("Sheet 1")$
+      add_data_table(x = head(iris))$
+      # whole numbers are fine
+      add_data_validation(col = 1, rows = 2:12, type = "time",
+                          operator = "greaterThanOrEqual", value = 7
+      ),
+    "If type == 'time' value argument must be a POSIXct or POSIXlt vector."
+  )
+
 })

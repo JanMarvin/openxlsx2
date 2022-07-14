@@ -2428,9 +2428,13 @@ wbWorkbook <- R6::R6Class(
       }
       rows <- as.integer(rows)
 
+      assert_class(allowBlank, "logical")
+      assert_class(showInputMsg, "logical")
+      assert_class(showErrorMsg, "logical")
+
       ## check length of value
       if (length(value) > 2) {
-        stop("value argument must be length < 2")
+        stop("value argument must be length <= 2")
       }
 
       valid_types <- c(
@@ -2469,18 +2473,6 @@ wbWorkbook <- R6::R6Class(
         operator <- "between" ## ignored
       }
 
-      if (!is.logical(allowBlank)) {
-        stop("Argument 'allowBlank' musts be logical!")
-      }
-
-      if (!is.logical(showInputMsg)) {
-        stop("Argument 'showInputMsg' musts be logical!")
-      }
-
-      if (!is.logical(showErrorMsg)) {
-        stop("Argument 'showErrorMsg' musts be logical!")
-      }
-
       ## All inputs validated
 
       type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
@@ -2491,7 +2483,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
-        stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
+        stop("If type == 'time' value argument must be a POSIXct or POSIXlt vector.")
       }
 
 
