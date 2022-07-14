@@ -179,6 +179,17 @@ test_that("data validation", {
     "Invalid 'type' argument!"
   )
 
+  # wrong operator
+  expect_error(
+    wb <- wb_workbook()$
+      add_worksheet("Sheet 1")$
+      add_data_table(x = head(iris))$
+      add_data_validation(col = "A", rows = 2:151, type = "whole",
+                          operator = "lower", value = c(1, 9)
+      ),
+    "Invalid 'operator' argument!"
+  )
+
   # wrong value for date
   expect_error(
     wb <- wb_workbook()$
