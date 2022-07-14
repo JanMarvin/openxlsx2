@@ -79,7 +79,12 @@
 <span>  <span class="va">value</span>,</span>
 <span>  allowBlank <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  showInputMsg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  showErrorMsg <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  showErrorMsg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  errorStyle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  errorTitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  error <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  promptTitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prompt <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -124,6 +129,26 @@
 
 <dt>showErrorMsg</dt>
 <dd><p>logical</p></dd>
+
+
+<dt>errorStyle</dt>
+<dd><p>The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)</p></dd>
+
+
+<dt>errorTitle</dt>
+<dd><p>The error title</p></dd>
+
+
+<dt>error</dt>
+<dd><p>The error text</p></dd>
+
+
+<dt>promptTitle</dt>
+<dd><p>The prompt title</p></dd>
+
+
+<dt>prompt</dt>
+<dd><p>The prompt text</p></dd>
 
 </dl></div>
 
