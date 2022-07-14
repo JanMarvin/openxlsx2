@@ -963,7 +963,7 @@ wbWorkbook <- R6::R6Class(
         unlink(tmpDir, recursive = TRUE, force = TRUE)
       }
 
-      success <- dir.create(path = tmpDir, recursive = TRUE)
+      success <- dir.create(path = tmpDir, recursive = FALSE)
       if (!success) {
         stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
       }
@@ -5150,8 +5150,8 @@ wbWorkbook <- R6::R6Class(
             file.path(dirname(xlworksheetsDir), "chartsheets", "_rels")
 
           if (!file.exists(chartSheetDir)) {
-            dir.create(chartSheetDir, recursive = TRUE)
-            dir.create(chartSheetRelsDir, recursive = TRUE)
+            dir.create(chartSheetDir, recursive = FALSE)
+            dir.create(chartSheetRelsDir, recursive = FALSE)
           }
 
           write_file(

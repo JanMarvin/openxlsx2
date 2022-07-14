@@ -76,7 +76,7 @@ test_that("read <br> node in vml", {
   temp_dir <- tempfile()
   temp_file <- file.path(temp_dir, "macro2.xlsm")
   temp_zip  <- paste0(temp_file, ".zip")
-  dir.create(temp_dir, recursive = TRUE, showWarnings = FALSE)
+  dir.create(temp_dir, recursive = FALSE, showWarnings = FALSE)
   download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp_zip)
   zip::unzip(temp_zip, exdir = temp_dir)
 
