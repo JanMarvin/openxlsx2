@@ -78,3 +78,68 @@ test_that("$set_sheet_names() and $get_sheet_names() work", {
   res <- wb$.__enclos_env__$private$get_sheet_index("b & c")
   expect_identical(res, 2L)
 })
+
+# data validation ---------------------------------------------------------
+
+
+test_that("data validation", {
+
+
+  df <- data.frame(
+    "d" = as.Date("2016-01-01") + -5:5,
+    "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data_table(x = iris)$
+    # whole numbers are fine
+    add_data_validation(col = 1:3, rows = 2:151, type = "whole",
+                        operator = "between", value = c(1, 9)
+    )$
+    # text width 7-9 is fine
+    add_data_validation(col = 5, rows = 2:151, type = "textLength",
+                        operator = "between", value = c(7, 9)
+    )$
+    ## Date and Time cell validation
+    add_worksheet("Sheet 2")$
+    add_data_table(x = df)$
+    # date >= 2016-01-01 is fine
+    add_data_validation(col = 1, rows = 2:12, type = "date",
+                        operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
+    )$
+    # a few timestamps are fine
+    add_data_validation(col = 2, rows = 2:12, type = "time",
+                        operator = "between", value = df$t[c(4, 8)]
+    )$
+    ## validate list: validate inputs on one sheet with another
+    add_worksheet("Sheet 3")$
+    add_data_table(x = iris[1:30, ])$
+    add_worksheet("Sheet 4")$
+    add_data(x = sample(iris$Sepal.Length, 10))$
+    add_data_validation("Sheet 3", col = 1, rows = 2:31, type = "list",
+                        value = "'Sheet 4'!$A$1:$A$10")
+
+  exp <- c(
+    "<dataValidation type=\"whole\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:C151\"><formula1>1</formula1><formula2>9</formula2></dataValidation>",
+    "<dataValidation type=\"textLength\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"E2:E151\"><formula1>7</formula1><formula2>9</formula2></dataValidation>"
+  )
+  got <- wb$worksheets[[1]]$dataValidations
+  expect_equal(exp, got)
+
+
+  exp <- c(
+    "<dataValidation type=\"date\" operator=\"greaterThanOrEqual\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:A12\"><formula1>42370</formula1></dataValidation>",
+    "<dataValidation type=\"time\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"B2:B12\"><formula1>42369.7685185185</formula1><formula2>42370.2314814815</formula2></dataValidation>"
+  )
+  got <- wb$worksheets[[2]]$dataValidations
+  expect_equal(exp, got)
+
+
+  exp <- c(
+    "<x14:dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\"><x14:formula1><xm:f>'Sheet 4'!$A$1:$A$10</xm:f></x14:formula1><xm:sqref>A2:A31</xm:sqref></x14:dataValidation>"
+  )
+  got <- wb$worksheets[[3]]$dataValidationsLst
+  expect_equal(exp, got)
+
+})
