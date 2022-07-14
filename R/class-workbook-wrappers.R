@@ -1468,6 +1468,11 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #' @param allowBlank logical
 #' @param showInputMsg logical
 #' @param showErrorMsg logical
+#' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+#' @param errorTitle The error title
+#' @param error The error text
+#' @param promptTitle The prompt title
+#' @param prompt The prompt text
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1530,7 +1535,12 @@ wb_add_data_validation <- function(
     value,
     allowBlank = TRUE,
     showInputMsg = TRUE,
-    showErrorMsg = TRUE
+    showErrorMsg = TRUE,
+    errorStyle = NULL,
+    errorTitle = NULL,
+    error = NULL,
+    promptTitle = NULL,
+    prompt = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$add_data_validation(
@@ -1542,7 +1552,12 @@ wb_add_data_validation <- function(
     value        = value,
     allowBlank   = allowBlank,
     showInputMsg = showInputMsg,
-    showErrorMsg = showErrorMsg
+    showErrorMsg = showErrorMsg,
+    errorStyle   = errorStyle,
+    errorTitle   = errorTitle,
+    error        = error,
+    promptTitle  = promptTitle,
+    prompt       = prompt
   )
 }
 

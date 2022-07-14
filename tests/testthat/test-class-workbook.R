@@ -155,6 +155,7 @@ test_that("data validation", {
 
   exp <- "<dataValidation type=\"whole\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:A151\"><formula1>1</formula1><formula2>9</formula2></dataValidation>"
   got <- wb$worksheets[[1]]$dataValidations
+  expect_equal(exp, got)
 
 
   # to many values
@@ -213,5 +214,34 @@ test_that("data validation", {
       ),
     "If type == 'time' value argument must be a POSIXct or POSIXlt vector."
   )
+
+
+  # some more options
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data(x = c(-1:1), colNames = FALSE)$
+    # whole numbers are fine
+    add_data_validation(col = 1, rows = 1:3, type = "whole",
+                        operator = "greaterThan", value = c(0),
+                        errorStyle = "information", errorTitle = "ERROR!",
+                        error = "Some error ocurred!",
+                        promptTitle = "PROMT!",
+                        prompt = "Choose something!"
+    )
+
+  exp <- "<dataValidation type=\"whole\" operator=\"greaterThan\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A1:A3\" errorStyle=\"information\" errorTitle=\"ERROR!\" error=\"Some error ocurred!\" promptTitle=\"PROMT!\" prompt=\"Choose something!\"><formula1>0</formula1></dataValidation>"
+  got <- wb$worksheets[[1]]$dataValidations
+  expect_equal(exp, got)
+
+  # add custom data
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data(x = data.frame(x = 1, y = 2), colNames = FALSE)$
+    # whole numbers are fine
+    add_data_validation(col = 1, rows = 1:3, type = "custom", value = "A1=B1")
+
+  exp <- "<dataValidation type=\"custom\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A1:A3\"><formula1>A1=B1</formula1></dataValidation>"
+  got <- wb$worksheets[[1]]$dataValidations
+  expect_equal(exp, got)
 
 })

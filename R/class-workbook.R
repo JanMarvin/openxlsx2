@@ -2410,6 +2410,11 @@ wbWorkbook <- R6::R6Class(
     #' @param allowBlank allowBlank
     #' @param showInputMsg showInputMsg
     #' @param showErrorMsg showErrorMsg
+    #' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+    #' @param errorTitle The error title
+    #' @param error The error text
+    #' @param promptTitle The prompt title
+    #' @param prompt The promt text
     #' @returns The `wbWorkbook` object
     add_data_validation = function(
       sheet = current_sheet(),
@@ -2420,7 +2425,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank = TRUE,
       showInputMsg = TRUE,
-      showErrorMsg = TRUE
+      showErrorMsg = TRUE,
+      errorStyle = NULL,
+      errorTitle = NULL,
+      error = NULL,
+      promptTitle = NULL,
+      prompt = NULL
     ) {
       ## rows and cols
       if (!is.numeric(cols)) {
@@ -2438,6 +2448,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       valid_types <- c(
+        "custom",
         "whole",
         "decimal",
         "date",
@@ -2449,7 +2460,6 @@ wbWorkbook <- R6::R6Class(
       if (!tolower(type) %in% tolower(valid_types)) {
         stop("Invalid 'type' argument!")
       }
-
 
       ## operator == 'between' we leave out
       valid_operators <- c(
@@ -2463,12 +2473,14 @@ wbWorkbook <- R6::R6Class(
         "lessThanOrEqual"
       )
 
-      if (tolower(type) != "list") {
+      if (!tolower(type) %in% c("custom", "list")) {
         if (!tolower(operator) %in% tolower(valid_operators)) {
           stop("Invalid 'operator' argument!")
         }
 
         operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
+      } else if (tolower(type) == "custom") {
+        operator <- NULL
       } else {
         operator <- "between" ## ignored
       }
@@ -2488,9 +2500,9 @@ wbWorkbook <- R6::R6Class(
 
 
       value <- head(value, 2)
-      allowBlank <- as.integer(allowBlank[1])
-      showInputMsg <- as.integer(showInputMsg[1])
-      showErrorMsg <- as.integer(showErrorMsg[1])
+      allowBlank <- as.character(as.integer(allowBlank[1]))
+      showInputMsg <- as.character(as.integer(showInputMsg[1]))
+      showErrorMsg <- as.character(as.integer(showErrorMsg[1]))
 
       if (type == "list") {
         private$data_validation_list(
@@ -2502,7 +2514,12 @@ wbWorkbook <- R6::R6Class(
           value        = value,
           allowBlank   = allowBlank,
           showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg
+          showErrorMsg = showErrorMsg,
+          errorStyle   = errorStyle,
+          errorTitle   = errorTitle,
+          error        = error,
+          promptTitle  = promptTitle,
+          prompt       = prompt
         )
       } else {
         private$data_validation(
@@ -2516,7 +2533,12 @@ wbWorkbook <- R6::R6Class(
           value        = value,
           allowBlank   = allowBlank,
           showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg
+          showErrorMsg = showErrorMsg,
+          errorStyle   = errorStyle,
+          errorTitle   = errorTitle,
+          error        = error,
+          promptTitle  = promptTitle,
+          prompt       = prompt
         )
       }
 
@@ -5218,7 +5240,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt
     ) {
       # TODO rename: setDataValidation?
       # TODO can this be moved to the worksheet class?
@@ -5232,17 +5259,22 @@ wbWorkbook <- R6::R6Class(
           collapse = ":"
         )
 
-      header <-
-        sprintf(
-          '<dataValidation type="%s" operator="%s" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s" sqref="%s">',
-          type,
-          operator,
-          allowBlank,
-          showInputMsg,
-          showErrorMsg,
-          sqref
+      header <- xml_node_create(
+        "dataValidation",
+        xml_attributes = c(
+          type = type,
+          operator = operator,
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          sqref = sqref,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
         )
-
+      )
 
       # TODO consider switch(type, date = ..., time = ..., )
       if (type == "date") {
@@ -5293,10 +5325,11 @@ wbWorkbook <- R6::R6Class(
         }
       )
 
-      private$append_sheet_field(sheet, "dataValidations", stri_join(header, stri_join(form, collapse = ""), "</dataValidation>"))
+      private$append_sheet_field(sheet, "dataValidations", xml_add_child(header, form))
       invisible(self)
     },
 
+    # TODO can this be merged with above?
     data_validation_list = function(
       sheet = current_sheet(),
       startRow,
@@ -5306,7 +5339,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt
     ) {
       # TODO consider some defaults to logicals
       # TODO rename: setDataValidationList?
@@ -5319,17 +5357,25 @@ wbWorkbook <- R6::R6Class(
           sep = " ",
           collapse = ":"
         )
-      data_val <-
-        sprintf(
-          '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
-          allowBlank,
-          showInputMsg,
-          showErrorMsg
+
+      data_val <- xml_node_create(
+        "x14:dataValidation",
+        xml_attributes = c(
+          type = "list",
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
         )
+      )
 
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
+      xmlData <- xml_add_child(data_val, c(formula, sqref))
       private$append_sheet_field(sheet, "dataValidationsLst", xmlData)
       invisible(self)
     },

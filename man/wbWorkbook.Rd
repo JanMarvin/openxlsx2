@@ -1120,7 +1120,12 @@ Adds data validation
   value,
   allowBlank = TRUE,
   showInputMsg = TRUE,
-  showErrorMsg = TRUE
+  showErrorMsg = TRUE,
+  errorStyle = NULL,
+  errorTitle = NULL,
+  error = NULL,
+  promptTitle = NULL,
+  prompt = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -1144,6 +1149,16 @@ Adds data validation
 \item{\code{showInputMsg}}{showInputMsg}
 
 \item{\code{showErrorMsg}}{showErrorMsg}
+
+\item{\code{errorStyle}}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+
+\item{\code{errorTitle}}{The error title}
+
+\item{\code{error}}{The error text}
+
+\item{\code{promptTitle}}{The prompt title}
+
+\item{\code{prompt}}{The promt text}
 }
 \if{html}{\out{</div>}}
 }
