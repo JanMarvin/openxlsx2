@@ -220,6 +220,18 @@ xml_append_child3 <- function(node, child, level1, level2, pointer, escapes) {
     .Call(`_openxlsx2_xml_append_child3`, node, child, level1, level2, pointer, escapes)
 }
 
+xml_remove_child1 <- function(node, child, which, pointer, escapes) {
+    .Call(`_openxlsx2_xml_remove_child1`, node, child, which, pointer, escapes)
+}
+
+xml_remove_child2 <- function(node, child, level1, which, pointer, escapes) {
+    .Call(`_openxlsx2_xml_remove_child2`, node, child, level1, which, pointer, escapes)
+}
+
+xml_remove_child3 <- function(node, child, level1, level2, which, pointer, escapes) {
+    .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer, escapes)
+}
+
 si_to_txt <- function(doc) {
     .Call(`_openxlsx2_si_to_txt`, doc)
 }

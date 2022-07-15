@@ -300,3 +300,50 @@ xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, escapes =
 
   return(z)
 }
+
+
+#' remove xml child to node
+#' @param xml_node xml_node
+#' @param xml_child xml_child
+#' @param level optional level, if missing the first child is picked
+#' @param which optional index which node to remove, if multiple are available. Default disabled all will be removed
+#' @param pointer pointer
+#' @param escapes escapes
+#' @examples
+#' xml_node <- "<a><b><c><d/></c></b><c/></a>"
+#' xml_child <- "c"
+#'
+#' xml_rm_child(xml_node, xml_child)
+#'
+#' xml_rm_child(xml_node, xml_child, level = c("b"))
+#'
+#' xml_rm_child(xml_node, "d", level = c("b", "c"))
+#'
+#' @export
+xml_rm_child <- function(xml_node, xml_child, level, which = 0, pointer = FALSE, escapes = FALSE) {
+
+  if (missing(xml_node))
+    stop("need xml_node")
+
+  if (missing(xml_child))
+    stop("need xml_child")
+
+  xml_node <- read_xml(xml_node)
+  assert_class(xml_child, "character")
+
+  which <- which - 1
+
+  if (missing(level)) {
+    z <- xml_remove_child1(xml_node, xml_child, which, pointer, escapes)
+  } else {
+
+    if (length(level) == 1)
+      z <- xml_remove_child2(xml_node, xml_child, level[[1]], which, pointer, escapes)
+
+    if (length(level) == 2)
+      z <- xml_remove_child3(xml_node, xml_child, level[[1]], level[[2]], which, pointer, escapes)
+
+  }
+
+  return(z)
+}

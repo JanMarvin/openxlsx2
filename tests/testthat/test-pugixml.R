@@ -241,6 +241,50 @@ test_that("xml_add_child", {
 })
 
 
+test_that("xml_rm_child", {
+
+
+  xml_node <- "<a><c>1</c><c>2</c></a>"
+  xml_child <- "c"
+
+  expect_equal("<a/>", xml_rm_child(xml_node, xml_child, which = 0))
+  expect_equal("<a><c>2</c></a>", xml_rm_child(xml_node, xml_child, which = 1))
+  expect_equal("<a><c>1</c></a>", xml_rm_child(xml_node, xml_child, which = 2))
+  expect_equal("<a><c>1</c><c>2</c></a>", xml_rm_child(xml_node, xml_child, which = 3))
+
+  xml_node <- "<a><b>1</b><b><c><d/></c><c/></b><c>2</c><c/></a>"
+  xml_child <- "c"
+
+  exp <- "<a><b><c><d/></c><c/></b><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, "b", which = 1)
+  expect_equal(exp, got)
+
+  xml_node <- exp
+
+  exp <- "<a><b><c/></b><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, xml_child, "b", which = 1)
+  expect_equal(exp, got)
+
+  exp <- "<a><b><c><d/></c></b><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, xml_child, level = "b", which = 2)
+  expect_equal(exp, got)
+
+  exp <- "<a><b/><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, xml_child, "b", which = 0)
+  expect_equal(exp, got)
+
+  xml_node <- "<x><a><b><c>1</c><c>2</c><c>3</c></b></a></x>"
+
+  exp <- "<x><a><b><c>1</c><c>3</c></b></a></x>"
+  got <- xml_rm_child(xml_node, xml_child, level = c("a","b"), which = 2)
+  expect_equal(exp, got)
+
+  exp <- "<x><a><b/></a></x>"
+  got <- xml_rm_child(xml_node, xml_child, level = c("a","b"), which = 0)
+  expect_equal(exp, got)
+
+})
+
 test_that("xml_attr_mod", {
 
   # add single node
