@@ -64,12 +64,13 @@ void update_cell_loop(
 
     for (auto &row : rows) {
 
-      // check if is data frame or matrix
+      // get the initial vector from the new data frame
       Rcpp::String value = "";
       value = Rcpp::wrap(Rcpp::as<Rcpp::CharacterVector>(x[m])[n]);
 
       R_xlen_t sel = select_rows(cc["r"], row, col);
 
+      // clean up the cc entry
       if (removeCellStyle) Rcpp::as<Rcpp::CharacterVector>(cc["c_s"])[sel] = "";
       Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "";
       Rcpp::as<Rcpp::CharacterVector>(cc["c_cm"])[sel] = "";
@@ -84,6 +85,8 @@ void update_cell_loop(
       Rcpp::as<Rcpp::CharacterVector>(cc["is"])[sel] = "";
 
       // for now convert all R-characters to inlineStr (e.g. names() of a data frame)
+
+      // either character or column name and first row
       if ((data_class[m] == character) || ((colNames) && (n == 0))) {
         if (value == NA_STRING) {
           Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel] = "#N/A";
@@ -107,7 +110,6 @@ void update_cell_loop(
             Rcpp::String hyperlinkstyle(hyperlinkstyle_);
           Rcpp::as<Rcpp::CharacterVector>(cc["c_s"])[sel] = hyperlinkstyle.get_cstring();
         }
-
       } else {
         if (value == NA_STRING) {
           if (no_na_strings) {

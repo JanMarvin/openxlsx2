@@ -107,14 +107,10 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
     # assign to cc
     cc <- rbind(cc, cc_missing)
+
+    # order cc (not really necessary, will be done when saving)
+    cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
   }
-
-  # update cc
-  # TODO this was not supposed to happen, caused by delete? clean?
-  cc <- cc[cc$row_r != "" & cc$c_r != "",]
-
-  # update dimensions
-  cc$r <- paste0(cc$c_r, cc$row_r)
 
   all_rows <- as.numeric(unique(cc$row_r))
   all_cols <- col2int(unique(cc$c_r))
@@ -228,11 +224,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     cc[is.na(cc)] <- ""
 
   }
-
-  # order cc
-  cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
-  cc$ordered_cols <- NULL
-  cc$ordered_rows <- NULL
 
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
