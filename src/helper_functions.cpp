@@ -397,7 +397,7 @@ void update_cell_loop(
 
       // get the initial data from the new data frame
       Rcpp::String value = "";
-      value = to_string(Rcpp::as<Rcpp::CharacterVector>(x[m])[n]);
+      value = Rcpp::wrap(Rcpp::as<Rcpp::CharacterVector>(x[m])[n]);
 
 
       R_xlen_t sel = select_rows(cc["r"], row, col);
