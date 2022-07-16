@@ -89,6 +89,7 @@ test_that("missing x is caught early [246]", {
 
 test_that("update_cells", {
 
+  ## exactly the same
   data <- mtcars
   wb <- wb_workbook()$add_worksheet()$add_data(x = data)
   cc1 <- wb$worksheets[[1]]$sheet_data$cc
@@ -97,5 +98,49 @@ test_that("update_cells", {
   cc2 <- wb$worksheets[[1]]$sheet_data$cc
 
   all.equal(cc1, cc2)
+
+  ## write na.strings
+  data <- matrix(NA, 2, 2)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data)$add_data(x = data, na.strings = "N/A")
+
+  exp <- c("<is><t>V1</t></is>", "<is><t>V2</t></is>", "<is><t>N/A</t></is>")
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
+  expect_equal(exp, got)
+
+  ### write logical
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  wb1 <- wb_load(xlsxFile)
+
+  data <- head(wb_to_df(wb1, sheet = 3))
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data)$add_data(x = data)
+
+  exp <- c("inlineStr", "", "b", "e")
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$c_t)
+  expect_equal(exp, got)
+
+
+  set.seed(123)
+  df <- data.frame(C = rnorm(10), D = rnorm(10))
+
+  wb <- wb_workbook()$
+    add_worksheet("df")$
+    add_data(x = df, startCol = "C")
+  # TODO add_formula()
+  write_formula(wb, "df", startCol = "E", startRow = "2",
+                x = "SUM(C2:C11*D2:D11)",
+                array = TRUE)
+  write_formula(wb, "df", x = "C3 + D3", startCol = "E", startRow = 3)
+  x <- c(google = "https://www.google.com")
+  class(x) <- "hyperlink"
+  wb$add_data(sheet = "df", x = x, startCol = "E", startRow = 4)
+
+
+  exp <- structure(
+    list(c_t = c("", "str", ""),
+         f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\")"),
+         f_t = c("array", "", "")),
+    row.names = c("23", "110", "111"), class = "data.frame")
+  got <- wb$worksheets[[1]]$sheet_data$cc[c(5,8,11), c("c_t", "f", "f_t")]
+  expect_equal(exp, got)
 
 })
