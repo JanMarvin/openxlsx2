@@ -312,8 +312,8 @@ set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
-update_cell_loop <- function(cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, hyperlinkstyle, no_na_strings, na_strings_ = NULL) {
-    invisible(.Call(`_openxlsx2_update_cell_loop`, cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, hyperlinkstyle, no_na_strings, na_strings_))
+update_cell_loop <- function(cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_ = NULL, hyperlinkstyle_ = NULL) {
+    invisible(.Call(`_openxlsx2_update_cell_loop`, cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_, hyperlinkstyle_))
 }
 
 write_worksheet <- function(prior, post, sheet_data) {

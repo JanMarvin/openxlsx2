@@ -76,7 +76,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   # check if there are rows not available
   if (!all(rows %in% rows_in_wb)) {
-    message("row(s) not in workbook")
+    # message("row(s) not in workbook")
 
     # add row to name vector, extend the entire thing
     total_rows <- as.character(sort(unique(as.numeric(c(rows, rows_in_wb)))))
@@ -95,7 +95,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
   if (!all(cells_needed %in% cells_in_wb)) {
-    message("cell(s) not in workbook")
+    # message("cell(s) not in workbook")
 
     missing_cells <- cells_needed[!cells_needed %in% cells_in_wb]
 
@@ -128,13 +128,14 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   if (all(rows %in% rows_in_wb)) {
     # message("cell(s) to update already in workbook. updating ...")
 
-    no_na_strings <- FALSE
-    if (missing(na.strings)) {
-      na.strings <- NULL
-      no_na_strings <- TRUE
-    }
-
     if (options("loop") == "Rcpp") {
+
+      no_na_strings <- FALSE
+      if (missing(na.strings)) {
+        na.strings <- NULL
+        no_na_strings <- TRUE
+      }
+
       update_cell_loop(
         cc,
         x,
@@ -144,10 +145,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         colNames,
         removeCellStyle,
         cell,
-        "1", # wb$styles_mgr$get_xf_id("hyperlinkstyle"),
         no_na_strings,
-        na.strings
+        na.strings,
+        wb$styles_mgr$get_xf_id("hyperlinkstyle")
       )
+
     } else {
 
     i <- 0

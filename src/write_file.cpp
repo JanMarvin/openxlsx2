@@ -52,9 +52,9 @@ void update_cell_loop(
     bool colNames,
     bool removeCellStyle,
     std::string cell,
-    std::string hyperlinkstyle,
     bool no_na_strings,
-    Rcpp::Nullable<Rcpp::String> na_strings_ = R_NilValue
+    Rcpp::Nullable<Rcpp::String> na_strings_ = R_NilValue,
+    Rcpp::Nullable<Rcpp::String> hyperlinkstyle_ = R_NilValue
 ) {
 
   auto i = 0, m = 0;
@@ -101,12 +101,13 @@ void update_cell_loop(
         Rcpp::as<Rcpp::CharacterVector>(cc["f_ref"])[sel] = cell.c_str();
       } else if (data_class[m] == hyperlink) {
         Rcpp::as<Rcpp::CharacterVector>(cc["f"])[sel] = value.get_cstring();
-        /* ** not yet implemented **
         //FIXME assign the hyperlinkstyle if no style found. This might not be
         // desired. We should provide an option to prevent this.
-        if (cc[sel, "c_s"] == "" || is.na(cc[sel, "c_s"]))
-          cc[sel, "c_s"] <- hyperlinkstyle.c_str()
-        */
+        if (Rcpp::as<Rcpp::CharacterVector>(cc["c_s"])[sel] == "" && hyperlinkstyle_.isNotNull()) {
+            Rcpp::String hyperlinkstyle(hyperlinkstyle_);
+          Rcpp::as<Rcpp::CharacterVector>(cc["c_s"])[sel] = hyperlinkstyle.get_cstring();
+        }
+
       } else {
         if (value == NA_STRING) {
           if (no_na_strings) {
