@@ -12,7 +12,7 @@ test_that("write_formula", {
          f_t = "array", f_ref = "E2:E2",
          f_ca = "", f_si = "",
          is = "", typ = ""),
-    row.names = "3", class = "data.frame")
+    row.names = 23L, class = "data.frame")
 
   # write data add array formula later
   wb <- wb_workbook()
@@ -27,7 +27,7 @@ test_that("write_formula", {
   expect_equal(exp[1:16], got[1:16])
 
 
-  rownames(exp) <- "31"
+  rownames(exp) <- 1L
   # write formula first add data later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")

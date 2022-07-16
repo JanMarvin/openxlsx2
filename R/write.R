@@ -97,32 +97,16 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   if (!all(cells_needed %in% cells_in_wb)) {
     message("cell(s) not in workbook")
 
-    # [!cells_needed %in% cells_in_wb]
+    missing_cells <- cells_needed[!cells_needed %in% cells_in_wb]
 
-    # all rows are availabe in the data frame
-    for (row in rows) {
+    # create missing cells
+    cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
+    cc_missing$r     <- missing_cells
+    cc_missing$row_r <- gsub("[[:upper:]]","", cc_missing$r)
+    cc_missing$c_r   <- gsub("[[:digit:]]","", cc_missing$r)
 
-      # collect all wanted cols and order for excel
-      total_cols <- unique(c(cc$c_r[cc$row_r == row], cols))
-      total_cols <- int2col(sort(col2int(total_cols)))
-
-      # create candidate
-      cc_row_new <- create_char_dataframe(names(cc)[1:3], length(total_cols))
-      cc_row_new$row_r <- row
-      cc_row_new$c_r <- total_cols
-      cc_row_new$r <- stringi::stri_join(cc_row_new$c_r, cc_row_new$row_r)
-
-      # extract row (easier or maybe only way to change order?)
-      cc_row <- cc[cc$row_r == row, ]
-      # remove row from cc
-      if (nrow(cc_row)>0) cc <- cc[-which(rownames(cc) %in% rownames(cc_row)),]
-      # new row
-      cc_row <- merge(x = cc_row_new, y = cc_row, all.x = TRUE)
-
-      # assign to cc
-      cc <- rbind(cc, cc_row)
-
-    }
+    # assign to cc
+    cc <- rbind(cc, cc_missing)
   }
 
   # update cc
