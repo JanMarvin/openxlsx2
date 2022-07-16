@@ -80,7 +80,6 @@ SEXP openxlsx2_type(SEXP x) {
   return type;
 }
 
-
 // [[Rcpp::export]]
 std::string int_to_col(uint32_t cell) {
   std::string col_name = "";
@@ -203,7 +202,6 @@ SEXP rbindlist(Rcpp::List x) {
 SEXP copy(SEXP x) {
   return Rf_duplicate(x);
 }
-
 
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
@@ -343,6 +341,156 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
   }
 }
 
+//' this returns the index of the character vector that matches
+//' @param x x
+//' @param row row
+//' @param col col
+//' @keywords internal
+//' @noRd
+R_xlen_t select_rows(std::vector<std::string> x, std::string row, std::string col) {
+  return std::distance(x.begin(), find(x.begin(), x.end(), col + row));
+}
+
+//' convert "TRUE"/"FALSE" to "1"/"0"
+//' @param input input
+//' @keywords internal
+//' @noRd
+std::string to_int(Rcpp::String input) {
+  if (input == "TRUE") return ("1");
+  else return("0");
+}
+
+//' update loop used in update_cell(), when writing on worksheet data
+//' @param cc cc
+//' @param x x
+//' @param data_class data_class
+//' @param rows rows
+//' @param cols cols
+//' @param colNames colNames
+//' @param removeCellStyle removeCellStyle
+//' @param cell cell
+//' @param hyperlinkstyle hyperlinkstyle
+//' @param no_na_strings no_na_strings
+//' @param na_strings_ na_strings
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export]]
+void update_cell_loop(
+    Rcpp::DataFrame cc,
+    Rcpp::DataFrame x,
+    Rcpp::CharacterVector data_class,
+    std::vector<std::string> rows,
+    std::vector<std::string> cols,
+    bool colNames,
+    bool removeCellStyle,
+    std::string cell,
+    bool no_na_strings,
+    Rcpp::Nullable<Rcpp::String> na_strings_ = R_NilValue,
+    Rcpp::Nullable<Rcpp::String> hyperlinkstyle_ = R_NilValue
+) {
+
+  auto m = 0;
+  for (auto &col : cols) {
+
+    auto n = 0;
+    for (auto &row : rows) {
+
+      // get the initial data from the new data frame
+      Rcpp::String value = "";
+      value = Rcpp::wrap(Rcpp::as<Rcpp::CharacterVector>(x[m])[n]);
+
+
+      R_xlen_t sel = select_rows(cc["r"], row, col);
+
+      xml_col uu;
+      uu.c_s   = "";
+      uu.c_t   = "";
+      uu.c_cm  = "";
+      uu.c_ph  = "";
+      uu.c_vm  = "";
+      uu.v     = "";
+      uu.f     = "";
+      uu.f     = "";
+      uu.f_ref = "";
+      uu.f_ca  = "";
+      uu.f_si  = "";
+      uu.is    = "";
+
+      // handle NA_STRING for all input types
+      if (value == NA_STRING) {
+
+        if (no_na_strings) {
+          uu.v   = "#N/A";
+          uu.c_t = "e";
+        } else {
+          if (na_strings_.isNull()) {
+            // do not add any value: <c/>
+          } else {
+            Rcpp::String na_strings(na_strings_);
+
+            uu.c_t = "inlineStr";
+            uu.is  = txt_to_is(na_strings, 0, 1);
+          }
+        }
+
+      } else {
+
+        // either character or column name and first row
+        if ((data_class[m] == character) || ((colNames) && (n == 0))) {
+          uu.c_t = "inlineStr";
+          uu.is = txt_to_is(value.get_cstring(), 0, 1);
+        } else if (data_class[m] == formula) {
+          uu.c_t = "str";
+          uu.f = value.get_cstring();
+        } else if (data_class[m] == array_formula) {
+          uu.f = value.get_cstring();
+          uu.f_t = "array";
+          uu.f_ref = cell.c_str();
+        } else if (data_class[m] == hyperlink) {
+          uu.f = value.get_cstring();
+          //FIXME always assign the hyperlink style. This might not be
+          // desired. We should provide an option to prevent this.
+          if (hyperlinkstyle_.isNotNull()) {
+            Rcpp::String hyperlinkstyle(hyperlinkstyle_);
+            uu.c_s = hyperlinkstyle.get_cstring();
+          }
+        } else if (data_class[m] == logical) {
+          uu.v   = to_int(value);
+          uu.c_t = "b";
+        } else { // numerics, dates, openxlsx custom styles
+          if (value == "NaN") {
+            uu.v   = "#VALUE!";
+            uu.c_t = "e";
+          } else if (value == "-Inf" || value == "Inf") {
+            uu.v   = "#NUM!";
+            uu.c_t = "e";
+          } else {
+            uu.v = value.get_cstring();
+          }
+        }
+
+      }
+
+      // write the xml_col to the data frame
+      if (removeCellStyle) Rcpp::as<Rcpp::CharacterVector>(cc["c_s"])[sel] = uu.c_s;
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel]   = uu.c_t;
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_cm"])[sel]  = uu.c_cm;
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_ph"])[sel]  = uu.c_ph;
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_vm"])[sel]  = uu.c_vm;
+      Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel]     = uu.v;
+      Rcpp::as<Rcpp::CharacterVector>(cc["f"])[sel]     = uu.f;
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_t"])[sel]   = uu.f_t;
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_ref"])[sel] = uu.f_ref;
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_ca"])[sel]  = uu.f_ca;
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_si"])[sel]  = uu.f_si;
+      Rcpp::as<Rcpp::CharacterVector>(cc["is"])[sel]    = uu.is;
+
+      // cell is done
+      ++n;
+    }
+    ++m;
+  }
+}
 
 // [[Rcpp::export]]
 Rcpp::List build_cell_merges(Rcpp::List comps) {
@@ -392,7 +540,6 @@ Rcpp::List build_cell_merges(Rcpp::List comps) {
   return wrap(res) ;
 
 }
-
 
 // simple helper function to create a data frame of type character
 //' @param colnames a vector of the names of the data frame

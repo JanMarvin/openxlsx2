@@ -107,6 +107,26 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// update_cell_loop
+void update_cell_loop(Rcpp::DataFrame cc, Rcpp::DataFrame x, Rcpp::CharacterVector data_class, std::vector<std::string> rows, std::vector<std::string> cols, bool colNames, bool removeCellStyle, std::string cell, bool no_na_strings, Rcpp::Nullable<Rcpp::String> na_strings_, Rcpp::Nullable<Rcpp::String> hyperlinkstyle_);
+RcppExport SEXP _openxlsx2_update_cell_loop(SEXP ccSEXP, SEXP xSEXP, SEXP data_classSEXP, SEXP rowsSEXP, SEXP colsSEXP, SEXP colNamesSEXP, SEXP removeCellStyleSEXP, SEXP cellSEXP, SEXP no_na_stringsSEXP, SEXP na_strings_SEXP, SEXP hyperlinkstyle_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type cc(ccSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type data_class(data_classSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type rows(rowsSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type cols(colsSEXP);
+    Rcpp::traits::input_parameter< bool >::type colNames(colNamesSEXP);
+    Rcpp::traits::input_parameter< bool >::type removeCellStyle(removeCellStyleSEXP);
+    Rcpp::traits::input_parameter< std::string >::type cell(cellSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_na_strings(no_na_stringsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::String> >::type na_strings_(na_strings_SEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::String> >::type hyperlinkstyle_(hyperlinkstyle_SEXP);
+    update_cell_loop(cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_, hyperlinkstyle_);
+    return R_NilValue;
+END_RCPP
+}
 // build_cell_merges
 Rcpp::List build_cell_merges(Rcpp::List comps);
 RcppExport SEXP _openxlsx2_build_cell_merges(SEXP compsSEXP) {
@@ -807,6 +827,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 3},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 7},
+    {"_openxlsx2_update_cell_loop", (DL_FUNC) &_openxlsx2_update_cell_loop, 11},
     {"_openxlsx2_build_cell_merges", (DL_FUNC) &_openxlsx2_build_cell_merges, 1},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},

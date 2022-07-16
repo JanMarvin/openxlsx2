@@ -22,12 +22,6 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 }
 
 
-// helper function to access element from Rcpp::Character Vector as string
-std::string to_string(Rcpp::Vector<16>::Proxy x) {
-  return Rcpp::String(x);
-}
-
-
 // creates an xml row
 // data in xml is ordered row wise. therefore we need the row attributes and
 // the column data used in this row. This function uses both to create a single
