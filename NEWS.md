@@ -1,5 +1,7 @@
 # openxlsx2 (in development)
 
+* Fixes a bug in `update_cell()` that slowed down writing on worksheets with data. In addition, this function has been cleaned up and further improved. It is no longer exported, as users only need to use `wb_add_data()` or `write_data()`, each of which calls `update_cell()` under the hood. [275](https://github.com/JanMarvin/openxlsx2/pull/275)
+
 * Add new options to data validation. allow type custom, add arguments `errorStyle`, `errorTitle`, `error`, `promptTitle`, `prompt`. [271](https://github.com/JanMarvin/openxlsx2/issues/271)
 
 * Provide `wb_clone_sheet_style()`. This improves upon the now deprecated`cloneSheetStyle()` that existed as an early draft. [233](https://github.com/JanMarvin/openxlsx2/issues/233)
