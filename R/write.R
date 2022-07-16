@@ -50,7 +50,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
   if (missing(data_class)) {
-    # TODO consider using inherit() for class chekcing
+    # TODO consider using inherit() for class checking
     data_class <- openxlsx2_type(x)
   }
 
@@ -62,14 +62,12 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # workbooks contain only entries for values currently present.
   # if A1 is filled, B1 is not filled and C1 is filled the sheet will only
   # contain fields A1 and C1.
-  # cc$r <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$r
   rows_in_wb <- row_attr$r
 
   if (!inherits(x, "data.frame")) {
     x <- as.data.frame(x)
   }
-
 
   # check if there are rows not available
   if (!all(rows %in% rows_in_wb)) {
@@ -108,111 +106,37 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
     # order cc (not really necessary, will be done when saving)
     cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
+
+    # update dimensions (only required if new cols and rows are added) ------
+    all_rows <- as.numeric(unique(cc$row_r))
+    all_cols <- col2int(unique(cc$c_r))
+
+    min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
+    max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
+
+    # i know, i know, i'm lazy
+    wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  all_rows <- as.numeric(unique(cc$row_r))
-  all_cols <- col2int(unique(cc$c_r))
-
-  min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
-  max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
-
-  # i know, i know, i'm lazy
-  wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
-
-
-  if (options("loop") == "Rcpp") {
-
-    no_na_strings <- FALSE
-    if (missing(na.strings)) {
-      na.strings <- NULL
-      no_na_strings <- TRUE
-    }
-
-    update_cell_loop(
-      cc,
-      x,
-      data_class,
-      rows,
-      cols,
-      colNames,
-      removeCellStyle,
-      cell,
-      no_na_strings,
-      na.strings,
-      wb$styles_mgr$get_xf_id("hyperlinkstyle")
-    )
-
-  } else {
-
-    i <- 0
-    n <- 0
-    for (row in rows) {
-
-      n <- n+1
-      m <- 0
-
-      for (col in cols) {
-        i <- i + 1
-        m <- m + 1
-
-        # check if is data frame or matrix
-        value <- x[n, m]
-
-        sel <- cc$r == paste0(col, row)
-        c_s <- NULL
-        if (removeCellStyle) c_s <- "c_s"
-
-        cc[sel, c(c_s, "c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
-
-        # for now convert all R-characters to inlineStr (e.g. names() of a data frame)
-        if ((data_class[m] == openxlsx2_celltype[["character"]]) || ((colNames == TRUE) && (n == 1))) {
-          if (is.na(value)) {
-            cc[sel, "v"] <- "#N/A"
-            cc[sel, "c_t"] <- "e"
-          } else {
-            cc[sel, "c_t"] <- "inlineStr"
-            cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
-          }
-        } else if (data_class[m] == openxlsx2_celltype[["formula"]]) {
-          cc[sel, "c_t"] <- "str"
-          cc[sel, "f"] <- as.character(value)
-        } else if (data_class[m] == openxlsx2_celltype[["array_formula"]]) {
-          cc[sel, "f"] <- as.character(value)
-          cc[sel, "f_t"] <- "array"
-          cc[sel, "f_ref"] <- cell
-        } else if (data_class[m] == openxlsx2_celltype[["hyperlink"]]) {
-          cc[sel, "f"] <- as.character(value)
-          # FIXME assign the hyperlinkstyle if no style found. This might not be
-          # desired. We should provide an option to prevent this.
-          if (cc[sel, "c_s"] == "" || is.na(cc[sel, "c_s"]))
-            cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
-        } else {
-          if (is.na(value)) {
-            if (missing(na.strings)) {
-              cc[sel, "v"] <- "#N/A"
-              cc[sel, "c_t"] <- "e"
-            } else {
-              if (is.null(na.strings)) {
-                next # do not add any value: <c/>
-              } else {
-                cc[sel, "c_t"] <- "inlineStr"
-                cc[sel, "is"] <- txt_to_is(as.character(na.strings),
-                                           no_escapes = TRUE, raw = TRUE)
-              }
-            }
-          } else if (value == "NaN") {
-            cc[sel, "v"] <- "#VALUE!"
-            cc[sel, "c_t"] <- "e"
-          } else if (value == "-Inf" || value == "Inf") {
-            cc[sel, "v"] <- "#NUM!"
-            cc[sel, "c_t"] <- "e"
-          } else {
-            cc[sel, "v"]   <- as.character(value)
-          }
-        }
-      }
-    }
+  no_na_strings <- FALSE
+  if (missing(na.strings)) {
+    na.strings <- NULL
+    no_na_strings <- TRUE
   }
+
+  update_cell_loop(
+    cc,
+    x,
+    data_class,
+    rows,
+    cols,
+    colNames,
+    removeCellStyle,
+    cell,
+    no_na_strings,
+    na.strings,
+    wb$styles_mgr$get_xf_id("hyperlinkstyle")
+  )
 
   # avoid missings in cc
   if (any(is.na(cc)))
