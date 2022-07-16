@@ -86,3 +86,16 @@ test_that("missing x is caught early [246]", {
     "`x` is missing"
   )
 })
+
+test_that("update_cells", {
+
+  data <- mtcars
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data)
+  cc1 <- wb$worksheets[[1]]$sheet_data$cc
+
+  wb$add_data(x = data)
+  cc2 <- wb$worksheets[[1]]$sheet_data$cc
+
+  all.equal(cc1, cc2)
+
+})
