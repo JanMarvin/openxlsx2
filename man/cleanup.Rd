@@ -15,7 +15,7 @@ wb_clean_sheet(
   merged_cells = TRUE
 )
 
-delete_data(wb, sheet, cols, rows, gridExpand)
+delete_data(wb, sheet, cols, rows)
 }
 \arguments{
 \item{wb}{workbook}
@@ -33,8 +33,6 @@ delete_data(wb, sheet, cols, rows, gridExpand)
 \item{cols}{numeric column vector}
 
 \item{rows}{numeric row vector}
-
-\item{gridExpand}{does nothing}
 }
 \description{
 clean sheet (remove all values)

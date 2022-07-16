@@ -55,9 +55,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   }
 
 
-  # if (identical(sheet_id, integer()))
-  #   stop("sheet not in workbook")
-
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
   cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
   row_attr <- wb$worksheets[[sheet_id]]$sheet_data$row_attr
@@ -78,19 +75,20 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   if (!all(rows %in% rows_in_wb)) {
     # message("row(s) not in workbook")
 
-    # add row to name vector, extend the entire thing
-    total_rows <- as.character(sort(unique(as.numeric(c(rows, rows_in_wb)))))
+    missing_rows <- rows[!rows %in% rows_in_wb]
 
     # new row_attr
-    row_attr_new <- empty_row_attr(n = length(total_rows))
-    row_attr_new$r <- total_rows
+    row_attr_missing <- empty_row_attr(n = length(missing_rows))
+    row_attr_missing$r <- missing_rows
 
-    row_attr_new <- merge(row_attr_new[c("r")], row_attr, all.x = TRUE)
-    row_attr_new[is.na(row_attr_new)] <- ""
+    row_attr <- rbind(row_attr, row_attr_missing)
 
-    wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr_new
+    # order
+    row_attr <- row_attr[order(as.numeric(row_attr$r)),]
+
+    wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
     # provide output
-    rows_in_wb <- total_rows
+    rows_in_wb <- row_attr$r
 
   }
 
@@ -121,32 +119,30 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # i know, i know, i'm lazy
   wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
 
-  if (all(rows %in% rows_in_wb)) {
-    # message("cell(s) to update already in workbook. updating ...")
 
-    if (options("loop") == "Rcpp") {
+  if (options("loop") == "Rcpp") {
 
-      no_na_strings <- FALSE
-      if (missing(na.strings)) {
-        na.strings <- NULL
-        no_na_strings <- TRUE
-      }
+    no_na_strings <- FALSE
+    if (missing(na.strings)) {
+      na.strings <- NULL
+      no_na_strings <- TRUE
+    }
 
-      update_cell_loop(
-        cc,
-        x,
-        data_class,
-        rows,
-        cols,
-        colNames,
-        removeCellStyle,
-        cell,
-        no_na_strings,
-        na.strings,
-        wb$styles_mgr$get_xf_id("hyperlinkstyle")
-      )
+    update_cell_loop(
+      cc,
+      x,
+      data_class,
+      rows,
+      cols,
+      colNames,
+      removeCellStyle,
+      cell,
+      no_na_strings,
+      na.strings,
+      wb$styles_mgr$get_xf_id("hyperlinkstyle")
+    )
 
-    } else {
+  } else {
 
     i <- 0
     n <- 0
@@ -199,9 +195,9 @@ update_cell <- function(x, wb, sheet, cell, data_class,
               if (is.null(na.strings)) {
                 next # do not add any value: <c/>
               } else {
-               cc[sel, "c_t"] <- "inlineStr"
-               cc[sel, "is"] <- txt_to_is(as.character(na.strings),
-                                          no_escapes = TRUE, raw = TRUE)
+                cc[sel, "c_t"] <- "inlineStr"
+                cc[sel, "is"] <- txt_to_is(as.character(na.strings),
+                                           no_escapes = TRUE, raw = TRUE)
               }
             }
           } else if (value == "NaN") {
@@ -214,16 +210,13 @@ update_cell <- function(x, wb, sheet, cell, data_class,
             cc[sel, "v"]   <- as.character(value)
           }
         }
-
       }
     }
-
-    }
-
-    # avoid missings in cc
-    cc[is.na(cc)] <- ""
-
   }
+
+  # avoid missings in cc
+  if (any(is.na(cc)))
+    cc[is.na(cc)] <- ""
 
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc

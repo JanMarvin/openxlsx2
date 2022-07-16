@@ -3714,7 +3714,7 @@ wbWorkbook <- R6::R6Class(
       cols <- seq(from = cols[1], to = cols[2], by = 1)
 
       ## now delete data
-      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
+      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols)
       invisible(self)
     },
 
