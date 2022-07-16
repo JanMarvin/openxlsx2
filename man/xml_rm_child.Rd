@@ -20,6 +20,8 @@ xml_rm_child(
 
 \item{level}{optional level, if missing the first child is picked}
 
+\item{which}{optional index which node to remove, if multiple are available. Default disabled all will be removed}
+
 \item{pointer}{pointer}
 
 \item{escapes}{escapes}
