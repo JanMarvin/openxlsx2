@@ -37,19 +37,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
                         colNames = FALSE, removeCellStyle = FALSE,
                         na.strings) {
 
-  dimensions <- unlist(strsplit(cell, ":"))
-  rows <- gsub("[[:upper:]]","", dimensions)
-  cols <- gsub("[[:digit:]]","", dimensions)
+  dims <- dims_to_dataframe(cell, fill = TRUE)
+  cols <- colnames(dims)
+  rows <- rownames(dims)
 
-  if (length(dimensions) == 2) {
-    # cols
-    cols <- col2int(cols)
-    cols <- seq(cols[1], cols[2])
-    cols <- int2col(cols)
-
-    rows <- as.character(seq(rows[1], rows[2]))
-  }
-
+  cells_needed <- unname(unlist(dims))
 
   if (is.character(sheet)) {
     sheet_id <- which(sheet == wb$sheet_names)
@@ -74,7 +66,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # if A1 is filled, B1 is not filled and C1 is filled the sheet will only
   # contain fields A1 and C1.
   # cc$r <- paste0(cc$c_r, cc$row_r)
-  cells_in_wb <- cc$rw
+  cells_in_wb <- cc$r
   rows_in_wb <- row_attr$r
 
   if (!inherits(x, "data.frame")) {
@@ -84,7 +76,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   # check if there are rows not available
   if (!all(rows %in% rows_in_wb)) {
-    # message("row(s) not in workbook")
+    message("row(s) not in workbook")
 
     # add row to name vector, extend the entire thing
     total_rows <- as.character(sort(unique(as.numeric(c(rows, rows_in_wb)))))
@@ -102,7 +94,11 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   }
 
-  if (!any(cols %in% cells_in_wb)) {
+  if (!all(cells_needed %in% cells_in_wb)) {
+    message("cell(s) not in workbook")
+
+    # [!cells_needed %in% cells_in_wb]
+
     # all rows are availabe in the data frame
     for (row in rows) {
 
@@ -135,7 +131,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   # update dimensions
   cc$r <- paste0(cc$c_r, cc$row_r)
-  cells_in_wb <- cc$rw
 
   all_rows <- as.numeric(unique(cc$row_r))
   all_cols <- col2int(unique(cc$c_r))
