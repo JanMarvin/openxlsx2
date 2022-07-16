@@ -31,7 +31,8 @@
 #'    wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "A9")
 #'    wb_to_df(wb)
 #'
-#' @export
+#' @keywords internal
+#' @noRd
 update_cell <- function(x, wb, sheet, cell, data_class,
                         colNames = FALSE, removeCellStyle = FALSE,
                         na.strings) {
@@ -75,6 +76,10 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # cc$r <- paste0(cc$c_r, cc$row_r)
   cells_in_wb <- cc$rw
   rows_in_wb <- row_attr$r
+
+  if (!inherits(x, "data.frame")) {
+    x <- as.data.frame(x)
+  }
 
 
   # check if there are rows not available
@@ -141,11 +146,30 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # i know, i know, i'm lazy
   wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
 
-  # if (any(rows %in% rows_in_wb) )
-  # message("found cell(s) to update")
-
   if (all(rows %in% rows_in_wb)) {
     # message("cell(s) to update already in workbook. updating ...")
+
+    no_na_strings <- FALSE
+    if (missing(na.strings)) {
+      na.strings <- NULL
+      no_na_strings <- TRUE
+    }
+
+    if (options("loop") == "Rcpp") {
+      update_cell_loop(
+        cc,
+        x,
+        data_class,
+        rows,
+        cols,
+        colNames,
+        removeCellStyle,
+        cell,
+        "1", # wb$styles_mgr$get_xf_id("hyperlinkstyle"),
+        no_na_strings,
+        na.strings
+      )
+    } else {
 
     i <- 0
     n <- 0
@@ -159,9 +183,9 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         m <- m + 1
 
         # check if is data frame or matrix
-        value <- if (is.null(dim(x))) x[i] else x[n, m]
+        value <- x[n, m]
 
-        sel <- cc$row_r == row & cc$c_r == col
+        sel <- cc$r == paste0(col, row)
         c_s <- NULL
         if (removeCellStyle) c_s <- "c_s"
 
@@ -215,6 +239,8 @@ update_cell <- function(x, wb, sheet, cell, data_class,
         }
 
       }
+    }
+
     }
 
     # avoid missings in cc

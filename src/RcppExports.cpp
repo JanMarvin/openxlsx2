@@ -773,6 +773,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// update_cell_loop
+void update_cell_loop(Rcpp::DataFrame cc, Rcpp::DataFrame x, Rcpp::CharacterVector data_class, std::vector<std::string> rows, std::vector<std::string> cols, bool colNames, bool removeCellStyle, std::string cell, std::string hyperlinkstyle, bool no_na_strings, Rcpp::Nullable<Rcpp::String> na_strings_);
+RcppExport SEXP _openxlsx2_update_cell_loop(SEXP ccSEXP, SEXP xSEXP, SEXP data_classSEXP, SEXP rowsSEXP, SEXP colsSEXP, SEXP colNamesSEXP, SEXP removeCellStyleSEXP, SEXP cellSEXP, SEXP hyperlinkstyleSEXP, SEXP no_na_stringsSEXP, SEXP na_strings_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type cc(ccSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type data_class(data_classSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type rows(rowsSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type cols(colsSEXP);
+    Rcpp::traits::input_parameter< bool >::type colNames(colNamesSEXP);
+    Rcpp::traits::input_parameter< bool >::type removeCellStyle(removeCellStyleSEXP);
+    Rcpp::traits::input_parameter< std::string >::type cell(cellSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hyperlinkstyle(hyperlinkstyleSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_na_strings(no_na_stringsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::String> >::type na_strings_(na_strings_SEXP);
+    update_cell_loop(cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, hyperlinkstyle, no_na_strings, na_strings_);
+    return R_NilValue;
+END_RCPP
+}
 // write_worksheet
 XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data);
 RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP) {
@@ -861,6 +881,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_read_colors", (DL_FUNC) &_openxlsx2_read_colors, 1},
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
+    {"_openxlsx2_update_cell_loop", (DL_FUNC) &_openxlsx2_update_cell_loop, 11},
     {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
     {"_openxlsx2_write_xmlPtr", (DL_FUNC) &_openxlsx2_write_xmlPtr, 2},
     {NULL, NULL, 0}

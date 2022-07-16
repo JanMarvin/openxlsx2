@@ -21,6 +21,128 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
   return sst;
 }
 
+R_xlen_t select_rows(std::vector<std::string> x, std::string row, std::string col) {
+  std::string y = col + row;
+  for (auto i = 0; i < x.size(); ++i) {
+    if (x[i] == y)
+      return(i);
+  }
+  // else
+  return(0);
+}
+
+// @param cc cc
+// @param x x
+// @param data_class data_class
+// @param rows rows
+// @param cols cols
+// @param colNames colNames
+// @param removeCellStyle removeCellStyle
+// @param cell cell
+// @param hyperlinkstyle hyperlinkstyle
+// @param no_na_strings no_na_strings
+// @param na_strings_ na_strings
+// [[Rcpp::export]]
+void update_cell_loop(
+    Rcpp::DataFrame cc,
+    Rcpp::DataFrame x,
+    Rcpp::CharacterVector data_class,
+    std::vector<std::string> rows,
+    std::vector<std::string> cols,
+    bool colNames,
+    bool removeCellStyle,
+    std::string cell,
+    std::string hyperlinkstyle,
+    bool no_na_strings,
+    Rcpp::Nullable<Rcpp::String> na_strings_ = R_NilValue
+) {
+
+  auto i = 0, m = 0;
+    for (auto &col : cols) {
+
+    auto n = 0;
+
+    for (auto &row : rows) {
+
+      // check if is data frame or matrix
+      Rcpp::String value = "";
+      value = Rcpp::wrap(Rcpp::as<Rcpp::CharacterVector>(x[m])[n]);
+
+      R_xlen_t sel = select_rows(cc["r"], row, col);
+
+      if (removeCellStyle) Rcpp::as<Rcpp::CharacterVector>(cc["c_s"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_cm"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_ph"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["c_vm"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["f"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_t"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_ref"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_ca"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["f_si"])[sel] = "";
+      Rcpp::as<Rcpp::CharacterVector>(cc["is"])[sel] = "";
+
+      // for now convert all R-characters to inlineStr (e.g. names() of a data frame)
+      if ((data_class[m] == character) || ((colNames) && (n == 0))) {
+        if (value == NA_STRING) {
+          Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel] = "#N/A";
+          Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "e";
+        } else {
+          Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "inlineStr";
+          Rcpp::as<Rcpp::CharacterVector>(cc["is"])[sel] = txt_to_is(value.get_cstring(), 0, 1).c_str();
+        }
+      } else if (data_class[m] == formula) {
+        Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "str";
+        Rcpp::as<Rcpp::CharacterVector>(cc["f"])[sel] = value.get_cstring();
+      } else if (data_class[m] == array_formula) {
+        Rcpp::as<Rcpp::CharacterVector>(cc["f"])[sel] = value.get_cstring();
+        Rcpp::as<Rcpp::CharacterVector>(cc["f_t"])[sel] = "array";
+        Rcpp::as<Rcpp::CharacterVector>(cc["f_ref"])[sel] = cell.c_str();
+      } else if (data_class[m] == hyperlink) {
+        Rcpp::as<Rcpp::CharacterVector>(cc["f"])[sel] = value.get_cstring();
+        /* ** not yet implemented **
+        //FIXME assign the hyperlinkstyle if no style found. This might not be
+        // desired. We should provide an option to prevent this.
+        if (cc[sel, "c_s"] == "" || is.na(cc[sel, "c_s"]))
+          cc[sel, "c_s"] <- hyperlinkstyle.c_str()
+        */
+      } else {
+        if (value == NA_STRING) {
+          if (no_na_strings) {
+            Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel]   = "#N/A";
+            Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "e";
+          } else {
+            if (na_strings_.isNull()) {
+              // do not add any value: <c/>
+            } else {
+              Rcpp::String na_strings(na_strings_);
+
+              Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "inlineStr";
+              Rcpp::as<Rcpp::CharacterVector>(cc["is"])[sel]  = txt_to_is(na_strings, 0, 1).c_str();
+            }
+          }
+        } else if (value == "NaN") {
+          Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel]   = "#VALUE!";
+          Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "e";
+        } else if (value == "-Inf" || value == "Inf") {
+          Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel]   = "#NUM!";
+          Rcpp::as<Rcpp::CharacterVector>(cc["c_t"])[sel] = "e";
+        } else {
+          Rcpp::as<Rcpp::CharacterVector>(cc["v"])[sel] = value.get_cstring();
+        }
+      }
+      ++i;
+      ++n;
+
+      // Rcpp::Rcout << "col: " << m << std::endl;
+    }
+    ++m;
+
+    // Rcpp::Rcout << "row: " << n << std::endl;
+  }
+}
+
 
 // helper function to access element from Rcpp::Character Vector as string
 std::string to_string(Rcpp::Vector<16>::Proxy x) {
