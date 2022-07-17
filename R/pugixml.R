@@ -195,6 +195,7 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #' @param x something to print
 #' @param indent indent used default is " "
 #' @param raw print as raw text
+#' @param attr_indent print attributes indented on new line
 #' @param ... to please check
 #' @examples
 #'   # a pointer

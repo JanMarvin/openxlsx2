@@ -13,6 +13,8 @@
 
 \item{raw}{print as raw text}
 
+\item{attr_indent}{print attributes indented on new line}
+
 \item{...}{to please check}
 }
 \description{
