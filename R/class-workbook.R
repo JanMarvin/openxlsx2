@@ -5139,7 +5139,6 @@ wbWorkbook <- R6::R6Class(
         } else {
           ## Write worksheets
           ws <- self$worksheets[[i]]
-          hasHL <- length(ws$hyperlinks) > 0
 
           prior <- ws$get_prior_sheet_data()
           post <- ws$get_post_sheet_data()
@@ -5189,15 +5188,6 @@ wbWorkbook <- R6::R6Class(
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {
             ws_rels <- self$worksheets_rels[[i]]
-            if (hasHL) {
-              h_inds <- stri_join(seq_along(self$worksheets[[i]]$hyperlinks), "h")
-              ws_rels <-
-                c(ws_rels, unlist(
-                  lapply(seq_along(h_inds), function(j) {
-                    self$worksheets[[i]]$hyperlinks[[j]]$to_target_xml(h_inds[j])
-                  })
-                ))
-            }
 
             ## Check if any tables were deleted - remove these from rels
             # TODO a relship manager should take care of this

@@ -304,25 +304,6 @@ wbWorksheet <- R6::R6Class(
           )
         },
 
-        # hyperlinks
-        if (n <- length(self$hyperlinks)) {
-          h_inds <- paste0(seq_len(n), "h")
-          paste(
-            "<hyperlinks>",
-            paste(
-              vapply(
-                seq_along(h_inds),
-                function(i)  {
-                  self$hyperlinks[[i]]$to_xml(h_inds[i])
-                },
-                NA_character_
-              ),
-              collapse = ""
-            ),
-            "</hyperlinks>"
-          )
-        },
-
         self$pageMargins,
         self$pageSetup,
 
