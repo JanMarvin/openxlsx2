@@ -34,6 +34,8 @@ test_that("Page setup", {
 
 test_that("page_breaks", {
 
+  temp <- temp_xlsx()
+
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_data(sheet = 1, x = iris)
@@ -49,5 +51,18 @@ test_that("page_breaks", {
 
   expect_equal(rbrk, wb$worksheets[[1]]$rowBreaks)
   expect_equal(cbrk, wb$worksheets[[1]]$colBreaks)
+
+  wb$save(temp)
+  wb2 <- wb_load(temp)
+
+  expect_equal(
+    wb$worksheets[[1]]$colBreaks,
+    wb2$worksheets[[1]]$colBreaks
+  )
+
+  expect_equal(
+    wb$worksheets[[1]]$rowBreaks,
+    wb2$worksheets[[1]]$rowBreaks
+  )
 
 })
