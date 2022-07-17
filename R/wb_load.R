@@ -795,34 +795,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     } ## if (length(tablesXML))
 
-    ## might we have some external hyperlinks
-    # TODO use lengths()
-    if (any(vapply(wb$worksheets[sheets$typ == "worksheet"], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
-
-      ## Do we have external hyperlinks
-      hlinks <- lapply(xml, function(x) x[grepl("hyperlink", x) & grepl("External", x)])
-      # TODO use lengths()
-      hlinksInds <- which(lengths(hlinks) > 0)
-
-      ## If it's an external hyperlink it will have a target in the sheet_rels
-      if (length(hlinksInds)) {
-        for (i in hlinksInds) {
-          ids <- apply_reg_match(hlinks[[i]], '(?<=Id=").*?"')
-          ids <- gsub('"$', "", ids)
-
-          targets <- apply_reg_match(hlinks[[i]], '(?<=Target=").*?"')
-          targets <- gsub('"$', "", targets)
-
-          ids2 <- lapply(wb$worksheets[[i]]$hyperlinks, reg_match, pat = '(?<=r:id=").*?"')
-          ids2[lengths(ids2) == 0] <- NA
-          ids2 <- gsub('"$', "", unlist(ids2))
-
-          targets <- targets[match(ids2, ids)]
-          names(wb$worksheets[[i]]$hyperlinks) <- targets
-        }
-      }
-    }
-
 
     ## Drawings ------------------------------------------------------------------------------------
 
@@ -1057,12 +1029,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     # Otherwise spreadsheet software will stumble over missing rels to drwaing.
     wb$worksheets_rels <- lapply(seq_along(wb$sheet_names), FUN = function(x) character())
   } ## end of worksheetRels
-
-  ## convert hyperliks to hyperlink objects
-  if (!data_only)
-    for (i in seq_len(nSheets)) {
-      wb$worksheets[[i]]$hyperlinks <- xml_to_hyperlink(wb$worksheets[[i]]$hyperlinks)
-    }
 
   ## queryTables
   if (!data_only && length(queryTablesXML) > 0) {
