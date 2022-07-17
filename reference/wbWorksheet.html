@@ -258,7 +258,6 @@ R6 class for a Workbook Worksheet"><!-- mathjax --><script src="https://cdnjs.cl
 <ul><li><p><a href="#method-wbWorksheet-new"><code>wbWorksheet$new()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-get_prior_sheet_data"><code>wbWorksheet$get_prior_sheet_data()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-get_post_sheet_data"><code>wbWorksheet$get_post_sheet_data()</code></a></p></li>
-<li><p><a href="#method-wbWorksheet-order_sheetdata"><code>wbWorksheet$order_sheetdata()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-unfold_cols"><code>wbWorksheet$unfold_cols()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-fold_cols"><code>wbWorksheet$fold_cols()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-clean_sheet"><code>wbWorksheet$clean_sheet()</code></a></p></li>
@@ -381,18 +380,6 @@ R6 class for a Workbook Worksheet"><!-- mathjax --><script src="https://cdnjs.cl
 <p>A character vector of xml</p>
 </div>
 
-</div><p></p><hr><a id="method-wbWorksheet-order_sheetdata"></a><div class="section">
-<h3 id="method-order-sheetdata-">Method <code>order_sheetdata()</code><a class="anchor" aria-label="anchor" href="#method-order-sheetdata-"></a></h3>
-<p>order sheet data</p><div class="section">
-<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">order_sheetdata</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
-<p>The <code>wbWorksheetObject</code>, invisibly</p>
-</div>
-
 </div><p></p><hr><a id="method-wbWorksheet-unfold_cols"></a><div class="section">
 <h3 id="method-unfold-cols-">Method <code>unfold_cols()</code><a class="anchor" aria-label="anchor" href="#method-unfold-cols-"></a></h3>
 <p>unfold <code>&lt;cols ..&gt;</code> node to dataframe. <code>&lt;cols&gt;&lt;col ..&gt;</code> are compressed.
@@ -402,19 +389,19 @@ found in cc gets a value.
 TODO might extend this to match either largest cc or largest col. Could
 be that "Z" is formatted, but the last value is written to "Y".
 TODO might replace the xml nodes with the data frame?</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">unfold_cols</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
+<h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>The column data frame</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorksheet-fold_cols"></a><div class="section">
 <h3 id="method-fold-cols-">Method <code>fold_cols()</code><a class="anchor" aria-label="anchor" href="#method-fold-cols-"></a></h3>
 <p>fold the column dataframe back into a node.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">fold_cols</span><span class="op">(</span><span class="va">col_df</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -427,14 +414,14 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorksheet-clean_sheet"></a><div class="section">
 <h3 id="method-clean-sheet-">Method <code>clean_sheet()</code><a class="anchor" aria-label="anchor" href="#method-clean-sheet-"></a></h3>
 <p>clean sheet (remove all values)</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">clean_sheet</span><span class="op">(</span></span>
 <span>  numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  characters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -464,14 +451,14 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorksheet-add_page_break"></a><div class="section">
 <h3 id="method-add-page-break-">Method <code>add_page_break()</code><a class="anchor" aria-label="anchor" href="#method-add-page-break-"></a></h3>
 <p>add page break</p><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">add_page_break</span><span class="op">(</span>row <span class="op">=</span> <span class="cn">NULL</span>, col <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -492,7 +479,7 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 <h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
 <p>append a field.  Intended for internal use only.  Not
 guaranteed to remain a public method.</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">field</span>, value <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -512,7 +499,7 @@ guaranteed to remain a public method.</p><div class="section">
 </div><p></p><hr><a id="method-wbWorksheet-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
