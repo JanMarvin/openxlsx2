@@ -84,6 +84,7 @@ test_that("$set_sheet_names() and $get_sheet_names() work", {
 
 test_that("data validation", {
 
+  temp <- temp_xlsx()
 
   df <- data.frame(
     "d" = as.Date("2016-01-01") + -5:5,
@@ -141,6 +142,41 @@ test_that("data validation", {
   )
   got <- wb$worksheets[[3]]$dataValidationsLst
   expect_equal(exp, got)
+
+  wb$save(temp)
+
+  wb2 <- wb_load(temp)
+
+  # wb2$add_data_validation("Sheet 3", col = 2, rows = 2:31, type = "list",
+  #                         value = "'Sheet 4'!$A$1:$A$10")
+  # wb2$save(temp)
+
+  expect_equal(
+    wb$worksheets[[1]]$dataValidations,
+    wb2$worksheets[[1]]$dataValidations
+  )
+
+  expect_equal(
+    wb$worksheets[[2]]$dataValidations,
+    wb2$worksheets[[2]]$dataValidations
+  )
+
+  # FIXME gh #277
+  # when saving, dataValidationsLst is moved to ext. Upon loading it is not
+  # moved to dataValidationsLst but remains in extLst. Hence we need to check
+  # if creating another entry in dataValidationsLst and saving again properly
+  # merges or creates broken xlsx output. Preferably the list is not silently
+  # moved from one entry to another, but remains at a single spot. E.g. load it,
+  # move the node around and remove the node in the extLst.
+  #
+  # # this will be broken. Has one extLst, but two "<ext xmlns:x14 ...>" entries.
+  # wb2$add_data_validation("Sheet 3", col = 2, rows = 2:31, type = "list",
+  #                         value = "'Sheet 4'!$A$1:$A$10")
+  # wb2$save(temp)
+  expect_equal(
+    wb$worksheets[[3]]$dataValidationsLst,
+    xml_node(wb2$worksheets[[3]]$extLst, "ext", "x14:dataValidations", "x14:dataValidation")
+  )
 
   ### tests if conditions
 
