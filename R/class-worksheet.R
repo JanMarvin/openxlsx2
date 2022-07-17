@@ -384,39 +384,6 @@ wbWorksheet <- R6::R6Class(
     },
 
     #' @description
-    #' order sheet data
-    #' @return The `wbWorksheetObject`, invisibly
-    order_sheetdata = function() {
-      if (self$sheet_data$n_elements == 0) {
-        return(invisible(self))
-      }
-
-      if (self$sheet_data$data_count > 1) {
-        ord <- order(self$sheet_data$rows, self$sheet_data$cols, method = "radix", na.last = TRUE)
-        self$sheet_data$rows <- self$sheet_data$rows[ord]
-        self$sheet_data$cols <- self$sheet_data$cols[ord]
-        self$sheet_data$t <- self$sheet_data$t[ord]
-        self$sheet_data$v <- self$sheet_data$v[ord]
-        self$sheet_data$f <- self$sheet_data$f[ord]
-
-        self$sheet_data$style_id <- self$sheet_data$style_id[ord]
-
-        self$sheet_data$data_count <- 1L
-
-        dm1 <- paste0(int_to_col(self$sheet_data$cols[1]), self$sheet_data$rows[1])
-        dm2 <- paste0(int_to_col(self$sheet_data$cols[self$sheet_data$n_elements]), self$sheet_data$rows[sheet_data$n_elements])
-
-        if (length(dm1) == 1 & length(dm2) != 1) {
-          if (!is.na(dm1) & !is.na(dm2) & dm1 != "NA" & dm2 != "NA") {
-            self$dimension <- sprintf("<dimension ref=\"%s:%s\"/>", dm1, dm2)
-          }
-        }
-      }
-
-      invisible(self)
-    },
-
-    #' @description
     #' unfold `<cols ..>` node to dataframe. `<cols><col ..>` are compressed.
     #' Only columns with attributes are written to the file. This function
     #' unfolds them so that each cell beginning with the "A" to the last one
