@@ -5,6 +5,8 @@
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escapes. Assuming that the input already provides valid information.
 #' @param whitespace should whitespace pcdata be imported
+#' @param empty_tags should `<b/>` or `<b></b>` be returned
+#' @param skip_control should whitespace character be exported
 #' @details Read xml files or strings to pointer and checks if the input is
 #' valid XML.
 #' If the input is read into a character object, it will be reevaluated every
@@ -38,7 +40,7 @@
 #'   read_xml(xml, declaration = TRUE)
 #'
 #' @export
-read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE) {
+read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE) {
 
   z <- NULL
 
@@ -53,9 +55,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
     xml <- "<NA_character_ />"
 
   if (pointer) {
-    z <- readXMLPtr(xml, isfile, escapes, declaration, whitespace)
+    z <- readXMLPtr(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
   } else {
-    z <- readXML(xml, isfile, escapes, declaration, whitespace)
+    z <- readXML(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
   }
 
   z
@@ -200,11 +202,8 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #'   print(x)
 #'   print(x, raw = TRUE)
 #' @export
-print.pugi_xml <- function(x, indent = " ", raw = FALSE, ...) {
-
-  escapes <- attr(x, "escapes")
-
-  cat(printXPtr(x, indent, !escapes, raw))
+print.pugi_xml <- function(x, indent = " ", raw = FALSE, attr_indent = FALSE, ...) {
+  cat(printXPtr(x, indent, raw, attr_indent))
   if (raw) cat("\n")
 }
 

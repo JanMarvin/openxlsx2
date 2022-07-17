@@ -88,12 +88,12 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
-readXMLPtr <- function(path, isfile, escapes, declaration, whitespace) {
-    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, whitespace)
+readXMLPtr <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {
+    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
 }
 
-readXML <- function(path, isfile, escapes, declaration, whitespace) {
-    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace)
+readXML <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {
+    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
 }
 
 getXMLXPtrName1 <- function(doc) {
@@ -164,8 +164,8 @@ getXMLXPtr4attr <- function(doc, level1, level2, level3, child) {
     .Call(`_openxlsx2_getXMLXPtr4attr`, doc, level1, level2, level3, child)
 }
 
-printXPtr <- function(doc, indent, no_escapes, raw) {
-    .Call(`_openxlsx2_printXPtr`, doc, indent, no_escapes, raw)
+printXPtr <- function(doc, indent, raw, attr_indent) {
+    .Call(`_openxlsx2_printXPtr`, doc, indent, raw, attr_indent)
 }
 
 write_xml_file <- function(xml_content, escapes) {
@@ -256,16 +256,16 @@ si_to_txt <- function(doc) {
     .Call(`_openxlsx2_si_to_txt`, doc)
 }
 
-txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE) {
-    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw)
+txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
+    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw, skip_control)
 }
 
 is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
 }
 
-txt_to_is <- function(text, no_escapes, raw) {
-    .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw)
+txt_to_is <- function(text, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
+    .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw, skip_control)
 }
 
 read_xf <- function(xml_doc_xf) {

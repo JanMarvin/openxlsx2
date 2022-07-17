@@ -40,14 +40,14 @@ SEXP si_to_txt(XPtrXML doc) {
 
 // [[Rcpp::export]]
 std::string txt_to_si(Rcpp::CharacterVector txt,
-                      bool no_escapes = false, bool raw = true) {
+                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
 
   pugi::xml_document doc;
 
   unsigned int pugi_format_flags = pugi::format_indent;
   if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
   if (raw)  pugi_format_flags |= pugi::format_raw;
-
+  if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
 
   pugi::xml_node si_node = doc.append_child("si");
 
@@ -127,13 +127,14 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
 
 // [[Rcpp::export]]
 std::string txt_to_is(std::string text,
-                      bool no_escapes, bool raw) {
+                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
 
   pugi::xml_document doc;
 
   unsigned int pugi_format_flags = pugi::format_indent;
   if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
   if (raw)  pugi_format_flags |= pugi::format_raw;
+  if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
 
   pugi::xml_node is_node = doc.append_child("is");
 

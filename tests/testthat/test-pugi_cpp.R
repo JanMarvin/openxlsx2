@@ -5,26 +5,26 @@ test_that("read_xml", {
   # TODO add test for isfile
   # and do some actual tests
 
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<a>A & B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<?xml test=\"yay\"?><a>A & B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<a>A &amp; B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<?xml test=\"yay\"?><a>A &amp; B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   xml <- "<a>"
-  expect_error(readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
-  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
+  expect_error(readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
 })
 
