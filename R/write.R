@@ -37,22 +37,13 @@ update_cell <- function(x, wb, sheet, cell, data_class,
                         colNames = FALSE, removeCellStyle = FALSE,
                         na.strings) {
 
+  sheet_id <- wb$validate_sheet(sheet)
+
   dims <- dims_to_dataframe(cell, fill = TRUE)
   cols <- colnames(dims)
   rows <- rownames(dims)
 
   cells_needed <- unname(unlist(dims))
-
-  if (is.character(sheet)) {
-    sheet_id <- which(sheet == wb$sheet_names)
-  } else {
-    sheet_id <- sheet
-  }
-
-  if (missing(data_class)) {
-    # TODO consider using inherit() for class checking
-    data_class <- openxlsx2_type(x)
-  }
 
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
@@ -64,10 +55,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # contain fields A1 and C1.
   cells_in_wb <- cc$r
   rows_in_wb <- row_attr$r
-
-  if (!inherits(x, "data.frame")) {
-    x <- as.data.frame(x)
-  }
 
   # check if there are rows not available
   if (!all(rows %in% rows_in_wb)) {
