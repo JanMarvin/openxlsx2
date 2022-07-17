@@ -108,15 +108,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // update_cell_loop
-void update_cell_loop(Rcpp::DataFrame cc, Rcpp::DataFrame x, Rcpp::CharacterVector data_class, std::vector<std::string> rows, std::vector<std::string> cols, bool colNames, bool removeCellStyle, std::string cell, bool no_na_strings, Rcpp::Nullable<Rcpp::String> na_strings_, Rcpp::Nullable<Rcpp::String> hyperlinkstyle_);
+void update_cell_loop(Rcpp::DataFrame cc, Rcpp::DataFrame x, Rcpp::IntegerVector data_class, vec_string rows, vec_string cols, bool colNames, bool removeCellStyle, std::string cell, bool no_na_strings, Rcpp::Nullable<Rcpp::String> na_strings_, Rcpp::Nullable<Rcpp::String> hyperlinkstyle_);
 RcppExport SEXP _openxlsx2_update_cell_loop(SEXP ccSEXP, SEXP xSEXP, SEXP data_classSEXP, SEXP rowsSEXP, SEXP colsSEXP, SEXP colNamesSEXP, SEXP removeCellStyleSEXP, SEXP cellSEXP, SEXP no_na_stringsSEXP, SEXP na_strings_SEXP, SEXP hyperlinkstyle_SEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type cc(ccSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type x(xSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type data_class(data_classSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type rows(rowsSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type cols(colsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type data_class(data_classSEXP);
+    Rcpp::traits::input_parameter< vec_string >::type rows(rowsSEXP);
+    Rcpp::traits::input_parameter< vec_string >::type cols(colsSEXP);
     Rcpp::traits::input_parameter< bool >::type colNames(colNamesSEXP);
     Rcpp::traits::input_parameter< bool >::type removeCellStyle(removeCellStyleSEXP);
     Rcpp::traits::input_parameter< std::string >::type cell(cellSEXP);

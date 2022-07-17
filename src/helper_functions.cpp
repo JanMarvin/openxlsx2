@@ -347,7 +347,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 //' @param col col
 //' @keywords internal
 //' @noRd
-R_xlen_t select_rows(std::vector<std::string> x, std::string row, std::string col) {
+R_xlen_t select_rows(vec_string &x, std::string row, std::string col) {
   return std::distance(x.begin(), find(x.begin(), x.end(), col + row));
 }
 
@@ -378,9 +378,9 @@ std::string to_int(Rcpp::String input) {
 void update_cell_loop(
     Rcpp::DataFrame cc,
     Rcpp::DataFrame x,
-    Rcpp::CharacterVector data_class,
-    std::vector<std::string> rows,
-    std::vector<std::string> cols,
+    Rcpp::IntegerVector data_class,
+    vec_string rows,
+    vec_string cols,
     bool colNames,
     bool removeCellStyle,
     std::string cell,
@@ -389,8 +389,12 @@ void update_cell_loop(
     Rcpp::Nullable<Rcpp::String> hyperlinkstyle_ = R_NilValue
 ) {
 
+  vec_string cc_r = Rcpp::as<vec_string>(cc["r"]);
+
   auto m = 0;
   for (auto &col : cols) {
+
+    auto dc = data_class[m];
 
     auto n = 0;
     for (auto &row : rows) {
@@ -399,8 +403,7 @@ void update_cell_loop(
       Rcpp::String value = "";
       value = Rcpp::wrap(Rcpp::as<Rcpp::CharacterVector>(x[m])[n]);
 
-
-      R_xlen_t sel = select_rows(cc["r"], row, col);
+      R_xlen_t sel = select_rows(cc_r, row, col);
 
       xml_col uu;
       uu.c_s   = "";
@@ -436,17 +439,17 @@ void update_cell_loop(
       } else {
 
         // either character or column name and first row
-        if ((data_class[m] == character) || ((colNames) && (n == 0))) {
+        if ((dc == character) || ((colNames) && (n == 0))) {
           uu.c_t = "inlineStr";
           uu.is = txt_to_is(value.get_cstring(), 0, 1);
-        } else if (data_class[m] == formula) {
+        } else if (dc == formula) {
           uu.c_t = "str";
           uu.f = value.get_cstring();
-        } else if (data_class[m] == array_formula) {
+        } else if (dc == array_formula) {
           uu.f = value.get_cstring();
           uu.f_t = "array";
           uu.f_ref = cell.c_str();
-        } else if (data_class[m] == hyperlink) {
+        } else if (dc == hyperlink) {
           uu.f = value.get_cstring();
           //FIXME always assign the hyperlink style. This might not be
           // desired. We should provide an option to prevent this.
@@ -454,7 +457,7 @@ void update_cell_loop(
             Rcpp::String hyperlinkstyle(hyperlinkstyle_);
             uu.c_s = hyperlinkstyle.get_cstring();
           }
-        } else if (data_class[m] == logical) {
+        } else if (dc == logical) {
           uu.v   = to_int(value);
           uu.c_t = "b";
         } else { // numerics, dates, openxlsx custom styles
