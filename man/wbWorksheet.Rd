@@ -107,7 +107,6 @@ A Worksheet
 \item \href{#method-wbWorksheet-new}{\code{wbWorksheet$new()}}
 \item \href{#method-wbWorksheet-get_prior_sheet_data}{\code{wbWorksheet$get_prior_sheet_data()}}
 \item \href{#method-wbWorksheet-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
-\item \href{#method-wbWorksheet-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
 \item \href{#method-wbWorksheet-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
 \item \href{#method-wbWorksheet-fold_cols}{\code{wbWorksheet$fold_cols()}}
 \item \href{#method-wbWorksheet-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
@@ -204,19 +203,6 @@ Get post sheet data
 
 \subsection{Returns}{
 A character vector of xml
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-order_sheetdata"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-order_sheetdata}{}}}
-\subsection{Method \code{order_sheetdata()}}{
-order sheet data
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$order_sheetdata()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}

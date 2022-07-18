@@ -557,7 +557,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       if (!data_only) {
         wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
         wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
-        wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks")
+        wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks", "brk")
         # wb$worksheets[[i]]$cols <- xml_node(worksheet_xml, "worksheet", "cols")
         # wb$worksheets[[i]]$conditionalFormatting <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
         wb$worksheets[[i]]$controls <- xml_node(worksheet_xml, "worksheet", "controls")
@@ -583,7 +583,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
         wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")
         wb$worksheets[[i]]$protectedRanges <- xml_node(worksheet_xml, "worksheet", "protectedRanges")
-        wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks")
+        wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks", "brk")
         wb$worksheets[[i]]$scenarios <- xml_node(worksheet_xml, "worksheet", "scenarios")
         wb$worksheets[[i]]$sheetCalcPr <- xml_node(worksheet_xml, "worksheet", "sheetCalcPr")
         # wb$worksheets[[i]]$sheetData <- xml_node(worksheet_xml, "worksheet", "sheetData")
