@@ -1,5 +1,7 @@
 # openxlsx2 (in development)
 
+* Provide internal helper `xml_rm_child()` to remove children of XML strings. [273](https://github.com/JanMarvin/openxlsx2/issues/273)
+
 * Fixes a bug in `update_cell()` that slowed down writing on worksheets with data. In addition, this function has been cleaned up and further improved. It is no longer exported, as users only need to use `wb_add_data()` or `write_data()`, each of which calls `update_cell()` under the hood. [275](https://github.com/JanMarvin/openxlsx2/pull/275) [276](https://github.com/JanMarvin/openxlsx2/pull/276)
 
 * Add new options to data validation. allow type custom, add arguments `errorStyle`, `errorTitle`, `error`, `promptTitle`, `prompt`. [271](https://github.com/JanMarvin/openxlsx2/issues/271)
