@@ -366,4 +366,7 @@
   <url>
     <loc>/reference/xml_node_create.html</loc>
   </url>
+  <url>
+    <loc>/reference/xml_rm_child.html</loc>
+  </url>
 </urlset>
