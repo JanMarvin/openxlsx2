@@ -240,28 +240,28 @@ xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL
     .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes, escapes, declaration)
 }
 
-xml_append_child1 <- function(node, child, pointer, escapes) {
-    .Call(`_openxlsx2_xml_append_child1`, node, child, pointer, escapes)
+xml_append_child1 <- function(node, child, pointer) {
+    .Call(`_openxlsx2_xml_append_child1`, node, child, pointer)
 }
 
-xml_append_child2 <- function(node, child, level1, pointer, escapes) {
-    .Call(`_openxlsx2_xml_append_child2`, node, child, level1, pointer, escapes)
+xml_append_child2 <- function(node, child, level1, pointer) {
+    .Call(`_openxlsx2_xml_append_child2`, node, child, level1, pointer)
 }
 
-xml_append_child3 <- function(node, child, level1, level2, pointer, escapes) {
-    .Call(`_openxlsx2_xml_append_child3`, node, child, level1, level2, pointer, escapes)
+xml_append_child3 <- function(node, child, level1, level2, pointer) {
+    .Call(`_openxlsx2_xml_append_child3`, node, child, level1, level2, pointer)
 }
 
-xml_remove_child1 <- function(node, child, which, pointer, escapes) {
-    .Call(`_openxlsx2_xml_remove_child1`, node, child, which, pointer, escapes)
+xml_remove_child1 <- function(node, child, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child1`, node, child, which, pointer)
 }
 
-xml_remove_child2 <- function(node, child, level1, which, pointer, escapes) {
-    .Call(`_openxlsx2_xml_remove_child2`, node, child, level1, which, pointer, escapes)
+xml_remove_child2 <- function(node, child, level1, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child2`, node, child, level1, which, pointer)
 }
 
-xml_remove_child3 <- function(node, child, level1, level2, which, pointer, escapes) {
-    .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer, escapes)
+xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
 }
 
 si_to_txt <- function(doc) {

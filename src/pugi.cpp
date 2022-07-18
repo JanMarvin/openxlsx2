@@ -691,13 +691,11 @@ Rcpp::CharacterVector xml_node_create(
 // @param node xml_node a child is appended to
 // @param child the xml_node appended to node
 // @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes) {
+SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   for (auto cld: child->children()) {
     node->first_child().append_copy(cld);
@@ -717,13 +715,11 @@ SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes) 
 // @param child the xml_node appended to node
 // @param level1 level the child will be added to
 // @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool pointer, bool escapes) {
+SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   for (auto cld: child->children()) {
     node->first_child().child(level1.c_str()).append_copy(cld);
@@ -744,13 +740,11 @@ SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool poi
 // @param level1 level the child will be added to
 // @param level2 level the child will be added to
 // @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::string level2, bool pointer, bool escapes) {
+SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::string level2, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   for (auto cld: child->children()) {
     node->first_child().child(level1.c_str()).child(level2.c_str()).append_copy(cld);
@@ -772,10 +766,9 @@ SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::str
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer, bool escapes) {
+SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
   for (pugi::xml_node cld = node->first_child().child(child.c_str()); cld; ) {
@@ -802,10 +795,9 @@ SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer,
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int which,  bool pointer, bool escapes) {
+SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int which,  bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
   for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(child.c_str()); cld; ) {
@@ -833,11 +825,9 @@ SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int 
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int which, bool pointer, bool escapes) {
+SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int which, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
-
+  unsigned int pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
   for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(level2.c_str()).child(child.c_str()); cld; ) {
