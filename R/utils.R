@@ -82,7 +82,7 @@ has_chr <- function(x, na = FALSE) {
   vapply(nzchar(x, keepNA = !na), isTRUE, NA)
 }
 
-dir_create <- function(..., warn = TRUE, recurse = TRUE) {
+dir_create <- function(..., warn = TRUE, recurse = FALSE) {
   # create path and directory -- returns path
   path <- file.path(...)
   dir.create(path, showWarnings = warn, recursive = recurse)
