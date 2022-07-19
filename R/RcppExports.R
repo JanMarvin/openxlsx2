@@ -88,12 +88,12 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
-readXMLPtr <- function(path, isfile, escapes, declaration, whitespace) {
-    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, whitespace)
+readXMLPtr <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {
+    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
 }
 
-readXML <- function(path, isfile, escapes, declaration, whitespace) {
-    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace)
+readXML <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {
+    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
 }
 
 getXMLXPtrName1 <- function(doc) {
@@ -164,8 +164,8 @@ getXMLXPtr4attr <- function(doc, level1, level2, level3, child) {
     .Call(`_openxlsx2_getXMLXPtr4attr`, doc, level1, level2, level3, child)
 }
 
-printXPtr <- function(doc, indent, no_escapes, raw) {
-    .Call(`_openxlsx2_printXPtr`, doc, indent, no_escapes, raw)
+printXPtr <- function(doc, indent, raw, attr_indent) {
+    .Call(`_openxlsx2_printXPtr`, doc, indent, raw, attr_indent)
 }
 
 write_xml_file <- function(xml_content, escapes) {
@@ -240,44 +240,44 @@ xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL
     .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes, escapes, declaration)
 }
 
-xml_append_child1 <- function(node, child, pointer, escapes) {
-    .Call(`_openxlsx2_xml_append_child1`, node, child, pointer, escapes)
+xml_append_child1 <- function(node, child, pointer) {
+    .Call(`_openxlsx2_xml_append_child1`, node, child, pointer)
 }
 
-xml_append_child2 <- function(node, child, level1, pointer, escapes) {
-    .Call(`_openxlsx2_xml_append_child2`, node, child, level1, pointer, escapes)
+xml_append_child2 <- function(node, child, level1, pointer) {
+    .Call(`_openxlsx2_xml_append_child2`, node, child, level1, pointer)
 }
 
-xml_append_child3 <- function(node, child, level1, level2, pointer, escapes) {
-    .Call(`_openxlsx2_xml_append_child3`, node, child, level1, level2, pointer, escapes)
+xml_append_child3 <- function(node, child, level1, level2, pointer) {
+    .Call(`_openxlsx2_xml_append_child3`, node, child, level1, level2, pointer)
 }
 
-xml_remove_child1 <- function(node, child, which, pointer, escapes) {
-    .Call(`_openxlsx2_xml_remove_child1`, node, child, which, pointer, escapes)
+xml_remove_child1 <- function(node, child, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child1`, node, child, which, pointer)
 }
 
-xml_remove_child2 <- function(node, child, level1, which, pointer, escapes) {
-    .Call(`_openxlsx2_xml_remove_child2`, node, child, level1, which, pointer, escapes)
+xml_remove_child2 <- function(node, child, level1, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child2`, node, child, level1, which, pointer)
 }
 
-xml_remove_child3 <- function(node, child, level1, level2, which, pointer, escapes) {
-    .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer, escapes)
+xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
 }
 
 si_to_txt <- function(doc) {
     .Call(`_openxlsx2_si_to_txt`, doc)
 }
 
-txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE) {
-    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw)
+txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
+    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw, skip_control)
 }
 
 is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
 }
 
-txt_to_is <- function(text, no_escapes, raw) {
-    .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw)
+txt_to_is <- function(text, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
+    .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw, skip_control)
 }
 
 read_xf <- function(xml_doc_xf) {

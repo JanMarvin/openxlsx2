@@ -1,7 +1,7 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace) {
+SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
@@ -26,11 +26,13 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, b
   XPtrXML ptr(doc, true);
   ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
   ptr.attr("escapes") = escapes;
+  ptr.attr("empty_tags") = empty_tags;
+  ptr.attr("skip_control") = skip_control;
   return ptr;
 }
 
 // [[Rcpp::export]]
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
@@ -44,6 +46,8 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
 
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  if (empty_tags) pugi_format_flags |= pugi::format_no_empty_element_tags;
+  if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
 
   if (isfile) {
     result = doc.load_file(path.c_str(), pugi_parse_flags, pugi::encoding_utf8);
@@ -60,10 +64,15 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   return  Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
-unsigned int pugi_format(XPtrXML doc){
+inline unsigned int pugi_format(XPtrXML doc){
   bool escapes = Rcpp::as<bool>(doc.attr("escapes"));
+  bool empty_tags = Rcpp::as<bool>(doc.attr("empty_tags"));
+  bool skip_control = Rcpp::as<bool>(doc.attr("skip_control"));
+
   unsigned int pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  if (empty_tags) pugi_format_flags |= pugi::format_no_empty_element_tags;
+  if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
 
   return pugi_format_flags;
 }
@@ -466,12 +475,16 @@ Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, 
 
 
 // [[Rcpp::export]]
-SEXP printXPtr(XPtrXML doc, std::string indent, bool no_escapes, bool raw) {
+SEXP printXPtr(XPtrXML doc, std::string indent, bool raw, bool attr_indent) {
 
   // pugi::parse_default without escapes flag
-  unsigned int pugi_format_flags = pugi::format_indent;
-  if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
-  if (raw)  pugi_format_flags |= pugi::format_raw;
+  unsigned int pugi_format_flags = pugi_format(doc);
+  if (!raw) {
+    // disable raw if not set. it is default in pugi_format()
+    pugi_format_flags &= ~pugi::format_raw;
+    pugi_format_flags |= pugi::format_indent;
+  }
+  if (attr_indent) pugi_format_flags |= pugi::format_indent_attributes;
 
   std::ostringstream oss;
   doc->print(oss, indent.c_str(), pugi_format_flags);
@@ -678,13 +691,11 @@ Rcpp::CharacterVector xml_node_create(
 // @param node xml_node a child is appended to
 // @param child the xml_node appended to node
 // @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes) {
+SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   for (auto cld: child->children()) {
     node->first_child().append_copy(cld);
@@ -704,13 +715,11 @@ SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer, bool escapes) 
 // @param child the xml_node appended to node
 // @param level1 level the child will be added to
 // @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool pointer, bool escapes) {
+SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   for (auto cld: child->children()) {
     node->first_child().child(level1.c_str()).append_copy(cld);
@@ -731,13 +740,11 @@ SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool poi
 // @param level1 level the child will be added to
 // @param level2 level the child will be added to
 // @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::string level2, bool pointer, bool escapes) {
+SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::string level2, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   for (auto cld: child->children()) {
     node->first_child().child(level1.c_str()).child(level2.c_str()).append_copy(cld);
@@ -759,10 +766,9 @@ SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::str
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer, bool escapes) {
+SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
   for (pugi::xml_node cld = node->first_child().child(child.c_str()); cld; ) {
@@ -789,10 +795,9 @@ SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer,
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int which,  bool pointer, bool escapes) {
+SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int which,  bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
+  unsigned int pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
   for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(child.c_str()); cld; ) {
@@ -820,11 +825,9 @@ SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int 
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int which, bool pointer, bool escapes) {
+SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int which, bool pointer) {
 
-  unsigned int pugi_format_flags = pugi::format_raw;
-  if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
-
+  unsigned int pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
   for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(level2.c_str()).child(child.c_str()); cld; ) {

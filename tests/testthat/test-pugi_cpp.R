@@ -5,26 +5,26 @@ test_that("read_xml", {
   # TODO add test for isfile
   # and do some actual tests
 
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE))
-  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_silent(z <- readXMLPtr(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<a>A & B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<?xml test=\"yay\"?><a>A & B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<a>A &amp; B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   exp <- "<?xml test=\"yay\"?><a>A &amp; B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
   xml <- "<a>"
-  expect_error(readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
-  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE))
+  expect_error(readXMLPtr(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
+  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE))
 
 })
 
@@ -101,24 +101,25 @@ test_that("xml_append_child", {
   xml_node <- read_xml("<node><child1/><child2/></node>")
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&</new_child></node>"
-  expect_equal(exp, xml_append_child1(xml_node, xml_child, pointer = FALSE, escapes = FALSE))
+  expect_equal(exp, xml_append_child1(xml_node, xml_child, pointer = FALSE))
 
-  xml_node <- read_xml("<node><child1/><child2/></node>")
+  # xml_node sets the flags for both
+  xml_node <- read_xml("<node><child1/><child2/></node>", escapes = TRUE)
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&amp;</new_child></node>"
-  expect_equal(exp, xml_append_child1(xml_node, xml_child, pointer = FALSE, escapes = TRUE))
+  expect_equal(exp, xml_append_child1(xml_node, xml_child, pointer = FALSE))
 
 
   xml_node <- "<a><b/></a>"
   xml_child <- read_xml("<c/>")
 
-  xml_node <- xml_append_child1(read_xml(xml_node), xml_child, pointer = FALSE, escapes = FALSE)
+  xml_node <- xml_append_child1(read_xml(xml_node), xml_child, pointer = FALSE)
   expect_equal("<a><b/><c/></a>", xml_node)
 
-  xml_node <- xml_append_child2(read_xml(xml_node), xml_child, level1 = "b", pointer = FALSE, escapes = FALSE)
+  xml_node <- xml_append_child2(read_xml(xml_node), xml_child, level1 = "b", pointer = FALSE)
   expect_equal("<a><b><c/></b><c/></a>", xml_node)
 
-  xml_node <- xml_append_child3(read_xml(xml_node), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE, escapes = FALSE)
+  xml_node <- xml_append_child3(read_xml(xml_node), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
   expect_equal("<a><b><c><d/></c></b><c/></a>", xml_node)
 
 
@@ -126,24 +127,24 @@ test_that("xml_append_child", {
   xml_node <- "<a><b/></a>"
   xml_child <- read_xml("<c>a&b</c>", escapes = FALSE)
 
-  xml_node <- xml_append_child1(read_xml(xml_node), xml_child, pointer = FALSE, escapes = TRUE)
+  xml_node <- xml_append_child1(read_xml(xml_node, escapes = TRUE), xml_child, pointer = FALSE)
   expect_equal("<a><b/><c>a&amp;b</c></a>", xml_node)
 
-  xml_node <- xml_append_child2(read_xml(xml_node, escapes = TRUE), xml_child, level1 = "b", pointer = FALSE, escapes = TRUE)
+  xml_node <- xml_append_child2(read_xml(xml_node, escapes = TRUE), xml_child, level1 = "b", pointer = FALSE)
   expect_equal("<a><b><c>a&amp;b</c></b><c>a&amp;b</c></a>", xml_node)
 
-  xml_node <- xml_append_child3(read_xml(xml_node, escapes = TRUE), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE, escapes = TRUE)
+  xml_node <- xml_append_child3(read_xml(xml_node, escapes = TRUE), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
   expect_equal("<a><b><c>a&amp;b<d/></c></b><c>a&amp;b</c></a>", xml_node)
 
   # check that pointer is valid
-  expect_true(inherits(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE, escapes = FALSE), "pugi_xml"))
-  expect_true(inherits(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE, escapes = TRUE), "pugi_xml"))
+  expect_true(inherits(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml"))
+  expect_true(inherits(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml"))
 
-  expect_true(inherits(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE, escapes = FALSE), "pugi_xml"))
-  expect_true(inherits(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE, escapes = TRUE), "pugi_xml"))
+  expect_true(inherits(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml"))
+  expect_true(inherits(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml"))
 
-  expect_true(inherits(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE, escapes = FALSE), "pugi_xml"))
-  expect_true(inherits(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE, escapes = TRUE), "pugi_xml"))
+  expect_true(inherits(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml"))
+  expect_true(inherits(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml"))
 
 })
 

@@ -1,6 +1,14 @@
 
 test_that("read_xml", {
 
+  exp <- "<a/>"
+  got <- read_xml("<a/>", empty_tags = FALSE, pointer = FALSE)
+  expect_equal(exp, got)
+
+  exp <- "<a></a>"
+  got <- read_xml("<a/>", empty_tags = TRUE, pointer = FALSE)
+  expect_equal(exp, got)
+
   # a pointer
   x <- read_xml("<a><b/></a>")
   exp <- "<a>\n  <b/>\n</a>"
@@ -211,6 +219,9 @@ test_that("print", {
 
   expect_output(print(as_xml(xml_str)), "<a />")
   expect_output(print(as_xml(xml_str), raw = TRUE), "<a/>")
+
+  xml_str <- '<a b1="foo" b2 = "bar"/>'
+  expect_output(print(as_xml(xml_str), attr_indent = TRUE), '<a\n b1="foo"\n b2="bar" />')
 
 })
 

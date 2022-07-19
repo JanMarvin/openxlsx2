@@ -9,7 +9,9 @@ read_xml(
   pointer = TRUE,
   escapes = FALSE,
   declaration = FALSE,
-  whitespace = TRUE
+  whitespace = TRUE,
+  empty_tags = FALSE,
+  skip_control = TRUE
 )
 }
 \arguments{
@@ -23,6 +25,10 @@ no escapes. Assuming that the input already provides valid information.}
 \item{declaration}{should the declaration be imported}
 
 \item{whitespace}{should whitespace pcdata be imported}
+
+\item{empty_tags}{should \verb{<b/>} or \verb{<b></b>} be returned}
+
+\item{skip_control}{should whitespace character be exported}
 }
 \description{
 read xml file

@@ -306,7 +306,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         break;
       case character:
         cell.c_t = "inlineStr";
-        cell.is  = txt_to_is(vals, 0, 1);
+        cell.is  = txt_to_is(vals, 0, 1, 1);
         break;
       case hyperlink:
       case formula:
@@ -432,7 +432,7 @@ void update_cell_loop(
             Rcpp::String na_strings(na_strings_);
 
             uu.c_t = "inlineStr";
-            uu.is  = txt_to_is(na_strings, 0, 1);
+            uu.is  = txt_to_is(na_strings, 0, 1, 1);
           }
         }
 
@@ -441,7 +441,7 @@ void update_cell_loop(
         // either character or column name and first row
         if ((dc == character) || ((colNames) && (n == 0))) {
           uu.c_t = "inlineStr";
-          uu.is = txt_to_is(value.get_cstring(), 0, 1);
+          uu.is = txt_to_is(value.get_cstring(), 0, 1, 1);
         } else if (dc == formula) {
           uu.c_t = "str";
           uu.f = value.get_cstring();

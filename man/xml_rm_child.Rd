@@ -4,14 +4,7 @@
 \alias{xml_rm_child}
 \title{remove xml child to node}
 \usage{
-xml_rm_child(
-  xml_node,
-  xml_child,
-  level,
-  which = 0,
-  pointer = FALSE,
-  escapes = FALSE
-)
+xml_rm_child(xml_node, xml_child, level, which = 0, pointer = FALSE, ...)
 }
 \arguments{
 \item{xml_node}{xml_node}
@@ -24,7 +17,7 @@ xml_rm_child(
 
 \item{pointer}{pointer}
 
-\item{escapes}{escapes}
+\item{...}{additional arguments passed to \code{read_xml()}}
 }
 \description{
 remove xml child to node

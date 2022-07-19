@@ -7,7 +7,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x);
 SEXP si_to_txt(XPtrXML doc);
 SEXP is_to_txt(Rcpp::CharacterVector is_vec);
 
-std::string txt_to_is(std::string txt, bool no_escapes, bool raw);
+std::string txt_to_is(std::string txt, bool no_escapes, bool raw, bool skip_control);
 
 // helper function to access element from Rcpp::Character Vector as string
 inline std::string to_string(Rcpp::Vector<16>::Proxy x) {
