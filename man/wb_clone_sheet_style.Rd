@@ -4,7 +4,7 @@
 \alias{wb_clone_sheet_style}
 \title{clone sheets style}
 \usage{
-wb_clone_sheet_style(wb, from, to)
+wb_clone_sheet_style(wb, from = current_sheet(), to)
 }
 \arguments{
 \item{wb}{workbook}
