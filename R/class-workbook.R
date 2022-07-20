@@ -4709,10 +4709,10 @@ wbWorkbook <- R6::R6Class(
     #' @description clone style from one sheet to another
     #' @param from the worksheet you are cloning
     #' @param to the worksheet the style is applied to
-    clone_sheet_style = function(from, to) {
+    clone_sheet_style = function(from = current_sheet(), to) {
 
-      id_org <- self$validate_sheet(from)
-      id_new <- self$validate_sheet(to)
+      id_org <- private$get_sheet_index(from)
+      id_new <- private$get_sheet_index(to)
 
       org_style <- self$worksheets[[id_org]]$sheet_data$cc
       wb_style  <- self$worksheets[[id_new]]$sheet_data$cc
@@ -4773,6 +4773,19 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[id_new]]$mergeCells <-
         self$worksheets[[id_org]]$mergeCells
 
+      invisible(self)
+    },
+
+
+    #' @description apply sparkline to worksheet
+    #' @param sheet the worksheet you are using
+    #' @param sparklines sparkline created by `create_sparkline()`
+    add_sparklines = function(
+      sheet = current_sheet(),
+      sparklines
+    ) {
+      sheet <- private$get_sheet_index(sheet)
+      self$worksheets[[sheet]]$add_sparklines(sparklines)
       invisible(self)
     }
 
