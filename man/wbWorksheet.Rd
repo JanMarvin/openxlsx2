@@ -112,6 +112,7 @@ A Worksheet
 \item \href{#method-wbWorksheet-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
 \item \href{#method-wbWorksheet-add_page_break}{\code{wbWorksheet$add_page_break()}}
 \item \href{#method-wbWorksheet-append}{\code{wbWorksheet$append()}}
+\item \href{#method-wbWorksheet-add_sparklines}{\code{wbWorksheet$add_sparklines()}}
 \item \href{#method-wbWorksheet-clone}{\code{wbWorksheet$clone()}}
 }
 }
@@ -312,6 +313,29 @@ guaranteed to remain a public method.
 \item{\code{value}}{a new value}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-add_sparklines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-add_sparklines}{}}}
+\subsection{Method \code{add_sparklines()}}{
+add sparkline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$add_sparklines(sparklines)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}

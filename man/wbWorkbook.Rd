@@ -296,6 +296,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
 \item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
+\item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -2257,7 +2258,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Method \code{clone_sheet_style()}}{
 clone style from one sheet to another
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_sheet_style(from, to)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_sheet_style(from = current_sheet(), to)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -2266,6 +2267,25 @@ clone style from one sheet to another
 \item{\code{from}}{the worksheet you are cloning}
 
 \item{\code{to}}{the worksheet the style is applied to}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_sparklines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_sparklines}{}}}
+\subsection{Method \code{add_sparklines()}}{
+apply sparkline to worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_sparklines(sheet = current_sheet(), sparklines)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet you are using}
+
+\item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
 }
 \if{html}{\out{</div>}}
 }
