@@ -2442,7 +2442,7 @@ wb_conditional_formatting <- function(
 #' @param from sheet we select the style from
 #' @param to sheet we apply the style from
 #' @export
-wb_clone_sheet_style <- function(wb, from, to) {
+wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
   assert_workbook(wb)
   wb$clone()$clone_sheet_style(from, to)
 }
