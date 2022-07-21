@@ -116,10 +116,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
     # try to get a previous openxlsx2 seed and use this as random seed
     openxlsx2_seed <- get0(".openxlsx2.seed", globalenv(), mode = "integer", inherits = FALSE)
 
-    if (is.null(openxlsx2_seed)) {
-      # non found, change our seed to the global seed
-      openxlsx2_seed <- seed
-    } else {
+    if (!is.null(openxlsx2_seed)) {
       # found one, change the global seed for stri_rand_strings
       assign(".Random.seed", openxlsx2_seed, globalenv())
     }
