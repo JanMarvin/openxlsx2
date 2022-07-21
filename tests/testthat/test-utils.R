@@ -24,6 +24,7 @@ test_that("create_char_dataframe", {
 })
 
 test_that("test random_string", {
+  set.seed(123)
   suppressWarnings(rm(.openxlsx2.seed, envir = .GlobalEnv))
 
   x <- .Random.seed
