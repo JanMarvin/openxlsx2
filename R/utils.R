@@ -130,7 +130,7 @@ random_string <- function(n = 1, length, pattern = "[A-Za-z0-9]") {
   res <- stringi::stri_rand_strings(n = 1, length = length, pattern = pattern)
 
   # store the altered seed and reset the
-  assign(".openxlsx2.seed", .Random.seed, .GlobalEnv)
+  assign(".openxlsx2.seed", .Random.seed, .GlobalEnv) # nolint
   assign(".Random.seed", rng, .GlobalEnv)
 
   return (res)
