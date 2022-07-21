@@ -116,3 +116,81 @@ test_that("amp_split & genHeaderFooterNode", {
   expect_equal(exp, got)
 
 })
+
+test_that("add_sparklines", {
+
+  set.seed(123) # sparklines has a random uri string
+  try(rm(.openxlsx2.seed, envir = .GlobalEnv), TRUE)
+
+  sparklines <- c(
+    create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"),
+    create_sparklines("Sheet 1", "A2:L2", "M2", markers = "1"),
+    create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1")
+  )
+
+  t1 <- AirPassengers
+  t2 <- do.call(cbind, split(t1, cycle(t1)))
+  dimnames(t2) <- dimnames(.preformat.ts(t1))
+
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data(x = t2)$
+    add_sparklines(sparklines = sparklines)
+
+  exp <- read_xml('<ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}">
+ <x14:sparklineGroups xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
+  <x14:sparklineGroup type="column" displayEmptyCellsAs="gap" first="1" xr2:uid="{6F57B887-24F1-C14A-942C-ASEVX1JWJGYG}">
+   <x14:colorSeries rgb="FF376092" />
+   <x14:colorNegative rgb="FFD00000" />
+   <x14:colorAxis rgb="FFD00000" />
+   <x14:colorMarkers rgb="FFD00000" />
+   <x14:colorFirst rgb="FFD00000" />
+   <x14:colorLast rgb="FFD00000" />
+   <x14:colorHigh rgb="FFD00000" />
+   <x14:colorLow rgb="FFD00000" />
+   <x14:sparklines>
+    <x14:sparkline>
+     <xm:f>\'Sheet 1\'!A3:L3</xm:f>
+     <xm:sqref>M3</xm:sqref>
+    </x14:sparkline>
+   </x14:sparklines>
+  </x14:sparklineGroup>
+  <x14:sparklineGroup displayEmptyCellsAs="gap" markers="1" xr2:uid="{6F57B887-24F1-C14A-942C-OK3W81BYWONZ}">
+   <x14:colorSeries rgb="FF376092" />
+   <x14:colorNegative rgb="FFD00000" />
+   <x14:colorAxis rgb="FFD00000" />
+   <x14:colorMarkers rgb="FFD00000" />
+   <x14:colorFirst rgb="FFD00000" />
+   <x14:colorLast rgb="FFD00000" />
+   <x14:colorHigh rgb="FFD00000" />
+   <x14:colorLow rgb="FFD00000" />
+   <x14:sparklines>
+    <x14:sparkline>
+     <xm:f>\'Sheet 1\'!A2:L2</xm:f>
+     <xm:sqref>M2</xm:sqref>
+    </x14:sparkline>
+   </x14:sparklines>
+  </x14:sparklineGroup>
+  <x14:sparklineGroup type="stacked" displayEmptyCellsAs="gap" negative="1" xr2:uid="{6F57B887-24F1-C14A-942C-NPJLA5YWOS0H}">
+   <x14:colorSeries rgb="FF376092" />
+   <x14:colorNegative rgb="FFD00000" />
+   <x14:colorAxis rgb="FFD00000" />
+   <x14:colorMarkers rgb="FFD00000" />
+   <x14:colorFirst rgb="FFD00000" />
+   <x14:colorLast rgb="FFD00000" />
+   <x14:colorHigh rgb="FFD00000" />
+   <x14:colorLow rgb="FFD00000" />
+   <x14:sparklines>
+    <x14:sparkline>
+     <xm:f>\'Sheet 1\'!A4:L4</xm:f>
+     <xm:sqref>M4</xm:sqref>
+    </x14:sparkline>
+   </x14:sparklines>
+  </x14:sparklineGroup>
+ </x14:sparklineGroups>
+</ext>', pointer = FALSE)
+  got <- wb$worksheets[[1]]$extLst
+  expect_equal(exp, got)
+
+})

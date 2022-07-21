@@ -2446,3 +2446,14 @@ wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
   assert_workbook(wb)
   wb$clone()$clone_sheet_style(from, to)
 }
+
+#' clone sheets style
+#'
+#' @param wb workbook
+#' @param sheet sheet to add the sparklines to
+#' @param sparklines sparklines object
+#' @export
+wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
+  assert_workbook(wb)
+  wb$clone()$add_sparklines(sheet, sparklines)
+}

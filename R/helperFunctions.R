@@ -465,7 +465,7 @@ create_sparklines <- function(
       first = first,
       last = last,
       negative = negative,
-      "xr2:uid" = sprintf("{6F57B887-24F1-C14A-942C-%s}", toupper(random_string(12)))
+      "xr2:uid" = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-Z0-9]"))
     ),
     xml_children = c(
       xml_node_create("x14:colorSeries", xml_attributes = colorSeries),
