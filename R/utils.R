@@ -111,28 +111,28 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
   # https://github.com/ycphs/openxlsx/pull/224
 
   if (keep_seed) {
-    rng <- get0(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
+    seed <- get0(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
 
     # try to get a previous openxlsx2 seed and use this as random seed
-    try(openxlsx2_seed <- get0(".openxlsx2.seed", globalenv(), mode = "integer", inherits = FALSE), TRUE)
+    openxlsx2_seed <- get0(".openxlsx2.seed", globalenv(), mode = "integer", inherits = FALSE)
 
-    if (!is.null(openxlsx2_seed)) {
+    if (is.null(openxlsx2_seed)) {
+      # non found, change our seed to the global seed
+      openxlsx2_seed <- seed
+    } else {
       # found one, change the global seed for stri_rand_strings
       assign(".Random.seed", openxlsx2_seed, globalenv())
-    } else {
-      # non found, change the seed to the current
-      openxlsx2_seed <- rng
     }
   }
 
-  # create random string, this alters the seed
+  # create the random string, this alters the global seed
   res <- stringi::stri_rand_strings(n = n, length = length, pattern = pattern)
 
   if (keep_seed) {
-    # store the altered seed and reset the
+    # store the altered seed and reset the global seed
     assign(".openxlsx2.seed", .Random.seed, globalenv()) # nolint
-    assign(".Random.seed", rng, globalenv())
+    assign(".Random.seed", seed, globalenv())
   }
 
-  return (res)
+  return(res)
 }
