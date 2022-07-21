@@ -26,12 +26,13 @@ test_that("create_char_dataframe", {
 
 test_that("test random_string", {
   set.seed(123)
+  suppressWarnings(rm(.openxlsx2.seed, envir = .GlobalEnv))
 
   x <- .Random.seed
   tmp <- openxlsx2:::random_string()
   y <- .Random.seed
   expect_identical(x, y)
-  expect_equal("f5NHoRoonRkdi0TD", tmp)
+  expect_equal("HmPsw2WtYSxSgZ6t", tmp)
 
   x <- .Random.seed
   tmp <- openxlsx2:::random_string(length = 6)
