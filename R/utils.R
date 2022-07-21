@@ -99,39 +99,40 @@ as_binary <- function(x) {
 }
 
 #' random string function that does not alter the seed.
-#' 
+#'
 #' simple wrapper around `stringi::stri_rand_strings()``
-#' 
-#' @param n n
-#' @param length length
-#' @param pattern pattern
+#'
+#' @inheritParams stringi::stri_rand_strings
+#' @param keep_seed logical should the default seed be kept unaltered
 #' @keywords internal
 #' @noRd
-random_string <- function(n = 1, length, pattern = "[A-Za-z0-9]") {
+random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed = TRUE) {
   # https://github.com/ycphs/openxlsx/issues/183
   # https://github.com/ycphs/openxlsx/pull/224
-  
-  if (missing(length)) length <- 16
 
-  rng <- get(".Random.seed", .GlobalEnv)
+  if (keep_seed) {
+    rng <- get0(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
 
-  # try to get a previous openxlsx2 seed and use this as random seed
-  try(openxlsx2_seed <- get(".openxlsx2.seed", .GlobalEnv), TRUE)
+    # try to get a previous openxlsx2 seed and use this as random seed
+    try(openxlsx2_seed <- get0(".openxlsx2.seed", globalenv(), mode = "integer", inherits = FALSE), TRUE)
 
-  if (exists("openxlsx2_seed")) {
-    # found one, change the global seed for stri_rand_strings
-    assign(".Random.seed", openxlsx2_seed, .GlobalEnv)
-  } else { 
-    # non found, change the seed to the current
-    openxlsx2_seed <- rng
+    if (!is.null(openxlsx2_seed)) {
+      # found one, change the global seed for stri_rand_strings
+      assign(".Random.seed", openxlsx2_seed, globalenv())
+    } else {
+      # non found, change the seed to the current
+      openxlsx2_seed <- rng
+    }
   }
 
   # create random string, this alters the seed
-  res <- stringi::stri_rand_strings(n = 1, length = length, pattern = pattern)
+  res <- stringi::stri_rand_strings(n = n, length = length, pattern = pattern)
 
-  # store the altered seed and reset the
-  assign(".openxlsx2.seed", .Random.seed, .GlobalEnv) # nolint
-  assign(".Random.seed", rng, .GlobalEnv)
+  if (keep_seed) {
+    # store the altered seed and reset the
+    assign(".openxlsx2.seed", .Random.seed, globalenv()) # nolint
+    assign(".Random.seed", rng, globalenv())
+  }
 
   return (res)
 }

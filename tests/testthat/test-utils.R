@@ -38,4 +38,10 @@ test_that("test random_string", {
   tmp <- random_string(length = 6)
   y <- .Random.seed
   expect_identical(x, y)
+  expect_equal("F2Kxtg", tmp)
+
+  x <- .Random.seed
+  tmp <- random_string(length = 6, keep_seed = FALSE)
+  y <- .Random.seed
+  expect_false(identical(x, y))
 })
