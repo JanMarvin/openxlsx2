@@ -23,3 +23,12 @@ test_that("create_char_dataframe", {
   expect_equal(exp, got)
 
 })
+
+test_that("test random_string", {
+  set.seed(123)
+
+  x <- .Random.seed
+  tmp <- openxlsx2:::random_string(length = 6)
+  y <- .Random.seed
+  expect_identical(x, y)
+})
