@@ -111,7 +111,7 @@ random_string <- function(n = 1, length, pattern = "[A-Za-z0-9]") {
   # https://github.com/ycphs/openxlsx/issues/183
   # https://github.com/ycphs/openxlsx/pull/224
   
-  if (missing(length)) length <- substitute()
+  if (missing(length)) length <- 16
 
   rng <- get(".Random.seed", .GlobalEnv)
 

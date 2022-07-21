@@ -28,6 +28,12 @@ test_that("test random_string", {
   set.seed(123)
 
   x <- .Random.seed
+  tmp <- openxlsx2:::random_string()
+  y <- .Random.seed
+  expect_identical(x, y)
+  expect_equal("f5NHoRoonRkdi0TD", tmp)
+
+  x <- .Random.seed
   tmp <- openxlsx2:::random_string(length = 6)
   y <- .Random.seed
   expect_identical(x, y)
