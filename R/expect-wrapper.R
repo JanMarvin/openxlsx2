@@ -111,7 +111,15 @@ expect_wrapper <- function(
     wb_method <- wb$clone(deep = TRUE)
 
     # be careful and report when we failed to run these
+
+
+    # the style names are generated at random: use matching seeds for both calls
+    set.seed(123)
+    options("openxlsx2_seed" = NULL)
     res_fun    <- try(do.call(fun, c(wb = wb_fun, params)), silent = TRUE)
+
+    set.seed(123)
+    options("openxlsx2_seed" = NULL)
     res_method <- try(do.call(wb_method[[method]], params), silent = TRUE)
 
     msg <- NULL
