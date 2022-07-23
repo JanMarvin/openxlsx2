@@ -145,6 +145,43 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
 
 }
 
+// [[Rcpp::export]]
+Rcpp::IntegerVector order_cc(vec_string &r) {
+
+  auto n = r.size();
+  std::vector<idx> idxs(n);
+  Rcpp::IntegerVector out(n);
+
+  for (auto i = 0; i < r.size(); ++i) {
+
+    std::string buffer = r[i];
+
+    // get col name
+    std::string col = buffer;
+    col.erase(std::remove_if(col.begin(), col.end(), &isdigit), col.end());
+    idxs[i].col = uint_col_to_int(col);
+
+    // remove numeric from string
+    std::string row = buffer;
+    row.erase(std::remove_if(row.begin(), row.end(), &isalpha), row.end());
+    idxs[i].row = std::stoi(row);
+
+    idxs[i].idx = i+1;
+  }
+
+  std::sort(idxs.begin(), idxs.end(), [](idx a, idx b) {
+    if (a.row != b.row) return a.row < b.row;
+    return a.col < b.col;
+  });
+
+  for (auto i = 0; i < n; ++i) {
+    out[i] = idxs[i].idx;
+  }
+
+  return( out );
+}
+
+
 // provide a basic rbindlist for lists of named characters
 // xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 // wb <- wb_load(xlsxFile)

@@ -92,7 +92,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     cc <- rbind(cc, cc_missing)
 
     # order cc (not really necessary, will be done when saving)
-    cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
+    cc <- cc[order_cc(cc[, "r"]), ]
 
     # update dimensions (only required if new cols and rows are added) ------
     all_rows <- as.numeric(unique(cc$row_r))

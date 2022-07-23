@@ -8,6 +8,12 @@
 #include <RcppCommon.h>
 
 typedef struct {
+  int col;
+  int row;
+  int idx;
+} idx;
+
+typedef struct {
   std::string r;
   std::string row_r;
   std::string c_r;   // CellReference

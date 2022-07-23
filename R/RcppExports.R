@@ -27,6 +27,10 @@ col_to_int <- function(x) {
     .Call(`_openxlsx2_col_to_int`, x)
 }
 
+order_cc <- function(r) {
+    .Call(`_openxlsx2_order_cc`, r)
+}
+
 rbindlist <- function(x) {
     .Call(`_openxlsx2_rbindlist`, x)
 }

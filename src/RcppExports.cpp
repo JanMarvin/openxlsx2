@@ -44,6 +44,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// order_cc
+Rcpp::IntegerVector order_cc(vec_string& r);
+RcppExport SEXP _openxlsx2_order_cc(SEXP rSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< vec_string& >::type r(rSEXP);
+    rcpp_result_gen = Rcpp::wrap(order_cc(r));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rbindlist
 SEXP rbindlist(Rcpp::List x);
 RcppExport SEXP _openxlsx2_rbindlist(SEXP xSEXP) {
@@ -870,6 +881,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_openxlsx2_type", (DL_FUNC) &_openxlsx2_openxlsx2_type, 1},
     {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
+    {"_openxlsx2_order_cc", (DL_FUNC) &_openxlsx2_order_cc, 1},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 3},
