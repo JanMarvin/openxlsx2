@@ -164,11 +164,12 @@ SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->child(level1.c_str()).children(child.c_str()))
-  {
-    std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
+  for (auto worksheet : doc->children(level1.c_str())) {
+    for (auto chld : worksheet.children(child.c_str())) {
+      std::ostringstream oss;
+      chld.print(oss, " ", pugi_format_flags);
+      res.push_back(Rcpp::String(oss.str()));
+    }
   }
 
   return  Rcpp::wrap(res);
@@ -180,11 +181,14 @@ SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::strin
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str()))
-  {
-    std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
+  for (auto worksheet : doc->children(level1.c_str())) {
+    for (auto lvl2 : worksheet.children(level2.c_str())) {
+      for (auto lvl3 : lvl2.children(child.c_str())) {
+        std::ostringstream oss;
+        lvl3.print(oss, " ", pugi_format_flags);
+        res.push_back(Rcpp::String(oss.str()));
+      }
+    }
   }
 
   return  Rcpp::wrap(res);
@@ -198,12 +202,13 @@ SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->child(level1.c_str()).children()) {
-    for (auto cld : worksheet.children(child.c_str()))
-    {
-      std::ostringstream oss;
-      cld.print(oss, " ", pugi_format_flags);
-      res.push_back(Rcpp::String(oss.str()));
+  for (auto worksheet : doc->children(level1.c_str())) {
+    for (auto lvl1 : worksheet.children()) {
+      for (auto cld : lvl1.children(child.c_str())) {
+        std::ostringstream oss;
+        cld.print(oss, " ", pugi_format_flags);
+        res.push_back(Rcpp::String(oss.str()));
+      }
     }
   }
 

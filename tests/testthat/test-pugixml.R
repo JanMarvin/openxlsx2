@@ -67,6 +67,24 @@ test_that("read_xml", {
   got <- readLines(tmp, warn = FALSE)
   expect_equal(exp, got)
 
+  xml <- '<a><b><c1/></b></a><a><b><c2/></b></a>'
+
+  exp <- c("<a><b><c1/></b></a>", "<a><b><c2/></b></a>")
+  got <- xml_node(xml, "a")
+  expect_equal(exp, got)
+
+  exp <- c("<b><c1/></b>", "<b><c2/></b>")
+  got <- xml_node(xml, "a", "b")
+  expect_equal(exp, got)
+
+  exp <- "<c1/>"
+  got <- xml_node(xml, "a", "b", "c1")
+  expect_equal(exp, got)
+
+  exp <- "<c2/>"
+  got <- xml_node(xml, "a", "b", "c2")
+  expect_equal(exp, got)
+
 })
 
 test_that("xml_node", {
