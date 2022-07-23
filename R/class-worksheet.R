@@ -540,26 +540,53 @@ wbWorksheet <- R6::R6Class(
       sparklines
     ) {
 
-      if (length(self$extLst) == 0)
-        self$extLst <- xml_node_create(
+      if (!all(xml_node_name(sparklines) == "x14:sparklineGroup"))
+        stop("sparklines nodes must all be 'x14:sparklineGroup'")
+
+      # can have length > 1 for multiple xmlns attributes. we take this extLst,
+      # inspect it, update if needed and return it
+      extLst <- xml_node(self$extLst, "ext")
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check if any <ext xmlns:x14 ...> node exists, else add it
+      if (length(extLst) == 0 || !any(is_xmlns_x14)) {
+        ext <- xml_node_create(
           "ext",
           xml_attributes = c("xmlns:x14" = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main",
                              uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}")
         )
 
-      sparklineGroups <- xml_node(self$extLst, "ext", "x14:sparklineGroups")
+        # update extLst
+        extLst <- c(extLst, ext)
+        is_xmlns_x14 <- c(is_xmlns_x14, TRUE)
+      } else {
+        ext <- extLst[is_xmlns_x14]
+      }
 
-      if (length(sparklineGroups) == 0)
-        self$extLst <- xml_add_child(
-          self$extLst,
-          xml_node_create("x14:sparklineGroups",
-                          xml_attributes = c("xmlns:xm"="http://schemas.microsoft.com/office/excel/2006/main"))
+      # check again and should be exactly one ext node
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check for sparklineGroups and add one if none is found
+      sparklineGroups <- xml_node(ext, "ext", "x14:sparklineGroups")
+      if (length(sparklineGroups) == 0) {
+        ext <- xml_add_child(
+          ext,
+          xml_node_create(
+            "x14:sparklineGroups",
+            xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
         )
+      }
 
-      self$extLst <- xml_add_child(
-        self$extLst,
+      # add new sparklines to exisisting sparklineGroups
+      ext <- xml_add_child(
+        ext,
         level = c("x14:sparklineGroups"),
-        sparklines)
+        sparklines
+      )
+
+      # update extLst and add it back to worksheet
+      extLst[is_xmlns_x14] <- ext
+      self$extLst <- extLst
 
       invisible(self)
     }

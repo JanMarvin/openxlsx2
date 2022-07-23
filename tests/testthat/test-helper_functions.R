@@ -193,4 +193,9 @@ test_that("add_sparklines", {
   got <- wb$worksheets[[1]]$extLst
   expect_equal(exp, got)
 
+  expect_error(
+    wb$add_sparklines(sparklines = xml_node_create("sparklines", sparklines)),
+    "sparklines nodes must all be 'x14:sparklineGroup'"
+  )
+
 })
