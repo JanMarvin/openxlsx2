@@ -47,9 +47,6 @@ test_that("xml_node", {
   # bit cheating, this test returns the same, but not the actual feature of "*"
   expect_equal(exp, unkgetXMLXPtr3(xml, "a", "c"))
 
-  exp <- list(c("<d><e/></d>"))
-  expect_equal(exp, getXMLXPtr4(xml, "a", "b", "c", "d"))
-
 })
 
 test_that("xml_value", {
@@ -68,10 +65,6 @@ test_that("xml_value", {
   xml <- read_xml(xml_str)
   expect_equal(exp, getXMLXPtr3val(xml, "a", "b", "c"))
 
-  xml_str <- "<a><b><c><d>1</d></c></b></a>"
-  xml <- read_xml(xml_str)
-  expect_equal(list(exp), getXMLXPtr4val(xml, "a", "b", "c", "d"))
-
 })
 
 test_that("xml_attr", {
@@ -89,10 +82,6 @@ test_that("xml_attr", {
   xml_str <- "<c><b><a a=\"1\"/></b></c>"
   xml <- read_xml(xml_str)
   expect_equal(exp, getXMLXPtr3attr(xml, "c", "b", "a"))
-
-  xml_str <- "<d><c><b><a a=\"1\"/></b></c></d>"
-  xml <- read_xml(xml_str)
-  expect_equal(list(list(as.list(unlist(exp)))), getXMLXPtr4attr(xml, "d", "c", "b", "a"))
 
 })
 

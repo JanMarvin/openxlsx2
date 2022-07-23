@@ -128,10 +128,6 @@ unkgetXMLXPtr3 <- function(doc, level1, child) {
     .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
 }
 
-getXMLXPtr4 <- function(doc, level1, level2, level3, child) {
-    .Call(`_openxlsx2_getXMLXPtr4`, doc, level1, level2, level3, child)
-}
-
 getXMLXPtr1val <- function(doc, child) {
     .Call(`_openxlsx2_getXMLXPtr1val`, doc, child)
 }
@@ -144,10 +140,6 @@ getXMLXPtr3val <- function(doc, level1, level2, child) {
     .Call(`_openxlsx2_getXMLXPtr3val`, doc, level1, level2, child)
 }
 
-getXMLXPtr4val <- function(doc, level1, level2, level3, child) {
-    .Call(`_openxlsx2_getXMLXPtr4val`, doc, level1, level2, level3, child)
-}
-
 getXMLXPtr1attr <- function(doc, child) {
     .Call(`_openxlsx2_getXMLXPtr1attr`, doc, child)
 }
@@ -158,10 +150,6 @@ getXMLXPtr2attr <- function(doc, level1, child) {
 
 getXMLXPtr3attr <- function(doc, level1, level2, child) {
     .Call(`_openxlsx2_getXMLXPtr3attr`, doc, level1, level2, child)
-}
-
-getXMLXPtr4attr <- function(doc, level1, level2, level3, child) {
-    .Call(`_openxlsx2_getXMLXPtr4attr`, doc, level1, level2, level3, child)
 }
 
 printXPtr <- function(doc, indent, raw, attr_indent) {

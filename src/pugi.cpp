@@ -147,10 +147,10 @@ SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->children(child.c_str()))
+  for (auto cld : doc->children(child.c_str()))
   {
     std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags);
+    cld.print(oss, " ", pugi_format_flags);
     res.push_back(Rcpp::String(oss.str()));
   }
 
@@ -164,10 +164,10 @@ SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->children(level1.c_str())) {
-    for (auto chld : worksheet.children(child.c_str())) {
+  for (auto lvl1 : doc->children(level1.c_str())) {
+    for (auto cld : lvl1.children(child.c_str())) {
       std::ostringstream oss;
-      chld.print(oss, " ", pugi_format_flags);
+      cld.print(oss, " ", pugi_format_flags);
       res.push_back(Rcpp::String(oss.str()));
     }
   }
@@ -181,11 +181,11 @@ SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::strin
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->children(level1.c_str())) {
-    for (auto lvl2 : worksheet.children(level2.c_str())) {
-      for (auto lvl3 : lvl2.children(child.c_str())) {
+  for (auto lvl1 : doc->children(level1.c_str())) {
+    for (auto lvl2 : lvl1.children(level2.c_str())) {
+      for (auto cld : lvl2.children(child.c_str())) {
         std::ostringstream oss;
-        lvl3.print(oss, " ", pugi_format_flags);
+        cld.print(oss, " ", pugi_format_flags);
         res.push_back(Rcpp::String(oss.str()));
       }
     }
@@ -202,9 +202,9 @@ SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
   vec_string res;
   unsigned int  pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->children(level1.c_str())) {
-    for (auto lvl1 : worksheet.children()) {
-      for (auto cld : lvl1.children(child.c_str())) {
+  for (auto lvl1 : doc->children(level1.c_str())) {
+    for (auto lvl2 : lvl1.children()) {
+      for (auto cld : lvl2.children(child.c_str())) {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
         res.push_back(Rcpp::String(oss.str()));
@@ -213,43 +213,6 @@ SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
   }
 
   return  Rcpp::wrap(res);
-}
-
-//nested list below level 3. eg:
-//<level1>
-//  <level2>
-//    <level3>
-//      <child />
-//      x
-//      <child />
-//    </level3>
-//    <level3>
-//      <child />
-//    </level3>
-//  </level2>
-//</level1>
-// [[Rcpp::export]]
-SEXP getXMLXPtr4(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child) {
-
-  std::vector<std::vector<std::string>> x;
-  unsigned int  pugi_format_flags = pugi_format(doc);
-
-  for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(level3.c_str()))
-  {
-    std::vector<std::string> y;
-
-    for (auto col : worksheet.children(child.c_str()))
-    {
-      std::ostringstream oss;
-      col.print(oss, " ", pugi_format_flags);
-
-      y.push_back(Rcpp::String(oss.str()));
-    }
-
-    x.push_back(y);
-  }
-
-  return  Rcpp::wrap(x);
 }
 
 // [[Rcpp::export]]
@@ -299,26 +262,6 @@ SEXP getXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::st
   return  Rcpp::wrap(x);
 }
 
-// [[Rcpp::export]]
-SEXP getXMLXPtr4val(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child) {
-
-  // returns a list of vectors!
-  std::vector<std::vector<std::string>> x;
-
-  for (auto worksheet : doc->child(level1.c_str()).child(level2.c_str()).children(level3.c_str()))
-  {
-    std::vector<std::string> y;
-
-    for (auto col : worksheet.children(child.c_str()))
-    {
-      y.push_back(Rcpp::String(col.child_value()));
-    }
-
-    x.push_back(y);
-  }
-
-  return  Rcpp::wrap(x);
-}
 
 // [[Rcpp::export]]
 SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
@@ -417,62 +360,6 @@ SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::s
 
     z[itr] = res;
     ++itr;
-  }
-
-  return z;
-}
-
-// nested list below level 3. eg:
-// <worksheet>
-//  <sheetData>
-//    <row>
-//      <c />
-//      <c />
-//    </row>
-//    <row>
-//      <c />
-//    </row>
-//  </sheetData>
-//</worksheet>
-// [[Rcpp::export]]
-Rcpp::List getXMLXPtr4attr(XPtrXML doc, std::string level1, std::string level2, std::string level3, std::string child) {
-
-  auto worksheet = doc->child(level1.c_str()).child(level2.c_str());
-
-  size_t n = std::distance(worksheet.begin(), worksheet.end());
-  Rcpp::List z(n);
-  auto itr_rows = 0;
-
-  for (auto ws : worksheet.children(level3.c_str()))
-  {
-    size_t k = std::distance(ws.begin(), ws.end());
-    auto itr_cols = 0;
-    Rcpp::List y(k);
-
-    for (auto row : ws.children(child.c_str()))
-    {
-      size_t j = std::distance(row.attributes_begin(), row.attributes_end());
-      Rcpp::List res(j);
-      auto attr_itr = 0;
-
-      Rcpp::CharacterVector nam(j);
-
-      for (auto attr : row.attributes())
-      {
-        nam[attr_itr] = Rcpp::String(attr.name());
-        res[attr_itr] = Rcpp::String(attr.value());
-        ++attr_itr;
-      }
-
-      // assign names
-      res.attr("names") = nam;
-
-      y[itr_cols] = res;
-      ++itr_cols;
-    }
-
-    z[itr_rows] = y;
-    ++itr_rows;
   }
 
   return z;

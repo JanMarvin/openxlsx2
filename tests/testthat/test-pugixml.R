@@ -126,9 +126,6 @@ test_that("xml_node", {
   # bit cheating, this test returns the same, but not the actual feature of "*"
   expect_equal(exp, xml_node(xml, "a", "*","c"))
 
-  exp <- list(c("<d><e/></d>"))
-  expect_equal(exp, xml_node(xml, "a", "b", "c", "d"))
-
 })
 
 test_that("xml_attr", {
@@ -180,10 +177,6 @@ test_that("xml_attr", {
   xml <- read_xml(xml_str)
   expect_equal(exp, xml_attr(xml, "c", "b", "a"))
 
-  xml_str <- "<d><c><b><a a=\"1\"/></b></c></d>"
-  xml <- read_xml(xml_str)
-  expect_equal(list(list(as.list(unlist(exp)))), xml_attr(xml, "d", "c", "b", "a"))
-
 })
 
 test_that("xml_value", {
@@ -215,10 +208,6 @@ test_that("xml_value", {
   xml_str <- "<a><b><c>1</c></b></a>"
   xml <- read_xml(xml_str)
   expect_equal(exp, xml_value(xml, "a", "b", "c"))
-
-  xml_str <- "<a><b><c><d>1</d></c></b></a>"
-  xml <- read_xml(xml_str)
-  expect_equal(list(exp), xml_value(xml, "a", "b", "c", "d"))
 
 })
 
