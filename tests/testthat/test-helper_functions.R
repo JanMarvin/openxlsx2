@@ -120,7 +120,7 @@ test_that("amp_split & genHeaderFooterNode", {
 test_that("add_sparklines", {
 
   set.seed(123) # sparklines has a random uri string
-  try(rm(.openxlsx2.seed, envir = .GlobalEnv), TRUE)
+  options("openxlsx2_seed" = NULL)
 
   sparklines <- c(
     create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"),
@@ -156,7 +156,7 @@ test_that("add_sparklines", {
     </x14:sparkline>
    </x14:sparklines>
   </x14:sparklineGroup>
-  <x14:sparklineGroup displayEmptyCellsAs="gap" markers="1" xr2:uid="{6F57B887-24F1-C14A-942C-OK3W81BYWONZ}">
+  <x14:sparklineGroup displayEmptyCellsAs="gap" markers="1" xr2:uid="{6F57B887-24F1-C14A-942C-9DKW7WYNM276}">
    <x14:colorSeries rgb="FF376092" />
    <x14:colorNegative rgb="FFD00000" />
    <x14:colorAxis rgb="FFD00000" />
@@ -172,7 +172,7 @@ test_that("add_sparklines", {
     </x14:sparkline>
    </x14:sparklines>
   </x14:sparklineGroup>
-  <x14:sparklineGroup type="stacked" displayEmptyCellsAs="gap" negative="1" xr2:uid="{6F57B887-24F1-C14A-942C-NPJLA5YWOS0H}">
+  <x14:sparklineGroup type="stacked" displayEmptyCellsAs="gap" negative="1" xr2:uid="{6F57B887-24F1-C14A-942C-6PK6XX4UGJJ8}">
    <x14:colorSeries rgb="FF376092" />
    <x14:colorNegative rgb="FFD00000" />
    <x14:colorAxis rgb="FFD00000" />
