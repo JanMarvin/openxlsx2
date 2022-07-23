@@ -8,13 +8,13 @@
 \alias{xml_attr}
 \title{xml_node}
 \usage{
-xml_node(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, ...)
+xml_node(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...)
 
 xml_node_name(xml, level1 = NULL, level2 = NULL, ...)
 
-xml_value(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, ...)
+xml_value(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...)
 
-xml_attr(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, ...)
+xml_attr(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...)
 }
 \arguments{
 \item{xml}{something xml}
@@ -24,8 +24,6 @@ xml_attr(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, ...)
 \item{level2}{to please check}
 
 \item{level3}{to please check}
-
-\item{level4}{to please check}
 
 \item{...}{additional arguments passed to \code{read_xml()}}
 }
