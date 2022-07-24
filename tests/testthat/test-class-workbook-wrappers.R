@@ -396,3 +396,15 @@ test_that("wb_clone_sheet_style() is a wrapper", {
     params = list(from = 1, to = 2)
   )
 })
+
+
+# wb_add_sparklines() -----------------------------------------------------
+
+test_that("wb_add_sparklines() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+  expect_wrapper(
+    "add_sparklines",
+    wb = wb,
+    params = list(sparklines = create_sparklines("Sheet  1", "A3:L3", "M3", type = "column", first = "1"))
+  )
+})

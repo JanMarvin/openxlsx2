@@ -70,7 +70,6 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 #' @param level1 to please check
 #' @param level2 to please check
 #' @param level3 to please check
-#' @param level4 to please check
 #' @param ... additional arguments passed to `read_xml()`
 #' @details This function returns XML nodes as used in openxlsx2. In theory they
 #' could be returned as pointers as well, but this has not yet been implemented.
@@ -82,9 +81,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 #'   # return b. requires the path to the node
 #'   xml_node(x, "a", "b")
 #' @export
-xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, ...) {
+xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
 
-  lvl <- c(level1, level2, level3, level4)
+  lvl <- c(level1, level2, level3)
   if (!all(is.null(lvl))) {
     lvl <- lvl[!is.null(lvl)]
     if (!all(is.character(lvl)))
@@ -103,7 +102,6 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
     if (length(lvl) == 2) z <- getXMLXPtr2(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3(xml, level1, level2, level3)
     if (length(lvl) == 3) if (level2 == "*") z <- unkgetXMLXPtr3(xml, level1, level3)
-    if (length(lvl) == 4) z <- getXMLXPtr4(xml, level1, level2, level3, level4)
   }
 
   z
@@ -133,9 +131,9 @@ xml_node_name <- function(xml, level1 = NULL, level2 = NULL, ...) {
 #'   x <- read_xml("<a><b r=\"1\">2</b></a>")
 #'   xml_value(x, "a", "b")
 #' @export
-xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, ...) {
+xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
 
-  lvl <- c(level1, level2, level3, level4)
+  lvl <- c(level1, level2, level3)
   lvl <- lvl[!is.null(lvl)]
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
@@ -149,7 +147,6 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
     if (length(lvl) == 1) z <- getXMLXPtr1val(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2val(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3val(xml, level1, level2, level3)
-    if (length(lvl) == 4) z <- getXMLXPtr4val(xml, level1, level2, level3, level4)
   }
 
   z
@@ -169,9 +166,9 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
 #'   x <- read_xml("<b><a a=\"1\" b=\"2\"/></b>")
 #'   xml_attr(x, "b", "a")
 #' @export
-xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL, ...) {
+xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL,  ...) {
 
-  lvl <- c(level1, level2, level3, level4)
+  lvl <- c(level1, level2, level3)
   lvl <- lvl[!is.null(lvl)]
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
@@ -185,7 +182,6 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
     if (length(lvl) == 1) z <- getXMLXPtr1attr(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2attr(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3attr(xml, level1, level2, level3)
-    if (length(lvl) == 4) z <- getXMLXPtr4attr(xml, level1, level2, level3, level4)
   }
 
   z

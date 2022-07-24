@@ -956,16 +956,23 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
             authorsInds <- as.integer(comments_attr$authorId) + 1
             authors <- authors[authorsInds]
 
-            style <- lapply(comments, function(x) unlist(xml_node(x, "comment", "text", "r", "rPr")) )
-            comments <- lapply(comments, function(x) unlist(xml_value(x, "comment", "text", "r", "t")) )
+            text <- xml_node(comments, "comment", "text")
+
+            comments <- lapply(comments, function(x) {
+              text <- xml_node(x, "comment", "text")
+              list(
+                style = xml_node(text, "text", "r", "rPr"),
+                comments = xml_node(text, "text", "r", "t")
+              )
+            })
 
             wb$comments[[i]] <- lapply(seq_along(comments), function(j) {
               list(
                 #"refId" = com_rId[j],
                 "ref" = refs[j],
                 "author" = authors[j],
-                "comment" = comments[[j]],
-                "style" = style[[j]],
+                "comment" = comments[[j]]$comments,
+                "style" = comments[[j]]$style,
                 "clientData" = cd[[j]]
               )
             })
