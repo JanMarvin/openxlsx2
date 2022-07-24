@@ -82,6 +82,9 @@
     <loc>/reference/create_numfmt.html</loc>
   </url>
   <url>
+    <loc>/reference/create_sparklines.html</loc>
+  </url>
+  <url>
     <loc>/reference/dims_to_dataframe.html</loc>
   </url>
   <url>
@@ -230,6 +233,9 @@
   </url>
   <url>
     <loc>/reference/wb_add_plot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_add_sparklines.html</loc>
   </url>
   <url>
     <loc>/reference/wb_add_worksheet.html</loc>
