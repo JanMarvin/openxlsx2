@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_sparklines}
 \alias{wb_add_sparklines}
-\title{clone sheets style}
+\title{add sparklines to workbook}
 \usage{
 wb_add_sparklines(wb, sheet = current_sheet(), sparklines)
 }
@@ -11,8 +11,18 @@ wb_add_sparklines(wb, sheet = current_sheet(), sparklines)
 
 \item{sheet}{sheet to add the sparklines to}
 
-\item{sparklines}{sparklines object}
+\item{sparklines}{sparklines object created with \code{create_sparklines()}}
 }
 \description{
-clone sheets style
+add sparklines to workbook
+}
+\examples{
+ sl <- create_sparklines("Sheet  1", "A3:K3", "L3")
+ wb <- wb_workbook() \%>\%
+   wb_add_worksheet() \%>\%
+   wb_add_data(x = mtcars) \%>\%
+   wb_add_sparklines(sparklines = sl)
+}
+\seealso{
+\code{\link[=create_sparklines]{create_sparklines()}}
 }
