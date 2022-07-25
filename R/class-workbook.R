@@ -5730,7 +5730,10 @@ wbWorkbook <- R6::R6Class(
       # initialize cell
       if (!all(unname(unlist(dims_df)) %in% self$worksheets[[sheet]]$sheet_data$cc$r)) {
         init_cells <- matrix(NA, ncol = ncol(dims_df), nrow = nrow(dims_df))
-        self$add_data(x = init_cells, na.strings = NULL, colNames = FALSE)
+        # TODO use dims once PR#236 is merged
+        self$add_data(x = init_cells, na.strings = NULL, colNames = FALSE,
+                      startCol = colnames(dims_df)[1],
+                      startRow = rownames(dims_df)[1])
       }
 
       invisible(self)
