@@ -122,16 +122,15 @@ test_that("test add_fill()", {
 
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
            "<xf applyFill=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
-           "<xf applyFill=\"1\" fillId=\"2\"/>",
-           "<xf applyFill=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
-           "<xf applyFill=\"1\" fillId=\"3\"/>")
+           "<xf applyFill=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>")
   got <- wb$styles_mgr$styles$cellXfs
 
   expect_equal(exp, got)
 
   # check the actual styles
-  exp <- c("", "1", "", "1", "", "3", "3", "3", "3", "3", "", "1", "",
-           "1", "", "3", "3", "3", "3", "3", "", "1", "", "1", "")
+  exp <- c("", "1", "", "1", "", "2", "2", "2", "2", "2", "", "1", "",
+           "1", "", "2", "2", "2", "2", "2", "", "1", "", "1", "", "2",
+           "2", "2", "2", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
 

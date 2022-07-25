@@ -5727,13 +5727,17 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims_df <- dims_to_dataframe(dims, fill = TRUE)
 
+      exp_cells <- unname(unlist(dims_df))
+      got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
+
       # initialize cell
-      if (!all(unname(unlist(dims_df)) %in% self$worksheets[[sheet]]$sheet_data$cc$r)) {
-        init_cells <- matrix(NA, ncol = ncol(dims_df), nrow = nrow(dims_df))
+      if (!all(exp_cells %in% got_cells)) {
+        init_cells <- NA
+        for (exp_cell in exp_cells[!exp_cells %in% got_cells])
         # TODO use dims once PR#236 is merged
         self$add_data(x = init_cells, na.strings = NULL, colNames = FALSE,
-                      startCol = colnames(dims_df)[1],
-                      startRow = rownames(dims_df)[1])
+                      startCol = col2int(exp_cell),
+                      startRow = as.numeric(gsub("\\D", "", exp_cell)))
       }
 
       invisible(self)
