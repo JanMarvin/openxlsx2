@@ -61,3 +61,12 @@ gradient_fill2 <- '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bo
 </gradientFill>'
 wb <- wb \%>\% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_numfmt}()},
+\code{\link{wb_clone_sheet_style}()}
+}
+\concept{styles}

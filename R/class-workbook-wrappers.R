@@ -1992,7 +1992,7 @@ wb_open <- function(wb) {
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
 #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
-#' @seealso create_border
+#' @seealso [create_border()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
 #' wb <- wb_add_border(wb, 1, dims = "A1:K1",
@@ -2011,6 +2011,7 @@ wb_open <- function(wb) {
 #'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
 #'  bottom_color = c(rgb ="FFFF0000"))
 #' wb <- wb_add_border(wb, 1, dims = "D28:E28")
+#' @family styles
 #' @export
 wb_add_border <- function(
     wb,
@@ -2083,6 +2084,7 @@ wb_add_border <- function(
 #' </gradientFill>'
 #' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_fill <- function(
     wb,
@@ -2130,6 +2132,7 @@ wb_add_fill <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_font <- function(
       wb,
@@ -2184,6 +2187,7 @@ wb_add_font <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_numfmt <- function(
     wb,
@@ -2246,6 +2250,7 @@ wb_add_numfmt <- function(
 #'      wrapText = "1"
 #'    )
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_cell_style <- function(
     wb,
@@ -2365,12 +2370,12 @@ wb_add_cell_style <- function(
 #'   }
 #' }
 #'
-#' @export
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("a")
 #' wb$add_data("a", 1:4, colNames = FALSE)
 #' wb$add_conditional_formatting("a", 1, 1:4, ">2")
+#' @export
 wb_add_conditional_formatting <- function(
     wb,
     sheet = current_sheet(),
@@ -2441,6 +2446,7 @@ wb_conditional_formatting <- function(
 #' @param wb workbook
 #' @param from sheet we select the style from
 #' @param to sheet we apply the style from
+#' @family styles
 #' @export
 wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
   assert_workbook(wb)
