@@ -1,11 +1,39 @@
 
 test_that("read_xml", {
 
+  exp <- "<a/>"
+  got <- read_xml("<a/>", empty_tags = FALSE, pointer = FALSE)
+  expect_equal(exp, got)
+
+  exp <- "<a></a>"
+  got <- read_xml("<a/>", empty_tags = TRUE, pointer = FALSE)
+  expect_equal(exp, got)
+
   # a pointer
   x <- read_xml("<a><b/></a>")
   exp <- "<a>\n  <b/>\n</a>"
 
   expect_true(inherits(x, "pugi_xml"))
+
+  xml <- "<a> </a>"
+  got <- read_xml(xml, whitespace = TRUE, pointer = FALSE)
+  expect_equal(xml, got)
+
+  xml <- "<a> </a>"
+  got <- read_xml(xml, whitespace = FALSE, pointer = FALSE)
+  expect_equal("<a/>", got)
+
+  xml <- "<a> <b> </b> </a>"
+  got <- read_xml(xml, pointer = FALSE)
+  expect_equal("<a><b> </b></a>", got)
+
+  xml <- "<a> <b> </b> </a>"
+  got <- paste(capture.output(read_xml(xml)), collapse = "\n")
+  expect_equal("<a>\n <b> </b>\n</a>", got)
+
+  xml <- "<a> <b> </b> </a>"
+  got <- paste(capture.output(print(read_xml(xml), indent = "\t")), collapse = "\n")
+  expect_equal("<a>\n\t<b> </b>\n</a>", got)
 
   # #does this even work?
   # expect_equal(cat(exp), print(x))
@@ -37,6 +65,24 @@ test_that("read_xml", {
 
   exp <- "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><t xml:space=\"preserve\"> </t>"
   got <- readLines(tmp, warn = FALSE)
+  expect_equal(exp, got)
+
+  xml <- '<a><b><c1/></b></a><a><b><c2/></b></a>'
+
+  exp <- c("<a><b><c1/></b></a>", "<a><b><c2/></b></a>")
+  got <- xml_node(xml, "a")
+  expect_equal(exp, got)
+
+  exp <- c("<b><c1/></b>", "<b><c2/></b>")
+  got <- xml_node(xml, "a", "b")
+  expect_equal(exp, got)
+
+  exp <- "<c1/>"
+  got <- xml_node(xml, "a", "b", "c1")
+  expect_equal(exp, got)
+
+  exp <- "<c2/>"
+  got <- xml_node(xml, "a", "b", "c2")
   expect_equal(exp, got)
 
 })
@@ -79,9 +125,6 @@ test_that("xml_node", {
   expect_equal(exp, xml_node(xml, "a", "b", "c"))
   # bit cheating, this test returns the same, but not the actual feature of "*"
   expect_equal(exp, xml_node(xml, "a", "*","c"))
-
-  exp <- list(c("<d><e/></d>"))
-  expect_equal(exp, xml_node(xml, "a", "b", "c", "d"))
 
 })
 
@@ -134,10 +177,6 @@ test_that("xml_attr", {
   xml <- read_xml(xml_str)
   expect_equal(exp, xml_attr(xml, "c", "b", "a"))
 
-  xml_str <- "<d><c><b><a a=\"1\"/></b></c></d>"
-  xml <- read_xml(xml_str)
-  expect_equal(list(list(as.list(unlist(exp)))), xml_attr(xml, "d", "c", "b", "a"))
-
 })
 
 test_that("xml_value", {
@@ -170,10 +209,6 @@ test_that("xml_value", {
   xml <- read_xml(xml_str)
   expect_equal(exp, xml_value(xml, "a", "b", "c"))
 
-  xml_str <- "<a><b><c><d>1</d></c></b></a>"
-  xml <- read_xml(xml_str)
-  expect_equal(list(exp), xml_value(xml, "a", "b", "c", "d"))
-
 })
 
 test_that("as_xml", {
@@ -191,6 +226,9 @@ test_that("print", {
 
   expect_output(print(as_xml(xml_str)), "<a />")
   expect_output(print(as_xml(xml_str), raw = TRUE), "<a/>")
+
+  xml_str <- '<a b1="foo" b2 = "bar"/>'
+  expect_output(print(as_xml(xml_str), attr_indent = TRUE), '<a\n b1="foo"\n b2="bar" />')
 
 })
 
@@ -220,6 +258,50 @@ test_that("xml_add_child", {
 
 })
 
+
+test_that("xml_rm_child", {
+
+
+  xml_node <- "<a><c>1</c><c>2</c></a>"
+  xml_child <- "c"
+
+  expect_equal("<a/>", xml_rm_child(xml_node, xml_child, which = 0))
+  expect_equal("<a><c>2</c></a>", xml_rm_child(xml_node, xml_child, which = 1))
+  expect_equal("<a><c>1</c></a>", xml_rm_child(xml_node, xml_child, which = 2))
+  expect_equal("<a><c>1</c><c>2</c></a>", xml_rm_child(xml_node, xml_child, which = 3))
+
+  xml_node <- "<a><b>1</b><b><c><d/></c><c/></b><c>2</c><c/></a>"
+  xml_child <- "c"
+
+  exp <- "<a><b><c><d/></c><c/></b><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, "b", which = 1)
+  expect_equal(exp, got)
+
+  xml_node <- exp
+
+  exp <- "<a><b><c/></b><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, xml_child, "b", which = 1)
+  expect_equal(exp, got)
+
+  exp <- "<a><b><c><d/></c></b><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, xml_child, level = "b", which = 2)
+  expect_equal(exp, got)
+
+  exp <- "<a><b/><c>2</c><c/></a>"
+  got <- xml_rm_child(xml_node, xml_child, "b", which = 0)
+  expect_equal(exp, got)
+
+  xml_node <- "<x><a><b><c>1</c><c>2</c><c>3</c></b></a></x>"
+
+  exp <- "<x><a><b><c>1</c><c>3</c></b></a></x>"
+  got <- xml_rm_child(xml_node, xml_child, level = c("a","b"), which = 2)
+  expect_equal(exp, got)
+
+  exp <- "<x><a><b/></a></x>"
+  got <- xml_rm_child(xml_node, xml_child, level = c("a","b"), which = 0)
+  expect_equal(exp, got)
+
+})
 
 test_that("xml_attr_mod", {
 

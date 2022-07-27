@@ -114,7 +114,11 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 ## ------------------------------------------------
 
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
 }
 \seealso{
 create_border
@@ -259,7 +263,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
 \item \href{#method-wbWorkbook-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
 \item \href{#method-wbWorkbook-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
-\item \href{#method-wbWorkbook-conditional_formatting}{\code{wbWorkbook$conditional_formatting()}}
 \item \href{#method-wbWorkbook-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
@@ -292,6 +295,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_font}{\code{wbWorkbook$add_font()}}
 \item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
 \item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
+\item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
+\item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -408,10 +413,8 @@ Add worksheet to the \code{wbWorkbook} object
   hasDrawing = FALSE,
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
-  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default =
-    300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default =
-    300))
+  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
 )}\if{html}{\out{</div>}}
 }
 
@@ -1125,7 +1128,12 @@ Adds data validation
   value,
   allowBlank = TRUE,
   showInputMsg = TRUE,
-  showErrorMsg = TRUE
+  showErrorMsg = TRUE,
+  errorStyle = NULL,
+  errorTitle = NULL,
+  error = NULL,
+  promptTitle = NULL,
+  prompt = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -1149,57 +1157,18 @@ Adds data validation
 \item{\code{showInputMsg}}{showInputMsg}
 
 \item{\code{showErrorMsg}}{showErrorMsg}
+
+\item{\code{errorStyle}}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+
+\item{\code{errorTitle}}{The error title}
+
+\item{\code{error}}{The error text}
+
+\item{\code{promptTitle}}{The prompt title}
+
+\item{\code{prompt}}{The promt text}
 }
 \if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-conditional_formatting"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-conditional_formatting}{}}}
-\subsection{Method \code{conditional_formatting()}}{
-Set conditional formatting for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditional_formatting(
-  sheet = current_sheet(),
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  dxfId,
-  formula,
-  type,
-  values,
-  params
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{dxfId}}{dxfId}
-
-\item{\code{formula}}{formula}
-
-\item{\code{type}}{type}
-
-\item{\code{values}}{values}
-
-\item{\code{params}}{params}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
@@ -1294,8 +1263,8 @@ Add conditional formatting
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
     "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
-  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank
-    = 5L)
+  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
+    5L)
 )}\if{html}{\out{</div>}}
 }
 
@@ -2017,7 +1986,7 @@ provide simple fill function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   color = "",
   pattern = "solid",
   gradient_fill = "",
@@ -2073,7 +2042,7 @@ provide simple font function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_font(
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   name = "Calibri",
   color = c(rgb = "FF000000"),
   size = "11",
@@ -2150,7 +2119,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Method \code{add_numfmt()}}{
 provide simple number format function
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet = current_sheet(), dims, numfmt)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet = current_sheet(), dims = "A1", numfmt)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -2185,7 +2154,7 @@ provide simple cell style format function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_cell_style(
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   applyAlignment = NULL,
   applyBorder = NULL,
   applyFill = NULL,
@@ -2279,12 +2248,54 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
 }
 \if{html}{\out{</div>}}
 
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-clone_sheet_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone_sheet_style}{}}}
+\subsection{Method \code{clone_sheet_style()}}{
+clone style from one sheet to another
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_sheet_style(from = current_sheet(), to)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{the worksheet you are cloning}
+
+\item{\code{to}}{the worksheet the style is applied to}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_sparklines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_sparklines}{}}}
+\subsection{Method \code{add_sparklines()}}{
+apply sparkline to worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_sparklines(sheet = current_sheet(), sparklines)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet you are using}
+
+\item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-clone"></a>}}

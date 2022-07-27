@@ -98,24 +98,40 @@ as_binary <- function(x) {
   as.integer(x)
 }
 
-random_string <- function(size = NULL) {
-  # creates a random string using tempfile() which does better to not affect the
-  # random seed
+#' random string function that does not alter the seed.
+#'
+#' simple wrapper around `stringi::stri_rand_strings()``
+#'
+#' @inheritParams stringi::stri_rand_strings
+#' @param keep_seed logical should the default seed be kept unaltered
+#' @keywords internal
+#' @noRd
+random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed = TRUE) {
   # https://github.com/ycphs/openxlsx/issues/183
   # https://github.com/ycphs/openxlsx/pull/224
-  res <- basename(tempfile(""))
 
-  if (is.null(size)) {
-    return(res)
+  if (keep_seed) {
+    seed <- get0(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
+
+    # try to get a previous openxlsx2 seed and use this as random seed
+    openxlsx2_seed <- options()[["openxlsx2_seed"]]
+
+    if (!is.null(openxlsx2_seed)) {
+      # found one, change the global seed for stri_rand_strings
+      set.seed(openxlsx2_seed)
+    }
   }
 
-  size <- as.integer(size)
-  stopifnot(size >= 0L)
-  while (nchar(res) < size) {
-    res <- paste0(res, random_string())
+  # create the random string, this alters the global seed
+  res <- stringi::stri_rand_strings(n = n, length = length, pattern = pattern)
+
+  if (keep_seed) {
+    # store the altered seed and reset the global seed
+    options("openxlsx2_seed" = ifelse(is.null(openxlsx2_seed), 1L, openxlsx2_seed + 1L))
+    assign(".Random.seed", seed, globalenv())
   }
 
-  substr(res, 1L, size)
+  return(res)
 }
 
 #' row and col to dims

@@ -612,9 +612,8 @@ wb_to_df <- function(
 #' @param sheet sheet to clean
 #' @param cols numeric column vector
 #' @param rows numeric row vector
-#' @param gridExpand does nothing
 #' @export
-delete_data <- function(wb, sheet, cols, rows, gridExpand) {
+delete_data <- function(wb, sheet, cols, rows) {
 
   sheet_id <- wb_validate_sheet(wb, sheet)
 
@@ -626,7 +625,9 @@ delete_data <- function(wb, sheet, cols, rows, gridExpand) {
     sel <- cc$row_r %in% as.character(rows) & cc$c_r %in% cols
   }
 
-  cc[sel, ] <- ""
+  # clean selected entries of cc
+  clean <- names(cc)[!names(cc) %in% c("r", "row_r", "c_r")]
+  cc[sel, clean] <- ""
 
   wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
 

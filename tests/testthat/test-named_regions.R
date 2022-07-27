@@ -215,7 +215,7 @@ test_that("Missing columns in named regions", {
 
   ## create region
   wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
-  delete_data(wb, sheet = 1, cols = 2, rows = 1:12, gridExpand = TRUE)
+  delete_data(wb, sheet = 1, cols = 2, rows = 1:12)
 
   wb$add_named_region(
     sheet = 1,

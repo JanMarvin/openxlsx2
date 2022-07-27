@@ -1477,6 +1477,11 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #' @param allowBlank logical
 #' @param showInputMsg logical
 #' @param showErrorMsg logical
+#' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+#' @param errorTitle The error title
+#' @param error The error text
+#' @param promptTitle The prompt title
+#' @param prompt The prompt text
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1539,7 +1544,12 @@ wb_add_data_validation <- function(
     value,
     allowBlank = TRUE,
     showInputMsg = TRUE,
-    showErrorMsg = TRUE
+    showErrorMsg = TRUE,
+    errorStyle = NULL,
+    errorTitle = NULL,
+    error = NULL,
+    promptTitle = NULL,
+    prompt = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$add_data_validation(
@@ -1551,7 +1561,12 @@ wb_add_data_validation <- function(
     value        = value,
     allowBlank   = allowBlank,
     showInputMsg = showInputMsg,
-    showErrorMsg = showErrorMsg
+    showErrorMsg = showErrorMsg,
+    errorStyle   = errorStyle,
+    errorTitle   = errorTitle,
+    error        = error,
+    promptTitle  = promptTitle,
+    prompt       = prompt
   )
 }
 
@@ -1986,7 +2001,7 @@ wb_open <- function(wb) {
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
 #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
-#' @seealso create_border
+#' @seealso [create_border()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
 #' wb <- wb_add_border(wb, 1, dims = "A1:K1",
@@ -2005,6 +2020,7 @@ wb_open <- function(wb) {
 #'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
 #'  bottom_color = c(rgb ="FFFF0000"))
 #' wb <- wb_add_border(wb, 1, dims = "D28:E28")
+#' @family styles
 #' @export
 wb_add_border <- function(
     wb,
@@ -2077,11 +2093,12 @@ wb_add_border <- function(
 #' </gradientFill>'
 #' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_fill <- function(
     wb,
-    sheet,
-    dims,
+    sheet         = current_sheet(),
+    dims          = "A1",
     color         = "",
     pattern       = "solid",
     gradient_fill = "",
@@ -2124,11 +2141,12 @@ wb_add_fill <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_font <- function(
       wb,
       sheet     = current_sheet(),
-      dims,
+      dims      = "A1",
       name      = "Calibri",
       color     = c(rgb = "FF000000"),
       size      = "11",
@@ -2178,11 +2196,12 @@ wb_add_font <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_numfmt <- function(
     wb,
     sheet = current_sheet(),
-    dims,
+    dims  = "A1",
     numfmt
 ) {
   assert_workbook(wb)
@@ -2240,11 +2259,12 @@ wb_add_numfmt <- function(
 #'      wrapText = "1"
 #'    )
 #' @return The `wbWorksheetObject`, invisibly
+#' @family styles
 #' @export
 wb_add_cell_style <- function(
     wb,
     sheet             = current_sheet(),
-    dims,
+    dims              = "A1",
     applyAlignment    = NULL,
     applyBorder       = NULL,
     applyFill         = NULL,
@@ -2301,4 +2321,161 @@ wb_add_cell_style <- function(
     wrapText          = wrapText,
     xfId              = xfId
   )
+}
+
+#' Add conditional formatting to cells
+#'
+#' Add conditional formatting to cells
+#' @param wb A workbook object
+#' @param sheet A name or index of a worksheet
+#' @param cols Columns to apply conditional formatting to
+#' @param rows Rows to apply conditional formatting to
+#' @param rule The condition under which to apply the formatting. See examples.
+#' @param style A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'
+#' @param type The type of conditional formatting rule to apply.
+#' @param params Additional parameters passed.  See **Details** for more
+#' @details See Examples.
+#'
+#' @details
+#' Conditional formatting types accept different parameters.  Unless noted,
+#' unlisted parameters are ignored.
+#'
+#' \describe{
+#'   \item{`expression`}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[rule]`\cr An Excel expression (as a character). Valid operators are: `<`, `<=`, `>`, `>=`, `==`, `!=`
+#'   }
+#'   \item{colorScale}{
+#'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
+#'     `[rule]`\cr `NULL` or a `character` vector of valid colors of equal length to `styles`
+#'   }
+#'   \item{dataBar}{
+#'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
+#'     `[rule]`\cr A `numeric` vector specifying the range of the databar colors. Must be equal length to `style`\cr\cr
+#'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
+#'     `[params$gradient]`\cr If `FALSE` colour gradient is removed. Default `TRUE`\cr\cr
+#'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE`
+#'   }
+#'   \item{duplicated}{
+#'     `[style]`\cr A `Style` object
+#'   }
+#'   \item{contains}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[rule]`\cr The text to look for within cells
+#'   }
+#'   \item{between}{
+#'     `[style]`\cr A Style object.\cr\cr
+#'     `[rule]`\cr A `numeric` vector of length `2` specifying lower and upper bound (Inclusive)
+#'   }
+#'   \item{topN}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of highest values. Default `5L`\cr\cr
+#'     `[params$percent]` If `TRUE` uses percentage
+#'   }
+#'   \item{bottomN}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of lowest values. Default `5L`\cr\cr
+#'     `[params$percent]`\cr If `TRUE` uses percentage
+#'   }
+#' }
+#'
+#' @examples
+#' wb <- wb_workbook()
+#' wb$add_worksheet("a")
+#' wb$add_data("a", 1:4, colNames = FALSE)
+#' wb$add_conditional_formatting("a", 1, 1:4, ">2")
+#' @export
+wb_add_conditional_formatting <- function(
+    wb,
+    sheet = current_sheet(),
+    cols,
+    rows,
+    rule = NULL,
+    style = NULL,
+    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+             "containsText", "notContainsText", "beginsWith", "endsWith",
+             "between", "topN", "bottomN"),
+    params = list(
+      showValue = TRUE,
+      gradient  = TRUE,
+      border    = TRUE,
+      percent   = FALSE,
+      rank      = 5L
+    )
+) {
+  assert_workbook(wb)
+  wb$clone()$add_conditional_formatting(
+    sheet = sheet,
+    cols  = cols,
+    rows  = rows,
+    rule  = rule,
+    style = style,
+    type  = type,
+    params = params
+  )
+}
+
+#' @rdname wb_add_conditional_formatting
+#' @export
+#' @param ... passed to `params`
+wb_conditional_formatting <- function(
+    wb,
+    sheet,
+    cols,
+    rows,
+    rule = NULL,
+    style = NULL,
+    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+             "containsText", "notContainsText", "beginsWith", "endsWith",
+             "between", "topN", "bottomN"),
+    ...
+) {
+  .Deprecated("wb_add_conditional_formatting()")
+
+  params <- list(...)
+  params$showValue <- params$showValue %||% TRUE
+  params$gradient  <- params$gradient  %||% TRUE
+  params$border    <- params$border    %||% TRUE
+  params$percent   <- params$percent   %||% FALSE
+  params$percent   <- params$percent   %||% 5L
+
+  wb$clone()$add_conditional_formatting(
+    sheet  = sheet,
+    cols   = cols,
+    rows   = rows,
+    rule   = rule,
+    style  = style,
+    type   = type,
+    params = params
+  )
+}
+
+#' clone sheets style
+#'
+#' @param wb workbook
+#' @param from sheet we select the style from
+#' @param to sheet we apply the style from
+#' @family styles
+#' @export
+wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
+  assert_workbook(wb)
+  wb$clone()$clone_sheet_style(from, to)
+}
+
+#' add sparklines to workbook
+#'
+#' @param wb workbook
+#' @param sheet sheet to add the sparklines to
+#' @param sparklines sparklines object created with `create_sparklines()`
+#' @seealso [create_sparklines()]
+#' @examples
+#'  sl <- create_sparklines("Sheet  1", "A3:K3", "L3")
+#'  wb <- wb_workbook() %>%
+#'    wb_add_worksheet() %>%
+#'    wb_add_data(x = mtcars) %>%
+#'    wb_add_sparklines(sparklines = sl)
+#' @export
+wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
+  assert_workbook(wb)
+  wb$clone()$add_sparklines(sheet, sparklines)
 }

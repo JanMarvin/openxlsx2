@@ -7,7 +7,7 @@
 wb_add_cell_style(
   wb,
   sheet = current_sheet(),
-  dims,
+  dims = "A1",
   applyAlignment = NULL,
   applyBorder = NULL,
   applyFill = NULL,
@@ -114,3 +114,12 @@ add cell style for cell region
      wrapText = "1"
    )
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_numfmt}()},
+\code{\link{wb_clone_sheet_style}()}
+}
+\concept{styles}

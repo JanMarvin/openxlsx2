@@ -384,39 +384,6 @@ wbWorksheet <- R6::R6Class(
     },
 
     #' @description
-    #' order sheet data
-    #' @return The `wbWorksheetObject`, invisibly
-    order_sheetdata = function() {
-      if (self$sheet_data$n_elements == 0) {
-        return(invisible(self))
-      }
-
-      if (self$sheet_data$data_count > 1) {
-        ord <- order(self$sheet_data$rows, self$sheet_data$cols, method = "radix", na.last = TRUE)
-        self$sheet_data$rows <- self$sheet_data$rows[ord]
-        self$sheet_data$cols <- self$sheet_data$cols[ord]
-        self$sheet_data$t <- self$sheet_data$t[ord]
-        self$sheet_data$v <- self$sheet_data$v[ord]
-        self$sheet_data$f <- self$sheet_data$f[ord]
-
-        self$sheet_data$style_id <- self$sheet_data$style_id[ord]
-
-        self$sheet_data$data_count <- 1L
-
-        dm1 <- paste0(int_to_col(self$sheet_data$cols[1]), self$sheet_data$rows[1])
-        dm2 <- paste0(int_to_col(self$sheet_data$cols[self$sheet_data$n_elements]), self$sheet_data$rows[sheet_data$n_elements])
-
-        if (length(dm1) == 1 & length(dm2) != 1) {
-          if (!is.na(dm1) & !is.na(dm2) & dm1 != "NA" & dm2 != "NA") {
-            self$dimension <- sprintf("<dimension ref=\"%s:%s\"/>", dm1, dm2)
-          }
-        }
-      }
-
-      invisible(self)
-    },
-
-    #' @description
     #' unfold `<cols ..>` node to dataframe. `<cols><col ..>` are compressed.
     #' Only columns with attributes are written to the file. This function
     #' unfolds them so that each cell beginning with the "A" to the last one
@@ -553,16 +520,75 @@ wbWorksheet <- R6::R6Class(
         self$append("colBreaks", sprintf('<brk id="%i" max="1048575" man="1"/>', round(col)))
       }
 
-      self
+      invisible(self)
     },
 
     #' @description append a field.  Intended for internal use only.  Not
     #'   guaranteed to remain a public method.
     #' @param field a field name
     #' @param value a new value
+    #' @return The `wbWorksheetObject`, invisibly
     append = function(field, value = NULL) {
       self[[field]] <- c(self[[field]], value)
-      self
+      invisible(self)
+    },
+
+    #' @description add sparkline
+    #' @param sparklines sparkline created by `create_sparkline()`
+    #' @return The `wbWorksheetObject`, invisibly
+    add_sparklines = function(
+      sparklines
+    ) {
+
+      if (!all(xml_node_name(sparklines) == "x14:sparklineGroup"))
+        stop("sparklines nodes must all be 'x14:sparklineGroup'")
+
+      # can have length > 1 for multiple xmlns attributes. we take this extLst,
+      # inspect it, update if needed and return it
+      extLst <- xml_node(self$extLst, "ext")
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check if any <ext xmlns:x14 ...> node exists, else add it
+      if (length(extLst) == 0 || !any(is_xmlns_x14)) {
+        ext <- xml_node_create(
+          "ext",
+          xml_attributes = c("xmlns:x14" = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main",
+                             uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}")
+        )
+
+        # update extLst
+        extLst <- c(extLst, ext)
+        is_xmlns_x14 <- c(is_xmlns_x14, TRUE)
+      } else {
+        ext <- extLst[is_xmlns_x14]
+      }
+
+      # check again and should be exactly one ext node
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check for sparklineGroups and add one if none is found
+      sparklineGroups <- xml_node(ext, "ext", "x14:sparklineGroups")
+      if (length(sparklineGroups) == 0) {
+        ext <- xml_add_child(
+          ext,
+          xml_node_create(
+            "x14:sparklineGroups",
+            xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
+        )
+      }
+
+      # add new sparklines to exisisting sparklineGroups
+      ext <- xml_add_child(
+        ext,
+        level = c("x14:sparklineGroups"),
+        sparklines
+      )
+
+      # update extLst and add it back to worksheet
+      extLst[is_xmlns_x14] <- ext
+      self$extLst <- extLst
+
+      invisible(self)
     }
   ),
 

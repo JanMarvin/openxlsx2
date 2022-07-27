@@ -107,12 +107,12 @@ A Worksheet
 \item \href{#method-wbWorksheet-new}{\code{wbWorksheet$new()}}
 \item \href{#method-wbWorksheet-get_prior_sheet_data}{\code{wbWorksheet$get_prior_sheet_data()}}
 \item \href{#method-wbWorksheet-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
-\item \href{#method-wbWorksheet-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
 \item \href{#method-wbWorksheet-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
 \item \href{#method-wbWorksheet-fold_cols}{\code{wbWorksheet$fold_cols()}}
 \item \href{#method-wbWorksheet-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
 \item \href{#method-wbWorksheet-add_page_break}{\code{wbWorksheet$add_page_break()}}
 \item \href{#method-wbWorksheet-append}{\code{wbWorksheet$append()}}
+\item \href{#method-wbWorksheet-add_sparklines}{\code{wbWorksheet$add_sparklines()}}
 \item \href{#method-wbWorksheet-clone}{\code{wbWorksheet$clone()}}
 }
 }
@@ -204,19 +204,6 @@ Get post sheet data
 
 \subsection{Returns}{
 A character vector of xml
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorksheet-order_sheetdata"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorksheet-order_sheetdata}{}}}
-\subsection{Method \code{order_sheetdata()}}{
-order sheet data
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$order_sheetdata()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
@@ -326,6 +313,29 @@ guaranteed to remain a public method.
 \item{\code{value}}{a new value}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-add_sparklines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-add_sparklines}{}}}
+\subsection{Method \code{add_sparklines()}}{
+add sparkline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$add_sparklines(sparklines)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}

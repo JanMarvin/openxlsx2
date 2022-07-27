@@ -1,7 +1,6 @@
 
 # functions interacting with styles
 
-
 #' clone sheets style
 #'
 #' @param wb workbook
@@ -9,43 +8,8 @@
 #' @param to_sheet sheet we apply the style from
 #' @export
 cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
-
-  # check if sheets exist in wb
-  id_org <- wb_validate_sheet(wb, from_sheet)
-  id_new <- wb_validate_sheet(wb, to_sheet)
-
-  org_style <- wb$worksheets[[id_org]]$sheet_data$cc
-  wb_style <- wb$worksheets[[id_new]]$sheet_data$cc
-
-  # remove all values
-  org_style <- org_style[c("row_r", "c_r", "c_s")]
-
-  merged_style <- merge(org_style, wb_style, all = TRUE)
-  merged_style[is.na(merged_style)] <- ""
-
-  # TODO order this as well?
-  wb$worksheets[[id_new]]$sheet_data$cc <- merged_style
-
-  # copy entire attributes from original sheet to new sheet
-  org_rows <- wb$worksheets[[id_org]]$sheet_data$row_attr
-  new_rows <- wb$worksheets[[id_new]]$sheet_data$row_attr
-
-  merged_rows <- merge(org_rows[c("r")], new_rows, all = TRUE)
-  merged_rows[is.na(merged_rows)] <- ""
-  ordr <- ordered(order(as.integer(merged_rows$r)))
-  merged_rows <- merged_rows[ordr,]
-
-  wb$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
-
-  wb$worksheets[[id_new]]$cols_attr <-
-    wb$worksheets[[id_org]]$cols_attr
-
-  wb$worksheets[[id_new]]$dimension <-
-    wb$worksheets[[id_org]]$dimension
-
-  wb$worksheets[[id_new]]$mergeCells <-
-    wb$worksheets[[id_org]]$mergeCells
-
+  .Deprecated("use wb_clone_sheet_style")
+  wb_clone_sheet_style(wb, from_sheet, to_sheet)
 }
 
 
@@ -776,7 +740,7 @@ set_cellstyle <- function(
   if (!is.null(textRotation))      z$textRotation <- textRotation
   if (!is.null(vertical))          z$vertical <- vertical
   if (!is.null(wrapText))          z$wrapText <- wrapText
-  if (!is.null(xfId))              z$xfId <- xfId 
+  if (!is.null(xfId))              z$xfId <- xfId
 
   write_xf(z)
 }

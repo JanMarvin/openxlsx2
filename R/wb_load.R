@@ -557,7 +557,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       if (!data_only) {
         wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
         wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
-        wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks")
+        wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks", "brk")
         # wb$worksheets[[i]]$cols <- xml_node(worksheet_xml, "worksheet", "cols")
         # wb$worksheets[[i]]$conditionalFormatting <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
         wb$worksheets[[i]]$controls <- xml_node(worksheet_xml, "worksheet", "controls")
@@ -583,7 +583,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
         wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")
         wb$worksheets[[i]]$protectedRanges <- xml_node(worksheet_xml, "worksheet", "protectedRanges")
-        wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks")
+        wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks", "brk")
         wb$worksheets[[i]]$scenarios <- xml_node(worksheet_xml, "worksheet", "scenarios")
         wb$worksheets[[i]]$sheetCalcPr <- xml_node(worksheet_xml, "worksheet", "sheetCalcPr")
         # wb$worksheets[[i]]$sheetData <- xml_node(worksheet_xml, "worksheet", "sheetData")
@@ -630,34 +630,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   for (i in seq_len(nSheets)) {
     if (sheets$typ[i] == "worksheet") {
       if (length(wb$worksheets[[i]]$headerFooter)) {
-
-        amp_split <- function(x) {
-          if (length(x) == 0) return (NULL)
-          # create output string of width 3
-          res <- vector("character", 3)
-          # Identify the names found in the string: returns them as matrix: strip the &amp;
-          nam <- gsub(pattern = "&amp;", "", unlist(stri_match_all_regex(x, "&amp;[LCR]")))
-          # split the string and assign names to join
-          z <- unlist(stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
-          names(z) <- as.character(nam)
-          res[c("L", "C", "R") %in% names(z)] <- z
-
-          # return the string vector
-          unname(res)
-        }
-
-        head_foot <- c("oddHeader", "oddFooter",
-                       "evenHeader", "evenFooter",
-                       "firstHeader", "firstFooter")
-
-        headerFooter <- vector("list", length = length(head_foot))
-        names(headerFooter) <- head_foot
-
-        for (hf in head_foot) {
-          headerFooter[[hf]] <- amp_split(xml_value(wb$worksheets[[i]]$headerFooter, "headerFooter", hf))
-        }
-
-        wb$worksheets[[i]]$headerFooter <- headerFooter
+        wb$worksheets[[i]]$headerFooter <- getHeaderFooterNode(wb$worksheets[[i]]$headerFooter)
       }
     }
   }
@@ -983,16 +956,23 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
             authorsInds <- as.integer(comments_attr$authorId) + 1
             authors <- authors[authorsInds]
 
-            style <- lapply(comments, function(x) unlist(xml_node(x, "comment", "text", "r", "rPr")) )
-            comments <- lapply(comments, function(x) unlist(xml_value(x, "comment", "text", "r", "t")) )
+            text <- xml_node(comments, "comment", "text")
+
+            comments <- lapply(comments, function(x) {
+              text <- xml_node(x, "comment", "text")
+              list(
+                style = xml_node(text, "text", "r", "rPr"),
+                comments = xml_node(text, "text", "r", "t")
+              )
+            })
 
             wb$comments[[i]] <- lapply(seq_along(comments), function(j) {
               list(
                 #"refId" = com_rId[j],
                 "ref" = refs[j],
                 "author" = authors[j],
-                "comment" = comments[[j]],
-                "style" = style[[j]],
+                "comment" = comments[[j]]$comments,
+                "style" = comments[[j]]$style,
                 "clientData" = cd[[j]]
               )
             })

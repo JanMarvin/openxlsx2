@@ -14,7 +14,12 @@ wb_add_data_validation(
   value,
   allowBlank = TRUE,
   showInputMsg = TRUE,
-  showErrorMsg = TRUE
+  showErrorMsg = TRUE,
+  errorStyle = NULL,
+  errorTitle = NULL,
+  error = NULL,
+  promptTitle = NULL,
+  prompt = NULL
 )
 }
 \arguments{
@@ -38,6 +43,16 @@ wb_add_data_validation(
 \item{showInputMsg}{logical}
 
 \item{showErrorMsg}{logical}
+
+\item{errorStyle}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+
+\item{errorTitle}{The error title}
+
+\item{error}{The error text}
+
+\item{promptTitle}{The prompt title}
+
+\item{prompt}{The prompt text}
 }
 \description{
 Add Excel data validation to cells

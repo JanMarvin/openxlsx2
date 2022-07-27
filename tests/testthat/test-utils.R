@@ -7,7 +7,6 @@ test_that("paste_c() works", {
   expect_identical(paste_c(character(), "", NULL), "")
 })
 
-
 test_that("rbindlist", {
 
   expect_equal(data.frame(), rbindlist(character()))
@@ -56,4 +55,26 @@ test_that("create_char_dataframe", {
 
   expect_equal(exp, got)
 
+})
+
+test_that("test random_string", {
+  set.seed(123)
+  options("openxlsx2_seed" = NULL)
+
+  x <- .Random.seed
+  tmp <- random_string()
+  y <- .Random.seed
+  expect_identical(x, y)
+  expect_equal("HmPsw2WtYSxSgZ6t", tmp)
+
+  x <- .Random.seed
+  tmp <- random_string(length = 6)
+  y <- .Random.seed
+  expect_identical(x, y)
+  expect_equal("GNZuCt", tmp)
+
+  x <- .Random.seed
+  tmp <- random_string(length = 6, keep_seed = FALSE)
+  y <- .Random.seed
+  expect_false(identical(x, y))
 })

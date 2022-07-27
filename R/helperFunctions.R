@@ -215,9 +215,50 @@ pxml <- function(x) {
     paste(unlist(x), collapse = "")
 }
 
+#' split headerFooter xml into left, center, and right.
+#' @param x xml string
+#' @keywords internal
+#' @noRd
+amp_split <- function(x) {
+  if (length(x) == 0) return (NULL)
+  # create output string of width 3
+  res <- vector("character", 3)
+  # Identify the names found in the string: returns them as matrix: strip the &amp;
+  nam <- gsub(pattern = "&amp;", "", unlist(stri_match_all_regex(x, "&amp;[LCR]")))
+  # split the string and assign names to join
+  z <- unlist(stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
+  names(z) <- as.character(nam)
+  res[c("L", "C", "R") %in% names(z)] <- z
 
+  # return the string vector
+  unname(res)
+}
+
+#' get headerFooter from xml into list with left, center, and right.
+#' @param x xml string
+#' @keywords internal
+#' @noRd
+getHeaderFooterNode <- function(x) {
+
+  head_foot <- c("oddHeader", "oddFooter",
+                  "evenHeader", "evenFooter",
+                  "firstHeader", "firstFooter")
+
+  headerFooter <- vector("list", length = length(head_foot))
+  names(headerFooter) <- head_foot
+
+  for (hf in head_foot) {
+    headerFooter[[hf]] <- amp_split(xml_value(x, "headerFooter", hf))
+  }
+
+  headerFooter
+}
+
+#' generate headerFooter xml from left, center, and right characters
+#' @param x xml string
+#' @keywords internal
+#' @noRd
 genHeaderFooterNode <- function(x) {
-  # TODO is x some class of something?
 
   # <headerFooter differentOddEven="1" differentFirst="1" scaleWithDoc="0" alignWithMargins="0">
   #   <oddHeader>&amp;Lfirst L&amp;CfC&amp;RfR</oddHeader>
@@ -236,40 +277,54 @@ genHeaderFooterNode <- function(x) {
   # return nothing if there is no length
   if (!length(x)) return(NULL)
 
+  lcr <- function(x) {
+    list(
+      left   = ifelse(x[[1]] == "", "", sprintf("&amp;L%s", x[[1]])),
+      center = ifelse(x[[2]] == "", "", sprintf("&amp;C%s", x[[2]])),
+      right  = ifelse(x[[3]] == "", "", sprintf("&amp;R%s", x[[3]]))
+    )
+  }
+
   if (length(x$oddHeader)) {
-    oddHeader <- paste0("<oddHeader>", sprintf("&amp;L%s", x$oddHeader[[1]]), sprintf("&amp;C%s", x$oddHeader[[2]]), sprintf("&amp;R%s", x$oddHeader[[3]]), "</oddHeader>", collapse = "")
+    odd_header <- lcr(x$oddHeader)
+    oddHeader <- paste0("<oddHeader>", odd_header[["left"]], odd_header[["center"]], odd_header[["right"]], "</oddHeader>", collapse = "")
   } else {
     oddHeader <- NULL
   }
 
   if (length(x$oddFooter)) {
-    oddFooter <- paste0("<oddFooter>", sprintf("&amp;L%s", x$oddFooter[[1]]), sprintf("&amp;C%s", x$oddFooter[[2]]), sprintf("&amp;R%s", x$oddFooter[[3]]), "</oddFooter>", collapse = "")
+    odd_footer <- lcr(x$oddFooter)
+    oddFooter <- paste0("<oddFooter>", odd_footer[["left"]], odd_footer[["center"]], odd_footer[["right"]], "</oddFooter>", collapse = "")
   } else {
     oddFooter <- NULL
   }
 
   ## EVEN
   if (length(x$evenHeader)) {
-    evenHeader <- paste0("<evenHeader>", sprintf("&amp;L%s", x$evenHeader[[1]]), sprintf("&amp;C%s", x$evenHeader[[2]]), sprintf("&amp;R%s", x$evenHeader[[3]]), "</evenHeader>", collapse = "")
+    even_header <- lcr(x$evenHeader)
+    evenHeader <- paste0("<evenHeader>", even_header[["left"]], even_header[["center"]], even_header[["right"]], "</evenHeader>", collapse = "")
   } else {
     evenHeader <- NULL
   }
 
   if (length(x$evenFooter)) {
-    evenFooter <- paste0("<evenFooter>", sprintf("&amp;L%s", x$evenFooter[[1]]), sprintf("&amp;C%s", x$evenFooter[[2]]), sprintf("&amp;R%s", x$evenFooter[[3]]), "</evenFooter>", collapse = "")
+    even_footer <- lcr(x$evenFooter)
+    evenFooter <- paste0("<evenFooter>", even_footer[["left"]], even_footer[["center"]], even_footer[["right"]], "</evenFooter>", collapse = "")
   } else {
     evenFooter <- NULL
   }
 
   ## FIRST
   if (length(x$firstHeader)) {
-    firstHeader <- paste0("<firstHeader>", sprintf("&amp;L%s", x$firstHeader[[1]]), sprintf("&amp;C%s", x$firstHeader[[2]]), sprintf("&amp;R%s", x$firstHeader[[3]]), "</firstHeader>", collapse = "")
+    first_header <- lcr(x$firstHeader)
+    firstHeader <- paste0("<firstHeader>", first_header[["left"]], first_header[["center"]], first_header[["right"]], "</firstHeader>", collapse = "")
   } else {
     firstHeader <- NULL
   }
 
   if (length(x$firstFooter)) {
-    firstFooter <- paste0("<firstFooter>", sprintf("&amp;L%s", x$firstFooter[[1]]), sprintf("&amp;C%s", x$firstFooter[[2]]), sprintf("&amp;R%s", x$firstFooter[[3]]), "</firstFooter>", collapse = "")
+    first_footer <- lcr(x$firstFooter)
+    firstFooter <- paste0("<firstFooter>", first_footer[["left"]], first_footer[["center"]], first_footer[["right"]], "</firstFooter>", collapse = "")
   } else {
     firstFooter <- NULL
   }
@@ -322,4 +377,122 @@ hashPassword <- function(password) {
   }, chars, 0, right = TRUE)
   hash <- bitwXor(bitwXor(hash, length(chars)), 0xCE4B)
   format(as.hexmode(hash), upper.case = TRUE)
+}
+
+#' create sparklines used in `add_sparline()`
+#' @details the colors are all predefined to be rgb. Maybe theme colors can be
+#' used too.
+#' @param sheet sheet
+#' @param dims dims
+#' @param sqref sqref
+#' @param type type
+#' @param negative negative
+#' @param displayEmptyCellsAs displayEmptyCellsAs
+#' @param markers markers add marker to line
+#' @param high highligh highest value
+#' @param low highlight lowest value
+#' @param first highlight first value
+#' @param last hightlight last value
+#' @param colorSeries colorSeries
+#' @param colorNegative colorNegative
+#' @param colorAxis colorAxis
+#' @param colorMarkers colorMarkers
+#' @param colorFirst colorFirst
+#' @param colorLast colorLast
+#' @param colorHigh colorHigh
+#' @param colorLow colorLow
+#' @examples
+#' # create sparklineGroup
+#' sparklines <- c(
+#'   create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"),
+#'   create_sparklines("Sheet 1", "A2:L2", "M2", markers = "1"),
+#'   create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1")
+#' )
+#'
+#' t1 <- AirPassengers
+#' t2 <- do.call(cbind, split(t1, cycle(t1)))
+#' dimnames(t2) <- dimnames(.preformat.ts(t1))
+#'
+#' wb <- wb_workbook()$
+#'   add_worksheet("Sheet 1")$
+#'   add_data(x = t2)$
+#'   add_sparklines(sparklines = sparklines)
+#'
+#' @export
+create_sparklines <- function(
+    sheet = current_sheet(),
+    dims,
+    sqref,
+    type = NULL,
+    negative = NULL,
+    displayEmptyCellsAs = "gap", # "span", "zero"
+    markers = NULL,
+    high = NULL,
+    low = NULL,
+    first = NULL,
+    last = NULL,
+    colorSeries = c(rgb = "FF376092"),
+    colorNegative = c(rgb = "FFD00000"),
+    colorAxis = c(rgb = "FFD00000"),
+    colorMarkers = c(rgb = "FFD00000"),
+    colorFirst = c(rgb = "FFD00000"),
+    colorLast = c(rgb = "FFD00000"),
+    colorHigh = c(rgb = "FFD00000"),
+    colorLow = c(rgb = "FFD00000")
+) {
+
+  assert_class(dims, "character")
+  assert_class(sqref, "character")
+
+  ## FIXME validate_colour barks
+  # colorSeries <- validate_colour(colorSeries)
+
+  if (!is.null(type) && !type %in% c("stacked", "column"))
+    stop("type must be NULL, stacked or column")
+
+  if (!is.null(markers) && !is.null(type))
+    stop("markers only work with stacked or column")
+
+
+  sparklineGroup <- xml_node_create(
+    "x14:sparklineGroup",
+    xml_attributes = c(
+      type = type,
+      displayEmptyCellsAs = displayEmptyCellsAs,
+      markers = markers,
+      high = high,
+      low = low,
+      first = first,
+      last = last,
+      negative = negative,
+      "xr2:uid" = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-Z0-9]"))
+    ),
+    xml_children = c(
+      xml_node_create("x14:colorSeries", xml_attributes = colorSeries),
+      xml_node_create("x14:colorNegative", xml_attributes = colorNegative),
+      xml_node_create("x14:colorAxis", xml_attributes = colorAxis),
+      xml_node_create("x14:colorMarkers", xml_attributes = colorMarkers),
+      xml_node_create("x14:colorFirst", xml_attributes = colorFirst),
+      xml_node_create("x14:colorLast", xml_attributes = colorLast),
+      xml_node_create("x14:colorHigh", xml_attributes = colorHigh),
+      xml_node_create("x14:colorLow", xml_attributes = colorLow),
+      xml_node_create(
+        "x14:sparklines", xml_children = c(
+          xml_node_create(
+            "x14:sparkline", xml_children = c(
+              xml_node_create(
+                "xm:f", xml_children = c(
+                  paste0(shQuote(sheet, type = "sh"), "!", dims)
+                )),
+              xml_node_create(
+                "xm:sqref", xml_children = c(
+                  sqref
+                ))
+            ))
+        )
+      )
+    )
+  )
+
+  sparklineGroup
 }

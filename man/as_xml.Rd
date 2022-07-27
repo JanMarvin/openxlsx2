@@ -4,10 +4,12 @@
 \alias{as_xml}
 \title{loads character string to pugixml and returns an externalptr}
 \usage{
-as_xml(x)
+as_xml(x, ...)
 }
 \arguments{
 \item{x}{input as xml}
+
+\item{...}{additional arguments passed to \code{read_xml()}}
 }
 \description{
 loads character string to pugixml and returns an externalptr

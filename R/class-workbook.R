@@ -271,7 +271,7 @@ wbWorkbook <- R6::R6Class(
       self$datetimeCreated <- datetimeCreated
       private$generate_base_core()
       private$current_sheet <- 0L
-      self
+      invisible(self)
     },
 
     #' @description
@@ -280,7 +280,7 @@ wbWorkbook <- R6::R6Class(
     #' @param value A value for the field
     append = function(field, value) {
       self[[field]] <- c(self[[field]], value)
-      self
+      invisible(self)
     },
 
     #' @description
@@ -288,7 +288,7 @@ wbWorkbook <- R6::R6Class(
     #' @param value A value for `self$workbook$sheets`
     append_sheets = function(value) {
       self$workbook$sheets <- c(self$workbook$sheets, value)
-      self
+      invisible(self)
     },
 
     #' @description validate sheet
@@ -840,7 +840,7 @@ wbWorkbook <- R6::R6Class(
         removeCellStyle = removeCellStyle,
         na.strings      = na.strings
       )
-      self
+      invisible(self)
     },
 
     #' @description add a data table
@@ -904,7 +904,7 @@ wbWorkbook <- R6::R6Class(
         bandedCols  = bandedCols,
         na.strings  = na.strings
       )
-      self
+      invisible(self)
     },
 
     #' @description add formula
@@ -935,7 +935,7 @@ wbWorkbook <- R6::R6Class(
         array    = array,
         xy       = xy
       )
-      self
+      invisible(self)
     },
 
     # TODO wb_save can be shortened a lot by some formatting and by using a
@@ -1855,7 +1855,7 @@ wbWorkbook <- R6::R6Class(
         self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][-removeInds]
       }
 
-      self
+      invisible(self)
     },
 
     ## columns ----
@@ -1973,7 +1973,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
       }
 
-      self
+      invisible(self)
     },
 
     #' @description Remove row heights from a worksheet
@@ -2107,7 +2107,7 @@ wbWorkbook <- R6::R6Class(
       col_df$bestFit[select] <- bestFit
       col_df$customWidth[select] <- customWidth
       self$worksheets[[sheet]]$fold_cols(col_df)
-      self
+      invisible(self)
     },
 
     ## rows ----
@@ -2211,7 +2211,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
       }
 
-      self
+      invisible(self)
     },
 
     #' @description
@@ -2419,6 +2419,11 @@ wbWorkbook <- R6::R6Class(
     #' @param allowBlank allowBlank
     #' @param showInputMsg showInputMsg
     #' @param showErrorMsg showErrorMsg
+    #' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+    #' @param errorTitle The error title
+    #' @param error The error text
+    #' @param promptTitle The prompt title
+    #' @param prompt The promt text
     #' @returns The `wbWorkbook` object
     add_data_validation = function(
       sheet = current_sheet(),
@@ -2429,7 +2434,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank = TRUE,
       showInputMsg = TRUE,
-      showErrorMsg = TRUE
+      showErrorMsg = TRUE,
+      errorStyle = NULL,
+      errorTitle = NULL,
+      error = NULL,
+      promptTitle = NULL,
+      prompt = NULL
     ) {
       ## rows and cols
       if (!is.numeric(cols)) {
@@ -2437,12 +2447,17 @@ wbWorkbook <- R6::R6Class(
       }
       rows <- as.integer(rows)
 
+      assert_class(allowBlank, "logical")
+      assert_class(showInputMsg, "logical")
+      assert_class(showErrorMsg, "logical")
+
       ## check length of value
       if (length(value) > 2) {
-        stop("value argument must be length < 2")
+        stop("value argument must be length <= 2")
       }
 
       valid_types <- c(
+        "custom",
         "whole",
         "decimal",
         "date",
@@ -2454,7 +2469,6 @@ wbWorkbook <- R6::R6Class(
       if (!tolower(type) %in% tolower(valid_types)) {
         stop("Invalid 'type' argument!")
       }
-
 
       ## operator == 'between' we leave out
       valid_operators <- c(
@@ -2468,26 +2482,16 @@ wbWorkbook <- R6::R6Class(
         "lessThanOrEqual"
       )
 
-      if (tolower(type) != "list") {
+      if (!tolower(type) %in% c("custom", "list")) {
         if (!tolower(operator) %in% tolower(valid_operators)) {
           stop("Invalid 'operator' argument!")
         }
 
         operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
+      } else if (tolower(type) == "custom") {
+        operator <- NULL
       } else {
         operator <- "between" ## ignored
-      }
-
-      if (!is.logical(allowBlank)) {
-        stop("Argument 'allowBlank' musts be logical!")
-      }
-
-      if (!is.logical(showInputMsg)) {
-        stop("Argument 'showInputMsg' musts be logical!")
-      }
-
-      if (!is.logical(showErrorMsg)) {
-        stop("Argument 'showErrorMsg' musts be logical!")
       }
 
       ## All inputs validated
@@ -2500,14 +2504,14 @@ wbWorkbook <- R6::R6Class(
       }
 
       if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
-        stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
+        stop("If type == 'time' value argument must be a POSIXct or POSIXlt vector.")
       }
 
 
       value <- head(value, 2)
-      allowBlank <- as.integer(allowBlank[1])
-      showInputMsg <- as.integer(showInputMsg[1])
-      showErrorMsg <- as.integer(showErrorMsg[1])
+      allowBlank <- as.character(as.integer(allowBlank[1]))
+      showInputMsg <- as.character(as.integer(showInputMsg[1]))
+      showErrorMsg <- as.character(as.integer(showErrorMsg[1]))
 
       if (type == "list") {
         private$data_validation_list(
@@ -2519,7 +2523,12 @@ wbWorkbook <- R6::R6Class(
           value        = value,
           allowBlank   = allowBlank,
           showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg
+          showErrorMsg = showErrorMsg,
+          errorStyle   = errorStyle,
+          errorTitle   = errorTitle,
+          error        = error,
+          promptTitle  = promptTitle,
+          prompt       = prompt
         )
       } else {
         private$data_validation(
@@ -2533,321 +2542,15 @@ wbWorkbook <- R6::R6Class(
           value        = value,
           allowBlank   = allowBlank,
           showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg
+          showErrorMsg = showErrorMsg,
+          errorStyle   = errorStyle,
+          errorTitle   = errorTitle,
+          error        = error,
+          promptTitle  = promptTitle,
+          prompt       = prompt
         )
       }
 
-      self
-    },
-
-    #' @description
-    #' Set conditional formatting for a sheet
-    #' @param sheet sheet
-    #' @param startRow startRow
-    #' @param endRow endRow
-    #' @param startCol startCol
-    #' @param endCol endCol
-    #' @param dxfId dxfId
-    #' @param formula formula
-    #' @param type type
-    #' @param values values
-    #' @param params params
-    #' @return The `wbWorkbook` object, invisibly
-    conditional_formatting = function(
-      sheet = current_sheet(),
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      dxfId,
-      formula,
-      type,
-      values,
-      params
-    ) {
-      # TODO consider defaults for logicals
-      # TODO rename: setConditionFormatting?  Or addConditionalFormatting
-      # TODO can this be moved to the sheet data?
-      sheet <- private$get_sheet_index(sheet)
-      sqref <- stri_join(
-        get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
-        collapse = ":"
-      )
-
-      ## Increment priority of conditional formatting rule
-      for (i in rev(seq_along(self$worksheets[[sheet]]$conditionalFormatting))) {
-        priority <- reg_match0(
-          self$worksheets[[sheet]]$conditionalFormatting[[i]],
-          '(?<=priority=")[0-9]+'
-        )
-        priority_new <- as.integer(priority) + 1L
-        priority_pattern <- sprintf('priority="%s"', priority)
-        priority_new <- sprintf('priority="%s"', priority_new)
-
-        ## now replace
-        self$worksheets[[sheet]]$conditionalFormatting[[i]] <- gsub(
-          priority_pattern,
-          priority_new,
-          self$worksheets[[sheet]]$conditionalFormatting[[i]],
-          fixed = TRUE
-        )
-      }
-
-      nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
-
-
-      # big switch statement
-      cfRule <- switch(
-        type,
-
-        ## colourScale ----
-        colorScale = {
-
-          ## formula contains the colours
-          ## values contains numerics or is NULL
-          ## dxfId is ignored
-
-          if (is.null(values)) {
-          # could use a switch() here for length to also check against other
-          # lengths, if these aren't checked somewhere already?
-            if (length(formula) == 2L) {
-              sprintf(
-                # TODO is this indentation necessary?
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]]
-              )
-            } else {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]],
-                formula[[3]]
-              )
-            }
-          } else {
-            if (length(formula) == 2L) {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                values[[1]],
-                values[[2]],
-                formula[[1]],
-                formula[[2]]
-              )
-            } else {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                values[[1]],
-                values[[2]],
-                values[[3]],
-                formula[[1]],
-                formula[[2]],
-                formula[[3]]
-              )
-            }
-          }
-        },
-
-        ## dataBar ----
-        dataBar = {
-          if (length(formula) == 2L) {
-            negColour <- formula[[1]]
-            posColour <- formula[[2]]
-          } else {
-            posColour <- formula
-            negColour <- "FFFF0000"
-          }
-
-          guid <- stri_join(
-            "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(xml_node(
-              self$worksheets[[sheet]]$extLst,
-              "ext",
-              "x14:conditionalFormattings",
-              "x14:conditionalFormatting"
-            ))
-          )
-
-          showValue <- as.integer(params$showValue %||% 1L)
-          gradient  <- as.integer(params$gradient  %||% 1L)
-          border    <- as.integer(params$border    %||% 1L)
-
-          newExtLst <- gen_databar_extlst(
-            guid      = guid,
-            sqref     = sqref,
-            posColour = posColour,
-            negColour = negColour,
-            values    = values,
-            border    = border,
-            gradient  = gradient
-          )
-
-          # check if any extLst availaible
-          if (length(self$worksheets[[sheet]]$extLst) == 0) {
-            self$worksheets[[sheet]]$extLst <- newExtLst
-          } else if (length(xml_node(self$worksheets[[sheet]]$extLst, "ext", "x14:conditionalFormattings")) == 0) {
-            # extLst is available, has no conditionalFormattings
-            self$worksheets[[sheet]]$extLst <- xml_add_child(
-              self$worksheets[[sheet]]$extLst,
-              xml_node(newExtLst, "ext", "x14:conditionalFormattings")
-            )
-          } else {
-            # extLst is available, has conditionalFormattings
-            self$worksheets[[sheet]]$extLst <- xml_add_child(
-              self$worksheets[[sheet]]$extLst,
-              xml_node(
-                newExtLst,
-                "ext",
-                "x14:conditionalFormattings",
-                "x14:conditionalFormatting"
-              ),
-              level = "x14:conditionalFormattings"
-            )
-          }
-
-          if (is.null(values)) {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                          <cfvo type="min"/><cfvo type="max"/>
-                          <color rgb="%s"/>
-                          </dataBar>
-                          <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{%s}</x14:id></ext>
-                        </extLst></cfRule>',
-              showValue,
-              posColour,
-              guid
-            )
-          } else {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/>
-                            </dataBar>
-                            <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-                            <x14:id>{%s}</x14:id></ext></extLst></cfRule>',
-              showValue,
-              values[[1]],
-              values[[2]],
-              posColour,
-              guid
-            )
-          }
-        },
-
-        ## expression ----
-        expression = {
-          sprintf(
-            '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
-            dxfId,
-            formula
-          )
-        },
-
-        ## duplicatedValues ----
-        duplicatedValues = {
-          sprintf(
-            '<cfRule type="duplicateValues" dxfId="%s" priority="1"/>',
-            dxfId
-          )
-        },
-
-        ## containsText ----
-        containsText = {
-          sprintf(
-            '<cfRule type="containsText" dxfId="%s" priority="1" operator="containsText" text="%s">
-                        	<formula>NOT(ISERROR(SEARCH("%s", %s)))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        ## notContainsText ----
-        notContainsText = {
-          sprintf(
-            '<cfRule type="notContainsText" dxfId="%s" priority="1" operator="notContains" text="%s">
-                        	<formula>ISERROR(SEARCH("%s", %s))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        ## beginsWith ----
-        beginsWith = {
-          sprintf(
-            '<cfRule type="beginsWith" dxfId="%s" priority="1" operator="beginsWith" text="%s">
-                        	<formula>LEFT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-
-            strsplit(sqref, split = ":")[[1]][1],
-            values,
-            values
-          )
-        },
-
-        ## endsWith ----
-        endsWith = sprintf(
-          '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
-                        	<formula>RIGHT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-          dxfId,
-          values,
-
-          strsplit(sqref, split = ":")[[1]][1],
-          values,
-          values
-        ),
-
-        ## between ----
-        between = sprintf(
-          '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
-          dxfId,
-          formula[1],
-          formula[2]
-        ),
-
-        ## topN ----
-        topN = sprintf(
-          '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
-          dxfId,
-          values[1],
-          values[2]
-        ),
-
-        ## bottomN ----
-        bottomN = {
-          sprintf(
-            '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
-            dxfId,
-            values[1],
-            values[2]
-          )
-        },
-        # do we have a match.arg() anywhere or will it just be showned in this switch()?
-        stop("type `", type, "` is not a valid formatting rule")
-      )
-
-      private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
-      names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
       invisible(self)
     },
 
@@ -3060,6 +2763,11 @@ wbWorkbook <- R6::R6Class(
           rank      = 5L
         )
     ) {
+
+      if (!is.null(style)) assert_class(style, "character")
+      assert_class(type, "character")
+      assert_class(params, "list")
+
       type <- match.arg(type)
 
       ## rows and cols
@@ -3070,11 +2778,18 @@ wbWorkbook <- R6::R6Class(
       rows <- as.integer(rows)
 
       ## check valid rule
-      values <- NULL
-      dxfs <- self$styles_mgr$styles$dxfs
-      dxf <- xml_node(dxfs, "dxf")
-      dxfId <- which(dxf == style) - 1
+      dxfId <- NULL
+      if (!is.null(style)) dxfId <- self$styles_mgr$get_dxf_id(style)
       params <- validate_conditional_formatting_params(params)
+      values <- NULL
+
+      sel <- c("expression", "duplicatedValues", "containsText", "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN")
+      if (is.null(style) && type %in% sel) {
+        smp <- random_string()
+        style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
+        self$styles_mgr$add(style, smp)
+        dxfId <- self$styles_mgr$get_dxf_id(smp)
+      }
 
       switch(
         type,
@@ -3100,17 +2815,6 @@ wbWorkbook <- R6::R6Class(
             )
           } ## else, there is a letter in the formula and apply as is
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1L
-          }
-
-          # # TODO check type up front and validate selections there...
-          # # or only use style class...
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
-          }
         },
 
         colorScale = {
@@ -3179,16 +2883,6 @@ wbWorkbook <- R6::R6Class(
           # type == "duplicatedValues"
           # - style is a Style object
           # - rule is ignored
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-
-          if (!grepl("^<dxf>", style)) {
-            stop("When type == 'duplicates', style must be a Style object.")
-          }
 
           rule <- style
         },
@@ -3198,18 +2892,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'contains', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3221,19 +2905,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'notContains', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3245,18 +2918,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'beginsWith', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
           if (!is.character("character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3268,18 +2931,8 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'endsWith', "
 
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
           if (!inherits(rule, "character")) {
             stop(msg, "rule must be a character vector of length 1.")
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop(msg, "style must be a Style object.")
           }
 
           values <- rule
@@ -3288,30 +2941,11 @@ wbWorkbook <- R6::R6Class(
 
         between = {
           rule <- range(rule)
-
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop("When type == 'between', style must be a Style object.")
-          }
         },
 
         topN = {
           # - rule is ignored
           # - 'rank' and 'percent' are named params
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop("when type == 'topN', style must be a Style object.")
-          }
 
           ## Additional parameters passed by ...
           # percent, rank
@@ -3323,15 +2957,6 @@ wbWorkbook <- R6::R6Class(
         bottomN = {
           # - rule is ignored
           # - 'rank' and 'percent' are named params
-          if (is.null(style)) {
-            style <- create_dxfs_style(font_color = c(rgb = "FF9C0006"), bgFill = c(rgb = "FFFFC7CE"))
-            self$styles_mgr$styles$dxfs <- unique(c(self$styles_mgr$styles$dxfs, style))
-            dxfId <- which(dxf == style) - 1
-          }
-
-          if (!grepl("^<dxf>", style)) {
-            stop("When type == 'bottomN', style must be a Style object.")
-          }
 
           ## Additional parameters passed by ...
           # percent, rank
@@ -3354,7 +2979,7 @@ wbWorkbook <- R6::R6Class(
         params   = params
       )
 
-      self
+      invisible(self)
     },
 
     ## plots and images ----
@@ -3536,7 +3161,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       if (is.null(dev.list()[[1]])) {
         warning("No plot to insert.")
-        return(self)
+        return(invisible(self))
       }
 
       if (!is.null(xy)) {
@@ -3596,39 +3221,17 @@ wbWorkbook <- R6::R6Class(
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
-      exSheets <- self$sheet_names
+      exSheets <- self$get_sheet_names()
       nSheets <- length(exSheets)
       nImages <- length(self$media)
       nCharts <- length(self$charts)
 
-      exSheets <- replaceXMLEntities(exSheets)
       showText <- "A Workbook object.\n"
 
       ## worksheets
       if (nSheets > 0) {
         showText <- c(showText, "\nWorksheets:\n")
-
-        # TODO use seq_along()
-        sheetTxt <- lapply(seq_len(nSheets), function(i) {
-          tmpTxt <- sprintf('Sheet %s: "%s"\n', i, exSheets[[i]])
-
-          if (length(self$rowHeights[[i]])) {
-            tmpTxt <-
-              c(
-                tmpTxt,
-                c(
-                  "\n\tCustom row heights (row: height)\n\t",
-                  stri_join(
-                    sprintf("%s: %s", names(self$rowHeights[[i]]), round(as.numeric(
-                      self$rowHeights[[i]]
-                    ), 2)),
-                    collapse = ", ",
-                    sep = " "
-                  )
-                )
-              )
-          }
-        })
+        sheetTxt <- sprintf("Sheets: %s", paste(names(exSheets), collapse = " "))
 
         showText <- c(showText, sheetTxt, "\n")
       } else {
@@ -3636,29 +3239,10 @@ wbWorkbook <- R6::R6Class(
           c(showText, "\nWorksheets:\n", "No worksheets attached\n")
       }
 
-      ## images
-      if (nImages > 0) {
-        showText <-
-          c(
-            showText,
-            "\nImages:\n",
-            sprintf('Image %s: "%s"\n', seq_len(nImages), self$media)
-          )
-      }
-
-      if (nCharts > 0) {
-        showText <-
-          c(
-            showText,
-            "\nCharts:\n",
-            sprintf('Chart %s: "%s"\n', seq_len(nCharts), self$charts)
-          )
-      }
-
       if (nSheets > 0) {
         showText <-
           c(showText, sprintf(
-            "Worksheet write order: %s",
+            "Write order: %s",
             stri_join(self$sheetOrder, sep = " ", collapse = ", ")
           ))
       }
@@ -3723,7 +3307,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$workbook$apps <- xml_node_create("DocSecurity", type)
-      self
+      invisible(self)
     },
 
     #' @description protect worksheet
@@ -3773,7 +3357,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      self
+      invisible(self)
     },
 
 
@@ -3987,7 +3571,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      self
+      invisible(self)
     },
 
     ## header footer ----
@@ -4058,7 +3642,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$worksheets[[sheet]]$headerFooter <- hf
-      self
+      invisible(self)
     },
 
     #' @description get tables
@@ -4139,8 +3723,8 @@ wbWorkbook <- R6::R6Class(
       cols <- seq(from = cols[1], to = cols[2], by = 1)
 
       ## now delete data
-      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
-      self
+      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols)
+      invisible(self)
     },
 
     #' @description add filters
@@ -4164,7 +3748,7 @@ wbWorkbook <- R6::R6Class(
         paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
       )
 
-      self
+      invisible(self)
     },
 
     #' @description remove filters
@@ -4175,7 +3759,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[s]]$autoFilter <- character()
       }
 
-      self
+      invisible(self)
     },
 
     #' @description grid lines
@@ -4199,7 +3783,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$worksheets[[sheet]]$sheetViews <- sv
-      self
+      invisible(self)
     },
 
     ### named region ----
@@ -4266,7 +3850,7 @@ wbWorkbook <- R6::R6Class(
         localSheetId = localSheetId
       )
 
-      self
+      invisible(self)
     },
 
     #' @description remove a named region
@@ -4298,7 +3882,7 @@ wbWorkbook <- R6::R6Class(
         # user does not care, as long as no defined name remains on a sheet.
       }
 
-      self
+      invisible(self)
     },
 
     #' @description set worksheet order
@@ -4320,7 +3904,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$sheetOrder <- sheets
-      self
+      invisible(self)
     },
 
     ## sheet visibility ----
@@ -4361,7 +3945,7 @@ wbWorkbook <- R6::R6Class(
       inds <- which(value != exState)
 
       if (length(inds) == 0) {
-        return(self)
+        return(invisible(self))
       }
 
       for (i in seq_along(self$worksheets)) {
@@ -4373,7 +3957,7 @@ wbWorkbook <- R6::R6Class(
         self$set_sheet_visibility(1, TRUE)
       }
 
-      self
+      invisible(self)
     },
 
     ## page breaks ----
@@ -4386,7 +3970,7 @@ wbWorkbook <- R6::R6Class(
     add_page_break = function(sheet = current_sheet(), row = NULL, col = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
-      self
+      invisible(self)
     },
 
     #' @description clean sheet (remove all values)
@@ -4831,7 +4415,7 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim_inner_cell, self$styles_mgr$get_xf_id(xf_inner_cell))
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple fill function
@@ -4855,7 +4439,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
         sheet         = current_sheet(),
-        dims,
+        dims          = "A1",
         color         = "",
         pattern       = "solid",
         gradient_fill = "",
@@ -4893,7 +4477,7 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim, s_id)
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple font function
@@ -4920,7 +4504,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
         sheet     = current_sheet(),
-        dims,
+        dims      = "A1",
         name      = "Calibri",
         color     = c(rgb = "FF000000"),
         size      = "11",
@@ -4971,7 +4555,7 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim, s_id)
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple number format function
@@ -4984,7 +4568,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     add_numfmt = function(
         sheet = current_sheet(),
-        dims,
+        dims  = "A1",
         numfmt
     ) {
 
@@ -5021,7 +4605,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      return(self)
+      invisible(self)
     },
 
     #' @description provide simple cell style format function
@@ -5056,11 +4640,15 @@ wbWorkbook <- R6::R6Class(
     #' @param xfId xf ID to apply
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_cell_style("S1", "A1:K1", textRotation = "45", horizontal = "center", vertical = "center", wrapText = "1")
+    #'  wb$add_cell_style("S1", "A1:K1",
+    #'                    textRotation = "45",
+    #'                    horizontal = "center",
+    #'                    vertical = "center",
+    #'                    wrapText = "1")
     #' @return The `wbWorksheetObject`, invisibly
     add_cell_style = function(
         sheet             = current_sheet(),
-        dims,
+        dims              = "A1",
         applyAlignment    = NULL,
         applyBorder       = NULL,
         applyFill         = NULL,
@@ -5123,7 +4711,91 @@ wbWorkbook <- R6::R6Class(
         set_cell_style(self, sheet, dim, s_id)
       }
 
-      return(self)
+      invisible(self)
+    },
+
+
+    #' @description clone style from one sheet to another
+    #' @param from the worksheet you are cloning
+    #' @param to the worksheet the style is applied to
+    clone_sheet_style = function(from = current_sheet(), to) {
+
+      id_org <- private$get_sheet_index(from)
+      id_new <- private$get_sheet_index(to)
+
+      org_style <- self$worksheets[[id_org]]$sheet_data$cc
+      wb_style  <- self$worksheets[[id_new]]$sheet_data$cc
+
+      # only clone styles from sheets with cc
+      if (is.null(org_style)) {
+        message("'from' has no sheet data styles to clone")
+      } else {
+
+        if (is.null(wb_style)) # if null, create empty dataframe
+          wb_style <- create_char_dataframe(names(org_style), n = 0)
+
+        # remove all values
+        org_style <- org_style[c("r", "row_r", "c_r", "c_s")]
+
+        # do not merge c_s and do not create duplicates
+        merged_style <- merge(org_style,
+                              wb_style[-which(names(wb_style) == "c_s")],
+                              all = TRUE)
+        merged_style[is.na(merged_style)] <- ""
+        merged_style <- merged_style[!duplicated(merged_style["r"]), ]
+
+        # will be ordere on save
+        self$worksheets[[id_new]]$sheet_data$cc <- merged_style
+
+      }
+
+
+      # copy entire attributes from original sheet to new sheet
+      org_rows <- self$worksheets[[id_org]]$sheet_data$row_attr
+      new_rows <- self$worksheets[[id_new]]$sheet_data$row_attr
+
+      if (is.null(org_style)) {
+        message("'from' has no row styles to clone")
+      } else {
+
+        if (is.null(new_rows))
+          new_rows <- create_char_dataframe(names(org_rows), n = 0)
+
+        # only add the row information, nothing else
+        merged_rows <- merge(org_rows,
+                             new_rows["r"],
+                             all = TRUE)
+        merged_rows[is.na(merged_rows)] <- ""
+        merged_rows <- merged_rows[!duplicated(merged_rows["r"]), ]
+        ordr <- ordered(order(as.integer(merged_rows$r)))
+        merged_rows <- merged_rows[ordr,]
+
+        self$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
+      }
+
+      self$worksheets[[id_new]]$cols_attr <-
+        self$worksheets[[id_org]]$cols_attr
+
+      self$worksheets[[id_new]]$dimension <-
+        self$worksheets[[id_org]]$dimension
+
+      self$worksheets[[id_new]]$mergeCells <-
+        self$worksheets[[id_org]]$mergeCells
+
+      invisible(self)
+    },
+
+
+    #' @description apply sparkline to worksheet
+    #' @param sheet the worksheet you are using
+    #' @param sparklines sparkline created by `create_sparkline()`
+    add_sparklines = function(
+      sheet = current_sheet(),
+      sparklines
+    ) {
+      sheet <- private$get_sheet_index(sheet)
+      self$worksheets[[sheet]]$add_sparklines(sparklines)
+      invisible(self)
     }
 
   ),
@@ -5282,18 +4954,18 @@ wbWorkbook <- R6::R6Class(
       # object.  wbWorksheet$append() is currently public. _Currently_.
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$append(field, value)
-      self
+      invisible(self)
     },
 
     append_workbook_field = function(field, value = NULL) {
       self$workbook[[field]] <- c(self$workbook[[field]], value)
-      self
+      invisible(self)
     },
 
     append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
-      self
+      invisible(self)
     },
 
     generate_base_core = function() {
@@ -5346,7 +5018,7 @@ wbWorkbook <- R6::R6Class(
       self$creator <- value
       # core is made on initialization
       private$generate_base_core()
-      self
+      invisible(self)
     },
 
     get_worksheet = function(sheet) {
@@ -5590,7 +5262,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt
     ) {
       # TODO rename: setDataValidation?
       # TODO can this be moved to the worksheet class?
@@ -5604,17 +5281,22 @@ wbWorkbook <- R6::R6Class(
           collapse = ":"
         )
 
-      header <-
-        sprintf(
-          '<dataValidation type="%s" operator="%s" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s" sqref="%s">',
-          type,
-          operator,
-          allowBlank,
-          showInputMsg,
-          showErrorMsg,
-          sqref
+      header <- xml_node_create(
+        "dataValidation",
+        xml_attributes = c(
+          type = type,
+          operator = operator,
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          sqref = sqref,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
         )
-
+      )
 
       # TODO consider switch(type, date = ..., time = ..., )
       if (type == "date") {
@@ -5665,10 +5347,11 @@ wbWorkbook <- R6::R6Class(
         }
       )
 
-      private$append_sheet_field(sheet, "dataValidations", stri_join(header, stri_join(form, collapse = ""), "</dataValidation>"))
+      private$append_sheet_field(sheet, "dataValidations", xml_add_child(header, form))
       invisible(self)
     },
 
+    # TODO can this be merged with above?
     data_validation_list = function(
       sheet = current_sheet(),
       startRow,
@@ -5678,7 +5361,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt
     ) {
       # TODO consider some defaults to logicals
       # TODO rename: setDataValidationList?
@@ -5691,17 +5379,25 @@ wbWorkbook <- R6::R6Class(
           sep = " ",
           collapse = ":"
         )
-      data_val <-
-        sprintf(
-          '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
-          allowBlank,
-          showInputMsg,
-          showErrorMsg
+
+      data_val <- xml_node_create(
+        "x14:dataValidation",
+        xml_attributes = c(
+          type = "list",
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
         )
+      )
 
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
+      xmlData <- xml_add_child(data_val, c(formula, sqref))
       private$append_sheet_field(sheet, "dataValidationsLst", xmlData)
       invisible(self)
     },
@@ -5794,226 +5490,48 @@ wbWorkbook <- R6::R6Class(
       cfRule <- switch(
         type,
 
-        colorScale = {
+        ## colourScale ----
+        colorScale = cf_create_colorscale(formula, values),
 
-          ## formula contains the colours
-          ## values contains numerics or is NULL
-          ## dxfId is ignored
+        ## dataBar ----
+        dataBar = cf_create_databar(self$worksheets[[sheet]]$extLst, formula, params, sqref, values),
 
-          if (is.null(values)) {
-            # could use a switch() here for length to also check against other
-            # lengths, if these aren't checked somewhere already?
-            if (length(formula) == 2L) {
-              sprintf(
-                # TODO is this indentation necessary?
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]]
-              )
-            } else {
-              sprintf(
-                '<cfRule type="colorScale" priority="1"><colorScale>
-                             <cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/>
-                             <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-                formula[[1]],
-                formula[[2]],
-                formula[[3]]
-              )
-            }
-          } else if (length(formula) == 2L) {
-            sprintf(
-              '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-              values[[1]],
-              values[[2]],
-              formula[[1]],
-              formula[[2]]
-            )
-          } else {
-            sprintf(
-              '<cfRule type="colorScale" priority="1"><colorScale>
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/><color rgb="%s"/><color rgb="%s"/>
-                           </colorScale></cfRule>',
-              values[[1]],
-              values[[2]],
-              values[[3]],
-              formula[[1]],
-              formula[[2]],
-              formula[[3]]
-            )
-          }
-        },
+        ## expression ----
+        expression = cf_create_expression(dxfId, formula),
 
-        dataBar = {
-          if (length(formula) == 2L) {
-            negColour <- formula[[1]]
-            posColour <- formula[[2]]
-          } else {
-            posColour <- formula
-            negColour <- "FFFF0000"
-          }
+        ## duplicatedValues ----
+        duplicatedValues = cf_create_duplicated_values(dxfId),
 
-          extLst <- self$worksheets[[sheet]]$extLst
+        ## containsText ----
+        containsText = cf_create_contains_text(dxfId, sqref, values),
 
-          guid <- stri_join(
-            "F7189283-14F7-4DE0-9601-54DE9DB",
-            40000L + length(xml_node(extLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting"))
-          )
+        ## notContainsText ----
+        notContainsText = cf_create_not_contains_text(dxfId, sqref, values),
 
-          newExtLst <- gen_databar_extlst(
-            guid      = guid,
-            sqref     = sqref,
-            posColour = posColour,
-            negColour = negColour,
-            values    = values,
-            border    = params$border,
-            gradient  = params$gradient
-          )
+        ## beginsWith ----
+        beginsWith = cf_begins_with(dxfId, sqref, values),
 
-          # check if any extLst availaible
-          if (length(extLst) == 0) {
-            self$worksheets[[sheet]]$extLst <- newExtLst
-          } else if (length(xml_node(extLst, "ext", "x14:conditionalFormattings")) == 0) {
-            # extLst is available, has no conditionalFormattings
-            extLst <- xml_add_child(extLst,
-                                    xml_node(newExtLst, "ext", "x14:conditionalFormattings"))
-            self$worksheets[[sheet]]$extLst <- extLst
-          } else {
-            # extLst is available, has conditionalFormattings
-            extLst <- xml_add_child(extLst,
-                                    xml_node(newExtLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting"),
-                                    level = "x14:conditionalFormattings")
-            self$worksheets[[sheet]]$extLst <- extLst
-          }
+        ## endsWith ----
+        endsWith = cf_ends_with(dxfId, sqref, values),
 
+        ## between ----
+        between = cf_between(dxfId, formula),
 
+        ## topN ----
+        topN = cf_top_n(dxfId, values),
 
-          if (is.null(values)) {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                          <cfvo type="min"/><cfvo type="max"/>
-                          <color rgb="%s"/>
-                          </dataBar>
-                          <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{%s}</x14:id></ext>
-                        </extLst></cfRule>',
-              params$showValue,
-              posColour,
-              guid
-            )
-          } else {
-            sprintf(
-              '<cfRule type="dataBar" priority="1"><dataBar showValue="%s">
-                            <cfvo type="num" val="%s"/><cfvo type="num" val="%s"/>
-                            <color rgb="%s"/>
-                            </dataBar>
-                            <extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-                            <x14:id>{%s}</x14:id></ext></extLst></cfRule>',
-              params$showValue,
-              values[[1]],
-              values[[2]],
-              posColour,
-              guid
-            )
-          }
-        },
+        ## bottomN ----
+        bottomN = cf_bottom_n(dxfId, values),
 
-        expression = {
-          sprintf(
-            '<cfRule type="expression" dxfId="%s" priority="1"><formula>%s</formula></cfRule>',
-            dxfId,
-            formula
-          )
-        },
-
-        duplicatedValues = {
-          sprintf(
-            '<cfRule type="duplicateValues" dxfId="%s" priority="1"/>',
-            dxfId
-          )
-        },
-
-        containsText = {
-          sprintf(
-            '<cfRule type="containsText" dxfId="%s" priority="1" operator="containsText" text="%s">
-                        	<formula>NOT(ISERROR(SEARCH("%s", %s)))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        notContainsText = {
-          sprintf(
-            '<cfRule type="notContainsText" dxfId="%s" priority="1" operator="notContains" text="%s">
-                        	<formula>ISERROR(SEARCH("%s", %s))</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            values,
-            strsplit(sqref, split = ":")[[1]][1]
-          )
-        },
-
-        beginsWith = {
-          sprintf(
-            '<cfRule type="beginsWith" dxfId="%s" priority="1" operator="beginsWith" text="%s">
-                        	<formula>LEFT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-            dxfId,
-            values,
-            strsplit(sqref, split = ":")[[1]][1],
-            values,
-            values
-          )
-        },
-
-        endsWith = sprintf(
-          '<cfRule type="endsWith" dxfId="%s" priority="1" operator="endsWith" text="%s">
-                        	<formula>RIGHT(%s,LEN("%s"))="%s"</formula>
-                       </cfRule>',
-          dxfId,
-          values,
-          strsplit(sqref, split = ":")[[1]][1],
-          values,
-          values
-        ),
-
-        between = sprintf(
-          '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between"><formula>%s</formula><formula>%s</formula></cfRule>',
-          dxfId,
-          formula[1],
-          formula[2]
-        ),
-
-        topN = sprintf(
-          '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"></cfRule>',
-          dxfId,
-          values$rank,
-          values$percent
-        ),
-
-        bottomN = {
-          sprintf(
-            '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"></cfRule>',
-            dxfId,
-            values$rank,
-            values$percent
-          )
-        },
-        # match.arg() from call should take care of this
-        stop("[internal error] type : ", toString(type)) # nocov
+        # do we have a match.arg() anywhere or will it just be showned in this switch()?
+        stop("type `", type, "` is not a valid formatting rule")
       )
 
-      private$append_sheet_field(sheet, "conditionalFormatting", cfRule)
+      # dataBar needs additional extLst
+      if (!is.null(attr(cfRule, "extLst")))
+        self$worksheets[[sheet]]$extLst <- read_xml(attr(cfRule, "extLst"), pointer = FALSE)
+
+      private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE))
       names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
       invisible(self)
     },

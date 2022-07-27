@@ -4,7 +4,7 @@
 \alias{wb_add_numfmt}
 \title{add numfmt for cell region}
 \usage{
-wb_add_numfmt(wb, sheet = current_sheet(), dims, numfmt)
+wb_add_numfmt(wb, sheet = current_sheet(), dims = "A1", numfmt)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -25,3 +25,12 @@ add numfmt for cell region
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
  wb \%>\% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_clone_sheet_style}()}
+}
+\concept{styles}

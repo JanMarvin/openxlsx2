@@ -237,3 +237,55 @@ test_that("writing NA, NaN and Inf", {
   expect_equal(exp, got)
 
 })
+
+
+test_that("write cells without data", {
+
+  temp <- temp_xlsx()
+  tmp <- tempdir()
+
+  dat <- as.data.frame(matrix(NA, 2, 2))
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = dat, startRow = 2, startCol = 2, na.strings = NULL, colNames = FALSE)
+
+  wb$worksheets[[1]]$sheet_data$cc$c_t <- ""
+
+  # # created an empty canvas that can be styled
+  # wb$add_fill(dims = "B2:C3", color = c(rgb = "FFFFFF00"))
+  # wb$add_border(dims = "B2:C3")
+
+  wb$save(temp)
+
+  unzip(temp, exdir = tmp)
+
+  exp <- structure(
+    list(
+      r = c("B2", "C2", "B3", "C3"),
+      row_r = c("2", "2", "3", "3"),
+      c_r = c("B", "C", "B", "C"),
+      c_s = c("", "", "", ""),
+      c_t = c("", "", "", ""),
+      c_cm = c("", "", "", ""),
+      c_ph = c("", "", "", ""),
+      c_vm = c("", "", "", ""),
+      v = c("", "", "", ""),
+      f = c("", "", "", ""),
+      f_t = c("", "", "", ""),
+      f_ref = c("", "", "", ""),
+      f_ca = c("", "", "", ""),
+      f_si = c("", "", "", ""),
+      is = c("", "", "", ""),
+      typ = c("3", "3", "3", "3")
+    ),
+    row.names = c(NA, 4L),
+    class = "data.frame")
+  got <- wb$worksheets[[1]]$sheet_data$cc
+  expect_equal(exp, got)
+
+  sheet <- paste0(tmp, "/xl/worksheets/sheet1.xml")
+  exp <- "<sheetData><row r=\"2\"><c r=\"B2\"/><c r=\"C2\"/></row><row r=\"3\"><c r=\"B3\"/><c r=\"C3\"/></row></sheetData>"
+  got <- xml_node(sheet, "worksheet", "sheetData")
+  expect_equal(exp, got)
+
+})
