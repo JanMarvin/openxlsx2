@@ -75,6 +75,7 @@
 <span>  <span class="va">x</span>,</span>
 <span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
 <span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -110,6 +111,10 @@
 
 <dt>startRow</dt>
 <dd><p>A vector specifying the starting row to write df</p></dd>
+
+
+<dt>dims</dt>
+<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
 
 
 <dt>xy</dt>
