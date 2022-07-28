@@ -4053,6 +4053,8 @@ wbWorkbook <- R6::R6Class(
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
+      private$do_cell_init(sheet, dims)
+
       ### beg border creation
       full_single <- create_border(
         top = top_border, top_color = top_color,
@@ -4447,6 +4449,7 @@ wbWorkbook <- R6::R6Class(
         every_nth_row = 1
     ) {
       sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       new_fill <- create_fill(
         gradientFill = gradient_fill,
@@ -4522,6 +4525,8 @@ wbWorkbook <- R6::R6Class(
         shadow    = "",
         vertAlign = ""
     ) {
+      sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       new_font <- create_font(
         b = bold,
@@ -4571,6 +4576,8 @@ wbWorkbook <- R6::R6Class(
         dims  = "A1",
         numfmt
     ) {
+      sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       if (inherits(numfmt, "character")) {
 
@@ -4675,6 +4682,8 @@ wbWorkbook <- R6::R6Class(
         wrapText          = NULL,
         xfId              = NULL
     ) {
+      sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       for (dim in dims) {
         xf_prev <- get_cell_styles(self, sheet, dim)
@@ -5713,6 +5722,31 @@ wbWorkbook <- R6::R6Class(
           stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
           "</externalReferences>"
         )
+      }
+
+      invisible(self)
+    },
+
+    ## @description initialize cells in workbook
+    ## @param sheet sheet
+    ## @param dims dims
+    ## @keywords internal
+    do_cell_init = function(sheet = current_sheet(), dims) {
+
+      sheet <- private$get_sheet_index(sheet)
+      dims_df <- dims_to_dataframe(dims, fill = TRUE)
+
+      exp_cells <- unname(unlist(dims_df))
+      got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
+
+      # initialize cell
+      if (!all(exp_cells %in% got_cells)) {
+        init_cells <- NA
+        for (exp_cell in exp_cells[!exp_cells %in% got_cells])
+        # TODO use dims once PR#236 is merged
+        self$add_data(x = init_cells, na.strings = NULL, colNames = FALSE,
+                      startCol = col2int(exp_cell),
+                      startRow = as.numeric(gsub("\\D", "", exp_cell)))
       }
 
       invisible(self)
