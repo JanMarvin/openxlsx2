@@ -79,6 +79,14 @@ test_that("test add_border()", {
 
   expect_equal(exp, got)
 
+
+  wb <- wb_workbook()
+  wb$add_worksheet("S1")$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double")
+
+  exp <- c("1", "3", "3", "3", "3", "3", "3", "3", "3", "3", "2")
+  got <- wb$worksheets[[1]]$sheet_data$cc$c_s
+  expect_equal(exp, got)
+
 })
 
 test_that("test add_fill()", {
@@ -135,6 +143,13 @@ test_that("test add_fill()", {
   expect_equal(exp, got)
 
 
+  wb <- wb_workbook()
+  wb$add_worksheet("S1")$add_fill("S1", dims = "D5:G6", color = c(rgb = "FFFFFF00"))
+
+  exp <- rep("1", 8)
+  got <- wb$worksheets[[1]]$sheet_data$cc$c_s
+  expect_equal(exp, got)
+
 })
 
 test_that("test add_font()", {
@@ -164,6 +179,13 @@ test_that("test add_font()", {
   exp <- c("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "",
            "", "", "", "", "", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()
+  wb$add_worksheet("S1")$add_font("S1", dims = "A1:K1", color = c(rgb = "FFFFFF00"))
+
+  exp <- rep("1", 11)
+  got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
 
 })
@@ -197,6 +219,14 @@ test_that("test add_numfmt()", {
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
   expect_equal(exp, got)
 
+
+  wb <- wb_workbook()
+  wb$add_worksheet("S1")$add_numfmt("S1", dims = "A1:A33", numfmt = 2)
+
+  exp <- rep("1", 33)
+  got <- wb$worksheets[[1]]$sheet_data$cc$c_s
+  expect_equal(exp, got)
+
 })
 
 test_that("test add_cell_style()", {
@@ -219,6 +249,14 @@ test_that("test add_cell_style()", {
   exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
            "", "", "2", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
+  expect_equal(exp, got)
+
+
+  wb <- wb_workbook()
+  wb$add_worksheet("S1")$add_cell_style("S1", dims = "A1:A33", textRotation = "45")
+
+  exp <- rep("1", 33)
+  got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
 
 })
