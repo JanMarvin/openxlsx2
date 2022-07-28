@@ -49,9 +49,10 @@ test_that("silent with numfmt option", {
   wb$add_worksheet("S2")
 
   wb$add_data_table("S1", x = iris)
-  wb$add_data_table("S2",
+  expect_warning(
+    wb$add_data_table("S2",
                  x = mtcars, xy = c("B", 3), rowNames = TRUE,
-                 tableStyle = "TableStyleLight9"
+                 tableStyle = "TableStyleLight9")
   )
 
   # [1:4] to ignore factor
@@ -66,7 +67,6 @@ test_that("silent with numfmt option", {
   expect_equal(rownames(mtcars), rownames(got))
 
 })
-
 
 test_that("test options", {
 
@@ -142,5 +142,27 @@ test_that("update_cells", {
     row.names = c("23", "110", "111"), class = "data.frame")
   got <- wb$worksheets[[1]]$sheet_data$cc[c(5,8,11), c("c_t", "f", "f_t")]
   expect_equal(exp, got)
+
+})
+
+test_that("write dims", {
+
+  # create a workbook
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(dims = "B2:C3", x = matrix(1:4, 2, 2), colNames = FALSE)$
+    add_worksheet()$add_data_table(dims = "B:C", x = as.data.frame(matrix(1:4, 2, 2)))$
+    add_worksheet()$add_formula(dims = "B3", x = "42")
+
+  s1 <- wb_to_df(wb, 1, colNames = FALSE)
+  s2 <- wb_to_df(wb, 2, colNames = FALSE)
+  s3 <- wb_to_df(wb, 3, colNames = FALSE)
+
+  expect_equal(rownames(s1), c("2", "3"))
+  expect_equal(rownames(s2), c("1", "2", "3"))
+  expect_equal(rownames(s3), c("3"))
+
+  expect_equal(colnames(s1), c("B", "C"))
+  expect_equal(colnames(s2), c("B", "C"))
+  expect_equal(colnames(s3), c("B"))
 
 })

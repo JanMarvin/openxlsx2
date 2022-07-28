@@ -56,5 +56,13 @@ wb <- wb_add_border(wb, 1, dims = "B12:D14",
 wb <- wb_add_border(wb, 1, dims = "D28:E28")
 }
 \seealso{
-create_border
+\code{\link[=create_border]{create_border()}}
+
+Other styles: 
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_numfmt}()},
+\code{\link{wb_clone_sheet_style}()}
 }
+\concept{styles}

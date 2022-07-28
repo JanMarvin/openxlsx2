@@ -75,3 +75,12 @@ add_font provides all the options openxml accepts for a font node, not all have 
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
  wb \%>\% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_numfmt}()},
+\code{\link{wb_clone_sheet_style}()}
+}
+\concept{styles}

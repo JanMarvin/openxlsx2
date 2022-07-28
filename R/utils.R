@@ -133,3 +133,56 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 
   return(res)
 }
+
+#' row and col to dims
+#' @param x a dimension object "A1" or "A1:A1"
+#' @param as_integer optional if the output should be returned as interger
+#' @noRd
+dims_to_rowcol <- function(x, as_integer = FALSE) {
+  dimensions <- unlist(strsplit(x, ":"))
+  cols <- gsub("[[:digit:]]","", dimensions)
+  rows <- gsub("[[:upper:]]","", dimensions)
+
+  # if "A:B"
+  if (any(rows == "")) rows[rows == ""] <- "1"
+
+  # convert cols to integer
+  cols_int <- col2int(cols)
+  rows_int <- as.integer(rows)
+
+  if (length(dimensions) == 2) {
+    # needs integer to create sequence
+    cols <- int2col(seq.int(min(cols_int), max(cols_int)))
+    rows_int <- seq.int(min(rows_int), max(rows_int))
+  }
+
+  if (as_integer) {
+    cols <- cols_int
+    rows <- rows_int
+  } else {
+    rows <- as.character(rows_int)
+  }
+
+  list(cols, rows)
+}
+
+#' row and col to dims
+#' @param rows a numeric vector of rows
+#' @param cols a numeric or character vector of cols
+#' @noRd
+rowcol_to_dims <- function(row, col) {
+
+  # no assert for col. will output character anyways
+  # assert_class(row, "numeric") - complains if integer
+  col_int <- col2int(col)
+
+  min_col <- int2col(min(col_int))
+  max_col <- int2col(max(col_int))
+
+  min_row <- min(row)
+  max_row <- max(row)
+
+  # we will always return something like "A1:A1", even for single cells
+  stringi::stri_join(min_col, min_row, ":", max_col, max_row)
+
+}
