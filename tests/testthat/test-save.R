@@ -242,7 +242,7 @@ test_that("writing NA, NaN and Inf", {
 test_that("write cells without data", {
 
   temp <- temp_xlsx()
-  tmp <- tempdir()
+  tmp <- temp_dir()
 
   dat <- as.data.frame(matrix(NA, 2, 2))
   wb <- wb_workbook()$
