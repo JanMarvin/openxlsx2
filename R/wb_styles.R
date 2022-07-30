@@ -326,7 +326,11 @@ create_font <- function(
   }
 
   if(is.null(name)) name <- ""
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 210509df (allow dxf creation without font)
   if (name != "") {
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
