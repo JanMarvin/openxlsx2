@@ -938,6 +938,25 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description add style
+    #' @param style style
+    #' @param style_name style_name
+    #' @returns The `wbWorkbook` object
+    add_style = function(style = NULL, style_name = NULL) {
+
+      assert_class(style, "character")
+
+      if (is.null(style_name)) {
+        style_name <- deparse(substitute(style))
+      } else {
+        assert_class(style_name, "character")
+      }
+
+      self$styles_mgr$add(style, style_name)
+
+      invisible(self)
+    },
+
     # TODO wb_save can be shortened a lot by some formatting and by using a
     # function that creates all the temporary directories and subdirectries as a
     # named list
