@@ -329,7 +329,11 @@ set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
 
 The loop below will apply the tint attribute to the fill color
 
-````R
+```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="Tint variations of the theme colors."}
+knitr::include_graphics("color_tint.png")
+```
+
+```{r}
 wb <- wb_workbook() %>% wb_add_worksheet("S1")
 
 tints <- seq(-0.9, 0.9, by = 0.1)
