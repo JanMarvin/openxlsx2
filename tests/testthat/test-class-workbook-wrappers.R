@@ -413,6 +413,8 @@ test_that("wb_add_sparklines() is a wrapper", {
 # wb_add_style() ----------------------------------------------------------
 
 test_that("wb_add_style() is a wrapper", {
+
+  # with name
   style <- create_numfmt(numFmtId = "165", formatCode = "#.#")
   wb <- wb_workbook()
   expect_wrapper(
@@ -420,4 +422,14 @@ test_that("wb_add_style() is a wrapper", {
     wb = wb,
     params = list(style = style, style_name = "numfmt")
   )
+
+  # without name
+  wb <- wb_workbook()
+  numfmt <- create_numfmt(numFmtId = "165", formatCode = "#.#")
+  expect_wrapper(
+    "add_style",
+    wb = wb,
+    params = list(style = numfmt)
+  )
+
 })
