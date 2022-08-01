@@ -69,6 +69,13 @@ wbColor <- R6::R6Class(
 
 #' Create a new hyperlink object
 #' @param name a color name as character string
+#' @param name A name of a color known to R
+#' @param auto A boolean.
+#' @param indexed An indexed color values.
+#' @param rgb A rgb color as ARGB hex value "FF000000".
+#' @param theme A zero based index referencing a value in the theme.
+#' @param tint A tint value applied. Range from -1 (dark) to 1 (light).
+#' @return a `wbColor` object
 #' @rdname wbColor
 #' @export
 wb_color <- function(name = NULL, auto = NULL, indexed = NULL, rgb = NULL, theme = NULL, tint = NULL) {

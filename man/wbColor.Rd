@@ -15,7 +15,20 @@ wb_color(
 )
 }
 \arguments{
-\item{name}{a color name as character string}
+\item{name}{A name of a color known to R}
+
+\item{auto}{A boolean.}
+
+\item{indexed}{An indexed color values.}
+
+\item{rgb}{A rgb color as ARGB hex value "FF000000".}
+
+\item{theme}{A zero based index referencing a value in the theme.}
+
+\item{tint}{A tint value applied. Range from -1 (dark) to 1 (light).}
+}
+\value{
+a \code{wbColor} object
 }
 \description{
 R6 class for a Workbook Color
