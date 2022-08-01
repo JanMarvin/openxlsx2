@@ -898,7 +898,10 @@ create_dxfs_style <- function(
                       u = text_underline,
                       family = "", scheme = "")
 
-  fill <- create_fill(patternType = "solid", bgColor = bgFill)
+  if (!is.null(bgFill) && bgFill != "") 
+    fill <- create_fill(patternType = "solid", bgColor = bgFill)
+  else
+    fill <- NULL
 
   # untested
   if (!is.null(border))

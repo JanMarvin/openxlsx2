@@ -594,3 +594,11 @@ test_that("wb_conditional_formatting", {
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_equal(exp, got)
 })
+
+test_that("create dxfs style without font and bg color", {
+
+  exp <- "<dxf><font><name val=\"Calibri\"/><sz val=\"11\"/></font></dxf>"
+  got <- create_dxfs_style(font_color = "", bgFill = "")
+  expect_equal(exp, got)
+
+})
