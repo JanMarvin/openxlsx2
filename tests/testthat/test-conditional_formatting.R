@@ -601,4 +601,7 @@ test_that("create dxfs style without font and bg color", {
   got <- create_dxfs_style(font_color = "", bgFill = "")
   expect_equal(exp, got)
 
+  got <- create_dxfs_style(font_color = NULL, bgFill = NULL)
+  expect_equal(exp, got)
+
 })

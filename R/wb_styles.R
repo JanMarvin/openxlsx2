@@ -885,6 +885,7 @@ create_dxfs_style <- function(
     text_underline = NULL # "true" or "double"
 ) {
 
+  if (is.null(font_color)) font_color = ""
   if (is.null(text_bold)) text_bold = ""
   if (is.null(text_strike)) text_strike = ""
   if (is.null(text_italic)) text_italic = ""
