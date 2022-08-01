@@ -437,14 +437,14 @@ create_sparklines <- function(
     low = NULL,
     first = NULL,
     last = NULL,
-    colorSeries = wb_color(rgb =  "FF376092"),
-    colorNegative = wb_color(rgb =  "FFD00000"),
-    colorAxis = wb_color(rgb =  "FFD00000"),
-    colorMarkers = wb_color(rgb =  "FFD00000"),
-    colorFirst = wb_color(rgb =  "FFD00000"),
-    colorLast = wb_color(rgb =  "FFD00000"),
-    colorHigh = wb_color(rgb =  "FFD00000"),
-    colorLow = wb_color(rgb =  "FFD00000")
+    colorSeries = wb_color(rgb = "FF376092"),
+    colorNegative = wb_color(rgb = "FFD00000"),
+    colorAxis = wb_color(rgb = "FFD00000"),
+    colorMarkers = wb_color(rgb = "FFD00000"),
+    colorFirst = wb_color(rgb = "FFD00000"),
+    colorLast = wb_color(rgb = "FFD00000"),
+    colorHigh = wb_color(rgb = "FFD00000"),
+    colorLow = wb_color(rgb = "FFD00000")
 ) {
 
   assert_class(dims, "character")

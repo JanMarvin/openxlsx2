@@ -76,11 +76,11 @@ wb$add_border(1, dims = "A5",
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
 wb$add_border(1, dims = "G12:H13",
- left_color = wb_color(rgb =  "FF9400D3"), right_color = wb_color(rgb =  "FF4B0082"),
- top_color = wb_color(rgb =  "FF0000FF"), bottom_color = wb_color(rgb =  "FF00FF00"))
+ left_color = wb_color(rgb = "FF9400D3"), right_color = wb_color(rgb = "FF4B0082"),
+ top_color = wb_color(rgb = "FF0000FF"), bottom_color = wb_color(rgb = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
 wb$add_border(1, dims = "B12:D14",
- left_color = wb_color(rgb =  "FFFFFF00"), right_color = wb_color(rgb =  "FFFF7F00"),
+ left_color = wb_color(rgb = "FFFFFF00"), right_color = wb_color(rgb = "FFFF7F00"),
  bottom_color = wb_color(rgb = "FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
 # if (interactive()) wb$open()
@@ -1984,11 +1984,11 @@ wb$add_border(1, dims = "A5",
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
 wb$add_border(1, dims = "G12:H13",
- left_color = wb_color(rgb =  "FF9400D3"), right_color = wb_color(rgb =  "FF4B0082"),
- top_color = wb_color(rgb =  "FF0000FF"), bottom_color = wb_color(rgb =  "FF00FF00"))
+ left_color = wb_color(rgb = "FF9400D3"), right_color = wb_color(rgb = "FF4B0082"),
+ top_color = wb_color(rgb = "FF0000FF"), bottom_color = wb_color(rgb = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
 wb$add_border(1, dims = "B12:D14",
- left_color = wb_color(rgb =  "FFFFFF00"), right_color = wb_color(rgb =  "FFFF7F00"),
+ left_color = wb_color(rgb = "FFFFFF00"), right_color = wb_color(rgb = "FFFF7F00"),
  bottom_color = wb_color(rgb = "FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
 # if (interactive()) wb$open()
@@ -2026,7 +2026,7 @@ provide simple fill function
 
 \item{\code{dims}}{the cell range}
 
-\item{\code{color}}{the colors to apply, e.g. yellow: wb_color(rgb =  "FFFFFF00")}
+\item{\code{color}}{the colors to apply, e.g. yellow: wb_color(rgb = "FFFFFF00")}
 
 \item{\code{pattern}}{various default "none" but others are possible:
 "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",

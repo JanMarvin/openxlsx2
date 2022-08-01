@@ -93,7 +93,7 @@ test_that("test add_fill()", {
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_data("S1", mtcars)
-  expect_silent(wb$add_fill("S1", dims = "D5:G6", color = wb_color(rgb =  "FFFFFF00")))
+  expect_silent(wb$add_fill("S1", dims = "D5:G6", color = wb_color(rgb = "FFFFFF00")))
 
   # check xf
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
@@ -116,8 +116,8 @@ test_that("test add_fill()", {
   # every_nth_col/row
   wb <- wb_workbook()
   wb$add_worksheet("S1", gridLines = FALSE)$add_data("S1", matrix(1:20, 4, 5))
-  wb$add_fill("S1", dims = "A1:E6", color = wb_color(rgb =  "FFFFFF00"), every_nth_col = 2)
-  wb$add_fill("S1", dims = "A1:E6", color = wb_color(rgb =  "FF00FF00"), every_nth_row = 2)
+  wb$add_fill("S1", dims = "A1:E6", color = wb_color(rgb = "FFFFFF00"), every_nth_col = 2)
+  wb$add_fill("S1", dims = "A1:E6", color = wb_color(rgb = "FF00FF00"), every_nth_row = 2)
 
   exp <- c("<fill><patternFill patternType=\"none\"/></fill>",
            "<fill><patternFill patternType=\"gray125\"/></fill>",
@@ -144,7 +144,7 @@ test_that("test add_fill()", {
 
 
   wb <- wb_workbook()
-  wb$add_worksheet("S1")$add_fill("S1", dims = "D5:G6", color = wb_color(rgb =  "FFFFFF00"))
+  wb$add_worksheet("S1")$add_fill("S1", dims = "D5:G6", color = wb_color(rgb = "FFFFFF00"))
 
   exp <- rep("1", 8)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
@@ -156,7 +156,7 @@ test_that("test add_font()", {
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_data("S1", mtcars)
-  expect_silent(wb$add_font("S1", dims = "A1:K1", color = wb_color(rgb =  "FFFFFF00")))
+  expect_silent(wb$add_font("S1", dims = "A1:K1", color = wb_color(rgb = "FFFFFF00")))
 
   # check xf
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
@@ -182,7 +182,7 @@ test_that("test add_font()", {
   expect_equal(exp, got)
 
   wb <- wb_workbook()
-  wb$add_worksheet("S1")$add_font("S1", dims = "A1:K1", color = wb_color(rgb =  "FFFFFF00"))
+  wb$add_worksheet("S1")$add_font("S1", dims = "A1:K1", color = wb_color(rgb = "FFFFFF00"))
 
   exp <- rep("1", 11)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s

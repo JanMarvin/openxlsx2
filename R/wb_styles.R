@@ -281,7 +281,7 @@ merge_numFmts <- function(wb, new_numfmts) {
 create_font <- function(
     b = "",
     charset = "",
-    color = wb_color(rgb =  "FF000000"),
+    color = wb_color(rgb = "FF000000"),
     condense ="",
     extend = "",
     family = "2",
@@ -856,12 +856,12 @@ set_cell_style <- function(wb, sheet, cell, value) {
 create_dxfs_style <- function(
     font_name      = "Calibri",
     font_size      = "11",
-    font_color     = wb_color(rgb =  "FF9C0006"),
+    font_color     = wb_color(rgb = "FF9C0006"),
     numFmt         = NULL,
     border         = NULL,
     border_color   = wb_color(getOption("openxlsx2.borderColour", "black")),
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
-    bgFill         = wb_color(rgb =  "FFFFC7CE"),
+    bgFill         = wb_color(rgb = "FFFFC7CE"),
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
