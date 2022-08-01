@@ -104,7 +104,7 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 ## ------------------------------------------------
 
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+ wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 
 ## ------------------------------------------------
 ## Method `wbWorkbook$add_numfmt`
@@ -2130,7 +2130,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+ wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 }
 \if{html}{\out{</div>}}
 

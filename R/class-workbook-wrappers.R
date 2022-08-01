@@ -2191,7 +2191,7 @@ wb_add_fill <- function(
 #' @param vertAlign vertical alignment
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 #' @return The `wbWorksheetObject`, invisibly
 #' @family styles
 #' @export

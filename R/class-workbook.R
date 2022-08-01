@@ -4717,7 +4717,7 @@ wbWorkbook <- R6::R6Class(
     #' @param vertAlign vertical alignment
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+    #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
         sheet     = current_sheet(),
