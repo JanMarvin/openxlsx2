@@ -1993,6 +1993,27 @@ wb_open <- function(wb) {
   wb$open()
 }
 
+#' add style to workbook
+#'
+#' @description wb wrapper to add style to workbook
+#' @param wb workbook
+#' @param style style xml character
+#' @param style_name style name used optional argument
+#' @seealso [create_border()], [create_cell_style()], [create_dxfs_style()], [create_fill()], [create_font()], [create_numfmt()]
+#' @examples
+#' yellow_f <- c(rgb = "FF9C6500")
+#' yellow_b <- c(rgb = "FFFFEB9C")
+#'
+#' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
+#' wb <- wb_workbook() %>% wb_add_style(yellow)
+#' @export
+wb_add_style <- function(wb, style = NULL, style_name = NULL) {
+  assert_workbook(wb)
+  # deparse this name, otherwise it will remain "style"
+  if (is.null(style_name)) style_name <- deparse(substitute(style))
+  wb$clone()$add_style(style, style_name)
+}
+
 #' add border for cell region
 #'
 #' @description wb wrapper to create borders for cell region

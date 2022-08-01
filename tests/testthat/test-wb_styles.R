@@ -260,3 +260,34 @@ test_that("test add_cell_style()", {
   expect_equal(exp, got)
 
 })
+
+test_that("add_style", {
+
+  # without name
+  num <- create_numfmt(numFmtId = "165", formatCode = "#.#")
+  wb <- wb_workbook() %>% wb_add_style(num)
+
+  exp <- num
+  got <- wb$styles_mgr$styles$numFmts
+  expect_equal(exp, got)
+
+  exp <- structure(list(typ = "numFmt", id = "165", name = "num"),
+                   row.names = c(NA, -1L),
+                   class = "data.frame")
+  got <- wb$styles_mgr$numfmt
+  expect_equal(exp, got)
+
+  # with name
+  wb <- wb_workbook() %>% wb_add_style(num, "num")
+
+  exp <- num
+  got <- wb$styles_mgr$styles$numFmts
+  expect_equal(exp, got)
+
+  exp <- structure(list(typ = "numFmt", id = "165", name = "num"),
+                   row.names = c(NA, -1L),
+                   class = "data.frame")
+  got <- wb$styles_mgr$numfmt
+  expect_equal(exp, got)
+
+})
