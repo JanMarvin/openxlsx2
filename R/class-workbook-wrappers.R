@@ -2139,11 +2139,11 @@ wb_add_border <- function(
 #' </gradientFill>'
 #' wb <- wb %>% wb_add_fill("S2", dims = "A2:K5", gradient_fill = gradient_fill1)
 #'
-#' gf <- wb_color(gradient_fill = '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
+#' gradient_fill2 <- '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
 #' <stop position="0"><color theme="0"/></stop>
 #' <stop position="1"><color theme="4"/></stop>
-#' </gradientFill>')
-#' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gf)
+#' </gradientFill>'
+#' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
 #' @return The `wbWorksheetObject`, invisibly
 #' @family styles
 #' @export
