@@ -61,7 +61,7 @@ wbColor <- R6::R6Class(
     to_xml = function() {
       xml_node_create(
         "color",
-        self$get()
+        xml_attributes = self$get()
       )
     }
   )

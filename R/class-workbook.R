@@ -4656,7 +4656,7 @@ wbWorkbook <- R6::R6Class(
     add_fill = function(
         sheet         = current_sheet(),
         dims          = "A1",
-        color         = "",
+        color         = wb_color(rgb = "FFFFFF00"),
         pattern       = "solid",
         gradient_fill = "",
         every_nth_col = 1,
@@ -4723,7 +4723,7 @@ wbWorkbook <- R6::R6Class(
         sheet     = current_sheet(),
         dims      = "A1",
         name      = "Calibri",
-        color     = wb_color("black"),
+        color     = wb_color(rgb = "FF000000"),
         size      = "11",
         bold      = "",
         italic    = "",

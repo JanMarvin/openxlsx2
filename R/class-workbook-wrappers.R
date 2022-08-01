@@ -2151,7 +2151,7 @@ wb_add_fill <- function(
     wb,
     sheet         = current_sheet(),
     dims          = "A1",
-    color         = wb_color(),
+    color         = wb_color(rgb = "FFFFFF00"),
     pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,

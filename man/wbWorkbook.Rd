@@ -2011,7 +2011,7 @@ provide simple fill function
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
   sheet = current_sheet(),
   dims = "A1",
-  color = "",
+  color = wb_color(rgb = "FFFFFF00"),
   pattern = "solid",
   gradient_fill = "",
   every_nth_col = 1,
@@ -2068,7 +2068,7 @@ provide simple font function
   sheet = current_sheet(),
   dims = "A1",
   name = "Calibri",
-  color = wb_color("black"),
+  color = wb_color(rgb = "FF000000"),
   size = "11",
   bold = "",
   italic = "",
