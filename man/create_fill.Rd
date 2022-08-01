@@ -4,7 +4,12 @@
 \alias{create_fill}
 \title{create fill}
 \usage{
-create_fill(gradientFill = "", patternType = "", bgColor = "", fgColor = "")
+create_fill(
+  gradientFill = "",
+  patternType = "",
+  bgColor = NULL,
+  fgColor = NULL
+)
 }
 \arguments{
 \item{gradientFill}{complex fills}

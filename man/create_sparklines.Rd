@@ -16,14 +16,14 @@ create_sparklines(
   low = NULL,
   first = NULL,
   last = NULL,
-  colorSeries = c(rgb = "FF376092"),
-  colorNegative = c(rgb = "FFD00000"),
-  colorAxis = c(rgb = "FFD00000"),
-  colorMarkers = c(rgb = "FFD00000"),
-  colorFirst = c(rgb = "FFD00000"),
-  colorLast = c(rgb = "FFD00000"),
-  colorHigh = c(rgb = "FFD00000"),
-  colorLow = c(rgb = "FFD00000")
+  colorSeries = wb_color(rgb = "FF376092"),
+  colorNegative = wb_color(rgb = "FFD00000"),
+  colorAxis = wb_color(rgb = "FFD00000"),
+  colorMarkers = wb_color(rgb = "FFD00000"),
+  colorFirst = wb_color(rgb = "FFD00000"),
+  colorLast = wb_color(rgb = "FFD00000"),
+  colorHigh = wb_color(rgb = "FFD00000"),
+  colorLow = wb_color(rgb = "FFD00000")
 )
 }
 \arguments{

@@ -133,11 +133,11 @@ create_border <- function(
     vertical = ""
 ) {
 
-  if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
-  if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
-  if (!is.null(top_color))      top_color      <- xml_node_create("color", xml_attributes = top_color)
-  if (!is.null(bottom_color))   bottom_color   <- xml_node_create("color", xml_attributes = bottom_color)
-  if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
+  if (!is.null(left_color) && inherits(left_color, "wbColor"))         left_color     <- xml_node_create("color", xml_attributes = left_color$get())
+  if (!is.null(right_color) && inherits(right_color, "wbColor"))       right_color    <- xml_node_create("color", xml_attributes = right_color$get())
+  if (!is.null(top_color) && inherits(top_color, "wbColor"))           top_color      <- xml_node_create("color", xml_attributes = top_color$get())
+  if (!is.null(bottom_color) && inherits(bottom_color, "wbColor"))     bottom_color   <- xml_node_create("color", xml_attributes = bottom_color$get())
+  if (!is.null(diagonal_color) && inherits(diagonal_color, "wbColor")) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color$get())
 
   # excel dies on style=\"\"
   if (!is.null(left))     left     <- c(style = left)
@@ -281,7 +281,7 @@ merge_numFmts <- function(wb, new_numfmts) {
 create_font <- function(
     b = "",
     charset = "",
-    color = c(rgb = "FF000000"),
+    color = wb_color(rgb =  "FF000000"),
     condense ="",
     extend = "",
     family = "2",
@@ -304,9 +304,9 @@ create_font <- function(
     charset <- xml_node_create("charset", xml_attributes = c("val" = charset))
   }
 
-  if (!all(color == "")) {
+  if (!is.null(color) && inherits(color, "wbColor")) {
     # alt xml_attributes(theme:)
-    color <- xml_node_create("color", xml_attributes = color)
+    color <- xml_node_create("color", xml_attributes = color$get())
   }
 
   if (condense != "") {
@@ -425,16 +425,16 @@ merge_fonts <- function(wb, new_fonts) {
 create_fill <- function(
     gradientFill = "",
     patternType = "",
-    bgColor = "",
-    fgColor = ""
+    bgColor = NULL,
+    fgColor = NULL
 ) {
 
-  if (bgColor != "") {
-    bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
+  if (!is.null(bgColor) && inherits(bgColor, "wbColor")) {
+    bgColor <- xml_node_create("bgColor", xml_attributes = bgColor$get())
   }
 
-  if (!all(fgColor == "")) {
-    fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
+  if (!is.null(fgColor) && inherits(fgColor, "wbColor")) {
+    fgColor <- xml_node_create("fgColor", xml_attributes = fgColor$get())
   }
 
   # if gradient fill is specified we can not have patternFill too. otherwise
@@ -856,12 +856,12 @@ set_cell_style <- function(wb, sheet, cell, value) {
 create_dxfs_style <- function(
     font_name      = "Calibri",
     font_size      = "11",
-    font_color     = c(rgb = "FF9C0006"),
+    font_color     = wb_color(rgb =  "FF9C0006"),
     numFmt         = NULL,
     border         = NULL,
-    border_color   = getOption("openxlsx2.borderColour", "black"),
+    border_color   = wb_color(getOption("openxlsx2.borderColour", "black")),
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
-    bgFill         = c(rgb = "FFFFC7CE"),
+    bgFill         = wb_color(rgb =  "FFFFC7CE"),
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,

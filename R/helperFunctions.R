@@ -437,14 +437,14 @@ create_sparklines <- function(
     low = NULL,
     first = NULL,
     last = NULL,
-    colorSeries = c(rgb = "FF376092"),
-    colorNegative = c(rgb = "FFD00000"),
-    colorAxis = c(rgb = "FFD00000"),
-    colorMarkers = c(rgb = "FFD00000"),
-    colorFirst = c(rgb = "FFD00000"),
-    colorLast = c(rgb = "FFD00000"),
-    colorHigh = c(rgb = "FFD00000"),
-    colorLow = c(rgb = "FFD00000")
+    colorSeries = wb_color(rgb =  "FF376092"),
+    colorNegative = wb_color(rgb =  "FFD00000"),
+    colorAxis = wb_color(rgb =  "FFD00000"),
+    colorMarkers = wb_color(rgb =  "FFD00000"),
+    colorFirst = wb_color(rgb =  "FFD00000"),
+    colorLast = wb_color(rgb =  "FFD00000"),
+    colorHigh = wb_color(rgb =  "FFD00000"),
+    colorLow = wb_color(rgb =  "FFD00000")
 ) {
 
   assert_class(dims, "character")
@@ -474,14 +474,14 @@ create_sparklines <- function(
       "xr2:uid" = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-Z0-9]"))
     ),
     xml_children = c(
-      xml_node_create("x14:colorSeries", xml_attributes = colorSeries),
-      xml_node_create("x14:colorNegative", xml_attributes = colorNegative),
-      xml_node_create("x14:colorAxis", xml_attributes = colorAxis),
-      xml_node_create("x14:colorMarkers", xml_attributes = colorMarkers),
-      xml_node_create("x14:colorFirst", xml_attributes = colorFirst),
-      xml_node_create("x14:colorLast", xml_attributes = colorLast),
-      xml_node_create("x14:colorHigh", xml_attributes = colorHigh),
-      xml_node_create("x14:colorLow", xml_attributes = colorLow),
+      xml_node_create("x14:colorSeries", xml_attributes = colorSeries$get()),
+      xml_node_create("x14:colorNegative", xml_attributes = colorNegative$get()),
+      xml_node_create("x14:colorAxis", xml_attributes = colorAxis$get()),
+      xml_node_create("x14:colorMarkers", xml_attributes = colorMarkers$get()),
+      xml_node_create("x14:colorFirst", xml_attributes = colorFirst$get()),
+      xml_node_create("x14:colorLast", xml_attributes = colorLast$get()),
+      xml_node_create("x14:colorHigh", xml_attributes = colorHigh$get()),
+      xml_node_create("x14:colorLow", xml_attributes = colorLow$get()),
       xml_node_create(
         "x14:sparklines", xml_children = c(
           xml_node_create(

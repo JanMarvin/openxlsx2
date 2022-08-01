@@ -9,7 +9,7 @@ wb_add_font(
   sheet = current_sheet(),
   dims = "A1",
   name = "Calibri",
-  color = c(rgb = "FF000000"),
+  color = wb_color(rgb = "FF000000"),
   size = "11",
   bold = "",
   italic = "",

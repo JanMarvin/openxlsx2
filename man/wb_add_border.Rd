@@ -8,10 +8,10 @@ wb_add_border(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  bottom_color = c(rgb = "FF000000"),
-  left_color = c(rgb = "FF000000"),
-  right_color = c(rgb = "FF000000"),
-  top_color = c(rgb = "FF000000"),
+  bottom_color = wb_color(rgb = "FF000000"),
+  left_color = wb_color(rgb = "FF000000"),
+  right_color = wb_color(rgb = "FF000000"),
+  top_color = wb_color(rgb = "FF000000"),
   bottom_border = "thin",
   left_border = "thin",
   right_border = "thin",
@@ -47,12 +47,12 @@ wb <- wb_add_border(wb, 1, dims = "A5",
 wb <- wb_add_border(wb, 1, dims = "C2:C5")
 wb <- wb_add_border(wb, 1, dims = "G2:H3")
 wb <- wb_add_border(wb, 1, dims = "G12:H13",
- left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
- top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+ left_color = wb_color(rgb =  "FF9400D3"), right_color = wb_color(rgb =  "FF4B0082"),
+ top_color = wb_color(rgb =  "FF0000FF"), bottom_color = wb_color(rgb =  "FF00FF00"))
 wb <- wb_add_border(wb, 1, dims = "A20:C23")
 wb <- wb_add_border(wb, 1, dims = "B12:D14",
- left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
- bottom_color = c(rgb ="FFFF0000"))
+ left_color = wb_color(rgb =  "FFFFFF00"), right_color = wb_color(rgb =  "FFFF7F00"),
+ bottom_color = wb_color(rgb = "FFFF0000"))
 wb <- wb_add_border(wb, 1, dims = "D28:E28")
 }
 \seealso{

@@ -2001,8 +2001,8 @@ wb_open <- function(wb) {
 #' @param style_name style name used optional argument
 #' @seealso [create_border()], [create_cell_style()], [create_dxfs_style()], [create_fill()], [create_font()], [create_numfmt()]
 #' @examples
-#' yellow_f <- c(rgb = "FF9C6500")
-#' yellow_b <- c(rgb = "FFFFEB9C")
+#' yellow_f <- wb_color(rgb =  "FF9C6500")
+#' yellow_b <- wb_color(rgb =  "FFFFEB9C")
 #'
 #' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
 #' wb <- wb_workbook() %>% wb_add_style(yellow)
@@ -2065,12 +2065,12 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' wb <- wb_add_border(wb, 1, dims = "C2:C5")
 #' wb <- wb_add_border(wb, 1, dims = "G2:H3")
 #' wb <- wb_add_border(wb, 1, dims = "G12:H13",
-#'  left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
-#'  top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+#'  left_color = wb_color(rgb =  "FF9400D3"), right_color = wb_color(rgb =  "FF4B0082"),
+#'  top_color = wb_color(rgb =  "FF0000FF"), bottom_color = wb_color(rgb =  "FF00FF00"))
 #' wb <- wb_add_border(wb, 1, dims = "A20:C23")
 #' wb <- wb_add_border(wb, 1, dims = "B12:D14",
-#'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
-#'  bottom_color = c(rgb ="FFFF0000"))
+#'  left_color = wb_color(rgb =  "FFFFFF00"), right_color = wb_color(rgb =  "FFFF7F00"),
+#'  bottom_color = wb_color(rgb = "FFFF0000"))
 #' wb <- wb_add_border(wb, 1, dims = "D28:E28")
 #' @family styles
 #' @export
@@ -2078,10 +2078,10 @@ wb_add_border <- function(
     wb,
     sheet          = current_sheet(),
     dims           = "A1",
-    bottom_color   = c(rgb = "FF000000"),
-    left_color     = c(rgb = "FF000000"),
-    right_color    = c(rgb = "FF000000"),
-    top_color      = c(rgb = "FF000000"),
+    bottom_color   = wb_color(rgb =  "FF000000"),
+    left_color     = wb_color(rgb =  "FF000000"),
+    right_color    = wb_color(rgb =  "FF000000"),
+    top_color      = wb_color(rgb =  "FF000000"),
     bottom_border  = "thin",
     left_border    = "thin",
     right_border   = "thin",
@@ -2117,7 +2117,7 @@ wb_add_border <- function(
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
-#' @param color the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")
+#' @param color the colors to apply, e.g. yellow: wb_color(rgb =  "FFFFFF00")
 #' @param pattern various default "none" but others are possible:
 #'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
 #'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
@@ -2128,8 +2128,8 @@ wb_add_border <- function(
 #' @param every_nth_row which row should be filled
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = c(rgb = "FFFFFF00"))
-#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = c(rgb = "FF00FF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_color(rgb =  "FFFFFF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = wb_color(rgb =  "FF00FF00"))
 #'
 #' wb <- wb %>%  wb_add_worksheet("S2") %>% wb_add_data("S2", mtcars)
 #'
@@ -2139,11 +2139,11 @@ wb_add_border <- function(
 #' </gradientFill>'
 #' wb <- wb %>% wb_add_fill("S2", dims = "A2:K5", gradient_fill = gradient_fill1)
 #'
-#' gradient_fill2 <- '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
+#' gf <- wb_color(gradient_fill = '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
 #' <stop position="0"><color theme="0"/></stop>
 #' <stop position="1"><color theme="4"/></stop>
-#' </gradientFill>'
-#' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
+#' </gradientFill>')
+#' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gf)
 #' @return The `wbWorksheetObject`, invisibly
 #' @family styles
 #' @export
@@ -2151,7 +2151,7 @@ wb_add_fill <- function(
     wb,
     sheet         = current_sheet(),
     dims          = "A1",
-    color         = "",
+    color         = wb_color(),
     pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,
@@ -2200,7 +2200,7 @@ wb_add_font <- function(
       sheet     = current_sheet(),
       dims      = "A1",
       name      = "Calibri",
-      color     = c(rgb = "FF000000"),
+      color     = wb_color(rgb =  "FF000000"),
       size      = "11",
       bold      = "",
       italic    = "",

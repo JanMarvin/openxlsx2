@@ -252,7 +252,7 @@ test_that("write cells without data", {
   wb$worksheets[[1]]$sheet_data$cc$c_t <- ""
 
   # # created an empty canvas that can be styled
-  # wb$add_fill(dims = "B2:C3", color = c(rgb = "FFFFFF00"))
+  # wb$add_fill(dims = "B2:C3", color = wb_color(rgb =  "FFFFFF00"))
   # wb$add_border(dims = "B2:C3")
 
   wb$save(temp)
