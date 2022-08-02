@@ -885,6 +885,7 @@ create_dxfs_style <- function(
     text_underline = NULL # "true" or "double"
 ) {
 
+  if (is.null(font_color)) font_color = ""
   if (is.null(text_bold)) text_bold = ""
   if (is.null(text_strike)) text_strike = ""
   if (is.null(text_italic)) text_italic = ""
@@ -898,7 +899,10 @@ create_dxfs_style <- function(
                       u = text_underline,
                       family = "", scheme = "")
 
-  fill <- create_fill(patternType = "solid", bgColor = bgFill)
+  if (!is.null(bgFill) && bgFill != "") 
+    fill <- create_fill(patternType = "solid", bgColor = bgFill)
+  else
+    fill <- NULL
 
   # untested
   if (!is.null(border))
