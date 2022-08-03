@@ -2313,7 +2313,8 @@ wbWorkbook <- R6::R6Class(
       #### Modify Content_Types
       ## remove last drawings(sheet).xml from Content_Types
       drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
-      if (!is.null(drawing_name)) self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
+      if (!is.null(drawing_name) && !identical(drawing_name, character()))
+        self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       ## remove highest sheet
       # (don't chagne this to a "grep(value = TRUE)" ... )
