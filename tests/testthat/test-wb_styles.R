@@ -291,3 +291,12 @@ test_that("add_style", {
   expect_equal(exp, got)
 
 })
+
+test_that("assigning styles to loaded workbook works", {
+
+  wb <- wb_load(file = system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2"))
+
+  # previously it would break on xml_import, because NA was returned  
+  expect_silent(wb$add_font()$add_font())
+
+})
