@@ -772,11 +772,11 @@ get_cell_styles <- function(wb, sheet, cell) {
   z <- get_cell_style(wb, sheet, cell)
   id <- vapply(z, function(x) {
     out <- which(wb$styles_mgr$get_xf()$id %in% x)
-    if (identical(out,integer())) out <- 0L
+    if (identical(out,integer())) out <- 1L
     out
   },
   NA_integer_)
-  wb$styles_mgr$styles$cellXfs[id+1]
+  wb$styles_mgr$styles$cellXfs[id]
 }
 
 
