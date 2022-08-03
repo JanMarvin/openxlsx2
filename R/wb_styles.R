@@ -325,6 +325,8 @@ create_font <- function(
     i <- xml_node_create("i", xml_attributes = c("val" = i))
   }
 
+  if(is.null(name)) name <- ""
+  
   if (name != "") {
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
@@ -344,6 +346,8 @@ create_font <- function(
   if (strike != "") {
     strike <- xml_node_create("strike", xml_attributes = c("val" = strike))
   }
+
+  if(is.null(sz)) sz <- ""
 
   if (sz != "") {
     sz <- xml_node_create("sz", xml_attributes = c("val" = sz))

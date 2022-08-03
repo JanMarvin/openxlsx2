@@ -605,3 +605,14 @@ test_that("create dxfs style without font and bg color", {
   expect_equal(exp, got)
 
 })
+
+test_that("create dxfs style without font family and size", {
+
+  exp <- "<dxf><font><color rgb=\"FF9C0006\"/></font><fill><patternFill patternType=\"solid\"><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
+  got <- create_dxfs_style(font_name = "", font_size = "")
+  expect_equal(exp, got)
+
+  got <- create_dxfs_style(font_name = NULL, font_size = NULL)
+  expect_equal(exp, got)
+
+})
