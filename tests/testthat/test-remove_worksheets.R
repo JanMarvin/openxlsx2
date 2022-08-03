@@ -53,4 +53,8 @@ test_that("Deleting worksheets", {
   expect_equal(names(wb$get_sheet_names()), character(0))
 
   unlink(tempFile, recursive = TRUE, force = TRUE)
+
+  wb <- wb_load(file = system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2"))
+  expect_silent(wb$remove_worksheet())
+
 })
