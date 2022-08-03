@@ -1775,9 +1775,9 @@ wbWorkbook <- R6::R6Class(
         # TODO move this work into private$set_single_sheet_name()
 
         ## Rename in workbook
-        sheetId <- private$get_sheet_id(type = "sheetId", old[i])
-        rId <- private$get_sheet_id(type = 'rId', old[i])
-        self$workbook$sheets[[old[i]]] <-
+        sheetId <- private$get_sheet_id(type = "sheetId", pos[i])
+        rId <- private$get_sheet_id(type = 'rId', pos[i])
+        self$workbook$sheets[[pos[i]]] <-
           sprintf(
             '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
             new_name[i],

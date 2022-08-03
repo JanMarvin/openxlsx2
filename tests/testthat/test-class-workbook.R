@@ -77,6 +77,14 @@ test_that("$set_sheet_names() and $get_sheet_names() work", {
   # should be able to check the original values, too
   res <- wb$.__enclos_env__$private$get_sheet_index("b & c")
   expect_identical(res, 2L)
+
+  # make sure that it works silently
+  wb <- wb_load(file = system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2"))
+  expect_silent(wb$set_sheet_names(old = "SUM", new = "Sheet 1"))
+
+  exp <- c(`Sheet 1` = "Sheet 1")
+  got <- wb$get_sheet_names()
+  expect_equal(exp, got)
 })
 
 # data validation ---------------------------------------------------------
