@@ -2282,38 +2282,45 @@ wbWorkbook <- R6::R6Class(
       self$sheet_names <- self$sheet_names[-sheet]
       private$original_sheet_names <- private$original_sheet_names[-sheet]
 
-      xml_rels <- rbindlist(
-         xml_attr(self$worksheets_rels[[sheet]], "Relationship")
-      )
+      # if a sheet has no relationships, we xml_rels will not contain data
+      if (!is.null(self$worksheets_rels[[sheet]])) {
 
-      if (nrow(xml_rels)) {
-        xml_rels$type   <- basename(xml_rels$Type)
-        xml_rels$target <- basename(xml_rels$Target)
-        xml_rels$target[xml_rels$type == "hyperlink"] <- ""
-        xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+        xml_rels <- rbindlist(
+          xml_attr(self$worksheets_rels[[sheet]], "Relationship")
+        )
+
+        if (nrow(xml_rels) && ncol(xml_rels)) {
+          xml_rels$type   <- basename(xml_rels$Type)
+          xml_rels$target <- basename(xml_rels$Target)
+          xml_rels$target[xml_rels$type == "hyperlink"] <- ""
+          xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+        }
+
+        comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
+        drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
+        pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
+        table_id      <- xml_rels$target_ind[xml_rels$type == "table"]
+        thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
+        vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
+
+        # NULL the sheets
+        if (length(comment_id))    self$comments[[comment_id]]            <- NULL
+        if (length(drawing_id))    self$drawings[[drawing_id]]            <- NULL
+        if (length(drawing_id))    self$drawings_rels[[drawing_id]]       <- NULL
+        if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
+        if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]              <- NULL
+        if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]         <- NULL
+
+
+        #### Modify Content_Types
+        ## remove last drawings(sheet).xml from Content_Types
+        drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
+        if (!is.null(drawing_name) && !identical(drawing_name, character()))
+          self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
+
       }
 
-      comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
-      drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
-      pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
-      table_id      <- xml_rels$target_ind[xml_rels$type == "table"]
-      thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
-      vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
-
-      # NULL the sheets
-      if (length(comment_id))    self$comments[[comment_id]]            <- NULL
-      if (length(drawing_id))    self$drawings[[drawing_id]]            <- NULL
-      if (length(drawing_id))    self$drawings_rels[[drawing_id]]       <- NULL
-      if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
-      if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]              <- NULL
-      if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]         <- NULL
-
       self$isChartSheet <- self$isChartSheet[-sheet]
-
-      #### Modify Content_Types
-      ## remove last drawings(sheet).xml from Content_Types
-      drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
-      if (!is.null(drawing_name)) self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       ## remove highest sheet
       # (don't chagne this to a "grep(value = TRUE)" ... )
