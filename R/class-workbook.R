@@ -560,12 +560,14 @@ wbWorkbook <- R6::R6Class(
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
-        sprintf(
-          '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
-          new,
-          sheetId,
-          visible,
-          newSheetIndex
+        xml_node_create(
+          "sheet",
+          xml_attributes = c(
+          name = new,
+          sheetId = sheetId,
+          state = visible,
+          `r:id` = paste0("rId", newSheetIndex)
+          )
         )
       )
 
@@ -577,13 +579,25 @@ wbWorkbook <- R6::R6Class(
       # FIXME only add what is needed. If no previous drawing is found, don't
       # add a new one
       self$append("Content_Types", c(
-        sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex),
+
+        if (self$isChartSheet[old]) {
+          sprintf('<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>', newSheetIndex)
+        } else {
+          sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex)
+        }
+        ,
+
         sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', newSheetIndex)
       ))
 
       ## Update xl/rels
-      self$append("workbook.xml.rels",
-        sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>', newSheetIndex)
+      self$append(
+        "workbook.xml.rels",
+        if (self$isChartSheet[old]) {
+          sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>', newSheetIndex)
+        } else {
+          sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>', newSheetIndex)
+        }
       )
 
       ## create sheet.rels to simplify id assignment
@@ -631,7 +645,7 @@ wbWorkbook <- R6::R6Class(
               )
 
               chart <- self$charts$chart[chartid]
-              self$charts$rels[chartid] <- gsub("2.xml", paste0(chartid, ".xml"), self$charts$rels[chartid])
+              self$charts$rels[chartid] <- gsub("?[0-9].xml", paste0(chartid, ".xml"), self$charts$rels[chartid])
 
               chart <- gsub(
                 stri_join("(?<=')", self$sheet_names[[old]], "(?='!)"),
