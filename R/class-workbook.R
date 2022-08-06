@@ -601,18 +601,15 @@ wbWorkbook <- R6::R6Class(
             chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
 
             for (cf in chartfiles) {
-              chartid <- length(self$charts) + 1L
+              chartid <- nrow(self$charts) + 1L
               newname <- stri_join("chart", chartid, ".xml")
-              fl <- self$charts[cf]
+              old_chart <- as.integer(gsub("\\D+", "", cf))
+              self$charts <- rbind(self$charts, self$charts[old_chart,])
 
               # Read the chartfile and adjust all formulas to point to the new
               # sheet name instead of the clone source
-              # The result is saved to a new chart xml file
-              newfl <- file.path(dirname(fl), newname)
 
-              self$charts[newname] <- newfl
-
-              chart <- read_xml(fl, pointer = FALSE)
+              chart <- self$charts$chart[chartid]
 
               chart <- gsub(
                 stri_join("(?<=')", self$sheet_names[[old]], "(?='!)"),
@@ -628,11 +625,7 @@ wbWorkbook <- R6::R6Class(
                 perl = TRUE
               )
 
-              writeLines(chart, newfl)
-
-              self$append("Content_Types",
-                sprintf('<Override PartName="/xl/charts/%s" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', newname)
-              )
+              self$charts$chart[chartid] <- chart
 
               rl <- gsub(stri_join("(?<=charts/)", cf), newname, rl, perl = TRUE)
             }
@@ -661,13 +654,23 @@ wbWorkbook <- R6::R6Class(
       ## and in the worksheets[]$tableParts list. We also need to adjust the
       ## worksheets_rels and set the content type for the new table
 
+      # if we have tables to clone, remove every table referece from Relationship
+      relship_no_tables <- function() {
+        if (length(self$worksheets_rels[[newSheetIndex]]) == 0) return(character())
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        relship <- relship[relship$typ != "table",]
+        df_to_xml("Relationship", relship[c("Id", "Type", "Target")])
+      }
+      self$worksheets_rels[[newSheetIndex]] <- relship_no_tables()
+
       # make this the new sheets object
       tbls <- self$tables[self$tables$tab_sheet == old,]
       if (NROW(tbls)) {
 
         # newid and rid can be different
         newid <- nrow(self$tables) + seq_len(nrow(tbls))
-        rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))[["Id"]]))) + seq_along(newid)
+        rid <- max(0, as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))[["Id"]]))) + seq_along(newid)
 
         # add _n to all table names found
         tbls$tab_name <- stri_join(tbls$tab_name, "_n")

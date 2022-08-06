@@ -310,7 +310,6 @@ test_that("clone worksheet", {
 
   # clone drawing --
   fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
-
   wb <- wb_load(fl)
   expect_silent(wb$clone_worksheet("testing", "Clone 1"))
   # wb$open()
@@ -318,13 +317,17 @@ test_that("clone worksheet", {
   # clone sheet with table --
   fl <- system.file("extdata", "tableStyles.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
-  expect_silent(wb$clone_worksheet(1, "clone"))
+  wb$clone_worksheet(1, "clone")
   # wb$open()
 
   # clone sheet with chart --
   fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
-  expect_silent(wb$clone_worksheet(2, "clone"))
-  # wb$open()
+  wb$clone_worksheet(2, "Clone 1")
+  wb$open()
+
+  wb$save("/tmp/test.xlsx")
+  unlink("/tmp/test", recursive = TRUE)
+  unzip("/tmp/test.xlsx", exdir = "/tmp/test")
 
 })
