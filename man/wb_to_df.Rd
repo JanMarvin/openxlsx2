@@ -16,6 +16,7 @@ wb_to_df(
   rows = NULL,
   cols = NULL,
   na.strings = "#N/A",
+  na.numbers = NA,
   fillMergedCells = FALSE,
   dims,
   showFormula = FALSE,
@@ -47,6 +48,8 @@ wb_to_df(
 \item{cols}{A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.}
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
+
+\item{na.numbers}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
 
 \item{fillMergedCells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
 
