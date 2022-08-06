@@ -23,10 +23,8 @@ wb_add_worksheet(
   hasDrawing = FALSE,
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
-  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default =
-    300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default =
-    300))
+  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
 )
 }
 \arguments{

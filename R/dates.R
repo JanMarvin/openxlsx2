@@ -106,7 +106,7 @@ get_date_origin <- function(xlsxFile) {
   }
 
   ## create temp dir and unzip
-  xmlDir <- tempfile("_excelXMLRead")
+  xmlDir <- temp_dir("_excelXMLRead")
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   xmlFiles <- unzip(xlsxFile, exdir = xmlDir)

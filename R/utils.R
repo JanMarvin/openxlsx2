@@ -52,6 +52,25 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
   tempfile(pattern = paste0(name, "_"), fileext = fileext)
 }
 
+#' helper function to create temporary directory for testing purpose
+#' @param pattern pattern from `base::tempfile()`
+#' @keywords internal
+#' @noRd
+temp_dir <- function(pattern = "file") {
+
+  tmpDir <- file.path(tempfile(pattern))
+  if (dir.exists(tmpDir)) {
+    unlink(tmpDir, recursive = TRUE, force = TRUE)
+  }
+
+  success <- dir.create(path = tmpDir, recursive = FALSE)
+  if (!success) {
+    stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
+  }
+
+  tmpDir
+}
+
 openxlsx2_options <- function() {
   options(
     # increase scipen to avoid writing in scientific
@@ -98,22 +117,91 @@ as_binary <- function(x) {
   as.integer(x)
 }
 
-random_string <- function(size = NULL) {
-  # creates a random string using tempfile() which does better to not affect the
-  # random seed
+#' random string function that does not alter the seed.
+#'
+#' simple wrapper around `stringi::stri_rand_strings()``
+#'
+#' @inheritParams stringi::stri_rand_strings
+#' @param keep_seed logical should the default seed be kept unaltered
+#' @keywords internal
+#' @noRd
+random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed = TRUE) {
   # https://github.com/ycphs/openxlsx/issues/183
   # https://github.com/ycphs/openxlsx/pull/224
-  res <- basename(tempfile(""))
 
-  if (is.null(size)) {
-    return(res)
+  if (keep_seed) {
+    seed <- get0(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
+
+    # try to get a previous openxlsx2 seed and use this as random seed
+    openxlsx2_seed <- options()[["openxlsx2_seed"]]
+
+    if (!is.null(openxlsx2_seed)) {
+      # found one, change the global seed for stri_rand_strings
+      set.seed(openxlsx2_seed)
+    }
   }
 
-  size <- as.integer(size)
-  stopifnot(size >= 0L)
-  while (nchar(res) < size) {
-    res <- paste0(res, random_string())
+  # create the random string, this alters the global seed
+  res <- stringi::stri_rand_strings(n = n, length = length, pattern = pattern)
+
+  if (keep_seed) {
+    # store the altered seed and reset the global seed
+    options("openxlsx2_seed" = ifelse(is.null(openxlsx2_seed), 1L, openxlsx2_seed + 1L))
+    assign(".Random.seed", seed, globalenv())
   }
 
-  substr(res, 1L, size)
+  return(res)
+}
+
+#' row and col to dims
+#' @param x a dimension object "A1" or "A1:A1"
+#' @param as_integer optional if the output should be returned as interger
+#' @noRd
+dims_to_rowcol <- function(x, as_integer = FALSE) {
+  dimensions <- unlist(strsplit(x, ":"))
+  cols <- gsub("[[:digit:]]","", dimensions)
+  rows <- gsub("[[:upper:]]","", dimensions)
+
+  # if "A:B"
+  if (any(rows == "")) rows[rows == ""] <- "1"
+
+  # convert cols to integer
+  cols_int <- col2int(cols)
+  rows_int <- as.integer(rows)
+
+  if (length(dimensions) == 2) {
+    # needs integer to create sequence
+    cols <- int2col(seq.int(min(cols_int), max(cols_int)))
+    rows_int <- seq.int(min(rows_int), max(rows_int))
+  }
+
+  if (as_integer) {
+    cols <- cols_int
+    rows <- rows_int
+  } else {
+    rows <- as.character(rows_int)
+  }
+
+  list(cols, rows)
+}
+
+#' row and col to dims
+#' @param rows a numeric vector of rows
+#' @param cols a numeric or character vector of cols
+#' @noRd
+rowcol_to_dims <- function(row, col) {
+
+  # no assert for col. will output character anyways
+  # assert_class(row, "numeric") - complains if integer
+  col_int <- col2int(col)
+
+  min_col <- int2col(min(col_int))
+  max_col <- int2col(max(col_int))
+
+  min_row <- min(row)
+  max_row <- max(row)
+
+  # we will always return something like "A1:A1", even for single cells
+  stringi::stri_join(min_col, min_row, ":", max_col, max_row)
+
 }

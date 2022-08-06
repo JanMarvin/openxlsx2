@@ -4,7 +4,7 @@
 \alias{wb_clone_sheet_style}
 \title{clone sheets style}
 \usage{
-wb_clone_sheet_style(wb, from, to)
+wb_clone_sheet_style(wb, from = current_sheet(), to)
 }
 \arguments{
 \item{wb}{workbook}
@@ -16,3 +16,12 @@ wb_clone_sheet_style(wb, from, to)
 \description{
 clone sheets style
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_numfmt}()}
+}
+\concept{styles}

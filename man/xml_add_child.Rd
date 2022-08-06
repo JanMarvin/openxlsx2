@@ -4,7 +4,7 @@
 \alias{xml_add_child}
 \title{append xml child to node}
 \usage{
-xml_add_child(xml_node, xml_child, level, pointer = FALSE, escapes = FALSE)
+xml_add_child(xml_node, xml_child, level, pointer = FALSE, ...)
 }
 \arguments{
 \item{xml_node}{xml_node}
@@ -15,7 +15,7 @@ xml_add_child(xml_node, xml_child, level, pointer = FALSE, escapes = FALSE)
 
 \item{pointer}{pointer}
 
-\item{escapes}{escapes}
+\item{...}{additional arguments passed to \code{read_xml()}}
 }
 \description{
 append xml child to node

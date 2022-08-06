@@ -331,12 +331,10 @@ test_that("wb_clean_sheet() is a wrapper", {
 
 test_that("wb_add_border() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the style names are generated at random
   expect_wrapper(
     "add_border",
     wb = wb,
-    params = list(sheet = 1),
-    ignore_fields = "styles_mgr"
+    params = list(sheet = 1)
   )
 })
 
@@ -344,12 +342,10 @@ test_that("wb_add_border() is a wrapper", {
 
 test_that("wb_add_fill() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the style names are generated at random
   expect_wrapper(
     "add_fill",
     wb = wb,
-    params = list(sheet = 1),
-    ignore_fields = "styles_mgr"
+    params = list(sheet = 1)
   )
 })
 
@@ -357,12 +353,10 @@ test_that("wb_add_fill() is a wrapper", {
 
 test_that("wb_add_font() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the style names are generated at random
   expect_wrapper(
     "add_font",
     wb = wb,
-    params = list(sheet = 1),
-    ignore_fields = "styles_mgr"
+    params = list(sheet = 1)
   )
 })
 
@@ -370,12 +364,10 @@ test_that("wb_add_font() is a wrapper", {
 
 test_that("wb_add_numfmt() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the style names are generated at random
   expect_wrapper(
     "add_numfmt",
     wb = wb,
-    params = list(sheet = 1, numfmt = 1),
-    ignore_fields = "styles_mgr"
+    params = list(sheet = 1, numfmt = 1)
   )
 })
 
@@ -383,12 +375,10 @@ test_that("wb_add_numfmt() is a wrapper", {
 
 test_that("wb_add_cell_style() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  # the style names are generated at random
   expect_wrapper(
     "add_cell_style",
     wb = wb,
-    params = list(sheet = 1),
-    ignore_fields = "styles_mgr"
+    params = list(sheet = 1)
   )
 })
 
@@ -400,10 +390,21 @@ test_that("wb_clone_sheet_style() is a wrapper", {
     add_worksheet(1)$add_data(x = mtcars)$
     add_worksheet(2)$add_data(x = mtcars)
   wb$add_fill(sheet = 1, dims = "D5:J23", color = c(rgb = "FFFFFF00"))
-  # the style names are generated at random
   expect_wrapper(
     "clone_sheet_style",
     wb = wb,
     params = list(from = 1, to = 2)
+  )
+})
+
+
+# wb_add_sparklines() -----------------------------------------------------
+
+test_that("wb_add_sparklines() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+  expect_wrapper(
+    "add_sparklines",
+    wb = wb,
+    params = list(sparklines = create_sparklines("Sheet  1", "A3:L3", "M3", type = "column", first = "1"))
   )
 })

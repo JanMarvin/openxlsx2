@@ -5,6 +5,8 @@
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escapes. Assuming that the input already provides valid information.
 #' @param whitespace should whitespace pcdata be imported
+#' @param empty_tags should `<b/>` or `<b></b>` be returned
+#' @param skip_control should whitespace character be exported
 #' @details Read xml files or strings to pointer and checks if the input is
 #' valid XML.
 #' If the input is read into a character object, it will be reevaluated every
@@ -38,7 +40,7 @@
 #'   read_xml(xml, declaration = TRUE)
 #'
 #' @export
-read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE) {
+read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE) {
 
   z <- NULL
 
@@ -53,9 +55,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
     xml <- "<NA_character_ />"
 
   if (pointer) {
-    z <- readXMLPtr(xml, isfile, escapes, declaration, whitespace)
+    z <- readXMLPtr(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
   } else {
-    z <- readXML(xml, isfile, escapes, declaration, whitespace)
+    z <- readXML(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
   }
 
   z
@@ -68,7 +70,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 #' @param level1 to please check
 #' @param level2 to please check
 #' @param level3 to please check
-#' @param level4 to please check
+#' @param ... additional arguments passed to `read_xml()`
 #' @details This function returns XML nodes as used in openxlsx2. In theory they
 #' could be returned as pointers as well, but this has not yet been implemented.
 #' If no level is provided, the nodes on level1 are returned
@@ -79,9 +81,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 #'   # return b. requires the path to the node
 #'   xml_node(x, "a", "b")
 #' @export
-xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL) {
+xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
 
-  lvl <- c(level1, level2, level3, level4)
+  lvl <- c(level1, level2, level3)
   if (!all(is.null(lvl))) {
     lvl <- lvl[!is.null(lvl)]
     if (!all(is.character(lvl)))
@@ -91,7 +93,7 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
   z <- NULL
 
   if (!inherits(xml, "pugi_xml"))
-    xml <- read_xml(xml)
+    xml <- read_xml(xml, ...)
 
 
   if (inherits(xml, "pugi_xml")) {
@@ -100,7 +102,6 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
     if (length(lvl) == 2) z <- getXMLXPtr2(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3(xml, level1, level2, level3)
     if (length(lvl) == 3) if (level2 == "*") z <- unkgetXMLXPtr3(xml, level1, level3)
-    if (length(lvl) == 4) z <- getXMLXPtr4(xml, level1, level2, level3, level4)
   }
 
   z
@@ -111,9 +112,9 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #'   xml_node_name("<a/>")
 #'   xml_node_name("<a><b/></a>", "a")
 #' @export
-xml_node_name <- function(xml, level1 = NULL, level2 = NULL) {
+xml_node_name <- function(xml, level1 = NULL, level2 = NULL, ...) {
   lvl <- c(level1, level2)
-  if (!inherits(xml, "pugi_xml")) xml <- read_xml(xml)
+  if (!inherits(xml, "pugi_xml")) xml <- read_xml(xml, ...)
   if (length(lvl) == 0) z <- getXMLXPtrName1(xml)
   if (length(lvl) == 1) z <- getXMLXPtrName2(xml, level1)
   if (length(lvl) == 2) z <- getXMLXPtrName3(xml, level1, level2)
@@ -130,9 +131,9 @@ xml_node_name <- function(xml, level1 = NULL, level2 = NULL) {
 #'   x <- read_xml("<a><b r=\"1\">2</b></a>")
 #'   xml_value(x, "a", "b")
 #' @export
-xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL) {
+xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
 
-  lvl <- c(level1, level2, level3, level4)
+  lvl <- c(level1, level2, level3)
   lvl <- lvl[!is.null(lvl)]
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
@@ -140,13 +141,12 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
   z <- NULL
 
   if (!inherits(xml, "pugi_xml"))
-    xml <- read_xml(xml)
+    xml <- read_xml(xml, ...)
 
   if (inherits(xml, "pugi_xml")) {
     if (length(lvl) == 1) z <- getXMLXPtr1val(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2val(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3val(xml, level1, level2, level3)
-    if (length(lvl) == 4) z <- getXMLXPtr4val(xml, level1, level2, level3, level4)
   }
 
   z
@@ -166,9 +166,9 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 =
 #'   x <- read_xml("<b><a a=\"1\" b=\"2\"/></b>")
 #'   xml_attr(x, "b", "a")
 #' @export
-xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL) {
+xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL,  ...) {
 
-  lvl <- c(level1, level2, level3, level4)
+  lvl <- c(level1, level2, level3)
   lvl <- lvl[!is.null(lvl)]
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
@@ -176,13 +176,12 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
   z <- NULL
 
   if (!inherits(xml, "pugi_xml"))
-    xml <- read_xml(xml)
+    xml <- read_xml(xml, ...)
 
   if (inherits(xml, "pugi_xml")) {
     if (length(lvl) == 1) z <- getXMLXPtr1attr(xml, level1)
     if (length(lvl) == 2) z <- getXMLXPtr2attr(xml, level1, level2)
     if (length(lvl) == 3) z <- getXMLXPtr3attr(xml, level1, level2, level3)
-    if (length(lvl) == 4) z <- getXMLXPtr4attr(xml, level1, level2, level3, level4)
   }
 
   z
@@ -193,6 +192,7 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #' @param x something to print
 #' @param indent indent used default is " "
 #' @param raw print as raw text
+#' @param attr_indent print attributes indented on new line
 #' @param ... to please check
 #' @examples
 #'   # a pointer
@@ -200,11 +200,8 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = 
 #'   print(x)
 #'   print(x, raw = TRUE)
 #' @export
-print.pugi_xml <- function(x, indent = " ", raw = FALSE, ...) {
-
-  escapes <- attr(x, "escapes")
-
-  cat(printXPtr(x, indent, !escapes, raw))
+print.pugi_xml <- function(x, indent = " ", raw = FALSE, attr_indent = FALSE, ...) {
+  cat(printXPtr(x, indent, raw, attr_indent))
   if (raw) cat("\n")
 }
 
@@ -216,6 +213,7 @@ print.pugi_xml <- function(x, indent = " ", raw = FALSE, ...) {
 #' is useful, for printing nodes from a larger tree, that have been exported
 #' as characters (at some point in time we have to convert the xml to R)
 #' @param x input as xml
+#' @param ... additional arguments passed to `read_xml()`
 #' @examples
 #' \dontrun{
 #' tmp_xlsx <- tempfile()
@@ -235,8 +233,8 @@ print.pugi_xml <- function(x, indent = " ", raw = FALSE, ...) {
 #' as_xml(font)
 #' }
 #' @export
-as_xml <- function(x) {
-  read_xml(paste(x, collapse = ""))
+as_xml <- function(x, ...) {
+  read_xml(paste(x, collapse = ""), ...)
 }
 
 #' write xml file
@@ -260,7 +258,7 @@ write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE
 #' @param xml_child xml_child
 #' @param level optional level, if missing the first child is picked
 #' @param pointer pointer
-#' @param escapes escapes
+#' @param ... additional arguments passed to `read_xml()`
 #' @examples
 #' xml_node <- "<a><b/></a>"
 #' xml_child <- "<c/>"
@@ -275,7 +273,7 @@ write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE
 #' xml_node <- xml_add_child(xml_node, "<d/>", level = c("b", "c"))
 #'
 #' @export
-xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, escapes = FALSE) {
+xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, ...) {
 
   if (missing(xml_node))
     stop("need xml_node")
@@ -283,18 +281,65 @@ xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, escapes =
   if (missing(xml_child))
     stop("need xml_child")
 
-  xml_node <- read_xml(xml_node)
-  xml_child <- read_xml(xml_child)
+  xml_node <- read_xml(xml_node, ...)
+  xml_child <- read_xml(xml_child, ...)
 
   if (missing(level)) {
-    z <- xml_append_child1(xml_node, xml_child, pointer, escapes)
+    z <- xml_append_child1(xml_node, xml_child, pointer)
   } else {
 
     if (length(level) == 1)
-      z <- xml_append_child2(xml_node, xml_child, level[[1]], pointer, escapes)
+      z <- xml_append_child2(xml_node, xml_child, level[[1]], pointer)
 
     if (length(level) == 2)
-      z <- xml_append_child3(xml_node, xml_child, level[[1]], level[[2]], pointer, escapes)
+      z <- xml_append_child3(xml_node, xml_child, level[[1]], level[[2]], pointer)
+
+  }
+
+  return(z)
+}
+
+
+#' remove xml child to node
+#' @param xml_node xml_node
+#' @param xml_child xml_child
+#' @param level optional level, if missing the first child is picked
+#' @param which optional index which node to remove, if multiple are available. Default disabled all will be removed
+#' @param pointer pointer
+#' @param ... additional arguments passed to `read_xml()`
+#' @examples
+#' xml_node <- "<a><b><c><d/></c></b><c/></a>"
+#' xml_child <- "c"
+#'
+#' xml_rm_child(xml_node, xml_child)
+#'
+#' xml_rm_child(xml_node, xml_child, level = c("b"))
+#'
+#' xml_rm_child(xml_node, "d", level = c("b", "c"))
+#'
+#' @export
+xml_rm_child <- function(xml_node, xml_child, level, which = 0, pointer = FALSE, ...) {
+
+  if (missing(xml_node))
+    stop("need xml_node")
+
+  if (missing(xml_child))
+    stop("need xml_child")
+
+  if (!inherits(xml_node, "pugi_xml")) xml_node <- read_xml(xml_node, ...)
+  assert_class(xml_child, "character")
+
+  which <- which - 1
+
+  if (missing(level)) {
+    z <- xml_remove_child1(xml_node, xml_child, which, pointer)
+  } else {
+
+    if (length(level) == 1)
+      z <- xml_remove_child2(xml_node, xml_child, level[[1]], which, pointer)
+
+    if (length(level) == 2)
+      z <- xml_remove_child3(xml_node, xml_child, level[[1]], level[[2]], which, pointer)
 
   }
 

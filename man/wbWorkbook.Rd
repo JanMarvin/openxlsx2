@@ -296,6 +296,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
 \item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
+\item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -412,10 +413,8 @@ Add worksheet to the \code{wbWorkbook} object
   hasDrawing = FALSE,
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
-  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default =
-    300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default =
-    300))
+  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
 )}\if{html}{\out{</div>}}
 }
 
@@ -520,6 +519,7 @@ add data
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL,
   colNames = TRUE,
@@ -542,6 +542,8 @@ add data
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
 
@@ -577,6 +579,7 @@ add a data table
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
@@ -602,6 +605,8 @@ add a data table
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{xy}}{xy}
 
@@ -641,6 +646,7 @@ add formula
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL
 )}\if{html}{\out{</div>}}
@@ -656,6 +662,8 @@ add formula
 \item{\code{startCol}}{startCol}
 
 \item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
 
@@ -1120,7 +1128,12 @@ Adds data validation
   value,
   allowBlank = TRUE,
   showInputMsg = TRUE,
-  showErrorMsg = TRUE
+  showErrorMsg = TRUE,
+  errorStyle = NULL,
+  errorTitle = NULL,
+  error = NULL,
+  promptTitle = NULL,
+  prompt = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -1144,6 +1157,16 @@ Adds data validation
 \item{\code{showInputMsg}}{showInputMsg}
 
 \item{\code{showErrorMsg}}{showErrorMsg}
+
+\item{\code{errorStyle}}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+
+\item{\code{errorTitle}}{The error title}
+
+\item{\code{error}}{The error text}
+
+\item{\code{promptTitle}}{The prompt title}
+
+\item{\code{prompt}}{The promt text}
 }
 \if{html}{\out{</div>}}
 }
@@ -1240,8 +1263,8 @@ Add conditional formatting
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
     "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
-  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank
-    = 5L)
+  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
+    5L)
 )}\if{html}{\out{</div>}}
 }
 
@@ -2242,7 +2265,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Method \code{clone_sheet_style()}}{
 clone style from one sheet to another
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_sheet_style(from, to)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_sheet_style(from = current_sheet(), to)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -2251,6 +2274,25 @@ clone style from one sheet to another
 \item{\code{from}}{the worksheet you are cloning}
 
 \item{\code{to}}{the worksheet the style is applied to}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_sparklines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_sparklines}{}}}
+\subsection{Method \code{add_sparklines()}}{
+apply sparkline to worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_sparklines(sheet = current_sheet(), sparklines)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet you are using}
+
+\item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
 }
 \if{html}{\out{</div>}}
 }

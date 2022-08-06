@@ -4,7 +4,7 @@
 \alias{print.pugi_xml}
 \title{print pugi_xml}
 \usage{
-\method{print}{pugi_xml}(x, indent = " ", raw = FALSE, ...)
+\method{print}{pugi_xml}(x, indent = " ", raw = FALSE, attr_indent = FALSE, ...)
 }
 \arguments{
 \item{x}{something to print}
@@ -12,6 +12,8 @@
 \item{indent}{indent used default is " "}
 
 \item{raw}{print as raw text}
+
+\item{attr_indent}{print attributes indented on new line}
 
 \item{...}{to please check}
 }

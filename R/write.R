@@ -31,39 +31,20 @@
 #'    wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "A9")
 #'    wb_to_df(wb)
 #'
-#' @export
+#' @keywords internal
+#' @noRd
 update_cell <- function(x, wb, sheet, cell, data_class,
                         colNames = FALSE, removeCellStyle = FALSE,
                         na.strings) {
 
-  dimensions <- unlist(strsplit(cell, ":"))
-  rows <- gsub("[[:upper:]]","", dimensions)
-  cols <- gsub("[[:digit:]]","", dimensions)
+  sheet_id <- wb$validate_sheet(sheet)
 
-  if (length(dimensions) == 2) {
-    # cols
-    cols <- col2int(cols)
-    cols <- seq(cols[1], cols[2])
-    cols <- int2col(cols)
+  dims <- dims_to_dataframe(cell, fill = TRUE)
+  cols <- colnames(dims)
+  rows <- rownames(dims)
 
-    rows <- as.character(seq(rows[1], rows[2]))
-  }
+  cells_needed <- unname(unlist(dims))
 
-
-  if (is.character(sheet)) {
-    sheet_id <- which(sheet == wb$sheet_names)
-  } else {
-    sheet_id <- sheet
-  }
-
-  if (missing(data_class)) {
-    # TODO consider using inherit() for class chekcing
-    data_class <- openxlsx2_type(x)
-  }
-
-
-  # if (identical(sheet_id, integer()))
-  #   stop("sheet not in workbook")
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
   cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
@@ -72,160 +53,81 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # workbooks contain only entries for values currently present.
   # if A1 is filled, B1 is not filled and C1 is filled the sheet will only
   # contain fields A1 and C1.
-  # cc$r <- paste0(cc$c_r, cc$row_r)
-  cells_in_wb <- cc$rw
+  cells_in_wb <- cc$r
   rows_in_wb <- row_attr$r
-
 
   # check if there are rows not available
   if (!all(rows %in% rows_in_wb)) {
     # message("row(s) not in workbook")
 
-    # add row to name vector, extend the entire thing
-    total_rows <- as.character(sort(unique(as.numeric(c(rows, rows_in_wb)))))
+    missing_rows <- rows[!rows %in% rows_in_wb]
 
     # new row_attr
-    row_attr_new <- empty_row_attr(n = length(total_rows))
-    row_attr_new$r <- total_rows
+    row_attr_missing <- empty_row_attr(n = length(missing_rows))
+    row_attr_missing$r <- missing_rows
 
-    row_attr_new <- merge(row_attr_new[c("r")], row_attr, all.x = TRUE)
-    row_attr_new[is.na(row_attr_new)] <- ""
+    row_attr <- rbind(row_attr, row_attr_missing)
 
-    wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr_new
+    # order
+    row_attr <- row_attr[order(as.numeric(row_attr$r)),]
+
+    wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
     # provide output
-    rows_in_wb <- total_rows
+    rows_in_wb <- row_attr$r
 
   }
 
-  if (!any(cols %in% cells_in_wb)) {
-    # all rows are availabe in the data frame
-    for (row in rows) {
+  if (!all(cells_needed %in% cells_in_wb)) {
+    # message("cell(s) not in workbook")
 
-      # collect all wanted cols and order for excel
-      total_cols <- unique(c(cc$c_r[cc$row_r == row], cols))
-      total_cols <- int2col(sort(col2int(total_cols)))
+    missing_cells <- cells_needed[!cells_needed %in% cells_in_wb]
 
-      # create candidate
-      cc_row_new <- create_char_dataframe(names(cc)[1:3], length(total_cols))
-      cc_row_new$row_r <- row
-      cc_row_new$c_r <- total_cols
-      cc_row_new$r <- stringi::stri_join(cc_row_new$c_r, cc_row_new$row_r)
+    # create missing cells
+    cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
+    cc_missing$r     <- missing_cells
+    cc_missing$row_r <- gsub("[[:upper:]]","", cc_missing$r)
+    cc_missing$c_r   <- gsub("[[:digit:]]","", cc_missing$r)
 
-      # extract row (easier or maybe only way to change order?)
-      cc_row <- cc[cc$row_r == row, ]
-      # remove row from cc
-      if (nrow(cc_row)>0) cc <- cc[-which(rownames(cc) %in% rownames(cc_row)),]
-      # new row
-      cc_row <- merge(x = cc_row_new, y = cc_row, all.x = TRUE)
+    # assign to cc
+    cc <- rbind(cc, cc_missing)
 
-      # assign to cc
-      cc <- rbind(cc, cc_row)
+    # order cc (not really necessary, will be done when saving)
+    cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
 
-    }
+    # update dimensions (only required if new cols and rows are added) ------
+    all_rows <- as.numeric(unique(cc$row_r))
+    all_cols <- col2int(unique(cc$c_r))
+
+    min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
+    max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
+
+    # i know, i know, i'm lazy
+    wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  # update cc
-  # TODO this was not supposed to happen, caused by delete? clean?
-  cc <- cc[cc$row_r != "" & cc$c_r != "",]
+  no_na_strings <- FALSE
+  if (missing(na.strings)) {
+    na.strings <- NULL
+    no_na_strings <- TRUE
+  }
 
-  # update dimensions
-  cc$r <- paste0(cc$c_r, cc$row_r)
-  cells_in_wb <- cc$rw
+  update_cell_loop(
+    cc,
+    x,
+    data_class,
+    rows,
+    cols,
+    colNames,
+    removeCellStyle,
+    cell,
+    no_na_strings,
+    na.strings,
+    wb$styles_mgr$get_xf_id("hyperlinkstyle")
+  )
 
-  all_rows <- as.numeric(unique(cc$row_r))
-  all_cols <- col2int(unique(cc$c_r))
-
-  min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
-  max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
-
-  # i know, i know, i'm lazy
-  wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
-
-  # if (any(rows %in% rows_in_wb) )
-  # message("found cell(s) to update")
-
-  if (all(rows %in% rows_in_wb)) {
-    # message("cell(s) to update already in workbook. updating ...")
-
-    i <- 0
-    n <- 0
-    for (row in rows) {
-
-      n <- n+1
-      m <- 0
-
-      for (col in cols) {
-        i <- i + 1
-        m <- m + 1
-
-        # check if is data frame or matrix
-        value <- if (is.null(dim(x))) x[i] else x[n, m]
-
-        sel <- cc$row_r == row & cc$c_r == col
-        c_s <- NULL
-        if (removeCellStyle) c_s <- "c_s"
-
-        cc[sel, c(c_s, "c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
-
-        # for now convert all R-characters to inlineStr (e.g. names() of a data frame)
-        if ((data_class[m] == openxlsx2_celltype[["character"]]) || ((colNames == TRUE) && (n == 1))) {
-          if (is.na(value)) {
-            cc[sel, "v"] <- "#N/A"
-            cc[sel, "c_t"] <- "e"
-          } else {
-            cc[sel, "c_t"] <- "inlineStr"
-            cc[sel, "is"]   <- paste0("<is><t>", as.character(value), "</t></is>")
-          }
-        } else if (data_class[m] == openxlsx2_celltype[["formula"]]) {
-          cc[sel, "c_t"] <- "str"
-          cc[sel, "f"] <- as.character(value)
-        } else if (data_class[m] == openxlsx2_celltype[["array_formula"]]) {
-          cc[sel, "f"] <- as.character(value)
-          cc[sel, "f_t"] <- "array"
-          cc[sel, "f_ref"] <- cell
-        } else if (data_class[m] == openxlsx2_celltype[["hyperlink"]]) {
-          cc[sel, "f"] <- as.character(value)
-          # FIXME assign the hyperlinkstyle if no style found. This might not be
-          # desired. We should provide an option to prevent this.
-          if (cc[sel, "c_s"] == "" || is.na(cc[sel, "c_s"]))
-            cc[sel, "c_s"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
-        } else {
-          if (is.na(value)) {
-            if (missing(na.strings)) {
-              cc[sel, "v"] <- "#N/A"
-              cc[sel, "c_t"] <- "e"
-            } else {
-              if (is.null(na.strings)) {
-                next # do not add any value: <c/>
-              } else {
-               cc[sel, "c_t"] <- "inlineStr"
-               cc[sel, "is"] <- txt_to_is(as.character(na.strings),
-                                          no_escapes = TRUE, raw = TRUE)
-              }
-            }
-          } else if (value == "NaN") {
-            cc[sel, "v"] <- "#VALUE!"
-            cc[sel, "c_t"] <- "e"
-          } else if (value == "-Inf" || value == "Inf") {
-            cc[sel, "v"] <- "#NUM!"
-            cc[sel, "c_t"] <- "e"
-          } else {
-            cc[sel, "v"]   <- as.character(value)
-          }
-        }
-
-      }
-    }
-
-    # avoid missings in cc
+  # avoid missings in cc
+  if (any(is.na(cc)))
     cc[is.na(cc)] <- ""
-
-  }
-
-  # order cc
-  cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
-  cc$ordered_cols <- NULL
-  cc$ordered_rows <- NULL
 
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
@@ -618,6 +520,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying startCol and startRow individually.
 #' A vector of the form c(startCol, startRow)
@@ -642,6 +545,7 @@ write_data_table <- function(
     x,
     startCol = 1,
     startRow = 1,
+    dims,
     array = FALSE,
     xy = NULL,
     colNames = TRUE,
@@ -675,6 +579,12 @@ write_data_table <- function(
   assert_class(bandedRows, "logical")
   assert_class(bandedCols, "logical")
 
+  if (!is.null(dims)) {
+    dims <- dims_to_rowcol(dims, as_integer = TRUE)
+    startCol <- min(dims[[1]])
+    startRow <- min(dims[[2]])
+  }
+
   if (missing(na.strings)) na.strings <- substitute()
 
   ## common part ---------------------------------------------------------------
@@ -689,6 +599,7 @@ write_data_table <- function(
 
   ## All input conversions/validations
   if (!is.null(xy)) {
+    warning("xy is deprecated. Please use dims instead.")
     if (length(xy) != 2) {
       stop("xy parameter must have length 2")
     }
@@ -884,6 +795,7 @@ write_data_table <- function(
 #' @param x Object to be written. For classes supported look at the examples.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -968,6 +880,7 @@ write_data <- function(
     x,
     startCol = 1,
     startRow = 1,
+    dims = rowcol_to_dims(startRow, startCol),
     array = FALSE,
     xy = NULL,
     colNames = TRUE,
@@ -987,6 +900,7 @@ write_data <- function(
     x = x,
     startCol = startCol,
     startRow = startRow,
+    dims = dims,
     array = array,
     xy = xy,
     colNames = colNames,
@@ -1025,6 +939,7 @@ write_data <- function(
 #' @param x A character vector.
 #' @param startCol A vector specifying the starting column to write to.
 #' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
@@ -1110,6 +1025,7 @@ write_formula <- function(wb,
   x,
   startCol = 1,
   startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   xy = NULL) {
   assert_class(x, "character")
@@ -1126,6 +1042,7 @@ write_formula <- function(wb,
     x = dfx,
     startCol = startCol,
     startRow = startRow,
+    dims = dims,
     array = array,
     xy = xy,
     colNames = FALSE,
@@ -1142,6 +1059,7 @@ write_formula <- function(wb,
 #' @param x A data frame.
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param xy An alternative to specifying startCol and startRow individually.
 #' A vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
@@ -1272,6 +1190,7 @@ write_datatable <- function(
     x,
     startCol = 1,
     startRow = 1,
+    dims = rowcol_to_dims(startRow, startCol),
     xy = NULL,
     colNames = TRUE,
     rowNames = FALSE,
@@ -1294,6 +1213,7 @@ write_datatable <- function(
     x = x,
     startCol = startCol,
     startRow = startRow,
+    dims = dims,
     array = FALSE,
     xy = xy,
     colNames = colNames,

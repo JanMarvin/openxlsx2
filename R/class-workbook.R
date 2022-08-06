@@ -793,6 +793,7 @@ wbWorkbook <- R6::R6Class(
     #' @param x x
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param array array
     #' @param xy xy
     #' @param colNames colNames
@@ -808,6 +809,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol        = 1,
         startRow        = 1,
+        dims            = rowcol_to_dims(startRow, startCol),
         array           = FALSE,
         xy              = NULL,
         colNames        = TRUE,
@@ -827,6 +829,7 @@ wbWorkbook <- R6::R6Class(
         x               = x,
         startCol        = startCol,
         startRow        = startRow,
+        dims            = dims,
         array           = array,
         xy              = xy,
         colNames        = colNames,
@@ -845,6 +848,7 @@ wbWorkbook <- R6::R6Class(
     #' @param x x
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param xy xy
     #' @param colNames colNames
     #' @param rowNames rowNames
@@ -863,6 +867,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol    = 1,
         startRow    = 1,
+        dims        = rowcol_to_dims(startRow, startCol),
         xy          = NULL,
         colNames    = TRUE,
         rowNames    = FALSE,
@@ -883,6 +888,7 @@ wbWorkbook <- R6::R6Class(
         wb          = self,
         sheet       = sheet,
         x           = x,
+        dims        = dims,
         startCol    = startCol,
         startRow    = startRow,
         xy          = xy,
@@ -906,6 +912,7 @@ wbWorkbook <- R6::R6Class(
     #' @param x x
     #' @param startCol startCol
     #' @param startRow startRow
+    #' @param dims dims
     #' @param array array
     #' @param xy xy
     #' @returns The `wbWorkbook` object
@@ -914,6 +921,7 @@ wbWorkbook <- R6::R6Class(
         x,
         startCol = 1,
         startRow = 1,
+        dims     = rowcol_to_dims(startRow, startCol),
         array    = FALSE,
         xy       = NULL
     ) {
@@ -923,6 +931,7 @@ wbWorkbook <- R6::R6Class(
         x        = x,
         startCol = startCol,
         startRow = startRow,
+        dims     = dims,
         array    = array,
         xy       = xy
       )
@@ -2410,6 +2419,11 @@ wbWorkbook <- R6::R6Class(
     #' @param allowBlank allowBlank
     #' @param showInputMsg showInputMsg
     #' @param showErrorMsg showErrorMsg
+    #' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+    #' @param errorTitle The error title
+    #' @param error The error text
+    #' @param promptTitle The prompt title
+    #' @param prompt The promt text
     #' @returns The `wbWorkbook` object
     add_data_validation = function(
       sheet = current_sheet(),
@@ -2420,7 +2434,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank = TRUE,
       showInputMsg = TRUE,
-      showErrorMsg = TRUE
+      showErrorMsg = TRUE,
+      errorStyle = NULL,
+      errorTitle = NULL,
+      error = NULL,
+      promptTitle = NULL,
+      prompt = NULL
     ) {
       ## rows and cols
       if (!is.numeric(cols)) {
@@ -2428,12 +2447,17 @@ wbWorkbook <- R6::R6Class(
       }
       rows <- as.integer(rows)
 
+      assert_class(allowBlank, "logical")
+      assert_class(showInputMsg, "logical")
+      assert_class(showErrorMsg, "logical")
+
       ## check length of value
       if (length(value) > 2) {
-        stop("value argument must be length < 2")
+        stop("value argument must be length <= 2")
       }
 
       valid_types <- c(
+        "custom",
         "whole",
         "decimal",
         "date",
@@ -2445,7 +2469,6 @@ wbWorkbook <- R6::R6Class(
       if (!tolower(type) %in% tolower(valid_types)) {
         stop("Invalid 'type' argument!")
       }
-
 
       ## operator == 'between' we leave out
       valid_operators <- c(
@@ -2459,26 +2482,16 @@ wbWorkbook <- R6::R6Class(
         "lessThanOrEqual"
       )
 
-      if (tolower(type) != "list") {
+      if (!tolower(type) %in% c("custom", "list")) {
         if (!tolower(operator) %in% tolower(valid_operators)) {
           stop("Invalid 'operator' argument!")
         }
 
         operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
+      } else if (tolower(type) == "custom") {
+        operator <- NULL
       } else {
         operator <- "between" ## ignored
-      }
-
-      if (!is.logical(allowBlank)) {
-        stop("Argument 'allowBlank' musts be logical!")
-      }
-
-      if (!is.logical(showInputMsg)) {
-        stop("Argument 'showInputMsg' musts be logical!")
-      }
-
-      if (!is.logical(showErrorMsg)) {
-        stop("Argument 'showErrorMsg' musts be logical!")
       }
 
       ## All inputs validated
@@ -2491,14 +2504,14 @@ wbWorkbook <- R6::R6Class(
       }
 
       if ((type == "time") && !inherits(value, c("POSIXct", "POSIXt"))) {
-        stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
+        stop("If type == 'time' value argument must be a POSIXct or POSIXlt vector.")
       }
 
 
       value <- head(value, 2)
-      allowBlank <- as.integer(allowBlank[1])
-      showInputMsg <- as.integer(showInputMsg[1])
-      showErrorMsg <- as.integer(showErrorMsg[1])
+      allowBlank <- as.character(as.integer(allowBlank[1]))
+      showInputMsg <- as.character(as.integer(showInputMsg[1]))
+      showErrorMsg <- as.character(as.integer(showErrorMsg[1]))
 
       if (type == "list") {
         private$data_validation_list(
@@ -2510,7 +2523,12 @@ wbWorkbook <- R6::R6Class(
           value        = value,
           allowBlank   = allowBlank,
           showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg
+          showErrorMsg = showErrorMsg,
+          errorStyle   = errorStyle,
+          errorTitle   = errorTitle,
+          error        = error,
+          promptTitle  = promptTitle,
+          prompt       = prompt
         )
       } else {
         private$data_validation(
@@ -2524,7 +2542,12 @@ wbWorkbook <- R6::R6Class(
           value        = value,
           allowBlank   = allowBlank,
           showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg
+          showErrorMsg = showErrorMsg,
+          errorStyle   = errorStyle,
+          errorTitle   = errorTitle,
+          error        = error,
+          promptTitle  = promptTitle,
+          prompt       = prompt
         )
       }
 
@@ -3700,7 +3723,7 @@ wbWorkbook <- R6::R6Class(
       cols <- seq(from = cols[1], to = cols[2], by = 1)
 
       ## now delete data
-      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
+      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols)
       invisible(self)
     },
 
@@ -4029,6 +4052,8 @@ wbWorkbook <- R6::R6Class(
 
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
+
+      private$do_cell_init(sheet, dims)
 
       ### beg border creation
       full_single <- create_border(
@@ -4424,6 +4449,7 @@ wbWorkbook <- R6::R6Class(
         every_nth_row = 1
     ) {
       sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       new_fill <- create_fill(
         gradientFill = gradient_fill,
@@ -4499,6 +4525,8 @@ wbWorkbook <- R6::R6Class(
         shadow    = "",
         vertAlign = ""
     ) {
+      sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       new_font <- create_font(
         b = bold,
@@ -4548,6 +4576,8 @@ wbWorkbook <- R6::R6Class(
         dims  = "A1",
         numfmt
     ) {
+      sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       if (inherits(numfmt, "character")) {
 
@@ -4652,6 +4682,8 @@ wbWorkbook <- R6::R6Class(
         wrapText          = NULL,
         xfId              = NULL
     ) {
+      sheet <- private$get_sheet_index(sheet)
+      private$do_cell_init(sheet, dims)
 
       for (dim in dims) {
         xf_prev <- get_cell_styles(self, sheet, dim)
@@ -4695,10 +4727,10 @@ wbWorkbook <- R6::R6Class(
     #' @description clone style from one sheet to another
     #' @param from the worksheet you are cloning
     #' @param to the worksheet the style is applied to
-    clone_sheet_style = function(from, to) {
+    clone_sheet_style = function(from = current_sheet(), to) {
 
-      id_org <- self$validate_sheet(from)
-      id_new <- self$validate_sheet(to)
+      id_org <- private$get_sheet_index(from)
+      id_new <- private$get_sheet_index(to)
 
       org_style <- self$worksheets[[id_org]]$sheet_data$cc
       wb_style  <- self$worksheets[[id_new]]$sheet_data$cc
@@ -4759,6 +4791,19 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[id_new]]$mergeCells <-
         self$worksheets[[id_org]]$mergeCells
 
+      invisible(self)
+    },
+
+
+    #' @description apply sparkline to worksheet
+    #' @param sheet the worksheet you are using
+    #' @param sparklines sparkline created by `create_sparkline()`
+    add_sparklines = function(
+      sheet = current_sheet(),
+      sparklines
+    ) {
+      sheet <- private$get_sheet_index(sheet)
+      self$worksheets[[sheet]]$add_sparklines(sparklines)
       invisible(self)
     }
 
@@ -5226,7 +5271,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt
     ) {
       # TODO rename: setDataValidation?
       # TODO can this be moved to the worksheet class?
@@ -5240,17 +5290,22 @@ wbWorkbook <- R6::R6Class(
           collapse = ":"
         )
 
-      header <-
-        sprintf(
-          '<dataValidation type="%s" operator="%s" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s" sqref="%s">',
-          type,
-          operator,
-          allowBlank,
-          showInputMsg,
-          showErrorMsg,
-          sqref
+      header <- xml_node_create(
+        "dataValidation",
+        xml_attributes = c(
+          type = type,
+          operator = operator,
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          sqref = sqref,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
         )
-
+      )
 
       # TODO consider switch(type, date = ..., time = ..., )
       if (type == "date") {
@@ -5301,10 +5356,11 @@ wbWorkbook <- R6::R6Class(
         }
       )
 
-      private$append_sheet_field(sheet, "dataValidations", stri_join(header, stri_join(form, collapse = ""), "</dataValidation>"))
+      private$append_sheet_field(sheet, "dataValidations", xml_add_child(header, form))
       invisible(self)
     },
 
+    # TODO can this be merged with above?
     data_validation_list = function(
       sheet = current_sheet(),
       startRow,
@@ -5314,7 +5370,12 @@ wbWorkbook <- R6::R6Class(
       value,
       allowBlank,
       showInputMsg,
-      showErrorMsg
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt
     ) {
       # TODO consider some defaults to logicals
       # TODO rename: setDataValidationList?
@@ -5327,17 +5388,25 @@ wbWorkbook <- R6::R6Class(
           sep = " ",
           collapse = ":"
         )
-      data_val <-
-        sprintf(
-          '<x14:dataValidation type="list" allowBlank="%s" showInputMessage="%s" showErrorMessage="%s">',
-          allowBlank,
-          showInputMsg,
-          showErrorMsg
+
+      data_val <- xml_node_create(
+        "x14:dataValidation",
+        xml_attributes = c(
+          type = "list",
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
         )
+      )
 
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-      xmlData <- stri_join(data_val, formula, sqref, "</x14:dataValidation>")
+      xmlData <- xml_add_child(data_val, c(formula, sqref))
       private$append_sheet_field(sheet, "dataValidationsLst", xmlData)
       invisible(self)
     },
@@ -5653,6 +5722,31 @@ wbWorkbook <- R6::R6Class(
           stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
           "</externalReferences>"
         )
+      }
+
+      invisible(self)
+    },
+
+    ## @description initialize cells in workbook
+    ## @param sheet sheet
+    ## @param dims dims
+    ## @keywords internal
+    do_cell_init = function(sheet = current_sheet(), dims) {
+
+      sheet <- private$get_sheet_index(sheet)
+      dims_df <- dims_to_dataframe(dims, fill = TRUE)
+
+      exp_cells <- unname(unlist(dims_df))
+      got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
+
+      # initialize cell
+      if (!all(exp_cells %in% got_cells)) {
+        init_cells <- NA
+        for (exp_cell in exp_cells[!exp_cells %in% got_cells])
+        # TODO use dims once PR#236 is merged
+        self$add_data(x = init_cells, na.strings = NULL, colNames = FALSE,
+                      startCol = col2int(exp_cell),
+                      startRow = as.numeric(gsub("\\D", "", exp_cell)))
       }
 
       invisible(self)

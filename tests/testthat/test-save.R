@@ -134,8 +134,8 @@ test_that("write xlsx", {
   expect_error(write_xlsx(df, tmp, rowNames = "NO"))
   expect_silent(write_xlsx(df, tmp, rowNames = TRUE))
   expect_error(write_xlsx(df, tmp, xy = "A2"))
-  expect_silent(write_xlsx(df, tmp, xy = c(1, 2)))
-  expect_silent(write_xlsx(df, tmp, xy = c(1, 2)))
+  expect_warning(write_xlsx(df, tmp, xy = c(1, 2)))
+  expect_warning(write_xlsx(df, tmp, xy = c(1, 2)))
   expect_silent(write_xlsx(df, tmp, colWidth = "auto"))
   expect_silent(write_xlsx(list(df, df), tmp, firstActiveCol = 2, firstActiveRow = 2))
   expect_silent(write_xlsx(list(df, df), tmp, firstCol = FALSE, firstRow = FALSE))
@@ -242,7 +242,7 @@ test_that("writing NA, NaN and Inf", {
 test_that("write cells without data", {
 
   temp <- temp_xlsx()
-  tmp <- tempdir()
+  tmp <- temp_dir()
 
   dat <- as.data.frame(matrix(NA, 2, 2))
   wb <- wb_workbook()$
