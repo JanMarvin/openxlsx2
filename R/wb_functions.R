@@ -179,6 +179,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
 #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+#' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @examples
 #'
@@ -264,6 +265,7 @@ wb_to_df <- function(
   rows            = NULL,
   cols            = NULL,
   na.strings      = "#N/A",
+  na.numbers      = NA,
   fillMergedCells = FALSE,
   dims,
   showFormula     = FALSE,
@@ -441,12 +443,25 @@ wb_to_df <- function(
 
   has_na_string <- FALSE
   # convert missings
-  if (!is.na(na.strings) || !missing(na.strings)) {
+  if (!all(is.na(na.strings))) {
     sel <- cc$val %in% na.strings
     if (any(sel)) {
       cc$val[sel] <- NA_character_
       cc$typ[sel] <- "na_string"
       has_na_string <- TRUE
+    }
+  }
+
+  has_na_number <- FALSE
+  # convert missings.
+  # at this stage we only have characters.
+  na.numbers <- as.character(na.numbers)
+  if (!all(is.na(na.numbers))) {
+    sel <- cc$v %in% na.numbers
+    if (any(sel)) {
+      cc$val[sel] <- NA_character_
+      cc$typ[sel] <- "na_number"
+      has_na_number <- TRUE
     }
   }
 
@@ -480,6 +495,7 @@ wb_to_df <- function(
 
   # convert "na_string" to missing
   if (has_na_string) cc$typ[cc$typ == "na_string"] <- NA
+  if (has_na_number) cc$typ[cc$typ == "na_number"] <- NA
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]

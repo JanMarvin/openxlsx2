@@ -296,6 +296,11 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
     tableStyle <- params$tableStyle
   }
 
+  na_strings <- substitute()
+  if ("na.strings" %in% names(params)) {
+    na_strings <- params$na.strings
+  }
+
 
   ## create new Workbook object
   wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
@@ -384,7 +389,8 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
         rowNames = rowNames[[i]],
         tableStyle = tableStyle[[i]],
         tableName = NULL,
-        withFilter = withFilter[[i]]
+        withFilter = withFilter[[i]],
+        na.strings = na_strings
       )
     } else {
       write_data(
@@ -395,7 +401,8 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
         startRow = startRow[[i]],
         xy = xy,
         colNames = colNames[[i]],
-        rowNames = rowNames[[i]]
+        rowNames = rowNames[[i]],
+        na.strings = na_strings
       )
     }
 

@@ -289,3 +289,27 @@ test_that("write cells without data", {
   expect_equal(exp, got)
 
 })
+
+test_that("write_xlsx with na.strings", {
+
+  df <- data.frame(
+    num = c(1, -99, 3, NA_real_),
+    char = c("hello", "99", "3", NA_character_)
+  )
+
+  test <- temp_xlsx()
+  write_xlsx(df, file = test)
+
+  exp <- df
+  got <- read_xlsx(test)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  write_xlsx(df, file = test, na.strings = "N/A")
+  got <- read_xlsx(test, na.strings = "N/A")
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  exp$num[exp$num == -99] <- NA
+  got <- read_xlsx(test, na.strings = "N/A", na.numbers = -99)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+})

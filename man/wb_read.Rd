@@ -16,7 +16,8 @@ wb_read(
   rows = NULL,
   cols = NULL,
   namedRegion,
-  na.strings = "NA"
+  na.strings = "NA",
+  na.numbers = NA
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ If NULL, all columns are read.}
 \item{namedRegion}{A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.}
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
+
+\item{na.numbers}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
 }
 \value{
 data.frame

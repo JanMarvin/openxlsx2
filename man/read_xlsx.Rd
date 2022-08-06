@@ -17,6 +17,7 @@ read_xlsx(
   cols = NULL,
   namedRegion,
   na.strings = "#N/A",
+  na.numbers = NA,
   check.names = FALSE,
   sep.names = ".",
   fillMergedCells = FALSE
@@ -50,6 +51,8 @@ If NULL, all columns are read.}
 \item{namedRegion}{A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.}
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
+
+\item{na.numbers}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
 
 \item{check.names}{logical. If TRUE then the names of the variables in the data frame
 are checked to ensure that they are syntactically valid variable names}

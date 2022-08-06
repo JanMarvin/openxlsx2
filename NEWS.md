@@ -2,6 +2,8 @@
 
 ## New features
 
+* Provide `na.numbers` for reading functions, that convert numbers to `NA` in R output. Handle `na.strings` in `write_xlsx()`. [301](https://github.com/JanMarvin/openxlsx2/issues/301)
+
 * Add new option to add sparklines with various style options to worksheets: `wb_add_sparklines()`. Sparklines can be created with `create_sparklines()`. The manual page contains an example. [280](https://github.com/JanMarvin/openxlsx2/issues/280)
 
 * Add new options to data validation. allow type custom, add arguments `errorStyle`, `errorTitle`, `error`, `promptTitle`, `prompt`. [271](https://github.com/JanMarvin/openxlsx2/issues/271)

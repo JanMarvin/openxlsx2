@@ -19,6 +19,7 @@
 #' @param sep.names (unimplemented) One character which substitutes blanks in column names. By default, "."
 #' @param namedRegion A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+#' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If `TRUE`, empty columns are skipped.
 #' @seealso [get_named_regions()]
@@ -77,6 +78,7 @@ read_xlsx <- function(
   cols            = NULL,
   namedRegion,
   na.strings      = "#N/A",
+  na.numbers      = NA,
   check.names     = FALSE,
   sep.names       = ".",
   fillMergedCells = FALSE
@@ -100,6 +102,7 @@ read_xlsx <- function(
     cols            = cols,
     named_region    = namedRegion,
     na.strings      = na.strings,
+    na.numbers      = na.numbers,
     fillMergedCells = fillMergedCells
   )
 }
@@ -132,7 +135,8 @@ wb_read <- function(
   rows          = NULL,
   cols          = NULL,
   namedRegion,
-  na.strings    = "NA"
+  na.strings    = "NA",
+  na.numbers    = NA
 ) {
 
   # keep sheet missing // read_xlsx is the function to replace.
@@ -152,7 +156,8 @@ wb_read <- function(
     rows          = rows,
     cols          = cols,
     named_region  = namedRegion,
-    na.strings    = na.strings
+    na.strings    = na.strings,
+    na.numbers    = na.numbers
   )
 
 }
