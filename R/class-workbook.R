@@ -5386,7 +5386,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    # TODO can this be merged with above?
+    # data validations list goes to extLst not to worksheet
     data_validation_list = function(
       sheet = current_sheet(),
       startRow,
@@ -5403,6 +5403,7 @@ wbWorkbook <- R6::R6Class(
       promptTitle,
       prompt
     ) {
+
       # TODO consider some defaults to logicals
       # TODO rename: setDataValidationList?
       sheet <- private$get_sheet_index(sheet)
@@ -5433,7 +5434,8 @@ wbWorkbook <- R6::R6Class(
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
       xmlData <- xml_add_child(data_val, c(formula, sqref))
-      private$append_sheet_field(sheet, "dataValidationsLst", xmlData)
+      self$worksheets[[sheet]]$.__enclos_env__$private$add_data_validation_lst(xmlData)
+
       invisible(self)
     },
 

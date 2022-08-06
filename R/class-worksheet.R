@@ -44,9 +44,6 @@ wbWorksheet <- R6::R6Class(
     #' @field dataValidations dataValidations
     dataValidations = NULL,
 
-    #' @field dataValidationsLst dataValidationsLst
-    dataValidationsLst = character(),
-
     #' @field freezePane freezePane
     freezePane = character(),
 
@@ -208,7 +205,6 @@ wbWorksheet <- R6::R6Class(
       self$mergeCells            <- character()
       self$conditionalFormatting <- character()
       self$dataValidations       <- NULL
-      self$dataValidationsLst    <- character()
       self$hyperlinks            <- list()
       self$pageMargins           <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s"/>', paperSize, orientation, hdpi, vdpi)
@@ -358,21 +354,12 @@ wbWorksheet <- R6::R6Class(
           paste0(sprintf('<tableParts count="%i">', n), pxml(self$tableParts), "</tableParts>")
         },
 
-        # extLst, dataValidationsLst
-        # parenthese or R gets confused with the ||
-        if ((length(self$extLst)) || (length(self$dataValidationsLst))) {
+        # extLst
+        if (length(self$extLst)) {
           sprintf(
             "<extLst>%s</extLst>",
             paste0(
-              pxml(self$extLst),
-              # dataValidationsLst_xml
-              if (length(self$dataValidationsLst)) {
-                paste0(
-                  sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
-                  paste0(pxml(self$dataValidationsLst), "</x14:dataValidations></ext>"),
-                  collapse = ""
-                )
-              }
+              pxml(self$extLst)
             )
           )
         },
@@ -596,7 +583,64 @@ wbWorksheet <- R6::R6Class(
   private = list(
     # These were commented out in the RC object -- not sure if they're needed
     cols                  = NULL,
-    sheetData             = NULL
+    sheetData             = NULL,
+
+    # @description add data_validation_lst
+    # @param datavalidation datavalidation
+    add_data_validation_lst = function(
+      datavalidation
+    ) {
+
+      if (!all(xml_node_name(datavalidation) == "x14:dataValidation"))
+        stop("datavalidation nodes must all be 'x14:dataValidation'")
+
+      # can have length > 1 for multiple xmlns attributes. we take this extLst,
+      # inspect it, update if needed and return it
+      extLst <- xml_node(self$extLst, "ext")
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check if any <ext xmlns:x14 ...> node exists, else add it
+      if (length(extLst) == 0 || !any(is_xmlns_x14)) {
+        ext <- xml_node_create(
+          "ext",
+          xml_attributes = c("xmlns:x14" = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main",
+                             uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}")
+        )
+
+        # update extLst
+        extLst <- c(extLst, ext)
+        is_xmlns_x14 <- c(is_xmlns_x14, TRUE)
+      } else {
+        ext <- extLst[is_xmlns_x14]
+      }
+
+      # check again and should be exactly one ext node
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check for dataValidations and add one if none is found
+      dataValidations <- xml_node(ext, "ext", "x14:dataValidations")
+      if (length(dataValidations) == 0) {
+        ext <- xml_add_child(
+          ext,
+          xml_node_create(
+            "x14:dataValidations",
+            xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
+        )
+      }
+
+      # add new datavalidation to exisisting dataValidations
+      ext <- xml_add_child(
+        ext,
+        level = c("x14:dataValidations"),
+        datavalidation
+      )
+
+      # update extLst and add it back to worksheet
+      extLst[is_xmlns_x14] <- ext
+      self$extLst <- extLst
+
+      invisible(self)
+    }
   )
 )
 

@@ -37,8 +37,6 @@ A Worksheet
 
 \item{\code{dataValidations}}{dataValidations}
 
-\item{\code{dataValidationsLst}}{dataValidationsLst}
-
 \item{\code{freezePane}}{freezePane}
 
 \item{\code{hyperlinks}}{hyperlinks}

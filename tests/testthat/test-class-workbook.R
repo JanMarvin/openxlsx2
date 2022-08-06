@@ -148,7 +148,7 @@ test_that("data validation", {
   exp <- c(
     "<x14:dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\"><x14:formula1><xm:f>'Sheet 4'!$A$1:$A$10</xm:f></x14:formula1><xm:sqref>A2:A31</xm:sqref></x14:dataValidation>"
   )
-  got <- wb$worksheets[[3]]$dataValidationsLst
+  got <- xml_node(wb$worksheets[[3]]$extLst, "ext", "x14:dataValidations", "x14:dataValidation")
   expect_equal(exp, got)
 
   wb$save(temp)
@@ -169,22 +169,20 @@ test_that("data validation", {
     wb2$worksheets[[2]]$dataValidations
   )
 
-  # FIXME gh #277
-  # when saving, dataValidationsLst is moved to ext. Upon loading it is not
-  # moved to dataValidationsLst but remains in extLst. Hence we need to check
-  # if creating another entry in dataValidationsLst and saving again properly
-  # merges or creates broken xlsx output. Preferably the list is not silently
-  # moved from one entry to another, but remains at a single spot. E.g. load it,
-  # move the node around and remove the node in the extLst.
-  #
-  # # this will be broken. Has one extLst, but two "<ext xmlns:x14 ...>" entries.
-  # wb2$add_data_validation("Sheet 3", col = 2, rows = 2:31, type = "list",
-  #                         value = "'Sheet 4'!$A$1:$A$10")
-  # wb2$save(temp)
   expect_equal(
-    wb$worksheets[[3]]$dataValidationsLst,
+    xml_node(wb$worksheets[[3]]$extLst, "ext", "x14:dataValidations", "x14:dataValidation"),
     xml_node(wb2$worksheets[[3]]$extLst, "ext", "x14:dataValidations", "x14:dataValidation")
   )
+
+  wb2$add_data_validation("Sheet 3", col = 2, rows = 2:31, type = "list",
+                          value = "'Sheet 4'!$A$1:$A$10")
+
+  exp <- c(
+    "<x14:dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\"><x14:formula1><xm:f>'Sheet 4'!$A$1:$A$10</xm:f></x14:formula1><xm:sqref>A2:A31</xm:sqref></x14:dataValidation>",
+    "<x14:dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\"><x14:formula1><xm:f>'Sheet 4'!$A$1:$A$10</xm:f></x14:formula1><xm:sqref>B2:B31</xm:sqref></x14:dataValidation>"
+  )
+  got <- xml_node(wb2$worksheets[[3]]$extLst, "ext", "x14:dataValidations", "x14:dataValidation")
+  expect_equal(exp, got)
 
   ### tests if conditions
 
