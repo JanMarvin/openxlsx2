@@ -64,9 +64,9 @@ temp_dir <- function(pattern = "file") {
   }
 
   success <- dir.create(path = tmpDir, recursive = FALSE)
-  if (!success) {
+  if (!success) { # nocov start
     stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
-  }
+  } # nocov end
 
   tmpDir
 }

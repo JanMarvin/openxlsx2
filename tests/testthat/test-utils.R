@@ -78,3 +78,10 @@ test_that("test random_string", {
   y <- .Random.seed
   expect_false(identical(x, y))
 })
+
+test_that("temp_dir works", {
+
+  out <- temp_dir("temp_dir_works")
+  expect_true(dir.exists(out))
+
+})

@@ -964,9 +964,9 @@ wbWorkbook <- R6::R6Class(
       }
 
       success <- dir.create(path = tmpDir, recursive = FALSE)
-      if (!success) {
+      if (!success) { # nocov start
         stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
-      }
+      } # nocov end
 
       private$preSaveCleanUp()
 
