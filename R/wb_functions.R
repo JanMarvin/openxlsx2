@@ -443,7 +443,7 @@ wb_to_df <- function(
 
   has_na_string <- FALSE
   # convert missings
-  if (!missing(na.strings) && !all(is.na(na.strings))) {
+  if (!all(is.na(na.strings))) {
     sel <- cc$val %in% na.strings
     if (any(sel)) {
       cc$val[sel] <- NA_character_
@@ -456,7 +456,7 @@ wb_to_df <- function(
   # convert missings.
   # at this stage we only have characters.
   na.numbers <- as.character(na.numbers)
-  if (!missing(na.numbers) && !all(is.na(na.numbers))) {
+  if (!all(is.na(na.numbers))) {
     sel <- cc$v %in% na.numbers
     if (any(sel)) {
       cc$val[sel] <- NA_character_
