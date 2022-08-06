@@ -609,7 +609,29 @@ wbWorkbook <- R6::R6Class(
               # Read the chartfile and adjust all formulas to point to the new
               # sheet name instead of the clone source
 
+              # if we have drawings to clone, remove every table referece from Relationship
+              relship_no_drawing <- function() {
+                if (length(self$worksheets_rels[[newSheetIndex]]) == 0) return(character())
+                relship <- rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))
+                relship$typ <- basename(relship$Type)
+                relship <- relship[relship$typ != "drawing",]
+                df_to_xml("Relationship", relship[c("Id", "Type", "Target")])
+              }
+              self$worksheets_rels[[newSheetIndex]] <- relship_no_drawing()
+              rid <- max(0, as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))[["Id"]]))) + seq_along(newSheetIndex)
+
+
+              self$worksheets_rels[[newSheetIndex]] <- c(
+                self$worksheets_rels[[newSheetIndex]],
+                sprintf(
+                  '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>',
+                  rid,
+                  newSheetIndex
+                )
+              )
+
               chart <- self$charts$chart[chartid]
+              self$charts$rels[chartid] <- gsub("2.xml", paste0(chartid, ".xml"), self$charts$rels[chartid])
 
               chart <- gsub(
                 stri_join("(?<=')", self$sheet_names[[old]], "(?='!)"),
