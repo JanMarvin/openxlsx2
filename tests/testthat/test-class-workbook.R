@@ -299,14 +299,14 @@ test_that("clone worksheet", {
   # wb$clone_worksheet(1, "Clone 1")
   # wb$open()
 
-  # # clone pivot table and drawing - the pivot table works, drawing not
-  # fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
-  #
-  # wb <- wb_load(fl)
-  # expect_silent(wb$clone_worksheet(4, "Clone 1"))
-  # wb$open()
-
   ## Dummy tests - not sure how to test these from R ##
+
+  # clone pivot table and drawing
+  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+
+  wb <- wb_load(fl)
+  expect_silent(wb$clone_worksheet(4, "Clone 1"))
+  # wb$open()
 
   # clone drawing --
   fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
@@ -317,17 +317,13 @@ test_that("clone worksheet", {
   # clone sheet with table --
   fl <- system.file("extdata", "tableStyles.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
-  wb$clone_worksheet(1, "clone")
+  expect_silent(wb$clone_worksheet(1, "clone"))
   # wb$open()
 
   # clone sheet with chart --
   fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
   wb$clone_worksheet(2, "Clone 1")
-  wb$open()
-
-  wb$save("/tmp/test.xlsx")
-  unlink("/tmp/test", recursive = TRUE)
-  unzip("/tmp/test.xlsx", exdir = "/tmp/test")
+  # wb$open()
 
 })
