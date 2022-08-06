@@ -195,7 +195,7 @@ test_that("add_sparklines", {
 
   expect_error(
     wb$add_sparklines(sparklines = xml_node_create("sparklines", sparklines)),
-    "sparklines nodes must all be 'x14:sparklineGroup'"
+    "all nodes must match x14:sparklineGroup. Got sparklines"
   )
 
 })

@@ -527,53 +527,7 @@ wbWorksheet <- R6::R6Class(
       sparklines
     ) {
 
-      if (!all(xml_node_name(sparklines) == "x14:sparklineGroup"))
-        stop("sparklines nodes must all be 'x14:sparklineGroup'")
-
-      # can have length > 1 for multiple xmlns attributes. we take this extLst,
-      # inspect it, update if needed and return it
-      extLst <- xml_node(self$extLst, "ext")
-      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
-
-      # check if any <ext xmlns:x14 ...> node exists, else add it
-      if (length(extLst) == 0 || !any(is_xmlns_x14)) {
-        ext <- xml_node_create(
-          "ext",
-          xml_attributes = c("xmlns:x14" = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main",
-                             uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}")
-        )
-
-        # update extLst
-        extLst <- c(extLst, ext)
-        is_xmlns_x14 <- c(is_xmlns_x14, TRUE)
-      } else {
-        ext <- extLst[is_xmlns_x14]
-      }
-
-      # check again and should be exactly one ext node
-      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
-
-      # check for sparklineGroups and add one if none is found
-      sparklineGroups <- xml_node(ext, "ext", "x14:sparklineGroups")
-      if (length(sparklineGroups) == 0) {
-        ext <- xml_add_child(
-          ext,
-          xml_node_create(
-            "x14:sparklineGroups",
-            xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
-        )
-      }
-
-      # add new sparklines to exisisting sparklineGroups
-      ext <- xml_add_child(
-        ext,
-        level = c("x14:sparklineGroups"),
-        sparklines
-      )
-
-      # update extLst and add it back to worksheet
-      extLst[is_xmlns_x14] <- ext
-      self$extLst <- extLst
+      private$do_append_x14(sparklines, "x14:sparklineGroup", "x14:sparklineGroups")
 
       invisible(self)
     }
@@ -587,12 +541,14 @@ wbWorksheet <- R6::R6Class(
 
     # @description add data_validation_lst
     # @param datavalidation datavalidation
-    add_data_validation_lst = function(
-      datavalidation
+    do_append_x14 = function(
+      x,
+      s_name,
+      l_name
     ) {
 
-      if (!all(xml_node_name(datavalidation) == "x14:dataValidation"))
-        stop("datavalidation nodes must all be 'x14:dataValidation'")
+      if (!all(xml_node_name(x) == s_name))
+        stop(sprintf("all nodes must match %s. Got %s", s_name, xml_node_name(x)))
 
       # can have length > 1 for multiple xmlns attributes. we take this extLst,
       # inspect it, update if needed and return it
@@ -617,22 +573,21 @@ wbWorksheet <- R6::R6Class(
       # check again and should be exactly one ext node
       is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
 
-      # check for dataValidations and add one if none is found
-      dataValidations <- xml_node(ext, "ext", "x14:dataValidations")
-      if (length(dataValidations) == 0) {
+      # check for l_name and add one if none is found
+      if (length(xml_node(ext, "ext", l_name)) == 0) {
         ext <- xml_add_child(
           ext,
           xml_node_create(
-            "x14:dataValidations",
+            l_name,
             xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
         )
       }
 
-      # add new datavalidation to exisisting dataValidations
+      # add new x to exisisting l_name
       ext <- xml_add_child(
         ext,
-        level = c("x14:dataValidations"),
-        datavalidation
+        level = c(l_name),
+        x
       )
 
       # update extLst and add it back to worksheet

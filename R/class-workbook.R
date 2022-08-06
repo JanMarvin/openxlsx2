@@ -5434,7 +5434,7 @@ wbWorkbook <- R6::R6Class(
       formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
       sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
       xmlData <- xml_add_child(data_val, c(formula, sqref))
-      self$worksheets[[sheet]]$.__enclos_env__$private$add_data_validation_lst(xmlData)
+      self$worksheets[[sheet]]$.__enclos_env__$private$do_append_x14(xmlData, "x14:dataValidation", "x14:dataValidations")
 
       invisible(self)
     },
