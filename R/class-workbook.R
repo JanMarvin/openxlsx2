@@ -556,7 +556,7 @@ wbWorkbook <- R6::R6Class(
       new <- replace_legal_chars(new)
 
       ## copy visibility from cloned sheet!
-      visible <- reg_match0(self$workbook$sheets[[old]], '(?<=state=")[^"]+')
+      visible <- rbindlist(xml_attr(wb$workbook$sheets[[old]], "sheet"))$state
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
@@ -587,7 +587,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
-      self$worksheets_rels[[newSheetIndex]] <- genBaseSheetRels(newSheetIndex)
+      self$worksheets_rels[[newSheetIndex]] <- self$worksheets_rels[[old]]
       self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[old]]
 
       # give each chart its own filename (images can re-use the same file, but charts can't)
@@ -601,7 +601,7 @@ wbWorkbook <- R6::R6Class(
             chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
 
             for (cf in chartfiles) {
-              chartid <- length(.self$charts) + 1L
+              chartid <- length(self$charts) + 1L
               newname <- stri_join("chart", chartid, ".xml")
               fl <- self$charts[cf]
 
@@ -616,14 +616,14 @@ wbWorkbook <- R6::R6Class(
 
               chart <- gsub(
                 stri_join("(?<=')", self$sheet_names[[old]], "(?='!)"),
-                stri_join("'", new, "'"),
+                stri_join(new),
                 chart,
                 perl = TRUE
               )
 
               chart <- gsub(
-                stri_join("(?<=[^A-Za-z0-9])", .self$sheet_names[[old]], "(?=!)"),
-                stri_join("'", new, "'"),
+                stri_join("(?<=[^A-Za-z0-9])", self$sheet_names[[old]], "(?=!)"),
+                stri_join(new),
                 chart,
                 perl = TRUE
               )

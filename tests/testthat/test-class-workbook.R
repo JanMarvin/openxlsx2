@@ -287,3 +287,44 @@ test_that("data validation", {
   expect_equal(exp, got)
 
 })
+
+
+test_that("clone worksheet", {
+
+  # # clone chartsheet
+  # fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  #
+  # wb <- wb_load(fl)
+  # wb$get_sheet_names() # chartsheet has no named name?
+  # wb$clone_worksheet(1, "Clone 1")
+  # wb$open()
+
+  # # clone pivot table and drawing - the pivot table works, drawing not
+  # fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  #
+  # wb <- wb_load(fl)
+  # expect_silent(wb$clone_worksheet(4, "Clone 1"))
+  # wb$open()
+
+  ## Dummy tests - not sure how to test these from R ##
+
+  # clone drawing --
+  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+
+  wb <- wb_load(fl)
+  expect_silent(wb$clone_worksheet("testing", "Clone 1"))
+  # wb$open()
+
+  # clone sheet with table --
+  fl <- system.file("extdata", "tableStyles.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)
+  expect_silent(wb$clone_worksheet(1, "clone"))
+  # wb$open()
+
+  # clone sheet with chart --
+  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)
+  expect_silent(wb$clone_worksheet(2, "clone"))
+  # wb$open()
+
+})
