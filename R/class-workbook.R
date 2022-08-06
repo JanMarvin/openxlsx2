@@ -556,7 +556,7 @@ wbWorkbook <- R6::R6Class(
       new <- replace_legal_chars(new)
 
       ## copy visibility from cloned sheet!
-      visible <- rbindlist(xml_attr(wb$workbook$sheets[[old]], "sheet"))$state
+      visible <- rbindlist(xml_attr(self$workbook$sheets[[old]], "sheet"))$state
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
