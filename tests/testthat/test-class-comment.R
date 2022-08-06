@@ -64,14 +64,12 @@ test_that("load comments", {
   temp <- temp_xlsx()
   wb$save(temp)
 
-  temp_dir <- "comment_ext"
-
-  dir.create(temp_dir)
-  unzip(temp, exdir = temp_dir)
-  comments <- dir(path = paste0(temp_dir, "/xl"), pattern = "comment")
+  tempd <- temp_dir("comment_ext")
+  unzip(temp, exdir = tempd)
+  comments <- dir(path = paste0(tempd, "/xl"), pattern = "comment")
 
   expect_equal(c("comments1.xml", "comments2.xml"), comments)
-  unlink(temp_dir, recursive = TRUE)
+  unlink(tempd, recursive = TRUE)
 
   ## add a new comment to a workbook that has comments
   c1 <- create_comment(text = "this is a comment", author = "")
@@ -79,11 +77,11 @@ test_that("load comments", {
 
   wb$save(temp)
 
-  dir.create(temp_dir)
-  unzip(temp, exdir = temp_dir)
-  comments <- dir(path = paste0(temp_dir, "/xl"), pattern = "comment")
+  tempd <- temp_dir("comment_ext")
+  unzip(temp, exdir = tempd)
+  comments <- dir(path = paste0(tempd, "/xl"), pattern = "comment")
 
   expect_equal(c("comments1.xml", "comments2.xml", "comments3.xml"), comments)
-  unlink(temp_dir, recursive = TRUE)
+  unlink(tempd, recursive = TRUE)
 
 })

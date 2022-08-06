@@ -34,7 +34,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   }
 
   ## create temp dir
-  xmlDir <- tempfile("_openxlsx_wb_load")
+  xmlDir <- temp_dir("_openxlsx_wb_load")
+
   # do not unlink after loading
   # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 

@@ -52,6 +52,25 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
   tempfile(pattern = paste0(name, "_"), fileext = fileext)
 }
 
+#' helper function to create temporary directory for testing purpose
+#' @param pattern pattern from `base::tempfile()`
+#' @keywords internal
+#' @noRd
+temp_dir <- function(pattern = "file") {
+
+  tmpDir <- file.path(tempfile(pattern))
+  if (dir.exists(tmpDir)) {
+    unlink(tmpDir, recursive = TRUE, force = TRUE)
+  }
+
+  success <- dir.create(path = tmpDir, recursive = FALSE)
+  if (!success) { # nocov start
+    stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
+  } # nocov end
+
+  tmpDir
+}
+
 openxlsx2_options <- function() {
   options(
     # increase scipen to avoid writing in scientific
@@ -82,7 +101,7 @@ has_chr <- function(x, na = FALSE) {
   vapply(nzchar(x, keepNA = !na), isTRUE, NA)
 }
 
-dir_create <- function(..., warn = TRUE, recurse = TRUE) {
+dir_create <- function(..., warn = TRUE, recurse = FALSE) {
   # create path and directory -- returns path
   path <- file.path(...)
   dir.create(path, showWarnings = warn, recursive = recurse)
