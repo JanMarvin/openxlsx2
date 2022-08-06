@@ -187,9 +187,10 @@ test_that("additional wb tests", {
   # types
   # Var1 is requested as character
   exp <- data.frame(Var1 = c("TRUE", "TRUE", "TRUE", "FALSE"),
-                    Var3 = c(1.00, NaN, 1.34, NA))
-  got <- wb_to_df(wb1, cols = c(1, 4),
-                  types = c("Var1" = 0, "Var3" = 1))[seq_len(4),]
+                    Var3 = c(1.00, NA, 1.34, NA))
+  expect_warning(got <- wb_to_df(wb1, cols = c(1, 4),
+                  types = c("Var1" = 0, "Var3" = 1))[seq_len(4),],
+                 "NAs introduced by coercion")
   expect_equal(exp, got, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 })

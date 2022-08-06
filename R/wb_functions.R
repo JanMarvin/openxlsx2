@@ -581,7 +581,7 @@ wb_to_df <- function(
       logs <- names( which(types[sel] == 4) )
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
+      if (length(nums)) z[nums] <- lapply(z[nums], as.numeric)
       if (length(dtes)) z[dtes] <- lapply(z[dtes], as.Date)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], as.POSIXct)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
