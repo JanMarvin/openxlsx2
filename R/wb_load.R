@@ -41,6 +41,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   ## Unzip files to temp directory
   xmlFiles <- unzip(file, exdir = xmlDir)
+  # we need to read the files in human order: 1, 2, 10 and not 1, 10, 2.
   ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))
   xmlFiles <- xmlFiles[ordr]
 
@@ -48,7 +49,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
     # targets xmlFiles; has presents
-    z <- grep(pattern, xmlFiles, perl = perl, value = value, ...)
+    grep(pattern, xmlFiles, perl = perl, value = value, ...)
   }
 
   ## Not used
