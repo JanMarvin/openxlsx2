@@ -44,9 +44,6 @@ wbWorksheet <- R6::R6Class(
     #' @field dataValidations dataValidations
     dataValidations = NULL,
 
-    #' @field dataValidationsLst dataValidationsLst
-    dataValidationsLst = character(),
-
     #' @field freezePane freezePane
     freezePane = character(),
 
@@ -208,7 +205,6 @@ wbWorksheet <- R6::R6Class(
       self$mergeCells            <- character()
       self$conditionalFormatting <- character()
       self$dataValidations       <- NULL
-      self$dataValidationsLst    <- character()
       self$hyperlinks            <- list()
       self$pageMargins           <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s"/>', paperSize, orientation, hdpi, vdpi)
@@ -358,21 +354,12 @@ wbWorksheet <- R6::R6Class(
           paste0(sprintf('<tableParts count="%i">', n), pxml(self$tableParts), "</tableParts>")
         },
 
-        # extLst, dataValidationsLst
-        # parenthese or R gets confused with the ||
-        if ((length(self$extLst)) || (length(self$dataValidationsLst))) {
+        # extLst
+        if (length(self$extLst)) {
           sprintf(
             "<extLst>%s</extLst>",
             paste0(
-              pxml(self$extLst),
-              # dataValidationsLst_xml
-              if (length(self$dataValidationsLst)) {
-                paste0(
-                  sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
-                  paste0(pxml(self$dataValidationsLst), "</x14:dataValidations></ext>"),
-                  collapse = ""
-                )
-              }
+              pxml(self$extLst)
             )
           )
         },
@@ -540,8 +527,28 @@ wbWorksheet <- R6::R6Class(
       sparklines
     ) {
 
-      if (!all(xml_node_name(sparklines) == "x14:sparklineGroup"))
-        stop("sparklines nodes must all be 'x14:sparklineGroup'")
+      private$do_append_x14(sparklines, "x14:sparklineGroup", "x14:sparklineGroups")
+
+      invisible(self)
+    }
+  ),
+
+  ## private ----
+  private = list(
+    # These were commented out in the RC object -- not sure if they're needed
+    cols                  = NULL,
+    sheetData             = NULL,
+
+    # @description add data_validation_lst
+    # @param datavalidation datavalidation
+    do_append_x14 = function(
+      x,
+      s_name,
+      l_name
+    ) {
+
+      if (!all(xml_node_name(x) == s_name))
+        stop(sprintf("all nodes must match %s. Got %s", s_name, xml_node_name(x)))
 
       # can have length > 1 for multiple xmlns attributes. we take this extLst,
       # inspect it, update if needed and return it
@@ -566,22 +573,21 @@ wbWorksheet <- R6::R6Class(
       # check again and should be exactly one ext node
       is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
 
-      # check for sparklineGroups and add one if none is found
-      sparklineGroups <- xml_node(ext, "ext", "x14:sparklineGroups")
-      if (length(sparklineGroups) == 0) {
+      # check for l_name and add one if none is found
+      if (length(xml_node(ext, "ext", l_name)) == 0) {
         ext <- xml_add_child(
           ext,
           xml_node_create(
-            "x14:sparklineGroups",
+            l_name,
             xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
         )
       }
 
-      # add new sparklines to exisisting sparklineGroups
+      # add new x to exisisting l_name
       ext <- xml_add_child(
         ext,
-        level = c("x14:sparklineGroups"),
-        sparklines
+        level = c(l_name),
+        x
       )
 
       # update extLst and add it back to worksheet
@@ -589,14 +595,107 @@ wbWorksheet <- R6::R6Class(
       self$extLst <- extLst
 
       invisible(self)
-    }
-  ),
+    },
 
-  ## private ----
-  private = list(
-    # These were commented out in the RC object -- not sure if they're needed
-    cols                  = NULL,
-    sheetData             = NULL
+    data_validation = function(
+      type,
+      operator,
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt,
+      origin,
+      sqref
+    ) {
+
+      header <- xml_node_create(
+        "dataValidation",
+        xml_attributes = c(
+          type = type,
+          operator = operator,
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          sqref = sqref,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
+        )
+      )
+
+      if (type == "date") {
+        value <- as.integer(value) + origin
+      }
+
+      if (type == "time") {
+        t <- format(value[1], "%z")
+        offSet <-
+          suppressWarnings(
+            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
+              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
+            ) / 24
+          )
+        if (is.na(offSet)) {
+          offSet[i] <- 0
+        }
+
+        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      }
+
+      form <- sapply(
+        seq_along(value),
+        function(i) {
+          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
+        }
+      )
+
+      self$append("dataValidations", xml_add_child(header, form))
+      invisible(self)
+    },
+
+    # data validations list goes to extLst not to worksheet
+    data_validation_list = function(
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt,
+      sqref
+    ) {
+
+      data_val <- xml_node_create(
+        "x14:dataValidation",
+        xml_attributes = c(
+          type = "list",
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
+        )
+      )
+
+      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
+      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
+      xmlData <- xml_add_child(data_val, c(formula, sqref))
+      private$do_append_x14(xmlData, "x14:dataValidation", "x14:dataValidations")
+
+      invisible(self)
+    }
   )
 )
 

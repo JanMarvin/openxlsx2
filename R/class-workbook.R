@@ -2467,6 +2467,9 @@ wbWorkbook <- R6::R6Class(
       promptTitle = NULL,
       prompt = NULL
     ) {
+
+      sheet <- private$get_sheet_index(sheet)
+
       ## rows and cols
       if (!is.numeric(cols)) {
         cols <- col2int(cols)
@@ -2539,13 +2542,20 @@ wbWorkbook <- R6::R6Class(
       showInputMsg <- as.character(as.integer(showInputMsg[1]))
       showErrorMsg <- as.character(as.integer(showErrorMsg[1]))
 
+      # prepare for worksheet
+      origin <- get_date_origin(self, origin = TRUE)
+
+      sqref <- stri_join(
+        get_cell_refs(data.frame(
+          "x" = c(min(rows), max(rows)),
+          "y" = c(min(cols), max(cols))
+        )),
+        sep = " ",
+        collapse = ":"
+      )
+
       if (type == "list") {
-        private$data_validation_list(
-          sheet        = sheet,
-          startRow     = min(rows),
-          endRow       = max(rows),
-          startCol     = min(cols),
-          endCol       = max(cols),
+        self$worksheets[[sheet]]$.__enclos_env__$private$data_validation_list(
           value        = value,
           allowBlank   = allowBlank,
           showInputMsg = showInputMsg,
@@ -2554,15 +2564,11 @@ wbWorkbook <- R6::R6Class(
           errorTitle   = errorTitle,
           error        = error,
           promptTitle  = promptTitle,
-          prompt       = prompt
+          prompt       = prompt,
+          sqref        = sqref
         )
       } else {
-        private$data_validation(
-          sheet        = sheet,
-          startRow     = min(rows),
-          endRow       = max(rows),
-          startCol     = min(cols),
-          endCol       = max(cols),
+        self$worksheets[[sheet]]$.__enclos_env__$private$data_validation(
           type         = type,
           operator     = operator,
           value        = value,
@@ -2573,7 +2579,9 @@ wbWorkbook <- R6::R6Class(
           errorTitle   = errorTitle,
           error        = error,
           promptTitle  = promptTitle,
-          prompt       = prompt
+          prompt       = prompt,
+          origin       = origin,
+          sqref        = sqref
         )
       }
 
@@ -3922,7 +3930,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(sheets) != length(self$worksheets)) {
-        stop(sprintf("Worksheet order must be same length as number of worksheets [%s]", length(wb$worksheets)))
+        stop(sprintf("Worksheet order must be same length as number of worksheets [%s]", length(self$worksheets)))
       }
 
       if (any(sheets > length(self$worksheets))) {
@@ -5283,157 +5291,6 @@ wbWorkbook <- R6::R6Class(
         } ## end of isChartSheet[i]
       } ## end of loop through nSheets
 
-      invisible(self)
-    },
-
-    data_validation = function(
-      sheet = current_sheet(),
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      type,
-      operator,
-      value,
-      allowBlank,
-      showInputMsg,
-      showErrorMsg,
-      errorStyle,
-      errorTitle,
-      error,
-      promptTitle,
-      prompt
-    ) {
-      # TODO rename: setDataValidation?
-      # TODO can this be moved to the worksheet class?
-      sheet <- private$get_sheet_index(sheet)
-      sqref <-
-        stri_join(get_cell_refs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )),
-          sep = " ",
-          collapse = ":"
-        )
-
-      header <- xml_node_create(
-        "dataValidation",
-        xml_attributes = c(
-          type = type,
-          operator = operator,
-          allowBlank = allowBlank,
-          showInputMessage = showInputMsg,
-          showErrorMessage = showErrorMsg,
-          sqref = sqref,
-          errorStyle = errorStyle,
-          errorTitle = errorTitle,
-          error = error,
-          promptTitle = promptTitle,
-          prompt = prompt
-        )
-      )
-
-      # TODO consider switch(type, date = ..., time = ..., )
-      if (type == "date") {
-        # TODO consider origin <- if () ... else ...
-        origin <- 25569L
-        # TODO would it be faster to just search each self$workbook instead of
-        # trying to unlist and join everything?
-        if (grepl(
-          'date1904="1"|date1904="true"',
-          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
-          ignore.case = TRUE
-        )) {
-          origin <- 24107L
-        }
-
-        value <- as.integer(value) + origin
-      }
-
-      if (type == "time") {
-        # TODO simplify with above?  This is the same thing?
-        origin <- 25569L
-        if (grepl(
-          'date1904="1"|date1904="true"',
-          stri_join(unlist(self$workbook), sep = " ", collapse = ""),
-          ignore.case = TRUE
-        )) {
-          origin <- 24107L
-        }
-
-        t <- format(value[1], "%z")
-        offSet <-
-          suppressWarnings(
-            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
-              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
-            ) / 24
-          )
-        if (is.na(offSet)) {
-          offSet[i] <- 0
-        }
-
-        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
-      }
-
-      form <- sapply(
-        seq_along(value),
-        function(i) {
-          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
-        }
-      )
-
-      private$append_sheet_field(sheet, "dataValidations", xml_add_child(header, form))
-      invisible(self)
-    },
-
-    # TODO can this be merged with above?
-    data_validation_list = function(
-      sheet = current_sheet(),
-      startRow,
-      endRow,
-      startCol,
-      endCol,
-      value,
-      allowBlank,
-      showInputMsg,
-      showErrorMsg,
-      errorStyle,
-      errorTitle,
-      error,
-      promptTitle,
-      prompt
-    ) {
-      # TODO consider some defaults to logicals
-      # TODO rename: setDataValidationList?
-      sheet <- private$get_sheet_index(sheet)
-      sqref <-
-        stri_join(get_cell_refs(data.frame(
-          "x" = c(startRow, endRow),
-          "y" = c(startCol, endCol)
-        )),
-          sep = " ",
-          collapse = ":"
-        )
-
-      data_val <- xml_node_create(
-        "x14:dataValidation",
-        xml_attributes = c(
-          type = "list",
-          allowBlank = allowBlank,
-          showInputMessage = showInputMsg,
-          showErrorMessage = showErrorMsg,
-          errorStyle = errorStyle,
-          errorTitle = errorTitle,
-          error = error,
-          promptTitle = promptTitle,
-          prompt = prompt
-        )
-      )
-
-      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
-      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-      xmlData <- xml_add_child(data_val, c(formula, sqref))
-      private$append_sheet_field(sheet, "dataValidationsLst", xmlData)
       invisible(self)
     },
 

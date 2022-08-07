@@ -1552,7 +1552,7 @@ wb_add_data_validation <- function(
     prompt = NULL
 ) {
   assert_workbook(wb)
-  wb$clone()$add_data_validation(
+  wb$clone(deep = TRUE)$add_data_validation(
     sheet        = sheet,
     cols         = cols,
     rows         = rows,
@@ -1635,7 +1635,7 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 #' ## In Excel: View tab -> Page Break Preview
 wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)
-  wb$clone()$add_page_break(sheet = sheet, row = row, col = col)
+  wb$clone(deep = TRUE)$add_page_break(sheet = sheet, row = row, col = col)
 }
 
 
@@ -1976,7 +1976,7 @@ wb_clean_sheet <- function(
     merged_cells = TRUE
 ) {
   assert_workbook(wb)
-  wb$clone()$clean_sheet(
+  wb$clone(deep = TRUE)$clean_sheet(
     sheet        = sheet,
     numbers      = numbers,
     characters   = characters,
@@ -2498,5 +2498,5 @@ wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
 #' @export
 wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   assert_workbook(wb)
-  wb$clone()$add_sparklines(sheet, sparklines)
+  wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }
