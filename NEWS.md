@@ -14,6 +14,8 @@
 
 ## Internal changes
 
+* Moving the data validation code from the workbook to the worksheet. Also, `data_validation_list()` is no longer stored in `dataValidationLst`. It has been moved to `extLst`, fixing a bug when saving and adding another data validation list. The code for retrieving the date origin from a workbook has been improved and `get_date_origin(wb, origin = TRUE)` now returns the origin as an integer from a `wbWorkbook`. [299](https://github.com/JanMarvin/openxlsx2/pull/299)
+
 * Removed level4 from XML functions. There was only a single use case for a level4 function that has been solved differently. If level4 is needed, this can be solved using a level3 and additional level2 functions. In addition xml_nodes now return nodes for all reachable nestings, therefore `xml_node("<a/><a/>", "a")` will now return a character vector of length two. For `xml_node("<a/><b/>", "a")` only a single character vector is returned. [280](https://github.com/JanMarvin/openxlsx2/issues/280)
 
 * Changes to various internal pugixml functions, to improve handling of XML strings. [279](https://github.com/JanMarvin/openxlsx2/issues/279)
