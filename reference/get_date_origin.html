@@ -69,13 +69,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_date_origin</span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_date_origin</span><span class="op">(</span><span class="va">xlsxFile</span>, origin <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>xlsxFile</dt>
-<dd><p>An xlsx or xlsm file.</p></dd>
+<dd><p>An xlsx or xlsm file or a wbWorkbook object.</p></dd>
+
+
+<dt>origin</dt>
+<dd><p>return the origin instead of the character string.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -106,6 +110,10 @@ checks the date origin being used in an Excel file and returns is so it can be u
 <span class="r-in"><span><span class="va">do</span> <span class="op">&lt;-</span> <span class="fu">get_date_origin</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="convert_date.html">convert_date</a></span><span class="op">(</span><span class="va">m</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">do</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu">get_date_origin</span><span class="op">(</span><span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1900-01-01"</span>
+<span class="r-in"><span><span class="fu">get_date_origin</span><span class="op">(</span><span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span>, origin <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 25569</span>
 </code></pre></div>
     </div>
   </div>
