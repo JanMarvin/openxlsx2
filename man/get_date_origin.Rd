@@ -4,10 +4,12 @@
 \alias{get_date_origin}
 \title{Get the date origin an xlsx file is using}
 \usage{
-get_date_origin(xlsxFile)
+get_date_origin(xlsxFile, origin = FALSE)
 }
 \arguments{
-\item{xlsxFile}{An xlsx or xlsm file.}
+\item{xlsxFile}{An xlsx or xlsm file or a wbWorkbook object.}
+
+\item{origin}{return the origin instead of the character string.}
 }
 \value{
 One of "1900-01-01" or "1904-01-01".
@@ -30,6 +32,8 @@ m <- read_xlsx("get_date_originExample.xlsx")
 do <- get_date_origin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 convert_date(m[[1]], do)
 }
+get_date_origin(wb_workbook())
+get_date_origin(wb_workbook(), origin = TRUE)
 }
 \seealso{
 \code{\link[=convert_date]{convert_date()}}

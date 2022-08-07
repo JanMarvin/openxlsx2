@@ -595,6 +595,106 @@ wbWorksheet <- R6::R6Class(
       self$extLst <- extLst
 
       invisible(self)
+    },
+
+    data_validation = function(
+      type,
+      operator,
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt,
+      origin,
+      sqref
+    ) {
+
+      header <- xml_node_create(
+        "dataValidation",
+        xml_attributes = c(
+          type = type,
+          operator = operator,
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          sqref = sqref,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
+        )
+      )
+
+      if (type == "date") {
+        value <- as.integer(value) + origin
+      }
+
+      if (type == "time") {
+        t <- format(value[1], "%z")
+        offSet <-
+          suppressWarnings(
+            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
+              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
+            ) / 24
+          )
+        if (is.na(offSet)) {
+          offSet[i] <- 0
+        }
+
+        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      }
+
+      form <- sapply(
+        seq_along(value),
+        function(i) {
+          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
+        }
+      )
+
+      self$append("dataValidations", xml_add_child(header, form))
+      invisible(self)
+    },
+
+    # data validations list goes to extLst not to worksheet
+    data_validation_list = function(
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt,
+      sqref
+    ) {
+
+      data_val <- xml_node_create(
+        "x14:dataValidation",
+        xml_attributes = c(
+          type = "list",
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
+        )
+      )
+
+      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
+      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
+      xmlData <- xml_add_child(data_val, c(formula, sqref))
+      private$do_append_x14(xmlData, "x14:dataValidation", "x14:dataValidations")
+
+      invisible(self)
     }
   )
 )

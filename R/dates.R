@@ -76,7 +76,8 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #' @name get_date_origin
 #' @title Get the date origin an xlsx file is using
 #' @description Return the date origin used internally by an xlsx or xlsm file
-#' @param xlsxFile An xlsx or xlsm file.
+#' @param xlsxFile An xlsx or xlsm file or a wbWorkbook object.
+#' @param origin return the origin instead of the character string.
 #' @details Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
 #' checks the date origin being used in an Excel file and returns is so it can be used in [convert_date()]
 #' @return One of "1900-01-01" or "1904-01-01".
@@ -92,32 +93,22 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #' do <- get_date_origin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' convert_date(m[[1]], do)
 #' }
+#' get_date_origin(wb_workbook())
+#' get_date_origin(wb_workbook(), origin = TRUE)
 #' @export
-get_date_origin <- function(xlsxFile) {
+get_date_origin <- function(xlsxFile, origin = FALSE) {
+  
   # TODO: allow using a workbook?
-  xlsxFile <- getFile(xlsxFile)
+  if (!inherits(xlsxFile, "wbWorkbook"))
+    xlsxFile <- wb_load(xlsxFile) 
 
-  if (!file.exists(xlsxFile)) {
-    stop("File does not exist.")
+  if (grepl('date1904="1"|date1904="true"', xlsxFile$workbook$workbookPr, ignore.case = TRUE)) {
+    z <- ifelse(origin, 24107L, "1904-01-01")
+  } else {
+    z <- ifelse(origin, 25569L, "1900-01-01")
   }
 
-  if (grepl("\\.xls$|\\.xlm$", xlsxFile)) {
-    stop("openxlsx can not read .xls or .xlm files!")
-  }
-
-  ## create temp dir and unzip
-  xmlDir <- temp_dir("_excelXMLRead")
-  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
-
-  xmlFiles <- unzip(xlsxFile, exdir = xmlDir)
-  workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- read_xml(workbook, pointer = FALSE)
-
-  if (grepl('date1904="1"|date1904="true"', workbook, ignore.case = TRUE)) {
-    return("1904-01-01")
-  }
-
-  "1900-01-01"
+  z
 }
 
 #' convert back to ExcelDate
