@@ -1,1 +1,41 @@
 destination: docs
+
+reference:
+- title: Main
+  contents:
+  - read_xlsx
+  - write_xlsx
+  - wbWorkbook
+
+- title: wb functions
+  contents:
+  - wb_workbook
+  - wb_load
+  - wb_save
+  - wb_to_df
+  - wb_read
+
+- title: wb add and remove functions
+  contents:
+  - starts_with("wb_add_")
+  - starts_with("wb_remove_")
+
+- title: wb get and set functions
+  contents:
+  - starts_with("wb_get_")
+  - starts_with("wb_set_")
+
+- title: create functions
+  contents:
+  - starts_with("create_")
+
+- title: XML functions
+  desc: A curated list of XML functions used in openxlsx2.
+  contents:
+  - read_xml
+  - starts_with("xml_")
+  - as_xml
+
+- title: All functions
+  contents:
+  - matches(".*")
