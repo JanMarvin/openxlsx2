@@ -45,6 +45,8 @@ Returns sheet visibility
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
+
+a character vector of cell styles
 }
 \description{
 R6 class for a Workbook
@@ -2321,6 +2323,9 @@ get sheet style
 \item{\code{style}}{style}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
