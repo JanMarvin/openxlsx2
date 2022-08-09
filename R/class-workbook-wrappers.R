@@ -2015,6 +2015,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 }
 
 #' get cell style
+#' @param wb wb
 #' @param sheet sheet
 #' @param dims dims
 #' @export
@@ -2024,6 +2025,7 @@ wb_get_cell_style <- function(wb, sheet, dims) {
 }
 
 #' get cell style
+#' @param wb wb
 #' @param sheet sheet
 #' @param dims dims
 #' @param style style

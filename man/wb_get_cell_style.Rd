@@ -7,6 +7,8 @@
 wb_get_cell_style(wb, sheet, dims)
 }
 \arguments{
+\item{wb}{wb}
+
 \item{sheet}{sheet}
 
 \item{dims}{dims}
