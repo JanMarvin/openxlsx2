@@ -110,7 +110,7 @@ wb$styles_mgr$add(new_cellxfs, "new_styles")
 
 # assign the new cell style to the header row of our data set
 cell <- sprintf("A1:%s1", int2col(nrow(mat)))
-set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("new_styles"))
+wb_set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("new_styles"))
 
 ## style the cells with some builtin format codes (no new numFmt entry is needed)
 # add builtin style ids
@@ -130,7 +130,7 @@ for (i in seq_along(x)) {
 new_styles <- wb$styles_mgr$get_xf()
 for (i in as.integer(new_styles$id[new_styles$name %in% paste0("new_style", seq_along(x))])) {
   cell <- sprintf("%s2:%s29", int2col(i), int2col(i))
-  set_cell_style(wb, "test", cell, i)
+  wb_set_cell_style(wb, "test", cell, i)
 }
 
 # assign a custom tabColor
@@ -320,9 +320,9 @@ wb$styles_mgr$add(bottom_cellxfs, "bottom_styles")
 
 # assign the new cell style to the header row of our data set
 cell <- "B2:C2"
-set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("top_styles"))
+wb_set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("top_styles"))
 cell <- "B4:C4"
-set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
+wb_set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
 ```
 
 ### Use workbook colors and modify them
