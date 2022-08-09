@@ -2014,6 +2014,25 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   wb$clone()$add_style(style, style_name)
 }
 
+#' get cell style
+#' @param sheet sheet
+#' @param dims dims
+#' @export
+wb_get_cell_style <- function(wb, sheet, dims) {
+  assert_workbook(wb)
+  wb$get_cell_style(sheet, dims)
+}
+
+#' get cell style
+#' @param sheet sheet
+#' @param dims dims
+#' @param style style
+#' @export
+wb_set_cell_style <- function(wb, sheet, dims, style) {
+  assert_workbook(wb)
+  wb$clone()$set_cell_style(sheet, dims, style)
+}
+
 #' add border for cell region
 #'
 #' @description wb wrapper to create borders for cell region

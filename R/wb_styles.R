@@ -326,7 +326,7 @@ create_font <- function(
   }
 
   if(is.null(name)) name <- ""
-  
+
   if (name != "") {
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
@@ -769,7 +769,7 @@ styles_on_sheet <- function(wb, sheet) {
 #' @param cell cell
 #' @noRd
 get_cell_styles <- function(wb, sheet, cell) {
-  z <- get_cell_style(wb, sheet, cell)
+  z <- wb$get_cell_style(sheet, cell)
   id <- vapply(z, function(x) {
     out <- which(wb$styles_mgr$get_xf()$id %in% x)
     if (identical(out,integer())) out <- 1L
@@ -786,16 +786,8 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' @param cell a cell
 #' @export
 get_cell_style <- function(wb, sheet, cell) {
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # if a range is passed (e.g. "A1:B2") we need to get every cell
-  if (length(cell) == 1 && grepl(":", cell))
-    cell <- unname(unlist(dims_to_dataframe(cell, fill = TRUE)))
-
-  # TODO check that cc$r is alway valid. not sure atm
-  sel <- wb$worksheets[[sheet]]$sheet_data$cc$r %in% cell
-  wb$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
+  .Deprecated("wb_get_cell_style")
+  wb_get_cell_style(wb, sheet, dims = cell)
 }
 
 
@@ -834,21 +826,8 @@ get_cell_style <- function(wb, sheet, cell) {
 #' }
 #' @export
 set_cell_style <- function(wb, sheet, cell, value) {
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  # pass multiple characters
-  if (length(cell) == 1 && grepl(":", cell))
-    cell <- sapply(cell, function(x) as.character(unlist(dims_to_dataframe(x, fill = TRUE))))
-  cc <- wb$worksheets[[sheet]]$sheet_data$cc
-
-  cc$cell <- paste0(cc$c_r, cc$row_r)
-
-  sel <- cc$cell %in% cell
-  cc$c_s[sel] <- value
-  cc$cell <- NULL
-
-  wb$worksheets[[sheet]]$sheet_data$cc <- cc
+  .Deprecated("wb_set_cell_style")
+  wb_set_cell_style(wb, sheet, dims = cell, style = value)
 }
 
 #' @name create_dxfs_style
@@ -903,7 +882,7 @@ create_dxfs_style <- function(
                       u = text_underline,
                       family = "", scheme = "")
 
-  if (!is.null(bgFill) && bgFill != "") 
+  if (!is.null(bgFill) && bgFill != "")
     fill <- create_fill(patternType = "solid", bgColor = bgFill)
   else
     fill <- NULL
