@@ -4948,7 +4948,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
 
       # This alters the workbook
-      temp <- private$do_cell_init(sheet, dims)
+      temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
 
       # if a range is passed (e.g. "A1:B2") we need to get every cell
       dims <- unname(unlist(dims))
