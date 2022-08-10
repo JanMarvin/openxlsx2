@@ -324,3 +324,30 @@ set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("top_styles"))
 cell <- "B4:C4"
 set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
 ```
+
+### Use workbook colors and modify them
+
+The loop below will apply the tint attribute to the fill color
+
+```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="Tint variations of the theme colors."}
+knitr::include_graphics("color_tint.png")
+```
+
+```{r}
+wb <- wb_workbook() %>% wb_add_worksheet("S1")
+
+tints <- seq(-0.9, 0.9, by = 0.1)
+
+for (i in 0:9) {
+  for (tnt in tints) {
+    
+    col <- paste0(int2col(i+1), which(tints %in% tnt))
+  
+    if (tnt == 0)
+      wb <- wb %>%  wb_add_fill(dims = col, color = c(theme=as.character(i)))
+    else 
+      wb <- wb %>%  wb_add_fill(dims = col, color = c(theme=as.character(i), tint = tnt))  
+  }
+}
+```
+

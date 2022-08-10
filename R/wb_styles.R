@@ -304,7 +304,7 @@ create_font <- function(
     charset <- xml_node_create("charset", xml_attributes = c("val" = charset))
   }
 
-  if (color != "") {
+  if (!all(color == "")) {
     # alt xml_attributes(theme:)
     color <- xml_node_create("color", xml_attributes = color)
   }
@@ -433,7 +433,7 @@ create_fill <- function(
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
   }
 
-  if (fgColor != "") {
+  if (!all(fgColor == "")) {
     fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
