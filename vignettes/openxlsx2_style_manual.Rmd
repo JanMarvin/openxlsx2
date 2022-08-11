@@ -49,8 +49,8 @@ wb <- wb_workbook() %>%
                 left_color = border_col, left_border = border_sty,
                 right_color = border_col, right_border = border_sty,
                 inner_hcolor = border_col, inner_hgrid = border_sty) %>% 
-  wb_add_fill("test", "A1:AB1", color = wb_color(rgb = "FF334E6F")) %>% 
-  wb_add_font("test", "A1:AB1", name = "Arial", bold = "1", color= wb_color(rgb = "FFFFFFFF"), size = "20") %>%
+  wb_add_fill("test", "A1:AB1", color = wb_color(hex = "FF334E6F")) %>% 
+  wb_add_font("test", "A1:AB1", name = "Arial", bold = "1", color= wb_color(hex = "FFFFFFFF"), size = "20") %>%
   wb_add_cell_style("test", "A1:AB1", horizontal = "center", textRotation = "45")
 
 # create various number formats
@@ -89,11 +89,11 @@ wb$styles_mgr$add(new_border, "new_border")
 
 
 # create a fill style and assign it to the workbook
-new_fill <- create_fill(patternType = "solid", fgColor = wb_color(rgb = "FF334E6F"))
+new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FF334E6F"))
 wb$styles_mgr$add(new_fill, "new_fill")
 
 # create a font style and assign it to the workbook
-new_font <- create_font(sz = "20", name = "Arial", b = "1", color = wb_color(rgb = "FFFFFFFF"))
+new_font <- create_font(sz = "20", name = "Arial", b = "1", color = wb_color(hex = "FFFFFFFF"))
 wb$styles_mgr$add(new_font, "new_font")
 
 # create a new cell style, that uses the fill, the font and the border style
@@ -138,7 +138,7 @@ wb$worksheets[[1]]$sheetPr <- xml_node_create(
   "sheetPr",
   xml_children = xml_node_create(
     "tabColor",
-    xml_attributes = wb_color(rgb = "FF00FF00")$get()))
+    xml_attributes = wb_color(hex = "FF00FF00")))
 
 # # look at the beauty you've created
 # wb_open(wb)

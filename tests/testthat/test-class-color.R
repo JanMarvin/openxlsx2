@@ -5,14 +5,13 @@ test_that("class color works", {
 
 test_that("get()", {
 
-  z <- wb_color("black")
-
   exp <- c(rgb = "FF000000")
-  got <- z$get()
-  expect_equal(exp, got)
+  expect_false(is_wbColor(exp))
 
-  exp <- "<color rgb=\"FF000000\"/>"
-  got <- z$to_xml()
+  class(exp) <- c("character", "wbColor")
+  got <- wb_color("black")
+
+  expect_true(is_wbColor(got))
   expect_equal(exp, got)
 
 })

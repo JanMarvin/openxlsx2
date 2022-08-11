@@ -21,8 +21,8 @@ library(openxlsx2)
 
 ```{r}
 wb <- wb_workbook()
-negStyle <- create_dxfs_style(font_color = wb_color(rgb = "FF9C0006"), bgFill = wb_color(rgb = "FFFFC7CE"))
-posStyle <- create_dxfs_style(font_color = wb_color(rgb = "FF006100"), bgFill = wb_color(rgb = "FFC6EFCE"))
+negStyle <- create_dxfs_style(font_color = wb_color(hex = "FF9C0006"), bgFill = wb_color(hex = "FFFFC7CE"))
+posStyle <- create_dxfs_style(font_color = wb_color(hex = "FF006100"), bgFill = wb_color(hex = "FFC6EFCE"))
 wb$styles_mgr$add(negStyle, "negStyle")
 wb$styles_mgr$add(posStyle, "posStyle")
 ```

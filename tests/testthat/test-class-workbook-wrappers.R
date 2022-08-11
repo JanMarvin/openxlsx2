@@ -389,7 +389,7 @@ test_that("wb_clone_sheet_style() is a wrapper", {
   wb <- wb_workbook()$
     add_worksheet(1)$add_data(x = mtcars)$
     add_worksheet(2)$add_data(x = mtcars)
-  wb$add_fill(sheet = 1, dims = "D5:J23", color = wb_color(rgb = "FFFFFF00"))
+  wb$add_fill(sheet = 1, dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
   expect_wrapper(
     "clone_sheet_style",
     wb = wb,
