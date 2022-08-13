@@ -38,8 +38,8 @@ hidden.}
 \item{rowColHeaders}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
 hidden.}
 
-\item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
-colours()) or a valid hex colour beginning with "#"}
+\item{tabColour}{Colour of the worksheet tab. A valid color (belonging to
+colors()) or a valid hex color beginning with "#"}
 
 \item{zoom}{A numeric between 10 and 400. Worksheet zoom level as a
 percentage.}

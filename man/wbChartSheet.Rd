@@ -51,7 +51,7 @@ Create a new workbook chart sheet object
 \describe{
 \item{\code{tabSelected}}{\code{logical}, if \code{TRUE} ...}
 
-\item{\code{tabColour}}{\code{character} a tab colour to set}
+\item{\code{tabColour}}{\code{character} a tab color to set}
 
 \item{\code{zoom}}{The zoom level as a single integer}
 }

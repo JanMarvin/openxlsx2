@@ -67,7 +67,7 @@ p1 <- qplot(mpg,
   fill = as.factor(gear), alpha = I(.5), main = "Distribution of Gas Mileage"
 )
 p2 <- qplot(age, circumference,
-  data = Orange, geom = c("point", "line"), colour = Tree
+  data = Orange, geom = c("point", "line"), color = Tree
 )
 
 ## Insert currently displayed plot to sheet 1, row 1, column 1

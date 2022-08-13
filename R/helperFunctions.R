@@ -122,36 +122,36 @@ getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
 
 #' @name validateColour
-#' @description validate the colour input
-#' @param colour colour
+#' @description validate the color input
+#' @param color color
 #' @param errorMsg Error message
 #' @keywords internal
 #' @noRd
-validateColour <- function(colour, errorMsg = "Invalid colour!") {
-  colour <- check_valid_colour(colour)
+validateColour <- function(color, errorMsg = "Invalid color!") {
+  color <- check_valid_color(color)
 
-  if (isFALSE(colour)) {
+  if (isFALSE(color)) {
     stop(errorMsg)
   }
 
-  colour
+  color
 }
 
-check_valid_colour <- function(colour) {
+check_valid_color <- function(color) {
   # Not proud of this.  Returns FALSE if not a vaild, otherwise  cleans up.
   # Probably not the best, but working within the functions we alreayd have.
-  if (is.null(colour)) {
-    colour <- "black"
+  if (is.null(color)) {
+    color <- "black"
   }
 
-  validColours <- colours()
+  validColours <- grDevices::colors()
 
-  if (any(colour %in% validColours)) {
-    colour[colour %in% validColours] <- col2hex(colour[colour %in% validColours])
+  if (any(color %in% validColours)) {
+    color[color %in% validColours] <- col2hex(color[color %in% validColours])
   }
 
-  if (all(grepl("^#[A-Fa-f0-9]{6}$", colour))) {
-    gsub("^#", "FF", toupper(colour))
+  if (all(grepl("^#[A-Fa-f0-9]{6}$", color))) {
+    gsub("^#", "FF", toupper(color))
   } else {
     FALSE
   }
@@ -444,8 +444,8 @@ create_sparklines <- function(
   assert_class(dims, "character")
   assert_class(sqref, "character")
 
-  ## FIXME validate_colour barks
-  # colorSeries <- validate_colour(colorSeries)
+  ## FIXME validate_color barks
+  # colorSeries <- validate_color(colorSeries)
 
   if (!is.null(type) && !type %in% c("stacked", "column"))
     stop("type must be NULL, stacked or column")

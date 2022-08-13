@@ -28,7 +28,7 @@ wbChartSheet <- R6::R6Class(
     #' @description
     #' Create a new workbook chart sheet object
     #' @param tabSelected `logical`, if `TRUE` ...
-    #' @param tabColour `character` a tab colour to set
+    #' @param tabColour `character` a tab color to set
     #' @param zoom The zoom level as a single integer
     #' @return The `wbChartSheet` object
     initialize = function(

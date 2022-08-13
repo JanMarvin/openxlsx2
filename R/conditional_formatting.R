@@ -6,7 +6,7 @@
 #' @noRd
 cf_create_colorscale <- function(formula, values) {
 
-  ## formula contains the colours
+  ## formula contains the colors
   ## values contains numerics or is NULL
 
   if (is.null(values)) {

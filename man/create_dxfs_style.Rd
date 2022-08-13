@@ -26,8 +26,8 @@ the workbook base font is used. (Defaults to Calibri)}
 \item{font_size}{Font size. A numeric greater than 0.
 If fontSize is NULL, the workbook base font size is used. (Defaults to 11)}
 
-\item{font_color}{Colour of text in cell.  A valid hex colour beginning with "#"
-or one of colours(). If fontColour is NULL, the workbook base font colours is used.
+\item{font_color}{Colour of text in cell.  A valid hex color beginning with "#"
+or one of colors(). If fontColour is NULL, the workbook base font colors is used.
 (Defaults to black)}
 
 \item{numFmt}{Cell formatting. Some custom openxml format}

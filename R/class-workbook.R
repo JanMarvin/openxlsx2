@@ -1671,7 +1671,7 @@ wbWorkbook <- R6::R6Class(
       baseFont <- self$styles_mgr$styles$fonts[[1]]
 
       sz     <- unlist(xml_attr(baseFont, "font", "sz"))
-      colour <- unlist(xml_attr(baseFont, "font", "color"))
+      color <- unlist(xml_attr(baseFont, "font", "color"))
       name   <- unlist(xml_attr(baseFont, "font", "name"))
 
       if (length(sz[[1]]) == 0) {
@@ -1680,10 +1680,10 @@ wbWorkbook <- R6::R6Class(
         sz <- as.list(sz)
       }
 
-      if (length(colour[[1]]) == 0) {
-        colour <- list("rgb" = "#000000")
+      if (length(color[[1]]) == 0) {
+        color <- list("rgb" = "#000000")
       } else {
-        colour <- as.list(colour)
+        color <- as.list(color)
       }
 
       if (length(name[[1]]) == 0) {
@@ -1694,7 +1694,7 @@ wbWorkbook <- R6::R6Class(
 
       list(
         size   = sz,
-        colour = colour,
+        color = color,
         name   = name
       )
     },
@@ -2848,12 +2848,12 @@ wbWorkbook <- R6::R6Class(
         },
 
         colorScale = {
-          # - style is a vector of colours with length 2 or 3
+          # - style is a vector of colors with length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
-          msg <- "When type == 'colourScale', "
+          msg <- "When type == 'colorScale', "
 
           if (!is.character(style)) {
-            stop(msg, "style must be a vector of colours of length 2 or 3.")
+            stop(msg, "style must be a vector of colors of length 2 or 3.")
           }
 
           if (!length(style) %in% 2:3) {
@@ -2866,7 +2866,7 @@ wbWorkbook <- R6::R6Class(
             }
           }
 
-          style <- check_valid_colour(style)
+          style <- check_valid_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
@@ -2877,14 +2877,14 @@ wbWorkbook <- R6::R6Class(
         },
 
         dataBar = {
-          # - style is a vector of colours of length 2 or 3
+          # - style is a vector of colors of length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
           msg <- "When type == 'dataBar', "
           style <- style %||% "#638EC6"
 
           # TODO use inherits() not class()
           if (!inherits(style, "character")) {
-            stop(msg, "style must be a vector of colours of length 1 or 2.")
+            stop(msg, "style must be a vector of colors of length 1 or 2.")
           }
 
           if (!length(style) %in% 1:2) {
@@ -2899,7 +2899,7 @@ wbWorkbook <- R6::R6Class(
 
           ## Additional parameters passed by ...
           # showValue, gradient, border
-          style <- check_valid_colour(style)
+          style <- check_valid_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
@@ -5419,7 +5419,7 @@ wbWorkbook <- R6::R6Class(
       cfRule <- switch(
         type,
 
-        ## colourScale ----
+        ## colorScale ----
         colorScale = cf_create_colorscale(formula, values),
 
         ## dataBar ----

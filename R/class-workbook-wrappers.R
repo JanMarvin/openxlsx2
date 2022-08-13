@@ -169,8 +169,8 @@ wb_add_data <- function(
 #'
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are colour banded
-#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedRows logical. If TRUE, rows are color banded
+#' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param na.strings optional
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
@@ -347,8 +347,8 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #'   hidden.
 #' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
-#'   colours()) or a valid hex colour beginning with "#"
+#' @param tabColour Colour of the worksheet tab. A valid color (belonging to
+#'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param header,oddHeader,evenHeader,firstHeader,footer,oddFooter,evenFooter,firstFooter
@@ -733,7 +733,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'   fill = as.factor(gear), alpha = I(.5), main = "Distribution of Gas Mileage"
 #' )
 #' p2 <- qplot(age, circumference,
-#'   data = Orange, geom = c("point", "line"), colour = Tree
+#'   data = Orange, geom = c("point", "line"), color = Tree
 #' )
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
@@ -808,7 +808,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @description Modify the default font for this workbook
 #' @param wb A workbook object
 #' @param fontSize font size
-#' @param fontColour font colour
+#' @param fontColour font color
 #' @param fontName Name of a font
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
@@ -821,7 +821,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb$add_data("S1", iris)
-#' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
+#' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
 #' \dontrun{
 #' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 #' }
@@ -2374,7 +2374,7 @@ wb_add_cell_style <- function(
 #'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
 #'     `[rule]`\cr A `numeric` vector specifying the range of the databar colors. Must be equal length to `style`\cr\cr
 #'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
-#'     `[params$gradient]`\cr If `FALSE` colour gradient is removed. Default `TRUE`\cr\cr
+#'     `[params$gradient]`\cr If `FALSE` color gradient is removed. Default `TRUE`\cr\cr
 #'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE`
 #'   }
 #'   \item{duplicated}{

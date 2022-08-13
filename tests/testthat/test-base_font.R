@@ -5,7 +5,7 @@ test_that("get_base_font works", {
     list(
       size = list(val = "11"),
       # should this be "#000000"?
-      colour = list(rgb = "FF000000"),
+      color = list(rgb = "FF000000"),
       name = list(val = "Calibri")
     )
   )
@@ -15,7 +15,7 @@ test_that("get_base_font works", {
     wb$get_base_font(),
     list(
       size = list(val = "9"),
-      colour = list(rgb = "FFFF0000"),
+      color = list(rgb = "FFFF0000"),
       name = list(val = "Arial")
     )
   )

@@ -288,7 +288,7 @@ wb <- wb_add_conditional_formatting(
   cols = 1,
   rows = 1:11,
   type = "dataBar"
-) ## Default colours
+) ## Default colors
 
 wb$add_data("databar", -5:5, startCol = 3)
 wb <- wb_add_conditional_formatting(
@@ -301,7 +301,7 @@ wb <- wb_add_conditional_formatting(
     showValue = FALSE,
     gradient = FALSE
   )
-) ## Default colours
+) ## Default colors
 
 wb$add_data("databar", -5:5, startCol = 5)
 wb <- wb_add_conditional_formatting(

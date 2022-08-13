@@ -532,8 +532,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are colour banded
-#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedRows logical. If TRUE, rows are color banded
+#' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param bandedCols logical. If TRUE, a data table is created
 #' @param name If not NULL, a named region is defined.
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
@@ -1076,8 +1076,8 @@ write_formula <- function(wb,
 #'
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are colour banded
-#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedRows logical. If TRUE, rows are color banded
+#' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
