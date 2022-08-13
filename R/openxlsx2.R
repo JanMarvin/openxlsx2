@@ -30,7 +30,7 @@
 #' The openxlsx package uses global options to simplify formatting:
 #'
 #' \itemize{
-#'    \item{`options("openxlsx2.borderColour" = "black")`}
+#'    \item{`options("openxlsx2.borderColor" = "black")`}
 #'    \item{`options("openxlsx2.borderStyle" = "thin")`}
 #'    \item{`options("openxlsx2.dateFormat" = "mm/dd/yyyy")`}
 #'    \item{`options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`}

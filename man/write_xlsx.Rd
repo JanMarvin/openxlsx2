@@ -42,7 +42,7 @@ Optional parameters are:
 \itemize{
 \item{\strong{sheetName}}{ Name of the worksheet}
 \item{\strong{gridLines}}{ A logical. If \code{FALSE}, the worksheet grid lines will be hidden.}
-\item{\strong{tabColour}}{ Colour of the worksheet tab. A valid color (belonging to colors())
+\item{\strong{tabColor}}{ Color of the worksheet tab. A valid color (belonging to colors())
 or a valid hex color beginning with "#".}
 \item{\strong{zoom}}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
 }

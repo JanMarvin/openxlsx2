@@ -347,7 +347,7 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #'   hidden.
 #' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tabColour Colour of the worksheet tab. A valid color (belonging to
+#' @param tabColor Color of the worksheet tab. A valid color (belonging to
 #'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
@@ -382,8 +382,8 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' ## Add 3 worksheets
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2", gridLines = FALSE)
-#' wb$add_worksheet("Sheet 3", tabColour = "red")
-#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+#' wb$add_worksheet("Sheet 3", tabColor = "red")
+#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColor = "#4F81BD")
 #'
 #' ## Headers and Footers
 #' wb$add_worksheet("Sheet 5",
@@ -427,7 +427,7 @@ wb_add_worksheet <- function(
   sheet       = next_sheet(),
   gridLines   = TRUE,
   rowColHeaders = TRUE,
-  tabColour   = NULL,
+  tabColor   = NULL,
   zoom        = 100,
   header      = NULL,
   footer      = NULL,
@@ -449,7 +449,7 @@ wb_add_worksheet <- function(
     sheet       = sheet,
     gridLines   = gridLines,
     rowColHeaders = rowColHeaders,
-    tabColour   = tabColour,
+    tabColor   = tabColor,
     zoom        = zoom,
     oddHeader   = headerFooterSub(oddHeader),
     oddFooter   = headerFooterSub(oddFooter),
@@ -808,7 +808,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @description Modify the default font for this workbook
 #' @param wb A workbook object
 #' @param fontSize font size
-#' @param fontColour font color
+#' @param fontColor font color
 #' @param fontName Name of a font
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
@@ -818,18 +818,18 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb$add_data("S1", iris)
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
 #' \dontrun{
 #' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 #' }
-wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
+wb_set_base_font <- function(wb, fontSize = 11, fontColor = "black", fontName = "Calibri") {
   assert_workbook(wb)
   wb$clone()$set_base_font(
     fontSize   = fontSize,
-    fontColour = fontColour,
+    fontColor = fontColor,
     fontName   = fontName
   )
 }
@@ -849,7 +849,7 @@ wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName =
 #' wb_get_base_font(wb)
 #'
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb_get_base_font(wb)
 wb_get_base_font <- function(wb) {

@@ -43,7 +43,7 @@ A chart sheet
 \subsection{Method \code{new()}}{
 Create a new workbook chart sheet object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbChartSheet$new(tabSelected = FALSE, tabColour = character(), zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbChartSheet$new(tabSelected = FALSE, tabColor = character(), zoom = 100)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -51,7 +51,7 @@ Create a new workbook chart sheet object
 \describe{
 \item{\code{tabSelected}}{\code{logical}, if \code{TRUE} ...}
 
-\item{\code{tabColour}}{\code{character} a tab color to set}
+\item{\code{tabColor}}{\code{character} a tab color to set}
 
 \item{\code{zoom}}{The zoom level as a single integer}
 }

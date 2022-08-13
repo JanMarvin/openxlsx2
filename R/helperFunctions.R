@@ -121,13 +121,13 @@ getRId <- function(x) reg_match0(x, '(?<= r:id=")[0-9A-Za-z]+')
 getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
 
-#' @name validateColour
+#' @name validateColor
 #' @description validate the color input
 #' @param color color
 #' @param errorMsg Error message
 #' @keywords internal
 #' @noRd
-validateColour <- function(color, errorMsg = "Invalid color!") {
+validateColor <- function(color, errorMsg = "Invalid color!") {
   color <- check_valid_color(color)
 
   if (isFALSE(color)) {
@@ -144,10 +144,10 @@ check_valid_color <- function(color) {
     color <- "black"
   }
 
-  validColours <- grDevices::colors()
+  validColors <- grDevices::colors()
 
-  if (any(color %in% validColours)) {
-    color[color %in% validColours] <- col2hex(color[color %in% validColours])
+  if (any(color %in% validColors)) {
+    color[color %in% validColors] <- col2hex(color[color %in% validColors])
   }
 
   if (all(grepl("^#[A-Fa-f0-9]{6}$", color))) {

@@ -3,7 +3,6 @@ CMD
 Calibri
 Calligra
 Colorscale
-Colour
 DL
 Databars
 ExcelDate
@@ -93,7 +92,7 @@ firstHeader
 firstRow
 fitToHeight
 fitToWidth
-fontColour
+fontColor
 fontName
 fontSize
 freezePane
@@ -211,7 +210,7 @@ startRow
 summaryCol
 summaryRow
 swiss
-tabColour
+tabColor
 tabSelected
 tableName
 tableParts

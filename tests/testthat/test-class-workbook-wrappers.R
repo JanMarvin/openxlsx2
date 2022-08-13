@@ -123,7 +123,7 @@ test_that("wb_page_setup() is a wrapper", {
 # wb_set_base_font() ----------------------------------------------------------
 
 test_that("wb_set_base_font() is a wrapper", {
-  params <- list(fontColour = "red", fontSize = 20)
+  params <- list(fontColor = "red", fontSize = 20)
   expect_wrapper("set_base_font", params = params)
 })
 

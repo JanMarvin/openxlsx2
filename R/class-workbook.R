@@ -320,7 +320,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param gridLines gridLines
     #' @param rowColHeaders rowColHeaders
-    #' @param tabColour tabColour
+    #' @param tabColor tabColor
     #' @param zoom zoom
     #' @param header header
     #' @param footer footer
@@ -341,7 +341,7 @@ wbWorkbook <- R6::R6Class(
       sheet       = next_sheet(),
       gridLines   = TRUE,
       rowColHeaders = TRUE,
-      tabColour   = NULL,
+      tabColor   = NULL,
       zoom        = 100,
       header      = NULL,
       footer      = NULL,
@@ -385,8 +385,8 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "gridLines must be a logical of length 1.")
       }
 
-      if (!is.null(tabColour)) {
-        tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
+      if (!is.null(tabColor)) {
+        tabColor <- validateColor(tabColor, "Invalid tabColor in add_worksheet.")
       }
 
       if (!is.numeric(zoom)) {
@@ -480,7 +480,7 @@ wbWorkbook <- R6::R6Class(
           gridLines   = gridLines,
           rowColHeaders = rowColHeaders,
           tabSelected = newSheetIndex == 1,
-          tabColour   = tabColour,
+          tabColor   = tabColor,
           zoom        = zoom,
           oddHeader   = oddHeader,
           oddFooter   = oddFooter,
@@ -719,10 +719,10 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Add a chart sheet to the workbook
     #' @param sheet sheet
-    #' @param tabColour tabColour
+    #' @param tabColor tabColor
     #' @param zoom zoom
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheet = current_sheet(), tabColour = NULL, zoom = 100) {
+    addChartSheet = function(sheet = current_sheet(), tabColor = NULL, zoom = 100) {
       # TODO private$new_sheet_index()?
       newSheetIndex <- length(self$worksheets) + 1L
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
@@ -741,7 +741,7 @@ wbWorkbook <- R6::R6Class(
       self$append("worksheets",
         wbChartSheet$new(
           tabSelected = newSheetIndex == 1,
-          tabColour = tabColour,
+          tabColor = tabColor,
           zoom = zoom
         )
       )
@@ -1702,17 +1702,17 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Get the base font
     #' @param fontSize fontSize
-    #' @param fontColour fontColour
+    #' @param fontColor fontColor
     #' @param fontName fontName
     #' @return The `wbWorkbook` object
-    set_base_font = function(fontSize = 11, fontColour = "black", fontName = "Calibri") {
+    set_base_font = function(fontSize = 11, fontColor = "black", fontName = "Calibri") {
       if (fontSize < 0) stop("Invalid fontSize")
-      fontColour <- validateColour(fontColour)
+      fontColor <- validateColor(fontColor)
 
       self$styles_mgr$styles$fonts[[1]] <- sprintf(
         '<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>',
         fontSize,
-        fontColour,
+        fontColor,
         fontName
       )
     },

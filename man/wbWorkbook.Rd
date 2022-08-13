@@ -402,7 +402,7 @@ Add worksheet to the \code{wbWorkbook} object
   sheet = next_sheet(),
   gridLines = TRUE,
   rowColHeaders = TRUE,
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
   header = NULL,
   footer = NULL,
@@ -430,7 +430,7 @@ Add worksheet to the \code{wbWorkbook} object
 
 \item{\code{rowColHeaders}}{rowColHeaders}
 
-\item{\code{tabColour}}{tabColour}
+\item{\code{tabColor}}{tabColor}
 
 \item{\code{zoom}}{zoom}
 
@@ -493,7 +493,7 @@ Clone a workbooksheet
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet = current_sheet(), tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet = current_sheet(), tabColor = NULL, zoom = 100)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -501,7 +501,7 @@ Add a chart sheet to the workbook
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{tabColour}}{tabColour}
+\item{\code{tabColor}}{tabColor}
 
 \item{\code{zoom}}{zoom}
 }
@@ -814,7 +814,7 @@ Get the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
   fontSize = 11,
-  fontColour = "black",
+  fontColor = "black",
   fontName = "Calibri"
 )}\if{html}{\out{</div>}}
 }
@@ -824,7 +824,7 @@ Get the base font
 \describe{
 \item{\code{fontSize}}{fontSize}
 
-\item{\code{fontColour}}{fontColour}
+\item{\code{fontColor}}{fontColor}
 
 \item{\code{fontName}}{fontName}
 }

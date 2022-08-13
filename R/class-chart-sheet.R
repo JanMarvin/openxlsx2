@@ -28,18 +28,18 @@ wbChartSheet <- R6::R6Class(
     #' @description
     #' Create a new workbook chart sheet object
     #' @param tabSelected `logical`, if `TRUE` ...
-    #' @param tabColour `character` a tab color to set
+    #' @param tabColor `character` a tab color to set
     #' @param zoom The zoom level as a single integer
     #' @return The `wbChartSheet` object
     initialize = function(
       tabSelected = FALSE,
-      tabColour = character(),
+      tabColor = character(),
       zoom = 100
     ) {
-      if (length(tabColour)) {
-        tabColour <- sprintf("<sheetPr>%s</sheetPr>", tabColour)
+      if (length(tabColor)) {
+        tabColor <- sprintf("<sheetPr>%s</sheetPr>", tabColor)
       } else {
-        tabColour <- character()
+        tabColor <- character()
       }
 
       if (zoom < 10) {
@@ -48,7 +48,7 @@ wbChartSheet <- R6::R6Class(
         zoom <- 400
       }
 
-      self$sheetPr     <- tabColour
+      self$sheetPr     <- tabColor
       self$sheetViews  <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(tabSelected))
       self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$drawing     <- '<drawing r:id=\"rId1\"/>'

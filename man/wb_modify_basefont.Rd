@@ -5,14 +5,14 @@
 \alias{wb_set_base_font}
 \title{Modify the default font}
 \usage{
-wb_set_base_font(wb, fontSize = 11, fontColour = "black", fontName = "Calibri")
+wb_set_base_font(wb, fontSize = 11, fontColor = "black", fontName = "Calibri")
 }
 \arguments{
 \item{wb}{A workbook object}
 
 \item{fontSize}{font size}
 
-\item{fontColour}{font color}
+\item{fontColor}{font color}
 
 \item{fontName}{Name of a font}
 }
@@ -28,7 +28,7 @@ with Arial. Base font is black, size 11, Calibri.
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 ## modify base font to size 10 Arial Narrow in red
-wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 
 wb$add_data("S1", iris)
 wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables

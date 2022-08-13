@@ -124,7 +124,7 @@ Creates a new \code{wbWorksheet} object
   gridLines = TRUE,
   rowColHeaders = TRUE,
   tabSelected = FALSE,
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
   oddHeader = NULL,
   oddFooter = NULL,
@@ -148,7 +148,7 @@ Creates a new \code{wbWorksheet} object
 
 \item{\code{tabSelected}}{tabSelected}
 
-\item{\code{tabColour}}{tabColour}
+\item{\code{tabColor}}{tabColor}
 
 \item{\code{zoom}}{zoom}
 

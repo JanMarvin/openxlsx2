@@ -140,7 +140,7 @@ wbWorksheet <- R6::R6Class(
     #' @param gridLines gridLines
     #' @param rowColHeaders rowColHeaders
     #' @param tabSelected tabSelected
-    #' @param tabColour tabColour
+    #' @param tabColor tabColor
     #' @param zoom zoom
     #' @param oddHeader oddHeader
     #' @param oddFooter oddFooter
@@ -157,7 +157,7 @@ wbWorksheet <- R6::R6Class(
       gridLines   = TRUE,
       rowColHeaders = TRUE,
       tabSelected = FALSE,
-      tabColour   = NULL,
+      tabColor   = NULL,
       zoom        = 100,
       oddHeader   = NULL,
       oddFooter   = NULL,
@@ -170,10 +170,10 @@ wbWorksheet <- R6::R6Class(
       hdpi        = 300,
       vdpi        = 300
     ) {
-      if (!is.null(tabColour)) {
-        tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
+      if (!is.null(tabColor)) {
+        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColor)
       } else {
-        tabColour <- character()
+        tabColor <- character()
       }
 
       if (zoom < 10) {
@@ -196,7 +196,7 @@ wbWorksheet <- R6::R6Class(
       }
 
       ## list of all possible children
-      self$sheetPr               <- tabColour
+      self$sheetPr               <- tabColor
       self$dimension             <- '<dimension ref="A1"/>'
       self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" showRowColHeaders="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(rowColHeaders), as.integer(tabSelected))
       self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'

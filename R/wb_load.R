@@ -212,12 +212,12 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
           zoom <- 100
         }
 
-        tabColour <- xml_node(txt, "chartsheet", "sheetPr", "tabColor")
-        if (length(tabColour) == 0) {
-          tabColour <- NULL
+        tabColor <- xml_node(txt, "chartsheet", "sheetPr", "tabColor")
+        if (length(tabColor) == 0) {
+          tabColor <- NULL
         }
 
-        wb$addChartSheet(sheet = sheets$name[i], tabColour = tabColour, zoom = as.numeric(zoom))
+        wb$addChartSheet(sheet = sheets$name[i], tabColor = tabColor, zoom = as.numeric(zoom))
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
