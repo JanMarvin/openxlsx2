@@ -41,13 +41,13 @@ create_sparklines(
 
 \item{markers}{markers add marker to line}
 
-\item{high}{highligh highest value}
+\item{high}{highlight highest value}
 
 \item{low}{highlight lowest value}
 
 \item{first}{highlight first value}
 
-\item{last}{hightlight last value}
+\item{last}{highlight last value}
 
 \item{colorSeries}{colorSeries}
 

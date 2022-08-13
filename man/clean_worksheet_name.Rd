@@ -7,7 +7,7 @@
 clean_worksheet_name(x, replacement = " ")
 }
 \arguments{
-\item{x}{A vector, coherced to \code{character}}
+\item{x}{A vector, coerced to \code{character}}
 
 \item{replacement}{A single value to replace illegal characters by.}
 }

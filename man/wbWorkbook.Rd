@@ -1188,7 +1188,7 @@ Adds data validation
 
 \item{\code{promptTitle}}{The prompt title}
 
-\item{\code{prompt}}{The promt text}
+\item{\code{prompt}}{The prompt text}
 }
 \if{html}{\out{</div>}}
 }
