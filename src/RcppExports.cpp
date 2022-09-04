@@ -328,17 +328,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// getXMLPtr1con
-SEXP getXMLPtr1con(XPtrXML doc);
-RcppExport SEXP _openxlsx2_getXMLPtr1con(SEXP docSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLPtr1con(doc));
-    return rcpp_result_gen;
-END_RCPP
-}
 // getXMLXPtr1val
 SEXP getXMLXPtr1val(XPtrXML doc, std::string child);
 RcppExport SEXP _openxlsx2_getXMLXPtr1val(SEXP docSEXP, SEXP childSEXP) {
@@ -432,15 +421,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_xml_file
-XPtrXML write_xml_file(std::string xml_content, bool escapes, bool no_declaration);
-RcppExport SEXP _openxlsx2_write_xml_file(SEXP xml_contentSEXP, SEXP escapesSEXP, SEXP no_declarationSEXP) {
+XPtrXML write_xml_file(std::string xml_content, bool escapes);
+RcppExport SEXP _openxlsx2_write_xml_file(SEXP xml_contentSEXP, SEXP escapesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type xml_content(xml_contentSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
-    Rcpp::traits::input_parameter< bool >::type no_declaration(no_declarationSEXP);
-    rcpp_result_gen = Rcpp::wrap(write_xml_file(xml_content, escapes, no_declaration));
+    rcpp_result_gen = Rcpp::wrap(write_xml_file(xml_content, escapes));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -833,14 +821,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_xmlPtr
-void write_xmlPtr(XPtrXML doc, std::string fl, bool no_declaration);
-RcppExport SEXP _openxlsx2_write_xmlPtr(SEXP docSEXP, SEXP flSEXP, SEXP no_declarationSEXP) {
+void write_xmlPtr(XPtrXML doc, std::string fl);
+RcppExport SEXP _openxlsx2_write_xmlPtr(SEXP docSEXP, SEXP flSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
     Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
-    Rcpp::traits::input_parameter< bool >::type no_declaration(no_declarationSEXP);
-    write_xmlPtr(doc, fl, no_declaration);
+    write_xmlPtr(doc, fl);
     return R_NilValue;
 END_RCPP
 }
@@ -871,7 +858,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr2", (DL_FUNC) &_openxlsx2_getXMLXPtr2, 3},
     {"_openxlsx2_getXMLXPtr3", (DL_FUNC) &_openxlsx2_getXMLXPtr3, 4},
     {"_openxlsx2_unkgetXMLXPtr3", (DL_FUNC) &_openxlsx2_unkgetXMLXPtr3, 3},
-    {"_openxlsx2_getXMLPtr1con", (DL_FUNC) &_openxlsx2_getXMLPtr1con, 1},
     {"_openxlsx2_getXMLXPtr1val", (DL_FUNC) &_openxlsx2_getXMLXPtr1val, 2},
     {"_openxlsx2_getXMLXPtr2val", (DL_FUNC) &_openxlsx2_getXMLXPtr2val, 3},
     {"_openxlsx2_getXMLXPtr3val", (DL_FUNC) &_openxlsx2_getXMLXPtr3val, 4},
@@ -879,7 +865,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtr2attr", (DL_FUNC) &_openxlsx2_getXMLXPtr2attr, 3},
     {"_openxlsx2_getXMLXPtr3attr", (DL_FUNC) &_openxlsx2_getXMLXPtr3attr, 4},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 4},
-    {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 3},
+    {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
     {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 4},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
     {"_openxlsx2_xml_append_child1", (DL_FUNC) &_openxlsx2_xml_append_child1, 3},
@@ -912,7 +898,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
-    {"_openxlsx2_write_xmlPtr", (DL_FUNC) &_openxlsx2_write_xmlPtr, 3},
+    {"_openxlsx2_write_xmlPtr", (DL_FUNC) &_openxlsx2_write_xmlPtr, 2},
     {NULL, NULL, 0}
 };
 

@@ -5266,26 +5266,50 @@ wbWorkbook <- R6::R6Class(
         nComments <- length(cd)
 
         ## write head
-        if (nComments > 0 || length(self$vml[[i]])) {
-
-          vml_xml <-  xml_node_create(
-              xml_name = "xml",
-              xml_attributes = c(
-                `xmlns:v` = "urn:schemas-microsoft-com:vml",
-                `xmlns:o` = "urn:schemas-microsoft-com:office:office",
-                `xmlns:x` = "urn:schemas-microsoft-com:office:excel"
-              ),
-              xml_children = ifelse(length(self$vml[[i]]), self$vml[[i]], "")
-          )
-
-          write_file(
-            head = '',
-            body = pxml(vml_xml),
-            tail = '',
-            fl = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            no_declaration = TRUE
+        if (nComments > 0 | length(self$vml[[i]])) {
+          write(
+            x = stri_join(
+              '<xml xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
+            ),
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            sep = " "
           )
         }
+
+        # TODO use seq_along()
+        for (j in seq_len(nComments)) {
+          id <- id + 1L
+          write(
+            x = genBaseShapeVML(cd[j], id),
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
+        }
+
+        if (length(self$vml[[i]])) {
+          write(
+            x = self$vml[[i]],
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
+        }
+
+        # TODO nComments and self$vml is already checked
+        if (nComments > 0 | length(self$vml[[i]])) {
+          write(
+            x = "</xml>",
+            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
+            append = TRUE
+          )
+        }
+
+      }
+
+      for (i in seq_along(self$drawings_vml)) {
+        write(
+          x = self$drawings_vml[[i]],
+          file = file.path(dir, sprintf("vmlDrawing%s.vml", i))
+        )
       }
 
       invisible(self)
@@ -5473,7 +5497,7 @@ wbWorkbook <- R6::R6Class(
             post = post,
             sheet_data = ws$sheet_data
           )
-          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)), no_declaration = TRUE)
+          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {
