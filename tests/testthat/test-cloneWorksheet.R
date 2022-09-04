@@ -47,11 +47,11 @@ test_that("clone Worksheet with table", {
   got <- relships[relships$typ == "table", c("Id", "typ", "target")]
 
   exp <- structure(list(
-    Id = c("rId3", "rId4", "rId3", "rId4"),
+    Id = c("rId1", "rId2", "rId1", "rId1"),
     typ = c("table", "table", "table", "table"),
     target = c("table1.xml", "table2.xml", "table3.xml", "table4.xml")
   ),
-  row.names = c(3L, 4L, 7L, 8L),
+  row.names = c(1L, 2L, 3L, 4L),
   class = "data.frame")
 
   expect_equal(got, exp)
