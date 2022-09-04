@@ -96,6 +96,10 @@ readXML <- function(path, isfile, escapes, declaration, whitespace, empty_tags, 
     .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
 }
 
+is_xml <- function(str) {
+    .Call(`_openxlsx2_is_xml`, str)
+}
+
 getXMLXPtrName1 <- function(doc) {
     .Call(`_openxlsx2_getXMLXPtrName1`, doc)
 }
