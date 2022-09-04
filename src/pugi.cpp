@@ -216,25 +216,6 @@ SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLPtr1con(XPtrXML doc) {
-
-  vec_string res;
-  unsigned int  pugi_format_flags = pugi_format(doc);
-
-  for (auto node : doc->children())
-  {
-    for (auto cld : node.children()) {
-      std::ostringstream oss;
-      cld.print(oss, " ", pugi_format_flags);
-      res.push_back(Rcpp::String(oss.str()));
-    }
-  }
-
-  return  Rcpp::wrap(res);
-}
-
-
-// [[Rcpp::export]]
 SEXP getXMLXPtr1val(XPtrXML doc, std::string child) {
 
   // returns a single vector, not a list of vectors!
@@ -242,6 +223,7 @@ SEXP getXMLXPtr1val(XPtrXML doc, std::string child) {
 
   for (auto worksheet : doc->children(child.c_str()))
   {
+    std::vector<std::string> y;
     x.push_back(Rcpp::String(worksheet.child_value()));
   }
 
@@ -404,7 +386,7 @@ SEXP printXPtr(XPtrXML doc, std::string indent, bool raw, bool attr_indent) {
 
 
 // [[Rcpp::export]]
-XPtrXML write_xml_file(std::string xml_content, bool escapes, bool no_declaration) {
+XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 
   xmldoc *doc = new xmldoc;
 
@@ -419,13 +401,11 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes, bool no_declaratio
     if (!result) Rcpp::stop("Loading xml_content node failed: \n %s", xml_content);
   }
 
-  if (!no_declaration) {
-    // Needs to be added after the node has been loaded and validated
-    pugi::xml_node decl = doc->prepend_child(pugi::node_declaration);
-    decl.append_attribute("version") = "1.0";
-    decl.append_attribute("encoding") = "UTF-8";
-    decl.append_attribute("standalone") = "yes";
-  }
+  // Needs to be added after the node has been loaded and validated
+  pugi::xml_node decl = doc->prepend_child(pugi::node_declaration);
+  decl.append_attribute("version") = "1.0";
+  decl.append_attribute("encoding") = "UTF-8";
+  decl.append_attribute("standalone") = "yes";
 
   XPtrXML ptr(doc, true);
   ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
