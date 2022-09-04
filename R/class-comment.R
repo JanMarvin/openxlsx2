@@ -226,18 +226,28 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
   # check if relationships for this sheet already has comment entry and get next free rId
   if (length(wb$worksheets_rels[[sheet]]) == 0) wb$worksheets_rels[[sheet]] <- genBaseSheetRels(sheet)
-  rels <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
-  rels$typ <- basename(rels$Type)
-  rels$id <- as.integer(gsub("\\D+", "", rels$Id))
-  next_rid <- iterator(rels$id)
 
-  # check Content_Types for comment entries and get next free comment id
-  cmts <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
-  cmts$target <- basename(cmts$Target)
-  cmts$typ <- basename(cmts$Type)
-  cmts <- cmts[cmts$typ == "comments", ]
-  cmts$id <- as.integer(gsub("\\D+", "", cmts$target))
-  next_id <- iterator(cmts$id)
+  rels     <- data.frame()
+  rs       <- data.frame()
+  next_rid <- 1
+  next_id  <- 1
+
+  if (!all(identical(wb$worksheets_rels[[sheet]], character()))) {
+    rels <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
+    rels$typ <- basename(rels$Type)
+    rels$id <- as.integer(gsub("\\D+", "", rels$Id))
+    next_rid <- iterator(rels$id)
+  }
+
+  if (!all(identical(unlist(wb$worksheets_rels), character()))) {
+    # check Content_Types for comment entries and get next free comment id
+    rs <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
+    rs$target <- basename(rs$Target)
+    rs$typ <- basename(rs$Type)
+    rs$id <- as.integer(gsub("\\D+", "", rs$target))
+    cmts <- rs[rs$typ == "comments", ]
+    next_id <- iterator(cmts$id)
+  }
 
   # if this sheet has no comment entry in relationships, add a new relationship
   # 1) to Content_Types
@@ -260,6 +270,27 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
         next_id
       )
     )
+
+    if (!any(rels$typ == "vmlDrawing")) {
+
+      next_rid <- next_rid + 1
+      # next_vml <- 1
+
+      # if (!any(rs$typ == "vmlDrawing")) {
+      #   vmls <- rs[rs$typ == "vmlDrawing", ]
+      #   next_vml <- iterator(vmls$id)
+      # }
+
+      wb$worksheets_rels[[sheet]] <- c(
+        wb$worksheets_rels[[sheet]],
+        sprintf(
+          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>',
+          next_rid,
+          sheet
+        )
+      )
+      
+    }
   }
 
   wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
@@ -267,7 +298,7 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
   # unique? keep prev legacyDrawing?
   #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
   # TODO hardcoded 2. Marvin fears that this is not good enough
-  wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', 2)
+  wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_rid)
 
 
   invisible(wb)

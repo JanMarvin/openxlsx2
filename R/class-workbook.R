@@ -1316,10 +1316,15 @@ wbWorkbook <- R6::R6Class(
 
         # TODO get table Id from table entry
         table_ids <- function() {
-          relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
-          relship$typ <- basename(relship$Type)
-          relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-          sort(relship$tid[relship$typ == "table"])
+          z <- 0
+          if (!all(unlist(self$worksheets_rels) == "")) {
+            relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
+            relship$typ <- basename(relship$Type)
+            relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+
+            z <- sort(relship$tid[relship$typ == "table"])
+          }
+          z
         }
 
         tab_ids <- table_ids()
@@ -1409,6 +1414,47 @@ wbWorkbook <- R6::R6Class(
       ## VBA Macro
       if (!is.null(self$vbaProject)) {
         file.copy(self$vbaProject, xlDir)
+      }
+
+      ## Drawings
+      for (draw in seq_along(self$drawings)) {
+
+        relship <- data.frame()
+        if (!all(identical(self$worksheets_rels[[draw]], character()))) {
+          relship <- rbindlist(xml_attr(unlist(self$worksheets_rels[[draw]]), "Relationship"))
+          relship$typ <- basename(relship$Type)
+          relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+        }
+
+        rid <- max(0, relship$tid)
+        
+        if (!any(relship$typ == "drawing")) {
+
+          # check if drawings required
+          drawing_rel <- NULL
+          if (length(self$drawings) != 0 && length(self$drawings[[draw]])) {
+            rid <- rid + 1
+            drawing_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', rid, draw)
+          }
+
+          drawing_vml_rel <- NULL
+          # if drawings_vml is set or if file has comments. comments create drawings_vml when writing
+          if ((length(self$drawings_vml) > 0 && length(self$drawings_vml[[draw]]) > 0) || (length(self$comments) > 0 && length(self$comments[[draw]]) > 0)) {
+            rid <- rid + 1
+            drawing_vml_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>', rid, draw)
+          }
+
+          self$worksheets_rels[[draw]] <-  unique(c(self$worksheets_rels[[draw]], drawing_rel, drawing_vml_rel))
+
+        }
+
+        if (length(self$drawings[[draw]])) {
+            ct <- c(ct,
+              sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', draw)
+            )
+        }
+
+
       }
 
       ## write worksheet, worksheet_rels, drawings, drawing_rels
@@ -1663,11 +1709,15 @@ wbWorkbook <- R6::R6Class(
       ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
       last_table_id <- function() {
         z <- 0
-        relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
-        relship$typ <- basename(relship$Type)
-        relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-        if (any(relship$typ == "table"))
-          z <- max(relship$tid[relship$typ == "table"])
+
+        if (!all(unlist(self$worksheets_rels) == "")) {
+          relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
+          # assign("relship", relship, globalenv())
+          relship$typ <- basename(relship$Type)
+          relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+          if (any(relship$typ == "table"))
+            z <- max(relship$tid[relship$typ == "table"])
+        }
 
         z
       }
@@ -1675,7 +1725,10 @@ wbWorkbook <- R6::R6Class(
       id <- as.character(last_table_id() + 1) # otherwise will start at 0 for table 1 length indicates the last known
       sheet <- wb_validate_sheet(self, sheet)
       # get the next highest rid
-      rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))[["Id"]]))) + 1
+      rid <- 1
+      if (!all(identical(self$worksheets_rels[[sheet]], character()))) {
+        rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))[["Id"]]))) + 1
+      }
 
       if (is.null(self$tables)) {
         nms <- NULL
@@ -1761,12 +1814,15 @@ wbWorkbook <- R6::R6Class(
       self$append("tables.xml.rels", "")
 
       ## update worksheets_rels
-      # TODO do we have to worry about exisiting table relationships?
-      private$append_sheet_rels(sheet, sprintf(
-        '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
-        rid,
-        id
-      ))
+      self$worksheets_rels[[sheet]] <- c(
+        self$worksheets_rels[[sheet]],
+        sprintf(
+          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
+          rid,
+          id
+        )
+      )
+
       invisible(self)
     },
 
@@ -2402,7 +2458,9 @@ wbWorkbook <- R6::R6Class(
         }
 
         comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
-        drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
+        # TODO not every sheet has a drawing. this originates from a time where 
+        # every sheet created got a drawing assigned.
+        # drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
         pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
         table_id      <- xml_rels$target_ind[xml_rels$type == "table"]
         thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
@@ -2410,11 +2468,15 @@ wbWorkbook <- R6::R6Class(
 
         # NULL the sheets
         if (length(comment_id))    self$comments[[comment_id]]            <- NULL
-        if (length(drawing_id))    self$drawings[[drawing_id]]            <- NULL
-        if (length(drawing_id))    self$drawings_rels[[drawing_id]]       <- NULL
+        # if (length(drawing_id))
+                                   self$drawings[[sheet]]                 <- NULL
+        # if (length(drawing_id))    
+                                   self$drawings_rels[[sheet]]            <- NULL
         if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
-        if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]              <- NULL
-        if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]         <- NULL
+        # if (length(vmlDrawing_id)) 
+                                   self$vml[[sheet]]                      <- NULL
+        # if (length(vmlDrawing_id)) 
+                                   self$vml_rels[[sheet]]                 <- NULL
 
 
         #### Modify Content_Types
@@ -2503,7 +2565,7 @@ wbWorkbook <- R6::R6Class(
           # did this get updated from length of 3 to 2?
           #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
           rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
-          if (nrow(rel)) {
+          if (nrow(rel) && ncol(rel)) {
             if (any(basename(rel$Type) == "drawing")) {
               rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
             }
@@ -5457,12 +5519,14 @@ wbWorkbook <- R6::R6Class(
               table_inds <- grep("tables/table[0-9].xml", ws_rels)
 
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
-              relship$typ <- basename(relship$Type)
-              relship$tid <- as.integer(gsub("\\D+", "", relship$Target))
+              if (ncol(relship) && nrow(relship)) {
+                relship$typ <- basename(relship$Type)
+                relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
 
-              relship$typ <- relship$tid <- NULL
-              if (is.null(relship$TargetMode)) relship$TargetMode <- ""
-              ws_rels <- df_to_xml("Relationship", df_col = relship[c("Id", "Type", "Target", "TargetMode")])
+                relship$typ <- relship$tid <- NULL
+                if (is.null(relship$TargetMode)) relship$TargetMode <- ""
+                ws_rels <- df_to_xml("Relationship", df_col = relship[c("Id", "Type", "Target", "TargetMode")])
+              }
             }
 
 
