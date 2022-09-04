@@ -244,8 +244,10 @@ XPtrXML write_worksheet(
 // [[Rcpp::export]]
 void write_xmlPtr(
     XPtrXML doc,
-    std::string fl
+    std::string fl,
+    bool no_declaration
 ) {
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  if (no_declaration) pugi_format_flags |= pugi::format_no_declaration;
   doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
 }
