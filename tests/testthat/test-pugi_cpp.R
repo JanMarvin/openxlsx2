@@ -166,6 +166,15 @@ test_that("col2int and int2col", {
 
 })
 
+test_that("read content", {
+
+  xml <- "<xml><a/><a/><b/></xml>"
+  exp <- c("<a/>", "<a/>", "<b/>")
+  got <- getXMLPtr1con(read_xml(xml))
+  expect_equal(exp, got)
+
+})
+
 test_that("is_xml", {
 
   expect_true(is_xml("<a/>"))

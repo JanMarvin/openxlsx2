@@ -132,6 +132,10 @@ unkgetXMLXPtr3 <- function(doc, level1, child) {
     .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
 }
 
+getXMLPtr1con <- function(doc) {
+    .Call(`_openxlsx2_getXMLPtr1con`, doc)
+}
+
 getXMLXPtr1val <- function(doc, child) {
     .Call(`_openxlsx2_getXMLXPtr1val`, doc, child)
 }
@@ -160,8 +164,8 @@ printXPtr <- function(doc, indent, raw, attr_indent) {
     .Call(`_openxlsx2_printXPtr`, doc, indent, raw, attr_indent)
 }
 
-write_xml_file <- function(xml_content, escapes) {
-    .Call(`_openxlsx2_write_xml_file`, xml_content, escapes)
+write_xml_file <- function(xml_content, escapes, no_declaration) {
+    .Call(`_openxlsx2_write_xml_file`, xml_content, escapes, no_declaration)
 }
 
 #' adds or updates attribute(s) in existing xml node
@@ -352,7 +356,7 @@ write_worksheet <- function(prior, post, sheet_data) {
     .Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data)
 }
 
-write_xmlPtr <- function(doc, fl) {
-    invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
+write_xmlPtr <- function(doc, fl, no_declaration) {
+    invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl, no_declaration))
 }
 

@@ -245,12 +245,13 @@ as_xml <- function(x, ...) {
 #' @param fl file name with full path
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escape, assuming that xml to export is already valid.
+#' @param no_declaration bool if a declaration should be written. The default is FALSE
 #' @export
 # TODO needs a unit test
-write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
+write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE, no_declaration = TRUE) {
   xml_content <- stringi::stri_join(head, body, tail, collapse = "")
-  xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes)
-  write_xmlPtr(xml_content, fl)
+  xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes, no_declaration = no_declaration)
+  write_xmlPtr(xml_content, fl, no_declaration)
 }
 
 #' append xml child to node
