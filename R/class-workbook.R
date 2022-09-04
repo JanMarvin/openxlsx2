@@ -1317,7 +1317,7 @@ wbWorkbook <- R6::R6Class(
         # TODO get table Id from table entry
         table_ids <- function() {
           z <- 0
-          if (!all(unlist(self$worksheets_rels) == "")) {
+          if (!all(identical(unlist(self$worksheets_rels), character()))) {
             relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
             relship$typ <- basename(relship$Type)
             relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
@@ -1328,6 +1328,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         tab_ids <- table_ids()
+
         for (i in seq_along(tab_ids)) {
 
           # select only active tabs. in future there should only be active tabs
@@ -1355,6 +1356,7 @@ wbWorkbook <- R6::R6Class(
             }
           }
         }
+
       }
 
       ## ct is updated as xml

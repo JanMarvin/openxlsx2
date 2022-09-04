@@ -47,7 +47,7 @@ test_that("clone Worksheet with table", {
   got <- relships[relships$typ == "table", c("Id", "typ", "target")]
 
   exp <- structure(list(
-    Id = c("rId1", "rId2", "rId1", "rId1"),
+    Id = c("rId1", "rId2", "rId1", "rId2"),
     typ = c("table", "table", "table", "table"),
     target = c("table1.xml", "table2.xml", "table3.xml", "table4.xml")
   ),
