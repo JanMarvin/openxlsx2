@@ -5189,7 +5189,7 @@ wbWorkbook <- R6::R6Class(
                 `xmlns:o` = "urn:schemas-microsoft-com:office:office",
                 `xmlns:x` = "urn:schemas-microsoft-com:office:excel"
               ),
-              xml_children = self$vml[[i]]
+              xml_children = ifelse(length(self$vml[[i]]), self$vml[[i]], "")
           )
 
           write_file(
