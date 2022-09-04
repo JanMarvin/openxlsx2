@@ -196,9 +196,12 @@ write_comment_xml <- function(comment_list, file_name) {
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
       # write styles and comments
-      xml <- c(xml, sprintf('<r>%s<t xml:space="preserve">%s</t></r>',
-        comment_list[[i]]$style[[j]],
-        comment_list[[i]]$comment[[j]]))
+      xml <- c(xml,
+        # xml:preserve is handled for files loaded
+        sprintf('<r>%s%s</r>',
+               comment_list[[i]]$style[[j]],
+               comment_list[[i]]$comment[[j]])
+        )
     }
 
     xml <- c(xml, "</text></comment>")
