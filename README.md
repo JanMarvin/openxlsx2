@@ -34,7 +34,8 @@ remotes::install_github("JanMarvin/openxlsx2")
 ```
 
 Or from [r-universe](https://r-universe.dev/) with:
-```R
+
+``` r
 # Enable repository from janmarvin
 options(repos = c(
   janmarvin = 'https://janmarvin.r-universe.dev',
