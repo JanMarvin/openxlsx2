@@ -7,6 +7,7 @@
 
 [![R-CMD-check](https://github.com/JanMarvin/openxlsx2/workflows/R-CMD-check/badge.svg)](https://github.com/JanMarvin/openxlsx2/actions)
 [![codecov](https://codecov.io/gh/JanMarvin/openxlsx2/branch/main/graph/badge.svg?token=HEZ7rXcZNq)](https://app.codecov.io/gh/JanMarvin/openxlsx2)
+[![r-universe](https://janmarvin.r-universe.dev/badges/openxlsx2)](https://janmarvin.r-universe.dev/ui#package:openxlsx2)
 <!-- badges: end -->
 
 This R package is a modern reinterpretation of the widely used popular
@@ -30,6 +31,17 @@ You can install the development version of `openxlsx2` from
 # openxlsx2 is not yet available on CRAN
 # install.packages("remotes")
 remotes::install_github("JanMarvin/openxlsx2")
+```
+
+Or from [r-universe](https://r-universe.dev/) with:
+
+``` r
+# Enable repository from janmarvin
+options(repos = c(
+  janmarvin = 'https://janmarvin.r-universe.dev',
+  CRAN = 'https://cloud.r-project.org'))
+# Download and install openxlsx2 in R
+install.packages('openxlsx2')
 ```
 
 ## Introduction
