@@ -167,11 +167,22 @@ test_that("write dims", {
 
 })
 
-test_that("write data.table", {
+test_that("write data.table class", {
 
   df <- mtcars
   class(df) <- c("data.table", "data.frame")
 
-  expect_silent(write_xlsx(df, temp_xlsx()))
+  tmp <- temp_xlsx()
+  expect_silent(write_xlsx(df, tmp))
+  expect_equal(mtcars, read_xlsx(tmp), ignore_attr = TRUE)
+
+})
+
+test_that("write with data.table", {
+
+  skip_if_not_installed("data.table")
+  tmp <- temp_xlsx()
+  expect_silent(write_xlsx(x = data.table(1), file = tmp))
+  expect_equal(data.frame(V1=1), read_xlsx(tmp), ignore_attr = TRUE)
 
 })
