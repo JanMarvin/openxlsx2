@@ -166,3 +166,12 @@ test_that("write dims", {
   expect_equal(colnames(s3), c("B"))
 
 })
+
+test_that("write data.table", {
+
+  df <- mtcars
+  class(df) <- c("data.table", "data.frame")
+
+  expect_silent(write_xlsx(df, temp_xlsx()))
+
+})

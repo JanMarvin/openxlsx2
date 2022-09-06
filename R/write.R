@@ -228,6 +228,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   if (inherits(data, "data.frame") || inherits(data, "matrix")) {
     is_data_frame <- TRUE
 
+    if (inherits(data, "data.table")) data <- as.data.frame(data)
+
     sel <- !dc %in% c(4, 5, 10)
     data[sel] <- lapply(data[sel], as.character)
 
