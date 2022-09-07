@@ -205,3 +205,25 @@ rowcol_to_dims <- function(row, col) {
   stringi::stri_join(min_col, min_row, ":", max_col, max_row)
 
 }
+
+#' removes entries from worksheets_rels
+#' @param x character string
+#' @noRd
+relship_no <- function(obj, x) {
+  if (length(obj) == 0) return(character())
+  relship <- rbindlist(xml_attr(obj, "Relationship"))
+  relship$typ <- basename(relship$Type)
+  relship <- relship[relship$typ != x,]
+  df_to_xml("Relationship", relship[c("Id", "Type", "Target")])
+}
+
+#' get ids from worksheets_rels
+#' @param x character string
+#' @noRd
+get_relship_id <- function(obj, x) {
+  if (length(obj) == 0) return(character())
+  relship <- rbindlist(xml_attr(obj, "Relationship"))
+  relship$typ <- basename(relship$Type)
+  relship <- relship[relship$typ == x,]
+  unname(unlist(relship[c("Id")]))
+}

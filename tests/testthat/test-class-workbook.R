@@ -293,35 +293,59 @@ test_that("clone worksheet", {
 
   ## Dummy tests - not sure how to test these from R ##
 
-  # # clone chartsheet
+  # # clone chartsheet ----------------------------------------------------
   fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
   # wb$get_sheet_names() # chartsheet has no named name?
   expect_silent(wb$clone_worksheet(1, "Clone 1"))
+  expect_true(inherits(wb$worksheets[[5]], "wbChartSheet"))
   # wb$open()
 
-  # clone pivot table and drawing
+  # clone pivot table and drawing -----------------------------------------
   fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
   expect_silent(wb$clone_worksheet(4, "Clone 1"))
+
+  # sheets 4 & 5 both reference the same pivot table in different drawing
+  # once the file is opened, both pivot tables behave independently
+  exp <- c(
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotTable\" Target=\"../pivotTables/pivotTable2.xml\"/>",
+    "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing5.xml\"/>"
+  )
+  got <- wb$worksheets_rels[[5]]
+  expect_equal(exp, got)
   # wb$open()
 
-  # clone drawing --
+  # clone drawing ---------------------------------------------------------
   fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
-  expect_silent(wb$clone_worksheet("testing", "Clone 1"))
+  expect_silent(wb$clone_worksheet("testing", "Clone1"))
+
+  expect_false(identical(wb$worksheets_rels[2], wb$worksheets_rels[5]))
   # wb$open()
 
-  # clone sheet with table --
+  # clone sheet with table ------------------------------------------------
   fl <- system.file("extdata", "tableStyles.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
   expect_silent(wb$clone_worksheet(1, "clone"))
+
+  expect_false(identical(wb$tables$tab_xml[1], wb$tables$tab_xml[2]))
   # wb$open()
 
-  # clone sheet with chart --
+  # clone sheet with chart ------------------------------------------------
   fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
   wb$clone_worksheet(2, "Clone 1")
+
+  expect_true(grepl("test", wb$charts$chart[2]))
+  expect_true(grepl("'Clone 1'", wb$charts$chart[3]))
+  # wb$open()
+
+  # clone slicer ----------------------------------------------------------
+  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)
+  expect_warning(wb$clone_worksheet("IrisSample", "Clone1"),
+                 "Cloning slicers is not yet supported. It will not appear on the sheet.")
   # wb$open()
 
 })

@@ -85,3 +85,17 @@ test_that("temp_dir works", {
   expect_true(dir.exists(out))
 
 })
+
+test_that("relship", {
+
+  wb <- wb_load(system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+
+  exp <- "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing3.xml\"/>"
+  got <- relship_no(obj = wb$worksheets_rels[[3]], x = "table")
+  expect_equal(exp, got)
+
+  exp <- "rId2"
+  got <- get_relship_id(obj = wb$worksheets_rels[[1]], x = "drawing")
+  expect_equal(exp, got)
+
+})
