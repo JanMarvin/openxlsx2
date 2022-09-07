@@ -659,6 +659,7 @@ wbWorkbook <- R6::R6Class(
           USE.NAMES = FALSE
         )
 
+      # otherwise an empty drawings relationship is written
       if (identical(self$drawings_rels[[newSheetIndex]], character()))
         self$drawings_rels[[newSheetIndex]] <- list()
 
@@ -681,7 +682,8 @@ wbWorkbook <- R6::R6Class(
         cloned_slicers <- self$slicers[[old]]
         slicer_attr <- xml_attr(cloned_slicers, "slicers")
 
-        # replace name with name_n
+        # Replace name with name_n. This will prevent the slicer from loading,
+        # but the xlsx file is not broken
         slicer_child <- xml_node(cloned_slicers, "slicers", "slicer")
         slicer_df <- rbindlist(xml_attr(slicer_child, "slicer"))[c("name", "cache", "caption", "rowHeight")]
         slicer_df$name <- paste0(slicer_df$name, "_n")
@@ -803,7 +805,7 @@ wbWorkbook <- R6::R6Class(
 
       # TODO: The following items are currently NOT copied/duplicated for the cloned sheet:
       #   - Comments ???
-      #   - Silcers
+      #   - Slicers
 
       invisible(self)
     },
