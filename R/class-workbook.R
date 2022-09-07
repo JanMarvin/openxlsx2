@@ -623,7 +623,7 @@ wbWorkbook <- R6::R6Class(
               self$charts$rels[chartid] <- gsub("?[0-9].xml", paste0(chartid, ".xml"), self$charts$rels[chartid])
 
               guard_ws <- function(x) {
-                if (grepl(" ", x)) x <- paste0("'", x, "'")
+                if (grepl(" ", x)) x <- shQuote(x, type = "sh")
                 x
               }
 
