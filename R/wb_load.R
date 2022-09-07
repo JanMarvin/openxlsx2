@@ -715,7 +715,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       # maybe these need to be sorted?
       # slicerXML <- slicerXML[order(nchar(slicerXML), slicerXML)] ???
 
-      wb$slicers <- vapply(slicerXML, read_xml, pointer = F,
+      wb$slicers <- vapply(slicerXML, read_xml, pointer = FALSE,
                            FUN.VALUE = NA_character_, USE.NAMES = FALSE)
 
       slicersFiles <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=slicer)[0-9]+(?=\\.xml)", x, perl = TRUE))))
@@ -743,7 +743,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     ## ---- slicerCaches
     if (length(slicerCachesXML)) {
-      wb$slicerCaches <- vapply(slicerCachesXML, read_xml, pointer = F,
+      wb$slicerCaches <- vapply(slicerCachesXML, read_xml, pointer = FALSE,
                                 FUN.VALUE = NA_character_, USE.NAMES = FALSE)
 
       wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds))
