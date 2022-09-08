@@ -576,7 +576,7 @@ Rcpp::CharacterVector xml_node_create(
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags);
 
-  return Rcpp::wrap(oss.str());
+  return Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
 // xml_append_child1
@@ -598,7 +598,7 @@ SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer) {
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(oss.str());
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
@@ -622,7 +622,7 @@ SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool poi
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(oss.str());
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
@@ -647,7 +647,7 @@ SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::str
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(oss.str());
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
@@ -675,7 +675,7 @@ SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer)
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(oss.str());
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
@@ -704,7 +704,7 @@ SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int 
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(oss.str());
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
@@ -734,6 +734,6 @@ SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std:
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(oss.str());
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
