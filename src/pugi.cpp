@@ -675,7 +675,7 @@ SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer)
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()))
+    return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
 
