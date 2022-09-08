@@ -711,18 +711,22 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     ## Slicers -------------------------------------------------------------------------------------
     if (length(slicerXML)) {
-      slicerXML <- slicerXML[order(nchar(slicerXML), slicerXML)]
+
+      # maybe these need to be sorted?
+      # slicerXML <- slicerXML[order(nchar(slicerXML), slicerXML)] ???
+
+      wb$slicers <- vapply(slicerXML, read_xml, pointer = FALSE,
+                           FUN.VALUE = NA_character_, USE.NAMES = FALSE)
+
       slicersFiles <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=slicer)[0-9]+(?=\\.xml)", x, perl = TRUE))))
       inds <- lengths(slicersFiles)
 
       ## worksheet_rels Id for slicer will be rId0
       k <- 1L
-      wb$slicers <- rep("", nSheets)
       for (i in seq_len(nSheets)) {
 
         ## read in slicer[j].XML sheets into sheet[i]
         if (inds[i]) {
-          wb$slicers[[i]] <- slicerXML[k]
 
           # this will add slicers to Content_Types. Ergo if worksheets with
           # slicers are removed, the slicer needs to remain in the worksheet
@@ -739,16 +743,17 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     ## ---- slicerCaches
     if (length(slicerCachesXML)) {
-      inds <- seq_along(slicerCachesXML)
+      wb$slicerCaches <- vapply(slicerCachesXML, read_xml, pointer = FALSE,
+                                FUN.VALUE = NA_character_, USE.NAMES = FALSE)
+
       wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds))
-      wb$slicerCaches <- sapply(slicerCachesXML[order(nchar(slicerCachesXML), slicerCachesXML)], read_xml, pointer = FALSE)
       wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds, inds))
 
-      # get extLst object. select the silcerCaches and replace it
+      # get extLst object. select the slicerCaches and replace it
       ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")
       is_slicer <- which(ext_nams == "x14:slicerCaches")
       ext <- xml_node(wb$workbook$extLst, "extLst", "ext")
-      ext[is_slicer] <- genSlicerCachesExtLst(1E5 + inds)
+      ext[is_slicer] <- genSlicerCachesExtLst(1E5 + seq_along(slicerCachesXML))
       wb$workbook$extLst <- xml_node_create("extLst", xml_children = ext)
     }
 
@@ -822,6 +827,9 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
           names(wb$worksheets[[i]]$hyperlinks) <- targets
         }
       }
+
+      # remove unused hyperlink reference from worksheets_rels
+      wb$worksheets_rels[[i]] <- relship_no(wb$worksheets_rels[[i]], "hyperlink")
     }
 
 
