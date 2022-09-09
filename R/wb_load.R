@@ -544,6 +544,10 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   if (!missing(sheet)) {
     import_sheets <- wb_validate_sheet(wb, sheet)
     sheet <- import_sheets
+    if (is.na(sheet)) {
+      stop("No such sheet in the workbook. Workbook contains:\n",
+           paste(names(wb$get_sheet_names()), collapse = "\n"))
+    }
   }
 
   for (i in import_sheets) {

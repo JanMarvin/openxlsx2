@@ -283,3 +283,19 @@ test_that("Content Types is not modified", {
   expect_equal(pre, post)
 
 })
+
+test_that("Sheet not found", {
+  temp <- temp_xlsx()
+
+  wb <- wb_workbook()$
+    add_worksheet("Test")$
+    add_worksheet("Test ")$
+    add_worksheet("Test & Test")
+  wb$save(temp)
+
+  expect_error(
+    read_xlsx(temp, "Tes"),
+    paste0("No such sheet in the workbook. Workbook contains:\nTest\nTest \nTest & Test")
+  )
+
+})
