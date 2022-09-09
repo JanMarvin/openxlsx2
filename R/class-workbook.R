@@ -5244,7 +5244,8 @@ wbWorkbook <- R6::R6Class(
 
         if (!file.exists(xlchartsDir)) {
           dir.create(xlchartsDir, recursive = TRUE)
-          dir.create(xlchartsRelsDir, recursive = TRUE)
+          if (any(self$rels != ""))
+            dir.create(xlchartsRelsDir, recursive = TRUE)
         }
 
         for (crt in seq_len(nrow(self$charts))) {
