@@ -474,7 +474,9 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   ## xl\chart
   if (!data_only && length(chartsXML)) {
 
-    # assume that every chart has chart, color, style and rels
+    # Not every chart has chart, color, style and rel. We read the file names
+    # into charts first and replace the file name with the content in a second
+    # run.
     empty_chr <- vector("character", length(chartsXML))
     charts <- data.frame(
       chart = empty_chr,
@@ -483,12 +485,39 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       rels = empty_chr
     )
 
-    for (crt in seq_along(chartsXML)) {
-      charts$chart[crt]  <- read_xml(chartsXML[crt], pointer = FALSE)
-      charts$colors[crt] <- read_xml(chartsXML_colors[crt], pointer = FALSE)
-      charts$style[crt]  <- read_xml(chartsXML_styles[crt], pointer = FALSE)
-      charts$rels[crt]   <- read_xml(chartsRels[crt], pointer = FALSE)
+    # filename_id returns an integer vector with the file name as name
+    filename_id <- function(x) {
+      vapply(X = x,
+             FUN = function(file) as.integer(gsub("\\D+", "", basename(file))),
+             FUN.VALUE = NA_integer_)
     }
+
+    read_xml_files <- function(x) {
+      vapply(X = x,
+             FUN = read_xml,
+             pointer = FALSE,
+             FUN.VALUE = NA_character_)
+    }
+
+    chartsXML_id        <- filename_id(chartsXML)
+    chartsXML_colors_id <- filename_id(chartsXML_colors)
+    chartsXML_styles_id <- filename_id(chartsXML_styles)
+    chartsRels_id       <- filename_id(chartsRels)
+
+    charts$chart[chartsXML_id]         <- names(chartsXML_id)
+    charts$colors[chartsXML_colors_id] <- names(chartsXML_colors_id)
+    charts$style[chartsXML_styles_id]  <- names(chartsXML_styles_id)
+    charts$rels[chartsRels_id]         <- names(chartsRels_id)
+
+    crt_ch <- charts$chart != ""
+    crt_rl <- charts$rels != ""
+    crt_co <- charts$colors != ""
+    crt_st <- charts$style != ""
+
+    charts$chart[crt_ch]  <- read_xml_files(charts$chart[crt_ch])
+    charts$colors[crt_co] <- read_xml_files(charts$colors[crt_co])
+    charts$style[crt_st]  <- read_xml_files(charts$style[crt_st])
+    charts$rels[crt_rl]   <- read_xml_files(charts$rels[crt_rl])
 
     wb$charts <- charts
 

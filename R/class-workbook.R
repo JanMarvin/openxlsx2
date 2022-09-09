@@ -5240,7 +5240,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       ## write charts
-      if (NROW(self$charts)) {
+      if (NROW(self$charts) && any(self$charts != "")) {
 
         if (!file.exists(xlchartsDir)) {
           dir.create(xlchartsDir, recursive = TRUE)
@@ -5249,29 +5249,39 @@ wbWorkbook <- R6::R6Class(
 
         for (crt in seq_len(nrow(self$charts))) {
 
-          ct <- c(ct, sprintf('<Override PartName="/xl/charts/chart%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', crt))
-          ct <- c(ct, sprintf('<Override PartName="/xl/charts/style%s.xml" ContentType="application/vnd.ms-office.chartstyle+xml"/>', crt))
-          ct <- c(ct, sprintf('<Override PartName="/xl/charts/colors%s.xml" ContentType="application/vnd.ms-office.chartcolorstyle+xml"/>', crt))
+          if (self$charts$chart[crt] != "") {
+            ct <- c(ct, sprintf('<Override PartName="/xl/charts/chart%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', crt))
 
-          write_file(
-            body = self$charts$chart[crt],
-            fl = file.path(xlchartsDir, stri_join("chart", crt, ".xml"))
-          )
+            write_file(
+              body = self$charts$chart[crt],
+              fl = file.path(xlchartsDir, stri_join("chart", crt, ".xml"))
+            )
+          }
 
-          write_file(
-            body = self$charts$colors[crt],
-            fl = file.path(xlchartsDir, stri_join("colors", crt, ".xml"))
-          )
+          if (self$charts$colors[crt] != "") {
+            ct <- c(ct, sprintf('<Override PartName="/xl/charts/colors%s.xml" ContentType="application/vnd.ms-office.chartcolorstyle+xml"/>', crt))
 
-          write_file(
-            body = self$charts$style[crt],
-            fl = file.path(xlchartsDir, stri_join("style", crt, ".xml"))
-          )
+            write_file(
+              body = self$charts$colors[crt],
+              fl = file.path(xlchartsDir, stri_join("colors", crt, ".xml"))
+            )
+          }
 
-          write_file(
-            body = self$charts$rels[crt],
-            fl = file.path(xlchartsRelsDir, stri_join("chart", crt, ".xml.rels"))
-          )
+          if (self$charts$style[crt] != "") {
+            ct <- c(ct, sprintf('<Override PartName="/xl/charts/style%s.xml" ContentType="application/vnd.ms-office.chartstyle+xml"/>', crt))
+
+            write_file(
+              body = self$charts$style[crt],
+              fl = file.path(xlchartsDir, stri_join("style", crt, ".xml"))
+            )
+          }
+
+          if (self$charts$rels[crt] != "") {
+            write_file(
+              body = self$charts$rels[crt],
+              fl = file.path(xlchartsRelsDir, stri_join("chart", crt, ".xml.rels"))
+            )
+          }
         }
 
       }
