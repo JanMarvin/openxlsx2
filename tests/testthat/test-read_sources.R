@@ -142,10 +142,39 @@ test_that("reading charts", {
 
   skip_if_offline()
 
+  temp <- temp_xlsx()
+
   wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/unemployment-nrw202208.xlsx")
 
   exp <- c("", "", "", "", "", "", "", "", "", "", "", "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartUserShapes\" Target=\"../drawings/drawing18.xml\"/></Relationships>", "", "", "")
   got <- wb$charts$rels
+  expect_equal(exp, got)
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  which(wb$get_sheet_names() == "Uebersicht_Quoten")
+  wb$add_image(19, img, startRow = 5, startCol = 3, width = 6, height = 5)
+  wb$save(temp)
+
+  # check that we wrote a chartshape
+  xlsx_unzip <- paste0(tempdir(), "/unzip")
+  dir.create(xlsx_unzip)
+
+
+  unzip(temp, exdir = xlsx_unzip)
+  overrides <- xml_node(read_xml(paste0(xlsx_unzip, "/[Content_Types].xml"), pointer = FALSE), "Types","Override")
+  unlink(xlsx_unzip, recursive = TRUE)
+
+  expect_true(any(grepl("chartshapes", overrides)))
+
+  # check that the image is valid and was placed on the correct sheet and drawing
+  exp <- c(
+    "<Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"#Inhaltsverzeichnis!A1\"/>",
+    "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart14.xml\"/>",
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image6.jpeg\"/>",
+    "<Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image7.jpg\"/>"
+  )
+  got <- wb$drawings_rels[[20]]
   expect_equal(exp, got)
 
 })
