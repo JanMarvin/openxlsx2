@@ -598,13 +598,20 @@ wbWorkbook <- R6::R6Class(
 
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]] <- self$worksheets_rels[[old]]
-      self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[old]]
+
+      relship <- rbindlist(xml_attr(self$worksheets_rels[[old]], "Relationship"))
+      relship$typ <- basename(relship$Type)
+      old_drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
+
+      new_drawing_sheet <- length(self$drawings) + 1
+
+      self$drawings_rels[[new_drawing_sheet]] <- self$drawings_rels[[old_drawing_sheet]]
 
       # give each chart its own filename (images can re-use the same file, but charts can't)
-      self$drawings_rels[[newSheetIndex]] <-
+      self$drawings_rels[[new_drawing_sheet]] <-
         # TODO Can this be simplified?  There's a bit going on here
         vapply(
-          self$drawings_rels[[newSheetIndex]],
+          self$drawings_rels[[new_drawing_sheet]],
           function(rl) {
             # is rl here a length of 1?
             stopifnot(length(rl) == 1L) # lets find out...  if this fails, just remove it
@@ -620,7 +627,7 @@ wbWorkbook <- R6::R6Class(
               # sheet name instead of the clone source
 
               chart <- self$charts$chart[chartid]
-              self$charts$rels[chartid] <- gsub("?[0-9].xml", paste0(chartid, ".xml"), self$charts$rels[chartid])
+              self$charts$rels[chartid] <- gsub("?drawing[0-9].xml", paste0("drawing", chartid, ".xml"), self$charts$rels[chartid])
 
               guard_ws <- function(x) {
                 if (grepl(" ", x)) x <- shQuote(x, type = "sh")
@@ -660,8 +667,8 @@ wbWorkbook <- R6::R6Class(
         )
 
       # otherwise an empty drawings relationship is written
-      if (identical(self$drawings_rels[[newSheetIndex]], character()))
-        self$drawings_rels[[newSheetIndex]] <- list()
+      if (identical(self$drawings_rels[[new_drawing_sheet]], character()))
+        self$drawings_rels[[new_drawing_sheet]] <- list()
 
       ## TODO Currently it is not possible to clone a sheet with a slicer in a
       #  safe way. It will always result in a broken xlsx file which is fixable
@@ -707,7 +714,7 @@ wbWorkbook <- R6::R6Class(
 
       # The IDs in the drawings array are sheet-specific, so within the new
       # cloned sheet the same IDs can be used => no need to modify drawings
-      self$drawings[[newSheetIndex]]       <- self$drawings[[old]]
+      self$drawings[[new_drawing_sheet]]       <- self$drawings[[old_drawing_sheet]]
       self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
       self$vml[[newSheetIndex]]            <- self$vml[[old]]
       self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
@@ -736,7 +743,7 @@ wbWorkbook <- R6::R6Class(
           sprintf(
             '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>',
             rid,
-            newSheetIndex
+            new_drawing_sheet
           )
         )
 
