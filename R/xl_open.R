@@ -93,6 +93,8 @@ xl_open.default <- function(x, file, interactive = NA) {
 
 
 chooseExcelApp <- function() {
+
+  # nocov start
   m <- c(
     `Libreoffice/OpenOffice` = "soffice",
     `Calligra Sheets` = "calligrasheets",
@@ -119,7 +121,6 @@ chooseExcelApp <- function() {
     return(invisible(unnprog))
   }
 
-  # nocov start
   if (1 < nApps) {
     if (!interactive()) {
       stop(

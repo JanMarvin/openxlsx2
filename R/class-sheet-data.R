@@ -26,7 +26,7 @@ wbSheetData <- R6::R6Class(
     }
   )
 )
-    
+
 #' @rdname wbSheetData
 #' @export
 wb_sheet_data <- function() {
@@ -38,44 +38,19 @@ wb_sheet_data <- function() {
 
 # Consider making some helpers for the cc stuff.
 
-empty_sheet_data_cc <- function(n = 0) {
-  value <- rep.int(NA_character_, n)
-  data.frame(
-    row_r = value,
-    c_r   = value,
-    c_s   = value,
-    c_t   = value,
-    v     = value,
-    f     = value,
-    f_t   = value,
-    f_ref = value,
-    f_si  = value,
-    is    = value,
-    typ   = value,
-    r     = value,
-    check.names = FALSE,
-    stringsAsFactors = FALSE
+empty_sheet_data_cc <- function(n) {
+  create_char_dataframe(
+    colnames = c("r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
+                 "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ"),
+    n = n
   )
 }
 
-
-empty_row_attr <- function(n = 0) {
-  value <- character(n)
-  data.frame(
-    collapsed         = value,
-    customFormat      = value,
-    customHeight      = value,
-    `x14ac:dyDescent` = value,
-    ht                = value,
-    hidden            = value,
-    outlineLevel      = value,
-    r                 = value,
-    ph                = value,
-    spans             = value,
-    s                 = value,
-    thickBot          = value,
-    thickTop          = value,
-    check.names = FALSE,
-    stringsAsFactors = FALSE
+empty_row_attr <- function(n) {
+  create_char_dataframe(
+    colnames = c("collapsed", "customFormat", "customHeight", "x14ac:dyDescent",
+                 "ht", "hidden", "outlineLevel", "r", "ph", "spans", "s",
+                 "thickBot", "thickTop"),
+    n = n
   )
 }

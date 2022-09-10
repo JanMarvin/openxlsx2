@@ -3,7 +3,7 @@
 #'
 #' Cleans a worksheet name by removing legal characters.
 #'
-#' @details Illegal characters are considered `\\`, `/`, `?`, `*`, `:`, `[`, and
+#' @details Illegal characters are considered `\`, `/`, `?`, `*`, `:`, `[`, and
 #' `]`.  These must be intentionally removed from worksheet names prior to
 #' creating a new worksheet.
 #'
@@ -57,7 +57,7 @@ replace_legal_chars <- function(x) {
 
 replace_illegal_chars <- function(x, replacement = " ") {
   x <- as.character(x)
-  Encoding(x) <- "UTF-8"
+  x <- stringi::stri_escape_unicode(x)
   stringi::stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
 }
 

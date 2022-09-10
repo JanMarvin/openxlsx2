@@ -311,12 +311,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
     # original cc data frame
-    # TODO should be empty_sheet_data(n = nrow(data) * ncol(data))
-    nams <- c("r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
-              "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
-
-    cc <- create_char_dataframe(colnames = nams,
-                                n = nrow(data) * ncol(data))
+    cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
 
     ## create a cell style format for specific types at the end of the existing
     # styles. gets the reference an passes it on.

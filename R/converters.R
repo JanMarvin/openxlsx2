@@ -61,30 +61,3 @@ get_cell_refs <- function(cellCoords) {
   l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])
 }
-
-
-# others ------------------------------------------------------------------
-
-convert2EMU <- function(d, units) {
-  if (grepl("in", units)) {
-    d <- d * 2.54
-  }
-
-  if (grepl("mm|milli", units)) {
-    d <- d / 10
-  }
-
-  return(d * 360000)
-}
-
-
-pixels2ExcelColWidth <- function(pixels) {
-  if (any(!is.numeric(pixels))) {
-    stop("All elements of pixels must be numeric")
-  }
-
-  pixels[pixels == 0] <- 8.43
-  pixels[pixels != 0] <- (pixels[pixels != 0] - 12) / 7 + 1
-
-  pixels
-}

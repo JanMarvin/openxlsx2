@@ -313,3 +313,20 @@ test_that("write_xlsx with na.strings", {
   expect_equal(exp, got, ignore_attr = TRUE)
 
 })
+
+test_that("write & load file with chartsheet", {
+
+  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  wb <- wb_load(fl)
+
+  wb$worksheets[[1]]$sheetPr <- xml_node_create(
+    "sheetPr",
+    xml_children = xml_node_create(
+      "tabColor",
+      xml_attributes = c(rgb = "FF00FF00")))
+
+  temp <- temp_xlsx()
+  wb$save(temp)
+  wb2 <- wb_load(temp)
+
+})

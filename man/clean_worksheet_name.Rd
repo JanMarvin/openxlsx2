@@ -18,7 +18,7 @@ x with bad characters removed
 Cleans a worksheet name by removing legal characters.
 }
 \details{
-Illegal characters are considered \verb{\\\\}, \code{/}, \verb{?}, \code{*}, \code{:}, \code{[}, and
+Illegal characters are considered \verb{\\}, \code{/}, \verb{?}, \code{*}, \code{:}, \code{[}, and
 \verb{]}.  These must be intentionally removed from worksheet names prior to
 creating a new worksheet.
 }

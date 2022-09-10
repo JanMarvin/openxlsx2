@@ -42,11 +42,13 @@ wbChartSheet <- R6::R6Class(
         tabColour <- character()
       }
 
+      # nocov start
       if (zoom < 10) {
         zoom <- 10
       } else if (zoom > 400) {
         zoom <- 400
       }
+      #nocov end
 
       self$sheetPr     <- tabColour
       self$sheetViews  <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(tabSelected))
