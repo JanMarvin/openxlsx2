@@ -5303,9 +5303,9 @@ wbWorkbook <- R6::R6Class(
           )
           if (!all(self$drawings_rels[[i]] == "")) {
             write_file(
-              head = '',
+              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(self$drawings_rels[[i]]),
-              tail = '',
+              tail = '</Relationships>',
               fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
             )
           }

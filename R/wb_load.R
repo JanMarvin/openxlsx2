@@ -876,9 +876,12 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
       drawing$drawing[drw_dr]  <- read_xml_files(drawing$drawing[drw_dr])
       drawing$rels[drw_rl]     <- read_xml_files(drawing$rels[drw_rl])
+      
+      # get Relationship and return a list
+      drawing$rels[drw_rl] <- lapply(drawing$rels[drw_rl], function(x) xml_node(x, "Relationships", "Relationship"))
 
       wb$drawings      <- as.list(drawing$drawing)
-      wb$drawings_rels <- as.list(drawing$rels)
+      wb$drawings_rels <- drawing$rels
 
     }
 
