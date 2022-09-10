@@ -1,7 +1,9 @@
 test_that("read_xlsx from different sources", {
 
+  skip_if_offline()
+
   ## URL
-  xlsxFile <- "https://github.com/ycphs/openxlsx/raw/master/inst/extdata/readTest.xlsx"
+  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
   df_url <- read_xlsx(xlsxFile)
 
   ## File
@@ -12,7 +14,7 @@ test_that("read_xlsx from different sources", {
 
 
   ## Non-existing URL
-  xlsxFile <- "https://github.com/ycphs/openxlsx/raw/master/inst/extdata/readTest2.xlsx"
+  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest2.xlsx"
   expect_error(suppressWarnings(read_xlsx(xlsxFile)))
 
 
@@ -24,8 +26,10 @@ test_that("read_xlsx from different sources", {
 
 test_that("wb_load from different sources", {
 
+  skip_if_offline()
+
   ## URL
-  xlsxFile <- "https://github.com/ycphs/openxlsx/raw/master/inst/extdata/readTest.xlsx"
+  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
   wb_url <- wb_load(xlsxFile)
 
   ## File
@@ -39,8 +43,10 @@ test_that("wb_load from different sources", {
 
 test_that("get_date_origin from different sources", {
 
+  skip_if_offline()
+
   ## URL
-  xlsxFile <- "https://github.com/ycphs/openxlsx/raw/master/inst/extdata/readTest.xlsx"
+  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
   origin_url <- get_date_origin(xlsxFile)
 
   ## File
@@ -55,9 +61,11 @@ test_that("get_date_origin from different sources", {
 
 test_that("read html source without r attribute on cell", {
 
+  skip_if_offline()
+
   # sheet without row attribute
   # original from https://www.atih.sante.fr/sites/default/files/public/content/3968/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx2/files/8702731/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx")
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx")
 
   expect_equal(c(46, 1), dim(wb_to_df(wb, sheet = 1)))
   expect_equal(c(31564, 52), dim(wb_to_df(wb, sheet = 2)))
@@ -72,24 +80,19 @@ test_that("read html source without r attribute on cell", {
 
 
 test_that("read <br> node in vml", {
-  # prepare test
-  tempd <- temp_dir()
-  temp_file <- file.path(tempd, "macro2.xlsm")
-  temp_zip  <- paste0(temp_file, ".zip")
-  download.file("https://github.com/JanMarvin/openxlsx2/files/8773595/macro2.xlsm.zip", temp_zip)
-  zip::unzip(temp_zip, exdir = tempd)
+
+  skip_if_offline()
 
   # test
-  expect_silent(wb <- wb_load(temp_file))
-
-  # clean up
-  unlink(tempd, recursive = TRUE, force = TRUE)
+  expect_silent(wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/macro2.xlsm"))
 })
 
 
 test_that("encoding", {
 
-  fl <- "https://github.com/JanMarvin/openxlsx2/files/8779041/umlauts.xlsx"
+  skip_if_offline()
+
+  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/umlauts.xlsx"
   wb <- wb_load(fl)
   expect_equal("äöüß", names(wb$get_sheet_names()))
 
@@ -131,6 +134,18 @@ test_that("encoding", {
   exp <- "<xml><a0>äöüß</a0><A0>ÄÖÜ</A0><a1>€</a1></xml>"
   got <- read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2"),
                   pointer = FALSE)
+  expect_equal(exp, got)
+
+})
+
+test_that("reading charts", {
+
+  skip_if_offline()
+
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/unemployment-nrw202208.xlsx")
+
+  exp <- c("", "", "", "", "", "", "", "", "", "", "", "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartUserShapes\" Target=\"../drawings/drawing18.xml\"/></Relationships>", "", "", "")
+  got <- wb$charts$rels
   expect_equal(exp, got)
 
 })
