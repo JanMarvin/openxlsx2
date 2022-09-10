@@ -78,6 +78,20 @@ inline unsigned int pugi_format(XPtrXML doc){
 }
 
 // [[Rcpp::export]]
+Rcpp::LogicalVector is_xml(std::string str) {
+
+  pugi::xml_document doc;
+  pugi::xml_parse_result result;
+
+  result = doc.load_string(str.c_str());
+
+  if (!result)
+    return false;
+  else
+    return true;
+}
+
+// [[Rcpp::export]]
 SEXP getXMLXPtrName1(XPtrXML doc) {
 
   vec_string res;

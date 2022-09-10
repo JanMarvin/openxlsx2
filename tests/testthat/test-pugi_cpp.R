@@ -165,3 +165,10 @@ test_that("col2int and int2col", {
   expect_equal(test, that)
 
 })
+
+test_that("is_xml", {
+
+  expect_true(is_xml("<a/>"))
+  expect_false(is_xml("a"))
+
+})
