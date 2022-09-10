@@ -395,10 +395,10 @@ hashPassword <- function(password) {
 #' @param negative negative
 #' @param displayEmptyCellsAs displayEmptyCellsAs
 #' @param markers markers add marker to line
-#' @param high highligh highest value
+#' @param high highlight highest value
 #' @param low highlight lowest value
 #' @param first highlight first value
-#' @param last hightlight last value
+#' @param last highlight last value
 #' @param colorSeries colorSeries
 #' @param colorNegative colorNegative
 #' @param colorAxis colorAxis

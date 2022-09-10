@@ -1859,7 +1859,7 @@ wb_set_sheet_names <- function(wb, old = NULL, new) {
   wb$clone()$set_sheet_names(old = old, new = new)
 }
 
-#' Get wokrhseet names for a workbook
+#' Get worksheet names for a workbook
 #'
 #' Gets the worksheet names for a [wbWorkbook] object
 #'

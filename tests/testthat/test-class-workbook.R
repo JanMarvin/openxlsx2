@@ -267,11 +267,11 @@ test_that("data validation", {
                         operator = "greaterThan", value = c(0),
                         errorStyle = "information", errorTitle = "ERROR!",
                         error = "Some error ocurred!",
-                        promptTitle = "PROMT!",
+                        promptTitle = "PROMPT!",
                         prompt = "Choose something!"
     )
 
-  exp <- "<dataValidation type=\"whole\" operator=\"greaterThan\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A1:A3\" errorStyle=\"information\" errorTitle=\"ERROR!\" error=\"Some error ocurred!\" promptTitle=\"PROMT!\" prompt=\"Choose something!\"><formula1>0</formula1></dataValidation>"
+  exp <- "<dataValidation type=\"whole\" operator=\"greaterThan\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A1:A3\" errorStyle=\"information\" errorTitle=\"ERROR!\" error=\"Some error ocurred!\" promptTitle=\"PROMPT!\" prompt=\"Choose something!\"><formula1>0</formula1></dataValidation>"
   got <- wb$worksheets[[1]]$dataValidations
   expect_equal(exp, got)
 

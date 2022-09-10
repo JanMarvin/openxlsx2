@@ -2542,7 +2542,7 @@ wbWorkbook <- R6::R6Class(
     #' @param errorTitle The error title
     #' @param error The error text
     #' @param promptTitle The prompt title
-    #' @param prompt The promt text
+    #' @param prompt The prompt text
     #' @returns The `wbWorkbook` object
     add_data_validation = function(
       sheet = current_sheet(),

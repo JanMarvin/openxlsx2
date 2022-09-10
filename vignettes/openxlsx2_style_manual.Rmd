@@ -215,7 +215,7 @@ wb$add_data("test", df)
 options("openxlsx2.numFmt" = NULL)
 ```
 
-# Modifiying the column widths
+# Modifying the column widths
 
 ## wb_set_col_widths
 ```{r}

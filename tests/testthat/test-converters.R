@@ -14,7 +14,6 @@ test_that("col2int", {
   expect_equal(1, col2int("a"))
   expect_equal(1, col2int(1))
   expect_error(col2int(list()), "x must be character")
-  expect_error(col2int(NA_integer_))
 
 })
 
