@@ -181,6 +181,7 @@ test_that("write data.table class", {
 test_that("write with data.table", {
 
   skip_if_not_installed("data.table")
+  require(data.table)
   tmp <- temp_xlsx()
   expect_silent(write_xlsx(x = data.table(1), file = tmp))
   expect_equal(data.frame(V1=1), read_xlsx(tmp), ignore_attr = TRUE)
