@@ -1420,14 +1420,6 @@ wbWorkbook <- R6::R6Class(
         ct <- ct[!grepl("sharedStrings", ct)]
       }
 
-      for (draw in seq_along(self$drawings)) {
-          if (length(self$drawings[[draw]])) {
-              ct <- c(ct,
-                sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', draw)
-              )
-          }
-      }
-
       if (nComments > 0) {
         ct <- c(
           ct,
@@ -5309,6 +5301,16 @@ wbWorkbook <- R6::R6Class(
               fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
             )
           }
+
+          drawing_type <- xml_node_name(self$drawings[[i]])
+          if (drawing_type == "xdr:wsDr") {
+            ct_drawing <- sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', i)
+          } else if (drawing_type == "c:userShapes") {
+            ct_drawing <- sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml"/>', i)
+          }
+          
+          ct <- c(ct, ct_drawing)
+
         } else {
           self$worksheets[[i]]$drawing <- character()
         }
