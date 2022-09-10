@@ -5287,31 +5287,40 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      ## write worksheets
+      ## write drawings
 
-      # TODO just seq_along()
-      nSheets <- length(self$worksheets)
+      nDrawings <- length(self$drawings)
 
-      for (i in seq_len(nSheets)) {
+      for (i in seq_len(nDrawings)) {
+
         ## Write drawing i (will always exist) skip those that are empty
-        if (!identical(self$drawings[[i]], list())) {
+        if (!all(self$drawings[[i]] == "")) {
           write_file(
             head = '',
             body = pxml(self$drawings[[i]]),
             tail = '',
             fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
           )
-          if (!identical(self$drawings_rels[[i]], list())) {
+          if (!all(self$drawings_rels[[i]] == "")) {
             write_file(
-              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
+              head = '',
               body = pxml(self$drawings_rels[[i]]),
-              tail = "</Relationships>",
+              tail = '',
               fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
             )
           }
         } else {
           self$worksheets[[i]]$drawing <- character()
         }
+        
+      }
+
+      ## write worksheets
+
+      # TODO just seq_along()
+      nSheets <- length(self$worksheets)
+
+      for (i in seq_len(nSheets)) {
 
         ## vml drawing
         if (length(self$vml_rels[[i]])) {

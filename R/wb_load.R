@@ -485,20 +485,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       rels = empty_chr
     )
 
-    # filename_id returns an integer vector with the file name as name
-    filename_id <- function(x) {
-      vapply(X = x,
-             FUN = function(file) as.integer(gsub("\\D+", "", basename(file))),
-             FUN.VALUE = NA_integer_)
-    }
-
-    read_xml_files <- function(x) {
-      vapply(X = x,
-             FUN = read_xml,
-             pointer = FALSE,
-             FUN.VALUE = NA_character_)
-    }
-
     chartsXML_id        <- filename_id(chartsXML)
     chartsXML_colors_id <- filename_id(chartsXML_colors)
     chartsXML_styles_id <- filename_id(chartsXML_styles)
@@ -708,8 +694,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
 
         xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
-        xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
-        xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
+        # xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+        # xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
 
         if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
 
@@ -871,45 +857,29 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     # TODO use lengths()
     hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
 
-    if (length(drawingRelsXML)) {
-      dRels <- lapply(drawingRelsXML, read_xml, pointer = FALSE)
-      # TODO lapply xml_node Relationships?
-      dRels <- gsub("<Relationships .*?>", "", dRels)
-      dRels <- gsub("</Relationships>", "", dRels)
-    }
-
-    if (length(drawingsXML)) {
-      dXML <- lapply(drawingsXML, read_xml, pointer = FALSE)
-      # this creates crippled drawings files
-      dXML <- gsub("<xdr:wsDr .*?>", "", dXML)
-      dXML <- gsub("</xdr:wsDr>", "", dXML)
-
-      # ptn1 <- "<(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)"
-      # ptn2 <- "</(mc:AlternateContent|xdr:oneCellAnchor|xdr:twoCellAnchor|xdr:absoluteAnchor)>"
-
-      # ## split at one/two cell Anchor
-      # dXML <- regmatches(dXML, gregexpr(paste0(ptn1, ".*?", ptn2), dXML))
-    }
-
     # loop over all worksheets and assign drawing to sheet
     if (any(hasDrawing)) {
-      for (i in seq_along(xml)) {
-        if (hasDrawing[i]) {
-          target <- apply_reg_match(drawXMLrelationship[[i]], '(?<=Target=").*?"')
-          target <- basename(gsub('"$', "", target))
+      empty_chr <- vector("character", length(drawingsXML))
+      drawing <- data.frame(
+        drawing = empty_chr,
+        rels = empty_chr
+      )
 
-          ## sheet_i has which(hasDrawing)[[i]]
-          relsInd <- grepl(target, drawingRelsXML)
-          if (any(relsInd)) {
-            wb$drawings_rels[i] <- dRels[relsInd]
-          }
+      drawingsXML_id <- filename_id(drawingsXML)
+      drawingRels_id <- filename_id(drawingRelsXML)
 
-          drawingInd <- grepl(target, drawingsXML)
-          if (any(drawingInd)) {
-            wb$drawings[i] <- sprintf("<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">%s</xdr:wsDr>", dXML[drawingInd])
-          }
-        }
-      }
+      drawing$drawing[drawingsXML_id] <- names(drawingsXML_id)
+      drawing$rels[drawingRels_id]    <- names(drawingRels_id)
+
+      drw_dr <- drawing$drawing != ""
+      drw_rl <- drawing$rels != ""
+
+      drawing$drawing[drw_dr]  <- read_xml_files(drawing$drawing[drw_dr])
+      drawing$rels[drw_rl]     <- read_xml_files(drawing$rels[drw_rl])
+
+      wb$drawings      <- as.list(drawing$drawing)
+      wb$drawings_rels <- as.list(drawing$rels)
+
     }
 
 
