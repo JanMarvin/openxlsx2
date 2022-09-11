@@ -521,9 +521,11 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
+      new_drawings_idx <- length(self$drawings) + 1
+      self$drawings[[new_drawings_idx]]      <- ""
+      self$drawings_rels[[new_drawings_idx]] <- ""
+
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$drawings_rels[[newSheetIndex]]    <- list()
-      self$drawings[[newSheetIndex]]         <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$isChartSheet[[newSheetIndex]]     <- FALSE
@@ -883,9 +885,11 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
+      new_drawings_idx <- length(self$drawings) + 1
+      self$drawings[[new_drawings_idx]]      <- ""
+      self$drawings_rels[[new_drawings_idx]] <- ""
+
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$drawings_rels[[newSheetIndex]]    <- list()
-      self$drawings[[newSheetIndex]]         <- list()
       self$isChartSheet[[newSheetIndex]]     <- TRUE
       self$rowHeights[[newSheetIndex]]       <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
@@ -3193,7 +3197,7 @@ wbWorkbook <- R6::R6Class(
       drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
 
       drawing_len <- 0
-      if (length(self$drawings_rels[[drawing_sheet]]))
+      if (all(self$drawings_rels[[drawing_sheet]] != ""))
         drawing_len <- length(xml_node(unlist(self$drawings_rels[[drawing_sheet]]), "Relationship"))
 
       imageNo <- drawing_len + 1L
@@ -3214,9 +3218,12 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
+
+      old_drawings_rels <- unlist(self$drawings_rels[[drawing_sheet]])
+      if (all(old_drawings_rels == "")) old_drawings_rels <- NULL
       ## drawings rels (Reference from drawings.xml to image file in media folder)
       self$drawings_rels[[drawing_sheet]] <- c(
-        unlist(self$drawings_rels[[drawing_sheet]]),
+        old_drawings_rels,
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
           imageNo,
@@ -3258,7 +3265,7 @@ wbWorkbook <- R6::R6Class(
 
       # If no drawing is found, initiate one. If one is found, append a child to the exisiting node.
       # Might look into updating attributes as well.
-      if (length(self$drawings[[drawing_sheet]]) == 0) {
+      if (all(self$drawings[[drawing_sheet]] == "")) {
         xml_attr = c(
           "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
           "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
@@ -3268,6 +3275,11 @@ wbWorkbook <- R6::R6Class(
       } else {
         self$drawings[[drawing_sheet]] <- xml_add_child(self$drawings[[drawing_sheet]], drawingsXML)
       }
+
+      # Finally we must assign the drawing to the sheet, if no drawing is assigned. If drawing is not
+      # empty, we must assume that the rId matches another drawing rId in worksheets_rels
+      if (identical(self$worksheets[[sheet]]$drawing, character()))
+        self$worksheets[[sheet]]$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
 
       invisible(self)
     },
@@ -5331,8 +5343,6 @@ wbWorkbook <- R6::R6Class(
           
           ct <- c(ct, ct_drawing)
 
-        } else {
-          self$worksheets[[i]]$drawing <- character()
         }
         
       }

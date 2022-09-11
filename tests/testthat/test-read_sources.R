@@ -177,4 +177,8 @@ test_that("reading charts", {
   got <- wb$drawings_rels[[20]]
   expect_equal(exp, got)
 
+
+  wb$add_worksheet()
+  wb$save(temp)
+
 })
