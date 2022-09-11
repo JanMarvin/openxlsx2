@@ -132,6 +132,10 @@ unkgetXMLXPtr3 <- function(doc, level1, child) {
     .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
 }
 
+getXMLPtr1con <- function(doc) {
+    .Call(`_openxlsx2_getXMLPtr1con`, doc)
+}
+
 getXMLXPtr1val <- function(doc, child) {
     .Call(`_openxlsx2_getXMLXPtr1val`, doc, child)
 }

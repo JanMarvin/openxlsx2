@@ -326,7 +326,7 @@ test_that("write & load file with chartsheet", {
       xml_attributes = c(rgb = "FF00FF00")))
 
   temp <- temp_xlsx()
-  wb$save(temp)
-  wb2 <- wb_load(temp)
+  expect_silent(wb$save(temp))
+  expect_silent(wb2 <- wb_load(temp))
 
 })

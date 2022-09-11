@@ -48,8 +48,8 @@ wbWorkbook <- R6::R6Class(
     #' @field drawings_rels drawings_rels
     drawings_rels = NULL,
 
-    #' @field drawings_vml drawings_vml
-    drawings_vml = NULL,
+    # #' @field drawings_vml drawings_vml
+    # drawings_vml = NULL,
 
     #' @field embeddings embeddings
     embeddings = NULL,
@@ -204,7 +204,7 @@ wbWorkbook <- R6::R6Class(
 
       self$drawings <- list()
       self$drawings_rels <- list()
-      self$drawings_vml <- list()
+      # self$drawings_vml <- list()
 
       self$embeddings <- NULL
       self$externalLinks <- NULL
@@ -677,7 +677,7 @@ wbWorkbook <- R6::R6Class(
         # otherwise an empty drawings relationship is written
         if (identical(self$drawings_rels[[new_drawing_sheet]], character()))
           self$drawings_rels[[new_drawing_sheet]] <- list()
-      
+
 
         self$drawings[[new_drawing_sheet]]       <- self$drawings[[old_drawing_sheet]]
       }
@@ -1140,6 +1140,10 @@ wbWorkbook <- R6::R6Class(
       }
 
 
+      ## Content types has entries of all xml files in the workbook
+      ct <- self$Content_Types
+
+
       ## will always have drawings
       xlworksheetsDir     <- dir_create(tmpDir, "xl", "worksheets")
       xlworksheetsRelsDir <- dir_create(tmpDir, "xl", "worksheets", "_rels")
@@ -1173,7 +1177,7 @@ wbWorkbook <- R6::R6Class(
           )
         }
 
-        private$writeDrawingVML(xldrawingsDir)
+        private$writeDrawingVML(xldrawingsDir, xldrawingsRelsDir)
       }
 
       ## Threaded Comments xl/threadedComments/threadedComment.xml
@@ -1302,8 +1306,6 @@ wbWorkbook <- R6::R6Class(
 
       ## write tables
 
-      ## Content types has entries of all xml files in the workbook
-      ct <- self$Content_Types
       ## update tables in content types (some have been added, some removed, get the final state)
       default <- xml_node(ct, "Default")
       override <- rbindlist(xml_attr(ct, "Override"))
@@ -1418,46 +1420,40 @@ wbWorkbook <- R6::R6Class(
         file.copy(self$vbaProject, xlDir)
       }
 
-      ## Drawings
-      for (draw in seq_along(self$drawings)) {
+      # ## Drawings
+      # for (draw in seq_along(self$drawings)) {
 
-        relship <- data.frame()
-        if (!all(identical(self$worksheets_rels[[draw]], character()))) {
-          relship <- rbindlist(xml_attr(unlist(self$worksheets_rels[[draw]]), "Relationship"))
-          relship$typ <- basename(relship$Type)
-          relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-        }
+      #   relship <- data.frame()
+      #   if (!all(identical(self$worksheets_rels[[draw]], character()))) {
+      #     relship <- rbindlist(xml_attr(unlist(self$worksheets_rels[[draw]]), "Relationship"))
+      #     relship$typ <- basename(relship$Type)
+      #     relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+      #   }
 
-        rid <- max(0, relship$tid)
-        
-        if (!any(relship$typ == "drawing")) {
+      #   rid <- max(0, relship$tid)
 
-          # check if drawings required
-          drawing_rel <- NULL
-          if (length(self$drawings) != 0 && length(self$drawings[[draw]])) {
-            rid <- rid + 1
-            drawing_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', rid, draw)
-          }
+      #   if (!any(relship$typ == "drawing")) {
 
-          drawing_vml_rel <- NULL
-          # if drawings_vml is set or if file has comments. comments create drawings_vml when writing
-          if ((length(self$drawings_vml) > 0 && length(self$drawings_vml[[draw]]) > 0) || (length(self$comments) > 0 && length(self$comments[[draw]]) > 0)) {
-            rid <- rid + 1
-            drawing_vml_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>', rid, draw)
-          }
+      #     # check if drawings required
+      #     drawing_rel <- NULL
+      #     if (length(self$drawings) != 0 && length(self$drawings[[draw]])) {
+      #       rid <- rid + 1
+      #       drawing_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', rid, draw)
+      #     }
 
-          self$worksheets_rels[[draw]] <-  unique(c(self$worksheets_rels[[draw]], drawing_rel, drawing_vml_rel))
+      #     drawing_vml_rel <- NULL
+      #     # if drawings_vml is set or if file has comments. comments create drawings_vml when writing
+      #     if ((length(self$drawings_vml) > 0 && length(self$drawings_vml[[draw]]) > 0) || (length(self$comments) > 0 && length(self$comments[[draw]]) > 0)) {
+      #       rid <- rid + 1
+      #       drawing_vml_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>', rid, draw)
+      #     }
 
-        }
+      #     self$worksheets_rels[[draw]] <-  unique(c(self$worksheets_rels[[draw]], drawing_rel, drawing_vml_rel))
 
-        if (length(self$drawings[[draw]])) {
-            ct <- c(ct,
-              sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', draw)
-            )
-        }
+      #   }
 
 
-      }
+      # }
 
       ## write worksheet, worksheet_rels, drawings, drawing_rels
       ct <- private$writeSheetDataXML(
@@ -2460,7 +2456,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
-        # TODO not every sheet has a drawing. this originates from a time where 
+        # TODO not every sheet has a drawing. this originates from a time where
         # every sheet created got a drawing assigned.
         # drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
         pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
@@ -2472,12 +2468,12 @@ wbWorkbook <- R6::R6Class(
         if (length(comment_id))    self$comments[[comment_id]]            <- NULL
         # if (length(drawing_id))
                                    self$drawings[[sheet]]                 <- NULL
-        # if (length(drawing_id))    
+        # if (length(drawing_id))
                                    self$drawings_rels[[sheet]]            <- NULL
         if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
-        # if (length(vmlDrawing_id)) 
+        # if (length(vmlDrawing_id))
                                    self$vml[[sheet]]                      <- NULL
-        # if (length(vmlDrawing_id)) 
+        # if (length(vmlDrawing_id))
                                    self$vml_rels[[sheet]]                 <- NULL
 
 
@@ -3256,12 +3252,15 @@ wbWorkbook <- R6::R6Class(
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
-      relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-      relship$typ <- basename(relship$Type)
-      drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
+      drawing_sheet <- 1
+      if (length(self$worksheets_rels[[sheet]])) {
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
+      }
 
       drawing_len <- 0
-      if (all(self$drawings_rels[[drawing_sheet]] != ""))
+      if (!all(self$drawings_rels[[drawing_sheet]] == ""))
         drawing_len <- length(xml_node(unlist(self$drawings_rels[[drawing_sheet]]), "Relationship"))
 
       imageNo <- drawing_len + 1L
@@ -3282,7 +3281,12 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
+      # update worksheets_rels
+      if (length(self$worksheets_rels[[sheet]]) == 0) {
+        self$worksheets_rels[[sheet]] <- sprintf('<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', imageNo) ## will always be 1
+      }
 
+      # update drawings_rels
       old_drawings_rels <- unlist(self$drawings_rels[[drawing_sheet]])
       if (all(old_drawings_rels == "")) old_drawings_rels <- NULL
       ## drawings rels (Reference from drawings.xml to image file in media folder)
@@ -5260,59 +5264,85 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    writeDrawingVML = function(dir) {
-      for (i in seq_along(self$comments)) {
+    writeDrawingVML = function(dir, dir_rel) {
+
+      # not sure if comments and vml are the same length
+      counter <- max(length(self$comments), length(self$vml))
+
+      # beg vml loop
+      for (i in seq_len(counter)) {
         id <- 1025
 
-        cd <- unapply(self$comments[[i]], "[[", "clientData")
-        nComments <- length(cd)
+        vml_ext <- NULL
 
-        ## write head
-        if (nComments > 0 | length(self$vml[[i]])) {
-          write(
-            x = stri_join(
-              '<xml xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
+        ## get additional vml
+        if (!is.null(unlist(self$vml[i]))) {
+          if (length(self$vml[[i]])) {
+            vml_ext <- c(vml_ext, getXMLPtr1con(read_xml(self$vml[[i]])))
+          }
+        }
+
+        vml_comment <- NULL
+
+        ## get comment vml
+        if (!is.null(unlist(self$comments[i]))) {
+          cd <- unapply(self$comments[[i]], "[[", "clientData")
+          nComments <- length(cd)
+
+          vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout>'
+
+          for (j in seq_len(nComments)) {
+            id <- id + 1L
+            vml_comment <- c(
+              vml_comment,
+              paste0('<v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>',
+              genBaseShapeVML(cd[j], id))
+            )
+          }
+        }
+
+        vml_xml <- c(vml_ext, vml_comment)
+
+
+        ## create output only if vml_comment != NULL
+        if (!is.null(vml_xml)) {
+
+          # keep only the first o:shapelayout
+          vml_xml <- xml_node(vml_xml)
+          oshapelayout <- which(xml_node_name(vml_xml) == "o:shapelayout")
+          sel <- which(!seq_along(vml_xml) %in% oshapelayout[-1])
+
+          ## create vml for output
+          vml_xml <-  xml_node_create(
+            xml_name = "xml",
+            xml_attributes = c(
+              `xmlns:v` = "urn:schemas-microsoft-com:vml",
+              `xmlns:o` = "urn:schemas-microsoft-com:office:office",
+              `xmlns:x` = "urn:schemas-microsoft-com:office:excel"
             ),
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            sep = " "
+            xml_children = vml_xml[sel]
           )
+
+          ## write vml output
+          write_file(
+              head = '',
+              body = pxml(vml_xml),
+              tail = '',
+              fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
+          )
+
+          ## vml drawing
+          if (length(self$vml_rels[[i]])) {
+            write_file(
+              head = '',
+              body = pxml(self$vml_rels[[i]]),
+              tail = '',
+              fl = file.path(dir_rel, stri_join("vmlDrawing", i, ".vml.rels"))
+            )
+          }
         }
 
-        # TODO use seq_along()
-        for (j in seq_len(nComments)) {
-          id <- id + 1L
-          write(
-            x = genBaseShapeVML(cd[j], id),
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            append = TRUE
-          )
-        }
-
-        if (length(self$vml[[i]])) {
-          write(
-            x = self$vml[[i]],
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            append = TRUE
-          )
-        }
-
-        # TODO nComments and self$vml is already checked
-        if (nComments > 0 | length(self$vml[[i]])) {
-          write(
-            x = "</xml>",
-            file = file.path(dir, sprintf("vmlDrawing%s.vml", i)),
-            append = TRUE
-          )
-        }
-
-      }
-
-      for (i in seq_along(self$drawings_vml)) {
-        write(
-          x = self$drawings_vml[[i]],
-          file = file.path(dir, sprintf("vmlDrawing%s.vml", i))
-        )
-      }
+      } # end vml loop
 
       invisible(self)
     },
@@ -5404,11 +5434,11 @@ wbWorkbook <- R6::R6Class(
           } else if (drawing_type == "c:userShapes") {
             ct_drawing <- sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml"/>', i)
           }
-          
+
           ct <- c(ct, ct_drawing)
 
         }
-        
+
       }
 
       ## write worksheets
@@ -5417,16 +5447,6 @@ wbWorkbook <- R6::R6Class(
       nSheets <- length(self$worksheets)
 
       for (i in seq_len(nSheets)) {
-
-        ## vml drawing
-        if (length(self$vml_rels[[i]])) {
-          write_file(
-            head = '',
-            body = pxml(self$vml_rels[[i]]),
-            tail = '',
-            fl = file.path(xldrawingsRelsDir, stri_join("vmlDrawing", i, ".vml.rels"))
-          )
-        }
 
         if (self$isChartSheet[i]) {
           chartSheetDir <- file.path(dirname(xlworksheetsDir), "chartsheets")
