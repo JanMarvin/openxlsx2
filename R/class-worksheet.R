@@ -211,7 +211,7 @@ wbWorksheet <- R6::R6Class(
       self$headerFooter          <- hf
       self$rowBreaks             <- character()
       self$colBreaks             <- character()
-      self$drawing               <- '<drawing r:id=\"rId1\"/>' ## will always be 1
+      self$drawing               <- character()
       self$legacyDrawing         <- character()
       self$legacyDrawingHF       <- character()
       self$oleObjects            <- character()

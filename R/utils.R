@@ -227,3 +227,22 @@ get_relship_id <- function(obj, x) {
   relship <- relship[relship$typ == x,]
   unname(unlist(relship[c("Id")]))
 }
+
+#' filename_id returns an integer vector with the file name as name
+#' @param x vector of filenames
+#' @noRd
+filename_id <- function(x) {
+  vapply(X = x,
+         FUN = function(file) as.integer(gsub("\\D+", "", basename(file))),
+         FUN.VALUE = NA_integer_)
+}
+
+#' filename_id returns an integer vector with the file name as name
+#' @param x vector of file names
+#' @noRd
+read_xml_files <- function(x) {
+  vapply(X = x,
+         FUN = read_xml,
+         pointer = FALSE,
+         FUN.VALUE = NA_character_)
+}

@@ -521,9 +521,11 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
+      new_drawings_idx <- length(self$drawings) + 1
+      self$drawings[[new_drawings_idx]]      <- ""
+      self$drawings_rels[[new_drawings_idx]] <- ""
+
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$drawings_rels[[newSheetIndex]]    <- list()
-      self$drawings[[newSheetIndex]]         <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$isChartSheet[[newSheetIndex]]     <- FALSE
@@ -598,70 +600,87 @@ wbWorkbook <- R6::R6Class(
 
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]] <- self$worksheets_rels[[old]]
-      self$drawings_rels[[newSheetIndex]] <- self$drawings_rels[[old]]
 
-      # give each chart its own filename (images can re-use the same file, but charts can't)
-      self$drawings_rels[[newSheetIndex]] <-
-        # TODO Can this be simplified?  There's a bit going on here
-        vapply(
-          self$drawings_rels[[newSheetIndex]],
-          function(rl) {
-            # is rl here a length of 1?
-            stopifnot(length(rl) == 1L) # lets find out...  if this fails, just remove it
-            chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
+      old_drawing_sheet <- NULL
 
-            for (cf in chartfiles) {
-              chartid <- nrow(self$charts) + 1L
-              newname <- stri_join("chart", chartid, ".xml")
-              old_chart <- as.integer(gsub("\\D+", "", cf))
-              self$charts <- rbind(self$charts, self$charts[old_chart,])
+      if (length(self$worksheets_rels[[old]])) {
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[old]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        old_drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
+      }
 
-              # Read the chartfile and adjust all formulas to point to the new
-              # sheet name instead of the clone source
+      if (length(old_drawing_sheet)) {
 
-              chart <- self$charts$chart[chartid]
-              self$charts$rels[chartid] <- gsub("?[0-9].xml", paste0(chartid, ".xml"), self$charts$rels[chartid])
+        new_drawing_sheet <- length(self$drawings) + 1
 
-              guard_ws <- function(x) {
-                if (grepl(" ", x)) x <- shQuote(x, type = "sh")
-                x
+        self$drawings_rels[[new_drawing_sheet]] <- self$drawings_rels[[old_drawing_sheet]]
+
+        # give each chart its own filename (images can re-use the same file, but charts can't)
+        self$drawings_rels[[new_drawing_sheet]] <-
+          # TODO Can this be simplified?  There's a bit going on here
+          vapply(
+            self$drawings_rels[[new_drawing_sheet]],
+            function(rl) {
+              # is rl here a length of 1?
+              stopifnot(length(rl) == 1L) # lets find out...  if this fails, just remove it
+              chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
+
+              for (cf in chartfiles) {
+                chartid <- nrow(self$charts) + 1L
+                newname <- stri_join("chart", chartid, ".xml")
+                old_chart <- as.integer(gsub("\\D+", "", cf))
+                self$charts <- rbind(self$charts, self$charts[old_chart,])
+
+                # Read the chartfile and adjust all formulas to point to the new
+                # sheet name instead of the clone source
+
+                chart <- self$charts$chart[chartid]
+                self$charts$rels[chartid] <- gsub("?drawing[0-9].xml", paste0("drawing", chartid, ".xml"), self$charts$rels[chartid])
+
+                guard_ws <- function(x) {
+                  if (grepl(" ", x)) x <- shQuote(x, type = "sh")
+                  x
+                }
+
+                old_sheet_name <- guard_ws(self$sheet_names[[old]])
+                new_sheet_name <- guard_ws(new)
+
+                ## we need to replace "'oldname'" as well as "oldname"
+                if (grepl("'", old_sheet_name)) {
+                  chart <- gsub(
+                    stri_join("(?<=')", old_sheet_name, "(?='!)"),
+                    stri_join(new_sheet_name),
+                    chart,
+                    perl = TRUE
+                  )
+                } else {
+                  chart <- gsub(
+                    stri_join("(?<=[^A-Za-z0-9])", old_sheet_name, "(?=!)"),
+                    stri_join(new_sheet_name),
+                    chart,
+                    perl = TRUE
+                  )
+                }
+
+                self$charts$chart[chartid] <- chart
+
+                rl <- gsub(stri_join("(?<=charts/)", cf), newname, rl, perl = TRUE)
               }
 
-              old_sheet_name <- guard_ws(self$sheet_names[[old]])
-              new_sheet_name <- guard_ws(new)
+              rl
 
-              ## we need to replace "'oldname'" as well as "oldname"
-              if (grepl("'", old_sheet_name)) {
-                chart <- gsub(
-                  stri_join("(?<=')", old_sheet_name, "(?='!)"),
-                  stri_join(new_sheet_name),
-                  chart,
-                  perl = TRUE
-                )
-              } else {
-                chart <- gsub(
-                  stri_join("(?<=[^A-Za-z0-9])", old_sheet_name, "(?=!)"),
-                  stri_join(new_sheet_name),
-                  chart,
-                  perl = TRUE
-                )
-              }
+            },
+            NA_character_,
+            USE.NAMES = FALSE
+          )
 
-              self$charts$chart[chartid] <- chart
+        # otherwise an empty drawings relationship is written
+        if (identical(self$drawings_rels[[new_drawing_sheet]], character()))
+          self$drawings_rels[[new_drawing_sheet]] <- list()
+      
 
-              rl <- gsub(stri_join("(?<=charts/)", cf), newname, rl, perl = TRUE)
-            }
-
-            rl
-
-          },
-          NA_character_,
-          USE.NAMES = FALSE
-        )
-
-      # otherwise an empty drawings relationship is written
-      if (identical(self$drawings_rels[[newSheetIndex]], character()))
-        self$drawings_rels[[newSheetIndex]] <- list()
+        self$drawings[[new_drawing_sheet]]       <- self$drawings[[old_drawing_sheet]]
+      }
 
       ## TODO Currently it is not possible to clone a sheet with a slicer in a
       #  safe way. It will always result in a broken xlsx file which is fixable
@@ -707,7 +726,6 @@ wbWorkbook <- R6::R6Class(
 
       # The IDs in the drawings array are sheet-specific, so within the new
       # cloned sheet the same IDs can be used => no need to modify drawings
-      self$drawings[[newSheetIndex]]       <- self$drawings[[old]]
       self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
       self$vml[[newSheetIndex]]            <- self$vml[[old]]
       self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
@@ -736,7 +754,7 @@ wbWorkbook <- R6::R6Class(
           sprintf(
             '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>',
             rid,
-            newSheetIndex
+            new_drawing_sheet
           )
         )
 
@@ -867,9 +885,11 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
+      new_drawings_idx <- length(self$drawings) + 1
+      self$drawings[[new_drawings_idx]]      <- ""
+      self$drawings_rels[[new_drawings_idx]] <- ""
+
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$drawings_rels[[newSheetIndex]]    <- list()
-      self$drawings[[newSheetIndex]]         <- list()
       self$isChartSheet[[newSheetIndex]]     <- TRUE
       self$rowHeights[[newSheetIndex]]       <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
@@ -1418,14 +1438,6 @@ wbWorkbook <- R6::R6Class(
       } else {
         ## Remove relationship to sharedStrings
         ct <- ct[!grepl("sharedStrings", ct)]
-      }
-
-      for (draw in seq_along(self$drawings)) {
-          if (length(self$drawings[[draw]])) {
-              ct <- c(ct,
-                sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', draw)
-              )
-          }
       }
 
       if (nComments > 0) {
@@ -3180,9 +3192,13 @@ wbWorkbook <- R6::R6Class(
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
+      relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+      relship$typ <- basename(relship$Type)
+      drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
+
       drawing_len <- 0
-      if (length(self$drawings_rels[[sheet]]))
-        drawing_len <- length(xml_node(unlist(self$drawings_rels[[sheet]]), "Relationship"))
+      if (all(self$drawings_rels[[drawing_sheet]] != ""))
+        drawing_len <- length(xml_node(unlist(self$drawings_rels[[drawing_sheet]]), "Relationship"))
 
       imageNo <- drawing_len + 1L
       mediaNo <- length(self$media) + 1L
@@ -3202,9 +3218,12 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
+
+      old_drawings_rels <- unlist(self$drawings_rels[[drawing_sheet]])
+      if (all(old_drawings_rels == "")) old_drawings_rels <- NULL
       ## drawings rels (Reference from drawings.xml to image file in media folder)
-      self$drawings_rels[[sheet]] <- paste0(
-        unlist(self$drawings_rels[[sheet]]),
+      self$drawings_rels[[drawing_sheet]] <- c(
+        old_drawings_rels,
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
           imageNo,
@@ -3246,16 +3265,21 @@ wbWorkbook <- R6::R6Class(
 
       # If no drawing is found, initiate one. If one is found, append a child to the exisiting node.
       # Might look into updating attributes as well.
-      if (length(self$drawings[[sheet]]) == 0) {
+      if (all(self$drawings[[drawing_sheet]] == "")) {
         xml_attr = c(
           "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
           "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
           "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         )
-        self$drawings[[sheet]] <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
+        self$drawings[[drawing_sheet]] <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
       } else {
-        self$drawings[[sheet]] <- xml_add_child(self$drawings[[sheet]], drawingsXML)
+        self$drawings[[drawing_sheet]] <- xml_add_child(self$drawings[[drawing_sheet]], drawingsXML)
       }
+
+      # Finally we must assign the drawing to the sheet, if no drawing is assigned. If drawing is not
+      # empty, we must assume that the rId matches another drawing rId in worksheets_rels
+      if (identical(self$worksheets[[sheet]]$drawing, character()))
+        self$worksheets[[sheet]]$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
 
       invisible(self)
     },
@@ -5287,31 +5311,48 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      ## write worksheets
+      ## write drawings
 
-      # TODO just seq_along()
-      nSheets <- length(self$worksheets)
+      nDrawings <- length(self$drawings)
 
-      for (i in seq_len(nSheets)) {
+      for (i in seq_len(nDrawings)) {
+
         ## Write drawing i (will always exist) skip those that are empty
-        if (!identical(self$drawings[[i]], list())) {
+        if (!all(self$drawings[[i]] == "")) {
           write_file(
             head = '',
             body = pxml(self$drawings[[i]]),
             tail = '',
             fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
           )
-          if (!identical(self$drawings_rels[[i]], list())) {
+          if (!all(self$drawings_rels[[i]] == "")) {
             write_file(
               head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(self$drawings_rels[[i]]),
-              tail = "</Relationships>",
+              tail = '</Relationships>',
               fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
             )
           }
-        } else {
-          self$worksheets[[i]]$drawing <- character()
+
+          drawing_type <- xml_node_name(self$drawings[[i]])
+          if (drawing_type == "xdr:wsDr") {
+            ct_drawing <- sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', i)
+          } else if (drawing_type == "c:userShapes") {
+            ct_drawing <- sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml"/>', i)
+          }
+          
+          ct <- c(ct, ct_drawing)
+
         }
+        
+      }
+
+      ## write worksheets
+
+      # TODO just seq_along()
+      nSheets <- length(self$worksheets)
+
+      for (i in seq_len(nSheets)) {
 
         ## vml drawing
         if (length(self$vml_rels[[i]])) {
