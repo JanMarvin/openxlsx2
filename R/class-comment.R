@@ -262,24 +262,7 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
       )
     )
 
-    wb$worksheets_rels[[sheet]] <- c(
-      wb$worksheets_rels[[sheet]],
-      sprintf(
-        '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../comments%s.xml"/>',
-        next_rid,
-        next_id
-      )
-    )
-
     if (!any(rels$typ == "vmlDrawing")) {
-
-      next_rid <- next_rid + 1
-      # next_vml <- 1
-
-      # if (!any(rs$typ == "vmlDrawing")) {
-      #   vmls <- rs[rs$typ == "vmlDrawing", ]
-      #   next_vml <- iterator(vmls$id)
-      # }
 
       wb$worksheets_rels[[sheet]] <- c(
         wb$worksheets_rels[[sheet]],
@@ -289,16 +272,27 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
           sheet
         )
       )
+
+
+      # unique? keep prev legacyDrawing?
+      #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
+      # TODO hardcoded 2. Marvin fears that this is not good enough
+      wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_rid)
       
+      next_rid <- next_rid + 1
     }
+
+    wb$worksheets_rels[[sheet]] <- c(
+      wb$worksheets_rels[[sheet]],
+      sprintf(
+        '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="../comments%s.xml"/>',
+        next_rid,
+        next_id
+      )
+    )
   }
 
   wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
-
-  # unique? keep prev legacyDrawing?
-  #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
-  # TODO hardcoded 2. Marvin fears that this is not good enough
-  wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_rid)
 
 
   invisible(wb)
