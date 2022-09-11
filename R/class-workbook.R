@@ -5289,14 +5289,12 @@ wbWorkbook <- R6::R6Class(
           cd <- unapply(self$comments[[i]], "[[", "clientData")
           nComments <- length(cd)
 
-          vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout>'
+          vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
 
           for (j in seq_len(nComments)) {
             id <- id + 1L
             vml_comment <- c(
-              vml_comment,
-              paste0('<v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>',
-              genBaseShapeVML(cd[j], id))
+              vml_comment, genBaseShapeVML(cd[j], id)
             )
           }
         }
