@@ -2458,7 +2458,7 @@ wbWorkbook <- R6::R6Class(
         comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
         # TODO not every sheet has a drawing. this originates from a time where
         # every sheet created got a drawing assigned.
-        # drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
+        drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
         pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
         table_id      <- xml_rels$target_ind[xml_rels$type == "table"]
         thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
