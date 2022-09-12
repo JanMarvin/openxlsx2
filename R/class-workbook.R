@@ -2467,14 +2467,14 @@ wbWorkbook <- R6::R6Class(
         # NULL the sheets
         if (length(comment_id))    self$comments[[comment_id]]            <- NULL
         # if (length(drawing_id))
-                                   self$drawings[[sheet]]                 <- NULL
+                                   self$drawings[[drawing_id]]                 <- NULL
         # if (length(drawing_id))
-                                   self$drawings_rels[[sheet]]            <- NULL
+                                   self$drawings_rels[[drawing_id]]            <- NULL
         if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
         # if (length(vmlDrawing_id))
-                                   self$vml[[sheet]]                      <- NULL
+                                   self$vml[[vmlDrawing_id]]                      <- NULL
         # if (length(vmlDrawing_id))
-                                   self$vml_rels[[sheet]]                 <- NULL
+                                   self$vml_rels[[vmlDrawing_id]]                 <- NULL
 
 
         #### Modify Content_Types
