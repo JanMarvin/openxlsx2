@@ -277,6 +277,13 @@ wb_to_df <- function(
 
   # .mc <- match.call() # not (yet) used?
 
+  if (missing(dims) && (!is.null(rows) && !is.null(cols))) {
+    cols <- col2int(cols)
+    cols <- int2col(c(min(cols), max(cols)))
+    dims <- paste0(cols[1], min(rows), ":", cols[2], max(rows))
+    cols <- rows <- NULL
+  }
+
   if (is.character(xlsxFile)) {
     # TODO this should instead check for the Workbook class?  Maybe also check
     # if the file exists?

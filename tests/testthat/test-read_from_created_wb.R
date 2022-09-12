@@ -84,3 +84,16 @@ test_that("Reading NAs and NaN values", {
   expect_equal(read_xlsx(fileName), exp, ignore_attr = TRUE)
   unlink(fileName, recursive = TRUE, force = TRUE)
 })
+
+test_that("dims != rows & cols", {
+
+  wb <- wb_workbook()$
+    add_worksheet("sheet1")$
+    add_data(1, data.frame("A" = 1))
+
+  got1 <- wb_to_df(wb, dims = "A2:D5", colNames = FALSE)
+  got2 <- wb_to_df(wb, rows = 2:5, cols = 1:4, colNames = FALSE)
+
+  expect_equal(got1, got2)
+
+})
