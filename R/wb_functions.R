@@ -392,19 +392,19 @@ wb_to_df <- function(
       z  <- z[keep_rows, , drop = FALSE]
       tt <- tt[keep_rows, , drop = FALSE]
 
-      rownames(z)  <- keep_rows
-      rownames(tt) <- keep_rows
+      rownames(z)  <- as.integer(keep_rows)
+      rownames(tt) <- as.integer(keep_rows)
     }
   }
 
   if (!is.null(cols)) {
-    keep_cols <- cols
+    keep_cols <- int2col(cols)
 
     if (!all(keep_cols %in% colnames(z))) {
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 
-      z[keep_col] <- NA
-      tt[keep_col] <- NA
+      z[keep_col] <- NA_character_
+      tt[keep_col] <- NA_character_
     }
 
       z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
@@ -622,8 +622,8 @@ wb_to_df <- function(
 
     if (any(empty)) {
       sel <- which(names(empty) %in% names(empty[empty == TRUE]))
-      z[, sel, drop = FALSE]  <- NULL
-      tt[, sel, drop = FALSE] <- NULL
+      z[, sel]  <- NULL
+      tt[, sel] <- NULL
     }
 
   }
