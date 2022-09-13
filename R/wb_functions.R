@@ -375,11 +375,21 @@ wb_to_df <- function(
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
 
-  if (startRow > 1) {
-    keep_rows <- as.character(seq(startRow, max(as.numeric(keep_rows))))
+  maxRow <- max(as.numeric(keep_rows))
 
-    z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
-    tt <- tt[rownames(tt) %in% keep_rows, , drop = FALSE]
+  if (startRow > 1) {
+    keep_rows <- as.character(seq(startRow, maxRow))
+    if (startRow <= maxRow) {
+      z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
+      tt <- tt[rownames(tt) %in% keep_rows, , drop = FALSE]
+    } else {
+      keep_rows <- as.character(startRow)
+      z  <- z[keep_rows, , drop = FALSE]
+      tt <- tt[keep_rows, , drop = FALSE]
+
+      rownames(z)  <- as.integer(keep_rows)
+      rownames(tt) <- as.integer(keep_rows)
+    }
   }
 
   if (!is.null(rows)) {
