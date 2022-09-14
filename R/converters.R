@@ -61,3 +61,14 @@ get_cell_refs <- function(cellCoords) {
   l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])
 }
+
+
+#' Convert number to character
+#' @param x input integer or numeric
+#' @noRd
+as_character <- function(x) {
+  is_na <- is.na(x) & !is.nan(x)
+  z <- format(x, trim = TRUE, digits = options()$digits, format = "g")
+  if (any(is_na)) z[is_na] <- NA_character_
+  z
+}

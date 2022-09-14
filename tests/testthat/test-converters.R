@@ -27,3 +27,22 @@ test_that("get_cell_refs", {
                "cellCoords must only contain integers")
 
 })
+
+test_that("as_character", {
+
+  chr <- "433256.529740090366"
+  num <-  433256.529740090366
+
+  op <- openxlsx2_options()
+  on.exit(options(op), add = TRUE)
+
+  exp <- "433256.5297400903655216"
+  got <- as_character(num)
+
+  input <- c(1, NA, 3)
+
+  exp <- c("1", NA_character_, "3")
+  got <- as_character(input)
+  expect_equal(exp, got)
+
+})

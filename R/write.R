@@ -231,7 +231,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     if (inherits(data, "data.table")) data <- as.data.frame(data)
 
     sel <- !dc %in% c(4, 5, 10)
-    data[sel] <- lapply(data[sel], as.character)
+    data[sel] <- lapply(data[sel], as_character)
 
     # add colnames
     if (colNames)
