@@ -277,6 +277,8 @@ wb_to_df <- function(
 
   # .mc <- match.call() # not (yet) used?
 
+  if (!is.null(cols)) cols <- col2int(cols)
+
   if (is.character(xlsxFile)) {
     # TODO this should instead check for the Workbook class?  Maybe also check
     # if the file exists?
@@ -370,32 +372,53 @@ wb_to_df <- function(
   z  <- dims_to_dataframe(dims)
   tt <- copy(z)
 
-  # tt <- data.frame(matrix(0, nrow = 4, ncol = ncol(z)))
-  # names(tt) <- names(z)
-  # rownames(tt) <- c("b", "s", "d", "n")
-
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
 
-  if (startRow > 1) {
-    keep_rows <- as.character(seq(startRow, max(as.numeric(keep_rows))))
+  maxRow <- max(as.numeric(keep_rows))
 
-    z  <- z[rownames(z) %in% keep_rows,]
-    tt <- tt[rownames(tt) %in% keep_rows,]
+  if (startRow > 1) {
+    keep_rows <- as.character(seq(startRow, maxRow))
+    if (startRow <= maxRow) {
+      z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
+      tt <- tt[rownames(tt) %in% keep_rows, , drop = FALSE]
+    } else {
+      keep_rows <- as.character(startRow)
+      z  <- z[keep_rows, , drop = FALSE]
+      tt <- tt[keep_rows, , drop = FALSE]
+
+      rownames(z)  <- as.integer(keep_rows)
+      rownames(tt) <- as.integer(keep_rows)
+    }
   }
 
   if (!is.null(rows)) {
     keep_rows <- as.character(rows)
 
-    z  <- z[rownames(z) %in% keep_rows,]
-    tt <- tt[rownames(tt) %in% keep_rows,]
+    if (all(keep_rows %in% rownames(z))) {
+      z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
+      tt <- tt[rownames(tt) %in% keep_rows, , drop = FALSE]
+    } else {
+      z  <- z[keep_rows, , drop = FALSE]
+      tt <- tt[keep_rows, , drop = FALSE]
+
+      rownames(z)  <- as.integer(keep_rows)
+      rownames(tt) <- as.integer(keep_rows)
+    }
   }
 
   if (!is.null(cols)) {
     keep_cols <- int2col(cols)
 
-    z  <- z[keep_cols]
-    tt <- tt[keep_cols]
+    if (!all(keep_cols %in% colnames(z))) {
+      keep_col <- keep_cols[!keep_cols %in% colnames(z)]
+
+      z[keep_col] <- NA_character_
+      tt[keep_col] <- NA_character_
+    }
+
+      z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
+      tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
   }
 
   keep_rows <- keep_rows[keep_rows %in% rnams]
@@ -556,8 +579,8 @@ wb_to_df <- function(
     rownames(tt) <- z[,1]
     xlsx_cols_names <- xlsx_cols_names[-1]
 
-    z  <- z[ ,-1]
-    tt <- tt[ , -1]
+    z  <- z[ ,-1, drop = FALSE]
+    tt <- tt[ , -1, drop = FALSE]
   }
 
   # # faster guess_col_type alternative? to avoid tt

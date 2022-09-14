@@ -49,6 +49,10 @@ test_that("wb_to_df", {
   got <- wb_to_df(wb1, cols = c(1:2, 7))
   expect_equal(exp[c(1,2,7)], got, ignore_attr = TRUE)
 
+  # read selected cols
+  got <- wb_to_df(wb1, cols = c("A", "B", "G"))
+  expect_equal(exp[c(1,2,7)], got, ignore_attr = TRUE)
+
   # read selected rows
   got <- wb_to_df(wb1, rows = c(1, 4, 6))
   got[c(4,7)] <- lapply(got[c(4,7)], as.character)
