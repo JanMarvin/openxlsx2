@@ -93,7 +93,6 @@ test_that("dims != rows & cols", {
 
   got1 <- wb_to_df(wb, dims = "A2:D5", colNames = FALSE)
   got2 <- wb_to_df(wb, rows = 2:5, cols = 1:4, colNames = FALSE)
-
   expect_equal(got1, got2)
 
   got3 <- wb_to_df(wb, rows = c(2:3, 5:6), cols = c(1, 3:5), colNames = FALSE)
