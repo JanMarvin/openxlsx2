@@ -632,8 +632,8 @@ wb_to_df <- function(
 
     if (any(empty)) {
       sel <- which(names(empty) %in% names(empty[empty == TRUE]))
-      z[, sel]  <- NULL
-      tt[, sel] <- NULL
+      z[sel]  <- NULL
+      tt[sel] <- NULL
     }
 
   }

@@ -107,7 +107,7 @@ test_that("dims != rows & cols", {
   got5 <- wb_to_df(wb, cols = 1:5, colNames = FALSE)
   expect_equal(c(2, 5), dim(got5))
 
-  got6 <- wb_to_df(wb, startRow = 4, cols = 1:4, colNames = F)
+  got6 <- wb_to_df(wb, startRow = 4, cols = 1:4, colNames = FALSE)
   expect_true(all(is.na(got6)))
   expect_equal("4", rownames(got6))
 
