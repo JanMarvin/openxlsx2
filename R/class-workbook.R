@@ -4941,7 +4941,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param dims dims
     #' @returns a character vector of cell styles
-    get_cell_style = function(sheet, dims) {
+    get_cell_style = function(sheet = current_sheet(), dims) {
 
       if (length(dims) == 1 && grepl(":", dims))
         dims <- dims_to_dataframe(dims, fill = TRUE)
@@ -4958,12 +4958,12 @@ wbWorkbook <- R6::R6Class(
       temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
     },
 
-    #' @description get sheet style
+    #' @description set sheet style
     #' @param sheet sheet
     #' @param dims dims
     #' @param style style
     #' @return The `wbWorksheetObject`, invisibly
-    set_cell_style = function(sheet, dims, style) {
+    set_cell_style = function(sheet = current_sheet(), dims, style) {
 
       if (length(dims) == 1 && grepl(":", dims))
         dims <- dims_to_dataframe(dims, fill = TRUE)

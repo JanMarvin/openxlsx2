@@ -152,8 +152,6 @@ create_border
 
 \item{\code{drawings_rels}}{drawings_rels}
 
-\item{\code{drawings_vml}}{drawings_vml}
-
 \item{\code{embeddings}}{embeddings}
 
 \item{\code{externalLinks}}{externalLinks}
@@ -2291,7 +2289,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Method \code{get_cell_style()}}{
 get sheet style
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_cell_style(sheet, dims)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_cell_style(sheet = current_sheet(), dims)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -2308,9 +2306,9 @@ get sheet style
 \if{html}{\out{<a id="method-wbWorkbook-set_cell_style"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_cell_style}{}}}
 \subsection{Method \code{set_cell_style()}}{
-get sheet style
+set sheet style
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_cell_style(sheet, dims, style)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_cell_style(sheet = current_sheet(), dims, style)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
