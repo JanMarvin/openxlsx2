@@ -296,7 +296,33 @@ test_that("assigning styles to loaded workbook works", {
 
   wb <- wb_load(file = system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2"))
 
-  # previously it would break on xml_import, because NA was returned  
+  # previously it would break on xml_import, because NA was returned
   expect_silent(wb$add_font()$add_font())
+
+})
+
+test_that("get & set cell style(s)", {
+
+  # set a style in b1
+  wb <- wb_workbook()$add_worksheet()$
+    add_numfmt(dims = "B1", numfmt = "#,0")
+
+  # get style from b1 to assign it to a1
+  numfmt <- wb$get_cell_style(dims = "B1")
+  expect_equal("1", numfmt)
+
+  # assign style to a1
+  pre <- wb$get_cell_style(dims = "A1")
+  expect_equal("", pre)
+
+  expect_silent(wb$set_cell_style(dims = "A1", style = numfmt))
+
+  post <- wb$get_cell_style(dims = "A1")
+  expect_equal("1", post)
+
+  s_a1_b1 <- wb$get_cell_style(dims = "A1:B1")
+  expect_silent(wb$set_cell_style(dims = "A2:B2", style = s_a1_b1))
+  s_a2_b2 <- wb$get_cell_style(dims = "A2:B2")
+  expect_equal(s_a1_b1, s_a2_b2)
 
 })
