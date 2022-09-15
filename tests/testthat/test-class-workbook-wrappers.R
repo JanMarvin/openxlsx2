@@ -433,3 +433,39 @@ test_that("wb_add_style() is a wrapper", {
   )
 
 })
+
+
+# wb_get_cell_style() -----------------------------------------------------
+
+test_that("wb_get_cell_style() is a wrapper", {
+
+  # set a style in A1
+  wb <- wb_workbook()$add_worksheet()$add_numfmt(dims = "A1", numfmt = "#.0")
+
+  expect_wrapper(
+    "get_cell_style",
+    wb = wb,
+    params = list(dims = "A1")
+  )
+
+})
+
+
+# wb_set_cell_style() -----------------------------------------------------
+
+test_that("wb_set_cell_style() is a wrapper", {
+
+  # set a style in b1
+  wb <- wb_workbook()$add_worksheet()$
+    add_numfmt(dims = "B1", numfmt = "#,0")
+
+  # get style from b1 to assign it to a1
+  numfmt <- wb$get_cell_style(dims = "B1")
+
+  expect_wrapper(
+    "set_cell_style",
+    wb = wb,
+    params = list(dims = "A1", style = numfmt)
+  )
+
+})
