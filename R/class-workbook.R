@@ -2465,13 +2465,12 @@ wbWorkbook <- R6::R6Class(
         vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
 
         # NULL the sheets
-        if (length(comment_id))    self$comments[[comment_id]]            <- NULL
-        if (length(drawing_id))    self$drawings[[drawing_id]]                 <- NULL
-        if (length(drawing_id))    self$drawings_rels[[drawing_id]]            <- NULL
-        if (length(thrComment_id)) self$threadComments[[thrComment_id]]   <- NULL
-        if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]                      <- NULL
-        if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]                 <- NULL
-
+        if (length(comment_id))    self$comments[[comment_id]]          <- NULL
+        if (length(drawing_id))    self$drawings[[drawing_id]]          <- ""
+        if (length(drawing_id))    self$drawings_rels[[drawing_id]]     <- ""
+        if (length(thrComment_id)) self$threadComments[[thrComment_id]] <- NULL
+        if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]            <- NULL
+        if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]       <- NULL
 
         #### Modify Content_Types
         ## remove last drawings(sheet).xml from Content_Types
@@ -2553,23 +2552,23 @@ wbWorkbook <- R6::R6Class(
         self$tables$tab_act[sel] <- 0
       }
 
-      ## drawing will always be the first relationship
-      if (nSheets > 1) {
-        for (i in seq_len(nSheets - 1L)) {
-          # did this get updated from length of 3 to 2?
-          #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
-          rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
-          if (nrow(rel) && ncol(rel)) {
-            if (any(basename(rel$Type) == "drawing")) {
-              rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
-            }
-            if (is.null(rel$TargetMode)) rel$TargetMode <- ""
-            self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
-          }
-        }
-      } else {
-        self$worksheets_rels <- list()
-      }
+      # ## drawing will always be the first relationship
+      # if (nSheets > 1) {
+      #   for (i in seq_len(nSheets - 1L)) {
+      #     # did this get updated from length of 3 to 2?
+      #     #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
+      #     rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
+      #     if (nrow(rel) && ncol(rel)) {
+      #       if (any(basename(rel$Type) == "drawing")) {
+      #         rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
+      #       }
+      #       if (is.null(rel$TargetMode)) rel$TargetMode <- ""
+      #       self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
+      #     }
+      #   }
+      # } else {
+      #   self$worksheets_rels <- list()
+      # }
 
       ## remove sheet
       sn <- apply_reg_match0(self$workbook$sheets, pat = '(?<= name=")[^"]+')
