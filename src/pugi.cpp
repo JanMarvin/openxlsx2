@@ -230,6 +230,24 @@ SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
 }
 
 // [[Rcpp::export]]
+SEXP getXMLPtr1con(XPtrXML doc) {
+
+  vec_string res;
+  unsigned int  pugi_format_flags = pugi_format(doc);
+
+  for (auto node : doc->children())
+  {
+    for (auto cld : node.children()) {
+      std::ostringstream oss;
+      cld.print(oss, " ", pugi_format_flags);
+      res.push_back(Rcpp::String(oss.str()));
+    }
+  }
+
+  return  Rcpp::wrap(res);
+}
+
+// [[Rcpp::export]]
 SEXP getXMLXPtr1val(XPtrXML doc, std::string child) {
 
   // returns a single vector, not a list of vectors!
@@ -237,7 +255,6 @@ SEXP getXMLXPtr1val(XPtrXML doc, std::string child) {
 
   for (auto worksheet : doc->children(child.c_str()))
   {
-    std::vector<std::string> y;
     x.push_back(Rcpp::String(worksheet.child_value()));
   }
 

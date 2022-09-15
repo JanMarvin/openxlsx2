@@ -18,6 +18,8 @@
 
 ## Internal changes
 
+* Worksheets added to a `wbWorkbook` no longer contain default references to the `drawings` and `vmlDrawings` directories. Previously, these references were added as `rId1` and `rId2` even if the worksheet did not contain any drawing (e.g., an image or a chart) or vml drawing (e.g., a comment or a button). In such cases certain third party software, strictly following the references in worksheet or `Content_Types` complained about missing files and the import of such files failed completely. [311](https://github.com/JanMarvin/openxlsx2/pull/311)
+
 * Implement loading of user defined chartShapes. Previously this was not implemented instead the previous logic assumed that every sheet has a matching drawing. With chartShapes this no longer is true. The number of drawings and the number of worksheets/chartsheets must not match. [323](https://github.com/JanMarvin/openxlsx2/pull/323)
 
 * When loading files with charts, they are now imported into the `wbWorkbook` object. Previously they were simply copied. This will allow easier interaction with charts in the future. [304](https://github.com/JanMarvin/openxlsx2/pull/304)

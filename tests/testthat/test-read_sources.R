@@ -181,4 +181,13 @@ test_that("reading charts", {
   wb$add_worksheet()
   wb$save(temp)
 
+  # remove worksheet
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/unemployment-nrw202208.xlsx")
+  rmsheet <- length(wb$worksheets) - 2
+  wb$remove_worksheet(rmsheet)
+
+  expect_false(any(grepl("drawing21.xml", unlist(wb$worksheets_rels))))
+  expect_equal("", wb$drawings[[21]])
+  expect_equal("", wb$drawings_rels[[21]])
+
 })

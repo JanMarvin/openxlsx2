@@ -65,7 +65,7 @@ test_that("Deleting a Table Object", {
   wb$remove_tables(sheet = 1, table = "iris")
 
   expect_equal(nrow(wb$tables), 4L)
-  expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId2\"/>", ignore_attr = TRUE)
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), "mtcars")
 
   expect_equal(wb$tables$tab_name, c(
@@ -79,14 +79,14 @@ test_that("Deleting a Table Object", {
   wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
   temp <- temp_xlsx()
   wb_save(wb, temp)
-  expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId4\"/>", "<tablePart r:id=\"rId5\"/>"), ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId2\"/>", "<tablePart r:id=\"rId3\"/>"), ignore_attr = TRUE)
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), c("mtcars", "iris"))
 
 
   wb$remove_tables(sheet = 1, table = "iris")
 
   expect_equal(nrow(wb$tables), 5L)
-  expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId2\"/>", ignore_attr = TRUE)
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), "mtcars")
 
   expect_equal(wb$tables$tab_name, c(
@@ -152,7 +152,7 @@ test_that("Save and load Table Deletion", {
   expect_equal(nrow(wb$tables), 1L)
   expect_equal(wb$tables$tab_name, "mtcars")
 
-  expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId4\"/>", ignore_attr = TRUE) ## rId reset
+  expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId2\"/>", ignore_attr = TRUE) ## rId reset
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), "mtcars")
   file.remove(temp_file)
 
@@ -177,7 +177,7 @@ test_that("Save and load Table Deletion", {
   expect_equal(nrow(wb$tables), 1L)
   expect_equal(wb$tables$tab_name, "mtcars2")
   expect_length(wb$worksheets[[1]]$tableParts, 0)
-  expect_equal(wb$worksheets[[2]]$tableParts, "<tablePart r:id=\"rId3\"/>", ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[2]]$tableParts, "<tablePart r:id=\"rId1\"/>", ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[2]]$tableParts, "tableName")), "mtcars2")
   unlink(temp_file)
 
@@ -190,11 +190,11 @@ test_that("Save and load Table Deletion", {
   expect_equal(wb$tables$tab_name, c("mtcars2", "iris", "mtcars"))
 
   expect_length(wb$worksheets[[1]]$tableParts, 2)
-  expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId3\"/>", "<tablePart r:id=\"rId4\"/>"), ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId1\"/>", "<tablePart r:id=\"rId2\"/>"), ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), c("iris", "mtcars"))
 
   expect_length(wb$worksheets[[2]]$tableParts, 1)
-  expect_equal(wb$worksheets[[2]]$tableParts, c("<tablePart r:id=\"rId3\"/>"), ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[2]]$tableParts, c("<tablePart r:id=\"rId1\"/>"), ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[2]]$tableParts, "tableName")), "mtcars2")
 
   wb_save(wb, temp_file)
@@ -207,11 +207,11 @@ test_that("Save and load Table Deletion", {
   expect_equal(wb$tables$tab_name, c("iris", "mtcars", "mtcars2"))
 
   expect_length(wb$worksheets[[1]]$tableParts, 2)
-  expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId3\"/>", "<tablePart r:id=\"rId4\"/>"), ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId1\"/>", "<tablePart r:id=\"rId2\"/>"), ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), c("iris", "mtcars"))
 
   expect_length(wb$worksheets[[2]]$tableParts, 1)
-  expect_equal(wb$worksheets[[2]]$tableParts, c("<tablePart r:id=\"rId3\"/>"), ignore_attr = TRUE)
+  expect_equal(wb$worksheets[[2]]$tableParts, c("<tablePart r:id=\"rId1\"/>"), ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[2]]$tableParts, "tableName")), "mtcars2")
 
   unlink(temp_file)

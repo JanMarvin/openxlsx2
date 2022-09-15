@@ -172,3 +172,12 @@ test_that("is_xml", {
   expect_false(is_xml("a"))
 
 })
+
+test_that("getXMLPtr1con", {
+
+  xml <- "<xml><a/><a/><b/></xml>"
+  exp <- c("<a/>", "<a/>", "<b/>")
+  got <- getXMLPtr1con(read_xml(xml))
+  expect_equal(exp, got)
+
+})
