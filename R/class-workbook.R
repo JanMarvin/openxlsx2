@@ -373,7 +373,12 @@ wbWorkbook <- R6::R6Class(
           stop("cannot add worksheet to current sheet")
         }
 
-        sheet <- paste("Sheet ", length(self$sheet_names) + 1L)
+        # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
+        # a better check for this
+        sheet <- paste(
+          getOption("openxlsx2.sheet.default_name", "Sheet"),
+          length(self$sheet_names) + 1L
+        )
       }
 
       sheet <- as.character(sheet)
