@@ -44,6 +44,12 @@ options(repos = c(
 install.packages('openxlsx2')
 ```
 
+## Use system pugixml on Linux and Mac
+
+If the system variable `USE_SYSTEM_PUGIXML` is set, `openxlsx2`
+will build against a local pugixml installation.
+`Sys.setenv(USE_SYSTEM_PUGIXML = 1)`
+
 ## Introduction
 
 `openxlsx2` aims to be the swiss knife for working with the openxml
@@ -51,30 +57,29 @@ spreadsheet formats xlsx and xlsm (other formats of other spreadsheet
 software are not supported). We offer two different variants how to work
 with `openxlsx2`.
 
--   The first one is to simply work with R objects. It is possible to
-    read
-    ([`read_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/read_xlsx.html))
-    and write
-    ([`write_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html))
-    data from and to files. We offer a number of options in the commands
-    to support various features of the openxml format, including reading
-    and writing named ranges and tables. Furthermore, there are several
-    ways to read certain information of an openxml spreadsheet without
-    having opened it in a spreadsheet software before, e.g. to get the
-    contained sheet names or tables.
--   As a second variant `openxlsx2` offers the work with so called
-    [`wbWorkbook`](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html)
-    objects. Here an openxml file is read into a corresponding
-    `wbWorkbook` object
-    ([`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.html))
-    or a new one is created
-    ([`wb_workbook()`](https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html)).
-    Afterwards the object can be further modified using various
-    functions. For example, worksheets can be added or removed, the
-    layout of cells or entire worksheets can be changed, and cells can
-    be modified (overwritten or rewritten). Afterwards the `wbWorkbook`
-    objects can be written as openxml files and processed by suitable
-    spreadsheet software.
+- The first one is to simply work with R objects. It is possible to read
+  ([`read_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/read_xlsx.html))
+  and write
+  ([`write_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html))
+  data from and to files. We offer a number of options in the commands
+  to support various features of the openxml format, including reading
+  and writing named ranges and tables. Furthermore, there are several
+  ways to read certain information of an openxml spreadsheet without
+  having opened it in a spreadsheet software before, e.g. to get the
+  contained sheet names or tables.
+- As a second variant `openxlsx2` offers the work with so called
+  [`wbWorkbook`](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html)
+  objects. Here an openxml file is read into a corresponding
+  `wbWorkbook` object
+  ([`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.html))
+  or a new one is created
+  ([`wb_workbook()`](https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html)).
+  Afterwards the object can be further modified using various functions.
+  For example, worksheets can be added or removed, the layout of cells
+  or entire worksheets can be changed, and cells can be modified
+  (overwritten or rewritten). Afterwards the `wbWorkbook` objects can be
+  written as openxml files and processed by suitable spreadsheet
+  software.
 
 Many examples how to work with `openxlsx2` are in our [manual
 pages](https://janmarvin.github.io/openxlsx2/reference/index.html) and

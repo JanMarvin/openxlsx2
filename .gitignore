@@ -3,6 +3,8 @@
 .RData
 .DS_Store
 .vscode/*
+configure.log
+src/Makevars
 src/*.o
 src/*.so
 src/*.dll

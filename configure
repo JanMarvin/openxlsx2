@@ -1,0 +1,76 @@
+# Anticonf (tm) script by Jeroen Ooms (2021)
+# Package requires pugixml. If system pugixml is found this is used,
+# unless the included pugixml is requested.
+# If your pugixml is installed in a custom location you need to set
+# INCLUDE_DIR and LIB_DIR manually via e.g:
+# R CMD INSTALL --configure-vars='INCLUDE_DIR=/.../include LIB_DIR=/.../lib'
+PKG_DEB_NAME="libpugixml-dev"
+PKG_RPM_NAME="pugixml-devel"
+PKG_BREW_NAME="pugixml"
+PKG_TEST_HEADER="\"pugixml.hpp\""
+PKG_LIBS="-lpugixml"
+PKG_CFLAGS="-I/usr/include"
+LIB_DIR="/usr/lib"
+
+UNAME=`uname`
+
+# Test common production platforms
+if [ "$UNAME" = "Darwin" ]; then
+  IS_MACOS=1
+fi
+
+# Find compiler
+CXX14=`${R_HOME}/bin/R CMD config CXX14` || unset CXX14
+CXX="$CXX14 `${R_HOME}/bin/R CMD config CXX14STD`"
+CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
+LDFLAGS=`${R_HOME}/bin/R CMD config LDFLAGS`
+CXXCPP="$CXX -E"
+
+# Check for custom locations
+if [ "$USE_SYSTEM_PUGIXML" -eq "1" ]; then
+  echo "Found INCLUDE_DIR and/or LIB_DIR!"
+  PKG_CFLAGS="-I$INCLUDE_DIR $PKG_CFLAGS"
+  PKG_LIBS="-L$LIB_DIR $PKG_LIBS"
+  if [ "$IS_MACOS" ]; then
+    if [ `command -v brew` ]; then
+      BREWDIR=`brew --prefix`
+      PUGIXML_HOME="$BREWDIR/opt/$PKG_BREW_NAME"
+      PKG_CFLAGS="-I${PUGIXML_HOME}/include -I${PUGIXML_HOME}/libexec/include"
+      PKG_LIBS="-L${PUGIXML_HOME}/libexec $PKG_LIBS"
+    fi
+  fi
+  
+  # Test for libpugixml
+  echo "#include $PKG_TEST_HEADER" | ${CXXCPP} ${CPPFLAGS} ${PKG_CFLAGS} ${CXXFLAGS} -xc++ - >/dev/null 2>configure.log
+  if [ $? -ne 0 ]; then
+    echo "-----------------------------[ ANTICONF ]-------------------------------"
+    echo "Configuration failed to find pugixml. Try installing:"
+    echo " * deb: $PKG_DEB_NAME (Debian / Ubuntu)"
+    echo " * rpm: $PKG_RPM_NAME (Fedora, EPEL)"
+    echo " * brew: $PKG_BREW_NAME (OSX)"
+    echo "Alternatively, you can set environment variable:"
+    echo "    USE_SYSTEM_PUGIXML=0"
+    echo "to use the included version of pugixml in openxlsx2. This should"
+    echo "already have been selected as fallback, but somehow did not work."
+    echo "To use a custom pugixml, set INCLUDE_DIR and LIB_DIR manually via:"
+    echo "R CMD INSTALL --configure-vars='INCLUDE_DIR=... LIB_DIR=...'"
+    echo "---------------------------[ ERROR MESSAGE ]----------------------------"
+    cat configure.log
+    echo "------------------------------------------------------------------------"
+    exit 1
+    
+  fi
+else
+  LIB_DIR=""
+  PKG_LIBS="-I."
+  PKG_CFLAGS="-I../inst/include/pugixml"
+fi
+
+# For debugging
+echo "Using PKG_CFLAGS=$PKG_CFLAGS"
+echo "Using PKG_LIBS=$PKG_LIBS"
+
+
+# Update Makevars
+sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" src/Makevars.in > src/Makevars
+exit 0

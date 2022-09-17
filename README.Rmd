@@ -48,6 +48,11 @@ options(repos = c(
 install.packages('openxlsx2')
 ```
 
+### Use system pugixml on Linux and Mac
+When installing from source you can use 
+`Sys.setenv(USE_SYSTEM_PUGIXML = 1)` to build `openxlsx2` against a local
+pugixml installation.
+
 ## Introduction
 
 `openxlsx2` aims to be the swiss knife for working with the openxml spreadsheet formats xlsx and xlsm (other formats of other spreadsheet software are not supported). We offer two different variants how to work with `openxlsx2`.
