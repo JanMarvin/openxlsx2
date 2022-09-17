@@ -119,4 +119,7 @@ test_that("read startCol", {
   got <- wb_to_df(wb, startCol = 1, colNames = FALSE)
   expect_equal(LETTERS[1:6], names(got))
 
+  got <- wb_to_df(wb, startCol = "F", colNames = FALSE)
+  expect_equal(LETTERS[6], names(got))
+
 })
