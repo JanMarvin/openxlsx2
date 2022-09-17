@@ -21,7 +21,7 @@ A comment
 
 \item{\code{author}}{The comment author}
 
-\item{\code{style}}{A style (class \code{wbStyle}) for the comment (?)}
+\item{\code{style}}{A style for the comment}
 
 \item{\code{visible}}{\code{logical}, if \code{FALSE} is not visible}
 
@@ -34,14 +34,14 @@ A comment
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{wbComment$new()}}
-\item \href{#method-print}{\code{wbComment$print()}}
-\item \href{#method-clone}{\code{wbComment$clone()}}
+\item \href{#method-wbComment-new}{\code{wbComment$new()}}
+\item \href{#method-wbComment-print}{\code{wbComment$print()}}
+\item \href{#method-wbComment-clone}{\code{wbComment$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-wbComment-new"></a>}}
+\if{latex}{\out{\hypertarget{method-wbComment-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbComment} object
 \subsection{Usage}{
@@ -62,7 +62,7 @@ Creates a new \code{wbComment} object
 
 \item{\code{author}}{The comment author}
 
-\item{\code{style}}{A style (class \code{wbStyle}) for the comment (?)}
+\item{\code{style}}{A style for the comment}
 
 \item{\code{visible}}{\code{logical}, if \code{FALSE} is not visible}
 
@@ -77,8 +77,8 @@ a \code{wbComment} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-print"></a>}}
-\if{latex}{\out{\hypertarget{method-print}{}}}
+\if{html}{\out{<a id="method-wbComment-print"></a>}}
+\if{latex}{\out{\hypertarget{method-wbComment-print}{}}}
 \subsection{Method \code{print()}}{
 Prints the object
 \subsection{Usage}{
@@ -87,8 +87,8 @@ Prints the object
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-wbComment-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-wbComment-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

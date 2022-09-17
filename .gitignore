@@ -1,6 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
+.DS_Store
+.vscode/*
 src/*.o
 src/*.so
 src/*.dll
@@ -18,3 +20,6 @@ docs/reference/*.html
 docs/
 # temporary xlsx files
 ~$*
+inst/doc
+/doc/
+/Meta/

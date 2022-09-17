@@ -1,264 +1,392 @@
 
-wb_workbook <- function() {
-  wbWorkbook$new()
-}
-
-#' @name createWorkbook
-#' @title Create a new Workbook object
-#' @description Create a new Workbook object
+#' Create a new Workbook object
+#'
+#' Create a new Workbook object
+#'
 #' @param creator Creator of the workbook (your name). Defaults to login username
 #' @param title Workbook properties title
 #' @param subject Workbook properties subject
 #' @param category Workbook properties category
-#' @return Workbook object
+#' @param datetimeCreated The time of the workbook is created
+#' @return A [wbWorkbook] object
+#'
 #' @export
-#' @seealso [loadWorkbook()]
-#' @seealso [saveWorkbook()]
-#' @import methods
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
-#' saveWorkbook(wb, file = "createWorkbookExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
 #'
 #' ## Set Workbook properties
-#' wb <- createWorkbook(
-#'   creator = "Me",
-#'   title = "title here",
-#'   subject = "this & that",
-#'   category = "something"
+#' wb <- wb_workbook(
+#'   creator  = "Me",
+#'   title    = "Expense Report",
+#'   subject  = "Expense Report - 2022 Q1",
+#'   category = "sales"
 #' )
-createWorkbook <- function(creator = ifelse(.Platform$OS.type == "windows", Sys.getenv("USERNAME"), Sys.getenv("USER")),
-  title = NULL,
-  subject = NULL,
-  category = NULL) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  ## check all inputs are valid
-  if (length(creator) > 1) creator <- creator[[1]]
-  if (length(creator) == 0) creator <- ""
-  if (!inherits(creator, "character")) creator <- ""
-
-  if (length(title) > 1) title <- title[[1]]
-  if (length(subject) > 1) subject <- subject[[1]]
-  if (length(category) > 1) category <- category[[1]]
-
-  assert_class(title, "character", or_null = TRUE)
-  assert_class(subject, "character", or_null = TRUE)
-  assert_class(category, "character", or_null = TRUE)
-  wbWorkbook$new(creator = creator, title = title, subject = subject, category = category)
+wb_workbook <- function(
+  creator         = NULL,
+  title           = NULL,
+  subject         = NULL,
+  category        = NULL,
+  datetimeCreated = Sys.time()
+) {
+  wbWorkbook$new(
+    creator         = creator,
+    title           = title,
+    subject         = subject,
+    category        = category,
+    datetimeCreated = datetimeCreated
+  )
 }
 
 
-#' @name saveWorkbook
-#' @title save Workbook to file
-#' @description save a Workbook object to file
-#' @param wb A Workbook object to write to file
-#' @param file A character string naming an xlsx file
-#' @param overwrite If `TRUE`, overwrite any existing file.
-#' @seealso [createWorkbook()]
-#' @seealso [addWorksheet()]
-#' @seealso [loadWorkbook()]
-#' @seealso [writeData()]
-#' @seealso [writeDataTable()]
+#' Save Workbook to file
+#'
+#' @param wb A `wbWorkbook` object to write to file
+#' @param path A path to save the workbook to
+#' @param overwrite If `FALSE`, will not overwrite when `path` exists
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## Create a new workbook and add a worksheet
-#' wb <- createWorkbook("Creator of workbook")
-#' addWorksheet(wb, sheetName = "My first worksheet")
+#' wb <- wb_workbook("Creator of workbook")
+#' wb$add_worksheet(sheet = "My first worksheet")
 #'
 #' ## Save workbook to working directory
 #' \dontrun{
-#' saveWorkbook(wb, file = "saveWorkbookExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
-saveWorkbook <- function(wb, file, overwrite = FALSE) {
-
-  # TODO set options in saveWorkbook
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  ## increase scipen to avoid writing in scientific
-  sci_pen <- getOption("scipen")
-  options("scipen" = 10000)
-  on.exit(options("scipen" = sci_pen), add = TRUE)
-
-  # TODO move this to separate function
-  wb_save_workbook(wb = wb, path = file, overwrite = overwrite)
-}
-
-# TODO export wb_save_workbook rather than saveWorkbook
-wb_save_workbook <- function(wb, path, overwrite = FALSE) {
-  wb$clone()$saveWorkbook(path = path, overwrite = overwrite)$path
+wb_save <- function(wb, path = NULL, overwrite = TRUE) {
+  assert_workbook(wb)
+  wb$clone()$save(path = path, overwrite = overwrite)$path
 }
 
 
-#' @name mergeCells
-#' @title Merge cells within a worksheet
-#' @description Merge cells within a worksheet
+# add data ----------------------------------------------------------------
+
+
+#' Add data to a worksheet
+#'
+#' Add data to worksheet with optional styling.
+#'
+#' @param wb A Workbook object containing a worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x Object to be written. For classes supported look at the examples.
+#' @param startCol A vector specifying the starting column to write to.
+#' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param array A bool if the function written is of type array
+#' @param xy An alternative to specifying `startCol` and
+#' `startRow` individually.  A vector of the form
+#' `c(startCol, startRow)`.
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, data.frame row names of x are written.
+#' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
+#' @param name If not NULL, a named region is defined.
+#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+#' @param removeCellStyle keep the cell style?
+#' @param na.strings na.strings
+#' @export
+#' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+#' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
+#' @rdname write_data
+#' @family workbook wrappers
+#' @return A clone of `wb``
+wb_add_data <- function(
+    wb,
+    sheet           = current_sheet(),
+    x,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    withFilter      = FALSE,
+    name            = NULL,
+    sep             = ", ",
+    removeCellStyle = FALSE,
+    na.strings
+) {
+  assert_workbook(wb)
+
+  if (missing(na.strings)) na.strings <- substitute()
+
+  wb$clone()$add_data(
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    withFilter      = withFilter,
+    name            = name,
+    sep             = sep,
+    removeCellStyle = removeCellStyle,
+    na.strings      = na.strings
+  )
+}
+
+#' Add data to a worksheet as an Excel table
+#'
+#' Add data to a worksheet and format as an Excel table
+#'
+#' @param wb A Workbook object containing a #' worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A dataframe.
+#' @param startCol A vector specifying the starting column to write df
+#' @param startRow A vector specifying the starting row to write df
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param xy An alternative to specifying startCol and startRow individually. A
+#'   vector of the form c(startCol, startRow)
+#' @param colNames If `TRUE`, column names of x are written.
+#' @param rowNames If `TRUE`, row names of x are written.
+#' @param tableStyle Any excel table style name or "none" (see "formatting"
+#'   vignette).
+#' @param tableName name of table in workbook. The table name must be unique.
+#' @param withFilter If `TRUE`, columns with have filters in the first row.
+#' @param sep Only applies to list columns. The separator used to collapse list
+#'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
+#'   sep).
+#' \cr\cr
+#' \cr**The below options correspond to Excel table options:**
+#' \cr
+#' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
+#' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
+#'
+#' @param firstColumn logical. If TRUE, the first column is bold
+#' @param lastColumn logical. If TRUE, the last column is bold
+#' @param bandedRows logical. If TRUE, rows are colour banded
+#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param na.strings optional
+#'
+#' @details columns of x with class Date/POSIXt, currency, accounting,
+#' hyperlink, percentage are automatically styled as dates, currency,
+#' accounting, hyperlinks, percentages respectively. The string `"_openxlsx_NA"`
+#' is reserved for `openxlsx2`. If the data frame contains this string, the
+#' output will be broken.
+#' @family workbook wrappers
+#' @export
+wb_add_data_table <- function(
+    wb,
+    sheet       = current_sheet(),
+    x,
+    startCol    = 1,
+    startRow    = 1,
+    dims        = rowcol_to_dims(startRow, startCol),
+    xy          = NULL,
+    colNames    = TRUE,
+    rowNames    = FALSE,
+    tableStyle  = "TableStyleLight9",
+    tableName   = NULL,
+    withFilter  = TRUE,
+    sep         = ", ",
+    firstColumn = FALSE,
+    lastColumn  = FALSE,
+    bandedRows  = TRUE,
+    bandedCols  = FALSE,
+    na.strings
+) {
+  assert_workbook(wb)
+  if (missing(na.strings)) na.strings <- substitute()
+
+  wb$clone()$add_data_table(
+    sheet       = sheet,
+    x           = x,
+    startCol    = startCol,
+    startRow    = startRow,
+    dims        = dims,
+    xy          = xy,
+    colNames    = colNames,
+    rowNames    = rowNames,
+    tableStyle  = tableStyle,
+    tableName   = tableName,
+    withFilter  = withFilter,
+    sep         = sep,
+    firstColumn = firstColumn,
+    lastColumn  = lastColumn,
+    bandedRows  = bandedRows,
+    bandedCols  = bandedCols,
+    na.strings  = na.strings
+  )
+}
+
+#' Add a character vector as an Excel Formula
+#'
+#' Add a character vector containing Excel formula to a worksheet.
+#'
+#' @details Currently only the English version of functions are supported. Please don't use the local translation.
+#' The examples below show a small list of possible formulas:
+#' \itemize{
+#'     \item{SUM(B2:B4)}
+#'     \item{AVERAGE(B2:B4)}
+#'     \item{MIN(B2:B4)}
+#'     \item{MAX(B2:B4)}
+#'     \item{...}
+#'
+#' }
+#' @param wb A Workbook object containing a worksheet.
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A character vector.
+#' @param startCol A vector specifying the starting column to write to.
+#' @param startRow A vector specifying the starting row to write to.
+#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param array A bool if the function written is of type array
+#' @param xy An alternative to specifying `startCol` and
+#' `startRow` individually.  A vector of the form
+#' `c(startCol, startRow)`.
+#' @family workbook wrappers
+#' @export
+wb_add_formula <- function(
+    wb,
+    sheet    = current_sheet(),
+    x,
+    startCol = 1,
+    startRow = 1,
+    dims     = rowcol_to_dims(startRow, startCol),
+    array    = FALSE,
+    xy       = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$add_formula(
+    sheet    = sheet,
+    x        = x,
+    startCol = startCol,
+    startRow = startRow,
+    dims     = dims,
+    array    = array,
+    xy       = xy
+  )
+}
+
+# merge cells -------------------------------------------------------------
+
+#' Worksheet cell merging
+#'
+#' Merge cells within a worksheet
+#'
+#' @details As merged region must be rectangular, only min and max of cols and
+#'   rows are used.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param cols Columns to merge
-#' @param rows corresponding rows to merge
-#' @details As merged region must be rectangular, only min and max of cols and rows are used.
-#' @seealso [removeCellMerge()]
-#' @export
+#' @param cols,rows Column and row specifications to merge on.  Note: `min()` and
+#'   `max()` of each vector are provided for specs.  Skipping rows or columns is
+#'   not recognized.
+#'
 #' @examples
-#' ## Create a new workbook
-#' wb <- createWorkbook()
+#' # Create a new workbook
+#' wb <- wb_workbook()
 #'
-#' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
+#' # Add a worksheets
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2")
 #'
-#' ## Merge cells: Row 2 column C to F (3:6)
-#' mergeCells(wb, "Sheet 1", cols = 2, rows = 3:6)
+#' # Merge cells: Row 2 column C to F (3:6)
+#' wb <- wb_merge_cells(wb, "Sheet 1", cols = 2, rows = 3:6)
 #'
-#' ## Merge cells:Rows 10 to 20 columns A to J (1:10)
-#' mergeCells(wb, 1, cols = 1:10, rows = 10:20)
+#' # Merge cells:Rows 10 to 20 columns A to J (1:10)
+#' wb <- wb_merge_cells(wb, 1, cols = 1:10, rows = 10:20)
 #'
-#' ## Intersecting merges
-#' mergeCells(wb, 2, cols = 1:10, rows = 1)
-#' mergeCells(wb, 2, cols = 5:10, rows = 2)
-#' mergeCells(wb, 2, cols = c(1, 10), rows = 12) ## equivalent to 1:10 as only min/max are used
-#' # mergeCells(wb, 2, cols = 1, rows = c(1,10)) # Throws error because intersects existing merge
+#' # Intersecting merges
+#' wb <- wb_merge_cells(wb, 2, cols = 1:10, rows = 1)
+#' wb <- wb_merge_cells(wb, 2, cols = 5:10, rows = 2)
+#' wb <- wb_merge_cells(wb, 2, cols = c(1, 10), rows = 12) # equivalent to 1:10
+#' try(wb_merge_cells(wb, 2, cols = 1, rows = c(1,10)))    # intersects existing merge
 #'
-#' ## remove merged cells
-#' removeCellMerge(wb, 2, cols = 1, rows = 1) # removes any intersecting merges
-#' mergeCells(wb, 2, cols = 1, rows = 1:10) # Now this works
+#' # remove merged cells
+#' wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
+#' wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
 #'
-#' ## Save workbook
+#' # Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "mergeCellsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, temp_xlsx(), overwrite = TRUE)
 #' }
-mergeCells <- function(wb, sheet, cols, rows) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+#'
+#' @name ws_cell_merge
+#' @family workbook wrappers
+NULL
 
-  assert_workbook(wb)
 
-  if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
-  }
 
-  wb$mergeCells(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
-}
-
-#' @name removeCellMerge
-#' @title Create a new Workbook object
-#' @description Unmerges any merged cells that intersect
-#' with the region specified by, min(cols):max(cols) X min(rows):max(rows)
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols vector of column indices
-#' @param rows vector of row indices
 #' @export
-#' @seealso [mergeCells()]
-removeCellMerge <- function(wb, sheet, cols, rows) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+#' @rdname ws_cell_merge
+wb_merge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
-
-  cols <- convertFromExcelRef(cols)
-  rows <- as.integer(rows)
-
-  wb$removeCellMerge(sheet, startRow = min(rows), endRow = max(rows), startCol = min(cols), endCol = max(cols))
+  wb$clone()$merge_cells(sheet = sheet, rows = rows, cols = cols)
 }
 
-
-#' @name sheets
-#' @title Returns names of worksheets.
-#' @description DEPRECATED. Use names().
-#' @param wb A workbook object
-#' @return Name of worksheet(s) for a given index
-#' @seealso [names()] to rename a worksheet in a Workbook
-#' @details DEPRECATED. Use [names()]
 #' @export
-#' @examples
-#'
-#' ## Create a new workbook
-#' wb <- createWorkbook()
-#'
-#' ## Add some worksheets
-#' addWorksheet(wb, "Worksheet Name")
-#' addWorksheet(wb, "This is worksheet 2")
-#' addWorksheet(wb, "The third worksheet")
-#'
-#' ## Return names of sheets, can not be used for assignment.
-#' names(wb)
-#' # openXL(wb)
-#'
-#' names(wb) <- c("A", "B", "C")
-#' names(wb)
-#' # openXL(wb)
-sheets <- function(wb) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+#' @rdname ws_cell_merge
+wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
-
-  nms <- wb$sheet_names
-  nms <- replaceXMLEntities(nms)
-
-  return(nms)
+  wb$clone()$unmerge_cells(sheet = sheet, rows = rows, cols = cols)
 }
 
 
+# worksheets --------------------------------------------------------------
 
-#' @name addWorksheet
-#' @title Add a worksheet to a workbook
-#' @description Add a worksheet to a Workbook object
+#' Add a worksheet to a workbook
+#'
 #' @param wb A Workbook object to attach the new worksheet
-#' @param sheetName A name for the new worksheet
-#' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be hidden.
-#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to colours()) or a valid hex colour beginning with "#"
-#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a percentage.
-#' @param header document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
-#' @param footer document footer. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
-#' @param evenHeader document header for even pages.
-#' @param evenFooter document footer for even pages.
-#' @param firstHeader document header for first page only.
-#' @param firstFooter document footer for first page only.
+#' @param sheet A name for the new worksheet
+#' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
+#'   hidden.
+#' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
+#'   hidden.
+#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
+#'   colours()) or a valid hex colour beginning with "#"
+#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
+#'   percentage.
+#' @param header,oddHeader,evenHeader,firstHeader,footer,oddFooter,evenFooter,firstFooter
+#'   Character vector of length 3 corresponding to positions left, center,
+#'   right.  `header` and `footer` are used to default additional arguments.
+#'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
+#'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
 #' @param hasDrawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paperSize An integer corresponding to a paper size. See ?pageSetup for details.
+#' @param paperSize An integer corresponding to a paper size. See ?ws_page_setup for
+#'   details.
 #' @param orientation One of "portrait" or "landscape"
-#' @param hdpi Horizontal DPI. Can be set with options("openxlsx.dpi" = X) or options("openxlsx.hdpi" = X)
-#' @param vdpi Vertical DPI. Can be set with options("openxlsx.dpi" = X) or options("openxlsx.vdpi" = X)
-#' @details Headers and footers can contain special tags
-#' \itemize{
-#'   \item{**&\[Page\]**}{ Page number}
-#'   \item{**&\[Pages\]**}{ Number of pages}
-#'   \item{**&\[Date\]**}{ Current date}
-#'   \item{**&\[Time\]**}{ Current time}
-#'   \item{**&\[Path\]**}{ File path}
-#'   \item{**&\[File\]**}{ File name}
-#'   \item{**&\[Tab\]**}{ Worksheet name}
-#' }
-#' @return XML tree
+#' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
+#'   options("openxlsx2.hdpi" = X)
+#' @param vdpi Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
+#'   options("openxlsx2.vdpi" = X)
+#' @details Headers and footers can contain special tags \itemize{
+#'   \item{**&\[Page\]**}{ Page number} \item{**&\[Pages\]**}{ Number of pages}
+#'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
+#'   \item{**&\[Path\]**}{ File path} \item{**&\[File\]**}{ File name}
+#'   \item{**&\[Tab\]**}{ Worksheet name} }
+#' @return The [wbWorkbook] object `wb`
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook("Fred")
+#' wb <- wb_workbook("Fred")
 #'
 #' ## Add 3 worksheets
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2", gridLines = FALSE)
-#' addWorksheet(wb, "Sheet 3", tabColour = "red")
-#' addWorksheet(wb, "Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2", gridLines = FALSE)
+#' wb$add_worksheet("Sheet 3", tabColour = "red")
+#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
 #'
 #' ## Headers and Footers
-#' addWorksheet(wb, "Sheet 5",
+#' wb$add_worksheet("Sheet 5",
 #'   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
 #'   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
 #'   evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
@@ -267,351 +395,108 @@ sheets <- function(wb) {
 #'   firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
 #' )
 #'
-#' addWorksheet(wb, "Sheet 6",
+#' wb$add_worksheet("Sheet 6",
 #'   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
 #'   footer = c("&[Path]&[File]", NA, "&[Tab]"),
 #'   firstHeader = c(NA, "Center Header of First Page", NA),
 #'   firstFooter = c(NA, "Center Footer of First Page", NA)
 #' )
 #'
-#' addWorksheet(wb, "Sheet 7",
+#' wb$add_worksheet("Sheet 7",
 #'   header = c("ALL HEAD LEFT 2", "ALL HEAD CENTER 2", "ALL HEAD RIGHT 2"),
 #'   footer = c("ALL FOOT RIGHT 2", "ALL FOOT CENTER 2", "ALL FOOT RIGHT 2")
 #' )
 #'
-#' addWorksheet(wb, "Sheet 8",
+#' wb$add_worksheet("Sheet 8",
 #'   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
 #'   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 #' )
 #'
 #' ## Need data on worksheet to see all headers and footers
-#' writeData(wb, sheet = 5, 1:400)
-#' writeData(wb, sheet = 6, 1:400)
-#' writeData(wb, sheet = 7, 1:400)
-#' writeData(wb, sheet = 8, 1:400)
+#' wb$add_data(sheet = 5, 1:400)
+#' wb$add_data(sheet = 6, 1:400)
+#' wb$add_data(sheet = 7, 1:400)
+#' wb$add_data(sheet = 8, 1:400)
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "addWorksheetExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "add_worksheetExample.xlsx", overwrite = TRUE)
 #' }
-addWorksheet <- function(
+wb_add_worksheet <- function(
   wb,
-  sheetName,
-  gridLines   = getOption("openxlsx.gridLines"),
-  tabColour   = getOption("openxlsx.tabColour"),
+  sheet       = next_sheet(),
+  gridLines   = TRUE,
+  rowColHeaders = TRUE,
+  tabColour   = NULL,
   zoom        = 100,
-  header      = getOption("openxlsx.header"),
-  footer      = getOption("openxlsx.footer"),
-  evenHeader  = getOption("openxlsx.evenHeader"),
-  evenFooter  = getOption("openxlsx.evenFooter"),
-  firstHeader = getOption("openxlsx.firstHeader"),
-  firstFooter = getOption("openxlsx.firstFooter"),
-  visible     = TRUE,
+  header      = NULL,
+  footer      = NULL,
+  oddHeader   = header,
+  oddFooter   = footer,
+  evenHeader  = header,
+  evenFooter  = footer,
+  firstHeader = header,
+  firstFooter = footer,
+  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing  = FALSE,
-  paperSize   = getOption("openxlsx.paperSize"),
-  orientation = getOption("openxlsx.orientation"),
-  vdpi        = getOption("openxlsx.vdpi", getOption("openxlsx.dpi")),
-  hdpi        = getOption("openxlsx.hdpi", getOption("openxlsx.dpi"))
+  paperSize   = getOption("openxlsx2.paperSize", default = 9),
+  orientation = getOption("openxlsx2.orientation", default = "portrait"),
+  hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
 ) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
   assert_workbook(wb)
-
-  if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
-    stop(paste0("A worksheet by the name '", sheetName, "' already exists! Sheet names must be unique case-insensitive."))
-  }
-
-  if (!is.logical(gridLines) | length(gridLines) > 1) {
-    stop("gridLines must be a logical of length 1.")
-  }
-
-  if (nchar(sheetName) > 31) {
-    stop(paste0("sheetName '", sheetName, "' too long! Max length is 31 characters."))
-  }
-
-  if (!is.null(tabColour)) {
-    tabColour <- validateColour(tabColour, "Invalid tabColour in addWorksheet.")
-  }
-
-  if (!is.numeric(zoom)) {
-    stop("zoom must be numeric")
-  }
-
-  if (!is.character(sheetName)) {
-    sheetName <- as.character(sheetName)
-  }
-
-  if (!is.null(header) & length(header) != 3) {
-    stop("header must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(footer) & length(footer) != 3) {
-    stop("footer must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenHeader) & length(evenHeader) != 3) {
-    stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenFooter) & length(evenFooter) != 3) {
-    stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstHeader) & length(firstHeader) != 3) {
-    stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstFooter) & length(firstFooter) != 3) {
-    stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  visible <- tolower(visible[1])
-  if (!visible %in% c("true", "false", "hidden", "visible", "veryhidden")) {
-    stop("visible must be one of: TRUE, FALSE, 'hidden', 'visible', 'veryHidden'")
-  }
-
-  orientation <- tolower(orientation)
-  if (!orientation %in% c("portrait", "landscape")) {
-    stop("orientation must be 'portrait' or 'landscape'.")
-  }
-
-  vdpi <- as.integer(vdpi)
-  if (is.na(vdpi)) {
-    stop("vdpi must be numeric")
-  }
-
-  hdpi <- as.integer(hdpi)
-  if (is.na(hdpi)) {
-    stop("hdpi must be numeric")
-  }
-
-
-
-  ## Invalid XML characters
-  sheetName <- replaceIllegalCharacters(sheetName)
-
-  invisible(wb$addWorksheet(
-    sheetName = sheetName,
-    showGridLines = gridLines,
-    tabColour = tabColour,
-    zoom = zoom[1],
-    oddHeader = headerFooterSub(header),
-    oddFooter = headerFooterSub(footer),
-    evenHeader = headerFooterSub(evenHeader),
-    evenFooter = headerFooterSub(evenFooter),
+  wb$clone()$add_worksheet(
+    sheet       = sheet,
+    gridLines   = gridLines,
+    rowColHeaders = rowColHeaders,
+    tabColour   = tabColour,
+    zoom        = zoom,
+    oddHeader   = headerFooterSub(oddHeader),
+    oddFooter   = headerFooterSub(oddFooter),
+    evenHeader  = headerFooterSub(evenHeader),
+    evenFooter  = headerFooterSub(evenFooter),
     firstHeader = headerFooterSub(firstHeader),
     firstFooter = headerFooterSub(firstFooter),
-    visible = visible,
-    paperSize = paperSize,
+    visible     = visible,
+    paperSize   = paperSize,
     orientation = orientation,
-    vdpi = vdpi,
-    hdpi = hdpi
-  ))
+    vdpi        = vdpi,
+    hdpi        = hdpi
+  )
 }
 
 
-#' @name cloneWorksheet
-#' @title Clone a worksheet to a workbook
-#' @description Clone a worksheet to a Workbook object
-#' @param wb A Workbook object to attach the new worksheet
-#' @param sheetName A name for the new worksheet
-#' @param clonedSheet The name of the existing worksheet to be cloned.
-#' @return XML tree
+#' Clone a worksheet to a workbook
+#'
+#' Clone a worksheet to a Workbook object
+#'
+#' @param wb A [wbWorkbook] object
+#' @param old Name of existing worksheet to copy
+#' @param new Name of New worksheet to create
+#' @return The `wb` object
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
-#' ## Create a new workbook
-#' wb <- createWorkbook("Fred")
+#' # Create a new workbook
+#' wb <- wb_workbook("Fred")
 #'
-#' ## Add 3 worksheets
-#' addWorksheet(wb, "Sheet 1")
-#' cloneWorksheet(wb, "Sheet 2", clonedSheet = "Sheet 1")
+#' # Add worksheets
+#' wb$add_worksheet("Sheet 1")
+#' wb$clone_worksheet("Sheet 1", "Sheet 2")
 #'
-#' ## Save workbook
+#' # Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "cloneWorksheetExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "clone_worksheetExample.xlsx", overwrite = TRUE)
 #' }
-cloneWorksheet <- function(wb, sheetName, clonedSheet) {
+wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
   assert_workbook(wb)
-
-  # TODO move these checks into Workbook$cloneWorksheet()
-
-  if (tolower(sheetName) %in% tolower(wb$sheet_names)) {
-    stop("A worksheet by that name already exists! Sheet names must be unique case-insensitive.")
-  }
-
-  if (nchar(sheetName) > 31) {
-    stop("sheetName too long! Max length is 31 characters.")
-  }
-
-  if (!is.character(sheetName)) {
-    sheetName <- as.character(sheetName)
-  }
-
-
-  ## Invalid XML characters
-  sheetName <- replaceIllegalCharacters(sheetName)
-  wb$cloneWorksheet(sheetName = sheetName, clonedSheet = clonedSheet)
-  # TODO change to return wb$clone()$cloneWorksheet(...) [which returns self]
-  # TODO use wb_clone_worksheet()
-  invisible(length(wb$worksheets))
-}
-
-wb_clone_worksheet <- function(wb, old, new, sheetName, clonedSheet) {
-  assert_workbook(wb)
-  if (!missing(sheetName)) {
-    warning("sheetName is soft deprecated: use old")
-    old <- sheetName
-  }
-
-  if (!missing(sheetName)) {
-    warning("clonedSheet is soft deprecated: use new")
-    new <- clonedSheet
-  }
-
-  # TODO use old_sheet, new_sheet
-  wb$clone()$cloneWorksheet(sheetName = old, clonedSheet = new)
+  wb$clone()$clone_worksheet(old = old, new = new)
 }
 
 
-#' @name renameWorksheet
-#' @title Rename a worksheet
-#' @description Rename a worksheet
-#' @param wb A Workbook object containing a worksheet
-#' @param sheet The name or index of the worksheet to rename
-#' @param newName The new name of the worksheet. No longer than 31 chars.
-#' @details DEPRECATED. Use [names()]
-#' @export
-#' @examples
-#'
-#' ## Create a new workbook
-#' wb <- createWorkbook("CREATOR")
-#'
-#' ## Add 3 worksheets
-#' addWorksheet(wb, "Worksheet Name")
-#' addWorksheet(wb, "This is worksheet 2")
-#' addWorksheet(wb, "Not the best name")
-#'
-#' #' ## rename all worksheets
-#' names(wb) <- c("A", "B", "C")
-#'
-#'
-#' ## Rename worksheet 1 & 3
-#' renameWorksheet(wb, 1, "New name for sheet 1")
-#' names(wb)[[1]] <- "New name for sheet 1"
-#' names(wb)[[3]] <- "A better name"
-#'
-#' ## Save workbook
-#' \dontrun{
-#' saveWorkbook(wb, "renameWorksheetExample.xlsx", overwrite = TRUE)
-#' }
-renameWorksheet <- function(wb, sheet, newName) {
-  assert_workbook(wb)
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  invisible(wb$setSheetName(sheet, newName))
-}
-
-
-#' @name addStyle
-#' @title Add a style to a set of cells
-#' @description Function adds a style to a specified set of cells.
-#' @param wb A Workbook object containing a worksheet.
-#' @param sheet A worksheet to apply the style to.
-#' @param style A style object returned from createStyle()
-#' @param rows Rows to apply style to.
-#' @param cols columns to apply style to.
-#' @param gridExpand If `TRUE`, style will be applied to all combinations of rows and cols.
-#' @param stack If `TRUE` the new style is merged with any existing cell styles.  If FALSE, any
-#' existing style is replaced by the new style.
-#' @seealso [createStyle()]
-#' @seealso expand.grid
-#' @export
-#' @examples
-#' ## See package vignette for more examples.
-#'
-#' ## Create a new workbook
-#' wb <- createWorkbook("My name here")
-#'
-#' ## Add a worksheets
-#' addWorksheet(wb, "Expenditure", gridLines = FALSE)
-#'
-#' ## write data to worksheet 1
-#' writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
-#'
-#' ## create and add a style to the column headers
-#' headerStyle <- createStyle(
-#'   fontSize = 14, fontColour = "#FFFFFF", halign = "center",
-#'   fgFill = "#4F81BD", border = c("top", "bottom"), borderColour = "#4F81BD"
-#' )
-#'
-#' addStyle(wb, sheet = 1, headerStyle, rows = 1, cols = 1:6, gridExpand = TRUE)
-#'
-#' ## style for body
-#' bodyStyle <- createStyle(border = c("top", "bottom"), borderColour = "#4F81BD")
-#' addStyle(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
-#' setColWidths(wb, 1, cols = 1, widths = 21) ## set column width for row names column
-#' \dontrun{
-#' saveWorkbook(wb, "addStyleExample.xlsx", overwrite = TRUE)
-#' }
-addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = FALSE) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-
-
-
-  if (!is.null(style$numFmt) & length(wb$styleObjects)) {
-    if (style$numFmt$numFmtId == 165) {
-      maxnumFmtId <- max(c(sapply(wb$styleObjects, function(i) {
-        as.integer(
-          max(c(i$style$numFmt$numFmtId, 0))
-        )
-      }), 165))
-      style$numFmt$numFmtId <- maxnumFmtId + 1
-    }
-  }
-  sheet <- wb$validateSheet(sheet)
-
-  assert_workbook(wb)
-  assert_style(style)
-
-  if (!is.logical(stack)) {
-    stop("stack parameter must be a logical!")
-  }
-
-  if (length(cols) == 0 | length(rows) == 0) {
-    return(invisible(0))
-  }
-
-  cols <- convertFromExcelRef(cols)
-  rows <- as.integer(rows)
-
-  ## rows and cols need to be the same length
-  if (gridExpand) {
-    n <- length(cols)
-    cols <- rep.int(cols, times = length(rows))
-    rows <- rep(rows, each = n)
-  } else if (length(rows) == 1 & length(cols) > 1) {
-    rows <- rep.int(rows, times = length(cols))
-  } else if (length(cols) == 1 & length(rows) > 1) {
-    cols <- rep.int(cols, times = length(rows))
-  } else if (length(rows) != length(cols)) {
-    stop("Length of rows and cols must be equal.")
-  }
-
-
-  wb$addStyle(sheet = sheet, style = style, rows = rows, cols = cols, stack = stack)
-}
-
-
-
-#' @name freezePane
+#' @name wb_freeze_pane
 #' @title Freeze a worksheet pane
 #' @description Freeze a worksheet pane
 #' @param wb A workbook object
@@ -620,332 +505,226 @@ addStyle <- function(wb, sheet, style, rows, cols, gridExpand = FALSE, stack = F
 #' @param firstActiveCol Furthest left column of active region
 #' @param firstRow If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)
 #' @param firstCol If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook("Kenshin")
+#' wb <- wb_workbook("Kenshin")
 #'
 #' ## Add some worksheets
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
-#' addWorksheet(wb, "Sheet 4")
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2")
+#' wb$add_worksheet("Sheet 3")
+#' wb$add_worksheet("Sheet 4")
 #'
 #' ## Freeze Panes
-#' freezePane(wb, "Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-#' freezePane(wb, "Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-#' freezePane(wb, 3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-#' freezePane(wb, 4, firstActiveRow = 1, firstActiveCol = "D")
+#' wb$freeze_pane("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
+#' wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
+#' wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
+#' wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "freezePaneExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
 #' }
-freezePane <- function(wb, sheet, firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
-  # TODO should freezePane() be a workbookWorksheet method?
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  if (is.null(firstActiveRow) & is.null(firstActiveCol) & !firstRow & !firstCol) {
-    return(invisible(0))
-  }
-
-  if (!is.logical(firstRow)) {
-    stop("firstRow must be TRUE/FALSE")
-  }
-
-  if (!is.logical(firstCol)) {
-    stop("firstCol must be TRUE/FALSE")
-  }
-
-  if (firstRow & !firstCol) {
-    invisible(wb$freezePanes(sheet, firstRow = firstRow))
-  } else if (firstCol & !firstRow) {
-    invisible(wb$freezePanes(sheet, firstCol = firstCol))
-  } else if (firstRow & firstCol) {
-    invisible(wb$freezePanes(sheet, firstActiveRow = 2L, firstActiveCol = 2L))
-  } else { ## else both firstRow and firstCol are FALSE
-
-    ## Convert to numeric if column letter given
-    if (!is.null(firstActiveRow)) {
-      firstActiveRow <- convertFromExcelRef(firstActiveRow)
-    } else {
-      firstActiveRow <- 1L
-    }
-
-    if (!is.null(firstActiveCol)) {
-      firstActiveCol <- convertFromExcelRef(firstActiveCol)
-    } else {
-      firstActiveCol <- 1L
-    }
-
-    invisible(wb$freezePanes(sheet, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol, firstRow = firstRow, firstCol = firstCol))
-  }
+wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
+  assert_workbook(wb)
+  wb$clone()$freeze_pane(
+    sheet          = sheet,
+    firstActiveRow = firstActiveRow,
+    firstActiveCol = firstActiveCol,
+    firstRow       = firstRow,
+    firstCol       = firstCol
+  )
 }
 
 
-#' @name setRowHeights
-#' @title Set worksheet row heights
-#' @description Set worksheet row heights
-#' @param wb A workbook object
+# heights and columns -----------------------------------------------------
+
+# TODO order these...
+
+#' Set worksheet row heights
+#'
+#' Set worksheet row heights
+#'
+#' @param wb A [wbWorkbook] object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to set height
 #' @param heights Heights to set rows to specified in Excel column height units.
-#' @seealso [removeRowHeights()]
+#'
 #' @export
+#' @family workbook wrappers
+#' @seealso [wb_remove_row_heights()]
+#'
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1")
+#' wb$add_worksheet("Sheet 1")
 #'
 #' ## set row heights
-#' setRowHeights(wb, 1, rows = c(1, 4, 22, 2, 19), heights = c(24, 28, 32, 42, 33))
+#' wb <- wb_set_row_heights(
+#'   wb, 1,
+#'   rows = c(1, 4, 22, 2, 19),
+#'   heights = c(24, 28, 32, 42, 33)
+#' )
 #'
 #' ## overwrite row 1 height
-#' setRowHeights(wb, 1, rows = 1, heights = 40)
+#' wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "setRowHeightsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "set_row_heightsExample.xlsx", overwrite = TRUE)
 #' }
-setRowHeights <- function(wb, sheet, rows, heights) {
-  sheet <- wb$validateSheet(sheet)
-
-  if (length(rows) > length(heights)) {
-    heights <- rep(heights, length.out = length(rows))
-  }
-
-  if (length(heights) > length(rows)) {
-    stop("Greater number of height values than rows.")
-  }
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  ## Remove duplicates
-  heights <- heights[!duplicated(rows)]
-  rows <- rows[!duplicated(rows)]
-
-
-  heights <- as.character(as.numeric(heights))
-  names(heights) <- rows
-
-  wb$setRowHeights(sheet, rows, heights)
+wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights) {
+  assert_workbook(wb)
+  wb$clone()$set_row_heights(sheet = sheet, rows, heights)
 }
 
 
-#' @name setColWidths
-#' @title Set worksheet column widths
-#' @description Set worksheet column widths to specific width or "auto".
-#' @param wb A workbook object
+#' Set worksheet column widths
+#'
+#' Set worksheet column widths to specific width or "auto".
+#'
+#' @param wb A [wbWorkbook] object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
-#' @param widths widths to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-#' recycled to the length of cols.
+#' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
+#' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
+#' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
+#' of the selected width.
 #' @param hidden Logical vector. If TRUE the column is hidden.
-#' @param ignoreMergedCells Ignore any cells that have been merged with other cells in the calculation of "auto" column widths.
 #' @details The global min and max column width for "auto" columns is set by (default values show):
 #' \itemize{
-#'   \item{options("openxlsx.minWidth" = 3)}
-#'   \item{options("openxlsx.maxWidth" = 250)} ## This is the maximum width allowed in Excel
+#'   \item{options("openxlsx2.minWidth" = 3)}
+#'   \item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
 #' }
 #'
-#' NOTE: The calculation of column widths can be slow for large worksheets.
+#'   NOTE: The calculation of column widths can be slow for large worksheets.
 #'
-#' NOTE: The `hidden` parameter may conflict with the one set in `groupColumns`; changing one will update the other.
+#'   NOTE: The `hidden` parameter may conflict with the one set in
+#'   [wb_group_cols]; changing one will update the other.
 #'
-#' @seealso [removeColWidths()]
 #' @export
+#' @family workbook wrappers
+#' @seealso [wb_remove_col_widths()]
+#'
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1")
-#'
+#' wb$add_worksheet("Sheet 1")
 #'
 #' ## set col widths
-#' setColWidths(wb, 1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+#' wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 #'
 #' ## auto columns
-#' addWorksheet(wb, "Sheet 2")
-#' writeData(wb, sheet = 2, x = iris)
-#' setColWidths(wb, sheet = 2, cols = 1:5, widths = "auto")
+#' wb$add_worksheet("Sheet 2")
+#' wb$add_data(sheet = 2, x = iris)
+#' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "setColWidthsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
-setColWidths <- function(wb, sheet, cols, widths = 8.43, hidden = rep(FALSE, length(cols)), ignoreMergedCells = FALSE) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  sheet <- wb$validateSheet(sheet)
-
+wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
-
-  # widths <- tolower(widths) ## possibly "auto"
-  # if (ignoreMergedCells) {
-  #   widths[widths == "auto"] <- "auto2"
-  # }
-
-  # should do nothing if the cols' length is zero
-  if (length(cols) == 0L) return(invisible(0))
-
-  if (length(widths) > length(cols)) {
-    stop("More widths than columns supplied.")
-  }
-
-  if (length(hidden) > length(cols)) {
-    stop("hidden argument is longer than cols.")
-  }
-
-  if (length(widths) < length(cols)) {
-    widths <- rep(widths, length.out = length(cols))
-  }
-
-  if (length(hidden) < length(cols)) {
-    hidden <- rep(hidden, length.out = length(cols))
-  }
-
-  # TODO add bestFit option?
-  bestFit <- rep("", length.out = length(cols))
-  customWidth <- rep("1", length.out = length(cols))
-
-  ## Remove duplicates
-  widths <- widths[!duplicated(cols)]
-  hidden <- hidden[!duplicated(cols)]
-  cols <- cols[!duplicated(cols)]
-
-  col_df <- wb$worksheets[[sheet]]$unfold_cols()
-
-  if (any(widths == "auto")) {
-    bestFit <- rep("1", length(widths))
-    widths <- rep("5", length(widths))
-    customWidth <- rep("1", length(widths))
-  }
-
-  # create empty rows
-  if (NROW(col_df) == 0)
-    col_df <- col_to_df(read_xml(wb$createCols(sheet, max(cols))))
-
-  select <- col_df$min %in% as.character(cols)
-  col_df$width[select] <- widths
-  col_df$hidden[select] <- tolower(hidden)
-  col_df$bestFit[select] <- bestFit
-  col_df$customWidth[select] <- customWidth
-
-  wb$worksheets[[sheet]]$fold_cols(col_df)
-
+  wb$clone()$set_col_widths(
+    sheet  = sheet,
+    cols   = cols,
+    widths = widths,
+    # TODO allow either 1 or length(cols)
+    hidden = hidden
+  )
 }
 
-#' @name removeColWidths
+#' @name wb_remove_col_widths
 #' @title Remove column widths from a worksheet
 
 #' @description Remove column widths from a worksheet
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of columns to remove custom width (if any) from.
-#' @seealso [setColWidths()]
+#' @seealso [wb_set_col_widths()]
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove column widths in columns 1 to 20
-#' removeColWidths(wb, 1, cols = 1:20)
+#' wb_remove_col_widths(wb, 1, cols = 1:20)
 #' \dontrun{
-#' saveWorkbook(wb, "removeColWidthsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_remove_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
-removeColWidths <- function(wb, sheet, cols) {
-  sheet <- wb$validateSheet(sheet)
-
-  if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
-  }
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  customCols <- as.integer(names(wb$colWidths[[sheet]]))
-  removeInds <- which(customCols %in% cols)
-  if (length(removeInds)) {
-    remainingCols <- customCols[-removeInds]
-    if (length(remainingCols) == 0) {
-      wb$colWidths[[sheet]] <- list()
-    } else {
-      rem_widths <- wb$colWidths[[sheet]][-removeInds]
-      names(rem_widths) <- as.character(remainingCols)
-      wb$colWidths[[sheet]] <- rem_widths
-    }
-  }
+wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
+  assert_workbook(wb)
+  wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
 }
 
 
 
-#' @name removeRowHeights
-#' @title Remove custom row heights from a worksheet
-#' @description Remove row heights from a worksheet
+#' Remove custom row heights from a worksheet
+#'
+#' Remove row heights from a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to remove custom height (if any) from.
-#' @seealso [setRowHeights()]
+#' @seealso [wb_set_row_heights()]
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## remove any custom row heights in rows 1 to 10
-#' removeRowHeights(wb, 1, rows = 1:10)
+#' wb$remove_row_heights(1, rows = 1:10)
 #' \dontrun{
-#' saveWorkbook(wb, "removeRowHeightsExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "remove_row_heightsExample.xlsx", overwrite = TRUE)
 #' }
-removeRowHeights <- function(wb, sheet, rows) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  sheet <- wb$validateSheet(sheet)
-
-  customRows <- as.integer(names(wb$rowHeights[[sheet]]))
-  removeInds <- which(customRows %in% rows)
-  if (length(removeInds)) {
-    wb$rowHeights[[sheet]] <- wb$rowHeights[[sheet]][-removeInds]
-  }
+wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
+  assert_workbook(wb)
+  wb$clone()$remove_row_heights(sheet = sheet, rows = rows)
 }
 
 
-#' @name insertPlot
-#' @title Insert the current plot into a worksheet
-#' @description The current plot is saved to a temporary image file using dev.copy.
-#' This file is then written to the workbook using insertImage.
+# images ------------------------------------------------------------------
+
+
+#' Insert the current plot into a worksheet
+#'
+#' The current plot is saved to a temporary image file using
+#' [grDevices::dev.copy()] This file is then written to the workbook using
+#' [wb_add_image()].
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param xy Alternate way to specify startRow and startCol.  A vector of length 2 of form (startcol, startRow)
-#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when xy is given.
-#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]` when xy is given.
-#' @param width Width of figure. Defaults to 6in.
-#' @param height Height of figure . Defaults to 4in.
+#' @param xy Alternate way to specify `startRow` and `startCol.`  A vector of
+#'   length `2` of form (`startcol`, `startRow`)
+#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when
+#'   `xy` is given.
+#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]`
+#'   when `xy` is given.
+#' @param rowOffset offset within cell (row)
+#' @param colOffset offset within cell (column)
+#' @param width Width of figure. Defaults to `6`in.
+#' @param height Height of figure . Defaults to `4`in.
 #' @param fileType File type of image
-#' @param units Units of width and height. Can be "in", "cm" or "px"
+#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution
-#' @seealso [insertImage()]
+#' @seealso [wb_add_image()]
 #' @export
-#' @importFrom grDevices bmp png jpeg tiff dev.copy dev.list dev.off
 #' @examples
 #' \dontrun{
 #' ## Create a new workbook
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' addWorksheet(wb, "Sheet 1", gridLines = FALSE)
+#' wb$add_worksheet("Sheet 1", gridLines = FALSE)
 #'
 #' ## create plot objects
 #' require(ggplot2)
@@ -959,117 +738,46 @@ removeRowHeights <- function(wb, sheet, rows) {
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
 #' print(p1) # plot needs to be showing
-#' insertPlot(wb, 1, width = 5, height = 3.5, fileType = "png", units = "in")
+#' wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
 #'
 #' ## Insert plot 2
 #' print(p2)
-#' insertPlot(wb, 1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+#' wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
 #' ## Save workbook
-#' saveWorkbook(wb, "insertPlotExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
-insertPlot <- function(wb, sheet, width = 6, height = 4, xy = NULL,
-  startRow = 1, startCol = 1, fileType = "png", units = "in", dpi = 300) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  if (is.null(dev.list()[[1]])) {
-    warning("No plot to insert.")
-    return()
-  }
-
+wb_add_plot <- function(
+    wb,
+    sheet     = current_sheet(),
+    width     = 6,
+    height    = 4,
+    xy        = NULL,
+    startRow  = 1,
+    startCol  = 1,
+    rowOffset = 0,
+    colOffset = 0,
+    fileType  = "png",
+    units     = "in",
+    dpi       = 300
+) {
   assert_workbook(wb)
-
-  if (!is.null(xy)) {
-    startCol <- xy[[1]]
-    startRow <- xy[[2]]
-  }
-
-  fileType <- tolower(fileType)
-  units <- tolower(units)
-
-  if (fileType == "jpg") {
-    fileType <- "jpeg"
-  }
-
-  if (!fileType %in% c("png", "jpeg", "tiff", "bmp")) {
-    stop("Invalid file type.\nfileType must be one of: png, jpeg, tiff, bmp")
-  }
-
-  if (!units %in% c("cm", "in", "px")) {
-    stop("Invalid units.\nunits must be one of: cm, in, px")
-  }
-
-  fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
-
-  if (fileType == "bmp") {
-    dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
-  } else if (fileType == "jpeg") {
-    dev.copy(jpeg, filename = fileName, width = width, height = height, units = units, quality = 100, res = dpi)
-  } else if (fileType == "png") {
-    dev.copy(png, filename = fileName, width = width, height = height, units = units, res = dpi)
-  } else if (fileType == "tiff") {
-    dev.copy(tiff, filename = fileName, width = width, height = height, units = units, compression = "none", res = dpi)
-  }
-
-  ## write image
-  invisible(dev.off())
-
-  insertImage(wb = wb, sheet = sheet, file = fileName, width = width, height = height, startRow = startRow, startCol = startCol, units = units, dpi = dpi)
+  wb$clone()$add_plot(
+    sheet     = sheet,
+    width     = width,
+    height    = height,
+    xy        = xy,
+    startRow  = startRow,
+    startCol  = startCol,
+    rowOffset = rowOffset,
+    colOffset = colOffset,
+    fileType  = fileType,
+    units     = units,
+    dpi       = dpi
+  )
 }
 
 
-
-#' @name replaceStyle
-#' @title Replace an existing cell style
-#' @description Replace an existing cell style
-#' @param wb A workbook object
-#' @param index Index of style object to replace
-#' @param newStyle A style to replace the existing style as position index
-#' @description Replace a style object
-#' @export
-#' @seealso [getStyles()]
-#' @examples
-#'
-#' \dontrun{
-#' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#'
-#' ## create a new style and replace style 2
-#'
-#' newStyle <- createStyle(fgFill = "#00FF00")
-#'
-#' ## replace style 2
-#' getStyles(wb)[1:3] ## prints styles
-#' replaceStyle(wb, 2, newStyle = newStyle)
-#'
-#' ## Save workbook
-#' saveWorkbook(wb, "replaceStyleExample.xlsx", overwrite = TRUE)
-#' }
-replaceStyle <- function(wb, index, newStyle) {
-  return(NULL)
-}
-
-
-#' @name getStyles
-#' @title Returns a list of all styles in the workbook
-#' @description Returns list of style objects in the workbook
-#' @param wb A workbook object
-#' @export
-#' @seealso [replaceStyle()]
-#' @examples
-#' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#' getStyles(wb)[1:3]
-getStyles <- function(wb) {
-
-  return(NULL)
-}
-
-
-
-#' @name removeWorksheet
 #' @title Remove a worksheet from a workbook
 #' @description Remove a worksheet from a Workbook object
 #' @param wb A workbook object
@@ -1078,29 +786,24 @@ getStyles <- function(wb) {
 #' @export
 #' @examples
 #' ## load a workbook
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #'
 #' ## Remove sheet 2
-#' removeWorksheet(wb, 2)
+#' wb <- wb_remove_worksheet(wb, 2)
 #'
 #' ## save the modified workbook
 #' \dontrun{
-#' saveWorkbook(wb, "removeWorksheetExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "remove_worksheetExample.xlsx", overwrite = TRUE)
 #' }
-removeWorksheet <- function(wb, sheet) {
-  # TODO this should just be wbWorkbook$remove_worksheet(...)
+wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
-
-  if (length(sheet) != 1) {
-    stop("sheet must have length 1.")
-  }
-
-  wb$deleteWorksheet(sheet)
-
-  invisible(0)
+  wb$clone()$remove_worksheet(sheet = sheet)
 }
 
-#' @name modifyBaseFont
+
+# base font ---------------------------------------------------------------
+
+#' @name wb_modify_basefont
 #' @title Modify the default font
 #' @description Modify the default font for this workbook
 #' @param wb A workbook object
@@ -1112,55 +815,53 @@ removeWorksheet <- function(wb, sheet) {
 #' @export
 #' @examples
 #' ## create a workbook
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "S1")
+#' wb <- wb_workbook()
+#' wb$add_worksheet("S1")
 #' ## modify base font to size 10 Arial Narrow in red
-#' modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
-#' writeData(wb, "S1", iris)
-#' writeDataTable(wb, "S1", x = iris, startCol = 10) ## font colour does not affect tables
+#' wb$add_data("S1", iris)
+#' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
 #' \dontrun{
-#' saveWorkbook(wb, "modifyBaseFontExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 #' }
-modifyBaseFont <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
   assert_workbook(wb)
-
-  if (fontSize < 0) stop("Invalid fontSize")
-  fontColour <- validateColour(fontColour)
-
-  wb$styles$fonts[[1]] <- sprintf('<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>', fontSize, fontColour, fontName)
+  wb$clone()$set_base_font(
+    fontSize   = fontSize,
+    fontColour = fontColour,
+    fontName   = fontName
+  )
 }
 
 
-#' @name getBaseFont
-#' @title Return the workbook default font
-#' @description Return the workbook default font
-#' @param wb A workbook object
-#' @description Returns the base font used in the workbook.
+#' Return the workbook default font
+#'
+#' Get the base font used in the workbook.
+#' @param wb A [wbWorkbook] object
+#'
 #' @export
+#' @family workbook wrappers
+#'
 #' @examples
 #' ## create a workbook
-#' wb <- createWorkbook()
-#' getBaseFont(wb)
+#' wb <- wb_workbook()
+#' wb_get_base_font(wb)
 #'
 #' ## modify base font to size 10 Arial Narrow in red
-#' modifyBaseFont(wb, fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
 #'
-#' getBaseFont(wb)
-# TODO change to wb_get_base_font() ?
-getBaseFont <- function(wb) {
+#' wb_get_base_font(wb)
+wb_get_base_font <- function(wb) {
   # TODO all of these class checks need to be cleaned up
   assert_workbook(wb)
-  wb$getBaseFont()
+  wb$get_base_font()
 }
 
-#' @name setHeaderFooter
-#' @title Set document headers and footers
-#' @description Set document headers and footers
+#' Set document headers and footers
+#'
+#' Set document headers and footers
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param header document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
@@ -1180,21 +881,21 @@ getBaseFont <- function(wb) {
 #'   \item{**&\[Tab\]**}{ Worksheet name}
 #' }
 #' @export
-#' @seealso [addWorksheet()] to set headers and footers when adding a worksheet
+#' @seealso [wb_add_worksheet()] to set headers and footers when adding a worksheet
 #' @examples
-#' wb <- createWorkbook()
+#' wb <- wb_workbook()
 #'
-#' addWorksheet(wb, "S1")
-#' addWorksheet(wb, "S2")
-#' addWorksheet(wb, "S3")
-#' addWorksheet(wb, "S4")
+#' wb$add_worksheet("S1")
+#' wb$add_worksheet("S2")
+#' wb$add_worksheet("S3")
+#' wb$add_worksheet("S4")
 #'
-#' writeData(wb, 1, 1:400)
-#' writeData(wb, 2, 1:400)
-#' writeData(wb, 3, 3:400)
-#' writeData(wb, 4, 3:400)
+#' wb$add_data(1, 1:400)
+#' wb$add_data(2, 1:400)
+#' wb$add_data(3, 3:400)
+#' wb$add_data(4, 3:400)
 #'
-#' setHeaderFooter(wb,
+#' wb$set_header_footer(
 #'   sheet = "S1",
 #'   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
 #'   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
@@ -1204,7 +905,7 @@ getBaseFont <- function(wb) {
 #'   firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
 #' )
 #'
-#' setHeaderFooter(wb,
+#' wb$set_header_footer(
 #'   sheet = 2,
 #'   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
 #'   footer = c("&[Path]&[File]", NA, "&[Tab]"),
@@ -1212,86 +913,45 @@ getBaseFont <- function(wb) {
 #'   firstFooter = c(NA, "Center Footer of First Page", NA)
 #' )
 #'
-#' setHeaderFooter(wb,
+#' wb$set_header_footer(
 #'   sheet = 3,
 #'   header = c("ALL HEAD LEFT 2", "ALL HEAD CENTER 2", "ALL HEAD RIGHT 2"),
 #'   footer = c("ALL FOOT RIGHT 2", "ALL FOOT CENTER 2", "ALL FOOT RIGHT 2")
 #' )
 #'
-#' setHeaderFooter(wb,
+#' wb$set_header_footer(
 #'   sheet = 4,
 #'   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
 #'   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 #' )
 #' \dontrun{
-#' saveWorkbook(wb, "setHeaderFooterExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_set_header_footerExample.xlsx", overwrite = TRUE)
 #' }
-setHeaderFooter <- function(wb, sheet,
-  header = NULL,
-  footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL) {
-
+wb_set_header_footer <- function(
+    wb,
+    sheet       = current_sheet(),
+    header      = NULL,
+    footer      = NULL,
+    evenHeader  = NULL,
+    evenFooter  = NULL,
+    firstHeader = NULL,
+    firstFooter = NULL
+) {
   assert_workbook(wb)
-  sheet <- wb$validateSheet(sheet)
-
-  if (!is.null(header) & length(header) != 3) {
-    stop("header must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(footer) & length(footer) != 3) {
-    stop("footer must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenHeader) & length(evenHeader) != 3) {
-    stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(evenFooter) & length(evenFooter) != 3) {
-    stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstHeader) & length(firstHeader) != 3) {
-    stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  if (!is.null(firstFooter) & length(firstFooter) != 3) {
-    stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
-  }
-
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  oddHeader <- headerFooterSub(header)
-  oddFooter <- headerFooterSub(footer)
-  evenHeader <- headerFooterSub(evenHeader)
-  evenFooter <- headerFooterSub(evenFooter)
-  firstHeader <- headerFooterSub(firstHeader)
-  firstFooter <- headerFooterSub(firstFooter)
-
-  hf <- list(
-    oddHeader = naToNULLList(oddHeader),
-    oddFooter = naToNULLList(oddFooter),
-    evenHeader = naToNULLList(evenHeader),
-    evenFooter = naToNULLList(evenFooter),
-    firstHeader = naToNULLList(firstHeader),
-    firstFooter = naToNULLList(firstFooter)
+  wb$clone()$set_header_footer(
+    sheet       = sheet,
+    header      = header,
+    footer      = footer,
+    evenHeader  = evenHeader,
+    evenFooter  = evenFooter,
+    firstHeader = firstHeader,
+    firstFooter = firstFooter
   )
-
-  if (all(lengths(hf) == 0)) {
-    hf <- NULL
-  }
-
-
-  wb$worksheets[[sheet]]$headerFooter <- hf
 }
 
 
 
-#' @name pageSetup
+#' @name ws_page_setup
 #' @title Set page margins, orientation and print scaling
 #' @description Set page margins, orientation and print scaling
 #' @param wb A workbook object
@@ -1383,437 +1043,299 @@ setHeaderFooter <- function(wb, sheet,
 #' \item{**68**}{ A3 extra transverse paper (322 mm by 445 mm)}
 #' }
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "S1")
-#' addWorksheet(wb, "S2")
-#' writeDataTable(wb, 1, x = iris[1:30, ])
-#' writeDataTable(wb, 2, x = iris[1:30, ], xy = c("C", 5))
+#' wb <- wb_workbook()
+#' wb$add_worksheet("S1")
+#' wb$add_worksheet("S2")
+#' wb$add_data_table(1, x = iris[1:30, ])
+#' wb$add_data_table(2, x = iris[1:30, ], xy = c("C", 5))
 #'
 #' ## landscape page scaled to 50%
-#' pageSetup(wb, sheet = 1, orientation = "landscape", scale = 50)
+#' wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
 #'
 #' ## portrait page scales to 300% with 0.5in left and right margins
-#' pageSetup(wb, sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+#' wb$page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
 #'
 #'
 #' ## print titles
-#' addWorksheet(wb, "print_title_rows")
-#' addWorksheet(wb, "print_title_cols")
+#' wb$add_worksheet("print_title_rows")
+#' wb$add_worksheet("print_title_cols")
 #'
-#' writeData(wb, "print_title_rows", rbind(iris, iris, iris, iris))
-#' writeData(wb, "print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
+#' wb$add_data("print_title_rows", rbind(iris, iris, iris, iris))
+#' wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
 #'
-#' pageSetup(wb, sheet = "print_title_rows", printTitleRows = 1) ## first row
-#' pageSetup(wb, sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+#' wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
+#' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 #' \dontrun{
-#' saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-pageSetup <- function(wb, sheet, orientation = NULL, scale = 100,
-  left = 0.7, right = 0.7, top = 0.75, bottom = 0.75,
-  header = 0.3, footer = 0.3,
-  fitToWidth = FALSE, fitToHeight = FALSE, paperSize = NULL,
-  printTitleRows = NULL, printTitleCols = NULL,
-  summaryRow = NULL, summaryCol = NULL) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+wb_page_setup <- function(
+    wb,
+    sheet          = current_sheet(),
+    orientation    = NULL,
+    scale          = 100,
+    left           = 0.7,
+    right          = 0.7,
+    top            = 0.75,
+    bottom         = 0.75,
+    header         = 0.3,
+    footer         = 0.3,
+    fitToWidth     = FALSE,
+    fitToHeight    = FALSE,
+    paperSize      = NULL,
+    printTitleRows = NULL,
+    printTitleCols = NULL,
+    summaryRow     = NULL,
+    summaryCol     = NULL
+) {
   assert_workbook(wb)
-
-  sheet <- wb$validateSheet(sheet)
-  xml <- wb$worksheets[[sheet]]$pageSetup
-
-  if (!is.null(orientation)) {
-    orientation <- tolower(orientation)
-    if (!orientation %in% c("portrait", "landscape")) stop("Invalid page orientation.")
-  } else {
-    orientation <- ifelse(grepl("landscape", xml), "landscape", "portrait") ## get existing
-  }
-
-  if (scale < 10 | scale > 400) {
-    stop("Scale must be between 10 and 400.")
-  }
-
-  if (!is.null(paperSize)) {
-    paperSizes <- 1:68
-    paperSizes <- paperSizes[!paperSizes %in% 48:49]
-    if (!paperSize %in% paperSizes) {
-      stop("paperSize must be an integer in range [1, 68]. See ?pageSetup details.")
-    }
-    paperSize <- as.integer(paperSize)
-  } else {
-    paperSize <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
-  }
-
-
-  ##############################
-  ## Keep defaults on orientation, hdpi, vdpi, paperSize
-  hdpi <- regmatches(xml, regexpr('(?<=horizontalDpi=")[0-9]+', xml, perl = TRUE))
-  vdpi <- regmatches(xml, regexpr('(?<=verticalDpi=")[0-9]+', xml, perl = TRUE))
-
-
-  ##############################
-  ## Update
-  wb$worksheets[[sheet]]$pageSetup <- sprintf(
-    '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>',
-    paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
+  wb$clone()$page_setup(
+    sheet          = sheet,
+    orientation    = orientation,
+    scale          = scale,
+    left           = left,
+    right          = right,
+    top            = top,
+    bottom         = bottom,
+    header         = header,
+    footer         = footer,
+    fitToWidth     = fitToWidth,
+    fitToHeight    = fitToHeight,
+    paperSize      = paperSize,
+    printTitleRows = printTitleRows,
+    printTitleCols = printTitleCols,
+    summaryRow     = summaryRow,
+    summaryCol     = summaryCol
   )
-
-  if (fitToHeight | fitToWidth) {
-    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, '<pageSetUpPr fitToPage="1"/>'))
-  }
-
-  wb$worksheets[[sheet]]$pageMargins <-
-    sprintf('<pageMargins left="%s" right="%s" top="%s" bottom="%s" header="%s" footer="%s"/>', left, right, top, bottom, header, footer)
-
-  validRow <- function(summaryRow) {
-    return(tolower(summaryRow) %in% c("above", "below"))
-  }
-  validCol <- function(summaryCol) {
-    return(tolower(summaryCol) %in% c("left", "right"))
-  }
-
-  outlinepr <- ""
-
-  if (!is.null(summaryRow)) {
-
-    if (!validRow(summaryRow)) {
-      stop("Invalid \`summaryRow\` option. Must be one of \"Above\" or \"Below\".")
-    } else if (tolower(summaryRow) == "above") {
-      outlinepr <- ' summaryBelow=\"0\"'
-    } else {
-      outlinepr <- ' summaryBelow=\"1\"'
-    }
-  }
-
-  if (!is.null(summaryCol)) {
-
-    if (!validCol(summaryCol)) {
-      stop("Invalid \`summaryCol\` option. Must be one of \"Left\" or \"Right\".")
-    } else if (tolower(summaryCol) == "left") {
-      outlinepr <- paste0(outlinepr, ' summaryRight=\"0\"')
-    } else {
-      outlinepr <- paste0(outlinepr, ' summaryRight=\"1\"')
-    }
-  }
-
-  if (!stri_isempty(outlinepr)) {
-    wb$worksheets[[sheet]]$sheetPr <- unique(c(wb$worksheets[[sheet]]$sheetPr, paste0("<outlinePr", outlinepr, "/>")))
-  }
-
-  ## print Titles
-  if (!is.null(printTitleRows) & is.null(printTitleCols)) {
-    if (!is.numeric(printTitleRows)) {
-      stop("printTitleRows must be numeric.")
-    }
-
-    wb$createNamedRegion(
-      ref1 = paste0("$", min(printTitleRows)),
-      ref2 = paste0("$", max(printTitleRows)),
-      name = "_xlnm.Print_Titles",
-      sheet = names(wb)[[sheet]],
-      localSheetId = sheet - 1L
-    )
-  } else if (!is.null(printTitleCols) & is.null(printTitleRows)) {
-    if (!is.numeric(printTitleCols)) {
-      stop("printTitleCols must be numeric.")
-    }
-
-    cols <- int2col(range(printTitleCols))
-    wb$createNamedRegion(
-      ref1 = paste0("$", cols[1]),
-      ref2 = paste0("$", cols[2]),
-      name = "_xlnm.Print_Titles",
-      sheet = names(wb)[[sheet]],
-      localSheetId = sheet - 1L
-    )
-  } else if (!is.null(printTitleCols) & !is.null(printTitleRows)) {
-    if (!is.numeric(printTitleRows)) {
-      stop("printTitleRows must be numeric.")
-    }
-
-    if (!is.numeric(printTitleCols)) {
-      stop("printTitleCols must be numeric.")
-    }
-
-    cols <- int2col(range(printTitleCols))
-    rows <- range(printTitleRows)
-
-    cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
-    rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
-    localSheetId <- sheet - 1L
-    sheet <- names(wb)[[sheet]]
-
-    wb$workbook$definedNames <- c(
-      wb$workbook$definedNames,
-      sprintf('<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>', localSheetId, sheet, cols, sheet, rows)
-    )
-  }
 }
 
 
-#' @name protectWorksheet
-#' @title Protect a worksheet from modifications
-#' @description Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection.
+# protect -----------------------------------------------------------------
+
+#' Protect a worksheet from modifications
+#'
+#' Protect or unprotect a worksheet from modifications by the user
+#'   in the graphical user interface. Replaces an existing protection.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the worksheet
-#' @param lockSelectingLockedCells Whether selecting locked cells is locked
-#' @param lockSelectingUnlockedCells Whether selecting unlocked cells is locked
-#' @param lockFormattingCells Whether formatting cells is locked
-#' @param lockFormattingColumns Whether formatting columns is locked
-#' @param lockFormattingRows Whether formatting rows is locked
-#' @param lockInsertingColumns Whether inserting columns is locked
-#' @param lockInsertingRows Whether inserting rows is locked
-#' @param lockInsertingHyperlinks Whether inserting hyperlinks is locked
-#' @param lockDeletingColumns Whether deleting columns is locked
-#' @param lockDeletingRows Whether deleting rows is locked
-#' @param lockSorting Whether sorting is locked
-#' @param lockAutoFilter Whether auto-filter is locked
-#' @param lockPivotTables Whether pivot tables are locked
-#' @param lockObjects Whether objects are locked
-#' @param lockScenarios Whether scenarios are locked
+#' @param properties A character vector of properties to lock.  Can be one or
+#'   more of the following: `"selectLockedCells"`, `"selectUnlockedCells"`,
+#'   `"formatCells"`, `"formatColumns"`, `"formatRows"`, `"insertColumns"`,
+#'   `"insertRows"`, `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`,
+#'   `"sort"`, `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
 #' @export
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "S1")
-#' writeDataTable(wb, 1, x = iris[1:30, ])
+#' wb <- wb_workbook()
+#' wb$add_worksheet("S1")
+#' wb$add_data_table(1, x = iris[1:30, ])
 #' # Formatting cells / columns is allowed , but inserting / deleting columns is protected:
-#' protectWorksheet(wb, "S1",
+#' wb$protect_worksheet("S1",
 #'   protect = TRUE,
-#'   lockFormattingCells = FALSE, lockFormattingColumns = FALSE,
-#'   lockInsertingColumns = TRUE, lockDeletingColumns = TRUE
+#'   properties = c("formatCells", "formatColumns", "insertColumns", "deleteColumns")
 #' )
 #'
 #' # Remove the protection
-#' protectWorksheet(wb, "S1", protect = FALSE)
+#' wb$protect_worksheet("S1", protect = FALSE)
 #' \dontrun{
-#' saveWorkbook(wb, "pageSetupExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
 #' }
-protectWorksheet <- function(wb, sheet, protect = TRUE, password = NULL,
-  lockSelectingLockedCells = NULL, lockSelectingUnlockedCells = NULL,
-  lockFormattingCells = NULL, lockFormattingColumns = NULL, lockFormattingRows = NULL,
-  lockInsertingColumns = NULL, lockInsertingRows = NULL, lockInsertingHyperlinks = NULL,
-  lockDeletingColumns = NULL, lockDeletingRows = NULL,
-  lockSorting = NULL, lockAutoFilter = NULL, lockPivotTables = NULL,
-  lockObjects = NULL, lockScenarios = NULL) {
+wb_protect_worksheet <- function(
+    wb,
+    sheet      = current_sheet(),
+    protect    = TRUE,
+    password   = NULL,
+    properties = NULL
+) {
 
   assert_workbook(wb)
-
-  sheet <- wb$validateSheet(sheet)
-  xml <- wb$worksheets[[sheet]]$sheetProtection
-
-  props <- c()
-
-  if (!missing(password) && !is.null(password)) {
-    props["password"] <- hashPassword(password)
-  }
-
-  if (!missing(lockSelectingLockedCells) && !is.null(lockSelectingLockedCells)) {
-    props["selectLockedCells"] <- toString(as.numeric(lockSelectingLockedCells))
-  }
-  if (!missing(lockSelectingUnlockedCells) && !is.null(lockSelectingUnlockedCells)) {
-    props["selectUnlockedCells"] <- toString(as.numeric(lockSelectingUnlockedCells))
-  }
-  if (!missing(lockFormattingCells) && !is.null(lockFormattingCells)) {
-    props["formatCells"] <- toString(as.numeric(lockFormattingCells))
-  }
-  if (!missing(lockFormattingColumns) && !is.null(lockFormattingColumns)) {
-    props["formatColumns"] <- toString(as.numeric(lockFormattingColumns))
-  }
-  if (!missing(lockFormattingRows) && !is.null(lockFormattingRows)) {
-    props["formatRows"] <- toString(as.numeric(lockFormattingRows))
-  }
-  if (!missing(lockInsertingColumns) && !is.null(lockInsertingColumns)) {
-    props["insertColumns"] <- toString(as.numeric(lockInsertingColumns))
-  }
-  if (!missing(lockInsertingRows) && !is.null(lockInsertingRows)) {
-    props["insertRows"] <- toString(as.numeric(lockInsertingRows))
-  }
-  if (!missing(lockInsertingHyperlinks) && !is.null(lockInsertingHyperlinks)) {
-    props["insertHyperlinks"] <- toString(as.numeric(lockInsertingHyperlinks))
-  }
-  if (!missing(lockDeletingColumns) && !is.null(lockDeletingColumns)) {
-    props["deleteColumns"] <- toString(as.numeric(lockDeletingColumns))
-  }
-  if (!missing(lockDeletingRows) && !is.null(lockDeletingRows)) {
-    props["deleteRows"] <- toString(as.numeric(lockDeletingRows))
-  }
-  if (!missing(lockSorting) && !is.null(lockSorting)) {
-    props["sort"] <- toString(as.numeric(lockSorting))
-  }
-  if (!missing(lockAutoFilter) && !is.null(lockAutoFilter)) {
-    props["autoFilter"] <- toString(as.numeric(lockAutoFilter))
-  }
-  if (!missing(lockPivotTables) && !is.null(lockPivotTables)) {
-    props["pivotTables"] <- toString(as.numeric(lockPivotTables))
-  }
-  if (!missing(lockObjects) && !is.null(lockObjects)) {
-    props["objects"] <- toString(as.numeric(lockObjects))
-  }
-  if (!missing(lockScenarios) && !is.null(lockScenarios)) {
-    props["scenarios"] <- toString(as.numeric(lockScenarios))
-  }
-
-  if (protect) {
-    props["sheet"] <- "1"
-    wb$worksheets[[sheet]]$sheetProtection <- sprintf("<sheetProtection %s/>", paste(names(props), '="', props, '"', collapse = " ", sep = ""))
-  } else {
-    wb$worksheets[[sheet]]$sheetProtection <- ""
-  }
+  wb$clone(deep = TRUE)$protect_worksheet(
+    sheet      = sheet,
+    protect    = protect,
+    password   = password,
+    properties = properties
+  )
 }
 
 
-
-#' @name protectWorkbook
-#' @title Protect a workbook from modifications
-#' @description Protect or unprotect a workbook from modifications by the user in the graphical user interface. Replaces an existing protection.
+#' Protect a workbook from modifications
+#'
+#' Protect or unprotect a workbook from modifications by the user in the
+#' graphical user interface. Replaces an existing protection.
+#'
 #' @param wb A workbook object
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the workbook
 #' @param lockStructure Whether the workbook structure should be locked
-#' @param lockWindows Whether the window position of the spreadsheet should be locked
+#' @param lockWindows Whether the window position of the spreadsheet should be
+#'   locked
+#' @param type Lock type (see details)
+#' @param fileSharing Whether to enable a popup requesting the unlock password
+#'   is prompted
+#' @param username The username for the `fileSharing` popup
+#' @param readOnlyRecommended Whether or not a post unlock message appears
+#'   stating that the workbook is recommended to be opened in readonly mode.
+#'
+#' @details
+#' Lock types:
+#'
+#' \describe{
+#'   \item{`1` }{xlsx with password (default)}
+#'   \item{`2` }{xlsx recommends read-only}
+#'   \item{`4` }{xlsx enforces read-only}
+#'   \item{`8` }{xlsx is locked for annotation}
+#' }
+#'
 #' @export
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "S1")
-#' protectWorkbook(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
+#' wb <- wb_workbook()
+#' wb$add_worksheet("S1")
+#' wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
 #' \dontrun{
-#' saveWorkbook(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
+#' wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
 #' }
 #' # Remove the protection
-#' protectWorkbook(wb, protect = FALSE)
+#' wb_protect(wb, protect = FALSE)
 #' \dontrun{
-#' saveWorkbook(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
+#' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
 #' }
-protectWorkbook <- function(wb, protect = TRUE, password = NULL, lockStructure = FALSE, lockWindows = FALSE) {
+#'
+#' wb <- wb_protect(
+#'   wb,
+#'   protect = TRUE,
+#'   password = "Password",
+#'   lockStructure = TRUE,
+#'   type = 2L,
+#'   fileSharing = TRUE,
+#'   username = "Test",
+#'   readOnlyRecommended = TRUE
+#' )
+#'
+wb_protect <- function(
+    wb,
+    protect             = TRUE,
+    password            = NULL,
+    lockStructure       = FALSE,
+    lockWindows         = FALSE,
+    type                = c("1", "2", "4", "8"),
+    fileSharing         = FALSE,
+    username            = unname(Sys.info()["user"]),
+    readOnlyRecommended = FALSE
+) {
   assert_workbook(wb)
-  invisible(wb$protectWorkbook(protect = protect, password = password, lockStructure = lockStructure, lockWindows = lockWindows))
+  wb$clone()$protect(
+    protect             = protect,
+    password            = password,
+    lockStructure       = lockStructure,
+    lockWindows         = lockWindows,
+    type                = type,
+    fileSharing         = fileSharing,
+    username            = username,
+    readOnlyRecommended = readOnlyRecommended
+  )
 }
 
-#' @name showGridLines
-#' @title Set worksheet gridlines to show or hide.
-#' @description Set worksheet gridlines to show or hide.
+
+# grid lines --------------------------------------------------------------
+
+#' Set worksheet gridlines to show or hide.
+#'
+#' Set worksheet gridlines to show or hide.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param showGridLines A logical. If `FALSE`, grid lines are hidden.
+#' @param show A logical. If `FALSE`, grid lines are hidden.
 #' @export
 #' @examples
-#' wb <- loadWorkbook(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
-#' names(wb) ## list worksheets in workbook
-#' showGridLines(wb, 1, showGridLines = FALSE)
-#' showGridLines(wb, "testing", showGridLines = FALSE)
+#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb$get_sheet_names() ## list worksheets in workbook
+#' wb$grid_lines(1, show = FALSE)
+#' wb$grid_lines("testing", show = FALSE)
 #' \dontrun{
-#' saveWorkbook(wb, "showGridLinesExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "ws_grid_linesExample.xlsx", overwrite = TRUE)
 #' }
-showGridLines <- function(wb, sheet, showGridLines = FALSE) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE) {
   assert_workbook(wb)
-
-  sheet <- wb$validateSheet(sheet)
-
-  if (!is.logical(showGridLines)) stop("showGridLines must be a logical")
-
-
-  sv <- wb$worksheets[[sheet]]$sheetViews
-  showGridLines <- as.integer(showGridLines)
-  ## If attribute exists gsub
-  if (grepl("showGridLines", sv)) {
-    sv <- gsub('showGridLines=".?[^"]', sprintf('showGridLines="%s', showGridLines), sv, perl = TRUE)
-  } else {
-    sv <- gsub("<sheetView ", sprintf('<sheetView showGridLines="%s" ', showGridLines), sv)
-  }
-
-  wb$worksheets[[sheet]]$sheetViews <- sv
+  wb$clone()$grid_lines(sheet = sheet, show = show)
 }
 
-#' @name worksheetOrder
-#' @title Order of worksheets in xlsx file
-#' @description Get/set order of worksheets in a Workbook object
-#' @details This function does not reorder the worksheets within the workbook object, it simply
-#' shuffles the order when writing to file.
+# TODO hide gridlines?
+
+# worksheet order ---------------------------------------------------------
+
+#' Order of worksheets in xlsx file
+#'
+#' Get/set order of worksheets in a Workbook object
+#'
+#' @param wb A `wbWorkbook` object
+#'
+#' @details This function does not reorder the worksheets within the workbook
+#'   object, it simply shuffles the order when writing to file.
 #' @export
 #' @examples
 #' ## setup a workbook with 3 worksheets
-#' wb <- createWorkbook()
-#' addWorksheet(wb = wb, sheetName = "Sheet 1", gridLines = FALSE)
-#' writeDataTable(wb = wb, sheet = 1, x = iris)
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1", gridLines = FALSE)
+#' wb$add_data_table(sheet = 1, x = iris)
 #'
-#' addWorksheet(wb = wb, sheetName = "mtcars (Sheet 2)", gridLines = FALSE)
-#' writeData(wb = wb, sheet = 2, x = mtcars)
+#' wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
+#' wb$add_data(sheet = 2, x = mtcars)
 #'
-#' addWorksheet(wb = wb, sheetName = "Sheet 3", gridLines = FALSE)
-#' writeData(wb = wb, sheet = 3, x = Formaldehyde)
+#' wb$add_worksheet("Sheet 3", gridLines = FALSE)
+#' wb$add_data(sheet = 3, x = Formaldehyde)
 #'
-#' worksheetOrder(wb)
-#' names(wb)
-#' worksheetOrder(wb) <- c(1, 3, 2) # switch position of sheets 2 & 3
-#' writeData(wb, 2, 'This is still the "mtcars" worksheet', startCol = 15)
-#' worksheetOrder(wb)
-#' names(wb) ## ordering within workbook is not changed
+#' wb_get_order(wb)
+#' wb$get_sheet_na
+#' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
+#' wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
+#' wb_get_order(wb)
+#' wb$get_sheet_names() ## ordering within workbook is not changed
 #' \dontrun{
-#' saveWorkbook(wb, "worksheetOrderExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
 #' }
-#' worksheetOrder(wb) <- c(3, 2, 1)
+#' wb$set_order(3:1)
 #' \dontrun{
-#' saveWorkbook(wb, "worksheetOrderExample2.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_orderExample2.xlsx", overwrite = TRUE)
 #' }
-worksheetOrder <- function(wb) {
+#' @name wb_order
+wb_get_order <- function(wb) {
   assert_workbook(wb)
   wb$sheetOrder
 }
 
-#' @rdname worksheetOrder
-#' @param wb A workbook object
-#' @param value Vector specifying order to write worksheets to file
+#' @rdname wb_order
+#' @param sheets Sheet order
 #' @export
-`worksheetOrder<-` <- function(wb, value) {
+wb_set_order <- function(wb, sheets) {
   assert_workbook(wb)
-
-  if (any(value != as.integer(value))) {
-    stop("values must be integers")
-  }
-
-  value <- as.integer(value)
-
-  value <- unique(value)
-  if (length(value) != length(wb$worksheets)) {
-    stop(sprintf("Worksheet order must be same length as number of worksheets [%s]", length(wb$worksheets)))
-  }
-
-  if (any(value > length(wb$worksheets))) {
-    stop("Elements of order are greater than the number of worksheets")
-  }
-
-  wb$sheetOrder <- value
-
-  invisible(wb)
+  wb$clone()$set_order(sheets = sheets)
 }
 
-#' @name createNamedRegion
-#' @title Create a named region.
-#' @description Create a named region
+
+# named region ------------------------------------------------------------
+
+
+#' Create / delete a named region
+#'
+#' Create / delete a named region
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param rows Numeric vector specifying rows to include in region
 #' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
+#' @param overwrite Boolean. Overwrite if exists? Default to FALSE
+#' @param localSheetId localSheetId
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
-#' @export
-#' @seealso [getNamedRegions()]
 #' @examples
 #' ## create named regions
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
 #'
 #' ## specify region
-#' writeData(wb, sheet = 1, x = iris, startCol = 1, startRow = 1)
-#' createNamedRegion(
-#'   wb = wb,
+#' wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
+#' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
 #'   rows = seq_len(nrow(iris) + 1),
@@ -1821,164 +1343,129 @@ worksheetOrder <- function(wb) {
 #' )
 #'
 #'
-#' ## using writeData 'name' argument
-#' writeData(wb, sheet = 1, x = iris, name = "iris2", startCol = 10)
+#' ## using write_data 'name' argument
+#' wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
 #'
 #' out_file <- tempfile(fileext = ".xlsx")
 #' \dontrun{
-#' saveWorkbook(wb, out_file, overwrite = TRUE)
+#' wb_save(wb, out_file, overwrite = TRUE)
 #'
 #' ## see named regions
-#' getNamedRegions(wb) ## From Workbook object
-#' getNamedRegions(out_file) ## From xlsx file
+#' get_named_regions(wb) ## From Workbook object
+#' get_named_regions(out_file) ## From xlsx file
+#'
+#' ## delete one
+#' wb$remove_named_region(name = "iris2")
+#' get_named_regions(wb)
 #'
 #' ## read named regions
-#' df <- read.xlsx(wb, namedRegion = "iris")
+#' df <- read_xlsx(wb, namedRegion = "iris")
 #' head(df)
 #'
-#' df <- read.xlsx(out_file, namedRegion = "iris2")
+#' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
 #' }
-createNamedRegion <- function(wb, sheet, cols, rows, name) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+#' @name named_region
+NULL
 
-  sheet <- wb$validateSheet(sheet)
-
+#' @rdname named_region
+#' @export
+wb_add_named_region <- function(wb, sheet = current_sheet(), cols, rows, name, localSheetId = NULL, overwrite = FALSE) {
   assert_workbook(wb)
-
-  if (!is.numeric(rows)) {
-    stop("rows argument must be a numeric/integer vector")
-  }
-
-  if (!is.numeric(cols)) {
-    stop("cols argument must be a numeric/integer vector")
-  }
-
-  ## check name doesn't already exist
-  ## named region
-
-  ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
-  ex_names <- tolower(replaceXMLEntities(ex_names))
-
-  if (tolower(name) %in% ex_names) {
-    stop(sprintf("Named region with name '%s' already exists!", name))
-  } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
-    stop("name cannot look like a cell reference.")
-  }
-
-
-  cols <- round(cols)
-  rows <- round(rows)
-
-  startCol <- min(cols)
-  endCol <- max(cols)
-
-  startRow <- min(rows)
-  endRow <- max(rows)
-
-  ref1 <- paste0("$", int2col(startCol), "$", startRow)
-  ref2 <- paste0("$", int2col(endCol), "$", endRow)
-
-  invisible(
-    wb$createNamedRegion(ref1 = ref1, ref2 = ref2, name = name, sheet = wb$sheet_names[sheet])
+  wb$clone()$add_named_region(
+    sheet        = sheet,
+    cols         = cols,
+    rows         = rows,
+    name         = name,
+    localSheetId = localSheetId,
+    overwrite    = overwrite
   )
 }
 
-#' @name addFilter
-#' @title Add column filters
-#' @description Add excel column filters to a worksheet
+#' @rdname named_region
+#' @export
+wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
+  assert_workbook(wb)
+  wb$clone()$remove_named_region(sheet = sheet, name = name)
+}
+
+# filters -----------------------------------------------------------------
+
+#' Add column filters
+#'
+#' Add excel column filters to a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols columns to add filter to.
 #' @param rows A row number.
-#' @seealso [writeData()]
-#' @details adds filters to worksheet columns, same as filter parameters in writeData.
-#' writeDataTable automatically adds filters to first row of a table.
+#' @seealso [write_data()]
+#' @details adds filters to worksheet columns, same as filter parameters in write_data.
+#' write_datatable automatically adds filters to first row of a table.
 #' NOTE Can only have a single filter per worksheet unless using tables.
 #' @export
-#' @seealso [addFilter()]
+#' @seealso [wb_add_filter()]
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2")
+#' wb$add_worksheet("Sheet 3")
 #'
-#' writeData(wb, 1, iris)
-#' addFilter(wb, 1, row = 1, cols = seq_along(iris))
+#' wb$add_data(1, iris)
+#' wb$add_filter(1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' writeData(wb, 2, x = iris, withFilter = TRUE)
+#' wb$add_data(2, x = iris, withFilter = TRUE)
 #'
 #' ## Similarly
-#' writeDataTable(wb, 3, iris)
+#' wb$add_data_table(3, iris)
 #' \dontrun{
-#' saveWorkbook(wb, file = "addFilterExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
 #' }
-addFilter <- function(wb, sheet, rows, cols) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
   assert_workbook(wb)
-
-  sheet <- wb$validateSheet(sheet)
-
-  if (length(rows) != 1) {
-    stop("row must be a numeric of length 1.")
-  }
-
-  if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
-  }
-
-  wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
-
-  invisible(wb)
+  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
 }
 
-#' @name removeFilter
+#' @name wb_remove_filter
 #' @title Remove a worksheet filter
-#' @description Removes filters from addFilter() and writeData()
+#' @description Removes filters from wb_add_filter() and write_data()
 #' @param wb A workbook object
 #' @param sheet A vector of names or indices of worksheets
 #' @export
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2")
+#' wb$add_worksheet("Sheet 3")
 #'
-#' writeData(wb, 1, iris)
-#' addFilter(wb, 1, row = 1, cols = seq_along(iris))
+#' wb$add_data(1, iris)
+#' wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' writeData(wb, 2, x = iris, withFilter = TRUE)
+#' wb$add_data(2, x = iris, withFilter = TRUE)
 #'
 #' ## Similarly
-#' writeDataTable(wb, 3, iris)
+#' wb$add_data_table(3, iris)
 #'
 #' ## remove filters
-#' removeFilter(wb, 1:2) ## remove filters
-#' removeFilter(wb, 3) ## Does not affect tables!
+#' wb_remove_filter(wb, 1:2) ## remove filters
+#' wb_remove_filter(wb, 3) ## Does not affect tables!
 #' \dontrun{
-#' saveWorkbook(wb, file = "removeFilterExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "wb_remove_filterExample.xlsx", overwrite = TRUE)
 #' }
-removeFilter <- function(wb, sheet) {
+wb_remove_filter <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
-
-  for (s in sheet) {
-    s <- wb$validateSheet(s)
-    wb$worksheets[[s]]$autoFilter <- character()
-  }
-
-  invisible(wb)
+  wb$clone()$remove_filter(sheet = sheet)
 }
 
-#' @name dataValidation
-#' @title Add data validation to cells
-#' @description Add Excel data validation to cells
+
+# validations -------------------------------------------------------------
+
+#' Add data validation to cells
+#'
+#' Add Excel data validation to cells
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Contiguous columns to apply conditional formatting to
@@ -1990,423 +1477,169 @@ removeFilter <- function(wb, sheet) {
 #' @param allowBlank logical
 #' @param showInputMsg logical
 #' @param showErrorMsg logical
+#' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+#' @param errorTitle The error title
+#' @param error The error text
+#' @param promptTitle The prompt title
+#' @param prompt The prompt text
 #' @export
 #' @examples
-#' \dontrun{
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2")
 #'
-#' writeDataTable(wb, 1, x = iris[1:30, ])
-#'
-#' dataValidation(wb, 1,
+#' wb$add_data_table(1, x = iris[1:30, ])
+#' wb$add_data_validation(1,
 #'   col = 1:3, rows = 2:31, type = "whole",
 #'   operator = "between", value = c(1, 9)
 #' )
-#'
-#' dataValidation(wb, 1,
+#' wb$add_data_validation(1,
 #'   col = 5, rows = 2:31, type = "textLength",
 #'   operator = "between", value = c(4, 6)
 #' )
-#'
 #'
 #' ## Date and Time cell validation
 #' df <- data.frame(
 #'   "d" = as.Date("2016-01-01") + -5:5,
 #'   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 #' )
-#'
-#' writeData(wb, 2, x = df)
-#' dataValidation(wb, 2,
+#' wb$add_data_table(2, x = df)
+#' wb$add_data_validation(2,
 #'   col = 1, rows = 2:12, type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
-#'
-#' dataValidation(wb, 2,
+#' wb$add_data_validation(2,
 #'   col = 2, rows = 2:12, type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
-#' saveWorkbook(wb, "dataValidationExample.xlsx", overwrite = TRUE)
+#'
+#' \dontrun{
+#' wb_save(wb, "data_validationExample.xlsx", overwrite = TRUE)
+#' }
 #'
 #'
 #' ######################################################################
 #' ## If type == 'list'
 #' # operator argument is ignored.
 #'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2")
 #'
-#' writeDataTable(wb, sheet = 1, x = iris[1:30, ])
-#' writeData(wb, sheet = 2, x = sample(iris$Sepal.Length, 10))
+#' wb$add_data_table(sheet = 1, x = iris[1:30, ])
+#' wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
-#' dataValidation(wb, 1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#'
+#' \dontrun{
+#' wb_save(wb, "data_validationExample2.xlsx", overwrite = TRUE)
 #' }
-#'
-#' # openXL(wb)
-dataValidation <- function(wb, sheet, cols, rows, type, operator, value, allowBlank = TRUE, showInputMsg = TRUE, showErrorMsg = TRUE) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  ## rows and cols
-  if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
-  }
-  rows <- as.integer(rows)
-
-  ## check length of value
-  if (length(value) > 2) {
-    stop("value argument must be length < 2")
-  }
-
-  valid_types <- c(
-    "whole",
-    "decimal",
-    "date",
-    "time", ## need to conv
-    "textLength",
-    "list"
+wb_add_data_validation <- function(
+    wb,
+    sheet = current_sheet(),
+    cols,
+    rows,
+    type,
+    operator,
+    value,
+    allowBlank = TRUE,
+    showInputMsg = TRUE,
+    showErrorMsg = TRUE,
+    errorStyle = NULL,
+    errorTitle = NULL,
+    error = NULL,
+    promptTitle = NULL,
+    prompt = NULL
+) {
+  assert_workbook(wb)
+  wb$clone(deep = TRUE)$add_data_validation(
+    sheet        = sheet,
+    cols         = cols,
+    rows         = rows,
+    type         = type,
+    operator     = operator,
+    value        = value,
+    allowBlank   = allowBlank,
+    showInputMsg = showInputMsg,
+    showErrorMsg = showErrorMsg,
+    errorStyle   = errorStyle,
+    errorTitle   = errorTitle,
+    error        = error,
+    promptTitle  = promptTitle,
+    prompt       = prompt
   )
-
-  if (!tolower(type) %in% tolower(valid_types)) {
-    stop("Invalid 'type' argument!")
-  }
-
-
-  ## operator == 'between' we leave out
-  valid_operators <- c(
-    "between",
-    "notBetween",
-    "equal",
-    "notEqual",
-    "greaterThan",
-    "lessThan",
-    "greaterThanOrEqual",
-    "lessThanOrEqual"
-  )
-
-  if (tolower(type) != "list") {
-    if (!tolower(operator) %in% tolower(valid_operators)) {
-      stop("Invalid 'operator' argument!")
-    }
-
-    operator <- valid_operators[tolower(valid_operators) %in% tolower(operator)][1]
-  } else {
-    operator <- "between" ## ignored
-  }
-
-  if (!is.logical(allowBlank)) {
-    stop("Argument 'allowBlank' musts be logical!")
-  }
-
-  if (!is.logical(showInputMsg)) {
-    stop("Argument 'showInputMsg' musts be logical!")
-  }
-
-  if (!is.logical(showErrorMsg)) {
-    stop("Argument 'showErrorMsg' musts be logical!")
-  }
-
-  ## All inputs validated
-
-  type <- valid_types[tolower(valid_types) %in% tolower(type)][1]
-
-  ## check input combinations
-  if (type == "date" & !inherits(value, "Date")) {
-    stop("If type == 'date' value argument must be a Date vector.")
-  }
-
-  if (type == "time" & !inherits(value, c("POSIXct", "POSIXt"))) {
-    stop("If type == 'date' value argument must be a POSIXct or POSIXlt vector.")
-  }
-
-
-  value <- head(value, 2)
-  allowBlank <- as.integer(allowBlank[1])
-  showInputMsg <- as.integer(showInputMsg[1])
-  showErrorMsg <- as.integer(showErrorMsg[1])
-
-  if (type == "list") {
-    invisible(wb$dataValidation_list(
-      sheet = sheet,
-      startRow = min(rows),
-      endRow = max(rows),
-      startCol = min(cols),
-      endCol = max(cols),
-      value = value,
-      allowBlank = allowBlank,
-      showInputMsg = showInputMsg,
-      showErrorMsg = showErrorMsg
-    ))
-  } else {
-    invisible(wb$dataValidation(
-      sheet = sheet,
-      startRow = min(rows),
-      endRow = max(rows),
-      startCol = min(cols),
-      endCol = max(cols),
-      type = type,
-      operator = operator,
-      value = value,
-      allowBlank = allowBlank,
-      showInputMsg = showInputMsg,
-      showErrorMsg = showErrorMsg
-    ))
-  }
-
-
-
-  invisible(0)
 }
 
 
-#' @name sheetVisibility
-#' @title Get/set worksheet visible state
-#' @description Get and set worksheet visible state
-#' @param wb A workbook object
+# visibility --------------------------------------------------------------
+
+#' Get/set worksheet visible state
+#'
+#'Get and set worksheet visible state
+#'
 #' @return Character vector of worksheet names.
 #' @return  Vector of "hidden", "visible", "veryHidden"
 #' @examples
 #'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, sheetName = "S1", visible = FALSE)
-#' addWorksheet(wb, sheetName = "S2", visible = TRUE)
-#' addWorksheet(wb, sheetName = "S3", visible = FALSE)
+#' wb <- wb_workbook()
+#' wb$add_worksheet(sheet = "S1", visible = FALSE)
+#' wb$add_worksheet(sheet = "S2", visible = TRUE)
+#' wb$add_worksheet(sheet = "S3", visible = FALSE)
 #'
-#' sheetVisibility(wb)
-#' sheetVisibility(wb)[1] <- TRUE ## show sheet 1
-#' sheetVisibility(wb)[2] <- FALSE ## hide sheet 2
-#' sheetVisibility(wb)[3] <- "hidden" ## hide sheet 3
-#' sheetVisibility(wb)[3] <- "veryHidden" ## hide sheet 3 from UI
+#' wb$get_sheet_visibility()
+#' wb$set_sheet_visibility(1, TRUE)         ## show sheet 1
+#' wb$set_sheet_visibility(2, FALSE)        ## hide sheet 2
+#' wb$set_sheet_visibility(3, "hidden")     ## hide sheet 3
+#' wb$set_sheet_visibility(3, "veryHidden") ## hide sheet 3 from UI
+#' @name sheet_visibility
+NULL
+
+#' @rdname sheet_visibility
+#' @param wb A `wbWorkbook` object
 #' @export
-sheetVisibility <- function(wb) {
+wb_get_sheet_visibility <- function(wb) {
   assert_workbook(wb)
-
-  state <- rep("visible", length(wb$workbook$sheets))
-  state[grepl("hidden", wb$workbook$sheets)] <- "hidden"
-  state[grepl("veryHidden", wb$workbook$sheets, ignore.case = TRUE)] <- "veryHidden"
-
-
-  return(state)
+  wb$get_sheet_visibility()
 }
 
-#' @rdname sheetVisibility
-#' @param value a logical/character vector the same length as sheetVisibility(wb)
+#' @rdname sheet_visibility
+#' @param sheet Worksheet identifier
+#' @param value a logical/character vector the same length as sheet
 #' @export
-`sheetVisibility<-` <- function(wb, value) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  value <- tolower(as.character(value))
-  if (!any(value %in% c("true", "visible"))) {
-    stop("A workbook must have atleast 1 visible worksheet.")
-  }
-
-  value[value %in% "true"] <- "visible"
-  value[value %in% "false"] <- "hidden"
-  value[value %in% "veryhidden"] <- "veryHidden"
-
-
-  exState0 <- regmatches(wb$workbook$sheets, regexpr('(?<=state=")[^"]+', wb$workbook$sheets, perl = TRUE))
-  exState <- tolower(exState0)
-  exState[exState %in% "true"] <- "visible"
-  exState[exState %in% "hidden"] <- "hidden"
-  exState[exState %in% "false"] <- "hidden"
-  exState[exState %in% "veryhidden"] <- "veryHidden"
-
-  if (length(value) != length(wb$workbook$sheets)) {
-    stop(sprintf("value vector must have length equal to number of worksheets in Workbook [%s]", length(exState)))
-  }
-
-  inds <- which(value != exState)
-  if (length(inds) == 0) {
-    return(invisible(wb))
-  }
-
-  for (i in seq_along(wb$worksheets)) {
-    wb$workbook$sheets[i] <- gsub(exState0[i], value[i], wb$workbook$sheets[i], fixed = TRUE)
-  }
-
-  invisible(wb)
+wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
+  assert_workbook(wb)
+  wb$clone()$set_sheet_visibility(sheet = sheet, value = value)
 }
 
 
-#' @name pageBreak
-#' @title add a page break to a worksheet
-#' @description insert page breaks into a worksheet
+#' Add a page break to a worksheet
+#'
+#' Insert page breaks into a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param i row or column number to insert page break.
-#' @param type One of "row" or "column" for a row break or column break.
+#' @param row,col Either a row number of column number.  One must be `NULL`
 #' @export
-#' @seealso [addWorksheet()]
+#' @seealso [wb_add_worksheet()]
 #' @examples
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "Sheet 1")
-#' writeData(wb, sheet = 1, x = iris)
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_data(sheet = 1, x = iris)
 #'
-#' pageBreak(wb, sheet = 1, i = 10, type = "row")
-#' pageBreak(wb, sheet = 1, i = 20, type = "row")
-#' pageBreak(wb, sheet = 1, i = 2, type = "column")
+#' wb$add_page_break(sheet = 1, row = 10)
+#' wb$add_page_break(sheet = 1, row = 20)
+#' wb$add_page_break(sheet = 1, col = 2)
 #' \dontrun{
-#' saveWorkbook(wb, "pageBreakExample.xlsx", TRUE)
+#' wb_save(wb, "wb_page_breakExample.xlsx", TRUE)
 #' }
 #' ## In Excel: View tab -> Page Break Preview
-pageBreak <- function(wb, sheet, i, type = "row") {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
+wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)
-
-  sheet <- wb$validateSheet(sheet)
-
-  type <- tolower(type)[1]
-  if (!type %in% c("row", "column")) {
-    stop("'type' argument must be 'row' or 'column'.")
-  }
-
-  if (!is.numeric(i)) {
-    stop("'i' must be numeric.")
-  }
-  i <- round(i)
-
-  if (type == "row") {
-    wb$worksheets[[sheet]]$rowBreaks <- c(
-      wb$worksheets[[sheet]]$rowBreaks,
-      sprintf('<brk id="%s" max="16383" man="1"/>', i)
-    )
-  } else if (type == "column") {
-    wb$worksheets[[sheet]]$colBreaks <- c(
-      wb$worksheets[[sheet]]$colBreaks,
-      sprintf('<brk id="%s" max="1048575" man="1"/>', i)
-    )
-  }
-
-
-  # wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', paste(getCellRefs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":"))
-
-  invisible(wb)
+  wb$clone(deep = TRUE)$add_page_break(sheet = sheet, row = row, col = col)
 }
 
 
-
-#' @name conditionalFormat
-#' @title Add conditional formatting to cells
-#' @description DEPRECATED! USE [conditionalFormatting()]
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols Columns to apply conditional formatting to
-#' @param rows Rows to apply conditional formatting to
-#' @param rule The condition under which to apply the formatting or a vector of colours. See examples.
-#' @param style A style to apply to those cells that satisfy the rule. A Style object returned from createStyle()
-#' @details DEPRECATED! USE [conditionalFormatting()]
-#'
-#' Valid operators are "<", "<=", ">", ">=", "==", "!=". See Examples.
-#' Default style given by: createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-#' @param type Either 'expression', 'colorscale' or 'databar'. If 'expression' the formatting is determined
-#' by a formula.  If colorScale cells are coloured based on cell value. See examples.
-#' @seealso [createStyle()]
-#' @export
-conditionalFormat <- function(wb, sheet, cols, rows, rule = NULL, style = NULL, type = "expression") {
-  warning("conditionalFormat() has been deprecated. Use conditionalFormatting().")
-  ## Rule always applies to top left of sqref, $ determine which cells the rule depends on
-  ## Rule for "databar" and colourscale are colours of length 2/3 or 1 respectively.
-
-  type <- tolower(type)
-  if (tolower(type) %in% c("colorscale", "colourscale")) {
-    type <- "colorScale"
-  } else if (type == "databar") {
-    type <- "dataBar"
-  } else if (type != "expression") {
-    stop("Invalid type argument.  Type must be 'expression', 'colourScale' or 'databar'")
-  }
-
-  ## rows and cols
-  if (!is.numeric(cols)) {
-    cols <- convertFromExcelRef(cols)
-  }
-  rows <- as.integer(rows)
-
-  ## check valid rule
-  if (type == "colorScale") {
-    if (!length(rule) %in% 2:3) {
-      stop("rule must be a vector containing 2 or 3 colours if type is 'colorScale'")
-    }
-
-    rule <- validateColour(rule, errorMsg = "Invalid colour specified in rule.")
-    dxfId <- NULL
-  } else if (type == "dataBar") {
-
-    ## If rule is NULL use default colour
-    if (is.null(rule)) {
-      rule <- "FF638EC6"
-    } else {
-      rule <- validateColour(rule, errorMsg = "Invalid colour specified in rule.")
-    }
-
-    dxfId <- NULL
-  } else { ## else type == "expression"
-
-    rule <- toupper(gsub(" ", "", rule))
-    rule <- replaceIllegalCharacters(rule)
-    rule <- gsub("!=", "&lt;&gt;", rule)
-    rule <- gsub("==", "=", rule)
-
-    if (!grepl("[A-Z]", substr(rule, 1, 2))) {
-
-      ## formula looks like "operatorX" , attach top left cell to rule
-      rule <- paste0(getCellRefs(data.frame("x" = min(rows), "y" = min(cols))), rule)
-    } ## else, there is a letter in the formula and apply as is
-
-    if (is.null(style)) {
-      style <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-    }
-
-    dxfId <- wb$addDXFS(style)$styles$dxfs
-  }
-
-
-  invisible(wb$conditionalFormatCell(sheet,
-    startRow = min(rows),
-    endRow = max(rows),
-    startCol = min(cols),
-    endCol = max(cols),
-    dxfId,
-    formula = rule,
-    type = type
-  ))
-
-  invisible(0)
-}
-
-
-#' @name copyWorkbook
-#' @title Copy a Workbook object.
-#' @description Just a wrapper of wb$clone()
-#' @param wb A workbook object
-#' @return Workbook
-#' @examples
-#'
-#' wb <- createWorkbook()
-#' wb2 <- wb ## does not create a copy
-#' wb3 <- copyWorkbook(wb) ## wrapper for wb$clone()
-#'
-#' addWorksheet(wb, "Sheet1") ## adds worksheet to both wb and wb2 but not wb3
-#'
-#' names(wb)
-#' names(wb2)
-#' names(wb3)
-#' @export
-copyWorkbook <- function(wb) {
-  assert_workbook(wb)
-  wb$clone()
-}
-
-
-#' @name getTables
+#' @name wb_get_tables
 #' @title List Excel tables in a workbook
 #' @description List Excel tables in a workbook
 #' @param wb A workbook object
@@ -2414,431 +1647,887 @@ copyWorkbook <- function(wb) {
 #' @return character vector of table names on the specified sheet
 #' @examples
 #'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, sheetName = "Sheet 1")
-#' writeDataTable(wb, sheet = "Sheet 1", x = iris)
-#' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb <- wb_workbook()
+#' wb$add_worksheet(sheet = "Sheet 1")
+#' wb$add_data_table(sheet = "Sheet 1", x = iris)
+#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
-#' getTables(wb, sheet = "Sheet 1")
+#' wb$get_tables(sheet = "Sheet 1")
 #' @export
-getTables <- function(wb, sheet) {
+wb_get_tables <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
-
-  if (length(sheet) != 1) {
-    stop("sheet argument must be length 1")
-  }
-
-  if (length(wb$tables) == 0) {
-    return(character())
-  }
-
-  sheet <- wb$validateSheet(sheetName = sheet)
-
-  table_sheets <- attr(wb$tables, "sheet")
-  tables <- attr(wb$tables, "tableName")
-  refs <- names(wb$tables)
-
-  refs <- refs[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
-  tables <- tables[table_sheets == sheet & !grepl("openxlsx_deleted", tables, fixed = TRUE)]
-
-  if (length(tables)) {
-    attr(tables, "refs") <- refs
-  }
-
-  return(tables)
+  wb$clone()$get_tables(sheet = sheet)
 }
 
 
 
-#' @name removeTable
-#' @title Remove an Excel table in a workbook
-#' @description List Excel tables in a workbook
+#' Remove an Excel table in a workbook
+#'
+#' List Excel tables in a workbook
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param table Name of table to remove. See [getTables()]
+#' @param table Name of table to remove. See [wb_get_tables()]
 #' @return character vector of table names on the specified sheet
 #' @examples
 #'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, sheetName = "Sheet 1")
-#' addWorksheet(wb, sheetName = "Sheet 2")
-#' writeDataTable(wb, sheet = "Sheet 1", x = iris, tableName = "iris")
-#' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb <- wb_workbook()
+#' wb$add_worksheet(sheet = "Sheet 1")
+#' wb$add_worksheet(sheet = "Sheet 2")
+#' wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
+#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
 #'
-#' removeWorksheet(wb, sheet = 1) ## delete worksheet removes table objects
+#' wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
 #'
-#' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris")
-#' writeDataTable(wb, sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris")
+#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
 #'
-#' ## removeTable() deletes table object and all data
-#' getTables(wb, sheet = 1)
-#' removeTable(wb = wb, sheet = 1, table = "iris")
-#' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
+#' ## wb_remove_tables() deletes table object and all data
+#' wb_get_tables(wb, sheet = 1)
+#' wb$remove_tables(sheet = 1, table = "iris")
+#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #'
-#' getTables(wb, sheet = 1)
-#' removeTable(wb = wb, sheet = 1, table = "iris")
-#' writeDataTable(wb, sheet = 1, x = iris, tableName = "iris", startCol = 1)
+#' wb_get_tables(wb, sheet = 1)
+#' wb$remove_tables(sheet = 1, table = "iris")
+#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' \dontrun{
-#' saveWorkbook(wb = wb, file = "removeTableExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, path = "wb_remove_tablesExample.xlsx", overwrite = TRUE)
 #' }
 #'
 #' @export
-removeTable <- function(wb, sheet, table) {
+wb_remove_tables <- function(wb, sheet = current_sheet(), table) {
   assert_workbook(wb)
-
-  if (length(sheet) != 1) {
-    stop("sheet argument must be length 1")
-  }
-
-  if (length(table) != 1) {
-    stop("table argument must be length 1")
-  }
-
-  ## delete table object and all data in it
-  sheet <- wb$validateSheet(sheetName = sheet)
-
-  if (!table %in% attr(wb$tables, "tableName")) {
-    stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
-  }
-
-  ## get existing tables
-  table_sheets <- attr(wb$tables, "sheet")
-  table_names <- attr(wb$tables, "tableName")
-  refs <- names(wb$tables)
-
-  ## delete table object (by flagging as deleted)
-  inds <- which(table_sheets %in% sheet & table_names %in% table)
-  table_name_original <- table_names[inds]
-
-  table_names[inds] <- paste0(table_name_original, "_openxlsx_deleted")
-  attr(wb$tables, "tableName") <- table_names
-
-  ## delete reference from worksheet to table
-  worksheet_table_names <- attr(wb$worksheets[[sheet]]$tableParts, "tableName")
-  to_remove <- which(worksheet_table_names == table_name_original)
-
-  wb$worksheets[[sheet]]$tableParts <- wb$worksheets[[sheet]]$tableParts[-to_remove]
-  attr(wb$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
-
-
-  ## Now delete data from the worksheet
-  refs <- strsplit(refs[[inds]], split = ":")[[1]]
-  rows <- as.integer(gsub("[A-Z]", "", refs))
-  rows <- seq(from = rows[1], to = rows[2], by = 1)
-
-  cols <- convertFromExcelRef(refs)
-  cols <- seq(from = cols[1], to = cols[2], by = 1)
-
-  ## now delete data
-  # FIXME: requires deleteData
-  # deleteData(wb = wb, sheet = sheet, rows = rows, cols = cols, gridExpand = TRUE)
-
-  invisible(0)
+  wb$clone()$remove_tables(sheet = sheet, table = table)
 }
 
-#' @rdname grouping
-#' @param wb A workbook object.
-#' @param sheet A name or index of a worksheet.
-#' @param cols Indices of cols to group.
-#' @param collapsed Logical vector. If TRUE the grouped columns are hidden. Defaults to FALSE.
-#' @details Group columns together, with the option to hide them.
-#' @export
-groupColumns <- function(wb, sheet, cols, collapsed = FALSE) {
 
-  assert_workbook(wb)
+# grouping ----------------------------------------------------------------
 
-  sheet <- wb$validateSheet(sheet)
-
-  if (length(collapsed) > length(cols)) {
-    stop("Collapses argument is of greater length than number of cols.")
-  }
-
-  if (!is.logical(collapsed)) {
-    stop("Collapses should be a logical value (TRUE/FALSE).")
-  }
-
-  if (any(cols) < 1L) {
-    stop("Invalid rows entered (<= 0).")
-  }
-
-  collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
-
-  # TODO what does this option do?
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  levels <- rep("1", length(cols))
-
-  # Remove duplicates
-  collapsed <- collapsed[!duplicated(cols)]
-  levels <- levels[!duplicated(cols)]
-  cols <- cols[!duplicated(cols)]
-
-  wb$groupCols(sheet = sheet, cols = cols, collapsed = collapsed, levels = levels)
-}
-
-#' @rdname grouping
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols Indices of columns to ungroup
-#' @details If column was previously hidden, it will now be shown
-#' @export
-ungroupColumns <- function(wb, sheet, cols) {
-  # TODO: what are these options supposed to do?
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  sheet <- wb$validateSheet(sheet)
-
-  # check if any rows are selected
-  if (any(cols) < 1L) {
-    stop("Invalid cols entered (<= 0).")
-  }
-
-  # fetch the cols_attr data.frame
-  col_attr <- wb$worksheets[[sheet]]$unfold_cols()
-
-  # get the selection based on the col_attr frame.
-  select <- col_attr$min %in% as.character(cols)
-  if (length(select)) {
-    col_attr$outlineLevel[select] <- ""
-    col_attr$collapsed[select] <- ""
-    # TODO only if unhide = TRUE
-    col_attr$hidden[select] <- ""
-    wb$worksheets[[sheet]]$fold_cols(col_attr)
-  }
-
-  # If all outlineLevels are missing: remove the outlineLevelCol attribute. Assigning "" will remove the attribute
-  if (all(col_attr$outlineLevel == "")) {
-    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = ""))
-  } else {
-    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
-  }
-}
-
-#' @name grouping
-#' @title Group Rows and Columns
-#' @description Group a selection of rows or cols
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param rows Indices of rows to group
-#' @param collapsed Logical vector. If TRUE the grouped columns are collapsed. Defaults to FALSE
-#' @examples
+#' Group Rows and Columns
 #'
+#' Group a selection of rows or cols
+#'
+#' @details If row was previously hidden, it will now be shown
+#'
+#' @param wb A [wbWorkbook] object
+#' @param sheet A name or index of a worksheet
+#' @param rows,cols Indices of rows and columns to group
+#' @param collapsed If `TRUE` the grouped columns are collapsed
+#' @param levels levels
+#'
+#' @examples
 #' # create matrix
 #' t1 <- AirPassengers
 #' t2 <- do.call(cbind, split(t1, cycle(t1)))
 #' dimnames(t2) <- dimnames(.preformat.ts(t1))
 #'
-#' wb <- createWorkbook()
-#' addWorksheet(wb, "AirPass")
-#' writeData(wb, "AirPass", t2, rowNames = TRUE)
+#' wb <- wb_workbook()
+#' wb$add_worksheet("AirPass")
+#' wb$add_data("AirPass", t2, rowNames = TRUE)
 #'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
-#' groupRows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
-#' groupRows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
-#' groupRows(wb, "AirPass", 9:13)                  # group years 1956-1960
+#' wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
+#' wb <- wb_group_rows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
+#' wb <- wb_group_rows(wb, "AirPass", 9:13)                  # group years 1956-1960
 #'
 #' wb$createCols("AirPass", 13)
 #'
-#' groupColumns(wb, "AirPass", 2:4, collapsed = TRUE)
-#' groupColumns(wb, "AirPass", 5:7, collapsed = TRUE)
-#' groupColumns(wb, "AirPass", 8:10, collapsed = TRUE)
-#' groupColumns(wb, "AirPass", 11:13)
+#' wb <- wb_group_cols(wb, "AirPass", 2:4, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
+#' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
+#' @name workbook_grouping
+#' @family workbook wrappers
+NULL
+
 #' @export
-groupRows <- function(wb, sheet, rows, collapsed = FALSE) {
+#' @rdname workbook_grouping
+wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-
-  sheet <- wb$validateSheet(sheet)
-
-  if (length(collapsed) > length(rows)) {
-    stop("Collapses argument is of greater length than number of rows.")
-  }
-
-  if (!is.logical(collapsed)) {
-    stop("Collapses should be a logical value (TRUE/FALSE).")
-  }
-
-  if (any(rows) < 1L) {
-    stop("Invalid rows entered (<= 0).")
-  }
-
-  collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
-
-  # TODO what does this option do?
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  levels <- rep("1", length(rows))
-
-  # Remove duplicates
-  collapsed <- collapsed[!duplicated(rows)]
-  levels <- levels[!duplicated(rows)]
-  rows <- rows[!duplicated(rows)]
-
-  wb$groupRows(sheet = sheet, rows = rows, collapsed = collapsed, levels = levels)
+  wb$clone()$group_cols(
+    sheet     = sheet,
+    cols      = cols,
+    collapsed = collapsed,
+    levels    = levels
+  )
 }
 
-#' @rdname grouping
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param rows Indices of rows to ungroup
-#' @details If row was previously hidden, it will now be shown
 #' @export
-ungroupRows <- function(wb, sheet, rows) {
-  # TODO: what are these options supposed to do?
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
-
-  sheet <- wb$validateSheet(sheet)
-
-  # check if any rows are selected
-  if (any(rows) < 1L) {
-    stop("Invalid rows entered (<= 0).")
-  }
-
-  # fetch the row_attr data.frame
-  row_attr <- wb$worksheets[[sheet]]$sheet_data$row_attr
-
-  # get the selection based on the row_attr frame.
-  select <- row_attr$r %in% as.character(rows)
-  if (length(select)) {
-    row_attr$outlineLevel[select] <- ""
-    row_attr$collapsed[select] <- ""
-    # TODO only if unhide = TRUE
-    row_attr$hidden[select] <- ""
-    wb$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
-  }
-
-  # If all outlineLevels are missing: remove the outlineLevelRow attribute. Assigning "" will remove the attribute
-  if (all(row_attr$outlineLevel == "")) {
-    wb$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(wb$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = ""))
-  } else {
-    self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
-  }
+#' @rdname workbook_grouping
+wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
+  assert_workbook(wb)
+  wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
 }
 
-#' @name addCreator
-#' @title Add another author to the meta data of the file.
-#' @description Just a wrapper of wb$addCreator()
-#' @param wb A workbook object
-#' @param Creator A string object with the name of the creator
+
+#' @export
+#' @rdname workbook_grouping
+wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
+  assert_workbook(wb)
+  wb$clone()$group_rows(
+    sheet     = sheet,
+    rows      = rows,
+    collapsed = collapsed,
+    levels    = levels
+  )
+}
+
+#' @export
+#' @rdname workbook_grouping
+wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
+  assert_workbook(wb)
+  wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
+}
+
+
+# creators ----------------------------------------------------------------
+
+#' Workbook creators
+#'
+#' Modify and get workbook creators
+#'
+#' @param wb A `wbWorkbook` object
 #' @examples
 #'
-#' wb <- createWorkbook()
-#' addCreator(wb, "test")
+#' # workbook made with default creator (see [wbWorkbook])
+#' wb <- wb_workbook()
+#' wb_get_creators(wb)
+#'
+#' # add a new creator (assuming "test" isn't your default creator)
+#' wb <- wb_add_creators(wb, "test")
+#' wb_get_creators(wb)
+#'
+#' # remove the creator (should be the same as before)
+#' wb <- wb_remove_creators(wb, "test")
+#' wb_get_creators(wb)
+#'
+#' @return
+#' * `wb_set_creators()`, `wb_add_creators()`, and `wb_remove_creators()` return the `wbWorkbook` object
+#' * `wb_get_creators()` returns a `character` vector of creators
+#'
+#' @name wb_creators
+#' @family workbook wrappers
+NULL
+
+#' @rdname wb_creators
 #' @export
-addCreator <- function(wb, Creator) {
+#' @param creators A character vector of names
+wb_add_creators <- function(wb, creators) {
   assert_workbook(wb)
-  wb$addCreator(Creator)
+  wb$clone()$add_creators(creators)
 }
 
-#' @name setLastModifiedBy
-#' @title Add another author to the meta data of the file.
-#' @description Just a wrapper of wb$changeLastModifiedBy()
+#' @rdname wb_creators
+#' @export
+wb_set_creators <- function(wb, creators) {
+  assert_workbook(wb)
+  wb$clone()$set_creators(creators)
+}
+
+#' @rdname wb_creators
+#' @export
+wb_remove_creators <- function(wb, creators) {
+  assert_workbook(wb)
+  wb$clone()$remove_creators(creators)
+}
+
+#' @rdname wb_creators
+#' @export
+wb_get_creators <- function(wb) {
+  assert_workbook(wb)
+  wb[["creator"]]
+}
+
+
+
+# names -------------------------------------------------------------------
+
+#' Set worksheet names for a workbook
+#'
+#' Sets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @param old The name (or index) of the old sheet name. If `NULL` will assume
+#'   all worksheets are to be renamed.
+#' @param new The name of the new sheet
+#' @returns The [wbWorkbook] object
+#' @export
+wb_set_sheet_names <- function(wb, old = NULL, new) {
+  assert_workbook(wb)
+  wb$clone()$set_sheet_names(old = old, new = new)
+}
+
+#' Get worksheet names for a workbook
+#'
+#' Gets the worksheet names for a [wbWorkbook] object
+#'
+#' @param wb A [wbWorkbook] object
+#' @returns A `named` `character` vector of sheet names in their order.  The
+#'   names represent the original value of the worksheet prior to any character
+#'   substitutions.
+#' @export
+wb_get_sheet_names <- function(wb) {
+  assert_workbook(wb)
+  wb$get_sheet_names()
+}
+
+# others? -----------------------------------------------------------------
+
+#' Add another author to the meta data of the file.
+#'
+#' Just a wrapper of wb$set_last_modified_by()
+#'
 #' @param wb A workbook object
 #' @param LastModifiedBy A string object with the name of the LastModifiedBy-User
-#' @examples
 #'
-#' wb <- createWorkbook()
-#' setLastModifiedBy(wb, "test")
 #' @export
-setLastModifiedBy <- function(wb, LastModifiedBy) {
+#' @family workbook wrappers
+#'
+#' @examples
+#' wb <- wb_workbook()
+#' wb_set_last_modified_by(wb, "test")
+wb_set_last_modified_by <- function(wb, LastModifiedBy) {
   assert_workbook(wb)
-  wb$changeLastModifiedBy(LastModifiedBy)
+  wb$clone()$set_last_modified_by(LastModifiedBy)
 }
 
-
-#' @name getCreators
-#' @title Add another author to the meta data of the file.
-#' @description Just a wrapper of wb$getCreators()
-#' Get the names of the
-#' @param wb A workbook object
-#' @return vector of creators
-#' @examples
+#' Insert an image into a worksheet
 #'
-#' wb <- createWorkbook()
-#' getCreators(wb)
-#' @export
-getCreators <- function(wb) {
-  assert_workbook(wb)
-  wb$getCreators()
-}
-
-#' @name insertImage
-#' @title Insert an image into a worksheet
-#' @description Insert an image into a worksheet
+#' Insert an image into a worksheet
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param file An image file. Valid file types are: jpeg, png, bmp
+#' @param file An image file. Valid file types are:` "jpeg"`, `"png"`, `"bmp"`
 #' @param width Width of figure.
 #' @param height Height of figure.
 #' @param startRow Row coordinate of upper left corner of the image
 #' @param startCol Column coordinate of upper left corner of the image
-#' @param units Units of width and height. Can be "in", "cm" or "px"
+#' @param rowOffset offset within cell (row)
+#' @param colOffset offset within cell (column)
+#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
-#' @importFrom grDevices bmp png jpeg
-#' @seealso [insertPlot()]
+#' @seealso [wb_add_plot()]
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- createWorkbook("Ayanami")
+#' wb <- wb_workbook("Ayanami")
 #'
 #' ## Add some worksheets
-#' addWorksheet(wb, "Sheet 1")
-#' addWorksheet(wb, "Sheet 2")
-#' addWorksheet(wb, "Sheet 3")
+#' wb$add_worksheet("Sheet 1")
+#' wb$add_worksheet("Sheet 2")
+#' wb$add_worksheet("Sheet 3")
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' insertImage(wb, "Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-#' insertImage(wb, 2, img, startRow = 2, startCol = 2)
-#' insertImage(wb, 3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#' wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
+#' wb$add_image(2, img, startRow = 2, startCol = 2)
+#' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 #'
 #' ## Save workbook
 #' \dontrun{
-#' saveWorkbook(wb, "insertImageExample.xlsx", overwrite = TRUE)
+#' wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
 #' }
-insertImage <- function(wb, sheet, file, width = 6, height = 3, startRow = 1, startCol = 1, units = "in", dpi = 300) {
-  od <- getOption("OutDec")
-  options("OutDec" = ".")
-  on.exit(expr = options("OutDec" = od), add = TRUE)
+wb_add_image <- function(
+  wb,
+  sheet     = current_sheet(),
+  file,
+  width     = 6,
+  height    = 3,
+  startRow  = 1,
+  startCol  = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  units     = "in",
+  dpi       = 300
+) {
+  assert_workbook(wb)
+  wb$clone()$add_image(
+    sheet     = sheet,
+    file      = file,
+    startRow  = startRow,
+    startCol  = startCol,
+    width     = width,
+    height    = height,
+    rowOffset = rowOffset,
+    colOffset = colOffset,
+    units     = units,
+    dpi       = dpi
+  )
+}
 
-  if (!file.exists(file)) {
-    stop("File does not exist.")
-  }
+#' clean sheet (remove all values)
+#'
+#' @param wb workbook
+#' @param sheet sheet to clean
+#' @param numbers remove all numbers
+#' @param characters remove all characters
+#' @param styles remove all styles
+#' @param merged_cells remove all merged_cells
+#' @name cleanup
+#' @export
+wb_clean_sheet <- function(
+    wb,
+    sheet        = current_sheet(),
+    numbers      = TRUE,
+    characters   = TRUE,
+    styles       = TRUE,
+    merged_cells = TRUE
+) {
+  assert_workbook(wb)
+  wb$clone(deep = TRUE)$clean_sheet(
+    sheet        = sheet,
+    numbers      = numbers,
+    characters   = characters,
+    styles       = styles,
+    merged_cells = merged_cells
+  )
+}
 
-  if (!grepl("\\\\|\\/", file)) {
-    file <- file.path(getwd(), file, fsep = .Platform$file.sep)
-  }
+#' little worksheet opener
+#' @param wb a workbook
+#' @export
+wb_open <- function(wb) {
+  assert_workbook(wb)
+  wb$open()
+}
 
-  units <- tolower(units)
+#' add style to workbook
+#'
+#' @description wb wrapper to add style to workbook
+#' @param wb workbook
+#' @param style style xml character
+#' @param style_name style name used optional argument
+#' @seealso [create_border()], [create_cell_style()], [create_dxfs_style()], [create_fill()], [create_font()], [create_numfmt()]
+#' @examples
+#' yellow_f <- c(rgb = "FF9C6500")
+#' yellow_b <- c(rgb = "FFFFEB9C")
+#'
+#' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
+#' wb <- wb_workbook() %>% wb_add_style(yellow)
+#' @export
+wb_add_style <- function(wb, style = NULL, style_name = NULL) {
+  assert_workbook(wb)
+  # deparse this name, otherwise it will remain "style"
+  if (is.null(style_name)) style_name <- deparse(substitute(style))
+  wb$clone()$add_style(style, style_name)
+}
 
-  if (!units %in% c("cm", "in", "px")) {
-    stop("Invalid units.\nunits must be one of: cm, in, px")
-  }
+#' get and set cell style
+#' @name cell_style
+#' @param wb wb
+#' @param sheet sheet
+#' @param dims dims
+#' @examples
+#' # set a style in b1
+#' wb <- wb_workbook()$add_worksheet()$
+#'   add_numfmt(dims = "B1", numfmt = "#,0")
+#'
+#' # get style from b1 to assign it to a1
+#' numfmt <- wb$get_cell_style(dims = "B1")
+#' 
+#' # assign style to a1
+#' wb$set_cell_style(dims = "A1", style = numfmt)
+#' @return wb_get_cell_style returns the style id as character
+#' @export
+wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
+  assert_workbook(wb)
+  wb$get_cell_style(sheet, dims)
+}
 
-  startCol <- convertFromExcelRef(startCol)
-  startRow <- as.integer(startRow)
+#' @rdname cell_style
+#' @param style style
+#' @return wb_set_cell_style returns the workbook invisible
+#' @export
+wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
+  assert_workbook(wb)
+  wb$clone()$set_cell_style(sheet, dims, style)
+}
 
-  ## convert to inches
-  if (units == "px") {
-    width <- width / dpi
-    height <- height / dpi
-  } else if (units == "cm") {
-    width <- width / 2.54
-    height <- height / 2.54
-  }
+#' add border for cell region
+#'
+#' @description wb wrapper to create borders for cell region
+#' @param wb workbook
+#' @param sheet a worksheet
+#' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
+#' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
+#' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @seealso [create_border()]
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
+#' wb <- wb_add_border(wb, 1, dims = "A1:K1",
+#'  left_border = NULL, right_border = NULL,
+#'  top_border = NULL, bottom_border = "double")
+#' wb <- wb_add_border(wb, 1, dims = "A5",
+#'  left_border = "dotted", right_border = "dotted",
+#'  top_border = "hair", bottom_border = "thick")
+#' wb <- wb_add_border(wb, 1, dims = "C2:C5")
+#' wb <- wb_add_border(wb, 1, dims = "G2:H3")
+#' wb <- wb_add_border(wb, 1, dims = "G12:H13",
+#'  left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+#'  top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+#' wb <- wb_add_border(wb, 1, dims = "A20:C23")
+#' wb <- wb_add_border(wb, 1, dims = "B12:D14",
+#'  left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+#'  bottom_color = c(rgb ="FFFF0000"))
+#' wb <- wb_add_border(wb, 1, dims = "D28:E28")
+#' @family styles
+#' @export
+wb_add_border <- function(
+    wb,
+    sheet          = current_sheet(),
+    dims           = "A1",
+    bottom_color   = c(rgb = "FF000000"),
+    left_color     = c(rgb = "FF000000"),
+    right_color    = c(rgb = "FF000000"),
+    top_color      = c(rgb = "FF000000"),
+    bottom_border  = "thin",
+    left_border    = "thin",
+    right_border   = "thin",
+    top_border     = "thin",
+    inner_hgrid    = NULL,
+    inner_hcolor   = NULL,
+    inner_vgrid    = NULL,
+    inner_vcolor   = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$add_border(
+    sheet         = sheet,
+    dims          = dims,
+    bottom_color  = bottom_color,
+    left_color    = left_color,
+    right_color   = right_color,
+    top_color     = top_color,
+    bottom_border = bottom_border,
+    left_border   = left_border,
+    right_border  = right_border,
+    top_border    = top_border,
+    inner_hgrid   = inner_hgrid,
+    inner_hcolor  = inner_hcolor,
+    inner_vgrid   = inner_vgrid,
+    inner_vcolor  = inner_vcolor
+  )
 
-  ## Convert to EMUs
-  widthEMU <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
-  heightEMU <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
+}
 
-  wb$insertImage(sheet, file = file, startRow = startRow, startCol = startCol, width = widthEMU, height = heightEMU)
+#' add fill for cell region
+#'
+#' @description wb wrapper to create fill for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param color the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")
+#' @param pattern various default "none" but others are possible:
+#'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+#'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+#'  "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+#'  "lightTrellis", "gray125", "gray0625"
+#' @param gradient_fill a gradient fill xml pattern.
+#' @param every_nth_col which col should be filled
+#' @param every_nth_row which row should be filled
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = c(rgb = "FFFFFF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = c(rgb = "FF00FF00"))
+#'
+#' wb <- wb %>%  wb_add_worksheet("S2") %>% wb_add_data("S2", mtcars)
+#'
+#' gradient_fill1 <- '<gradientFill degree="90">
+#' <stop position="0"><color rgb="FF92D050"/></stop>
+#' <stop position="1"><color rgb="FF0070C0"/></stop>
+#' </gradientFill>'
+#' wb <- wb %>% wb_add_fill("S2", dims = "A2:K5", gradient_fill = gradient_fill1)
+#'
+#' gradient_fill2 <- '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
+#' <stop position="0"><color theme="0"/></stop>
+#' <stop position="1"><color theme="4"/></stop>
+#' </gradientFill>'
+#' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
+#' @return The `wbWorksheetObject`, invisibly
+#' @family styles
+#' @export
+wb_add_fill <- function(
+    wb,
+    sheet         = current_sheet(),
+    dims          = "A1",
+    color         = "",
+    pattern       = "solid",
+    gradient_fill = "",
+    every_nth_col = 1,
+    every_nth_row = 1
+) {
+  assert_workbook(wb)
+  wb$clone()$add_fill(
+    sheet         = sheet,
+    dims          = dims,
+    color         = color,
+    pattern       = pattern,
+    gradient_fill = gradient_fill,
+    every_nth_col = every_nth_col,
+    every_nth_row = every_nth_row
+  )
+}
+
+#' add font for cell region
+#' @details add_font provides all the options openxml accepts for a font node, not all have to be set. Usually name, size and color should be what the user wants.
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param name font name: default "Calibri"
+#' @param color rgb color: default "FF000000"
+#' @param size font size: default "11",
+#' @param bold bold, "single" or "double", default: ""
+#' @param italic italic
+#' @param outline outline
+#' @param strike strike
+#' @param underline underline
+#' @param family font family
+#' @param charset charset
+#' @param condense condense
+#' @param scheme font scheme
+#' @param shadow shadow
+#' @param extend extend
+#' @param vertAlign vertical alignment
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+#' @return The `wbWorksheetObject`, invisibly
+#' @family styles
+#' @export
+wb_add_font <- function(
+      wb,
+      sheet     = current_sheet(),
+      dims      = "A1",
+      name      = "Calibri",
+      color     = c(rgb = "FF000000"),
+      size      = "11",
+      bold      = "",
+      italic    = "",
+      outline   = "",
+      strike    = "",
+      underline = "",
+      # fine tuning
+      charset   = "",
+      condense  = "",
+      extend    = "",
+      family    = "",
+      scheme    = "",
+      shadow    = "",
+      vertAlign = ""
+) {
+  assert_workbook(wb)
+  wb$clone()$add_font(
+    sheet     = sheet,
+    dims      = dims,
+    name      = name,
+    color     = color,
+    size      = size,
+    bold      = bold,
+    italic    = italic,
+    outline   = outline,
+    strike    = strike,
+    underline = underline,
+    # fine tuning
+    charset   = charset,
+    condense  = condense,
+    extend    = extend,
+    family    = family,
+    scheme    = scheme,
+    shadow    = shadow,
+    vertAlign = vertAlign
+  )
+}
+
+#' add numfmt for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param numfmt either an id or a character
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+#' @return The `wbWorksheetObject`, invisibly
+#' @family styles
+#' @export
+wb_add_numfmt <- function(
+    wb,
+    sheet = current_sheet(),
+    dims  = "A1",
+    numfmt
+) {
+  assert_workbook(wb)
+  wb$clone()$add_numfmt(
+    sheet  = sheet,
+    dims   = dims,
+    numfmt = numfmt
+  )
+}
+
+#' add cell style for cell region
+#' @param wb a workbook
+#' @param sheet the worksheet
+#' @param dims the cell range
+#' @param extLst extension list something like `<extLst>...</extLst>`
+#' @param hidden logical cell is hidden
+#' @param horizontal align content horizontal ('left', 'center', 'right')
+#' @param indent logical indent content
+#' @param justifyLastLine logical justify last line
+#' @param locked logical cell is locked
+#' @param pivotButton unknown
+#' @param quotePrefix unknown
+#' @param readingOrder reading order left to right
+#' @param relativeIndent relative indentation
+#' @param shrinkToFit logical shrink to fit
+#' @param textRotation degrees of text rotation
+#' @param vertical vertical alignment of content ('top', 'center', 'bottom')
+#' @param wrapText wrap text in cell
+# alignments
+#' @param applyAlignment logical apply alignment
+#' @param applyBorder logical apply border
+#' @param applyFill logical apply fill
+#' @param applyFont logical apply font
+#' @param applyNumberFormat logical apply number format
+#' @param applyProtection logical apply protection
+# ids
+#' @param borderId border ID to apply
+#' @param fillId fill ID to apply
+#' @param fontId font ID to apply
+#' @param numFmtId number format ID to apply
+#' @param xfId xf ID to apply
+#' @examples
+#'  wb <-
+#'    wb_workbook() %>%
+#'    wb_add_worksheet("S1") %>%
+#'    wb_add_data("S1", mtcars)
+#'
+#'  wb %>%
+#'    wb_add_cell_style(
+#'      "S1",
+#'      "A1:K1",
+#'      textRotation = "45",
+#'      horizontal = "center",
+#'      vertical = "center",
+#'      wrapText = "1"
+#'    )
+#' @return The `wbWorksheetObject`, invisibly
+#' @family styles
+#' @export
+wb_add_cell_style <- function(
+    wb,
+    sheet             = current_sheet(),
+    dims              = "A1",
+    applyAlignment    = NULL,
+    applyBorder       = NULL,
+    applyFill         = NULL,
+    applyFont         = NULL,
+    applyNumberFormat = NULL,
+    applyProtection   = NULL,
+    borderId          = NULL,
+    extLst            = NULL,
+    fillId            = NULL,
+    fontId            = NULL,
+    hidden            = NULL,
+    horizontal        = NULL,
+    indent            = NULL,
+    justifyLastLine   = NULL,
+    locked            = NULL,
+    numFmtId          = NULL,
+    pivotButton       = NULL,
+    quotePrefix       = NULL,
+    readingOrder      = NULL,
+    relativeIndent    = NULL,
+    shrinkToFit       = NULL,
+    textRotation      = NULL,
+    vertical          = NULL,
+    wrapText          = NULL,
+    xfId              = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$add_cell_style(
+    sheet             = sheet,
+    dims              = dims,
+    applyAlignment    = applyAlignment,
+    applyBorder       = applyBorder,
+    applyFill         = applyFill,
+    applyFont         = applyFont,
+    applyNumberFormat = applyNumberFormat,
+    applyProtection   = applyProtection,
+    borderId          = borderId,
+    extLst            = extLst,
+    fillId            = fillId,
+    fontId            = fontId,
+    hidden            = hidden,
+    horizontal        = horizontal,
+    indent            = indent,
+    justifyLastLine   = justifyLastLine,
+    locked            = locked,
+    numFmtId          = numFmtId,
+    pivotButton       = pivotButton,
+    quotePrefix       = quotePrefix,
+    readingOrder      = readingOrder,
+    relativeIndent    = relativeIndent,
+    shrinkToFit       = shrinkToFit,
+    textRotation      = textRotation,
+    vertical          = vertical,
+    wrapText          = wrapText,
+    xfId              = xfId
+  )
+}
+
+#' Add conditional formatting to cells
+#'
+#' Add conditional formatting to cells
+#' @param wb A workbook object
+#' @param sheet A name or index of a worksheet
+#' @param cols Columns to apply conditional formatting to
+#' @param rows Rows to apply conditional formatting to
+#' @param rule The condition under which to apply the formatting. See examples.
+#' @param style A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'
+#' @param type The type of conditional formatting rule to apply.
+#' @param params Additional parameters passed.  See **Details** for more
+#' @details See Examples.
+#'
+#' @details
+#' Conditional formatting types accept different parameters.  Unless noted,
+#' unlisted parameters are ignored.
+#'
+#' \describe{
+#'   \item{`expression`}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[rule]`\cr An Excel expression (as a character). Valid operators are: `<`, `<=`, `>`, `>=`, `==`, `!=`
+#'   }
+#'   \item{colorScale}{
+#'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
+#'     `[rule]`\cr `NULL` or a `character` vector of valid colors of equal length to `styles`
+#'   }
+#'   \item{dataBar}{
+#'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
+#'     `[rule]`\cr A `numeric` vector specifying the range of the databar colors. Must be equal length to `style`\cr\cr
+#'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
+#'     `[params$gradient]`\cr If `FALSE` colour gradient is removed. Default `TRUE`\cr\cr
+#'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE`
+#'   }
+#'   \item{duplicated}{
+#'     `[style]`\cr A `Style` object
+#'   }
+#'   \item{contains}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[rule]`\cr The text to look for within cells
+#'   }
+#'   \item{between}{
+#'     `[style]`\cr A Style object.\cr\cr
+#'     `[rule]`\cr A `numeric` vector of length `2` specifying lower and upper bound (Inclusive)
+#'   }
+#'   \item{topN}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of highest values. Default `5L`\cr\cr
+#'     `[params$percent]` If `TRUE` uses percentage
+#'   }
+#'   \item{bottomN}{
+#'     `[style]`\cr A `Style` object\cr\cr
+#'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of lowest values. Default `5L`\cr\cr
+#'     `[params$percent]`\cr If `TRUE` uses percentage
+#'   }
+#' }
+#'
+#' @examples
+#' wb <- wb_workbook()
+#' wb$add_worksheet("a")
+#' wb$add_data("a", 1:4, colNames = FALSE)
+#' wb$add_conditional_formatting("a", 1, 1:4, ">2")
+#' @export
+wb_add_conditional_formatting <- function(
+    wb,
+    sheet = current_sheet(),
+    cols,
+    rows,
+    rule = NULL,
+    style = NULL,
+    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+             "containsText", "notContainsText", "beginsWith", "endsWith",
+             "between", "topN", "bottomN"),
+    params = list(
+      showValue = TRUE,
+      gradient  = TRUE,
+      border    = TRUE,
+      percent   = FALSE,
+      rank      = 5L
+    )
+) {
+  assert_workbook(wb)
+  wb$clone()$add_conditional_formatting(
+    sheet = sheet,
+    cols  = cols,
+    rows  = rows,
+    rule  = rule,
+    style = style,
+    type  = type,
+    params = params
+  )
+}
+
+#' @rdname wb_add_conditional_formatting
+#' @export
+#' @param ... passed to `params`
+wb_conditional_formatting <- function(
+    wb,
+    sheet,
+    cols,
+    rows,
+    rule = NULL,
+    style = NULL,
+    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+             "containsText", "notContainsText", "beginsWith", "endsWith",
+             "between", "topN", "bottomN"),
+    ...
+) {
+  .Deprecated("wb_add_conditional_formatting()")
+
+  params <- list(...)
+  params$showValue <- params$showValue %||% TRUE
+  params$gradient  <- params$gradient  %||% TRUE
+  params$border    <- params$border    %||% TRUE
+  params$percent   <- params$percent   %||% FALSE
+  params$percent   <- params$percent   %||% 5L
+
+  wb$clone()$add_conditional_formatting(
+    sheet  = sheet,
+    cols   = cols,
+    rows   = rows,
+    rule   = rule,
+    style  = style,
+    type   = type,
+    params = params
+  )
+}
+
+#' clone sheets style
+#'
+#' @param wb workbook
+#' @param from sheet we select the style from
+#' @param to sheet we apply the style from
+#' @family styles
+#' @export
+wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
+  assert_workbook(wb)
+  wb$clone()$clone_sheet_style(from, to)
+}
+
+#' add sparklines to workbook
+#'
+#' @param wb workbook
+#' @param sheet sheet to add the sparklines to
+#' @param sparklines sparklines object created with `create_sparklines()`
+#' @seealso [create_sparklines()]
+#' @examples
+#'  sl <- create_sparklines("Sheet  1", "A3:K3", "L3")
+#'  wb <- wb_workbook() %>%
+#'    wb_add_worksheet() %>%
+#'    wb_add_data(x = mtcars) %>%
+#'    wb_add_sparklines(sparklines = sl)
+#' @export
+wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
+  assert_workbook(wb)
+  wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }

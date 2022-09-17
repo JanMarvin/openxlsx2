@@ -3,6 +3,51 @@
 \name{wbWorkbook}
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
+\value{
+The integer position of the sheet
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+A \code{named} \code{character} vector of sheet names in their order.  The
+names represent the original value of the worksheet prior to any
+character substitutions.
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The sheet tables.  \code{character()} if empty
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+Returns sheet visibility
+
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
+a character vector of cell styles
+}
 \description{
 R6 class for a Workbook
 
@@ -10,6 +55,77 @@ R6 class for a Workbook
 }
 \details{
 A Workbook
+
+minor helper wrapping xl_open which does the entire same thing
+}
+\examples{
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_border`
+## ------------------------------------------------
+
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb$add_border(1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
+wb$add_border(1, dims = "C2:C5")
+wb$add_border(1, dims = "G2:H3")
+wb$add_border(1, dims = "G12:H13",
+ left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+ top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+wb$add_border(1, dims = "A20:C23")
+wb$add_border(1, dims = "B12:D14",
+ left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+ bottom_color = c(rgb ="FFFF0000"))
+wb$add_border(1, dims = "D28:E28")
+# if (interactive()) wb$open()
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_fill`
+## ------------------------------------------------
+
+ # example from the gradient fill manual page
+ gradient_fill <- "<gradientFill degree=\"90\">
+   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+  </gradientFill>"
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_font`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_numfmt`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_numfmt("S1", "A1:A33", numfmt = 1)
+
+## ------------------------------------------------
+## Method `wbWorkbook$add_cell_style`
+## ------------------------------------------------
+
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
+}
+\seealso{
+create_border
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -18,11 +134,11 @@ A Workbook
 
 \item{\code{calcChain}}{calcChain}
 
+\item{\code{apps}}{apps}
+
 \item{\code{charts}}{charts}
 
 \item{\code{isChartSheet}}{isChartSheet}
-
-\item{\code{colWidths}}{colWidths}
 
 \item{\code{connections}}{connections}
 
@@ -36,8 +152,6 @@ A Workbook
 
 \item{\code{drawings_rels}}{drawings_rels}
 
-\item{\code{drawings_vml}}{drawings_vml}
-
 \item{\code{embeddings}}{embeddings}
 
 \item{\code{externalLinks}}{externalLinks}
@@ -47,6 +161,8 @@ A Workbook
 \item{\code{headFoot}}{headFoot}
 
 \item{\code{media}}{media}
+
+\item{\code{metadata}}{metadata}
 
 \item{\code{persons}}{persons}
 
@@ -70,9 +186,7 @@ A Workbook
 
 \item{\code{sharedStrings}}{sharedStrings}
 
-\item{\code{styleObjects}}{styleObjects}
-
-\item{\code{styles}}{styles}
+\item{\code{styles_mgr}}{styles_mgr}
 
 \item{\code{styles_xml}}{styles_xml}
 
@@ -100,81 +214,126 @@ A Workbook
 
 \item{\code{worksheets_rels}}{worksheets_rels}
 
-\item{\code{sheetOrder}}{sheetOrder}
+\item{\code{sheetOrder}}{The sheet order.  Controls ordering for worksheets and
+worksheet names.}
 
 \item{\code{path}}{path}
 
-\item{\code{styleObjectsList}}{styleObjectsList}
-}
-\if{html}{\out{</div>}}
-}
-\section{Methods}{
-\subsection{Public methods}{
-\itemize{
-\item \href{#method-new}{\code{wbWorkbook$new()}}
-\item \href{#method-addWorksheet}{\code{wbWorkbook$addWorksheet()}}
-\item \href{#method-cloneWorksheet}{\code{wbWorkbook$cloneWorksheet()}}
-\item \href{#method-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
-\item \href{#method-saveWorkbook}{\code{wbWorkbook$saveWorkbook()}}
-\item \href{#method-validateSheet}{\code{wbWorkbook$validateSheet()}}
-\item \href{#method-getSheetName}{\code{wbWorkbook$getSheetName()}}
-\item \href{#method-buildTable}{\code{wbWorkbook$buildTable()}}
-\item \href{#method-createFontNode}{\code{wbWorkbook$createFontNode()}}
-\item \href{#method-getBaseFont}{\code{wbWorkbook$getBaseFont()}}
-\item \href{#method-setSheetName}{\code{wbWorkbook$setSheetName()}}
-\item \href{#method-setRowHeights}{\code{wbWorkbook$setRowHeights()}}
-\item \href{#method-createCols}{\code{wbWorkbook$createCols()}}
-\item \href{#method-groupCols}{\code{wbWorkbook$groupCols()}}
-\item \href{#method-groupRows}{\code{wbWorkbook$groupRows()}}
-\item \href{#method-deleteWorksheet}{\code{wbWorkbook$deleteWorksheet()}}
-\item \href{#method-addDXFS}{\code{wbWorkbook$addDXFS()}}
-\item \href{#method-dataValidation}{\code{wbWorkbook$dataValidation()}}
-\item \href{#method-dataValidation_list}{\code{wbWorkbook$dataValidation_list()}}
-\item \href{#method-conditionalFormatting}{\code{wbWorkbook$conditionalFormatting()}}
-\item \href{#method-mergeCells}{\code{wbWorkbook$mergeCells()}}
-\item \href{#method-removeCellMerge}{\code{wbWorkbook$removeCellMerge()}}
-\item \href{#method-freezePanes}{\code{wbWorkbook$freezePanes()}}
-\item \href{#method-insertImage}{\code{wbWorkbook$insertImage()}}
-\item \href{#method-addStyle}{\code{wbWorkbook$addStyle()}}
-\item \href{#method-createNamedRegion}{\code{wbWorkbook$createNamedRegion()}}
-\item \href{#method-validate_table_name}{\code{wbWorkbook$validate_table_name()}}
-\item \href{#method-check_overwrite_tables}{\code{wbWorkbook$check_overwrite_tables()}}
-\item \href{#method-print}{\code{wbWorkbook$print()}}
-\item \href{#method-conditionalFormatCell}{\code{wbWorkbook$conditionalFormatCell()}}
-\item \href{#method-protectWorkbook}{\code{wbWorkbook$protectWorkbook()}}
-\item \href{#method-addCreator}{\code{wbWorkbook$addCreator()}}
-\item \href{#method-getCreators}{\code{wbWorkbook$getCreators()}}
-\item \href{#method-changeLastModifiedBy}{\code{wbWorkbook$changeLastModifiedBy()}}
-\item \href{#method-clone}{\code{wbWorkbook$clone()}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
-\subsection{Method \code{new()}}{
-Creates a new \code{wbWorkbook} object
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(
-  creator = get_creator(),
-  title = NULL,
-  subject = NULL,
-  category = NULL
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{creator}}{Workbook creator.  Default uses internal \code{get_creator()}
-which searches for an option \code{openxlsx.creator} or environmental
-variables \code{USER} and \code{USERNAME}, in this order.  If none are found,
-\code{""} is used instead.}
+\item{\code{creator}}{A character vector of creators}
 
 \item{\code{title}}{title}
 
 \item{\code{subject}}{subject}
 
 \item{\code{category}}{category}
+
+\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+created.  Defaults to the current \code{Sys.time()} when the workbook object
+is created, not when the Excel files are saved.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-wbWorkbook-new}{\code{wbWorkbook$new()}}
+\item \href{#method-wbWorkbook-append}{\code{wbWorkbook$append()}}
+\item \href{#method-wbWorkbook-append_sheets}{\code{wbWorkbook$append_sheets()}}
+\item \href{#method-wbWorkbook-validate_sheet}{\code{wbWorkbook$validate_sheet()}}
+\item \href{#method-wbWorkbook-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
+\item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
+\item \href{#method-wbWorkbook-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
+\item \href{#method-wbWorkbook-add_data}{\code{wbWorkbook$add_data()}}
+\item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
+\item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
+\item \href{#method-wbWorkbook-add_style}{\code{wbWorkbook$add_style()}}
+\item \href{#method-wbWorkbook-save}{\code{wbWorkbook$save()}}
+\item \href{#method-wbWorkbook-open}{\code{wbWorkbook$open()}}
+\item \href{#method-wbWorkbook-buildTable}{\code{wbWorkbook$buildTable()}}
+\item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
+\item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
+\item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
+\item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
+\item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
+\item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
+\item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
+\item \href{#method-wbWorkbook-createCols}{\code{wbWorkbook$createCols()}}
+\item \href{#method-wbWorkbook-group_cols}{\code{wbWorkbook$group_cols()}}
+\item \href{#method-wbWorkbook-ungroup_cols}{\code{wbWorkbook$ungroup_cols()}}
+\item \href{#method-wbWorkbook-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
+\item \href{#method-wbWorkbook-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
+\item \href{#method-wbWorkbook-group_rows}{\code{wbWorkbook$group_rows()}}
+\item \href{#method-wbWorkbook-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
+\item \href{#method-wbWorkbook-remove_worksheet}{\code{wbWorkbook$remove_worksheet()}}
+\item \href{#method-wbWorkbook-add_data_validation}{\code{wbWorkbook$add_data_validation()}}
+\item \href{#method-wbWorkbook-merge_cells}{\code{wbWorkbook$merge_cells()}}
+\item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
+\item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
+\item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
+\item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
+\item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
+\item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
+\item \href{#method-wbWorkbook-protect}{\code{wbWorkbook$protect()}}
+\item \href{#method-wbWorkbook-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
+\item \href{#method-wbWorkbook-set_creators}{\code{wbWorkbook$set_creators()}}
+\item \href{#method-wbWorkbook-add_creators}{\code{wbWorkbook$add_creators()}}
+\item \href{#method-wbWorkbook-remove_creators}{\code{wbWorkbook$remove_creators()}}
+\item \href{#method-wbWorkbook-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
+\item \href{#method-wbWorkbook-page_setup}{\code{wbWorkbook$page_setup()}}
+\item \href{#method-wbWorkbook-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
+\item \href{#method-wbWorkbook-get_tables}{\code{wbWorkbook$get_tables()}}
+\item \href{#method-wbWorkbook-remove_tables}{\code{wbWorkbook$remove_tables()}}
+\item \href{#method-wbWorkbook-add_filter}{\code{wbWorkbook$add_filter()}}
+\item \href{#method-wbWorkbook-remove_filter}{\code{wbWorkbook$remove_filter()}}
+\item \href{#method-wbWorkbook-grid_lines}{\code{wbWorkbook$grid_lines()}}
+\item \href{#method-wbWorkbook-add_named_region}{\code{wbWorkbook$add_named_region()}}
+\item \href{#method-wbWorkbook-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
+\item \href{#method-wbWorkbook-set_order}{\code{wbWorkbook$set_order()}}
+\item \href{#method-wbWorkbook-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
+\item \href{#method-wbWorkbook-set_sheet_visibility}{\code{wbWorkbook$set_sheet_visibility()}}
+\item \href{#method-wbWorkbook-add_page_break}{\code{wbWorkbook$add_page_break()}}
+\item \href{#method-wbWorkbook-clean_sheet}{\code{wbWorkbook$clean_sheet()}}
+\item \href{#method-wbWorkbook-add_border}{\code{wbWorkbook$add_border()}}
+\item \href{#method-wbWorkbook-add_fill}{\code{wbWorkbook$add_fill()}}
+\item \href{#method-wbWorkbook-add_font}{\code{wbWorkbook$add_font()}}
+\item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
+\item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
+\item \href{#method-wbWorkbook-get_cell_style}{\code{wbWorkbook$get_cell_style()}}
+\item \href{#method-wbWorkbook-set_cell_style}{\code{wbWorkbook$set_cell_style()}}
+\item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
+\item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
+\item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-new"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-new}{}}}
+\subsection{Method \code{new()}}{
+Creates a new \code{wbWorkbook} object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$new(
+  creator = NULL,
+  title = NULL,
+  subject = NULL,
+  category = NULL,
+  datetimeCreated = Sys.time()
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
+
+\item{\code{title}}{title}
+
+\item{\code{subject}}{subject}
+
+\item{\code{category}}{category}
+
+\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+created.  Defaults to the current \code{Sys.time()} when the workbook object
+is created, not when the Excel files are saved.}
 }
 \if{html}{\out{</div>}}
 }
@@ -183,41 +342,103 @@ a \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-addWorksheet}{}}}
-\subsection{Method \code{addWorksheet()}}{
+\if{html}{\out{<a id="method-wbWorkbook-append"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-append}{}}}
+\subsection{Method \code{append()}}{
+Append a field. This method is intended for internal use
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$append(field, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{field}}{A valid field name}
+
+\item{\code{value}}{A value for the field}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-append_sheets"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-append_sheets}{}}}
+\subsection{Method \code{append_sheets()}}{
+Append to \code{self$workbook$sheets} This method is intended for internal use
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$append_sheets(value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{value}}{A value for \code{self$workbook$sheets}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-validate_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-validate_sheet}{}}}
+\subsection{Method \code{validate_sheet()}}{
+validate sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validate_sheet(sheet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{A character sheet name or integer location}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_worksheet}{}}}
+\subsection{Method \code{add_worksheet()}}{
 Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addWorksheet(
-  sheetName,
-  showGridLines = getOption("openxlsx.gridLines"),
-  tabColour = getOption("openxlsx.tabColour"),
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
+  sheet = next_sheet(),
+  gridLines = TRUE,
+  rowColHeaders = TRUE,
+  tabColour = NULL,
   zoom = 100,
-  oddHeader = getOption("openxlsx.oddHeader", getOption("openxlsx.header")),
-  oddFooter = getOption("openxlsx.oddFooter", getOption("openxlsx.footer")),
-  evenHeader = getOption("openxlsx.evenHeader", getOption("openxlsx.header")),
-  evenFooter = getOption("openxlsx.evenFooter", getOption("openxlsx.footer")),
-  firstHeader = getOption("openxlsx.firstHeader", getOption("openxlsx.header")),
-  firstFooter = getOption("openxlsx.firstFooter", getOption("openxlsx.footer")),
-  visible = TRUE,
+  header = NULL,
+  footer = NULL,
+  oddHeader = header,
+  oddFooter = footer,
+  evenHeader = header,
+  evenFooter = footer,
+  firstHeader = header,
+  firstFooter = footer,
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
   hasDrawing = FALSE,
-  paperSize = getOption("openxlsx.paperSize"),
-  orientation = getOption("openxlsx.orientation"),
-  vdpi = getOption("openxlsx.vdpi", getOption("openxlsx.dpi")),
-  hdpi = getOption("openxlsx.hdpi", getOption("openxlsx.dpi"))
+  paperSize = getOption("openxlsx2.paperSize", default = 9),
+  orientation = getOption("openxlsx2.orientation", default = "portrait"),
+  hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{sheet}}{sheet}
 
-\item{\code{showGridLines}}{showGridLines}
+\item{\code{gridLines}}{gridLines}
+
+\item{\code{rowColHeaders}}{rowColHeaders}
 
 \item{\code{tabColour}}{tabColour}
 
 \item{\code{zoom}}{zoom}
+
+\item{\code{header}}{header}
+
+\item{\code{footer}}{footer}
 
 \item{\code{oddHeader}}{oddHeader}
 
@@ -239,9 +460,9 @@ Add worksheet to the \code{wbWorkbook} object
 
 \item{\code{orientation}}{orientation}
 
-\item{\code{vdpi}}{vdpi}
-
 \item{\code{hdpi}}{hdpi}
+
+\item{\code{vdpi}}{vdpi}
 }
 \if{html}{\out{</div>}}
 }
@@ -250,41 +471,37 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-cloneWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-cloneWorksheet}{}}}
-\subsection{Method \code{cloneWorksheet()}}{
+\if{html}{\out{<a id="method-wbWorkbook-clone_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone_worksheet}{}}}
+\subsection{Method \code{clone_worksheet()}}{
 Clone a workbooksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$cloneWorksheet(sheetName, clonedSheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_worksheet(old = current_sheet(), new = next_sheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{old}}{name of worksheet to clone}
 
-\item{\code{clonedSheet}}{clonedSheet}
+\item{\code{new}}{name of new worksheet to add}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addChartSheet"></a>}}
-\if{latex}{\out{\hypertarget{method-addChartSheet}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-addChartSheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-addChartSheet}{}}}
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(
-  sheetName,
-  tabColour = getOption("openxlsx.tabColour"),
-  zoom = 100
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet = current_sheet(), tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{sheetName}
+\item{\code{sheet}}{sheet}
 
 \item{\code{tabColour}}{tabColour}
 
@@ -297,12 +514,195 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-saveWorkbook"></a>}}
-\if{latex}{\out{\hypertarget{method-saveWorkbook}{}}}
-\subsection{Method \code{saveWorkbook()}}{
+\if{html}{\out{<a id="method-wbWorkbook-add_data"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_data}{}}}
+\subsection{Method \code{add_data()}}{
+add data
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
+  sheet = current_sheet(),
+  x,
+  startCol = 1,
+  startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
+  array = FALSE,
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  withFilter = FALSE,
+  name = NULL,
+  sep = ", ",
+  removeCellStyle = FALSE,
+  na.strings
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
+
+\item{\code{array}}{array}
+
+\item{\code{xy}}{xy}
+
+\item{\code{colNames}}{colNames}
+
+\item{\code{rowNames}}{rowNames}
+
+\item{\code{withFilter}}{withFilter}
+
+\item{\code{name}}{name}
+
+\item{\code{sep}}{sep}
+
+\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+
+\item{\code{na.strings}}{na.strings}
+
+\item{\code{return}}{The \code{wbWorkbook} object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_data_table"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_data_table}{}}}
+\subsection{Method \code{add_data_table()}}{
+add a data table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
+  sheet = current_sheet(),
+  x,
+  startCol = 1,
+  startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
+  xy = NULL,
+  colNames = TRUE,
+  rowNames = FALSE,
+  tableStyle = "TableStyleLight9",
+  tableName = NULL,
+  withFilter = TRUE,
+  sep = ", ",
+  firstColumn = FALSE,
+  lastColumn = FALSE,
+  bandedRows = TRUE,
+  bandedCols = FALSE,
+  na.strings
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
+
+\item{\code{xy}}{xy}
+
+\item{\code{colNames}}{colNames}
+
+\item{\code{rowNames}}{rowNames}
+
+\item{\code{tableStyle}}{tableStyle}
+
+\item{\code{tableName}}{tableName}
+
+\item{\code{withFilter}}{withFilter}
+
+\item{\code{sep}}{sep}
+
+\item{\code{firstColumn}}{firstColumn}
+
+\item{\code{lastColumn}}{lastColumn}
+
+\item{\code{bandedRows}}{bandedRows}
+
+\item{\code{bandedCols}}{bandedCols}
+
+\item{\code{na.strings}}{na.strings}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_formula"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_formula}{}}}
+\subsection{Method \code{add_formula()}}{
+add formula
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
+  sheet = current_sheet(),
+  x,
+  startCol = 1,
+  startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
+  array = FALSE,
+  xy = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{x}}{x}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{startRow}}{startRow}
+
+\item{\code{dims}}{dims}
+
+\item{\code{array}}{array}
+
+\item{\code{xy}}{xy}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_style}{}}}
+\subsection{Method \code{add_style()}}{
+add style
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_style(style = NULL, style_name = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{style}}{style}
+
+\item{\code{style_name}}{style_name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-save"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-save}{}}}
+\subsection{Method \code{save()}}{
 Save the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$saveWorkbook(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -310,7 +710,7 @@ Save the workbook
 \describe{
 \item{\code{path}}{The path to save the workbook to}
 
-\item{\code{overwrite}}{If \code{FALSE} will not overwrite when \code{path} is not empty}
+\item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{path} exists}
 }
 \if{html}{\out{</div>}}
 }
@@ -319,53 +719,35 @@ The \code{wbWorkbook} object invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validateSheet"></a>}}
-\if{latex}{\out{\hypertarget{method-validateSheet}{}}}
-\subsection{Method \code{validateSheet()}}{
-Validate sheet
+\if{html}{\out{<a id="method-wbWorkbook-open"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-open}{}}}
+\subsection{Method \code{open()}}{
+open wbWorkbook in Excel.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validateSheet(sheetName)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$open(interactive = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheetName}}{The sheet name to validate}
+\item{\code{interactive}}{If \code{FALSE} will throw a warning and not open the path.
+This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses
+the value returned from \code{\link[base:interactive]{base::interactive()}}}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The sheet name -- or the position?  This should be consistent
+The \code{wbWorkbook}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getSheetName"></a>}}
-\if{latex}{\out{\hypertarget{method-getSheetName}{}}}
-\subsection{Method \code{getSheetName()}}{
-Get sheet name
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getSheetName(sheetIndex)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheetIndex}}{Sheet name index}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The sheet index
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-buildTable"></a>}}
-\if{latex}{\out{\hypertarget{method-buildTable}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-buildTable"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-buildTable}{}}}
 \subsection{Method \code{buildTable()}}{
 Build table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$buildTable(
-  sheet,
+  sheet = current_sheet(),
   colNames,
   ref,
   showColNames,
@@ -414,32 +796,12 @@ The \code{wbWorksheet} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-createFontNode"></a>}}
-\if{latex}{\out{\hypertarget{method-createFontNode}{}}}
-\subsection{Method \code{createFontNode()}}{
-Create a font node from a style
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createFontNode(style)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{style}}{style}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The font node as xml?
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getBaseFont"></a>}}
-\if{latex}{\out{\hypertarget{method-getBaseFont}{}}}
-\subsection{Method \code{getBaseFont()}}{
+\if{html}{\out{<a id="method-wbWorkbook-get_base_font"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_base_font}{}}}
+\subsection{Method \code{get_base_font()}}{
 Get the base font
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getBaseFont()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_font()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
@@ -447,20 +809,58 @@ A list of of the font
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setSheetName"></a>}}
-\if{latex}{\out{\hypertarget{method-setSheetName}{}}}
-\subsection{Method \code{setSheetName()}}{
-Sets a sheet name
+\if{html}{\out{<a id="method-wbWorkbook-set_base_font"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_base_font}{}}}
+\subsection{Method \code{set_base_font()}}{
+Get the base font
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet, newSheetName)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
+  fontSize = 11,
+  fontColour = "black",
+  fontName = "Calibri"
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{Old sheet name}
+\item{\code{fontSize}}{fontSize}
 
-\item{\code{newSheetName}}{New sheet name}
+\item{\code{fontColour}}{fontColour}
+
+\item{\code{fontName}}{fontName}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_sheet_names}{}}}
+\subsection{Method \code{get_sheet_names()}}{
+Get sheet names
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_sheet_names"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_sheet_names}{}}}
+\subsection{Method \code{set_sheet_names()}}{
+Sets a sheet name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_names(old = NULL, new)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{old}}{Old sheet name}
+
+\item{\code{new}}{New sheet name}
 }
 \if{html}{\out{</div>}}
 }
@@ -469,12 +869,34 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setRowHeights"></a>}}
-\if{latex}{\out{\hypertarget{method-setRowHeights}{}}}
-\subsection{Method \code{setRowHeights()}}{
+\if{html}{\out{<a id="method-wbWorkbook-setSheetName"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-setSheetName}{}}}
+\subsection{Method \code{setSheetName()}}{
+Deprecated.  Use \code{set_sheet_names()} instead
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet = current_sheet(), name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{Old sheet name}
+
+\item{\code{name}}{New sheet name}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_row_heights"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_row_heights}{}}}
+\subsection{Method \code{set_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setRowHeights(sheet, rows, heights)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(sheet = current_sheet(), rows, heights)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -490,16 +912,38 @@ Sets a row height for a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_row_heights"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_row_heights}{}}}
+\subsection{Method \code{remove_row_heights()}}{
+Sets a row height for a sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_row_heights(sheet = current_sheet(), rows)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
 description
 creates column object for worksheet
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-createCols"></a>}}
-\if{latex}{\out{\hypertarget{method-createCols}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-createCols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-createCols}{}}}
 \subsection{Method \code{createCols()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet, n)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet = current_sheet(), n, beg, end)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -508,17 +952,26 @@ creates column object for worksheet
 \item{\code{sheet}}{sheet}
 
 \item{\code{n}}{n}
+
+\item{\code{beg}}{beg}
+
+\item{\code{end}}{end}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-groupCols"></a>}}
-\if{latex}{\out{\hypertarget{method-groupCols}{}}}
-\subsection{Method \code{groupCols()}}{
+\if{html}{\out{<a id="method-wbWorkbook-group_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-group_cols}{}}}
+\subsection{Method \code{group_cols()}}{
 Group cols
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupCols(sheet, cols, collapsed, levels)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_cols(
+  sheet = current_sheet(),
+  cols,
+  collapsed = FALSE,
+  levels = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -539,12 +992,90 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-groupRows"></a>}}
-\if{latex}{\out{\hypertarget{method-groupRows}{}}}
-\subsection{Method \code{groupRows()}}{
+\if{html}{\out{<a id="method-wbWorkbook-ungroup_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-ungroup_cols}{}}}
+\subsection{Method \code{ungroup_cols()}}{
+ungroup cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_cols(sheet = current_sheet(), cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{= cols}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_col_widths}{}}}
+\subsection{Method \code{remove_col_widths()}}{
+Remove row heights from a worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_col_widths(sheet = current_sheet(), cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{A name or index of a worksheet}
+
+\item{\code{cols}}{Indices of columns to remove custom width (if any) from.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_col_widths}{}}}
+\subsection{Method \code{set_col_widths()}}{
+Group cols
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(
+  sheet = current_sheet(),
+  cols,
+  widths = 8.43,
+  hidden = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{widths}}{Width of columns}
+
+\item{\code{hidden}}{A logical vector to determine which cols are hidden; values
+are repeated across length of \code{cols}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-group_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-group_rows}{}}}
+\subsection{Method \code{group_rows()}}{
 Group rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$groupRows(sheet, rows, collapsed, levels)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$group_rows(
+  sheet = current_sheet(),
+  rows,
+  collapsed = FALSE,
+  levels = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -565,12 +1096,34 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-deleteWorksheet"></a>}}
-\if{latex}{\out{\hypertarget{method-deleteWorksheet}{}}}
-\subsection{Method \code{deleteWorksheet()}}{
-Delete a worksheet
+\if{html}{\out{<a id="method-wbWorkbook-ungroup_rows"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-ungroup_rows}{}}}
+\subsection{Method \code{ungroup_rows()}}{
+ungroup rows
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$deleteWorksheet(sheet)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$ungroup_rows(sheet = current_sheet(), rows)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_worksheet}{}}}
+\subsection{Method \code{remove_worksheet()}}{
+Remove a worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_worksheet(sheet = current_sheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -585,43 +1138,26 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addDXFS"></a>}}
-\if{latex}{\out{\hypertarget{method-addDXFS}{}}}
-\subsection{Method \code{addDXFS()}}{
-Add DXFS?
+\if{html}{\out{<a id="method-wbWorkbook-add_data_validation"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_data_validation}{}}}
+\subsection{Method \code{add_data_validation()}}{
+Adds data validation
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addDXFS(style)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{style}}{style}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-dataValidation"></a>}}
-\if{latex}{\out{\hypertarget{method-dataValidation}{}}}
-\subsection{Method \code{dataValidation()}}{
-Set data validations for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$dataValidation(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_validation(
+  sheet = current_sheet(),
+  cols,
+  rows,
   type,
   operator,
   value,
-  allowBlank,
-  showInputMsg,
-  showErrorMsg
+  allowBlank = TRUE,
+  showInputMsg = TRUE,
+  showErrorMsg = TRUE,
+  errorStyle = NULL,
+  errorTitle = NULL,
+  error = NULL,
+  promptTitle = NULL,
+  prompt = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -630,13 +1166,9 @@ Set data validations for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
+\item{\code{cols}}{cols}
 
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows}}{rows}
 
 \item{\code{type}}{type}
 
@@ -649,115 +1181,27 @@ Set data validations for a sheet
 \item{\code{showInputMsg}}{showInputMsg}
 
 \item{\code{showErrorMsg}}{showErrorMsg}
+
+\item{\code{errorStyle}}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+
+\item{\code{errorTitle}}{The error title}
+
+\item{\code{error}}{The error text}
+
+\item{\code{promptTitle}}{The prompt title}
+
+\item{\code{prompt}}{The prompt text}
 }
 \if{html}{\out{</div>}}
 }
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-dataValidation_list"></a>}}
-\if{latex}{\out{\hypertarget{method-dataValidation_list}{}}}
-\subsection{Method \code{dataValidation_list()}}{
-Set data validations for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$dataValidation_list(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  value,
-  allowBlank,
-  showInputMsg,
-  showErrorMsg
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{value}}{value}
-
-\item{\code{allowBlank}}{allowBlank}
-
-\item{\code{showInputMsg}}{showInputMsg}
-
-\item{\code{showErrorMsg}}{showErrorMsg}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-conditionalFormatting"></a>}}
-\if{latex}{\out{\hypertarget{method-conditionalFormatting}{}}}
-\subsection{Method \code{conditionalFormatting()}}{
-Set conditional formatting for a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditionalFormatting(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  dxfId,
-  formula,
-  type,
-  values,
-  params
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{dxfId}}{dxfId}
-
-\item{\code{formula}}{formula}
-
-\item{\code{type}}{type}
-
-\item{\code{values}}{values}
-
-\item{\code{params}}{params}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mergeCells"></a>}}
-\if{latex}{\out{\hypertarget{method-mergeCells}{}}}
-\subsection{Method \code{mergeCells()}}{
+\if{html}{\out{<a id="method-wbWorkbook-merge_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-merge_cells}{}}}
+\subsection{Method \code{merge_cells()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$mergeCells(sheet, startRow, endRow, startCol, endCol)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet = current_sheet(), rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -765,13 +1209,7 @@ Set cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows, cols}}{Row and column specifications.}
 }
 \if{html}{\out{</div>}}
 }
@@ -780,12 +1218,12 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeCellMerge"></a>}}
-\if{latex}{\out{\hypertarget{method-removeCellMerge}{}}}
-\subsection{Method \code{removeCellMerge()}}{
+\if{html}{\out{<a id="method-wbWorkbook-unmerge_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-unmerge_cells}{}}}
+\subsection{Method \code{unmerge_cells()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$removeCellMerge(sheet, startRow, endRow, startCol, endCol)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$unmerge_cells(sheet = current_sheet(), rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -793,13 +1231,7 @@ Removes cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
+\item{\code{rows, cols}}{Row and column specifications.}
 }
 \if{html}{\out{</div>}}
 }
@@ -808,13 +1240,13 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-freezePanes"></a>}}
-\if{latex}{\out{\hypertarget{method-freezePanes}{}}}
-\subsection{Method \code{freezePanes()}}{
+\if{html}{\out{<a id="method-wbWorkbook-freeze_pane"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-freeze_pane}{}}}
+\subsection{Method \code{freeze_pane()}}{
 Set freeze panes for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$freezePanes(
-  sheet,
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$freeze_pane(
+  sheet = current_sheet(),
   firstActiveRow = NULL,
   firstActiveCol = NULL,
   firstRow = FALSE,
@@ -842,20 +1274,61 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-insertImage"></a>}}
-\if{latex}{\out{\hypertarget{method-insertImage}{}}}
-\subsection{Method \code{insertImage()}}{
+\if{html}{\out{<a id="method-wbWorkbook-add_conditional_formatting"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_conditional_formatting}{}}}
+\subsection{Method \code{add_conditional_formatting()}}{
+Add conditional formatting
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_conditional_formatting(
+  sheet = current_sheet(),
+  cols,
+  rows,
+  rule = NULL,
+  style = NULL,
+  type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
+    "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
+  params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
+    5L)
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{rows}}{rows}
+
+\item{\code{rule}}{rule}
+
+\item{\code{style}}{style}
+
+\item{\code{type}}{type}
+
+\item{\code{params}}{Additional parameters}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_image"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_image}{}}}
+\subsection{Method \code{add_image()}}{
 Insert an image into a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$insertImage(
-  sheet,
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_image(
+  sheet = current_sheet(),
   file,
-  startRow,
-  startCol,
-  width,
-  height,
+  width = 6,
+  height = 3,
+  startRow = 1,
+  startCol = 1,
   rowOffset = 0,
-  colOffset = 0
+  colOffset = 0,
+  units = "in",
+  dpi = 300
 )}\if{html}{\out{</div>}}
 }
 
@@ -866,17 +1339,21 @@ Insert an image into a sheet
 
 \item{\code{file}}{file}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{startCol}}{startCol}
-
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
 
+\item{\code{startRow}}{startRow}
+
+\item{\code{startCol}}{startCol}
+
 \item{\code{rowOffset}}{rowOffset}
 
 \item{\code{colOffset}}{colOffset}
+
+\item{\code{units}}{units}
+
+\item{\code{dpi}}{dpi}
 }
 \if{html}{\out{</div>}}
 }
@@ -885,93 +1362,23 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addStyle"></a>}}
-\if{latex}{\out{\hypertarget{method-addStyle}{}}}
-\subsection{Method \code{addStyle()}}{
-Add a style to a sheet
+\if{html}{\out{<a id="method-wbWorkbook-add_plot"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_plot}{}}}
+\subsection{Method \code{add_plot()}}{
+Add plot. A wrapper for add_image()
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addStyle(sheet, style, rows, cols, stack)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{style}}{style}
-
-\item{\code{rows}}{rows}
-
-\item{\code{cols}}{cols}
-
-\item{\code{stack}}{stack}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-createNamedRegion"></a>}}
-\if{latex}{\out{\hypertarget{method-createNamedRegion}{}}}
-\subsection{Method \code{createNamedRegion()}}{
-Create a named region in a sheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createNamedRegion(ref1, ref2, name, sheet, localSheetId = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{ref1}}{ref1}
-
-\item{\code{ref2}}{ref2}
-
-\item{\code{name}}{name}
-
-\item{\code{sheet}}{sheet}
-
-\item{\code{localSheetId}}{localSheetId}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate_table_name"></a>}}
-\if{latex}{\out{\hypertarget{method-validate_table_name}{}}}
-\subsection{Method \code{validate_table_name()}}{
-Validate table name for a workbook
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$validate_table_name(tableName)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{tableName}}{Table name}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A valid table name as a \code{character}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-check_overwrite_tables"></a>}}
-\if{latex}{\out{\hypertarget{method-check_overwrite_tables}{}}}
-\subsection{Method \code{check_overwrite_tables()}}{
-Checks for overwrite columns
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$check_overwrite_tables(
-  sheet,
-  new_rows,
-  new_cols,
-  error_msg = "Cannot overwrite existing table with another table.",
-  check_table_header_only = FALSE
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_plot(
+  sheet = current_sheet(),
+  width = 6,
+  height = 4,
+  xy = NULL,
+  startRow = 1,
+  startCol = 1,
+  rowOffset = 0,
+  colOffset = 0,
+  fileType = "png",
+  units = "in",
+  dpi = 300
 )}\if{html}{\out{</div>}}
 }
 
@@ -980,20 +1387,32 @@ Checks for overwrite columns
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{new_rows}}{new_rows}
+\item{\code{width}}{width}
 
-\item{\code{new_cols}}{new_cols}
+\item{\code{height}}{height}
 
-\item{\code{error_msg}}{error_msg}
+\item{\code{xy}}{xy}
 
-\item{\code{check_table_header_only}}{check_table_header_only}
+\item{\code{startRow}}{startRow}
+
+\item{\code{startCol}}{startCol}
+
+\item{\code{rowOffset}}{rowOffset}
+
+\item{\code{colOffset}}{colOffset}
+
+\item{\code{fileType}}{fileType}
+
+\item{\code{units}}{units}
+
+\item{\code{dpi}}{dpi}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-print"></a>}}
-\if{latex}{\out{\hypertarget{method-print}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-print"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-print}{}}}
 \subsection{Method \code{print()}}{
 Prints the \code{wbWorkbook} object
 \subsection{Usage}{
@@ -1005,59 +1424,20 @@ The \code{wbWorkbook} object, invisibly; called for its side-effects
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-conditionalFormatCell"></a>}}
-\if{latex}{\out{\hypertarget{method-conditionalFormatCell}{}}}
-\subsection{Method \code{conditionalFormatCell()}}{
-DEPRECATED
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$conditionalFormatCell(
-  sheet,
-  startRow,
-  endRow,
-  startCol,
-  endCol,
-  dxfId,
-  formula,
-  type
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{startRow}}{startRow}
-
-\item{\code{endRow}}{endRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{endCol}}{endCol}
-
-\item{\code{dxfId}}{dxfId}
-
-\item{\code{formula}}{formula}
-
-\item{\code{type}}{type}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-protectWorkbook"></a>}}
-\if{latex}{\out{\hypertarget{method-protectWorkbook}{}}}
-\subsection{Method \code{protectWorkbook()}}{
+\if{html}{\out{<a id="method-wbWorkbook-protect"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-protect}{}}}
+\subsection{Method \code{protect()}}{
 Protect a workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protectWorkbook(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect(
   protect = TRUE,
+  password = NULL,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  password = NULL
+  type = c("1", "2", "4", "8"),
+  fileSharing = FALSE,
+  username = unname(Sys.info()["user"]),
+  readOnlyRecommended = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -1066,11 +1446,19 @@ Protect a workbook
 \describe{
 \item{\code{protect}}{protect}
 
+\item{\code{password}}{password}
+
 \item{\code{lockStructure}}{lockStructure}
 
 \item{\code{lockWindows}}{lockWindows}
 
-\item{\code{password}}{password}
+\item{\code{type}}{type}
+
+\item{\code{fileSharing}}{fileSharing}
+
+\item{\code{username}}{username}
+
+\item{\code{readOnlyRecommended}}{readOnlyRecommended}
 }
 \if{html}{\out{</div>}}
 }
@@ -1079,45 +1467,99 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addCreator"></a>}}
-\if{latex}{\out{\hypertarget{method-addCreator}{}}}
-\subsection{Method \code{addCreator()}}{
-Add a creator (author) to the workbook
+\if{html}{\out{<a id="method-wbWorkbook-protect_worksheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-protect_worksheet}{}}}
+\subsection{Method \code{protect_worksheet()}}{
+protect worksheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addCreator(Creator = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect_worksheet(
+  sheet = current_sheet(),
+  protect = TRUE,
+  password = NULL,
+  properties = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{Creator}}{A name}
+\item{\code{sheet}}{sheet}
+
+\item{\code{protect}}{protect}
+
+\item{\code{password}}{password}
+
+\item{\code{properties}}{A character vector of properties to lock.  Can be one
+or more of the following: \code{"selectLockedCells"},
+\code{"selectUnlockedCells"}, \code{"formatCells"}, \code{"formatColumns"},
+\code{"formatRows"}, \code{"insertColumns"}, \code{"insertRows"},
+\code{"insertHyperlinks"}, \code{"deleteColumns"}, \code{"deleteRows"}, \code{"sort"},
+\code{"autoFilter"}, \code{"pivotTables"}, \code{"objects"}, \code{"scenarios"}}
 }
 \if{html}{\out{</div>}}
 }
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCreators"></a>}}
-\if{latex}{\out{\hypertarget{method-getCreators}{}}}
-\subsection{Method \code{getCreators()}}{
-Get the workbook creators
+\if{html}{\out{<a id="method-wbWorkbook-set_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_creators}{}}}
+\subsection{Method \code{set_creators()}}{
+Set creator(s)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$getCreators()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_creators(creators)}\if{html}{\out{</div>}}
 }
 
-\subsection{Returns}{
-A character vector of the workbook creators
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creators}}{A character vector of creators to set.  Duplicates are
+ignored.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-changeLastModifiedBy"></a>}}
-\if{latex}{\out{\hypertarget{method-changeLastModifiedBy}{}}}
-\subsection{Method \code{changeLastModifiedBy()}}{
+\if{html}{\out{<a id="method-wbWorkbook-add_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_creators}{}}}
+\subsection{Method \code{add_creators()}}{
+Add creator(s)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_creators(creators)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creators}}{A character vector of creators to add.  Duplicates are
+ignored.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_creators"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_creators}{}}}
+\subsection{Method \code{remove_creators()}}{
+Remove creator(s)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_creators(creators)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creators}}{A character vector of creators to remove.  All duplicated
+are removed.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_last_modified_by"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_last_modified_by}{}}}
+\subsection{Method \code{set_last_modified_by()}}{
 Change the last modified by
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$changeLastModifiedBy(LastModifiedBy = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_last_modified_by(LastModifiedBy = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1132,8 +1574,799 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-wbWorkbook-page_setup"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-page_setup}{}}}
+\subsection{Method \code{page_setup()}}{
+page_setup()
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$page_setup(
+  sheet = current_sheet(),
+  orientation = NULL,
+  scale = 100,
+  left = 0.7,
+  right = 0.7,
+  top = 0.75,
+  bottom = 0.75,
+  header = 0.3,
+  footer = 0.3,
+  fitToWidth = FALSE,
+  fitToHeight = FALSE,
+  paperSize = NULL,
+  printTitleRows = NULL,
+  printTitleCols = NULL,
+  summaryRow = NULL,
+  summaryCol = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{orientation}}{orientation}
+
+\item{\code{scale}}{scale}
+
+\item{\code{left}}{left}
+
+\item{\code{right}}{right}
+
+\item{\code{top}}{top}
+
+\item{\code{bottom}}{bottom}
+
+\item{\code{header}}{header}
+
+\item{\code{footer}}{footer}
+
+\item{\code{fitToWidth}}{fitToWidth}
+
+\item{\code{fitToHeight}}{fitToHeight}
+
+\item{\code{paperSize}}{paperSize}
+
+\item{\code{printTitleRows}}{printTitleRows}
+
+\item{\code{printTitleCols}}{printTitleCols}
+
+\item{\code{summaryRow}}{summaryRow}
+
+\item{\code{summaryCol}}{summaryCol}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_header_footer"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_header_footer}{}}}
+\subsection{Method \code{set_header_footer()}}{
+Sets headers and footers
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_header_footer(
+  sheet = current_sheet(),
+  header = NULL,
+  footer = NULL,
+  evenHeader = NULL,
+  evenFooter = NULL,
+  firstHeader = NULL,
+  firstFooter = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{header}}{header}
+
+\item{\code{footer}}{footer}
+
+\item{\code{evenHeader}}{evenHeader}
+
+\item{\code{evenFooter}}{evenFooter}
+
+\item{\code{firstHeader}}{firstHeader}
+
+\item{\code{firstFooter}}{firstFooter}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_tables"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_tables}{}}}
+\subsection{Method \code{get_tables()}}{
+get tables
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_tables(sheet = current_sheet())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_tables"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_tables}{}}}
+\subsection{Method \code{remove_tables()}}{
+remove tables
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_tables(sheet = current_sheet(), table)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{table}}{table}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_filter"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_filter}{}}}
+\subsection{Method \code{add_filter()}}{
+add filters
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_filter(sheet = current_sheet(), rows, cols)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+
+\item{\code{cols}}{cols}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_filter"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_filter}{}}}
+\subsection{Method \code{remove_filter()}}{
+remove filters
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_filter(sheet = current_sheet())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-grid_lines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-grid_lines}{}}}
+\subsection{Method \code{grid_lines()}}{
+grid lines
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$grid_lines(sheet = current_sheet(), show = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{show}}{show}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_named_region}{}}}
+\subsection{Method \code{add_named_region()}}{
+add a named region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
+  sheet = current_sheet(),
+  cols,
+  rows,
+  name,
+  localSheetId = NULL,
+  overwrite = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{rows}}{rows}
+
+\item{\code{name}}{name}
+
+\item{\code{localSheetId}}{localSheetId}
+
+\item{\code{overwrite}}{overwrite}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_named_region"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_named_region}{}}}
+\subsection{Method \code{remove_named_region()}}{
+remove a named region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_named_region(sheet = current_sheet(), name = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_order"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_order}{}}}
+\subsection{Method \code{set_order()}}{
+set worksheet order
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_order(sheets)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheets}}{sheets}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_sheet_visibility}{}}}
+\subsection{Method \code{get_sheet_visibility()}}{
+Get sheet visibility
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_visibility()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_sheet_visibility"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_sheet_visibility}{}}}
+\subsection{Method \code{set_sheet_visibility()}}{
+Set sheet visibility
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheet_visibility(sheet = current_sheet(), value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{value}}{value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_page_break"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_page_break}{}}}
+\subsection{Method \code{add_page_break()}}{
+Add a page break
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_page_break(sheet = current_sheet(), row = NULL, col = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{row}}{row}
+
+\item{\code{col}}{col}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-clean_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clean_sheet}{}}}
+\subsection{Method \code{clean_sheet()}}{
+clean sheet (remove all values)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clean_sheet(
+  sheet = current_sheet(),
+  numbers = TRUE,
+  characters = TRUE,
+  styles = TRUE,
+  merged_cells = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{numbers}}{remove all numbers}
+
+\item{\code{characters}}{remove all characters}
+
+\item{\code{styles}}{remove all styles}
+
+\item{\code{merged_cells}}{remove all merged_cells}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_border"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_border}{}}}
+\subsection{Method \code{add_border()}}{
+create borders for cell region
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_border(
+  sheet = current_sheet(),
+  dims = "A1",
+  bottom_color = c(rgb = "FF000000"),
+  left_color = c(rgb = "FF000000"),
+  right_color = c(rgb = "FF000000"),
+  top_color = c(rgb = "FF000000"),
+  bottom_border = "thin",
+  left_border = "thin",
+  right_border = "thin",
+  top_border = "thin",
+  inner_hgrid = NULL,
+  inner_hcolor = NULL,
+  inner_vgrid = NULL,
+  inner_vcolor = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"}
+
+\item{\code{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}}{a color, either something openxml knows or some RGB color}
+
+\item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb$add_border(1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
+wb$add_border(1, dims = "C2:C5")
+wb$add_border(1, dims = "G2:H3")
+wb$add_border(1, dims = "G12:H13",
+ left_color = c(rgb = "FF9400D3"), right_color = c(rgb = "FF4B0082"),
+ top_color = c(rgb = "FF0000FF"), bottom_color = c(rgb = "FF00FF00"))
+wb$add_border(1, dims = "A20:C23")
+wb$add_border(1, dims = "B12:D14",
+ left_color = c(rgb = "FFFFFF00"), right_color = c(rgb = "FFFF7F00"),
+ bottom_color = c(rgb ="FFFF0000"))
+wb$add_border(1, dims = "D28:E28")
+# if (interactive()) wb$open()
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_fill"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_fill}{}}}
+\subsection{Method \code{add_fill()}}{
+provide simple fill function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
+  sheet = current_sheet(),
+  dims = "A1",
+  color = "",
+  pattern = "solid",
+  gradient_fill = "",
+  every_nth_col = 1,
+  every_nth_row = 1
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{color}}{the colors to apply, e.g. yellow: c(rgb = "FFFFFF00")}
+
+\item{\code{pattern}}{various default "none" but others are possible:
+"solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+"darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+"lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+"lightTrellis", "gray125", "gray0625"}
+
+\item{\code{gradient_fill}}{a gradient fill xml pattern.}
+
+\item{\code{every_nth_col}}{which col should be filled}
+
+\item{\code{every_nth_row}}{which row should be filled}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ # example from the gradient fill manual page
+ gradient_fill <- "<gradientFill degree=\"90\">
+   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
+   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
+  </gradientFill>"
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_font"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_font}{}}}
+\subsection{Method \code{add_font()}}{
+provide simple font function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_font(
+  sheet = current_sheet(),
+  dims = "A1",
+  name = "Calibri",
+  color = c(rgb = "FF000000"),
+  size = "11",
+  bold = "",
+  italic = "",
+  outline = "",
+  strike = "",
+  underline = "",
+  charset = "",
+  condense = "",
+  extend = "",
+  family = "",
+  scheme = "",
+  shadow = "",
+  vertAlign = ""
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{name}}{font name: default "Calibri"}
+
+\item{\code{color}}{rgb color: default "FF000000"}
+
+\item{\code{size}}{font size: default "11",}
+
+\item{\code{bold}}{bold}
+
+\item{\code{italic}}{italic}
+
+\item{\code{outline}}{outline}
+
+\item{\code{strike}}{strike}
+
+\item{\code{underline}}{underline}
+
+\item{\code{charset}}{charset}
+
+\item{\code{condense}}{condense}
+
+\item{\code{extend}}{extend}
+
+\item{\code{family}}{font family}
+
+\item{\code{scheme}}{font scheme}
+
+\item{\code{shadow}}{shadow}
+
+\item{\code{vertAlign}}{vertical alignment}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_font("S1", "A1:K1", name = "Arial", color = c(theme = "4"))
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_numfmt"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_numfmt}{}}}
+\subsection{Method \code{add_numfmt()}}{
+provide simple number format function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_numfmt(sheet = current_sheet(), dims = "A1", numfmt)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{numfmt}}{number format id or a character of the format}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_numfmt("S1", "A1:A33", numfmt = 1)
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_cell_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_cell_style}{}}}
+\subsection{Method \code{add_cell_style()}}{
+provide simple cell style format function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_cell_style(
+  sheet = current_sheet(),
+  dims = "A1",
+  applyAlignment = NULL,
+  applyBorder = NULL,
+  applyFill = NULL,
+  applyFont = NULL,
+  applyNumberFormat = NULL,
+  applyProtection = NULL,
+  borderId = NULL,
+  extLst = NULL,
+  fillId = NULL,
+  fontId = NULL,
+  hidden = NULL,
+  horizontal = NULL,
+  indent = NULL,
+  justifyLastLine = NULL,
+  locked = NULL,
+  numFmtId = NULL,
+  pivotButton = NULL,
+  quotePrefix = NULL,
+  readingOrder = NULL,
+  relativeIndent = NULL,
+  shrinkToFit = NULL,
+  textRotation = NULL,
+  vertical = NULL,
+  wrapText = NULL,
+  xfId = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet}
+
+\item{\code{dims}}{the cell range}
+
+\item{\code{applyAlignment}}{logical apply alignment}
+
+\item{\code{applyBorder}}{logical apply border}
+
+\item{\code{applyFill}}{logical apply fill}
+
+\item{\code{applyFont}}{logical apply font}
+
+\item{\code{applyNumberFormat}}{logical apply number format}
+
+\item{\code{applyProtection}}{logical apply protection}
+
+\item{\code{borderId}}{border ID to apply}
+
+\item{\code{extLst}}{extension list something like \verb{<extLst>...</extLst>}}
+
+\item{\code{fillId}}{fill ID to apply}
+
+\item{\code{fontId}}{font ID to apply}
+
+\item{\code{hidden}}{logical cell is hidden}
+
+\item{\code{horizontal}}{align content horizontal ('left', 'center', 'right')}
+
+\item{\code{indent}}{logical indent content}
+
+\item{\code{justifyLastLine}}{logical justify last line}
+
+\item{\code{locked}}{logical cell is locked}
+
+\item{\code{numFmtId}}{number format ID to apply}
+
+\item{\code{pivotButton}}{unknown}
+
+\item{\code{quotePrefix}}{unknown}
+
+\item{\code{readingOrder}}{reading order left to right}
+
+\item{\code{relativeIndent}}{relative indentation}
+
+\item{\code{shrinkToFit}}{logical shrink to fit}
+
+\item{\code{textRotation}}{degrees of text rotation}
+
+\item{\code{vertical}}{vertical alignment of content ('top', 'center', 'bottom')}
+
+\item{\code{wrapText}}{wrap text in cell}
+
+\item{\code{xfId}}{xf ID to apply}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_cell_style("S1", "A1:K1",
+                   textRotation = "45",
+                   horizontal = "center",
+                   vertical = "center",
+                   wrapText = "1")
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_cell_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_cell_style}{}}}
+\subsection{Method \code{get_cell_style()}}{
+get sheet style
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_cell_style(sheet = current_sheet(), dims)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_cell_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_cell_style}{}}}
+\subsection{Method \code{set_cell_style()}}{
+set sheet style
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_cell_style(sheet = current_sheet(), dims, style)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+
+\item{\code{style}}{style}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-clone_sheet_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone_sheet_style}{}}}
+\subsection{Method \code{clone_sheet_style()}}{
+clone style from one sheet to another
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_sheet_style(from = current_sheet(), to)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{the worksheet you are cloning}
+
+\item{\code{to}}{the worksheet the style is applied to}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_sparklines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_sparklines}{}}}
+\subsection{Method \code{add_sparklines()}}{
+apply sparkline to worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_sparklines(sheet = current_sheet(), sparklines)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the worksheet you are using}
+
+\item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

@@ -79,7 +79,7 @@ wb_hyperlink <- function() {
 
 
 xml_to_hyperlink <- function(xml) {
-  # xml_to_hyperlink() is used once in loadWorkbook()
+  # xml_to_hyperlink() is used once in wb_load()
 
   # TODO allow wbHyperlink$new(xml = xml)
 
@@ -95,11 +95,10 @@ xml_to_hyperlink <- function(xml) {
   xml <- unname(xml)
 
   # TODO a, names, and vals could be moved within the larger lapply()
-  a <- unlist(lapply(xml, function(i) regmatches(i, gregexpr('[a-zA-Z]+=".*?"', i))), recursive = FALSE)
+  a <- unapply(xml, function(i) regmatches(i, gregexpr('[a-zA-Z]+=".*?"', i)), .recurse = FALSE)
   names <- lapply(a, function(i) regmatches(i, regexpr('[a-zA-Z]+(?=\\=".*?")', i, perl = TRUE)))
   vals <- lapply(a, function(i) {
     res <- regmatches(i, regexpr('(?<=").*?(?=")', i, perl = TRUE))
-    Encoding(res) <- "UTF-8"
     res
   })
 

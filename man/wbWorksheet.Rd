@@ -3,6 +3,9 @@
 \name{wbWorksheet}
 \alias{wbWorksheet}
 \title{R6 class for a Workbook Worksheet}
+\value{
+The \code{wbWorksheet} object
+}
 \description{
 R6 class for a Workbook Worksheet
 
@@ -33,8 +36,6 @@ A Worksheet
 \item{\code{conditionalFormatting}}{conditionalFormatting}
 
 \item{\code{dataValidations}}{dataValidations}
-
-\item{\code{dataValidationsLst}}{dataValidationsLst}
 
 \item{\code{freezePane}}{freezePane}
 
@@ -101,43 +102,49 @@ A Worksheet
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{wbWorksheet$new()}}
-\item \href{#method-get_prior_sheet_data}{\code{wbWorksheet$get_prior_sheet_data()}}
-\item \href{#method-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
-\item \href{#method-order_sheetdata}{\code{wbWorksheet$order_sheetdata()}}
-\item \href{#method-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
-\item \href{#method-fold_cols}{\code{wbWorksheet$fold_cols()}}
-\item \href{#method-clone}{\code{wbWorksheet$clone()}}
+\item \href{#method-wbWorksheet-new}{\code{wbWorksheet$new()}}
+\item \href{#method-wbWorksheet-get_prior_sheet_data}{\code{wbWorksheet$get_prior_sheet_data()}}
+\item \href{#method-wbWorksheet-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
+\item \href{#method-wbWorksheet-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
+\item \href{#method-wbWorksheet-fold_cols}{\code{wbWorksheet$fold_cols()}}
+\item \href{#method-wbWorksheet-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
+\item \href{#method-wbWorksheet-add_page_break}{\code{wbWorksheet$add_page_break()}}
+\item \href{#method-wbWorksheet-append}{\code{wbWorksheet$append()}}
+\item \href{#method-wbWorksheet-add_sparklines}{\code{wbWorksheet$add_sparklines()}}
+\item \href{#method-wbWorksheet-clone}{\code{wbWorksheet$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-wbWorksheet-new"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
-  showGridLines = getOption("openxlsx.showGridLines"),
+  gridLines = TRUE,
+  rowColHeaders = TRUE,
   tabSelected = FALSE,
-  tabColour = getOption("openxlsx.tabColour"),
+  tabColour = NULL,
   zoom = 100,
-  oddHeader = getOption("openxlsx.oddHeader", getOption("openxlsx.header")),
-  oddFooter = getOption("openxlsx.oddFooter", getOption("openxlsx.footer")),
-  evenHeader = getOption("openxlsx.evenHeader", getOption("openxlsx.header")),
-  evenFooter = getOption("openxlsx.evenFooter", getOption("openxlsx.footer")),
-  firstHeader = getOption("openxlsx.firstHeader", getOption("openxlsx.header")),
-  firstFooter = getOption("openxlsx.firstFooter", getOption("openxlsx.footer")),
-  paperSize = getOption("openxlsx.paperSize"),
-  orientation = getOption("openxlsx.orientation"),
-  hdpi = getOption("openxlsx.hdpi", getOption("opnexlsx.dpi")),
-  vdpi = getOption("openxlsx.vdpi", getOption("opnexlsx.dpi"))
+  oddHeader = NULL,
+  oddFooter = NULL,
+  evenHeader = NULL,
+  evenFooter = NULL,
+  firstHeader = NULL,
+  firstFooter = NULL,
+  paperSize = 9,
+  orientation = "portrait",
+  hdpi = 300,
+  vdpi = 300
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{showGridLines}}{showGridLines}
+\item{\code{gridLines}}{gridLines}
+
+\item{\code{rowColHeaders}}{rowColHeaders}
 
 \item{\code{tabSelected}}{tabSelected}
 
@@ -172,8 +179,8 @@ a \code{wbWorksheet} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_prior_sheet_data"></a>}}
-\if{latex}{\out{\hypertarget{method-get_prior_sheet_data}{}}}
+\if{html}{\out{<a id="method-wbWorksheet-get_prior_sheet_data"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-get_prior_sheet_data}{}}}
 \subsection{Method \code{get_prior_sheet_data()}}{
 Get prior sheet data
 \subsection{Usage}{
@@ -185,8 +192,8 @@ A character vector of xml
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_post_sheet_data"></a>}}
-\if{latex}{\out{\hypertarget{method-get_post_sheet_data}{}}}
+\if{html}{\out{<a id="method-wbWorksheet-get_post_sheet_data"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-get_post_sheet_data}{}}}
 \subsection{Method \code{get_post_sheet_data()}}{
 Get post sheet data
 \subsection{Usage}{
@@ -198,24 +205,11 @@ A character vector of xml
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-order_sheetdata"></a>}}
-\if{latex}{\out{\hypertarget{method-order_sheetdata}{}}}
-\subsection{Method \code{order_sheetdata()}}{
-order sheet data
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$order_sheetdata()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-The \code{wbWorksheetObject}, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-unfold_cols"></a>}}
-\if{latex}{\out{\hypertarget{method-unfold_cols}{}}}
+\if{html}{\out{<a id="method-wbWorksheet-unfold_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-unfold_cols}{}}}
 \subsection{Method \code{unfold_cols()}}{
 unfold \verb{<cols ..>} node to dataframe. \verb{<cols><col ..>} are compressed.
-Only columuns with attributes are written to the file. This function
+Only columns with attributes are written to the file. This function
 unfolds them so that each cell beginning with the "A" to the last one
 found in cc gets a value.
 TODO might extend this to match either largest cc or largest col. Could
@@ -230,8 +224,8 @@ The column data frame
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-fold_cols"></a>}}
-\if{latex}{\out{\hypertarget{method-fold_cols}{}}}
+\if{html}{\out{<a id="method-wbWorksheet-fold_cols"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-fold_cols}{}}}
 \subsection{Method \code{fold_cols()}}{
 fold the column dataframe back into a node.
 \subsection{Usage}{
@@ -241,7 +235,7 @@ fold the column dataframe back into a node.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{col_df}}{the colum data frame}
+\item{\code{col_df}}{the column data frame}
 }
 \if{html}{\out{</div>}}
 }
@@ -250,8 +244,101 @@ The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-wbWorksheet-clean_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-clean_sheet}{}}}
+\subsection{Method \code{clean_sheet()}}{
+clean sheet (remove all values)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$clean_sheet(
+  numbers = TRUE,
+  characters = TRUE,
+  styles = TRUE,
+  merged_cells = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{numbers}}{remove all numbers}
+
+\item{\code{characters}}{remove all characters}
+
+\item{\code{styles}}{remove all styles}
+
+\item{\code{merged_cells}}{remove all merged_cells}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-add_page_break"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-add_page_break}{}}}
+\subsection{Method \code{add_page_break()}}{
+add page break
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$add_page_break(row = NULL, col = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{row}}{row}
+
+\item{\code{col}}{col}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-append"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-append}{}}}
+\subsection{Method \code{append()}}{
+append a field.  Intended for internal use only.  Not
+guaranteed to remain a public method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$append(field, value = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{field}}{a field name}
+
+\item{\code{value}}{a new value}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-add_sparklines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-add_sparklines}{}}}
+\subsection{Method \code{add_sparklines()}}{
+add sparkline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$add_sparklines(sparklines)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

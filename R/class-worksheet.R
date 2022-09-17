@@ -44,9 +44,6 @@ wbWorksheet <- R6::R6Class(
     #' @field dataValidations dataValidations
     dataValidations = NULL,
 
-    #' @field dataValidationsLst dataValidationsLst
-    dataValidationsLst = character(),
-
     #' @field freezePane freezePane
     freezePane = character(),
 
@@ -140,7 +137,8 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorksheet` object
-    #' @param showGridLines showGridLines
+    #' @param gridLines gridLines
+    #' @param rowColHeaders rowColHeaders
     #' @param tabSelected tabSelected
     #' @param tabColour tabColour
     #' @param zoom zoom
@@ -156,20 +154,21 @@ wbWorksheet <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return a `wbWorksheet` object
     initialize = function(
-      showGridLines = getOption("openxlsx.showGridLines"),
-      tabSelected   = FALSE,
-      tabColour     = getOption("openxlsx.tabColour"),
-      zoom          = 100,
-      oddHeader     = getOption("openxlsx.oddHeader",   getOption("openxlsx.header")),
-      oddFooter     = getOption("openxlsx.oddFooter",   getOption("openxlsx.footer")),
-      evenHeader    = getOption("openxlsx.evenHeader",  getOption("openxlsx.header")),
-      evenFooter    = getOption("openxlsx.evenFooter",  getOption("openxlsx.footer")),
-      firstHeader   = getOption("openxlsx.firstHeader", getOption("openxlsx.header")),
-      firstFooter   = getOption("openxlsx.firstFooter", getOption("openxlsx.footer")),
-      paperSize     = getOption("openxlsx.paperSize"),
-      orientation   = getOption("openxlsx.orientation"),
-      hdpi          = getOption("openxlsx.hdpi", getOption("opnexlsx.dpi")),
-      vdpi          = getOption("openxlsx.vdpi", getOption("opnexlsx.dpi"))
+      gridLines   = TRUE,
+      rowColHeaders = TRUE,
+      tabSelected = FALSE,
+      tabColour   = NULL,
+      zoom        = 100,
+      oddHeader   = NULL,
+      oddFooter   = NULL,
+      evenHeader  = NULL,
+      evenFooter  = NULL,
+      firstHeader = NULL,
+      firstFooter = NULL,
+      paperSize   = 9,
+      orientation = "portrait",
+      hdpi        = 300,
+      vdpi        = 300
     ) {
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
@@ -199,21 +198,20 @@ wbWorksheet <- R6::R6Class(
       ## list of all possible children
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
-      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(showGridLines), as.integer(tabSelected))
-      self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0" baseColWidth="10"/>'
+      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" showRowColHeaders="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(rowColHeaders), as.integer(tabSelected))
+      self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
       self$mergeCells            <- character()
       self$conditionalFormatting <- character()
       self$dataValidations       <- NULL
-      self$dataValidationsLst    <- character()
       self$hyperlinks            <- list()
       self$pageMargins           <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
-      self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s" r:id="rId2"/>', paperSize, orientation, hdpi, vdpi) ## will always be 2
+      self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s"/>', paperSize, orientation, hdpi, vdpi)
       self$headerFooter          <- hf
       self$rowBreaks             <- character()
       self$colBreaks             <- character()
-      self$drawing               <- '<drawing r:id=\"rId1\"/>' ## will always be 1
+      self$drawing               <- character()
       self$legacyDrawing         <- character()
       self$legacyDrawingHF       <- character()
       self$oleObjects            <- character()
@@ -230,7 +228,7 @@ wbWorksheet <- R6::R6Class(
     #' @return A character vector of xml
     get_prior_sheet_data = function() {
       paste_c(
-        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
+        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
 
         # sheetPr
         if (length(self$sheetPr) && !any(grepl("<sheetPr>", self$sheetPr, fixed = TRUE))) {
@@ -252,6 +250,7 @@ wbWorksheet <- R6::R6Class(
         if (length(self$cols_attr)) {
           paste(c("<cols>", self$cols_attr, "</cols>"), collapse = "")
         },
+        '</worksheet>',
         sep = ""
       )
     },
@@ -355,26 +354,15 @@ wbWorksheet <- R6::R6Class(
           paste0(sprintf('<tableParts count="%i">', n), pxml(self$tableParts), "</tableParts>")
         },
 
-        # extLst, dataValidationsLst
-        # parenthese or R gets confused with the ||
-        if ((length(self$extLst)) || (length(self$dataValidationsLst))) {
+        # extLst
+        if (length(self$extLst)) {
           sprintf(
             "<extLst>%s</extLst>",
             paste0(
-              pxml(self$extLst),
-              # dataValidationsLst_xml
-              if (length(self$dataValidationsLst)) {
-                paste0(
-                  sprintf('<ext uri="{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:dataValidations count="%i" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">', n),
-                  paste0(pxml(self$dataValidationsLst), "</x14:dataValidations></ext>"),
-                  collapse = ""
-                )
-              }
+              pxml(self$extLst)
             )
           )
         },
-
-        "</worksheet>",
 
         # end
         sep = ""
@@ -383,41 +371,8 @@ wbWorksheet <- R6::R6Class(
     },
 
     #' @description
-    #' order sheet data
-    #' @return The `wbWorksheetObject`, invisibly
-    order_sheetdata = function() {
-      if (self$sheet_data$n_elements == 0) {
-        return(invisible(self))
-      }
-
-      if (self$sheet_data$data_count > 1) {
-        ord <- order(self$sheet_data$rows, self$sheet_data$cols, method = "radix", na.last = TRUE)
-        self$sheet_data$rows <- self$sheet_data$rows[ord]
-        self$sheet_data$cols <- self$sheet_data$cols[ord]
-        self$sheet_data$t <- self$sheet_data$t[ord]
-        self$sheet_data$v <- self$sheet_data$v[ord]
-        self$sheet_data$f <- self$sheet_data$f[ord]
-
-        self$sheet_data$style_id <- self$sheet_data$style_id[ord]
-
-        self$sheet_data$data_count <- 1L
-
-        dm1 <- paste0(int_to_col(self$sheet_data$cols[1]), self$sheet_data$rows[1])
-        dm2 <- paste0(int_to_col(self$sheet_data$cols[self$sheet_data$n_elements]), self$sheet_data$rows[sheet_data$n_elements])
-
-        if (length(dm1) == 1 & length(dm2) != 1) {
-          if (!is.na(dm1) & !is.na(dm2) & dm1 != "NA" & dm2 != "NA") {
-            self$dimension <- sprintf("<dimension ref=\"%s:%s\"/>", dm1, dm2)
-          }
-        }
-      }
-
-      invisible(self)
-    },
-
-    #' @description
     #' unfold `<cols ..>` node to dataframe. `<cols><col ..>` are compressed.
-    #' Only columuns with attributes are written to the file. This function
+    #' Only columns with attributes are written to the file. This function
     #' unfolds them so that each cell beginning with the "A" to the last one
     #' found in cc gets a value.
     #' TODO might extend this to match either largest cc or largest col. Could
@@ -446,9 +401,9 @@ wbWorksheet <- R6::R6Class(
       )
 
       out <- NULL
-      for (i in seq_len(nrow(col_df))){
+      for (i in seq_len(nrow(col_df))) {
         z <- col_df[i,]
-        for (j in seq(z$min, z$max)){
+        for (j in seq(z$min, z$max)) {
           z$key <- j
           out <- rbind(out, z)
         }
@@ -466,7 +421,7 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' fold the column dataframe back into a node.
-    #' @param col_df the colum data frame
+    #' @param col_df the column data frame
     #' @return The `wbWorksheetObject`, invisibly
     fold_cols = function(col_df) {
 
@@ -500,16 +455,247 @@ wbWorksheet <- R6::R6Class(
       self$cols_attr <- df_to_xml("col", col_df)
 
       invisible(self)
-    }
+    },
 
+
+    #' @description clean sheet (remove all values)
+    #' @param numbers remove all numbers
+    #' @param characters remove all characters
+    #' @param styles remove all styles
+    #' @param merged_cells remove all merged_cells
+    #' @return The `wbWorksheetObject`, invisibly
+    clean_sheet = function(numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
+
+      cc <- self$sheet_data$cc
+
+      if (NROW(cc) == 0) return (invisible(self))
+
+      if (numbers)
+        cc[cc$c_t %in% c("n", ""),
+          c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+
+      if (characters)
+        cc[cc$c_t %in% c("inlineStr", "s"),
+          c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+
+      if (styles)
+        cc[c("c_s")] <- ""
+
+      self$sheet_data$cc <- cc
+
+      if (merged_cells)
+        self$mergeCells <- character(0)
+
+      invisible(self)
+
+    },
+
+    #' @description add page break
+    #' @param row row
+    #' @param col col
+    #' @returns The `wbWorksheet` object
+    add_page_break = function(row = NULL, col = NULL) {
+      if (!xor(is.null(row), is.null(col))) {
+        stop("either `row` or `col` must be NULL but not both")
+      }
+
+      if (!is.null(row)) {
+        if (!is.numeric(row)) stop("`row` must be numeric")
+        self$append("rowBreaks", sprintf('<brk id="%i" max="16383" man="1"/>', round(row)))
+      } else if (!is.null(col)) {
+        if (!is.numeric(col)) stop("`col` must be numeric")
+        self$append("colBreaks", sprintf('<brk id="%i" max="1048575" man="1"/>', round(col)))
+      }
+
+      invisible(self)
+    },
+
+    #' @description append a field.  Intended for internal use only.  Not
+    #'   guaranteed to remain a public method.
+    #' @param field a field name
+    #' @param value a new value
+    #' @return The `wbWorksheetObject`, invisibly
+    append = function(field, value = NULL) {
+      self[[field]] <- c(self[[field]], value)
+      invisible(self)
+    },
+
+    #' @description add sparkline
+    #' @param sparklines sparkline created by `create_sparkline()`
+    #' @return The `wbWorksheetObject`, invisibly
+    add_sparklines = function(
+      sparklines
+    ) {
+
+      private$do_append_x14(sparklines, "x14:sparklineGroup", "x14:sparklineGroups")
+
+      invisible(self)
+    }
   ),
 
   ## private ----
   private = list(
     # These were commented out in the RC object -- not sure if they're needed
-    rows_attr             = NULL,
     cols                  = NULL,
-    sheetData             = NULL
+    sheetData             = NULL,
+
+    # @description add data_validation_lst
+    # @param datavalidation datavalidation
+    do_append_x14 = function(
+      x,
+      s_name,
+      l_name
+    ) {
+
+      if (!all(xml_node_name(x) == s_name))
+        stop(sprintf("all nodes must match %s. Got %s", s_name, xml_node_name(x)))
+
+      # can have length > 1 for multiple xmlns attributes. we take this extLst,
+      # inspect it, update if needed and return it
+      extLst <- xml_node(self$extLst, "ext")
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check if any <ext xmlns:x14 ...> node exists, else add it
+      if (length(extLst) == 0 || !any(is_xmlns_x14)) {
+        ext <- xml_node_create(
+          "ext",
+          xml_attributes = c("xmlns:x14" = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main",
+                             uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}")
+        )
+
+        # update extLst
+        extLst <- c(extLst, ext)
+        is_xmlns_x14 <- c(is_xmlns_x14, TRUE)
+      } else {
+        ext <- extLst[is_xmlns_x14]
+      }
+
+      # check again and should be exactly one ext node
+      is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
+
+      # check for l_name and add one if none is found
+      if (length(xml_node(ext, "ext", l_name)) == 0) {
+        ext <- xml_add_child(
+          ext,
+          xml_node_create(
+            l_name,
+            xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
+        )
+      }
+
+      # add new x to exisisting l_name
+      ext <- xml_add_child(
+        ext,
+        level = c(l_name),
+        x
+      )
+
+      # update extLst and add it back to worksheet
+      extLst[is_xmlns_x14] <- ext
+      self$extLst <- extLst
+
+      invisible(self)
+    },
+
+    data_validation = function(
+      type,
+      operator,
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt,
+      origin,
+      sqref
+    ) {
+
+      header <- xml_node_create(
+        "dataValidation",
+        xml_attributes = c(
+          type = type,
+          operator = operator,
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          sqref = sqref,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
+        )
+      )
+
+      if (type == "date") {
+        value <- as.integer(value) + origin
+      }
+
+      if (type == "time") {
+        t <- format(value[1], "%z")
+        offSet <-
+          suppressWarnings(
+            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
+              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
+            ) / 24
+          )
+        if (is.na(offSet)) {
+          offSet[i] <- 0
+        }
+
+        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      }
+
+      form <- sapply(
+        seq_along(value),
+        function(i) {
+          sprintf("<formula%s>%s</formula%s>", i, value[i], i)
+        }
+      )
+
+      self$append("dataValidations", xml_add_child(header, form))
+      invisible(self)
+    },
+
+    # data validations list goes to extLst not to worksheet
+    data_validation_list = function(
+      value,
+      allowBlank,
+      showInputMsg,
+      showErrorMsg,
+      errorStyle,
+      errorTitle,
+      error,
+      promptTitle,
+      prompt,
+      sqref
+    ) {
+
+      data_val <- xml_node_create(
+        "x14:dataValidation",
+        xml_attributes = c(
+          type = "list",
+          allowBlank = allowBlank,
+          showInputMessage = showInputMsg,
+          showErrorMessage = showErrorMsg,
+          errorStyle = errorStyle,
+          errorTitle = errorTitle,
+          error = error,
+          promptTitle = promptTitle,
+          prompt = prompt
+        )
+      )
+
+      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
+      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
+      xmlData <- xml_add_child(data_val, c(formula, sqref))
+      private$do_append_x14(xmlData, "x14:dataValidation", "x14:dataValidations")
+
+      invisible(self)
+    }
   )
 )
 
@@ -519,8 +705,15 @@ wb_worksheet <- function() {
   wbWorksheet$new()
 }
 
-empty_cols_attr <- function(n = 0) {
+empty_cols_attr <- function(n = 0, beg, end) {
   # make make this a specific class/object?
+
+  if (!missing(beg) && !missing(end)) {
+    n_seq <- seq.int(beg, end, by = 1)
+    n <- length(n_seq)
+  } else {
+     n_seq <- seq_len(n)
+  }
 
   cols_attr_nams <- c("bestFit", "collapsed", "customWidth", "hidden", "max",
                       "min", "outlineLevel", "phonetic", "style", "width")
@@ -532,9 +725,9 @@ empty_cols_attr <- function(n = 0) {
   names(z) <- cols_attr_nams
 
   if (n > 0) {
-    z$min <- seq_len(n)
-    z$max <- seq_len(n)
-    z$width <- "10.71" # default width in ms365
+    z$min <- n_seq
+    z$max <- n_seq
+    z$width <- "8.43" # default width in ms365
   }
 
   z

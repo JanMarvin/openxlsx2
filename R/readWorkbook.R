@@ -1,4 +1,4 @@
-#' @name read.xlsx
+#' @name read_xlsx
 #' @title  Read from an Excel file or Workbook object
 #' @description Read data from an Excel file or Workbook object into a data.frame
 #' @param xlsxFile An xlsx file, Workbook object or URL to xlsx file.
@@ -9,7 +9,7 @@
 #' @param skipEmptyRows If `TRUE`, empty rows are skipped else empty rows after the first row containing data
 #' will return a row of NAs.
 #' @param rowNames If `TRUE`, first column of data will be used as row names.
-#' @param detectDates If `TRUE`, attempt to recognise dates and perform conversion.
+#' @param detectDates If `TRUE`, attempt to recognize dates and perform conversion.
 #' @param cols A numeric vector specifying which columns in the Excel file to read.
 #' If NULL, all columns are read.
 #' @param rows A numeric vector specifying which rows in the Excel file to read.
@@ -18,11 +18,12 @@
 #' are checked to ensure that they are syntactically valid variable names
 #' @param sep.names (unimplemented) One character which substitutes blanks in column names. By default, "."
 #' @param namedRegion A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.
-#' @param na.strings (unimplemented) A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
-#' @param fillMergedCells (unimplemented) If TRUE, the value in a merged cell is given to all cells within the merge.
+#' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+#' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
+#' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If `TRUE`, empty columns are skipped.
-#' @seealso [getNamedRegions()]
-#' @details Formulae written using writeFormula to a Workbook object will not get picked up by read.xlsx().
+#' @seealso [get_named_regions()]
+#' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
 #' @return data.frame
@@ -30,28 +31,28 @@
 #' @examples
 #'
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-#' df1 <- read.xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
+#' df1 <- read_xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
 #' sapply(df1, class)
 #'
-#' df2 <- read.xlsx(xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE)
-#' df2$Date <- convertToDate(df2$Date)
+#' df2 <- read_xlsx(xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE)
+#' df2$Date <- convert_date(df2$Date)
 #' sapply(df2, class)
 #' head(df2)
 #'
-#' df2 <- read.xlsx(
+#' df2 <- read_xlsx(
 #'   xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE,
 #'   detectDates = TRUE
 #' )
 #' sapply(df2, class)
 #' head(df2)
 #'
-#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' df3 <- read.xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
-#' df4 <- read.xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
+#' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' df3 <- read_xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
+#' df4 <- read_xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
 #' all.equal(df3, df4)
 #'
-#' wb <- loadWorkbook(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' df3 <- read.xlsx(wb,
+#' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' df3 <- read_xlsx(wb,
 #'   sheet = 2, skipEmptyRows = FALSE,
 #'   cols = c(1, 4), rows = c(1, 3, 4)
 #' )
@@ -60,85 +61,89 @@
 #' ##
 #' \dontrun{
 #' xlsxFile <- "https://github.com/awalker89/openxlsx/raw/master/inst/readTest.xlsx"
-#' head(read.xlsx(xlsxFile))
+#' head(read_xlsx(xlsxFile))
 #' }
 #'
 #' @export
-read.xlsx <- function(
+read_xlsx <- function(
   xlsxFile,
   sheet,
   startRow        = 1,
   colNames        = TRUE,
   rowNames        = FALSE,
-  detectDates     = FALSE,
-  skipEmptyRows   = TRUE,
-  skipEmptyCols   = TRUE,
+  detectDates     = TRUE,
+  skipEmptyRows   = FALSE,
+  skipEmptyCols   = FALSE,
   rows            = NULL,
   cols            = NULL,
   namedRegion,
-  na.strings      = "NA",
+  na.strings      = "#N/A",
+  na.numbers      = NA,
   check.names     = FALSE,
   sep.names       = ".",
   fillMergedCells = FALSE
 ) {
 
-  # TODO just default sheet to 1
-  if (missing(sheet)) {
-    sheet <- 1
-  }
-
-  # TODO is.Workbook() would be better
-  if (inherits(xlsxFile, c("Workbook", "wbWorkbook"))) {
-    wb <- xlsxFile
-  } else {
-    wb <- loadWorkbook(xlsxFile = xlsxFile)
-  }
+  # keep sheet missing // read_xlsx is the function to replace.
+  # dont mess with wb_to_df
+  if (missing(sheet))
+    sheet <- substitute()
 
   wb_to_df(
-    wb,
-    sheet         = sheet,
-    startRow      = startRow,
-    colNames      = colNames,
-    rowNames      = rowNames,
-    detectDates   = detectDates,
-    skipEmptyRows = skipEmptyRows,
-    rows          = rows,
-    cols          = cols,
-    definedName   = namedRegion,
-    na.strings    = na.strings
+    xlsxFile,
+    sheet           = sheet,
+    startRow        = startRow,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    detectDates     = detectDates,
+    skipEmptyRows   = skipEmptyRows,
+    skipEmptyCols   = skipEmptyCols,
+    rows            = rows,
+    cols            = cols,
+    named_region    = namedRegion,
+    na.strings      = na.strings,
+    na.numbers      = na.numbers,
+    fillMergedCells = fillMergedCells
   )
 }
 
 
-#' @name readWorkbook
+#' @name wb_read
 #' @title  Read from an Excel file or Workbook object
 #' @description Read data from an Excel file or Workbook object into a data.frame
-#' @inheritParams read.xlsx
+#' @inheritParams read_xlsx
 #' @details Creates a data.frame of all data in worksheet.
 #' @return data.frame
-#' @seealso [getNamedRegions()]
-#' @seealso [read.xlsx()]
+#' @seealso [get_named_regions()]
+#' @seealso [read_xlsx()]
 #' @export
 #' @examples
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-#' df1 <- readWorkbook(xlsxFile = xlsxFile, sheet = 1)
+#' df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1)
 #'
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-#' df1 <- readWorkbook(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
-readWorkbook <- function(
+#' df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
+wb_read <- function(
   xlsxFile,
   sheet         = 1,
   startRow      = 1,
   colNames      = TRUE,
   rowNames      = FALSE,
-  detectDates   = FALSE,
-  skipEmptyRows = TRUE,
-  skipEmptyCols = TRUE,
+  detectDates   = TRUE,
+  skipEmptyRows = FALSE,
+  skipEmptyCols = FALSE,
   rows          = NULL,
   cols          = NULL,
   namedRegion,
-  na.strings    = "NA"
+  na.strings    = "NA",
+  na.numbers    = NA
 ) {
+
+  # keep sheet missing // read_xlsx is the function to replace.
+  # dont mess with wb_to_df
+  if (missing(sheet))
+    sheet <- substitute()
+
   wb_to_df(
     xlsxFile      = xlsxFile,
     sheet         = sheet,
@@ -150,21 +155,22 @@ readWorkbook <- function(
     skipEmptyCols = skipEmptyCols,
     rows          = rows,
     cols          = cols,
-    definedName   = namedRegion,
-    na.strings    = na.strings
+    named_region  = namedRegion,
+    na.strings    = na.strings,
+    na.numbers    = na.numbers
   )
 
 }
 
-#' @name getSheetNames
+#' @name read_sheet_names
 #' @title Get names of worksheets
 #' @description Returns the worksheet names within an xlsx file
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples
-#' getSheetNames(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' read_sheet_names(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' @export
-getSheetNames <- function(file) {
+read_sheet_names <- function(file) {
   if (!file.exists(file)) {
     stop("file does not exist.")
   }
@@ -174,10 +180,9 @@ getSheetNames <- function(file) {
   }
 
   ## create temp dir and unzip
-  xmlDir <- file.path(tempdir(), "_excelXMLRead")
-  xmlFiles <- unzip(file, exdir = xmlDir)
-
+  xmlDir <- temp_dir("_excelXMLRead")
   on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
+  xmlFiles <- unzip(file, exdir = xmlDir)
 
   workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
   workbook <- read_xml(workbook)
@@ -189,8 +194,8 @@ getSheetNames <- function(file) {
   ## Such sheets need to be filtered out because otherwise their sheet names
   ## occur in the list of all sheet names, leading to a wrong association
   ## of sheet names with sheet indeces.
-  sheetNames <- sheets$name[sheets$`r:id` != ""]
-  sheetNames <- replaceXMLEntities(sheetNames)
+  sheets <- sheets$name[sheets$`r:id` != ""]
+  sheets <- replaceXMLEntities(sheets)
 
-  return(sheetNames)
+  return(sheets)
 }

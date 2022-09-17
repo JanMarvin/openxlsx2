@@ -13,7 +13,6 @@ test_that("class assertions work", {
   expect_null(assert_comment(    wb_comment()))
   expect_null(assert_hyperlink(  wb_hyperlink()))
   expect_null(assert_sheet_data( wb_sheet_data()))
-  expect_null(assert_style(      wb_style()))
   expect_null(assert_workbook(   wb_workbook()))
   expect_null(assert_worksheet(  wb_worksheet()))
 })

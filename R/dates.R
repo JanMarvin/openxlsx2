@@ -1,30 +1,43 @@
-#' @name convertToDate
+#' @name as_POSIXct_utc
+#' @title Convert to POSIXct with timezone UTC
+#' @param x something as.POSIXct can convert
+#' @keywords internal
+#' @noRd
+as_POSIXct_utc <- function(x) {
+  z <- as.POSIXct(x, tz = "UTC")
+  attr(z, "tzone") <- "UTC"
+  z
+}
+
+
+#' @name convert_date
 #' @title Convert from excel date number to R Date type
 #' @description Convert from excel date number to R Date type
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
 #' @param ... additional parameters passed to as.Date()
 #' @details Excel stores dates as number of days from some origin day
-#' @seealso [writeData()]
+#' @seealso [write_data()]
 #' @export
 #' @examples
 #' ## 2014 April 21st to 25th
-#' convertToDate(c(41750, 41751, 41752, 41753, 41754, NA))
-#' convertToDate(c(41750.2, 41751.99, NA, 41753))
-convertToDate <- function(x, origin = "1900-01-01", ...) {
+#' convert_date(c(41750, 41751, 41752, 41753, 41754, NA))
+#' convert_date(c(41750.2, 41751.99, NA, 41753))
+convert_date <- function(x, origin = "1900-01-01", ...) {
   x <- as.numeric(x)
   notNa <- !is.na(x)
   earlyDate <- x < 60
+
   if (origin == "1900-01-01") {
     x[notNa] <- x[notNa] - 2
     x[earlyDate & notNa] <- x[earlyDate & notNa] + 1
   }
 
-  return(as.Date(x, origin = origin, ...))
+  as.Date(x, origin = origin, ...)
 }
 
 
-#' @name convertToDateTime
+#' @name convert_datetime
 #' @title Convert from excel time number to R POSIXct type.
 #' @description Convert from excel time number to R POSIXct type.
 #' @param x A numeric vector
@@ -35,16 +48,12 @@ convertToDate <- function(x, origin = "1900-01-01", ...) {
 #' @examples
 #' ## 2014-07-01, 2014-06-30, 2014-06-29
 #' x <- c(41821.8127314815, 41820.8127314815, NA, 41819, NaN)
-#' convertToDateTime(x)
-#' convertToDateTime(x, tz = "Australia/Perth")
-#' convertToDateTime(x, tz = "UTC")
-convertToDateTime <- function(x, origin = "1900-01-01", ...) {
-  sci_pen <- getOption("scipen")
-  options("scipen" = 10000)
-  on.exit(options("scipen" = sci_pen), add = TRUE)
-
+#' convert_datetime(x)
+#' convert_datetime(x, tz = "Australia/Perth")
+#' convert_datetime(x, tz = "UTC")
+convert_datetime <- function(x, origin = "1900-01-01", ...) {
   x <- as.numeric(x)
-  date <- convertToDate(x, origin)
+  date <- convert_date(x, origin)
 
   x <- x * 86400
   rem <- x %% 86400
@@ -59,70 +68,61 @@ convertToDateTime <- function(x, origin = "1900-01-01", ...) {
   date_time <- rep(NA, length(x))
   date_time[notNA] <- as.POSIXct(paste(date[notNA], y[notNA]), ...)
 
-  date_time <- .POSIXct(date_time)
-
-  return(date_time)
+  .POSIXct(date_time)
 }
 
 
 
-#' @name getDateOrigin
+#' @name get_date_origin
 #' @title Get the date origin an xlsx file is using
 #' @description Return the date origin used internally by an xlsx or xlsm file
-#' @param xlsxFile An xlsx or xlsm file.
+#' @param xlsxFile An xlsx or xlsm file or a wbWorkbook object.
+#' @param origin return the origin instead of the character string.
 #' @details Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
-#' checks the date origin being used in an Excel file and returns is so it can be used in [convertToDate()]
+#' checks the date origin being used in an Excel file and returns is so it can be used in [convert_date()]
 #' @return One of "1900-01-01" or "1904-01-01".
-#' @seealso [convertToDate()]
+#' @seealso [convert_date()]
 #' @examples
 #'
 #' ## create a file with some dates
 #' \dontrun{
-#' write.xlsx(as.Date("2015-01-10") - (0:4), file = "getDateOriginExample.xlsx")
-#' m <- read.xlsx("getDateOriginExample.xlsx")
+#' write_xlsx(as.Date("2015-01-10") - (0:4), file = "get_date_originExample.xlsx")
+#' m <- read_xlsx("get_date_originExample.xlsx")
 #'
 #' ## convert to dates
-#' do <- getDateOrigin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' convertToDate(m[[1]], do)
+#' do <- get_date_origin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' convert_date(m[[1]], do)
 #' }
+#' get_date_origin(wb_workbook())
+#' get_date_origin(wb_workbook(), origin = TRUE)
 #' @export
-getDateOrigin <- function(xlsxFile) {
-  # TODO: allow using a workbook? 
-  xlsxFile <- getFile(xlsxFile)
-  if (!file.exists(xlsxFile)) {
-    stop("File does not exist.")
-  }
+get_date_origin <- function(xlsxFile, origin = FALSE) {
+  
+  # TODO: allow using a workbook?
+  if (!inherits(xlsxFile, "wbWorkbook"))
+    xlsxFile <- wb_load(xlsxFile) 
 
-  if (grepl("\\.xls$|\\.xlm$", xlsxFile)) {
-    stop("openxlsx can not read .xls or .xlm files!")
-  }
-
-  ## create temp dir and unzip
-  xmlDir <- file.path(tempdir(), "_excelXMLRead")
-  xmlFiles <- unzip(xlsxFile, exdir = xmlDir)
-
-  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
-
-  workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- read_xml(workbook, pointer = FALSE)
-
-  if (grepl('date1904="1"|date1904="true"', workbook, ignore.case = TRUE)) {
-    origin <- "1904-01-01"
+  if (grepl('date1904="1"|date1904="true"', xlsxFile$workbook$workbookPr, ignore.case = TRUE)) {
+    z <- ifelse(origin, 24107L, "1904-01-01")
   } else {
-    origin <- "1900-01-01"
+    z <- ifelse(origin, 25569L, "1900-01-01")
   }
 
-  return(origin)
+  z
 }
 
 #' convert back to ExcelDate
 #' @param df dataframe
 #' @param date1904 take different origin
+#' @examples
+#'  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+#'  wb1 <- wb_load(xlsxFile)
+#'  df <- wb_to_df(wb1)
+#'  # conversion is done on dataframes only
+#'  convertToExcelDate(df = df["Var5"], date1904 = FALSE)
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
-
-
-  isPOSIXlt <- function(data) sapply(lapply(data, class), FUN = function(x) any(x == "POSIXlt"))
+  isPOSIXlt <- function(data) vapply(data, inherits, NA, "POSIXlt")
   to_convert <- isPOSIXlt(df)
 
   if (any(to_convert)) {
@@ -130,24 +130,26 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
     df[to_convert] <- lapply(df[to_convert], as.POSIXct)
   }
 
-  df_class <- sapply(df, class)
-  ## convert any Dates to integers and create date style object
-  if (any(df_class %in%  c("Date", "POSIXct"))) {
-    dInds <- which(sapply(df_class, function(x) "Date" %in% x))
+  df_class <- as.data.frame(Map(class, df))
+  is_date <- apply(df_class, 2, function(x) any(x %in%  c("Date", "POSIXct")))
 
+  ## convert any Dates to integers and create date style object
+  if (any(is_date)) {
+
+    dInds <- which(apply(df_class, 2, function(x) any(x %in%  c("Date"))))
     origin <- 25569L
     if (date1904) origin <- 24107L
 
     for (i in dInds) {
       df[[i]] <- as.integer(df[[i]]) + origin
-      if (origin == 25569L){
+      if (origin == 25569L) {
         earlyDate <- which(df[[i]] < 60)
         df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
       }
     }
 
-    pInds <- which(sapply(df_class, function(x) any(c("POSIXct") %in% x)))
-    if (length(pInds) > 0 & nrow(df) > 0) {
+    pInds <- which(apply(df_class, 2, function(x) any(x %in%  c("POSIXct"))))
+    if (length(pInds) && nrow(df)) {
       parseOffset <- function(tz) {
         suppressWarnings(
           ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
@@ -165,5 +167,5 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
     }
   }
 
-  return(df)
+  df
 }

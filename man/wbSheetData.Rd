@@ -23,25 +23,19 @@ A hyperlink
 \item{\code{cc}}{cc}
 
 \item{\code{cc_out}}{cc_out}
-
-\item{\code{style_id}}{style_id}
-
-\item{\code{data_count}}{data_count}
-
-\item{\code{n_elements}}{n_elements}
 }
 \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{wbSheetData$new()}}
-\item \href{#method-clone}{\code{wbSheetData$clone()}}
+\item \href{#method-wbSheetData-new}{\code{wbSheetData$new()}}
+\item \href{#method-wbSheetData-clone}{\code{wbSheetData$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-wbSheetData-new"></a>}}
+\if{latex}{\out{\hypertarget{method-wbSheetData-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{wbSheetData} object
 \subsection{Usage}{
@@ -53,8 +47,8 @@ a \code{wbSheetData} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-wbSheetData-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-wbSheetData-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

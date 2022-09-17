@@ -4,28 +4,30 @@
 \alias{as_xml}
 \title{loads character string to pugixml and returns an externalptr}
 \usage{
-as_xml(x)
+as_xml(x, ...)
 }
 \arguments{
 \item{x}{input as xml}
+
+\item{...}{additional arguments passed to \code{read_xml()}}
 }
 \description{
 loads character string to pugixml and returns an externalptr
 }
 \details{
-might be usefull for larger documents where single nodes are shortened
+might be useful for larger documents where single nodes are shortened
 and otherwise the full tree has to be reimported. unsure where we have
 such a case.
-is usefull, for printing nodes from a larger tree, that have been exported
+is useful, for printing nodes from a larger tree, that have been exported
 as characters (at some point in time we have to convert the xml to R)
 }
 \examples{
 \dontrun{
-tmp_xlsx <- tempdir()
+tmp_xlsx <- tempfile()
 xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 unzip(xlsxFile, exdir = tmp_xlsx)
 
-wb <- loadWorkbook(xlsxFile)
+wb <- wb_load(xlsxFile)
 styles_xml <- sprintf("\%s/xl/styles.xml", tmp_xlsx)
 
 # is external pointer

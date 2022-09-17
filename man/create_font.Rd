@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_font}
 \alias{create_font}
-\title{create number format}
+\title{create font format}
 \usage{
 create_font(
   b = "",
@@ -29,7 +29,7 @@ create_font(
 
 \item{color}{rgb color: default "FF000000"}
 
-\item{condense}{condese}
+\item{condense}{condense}
 
 \item{extend}{extend}
 
@@ -54,7 +54,7 @@ create_font(
 \item{vertAlign}{vertical alignment}
 }
 \description{
-create number format
+create font format
 }
 \examples{
 \dontrun{

@@ -19,11 +19,11 @@ set_cell_style(wb, sheet, cell, value)
 helper set_cell_style
 }
 \examples{
-wb <- createWorkbook()
-addWorksheet(wb, "test")
+wb <- wb_workbook()
+wb$add_worksheet("test")
 
 mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
-writeData(wb, "test", mat, colNames = FALSE)
+wb$add_data("test", mat, colNames = FALSE)
 
 
 x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
@@ -39,11 +39,11 @@ wb_styles <- attr(wb, "wb_styles")
 # new styles are 1:28, because s in a 0-index
 for (i in wb_styles) {
   cell <- sprintf("\%s1:\%s28", int2col(i), int2col(i))
-  set_cell_style(wb, "test", cell, as.character(i))
+  wb$set_cell_style("test", cell, as.character(i))
 }
 
 \dontrun{
 # look at the beauty you've created
-wb_open(wb)
+if (interactive()) wb_open(wb)
 }
 }

@@ -16,11 +16,14 @@ wb_to_df(
   rows = NULL,
   cols = NULL,
   na.strings = "#N/A",
+  na.numbers = NA,
+  fillMergedCells = FALSE,
   dims,
   showFormula = FALSE,
   convert = TRUE,
   types,
-  definedName
+  definedName,
+  named_region
 )
 }
 \arguments{
@@ -34,7 +37,7 @@ wb_to_df(
 
 \item{rowNames}{If TRUE, the first col of data will be used as row names.}
 
-\item{detectDates}{If TRUE, attempt to recognise dates and perform conversion.}
+\item{detectDates}{If TRUE, attempt to recognize dates and perform conversion.}
 
 \item{skipEmptyCols}{If TRUE, empty columns are skipped.}
 
@@ -46,7 +49,11 @@ wb_to_df(
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 
-\item{dims}{Character string of type "A1:B2" as optional dimentions to be imported.}
+\item{na.numbers}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
+
+\item{fillMergedCells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+
+\item{dims}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
 \item{showFormula}{If TRUE, the underlying Excel formulas are shown.}
 
@@ -54,7 +61,9 @@ wb_to_df(
 
 \item{types}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created}
 
-\item{definedName}{Character string with a definedName. If no sheet is selected, the first appearance will be selected.}
+\item{definedName}{(deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.}
+
+\item{named_region}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
 }
 \description{
 Simple function to create a dataframe from a workbook. Simple as in simply
@@ -65,7 +74,7 @@ written down and not optimized etc. The goal was to have something working.
   ###########################################################################
   # numerics, dates, missings, bool and string
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  wb1 <- loadWorkbook(xlsxFile)
+  wb1 <- wb_load(xlsxFile)
 
   # import workbook
   wb_to_df(wb1)
@@ -109,26 +118,26 @@ written down and not optimized etc. The goal was to have something working.
   # na string
   wb_to_df(wb1, na.strings = "")
 
-  # read.xlsx(wb1)
+  # read_xlsx(wb1)
 
   ###########################################################################
   # inlinestr
   xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
-  wb2 <- loadWorkbook(xlsxFile)
+  wb2 <- wb_load(xlsxFile)
 
   # read dataset with inlinestr
   wb_to_df(wb2)
-  # read.xlsx(wb2)
+  # read_xlsx(wb2)
 
   ###########################################################################
-  # definedName // namedRegion
+  # named_region // namedRegion
   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
-  wb3 <- loadWorkbook(xlsxFile)
+  wb3 <- wb_load(xlsxFile)
 
-  # read dataset with definedName (returns global first)
-  wb_to_df(wb3, definedName = "MyRange", colNames = FALSE)
+  # read dataset with named_region (returns global first)
+  wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
 
-  # read definedName from sheet
-  wb_to_df(wb3, definedName = "MyRange", sheet = 4, colNames = FALSE)
+  # read named_region from sheet
+  wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
 
 }

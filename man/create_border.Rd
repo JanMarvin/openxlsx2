@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_border}
 \alias{create_border}
-\title{create fill}
+\title{create border}
 \usage{
 create_border(
   diagonalDown = "",
@@ -60,5 +60,6 @@ create_border(
 \item{vertical}{x}
 }
 \description{
-create fill
+Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
+Border colors are of the following type: c(rgb="FF000000")
 }

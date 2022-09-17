@@ -2,17 +2,13 @@
 ^\.Rproj\.user$
 cran-comments.md
 ^revdep$
-^.*\.github\*
-.travis.yml
-.appveyor.yml
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^\.travis\.yml$
 ^\.github$
-^azure-pipelines\.yml$
+^\.vscode$
 ^\.pre-commit-config\.yaml$
 ^img$
 ^\.lintr$
@@ -20,3 +16,7 @@ cran-comments.md
 \~\$.*\.[a-z]+$
 ^codecov\.yml$
 ^data-raw$
+^.covrignore$
+^doc$
+^Meta$
+^README\.Rmd$

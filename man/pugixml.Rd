@@ -3,15 +3,18 @@
 \name{pugixml}
 \alias{pugixml}
 \alias{xml_node}
+\alias{xml_node_name}
 \alias{xml_value}
 \alias{xml_attr}
 \title{xml_node}
 \usage{
-xml_node(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL)
+xml_node(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...)
 
-xml_value(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL)
+xml_node_name(xml, level1 = NULL, level2 = NULL, ...)
 
-xml_attr(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL)
+xml_value(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...)
+
+xml_attr(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...)
 }
 \arguments{
 \item{xml}{something xml}
@@ -22,7 +25,7 @@ xml_attr(xml, level1 = NULL, level2 = NULL, level3 = NULL, level4 = NULL)
 
 \item{level3}{to please check}
 
-\item{level4}{to please check}
+\item{...}{additional arguments passed to \code{read_xml()}}
 }
 \description{
 returns xml values as character
@@ -30,6 +33,7 @@ returns xml values as character
 \details{
 This function returns XML nodes as used in openxlsx2. In theory they
 could be returned as pointers as well, but this has not yet been implemented.
+If no level is provided, the nodes on level1 are returned
 }
 \examples{
   x <- read_xml("<a><b/></a>")
@@ -37,6 +41,8 @@ could be returned as pointers as well, but this has not yet been implemented.
   xml_node(x, "a")
   # return b. requires the path to the node
   xml_node(x, "a", "b")
+  xml_node_name("<a/>")
+  xml_node_name("<a><b/></a>", "a")
   x <- read_xml("<a>1</a>")
   xml_value(x, "a")
 

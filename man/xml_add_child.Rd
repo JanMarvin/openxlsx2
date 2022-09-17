@@ -4,23 +4,33 @@
 \alias{xml_add_child}
 \title{append xml child to node}
 \usage{
-xml_add_child(xml_node, xml_child, pointer = FALSE, escapes = FALSE)
+xml_add_child(xml_node, xml_child, level, pointer = FALSE, ...)
 }
 \arguments{
 \item{xml_node}{xml_node}
 
 \item{xml_child}{xml_child}
 
+\item{level}{optional level, if missing the first child is picked}
+
 \item{pointer}{pointer}
 
-\item{escapes}{escapes}
+\item{...}{additional arguments passed to \code{read_xml()}}
 }
 \description{
 append xml child to node
 }
 \examples{
-xml_node <- "<node><child1/><child2/></node>"
-xml_child <- "<new_child/>"
+xml_node <- "<a><b/></a>"
+xml_child <- "<c/>"
 
+# add child to first level node
 xml_add_child(xml_node, xml_child)
+
+# add child to second level node as request
+xml_node <- xml_add_child(xml_node, xml_child, level = c("b"))
+
+# add child to third level node as request
+xml_node <- xml_add_child(xml_node, "<d/>", level = c("b", "c"))
+
 }
