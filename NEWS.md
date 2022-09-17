@@ -2,6 +2,8 @@
 
 ## New features
 
+* New argument `startCol` in read to data frame functions `wb_to_df()`, `wb_read()` and `read_xlsx()`. [330](https://github.com/JanMarvin/openxlsx2/issues/330)
+
 * New function `wb_colour()` to ease working with colour vectors used in `openxlsx2` styles. [292](https://github.com/JanMarvin/openxlsx2/issues/292)
 
 * Deprecated `get_cell_style()` and `set_cell_style()` in favor of newly introduced wrapper functions `wb_get_cell_style()` and `wb_set_cell_style()`. [306](https://github.com/JanMarvin/openxlsx2/issues/306)
@@ -39,6 +41,14 @@
 * Fixes a bug in `update_cell()` that slowed down writing on worksheets with data. In addition, this function has been cleaned up and further improved. It is no longer exported, as users only need to use `wb_add_data()` or `write_data()`, each of which calls `update_cell()` under the hood. [275](https://github.com/JanMarvin/openxlsx2/pull/275) [276](https://github.com/JanMarvin/openxlsx2/pull/276)
 
 * Various (mostly internal) changes to `conditional_formatting`. Created `style_mgr` integration for `dxf` (cf-styles) and cleaned up internal code. The syntax has changed slightly, see [conditional formatting vignette](https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html) for reference. Add `whitespace` argument to `read_xml()`. [268](https://github.com/JanMarvin/openxlsx2/issues/268)
+
+## Breaking changes
+
+* Order of arguments in reading functions `wb_to_df()`, `wb_read()` and `read_xls()` has changed.
+
+
+***************************************************************************
+
 
 # openxlsx2 0.2.1
 
@@ -141,6 +151,9 @@
   * `$append_workbook_field()` for `self$workbook[[field]]`
   * `$append_sheet_rels()` for `self$worksheet_rels[[sheet]]`
   * `$get_worksheet()` to replace `$ws()`
+
+
+***************************************************************************
 
 # openxlsx2 0.2.0
 
