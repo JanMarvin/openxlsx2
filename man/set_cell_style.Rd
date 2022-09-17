@@ -39,7 +39,7 @@ wb_styles <- attr(wb, "wb_styles")
 # new styles are 1:28, because s in a 0-index
 for (i in wb_styles) {
   cell <- sprintf("\%s1:\%s28", int2col(i), int2col(i))
-  set_cell_style(wb, "test", cell, as.character(i))
+  wb$set_cell_style("test", cell, as.character(i))
 }
 
 \dontrun{

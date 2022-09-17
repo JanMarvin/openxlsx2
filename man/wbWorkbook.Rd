@@ -45,6 +45,8 @@ Returns sheet visibility
 The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
+
+a character vector of cell styles
 }
 \description{
 R6 class for a Workbook
@@ -149,8 +151,6 @@ create_border
 \item{\code{drawings}}{drawings}
 
 \item{\code{drawings_rels}}{drawings_rels}
-
-\item{\code{drawings_vml}}{drawings_vml}
 
 \item{\code{embeddings}}{embeddings}
 
@@ -298,6 +298,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_font}{\code{wbWorkbook$add_font()}}
 \item \href{#method-wbWorkbook-add_numfmt}{\code{wbWorkbook$add_numfmt()}}
 \item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
+\item \href{#method-wbWorkbook-get_cell_style}{\code{wbWorkbook$get_cell_style()}}
+\item \href{#method-wbWorkbook-set_cell_style}{\code{wbWorkbook$set_cell_style()}}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
 \item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
@@ -2280,6 +2282,49 @@ The \code{wbWorksheetObject}, invisibly
 
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_cell_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_cell_style}{}}}
+\subsection{Method \code{get_cell_style()}}{
+get sheet style
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_cell_style(sheet = current_sheet(), dims)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_cell_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_cell_style}{}}}
+\subsection{Method \code{set_cell_style()}}{
+set sheet style
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_cell_style(sheet = current_sheet(), dims, style)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+
+\item{\code{style}}{style}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-clone_sheet_style"></a>}}

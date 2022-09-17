@@ -2014,6 +2014,37 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   wb$clone()$add_style(style, style_name)
 }
 
+#' get and set cell style
+#' @name cell_style
+#' @param wb wb
+#' @param sheet sheet
+#' @param dims dims
+#' @examples
+#' # set a style in b1
+#' wb <- wb_workbook()$add_worksheet()$
+#'   add_numfmt(dims = "B1", numfmt = "#,0")
+#'
+#' # get style from b1 to assign it to a1
+#' numfmt <- wb$get_cell_style(dims = "B1")
+#' 
+#' # assign style to a1
+#' wb$set_cell_style(dims = "A1", style = numfmt)
+#' @return wb_get_cell_style returns the style id as character
+#' @export
+wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
+  assert_workbook(wb)
+  wb$get_cell_style(sheet, dims)
+}
+
+#' @rdname cell_style
+#' @param style style
+#' @return wb_set_cell_style returns the workbook invisible
+#' @export
+wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
+  assert_workbook(wb)
+  wb$clone()$set_cell_style(sheet, dims, style)
+}
+
 #' add border for cell region
 #'
 #' @description wb wrapper to create borders for cell region

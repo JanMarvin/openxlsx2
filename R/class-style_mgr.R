@@ -60,8 +60,8 @@
 #' # wb$styles_mgr$get_xf_id("new_xf")
 #'
 #'  ## assign styles to cells
-#' set_cell_style(wb, "SUM", "B3:I3", wb$styles_mgr$get_xf_id("head_xf"))
-#' set_cell_style(wb, "SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
+#' wb$set_cell_style("SUM", "B3:I3", wb$styles_mgr$get_xf_id("head_xf"))
+#' wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 #' # wb_open(wb)
 #'
 #' @export
