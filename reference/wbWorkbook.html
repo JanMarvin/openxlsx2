@@ -137,6 +137,9 @@ character substitutions.</p>
 
 
 <p>The <code>wbWorkbook</code> object</p>
+
+
+<p>a character vector of cell styles</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -191,10 +194,6 @@ character substitutions.</p>
 
 <dt><code>drawings_rels</code></dt>
 <dd><p>drawings_rels</p></dd>
-
-
-<dt><code>drawings_vml</code></dt>
-<dd><p>drawings_vml</p></dd>
 
 
 <dt><code>embeddings</code></dt>
@@ -422,6 +421,8 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-add_font"><code>wbWorkbook$add_font()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_numfmt"><code>wbWorkbook$add_numfmt()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_cell_style"><code>wbWorkbook$add_cell_style()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-get_cell_style"><code>wbWorkbook$get_cell_style()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-set_cell_style"><code>wbWorkbook$set_cell_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone_sheet_style"><code>wbWorkbook$clone_sheet_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_sparklines"><code>wbWorkbook$add_sparklines()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
@@ -2842,15 +2843,63 @@ are removed.</p></dd>
 </div>
 
 
-</div><p></p><hr><a id="method-wbWorkbook-clone_sheet_style"></a><div class="section">
-<h3 id="method-clone-sheet-style-">Method <code>clone_sheet_style()</code><a class="anchor" aria-label="anchor" href="#method-clone-sheet-style-"></a></h3>
-<p>clone style from one sheet to another</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-get_cell_style"></a><div class="section">
+<h3 id="method-get-cell-style-">Method <code><a href="get_cell_style.html">get_cell_style()</a></code><a class="anchor" aria-label="anchor" href="#method-get-cell-style-"></a></h3>
+<p>get sheet style</p><div class="section">
 <h4 id="usage-62">Usage<a class="anchor" aria-label="anchor" href="#usage-62"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone_sheet_style</span><span class="op">(</span>from <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">to</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_cell_style</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-58">Arguments<a class="anchor" aria-label="anchor" href="#arguments-58"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-wbWorkbook-set_cell_style"></a><div class="section">
+<h3 id="method-set-cell-style-">Method <code><a href="set_cell_style.html">set_cell_style()</a></code><a class="anchor" aria-label="anchor" href="#method-set-cell-style-"></a></h3>
+<p>set sheet style</p><div class="section">
+<h4 id="usage-63">Usage<a class="anchor" aria-label="anchor" href="#usage-63"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_cell_style</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, <span class="va">style</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-59">Arguments<a class="anchor" aria-label="anchor" href="#arguments-59"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
+<dt><code>style</code></dt>
+<dd><p>style</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-34">Returns<a class="anchor" aria-label="anchor" href="#returns-34"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+
+</div><p></p><hr><a id="method-wbWorkbook-clone_sheet_style"></a><div class="section">
+<h3 id="method-clone-sheet-style-">Method <code>clone_sheet_style()</code><a class="anchor" aria-label="anchor" href="#method-clone-sheet-style-"></a></h3>
+<p>clone style from one sheet to another</p><div class="section">
+<h4 id="usage-64">Usage<a class="anchor" aria-label="anchor" href="#usage-64"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone_sheet_style</span><span class="op">(</span>from <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">to</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-60">Arguments<a class="anchor" aria-label="anchor" href="#arguments-60"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>from</code></dt>
 <dd><p>the worksheet you are cloning</p></dd>
 
@@ -2865,12 +2914,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_sparklines"></a><div class="section">
 <h3 id="method-add-sparklines-">Method <code>add_sparklines()</code><a class="anchor" aria-label="anchor" href="#method-add-sparklines-"></a></h3>
 <p>apply sparkline to worksheet</p><div class="section">
-<h4 id="usage-63">Usage<a class="anchor" aria-label="anchor" href="#usage-63"></a></h4>
+<h4 id="usage-65">Usage<a class="anchor" aria-label="anchor" href="#usage-65"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_sparklines</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">sparklines</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-59">Arguments<a class="anchor" aria-label="anchor" href="#arguments-59"></a></h4>
+<h4 id="arguments-61">Arguments<a class="anchor" aria-label="anchor" href="#arguments-61"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>the worksheet you are using</p></dd>
 
@@ -2885,12 +2934,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-64">Usage<a class="anchor" aria-label="anchor" href="#usage-64"></a></h4>
+<h4 id="usage-66">Usage<a class="anchor" aria-label="anchor" href="#usage-66"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-60">Arguments<a class="anchor" aria-label="anchor" href="#arguments-60"></a></h4>
+<h4 id="arguments-62">Arguments<a class="anchor" aria-label="anchor" href="#arguments-62"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
