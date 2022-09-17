@@ -111,3 +111,12 @@ test_that("dims != rows & cols", {
   expect_equal("4", rownames(got6))
 
 })
+
+test_that("read startCol", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = cars, startCol = "E")
+
+  got <- wb_to_df(wb, startCol = 1, colNames = FALSE)
+  expect_equal(LETTERS[1:6], names(got))
+
+})

@@ -8,13 +8,14 @@ wb_to_df(
   xlsxFile,
   sheet,
   startRow = 1,
-  colNames = TRUE,
+  startCol = NULL,
   rowNames = FALSE,
-  detectDates = TRUE,
-  skipEmptyCols = FALSE,
+  colNames = TRUE,
   skipEmptyRows = FALSE,
+  skipEmptyCols = FALSE,
   rows = NULL,
   cols = NULL,
+  detectDates = TRUE,
   na.strings = "#N/A",
   na.numbers = NA,
   fillMergedCells = FALSE,
@@ -33,19 +34,21 @@ wb_to_df(
 
 \item{startRow}{first row to begin looking for data.}
 
-\item{colNames}{If TRUE, the first row of data will be used as column names.}
+\item{startCol}{first column to begin looking for data.}
 
 \item{rowNames}{If TRUE, the first col of data will be used as row names.}
 
-\item{detectDates}{If TRUE, attempt to recognize dates and perform conversion.}
-
-\item{skipEmptyCols}{If TRUE, empty columns are skipped.}
+\item{colNames}{If TRUE, the first row of data will be used as column names.}
 
 \item{skipEmptyRows}{If TRUE, empty rows are skipped.}
+
+\item{skipEmptyCols}{If TRUE, empty columns are skipped.}
 
 \item{rows}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
 
 \item{cols}{A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.}
+
+\item{detectDates}{If TRUE, attempt to recognize dates and perform conversion.}
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 

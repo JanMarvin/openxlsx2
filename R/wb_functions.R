@@ -173,6 +173,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param skipEmptyCols If TRUE, empty columns are skipped.
 #' @param skipEmptyRows If TRUE, empty rows are skipped.
 #' @param startRow first row to begin looking for data.
+#' @param startCol first column to begin looking for data.
 #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
 #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
 #' @param definedName (deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.
@@ -257,13 +258,14 @@ wb_to_df <- function(
   xlsxFile,
   sheet,
   startRow        = 1,
-  colNames        = TRUE,
+  startCol        = NULL,
   rowNames        = FALSE,
-  detectDates     = TRUE,
-  skipEmptyCols   = FALSE,
+  colNames        = TRUE,
   skipEmptyRows   = FALSE,
+  skipEmptyCols   = FALSE,
   rows            = NULL,
   cols            = NULL,
+  detectDates     = TRUE,
   na.strings      = "#N/A",
   na.numbers      = NA,
   fillMergedCells = FALSE,
@@ -376,6 +378,7 @@ wb_to_df <- function(
   keep_rows <- rownames(z)
 
   maxRow <- max(as.numeric(keep_rows))
+  maxCol <- max(col2int(keep_cols))
 
   if (startRow > 1) {
     keep_rows <- as.character(seq(startRow, maxRow))
@@ -405,6 +408,25 @@ wb_to_df <- function(
       rownames(z)  <- as.integer(keep_rows)
       rownames(tt) <- as.integer(keep_rows)
     }
+  }
+
+  if (!is.null(startCol)) {
+    keep_cols <- int2col(seq(col2int(startCol), maxCol))
+
+    if (!all(keep_cols %in% colnames(z))) {
+      keep_col <- keep_cols[!keep_cols %in% colnames(z)]
+
+      z[keep_col] <- NA_character_
+      tt[keep_col] <- NA_character_
+
+      # return expected order of columns
+      z <- z[keep_cols]
+      tt <- tt[keep_cols]
+    }
+    
+
+      z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
+      tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
   }
 
   if (!is.null(cols)) {
