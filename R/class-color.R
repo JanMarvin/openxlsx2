@@ -6,10 +6,10 @@
 #' @param hex A rgb color as ARGB hex value "FF000000".
 #' @param theme A zero based index referencing a value in the theme.
 #' @param tint A tint value applied. Range from -1 (dark) to 1 (light).
-#' @return a `wbColor` object
-#' @rdname wbColor
+#' @return a `wbColour` object
+#' @rdname wbColour
 #' @export
-wb_color <- function(
+wb_colour <- function(
     name = NULL,
     auto = NULL,
     indexed = NULL,
@@ -31,8 +31,8 @@ wb_color <- function(
   if (is.null(z))
     z <- c(name = "black")
 
-  class(z) <- c("character", "wbColor")
+  class(z) <- c("character", "wbColour")
   z
 }
 
-is_wbColor <- function(x) inherits(x, "wbColor")
+is_wbColour <- function(x) inherits(x, "wbColour")

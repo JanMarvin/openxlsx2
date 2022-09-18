@@ -2,9 +2,9 @@ my_workbook <- function() {
   # Make the workbook each time so wbWorkbook$debug() is easier to access within
   # each test
   wb <- wb_workbook()
-  negStyle <- create_dxfs_style(font_color = wb_color(hex = "FF9C0006"), bgFill = wb_color(hex = "FFFFC7CE"))
+  negStyle <- create_dxfs_style(font_color = wb_colour(hex = "FF9C0006"), bgFill = wb_colour(hex = "FFFFC7CE"))
   wb$styles_mgr$add(negStyle, "negStyle")
-  posStyle <- create_dxfs_style(font_color = wb_color(hex = "FF006100"), bgFill = wb_color(hex = "FFC6EFCE"))
+  posStyle <- create_dxfs_style(font_color = wb_colour(hex = "FF006100"), bgFill = wb_colour(hex = "FFC6EFCE"))
   wb$styles_mgr$add(posStyle, "posStyle")
   invisible(wb)
 }

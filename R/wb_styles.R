@@ -133,11 +133,11 @@ create_border <- function(
     vertical = ""
 ) {
 
-  if (!is.null(left_color) && inherits(left_color, "wbColor"))         left_color     <- xml_node_create("color", xml_attributes = left_color)
-  if (!is.null(right_color) && inherits(right_color, "wbColor"))       right_color    <- xml_node_create("color", xml_attributes = right_color)
-  if (!is.null(top_color) && inherits(top_color, "wbColor"))           top_color      <- xml_node_create("color", xml_attributes = top_color)
-  if (!is.null(bottom_color) && inherits(bottom_color, "wbColor"))     bottom_color   <- xml_node_create("color", xml_attributes = bottom_color)
-  if (!is.null(diagonal_color) && inherits(diagonal_color, "wbColor")) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
+  if (!is.null(left_color) && inherits(left_color, "wbColour"))         left_color     <- xml_node_create("color", xml_attributes = left_color)
+  if (!is.null(right_color) && inherits(right_color, "wbColour"))       right_color    <- xml_node_create("color", xml_attributes = right_color)
+  if (!is.null(top_color) && inherits(top_color, "wbColour"))           top_color      <- xml_node_create("color", xml_attributes = top_color)
+  if (!is.null(bottom_color) && inherits(bottom_color, "wbColour"))     bottom_color   <- xml_node_create("color", xml_attributes = bottom_color)
+  if (!is.null(diagonal_color) && inherits(diagonal_color, "wbColour")) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
 
   # excel dies on style=\"\"
   if (!is.null(left))     left     <- c(style = left)
@@ -281,7 +281,7 @@ merge_numFmts <- function(wb, new_numfmts) {
 create_font <- function(
     b = "",
     charset = "",
-    color = wb_color(hex = "FF000000"),
+    color = wb_colour(hex = "FF000000"),
     condense ="",
     extend = "",
     family = "2",
@@ -304,7 +304,7 @@ create_font <- function(
     charset <- xml_node_create("charset", xml_attributes = c("val" = charset))
   }
 
-  if (!is.null(color) && inherits(color, "wbColor")) {
+  if (!is.null(color) && inherits(color, "wbColour")) {
     # alt xml_attributes(theme:)
     color <- xml_node_create("color", xml_attributes = color)
   }
@@ -428,11 +428,11 @@ create_fill <- function(
     fgColor = NULL
 ) {
 
-  if (!is.null(bgColor) && inherits(bgColor, "wbColor")) {
+  if (!is.null(bgColor) && inherits(bgColor, "wbColour")) {
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
   }
 
-  if (!is.null(fgColor) && inherits(fgColor, "wbColor")) {
+  if (!is.null(fgColor) && inherits(fgColor, "wbColour")) {
     fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
@@ -855,12 +855,12 @@ set_cell_style <- function(wb, sheet, cell, value) {
 create_dxfs_style <- function(
     font_name      = "Calibri",
     font_size      = "11",
-    font_color     = wb_color(hex = "FF9C0006"),
+    font_color     = wb_colour(hex = "FF9C0006"),
     numFmt         = NULL,
     border         = NULL,
-    border_color   = wb_color(getOption("openxlsx2.borderColour", "black")),
+    border_color   = wb_colour(getOption("openxlsx2.borderColour", "black")),
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
-    bgFill         = wb_color(hex = "FFFFC7CE"),
+    bgFill         = wb_colour(hex = "FFFFC7CE"),
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,

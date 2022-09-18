@@ -76,12 +76,12 @@ wb$add_border(1, dims = "A5",
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
 wb$add_border(1, dims = "G12:H13",
- left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
- top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
+ left_color = wb_colour(hex = "FF9400D3"), right_color = wb_colour(hex = "FF4B0082"),
+ top_color = wb_colour(hex = "FF0000FF"), bottom_color = wb_colour(hex = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
 wb$add_border(1, dims = "B12:D14",
- left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
- bottom_color = wb_color(hex = "FFFF0000"))
+ left_color = wb_colour(hex = "FFFFFF00"), right_color = wb_colour(hex = "FFFF7F00"),
+ bottom_color = wb_colour(hex = "FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
 # if (interactive()) wb$open()
 
@@ -104,7 +104,7 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 ## ------------------------------------------------
 
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+ wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
 
 ## ------------------------------------------------
 ## Method `wbWorkbook$add_numfmt`
@@ -1939,10 +1939,10 @@ create borders for cell region
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_border(
   sheet = current_sheet(),
   dims = "A1",
-  bottom_color = wb_color(hex = "FF000000"),
-  left_color = wb_color(hex = "FF000000"),
-  right_color = wb_color(hex = "FF000000"),
-  top_color = wb_color(hex = "FF000000"),
+  bottom_color = wb_colour(hex = "FF000000"),
+  left_color = wb_colour(hex = "FF000000"),
+  right_color = wb_colour(hex = "FF000000"),
+  top_color = wb_colour(hex = "FF000000"),
   bottom_border = "thin",
   left_border = "thin",
   right_border = "thin",
@@ -1984,12 +1984,12 @@ wb$add_border(1, dims = "A5",
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
 wb$add_border(1, dims = "G12:H13",
- left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
- top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
+ left_color = wb_colour(hex = "FF9400D3"), right_color = wb_colour(hex = "FF4B0082"),
+ top_color = wb_colour(hex = "FF0000FF"), bottom_color = wb_colour(hex = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
 wb$add_border(1, dims = "B12:D14",
- left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
- bottom_color = wb_color(hex = "FFFF0000"))
+ left_color = wb_colour(hex = "FFFFFF00"), right_color = wb_colour(hex = "FFFF7F00"),
+ bottom_color = wb_colour(hex = "FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
 # if (interactive()) wb$open()
 
@@ -2011,7 +2011,7 @@ provide simple fill function
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
   sheet = current_sheet(),
   dims = "A1",
-  color = wb_color(hex = "FFFFFF00"),
+  color = wb_colour(hex = "FFFFFF00"),
   pattern = "solid",
   gradient_fill = "",
   every_nth_col = 1,
@@ -2026,7 +2026,7 @@ provide simple fill function
 
 \item{\code{dims}}{the cell range}
 
-\item{\code{color}}{the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")}
+\item{\code{color}}{the colors to apply, e.g. yellow: wb_colour(hex = "FFFFFF00")}
 
 \item{\code{pattern}}{various default "none" but others are possible:
 "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
@@ -2068,7 +2068,7 @@ provide simple font function
   sheet = current_sheet(),
   dims = "A1",
   name = "Calibri",
-  color = wb_color(hex = "FF000000"),
+  color = wb_colour(hex = "FF000000"),
   size = "11",
   bold = "",
   italic = "",
@@ -2130,7 +2130,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+ wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
 }
 \if{html}{\out{</div>}}
 

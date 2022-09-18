@@ -24,7 +24,7 @@
 #' wb$styles_mgr$styles$numFmts
 #'
 #' ## create and add huge font
-#' new_huge_font <- create_font(sz = "20", name = "Arial", b = "1", color = wb_color(hex = "FFFFFFFF"))
+#' new_huge_font <- create_font(sz = "20", name = "Arial", b = "1", color = wb_colour(hex = "FFFFFFFF"))
 #' wb$styles_mgr$add(new_huge_font, "arial_huge")
 #'
 #' ## create another font
@@ -32,7 +32,7 @@
 #' wb$styles_mgr$add(new_font, "arial")
 #'
 #' ## create and add new fill
-#' new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FF00224B"))
+#' new_fill <- create_fill(patternType = "solid", fgColor = wb_colour(hex = "FF00224B"))
 #' wb$styles_mgr$add(new_fill, "blue")
 #'
 #' # create new style with numfmt enabled

@@ -28,7 +28,7 @@ assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL,
 
 assert_chart_sheet <- function(x) assert_class(x, c("wbChartSheet", "R6"), all = TRUE)
 assert_comment     <- function(x) assert_class(x, c("wbComment",    "R6"), all = TRUE)
-assert_color       <- function(x) assert_class(x, c("wbColor"),            all = TRUE)
+assert_color       <- function(x) assert_class(x, c("wbColour"),           all = TRUE)
 assert_hyperlink   <- function(x) assert_class(x, c("wbHyperlink",  "R6"), all = TRUE)
 assert_sheet_data  <- function(x) assert_class(x, c("wbSheetData",  "R6"), all = TRUE)
 assert_workbook    <- function(x) assert_class(x, c("wbWorkbook",   "R6"), all = TRUE)
