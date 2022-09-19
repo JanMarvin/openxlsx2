@@ -17,7 +17,7 @@ wb_add_sparklines(wb, sheet = current_sheet(), sparklines)
 add sparklines to workbook
 }
 \examples{
- sl <- create_sparklines("Sheet  1", "A3:K3", "L3")
+ sl <- create_sparklines("Sheet 1", "A3:K3", "L3")
  wb <- wb_workbook() \%>\%
    wb_add_worksheet() \%>\%
    wb_add_data(x = mtcars) \%>\%
