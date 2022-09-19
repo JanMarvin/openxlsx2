@@ -2026,7 +2026,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #'
 #' # get style from b1 to assign it to a1
 #' numfmt <- wb$get_cell_style(dims = "B1")
-#' 
+#'
 #' # assign style to a1
 #' wb$set_cell_style(dims = "A1", style = numfmt)
 #' @return wb_get_cell_style returns the style id as character
@@ -2521,7 +2521,7 @@ wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
 #' @param sparklines sparklines object created with `create_sparklines()`
 #' @seealso [create_sparklines()]
 #' @examples
-#'  sl <- create_sparklines("Sheet  1", "A3:K3", "L3")
+#'  sl <- create_sparklines("Sheet 1", "A3:K3", "L3")
 #'  wb <- wb_workbook() %>%
 #'    wb_add_worksheet() %>%
 #'    wb_add_data(x = mtcars) %>%
