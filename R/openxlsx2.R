@@ -37,6 +37,7 @@
 #'    \item{`options("openxlsx2.numFmt" = NULL)`}
 #'    \item{`options("openxlsx2.paperSize" = 9)`} ## A4
 #'    \item{`options("openxlsx2.orientation" = "portrait")`} ## page orientation
+#'    \item{`options("openxlsx2.sheet.default_name" = "Sheet")`}
 #' }
 #'  See the Formatting vignette for examples.
 #'

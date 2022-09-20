@@ -405,7 +405,7 @@ test_that("wb_add_sparklines() is a wrapper", {
   expect_wrapper(
     "add_sparklines",
     wb = wb,
-    params = list(sparklines = create_sparklines("Sheet  1", "A3:L3", "M3", type = "column", first = "1"))
+    params = list(sparklines = create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"))
   )
 })
 
