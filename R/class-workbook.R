@@ -375,8 +375,8 @@ wbWorkbook <- R6::R6Class(
 
         # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
         # a better check for this
-        sheet <- paste(
-          getOption("openxlsx2.sheet.default_name", "Sheet"),
+        sheet <- paste0(
+          getOption("openxlsx2.sheet.default_name", "Sheet "),
           length(self$sheet_names) + 1L
         )
       }
