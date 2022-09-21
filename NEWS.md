@@ -2,6 +2,8 @@
 
 ## New features
 
+* New function `wb_colour()` to ease working with colour vectors used in `openxlsx2` styles. [292](https://github.com/JanMarvin/openxlsx2/issues/292)
+
 * Deprecated `get_cell_style()` and `set_cell_style()` in favor of newly introduced wrapper functions `wb_get_cell_style()` and `wb_set_cell_style()`. [306](https://github.com/JanMarvin/openxlsx2/issues/306)
 
 * Improvements to `wb_clone_worksheet()`. Cloning of chartsheets as well as worksheets containing charts, pivot tables, drawings and tables is now possible or tweaked. Slicers are removed from the cloned worksheet. [305](https://github.com/JanMarvin/openxlsx2/issues/305)

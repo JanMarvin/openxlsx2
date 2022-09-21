@@ -37,8 +37,8 @@ test_that("comments", {
   write_comment(wb, 1, col = "C", row = 10, comment = c2)
 
   # write a styled comment with system author
-  s1 <- create_font(b = "true", color = c(rgb = "FFFF0000"), sz = "12")
-  s2 <- create_font(color = c(rgb = "FF000000"), sz = "9")
+  s1 <- create_font(b = "true", color = wb_colour(hex = "FFFF0000"), sz = "12")
+  s2 <- create_font(color = wb_colour(hex = "FF000000"), sz = "9")
   c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 
   expect_silent(write_comment(wb, 1, col = 6, row = 3, comment = c3))

@@ -281,7 +281,7 @@ merge_numFmts <- function(wb, new_numfmts) {
 create_font <- function(
     b = "",
     charset = "",
-    color = c(rgb = "FF000000"),
+    color = wb_colour(hex = "FF000000"),
     condense ="",
     extend = "",
     family = "2",
@@ -304,7 +304,7 @@ create_font <- function(
     charset <- xml_node_create("charset", xml_attributes = c("val" = charset))
   }
 
-  if (!all(color == "")) {
+  if (!is.null(color) && all(color != "")) {
     # alt xml_attributes(theme:)
     color <- xml_node_create("color", xml_attributes = color)
   }
@@ -326,7 +326,6 @@ create_font <- function(
   }
 
   if(is.null(name)) name <- ""
-
   if (name != "") {
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
@@ -425,15 +424,15 @@ merge_fonts <- function(wb, new_fonts) {
 create_fill <- function(
     gradientFill = "",
     patternType = "",
-    bgColor = "",
-    fgColor = ""
+    bgColor = NULL,
+    fgColor = NULL
 ) {
 
-  if (bgColor != "") {
+  if (!is.null(bgColor) && all(bgColor != "")) {
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
   }
 
-  if (!all(fgColor == "")) {
+  if (!is.null(fgColor) && all(fgColor != "")) {
     fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
@@ -856,12 +855,12 @@ set_cell_style <- function(wb, sheet, cell, value) {
 create_dxfs_style <- function(
     font_name      = "Calibri",
     font_size      = "11",
-    font_color     = c(rgb = "FF9C0006"),
+    font_color     = wb_colour(hex = "FF9C0006"),
     numFmt         = NULL,
     border         = NULL,
-    border_color   = getOption("openxlsx2.borderColour", "black"),
+    border_color   = wb_colour(getOption("openxlsx2.borderColour", "black")),
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
-    bgFill         = c(rgb = "FFFFC7CE"),
+    bgFill         = wb_colour(hex = "FFFFC7CE"),
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,

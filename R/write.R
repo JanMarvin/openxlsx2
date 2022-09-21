@@ -198,7 +198,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
     if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
       hyperlinkfont <- create_font(
-        color = c(rgb = "FF0000FF"),
+        color = wb_colour(hex = "FF0000FF"),
         name = wb_get_base_font(wb)$name$val,
         u = "single")
 
