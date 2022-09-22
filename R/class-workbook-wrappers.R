@@ -2390,7 +2390,7 @@ wb_add_comment <- function(
     sheet = current_sheet(),
     col,
     row,
-    dims,
+    dims  = rowcol_to_dims(row, col),
     comment
   ) {
 
@@ -2410,6 +2410,39 @@ wb_add_comment <- function(
   )
 }
 
+#' Remove comment from worksheet
+#' @param wb A workbook object
+#' @param sheet A worksheet of the workbook
+#' @param col A column to apply the comment
+#' @param row A row to apply the comment
+#' @param dims Optional row and colum as spreadsheet dimension, e.g. "A1"
+#' @param gridExpand Remove all comments inside the grid. Similar to dims "A1:B2"
+#' @returns The `wbWorkbook` object
+#' @rdname comment
+#' @export
+wb_remove_comment <- function(
+    wb,
+    sheet = current_sheet(),
+    col,
+    row,
+    dims  = rowcol_to_dims(row, col),
+    gridExpand = TRUE
+  ) {
+
+  assert_workbook(wb)
+
+  if (missing(col))  col <- substitute()
+  if (missing(row))  row <- substitute()
+  if (missing(dims)) dims <- substitute()
+
+  wb$clone()$remove_comment(
+    sheet = sheet,
+    col = col,
+    row = row,
+    dims = dims,
+    gridExpand = gridExpand
+  )
+}
 
 #' Add conditional formatting to cells
 #'

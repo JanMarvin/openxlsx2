@@ -5,6 +5,7 @@
 \alias{write_comment}
 \alias{remove_comment}
 \alias{wb_add_comment}
+\alias{wb_remove_comment}
 \title{Create, write and remove comments}
 \usage{
 create_comment(
@@ -20,7 +21,23 @@ write_comment(wb, sheet, col, row, comment, xy = NULL)
 
 remove_comment(wb, sheet, col, row, gridExpand = TRUE)
 
-wb_add_comment(wb, sheet = current_sheet(), col, row, dims, comment)
+wb_add_comment(
+  wb,
+  sheet = current_sheet(),
+  col,
+  row,
+  dims = rowcol_to_dims(row, col),
+  comment
+)
+
+wb_remove_comment(
+  wb,
+  sheet = current_sheet(),
+  col,
+  row,
+  dims = rowcol_to_dims(row, col),
+  gridExpand = TRUE
+)
 }
 \arguments{
 \item{text}{Comment text. Character vector.}
@@ -49,12 +66,13 @@ wb_add_comment(wb, sheet = current_sheet(), col, row, dims, comment)
 \code{row} individually.  A vector of the form
 \code{c(col, row)}.}
 
-\item{gridExpand}{If \code{TRUE}, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
-will be removed.}
+\item{gridExpand}{Remove all comments inside the grid. Similar to dims "A1:B2"}
 
 \item{dims}{Optional row and colum as spreadsheet dimension, e.g. "A1"}
 }
 \value{
+The \code{wbWorkbook} object
+
 The \code{wbWorkbook} object
 }
 \description{

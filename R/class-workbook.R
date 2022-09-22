@@ -301,6 +301,11 @@ wbWorkbook <- R6::R6Class(
         return(NA_integer_)
       }
 
+      # write_comment uses wb_validate and bails otherwise
+      if (inherits(sheet, "openxlsx2_waiver")) {
+        sheet <- private$get_sheet_index(sheet)
+      }
+
       # input is number
       if (is.numeric(sheet)) {
         badsheet <- !sheet %in% seq_along(self$sheet_names)
@@ -2953,9 +2958,6 @@ wbWorkbook <- R6::R6Class(
         row <- as.integer(xy[[2]])
       }
 
-
-      sheet <- self$.__enclos_env__$private$get_sheet_index(sheet)
-
       write_comment(
         wb = self,
         sheet = sheet,
@@ -2963,6 +2965,34 @@ wbWorkbook <- R6::R6Class(
         row = row,
         comment = comment
       ) # has no use: xy
+
+      invisible(self)
+    },
+
+    #' @description Remove comment
+    #' @param sheet sheet
+    #' @param col column to apply the comment
+    #' @param row row to apply the comment
+    #' @param dims row and colum as spreadsheet dimension, e.g. "A1"
+    #' @param gridExpand Remove all comments inside the grid. Similar to dims "A1:B2"
+    #' @returns The `wbWorkbook` object
+    remove_comment = function(
+      sheet = current_sheet(),
+      col,
+      row,
+      dims  = rowcol_to_dims(row, col),
+      gridExpand = TRUE
+    ) {
+
+      if (!missing(dims)) {
+        xy <- unlist(dims_to_rowcol(dims))
+        col <- xy[[1]]
+        row <- as.integer(xy[[2]])
+        # with gridExpand this is always true
+        gridExpand <- TRUE
+      }
+
+      remove_comment(wb = self, sheet = sheet, col = col, row = row, gridExpand = TRUE)
 
       invisible(self)
     },
