@@ -73,13 +73,14 @@
 <span>  <span class="va">xlsxFile</span>,</span>
 <span>  <span class="va">sheet</span>,</span>
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  startCol <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  detectDates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  skipEmptyRows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  skipEmptyCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  detectDates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">namedRegion</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
 <span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -100,20 +101,19 @@
 
 
 <dt>startRow</dt>
-<dd><p>first row to begin looking for data.  Empty rows at the top of a file are always skipped,
-regardless of the value of startRow.</p></dd>
+<dd><p>first row to begin looking for data.</p></dd>
 
 
-<dt>colNames</dt>
-<dd><p>If <code>TRUE</code>, the first row of data will be used as column names.</p></dd>
+<dt>startCol</dt>
+<dd><p>first column to begin looking for data.</p></dd>
 
 
 <dt>rowNames</dt>
 <dd><p>If <code>TRUE</code>, first column of data will be used as row names.</p></dd>
 
 
-<dt>detectDates</dt>
-<dd><p>If <code>TRUE</code>, attempt to recognize dates and perform conversion.</p></dd>
+<dt>colNames</dt>
+<dd><p>If <code>TRUE</code>, the first row of data will be used as column names.</p></dd>
 
 
 <dt>skipEmptyRows</dt>
@@ -133,6 +133,10 @@ If NULL, all rows are read.</p></dd>
 <dt>cols</dt>
 <dd><p>A numeric vector specifying which columns in the Excel file to read.
 If NULL, all columns are read.</p></dd>
+
+
+<dt>detectDates</dt>
+<dd><p>If <code>TRUE</code>, attempt to recognize dates and perform conversion.</p></dd>
 
 
 <dt>namedRegion</dt>
