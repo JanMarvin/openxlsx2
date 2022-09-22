@@ -194,10 +194,6 @@ rowcol_to_dims <- function(row, col) {
   # no assert for col. will output character anyways
   # assert_class(row, "numeric") - complains if integer
 
-  # if (length(row) == 1 && length(col) == 1) {
-  #   return(stringi::stri_join(int2col(col), row))
-  # }
-
   col_int <- col2int(col)
 
   min_col <- int2col(min(col_int))
