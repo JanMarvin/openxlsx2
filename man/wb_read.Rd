@@ -8,13 +8,14 @@ wb_read(
   xlsxFile,
   sheet = 1,
   startRow = 1,
-  colNames = TRUE,
+  startCol = NULL,
   rowNames = FALSE,
-  detectDates = TRUE,
+  colNames = TRUE,
   skipEmptyRows = FALSE,
   skipEmptyCols = FALSE,
   rows = NULL,
   cols = NULL,
+  detectDates = TRUE,
   namedRegion,
   na.strings = "NA",
   na.numbers = NA
@@ -25,14 +26,13 @@ wb_read(
 
 \item{sheet}{The name or index of the sheet to read data from.}
 
-\item{startRow}{first row to begin looking for data.  Empty rows at the top of a file are always skipped,
-regardless of the value of startRow.}
+\item{startRow}{first row to begin looking for data.}
 
-\item{colNames}{If \code{TRUE}, the first row of data will be used as column names.}
+\item{startCol}{first column to begin looking for data.}
 
 \item{rowNames}{If \code{TRUE}, first column of data will be used as row names.}
 
-\item{detectDates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
+\item{colNames}{If \code{TRUE}, the first row of data will be used as column names.}
 
 \item{skipEmptyRows}{If \code{TRUE}, empty rows are skipped else empty rows after the first row containing data
 will return a row of NAs.}
@@ -44,6 +44,8 @@ If NULL, all rows are read.}
 
 \item{cols}{A numeric vector specifying which columns in the Excel file to read.
 If NULL, all columns are read.}
+
+\item{detectDates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
 
 \item{namedRegion}{A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.}
 

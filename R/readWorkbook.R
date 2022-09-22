@@ -3,8 +3,8 @@
 #' @description Read data from an Excel file or Workbook object into a data.frame
 #' @param xlsxFile An xlsx file, Workbook object or URL to xlsx file.
 #' @param sheet The name or index of the sheet to read data from.
-#' @param startRow first row to begin looking for data.  Empty rows at the top of a file are always skipped,
-#' regardless of the value of startRow.
+#' @param startRow first row to begin looking for data.
+#' @param startCol first column to begin looking for data.
 #' @param colNames If `TRUE`, the first row of data will be used as column names.
 #' @param skipEmptyRows If `TRUE`, empty rows are skipped else empty rows after the first row containing data
 #' will return a row of NAs.
@@ -69,13 +69,14 @@ read_xlsx <- function(
   xlsxFile,
   sheet,
   startRow        = 1,
-  colNames        = TRUE,
+  startCol        = NULL,
   rowNames        = FALSE,
-  detectDates     = TRUE,
+  colNames        = TRUE,
   skipEmptyRows   = FALSE,
   skipEmptyCols   = FALSE,
   rows            = NULL,
   cols            = NULL,
+  detectDates     = TRUE,
   namedRegion,
   na.strings      = "#N/A",
   na.numbers      = NA,
@@ -93,13 +94,14 @@ read_xlsx <- function(
     xlsxFile,
     sheet           = sheet,
     startRow        = startRow,
-    colNames        = colNames,
+    startCol        = startCol,
     rowNames        = rowNames,
-    detectDates     = detectDates,
+    colNames        = colNames,
     skipEmptyRows   = skipEmptyRows,
     skipEmptyCols   = skipEmptyCols,
     rows            = rows,
     cols            = cols,
+    detectDates     = detectDates,
     named_region    = namedRegion,
     na.strings      = na.strings,
     na.numbers      = na.numbers,
@@ -127,13 +129,14 @@ wb_read <- function(
   xlsxFile,
   sheet         = 1,
   startRow      = 1,
-  colNames      = TRUE,
+  startCol      = NULL,
   rowNames      = FALSE,
-  detectDates   = TRUE,
+  colNames      = TRUE,
   skipEmptyRows = FALSE,
   skipEmptyCols = FALSE,
   rows          = NULL,
   cols          = NULL,
+  detectDates   = TRUE,
   namedRegion,
   na.strings    = "NA",
   na.numbers    = NA
@@ -148,13 +151,14 @@ wb_read <- function(
     xlsxFile      = xlsxFile,
     sheet         = sheet,
     startRow      = startRow,
-    colNames      = colNames,
+    startCol      = startCol,
     rowNames      = rowNames,
-    detectDates   = detectDates,
+    colNames      = colNames,
     skipEmptyRows = skipEmptyRows,
     skipEmptyCols = skipEmptyCols,
     rows          = rows,
     cols          = cols,
+    detectDates   = detectDates,
     named_region  = namedRegion,
     na.strings    = na.strings,
     na.numbers    = na.numbers
