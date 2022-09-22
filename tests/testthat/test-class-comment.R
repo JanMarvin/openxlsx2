@@ -85,3 +85,23 @@ test_that("load comments", {
   unlink(tempd, recursive = TRUE)
 
 })
+
+test_that("wb_add_comment", {
+
+  c1 <- create_comment(text = "this is a comment", author = "")
+
+  wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)
+
+  wb2 <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_comment(col = "A", row = 1, comment = c1)
+
+  expect_equal(wb$comments, wb2$comments)
+
+
+  expect_error(
+    wb_workbook()$add_worksheet()$add_comment(dims = "A1"),
+    'argument "comment" is missing, with no default'
+  )
+
+})

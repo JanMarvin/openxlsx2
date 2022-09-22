@@ -293,6 +293,20 @@ test_that("wb_add_formula() is a wrapper", {
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
 })
 
+# wb_add_comment() --------------------------------------------------------
+
+test_that("wb_add_comment() is a wrapper", {
+
+  c1 <- create_comment(text = "this is a comment", author = "")
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_wrapper(
+    "add_comment",
+    params = list(comment = c1, dims = "A1")
+  )
+
+})
+
 # wb_add_conditional_formatting() -----------------------------------------
 
 test_that("wb_add_conditional_formatting() is a wrapper", {

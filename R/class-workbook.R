@@ -2931,6 +2931,42 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    ## comment ----
+
+    #' @description Add comment
+    #' @param sheet sheet
+    #' @param col column to apply the comment
+    #' @param row row to apply the comment
+    #' @param dims row and colum as spreadsheet dimension, e.g. "A1"
+    #' @param comment a comment to apply to the worksheet
+    #' @returns The `wbWorkbook` object
+    add_comment = function(
+        sheet = current_sheet(),
+        col,
+        row,
+        dims  = rowcol_to_dims(row, col),
+        comment) {
+
+      if (!missing(dims)) {
+        xy <- unlist(dims_to_rowcol(dims))
+        col <- xy[[1]]
+        row <- as.integer(xy[[2]])
+      }
+
+
+      sheet <- self$.__enclos_env__$private$get_sheet_index(sheet)
+
+      write_comment(
+        wb = self,
+        sheet = sheet,
+        col = col,
+        row = row,
+        comment = comment
+      ) # has no use: xy
+
+      invisible(self)
+    },
+
     ## conditional formatting ----
 
     # TODO remove_conditional_formatting?

@@ -2375,6 +2375,42 @@ wb_add_cell_style <- function(
   )
 }
 
+#' Add comment to worksheet
+#' @param wb A workbook object
+#' @param sheet A worksheet of the workbook
+#' @param col A column to apply the comment
+#' @param row A row to apply the comment
+#' @param dims Optional row and colum as spreadsheet dimension, e.g. "A1"
+#' @param comment A comment to apply to the worksheet
+#' @returns The `wbWorkbook` object
+#' @rdname comment
+#' @export
+wb_add_comment <- function(
+    wb,
+    sheet = current_sheet(),
+    col,
+    row,
+    dims,
+    comment
+  ) {
+
+  assert_workbook(wb)
+  assert_comment(comment)
+
+  if (missing(col))  col <- substitute()
+  if (missing(row))  row <- substitute()
+  if (missing(dims)) dims <- substitute()
+
+  wb$clone()$add_comment(
+    sheet   = sheet,
+    col     = col,
+    row     = row,
+    dims    = dims,
+    comment = comment
+  )
+}
+
+
 #' Add conditional formatting to cells
 #'
 #' Add conditional formatting to cells
