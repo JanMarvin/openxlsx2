@@ -63,7 +63,7 @@ are called comments in openxml. Modification of what Excel now calls comment
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create, write and remove comments</h1>
-    <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-comment.R" class="external-link"><code>R/class-comment.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-comment.R" class="external-link"><code>R/class-comment.R</code></a>, <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
     <div class="hidden name"><code>comment.Rd</code></div>
     </div>
 
@@ -86,7 +86,25 @@ are called comments in openxml. Modification of what Excel now calls comment
 <span></span>
 <span><span class="fu">write_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span>, <span class="va">col</span>, <span class="va">row</span>, <span class="va">comment</span>, xy <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">remove_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span>, <span class="va">col</span>, <span class="va">row</span>, gridExpand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remove_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span>, <span class="va">col</span>, <span class="va">row</span>, gridExpand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_add_comment</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">col</span>,</span>
+<span>  <span class="va">row</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
+<span>  <span class="va">comment</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_remove_comment</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">col</span>,</span>
+<span>  <span class="va">row</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
+<span>  gridExpand <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -120,19 +138,19 @@ are called comments in openxml. Modification of what Excel now calls comment
 
 
 <dt>sheet</dt>
-<dd><p>A vector of names or indices of worksheets</p></dd>
+<dd><p>A worksheet of the workbook</p></dd>
 
 
 <dt>col</dt>
-<dd><p>Column a column number of letter. For <code>remove_comment</code> this can be a range.</p></dd>
+<dd><p>A column to apply the comment</p></dd>
 
 
 <dt>row</dt>
-<dd><p>A row number. For <code>remove_comment</code> this can be a range.</p></dd>
+<dd><p>A row to apply the comment</p></dd>
 
 
 <dt>comment</dt>
-<dd><p>A Comment object. See <code>create_comment()</code>.</p></dd>
+<dd><p>A comment to apply to the worksheet</p></dd>
 
 
 <dt>xy</dt>
@@ -142,10 +160,22 @@ are called comments in openxml. Modification of what Excel now calls comment
 
 
 <dt>gridExpand</dt>
-<dd><p>If <code>TRUE</code>, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
-will be removed.</p></dd>
+<dd><p>Remove all comments inside the grid. Similar to dims "A1:B2"</p></dd>
+
+
+<dt>dims</dt>
+<dd><p>Optional row and colum as spreadsheet dimension, e.g. "A1"</p></dd>
 
 </dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    
+
+<p>The <code>wbWorkbook</code> object</p>
+
+
+<p>The <code>wbWorkbook</code> object</p>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
