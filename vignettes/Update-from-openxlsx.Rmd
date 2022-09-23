@@ -1,0 +1,62 @@
+---
+title: "Update from openxlsx"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conditional Formatting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+# library(openxlsx)
+library(openxlsx2)
+```
+
+## Basic read and write functions
+
+### read
+
+While previous `openxlsx` functions were using the `.` in function calls as well as camel case, we have tried to switch to snake case (this is not yet completed, there are still function arguments that rely on camel case).
+
+```{r read}
+xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+
+# read in openxlsx2
+openxlsx2::read_xlsx(xlsxFile)
+```
+
+```{r old_read, eval = FALSE}
+# read in openxlsx
+openxlsx::read.xlsx(xlsxFile)
+```
+
+As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxlsx2. Another thing to see above, we return the cell row as rowname for the data frame returned. `openxlsx2` should return a data frame of the selected size, even if it empty. If you preferred `readWorksheet()` this has become `wb_read()`. All of these are wrappers for the newly introduced function `wb_to_df()` which provides the most options. `read_xlsx()` and `wb_read()` were created for backward comparability.
+
+## write
+
+Basic writing in `openxlsx` behaves identical to `openxlsx`. Though be aware that `overwrite` is an optional parameter in `openxlsx` and just like in other functions like `base::write.csv` if you write onto an existing file name, this file will be replaced.
+
+```{r write}
+output <- temp_xlsx()
+
+# write in openxlsx2
+openxlsx2::write_xlsx(iris, file = output, colNames = TRUE)
+```
+
+```{r old_write, eval = FALSE}
+# write in openxlsx
+openxlsx::write.xlsx(iris, file = output, colNames = TRUE)
+```
+
+
+## Basic workbook functions
+
+Workbook functions have been renamed to begin with `wb_` there are plenty of these in the package, therefore looking at the man pages seems to be the quickest way. Yet, it all begins with loading the workbook.
+
+```{r workbook}
+wb <- wb_load(xlsxFile)
+```
+
+```{r old_workbook, eval = FALSE}
+wb <- loadWorkbook(xlsxFile)
+```
