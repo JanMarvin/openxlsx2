@@ -555,19 +555,26 @@ wbWorksheet <- R6::R6Class(
       extLst <- xml_node(self$extLst, "ext")
       is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
 
+      # different ext types have different uri ids.
+      uri <- ""
+      if (l_name == "x14:dataValidations") uri <- "{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}"
+      if (l_name == "x14:sparklineGroups") uri <- "{05C60535-1F16-4fd2-B633-F4F36F0B64E0}"
+
+      is_needed_uri <- grepl(pattern = uri, extLst, fixed = TRUE)
+
       # check if any <ext xmlns:x14 ...> node exists, else add it
-      if (length(extLst) == 0 || !any(is_xmlns_x14)) {
+      if (length(extLst) == 0 || !any(is_xmlns_x14) || !any(is_needed_uri)) {
         ext <- xml_node_create(
           "ext",
           xml_attributes = c("xmlns:x14" = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main",
-                             uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}")
+                             uri=uri)
         )
 
         # update extLst
         extLst <- c(extLst, ext)
-        is_xmlns_x14 <- c(is_xmlns_x14, TRUE)
+        is_needed_uri <- c(is_needed_uri, TRUE)
       } else {
-        ext <- extLst[is_xmlns_x14]
+        ext <- extLst[is_needed_uri]
       }
 
       # check again and should be exactly one ext node
@@ -590,8 +597,24 @@ wbWorksheet <- R6::R6Class(
         x
       )
 
+      # update counts for dataValidations
+      # count is all matching nodes. not sure if required
+      if (l_name == "x14:dataValidations") {
+
+        outer <- xml_attr(ext, "ext")
+        inner <- getXMLPtr1con(read_xml(ext))
+
+        xdv <- grepl(l_name, inner)
+        inner <- xml_attr_mod(
+          inner[xdv],
+          xml_attributes = c(count = as.character(length(xml_node_name(inner[xdv], l_name))))
+        )
+
+        ext <- xml_node_create("ext", xml_children = inner, xml_attributes = unlist(outer))
+      }
+
       # update extLst and add it back to worksheet
-      extLst[is_xmlns_x14] <- ext
+      extLst[is_needed_uri] <- ext
       self$extLst <- extLst
 
       invisible(self)
