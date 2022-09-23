@@ -193,6 +193,7 @@ rowcol_to_dims <- function(row, col) {
 
   # no assert for col. will output character anyways
   # assert_class(row, "numeric") - complains if integer
+
   col_int <- col2int(col)
 
   min_col <- int2col(min(col_int))

@@ -26,6 +26,10 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -269,6 +273,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-merge_cells}{\code{wbWorkbook$merge_cells()}}
 \item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
+\item \href{#method-wbWorkbook-add_comment}{\code{wbWorkbook$add_comment()}}
+\item \href{#method-wbWorkbook-remove_comment}{\code{wbWorkbook$remove_comment()}}
 \item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
@@ -1271,6 +1277,68 @@ Set freeze panes for a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_comment"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_comment}{}}}
+\subsection{Method \code{add_comment()}}{
+Add comment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_comment(
+  sheet = current_sheet(),
+  col,
+  row,
+  dims = rowcol_to_dims(row, col),
+  comment
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{col}}{column to apply the comment}
+
+\item{\code{row}}{row to apply the comment}
+
+\item{\code{dims}}{row and colum as spreadsheet dimension, e.g. "A1"}
+
+\item{\code{comment}}{a comment to apply to the worksheet}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_comment"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_comment}{}}}
+\subsection{Method \code{remove_comment()}}{
+Remove comment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_comment(
+  sheet = current_sheet(),
+  col,
+  row,
+  dims = rowcol_to_dims(row, col),
+  gridExpand = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{col}}{column to apply the comment}
+
+\item{\code{row}}{row to apply the comment}
+
+\item{\code{dims}}{row and colum as spreadsheet dimension, e.g. "A1"}
+
+\item{\code{gridExpand}}{Remove all comments inside the grid. Similar to dims "A1:B2"}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
