@@ -555,7 +555,8 @@ wbWorksheet <- R6::R6Class(
       extLst <- xml_node(self$extLst, "ext")
       is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
 
-      # different ext types have different uri ids.
+      # different ext types have different uri ids. We support dataValidations
+      # and sparklineGroups.
       uri <- ""
       if (l_name == "x14:dataValidations") uri <- "{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}"
       if (l_name == "x14:sparklineGroups") uri <- "{05C60535-1F16-4fd2-B633-F4F36F0B64E0}"
@@ -567,7 +568,7 @@ wbWorksheet <- R6::R6Class(
         ext <- xml_node_create(
           "ext",
           xml_attributes = c("xmlns:x14" = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main",
-                             uri=uri)
+                             uri = uri)
         )
 
         # update extLst
