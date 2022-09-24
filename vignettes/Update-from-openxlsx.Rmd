@@ -1,8 +1,8 @@
 ---
-title: "Update from openxlsx"
+title: "Upgrade from openxlsx"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Update from openxlsx}
+  %\VignetteIndexEntry{Upgrade from openxlsx}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,9 +14,10 @@ library(openxlsx2)
 
 ## Basic read and write functions
 
-While previous `openxlsx` functions were using the `.` in function calls as well as camel case, we have tried to switch to snake case (this is not yet completed, there are still function arguments that rely on camel case).
+Welcome to the `openxlsx2` update vignette. In this vignette we will take some common code examples from `openxlsx` and show you how similar results can be replicated in `openxlsx2`. Thank you for taking a look, and let's get started.
+While previous `openxlsx` functions used the `.` in function calls, as well as camel-case, we have tried to switch to snake-case (this is still a work in progress, there are still function arguments that use camel-case).
 
-### read
+### Read xlsx or xlsm files
 
 The basic read function changed from `read.xlsx` to `read_xlsx`. Using a default xlsx file included in the package:
 
@@ -41,7 +42,7 @@ openxlsx2::read_xlsx(xlsxFile)
 
 As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxlsx2. Another thing to see above, we return the cell row as rowname for the data frame returned. `openxlsx2` should return a data frame of the selected size, even if it empty. If you preferred `readWorksheet()` this has become `wb_read()`. All of these are wrappers for the newly introduced function `wb_to_df()` which provides the most options. `read_xlsx()` and `wb_read()` were created for backward comparability.
 
-## write
+## Write xlsx files
 
 Basic writing in `openxlsx` behaves identical to `openxlsx`. Though be aware that `overwrite` is an optional parameter in `openxlsx` and just like in other functions like `base::write.csv` if you write onto an existing file name, this file will be replaced.
 
@@ -67,19 +68,25 @@ openxlsx2::write_xlsx(iris, file = output, colNames = TRUE)
 
 ## Basic workbook functions
 
-Workbook functions have been renamed to begin with `wb_` there are plenty of these in the package, therefore looking at the man pages seems to be the quickest way. Yet, it all begins with loading the workbook.
+Workbook functions have been renamed to begin with `wb_` there are plenty of these in the package, therefore looking at the man pages seems to be the fastest way. Yet, it all begins with loading the workbook.
 
-### loading a workbook
+### Loading a workbook
 
-```{r workbook}
-wb <- wb_load(xlsxFile)
-```
+A major feature in `openxlsx` are workbooks. Obviously they remain a central piece in `openxlsx2`. Previous you would load them with:
 
 ```{r old_workbook, eval = FALSE}
 wb <- loadWorkbook(xlsxFile)
 ```
 
-## Styles
+In `openxlsx2` loading was changed to:
+
+```{r workbook}
+wb <- wb_load(xlsxFile)
+```
+
+There are plenty of functions to interact with workbooks and we will not describe every single one here. A detailed list can be found over at [our references](https://janmarvin.github.io/openxlsx2/reference/index.html)
+
+### Styles
 
 One of the biggest user facing change was the removal of the `stylesObject`. In the following section we use code from [addStyle](https://ycphs.github.io/openxlsx/reference/addStyle.html)
 
@@ -121,3 +128,50 @@ wb <- wb_workbook("My name here")$
 The code above uses chaining. If you prefer piping, we provide the chained functions with the prefix `wb_` so `wb_add_worksheet()`, `wb_add_data()`, `wb_add_border()` and `wb_set_col_widths()` would be the functions to use with pipes `%>%` or `|>`.
 
 You can re-use styles with `wb_get_cell_style()` and `wb_set_cell_style()`. Abandoning `stylesObject` in `openxlsx2` has the huge benefit that we can import and export a spreadsheet without changing any cell style. It is still possible to modify a cell style with `wb_add_border()`, `wb_add_fill()`, `wb_add_font()` and `wb_add_numfmt()`.
+
+Additional examples regarding styles can be found in the styles vignette.
+
+### Conditional formatting
+
+Extended examples for conditional formatting can be found in the conditional formatting vignette. A minimal example is the following:
+
+```{r new_cf}
+wb <- wb_workbook()$
+  add_worksheet("a")$
+  add_data(x = 1:4, colNames = FALSE)$
+  add_conditional_formatting(cols = 1, rows = 1:4, rule = ">2")
+```
+
+### Data validation
+
+Similar data validation has been updated and improved. This `openxlsx` code for data validation
+
+```{r old_dv, eval = FALSE}
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+writeDataTable(wb, 1, x = iris[1:30, ])
+dataValidation(wb, 1,
+  col = 1:3, rows = 2:31, type = "whole",
+  operator = "between", value = c(1, 9)
+)
+```
+
+looks in `openxlsx2` something like this:
+
+```{r new_dv}
+wb <- wb_workbook()$
+  add_worksheet("Sheet 1")$
+  add_data_table(1, x = iris[1:30, ])$
+  add_data_validation(1,
+    col = 1:3, rows = 2:31, type = "whole",
+    operator = "between", value = c(1, 9)
+  )
+```
+
+### Saving
+
+Saving has been switched from `saveWorbook()` to `wb_save()` and opening a workbook has been switched from `openXL()` to `wb_open()`.
+
+## Invitation to contribute
+
+We have put a lot of work into `openxls2` to make it useful for our needs, improving what we found useful about `openxlsx` and removing what we didn't need. We do not claim to be omniscient about all the things you can do with spreadsheet software, nor do we claim to be omniscient about all the things you can do in `openxlsx2`. The package is still under development and we cannot make any promises about a stable API yet. This may change when we reach version 1.0. Nevertheless, we are quite fond of our little package and invite others to try it out and comment on what they like and of course what they think we are missing or if something doesn't work. `openxlsx2` is a complex piece of software that certainly does not work bug-free, even if we did our best. If you want to contribute to the development of `openxlsx2`, please be our guest on our Github. Join or open a discussion, post or fix issues or write us a mail.
