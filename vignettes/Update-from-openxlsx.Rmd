@@ -14,21 +14,30 @@ library(openxlsx2)
 
 ## Basic read and write functions
 
+While previous `openxlsx` functions were using the `.` in function calls as well as camel case, we have tried to switch to snake case (this is not yet completed, there are still function arguments that rely on camel case).
+
 ### read
 
-While previous `openxlsx` functions were using the `.` in function calls as well as camel case, we have tried to switch to snake case (this is not yet completed, there are still function arguments that rely on camel case).
+The basic read function changed from `read.xlsx` to `read_xlsx`. Using a default xlsx file included in the package:
 
 ```{r read}
 xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-
-# read in openxlsx2
-openxlsx2::read_xlsx(xlsxFile)
 ```
+
+The old syntax looked like this:
 
 ```{r old_read, eval = FALSE}
 # read in openxlsx
 openxlsx::read.xlsx(xlsxFile)
 ```
+
+This has changed to this:
+
+```{r new_read}
+# read in openxlsx2
+openxlsx2::read_xlsx(xlsxFile)
+```
+
 
 As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxlsx2. Another thing to see above, we return the cell row as rowname for the data frame returned. `openxlsx2` should return a data frame of the selected size, even if it empty. If you preferred `readWorksheet()` this has become `wb_read()`. All of these are wrappers for the newly introduced function `wb_to_df()` which provides the most options. `read_xlsx()` and `wb_read()` were created for backward comparability.
 
@@ -36,22 +45,31 @@ As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxls
 
 Basic writing in `openxlsx` behaves identical to `openxlsx`. Though be aware that `overwrite` is an optional parameter in `openxlsx` and just like in other functions like `base::write.csv` if you write onto an existing file name, this file will be replaced.
 
+Setting the ouput to some temporary xlsx file
 ```{r write}
 output <- temp_xlsx()
-
-# write in openxlsx2
-openxlsx2::write_xlsx(iris, file = output, colNames = TRUE)
 ```
+
+The previous write function looks like this:
 
 ```{r old_write, eval = FALSE}
 # write in openxlsx
 openxlsx::write.xlsx(iris, file = output, colNames = TRUE)
 ```
 
+The new function looks quite similar:
+
+```{r new_write}
+# write in openxlsx2
+openxlsx2::write_xlsx(iris, file = output, colNames = TRUE)
+```
+
 
 ## Basic workbook functions
 
 Workbook functions have been renamed to begin with `wb_` there are plenty of these in the package, therefore looking at the man pages seems to be the quickest way. Yet, it all begins with loading the workbook.
+
+### loading a workbook
 
 ```{r workbook}
 wb <- wb_load(xlsxFile)
@@ -60,3 +78,46 @@ wb <- wb_load(xlsxFile)
 ```{r old_workbook, eval = FALSE}
 wb <- loadWorkbook(xlsxFile)
 ```
+
+## Styles
+
+One of the biggest user facing change was the removal of the `stylesObject`. In the following section we use code from [addStyle](https://ycphs.github.io/openxlsx/reference/addStyle.html)
+
+```{r old_style, eval = FALSE}
+## Create a new workbook
+wb <- createWorkbook("My name here")
+addWorksheet(wb, "Expenditure", gridLines = FALSE)
+writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
+
+## style for body
+bodyStyle <- createStyle(border = "TopBottom", borderColour = "#4F81BD")
+addStyle(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
+
+## set column width for row names column
+setColWidths(wb, 1, cols = 1, widths = 21)
+```
+
+In `openxlsx2` the same code looks something like this:
+
+```{r new_style}
+border_color <- wb_colour(hex = "FF4F81BD")
+wb <- wb_workbook("My name here")$
+  add_worksheet("Expenditure", gridLines = FALSE)$
+  add_data(x = USPersonalExpenditure, rowNames = TRUE)$
+  add_border( # add the outer and inner border
+    dims = "A1:F6", 
+    top_border = "thin", top_color = border_color,
+    bottom_border = "thin", bottom_color = border_color,
+    inner_hgrid = "thin", inner_hcolor = border_color, 
+    left_border = "", right_border = ""
+  )$
+  set_col_widths( # set column width
+    cols = 1:6,
+    widths = c("20", rep("10", 5))
+  )$ # remove the value in A1
+  add_data(dims = "A1", x = "")
+```
+
+The code above uses chaining. If you prefer piping, we provide the chained functions with the prefix `wb_` so `wb_add_worksheet()`, `wb_add_data()`, `wb_add_border()` and `wb_set_col_widths()` would be the functions to use with pipes `%>%` or `|>`.
+
+You can re-use styles with `wb_get_cell_style()` and `wb_set_cell_style()`. Abandoning `stylesObject` in `openxlsx2` has the huge benefit that we can import and export a spreadsheet without changing any cell style. It is still possible to modify a cell style with `wb_add_border()`, `wb_add_fill()`, `wb_add_font()` and `wb_add_numfmt()`.
