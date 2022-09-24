@@ -2,7 +2,7 @@
 title: "Update from openxlsx"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Conditional Formatting}
+  %\VignetteIndexEntry{Update from openxlsx}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
