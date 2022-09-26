@@ -30,7 +30,7 @@ wb$styles_mgr$add(posStyle, "posStyle")
 ## Rule applies to all each cell in range
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_cells.png")
+knitr::include_graphics("img/cf_cells.png")
 ```
 
 ```{r}
@@ -56,7 +56,7 @@ wb$add_conditional_formatting(
 ## Highlight row dependent on first cell in row
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_moving_row.png")
+knitr::include_graphics("img/cf_moving_row.png")
 ```
 
 ```{r}
@@ -82,7 +82,7 @@ wb$add_conditional_formatting(
 ## Highlight column dependent on first cell in column
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_moving_col.png")
+knitr::include_graphics("img/cf_moving_col.png")
 ```
 
 ```{r}
@@ -108,7 +108,7 @@ wb$add_conditional_formatting(
 ## Highlight entire range cols X rows dependent only on cell A1
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_dependent_on.png")
+knitr::include_graphics("img/cf_dependent_on.png")
 ```
 
 ```{r}
@@ -154,7 +154,7 @@ wb$add_conditional_formatting(
 ## Highlight duplicates using default style
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_duplicates.png")
+knitr::include_graphics("img/cf_duplicates.png")
 ```
 
 ```{r}
@@ -171,7 +171,7 @@ wb$add_conditional_formatting(
 ## Cells containing text
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_contains_text.png")
+knitr::include_graphics("img/cf_contains_text.png")
 ```
 
 ```{r}
@@ -191,7 +191,7 @@ wb$add_worksheet("notcontainsText")
 ## Cells not containing text
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_contains_no_text.png")
+knitr::include_graphics("img/cf_contains_no_text.png")
 ```
 
 ```{r}
@@ -209,7 +209,7 @@ wb$add_conditional_formatting(
 ## Cells begins with text
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_begins_with.png")
+knitr::include_graphics("img/cf_begins_with.png")
 ```
 
 ```{r}
@@ -228,7 +228,7 @@ wb$add_conditional_formatting(
 ## Cells ends with text
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_ends_with.png")
+knitr::include_graphics("img/cf_ends_with.png")
 ```
 
 ```{r}
@@ -247,7 +247,7 @@ wb$add_conditional_formatting(
 ## Colorscale colors cells based on cell value
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="Yep, that is a color scale image."}
-knitr::include_graphics("cf_color_scale.png")
+knitr::include_graphics("img/cf_color_scale.png")
 ```
 
 ```{r}
@@ -275,7 +275,7 @@ wb$set_row_heights("colorScale", rows = seq_len(nrow(df)), heights = 7.5)
 ## Databars
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%"}
-knitr::include_graphics("cf_databar.png")
+knitr::include_graphics("img/cf_databar.png")
 ```
 
 ```{r}
@@ -357,7 +357,7 @@ wb <- wb_add_conditional_formatting(
 ## Between
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_between.png")
+knitr::include_graphics("img/cf_between.png")
 ```
 
 Highlight cells in interval [-2, 2]
@@ -378,7 +378,7 @@ wb$add_worksheet("topN")
 ## Top N
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_top_n.png")
+knitr::include_graphics("img/cf_top_n.png")
 ```
 
 ```{r}
@@ -415,7 +415,7 @@ wb$add_worksheet("bottomN")
 ## Bottom N
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_bottom_n.png")
+knitr::include_graphics("img/cf_bottom_n.png")
 ```
 
 ```{r}
@@ -452,7 +452,7 @@ wb$add_worksheet("logical operators")
 ## Logical Operators
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("cf_logical_operators.png")
+knitr::include_graphics("img/cf_logical_operators.png")
 ```
 
 You can use Excels logical Operators

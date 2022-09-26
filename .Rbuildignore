@@ -20,3 +20,4 @@ cran-comments.md
 ^doc$
 ^Meta$
 ^README\.Rmd$
+^inst/img$
