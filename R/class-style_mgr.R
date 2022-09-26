@@ -24,7 +24,8 @@
 #' wb$styles_mgr$styles$numFmts
 #'
 #' ## create and add huge font
-#' new_huge_font <- create_font(sz = "20", name = "Arial", b = "1", color = wb_colour(hex = "FFFFFFFF"))
+#' new_huge_font <- create_font(sz = "20", name = "Arial", b = "1",
+#'                              color = wb_colour(hex = "FFFFFFFF"))
 #' wb$styles_mgr$add(new_huge_font, "arial_huge")
 #'
 #' ## create another font
