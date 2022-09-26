@@ -24,11 +24,16 @@ stable version 1.0 there ~~may~~ will still be some changes to the API.
 
 ## Installation
 
+You can install the stable version of `openxlsx2` with:
+
+``` r
+install.packages('openxlsx2')
+```
+
 You can install the development version of `openxlsx2` from
 [GitHub](https://github.com/) with:
 
 ``` r
-# openxlsx2 is not yet available on CRAN
 # install.packages("remotes")
 remotes::install_github("JanMarvin/openxlsx2")
 ```

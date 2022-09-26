@@ -1,4 +1,4 @@
-# openxlsx2 (in development)
+# openxlsx2 0.3
 
 ## New features
 
