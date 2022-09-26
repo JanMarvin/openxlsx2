@@ -1878,10 +1878,16 @@ wbWorkbook <- R6::R6Class(
     #' @param fontColour fontColour
     #' @param fontName fontName
     #' @return The `wbWorkbook` object
-    set_base_font = function(fontSize = 12, fontColour = wb_colour(theme = "1"), fontName = "Calibri") {
+    set_base_font = function(fontSize = 11, fontColour = "black", fontName = "Calibri") {
       if (fontSize < 0) stop("Invalid fontSize")
-      if (is.character(fontColour) && is.null(names(fontColour))) fontColour <- wb_colour(fontColour)
-      self$styles_mgr$styles$fonts[[1]] <- create_font(sz = as.character(fontSize), color = fontColour, name = fontName)
+      fontColour <- validateColour(fontColour)
+
+      self$styles_mgr$styles$fonts[[1]] <- sprintf(
+        '<font><sz val="%s"/><color rgb="%s"/><name val="%s"/></font>',
+        fontSize,
+        fontColour,
+        fontName
+      )
     },
 
     ### sheet names ----
@@ -2194,7 +2200,7 @@ wbWorkbook <- R6::R6Class(
     #' @param hidden A logical vector to determine which cols are hidden; values
     #'   are repeated across length of `cols`
     #' @return The `wbWorkbook` object, invisibly
-    set_col_widths = function(sheet = current_sheet(), cols, widths = 10, hidden = FALSE) {
+    set_col_widths = function(sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
       sheet <- private$get_sheet_index(sheet)
 
       # should do nothing if the cols' length is zero
@@ -2232,7 +2238,6 @@ wbWorkbook <- R6::R6Class(
       cols <- cols[ok]
 
       col_df <- self$worksheets[[sheet]]$unfold_cols()
-      base_font <- wb_get_base_font(self)
 
       if (any(widths == "auto")) {
 
@@ -2245,9 +2250,25 @@ wbWorkbook <- R6::R6Class(
 
         # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
 
-        widths <- calc_col_width(base_font = base_font, col_width = col_width)
-      } else {
-        widths <- calc_col_width(base_font = base_font, col_width = widths)
+        # TODO save this instead as internal package data for quicker loading
+        fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
+        font_width_tab <- read.csv(fw)
+
+        # TODO base font might not be the font used in this column
+        base_font <- wb_get_base_font(self)
+        font <- base_font$name$val
+        size <- as.integer(base_font$size$val)
+
+        sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
+        # maximum digit width of selected font
+        mdw <- font_width_tab$Width[sel]
+
+        # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
+        # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
+        # the results were close to the initial col_width sizes. Character width is still bad, numbers are
+        # way larger, therefore characters cells are to wide. Not sure if we need improve this.
+        widths <- trunc((col_width * mdw + 5) / mdw * 256) / 256
+        widths <- round(widths)
       }
 
       # create empty cols

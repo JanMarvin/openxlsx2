@@ -199,7 +199,7 @@ wbWorksheet <- R6::R6Class(
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
       self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" showRowColHeaders="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(rowColHeaders), as.integer(tabSelected))
-      self$sheetFormatPr         <- '<sheetFormatPr baseColWidth="10" defaultRowHeight="16" x14ac:dyDescent="0.2"/>'
+      self$sheetFormatPr         <- '<sheetFormatPr defaultRowHeight="15.0"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
       self$mergeCells            <- character()
@@ -751,7 +751,7 @@ empty_cols_attr <- function(n = 0, beg, end) {
   if (n > 0) {
     z$min <- n_seq
     z$max <- n_seq
-    z$width <- "11.375" # default width in MS365 Desktop for Mac
+    z$width <- "8.43" # default width in ms365
   }
 
   z

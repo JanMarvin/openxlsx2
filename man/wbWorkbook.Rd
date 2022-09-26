@@ -821,8 +821,8 @@ A list of of the font
 Get the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
-  fontSize = 12,
-  fontColour = wb_colour(theme = "1"),
+  fontSize = 11,
+  fontColour = "black",
   fontName = "Calibri"
 )}\if{html}{\out{</div>}}
 }
@@ -1047,7 +1047,7 @@ Group cols
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(
   sheet = current_sheet(),
   cols,
-  widths = 10,
+  widths = 8.43,
   hidden = FALSE
 )}\if{html}{\out{</div>}}
 }

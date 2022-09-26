@@ -5,12 +5,7 @@
 \alias{wb_set_base_font}
 \title{Modify the default font}
 \usage{
-wb_set_base_font(
-  wb,
-  fontSize = 12,
-  fontColour = wb_colour(theme = "1"),
-  fontName = "Calibri"
-)
+wb_set_base_font(wb, fontSize = 11, fontColour = "black", fontName = "Calibri")
 }
 \arguments{
 \item{wb}{A workbook object}
