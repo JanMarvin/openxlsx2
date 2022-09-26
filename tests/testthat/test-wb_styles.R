@@ -159,8 +159,9 @@ test_that("test add_font()", {
   expect_silent(wb$add_font("S1", dims = "A1:K1", color = wb_colour(hex = "FFFFFF00")))
 
   # check xf
-  exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
-           "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
+  exp <- c(
+    "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
+    "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
   )
   got <- wb$styles_mgr$styles$cellXfs
 
@@ -168,8 +169,9 @@ test_that("test add_font()", {
 
 
   # check font
-  exp <- c("<font><sz val=\"11\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
-           "<font><color rgb=\"FFFFFF00\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>"
+  exp <- c(
+    "<font><sz val=\"12\"/><color theme=\"1\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
+    "<font><color rgb=\"FFFFFF00\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>"
   )
   got <- wb$styles_mgr$styles$fonts
 

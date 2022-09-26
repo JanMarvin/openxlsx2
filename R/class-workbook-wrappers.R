@@ -593,7 +593,7 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights) {
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of cols to set width
 #' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-#' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
+#' recycled to the length of cols. The default width is 10. Though there is no specific default width for Excel, it depends on
 #' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 #' of the selected width.
 #' @param hidden Logical vector. If TRUE the column is hidden.
@@ -632,7 +632,7 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights) {
 #' wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
 #' }
 #'
-wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
+wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 10, hidden = FALSE) {
   assert_workbook(wb)
   wb$clone()$set_col_widths(
     sheet  = sheet,
@@ -825,7 +825,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' \dontrun{
 #' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
 #' }
-wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
+wb_set_base_font <- function(wb, fontSize = 12, fontColour = wb_colour(theme = "1"), fontName = "Calibri") {
   assert_workbook(wb)
   wb$clone()$set_base_font(
     fontSize   = fontSize,
