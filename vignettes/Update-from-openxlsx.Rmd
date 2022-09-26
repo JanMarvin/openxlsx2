@@ -46,7 +46,7 @@ As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxls
 
 Basic writing in `openxlsx` behaves identical to `openxlsx`. Though be aware that `overwrite` is an optional parameter in `openxlsx` and just like in other functions like `base::write.csv` if you write onto an existing file name, this file will be replaced.
 
-Setting the ouput to some temporary xlsx file
+Setting the output to some temporary xlsx file
 ```{r write}
 output <- temp_xlsx()
 ```
