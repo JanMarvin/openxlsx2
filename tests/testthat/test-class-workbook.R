@@ -13,7 +13,7 @@ test_that("wb_set_col_widths", {
   # set column width to 12
   expect_silent(wb$set_col_widths("test", widths = 12L, cols = seq_along(mtcars)))
   expect_equal(
-    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"12.875\"/>",
+    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"12\"/>",
     wb$worksheets[[1]]$cols_attr
   )
 
@@ -23,46 +23,22 @@ test_that("wb_set_col_widths", {
   # reset the column with, we do not provide an option ot remove the column entry
   expect_silent(wb$set_col_widths("test", cols = seq_along(mtcars)))
   expect_equal(
-    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"10.875\"/>",
+    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"8.43\"/>",
     wb$worksheets[[1]]$cols_attr
   )
 
   # create column width for column 25
   expect_silent(wb$set_col_widths("test", cols = "Y", widths = 22))
   expect_equal(
-    c("<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"10.875\"/>",
-      "<col min=\"12\" max=\"24\" width=\"11.375\"/>",
-      "<col min=\"25\" max=\"25\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"22.875\"/>"),
+    c("<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"8.43\"/>",
+      "<col min=\"12\" max=\"24\" width=\"8.43\"/>",
+      "<col min=\"25\" max=\"25\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"22\"/>"),
     wb$worksheets[[1]]$cols_attr
   )
 
   # a few more errors
   expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
-
-
-
-
-  wb <- wb_workbook()$
-    add_worksheet()$
-    set_col_widths(cols = 1:10, width = (8:17) + .5)$
-    add_data(x = rbind(8:17), colNames = FALSE)
-
-  exp <- c(
-    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.375\"/>",
-    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"10.375\"/>",
-    "<col min=\"3\" max=\"3\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"11.375\"/>",
-    "<col min=\"4\" max=\"4\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"12.375\"/>",
-    "<col min=\"5\" max=\"5\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"13.375\"/>",
-    "<col min=\"6\" max=\"6\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"14.375\"/>",
-    "<col min=\"7\" max=\"7\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"15.375\"/>",
-    "<col min=\"8\" max=\"8\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"16.375\"/>",
-    "<col min=\"9\" max=\"9\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"17.375\"/>",
-    "<col min=\"10\" max=\"10\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"18.375\"/>"
-  )
-  got <- wb$worksheets[[1]]$cols_attr
-  expect_equal(exp, got)
-
 })
 
 

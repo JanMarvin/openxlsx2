@@ -8,7 +8,7 @@ wb_set_col_widths(
   wb,
   sheet = current_sheet(),
   cols,
-  widths = 10,
+  widths = 8.43,
   hidden = FALSE
 )
 }
@@ -20,7 +20,7 @@ wb_set_col_widths(
 \item{cols}{Indices of cols to set width}
 
 \item{widths}{width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-recycled to the length of cols. The default width is 10. Though there is no specific default width for Excel, it depends on
+recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
 Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 of the selected width.}
 
