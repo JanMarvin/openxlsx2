@@ -68,7 +68,7 @@ wb_remove_comment(
 
 \item{gridExpand}{Remove all comments inside the grid. Similar to dims "A1:B2"}
 
-\item{dims}{Optional row and colum as spreadsheet dimension, e.g. "A1"}
+\item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 }
 \value{
 The \code{wbWorkbook} object

@@ -1303,7 +1303,7 @@ Add comment
 
 \item{\code{row}}{row to apply the comment}
 
-\item{\code{dims}}{row and colum as spreadsheet dimension, e.g. "A1"}
+\item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
 \item{\code{comment}}{a comment to apply to the worksheet}
 }
@@ -1334,7 +1334,7 @@ Remove comment
 
 \item{\code{row}}{row to apply the comment}
 
-\item{\code{dims}}{row and colum as spreadsheet dimension, e.g. "A1"}
+\item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
 \item{\code{gridExpand}}{Remove all comments inside the grid. Similar to dims "A1:B2"}
 }

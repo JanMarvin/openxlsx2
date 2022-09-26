@@ -1,3 +1,4 @@
+ARGB
 Arial
 CMD
 Calibri
@@ -9,6 +10,7 @@ Databars
 ExcelDate
 FFFFC
 FFFFFF
+Github
 Gnumeric
 JIS
 LastModifiedBy
@@ -22,6 +24,7 @@ Sparklines
 SuperA
 SuperB
 Textbox
+addStyle
 allowBlank
 attr
 autoFilter
@@ -33,6 +36,7 @@ calcChain
 cellWatches
 cellXfs
 charset
+chartShapes
 chartsheets
 cloneable
 codecov
