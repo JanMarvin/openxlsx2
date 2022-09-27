@@ -57,8 +57,7 @@ wb$add_named_region(
 ## using write_data 'name' argument
 wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
 
-out_file <- tempfile(fileext = ".xlsx")
-\dontrun{
+out_file <- temp_xlsx()
 wb_save(wb, out_file, overwrite = TRUE)
 
 ## see named regions
@@ -75,5 +74,4 @@ head(df)
 
 df <- read_xlsx(out_file, namedRegion = "iris2")
 head(df)
-}
 }

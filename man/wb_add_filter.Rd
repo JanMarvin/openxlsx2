@@ -37,9 +37,6 @@ wb$add_data(2, x = iris, withFilter = TRUE)
 
 ## Similarly
 wb$add_data_table(3, iris)
-\dontrun{
-wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 \code{\link[=write_data]{write_data()}}

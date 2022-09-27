@@ -32,7 +32,4 @@ wb$add_data_table(3, iris)
 ## remove filters
 wb_remove_filter(wb, 1:2) ## remove filters
 wb_remove_filter(wb, 3) ## Does not affect tables!
-\dontrun{
-wb_save(wb, path = "wb_remove_filterExample.xlsx", overwrite = TRUE)
-}
 }

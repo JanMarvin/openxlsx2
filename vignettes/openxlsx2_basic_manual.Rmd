@@ -153,7 +153,7 @@ Once a workbook is imported, we provide several functions to interact with and m
 
 If you want to export a data frame from R, you can use `write_xlsx()` which will create an xlsx file. This file can be tweaked further. The man page provides various options (further explanation and examples will follow).
 
-```{r}
+```{r, eval = FALSE}
 write_xlsx(mtcars, "mtcars.xlsx")
 ```
 
@@ -161,14 +161,10 @@ write_xlsx(mtcars, "mtcars.xlsx")
 
 Imported workbooks can be saved as xlsx or xlsm files with the wrapper `wb_save()` or with `wb$save()`. Both functions take the filename and an optional `Overwrite` option. If the latter is set, an optional guard is provided to check if the file you want to write already exists. But be careful, this is optional. The default is to save the file and replace an existing file. Of course, in Windows, files that are locked (for example, if they were opened by another process) will not be replaced.
 
-```{r}
+```{r, eval = FALSE}
 # replace the existing file
 wb$save("mtcars.xlsx")
 
 # do not overwrite the exisisting file
 try(wb$save("mtcars.xlsx", overwrite = FALSE))
-```
-
-```{r post, include = FALSE}
-unlink("mtcars.xlsx")
 ```

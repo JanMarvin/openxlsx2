@@ -43,7 +43,4 @@ wb$protect_worksheet("S1",
 
 # Remove the protection
 wb$protect_worksheet("S1", protect = FALSE)
-\dontrun{
-wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
-}
 }

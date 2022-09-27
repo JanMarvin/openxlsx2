@@ -41,8 +41,4 @@ wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 wb_get_tables(wb, sheet = 1)
 wb$remove_tables(sheet = 1, table = "iris")
 wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
-\dontrun{
-wb_save(wb, path = "wb_remove_tablesExample.xlsx", overwrite = TRUE)
-}
-
 }

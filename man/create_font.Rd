@@ -57,14 +57,12 @@ create_font(
 create font format
 }
 \examples{
-\dontrun{
 font <- create_font()
 # openxml has the alpha value leading
 hex8 <- unlist(xml_attr(read_xml(font), "font", "color"))
 hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1,2))
 
-# write test color
-col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
-cat(col("Test"))
-}
+# # write test color
+# col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
+# cat(col("Test"))
 }

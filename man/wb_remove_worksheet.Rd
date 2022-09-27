@@ -22,9 +22,4 @@ wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openx
 
 ## Remove sheet 2
 wb <- wb_remove_worksheet(wb, 2)
-
-## save the modified workbook
-\dontrun{
-wb_save(wb, "remove_worksheetExample.xlsx", overwrite = TRUE)
-}
 }

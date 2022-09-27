@@ -89,9 +89,6 @@ wb$set_header_footer(
   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
-\dontrun{
-wb_save(wb, "wb_set_header_footerExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}} to set headers and footers when adding a worksheet

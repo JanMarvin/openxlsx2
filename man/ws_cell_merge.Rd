@@ -50,11 +50,6 @@ try(wb_merge_cells(wb, 2, cols = 1, rows = c(1,10)))    # intersects existing me
 wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
 wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
 
-# Save workbook
-\dontrun{
-wb_save(wb, temp_xlsx(), overwrite = TRUE)
-}
-
 }
 \seealso{
 Other workbook wrappers: 

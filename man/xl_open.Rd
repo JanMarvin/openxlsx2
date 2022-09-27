@@ -39,7 +39,7 @@ Libreoffice/Openoffice (\code{soffice} bin), Gnumeric (\code{gnumeric}) and Call
 Sheets (\code{calligrasheets}).
 }
 \examples{
-\dontrun{
+\donttest{
 if (interactive()) {
   # xl_open("write_dataExample.xlsx")
 

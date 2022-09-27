@@ -33,11 +33,6 @@ Create a new Workbook object
 ## Create a new workbook
 wb <- wb_workbook()
 
-## Save workbook to working directory
-\dontrun{
-wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
-}
-
 ## Set Workbook properties
 wb <- wb_workbook(
   creator  = "Me",

@@ -84,7 +84,8 @@ wb
 wb_to_df(wb)
 
 # and save
-if (interactive()) wb_save(wb, "new_wb.xlsx")
+temp <- temp_xlsx()
+if (interactive()) wb_save(wb, temp)
 
 ## or create one yourself
 wb <- wb_workbook()

@@ -119,11 +119,6 @@ wb$add_data(sheet = 5, 1:400)
 wb$add_data(sheet = 6, 1:400)
 wb$add_data(sheet = 7, 1:400)
 wb$add_data(sheet = 8, 1:400)
-
-## Save workbook
-\dontrun{
-wb_save(wb, "add_worksheetExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 Other workbook wrappers: 

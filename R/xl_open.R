@@ -23,7 +23,7 @@
 #'   value returned from [base::interactive()]
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' if (interactive()) {
 #'   # xl_open("write_dataExample.xlsx")
 #'

@@ -58,11 +58,6 @@ img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
 wb$add_image(2, img, startRow = 2, startCol = 2)
 wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
-
-## Save workbook
-\dontrun{
-wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 \code{\link[=wb_add_plot]{wb_add_plot()}}

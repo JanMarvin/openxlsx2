@@ -92,11 +92,6 @@ write_formula(
 ## Link to internal file
 x = create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
 write_formula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
-
-\dontrun{
-wb_save(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
-}
-
 }
 \seealso{
 \code{\link[=write_formula]{write_formula()}}

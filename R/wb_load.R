@@ -18,12 +18,6 @@
 #' wb ## view object
 #' ## Add a worksheet
 #' wb$add_worksheet("A new worksheet")
-#'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "loadExample.xlsx", overwrite = TRUE)
-#' }
-#'
 wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   file <- xlsxFile %||% file

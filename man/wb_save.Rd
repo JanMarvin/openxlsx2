@@ -22,7 +22,7 @@ wb <- wb_workbook("Creator of workbook")
 wb$add_worksheet(sheet = "My first worksheet")
 
 ## Save workbook to working directory
-\dontrun{
+\donttest{
 wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 }
 }

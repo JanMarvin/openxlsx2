@@ -87,10 +87,6 @@ wb$add_data_validation(2,
   operator = "between", value = df$t[c(4, 8)]
 )
 
-\dontrun{
-wb_save(wb, "data_validationExample.xlsx", overwrite = TRUE)
-}
-
 
 ######################################################################
 ## If type == 'list'
@@ -104,8 +100,4 @@ wb$add_data_table(sheet = 1, x = iris[1:30, ])
 wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 
 wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
-
-\dontrun{
-wb_save(wb, "data_validationExample2.xlsx", overwrite = TRUE)
-}
 }

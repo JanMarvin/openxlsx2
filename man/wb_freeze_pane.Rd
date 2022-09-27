@@ -44,11 +44,6 @@ wb$freeze_pane("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
 wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
 wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
 wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
-
-## Save workbook
-\dontrun{
-wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 Other workbook wrappers: 

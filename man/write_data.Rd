@@ -136,13 +136,6 @@ class(df$z) <- c(class(df$z), "formula")
 
 wb$add_data(sheet = "Formula", x = df)
 
-#####################################################################################
-## Save workbook
-## Open in excel without saving file: xl_open(wb)
-\dontrun{
-wb_save(wb, "write_dataExample.xlsx", overwrite = TRUE)
-}
-
 ###########################################################################
 # update cell range and add mtcars
 xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")

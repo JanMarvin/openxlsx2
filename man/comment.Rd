@@ -102,7 +102,4 @@ write_comment(wb, 1, col = 6, row = 3, comment = c3)
 
 # remove the first comment
 remove_comment(wb, 1, col = "B", row = 10)
-\dontrun{
-wb_save(wb, path = "create_commentExample.xlsx", overwrite = TRUE)
-}
 }

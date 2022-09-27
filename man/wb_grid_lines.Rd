@@ -21,7 +21,4 @@ wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openx
 wb$get_sheet_names() ## list worksheets in workbook
 wb$grid_lines(1, show = FALSE)
 wb$grid_lines("testing", show = FALSE)
-\dontrun{
-wb_save(wb, "ws_grid_linesExample.xlsx", overwrite = TRUE)
-}
 }
