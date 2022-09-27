@@ -23,3 +23,5 @@ docs/
 inst/doc
 /doc/
 /Meta/
+*.Rcheck
+*.tar.gz
