@@ -31,8 +31,8 @@ test_that("type = 'expression' work", {
   wb$add_worksheet("cellIs")
 
   exp <- c(
-    '<dxf><font><color rgb="FF9C0006"/><name val="Calibri"/><sz val="11"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFFFC7CE"/></patternFill></fill></dxf>',
-    '<dxf><font><color rgb="FF006100"/><name val="Calibri"/><sz val="11"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFC6EFCE"/></patternFill></fill></dxf>'
+    '<dxf><font><color rgb="FF9C0006"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFFFC7CE"/></patternFill></fill></dxf>',
+    '<dxf><font><color rgb="FF006100"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFC6EFCE"/></patternFill></fill></dxf>'
   )
 
   expect_identical(exp, wb$styles_mgr$styles$dxfs)
