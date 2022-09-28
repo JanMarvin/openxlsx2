@@ -77,5 +77,5 @@ style3 <- create_dxfs_style(
 ## See package vignettes for further examples
 }
 \seealso{
-\code{\link[=wb_add_styles]{wb_add_styles()}}
+\code{\link[=wb_add_style]{wb_add_style()}}
 }

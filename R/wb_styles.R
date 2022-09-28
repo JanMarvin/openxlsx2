@@ -848,7 +848,7 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #' @param text_italic italic
 #' @param text_underline underline 1, true, single or double
 #' @return A dxfs style node
-#' @seealso [wb_add_styles()]
+#' @seealso [wb_add_style()]
 #' @examples
 #' # do not apply anthing
 #' style1 <- create_dxfs_style()
