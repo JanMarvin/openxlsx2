@@ -29,6 +29,7 @@ LinkingTo:
     Rcpp
 Suggests:
     covr,
+    ggplot2,
     knitr,
     rmarkdown,
     roxygen2,

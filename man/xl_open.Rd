@@ -41,7 +41,8 @@ Sheets (\code{calligrasheets}).
 \examples{
 \donttest{
 if (interactive()) {
-  # xl_open("write_dataExample.xlsx")
+  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xl_open(xlsxFile)
 
   # (not yet saved) Workbook example
   wb <- wb_workbook()

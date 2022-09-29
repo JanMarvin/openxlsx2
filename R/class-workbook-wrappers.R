@@ -677,7 +677,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' @seealso [wb_add_image()]
 #' @export
 #' @examples
-#' \dontrun{
+#' if (requireNamespace("ggplot2") && interactive()) {
 #' ## Create a new workbook
 #' wb <- wb_workbook()
 #'
@@ -702,8 +702,6 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' print(p2)
 #' wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
-#' ## Save workbook
-#' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
 wb_add_plot <- function(
     wb,
