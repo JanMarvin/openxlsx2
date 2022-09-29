@@ -5,8 +5,11 @@
 \alias{openxlsx2}
 \title{xlsx reading, writing and editing.}
 \description{
-openxlsx simplifies the the process of writing and styling Excel xlsx files from R
-and removes the dependency on Java.
+This R package is a modern reinterpretation of the widely used popular
+\code{openxlsx} package. Similar to its predecessor, it simplifies the creation of xlsx
+files by providing a clean interface for writing, designing and editing worksheets.
+Based on a powerful XML library and focusing on modern programming flows in pipes
+or chains, \code{openxlsx2} allows to break many new ground.
 }
 \details{
 The openxlsx package uses global options to simplify formatting:
@@ -21,18 +24,28 @@ The openxlsx package uses global options to simplify formatting:
 \item{\code{options("openxlsx2.orientation" = "portrait")}} ## page orientation
 \item{\code{options("openxlsx2.sheet.default_name" = "Sheet")}}
 }
-See the Formatting vignette for examples.
+\subsection{Authors and contributions}{
 
-Additional options
+For a full list of all authors that have made this package possible and for whom we are greatful, please see:
 
-\itemize{
-\item{\code{options("openxlsx2.compressionLevel" = "9")}} ## set zip compression level, default is "1".
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{system.file("AUTHORS", package = "openxlsx2")
+}\if{html}{\out{</div>}}
+
+If you feel like you should be included on this list, please let us know.
+If you have something to contribute, you are welcome.
+If something is not working as expected, open issues or if you have solved an issue, open a pull request.
+Please be respectful and be aware that we are volunteers doing this for fun in our unpaid free time.
+We will work on problems when we have time or need.
+}
+
+\subsection{License}{
+
+This package is licensed under the MIT license and is based on \href{https://github.com/ycphs/openxlsx}{\code{openxlsx}} (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
 }
 }
 \seealso{
 \itemize{
-\item{\code{vignette("Introduction", package = "openxlsx2")}}
-\item{\code{vignette("formatting", package = "openxlsx2")}}
+\item{\code{vignette(package = "openxlsx2")}}
 \item{\code{\link[=write_data]{write_data()}}}
 \item{\code{\link[=write_datatable]{write_datatable()}}}
 \item{\code{\link[=write_xlsx]{write_xlsx()}}}
