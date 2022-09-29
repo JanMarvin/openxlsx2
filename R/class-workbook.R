@@ -2740,35 +2740,24 @@ wbWorkbook <- R6::R6Class(
       )
 
       if (type == "list") {
-        self$worksheets[[sheet]]$.__enclos_env__$private$data_validation_list(
-          value        = value,
-          allowBlank   = allowBlank,
-          showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg,
-          errorStyle   = errorStyle,
-          errorTitle   = errorTitle,
-          error        = error,
-          promptTitle  = promptTitle,
-          prompt       = prompt,
-          sqref        = sqref
-        )
-      } else {
-        self$worksheets[[sheet]]$.__enclos_env__$private$data_validation(
-          type         = type,
-          operator     = operator,
-          value        = value,
-          allowBlank   = allowBlank,
-          showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg,
-          errorStyle   = errorStyle,
-          errorTitle   = errorTitle,
-          error        = error,
-          promptTitle  = promptTitle,
-          prompt       = prompt,
-          origin       = origin,
-          sqref        = sqref
-        )
+        operator <- NULL
       }
+
+      self$worksheets[[sheet]]$.__enclos_env__$private$data_validation(
+        type         = type,
+        operator     = operator,
+        value        = value,
+        allowBlank   = allowBlank,
+        showInputMsg = showInputMsg,
+        showErrorMsg = showErrorMsg,
+        errorStyle   = errorStyle,
+        errorTitle   = errorTitle,
+        error        = error,
+        promptTitle  = promptTitle,
+        prompt       = prompt,
+        origin       = origin,
+        sqref        = sqref
+      )
 
       invisible(self)
     },
