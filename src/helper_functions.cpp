@@ -369,7 +369,6 @@ std::string to_int(Rcpp::String input) {
 //' @param colNames colNames
 //' @param removeCellStyle removeCellStyle
 //' @param cell cell
-//' @param hyperlinkstyle hyperlinkstyle
 //' @param no_na_strings no_na_strings
 //' @param na_strings_ na_strings
 //' @keywords internal
@@ -385,8 +384,7 @@ void update_cell_loop(
     bool removeCellStyle,
     std::string cell,
     bool no_na_strings,
-    Rcpp::Nullable<Rcpp::String> na_strings_ = R_NilValue,
-    Rcpp::Nullable<Rcpp::String> hyperlinkstyle_ = R_NilValue
+    Rcpp::Nullable<Rcpp::String> na_strings_ = R_NilValue
 ) {
 
   vec_string cc_r = Rcpp::as<vec_string>(cc["r"]);
@@ -451,12 +449,6 @@ void update_cell_loop(
           uu.f_ref = cell.c_str();
         } else if (dc == hyperlink) {
           uu.f = value.get_cstring();
-          //FIXME always assign the hyperlink style. This might not be
-          // desired. We should provide an option to prevent this.
-          if (hyperlinkstyle_.isNotNull()) {
-            Rcpp::String hyperlinkstyle(hyperlinkstyle_);
-            uu.c_s = hyperlinkstyle.get_cstring();
-          }
         } else if (dc == logical) {
           uu.v   = to_int(value);
           uu.c_t = "b";

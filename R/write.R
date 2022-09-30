@@ -121,8 +121,7 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     removeCellStyle,
     cell,
     no_na_strings,
-    na.strings,
-    wb$styles_mgr$get_xf_id("hyperlinkstyle")
+    na.strings
   )
 
   # avoid missings in cc
@@ -192,23 +191,6 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
   dc <- openxlsx2_type(data)
-
-  # if hyperlinks are found, Excel sets something like the following font
-  # blue with underline
-  if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
-    if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
-      hyperlinkfont <- create_font(
-        color = wb_colour(hex = "FF0000FF"),
-        name = wb_get_base_font(wb)$name$val,
-        u = "single")
-
-      wb$styles_mgr$add(hyperlinkfont, "hyperlinkfont")
-
-      hyperlink_xf <- create_cell_style(fontId = wb$styles_mgr$get_font_id("hyperlinkfont"))
-      wb$styles_mgr$add(hyperlink_xf, "hyperlinkstyle")
-    }
-  }
-
 
   # convert factor to character
   if (any(dc == openxlsx2_celltype[["factor"]])) {
@@ -486,7 +468,6 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     cc$c_s[cc$typ == "7"]  <- wb$styles_mgr$get_xf_id(percentage_fmtid)
     cc$c_s[cc$typ == "8"]  <- wb$styles_mgr$get_xf_id(scientific_fmtid)
     cc$c_s[cc$typ == "9"]  <- wb$styles_mgr$get_xf_id(comma_fmtid)
-    cc$c_s[cc$typ == "10"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
@@ -934,6 +915,7 @@ write_data <- function(
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
+#' @param styleHyperlinks Apply the default hyperlink font if a hyperlink is found.
 #' @seealso [write_data()]
 #' @export write_formula
 #' @rdname write_formula
@@ -1007,7 +989,10 @@ write_formula <- function(wb,
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL) {
+  xy = NULL,
+  styleHyperlinks = TRUE
+  ) {
+
   assert_class(x, "character")
   # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
   x <- replaceXMLEntities(x)
@@ -1017,7 +1002,6 @@ write_formula <- function(wb,
 
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")
-    removeCellStyle <- TRUE
   }
 
   write_data(
@@ -1030,9 +1014,16 @@ write_formula <- function(wb,
     array = array,
     xy = xy,
     colNames = FALSE,
-    rowNames = FALSE,
-    removeCellStyle = removeCellStyle
+    rowNames = FALSE
   )
+
+  # if hyperlinks are found, Excel sets something like the following font
+  # blue with underline
+  if (styleHyperlinks) {
+    wb$add_font(dims = dims, color = wb_colour(hex = "FF0000FF"), name = wb_get_base_font(wb)$name$val, u = "single")
+  }
+
+  return(invisible(wb))
 }
 
 

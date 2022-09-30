@@ -56,13 +56,12 @@ wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref) {
 #' @param colNames colNames
 #' @param removeCellStyle removeCellStyle
 #' @param cell cell
-#' @param hyperlinkstyle hyperlinkstyle
 #' @param no_na_strings no_na_strings
 #' @param na_strings_ na_strings
 #' @keywords internal
 #' @noRd
-update_cell_loop <- function(cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_ = NULL, hyperlinkstyle_ = NULL) {
-    invisible(.Call(`_openxlsx2_update_cell_loop`, cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_, hyperlinkstyle_))
+update_cell_loop <- function(cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_ = NULL) {
+    invisible(.Call(`_openxlsx2_update_cell_loop`, cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_))
 }
 
 build_cell_merges <- function(comps) {
