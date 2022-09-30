@@ -34,11 +34,6 @@ wb <- wb_set_row_heights(
 
 ## overwrite row 1 height
 wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
-
-## Save workbook
-\dontrun{
-wb_save(wb, "set_row_heightsExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 \code{\link[=wb_remove_row_heights]{wb_remove_row_heights()}}

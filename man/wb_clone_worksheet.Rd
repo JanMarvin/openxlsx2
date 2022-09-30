@@ -26,11 +26,6 @@ wb <- wb_workbook("Fred")
 # Add worksheets
 wb$add_worksheet("Sheet 1")
 wb$clone_worksheet("Sheet 1", "Sheet 2")
-
-# Save workbook
-\dontrun{
-wb_save(wb, "clone_worksheetExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 Other workbook wrappers: 

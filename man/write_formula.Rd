@@ -91,12 +91,6 @@ class(v2) <- c(class(v2), "formula")
 
 wb$add_data(sheet = 2, x = v2, startCol = 10, startRow = 2)
 
-## Save workbook
-\dontrun{
-wb_save(wb, "write_formulaExample.xlsx", overwrite = TRUE)
-}
-
-
 ## 4. - Writing internal hyperlinks
 
 wb <- wb_workbook()
@@ -104,12 +98,8 @@ wb$add_worksheet("Sheet1")
 wb$add_worksheet("Sheet2")
 write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 
-## Save workbook
-\dontrun{
-wb_save(wb, "write_formulaHyperlinkExample.xlsx", overwrite = TRUE)
-}
-
 ## 5. - Writing array formulas
+
 set.seed(123)
 df <- data.frame(C = rnorm(10), D = rnorm(10))
 

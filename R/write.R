@@ -854,13 +854,6 @@ write_data_table <- function(
 #'
 #' wb$add_data(sheet = "Formula", x = df)
 #'
-#' #####################################################################################
-#' ## Save workbook
-#' ## Open in excel without saving file: xl_open(wb)
-#' \dontrun{
-#' wb_save(wb, "write_dataExample.xlsx", overwrite = TRUE)
-#' }
-#'
 #' ###########################################################################
 #' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
@@ -986,12 +979,6 @@ write_data <- function(
 #'
 #' wb$add_data(sheet = 2, x = v2, startCol = 10, startRow = 2)
 #'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "write_formulaExample.xlsx", overwrite = TRUE)
-#' }
-#'
-#'
 #' ## 4. - Writing internal hyperlinks
 #'
 #' wb <- wb_workbook()
@@ -999,12 +986,8 @@ write_data <- function(
 #' wb$add_worksheet("Sheet2")
 #' write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "write_formulaHyperlinkExample.xlsx", overwrite = TRUE)
-#' }
-#'
 #' ## 5. - Writing array formulas
+#' 
 #' set.seed(123)
 #' df <- data.frame(C = rnorm(10), D = rnorm(10))
 #'
@@ -1141,13 +1124,6 @@ write_formula <- function(wb,
 #' )
 #'
 #' #####################################################################################
-#' ## Save workbook
-#' ## Open in excel without saving file: xl_open(wb)
-#' \dontrun{
-#' wb_save(wb, "write_datatableExample.xlsx", overwrite = TRUE)
-#' }
-#'
-#' #####################################################################################
 #' ## Pre-defined table styles gallery
 #'
 #' wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
@@ -1175,12 +1151,6 @@ write_formula <- function(wb,
 #'     tableStyle = style, startRow = 7, startCol = i * 3 - 2
 #'   )
 #' }
-#'
-#' ## xl_open(wb)
-#' \dontrun{
-#' wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
-#' }
-#'
 write_datatable <- function(
     wb,
     sheet,

@@ -42,7 +42,7 @@ for (i in wb_styles) {
   wb$set_cell_style("test", cell, as.character(i))
 }
 
-\dontrun{
+\donttest{
 # look at the beauty you've created
 if (interactive()) wb_open(wb)
 }

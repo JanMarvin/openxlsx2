@@ -17,11 +17,6 @@
 #' ## Create a new workbook
 #' wb <- wb_workbook()
 #'
-#' ## Save workbook to working directory
-#' \dontrun{
-#' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
-#' }
-#'
 #' ## Set Workbook properties
 #' wb <- wb_workbook(
 #'   creator  = "Me",
@@ -61,7 +56,7 @@ wb_workbook <- function(
 #' wb$add_worksheet(sheet = "My first worksheet")
 #'
 #' ## Save workbook to working directory
-#' \dontrun{
+#' \donttest{
 #' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
 wb_save <- function(wb, path = NULL, overwrite = TRUE) {
@@ -311,11 +306,6 @@ wb_add_formula <- function(
 #' wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
 #' wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
 #'
-#' # Save workbook
-#' \dontrun{
-#' wb_save(wb, temp_xlsx(), overwrite = TRUE)
-#' }
-#'
 #' @name ws_cell_merge
 #' @family workbook wrappers
 NULL
@@ -417,11 +407,6 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' wb$add_data(sheet = 6, 1:400)
 #' wb$add_data(sheet = 7, 1:400)
 #' wb$add_data(sheet = 8, 1:400)
-#'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "add_worksheetExample.xlsx", overwrite = TRUE)
-#' }
 wb_add_worksheet <- function(
   wb,
   sheet       = next_sheet(),
@@ -485,11 +470,6 @@ wb_add_worksheet <- function(
 #' # Add worksheets
 #' wb$add_worksheet("Sheet 1")
 #' wb$clone_worksheet("Sheet 1", "Sheet 2")
-#'
-#' # Save workbook
-#' \dontrun{
-#' wb_save(wb, "clone_worksheetExample.xlsx", overwrite = TRUE)
-#' }
 wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
   assert_workbook(wb)
   wb$clone()$clone_worksheet(old = old, new = new)
@@ -524,11 +504,6 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
 #' wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
 #' wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
-#'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "freezePaneExample.xlsx", overwrite = TRUE)
-#' }
 wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
   assert_workbook(wb)
   wb$clone()$freeze_pane(
@@ -574,11 +549,6 @@ wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, f
 #'
 #' ## overwrite row 1 height
 #' wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
-#'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "set_row_heightsExample.xlsx", overwrite = TRUE)
-#' }
 wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights) {
   assert_workbook(wb)
   wb$clone()$set_row_heights(sheet = sheet, rows, heights)
@@ -626,12 +596,6 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights) {
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_data(sheet = 2, x = iris)
 #' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
-#'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "wb_set_col_widthsExample.xlsx", overwrite = TRUE)
-#' }
-#'
 wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
   wb$clone()$set_col_widths(
@@ -658,9 +622,6 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
 #'
 #' ## remove column widths in columns 1 to 20
 #' wb_remove_col_widths(wb, 1, cols = 1:20)
-#' \dontrun{
-#' wb_save(wb, "wb_remove_col_widthsExample.xlsx", overwrite = TRUE)
-#' }
 wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
@@ -683,9 +644,6 @@ wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
 #'
 #' ## remove any custom row heights in rows 1 to 10
 #' wb$remove_row_heights(1, rows = 1:10)
-#' \dontrun{
-#' wb_save(wb, "remove_row_heightsExample.xlsx", overwrite = TRUE)
-#' }
 wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$remove_row_heights(sheet = sheet, rows = rows)
@@ -719,7 +677,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' @seealso [wb_add_image()]
 #' @export
 #' @examples
-#' \dontrun{
+#' if (requireNamespace("ggplot2") && interactive()) {
 #' ## Create a new workbook
 #' wb <- wb_workbook()
 #'
@@ -744,8 +702,6 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' print(p2)
 #' wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 #'
-#' ## Save workbook
-#' wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 #' }
 wb_add_plot <- function(
     wb,
@@ -790,11 +746,6 @@ wb_add_plot <- function(
 #'
 #' ## Remove sheet 2
 #' wb <- wb_remove_worksheet(wb, 2)
-#'
-#' ## save the modified workbook
-#' \dontrun{
-#' wb_save(wb, "remove_worksheetExample.xlsx", overwrite = TRUE)
-#' }
 wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
   wb$clone()$remove_worksheet(sheet = sheet)
@@ -822,9 +773,6 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data("S1", iris)
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
-#' \dontrun{
-#' wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
-#' }
 wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
   assert_workbook(wb)
   wb$clone()$set_base_font(
@@ -924,9 +872,6 @@ wb_get_base_font <- function(wb) {
 #'   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
 #'   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 #' )
-#' \dontrun{
-#' wb_save(wb, "wb_set_header_footerExample.xlsx", overwrite = TRUE)
-#' }
 wb_set_header_footer <- function(
     wb,
     sheet       = current_sheet(),
@@ -1065,9 +1010,6 @@ wb_set_header_footer <- function(
 #'
 #' wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
 #' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
-#' \dontrun{
-#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
-#' }
 wb_page_setup <- function(
     wb,
     sheet          = current_sheet(),
@@ -1138,9 +1080,6 @@ wb_page_setup <- function(
 #'
 #' # Remove the protection
 #' wb$protect_worksheet("S1", protect = FALSE)
-#' \dontrun{
-#' wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
-#' }
 wb_protect_worksheet <- function(
     wb,
     sheet      = current_sheet(),
@@ -1192,14 +1131,9 @@ wb_protect_worksheet <- function(
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
-#' \dontrun{
-#' wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
-#' }
+#' 
 #' # Remove the protection
 #' wb_protect(wb, protect = FALSE)
-#' \dontrun{
-#' wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
-#' }
 #'
 #' wb <- wb_protect(
 #'   wb,
@@ -1252,9 +1186,6 @@ wb_protect <- function(
 #' wb$get_sheet_names() ## list worksheets in workbook
 #' wb$grid_lines(1, show = FALSE)
 #' wb$grid_lines("testing", show = FALSE)
-#' \dontrun{
-#' wb_save(wb, "ws_grid_linesExample.xlsx", overwrite = TRUE)
-#' }
 wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE) {
   assert_workbook(wb)
   wb$clone()$grid_lines(sheet = sheet, show = show)
@@ -1291,13 +1222,7 @@ wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE) {
 #' wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 #' wb_get_order(wb)
 #' wb$get_sheet_names() ## ordering within workbook is not changed
-#' \dontrun{
-#' wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
-#' }
 #' wb$set_order(3:1)
-#' \dontrun{
-#' wb_save(wb, "wb_orderExample2.xlsx", overwrite = TRUE)
-#' }
 #' @name wb_order
 wb_get_order <- function(wb) {
   assert_workbook(wb)
@@ -1346,8 +1271,7 @@ wb_set_order <- function(wb, sheets) {
 #' ## using write_data 'name' argument
 #' wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
 #'
-#' out_file <- tempfile(fileext = ".xlsx")
-#' \dontrun{
+#' out_file <- temp_xlsx()
 #' wb_save(wb, out_file, overwrite = TRUE)
 #'
 #' ## see named regions
@@ -1364,7 +1288,6 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
-#' }
 #' @name named_region
 NULL
 
@@ -1419,9 +1342,6 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #'
 #' ## Similarly
 #' wb$add_data_table(3, iris)
-#' \dontrun{
-#' wb_save(wb, path = "wb_add_filterExample.xlsx", overwrite = TRUE)
-#' }
 wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
   assert_workbook(wb)
   wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
@@ -1451,9 +1371,6 @@ wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
 #' ## remove filters
 #' wb_remove_filter(wb, 1:2) ## remove filters
 #' wb_remove_filter(wb, 3) ## Does not affect tables!
-#' \dontrun{
-#' wb_save(wb, path = "wb_remove_filterExample.xlsx", overwrite = TRUE)
-#' }
 wb_remove_filter <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
   wb$clone()$remove_filter(sheet = sheet)
@@ -1513,10 +1430,6 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
 #'
-#' \dontrun{
-#' wb_save(wb, "data_validationExample.xlsx", overwrite = TRUE)
-#' }
-#'
 #'
 #' ######################################################################
 #' ## If type == 'list'
@@ -1530,10 +1443,6 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #' wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
 #' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
-#'
-#' \dontrun{
-#' wb_save(wb, "data_validationExample2.xlsx", overwrite = TRUE)
-#' }
 wb_add_data_validation <- function(
     wb,
     sheet = current_sheet(),
@@ -1629,9 +1538,7 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 #' wb$add_page_break(sheet = 1, row = 10)
 #' wb$add_page_break(sheet = 1, row = 20)
 #' wb$add_page_break(sheet = 1, col = 2)
-#' \dontrun{
-#' wb_save(wb, "wb_page_breakExample.xlsx", TRUE)
-#' }
+#' 
 #' ## In Excel: View tab -> Page Break Preview
 wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)
@@ -1691,10 +1598,6 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 #' wb_get_tables(wb, sheet = 1)
 #' wb$remove_tables(sheet = 1, table = "iris")
 #' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
-#' \dontrun{
-#' wb_save(wb, path = "wb_remove_tablesExample.xlsx", overwrite = TRUE)
-#' }
-#'
 #' @export
 wb_remove_tables <- function(wb, sheet = current_sheet(), table) {
   assert_workbook(wb)
@@ -1924,11 +1827,6 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #' wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
 #' wb$add_image(2, img, startRow = 2, startCol = 2)
 #' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
-#'
-#' ## Save workbook
-#' \dontrun{
-#' wb_save(wb, "wb_add_imageExample.xlsx", overwrite = TRUE)
-#' }
 wb_add_image <- function(
   wb,
   sheet     = current_sheet(),

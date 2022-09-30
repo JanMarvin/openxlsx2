@@ -53,7 +53,7 @@ The current plot is saved to a temporary image file using
 \code{\link[=wb_add_image]{wb_add_image()}}.
 }
 \examples{
-\dontrun{
+if (requireNamespace("ggplot2") && interactive()) {
 ## Create a new workbook
 wb <- wb_workbook()
 
@@ -78,8 +78,6 @@ wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
 print(p2)
 wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
 
-## Save workbook
-wb_save(wb, "wb_add_plotExample.xlsx", overwrite = TRUE)
 }
 }
 \seealso{

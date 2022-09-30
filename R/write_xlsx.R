@@ -69,37 +69,27 @@
 #' @examples
 #'
 #' ## write to working directory
-#' \dontrun{
-#' write_xlsx(iris, file = "writeXLSX1.xlsx", colNames = TRUE)
-#' }
+#' write_xlsx(iris, file = temp_xlsx(), colNames = TRUE)
 #'
-#' \dontrun{
 #' write_xlsx(iris,
-#'   file = "writeXLSX3.xlsx",
+#'   file = temp_xlsx(),
 #'   colNames = TRUE
 #' )
-#' }
 #'
 #' ## Lists elements are written to individual worksheets, using list names as sheet names if available
 #' l <- list("IRIS" = iris, "MTCATS" = mtcars, matrix(runif(1000), ncol = 5))
-#' \dontrun{
-#' write_xlsx(l, "writeList1.xlsx", colWidths = c(NA, "auto", "auto"))
-#' }
+#' write_xlsx(l, temp_xlsx(), colWidths = c(NA, "auto", "auto"))
 #'
 #' ## different sheets can be given different parameters
-#' \dontrun{
-#' write_xlsx(l, "writeList2.xlsx",
+#' write_xlsx(l, temp_xlsx(),
 #'   startCol = c(1, 2, 3), startRow = 2,
 #'   asTable = c(TRUE, TRUE, FALSE), withFilter = c(TRUE, FALSE, FALSE)
 #' )
-#' }
 #'
 #' # specify column widths for multiple sheets
-#' \dontrun{
-#' write_xlsx(l, "writeList2.xlsx", colWidths = 20)
-#' write_xlsx(l, "writeList2.xlsx", colWidths = list(100, 200, 300))
-#' write_xlsx(l, "writeList2.xlsx", colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
-#' }
+#' write_xlsx(l, temp_xlsx(), colWidths = 20)
+#' write_xlsx(l, temp_xlsx(), colWidths = list(100, 200, 300))
+#' write_xlsx(l, temp_xlsx(), colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
 #'
 #' @export
 write_xlsx <- function(x, file, asTable = FALSE, ...) {

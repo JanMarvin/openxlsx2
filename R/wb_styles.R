@@ -267,16 +267,14 @@ merge_numFmts <- function(wb, new_numfmts) {
 #' @param u underline
 #' @param vertAlign vertical alignment
 #' @examples
-#' \dontrun{
 #' font <- create_font()
 #' # openxml has the alpha value leading
 #' hex8 <- unlist(xml_attr(read_xml(font), "font", "color"))
 #' hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1,2))
 #'
-#' # write test color
-#' col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
-#' cat(col("Test"))
-#' }
+#' # # write test color
+#' # col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
+#' # cat(col("Test"))
 #' @export
 create_font <- function(
     b = "",
@@ -819,7 +817,7 @@ get_cell_style <- function(wb, sheet, cell) {
 #'   wb$set_cell_style("test", cell, as.character(i))
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' # look at the beauty you've created
 #' if (interactive()) wb_open(wb)
 #' }

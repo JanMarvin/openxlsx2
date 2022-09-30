@@ -157,7 +157,4 @@ wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TR
 
 wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
 wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
-\dontrun{
-wb_save(wb, "ws_page_setupExample.xlsx", overwrite = TRUE)
-}
 }

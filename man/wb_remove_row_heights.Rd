@@ -22,9 +22,6 @@ wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openx
 
 ## remove any custom row heights in rows 1 to 10
 wb$remove_row_heights(1, rows = 1:10)
-\dontrun{
-wb_save(wb, "remove_row_heightsExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 \code{\link[=wb_set_row_heights]{wb_set_row_heights()}}

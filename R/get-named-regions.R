@@ -78,8 +78,8 @@ get_named_regions_from_table <- function(wb) {
 #'
 #' ## using write_data 'name' argument to create a named region
 #' wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
-#' \dontrun{
-#' out_file <- tempfile(fileext = ".xlsx")
+#' 
+#' out_file <- temp_xlsx()
 #' wb$save(out_file, overwrite = TRUE)
 #'
 #' ## see named regions
@@ -92,7 +92,6 @@ get_named_regions_from_table <- function(wb) {
 #'
 #' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
-#' }
 get_named_regions <- function(x) {
   if (inherits(x, "wbWorkbook")) {
     wb <- x

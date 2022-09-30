@@ -215,7 +215,6 @@ print.pugi_xml <- function(x, indent = " ", raw = FALSE, attr_indent = FALSE, ..
 #' @param x input as xml
 #' @param ... additional arguments passed to `read_xml()`
 #' @examples
-#' \dontrun{
 #' tmp_xlsx <- tempfile()
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 #' unzip(xlsxFile, exdir = tmp_xlsx)
@@ -231,7 +230,6 @@ print.pugi_xml <- function(x, indent = " ", raw = FALSE, attr_indent = FALSE, ..
 #'
 #' # is again external pointer
 #' as_xml(font)
-#' }
 #' @export
 as_xml <- function(x, ...) {
   read_xml(paste(x, collapse = ""), ...)

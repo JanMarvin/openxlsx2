@@ -105,11 +105,8 @@ df3 <- read_xlsx(wb,
 
 ## URL
 ##
-\dontrun{
-xlsxFile <- "https://github.com/awalker89/openxlsx/raw/master/inst/readTest.xlsx"
+xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
 head(read_xlsx(xlsxFile))
-}
-
 }
 \seealso{
 \code{\link[=get_named_regions]{get_named_regions()}}

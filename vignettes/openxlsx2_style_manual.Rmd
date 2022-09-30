@@ -26,7 +26,7 @@ Welcome to the styling manual for `openxlsx2`. In this manual you will learn how
 Below we show you two ways how to create styled tables with `openxlsx2` one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table. We show both ways to create styles in `openxlsx2` to show how you could build on our functions or create your very own functions.
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="The example below, with increased column width."}
-knitr::include_graphics("img/worksheet_styling.png")
+knitr::include_graphics("img/worksheet_styling.jpg")
 ```
 
 ### the quick way: using high level functions
@@ -256,7 +256,7 @@ wb$add_border("S4", dims = "A2:K33")
 Below we show you two ways how to create styled tables with `openxlsx2` one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table.
 
 ```{r echo=FALSE, warning=FALSE}
-knitr::include_graphics("img/styled_table.png")
+knitr::include_graphics("img/styled_table.jpg")
 ```
 
 ### the quick way: using high level functions
@@ -330,7 +330,7 @@ wb_set_cell_style(wb, "test", cell, wb$styles_mgr$get_xf_id("bottom_styles"))
 The loop below will apply the tint attribute to the fill color
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="Tint variations of the theme colors."}
-knitr::include_graphics("img/color_tint.png")
+knitr::include_graphics("img/color_tint.jpg")
 ```
 
 ```{r}

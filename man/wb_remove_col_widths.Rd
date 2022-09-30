@@ -22,9 +22,6 @@ wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openx
 
 ## remove column widths in columns 1 to 20
 wb_remove_col_widths(wb, 1, cols = 1:20)
-\dontrun{
-wb_save(wb, "wb_remove_col_widthsExample.xlsx", overwrite = TRUE)
-}
 }
 \seealso{
 \code{\link[=wb_set_col_widths]{wb_set_col_widths()}}

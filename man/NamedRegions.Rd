@@ -31,8 +31,8 @@ wb$add_named_region(
 
 ## using write_data 'name' argument to create a named region
 wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
-\dontrun{
-out_file <- tempfile(fileext = ".xlsx")
+
+out_file <- temp_xlsx()
 wb$save(out_file, overwrite = TRUE)
 
 ## see named regions
@@ -45,7 +45,6 @@ head(df)
 
 df <- read_xlsx(out_file, namedRegion = "iris2")
 head(df)
-}
 }
 \seealso{
 \code{\link[=wb_add_named_region]{wb_add_named_region()}} \code{\link[=wb_remove_named_region]{wb_remove_named_region()}}

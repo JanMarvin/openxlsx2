@@ -56,14 +56,9 @@ Lock types:
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
-\dontrun{
-wb_save(wb, "WorkBook_Protection.xlsx", overwrite = TRUE)
-}
+
 # Remove the protection
 wb_protect(wb, protect = FALSE)
-\dontrun{
-wb_save(wb, "WorkBook_Protection_unprotected.xlsx", overwrite = TRUE)
-}
 
 wb <- wb_protect(
   wb,

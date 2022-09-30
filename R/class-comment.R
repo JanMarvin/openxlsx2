@@ -119,9 +119,6 @@ wbComment <- R6::R6Class(
 #'
 #' # remove the first comment
 #' remove_comment(wb, 1, col = "B", row = 10)
-#' \dontrun{
-#' wb_save(wb, path = "create_commentExample.xlsx", overwrite = TRUE)
-#' }
 create_comment <- function(text,
   author = Sys.info()[["user"]],
   style = NULL,

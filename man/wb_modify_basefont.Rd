@@ -32,7 +32,4 @@ wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow
 
 wb$add_data("S1", iris)
 wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
-\dontrun{
-wb_save(wb, "wb_set_base_font_example.xlsx", overwrite = TRUE)
-}
 }

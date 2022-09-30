@@ -40,11 +40,5 @@ wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
 wb_get_order(wb)
 wb$get_sheet_names() ## ordering within workbook is not changed
-\dontrun{
-wb_save(wb, "wb_orderExample.xlsx", overwrite = TRUE)
-}
 wb$set_order(3:1)
-\dontrun{
-wb_save(wb, "wb_orderExample2.xlsx", overwrite = TRUE)
-}
 }

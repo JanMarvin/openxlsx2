@@ -80,11 +80,6 @@
 #' ## Link to internal file
 #' x = create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
 #' write_formula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
-#'
-#' \dontrun{
-#' wb_save(wb, "internalHyperlinks.xlsx", overwrite = TRUE)
-#' }
-#'
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")

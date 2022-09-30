@@ -133,13 +133,6 @@ write_datatable(wb,
 )
 
 #####################################################################################
-## Save workbook
-## Open in excel without saving file: xl_open(wb)
-\dontrun{
-wb_save(wb, "write_datatableExample.xlsx", overwrite = TRUE)
-}
-
-#####################################################################################
 ## Pre-defined table styles gallery
 
 wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
@@ -167,12 +160,6 @@ for (i in 1:11) {
     tableStyle = style, startRow = 7, startCol = i * 3 - 2
   )
 }
-
-## xl_open(wb)
-\dontrun{
-wb_save(wb, path = "tableStylesGallery.xlsx", overwrite = TRUE)
-}
-
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
