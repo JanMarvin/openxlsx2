@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3</span>
       </span>
     </div>
 
@@ -96,8 +96,7 @@ as characters (at some point in time we have to convert the xml to R)</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">tmp_xlsx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tmp_xlsx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">xlsxFile</span>, exdir <span class="op">=</span> <span class="va">tmp_xlsx</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -112,7 +111,32 @@ as characters (at some point in time we have to convert the xml to R)</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># is again external pointer</span></span></span>
 <span class="r-in"><span><span class="fu">as_xml</span><span class="op">(</span><span class="va">font</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;font&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;sz val="11" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;color theme="1" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;name val="Calibri" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;family val="2" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;scheme val="minor" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/font&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;font&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;b /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;sz val="11" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;color indexed="8" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;name val="Calibri" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;family val="2" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/font&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;font&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;sz val="11" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;color indexed="8" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;name val="Calibri" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;family val="2" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/font&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;font&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;sz val="10" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;color rgb="FF000000" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;name val="Lucida Console" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;family val="3" /&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/font&gt;</span>
 </code></pre></div>
     </div>
   </div>
