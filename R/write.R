@@ -1017,6 +1017,7 @@ write_formula <- function(wb,
 
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")
+    removeCellStyle <- TRUE
   }
 
   write_data(
@@ -1029,7 +1030,8 @@ write_formula <- function(wb,
     array = array,
     xy = xy,
     colNames = FALSE,
-    rowNames = FALSE
+    rowNames = FALSE,
+    removeCellStyle = removeCellStyle
   )
 }
 
