@@ -22,4 +22,7 @@ test_that("encode Hyperlink works", {
 
   got <- wb$worksheets[[1]]$sheet_data$cc["12", "f"]
   expect_equal(exp, got)
+
+  expect_equal(formula, wb_to_df(wb, colNames = FALSE, showFormula = TRUE)[1, "B"])
+
 })

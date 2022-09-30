@@ -468,8 +468,7 @@ wb_to_df <- function(
     cc$val[sel] <- cc$v[sel]
     cc$typ[sel] <- "s"
     if (showFormula) {
-      sel <- cc$c_t %in% c("e")
-      cc$val[sel] <- cc$f[sel]
+      cc$val[sel] <- replaceXMLEntities(cc$f[sel])
       cc$typ[sel] <- "s"
     }
   }
