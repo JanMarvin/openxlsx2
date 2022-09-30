@@ -8,6 +8,8 @@
 [![R-CMD-check](https://github.com/JanMarvin/openxlsx2/workflows/R-CMD-check/badge.svg)](https://github.com/JanMarvin/openxlsx2/actions)
 [![codecov](https://codecov.io/gh/JanMarvin/openxlsx2/branch/main/graph/badge.svg?token=HEZ7rXcZNq)](https://app.codecov.io/gh/JanMarvin/openxlsx2)
 [![r-universe](https://janmarvin.r-universe.dev/badges/openxlsx2)](https://janmarvin.r-universe.dev/ui#package:openxlsx2)
+[![CRAN
+status](http://www.r-pkg.org/badges/version/openxlsx2)](https://cran.r-project.org/package=openxlsx2)
 <!-- badges: end -->
 
 This R package is a modern reinterpretation of the widely used popular
