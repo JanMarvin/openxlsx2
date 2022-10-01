@@ -969,7 +969,7 @@ write_data <- function(
 #' write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
 #' ## 5. - Writing array formulas
-#' 
+#'
 #' set.seed(123)
 #' df <- data.frame(C = rnorm(10), D = rnorm(10))
 #'
@@ -1019,8 +1019,13 @@ write_formula <- function(wb,
 
   # if hyperlinks are found, Excel sets something like the following font
   # blue with underline
-  if (styleHyperlinks) {
-    wb$add_font(dims = dims, color = wb_colour(hex = "FF0000FF"), name = wb_get_base_font(wb)$name$val, u = "single")
+  if (styleHyperlinks && inherits(dfx$X, "hyperlink")) {
+    wb$add_font(
+      dims = dims,
+      color = wb_colour(hex = "FF0000FF"),
+      name = wb_get_base_font(wb)$name$val,
+      u = "single"
+    )
   }
 
   return(invisible(wb))
