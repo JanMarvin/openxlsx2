@@ -5,14 +5,14 @@
 \title{Create a custom formatting style}
 \usage{
 create_dxfs_style(
-  font_name = "Calibri",
-  font_size = "11",
-  font_color = wb_colour(hex = "FF9C0006"),
+  font_name = NULL,
+  font_size = NULL,
+  font_color = NULL,
   numFmt = NULL,
   border = NULL,
   border_color = wb_colour(getOption("openxlsx2.borderColour", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
-  bgFill = wb_colour(hex = "FFFFC7CE"),
+  bgFill = NULL,
   text_bold = NULL,
   text_strike = NULL,
   text_italic = NULL,
@@ -52,8 +52,30 @@ or one of colours(). If fontColour is NULL, the workbook base font colours is us
 A dxfs style node
 }
 \description{
-Create a new style to apply to worksheet cells
+Create a new style to apply to worksheet cells. Created styles have to be
+assigned to a workbook to use them
 }
 \examples{
+# do not apply anthing
+style1 <- create_dxfs_style()
+
+# change font color and background color
+style2 <- create_dxfs_style(
+  font_color = wb_colour(hex = "FF9C0006"),
+  bgFill = wb_colour(hex = "FFFFC7CE")
+)
+
+# change font (type, size and color) and background
+# the old default in openxlsx and openxlsx2 <= 0.3
+style3 <- create_dxfs_style(
+  font_name = "Calibri",
+  font_size = 11,
+  font_color = wb_colour(hex = "FF9C0006"),
+  bgFill = wb_colour(hex = "FFFFC7CE")
+)
+
 ## See package vignettes for further examples
+}
+\seealso{
+\code{\link[=wb_add_style]{wb_add_style()}}
 }

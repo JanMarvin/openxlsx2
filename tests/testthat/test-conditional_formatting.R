@@ -31,8 +31,8 @@ test_that("type = 'expression' work", {
   wb$add_worksheet("cellIs")
 
   exp <- c(
-    '<dxf><font><color rgb="FF9C0006"/><name val="Calibri"/><sz val="11"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFFFC7CE"/></patternFill></fill></dxf>',
-    '<dxf><font><color rgb="FF006100"/><name val="Calibri"/><sz val="11"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFC6EFCE"/></patternFill></fill></dxf>'
+    '<dxf><font><color rgb="FF9C0006"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFFFC7CE"/></patternFill></fill></dxf>',
+    '<dxf><font><color rgb="FF006100"/></font><fill><patternFill patternType="solid"><bgColor rgb="FFC6EFCE"/></patternFill></fill></dxf>'
   )
 
   expect_identical(exp, wb$styles_mgr$styles$dxfs)
@@ -595,24 +595,29 @@ test_that("wb_conditional_formatting", {
   expect_equal(exp, got)
 })
 
-test_that("create dxfs style without font and bg color", {
-
-  exp <- "<dxf><font><name val=\"Calibri\"/><sz val=\"11\"/></font></dxf>"
-  got <- create_dxfs_style(font_color = "", bgFill = "")
-  expect_equal(exp, got)
-
-  got <- create_dxfs_style(font_color = NULL, bgFill = NULL)
-  expect_equal(exp, got)
-
-})
-
 test_that("create dxfs style without font family and size", {
 
-  exp <- "<dxf><font><color rgb=\"FF9C0006\"/></font><fill><patternFill patternType=\"solid\"><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
-  got <- create_dxfs_style(font_name = "", font_size = "")
+  # a workbook with this style loads, but has no highlighting
+  exp <- "<dxf><font/></dxf>"
+  got <- create_dxfs_style()
   expect_equal(exp, got)
 
-  got <- create_dxfs_style(font_name = NULL, font_size = NULL)
+  # most likely what the user expects. change font color and background color
+  exp <- "<dxf><font><color rgb=\"FF9C0006\"/></font><fill><patternFill patternType=\"solid\"><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
+  got <- create_dxfs_style(
+    font_color = wb_colour(hex = "FF9C0006"),
+    bgFill = wb_colour(hex = "FFFFC7CE")
+  )
+  expect_equal(exp, got)
+
+  # the fully fletched old default dxfs style
+  exp <- "<dxf><font><color rgb=\"FF9C0006\"/><name val=\"Calibri\"/><sz val=\"11\"/></font><fill><patternFill patternType=\"solid\"><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
+  got <- create_dxfs_style(
+    font_name = "Calibri",
+    font_size = 11,
+    font_color = wb_colour(hex = "FF9C0006"),
+    bgFill = wb_colour(hex = "FFFFC7CE")
+  )
   expect_equal(exp, got)
 
 })
