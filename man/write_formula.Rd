@@ -12,7 +12,8 @@ write_formula(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL
+  xy = NULL,
+  styleHyperlinks = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ write_formula(
 \item{xy}{An alternative to specifying \code{startCol} and
 \code{startRow} individually.  A vector of the form
 \code{c(startCol, startRow)}.}
+
+\item{styleHyperlinks}{Apply the default hyperlink font if a hyperlink is found.}
 }
 \description{
 Write a a character vector containing Excel formula to a worksheet.
