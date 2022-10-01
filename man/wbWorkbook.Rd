@@ -539,6 +539,7 @@ add data
   name = NULL,
   sep = ", ",
   removeCellStyle = FALSE,
+  styleHyperlinks = TRUE,
   na.strings
 )}\if{html}{\out{</div>}}
 }
@@ -572,6 +573,8 @@ add data
 
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
+\item{\code{styleHyperlinks}}{styleHyperlinks}
+
 \item{\code{na.strings}}{na.strings}
 
 \item{\code{return}}{The \code{wbWorkbook} object}
@@ -602,6 +605,7 @@ add a data table
   lastColumn = FALSE,
   bandedRows = TRUE,
   bandedCols = FALSE,
+  styleHyperlinks = TRUE,
   na.strings
 )}\if{html}{\out{</div>}}
 }
@@ -641,6 +645,8 @@ add a data table
 
 \item{\code{bandedCols}}{bandedCols}
 
+\item{\code{styleHyperlinks}}{styleHyperlinks}
+
 \item{\code{na.strings}}{na.strings}
 }
 \if{html}{\out{</div>}}
@@ -659,7 +665,8 @@ add formula
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL
+  xy = NULL,
+  styleHyperlinks = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -679,6 +686,8 @@ add formula
 \item{\code{array}}{array}
 
 \item{\code{xy}}{xy}
+
+\item{\code{styleHyperlinks}}{styleHyperlinks}
 }
 \if{html}{\out{</div>}}
 }

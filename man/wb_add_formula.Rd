@@ -12,7 +12,8 @@ wb_add_formula(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL
+  xy = NULL,
+  styleHyperlinks = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ wb_add_formula(
 \item{xy}{An alternative to specifying \code{startCol} and
 \code{startRow} individually.  A vector of the form
 \code{c(startCol, startRow)}.}
+
+\item{styleHyperlinks}{style hyperlinks with blue and underlined font}
 }
 \description{
 Add a character vector containing Excel formula to a worksheet.

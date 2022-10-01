@@ -88,6 +88,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param removeCellStyle keep the cell style?
+#' @param styleHyperlinks style hyperlinks?
 #' @param na.strings na.strings
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -111,6 +112,7 @@ wb_add_data <- function(
     name            = NULL,
     sep             = ", ",
     removeCellStyle = FALSE,
+    styleHyperlinks = TRUE,
     na.strings
 ) {
   assert_workbook(wb)
@@ -166,6 +168,7 @@ wb_add_data <- function(
 #' @param lastColumn logical. If TRUE, the last column is bold
 #' @param bandedRows logical. If TRUE, rows are colour banded
 #' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param styleHyperlinks style hyperlinks?
 #' @param na.strings optional
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
@@ -177,45 +180,47 @@ wb_add_data <- function(
 #' @export
 wb_add_data_table <- function(
     wb,
-    sheet       = current_sheet(),
+    sheet           = current_sheet(),
     x,
-    startCol    = 1,
-    startRow    = 1,
-    dims        = rowcol_to_dims(startRow, startCol),
-    xy          = NULL,
-    colNames    = TRUE,
-    rowNames    = FALSE,
-    tableStyle  = "TableStyleLight9",
-    tableName   = NULL,
-    withFilter  = TRUE,
-    sep         = ", ",
-    firstColumn = FALSE,
-    lastColumn  = FALSE,
-    bandedRows  = TRUE,
-    bandedCols  = FALSE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    tableStyle      = "TableStyleLight9",
+    tableName       = NULL,
+    withFilter      = TRUE,
+    sep             = ", ",
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = TRUE,
+    bandedCols      = FALSE,
+    styleHyperlinks = TRUE,
     na.strings
 ) {
   assert_workbook(wb)
   if (missing(na.strings)) na.strings <- substitute()
 
   wb$clone()$add_data_table(
-    sheet       = sheet,
-    x           = x,
-    startCol    = startCol,
-    startRow    = startRow,
-    dims        = dims,
-    xy          = xy,
-    colNames    = colNames,
-    rowNames    = rowNames,
-    tableStyle  = tableStyle,
-    tableName   = tableName,
-    withFilter  = withFilter,
-    sep         = sep,
-    firstColumn = firstColumn,
-    lastColumn  = lastColumn,
-    bandedRows  = bandedRows,
-    bandedCols  = bandedCols,
-    na.strings  = na.strings
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    tableStyle      = tableStyle,
+    tableName       = tableName,
+    withFilter      = withFilter,
+    sep             = sep,
+    firstColumn     = firstColumn,
+    lastColumn      = lastColumn,
+    bandedRows      = bandedRows,
+    bandedCols      = bandedCols,
+    styleHyperlinks = styleHyperlinks,
+    na.strings      = na.strings
   )
 }
 
@@ -243,27 +248,30 @@ wb_add_data_table <- function(
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
+#' @param styleHyperlinks style hyperlinks with blue and underlined font
 #' @family workbook wrappers
 #' @export
 wb_add_formula <- function(
     wb,
-    sheet    = current_sheet(),
+    sheet           = current_sheet(),
     x,
-    startCol = 1,
-    startRow = 1,
-    dims     = rowcol_to_dims(startRow, startCol),
-    array    = FALSE,
-    xy       = NULL
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    xy              = NULL,
+    styleHyperlinks = TRUE
 ) {
   assert_workbook(wb)
   wb$clone()$add_formula(
-    sheet    = sheet,
-    x        = x,
-    startCol = startCol,
-    startRow = startRow,
-    dims     = dims,
-    array    = array,
-    xy       = xy
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    xy              = xy,
+    styleHyperlinks = styleHyperlinks
   )
 }
 

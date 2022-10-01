@@ -9,6 +9,7 @@
 #' @param data_class optional data class object
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
+#' @param styleHyperlinks style hyperlinks with blue and underlined font
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #'
 #' @examples
@@ -35,7 +36,7 @@
 #' @noRd
 update_cell <- function(x, wb, sheet, cell, data_class,
                         colNames = FALSE, removeCellStyle = FALSE,
-                        na.strings) {
+                        styleHyperlinks = TRUE, na.strings) {
 
   sheet_id <- wb$validate_sheet(sheet)
 
@@ -131,6 +132,25 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
 
+  # if hyperlinks are found, Excel sets something like the following font
+  # blue with underline
+  if (styleHyperlinks && any(data_class == openxlsx2_celltype[["hyperlink"]])) {
+
+    # add color to the hyperlink cells
+    hyperlinks <- data_class == openxlsx2_celltype[["hyperlink"]]
+    hl_cols <- cols[hyperlinks]
+
+    for (hl_col in hl_cols) {
+      wb$add_font(
+        dims = rowcol_to_dims(rows, hl_col),
+        color = wb_colour(hex = "FF0000FF"),
+        name = wb_get_base_font(wb)$name$val,
+        u = "single"
+      )
+    }
+
+  }
+
   wb
 }
 
@@ -158,6 +178,7 @@ nmfmt_df <- function(x) {
 #' @param startRow row to place it
 #' @param startCol col to place it
 #' @param removeCellStyle keep the cell style?
+#' @param styleHyperlinks style hyperlinks with blue and underlined font
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
@@ -184,6 +205,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
                        colNames = TRUE, rowNames = FALSE,
                        startRow = 1, startCol = 1,
                        removeCellStyle = FALSE,
+                       styleHyperlinks = TRUE,
                        na.strings) {
 
   if (missing(na.strings)) na.strings <- substitute()
@@ -191,6 +213,22 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
   dc <- openxlsx2_type(data)
+
+  # if hyperlinks are found, Excel sets something like the following font
+  # blue with underline
+  if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
+    if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
+      hyperlinkfont <- create_font(
+        color = wb_colour(hex = "FF0000FF"),
+        name = wb_get_base_font(wb)$name$val,
+        u = "single")
+
+      wb$styles_mgr$add(hyperlinkfont, "hyperlinkfont")
+
+      hyperlink_xf <- create_cell_style(fontId = wb$styles_mgr$get_font_id("hyperlinkfont"))
+      wb$styles_mgr$add(hyperlink_xf, "hyperlinkstyle")
+    }
+  }
 
   # convert factor to character
   if (any(dc == openxlsx2_celltype[["factor"]])) {
@@ -468,6 +506,8 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     cc$c_s[cc$typ == "7"]  <- wb$styles_mgr$get_xf_id(percentage_fmtid)
     cc$c_s[cc$typ == "8"]  <- wb$styles_mgr$get_xf_id(scientific_fmtid)
     cc$c_s[cc$typ == "9"]  <- wb$styles_mgr$get_xf_id(comma_fmtid)
+    if (styleHyperlinks)
+      cc$c_s[cc$typ == "10"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
@@ -481,6 +521,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
       dc,
       colNames,
       removeCellStyle,
+      styleHyperlinks,
       na.strings
     )
   }
@@ -515,6 +556,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
 #' @param bandedCols logical. If TRUE, a data table is created
 #' @param name If not NULL, a named region is defined.
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+#' @param styleHyperlinks style hyperlinks with blue and underlined font
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @noRd
 write_data_table <- function(
@@ -538,6 +580,7 @@ write_data_table <- function(
     bandedCols = FALSE,
     name = NULL,
     removeCellStyle = FALSE,
+    styleHyperlinks = TRUE,
     data_table = FALSE,
     na.strings
 ) {
@@ -674,7 +717,7 @@ write_data_table <- function(
   } else {
     overwrite_nrows <- colNames
     check_tab_head_only <- TRUE
-    error_msg <- "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
+    error_msg <- "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tables() to remove the table object."
   }
 
   ## Check not overwriting existing table headers
@@ -698,6 +741,7 @@ write_data_table <- function(
     startRow = startRow,
     startCol = startCol,
     removeCellStyle = removeCellStyle,
+    styleHyperlinks = styleHyperlinks,
     na.strings = na.strings
   )
 
@@ -784,6 +828,7 @@ write_data_table <- function(
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param name If not NULL, a named region is defined.
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+#' @param styleHyperlinks style hyperlinks with blue and underlined font
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @seealso [write_datatable()]
 #' @export write_data
@@ -860,6 +905,7 @@ write_data <- function(
     sep = ", ",
     name = NULL,
     removeCellStyle = FALSE,
+    styleHyperlinks = TRUE,
     na.strings
 ) {
 
@@ -886,6 +932,7 @@ write_data <- function(
     bandedCols = FALSE,
     name = name,
     removeCellStyle = removeCellStyle,
+    styleHyperlinks = styleHyperlinks,
     data_table = FALSE,
     na.strings = na.strings
   )
@@ -1000,8 +1047,9 @@ write_formula <- function(wb,
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   class(dfx$X) <- c("character", if (array) "array_formula" else "formula")
 
+  # TODO remove this check in favor of the one in write_data
   if (any(grepl("^(=|)HYPERLINK\\(", x, ignore.case = TRUE))) {
-    class(dfx$X) <- c("character", "formula", "hyperlink")
+    class(dfx$X) <- c("character", "hyperlink")
   }
 
   write_data(
@@ -1014,19 +1062,9 @@ write_formula <- function(wb,
     array = array,
     xy = xy,
     colNames = FALSE,
-    rowNames = FALSE
+    rowNames = FALSE,
+    styleHyperlinks = styleHyperlinks
   )
-
-  # if hyperlinks are found, Excel sets something like the following font
-  # blue with underline
-  if (styleHyperlinks && inherits(dfx$X, "hyperlink")) {
-    wb$add_font(
-      dims = dims,
-      color = wb_colour(hex = "FF0000FF"),
-      name = wb_get_base_font(wb)$name$val,
-      u = "single"
-    )
-  }
 
   return(invisible(wb))
 }
@@ -1059,6 +1097,7 @@ write_formula <- function(wb,
 #' @param lastColumn logical. If TRUE, the last column is bold
 #' @param bandedRows logical. If TRUE, rows are colour banded
 #' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param styleHyperlinks bool. If TRUE, hyperlink font will be blue and underline
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
@@ -1156,47 +1195,49 @@ write_datatable <- function(
     wb,
     sheet,
     x,
-    startCol = 1,
-    startRow = 1,
-    dims = rowcol_to_dims(startRow, startCol),
-    xy = NULL,
-    colNames = TRUE,
-    rowNames = FALSE,
-    tableStyle = "TableStyleLight9",
-    tableName = NULL,
-    withFilter = TRUE,
-    sep = ", ",
-    firstColumn = FALSE,
-    lastColumn = FALSE,
-    bandedRows = TRUE,
-    bandedCols = FALSE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    tableStyle      = "TableStyleLight9",
+    tableName       = NULL,
+    withFilter      = TRUE,
+    sep             = ", ",
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = TRUE,
+    bandedCols      = FALSE,
+    styleHyperlinks = TRUE,
     na.strings
 ) {
 
   if (missing(na.strings)) na.strings <- substitute()
 
   write_data_table(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    startCol = startCol,
-    startRow = startRow,
-    dims = dims,
-    array = FALSE,
-    xy = xy,
-    colNames = colNames,
-    rowNames = rowNames,
-    tableStyle = tableStyle,
-    tableName = tableName,
-    withFilter = withFilter,
-    sep = sep,
-    firstColumn = firstColumn,
-    lastColumn = lastColumn,
-    bandedRows = bandedRows,
-    bandedCols = bandedCols,
-    name = NULL,
+    wb              = wb,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = FALSE,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    tableStyle      = tableStyle,
+    tableName       = tableName,
+    withFilter      = withFilter,
+    sep             = sep,
+    firstColumn     = firstColumn,
+    lastColumn      = lastColumn,
+    bandedRows      = bandedRows,
+    bandedCols      = bandedCols,
+    name            = NULL,
     removeCellStyle = FALSE,
-    data_table = TRUE,
-    na.strings = na.strings
+    styleHyperlinks = styleHyperlinks,
+    data_table      = TRUE,
+    na.strings      = na.strings
   )
 }

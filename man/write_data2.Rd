@@ -14,6 +14,7 @@ write_data2(
   startRow = 1,
   startCol = 1,
   removeCellStyle = FALSE,
+  styleHyperlinks = TRUE,
   na.strings
 )
 }
@@ -35,6 +36,8 @@ write_data2(
 \item{startCol}{col to place it}
 
 \item{removeCellStyle}{keep the cell style?}
+
+\item{styleHyperlinks}{style hyperlinks with blue and underlined font}
 
 \item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
 }

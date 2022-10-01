@@ -22,6 +22,7 @@ wb_add_data_table(
   lastColumn = FALSE,
   bandedRows = TRUE,
   bandedCols = FALSE,
+  styleHyperlinks = TRUE,
   na.strings
 )
 }
@@ -68,6 +69,8 @@ sep).
 \item{bandedRows}{logical. If TRUE, rows are colour banded}
 
 \item{bandedCols}{logical. If TRUE, the columns are colour banded}
+
+\item{styleHyperlinks}{style hyperlinks?}
 
 \item{na.strings}{optional}
 }

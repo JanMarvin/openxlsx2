@@ -20,6 +20,7 @@ wb_add_data(
   name = NULL,
   sep = ", ",
   removeCellStyle = FALSE,
+  styleHyperlinks = TRUE,
   na.strings
 )
 
@@ -38,6 +39,7 @@ write_data(
   sep = ", ",
   name = NULL,
   removeCellStyle = FALSE,
+  styleHyperlinks = TRUE,
   na.strings
 )
 }
@@ -71,6 +73,8 @@ write_data(
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
+
+\item{styleHyperlinks}{style hyperlinks with blue and underlined font}
 
 \item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
 }

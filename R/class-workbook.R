@@ -926,6 +926,7 @@ wbWorkbook <- R6::R6Class(
     #' @param name name
     #' @param sep sep
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+    #' @param styleHyperlinks styleHyperlinks
     #' @param na.strings na.strings
     #' @param return The `wbWorkbook` object
     add_data = function(
@@ -942,6 +943,7 @@ wbWorkbook <- R6::R6Class(
         name            = NULL,
         sep             = ", ",
         removeCellStyle = FALSE,
+        styleHyperlinks = TRUE,
         na.strings
       ) {
 
@@ -962,6 +964,7 @@ wbWorkbook <- R6::R6Class(
         name            = name,
         sep             = sep,
         removeCellStyle = removeCellStyle,
+        styleHyperlinks = styleHyperlinks,
         na.strings      = na.strings
       )
       invisible(self)
@@ -984,49 +987,52 @@ wbWorkbook <- R6::R6Class(
     #' @param lastColumn lastColumn
     #' @param bandedRows bandedRows
     #' @param bandedCols bandedCols
+    #' @param styleHyperlinks styleHyperlinks
     #' @param na.strings na.strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
-        sheet       = current_sheet(),
+        sheet           = current_sheet(),
         x,
-        startCol    = 1,
-        startRow    = 1,
-        dims        = rowcol_to_dims(startRow, startCol),
-        xy          = NULL,
-        colNames    = TRUE,
-        rowNames    = FALSE,
-        tableStyle  = "TableStyleLight9",
-        tableName   = NULL,
-        withFilter  = TRUE,
-        sep         = ", ",
-        firstColumn = FALSE,
-        lastColumn  = FALSE,
-        bandedRows  = TRUE,
-        bandedCols  = FALSE,
+        startCol        = 1,
+        startRow        = 1,
+        dims            = rowcol_to_dims(startRow, startCol),
+        xy              = NULL,
+        colNames        = TRUE,
+        rowNames        = FALSE,
+        tableStyle      = "TableStyleLight9",
+        tableName       = NULL,
+        withFilter      = TRUE,
+        sep             = ", ",
+        firstColumn     = FALSE,
+        lastColumn      = FALSE,
+        bandedRows      = TRUE,
+        bandedCols      = FALSE,
+        styleHyperlinks = TRUE,
         na.strings
     ) {
 
       if (missing(na.strings)) na.strings <- substitute()
 
       write_datatable(
-        wb          = self,
-        sheet       = sheet,
-        x           = x,
-        dims        = dims,
-        startCol    = startCol,
-        startRow    = startRow,
-        xy          = xy,
-        colNames    = colNames,
-        rowNames    = rowNames,
-        tableStyle  = tableStyle,
-        tableName   = tableName,
-        withFilter  = withFilter,
-        sep         = sep,
-        firstColumn = firstColumn,
-        lastColumn  = lastColumn,
-        bandedRows  = bandedRows,
-        bandedCols  = bandedCols,
-        na.strings  = na.strings
+        wb              = self,
+        sheet           = sheet,
+        x               = x,
+        dims            = dims,
+        startCol        = startCol,
+        startRow        = startRow,
+        xy              = xy,
+        colNames        = colNames,
+        rowNames        = rowNames,
+        tableStyle      = tableStyle,
+        tableName       = tableName,
+        withFilter      = withFilter,
+        sep             = sep,
+        firstColumn     = firstColumn,
+        lastColumn      = lastColumn,
+        bandedRows      = bandedRows,
+        bandedCols      = bandedCols,
+        styleHyperlinks = styleHyperlinks,
+        na.strings      = na.strings
       )
       invisible(self)
     },
@@ -1039,25 +1045,28 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dims
     #' @param array array
     #' @param xy xy
+    #' @param styleHyperlinks styleHyperlinks
     #' @returns The `wbWorkbook` object
     add_formula = function(
-        sheet    = current_sheet(),
+        sheet           = current_sheet(),
         x,
-        startCol = 1,
-        startRow = 1,
-        dims     = rowcol_to_dims(startRow, startCol),
-        array    = FALSE,
-        xy       = NULL
+        startCol        = 1,
+        startRow        = 1,
+        dims            = rowcol_to_dims(startRow, startCol),
+        array           = FALSE,
+        xy              = NULL,
+        styleHyperlinks = TRUE
     ) {
       write_formula(
-        wb       = self,
-        sheet    = sheet,
-        x        = x,
-        startCol = startCol,
-        startRow = startRow,
-        dims     = dims,
-        array    = array,
-        xy       = xy
+        wb              = self,
+        sheet           = sheet,
+        x               = x,
+        startCol        = startCol,
+        startRow        = startRow,
+        dims            = dims,
+        array           = array,
+        xy              = xy,
+        styleHyperlinks = styleHyperlinks
       )
       invisible(self)
     },
