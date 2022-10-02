@@ -26,3 +26,34 @@ test_that("test data validation list and sparklines", {
   expect_equal(exp, got)
 
 })
+
+test_that("old and new data validations", {
+
+  temp <- temp_xlsx()
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = sample(c("O1", "O2"), 10, TRUE))$
+    add_data(dims = "B1", x = sample(c("O1", "O2"), 10, TRUE))$
+    add_data_validation(sheet = 1, col = 2, rows = 1:10, type = "list", value = '"O1,O2"')
+
+  # add data validations list as x14. this was the default in openxlsx and openxlsx2 <= 0.3
+  wb$worksheets[[1]]$extLst <- "<ext xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" uri=\"{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}\"><x14:dataValidations xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\" count=\"2\"><x14:dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\"><x14:formula1><xm:f>\"O1,O2\"</xm:f></x14:formula1><xm:sqref>A2:A11</xm:sqref></x14:dataValidation></x14:dataValidations></ext>"
+
+  wb$save(temp)
+
+  # make sure that it loads
+  wb2 <- wb_load(temp)
+
+  # test for equality
+  expect_equal(
+    wb$worksheets[[1]]$dataValidations,
+    wb2$worksheets[[1]]$dataValidations
+  )
+
+  expect_equal(
+    wb$worksheets[[1]]$extLst,
+    wb2$worksheets[[1]]$extLst
+  )
+
+})
