@@ -23,12 +23,9 @@ dummy function to add a chart to an existing workbook
 currently only a barplot is possible
 }
 \examples{
-wb <- wb_workbook()
-wb$add_worksheet("S1")$add_data("S1", cars)
-wb$add_worksheet("S2")$add_data("S2", mtcars, rowNames = TRUE)
-
-# remove unneeded default worksheet_rels
-wb$worksheets_rels <- lapply(seq_along(wb$worksheets), function(x) NULL)
+wb <- wb_workbook()$
+  add_worksheet("S1")$add_data("S1", cars)$
+  add_worksheet("S2")$add_data("S2", mtcars, rowNames = TRUE)
 
 # create Chart input
 srhc <- list(
