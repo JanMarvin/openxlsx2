@@ -1009,6 +1009,9 @@ write_formula <- function(wb,
   array = FALSE,
   xy = NULL) {
   assert_class(x, "character")
+  # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
+  x <- replaceXMLEntities(x)
+  x <- vapply(x, function(val) xml_value(xml_node_create("fml", val, escapes = TRUE), "fml"), NA_character_)
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   class(dfx$X) <- c("character", if (array) "array_formula" else "formula")
 

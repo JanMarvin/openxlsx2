@@ -1,5 +1,9 @@
 # openxlsx2 (in development)
 
+## Fixes
+
+* It is now possible to use special characters in formulas without coding. Previously `&` had to be encoded like `&amp;` [251](https://github.com/JanMarvin/openxlsx2/issues/251)
+
 ## Breaking changes
 
 * Conditional style defaults for `create_dxfs_style()` have changed to be more permissive. Previously we shipped a default font, default font size and font color. This has been changed to better reflect a behavior the user expects. [343](https://github.com/JanMarvin/openxlsx2/issues/343)
