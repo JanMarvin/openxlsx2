@@ -106,7 +106,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
 
   if (missing(na.strings)) {
     na.strings <- NULL
-    no_na_strings <- TRUE
   }
 
   if (removeCellStyle) {
