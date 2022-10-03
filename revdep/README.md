@@ -2,28 +2,27 @@
 
 |field    |value                        |
 |:--------|:----------------------------|
-|version  |R version 3.6.0 (2019-04-26) |
-|os       |Oracle Linux Server 7.8      |
+|version  |R version 4.2.1 (2022-06-23) |
+|os       |Ubuntu 20.04.5 LTS           |
 |system   |x86_64, linux-gnu            |
 |ui       |X11                          |
 |language |(EN)                         |
-|collate  |en_US.UTF-8                  |
-|ctype    |en_US.UTF-8                  |
-|tz       |Europe/Vienna                |
-|date     |2020-08-12                   |
+|collate  |C.UTF-8                      |
+|ctype    |C.UTF-8                      |
+|tz       |UTC                          |
+|date     |2022-10-03                   |
+|pandoc   |2.14.2 @ /usr/bin/pandoc     |
 
 # Dependencies
 
-|package  |old   |new   |Δ  |
-|:--------|:-----|:-----|:--|
-|openxlsx |4.1.5 |4.2.0 |*  |
+|package   |old   |new         |Δ  |
+|:---------|:-----|:-----------|:--|
+|openxlsx2 |0.3   |0.3.0.90000 |*  |
+|magrittr  |2.0.3 |2.0.3       |   |
+|R6        |2.5.1 |2.5.1       |   |
+|Rcpp      |1.0.9 |1.0.9       |   |
+|stringi   |1.7.8 |1.7.8       |   |
+|zip       |2.2.1 |2.2.1       |   |
 
 # Revdeps
-
-## Failed to check (2)
-
-|package    |version |error |warning |note |
-|:----------|:-------|:-----|:-------|:----|
-|appreci8R  |?       |      |        |     |
-|maEndToEnd |?       |      |        |     |
 
