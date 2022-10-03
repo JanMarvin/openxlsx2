@@ -111,21 +111,13 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     no_na_strings <- TRUE
   }
 
-  # update_cell_loop(
-  #   cc,
-  #   x,
-  #   data_class,
-  #   rows,
-  #   cols,
-  #   colNames,
-  #   removeCellStyle,
-  #   cell,
-  #   no_na_strings,
-  #   na.strings,
-  #   wb$styles_mgr$get_xf_id("hyperlinkstyle")
-  # )
+  if (removeCellStyle){
+    cell_style <- "c_s"
+  } else {
+    cell_style <- NULL
+  }
 
-  replacement <- c("r", "c_t", "c_cm", "c_ph", "c_vm", "v",
+  replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
                    "f", "f_t", "f_ref", "f_ca", "f_si","is")
 
   sel <- match(x$r, cc$r)
