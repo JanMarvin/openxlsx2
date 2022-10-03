@@ -2,7 +2,7 @@
 #'
 #' Minimal invasive update of cell(s) inside of imported workbooks.
 #'
-#' @param x value you want to insert
+#' @param x cc dataframe of the updated cells
 #' @param wb the workbook you want to update
 #' @param sheet the sheet you want to update
 #' @param cell the cell you want to update in Excel connotation e.g. "A1"
@@ -111,19 +111,25 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     no_na_strings <- TRUE
   }
 
-  update_cell_loop(
-    cc,
-    x,
-    data_class,
-    rows,
-    cols,
-    colNames,
-    removeCellStyle,
-    cell,
-    no_na_strings,
-    na.strings,
-    wb$styles_mgr$get_xf_id("hyperlinkstyle")
-  )
+  # update_cell_loop(
+  #   cc,
+  #   x,
+  #   data_class,
+  #   rows,
+  #   cols,
+  #   colNames,
+  #   removeCellStyle,
+  #   cell,
+  #   no_na_strings,
+  #   na.strings,
+  #   wb$styles_mgr$get_xf_id("hyperlinkstyle")
+  # )
+
+  replacement <- c("r", "c_t", "c_cm", "c_ph", "c_vm", "v",
+                   "f", "f_t", "f_ref", "f_ca", "f_si","is")
+
+  sel <- match(x$r, cc$r)
+  cc[sel, replacement] <- x[replacement]
 
   # avoid missings in cc
   if (any(is.na(cc)))
@@ -293,207 +299,209 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   }
 
   # from here on only wb$worksheets is required
+
+  # rtyp character vector per row
+  # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
+  rtyp <- dims_to_dataframe(dims, fill = TRUE)
+
+  rows_attr <- vector("list", data_nrow)
+
+  # create <rows ...>
+  want_rows <- startRow:endRow
+  rows_attr <- empty_row_attr(n = length(want_rows))
+  rows_attr$r <- rownames(rtyp)
+
+  # original cc data frame
+  cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
+
+  ## create a cell style format for specific types at the end of the existing
+  # styles. gets the reference an passes it on.
+  short_date_fmt <- long_date_fmt <- accounting_fmt <- percentage_fmt <-
+    comma_fmt <- scientific_fmt <- NULL
+
+  hash_id          <- round(as.numeric(Sys.time()), digits = 3)
+  numeric_fmtid    <- paste0("numeric_fmt", hash_id)
+  short_date_fmtid <- paste0("short_date_fmt", hash_id)
+  long_date_fmtid  <- paste0("long_date_fmt", hash_id)
+  accounting_fmtid <- paste0("accounting_fmt", hash_id)
+  percentage_fmtid <- paste0("percentage_fmt", hash_id)
+  scientific_fmtid <- paste0("scientific_fmt", hash_id)
+  comma_fmtid      <- paste0("comma_fmt", hash_id)
+
+  # options("openxlsx2.numFmt" = NULL)
+  if (any(dc == openxlsx2_celltype[["numeric"]])) { # numeric or integer
+    if (!is.null(unlist(options("openxlsx2.numFmt")))) {
+      cust_numFmt <- create_numfmt(
+        numFmtId = wb$styles_mgr$next_numfmt_id(),
+        formatCode = unlist(options("openxlsx2.numFmt")))
+      wb$styles_mgr$add(cust_numFmt, numeric_fmtid)
+      numfmt_num <- wb$styles_mgr$get_numfmt_id(numeric_fmtid)
+      numeric_fmt <- write_xf(nmfmt_df(numfmt_num))
+      wb$styles_mgr$add(numeric_fmt, numeric_fmtid)
+    }
+  }
+  if (any(dc == openxlsx2_celltype[["short_date"]])) { # Date
+    if (is.null(unlist(options("openxlsx2.dateFormat")))) {
+      numfmt_dt <- 14
+    } else {
+      cust_dateFormat <- create_numfmt(
+        numFmtId = wb$styles_mgr$next_numfmt_id(),
+        formatCode = unlist(options("openxlsx2.dateFormat")))
+      wb$styles_mgr$add(cust_dateFormat, short_date_fmtid)
+      numfmt_dt <- wb$styles_mgr$get_numfmt_id(short_date_fmtid)
+    }
+    short_date_fmt <- write_xf(nmfmt_df(numfmt_dt))
+    wb$styles_mgr$add(short_date_fmt, short_date_fmtid)
+  }
+  if (any(dc == openxlsx2_celltype[["long_date"]])) {
+    if (is.null(unlist(options("openxlsx2.datetimeFormat")))) {
+      numfmt_posix <- 22
+    } else {
+      cust_datetimeFormat <- create_numfmt(
+        numFmtId = wb$styles_mgr$next_numfmt_id(),
+        formatCode = unlist(options("openxlsx2.datetimeFormat")))
+      wb$styles_mgr$add(cust_datetimeFormat, long_date_fmtid)
+      numfmt_posix <- wb$styles_mgr$get_numfmt_id(long_date_fmtid)
+    }
+    long_date_fmt  <- write_xf(nmfmt_df(numfmt_posix))
+    wb$styles_mgr$add(long_date_fmt, long_date_fmtid)
+  }
+  if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
+    if (is.null(unlist(options("openxlsx2.accountingFormat")))) {
+      numfmt_accounting <- 4
+    } else {
+      cust_accountingFormat <- create_numfmt(
+        numFmtId = wb$styles_mgr$next_numfmt_id(),
+        formatCode = unlist(options("openxlsx2.accountingFormat")))
+      wb$styles_mgr$add(cust_accountingFormat, accounting_fmtid)
+      numfmt_accounting <- wb$styles_mgr$get_numfmt_id(accounting_fmtid)
+    }
+    accounting_fmt <- write_xf(nmfmt_df(numfmt_accounting))
+    wb$styles_mgr$add(accounting_fmt, accounting_fmtid)
+  }
+  if (any(dc == openxlsx2_celltype[["percentage"]])) { # percentage
+    if (is.null(unlist(options("openxlsx2.percentageFormat")))) {
+      numfmt_percentage <- 10
+    } else {
+      cust_percentageFormat <- create_numfmt(
+        numFmtId = wb$styles_mgr$next_numfmt_id(),
+        formatCode = unlist(options("openxlsx2.percentageFormat")))
+      wb$styles_mgr$add(cust_percentageFormat, percentage_fmtid)
+      numfmt_percentage <- wb$styles_mgr$get_numfmt_id(percentage_fmtid)
+    }
+    percentage_fmt <- write_xf(nmfmt_df(numfmt_percentage))
+    wb$styles_mgr$add(percentage_fmt, percentage_fmtid)
+  }
+  if (any(dc == openxlsx2_celltype[["scientific"]])) {
+    if (is.null(unlist(options("openxlsx2.scientificFormat")))) {
+      numfmt_scientific <- 48
+    } else {
+      cust_scientificFormat <- create_numfmt(
+        numFmtId = wb$styles_mgr$next_numfmt_id(),
+        formatCode = unlist(options("openxlsx2.scientificFormat")))
+      wb$styles_mgr$add(cust_scientificFormat, scientific_fmtid)
+      numfmt_scientific <- wb$styles_mgr$get_numfmt_id(scientific_fmtid)
+    }
+    scientific_fmt <- write_xf(nmfmt_df(numfmt_scientific))
+    wb$styles_mgr$add(scientific_fmt, scientific_fmtid)
+  }
+  if (any(dc == openxlsx2_celltype[["comma"]])) {
+    if (is.null(unlist(options("openxlsx2.comma")))) {
+      numfmt_comma <- 3
+    } else {
+      cust_scientificFormat <- create_numfmt(
+        numFmtId = wb$styles_mgr$next_numfmt_id(),
+        formatCode = unlist(options("openxlsx2.commaFormat")))
+      wb$styles_mgr$add(cust_scientificFormat, comma_fmtid)
+      numfmt_comma <- wb$styles_mgr$get_numfmt_id(comma_fmtid)
+    }
+    comma_fmt <- write_xf(nmfmt_df(numfmt_comma))
+    wb$styles_mgr$add(comma_fmt, comma_fmtid)
+  }
+
+  sel <- which(dc == openxlsx2_celltype[["logical"]])
+  for (i in sel) {
+    if (colNames) {
+      data[-1, i] <- as.integer(as.logical(data[-1, i]))
+    } else {
+      data[,i] <- as.integer(as.logical(data[,i]))
+    }
+  }
+
+  sel <- which(dc == openxlsx2_celltype[["character"]]) # character
+  if (length(sel)) {
+    data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+  }
+
+  wide_to_long(
+    data,
+    dc,
+    cc,
+    ColNames = colNames,
+    start_col = startCol,
+    start_row = startRow,
+    ref = dims
+  )
+
+  # if any v is missing, set typ to 'e'. v is only filled for non character
+  # values, but contains a string. To avoid issues, set it to the missing
+  # value expression
+
+  ## replace NA, NaN, and Inf
+  is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
+  if (length(is_na)) {
+    if (missing(na.strings)) {
+      cc[is_na, "v"]   <- "#N/A"
+      cc[is_na, "c_t"] <- "e"
+      cc[is_na, "is"]  <- ""
+    } else {
+      cc[is_na, "v"]  <- ""
+      if (is.null(na.strings)) {
+        # do nothing
+      } else {
+        cc[is_na, "c_t"] <- "inlineStr"
+        cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
+                                     no_escapes = TRUE, raw = TRUE)
+      }
+    }
+  }
+
+  is_nan <- which(cc$v == "NaN")
+  if (length(is_nan)) {
+    cc[is_nan, "v"]   <- "#VALUE!"
+    cc[is_nan, "c_t"] <- "e"
+  }
+
+  is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+  if (length(is_inf)) {
+    cc[is_inf, "v"]   <- "#NUM!"
+    cc[is_inf, "c_t"] <- "e"
+  }
+
+  cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id(short_date_fmtid)
+  cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id(long_date_fmtid)
+  if (length(wb$styles_mgr$get_xf_id(numeric_fmtid)) == 1) {
+    cc$c_s[cc$typ == "2"]  <- wb$styles_mgr$get_xf_id(numeric_fmtid)
+  }
+  cc$c_s[cc$typ == "6"]  <- wb$styles_mgr$get_xf_id(accounting_fmtid)
+  cc$c_s[cc$typ == "7"]  <- wb$styles_mgr$get_xf_id(percentage_fmtid)
+  cc$c_s[cc$typ == "8"]  <- wb$styles_mgr$get_xf_id(scientific_fmtid)
+  cc$c_s[cc$typ == "9"]  <- wb$styles_mgr$get_xf_id(comma_fmtid)
+  cc$c_s[cc$typ == "10"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
+
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
 
     wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")
 
-    # rtyp character vector per row
-    # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
-    rtyp <- dims_to_dataframe(dims, fill = TRUE)
-
-    rows_attr <- vector("list", data_nrow)
-
-    # create <rows ...>
-    want_rows <- startRow:endRow
-    rows_attr <- empty_row_attr(n = length(want_rows))
-    rows_attr$r <- rownames(rtyp)
-
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
-
-    # original cc data frame
-    cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
-
-    ## create a cell style format for specific types at the end of the existing
-    # styles. gets the reference an passes it on.
-    short_date_fmt <- long_date_fmt <- accounting_fmt <- percentage_fmt <-
-      comma_fmt <- scientific_fmt <- NULL
-
-    hash_id          <- round(as.numeric(Sys.time()), digits = 3)
-    numeric_fmtid    <- paste0("numeric_fmt", hash_id)
-    short_date_fmtid <- paste0("short_date_fmt", hash_id)
-    long_date_fmtid  <- paste0("long_date_fmt", hash_id)
-    accounting_fmtid <- paste0("accounting_fmt", hash_id)
-    percentage_fmtid <- paste0("percentage_fmt", hash_id)
-    scientific_fmtid <- paste0("scientific_fmt", hash_id)
-    comma_fmtid      <- paste0("comma_fmt", hash_id)
-
-    # options("openxlsx2.numFmt" = NULL)
-    if (any(dc == openxlsx2_celltype[["numeric"]])) { # numeric or integer
-      if (!is.null(unlist(options("openxlsx2.numFmt")))) {
-        cust_numFmt <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.numFmt")))
-        wb$styles_mgr$add(cust_numFmt, numeric_fmtid)
-        numfmt_num <- wb$styles_mgr$get_numfmt_id(numeric_fmtid)
-        numeric_fmt <- write_xf(nmfmt_df(numfmt_num))
-        wb$styles_mgr$add(numeric_fmt, numeric_fmtid)
-      }
-    }
-    if (any(dc == openxlsx2_celltype[["short_date"]])) { # Date
-      if (is.null(unlist(options("openxlsx2.dateFormat")))) {
-        numfmt_dt <- 14
-      } else {
-        cust_dateFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.dateFormat")))
-        wb$styles_mgr$add(cust_dateFormat, short_date_fmtid)
-        numfmt_dt <- wb$styles_mgr$get_numfmt_id(short_date_fmtid)
-      }
-      short_date_fmt <- write_xf(nmfmt_df(numfmt_dt))
-      wb$styles_mgr$add(short_date_fmt, short_date_fmtid)
-    }
-    if (any(dc == openxlsx2_celltype[["long_date"]])) {
-      if (is.null(unlist(options("openxlsx2.datetimeFormat")))) {
-        numfmt_posix <- 22
-      } else {
-        cust_datetimeFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.datetimeFormat")))
-        wb$styles_mgr$add(cust_datetimeFormat, long_date_fmtid)
-        numfmt_posix <- wb$styles_mgr$get_numfmt_id(long_date_fmtid)
-      }
-      long_date_fmt  <- write_xf(nmfmt_df(numfmt_posix))
-      wb$styles_mgr$add(long_date_fmt, long_date_fmtid)
-    }
-    if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
-      if (is.null(unlist(options("openxlsx2.accountingFormat")))) {
-        numfmt_accounting <- 4
-      } else {
-        cust_accountingFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.accountingFormat")))
-        wb$styles_mgr$add(cust_accountingFormat, accounting_fmtid)
-        numfmt_accounting <- wb$styles_mgr$get_numfmt_id(accounting_fmtid)
-      }
-      accounting_fmt <- write_xf(nmfmt_df(numfmt_accounting))
-      wb$styles_mgr$add(accounting_fmt, accounting_fmtid)
-    }
-    if (any(dc == openxlsx2_celltype[["percentage"]])) { # percentage
-      if (is.null(unlist(options("openxlsx2.percentageFormat")))) {
-        numfmt_percentage <- 10
-      } else {
-        cust_percentageFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.percentageFormat")))
-        wb$styles_mgr$add(cust_percentageFormat, percentage_fmtid)
-        numfmt_percentage <- wb$styles_mgr$get_numfmt_id(percentage_fmtid)
-      }
-      percentage_fmt <- write_xf(nmfmt_df(numfmt_percentage))
-      wb$styles_mgr$add(percentage_fmt, percentage_fmtid)
-    }
-    if (any(dc == openxlsx2_celltype[["scientific"]])) {
-      if (is.null(unlist(options("openxlsx2.scientificFormat")))) {
-        numfmt_scientific <- 48
-      } else {
-        cust_scientificFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.scientificFormat")))
-        wb$styles_mgr$add(cust_scientificFormat, scientific_fmtid)
-        numfmt_scientific <- wb$styles_mgr$get_numfmt_id(scientific_fmtid)
-      }
-      scientific_fmt <- write_xf(nmfmt_df(numfmt_scientific))
-      wb$styles_mgr$add(scientific_fmt, scientific_fmtid)
-    }
-    if (any(dc == openxlsx2_celltype[["comma"]])) {
-      if (is.null(unlist(options("openxlsx2.comma")))) {
-        numfmt_comma <- 3
-      } else {
-        cust_scientificFormat <- create_numfmt(
-          numFmtId = wb$styles_mgr$next_numfmt_id(),
-          formatCode = unlist(options("openxlsx2.commaFormat")))
-        wb$styles_mgr$add(cust_scientificFormat, comma_fmtid)
-        numfmt_comma <- wb$styles_mgr$get_numfmt_id(comma_fmtid)
-      }
-      comma_fmt <- write_xf(nmfmt_df(numfmt_comma))
-      wb$styles_mgr$add(comma_fmt, comma_fmtid)
-    }
-
-    sel <- which(dc == openxlsx2_celltype[["logical"]])
-    for (i in sel) {
-      if (colNames) {
-        data[-1, i] <- as.integer(as.logical(data[-1, i]))
-      } else {
-        data[,i] <- as.integer(as.logical(data[,i]))
-      }
-    }
-
-    sel <- which(dc == openxlsx2_celltype[["character"]]) # character
-    if (length(sel)) {
-      data[sel][is.na(data[sel])] <- "_openxlsx_NA"
-    }
-
-    wide_to_long(
-      data,
-      dc,
-      cc,
-      ColNames = colNames,
-      start_col = startCol,
-      start_row = startRow,
-      ref = dims
-    )
-
-    # if any v is missing, set typ to 'e'. v is only filled for non character
-    # values, but contains a string. To avoid issues, set it to the missing
-    # value expression
-
-    ## replace NA, NaN, and Inf
-    is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
-    if (length(is_na)) {
-      if (missing(na.strings)) {
-        cc[is_na, "v"]   <- "#N/A"
-        cc[is_na, "c_t"] <- "e"
-        cc[is_na, "is"]  <- ""
-      } else {
-        cc[is_na, "v"]  <- ""
-        if (is.null(na.strings)) {
-          # do nothing
-        } else {
-          cc[is_na, "c_t"] <- "inlineStr"
-          cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
-                                        no_escapes = TRUE, raw = TRUE)
-        }
-      }
-    }
-
-    is_nan <- which(cc$v == "NaN")
-    if (length(is_nan)) {
-      cc[is_nan, "v"]   <- "#VALUE!"
-      cc[is_nan, "c_t"] <- "e"
-    }
-
-    is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
-    if (length(is_inf)) {
-      cc[is_inf, "v"]   <- "#NUM!"
-      cc[is_inf, "c_t"] <- "e"
-    }
-
-    cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id(short_date_fmtid)
-    cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id(long_date_fmtid)
-    if (length(wb$styles_mgr$get_xf_id(numeric_fmtid)) == 1) {
-      cc$c_s[cc$typ == "2"]  <- wb$styles_mgr$get_xf_id(numeric_fmtid)
-    }
-    cc$c_s[cc$typ == "6"]  <- wb$styles_mgr$get_xf_id(accounting_fmtid)
-    cc$c_s[cc$typ == "7"]  <- wb$styles_mgr$get_xf_id(percentage_fmtid)
-    cc$c_s[cc$typ == "8"]  <- wb$styles_mgr$get_xf_id(scientific_fmtid)
-    cc$c_s[cc$typ == "9"]  <- wb$styles_mgr$get_xf_id(comma_fmtid)
-    cc$c_s[cc$typ == "10"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
   } else {
     # update cell(s)
+    # message("update_cell()")
     wb <- update_cell(
-      x = data,
+      x = cc,
       wb,
       sheetno,
       dims,
@@ -504,7 +512,7 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     )
   }
 
-  wb
+  return(wb)
 }
 
 
@@ -987,7 +995,7 @@ write_data <- function(
 #' write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
 #' ## 5. - Writing array formulas
-#' 
+#'
 #' set.seed(123)
 #' df <- data.frame(C = rnorm(10), D = rnorm(10))
 #'
@@ -1001,13 +1009,13 @@ write_data <- function(
 #'              array = TRUE)
 #'
 write_formula <- function(wb,
-  sheet,
-  x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
-  array = FALSE,
-  xy = NULL) {
+                          sheet,
+                          x,
+                          startCol = 1,
+                          startRow = 1,
+                          dims = rowcol_to_dims(startRow, startCol),
+                          array = FALSE,
+                          xy = NULL) {
   assert_class(x, "character")
   # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
   x <- replaceXMLEntities(x)

@@ -117,7 +117,7 @@ wb_add_data <- function(
 
   if (missing(na.strings)) na.strings <- substitute()
 
-  wb$clone()$add_data(
+  wb$clone(deep = TRUE)$add_data(
     sheet           = sheet,
     x               = x,
     startCol        = startCol,
