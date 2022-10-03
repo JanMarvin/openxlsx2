@@ -40,7 +40,6 @@ update_cell <- function(x, wb, sheet, cell, data_class,
   sheet_id <- wb$validate_sheet(sheet)
 
   dims <- dims_to_dataframe(cell, fill = TRUE)
-  cols <- colnames(dims)
   rows <- rownames(dims)
 
   cells_needed <- unname(unlist(dims))
@@ -105,13 +104,12 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  no_na_strings <- FALSE
   if (missing(na.strings)) {
     na.strings <- NULL
     no_na_strings <- TRUE
   }
 
-  if (removeCellStyle){
+  if (removeCellStyle) {
     cell_style <- "c_s"
   } else {
     cell_style <- NULL
