@@ -2,7 +2,7 @@
 
 ## New features
 
-* Reading from file or workbook with `showFormula` now returns `str` functions like hyperlinks too. [352](https://github.com/JanMarvin/openxlsx2/issues/352)
+* Reading from file or workbook with `showFormula` now returns all formulas found in the workbook. Previously only those with type `e` or `str` were returned. Now we will be able to see formulas like hyperlinks too. [352](https://github.com/JanMarvin/openxlsx2/issues/352)
 
 ## Fixes
 
