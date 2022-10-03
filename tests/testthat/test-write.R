@@ -136,7 +136,7 @@ test_that("update_cells", {
 
 
   exp <- structure(
-    list(c_t = c("", "str", ""),
+    list(c_t = c("", "str", "str"),
          f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\")"),
          f_t = c("array", "", "")),
     row.names = c("23", "110", "111"), class = "data.frame")
