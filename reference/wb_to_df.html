@@ -234,17 +234,17 @@ written down and not optimized etc. The goal was to have something working.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># return the underlying Excel formula instead of their values</span></span></span>
 <span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, showFormula <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA   Var3 Var4       Var5         Var6 Var7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 NA   1.00    a 2015-02-07 3209324 This  1/0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA NA     NA    b 2015-02-06         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE    2 NA   1.34    c 2015-02-05         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  FALSE    2 NA     NA &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    3 NA   1.56    e       &lt;NA&gt;         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    1 NA   1.70    f 2015-02-02         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     NA   NA NA     NA &lt;NA&gt; 2015-02-01         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 NA  23.00    h 2015-01-31         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 NA  67.30    i 2015-01-30         &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1 NA 123.00 &lt;NA&gt; 2015-01-29         &lt;NA&gt; &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5                Var6  Var7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   TRUE    1 NA     1     a 2015-02-07 "3209324" &amp; " This"   1/0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE   NA NA #NUM!     b 2015-02-06                &lt;NA&gt;  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE    2 NA  1.34     c 2015-02-05                &lt;NA&gt; #NUM!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;                &lt;NA&gt;  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    3 NA  1.56     e       &lt;NA&gt;                &lt;NA&gt;  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    1 NA   1.7     f 2015-02-02                &lt;NA&gt;  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     NA   NA NA  &lt;NA&gt;  &lt;NA&gt; 2015-02-01                &lt;NA&gt;  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  FALSE    2 NA    23     h 2015-01-31                &lt;NA&gt;  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    3 NA  67.3     i 2015-01-30                &lt;NA&gt;  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29                &lt;NA&gt;  &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># read dimension withot colNames</span></span></span>
 <span class="r-in"><span>  <span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>

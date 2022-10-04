@@ -172,17 +172,17 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># return the underlying Excel formula instead of their values</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsxFile</span>, showFormula <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA   Var3 Var4       Var5         Var6 Var7</span></span>
-<span><span class="co">#&gt; 2   TRUE    1 NA   1.00    a 2015-02-07 3209324 This  1/0</span></span>
-<span><span class="co">#&gt; 3   TRUE   NA NA     NA    b 2015-02-06         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4   TRUE    2 NA   1.34    c 2015-02-05         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5  FALSE    2 NA     NA &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 6  FALSE    3 NA   1.56    e       &lt;NA&gt;         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 7  FALSE    1 NA   1.70    f 2015-02-02         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8     NA   NA NA     NA &lt;NA&gt; 2015-02-01         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 9  FALSE    2 NA  23.00    h 2015-01-31         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    3 NA  67.30    i 2015-01-30         &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11    NA    1 NA 123.00 &lt;NA&gt; 2015-01-29         &lt;NA&gt; &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5                Var6  Var7</span></span>
+<span><span class="co">#&gt; 2   TRUE    1 NA     1     a 2015-02-07 "3209324" &amp; " This"   1/0</span></span>
+<span><span class="co">#&gt; 3   TRUE   NA NA #NUM!     b 2015-02-06                &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4   TRUE    2 NA  1.34     c 2015-02-05                &lt;NA&gt; #NUM!</span></span>
+<span><span class="co">#&gt; 5  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;                &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6  FALSE    3 NA  1.56     e       &lt;NA&gt;                &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7  FALSE    1 NA   1.7     f 2015-02-02                &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8     NA   NA NA  &lt;NA&gt;  &lt;NA&gt; 2015-02-01                &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9  FALSE    2 NA    23     h 2015-01-31                &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10 FALSE    3 NA  67.3     i 2015-01-30                &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29                &lt;NA&gt;  &lt;NA&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="dims---read-specific-dimension">dims - read specific dimension<a class="anchor" aria-label="anchor" href="#dims---read-specific-dimension"></a>
