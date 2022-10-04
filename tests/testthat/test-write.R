@@ -177,3 +177,42 @@ test_that("write data.table class", {
   expect_equal(mtcars, read_xlsx(tmp), ignore_attr = TRUE)
 
 })
+
+test_that("update cell(s)", {
+
+  xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
+  wb <- wb_load(xlsxFile)
+
+  # update Cells D4:D6 with 1:3
+  wb <- wb_add_data(x = c(1:3),
+                    wb = wb, sheet = "Sheet1", dims = "D4:D6")
+
+  # update Cells B3:D3 (names())
+  wb <- wb_add_data(x = c("x", "y", "z"),
+                    wb = wb, sheet = "Sheet1", dims = "B3:D3")
+
+  # update D4 again (single value this time)
+  wb <- wb_add_data(x = 7,
+                    wb = wb, sheet = "Sheet1", dims = "D4")
+
+  # add new column on the left of the existing workbook
+  wb <- wb_add_data(x = 7,
+                    wb = wb, sheet = "Sheet1", dims = "A4")
+
+  # add new row on the end of the existing workbook
+  wb <- wb_add_data(x = 7,
+                    wb = wb, sheet = "Sheet1", dims = "A9")
+
+  exp <- structure(
+    list(c(7, NA, NA, NA, NA, 7),
+         c(NA, NA, TRUE, FALSE, TRUE, NA),
+         c(2, NA, 2.5, NA, NA, NA),
+         c(7, 2, 3, NA, 5, NA)),
+    names = c(NA, "x", "Var2", "Var3"),
+    row.names = 4:9,
+    class = "data.frame")
+
+  got <- wb_to_df(wb)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+})
