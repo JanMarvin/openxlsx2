@@ -215,4 +215,31 @@ test_that("update cell(s)", {
   got <- wb_to_df(wb)
   expect_equal(exp, got, ignore_attr = TRUE)
 
+  ####
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
+    add_data(dims = "C3", x = Sys.Date())$
+    add_data(dims = "E4", x = Sys.Date(), removeCellStyle = TRUE)
+  exp <- structure(list(r = c("B2", "C2", "D2", "E2", "F2", "G2"),
+                        row_r = c("2", "2", "2", "2", "2", "2"),
+                        c_r = c("B", "C", "D", "E", "F", "G"),
+                        c_s = c("1", "1", "1", "1", "1", "1"),
+                        c_t = c("b", "b", "b", "b", "b", "b"),
+                        c_cm = c("", "", "", "", "", ""),
+                        c_ph = c("", "", "", "", "", ""),
+                        c_vm = c("", "", "", "", "", ""),
+                        v = c("", "", "", "", "", ""),
+                        f = c("", "", "", "", "", ""),
+                        f_t = c("", "", "", "", "", ""),
+                        f_ref = c("", "", "", "", "", ""),
+                        f_ca = c("", "", "", "", "", ""),
+                        f_si = c("", "", "", "", "", ""),
+                        is = c("", "", "", "", "", ""),
+                        typ = c("3", "", "", "", "", "")),
+                   row.names = c("1", "8", "17", "114", "121", "128"),
+                   class = "data.frame")
+  got <- head(wb$worksheets[[1]]$sheet_data$cc)
+  expect_equal(exp, got)
+
 })
