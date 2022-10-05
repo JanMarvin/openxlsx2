@@ -2,45 +2,22 @@
 #'
 #' Minimal invasive update of cell(s) inside of imported workbooks.
 #'
-#' @param x value you want to insert
+#' @param x cc dataframe of the updated cells
 #' @param wb the workbook you want to update
 #' @param sheet the sheet you want to update
 #' @param cell the cell you want to update in Excel connotation e.g. "A1"
-#' @param data_class optional data class object
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #'
-#' @examples
-#'    xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
-#'    wb <- wb_load(xlsxFile)
-#'
-#'    # update Cells D4:D6 with 1:3
-#'    wb <- update_cell(x = c(1:3), wb = wb, sheet = "Sheet1", cell = "D4:D6")
-#'
-#'    # update Cells B3:D3 (names())
-#'    wb <- update_cell(x = c("x", "y", "z"), wb = wb, sheet = "Sheet1", cell = "B3:D3")
-#'
-#'    # update D4 again (single value this time)
-#'    wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "D4")
-#'
-#'    # add new column on the left of the existing workbook
-#'    wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "A4")
-#'
-#'    # add new row on the end of the existing workbook
-#'    wb <- update_cell(x = 7, wb = wb, sheet = "Sheet1", cell = "A9")
-#'    wb_to_df(wb)
-#'
 #' @keywords internal
 #' @noRd
-update_cell <- function(x, wb, sheet, cell, data_class,
-                        colNames = FALSE, removeCellStyle = FALSE,
-                        na.strings) {
+update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
+                        removeCellStyle = FALSE, na.strings) {
 
   sheet_id <- wb$validate_sheet(sheet)
 
   dims <- dims_to_dataframe(cell, fill = TRUE)
-  cols <- colnames(dims)
   rows <- rownames(dims)
 
   cells_needed <- unname(unlist(dims))
@@ -105,25 +82,21 @@ update_cell <- function(x, wb, sheet, cell, data_class,
     wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  no_na_strings <- FALSE
   if (missing(na.strings)) {
     na.strings <- NULL
-    no_na_strings <- TRUE
   }
 
-  update_cell_loop(
-    cc,
-    x,
-    data_class,
-    rows,
-    cols,
-    colNames,
-    removeCellStyle,
-    cell,
-    no_na_strings,
-    na.strings,
-    wb$styles_mgr$get_xf_id("hyperlinkstyle")
-  )
+  if (removeCellStyle) {
+    cell_style <- "c_s"
+  } else {
+    cell_style <- NULL
+  }
+
+  replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
+                   "f", "f_t", "f_ref", "f_ca", "f_si","is")
+
+  sel <- match(x$r, cc$r)
+  cc[sel, replacement] <- x[replacement]
 
   # avoid missings in cc
   if (any(is.na(cc)))
@@ -181,34 +154,17 @@ nmfmt_df <- function(x) {
 #' write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 #'
 #' @export
-write_data2 <-function(wb, sheet, data, name = NULL,
-                       colNames = TRUE, rowNames = FALSE,
-                       startRow = 1, startCol = 1,
-                       removeCellStyle = FALSE,
-                       na.strings) {
+write_data2 <- function(wb, sheet, data, name = NULL,
+                        colNames = TRUE, rowNames = FALSE,
+                        startRow = 1, startCol = 1,
+                        removeCellStyle = FALSE,
+                        na.strings) {
 
   if (missing(na.strings)) na.strings <- substitute()
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
   dc <- openxlsx2_type(data)
-
-  # if hyperlinks are found, Excel sets something like the following font
-  # blue with underline
-  if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
-    if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
-      hyperlinkfont <- create_font(
-        color = wb_colour(hex = "FF0000FF"),
-        name = wb_get_base_font(wb)$name$val,
-        u = "single")
-
-      wb$styles_mgr$add(hyperlinkfont, "hyperlinkfont")
-
-      hyperlink_xf <- create_cell_style(fontId = wb$styles_mgr$get_font_id("hyperlinkfont"))
-      wb$styles_mgr$add(hyperlink_xf, "hyperlinkstyle")
-    }
-  }
-
 
   # convert factor to character
   if (any(dc == openxlsx2_celltype[["factor"]])) {
@@ -293,25 +249,27 @@ write_data2 <-function(wb, sheet, data, name = NULL,
   }
 
   # from here on only wb$worksheets is required
-  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
 
-    wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")
+  # rtyp character vector per row
+  # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
+  rtyp <- dims_to_dataframe(dims, fill = TRUE)
 
-    # rtyp character vector per row
-    # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
-    rtyp <- dims_to_dataframe(dims, fill = TRUE)
+  rows_attr <- vector("list", data_nrow)
 
-    rows_attr <- vector("list", data_nrow)
+  # create <rows ...>
+  want_rows <- startRow:endRow
+  rows_attr <- empty_row_attr(n = length(want_rows))
+  rows_attr$r <- rownames(rtyp)
 
-    # create <rows ...>
-    want_rows <- startRow:endRow
-    rows_attr <- empty_row_attr(n = length(want_rows))
-    rows_attr$r <- rownames(rtyp)
+  # original cc data frame
+  cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
 
-    wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
-    # original cc data frame
-    cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
+
+  ### Begin styles
+  style_cc <- is.null(wb$worksheets[[sheetno]]$sheet_data$cc) || removeCellStyle
+
+  if (style_cc) {
 
     ## create a cell style format for specific types at the end of the existing
     # styles. gets the reference an passes it on.
@@ -326,6 +284,22 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     percentage_fmtid <- paste0("percentage_fmt", hash_id)
     scientific_fmtid <- paste0("scientific_fmt", hash_id)
     comma_fmtid      <- paste0("comma_fmt", hash_id)
+
+    # if hyperlinks are found, Excel sets something like the following font
+    # blue with underline
+    if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
+      if (!length(wb$styles_mgr$get_font_id("hyperlinkfont"))) {
+        hyperlinkfont <- create_font(
+          color = wb_colour(hex = "FF0000FF"),
+          name = wb_get_base_font(wb)$name$val,
+          u = "single")
+
+        wb$styles_mgr$add(hyperlinkfont, "hyperlinkfont")
+
+        hyperlink_xf <- create_cell_style(fontId = wb$styles_mgr$get_font_id("hyperlinkfont"))
+        wb$styles_mgr$add(hyperlink_xf, "hyperlinkstyle")
+      }
+    }
 
     # options("openxlsx2.numFmt" = NULL)
     if (any(dc == openxlsx2_celltype[["numeric"]])) { # numeric or integer
@@ -417,66 +391,68 @@ write_data2 <-function(wb, sheet, data, name = NULL,
       comma_fmt <- write_xf(nmfmt_df(numfmt_comma))
       wb$styles_mgr$add(comma_fmt, comma_fmtid)
     }
+  }
 
-    sel <- which(dc == openxlsx2_celltype[["logical"]])
-    for (i in sel) {
-      if (colNames) {
-        data[-1, i] <- as.integer(as.logical(data[-1, i]))
+  sel <- which(dc == openxlsx2_celltype[["logical"]])
+  for (i in sel) {
+    if (colNames) {
+      data[-1, i] <- as.integer(as.logical(data[-1, i]))
+    } else {
+      data[,i] <- as.integer(as.logical(data[,i]))
+    }
+  }
+
+  sel <- which(dc == openxlsx2_celltype[["character"]]) # character
+  if (length(sel)) {
+    data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+  }
+
+  wide_to_long(
+    data,
+    dc,
+    cc,
+    ColNames = colNames,
+    start_col = startCol,
+    start_row = startRow,
+    ref = dims
+  )
+
+  # if any v is missing, set typ to 'e'. v is only filled for non character
+  # values, but contains a string. To avoid issues, set it to the missing
+  # value expression
+
+  ## replace NA, NaN, and Inf
+  is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
+  if (length(is_na)) {
+    if (missing(na.strings)) {
+      cc[is_na, "v"]   <- "#N/A"
+      cc[is_na, "c_t"] <- "e"
+      cc[is_na, "is"]  <- ""
+    } else {
+      cc[is_na, "v"]  <- ""
+      if (is.null(na.strings)) {
+        # do nothing
       } else {
-        data[,i] <- as.integer(as.logical(data[,i]))
+        cc[is_na, "c_t"] <- "inlineStr"
+        cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
+                                     no_escapes = TRUE, raw = TRUE)
       }
     }
+  }
 
-    sel <- which(dc == openxlsx2_celltype[["character"]]) # character
-    if (length(sel)) {
-      data[sel][is.na(data[sel])] <- "_openxlsx_NA"
-    }
+  is_nan <- which(cc$v == "NaN")
+  if (length(is_nan)) {
+    cc[is_nan, "v"]   <- "#VALUE!"
+    cc[is_nan, "c_t"] <- "e"
+  }
 
-    wide_to_long(
-      data,
-      dc,
-      cc,
-      ColNames = colNames,
-      start_col = startCol,
-      start_row = startRow,
-      ref = dims
-    )
+  is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+  if (length(is_inf)) {
+    cc[is_inf, "v"]   <- "#NUM!"
+    cc[is_inf, "c_t"] <- "e"
+  }
 
-    # if any v is missing, set typ to 'e'. v is only filled for non character
-    # values, but contains a string. To avoid issues, set it to the missing
-    # value expression
-
-    ## replace NA, NaN, and Inf
-    is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
-    if (length(is_na)) {
-      if (missing(na.strings)) {
-        cc[is_na, "v"]   <- "#N/A"
-        cc[is_na, "c_t"] <- "e"
-        cc[is_na, "is"]  <- ""
-      } else {
-        cc[is_na, "v"]  <- ""
-        if (is.null(na.strings)) {
-          # do nothing
-        } else {
-          cc[is_na, "c_t"] <- "inlineStr"
-          cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
-                                        no_escapes = TRUE, raw = TRUE)
-        }
-      }
-    }
-
-    is_nan <- which(cc$v == "NaN")
-    if (length(is_nan)) {
-      cc[is_nan, "v"]   <- "#VALUE!"
-      cc[is_nan, "c_t"] <- "e"
-    }
-
-    is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
-    if (length(is_inf)) {
-      cc[is_inf, "v"]   <- "#NUM!"
-      cc[is_inf, "c_t"] <- "e"
-    }
-
+  if (style_cc) {
     cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id(short_date_fmtid)
     cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id(long_date_fmtid)
     if (length(wb$styles_mgr$get_xf_id(numeric_fmtid)) == 1) {
@@ -487,24 +463,31 @@ write_data2 <-function(wb, sheet, data, name = NULL,
     cc$c_s[cc$typ == "8"]  <- wb$styles_mgr$get_xf_id(scientific_fmtid)
     cc$c_s[cc$typ == "9"]  <- wb$styles_mgr$get_xf_id(comma_fmtid)
     cc$c_s[cc$typ == "10"] <- wb$styles_mgr$get_xf_id("hyperlinkstyle")
+  }
+
+  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
+
+    wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")
+
+    wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
   } else {
     # update cell(s)
+    # message("update_cell()")
     wb <- update_cell(
-      x = data,
-      wb,
-      sheetno,
-      dims,
-      dc,
-      colNames,
-      removeCellStyle,
-      na.strings
+      x = cc,
+      wb =  wb,
+      sheet = sheetno,
+      cell = dims,
+      colNames = colNames,
+      removeCellStyle = removeCellStyle,
+      na.strings = na.strings
     )
   }
 
-  wb
+  return(wb)
 }
 
 
@@ -987,7 +970,7 @@ write_data <- function(
 #' write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
 #'
 #' ## 5. - Writing array formulas
-#' 
+#'
 #' set.seed(123)
 #' df <- data.frame(C = rnorm(10), D = rnorm(10))
 #'
@@ -1001,13 +984,13 @@ write_data <- function(
 #'              array = TRUE)
 #'
 write_formula <- function(wb,
-  sheet,
-  x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
-  array = FALSE,
-  xy = NULL) {
+                          sheet,
+                          x,
+                          startCol = 1,
+                          startRow = 1,
+                          dims = rowcol_to_dims(startRow, startCol),
+                          array = FALSE,
+                          xy = NULL) {
   assert_class(x, "character")
   # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
   x <- replaceXMLEntities(x)

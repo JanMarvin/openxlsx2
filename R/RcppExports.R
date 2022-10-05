@@ -47,24 +47,6 @@ wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref) {
     invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref))
 }
 
-#' update loop used in update_cell(), when writing on worksheet data
-#' @param cc cc
-#' @param x x
-#' @param data_class data_class
-#' @param rows rows
-#' @param cols cols
-#' @param colNames colNames
-#' @param removeCellStyle removeCellStyle
-#' @param cell cell
-#' @param hyperlinkstyle hyperlinkstyle
-#' @param no_na_strings no_na_strings
-#' @param na_strings_ na_strings
-#' @keywords internal
-#' @noRd
-update_cell_loop <- function(cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_ = NULL, hyperlinkstyle_ = NULL) {
-    invisible(.Call(`_openxlsx2_update_cell_loop`, cc, x, data_class, rows, cols, colNames, removeCellStyle, cell, no_na_strings, na_strings_, hyperlinkstyle_))
-}
-
 build_cell_merges <- function(comps) {
     .Call(`_openxlsx2_build_cell_merges`, comps)
 }

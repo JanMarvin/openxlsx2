@@ -136,7 +136,7 @@ test_that("update_cells", {
 
 
   exp <- structure(
-    list(c_t = c("", "str", ""),
+    list(c_t = c("", "str", "str"),
          f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\")"),
          f_t = c("array", "", "")),
     row.names = c("23", "110", "111"), class = "data.frame")
@@ -175,5 +175,71 @@ test_that("write data.table class", {
   tmp <- temp_xlsx()
   expect_silent(write_xlsx(df, tmp))
   expect_equal(mtcars, read_xlsx(tmp), ignore_attr = TRUE)
+
+})
+
+test_that("update cell(s)", {
+
+  xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
+  wb <- wb_load(xlsxFile)
+
+  # update Cells D4:D6 with 1:3
+  wb <- wb_add_data(x = c(1:3),
+                    wb = wb, sheet = "Sheet1", dims = "D4:D6")
+
+  # update Cells B3:D3 (names())
+  wb <- wb_add_data(x = c("x", "y", "z"),
+                    wb = wb, sheet = "Sheet1", dims = "B3:D3")
+
+  # update D4 again (single value this time)
+  wb <- wb_add_data(x = 7,
+                    wb = wb, sheet = "Sheet1", dims = "D4")
+
+  # add new column on the left of the existing workbook
+  wb <- wb_add_data(x = 7,
+                    wb = wb, sheet = "Sheet1", dims = "A4")
+
+  # add new row on the end of the existing workbook
+  wb <- wb_add_data(x = 7,
+                    wb = wb, sheet = "Sheet1", dims = "A9")
+
+  exp <- structure(
+    list(c(7, NA, NA, NA, NA, 7),
+         c(NA, NA, TRUE, FALSE, TRUE, NA),
+         c(2, NA, 2.5, NA, NA, NA),
+         c(7, 2, 3, NA, 5, NA)),
+    names = c(NA, "x", "Var2", "Var3"),
+    row.names = 4:9,
+    class = "data.frame")
+
+  got <- wb_to_df(wb)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  ####
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
+    add_data(dims = "C3", x = Sys.Date())$
+    add_data(dims = "E4", x = Sys.Date(), removeCellStyle = TRUE)
+  exp <- structure(list(r = c("B2", "C2", "D2", "E2", "F2", "G2"),
+                        row_r = c("2", "2", "2", "2", "2", "2"),
+                        c_r = c("B", "C", "D", "E", "F", "G"),
+                        c_s = c("1", "1", "1", "1", "1", "1"),
+                        c_t = c("b", "b", "b", "b", "b", "b"),
+                        c_cm = c("", "", "", "", "", ""),
+                        c_ph = c("", "", "", "", "", ""),
+                        c_vm = c("", "", "", "", "", ""),
+                        v = c("", "", "", "", "", ""),
+                        f = c("", "", "", "", "", ""),
+                        f_t = c("", "", "", "", "", ""),
+                        f_ref = c("", "", "", "", "", ""),
+                        f_ca = c("", "", "", "", "", ""),
+                        f_si = c("", "", "", "", "", ""),
+                        is = c("", "", "", "", "", ""),
+                        typ = c("3", "", "", "", "", "")),
+                   row.names = c("1", "8", "17", "114", "121", "128"),
+                   class = "data.frame")
+  got <- head(wb$worksheets[[1]]$sheet_data$cc)
+  expect_equal(exp, got)
 
 })
