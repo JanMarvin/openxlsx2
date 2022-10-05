@@ -265,6 +265,64 @@ write_data2 <- function(wb, sheet, data, name = NULL,
   cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
 
 
+  sel <- which(dc == openxlsx2_celltype[["logical"]])
+  for (i in sel) {
+    if (colNames) {
+      data[-1, i] <- as.integer(as.logical(data[-1, i]))
+    } else {
+      data[,i] <- as.integer(as.logical(data[,i]))
+    }
+  }
+
+  sel <- which(dc == openxlsx2_celltype[["character"]]) # character
+  if (length(sel)) {
+    data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+  }
+
+  wide_to_long(
+    data,
+    dc,
+    cc,
+    ColNames = colNames,
+    start_col = startCol,
+    start_row = startRow,
+    ref = dims
+  )
+
+  # if any v is missing, set typ to 'e'. v is only filled for non character
+  # values, but contains a string. To avoid issues, set it to the missing
+  # value expression
+
+  ## replace NA, NaN, and Inf
+  is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
+  if (length(is_na)) {
+    if (missing(na.strings)) {
+      cc[is_na, "v"]   <- "#N/A"
+      cc[is_na, "c_t"] <- "e"
+      cc[is_na, "is"]  <- ""
+    } else {
+      cc[is_na, "v"]  <- ""
+      if (is.null(na.strings)) {
+        # do nothing
+      } else {
+        cc[is_na, "c_t"] <- "inlineStr"
+        cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
+                                     no_escapes = TRUE, raw = TRUE)
+      }
+    }
+  }
+
+  is_nan <- which(cc$v == "NaN")
+  if (length(is_nan)) {
+    cc[is_nan, "v"]   <- "#VALUE!"
+    cc[is_nan, "c_t"] <- "e"
+  }
+
+  is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+  if (length(is_inf)) {
+    cc[is_inf, "v"]   <- "#NUM!"
+    cc[is_inf, "c_t"] <- "e"
+  }
 
   ### Begin styles
   style_cc <- is.null(wb$worksheets[[sheetno]]$sheet_data$cc) || removeCellStyle
@@ -391,68 +449,7 @@ write_data2 <- function(wb, sheet, data, name = NULL,
       comma_fmt <- write_xf(nmfmt_df(numfmt_comma))
       wb$styles_mgr$add(comma_fmt, comma_fmtid)
     }
-  }
 
-  sel <- which(dc == openxlsx2_celltype[["logical"]])
-  for (i in sel) {
-    if (colNames) {
-      data[-1, i] <- as.integer(as.logical(data[-1, i]))
-    } else {
-      data[,i] <- as.integer(as.logical(data[,i]))
-    }
-  }
-
-  sel <- which(dc == openxlsx2_celltype[["character"]]) # character
-  if (length(sel)) {
-    data[sel][is.na(data[sel])] <- "_openxlsx_NA"
-  }
-
-  wide_to_long(
-    data,
-    dc,
-    cc,
-    ColNames = colNames,
-    start_col = startCol,
-    start_row = startRow,
-    ref = dims
-  )
-
-  # if any v is missing, set typ to 'e'. v is only filled for non character
-  # values, but contains a string. To avoid issues, set it to the missing
-  # value expression
-
-  ## replace NA, NaN, and Inf
-  is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
-  if (length(is_na)) {
-    if (missing(na.strings)) {
-      cc[is_na, "v"]   <- "#N/A"
-      cc[is_na, "c_t"] <- "e"
-      cc[is_na, "is"]  <- ""
-    } else {
-      cc[is_na, "v"]  <- ""
-      if (is.null(na.strings)) {
-        # do nothing
-      } else {
-        cc[is_na, "c_t"] <- "inlineStr"
-        cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
-                                     no_escapes = TRUE, raw = TRUE)
-      }
-    }
-  }
-
-  is_nan <- which(cc$v == "NaN")
-  if (length(is_nan)) {
-    cc[is_nan, "v"]   <- "#VALUE!"
-    cc[is_nan, "c_t"] <- "e"
-  }
-
-  is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
-  if (length(is_inf)) {
-    cc[is_inf, "v"]   <- "#NUM!"
-    cc[is_inf, "c_t"] <- "e"
-  }
-
-  if (style_cc) {
     cc$c_s[cc$typ == "0"]  <- wb$styles_mgr$get_xf_id(short_date_fmtid)
     cc$c_s[cc$typ == "1"]  <- wb$styles_mgr$get_xf_id(long_date_fmtid)
     if (length(wb$styles_mgr$get_xf_id(numeric_fmtid)) == 1) {
