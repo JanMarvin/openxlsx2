@@ -72,9 +72,10 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
   return(core)
 }
 
+# All relationships here must be matched with files inside of the xlsx files.
+# Otherwise certain third party tools might not accept the file as valid xlsx file. 
 genBaseWorkbook.xml.rels <- function() {
   c(
-    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>',
     '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>',
     '<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>'
   )
