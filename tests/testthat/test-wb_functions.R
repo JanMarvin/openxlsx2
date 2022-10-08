@@ -178,4 +178,8 @@ test_that("dims_to_dataframe", {
   got <- dims_to_dataframe("A1;A2;C1;C2", fill = TRUE)
   expect_equal(exp, got)
 
+  exp <- list(c("A", "B"), "1")
+  got <- dims_to_rowcol("A1;B1")
+  expect_equal(exp, got)
+
 })

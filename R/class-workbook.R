@@ -5036,7 +5036,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
 
-      if (length(dims) == 1 && grepl(":", dims))
+      if (length(dims) == 1 && grepl(":|;", dims))
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
@@ -5996,7 +5996,7 @@ wbWorkbook <- R6::R6Class(
     do_cell_init = function(sheet = current_sheet(), dims) {
 
       sheet <- private$get_sheet_index(sheet)
-      if (length(dims) == 1 && grepl(":", dims))
+      if (length(dims) == 1 && grepl(":|;", dims))
         dims <- dims_to_dataframe(dims, fill = TRUE)
 
       exp_cells <- unname(unlist(dims))
@@ -6004,12 +6004,18 @@ wbWorkbook <- R6::R6Class(
 
       # initialize cell
       if (!all(exp_cells %in% got_cells)) {
+
         init_cells <- NA
-        for (exp_cell in exp_cells[!exp_cells %in% got_cells])
-        # TODO use dims once PR#236 is merged
-        self$add_data(x = init_cells, na.strings = NULL, colNames = FALSE,
-                      startCol = col2int(exp_cell),
-                      startRow = as.numeric(gsub("\\D", "", exp_cell)))
+        missing_cells <- exp_cells[!exp_cells %in% got_cells]
+
+        for (exp_cell in missing_cells) {
+          self$add_data(
+            x = init_cells,
+            na.strings = NULL,
+            colNames = FALSE,
+            dims = exp_cell
+          )
+        }
       }
 
       invisible(self)
