@@ -360,8 +360,8 @@ write_data2 <- function(wb, sheet, data, name = NULL,
       sel_cols <- names(rtyp[sel == TRUE])
       sel_rows <- rownames(rtyp)
 
-      # # ignore first row if colNames
-      # if (colNames) sel_rows <- sel_rows[-1]
+      # ignore first row if colNames
+      if (colNames) sel_rows <- sel_rows[-1]
 
       paste(
         unname(
@@ -448,9 +448,7 @@ write_data2 <- function(wb, sheet, data, name = NULL,
       # message("accounting: ", dim_sel)
 
       wb$add_numfmt(
-        sheet = sheetno,
-        
-      sheet = sheetno,dim = dim_sel,
+        dim = dim_sel,
         numfmt = numfmt_accounting
       )
     }
