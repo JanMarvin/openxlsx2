@@ -131,6 +131,7 @@ nmfmt_df <- function(x) {
 #' @param rowNames include rownames?
 #' @param startRow row to place it
 #' @param startCol col to place it
+#' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details
@@ -154,11 +155,19 @@ nmfmt_df <- function(x) {
 #' write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 #'
 #' @export
-write_data2 <- function(wb, sheet, data, name = NULL,
-                        colNames = TRUE, rowNames = FALSE,
-                        startRow = 1, startCol = 1,
-                        removeCellStyle = FALSE,
-                        na.strings) {
+write_data2 <- function(
+    wb,
+    sheet,
+    data,
+    name = NULL,
+    colNames = TRUE,
+    rowNames = FALSE,
+    startRow = 1,
+    startCol = 1,
+    applyCellStyle = TRUE,
+    removeCellStyle = FALSE,
+    na.strings
+  ) {
 
   if (missing(na.strings)) na.strings <- substitute()
 
@@ -335,7 +344,7 @@ write_data2 <- function(wb, sheet, data, name = NULL,
   } else {
     # update cell(s)
     # message("update_cell()")
-  
+
     wb <- update_cell(
       x = cc,
       wb =  wb,
@@ -348,10 +357,8 @@ write_data2 <- function(wb, sheet, data, name = NULL,
   }
 
   ### Begin styles
-  # TODO: could be optional if styles should be applied or not
-  style_cc <- TRUE
 
-  if (style_cc) {
+  if (applyCellStyle) {
 
     ## create a cell style format for specific types at the end of the existing
     # styles. gets the reference an passes it on.
@@ -532,6 +539,7 @@ write_data2 <- function(wb, sheet, data, name = NULL,
 #' @param bandedCols logical. If TRUE, the columns are colour banded
 #' @param bandedCols logical. If TRUE, a data table is created
 #' @param name If not NULL, a named region is defined.
+#' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @noRd
@@ -555,6 +563,7 @@ write_data_table <- function(
     bandedRows = TRUE,
     bandedCols = FALSE,
     name = NULL,
+    applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     data_table = FALSE,
     na.strings
@@ -715,6 +724,7 @@ write_data_table <- function(
     rowNames = rowNames,
     startRow = startRow,
     startCol = startCol,
+    applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle,
     na.strings = na.strings
   )
@@ -801,6 +811,7 @@ write_data_table <- function(
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param name If not NULL, a named region is defined.
+#' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @seealso [write_datatable()]
@@ -877,6 +888,7 @@ write_data <- function(
     withFilter = FALSE,
     sep = ", ",
     name = NULL,
+    applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     na.strings
 ) {
@@ -903,6 +915,7 @@ write_data <- function(
     bandedRows = FALSE,
     bandedCols = FALSE,
     name = name,
+    applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle,
     data_table = FALSE,
     na.strings = na.strings
@@ -933,6 +946,8 @@ write_data <- function(
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
+#' @param applyCellStyle apply styles when writing on the sheet
+#' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_data()]
 #' @export write_formula
 #' @rdname write_formula
@@ -999,14 +1014,18 @@ write_data <- function(
 #'              x = "SUM(C2:C11*D2:D11)",
 #'              array = TRUE)
 #'
-write_formula <- function(wb,
-                          sheet,
-                          x,
-                          startCol = 1,
-                          startRow = 1,
-                          dims = rowcol_to_dims(startRow, startCol),
-                          array = FALSE,
-                          xy = NULL) {
+write_formula <- function(
+  wb,
+  sheet,
+  x,
+  startCol = 1,
+  startRow = 1,
+  dims = rowcol_to_dims(startRow, startCol),
+  array = FALSE,
+  xy = NULL,
+  applyCellStyle = TRUE,
+  removeCellStyle = FALSE
+) {
   assert_class(x, "character")
   # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
   x <- replaceXMLEntities(x)
@@ -1028,7 +1047,9 @@ write_formula <- function(wb,
     array = array,
     xy = xy,
     colNames = FALSE,
-    rowNames = FALSE
+    rowNames = FALSE,
+    applyCellStyle = applyCellStyle,
+    removeCellStyle = removeCellStyle
   )
 }
 
@@ -1060,6 +1081,8 @@ write_formula <- function(wb,
 #' @param lastColumn logical. If TRUE, the last column is bold
 #' @param bandedRows logical. If TRUE, rows are colour banded
 #' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param applyCellStyle apply styles when writing on the sheet
+#' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
@@ -1171,6 +1194,8 @@ write_datatable <- function(
     lastColumn = FALSE,
     bandedRows = TRUE,
     bandedCols = FALSE,
+    applyCellStyle = TRUE,
+    removeCellStyle = FALSE,
     na.strings
 ) {
 
@@ -1196,8 +1221,9 @@ write_datatable <- function(
     bandedRows = bandedRows,
     bandedCols = bandedCols,
     name = NULL,
-    removeCellStyle = FALSE,
     data_table = TRUE,
+    applyCellStyle = applyCellStyle,
+    removeCellStyle = removeCellStyle,
     na.strings = na.strings
   )
 }

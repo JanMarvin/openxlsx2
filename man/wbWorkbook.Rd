@@ -538,6 +538,7 @@ add data
   withFilter = FALSE,
   name = NULL,
   sep = ", ",
+  applyCellStyle = TRUE,
   removeCellStyle = FALSE,
   na.strings
 )}\if{html}{\out{</div>}}
@@ -569,6 +570,8 @@ add data
 \item{\code{name}}{name}
 
 \item{\code{sep}}{sep}
+
+\item{\code{applyCellStyle}}{applyCellStyle}
 
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
@@ -602,6 +605,8 @@ add a data table
   lastColumn = FALSE,
   bandedRows = TRUE,
   bandedCols = FALSE,
+  applyCellStyle = TRUE,
+  removeCellStyle = FALSE,
   na.strings
 )}\if{html}{\out{</div>}}
 }
@@ -641,6 +646,10 @@ add a data table
 
 \item{\code{bandedCols}}{bandedCols}
 
+\item{\code{applyCellStyle}}{applyCellStyle}
+
+\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+
 \item{\code{na.strings}}{na.strings}
 }
 \if{html}{\out{</div>}}
@@ -659,7 +668,9 @@ add formula
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL
+  xy = NULL,
+  applyCellStyle = TRUE,
+  removeCellStyle = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -679,6 +690,10 @@ add formula
 \item{\code{array}}{array}
 
 \item{\code{xy}}{xy}
+
+\item{\code{applyCellStyle}}{applyCellStyle}
+
+\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 }
 \if{html}{\out{</div>}}
 }

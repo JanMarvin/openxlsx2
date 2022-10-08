@@ -22,6 +22,8 @@ wb_add_data_table(
   lastColumn = FALSE,
   bandedRows = TRUE,
   bandedCols = FALSE,
+  applyCellStyle = TRUE,
+  removeCellStyle = FALSE,
   na.strings
 )
 }
@@ -68,6 +70,10 @@ sep).
 \item{bandedRows}{logical. If TRUE, rows are colour banded}
 
 \item{bandedCols}{logical. If TRUE, the columns are colour banded}
+
+\item{applyCellStyle}{Should we write cell styles to the workbook}
+
+\item{removeCellStyle}{keep the cell style?}
 
 \item{na.strings}{optional}
 }

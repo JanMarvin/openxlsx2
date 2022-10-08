@@ -19,6 +19,7 @@ wb_add_data(
   withFilter = FALSE,
   name = NULL,
   sep = ", ",
+  applyCellStyle = TRUE,
   removeCellStyle = FALSE,
   na.strings
 )
@@ -37,6 +38,7 @@ write_data(
   withFilter = FALSE,
   sep = ", ",
   name = NULL,
+  applyCellStyle = TRUE,
   removeCellStyle = FALSE,
   na.strings
 )
@@ -69,6 +71,8 @@ write_data(
 \item{name}{If not NULL, a named region is defined.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
+
+\item{applyCellStyle}{apply styles when writing on the sheet}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 

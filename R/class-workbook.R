@@ -925,6 +925,7 @@ wbWorkbook <- R6::R6Class(
     #' @param withFilter withFilter
     #' @param name name
     #' @param sep sep
+    #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @param na.strings na.strings
     #' @param return The `wbWorkbook` object
@@ -941,6 +942,7 @@ wbWorkbook <- R6::R6Class(
         withFilter      = FALSE,
         name            = NULL,
         sep             = ", ",
+        applyCellStyle  = TRUE,
         removeCellStyle = FALSE,
         na.strings
       ) {
@@ -984,6 +986,8 @@ wbWorkbook <- R6::R6Class(
     #' @param lastColumn lastColumn
     #' @param bandedRows bandedRows
     #' @param bandedCols bandedCols
+    #' @param applyCellStyle applyCellStyle
+    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @param na.strings na.strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
@@ -1003,6 +1007,8 @@ wbWorkbook <- R6::R6Class(
         lastColumn  = FALSE,
         bandedRows  = TRUE,
         bandedCols  = FALSE,
+        applyCellStyle = TRUE,
+        removeCellStyle = FALSE,
         na.strings
     ) {
 
@@ -1026,6 +1032,8 @@ wbWorkbook <- R6::R6Class(
         lastColumn  = lastColumn,
         bandedRows  = bandedRows,
         bandedCols  = bandedCols,
+        applyCellStyle = applyCellStyle,
+        removeCellStyle = removeCellStyle,
         na.strings  = na.strings
       )
       invisible(self)
@@ -1039,6 +1047,8 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dims
     #' @param array array
     #' @param xy xy
+    #' @param applyCellStyle applyCellStyle
+    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @returns The `wbWorkbook` object
     add_formula = function(
         sheet    = current_sheet(),
@@ -1047,7 +1057,9 @@ wbWorkbook <- R6::R6Class(
         startRow = 1,
         dims     = rowcol_to_dims(startRow, startCol),
         array    = FALSE,
-        xy       = NULL
+        xy       = NULL,
+        applyCellStyle = TRUE,
+        removeCellStyle = FALSE
     ) {
       write_formula(
         wb       = self,
@@ -1057,7 +1069,9 @@ wbWorkbook <- R6::R6Class(
         startRow = startRow,
         dims     = dims,
         array    = array,
-        xy       = xy
+        xy       = xy,
+        applyCellStyle = applyCellStyle,
+        removeCellStyle = removeCellStyle
       )
       invisible(self)
     },
