@@ -656,23 +656,23 @@ wbWorkbook <- R6::R6Class(
                 new_sheet_name <- guard_ws(new)
 
                 ## we need to replace "'oldname'" as well as "oldname"
-                if (grepl("'", old_sheet_name)) {
-                  chart <- gsub(
-                    stri_join("(?<=')", old_sheet_name, "(?='!)"),
-                    stri_join(new_sheet_name),
-                    chart,
-                    perl = TRUE
-                  )
-                } else {
-                  chart <- gsub(
-                    stri_join("(?<=[^A-Za-z0-9])", old_sheet_name, "(?=!)"),
-                    stri_join(new_sheet_name),
-                    chart,
-                    perl = TRUE
-                  )
-                }
+                chart <- gsub(
+                  old_sheet_name,
+                  new_sheet_name,
+                  chart,
+                  perl = TRUE
+                )
 
                 self$charts$chart[chartid] <- chart
+
+                # two charts can not point to the same rels
+                if (self$charts$rels[chartid] != "") {
+                  self$charts$rels[chartid] <- gsub(
+                    stri_join(old_chart, ".xml"),
+                    stri_join(chartid, ".xml"),
+                    self$charts$rels[chartid]
+                  )
+                }
 
                 rl <- gsub(stri_join("(?<=charts/)", cf), newname, rl, perl = TRUE)
               }

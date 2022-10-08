@@ -6,6 +6,10 @@
 
 ## Fixes
 
+* Fix cloning pivot charts. [361](https://github.com/JanMarvin/openxlsx2/issues/361)
+
+* Fix loading and writing files with slicers. Loading would add a few empty slicer xml files to `Content_Types` and `workbook.xml.rels`. [361](https://github.com/JanMarvin/openxlsx2/issues/361)
+
 * Align the logic for writing data to empty worksheets and updating/writing to worksheets with data. This removes `update_cell_loop()` and changes how `update_cell()` behaves. Not only does this remove duplicated code, it also brings great speed improvements (issue [356](https://github.com/JanMarvin/openxlsx2/issues/356)). [356](https://github.com/JanMarvin/openxlsx2/issues/356)
 
 * It is now possible to use special characters in formulas without coding. Previously `&` had to be encoded like `&amp;` [251](https://github.com/JanMarvin/openxlsx2/issues/251)

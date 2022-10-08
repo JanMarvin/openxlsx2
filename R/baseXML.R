@@ -1,4 +1,4 @@
-
+# functions to create basic xml lists
 
 genBaseContent_Type <- function() {
   c(
@@ -12,7 +12,6 @@ genBaseContent_Type <- function() {
     '<Override PartName="/xl/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>'
   )
 }
-
 
 genBaseShapeVML <- function(clientData, id) {
   if (grepl("visible", clientData, ignore.case = TRUE)) {
@@ -34,10 +33,6 @@ genBaseShapeVML <- function(clientData, id) {
   )
 }
 
-
-
-
-
 genClientData <- function(col, row, visible, height, width) {
   txt <- sprintf(
     '<x:ClientData ObjectType="Note"><x:MoveWithCells/><x:SizeWithCells/><x:Anchor>%s, 15, %s, 10, %s, 147, %s, 18</x:Anchor><x:AutoFill>False</x:AutoFill><x:Row>%s</x:Row><x:Column>%s</x:Column>',
@@ -52,21 +47,6 @@ genClientData <- function(col, row, visible, height, width) {
 
   return(txt)
 }
-
-
-# genBaseRels <- function() {
-#
-#   '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
-#    <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
-#    <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>'
-#
-# }
-#
-#
-# genBaseApp <- function() {
-#   list('<Application>Microsoft Excel</Application>')
-# }
-
 
 genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL) {
   core <- '<coreProperties xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
@@ -92,85 +72,6 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
   return(core)
 }
 
-#
-# addAuthor <- function(wb,Author = NULL) {
-#
-#   if (!is.null(Author)) {
-#     current_creator <-
-#       stri_match(wb$core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
-#     wb$core <-
-#       stri_replace_all_fixed(
-#         wb$core,
-#         pattern = current_creator,
-#         replacement = stri_c(current_creator, Author, sep = ";")
-#       )
-#   }
-#
-#
-# }
-#
-#
-# setAuthor <- function(wb,Author = NULL) {
-#
-#   if (!is.null(Author)) {
-#     current_creator <-
-#       stri_match(wb$core, regex = "<dc:creator>(.*?)</dc:creator>")[1, 2]
-#     wb$core <-
-#       stri_replace_all_fixed(
-#         wb$core,
-#         pattern = current_creator,
-#         replacement =  Author
-#       )
-#   }
-#
-#
-# }
-#
-# wb_set_last_modified_by <- function(wb,ModifiedBy=NULL) {
-#
-#   if (!is.null(addmodifier)) {
-#     current_lastmodifier <-
-#       stri_match(wb$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
-#     wb$core <-
-#       stri_replace_all_fixed(
-#         wb$core,
-#         pattern = current_lastmodifier,
-#         replacement = ModifiedBy
-#       )
-#   }
-#
-#
-# }
-#
-#
-
-#
-#
-# setBaseCore <- function(core,setcreator="",setmodifier="",
-#                         title = NULL, subject = NULL, category = NULL) {
-#
-#
-#   core <- c(core, sprintf('<dc:creator>%s</dc:creator>', setcreator))
-#   core <- c(core, sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")))
-#
-#   if (!is.null(title))
-#     core <- c(core, sprintf('<dc:title>%s</dc:title>', replace_legal_chars(title)))
-#
-#   if (!is.null(subject))
-#     core <- c(core, sprintf('<dc:subject>%s</dc:subject>', replace_legal_chars(subject)))
-#
-#   if (!is.null(category))
-#     core <- c(core, sprintf('<cp:category>%s</cp:category>', replace_legal_chars(category)))
-#
-#   core <- c(core, '</coreProperties>')
-#
-#   return(core)
-#
-# }
-
-
-
-
 genBaseWorkbook.xml.rels <- function() {
   c(
     '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>',
@@ -178,7 +79,6 @@ genBaseWorkbook.xml.rels <- function() {
     '<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>'
   )
 }
-
 
 genBaseWorkbook <- function() {
 
@@ -261,7 +161,6 @@ genBaseStyleSheet <- function(dxfs = NULL, tableStyles = NULL, extLst = NULL) {
   )
 }
 
-
 genBasePic <- function(imageNo) {
   sprintf('<xdr:pic>
       <xdr:nvPicPr>
@@ -284,15 +183,6 @@ genBasePic <- function(imageNo) {
       </xdr:spPr>
     </xdr:pic>', imageNo, imageNo, imageNo)
 }
-
-
-
-
-
-
-
-
-
 
 genBaseTheme <- function() {
   stringi::stri_unescape_unicode(
@@ -609,33 +499,6 @@ gen_databar_extlst <- function(guid, sqref, posColour, negColour, values, border
 
   return(xml)
 }
-
-
-
-contentTypePivotXML <- function(i) {
-  c(
-    sprintf('<Override PartName="/xl/pivotCache/pivotCacheDefinition%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml"/>', i),
-    sprintf('<Override PartName="/xl/pivotCache/pivotCacheRecords%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml"/>', i),
-    sprintf('<Override PartName="/xl/pivotTables/pivotTable%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml"/>', i)
-  )
-}
-
-contentTypeSlicerCacheXML <- function(i) {
-  c(
-    sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', i),
-    sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', i)
-  )
-}
-
-
-genBaseSlicerXML <- function() {
-  '<ext uri="{A8765BA9-456A-4dab-B4F3-ACF838C121DE}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-    <x14:slicerList>
-    <x14:slicer r:id="rId0"/>
-      </x14:slicerList>
-      </ext>'
-}
-
 
 genSlicerCachesExtLst <- function(i) {
   paste0(
