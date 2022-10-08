@@ -773,7 +773,9 @@ get_cell_styles <- function(wb, sheet, cell) {
     out
   },
   NA_integer_)
-  wb$styles_mgr$styles$cellXfs[id + 1]
+  out <- wb$styles_mgr$styles$cellXfs[id + 1]
+  if (is.na(out)) out <- ""
+  out
 }
 
 
@@ -852,13 +854,13 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #' @examples
 #' # do not apply anthing
 #' style1 <- create_dxfs_style()
-#' 
+#'
 #' # change font color and background color
 #' style2 <- create_dxfs_style(
 #'   font_color = wb_colour(hex = "FF9C0006"),
 #'   bgFill = wb_colour(hex = "FFFFC7CE")
 #' )
-#' 
+#'
 #' # change font (type, size and color) and background
 #' # the old default in openxlsx and openxlsx2 <= 0.3
 #' style3 <- create_dxfs_style(
@@ -867,7 +869,7 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #'   font_color = wb_colour(hex = "FF9C0006"),
 #'   bgFill = wb_colour(hex = "FFFFC7CE")
 #' )
-#' 
+#'
 #' ## See package vignettes for further examples
 #' @export
 create_dxfs_style <- function(
