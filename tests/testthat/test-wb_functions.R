@@ -163,3 +163,19 @@ test_that("select_active_sheet", {
   expect_identical(1, wb_get_active_sheet(wb))
 
 })
+
+
+test_that("dims_to_dataframe", {
+
+  exp <- structure(
+    list(A = c("A1", "A2"), C = c("C1", "C2")),
+    row.names = 1:2,
+    class = "data.frame"
+  )
+  got <- dims_to_dataframe("A1:A2;C1:C2", fill = TRUE)
+  expect_equal(exp, got)
+
+  got <- dims_to_dataframe("A1;A2;C1;C2", fill = TRUE)
+  expect_equal(exp, got)
+
+})
