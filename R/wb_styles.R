@@ -773,8 +773,10 @@ get_cell_styles <- function(wb, sheet, cell) {
     out
   },
   NA_integer_)
+
   out <- wb$styles_mgr$styles$cellXfs[id + 1]
-  if (is.na(out)) out <- ""
+  if (!all(identical(out, character())) && any(is.na(out))) 
+    out[is.na(out)] <- ""
   out
 }
 
