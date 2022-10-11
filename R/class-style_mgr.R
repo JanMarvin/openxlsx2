@@ -168,7 +168,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
-      dxfs <- self$styles$dxf
+      dxfs <- self$styles$dxfs
       if (length(dxfs)) {
         typ <- xml_node_name(dxfs)
         id  <- rownames(read_xf(read_xml(dxfs)))
