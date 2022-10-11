@@ -4881,6 +4881,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
 
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      dims <- unname(unlist(did))
+
       if (inherits(numfmt, "character")) {
 
         new_numfmt <- create_numfmt(
@@ -4986,6 +4989,9 @@ wbWorkbook <- R6::R6Class(
     ) {
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
+
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      dims <- unname(unlist(did))
 
       for (dim in dims) {
         xf_prev <- get_cell_styles(self, sheet, dim)
