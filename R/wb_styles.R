@@ -766,17 +766,18 @@ styles_on_sheet <- function(wb, sheet) {
 #' @param cell cell
 #' @noRd
 get_cell_styles <- function(wb, sheet, cell) {
-  z <- wb$get_cell_style(sheet, cell)
-  id <- vapply(z, function(x) {
-    out <- which(wb$styles_mgr$get_xf()$id %in% x)
-    if (identical(out,integer())) out <- 0L
-    out
-  },
-  NA_integer_)
+  cellstyles <- wb$get_cell_style(sheet, cell)
 
-  out <- wb$styles_mgr$styles$cellXfs[id + 1]
-  if (!all(identical(out, character())) && any(is.na(out))) 
-    out[is.na(out)] <- ""
+  out <- NULL
+  for (cellstyle in cellstyles) {
+    if (cellstyle == "")
+      tmp <- wb$styles_mgr$styles$cellXfs[1]
+    else
+      tmp <- wb$styles_mgr$styles$cellXfs[as.numeric(cellstyle) + 1]
+
+    out <- c(out, tmp)
+  }
+
   out
 }
 

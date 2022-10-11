@@ -4851,11 +4851,14 @@ wbWorkbook <- R6::R6Class(
 
       self$styles_mgr$add(new_font, snew_font)
 
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      dims <- unname(unlist(did))
+
       for (dim in dims) {
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(snew_font))
-        self$styles_mgr$add(xf_new_font, xf_new_font)
-        s_id <- self$styles_mgr$get_xf_id(xf_new_font)
+        self$styles_mgr$add(xf_new_font, sxf_new_font)
+        s_id <- self$styles_mgr$get_xf_id(sxf_new_font)
         self$set_cell_style(sheet, dim, s_id)
       }
 
