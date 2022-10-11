@@ -326,3 +326,39 @@ test_that("get & set cell style(s)", {
   expect_equal(s_a1_b1, s_a2_b2)
 
 })
+
+test_that("get_cell_styles()", {
+
+  wb <- wb_workbook()$
+    add_worksheet(gridLines = FALSE)$
+    # add title
+    add_data(dims = "B2", x = "MTCARS Title")$
+    add_font(dims = "B2", bold = "1", size = "16")$           # style 1
+    # add data
+    add_data(x = head(mtcars), startCol = 2, startRow = 3)$
+    add_fill(dims = "B3:L3", color = wb_colour("turquoise"))$ # style 2 unused
+    add_font(dims = "B3:L3", color = wb_colour("white"))$     # style 3
+    add_border(dims = "B9:L9",
+               bottom_color = wb_colour(hex = "FF000000"),
+               bottom_border = "thin",
+               left_border = "",
+               right_border = "",
+               top_border = "")
+
+  exp <- "1"
+  got <- wb$get_cell_style(dims = "B2")
+  expect_equal(exp, got)
+
+  exp <- "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
+  got <- get_cell_styles(wb, 1, "B2")
+  expect_equal(exp, got)
+
+  exp <- "3"
+  got <- wb$get_cell_style(dims = "B3")
+  expect_equal(exp, got)
+
+  exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>"
+  got <- get_cell_styles(wb, 1, "B3")
+  expect_equal(exp, got)
+
+})
