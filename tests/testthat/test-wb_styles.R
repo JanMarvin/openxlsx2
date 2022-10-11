@@ -31,7 +31,7 @@ test_that("wb_clone_sheet_style", {
   # sort for this test, does not matter later, because we will sort prior to saving
   ord <- match(
     wb$worksheets[[1]]$sheet_data$cc$r,
-      wb$worksheets[[2]]$sheet_data$cc$r
+    wb$worksheets[[2]]$sheet_data$cc$r
   )
 
   expect_equal(
@@ -358,6 +358,16 @@ test_that("get_cell_styles()", {
   expect_equal(exp, got)
 
   exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>"
+  got <- get_cell_styles(wb, 1, "B3")
+  expect_equal(exp, got)
+
+  wb$add_cell_style(dims = "B3:L3",
+                    textRotation = "45",
+                    horizontal = "center",
+                    vertical = "center",
+                    wrapText = "1")
+
+  exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"center\" textRotation=\"45\" vertical=\"center\" wrapText=\"1\"/></xf>"
   got <- get_cell_styles(wb, 1, "B3")
   expect_equal(exp, got)
 
