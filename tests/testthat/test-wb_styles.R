@@ -259,6 +259,31 @@ test_that("test add_cell_style()", {
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
 
+  ###
+  exp <- "<xf applyAlignment=\"1\" applyBorder=\"1\" applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" applyProtection=\"1\" borderId=\"1\" fillId=\"1\" fontId=\"1\" numFmtId=\"1\" pivotButton=\"0\" quotePrefix=\"0\" xfId=\"1\"><alignment horizontal=\"1\" indent=\"1\" justifyLastLine=\"1\" readingOrder=\"1\" relativeIndent=\"1\" shrinkToFit=\"1\" textRotation=\"1\" vertical=\"1\" wrapText=\"1\"/><extLst extLst=\"1\"/><protection hidden=\"1\" locked=\"1\"/></xf>"
+  got <- create_cell_style(
+    borderId = "1",
+    fillId = "1",
+    fontId = "1",
+    numFmtId = "1",
+    pivotButton = "0",
+    quotePrefix = "0",
+    xfId = "1",
+    horizontal = "1",
+    indent = "1",
+    justifyLastLine = "1",
+    readingOrder = "1",
+    relativeIndent = "1",
+    shrinkToFit = "1",
+    textRotation = "1",
+    vertical = "1",
+    wrapText = "1",
+    extLst = "1",
+    hidden = "1",
+    locked = "1"
+  )
+  expect_equal(exp, got)
+
 })
 
 test_that("add_style", {
