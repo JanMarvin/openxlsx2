@@ -362,3 +362,21 @@ test_that("get_cell_styles()", {
   expect_equal(exp, got)
 
 })
+
+test_that("applyCellStyle works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
+    add_data(dims = "C3", x = Sys.Date())$
+    add_data(dims = "E3", x = Sys.Date(), applyCellStyle = FALSE)$
+    add_data(dims = "E5", x = Sys.Date(), removeCellStyle = TRUE)$
+    add_data(dims = "A1", x = Sys.Date())
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  exp <- c("3", "2", "1", "3")
+  got <- cc[cc$r %in% c("A1", "C3", "E3", "E5"), "c_s"]
+  expect_equal(exp, got)
+
+})
+

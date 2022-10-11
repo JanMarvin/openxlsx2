@@ -963,6 +963,7 @@ wbWorkbook <- R6::R6Class(
         withFilter      = withFilter,
         name            = name,
         sep             = sep,
+        applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle,
         na.strings      = na.strings
       )
