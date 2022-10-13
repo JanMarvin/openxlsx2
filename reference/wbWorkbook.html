@@ -710,6 +710,7 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
+<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">na.strings</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
@@ -765,6 +766,10 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>sep</p></dd>
 
 
+<dt><code>applyCellStyle</code></dt>
+<dd><p>applyCellStyle</p></dd>
+
+
 <dt><code>removeCellStyle</code></dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
 
@@ -801,6 +806,8 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">na.strings</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -871,6 +878,14 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>bandedCols</p></dd>
 
 
+<dt><code>applyCellStyle</code></dt>
+<dd><p>applyCellStyle</p></dd>
+
+
+<dt><code>removeCellStyle</code></dt>
+<dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
+
+
 <dt><code>na.strings</code></dt>
 <dd><p>na.strings</p></dd>
 
@@ -889,7 +904,9 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  xy <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -921,6 +938,14 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>xy</code></dt>
 <dd><p>xy</p></dd>
+
+
+<dt><code>applyCellStyle</code></dt>
+<dd><p>applyCellStyle</p></dd>
+
+
+<dt><code>removeCellStyle</code></dt>
+<dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
 
 
 </dl><p></p></div>
