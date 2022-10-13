@@ -22,6 +22,8 @@ write_datatable(
   lastColumn = FALSE,
   bandedRows = TRUE,
   bandedCols = FALSE,
+  applyCellStyle = TRUE,
+  removeCellStyle = FALSE,
   na.strings
 )
 }
@@ -65,6 +67,10 @@ A vector of the form c(startCol, startRow)}
 \item{bandedRows}{logical. If TRUE, rows are colour banded}
 
 \item{bandedCols}{logical. If TRUE, the columns are colour banded}
+
+\item{applyCellStyle}{apply styles when writing on the sheet}
+
+\item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 
 \item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
 }

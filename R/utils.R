@@ -158,31 +158,43 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #' @param as_integer optional if the output should be returned as interger
 #' @noRd
 dims_to_rowcol <- function(x, as_integer = FALSE) {
-  dimensions <- unlist(strsplit(x, ":"))
-  cols <- gsub("[[:digit:]]","", dimensions)
-  rows <- gsub("[[:upper:]]","", dimensions)
 
-  # if "A:B"
-  if (any(rows == "")) rows[rows == ""] <- "1"
+  dims <- x
+  if (length(x) == 1 && grepl(";", x))
+    dims <- unlist(strsplit(x, ";"))
 
-  # convert cols to integer
-  cols_int <- col2int(cols)
-  rows_int <- as.integer(rows)
+  cols_out <- NULL
+  rows_out <- NULL
+  for (dim in dims) {
+    dimensions <- unlist(strsplit(dim, ":"))
+    cols <- gsub("[[:digit:]]","", dimensions)
+    rows <- gsub("[[:upper:]]","", dimensions)
 
-  if (length(dimensions) == 2) {
-    # needs integer to create sequence
-    cols <- int2col(seq.int(min(cols_int), max(cols_int)))
-    rows_int <- seq.int(min(rows_int), max(rows_int))
+    # if "A:B"
+    if (any(rows == "")) rows[rows == ""] <- "1"
+
+    # convert cols to integer
+    cols_int <- col2int(cols)
+    rows_int <- as.integer(rows)
+
+    if (length(dimensions) == 2) {
+      # needs integer to create sequence
+      cols <- int2col(seq.int(min(cols_int), max(cols_int)))
+      rows_int <- seq.int(min(rows_int), max(rows_int))
+    }
+
+    if (as_integer) {
+      cols <- cols_int
+      rows <- rows_int
+    } else {
+      rows <- as.character(rows_int)
+    }
+
+    cols_out <- unique(c(cols_out, cols))
+    rows_out <- unique(c(rows_out, rows))
   }
 
-  if (as_integer) {
-    cols <- cols_int
-    rows <- rows_int
-  } else {
-    rows <- as.character(rows_int)
-  }
-
-  list(cols, rows)
+  list(cols_out, rows_out)
 }
 
 #' row and col to dims

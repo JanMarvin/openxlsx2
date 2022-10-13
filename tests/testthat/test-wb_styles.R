@@ -31,7 +31,7 @@ test_that("wb_clone_sheet_style", {
   # sort for this test, does not matter later, because we will sort prior to saving
   ord <- match(
     wb$worksheets[[1]]$sheet_data$cc$r,
-      wb$worksheets[[2]]$sheet_data$cc$r
+    wb$worksheets[[2]]$sheet_data$cc$r
   )
 
   expect_equal(
@@ -259,6 +259,31 @@ test_that("test add_cell_style()", {
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
 
+  ###
+  exp <- "<xf applyAlignment=\"1\" applyBorder=\"1\" applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" applyProtection=\"1\" borderId=\"1\" fillId=\"1\" fontId=\"1\" numFmtId=\"1\" pivotButton=\"0\" quotePrefix=\"0\" xfId=\"1\"><alignment horizontal=\"1\" indent=\"1\" justifyLastLine=\"1\" readingOrder=\"1\" relativeIndent=\"1\" shrinkToFit=\"1\" textRotation=\"1\" vertical=\"1\" wrapText=\"1\"/><extLst extLst=\"1\"/><protection hidden=\"1\" locked=\"1\"/></xf>"
+  got <- create_cell_style(
+    borderId = "1",
+    fillId = "1",
+    fontId = "1",
+    numFmtId = "1",
+    pivotButton = "0",
+    quotePrefix = "0",
+    xfId = "1",
+    horizontal = "1",
+    indent = "1",
+    justifyLastLine = "1",
+    readingOrder = "1",
+    relativeIndent = "1",
+    shrinkToFit = "1",
+    textRotation = "1",
+    vertical = "1",
+    wrapText = "1",
+    extLst = "1",
+    hidden = "1",
+    locked = "1"
+  )
+  expect_equal(exp, got)
+
 })
 
 test_that("add_style", {
@@ -326,3 +351,67 @@ test_that("get & set cell style(s)", {
   expect_equal(s_a1_b1, s_a2_b2)
 
 })
+
+test_that("get_cell_styles()", {
+
+  wb <- wb_workbook()$
+    add_worksheet(gridLines = FALSE)$
+    # add title
+    add_data(dims = "B2", x = "MTCARS Title")$
+    add_font(dims = "B2", bold = "1", size = "16")$           # style 1
+    # add data
+    add_data(x = head(mtcars), startCol = 2, startRow = 3)$
+    add_fill(dims = "B3:L3", color = wb_colour("turquoise"))$ # style 2 unused
+    add_font(dims = "B3:L3", color = wb_colour("white"))$     # style 3
+    add_border(dims = "B9:L9",
+               bottom_color = wb_colour(hex = "FF000000"),
+               bottom_border = "thin",
+               left_border = "",
+               right_border = "",
+               top_border = "")
+
+  exp <- "1"
+  got <- wb$get_cell_style(dims = "B2")
+  expect_equal(exp, got)
+
+  exp <- "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
+  got <- get_cell_styles(wb, 1, "B2")
+  expect_equal(exp, got)
+
+  exp <- "3"
+  got <- wb$get_cell_style(dims = "B3")
+  expect_equal(exp, got)
+
+  exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>"
+  got <- get_cell_styles(wb, 1, "B3")
+  expect_equal(exp, got)
+
+  wb$add_cell_style(dims = "B3:L3",
+                    textRotation = "45",
+                    horizontal = "center",
+                    vertical = "center",
+                    wrapText = "1")
+
+  exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"center\" textRotation=\"45\" vertical=\"center\" wrapText=\"1\"/></xf>"
+  got <- get_cell_styles(wb, 1, "B3")
+  expect_equal(exp, got)
+
+})
+
+test_that("applyCellStyle works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
+    add_data(dims = "C3", x = Sys.Date())$
+    add_data(dims = "E3", x = Sys.Date(), applyCellStyle = FALSE)$
+    add_data(dims = "E5", x = Sys.Date(), removeCellStyle = TRUE)$
+    add_data(dims = "A1", x = Sys.Date())
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  exp <- c("3", "2", "1", "3")
+  got <- cc[cc$r %in% c("A1", "C3", "E3", "E5"), "c_s"]
+  expect_equal(exp, got)
+
+})
+

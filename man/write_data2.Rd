@@ -13,6 +13,7 @@ write_data2(
   rowNames = FALSE,
   startRow = 1,
   startCol = 1,
+  applyCellStyle = TRUE,
   removeCellStyle = FALSE,
   na.strings
 )
@@ -33,6 +34,8 @@ write_data2(
 \item{startRow}{row to place it}
 
 \item{startCol}{col to place it}
+
+\item{applyCellStyle}{apply styles when writing on the sheet}
 
 \item{removeCellStyle}{keep the cell style?}
 
