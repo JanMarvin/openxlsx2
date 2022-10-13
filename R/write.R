@@ -336,7 +336,7 @@ write_data2 <- function(
   }
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
-  if (!data_table && rowNames) {
+  if (!data_table && rowNames && colNames) {
     cc <- cc[cc$r != rtyp[1,1], ]
   }
 
