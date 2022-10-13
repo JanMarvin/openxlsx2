@@ -359,4 +359,4 @@ It is possible to copy the styles of several cells at once. In the following exa
 wb <- wb_load(system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")) %>%
   wb_set_cell_style(1, "A30:G35", wb_get_cell_style(., 1, "A10:G15"))
 # wb_open(wb)
-````
+```
