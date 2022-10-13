@@ -235,18 +235,18 @@ wb
 ```{r}
 wb <- wb_workbook()
 # full inner grid
-wb$add_worksheet("S1", gridLines = FALSE, rowColHeaders = FALSE)$add_data("S1", mtcars)
-wb$add_border("S1", dims = "A2:K33",
+wb$add_worksheet("S1", gridLines = FALSE)$add_data(x = mtcars)
+wb$add_border(dims = "A2:K33",
               inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"),
               inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
-# only vertical grid
-wb$add_worksheet("S2", gridLines = FALSE)$add_data("S2", mtcars)
-wb$add_border("S2", dims = "A2:K33", inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"))
 # only horizontal grid
-wb$add_worksheet("S3", gridLines = FALSE)$add_data("S3", mtcars)
-wb$add_border("S3", dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+wb$add_worksheet("S2", gridLines = FALSE)$add_data(x = mtcars)
+wb$add_border(dims = "A2:K33", inner_hgrid = "thin", inner_hcolor = c(rgb="FF808080"))
+# only vertical grid
+wb$add_worksheet("S3", gridLines = FALSE)$add_data(x = mtcars)
+wb$add_border(dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
 # no inner grid
-wb$add_worksheet("S4", gridLines = FALSE)$add_data("S4", mtcars)
+wb$add_worksheet("S4", gridLines = FALSE)$add_data(x = mtcars)
 wb$add_border("S4", dims = "A2:K33")
 ```
 
@@ -267,16 +267,16 @@ colnames(mat) <- make.names(seq_len(ncol(mat)))
 
 wb <- wb_workbook() %>% 
   wb_add_worksheet("test") %>% 
-  wb_add_data("test", mat, colNames = TRUE, startCol = 2, startRow = 2) %>% 
+  wb_add_data(x =mat, colNames = TRUE, startCol = 2, startRow = 2) %>% 
   # center first row
-  wb_add_cell_style("test", dims = "B2:C2", horizontal = "center") %>% 
+  wb_add_cell_style(dims = "B2:C2", horizontal = "center") %>% 
   # add border for first row
-  wb_add_border("test", dims = "B2:C2",
+  wb_add_border(dims = "B2:C2",
                      bottom_color = c(theme = "1"), bottom_border = "thin",
                      top_color = c(theme = "1"), top_border = "double",
                      left_border = "", right_border = "") %>% 
   # add border for last row
-  wb_add_border("test", dims = "B4:C4", 
+  wb_add_border(dims = "B4:C4", 
                      bottom_color = c(theme = "1"), bottom_border = "double",
                      top_border = "", left_border = "", right_border = "")
 
