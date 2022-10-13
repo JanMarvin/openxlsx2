@@ -351,3 +351,12 @@ for (i in 0:9) {
 }
 ```
 
+### Copy cell styles
+
+It is possible to copy the styles of several cells at once. In the following example, the styles of some cells from a formatted workbook are applied to a previously empty cell range. Be careful though, `wb_get_cell_style()` returns only some styles, so you have to make sure that the copy-from and copy-to dimensions match in a meaningful way.
+
+```{r}
+wb <- wb_load(system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")) %>%
+  wb_set_cell_style(1, "A30:G35", wb_get_cell_style(., 1, "A10:G15"))
+# wb_open(wb)
+````

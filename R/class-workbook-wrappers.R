@@ -1946,7 +1946,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #' @export
 wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
   assert_workbook(wb)
-  wb$get_cell_style(sheet, dims)
+  wb$clone()$get_cell_style(sheet, dims)
 }
 
 #' @rdname cell_style
@@ -1955,7 +1955,8 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
 #' @export
 wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   assert_workbook(wb)
-  wb$clone()$set_cell_style(sheet, dims, style)
+  # needs deep clone for nested calls as in styles vignette copy cell styles
+  wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
 }
 
 #' add border for cell region
