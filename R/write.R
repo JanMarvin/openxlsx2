@@ -745,7 +745,7 @@ write_data_table <- function(
 
     ## replace invalid XML characters
     col_names <- replace_legal_chars(colnames(x))
-    if (rowNames) col_names <- c("1", col_names)
+    if (rowNames) col_names <- c("_rowNames_", col_names)
 
     ## Table name validation
     if (is.null(tableName)) {
