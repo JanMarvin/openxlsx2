@@ -558,7 +558,7 @@ wbWorksheet <- R6::R6Class(
       # different ext types have different uri ids. We support dataValidations
       # and sparklineGroups.
       uri <- ""
-      if (l_name == "x14:dataValidations") uri <- "{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}"
+      # if (l_name == "x14:dataValidations") uri <- "{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}"
       if (l_name == "x14:sparklineGroups") uri <- "{05C60535-1F16-4fd2-B633-F4F36F0B64E0}"
 
       is_needed_uri <- grepl(pattern = uri, extLst, fixed = TRUE)
@@ -681,43 +681,6 @@ wbWorksheet <- R6::R6Class(
       )
 
       self$append("dataValidations", xml_add_child(header, form))
-      invisible(self)
-    },
-
-    # data validations list goes to extLst not to worksheet
-    data_validation_list = function(
-      value,
-      allowBlank,
-      showInputMsg,
-      showErrorMsg,
-      errorStyle,
-      errorTitle,
-      error,
-      promptTitle,
-      prompt,
-      sqref
-    ) {
-
-      data_val <- xml_node_create(
-        "x14:dataValidation",
-        xml_attributes = c(
-          type = "list",
-          allowBlank = allowBlank,
-          showInputMessage = showInputMsg,
-          showErrorMessage = showErrorMsg,
-          errorStyle = errorStyle,
-          errorTitle = errorTitle,
-          error = error,
-          promptTitle = promptTitle,
-          prompt = prompt
-        )
-      )
-
-      formula <- sprintf("<x14:formula1><xm:f>%s</xm:f></x14:formula1>", value)
-      sqref <- sprintf("<xm:sqref>%s</xm:sqref>", sqref)
-      xmlData <- xml_add_child(data_val, c(formula, sqref))
-      private$do_append_x14(xmlData, "x14:dataValidation", "x14:dataValidations")
-
       invisible(self)
     }
   )
