@@ -26,6 +26,7 @@ SuperB
 Textbox
 addStyle
 allowBlank
+applyCellStyle
 attr
 autoFilter
 bandedCols

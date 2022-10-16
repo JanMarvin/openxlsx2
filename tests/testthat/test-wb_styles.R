@@ -414,4 +414,3 @@ test_that("applyCellStyle works", {
   expect_equal(exp, got)
 
 })
-
