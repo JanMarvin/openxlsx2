@@ -168,6 +168,12 @@ wbWorkbook <- R6::R6Class(
     #'   is created, not when the Excel files are saved.
     datetimeCreated = Sys.time(),
 
+    #' @field message A record of what has been done to the workbook
+    message = NULL,
+
+    #' @field returns Returns from get* functions
+    returns = NULL,
+
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator character vector of creators.  Duplicated are ignored.
@@ -269,6 +275,10 @@ wbWorkbook <- R6::R6Class(
       self$subject         <- subject
       self$category        <- category
       self$datetimeCreated <- datetimeCreated
+
+      self$message         <- character()
+      self$returns         <- character()
+
       private$generate_base_core()
       private$current_sheet <- 0L
       invisible(self)

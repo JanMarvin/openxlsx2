@@ -234,6 +234,10 @@ worksheet names.}
 \item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
 is created, not when the Excel files are saved.}
+
+\item{\code{message}}{A record of what has been done to the workbook}
+
+\item{\code{returns}}{Returns from get* functions}
 }
 \if{html}{\out{</div>}}
 }
