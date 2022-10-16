@@ -181,3 +181,13 @@ test_that("getXMLPtr1con", {
   expect_equal(exp, got)
 
 })
+
+test_that("write_xmlPtr", {
+
+  xml <- read_xml("<a/>")
+  temp <- tempfile(fileext = ".xml")
+  expect_silent(write_xmlPtr(xml, temp))
+
+  skip_on_cran()
+  expect_error(write_xmlPtr(xml, paste0("/",random_string(), "/test.xml")), "could not save file")
+})
