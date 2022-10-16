@@ -1464,41 +1464,6 @@ wbWorkbook <- R6::R6Class(
         file.copy(self$vbaProject, xlDir)
       }
 
-      # ## Drawings
-      # for (draw in seq_along(self$drawings)) {
-
-      #   relship <- data.frame()
-      #   if (!all(identical(self$worksheets_rels[[draw]], character()))) {
-      #     relship <- rbindlist(xml_attr(unlist(self$worksheets_rels[[draw]]), "Relationship"))
-      #     relship$typ <- basename(relship$Type)
-      #     relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-      #   }
-
-      #   rid <- max(0, relship$tid)
-
-      #   if (!any(relship$typ == "drawing")) {
-
-      #     # check if drawings required
-      #     drawing_rel <- NULL
-      #     if (length(self$drawings) != 0 && length(self$drawings[[draw]])) {
-      #       rid <- rid + 1
-      #       drawing_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', rid, draw)
-      #     }
-
-      #     drawing_vml_rel <- NULL
-      #     # if drawings_vml is set or if file has comments. comments create drawings_vml when writing
-      #     if ((length(self$drawings_vml) > 0 && length(self$drawings_vml[[draw]]) > 0) || (length(self$comments) > 0 && length(self$comments[[draw]]) > 0)) {
-      #       rid <- rid + 1
-      #       drawing_vml_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>', rid, draw)
-      #     }
-
-      #     self$worksheets_rels[[draw]] <-  unique(c(self$worksheets_rels[[draw]], drawing_rel, drawing_vml_rel))
-
-      #   }
-
-
-      # }
-
       ## write worksheet, worksheet_rels, drawings, drawing_rels
       ct <- private$writeSheetDataXML(
         ct,
@@ -1595,13 +1560,6 @@ wbWorkbook <- R6::R6Class(
           pxml(styleXML$cellStyles),
           "</cellStyles>"
         )
-      # styleXML$cellStyles <-
-      #   stri_join(
-      #     pxml(self$styles_mgr$tableStyles)
-      #   )
-      # TODO
-      # tableStyles
-      # extLst
 
       styleXML$dxfs <-
         if (length(styleXML$dxfs)) {
@@ -2611,24 +2569,6 @@ wbWorkbook <- R6::R6Class(
         # deactivate sheet
         self$tables$tab_act[sel] <- 0
       }
-
-      # ## drawing will always be the first relationship
-      # if (nSheets > 1) {
-      #   for (i in seq_len(nSheets - 1L)) {
-      #     # did this get updated from length of 3 to 2?
-      #     #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
-      #     rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
-      #     if (nrow(rel) && ncol(rel)) {
-      #       if (any(basename(rel$Type) == "drawing")) {
-      #         rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
-      #       }
-      #       if (is.null(rel$TargetMode)) rel$TargetMode <- ""
-      #       self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
-      #     }
-      #   }
-      # } else {
-      #   self$worksheets_rels <- list()
-      # }
 
       ## remove sheet
       sn <- apply_reg_match0(self$workbook$sheets, pat = '(?<= name=")[^"]+')
