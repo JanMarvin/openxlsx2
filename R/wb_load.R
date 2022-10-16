@@ -1123,5 +1123,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     wb$tables.xml.rels <- rep("", length(tablesXML))
   }
 
+  # message is load call nothing else
+  wb$message <- match.call()
   return(wb)
 }

@@ -556,6 +556,7 @@ wbWorkbook <- R6::R6Class(
       self$append("sheetOrder", as.integer(newSheetIndex))
       private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -845,6 +846,7 @@ wbWorkbook <- R6::R6Class(
       #   - Comments ???
       #   - Slicers
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -916,7 +918,7 @@ wbWorkbook <- R6::R6Class(
       self$vml[[newSheetIndex]]              <- list()
       self$append("sheetOrder", newSheetIndex)
 
-      # invisible(newSheetIndex)
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -977,6 +979,8 @@ wbWorkbook <- R6::R6Class(
         removeCellStyle = removeCellStyle,
         na.strings      = na.strings
       )
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -1047,6 +1051,8 @@ wbWorkbook <- R6::R6Class(
         removeCellStyle = removeCellStyle,
         na.strings  = na.strings
       )
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -1084,6 +1090,8 @@ wbWorkbook <- R6::R6Class(
         applyCellStyle = applyCellStyle,
         removeCellStyle = removeCellStyle
       )
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -1103,6 +1111,7 @@ wbWorkbook <- R6::R6Class(
 
       self$styles_mgr$add(style, style_name)
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -1695,6 +1704,8 @@ wbWorkbook <- R6::R6Class(
 
       # (re)assign file path (if successful)
       self$path <- path
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -1890,6 +1901,7 @@ wbWorkbook <- R6::R6Class(
         name <- as.list(name)
       }
 
+      # wb$returns <- 
       list(
         size   = sz,
         colour = colour,
@@ -1913,6 +1925,9 @@ wbWorkbook <- R6::R6Class(
         fontColour,
         fontName
       )
+
+      self$append("message", match.call())
+      return(invisible(self))
     },
 
     ### sheet names ----
@@ -2051,6 +2066,8 @@ wbWorkbook <- R6::R6Class(
         allRowHeights[order(as.integer(names(allRowHeights)))]
 
       self$rowHeights[[sheet]] <- allRowHeights
+      
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2068,6 +2085,7 @@ wbWorkbook <- R6::R6Class(
         self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][-removeInds]
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2150,6 +2168,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel), na.rm = TRUE))))
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2186,6 +2205,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel)))))
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2213,6 +2233,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2320,6 +2341,8 @@ wbWorkbook <- R6::R6Class(
       col_df$bestFit[select] <- bestFit
       col_df$customWidth[select] <- customWidth
       self$worksheets[[sheet]]$fold_cols(col_df)
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2389,6 +2412,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel), na.rm = TRUE))))
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2424,6 +2448,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel)))))
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2627,6 +2652,7 @@ wbWorkbook <- R6::R6Class(
       # (don't use grepl(value = TRUE))
       self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2769,6 +2795,7 @@ wbWorkbook <- R6::R6Class(
         sqref        = sqref
       )
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2851,6 +2878,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$mergeCells <- self$worksheets[[sheet]]$mergeCells[!mergeIntersections]
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2947,6 +2975,8 @@ wbWorkbook <- R6::R6Class(
         }
 
       self$worksheets[[sheet]]$freezePane <- paneNode
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -2980,6 +3010,7 @@ wbWorkbook <- R6::R6Class(
         comment = comment
       ) # has no use: xy
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3008,6 +3039,7 @@ wbWorkbook <- R6::R6Class(
 
       remove_comment(wb = self, sheet = sheet, col = col, row = row, gridExpand = TRUE)
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3258,6 +3290,7 @@ wbWorkbook <- R6::R6Class(
         params   = params
       )
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3429,6 +3462,7 @@ wbWorkbook <- R6::R6Class(
       if (identical(self$worksheets[[sheet]]$drawing, character()))
         self$worksheets[[sheet]]$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3606,6 +3640,8 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$workbook$apps <- xml_node_create("DocSecurity", type)
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3656,6 +3692,8 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3667,6 +3705,8 @@ wbWorkbook <- R6::R6Class(
     #'   ignored.
     set_creators = function(creators) {
       private$modify_creators("set", creators)
+      self$append("message", match.call())
+      invisible(self)
     },
 
 
@@ -3675,6 +3715,8 @@ wbWorkbook <- R6::R6Class(
     #'   ignored.
     add_creators = function(creators) {
       private$modify_creators("add", creators)
+      self$append("message", match.call())
+      invisible(self)
     },
 
 
@@ -3683,6 +3725,8 @@ wbWorkbook <- R6::R6Class(
     #'   are removed.
     remove_creators = function(creators) {
       private$modify_creators("remove", creators)
+      self$append("message", match.call())
+      invisible(self)
     },
 
 
@@ -3703,6 +3747,7 @@ wbWorkbook <- R6::R6Class(
           )
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3870,6 +3915,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -3941,6 +3987,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$worksheets[[sheet]]$headerFooter <- hf
+      
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4023,6 +4071,8 @@ wbWorkbook <- R6::R6Class(
 
       ## now delete data
       delete_data(wb = self, sheet = sheet, rows = rows, cols = cols)
+      
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4047,6 +4097,7 @@ wbWorkbook <- R6::R6Class(
         paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
       )
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4058,6 +4109,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[s]]$autoFilter <- character()
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4082,6 +4134,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$worksheets[[sheet]]$sheetViews <- sv
+
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4149,6 +4203,7 @@ wbWorkbook <- R6::R6Class(
         localSheetId = localSheetId
       )
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4181,6 +4236,7 @@ wbWorkbook <- R6::R6Class(
         # user does not care, as long as no defined name remains on a sheet.
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4203,6 +4259,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       self$sheetOrder <- sheets
+      
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4256,6 +4314,7 @@ wbWorkbook <- R6::R6Class(
         self$set_sheet_visibility(1, TRUE)
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4269,6 +4328,7 @@ wbWorkbook <- R6::R6Class(
     add_page_break = function(sheet = current_sheet(), row = NULL, col = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4291,6 +4351,7 @@ wbWorkbook <- R6::R6Class(
         styles       = styles,
         merged_cells = merged_cells
       )
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4716,6 +4777,7 @@ wbWorkbook <- R6::R6Class(
         self$set_cell_style(sheet, dim_inner_cell, self$styles_mgr$get_xf_id(xf_inner_cell))
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4779,6 +4841,7 @@ wbWorkbook <- R6::R6Class(
         self$set_cell_style(sheet, dim, s_id)
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4862,6 +4925,7 @@ wbWorkbook <- R6::R6Class(
         self$set_cell_style(sheet, dim, s_id)
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -4917,6 +4981,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -5028,6 +5093,7 @@ wbWorkbook <- R6::R6Class(
         self$set_cell_style(sheet, dim, s_id)
       }
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -5049,7 +5115,8 @@ wbWorkbook <- R6::R6Class(
 
       # TODO check that cc$r is alway valid. not sure atm
       sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% dims
-      temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
+      self$returns <- temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
+      invisible(self)
     },
 
     #' @description set sheet style
@@ -5072,6 +5139,7 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- style
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -5142,6 +5210,7 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[id_new]]$mergeCells <-
         self$worksheets[[id_org]]$mergeCells
 
+      self$append("message", match.call())
       invisible(self)
     },
 
@@ -5155,6 +5224,8 @@ wbWorkbook <- R6::R6Class(
     ) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_sparklines(sparklines)
+      
+      self$append("message", match.call())
       invisible(self)
     }
 

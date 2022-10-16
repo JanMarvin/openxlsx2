@@ -61,7 +61,7 @@ wb_workbook <- function(
 #' }
 wb_save <- function(wb, path = NULL, overwrite = TRUE) {
   assert_workbook(wb)
-  wb$clone()$save(path = path, overwrite = overwrite)$path
+  wb$clone()$save(path = path, overwrite = overwrite)
 }
 
 
