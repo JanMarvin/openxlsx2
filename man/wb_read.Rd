@@ -18,7 +18,8 @@ wb_read(
   detectDates = TRUE,
   namedRegion,
   na.strings = "NA",
-  na.numbers = NA
+  na.numbers = NA,
+  ...
 )
 }
 \arguments{
@@ -52,9 +53,11 @@ If NULL, all columns are read.}
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 
 \item{na.numbers}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
+
+\item{...}{additional arguments passed to \code{wb_to_df()}}
 }
 \value{
-data.frame
+data.frame#'
 }
 \description{
 Read data from an Excel file or Workbook object into a data.frame
@@ -70,7 +73,5 @@ xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
 df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 }
 \seealso{
-\code{\link[=get_named_regions]{get_named_regions()}}
-
-\code{\link[=read_xlsx]{read_xlsx()}}
+\code{\link[=get_named_regions]{get_named_regions()}} \code{\link[=wb_to_df]{wb_to_df()}} \code{\link[=read_xlsx]{read_xlsx()}}
 }

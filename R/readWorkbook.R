@@ -22,7 +22,8 @@
 #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param skipEmptyCols If `TRUE`, empty columns are skipped.
-#' @seealso [get_named_regions()]
+#' @param ... additional arguments passed to `wb_to_df()`
+#' @seealso [get_named_regions()] [wb_to_df()]
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
@@ -79,7 +80,8 @@ read_xlsx <- function(
   na.numbers      = NA,
   check.names     = FALSE,
   sep.names       = ".",
-  fillMergedCells = FALSE
+  fillMergedCells = FALSE,
+  ...
 ) {
 
   # keep sheet missing // read_xlsx is the function to replace.
@@ -102,7 +104,8 @@ read_xlsx <- function(
     named_region    = namedRegion,
     na.strings      = na.strings,
     na.numbers      = na.numbers,
-    fillMergedCells = fillMergedCells
+    fillMergedCells = fillMergedCells,
+    ...
   )
 }
 
@@ -112,9 +115,9 @@ read_xlsx <- function(
 #' @description Read data from an Excel file or Workbook object into a data.frame
 #' @inheritParams read_xlsx
 #' @details Creates a data.frame of all data in worksheet.
-#' @return data.frame
-#' @seealso [get_named_regions()]
-#' @seealso [read_xlsx()]
+#' @param ... additional arguments passed to `wb_to_df()`
+#' @seealso [get_named_regions()] [wb_to_df()] [read_xlsx()]
+#' @return data.frame#' 
 #' @export
 #' @examples
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
@@ -136,7 +139,8 @@ wb_read <- function(
   detectDates   = TRUE,
   namedRegion,
   na.strings    = "NA",
-  na.numbers    = NA
+  na.numbers    = NA,
+  ...
 ) {
 
   # keep sheet missing // read_xlsx is the function to replace.
@@ -158,7 +162,8 @@ wb_read <- function(
     detectDates   = detectDates,
     named_region  = namedRegion,
     na.strings    = na.strings,
-    na.numbers    = na.numbers
+    na.numbers    = na.numbers,
+    ...
   )
 
 }

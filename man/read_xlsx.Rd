@@ -21,7 +21,8 @@ read_xlsx(
   na.numbers = NA,
   check.names = FALSE,
   sep.names = ".",
-  fillMergedCells = FALSE
+  fillMergedCells = FALSE,
+  ...
 )
 }
 \arguments{
@@ -62,6 +63,8 @@ are checked to ensure that they are syntactically valid variable names}
 \item{sep.names}{(unimplemented) One character which substitutes blanks in column names. By default, "."}
 
 \item{fillMergedCells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+
+\item{...}{additional arguments passed to \code{wb_to_df()}}
 }
 \value{
 data.frame
@@ -109,5 +112,5 @@ xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTe
 head(read_xlsx(xlsxFile))
 }
 \seealso{
-\code{\link[=get_named_regions]{get_named_regions()}}
+\code{\link[=get_named_regions]{get_named_regions()}} \code{\link[=wb_to_df]{wb_to_df()}}
 }
