@@ -6,6 +6,8 @@
 
 ## Fixes
 
+* Fix the workbook xml relationship file to not include a reference to shared strings per default. This solves [360](https://github.com/JanMarvin/openxlsx2/issues/360) for plain data files written from `openxlsx2`. [363](https://github.com/JanMarvin/openxlsx2/pull/363)
+
 * Fix cloning pivot charts. [361](https://github.com/JanMarvin/openxlsx2/issues/361)
 
 * Fix loading and writing files with slicers. Loading would add a few empty slicer xml files to `Content_Types` and `workbook.xml.rels`. [361](https://github.com/JanMarvin/openxlsx2/issues/361)
