@@ -133,15 +133,16 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     # TODO we remove all of the relationships and add them back later on.
     # I am not sure why we do this. We should simply keep it the way it is,
-    # and if we need to.
+    # and only modify it if we need to.
 
-    # Currently create a slim skeleton and add relationships if we see one. An
-    # alternative are the snippets below. Though this leaves the possibilty
-    # that we still keep folders we do not handle. Like ctrlProps #206.
+    # Currently we create a slim skeleton and add relationships if needed. An
+    # alternative to this is shown in the snippets below. Though this leaves 
+    # the possibility that we still include folders we do not handle correctly.
+    # Like ctrlProps #206.
 
     # Ideally we keep the entire relationship as loaded and check only for
-    # unknown content. Lastly workbook.xml.rels should be checked for
-    # consistency pre or post writing the output.
+    # unknown content. And workbook.xml.rels should be checked pre or post
+    # writing the output.
 
     # workbookRelsXML <- relship_no(workbookRelsXML, "connections")
     # workbookRelsXML <- relship_no(workbookRelsXML, "externalLink")
