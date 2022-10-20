@@ -4740,19 +4740,6 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
 
-      new_fill <- create_fill(
-        gradientFill = gradient_fill,
-        patternType = pattern,
-        fgColor = color
-      )
-
-      # sample() will change the random seed
-      smp <- random_string()
-      snew_fill <- paste0(smp, "new_fill")
-      # sxf_new_fill <- paste0(smp, "xf_new_fill") # not used?
-
-      self$styles_mgr$add(new_fill, snew_fill)
-
       # dim in dataframe can contain various styles. go cell by cell.
       did <- dims_to_dataframe(dims, fill = TRUE)
       # select a few cols and rows to fill
@@ -4762,8 +4749,16 @@ wbWorkbook <- R6::R6Class(
       dims <- unname(unlist(did[rows, cols, drop = FALSE]))
 
       for (dim in dims) {
+
+        new_fill <- create_fill(
+          gradientFill = gradient_fill,
+          patternType = pattern,
+          fgColor = color
+        )
+        self$styles_mgr$add(new_fill, new_fill)
+
         xf_prev <- get_cell_styles(self, sheet, dim)
-        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
+        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(new_fill))
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
         s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
         self$set_cell_style(sheet, dim, s_id)
@@ -4817,38 +4812,35 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
 
-      new_font <- create_font(
-        b = bold,
-        charset = charset,
-        color = color,
-        condense = condense,
-        extend = extend,
-        family = family,
-        i = italic,
-        name = name,
-        outline = outline,
-        scheme = scheme,
-        shadow = shadow,
-        strike = strike,
-        sz = size,
-        u = underline,
-        vertAlign = vertAlign
-      )
-
-      smp <- random_string()
-      snew_font <- paste0(smp, "new_font")
-      sxf_new_font <- paste0(smp, "xf_new_font")
-
-      self$styles_mgr$add(new_font, snew_font)
-
       did <- dims_to_dataframe(dims, fill = TRUE)
       dims <- unname(unlist(did))
 
       for (dim in dims) {
+
+        new_font <- create_font(
+          b = bold,
+          charset = charset,
+          color = color,
+          condense = condense,
+          extend = extend,
+          family = family,
+          i = italic,
+          name = name,
+          outline = outline,
+          scheme = scheme,
+          shadow = shadow,
+          strike = strike,
+          sz = size,
+          u = underline,
+          vertAlign = vertAlign
+        )
+        self$styles_mgr$add(new_font, new_font)
+
         xf_prev <- get_cell_styles(self, sheet, dim)
-        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(snew_font))
-        self$styles_mgr$add(xf_new_font, sxf_new_font)
-        s_id <- self$styles_mgr$get_xf_id(sxf_new_font)
+        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(new_font))
+
+        self$styles_mgr$add(xf_new_font, xf_new_font)
+        s_id <- self$styles_mgr$get_xf_id(xf_new_font)
         self$set_cell_style(sheet, dim, s_id)
       }
 
@@ -4880,16 +4872,11 @@ wbWorkbook <- R6::R6Class(
           numFmtId = self$styles_mgr$next_numfmt_id(),
           formatCode = numfmt
         )
-
-        smp <- random_string()
-        snew_numfmt <- paste0(smp, "new_numfmt")
-        # sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
-
-        self$styles_mgr$add(new_numfmt, snew_numfmt)
+        self$styles_mgr$add(new_numfmt, new_numfmt)
 
         for (dim in dims) {
           xf_prev <- get_cell_styles(self, sheet, dim)
-          xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(snew_numfmt))
+          xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(new_numfmt))
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
           self$set_cell_style(sheet, dim, s_id)
