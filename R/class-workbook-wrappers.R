@@ -1266,7 +1266,20 @@ wb_set_order <- function(wb, sheets) {
 #' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to FALSE
-#' @param localSheetId localSheetId
+#' @param localSheet If `TRUE` the named region will be local for this sheet
+#' @param comment description text for named region
+#' @param customMenu customMenu (unknown xml feature)
+#' @param description description (unknown xml feature)
+#' @param is_function function (unknown xml feature)
+#' @param functionGroupId function group id (unknown xml feature)
+#' @param help help (unknown xml feature)
+#' @param hidden hidden if the named region should be hidden
+#' @param localName localName (unknown xml feature)
+#' @param publishToServer publish to server (unknown xml feature)
+#' @param statusBar status bar (unknown xml feature)
+#' @param vbProcedure wbProcedure (unknown xml feature)
+#' @param workbookParameter workbookParameter (unknown xml feature)
+#' @param xml xml (unknown xml feature)
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
 #' @examples
 #' ## create named regions
@@ -1308,15 +1321,50 @@ NULL
 
 #' @rdname named_region
 #' @export
-wb_add_named_region <- function(wb, sheet = current_sheet(), cols, rows, name, localSheetId = NULL, overwrite = FALSE) {
+wb_add_named_region <- function(
+  wb,
+  sheet             = current_sheet(),
+  cols,
+  rows,
+  name,
+  localSheetId      = NULL,
+  overwrite         = FALSE,  
+  localSheet        = FALSE,
+  comment           = NULL,
+  customMenu        = NULL,
+  description       = NULL,
+  is_function       = NULL,
+  functionGroupId   = NULL,
+  help              = NULL,
+  hidden            = NULL,
+  localName         = NULL,
+  publishToServer   = NULL,
+  statusBar         = NULL,
+  vbProcedure       = NULL,
+  workbookParameter = NULL,
+  xml               = NULL
+) {
   assert_workbook(wb)
   wb$clone()$add_named_region(
-    sheet        = sheet,
-    cols         = cols,
-    rows         = rows,
-    name         = name,
-    localSheetId = localSheetId,
-    overwrite    = overwrite
+    sheet             = sheet,
+    cols              = cols,
+    rows              = rows,
+    name              = name,
+    localSheet        = localSheet,
+    overwrite         = overwrite,
+    comment           = comment,
+    customMenu        = customMenu,
+    description       = description,
+    is_function       = is_function,
+    functionGroupId   = functionGroupId,
+    help              = help,
+    hidden            = hidden,
+    localName         = localName,
+    publishToServer   = publishToServer,
+    statusBar         = statusBar,
+    vbProcedure       = wbProcedure,
+    workbookParameter = workbookParameter,
+    xml               = xml
   )
 }
 
