@@ -12,9 +12,8 @@ wb_add_named_region(
   cols,
   rows,
   name,
-  localSheetId = NULL,
-  overwrite = FALSE,
   localSheet = FALSE,
+  overwrite = FALSE,
   comment = NULL,
   customMenu = NULL,
   description = NULL,
@@ -43,9 +42,9 @@ wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 
 \item{name}{Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.}
 
-\item{overwrite}{Boolean. Overwrite if exists? Default to FALSE}
-
 \item{localSheet}{If \code{TRUE} the named region will be local for this sheet}
+
+\item{overwrite}{Boolean. Overwrite if exists? Default to FALSE}
 
 \item{comment}{description text for named region}
 

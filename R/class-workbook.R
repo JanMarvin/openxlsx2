@@ -4100,7 +4100,14 @@ wbWorkbook <- R6::R6Class(
 
       # TODO use reg_match0?
       definedNames <- rbindlist(xml_attr(self$workbook$definedNames, level1 = "definedName"))
-      match_dn <- which(tolower(definedNames$name) == tolower(name) & definedNames$localSheetId == localSheetId)
+      sel1 <- tolower(definedNames$name) == tolower(name)
+      sel2 <- definedNames$localSheetId == localSheetId
+      if (!is.null(definedNames$localSheetId)) {
+        sel <- sel1 & sel2
+      } else {
+         sel <- sel1
+      }
+      match_dn <- which(sel)
 
       if (any(match_dn)) {
         if (overwrite)

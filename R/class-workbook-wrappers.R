@@ -1327,9 +1327,8 @@ wb_add_named_region <- function(
   cols,
   rows,
   name,
-  localSheetId      = NULL,
-  overwrite         = FALSE,  
   localSheet        = FALSE,
+  overwrite         = FALSE,
   comment           = NULL,
   customMenu        = NULL,
   description       = NULL,
@@ -1362,7 +1361,7 @@ wb_add_named_region <- function(
     localName         = localName,
     publishToServer   = publishToServer,
     statusBar         = statusBar,
-    vbProcedure       = wbProcedure,
+    vbProcedure       = vbProcedure,
     workbookParameter = workbookParameter,
     xml               = xml
   )
