@@ -414,3 +414,58 @@ test_that("applyCellStyle works", {
   expect_equal(exp, got)
 
 })
+
+test_that("style names are xml", {
+  sheet <- mtcars[1:6, 1:6]
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet("test") %>%
+    wb_add_data(x = "Title", startCol = 1, startRow = 1) %>%
+    wb_add_font(dims = "A1", bold = "1", size = "14") %>%
+    wb_add_data(x = sheet, colNames = TRUE, startCol = 1, startRow = 2, removeCellStyle = TRUE) %>%
+    wb_add_cell_style(dims = "B2:F2", horizontal = "right") %>%
+    wb_add_font(dims = "A2:F2", bold = "1", size = "11") %>%
+    wb_add_numfmt(dims = "B3:D8", numfmt = 2) %>%
+    wb_add_font(dims = "B3:D8", italic = "1", size = "11") %>%
+    wb_add_fill(dims = "B3:D8", color = wb_colour("orange")) %>%
+    wb_add_fill(dims = "C5", color = wb_colour("black")) %>%
+    wb_add_font(dims = "C5", color = wb_colour("white"))
+
+  exp <- list(
+    numFmts = NULL,
+    fonts = c(
+      "<font><sz val=\"11\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
+      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><sz val=\"14\"/></font>",
+      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>",
+      "<font><color rgb=\"FF000000\"/><i val=\"1\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>",
+      "<font><color rgb=\"FFFFFFFF\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>"
+    ),
+    fills = c(
+      "<fill><patternFill patternType=\"none\"/></fill>",
+      "<fill><patternFill patternType=\"gray125\"/></fill>", "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFA500\"/></patternFill></fill>",
+      "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF000000\"/></patternFill></fill>"
+    ),
+    borders = "<border><left/><right/><top/><bottom/><diagonal/></border>",
+    cellStyleXfs = "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/>",
+    cellXfs = c(
+      "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
+      "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>",
+      "<xf borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"right\"/></xf>",
+      "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>",
+      "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"right\"/></xf>",
+      "<xf applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"3\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"3\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"3\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"4\" numFmtId=\"2\" xfId=\"0\"/>"
+    ),
+    cellStyles = "<cellStyle name=\"Normal\" xfId=\"0\" builtinId=\"0\"/>",
+    dxfs = NULL,
+    tableStyles = NULL,
+    indexedColors = NULL,
+    extLst = NULL
+  )
+  got <- wb$styles_mgr$styles
+  expect_equal(exp, got)
+
+})
