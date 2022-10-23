@@ -87,6 +87,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+#' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings na.strings
 #' @export
@@ -110,6 +111,7 @@ wb_add_data <- function(
     withFilter      = FALSE,
     name            = NULL,
     sep             = ", ",
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
     na.strings
 ) {
@@ -130,6 +132,7 @@ wb_add_data <- function(
     withFilter      = withFilter,
     name            = name,
     sep             = sep,
+    applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
     na.strings      = na.strings
   )
@@ -166,6 +169,8 @@ wb_add_data <- function(
 #' @param lastColumn logical. If TRUE, the last column is bold
 #' @param bandedRows logical. If TRUE, rows are colour banded
 #' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param applyCellStyle Should we write cell styles to the workbook
+#' @param removeCellStyle keep the cell style?
 #' @param na.strings optional
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
@@ -193,6 +198,8 @@ wb_add_data_table <- function(
     lastColumn  = FALSE,
     bandedRows  = TRUE,
     bandedCols  = FALSE,
+    applyCellStyle  = TRUE,
+    removeCellStyle = FALSE,
     na.strings
 ) {
   assert_workbook(wb)
@@ -215,6 +222,8 @@ wb_add_data_table <- function(
     lastColumn  = lastColumn,
     bandedRows  = bandedRows,
     bandedCols  = bandedCols,
+    applyCellStyle  = applyCellStyle,
+    removeCellStyle = removeCellStyle,
     na.strings  = na.strings
   )
 }
@@ -243,6 +252,8 @@ wb_add_data_table <- function(
 #' @param xy An alternative to specifying `startCol` and
 #' `startRow` individually.  A vector of the form
 #' `c(startCol, startRow)`.
+#' @param applyCellStyle Should we write cell styles to the workbook
+#' @param removeCellStyle keep the cell style?
 #' @family workbook wrappers
 #' @export
 wb_add_formula <- function(
@@ -253,7 +264,9 @@ wb_add_formula <- function(
     startRow = 1,
     dims     = rowcol_to_dims(startRow, startCol),
     array    = FALSE,
-    xy       = NULL
+    xy       = NULL,
+    applyCellStyle  = TRUE,
+    removeCellStyle = FALSE
 ) {
   assert_workbook(wb)
   wb$clone()$add_formula(
@@ -263,7 +276,9 @@ wb_add_formula <- function(
     startRow = startRow,
     dims     = dims,
     array    = array,
-    xy       = xy
+    xy       = xy,
+    applyCellStyle  = applyCellStyle,
+    removeCellStyle = removeCellStyle
   )
 }
 
@@ -1931,7 +1946,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #' @export
 wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
   assert_workbook(wb)
-  wb$get_cell_style(sheet, dims)
+  wb$clone()$get_cell_style(sheet, dims)
 }
 
 #' @rdname cell_style
@@ -1940,7 +1955,8 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
 #' @export
 wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   assert_workbook(wb)
-  wb$clone()$set_cell_style(sheet, dims, style)
+  # needs deep clone for nested calls as in styles vignette copy cell styles
+  wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
 }
 
 #' add border for cell region

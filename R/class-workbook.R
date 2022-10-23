@@ -925,6 +925,7 @@ wbWorkbook <- R6::R6Class(
     #' @param withFilter withFilter
     #' @param name name
     #' @param sep sep
+    #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @param na.strings na.strings
     #' @param return The `wbWorkbook` object
@@ -941,6 +942,7 @@ wbWorkbook <- R6::R6Class(
         withFilter      = FALSE,
         name            = NULL,
         sep             = ", ",
+        applyCellStyle  = TRUE,
         removeCellStyle = FALSE,
         na.strings
       ) {
@@ -961,6 +963,7 @@ wbWorkbook <- R6::R6Class(
         withFilter      = withFilter,
         name            = name,
         sep             = sep,
+        applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle,
         na.strings      = na.strings
       )
@@ -984,6 +987,8 @@ wbWorkbook <- R6::R6Class(
     #' @param lastColumn lastColumn
     #' @param bandedRows bandedRows
     #' @param bandedCols bandedCols
+    #' @param applyCellStyle applyCellStyle
+    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @param na.strings na.strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
@@ -1003,6 +1008,8 @@ wbWorkbook <- R6::R6Class(
         lastColumn  = FALSE,
         bandedRows  = TRUE,
         bandedCols  = FALSE,
+        applyCellStyle = TRUE,
+        removeCellStyle = FALSE,
         na.strings
     ) {
 
@@ -1026,6 +1033,8 @@ wbWorkbook <- R6::R6Class(
         lastColumn  = lastColumn,
         bandedRows  = bandedRows,
         bandedCols  = bandedCols,
+        applyCellStyle = applyCellStyle,
+        removeCellStyle = removeCellStyle,
         na.strings  = na.strings
       )
       invisible(self)
@@ -1039,6 +1048,8 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dims
     #' @param array array
     #' @param xy xy
+    #' @param applyCellStyle applyCellStyle
+    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @returns The `wbWorkbook` object
     add_formula = function(
         sheet    = current_sheet(),
@@ -1047,7 +1058,9 @@ wbWorkbook <- R6::R6Class(
         startRow = 1,
         dims     = rowcol_to_dims(startRow, startCol),
         array    = FALSE,
-        xy       = NULL
+        xy       = NULL,
+        applyCellStyle = TRUE,
+        removeCellStyle = FALSE
     ) {
       write_formula(
         wb       = self,
@@ -1057,7 +1070,9 @@ wbWorkbook <- R6::R6Class(
         startRow = startRow,
         dims     = dims,
         array    = array,
-        xy       = xy
+        xy       = xy,
+        applyCellStyle = applyCellStyle,
+        removeCellStyle = removeCellStyle
       )
       invisible(self)
     },
@@ -2725,35 +2740,24 @@ wbWorkbook <- R6::R6Class(
       )
 
       if (type == "list") {
-        self$worksheets[[sheet]]$.__enclos_env__$private$data_validation_list(
-          value        = value,
-          allowBlank   = allowBlank,
-          showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg,
-          errorStyle   = errorStyle,
-          errorTitle   = errorTitle,
-          error        = error,
-          promptTitle  = promptTitle,
-          prompt       = prompt,
-          sqref        = sqref
-        )
-      } else {
-        self$worksheets[[sheet]]$.__enclos_env__$private$data_validation(
-          type         = type,
-          operator     = operator,
-          value        = value,
-          allowBlank   = allowBlank,
-          showInputMsg = showInputMsg,
-          showErrorMsg = showErrorMsg,
-          errorStyle   = errorStyle,
-          errorTitle   = errorTitle,
-          error        = error,
-          promptTitle  = promptTitle,
-          prompt       = prompt,
-          origin       = origin,
-          sqref        = sqref
-        )
+        operator <- NULL
       }
+
+      self$worksheets[[sheet]]$.__enclos_env__$private$data_validation(
+        type         = type,
+        operator     = operator,
+        value        = value,
+        allowBlank   = allowBlank,
+        showInputMsg = showInputMsg,
+        showErrorMsg = showErrorMsg,
+        errorStyle   = errorStyle,
+        errorTitle   = errorTitle,
+        error        = error,
+        promptTitle  = promptTitle,
+        prompt       = prompt,
+        origin       = origin,
+        sqref        = sqref
+      )
 
       invisible(self)
     },
@@ -4736,19 +4740,6 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
 
-      new_fill <- create_fill(
-        gradientFill = gradient_fill,
-        patternType = pattern,
-        fgColor = color
-      )
-
-      # sample() will change the random seed
-      smp <- random_string()
-      snew_fill <- paste0(smp, "new_fill")
-      # sxf_new_fill <- paste0(smp, "xf_new_fill") # not used?
-
-      self$styles_mgr$add(new_fill, snew_fill)
-
       # dim in dataframe can contain various styles. go cell by cell.
       did <- dims_to_dataframe(dims, fill = TRUE)
       # select a few cols and rows to fill
@@ -4758,8 +4749,16 @@ wbWorkbook <- R6::R6Class(
       dims <- unname(unlist(did[rows, cols, drop = FALSE]))
 
       for (dim in dims) {
+
+        new_fill <- create_fill(
+          gradientFill = gradient_fill,
+          patternType = pattern,
+          fgColor = color
+        )
+        self$styles_mgr$add(new_fill, new_fill)
+
         xf_prev <- get_cell_styles(self, sheet, dim)
-        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(snew_fill))
+        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(new_fill))
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
         s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
         self$set_cell_style(sheet, dim, s_id)
@@ -4813,33 +4812,33 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
 
-      new_font <- create_font(
-        b = bold,
-        charset = charset,
-        color = color,
-        condense = condense,
-        extend = extend,
-        family = family,
-        i = italic,
-        name = name,
-        outline = outline,
-        scheme = scheme,
-        shadow = shadow,
-        strike = strike,
-        sz = size,
-        u = underline,
-        vertAlign = vertAlign
-      )
-
-      smp <- random_string()
-      snew_font <- paste0(smp, "new_font")
-      sxf_new_font <- paste0(smp, "xf_new_font")
-
-      self$styles_mgr$add(new_font, snew_font)
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      dims <- unname(unlist(did))
 
       for (dim in dims) {
+
+        new_font <- create_font(
+          b = bold,
+          charset = charset,
+          color = color,
+          condense = condense,
+          extend = extend,
+          family = family,
+          i = italic,
+          name = name,
+          outline = outline,
+          scheme = scheme,
+          shadow = shadow,
+          strike = strike,
+          sz = size,
+          u = underline,
+          vertAlign = vertAlign
+        )
+        self$styles_mgr$add(new_font, new_font)
+
         xf_prev <- get_cell_styles(self, sheet, dim)
-        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(snew_font))
+        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(new_font))
+
         self$styles_mgr$add(xf_new_font, xf_new_font)
         s_id <- self$styles_mgr$get_xf_id(xf_new_font)
         self$set_cell_style(sheet, dim, s_id)
@@ -4864,22 +4863,20 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
 
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      dims <- unname(unlist(did))
+
       if (inherits(numfmt, "character")) {
 
         new_numfmt <- create_numfmt(
           numFmtId = self$styles_mgr$next_numfmt_id(),
           formatCode = numfmt
         )
-
-        smp <- random_string()
-        snew_numfmt <- paste0(smp, "new_numfmt")
-        # sxf_new_numfmt <- paste0(smp, "xf_new_numfmt")
-
-        self$styles_mgr$add(new_numfmt, snew_numfmt)
+        self$styles_mgr$add(new_numfmt, new_numfmt)
 
         for (dim in dims) {
           xf_prev <- get_cell_styles(self, sheet, dim)
-          xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(snew_numfmt))
+          xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(new_numfmt))
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
           self$set_cell_style(sheet, dim, s_id)
@@ -4970,6 +4967,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
 
+      did <- dims_to_dataframe(dims, fill = TRUE)
+      dims <- unname(unlist(did))
+
       for (dim in dims) {
         xf_prev <- get_cell_styles(self, sheet, dim)
         xf_new_cellstyle <- set_cellstyle(
@@ -5036,7 +5036,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
 
-      if (length(dims) == 1 && grepl(":", dims))
+      if (length(dims) == 1 && grepl(":|;", dims))
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
@@ -5996,7 +5996,7 @@ wbWorkbook <- R6::R6Class(
     do_cell_init = function(sheet = current_sheet(), dims) {
 
       sheet <- private$get_sheet_index(sheet)
-      if (length(dims) == 1 && grepl(":", dims))
+      if (length(dims) == 1 && grepl(":|;", dims))
         dims <- dims_to_dataframe(dims, fill = TRUE)
 
       exp_cells <- unname(unlist(dims))
@@ -6004,12 +6004,18 @@ wbWorkbook <- R6::R6Class(
 
       # initialize cell
       if (!all(exp_cells %in% got_cells)) {
+
         init_cells <- NA
-        for (exp_cell in exp_cells[!exp_cells %in% got_cells])
-        # TODO use dims once PR#236 is merged
-        self$add_data(x = init_cells, na.strings = NULL, colNames = FALSE,
-                      startCol = col2int(exp_cell),
-                      startRow = as.numeric(gsub("\\D", "", exp_cell)))
+        missing_cells <- exp_cells[!exp_cells %in% got_cells]
+
+        for (exp_cell in missing_cells) {
+          self$add_data(
+            x = init_cells,
+            na.strings = NULL,
+            colNames = FALSE,
+            dims = exp_cell
+          )
+        }
       }
 
       invisible(self)

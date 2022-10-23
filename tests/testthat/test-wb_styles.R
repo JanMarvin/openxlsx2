@@ -31,7 +31,7 @@ test_that("wb_clone_sheet_style", {
   # sort for this test, does not matter later, because we will sort prior to saving
   ord <- match(
     wb$worksheets[[1]]$sheet_data$cc$r,
-      wb$worksheets[[2]]$sheet_data$cc$r
+    wb$worksheets[[2]]$sheet_data$cc$r
   )
 
   expect_equal(
@@ -259,6 +259,31 @@ test_that("test add_cell_style()", {
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
 
+  ###
+  exp <- "<xf applyAlignment=\"1\" applyBorder=\"1\" applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" applyProtection=\"1\" borderId=\"1\" fillId=\"1\" fontId=\"1\" numFmtId=\"1\" pivotButton=\"0\" quotePrefix=\"0\" xfId=\"1\"><alignment horizontal=\"1\" indent=\"1\" justifyLastLine=\"1\" readingOrder=\"1\" relativeIndent=\"1\" shrinkToFit=\"1\" textRotation=\"1\" vertical=\"1\" wrapText=\"1\"/><extLst extLst=\"1\"/><protection hidden=\"1\" locked=\"1\"/></xf>"
+  got <- create_cell_style(
+    borderId = "1",
+    fillId = "1",
+    fontId = "1",
+    numFmtId = "1",
+    pivotButton = "0",
+    quotePrefix = "0",
+    xfId = "1",
+    horizontal = "1",
+    indent = "1",
+    justifyLastLine = "1",
+    readingOrder = "1",
+    relativeIndent = "1",
+    shrinkToFit = "1",
+    textRotation = "1",
+    vertical = "1",
+    wrapText = "1",
+    extLst = "1",
+    hidden = "1",
+    locked = "1"
+  )
+  expect_equal(exp, got)
+
 })
 
 test_that("add_style", {
@@ -324,5 +349,123 @@ test_that("get & set cell style(s)", {
   expect_silent(wb$set_cell_style(dims = "A2:B2", style = s_a1_b1))
   s_a2_b2 <- wb$get_cell_style(dims = "A2:B2")
   expect_equal(s_a1_b1, s_a2_b2)
+
+})
+
+test_that("get_cell_styles()", {
+
+  wb <- wb_workbook()$
+    add_worksheet(gridLines = FALSE)$
+    # add title
+    add_data(dims = "B2", x = "MTCARS Title")$
+    add_font(dims = "B2", bold = "1", size = "16")$           # style 1
+    # add data
+    add_data(x = head(mtcars), startCol = 2, startRow = 3)$
+    add_fill(dims = "B3:L3", color = wb_colour("turquoise"))$ # style 2 unused
+    add_font(dims = "B3:L3", color = wb_colour("white"))$     # style 3
+    add_border(dims = "B9:L9",
+               bottom_color = wb_colour(hex = "FF000000"),
+               bottom_border = "thin",
+               left_border = "",
+               right_border = "",
+               top_border = "")
+
+  exp <- "1"
+  got <- wb$get_cell_style(dims = "B2")
+  expect_equal(exp, got)
+
+  exp <- "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
+  got <- get_cell_styles(wb, 1, "B2")
+  expect_equal(exp, got)
+
+  exp <- "3"
+  got <- wb$get_cell_style(dims = "B3")
+  expect_equal(exp, got)
+
+  exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>"
+  got <- get_cell_styles(wb, 1, "B3")
+  expect_equal(exp, got)
+
+  wb$add_cell_style(dims = "B3:L3",
+                    textRotation = "45",
+                    horizontal = "center",
+                    vertical = "center",
+                    wrapText = "1")
+
+  exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"center\" textRotation=\"45\" vertical=\"center\" wrapText=\"1\"/></xf>"
+  got <- get_cell_styles(wb, 1, "B3")
+  expect_equal(exp, got)
+
+})
+
+test_that("applyCellStyle works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
+    add_data(dims = "C3", x = Sys.Date())$
+    add_data(dims = "E3", x = Sys.Date(), applyCellStyle = FALSE)$
+    add_data(dims = "E5", x = Sys.Date(), removeCellStyle = TRUE)$
+    add_data(dims = "A1", x = Sys.Date())
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  exp <- c("3", "2", "1", "3")
+  got <- cc[cc$r %in% c("A1", "C3", "E3", "E5"), "c_s"]
+  expect_equal(exp, got)
+
+})
+
+test_that("style names are xml", {
+  sheet <- mtcars[1:6, 1:6]
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet("test") %>%
+    wb_add_data(x = "Title", startCol = 1, startRow = 1) %>%
+    wb_add_font(dims = "A1", bold = "1", size = "14") %>%
+    wb_add_data(x = sheet, colNames = TRUE, startCol = 1, startRow = 2, removeCellStyle = TRUE) %>%
+    wb_add_cell_style(dims = "B2:F2", horizontal = "right") %>%
+    wb_add_font(dims = "A2:F2", bold = "1", size = "11") %>%
+    wb_add_numfmt(dims = "B3:D8", numfmt = 2) %>%
+    wb_add_font(dims = "B3:D8", italic = "1", size = "11") %>%
+    wb_add_fill(dims = "B3:D8", color = wb_colour("orange")) %>%
+    wb_add_fill(dims = "C5", color = wb_colour("black")) %>%
+    wb_add_font(dims = "C5", color = wb_colour("white"))
+
+  exp <- list(
+    numFmts = NULL,
+    fonts = c(
+      "<font><sz val=\"11\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
+      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><sz val=\"14\"/></font>",
+      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>",
+      "<font><color rgb=\"FF000000\"/><i val=\"1\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>",
+      "<font><color rgb=\"FFFFFFFF\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>"
+    ),
+    fills = c(
+      "<fill><patternFill patternType=\"none\"/></fill>",
+      "<fill><patternFill patternType=\"gray125\"/></fill>", "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFA500\"/></patternFill></fill>",
+      "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF000000\"/></patternFill></fill>"
+    ),
+    borders = "<border><left/><right/><top/><bottom/><diagonal/></border>",
+    cellStyleXfs = "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/>",
+    cellXfs = c(
+      "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
+      "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>",
+      "<xf borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"right\"/></xf>",
+      "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>",
+      "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"right\"/></xf>",
+      "<xf applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"3\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"3\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"3\" numFmtId=\"2\" xfId=\"0\"/>",
+      "<xf applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"4\" numFmtId=\"2\" xfId=\"0\"/>"
+    ),
+    cellStyles = "<cellStyle name=\"Normal\" xfId=\"0\" builtinId=\"0\"/>",
+    dxfs = NULL,
+    tableStyles = NULL,
+    indexedColors = NULL,
+    extLst = NULL
+  )
+  got <- wb$styles_mgr$styles
+  expect_equal(exp, got)
 
 })

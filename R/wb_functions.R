@@ -8,28 +8,41 @@
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
 
-  if (!grepl(":", dims)) {
-    dims <- paste0(dims, ":", dims)
+  if (grepl(";", dims)) {
+    dims <- unlist(strsplit(dims, ";"))
   }
 
-  if (identical(dims, "Inf:-Inf")) {
-    # This should probably be fixed elsewhere?
-    stop("dims are inf:-inf")
-  } else {
-    dimensions <- strsplit(dims, ":")[[1]]
+  rows_out <- NULL
+  cols_out <- NULL
+  for(dim in dims) {
 
-    rows <- as.numeric(gsub("[[:upper:]]","", dimensions))
-    rows <- seq.int(rows[1], rows[2])
+    if (!grepl(":", dim)) {
+      dim <- paste0(dim, ":", dim)
+    }
 
-    # TODO seq.wb_columns?  make a wb_cols vector?
-    cols <- gsub("[[:digit:]]","", dimensions)
-    cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
+    if (identical(dim, "Inf:-Inf")) {
+      # This should probably be fixed elsewhere?
+      stop("dims are inf:-inf")
+    } else {
+      dimensions <- strsplit(dim, ":")[[1]]
+
+      rows <- as.numeric(gsub("[[:upper:]]","", dimensions))
+      rows <- seq.int(rows[1], rows[2])
+
+      rows_out <- unique(c(rows_out, rows))
+
+      # TODO seq.wb_columns?  make a wb_cols vector?
+      cols <- gsub("[[:digit:]]","", dimensions)
+      cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
+
+      cols_out <- unique(c(cols_out, cols))
+    }
   }
 
   # create data frame from rows/
   dims_to_df(
-    rows = rows,
-    cols = cols,
+    rows = rows_out,
+    cols = cols_out,
     fill = fill
   )
 }
