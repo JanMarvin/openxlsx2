@@ -631,13 +631,13 @@ write_data_table <- function(
     # hlinkNames <- names(x)
     if (is.null(dim(x))) {
       colNames <- FALSE
-      if (!any(grepl("HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
+      if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
         x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
       }
       class(x[is_hyperlink]) <- c("character", "hyperlink")
     } else {
       # check should be in create_hyperlink and that apply should not be required either
-      if (!any(grepl("HYPERLINK\\(", x[is_hyperlink], ignore.case = TRUE))) {
+      if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
         x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
       }
       class(x[,is_hyperlink]) <- c("character", "hyperlink")
@@ -1035,7 +1035,7 @@ write_formula <- function(
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   class(dfx$X) <- c("character", if (array) "array_formula" else "formula")
 
-  if (any(grepl("HYPERLINK\\(", toupper(x), ignore.case = TRUE))) {
+  if (any(grepl("=([\\s]*?)HYPERLINK\\(", x, perl = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")
   }
 
