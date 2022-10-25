@@ -10,6 +10,8 @@
 
 * Moved data validation list from x14 to data validation. This enables data validation lists without x14 extension [openxlsx 386](https://github.com/ycphs/openxlsx/issues/386). [347](https://github.com/JanMarvin/openxlsx2/pull/347)
 
+* Removed `build_cell_merges()` and replaced it with a plain R solution. [390](https://github.com/JanMarvin/openxlsx2/pull/390)
+
 ## Fixes
 
 * Fix the workbook xml relationship file to not include a reference to shared strings per default. This solves [360](https://github.com/JanMarvin/openxlsx2/issues/360) for plain data files written from `openxlsx2`. [363](https://github.com/JanMarvin/openxlsx2/pull/363)
