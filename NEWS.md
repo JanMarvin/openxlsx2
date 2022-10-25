@@ -12,6 +12,8 @@
 
 ## Fixes
 
+* Fix the workbook xml relationship file to not include a reference to shared strings per default. This solves [360](https://github.com/JanMarvin/openxlsx2/issues/360) for plain data files written from `openxlsx2`. [363](https://github.com/JanMarvin/openxlsx2/pull/363)
+
 * Adding cell styles has been streamlined to increase consistency. This includes all style functions like `wb_add_font()` and covers all cases of hyperlinks. [365](https://github.com/JanMarvin/openxlsx2/pull/365)
 
 * Fix cloning pivot charts. [361](https://github.com/JanMarvin/openxlsx2/issues/361)

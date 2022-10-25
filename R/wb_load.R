@@ -48,15 +48,16 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   ## Not used
   # .relsXML          <- grep_xml("_rels/.rels$")
-  appXML            <- grep_xml("app.xml$")
-
   ContentTypesXML   <- grep_xml("\\[Content_Types\\].xml$")
+  appXML            <- grep_xml("app.xml$")
+  coreXML           <- grep_xml("core.xml$")
+
+  workbookXML       <- grep_xml("workbook.xml$")
+  workbookXMLRels   <- grep_xml("workbook.xml.rels")
 
   drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
   worksheetsXML     <- grep_xml("/worksheets/sheet[0-9]+")
 
-  coreXML           <- grep_xml("core.xml$")
-  workbookXML       <- grep_xml("workbook.xml$")
   stylesXML         <- grep_xml("styles.xml$")
   sharedStringsXML  <- grep_xml("sharedStrings.xml$")
   metadataXML       <- grep_xml("metadata.xml$")
@@ -67,25 +68,30 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   vmlDrawingXML     <- grep_xml("drawings/vmlDrawing[0-9]+\\.vml$")
   vmlDrawingRelsXML <- grep_xml("vmlDrawing[0-9]+.vml.rels$")
   calcChainXML      <- grep_xml("xl/calcChain.xml")
-  commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
-  threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
-  personXML         <- grep_xml("xl/persons/person.xml$")
-  commentsrelXML    <- grep_xml("xl/worksheets/_rels/sheet[0-9]+\\.xml")
   embeddings        <- grep_xml("xl/embeddings")
 
+  # comments
+  commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
+  personXML         <- grep_xml("xl/persons/person.xml$")
+  threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
+  commentsrelXML    <- grep_xml("xl/worksheets/_rels/sheet[0-9]+\\.xml")
+
+  # charts
   chartsXML         <- grep_xml("xl/charts/chart[0-9]+\\.xml$")
   chartsXML_colors  <- grep_xml("xl/charts/colors[0-9]+\\.xml$")
   chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
   chartsRels        <- grep_xml("xl/charts/_rels")
   chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+\\.xml")
 
+  # tables
   tablesXML         <- grep_xml("tables/table[0-9]+.xml$")
   tableRelsXML      <- grep_xml("table[0-9]+.xml.rels$")
   queryTablesXML    <- grep_xml("queryTable[0-9]+.xml$")
+
+  # connections
   connectionsXML    <- grep_xml("connections.xml$")
   extLinksXML       <- grep_xml("externalLink[0-9]+.xml$")
   extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
-
 
   # pivot tables
   pivotTableXML     <- grep_xml("pivotTable[0-9]+.xml$")
@@ -121,10 +127,47 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   nSheets <- length(worksheetsXML) + length(chartSheetsXML)
 
-  ## get Rid of chartsheets, these do not have a worksheet/sheeti.xml
-  wb_relsxml <- grep_xml("workbook.xml.rels$")
-  if (!data_only && length(wb_relsxml)) {
-    workbookRelsXML <- xml_node(wb_relsxml, "Relationships", "Relationship")
+  ##
+  if (!data_only && length(workbookXMLRels)) {
+    workbookRelsXML <- xml_node(workbookXMLRels, "Relationships", "Relationship")
+
+    # TODO we remove all of the relationships and add them back later on.
+    # I am not sure why we do this. We should simply keep it the way it is,
+    # and only modify it if we need to.
+
+    # Currently we create a slim skeleton and add relationships if needed. An
+    # alternative to this is shown in the snippets below. Though this leaves 
+    # the possibility that we still include folders we do not handle correctly.
+    # Like ctrlProps #206.
+
+    # Ideally we keep the entire relationship as loaded and check only for
+    # unknown content. And workbook.xml.rels should be checked pre or post
+    # writing the output.
+
+    # workbookRelsXML <- relship_no(workbookRelsXML, "connections")
+    # workbookRelsXML <- relship_no(workbookRelsXML, "externalLink")
+    # workbookRelsXML <- relship_no(workbookRelsXML, "person")
+    # # our pivotTable has rId 2000 + x, but it is updated in preSaveClean
+    # workbookRelsXML <- relship_no(workbookRelsXML, "pivotCacheDefinition")
+    # workbookRelsXML <- relship_no(workbookRelsXML, "slicerCache")
+    # workbookRelsXML <- relship_no(workbookRelsXML, "chartsheet")
+    # workbookRelsXML <- relship_no(workbookRelsXML, "worksheet")
+    # workbookRelsXML <- relship_no(workbookRelsXML, "vbaProject")
+    # workbookRelsXML <- relship_no(workbookRelsXML, "sheetMetadata")
+
+    need_sharedStrings <- FALSE
+
+    if (any(grepl("sharedStrings", workbookRelsXML)))
+      need_sharedStrings <- TRUE
+
+    wb$workbook.xml.rels <- genBaseWorkbook.xml.rels()
+
+    if (need_sharedStrings) {
+      wb$append(
+        "workbook.xml.rels",
+        "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
+      )
+    }
   }
 
   ##
@@ -168,10 +211,11 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     # if wb_relsxml is not available, the workbook has no relationships, not
     # sure if this is possible
-    if (length(wb_relsxml))
+    if (length(workbookXMLRels)) {
       wb_rels_xml <- rbindlist(
-        xml_attr(wb_relsxml, "Relationships", "Relationship")
+        xml_attr(workbookXMLRels, "Relationships", "Relationship")
       )
+    }
 
     sheets <- merge(
       sheets, wb_rels_xml,
@@ -1032,43 +1076,6 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       wb$embeddings <- embeddings
     }
 
-    # ## pivot tables
-    # if (length(pivotTableXML) > 0) {
-    #   pivotTableJ <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=pivotTable)[0-9]+(?=\\.xml)", x, perl = TRUE))))
-    #   sheetWithPivot <- which(lengths(pivotTableJ) > 0)
-
-    #   pivotRels <- lapply(xml, function(x) {
-    #     y <- grep("pivotTable", x, value = TRUE)
-    #     y[order(nchar(y), y)]
-    #   })
-    #   hasPivot <- lengths(pivotRels) > 0
-
-    #   ## Modify rIds
-    #   for (i in seq_along(pivotRels)) {
-    #     if (hasPivot[i]) {
-    #       for (j in seq_along(pivotRels[[i]])) {
-    #         pivotRels[[i]][j] <- gsub('"rId[0-9]+"', sprintf('"rId%s"', 20000L + j), pivotRels[[i]][j])
-    #       }
-
-    #       wb$worksheets_rels[[i]] <- c(wb$worksheets_rels[[i]], pivotRels[[i]])
-    #     }
-    #   }
-
-
-    #   ## remove any workbook_res references to pivot tables that are not being used in worksheet_rels
-    #   inds <- seq_along(wb$pivotTables.xml.rels)
-    #   fileNo <- as.integer(unlist(regmatches(unlist(wb$worksheets_rels), gregexpr("(?<=pivotTable)[0-9]+(?=\\.xml)", unlist(wb$worksheets_rels), perl = TRUE))))
-    #   inds <- inds[!inds %in% fileNo]
-
-    #   if (length(inds) > 0) {
-    #     toRemove <- paste(sprintf("(pivotCacheDefinition%s\\.xml)", inds), collapse = "|")
-    #     fileNo <- grep(toRemove, wb$pivotTables.xml.rels)
-    #     toRemove <- paste(sprintf("(pivotCacheDefinition%s\\.xml)", fileNo), collapse = "|")
-
-    #     ## remove reference to file from workbook.xml.res
-    #     wb$workbook.xml.rels <- wb$workbook.xml.rels[!grepl(toRemove, wb$workbook.xml.rels)]
-    #   }
-    # }
   } else {
     # If workbook contains no sheetRels, create empty workbook.xml.rels.
     # Otherwise spreadsheet software will stumble over missing rels to drwaing.
