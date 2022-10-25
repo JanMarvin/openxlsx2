@@ -243,3 +243,37 @@ test_that("update cell(s)", {
   expect_equal(exp, got)
 
 })
+
+test_that("write_rownames", {
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(x = mtcars, rowNames = TRUE)$
+    add_worksheet()$add_data_table(x = mtcars, rowNames = TRUE)
+  
+  exp <- structure(
+    list(A = c(NA, "Mazda RX4"), B = c("mpg", "21")),
+    row.names = 1:2,
+    class = "data.frame",
+    tt = structure(
+      list(A = c(NA, "s"), B = c("s", "n")),
+      row.names = 1:2,
+      class = "data.frame"),
+    types = c(A = 0, B = 0)
+  )
+  got <- wb_to_df(wb, 1, dims = "A1:B2", colNames = FALSE)
+  expect_equal(exp, got)
+  
+  
+  exp <- structure(
+    list(A = c("_rowNames_", "Mazda RX4"), B = c("mpg", "21")),
+    row.names = 1:2,
+    class = "data.frame",
+    tt = structure(
+      list(A = c("s", "s"), B = c("s", "n")),
+      row.names = 1:2,
+      class = "data.frame"),
+    types = c(A = 0, B = 0)
+  )
+  got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE)
+  expect_equal(exp, got)
+  
+})
