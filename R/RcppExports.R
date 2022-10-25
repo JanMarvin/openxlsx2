@@ -47,10 +47,6 @@ wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref) {
     invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref))
 }
 
-build_cell_merges <- function(comps) {
-    .Call(`_openxlsx2_build_cell_merges`, comps)
-}
-
 #' @param colnames a vector of the names of the data frame
 #' @param n the length of the data frame
 #' @noRd

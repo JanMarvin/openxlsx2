@@ -2778,11 +2778,9 @@ wbWorkbook <- R6::R6Class(
       cols <- range(as.integer(cols))
 
       sqref <- paste0(int2col(cols), rows)
-      sqref <- stri_join(sqref, collapse = ":", sep = " " )
+      sqref <- stri_join(sqref, collapse = ":", sep = " ")
 
-      # TODO If the cell merge specs were saved as a data.frame or matrix
-      # this would be quicker to check
-      current <- rbindlist(xml_attr(xml = wb$worksheets[[1]]$mergeCells, "mergeCell"))$ref
+      current <- rbindlist(xml_attr(xml = self$worksheets[[sheet]]$mergeCells, "mergeCell"))$ref
 
       # regmatch0 will return character(0) when x is NULL
       if (length(current)) {
@@ -2815,24 +2813,22 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     unmerge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
       sheet <- private$get_sheet_index(sheet)
+
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
-      # sqref <- get_cell_refs(data.frame(x = rows, y = cols))
+      
       sqref <- paste0(int2col(cols), rows)
+      sqref <- stri_join(sqref, collapse = ":", sep = " ")
 
-      current <- regmatches(
-        self$worksheets[[sheet]]$mergeCells,
-        regexpr("[A-Z0-9]+:[A-Z0-9]+", self$worksheets[[sheet]]$mergeCells)
-      )
+      current <- rbindlist(xml_attr(xml = self$worksheets[[sheet]]$mergeCells, "mergeCell"))$ref
 
       if (!is.null(current)) {
-        comps <- lapply(current, function(x) unlist(strsplit(x, split = ":")))
-        current_cells <- build_cell_merges(comps = comps)
-        new <- unlist(build_cell_merges(comps = list(sqref))) # used right below
-        mergeIntersections <- vapply(current_cells, function(x) any(x %in% new), NA)
+        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
+        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
 
         # Remove intersection
-        self$worksheets[[sheet]]$mergeCells <- self$worksheets[[sheet]]$mergeCells[!mergeIntersections]
+        self$worksheets[[sheet]]$mergeCells <- self$worksheets[[sheet]]$mergeCells[!intersects]
       }
 
       invisible(self)
