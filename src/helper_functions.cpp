@@ -341,25 +341,6 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
   }
 }
 
-//' this returns the index of the character vector that matches
-//' @param x x
-//' @param row row
-//' @param col col
-//' @keywords internal
-//' @noRd
-R_xlen_t select_rows(vec_string &x, std::string row, std::string col) {
-  return std::distance(x.begin(), find(x.begin(), x.end(), col + row));
-}
-
-//' convert "TRUE"/"FALSE" to "1"/"0"
-//' @param input input
-//' @keywords internal
-//' @noRd
-std::string to_int(Rcpp::String input) {
-  if (input == "TRUE") return ("1");
-  else return("0");
-}
-
 // simple helper function to create a data frame of type character
 //' @param colnames a vector of the names of the data frame
 //' @param n the length of the data frame
