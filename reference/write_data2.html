@@ -83,7 +83,8 @@
 <span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">na.strings</span></span>
+<span>  <span class="va">na.strings</span>,</span>
+<span>  data_table <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -131,6 +132,10 @@
 
 <dt>na.strings</dt>
 <dd><p>optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)</p></dd>
+
+
+<dt>data_table</dt>
+<dd><p>logical. if <code>TRUE</code> and <code>rowNames = TRUE</code>, do not write the cell containing  <code>"_rowNames_"</code></p></dd>
 
 </dl></div>
     <div id="details">
