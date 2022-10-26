@@ -15,7 +15,8 @@ write_data2(
   startCol = 1,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  data_table = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ write_data2(
 \item{removeCellStyle}{keep the cell style?}
 
 \item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
+
+\item{data_table}{logical. if \code{TRUE} and \code{rowNames = TRUE}, do not write the cell containing  \code{"_rowNames_"}}
 }
 \description{
 dummy function to write data

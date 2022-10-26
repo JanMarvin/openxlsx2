@@ -134,6 +134,7 @@ nmfmt_df <- function(x) {
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -166,7 +167,8 @@ write_data2 <- function(
     startCol = 1,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings,
+    data_table = FALSE
   ) {
 
   if (missing(na.strings)) na.strings <- substitute()
@@ -198,15 +200,15 @@ write_data2 <- function(
     sel <- !dc %in% c(4, 5, 10)
     data[sel] <- lapply(data[sel], as.character)
 
+    # add rownames
+    if (rowNames) {
+      data <- cbind("_rowNames_" = rownames(data), data)
+      dc <- c(c("_rowNames_" = openxlsx2_celltype[["character"]]), dc)
+    }
+
     # add colnames
     if (colNames)
       data <- rbind(colnames(data), data)
-
-    # add rownames
-    if (rowNames) {
-      data <- cbind(rownames(data), data)
-      dc <- c(c("_rowNames_" = openxlsx2_celltype[["character"]]), dc)
-    }
   }
 
 
@@ -331,6 +333,11 @@ write_data2 <- function(
   if (length(is_inf)) {
     cc[is_inf, "v"]   <- "#NUM!"
     cc[is_inf, "c_t"] <- "e"
+  }
+
+  # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
+  if (!data_table && rowNames && colNames) {
+    cc <- cc[cc$r != rtyp[1,1], ]
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
@@ -726,9 +733,9 @@ write_data_table <- function(
     startCol = startCol,
     applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings = na.strings
+    na.strings = na.strings,
+    data_table = data_table
   )
-
 
   ### Beg: Only in datatable ---------------------------------------------------
 
@@ -738,7 +745,7 @@ write_data_table <- function(
 
     ## replace invalid XML characters
     col_names <- replace_legal_chars(colnames(x))
-    if (rowNames) col_names <- c("1", col_names)
+    if (rowNames) col_names <- c("_rowNames_", col_names)
 
     ## Table name validation
     if (is.null(tableName)) {
