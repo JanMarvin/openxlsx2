@@ -221,7 +221,7 @@ pxml <- function(x) {
 #' @keywords internal
 #' @noRd
 amp_split <- function(x) {
-  if (length(x) == 0) return (NULL)
+  if (length(x) == 0) return(NULL)
   # create output string of width 3
   res <- vector("character", 3)
   # Identify the names found in the string: returns them as matrix: strip the &amp;

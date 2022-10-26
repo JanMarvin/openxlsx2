@@ -44,7 +44,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 
   z <- NULL
 
-  isfile = FALSE
+  isfile <- FALSE
   if (length(xml) == 1 && file.exists(xml))
     isfile <- TRUE
 

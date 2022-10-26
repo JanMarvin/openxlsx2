@@ -2,7 +2,7 @@
 #'
 #' This R package is a modern reinterpretation of the widely used popular
 #' `openxlsx` package. Similar to its predecessor, it simplifies the creation of xlsx
-#' files by providing a clean interface for writing, designing and editing worksheets. 
+#' files by providing a clean interface for writing, designing and editing worksheets.
 #' Based on a powerful XML library and focusing on modern programming flows in pipes
 #' or chains, `openxlsx2` allows to break many new ground.
 #'
@@ -41,24 +41,24 @@
 #'    \item{`options("openxlsx2.orientation" = "portrait")`} ## page orientation
 #'    \item{`options("openxlsx2.sheet.default_name" = "Sheet")`}
 #' }
-#' 
-#' 
+#'
+#'
 #' ## Authors and contributions
-#' 
+#'
 #' For a full list of all authors that have made this package possible and for whom we are greatful, please see:
-#' 
+#'
 #' ``` r
 #' system.file("AUTHORS", package = "openxlsx2")
 #' ```
-#' 
+#'
 #' If you feel like you should be included on this list, please let us know.
 #' If you have something to contribute, you are welcome.
 #' If something is not working as expected, open issues or if you have solved an issue, open a pull request.
 #' Please be respectful and be aware that we are volunteers doing this for fun in our unpaid free time.
 #' We will work on problems when we have time or need.
-#' 
+#'
 #' ## License
-#' 
+#'
 #' This package is licensed under the MIT license and is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
 #'
 NULL

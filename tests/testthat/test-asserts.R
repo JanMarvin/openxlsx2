@@ -9,6 +9,7 @@ test_that("assert_class() works", {
 })
 
 test_that("class assertions work", {
+  # nolint start
   expect_null(assert_chart_sheet(wb_chart_sheet()))
   expect_null(assert_comment(    wb_comment()))
   expect_null(assert_color(      wb_colour()))
@@ -16,6 +17,7 @@ test_that("class assertions work", {
   expect_null(assert_sheet_data( wb_sheet_data()))
   expect_null(assert_workbook(   wb_workbook()))
   expect_null(assert_worksheet(  wb_worksheet()))
+  # nolint end
 })
 
 test_that("match_oneof() works", {

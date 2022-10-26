@@ -275,7 +275,7 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
       #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
       # TODO hardcoded 2. Marvin fears that this is not good enough
       wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_rid)
-      
+
       next_rid <- next_rid + 1
     }
 

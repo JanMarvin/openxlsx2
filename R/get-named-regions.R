@@ -2,7 +2,7 @@
 #' @param wb a workbook
 #' @returns a data frame in named_region format
 #' @noRd
-get_named_regions_from_definedName <- function(wb) {
+get_nr_from_definedName <- function(wb) {
 
   dn <- wb$workbook$definedNames
 
@@ -33,7 +33,7 @@ get_named_regions_from_definedName <- function(wb) {
   }
   dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
 
-  dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]),]
+  dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]), ]
 }
 
 #' get named region from ´wb$tables`
@@ -78,7 +78,7 @@ get_named_regions_from_table <- function(wb) {
 #'
 #' ## using write_data 'name' argument to create a named region
 #' wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
-#' 
+#'
 #' out_file <- temp_xlsx()
 #' wb$save(out_file, overwrite = TRUE)
 #'
@@ -102,7 +102,7 @@ get_named_regions <- function(x) {
   z <- NULL
 
   if (length(wb$workbook$definedNames)) {
-    z <- get_named_regions_from_definedName(wb)
+    z <- get_nr_from_definedName(wb)
   }
 
   if (!is.null(wb$tables)) {

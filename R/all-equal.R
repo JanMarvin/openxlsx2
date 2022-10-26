@@ -110,7 +110,7 @@ all.equal.wbWorkbook <- function(target, current, ...) {
   flag <- sapply(along, function(i) !isTRUE(all.equal(x$worksheets[[i]]$sheet_data$cc, y$worksheets[[i]]$sheet_data$cc)))
   if (any(flag)) {
     for (i in which(flag[flag])) {
-      txt <- sprintf("cc elements on sheet %s: not equal",i)
+      txt <- sprintf("cc elements on sheet %s: not equal", i)
       message(txt)
       failures <- c(failures, txt)
     }
@@ -120,7 +120,7 @@ all.equal.wbWorkbook <- function(target, current, ...) {
   flag <- sapply(along, function(i) !isTRUE(all.equal(x$worksheets[[i]]$sheet_data$row_attr, y$worksheets[[i]]$sheet_data$row_attr)))
   if (any(flag)) {
     for (i in which(flag[flag])) {
-      txt <- sprintf("row_attr elements on sheet %s: not equal",i)
+      txt <- sprintf("row_attr elements on sheet %s: not equal", i)
       message(txt)
       failures <- c(failures, txt)
     }

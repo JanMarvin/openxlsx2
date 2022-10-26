@@ -92,15 +92,15 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #' ## convert to dates
 #' do <- get_date_origin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' convert_date(m[[1]], do)
-#' 
+#'
 #' get_date_origin(wb_workbook())
 #' get_date_origin(wb_workbook(), origin = TRUE)
 #' @export
 get_date_origin <- function(xlsxFile, origin = FALSE) {
-  
+
   # TODO: allow using a workbook?
   if (!inherits(xlsxFile, "wbWorkbook"))
-    xlsxFile <- wb_load(xlsxFile) 
+    xlsxFile <- wb_load(xlsxFile)
 
   if (grepl('date1904="1"|date1904="true"', xlsxFile$workbook$workbookPr, ignore.case = TRUE)) {
     z <- ifelse(origin, 24107L, "1904-01-01")

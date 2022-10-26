@@ -10,7 +10,7 @@ test_that("Loading readTest.xlsx Sheet 1", {
   expect_equal(expected_shared_strings(), sst)
 })
 
-test_that("Loading multiple pivot tables: loadPivotTables.xlsx works",{
+test_that("Loading multiple pivot tables: loadPivotTables.xlsx works", {
   ## loadPivotTables.xlsx is a file with 3 pivot tables and 2 of them have the same reference data (pivotCacheDefinition)
   fl <- system.file("extdata", "loadPivotTables.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
@@ -189,7 +189,7 @@ test_that("additional wb tests", {
   exp <- data.frame(Var1 = c("TRUE", "TRUE", "TRUE", "FALSE"),
                     Var3 = c(1.00, NaN, 1.34, NA))
   got <- wb_to_df(wb1, cols = c(1, 4),
-                  types = c("Var1" = 0, "Var3" = 1))[seq_len(4),]
+                  types = c("Var1" = 0, "Var3" = 1))[seq_len(4), ]
   expect_equal(exp, got, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 })
@@ -197,12 +197,12 @@ test_that("additional wb tests", {
 test_that("test headerFooter", {
 
   # Plain text headers and footers
-  header = c('ODD HEAD LEFT', 'ODD HEAD CENTER', 'ODD HEAD RIGHT')
-  footer = c('ODD FOOT RIGHT', 'ODD FOOT CENTER', 'ODD FOOT RIGHT')
-  evenHeader = c('EVEN HEAD LEFT', 'EVEN HEAD CENTER', 'EVEN HEAD RIGHT')
-  evenFooter = c('EVEN FOOT RIGHT', 'EVEN FOOT CENTER', 'EVEN FOOT RIGHT')
-  firstHeader = c('TOP', 'OF FIRST', 'PAGE')
-  firstFooter = c('BOTTOM', 'OF FIRST', 'PAGE')
+  header <- c('ODD HEAD LEFT', 'ODD HEAD CENTER', 'ODD HEAD RIGHT')
+  footer <- c('ODD FOOT RIGHT', 'ODD FOOT CENTER', 'ODD FOOT RIGHT')
+  evenHeader <- c('EVEN HEAD LEFT', 'EVEN HEAD CENTER', 'EVEN HEAD RIGHT')
+  evenFooter <- c('EVEN FOOT RIGHT', 'EVEN FOOT CENTER', 'EVEN FOOT RIGHT')
+  firstHeader <- c('TOP', 'OF FIRST', 'PAGE')
+  firstFooter <- c('BOTTOM', 'OF FIRST', 'PAGE')
 
   # Add Sheet 1
   wb <- wb_workbook()

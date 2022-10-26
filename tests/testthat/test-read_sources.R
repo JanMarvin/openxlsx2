@@ -162,7 +162,7 @@ test_that("reading charts", {
 
 
   unzip(temp, exdir = xlsx_unzip)
-  overrides <- xml_node(read_xml(paste0(xlsx_unzip, "/[Content_Types].xml"), pointer = FALSE), "Types","Override")
+  overrides <- xml_node(read_xml(paste0(xlsx_unzip, "/[Content_Types].xml"), pointer = FALSE), "Types", "Override")
   unlink(xlsx_unzip, recursive = TRUE)
 
   expect_true(any(grepl("chartshapes", overrides)))

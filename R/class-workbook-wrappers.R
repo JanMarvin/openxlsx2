@@ -1146,7 +1146,7 @@ wb_protect_worksheet <- function(
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
-#' 
+#'
 #' # Remove the protection
 #' wb_protect(wb, protect = FALSE)
 #'
@@ -1553,7 +1553,7 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 #' wb$add_page_break(sheet = 1, row = 10)
 #' wb$add_page_break(sheet = 1, row = 20)
 #' wb$add_page_break(sheet = 1, col = 2)
-#' 
+#'
 #' ## In Excel: View tab -> Page Break Preview
 wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)

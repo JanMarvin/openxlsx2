@@ -383,7 +383,7 @@ wbWorksheet <- R6::R6Class(
 
       # avoid error and return empty data frame
       if (length(self$cols_attr) == 0)
-        return (empty_cols_attr())
+        return(empty_cols_attr())
 
       col_df <- col_to_df(read_xml(self$cols_attr))
       col_df$min <- as.numeric(col_df$min)
@@ -402,7 +402,7 @@ wbWorksheet <- R6::R6Class(
 
       out <- NULL
       for (i in seq_len(nrow(col_df))) {
-        z <- col_df[i,]
+        z <- col_df[i, ]
         for (j in seq(z$min, z$max)) {
           z$key <- j
           out <- rbind(out, z)
@@ -443,11 +443,11 @@ wbWorksheet <- R6::R6Class(
 
       # merge with string variable, drop empty string and clean up
       col_df <- merge(out, col_df, by = "string", all.x = TRUE)
-      col_df <- col_df[col_df$string != "",]
+      col_df <- col_df[col_df$string != "", ]
       col_df$string <- NULL
 
       # order and return
-      col_df <- col_df[order(col_df$min),]
+      col_df <- col_df[order(col_df$min), ]
       col_df$min <- as.character(col_df$min)
       col_df$max <- as.character(col_df$max)
 
@@ -468,7 +468,7 @@ wbWorksheet <- R6::R6Class(
 
       cc <- self$sheet_data$cc
 
-      if (NROW(cc) == 0) return (invisible(self))
+      if (NROW(cc) == 0) return(invisible(self))
 
       if (numbers)
         cc[cc$c_t %in% c("n", ""),
