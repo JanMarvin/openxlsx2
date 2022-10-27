@@ -36,3 +36,13 @@ test_that("fill merged cells", {
   expect_equal(read_xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], ignore_attr = TRUE)
   expect_equal(read_xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], ignore_attr = TRUE)
 })
+
+test_that("merge and unmerge cells", {
+
+  wb <- wb_workbook()$add_worksheet()$merge_cells(rows = 1:2, cols = 1:2)
+
+  expect_error(wb$merge_cells(rows = 1:2, cols = 1:2), "Remove existing merge first.")
+  expect_silent(wb$unmerge_cells(rows = 1:2, cols = 1:2))
+  expect_silent(wb$merge_cells(rows = 1:2, cols = 1:2))
+
+})
