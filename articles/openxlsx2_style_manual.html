@@ -97,14 +97,23 @@
 
     
     
-<p>Welcome to the styling manual for <code>openxlsx2</code>. In this manual you will learn how to use <code>openxlsx2</code> to style your worksheets. data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these openxml workbooks in R.</p>
+<p>Welcome to the styling manual for <code>openxlsx2</code>. In this
+manual you will learn how to use <code>openxlsx2</code> to style your
+worksheets. data from xlsx-files to R as well as how to export data from
+R to xlsx, and how to import and modify these openxml workbooks in
+R.</p>
 <div class="section level2">
 <h2 id="styling-showcase">Styling showcase<a class="anchor" aria-label="anchor" href="#styling-showcase"></a>
 </h2>
 <div class="section level3">
 <h3 id="colors-text-rotation-and-number-formats">Colors, text rotation and number formats<a class="anchor" aria-label="anchor" href="#colors-text-rotation-and-number-formats"></a>
 </h3>
-<p>Below we show you two ways how to create styled tables with <code>openxlsx2</code> one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table. We show both ways to create styles in <code>openxlsx2</code> to show how you could build on our functions or create your very own functions.</p>
+<p>Below we show you two ways how to create styled tables with
+<code>openxlsx2</code> one using the high level functions to style
+worksheet areas and one using the bare metal approach of creating the
+identical table. We show both ways to create styles in
+<code>openxlsx2</code> to show how you could build on our functions or
+create your very own functions.</p>
 <div class="figure">
 <img src="img/worksheet_styling.jpg" alt="The example below, with increased column width." width="100%"><p class="caption">
 The example below, with increased column width.
@@ -230,7 +239,8 @@ The example below, with increased column width.
 <div class="section level2">
 <h2 id="working-with-number-formats">Working with number formats<a class="anchor" aria-label="anchor" href="#working-with-number-formats"></a>
 </h2>
-<p>Per default <code>openxlsx2</code> will pick up number formats for selected R classes.</p>
+<p>Per default <code>openxlsx2</code> will pick up number formats for
+selected R classes.</p>
 <div class="section level3">
 <h3 id="numfmts">numfmts<a class="anchor" aria-label="anchor" href="#numfmts"></a>
 </h3>
@@ -263,7 +273,8 @@ The example below, with increased column width.
 <div class="section level3">
 <h3 id="numfmts2">numfmts2<a class="anchor" aria-label="anchor" href="#numfmts2"></a>
 </h3>
-<p>In addition, you can set the style to be picked up using <code>openxlsx2</code> options.</p>
+<p>In addition, you can set the style to be picked up using
+<code>openxlsx2</code> options.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span><span class="op">)</span></span>
@@ -341,7 +352,10 @@ The example below, with increased column width.
 <div class="section level3">
 <h3 id="styled-table">styled table<a class="anchor" aria-label="anchor" href="#styled-table"></a>
 </h3>
-<p>Below we show you two ways how to create styled tables with <code>openxlsx2</code> one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table.</p>
+<p>Below we show you two ways how to create styled tables with
+<code>openxlsx2</code> one using the high level functions to style
+worksheet areas and one using the bare metal approach of creating the
+identical table.</p>
 <p><img src="img/styled_table.jpg"><!-- --></p>
 <div class="section level4">
 <h4 id="the-quick-way-using-high-level-functions-1">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions-1"></a>
@@ -439,7 +453,12 @@ Tint variations of the theme colors.
 <div class="section level4">
 <h4 id="copy-cell-styles">Copy cell styles<a class="anchor" aria-label="anchor" href="#copy-cell-styles"></a>
 </h4>
-<p>It is possible to copy the styles of several cells at once. In the following example, the styles of some cells from a formatted workbook are applied to a previously empty cell range. Be careful though, <code><a href="../reference/cell_style.html">wb_get_cell_style()</a></code> returns only some styles, so you have to make sure that the copy-from and copy-to dimensions match in a meaningful way.</p>
+<p>It is possible to copy the styles of several cells at once. In the
+following example, the styles of some cells from a formatted workbook
+are applied to a previously empty cell range. Be careful though,
+<code><a href="../reference/cell_style.html">wb_get_cell_style()</a></code> returns only some styles, so you have
+to make sure that the copy-from and copy-to dimensions match in a
+meaningful way.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"oxlsx2_sheet.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/cell_style.html">wb_set_cell_style</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"A30:G35"</span>, <span class="fu"><a href="../reference/cell_style.html">wb_get_cell_style</a></span><span class="op">(</span><span class="va">.</span>, <span class="fl">1</span>, <span class="st">"A10:G15"</span><span class="op">)</span><span class="op">)</span></span>
