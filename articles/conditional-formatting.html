@@ -169,7 +169,7 @@
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"Moving Col"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, </span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"A$1&gt;0"</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"posStyle"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -185,7 +185,7 @@
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"Dependent on"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, </span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"$A$1 &lt; 0"</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"negStyle"</span></span>
 <span><span class="op">)</span></span>
@@ -205,15 +205,15 @@
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"Dependent on"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>, </span>
-<span>  rule <span class="op">=</span> <span class="st">"B16&lt;0.5"</span>, </span>
+<span>  rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>,</span>
+<span>  rule <span class="op">=</span> <span class="st">"B16&lt;0.5"</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"negStyle"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"Dependent on"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>, </span>
-<span>  rule <span class="op">=</span> <span class="st">"B16&gt;=0.5"</span>, </span>
+<span>  rows <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span>,</span>
+<span>  rule <span class="op">=</span> <span class="st">"B16&gt;=0.5"</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"posStyle"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -256,10 +256,10 @@
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"notcontainsText"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"notcontainsText"</span>, </span>
+<span>  <span class="st">"notcontainsText"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, </span>
-<span>  type <span class="op">=</span> <span class="st">"notContainsText"</span>, </span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"notContainsText"</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"A"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -272,10 +272,10 @@
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"beginsWith"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"beginsWith"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"beginsWith"</span>, </span>
+<span>  <span class="st">"beginsWith"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, </span>
-<span>  type <span class="op">=</span> <span class="st">"beginsWith"</span>, </span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"beginsWith"</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"A"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -288,9 +288,9 @@
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"endsWith"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"endsWith"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"endsWith"</span>, </span>
+<span>  <span class="st">"endsWith"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, </span>
+<span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"endsWith"</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"A"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -313,7 +313,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"colorScale"</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, </span>
+<span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>,</span>
@@ -410,11 +410,11 @@ cells is used. Rule must be the same length as style or L.</p>
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"between"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"between"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"between"</span>, </span>
+<span>  <span class="st">"between"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"between"</span>, </span>
-<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span></span>
+<span>  type <span class="op">=</span> <span class="st">"between"</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"topN"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -427,7 +427,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <p>Highlight top 5 values in column x</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"topN"</span>, </span>
+<span>  <span class="st">"topN"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"posStyle"</span>,</span>
@@ -437,10 +437,10 @@ cells is used. Rule must be the same length as style or L.</p>
 <p>Highlight top 20 percentage in column y</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"topN"</span>, </span>
+<span>  <span class="st">"topN"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span>  style <span class="op">=</span> <span class="st">"posStyle"</span>, </span>
+<span>  style <span class="op">=</span> <span class="st">"posStyle"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"topN"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -458,17 +458,17 @@ cells is used. Rule must be the same length as style or L.</p>
 <span>  <span class="st">"bottomN"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span>  style <span class="op">=</span> <span class="st">"negStyle"</span>, </span>
+<span>  style <span class="op">=</span> <span class="st">"negStyle"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"bottomN"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Highlight bottom 20 percentage in column y</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
-<span>  <span class="st">"bottomN"</span>, </span>
+<span>  <span class="st">"bottomN"</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
-<span>  style <span class="op">=</span> <span class="st">"negStyle"</span>, </span>
+<span>  style <span class="op">=</span> <span class="st">"negStyle"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"bottomN"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -483,7 +483,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"logical operators"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"logical operators"</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>  cols <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"OR($A1=1,$A1=3,$A1=5,$A1=7)"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
