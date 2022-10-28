@@ -23,7 +23,7 @@ test_that("write_formula", {
                array = TRUE)
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
-  got <- cc[cc$row_r == "2" & cc$c_r == "E",]
+  got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
   expect_equal(exp[1:16], got[1:16])
 
 
@@ -37,7 +37,7 @@ test_that("write_formula", {
   wb$add_data("df", df, startCol = "C")
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
-  got <- cc[cc$row_r == "2" & cc$c_r == "E",]
+  got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
   expect_equal(exp[1:11], got[1:11])
 
 })
@@ -140,7 +140,7 @@ test_that("update_cells", {
          f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\")"),
          f_t = c("array", "", "")),
     row.names = c("23", "110", "111"), class = "data.frame")
-  got <- wb$worksheets[[1]]$sheet_data$cc[c(5,8,11), c("c_t", "f", "f_t")]
+  got <- wb$worksheets[[1]]$sheet_data$cc[c(5, 8, 11), c("c_t", "f", "f_t")]
   expect_equal(exp, got)
 
 })
@@ -248,7 +248,7 @@ test_that("write_rownames", {
   wb <- wb_workbook()$
     add_worksheet()$add_data(x = mtcars, rowNames = TRUE)$
     add_worksheet()$add_data_table(x = mtcars, rowNames = TRUE)
-  
+
   exp <- structure(
     list(A = c(NA, "Mazda RX4"), B = c("mpg", "21")),
     row.names = 1:2,
@@ -261,8 +261,7 @@ test_that("write_rownames", {
   )
   got <- wb_to_df(wb, 1, dims = "A1:B2", colNames = FALSE)
   expect_equal(exp, got)
-  
-  
+
   exp <- structure(
     list(A = c("_rowNames_", "Mazda RX4"), B = c("mpg", "21")),
     row.names = 1:2,
@@ -275,5 +274,5 @@ test_that("write_rownames", {
   )
   got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE)
   expect_equal(exp, got)
-  
+
 })

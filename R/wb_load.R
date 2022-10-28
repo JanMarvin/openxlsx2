@@ -136,7 +136,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     # and only modify it if we need to.
 
     # Currently we create a slim skeleton and add relationships if needed. An
-    # alternative to this is shown in the snippets below. Though this leaves 
+    # alternative to this is shown in the snippets below. Though this leaves
     # the possibility that we still include folders we do not handle correctly.
     # Like ctrlProps #206.
 
@@ -207,7 +207,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     ## Such sheets need to be filtered out because otherwise their sheet names
     ## occur in the list of all sheet names, leading to a wrong association
     ## of sheet names with sheet indeces.
-    sheets <- sheets[sheets$`r:id` != "",]
+    sheets <- sheets[sheets$`r:id` != "", ]
 
     # if wb_relsxml is not available, the workbook has no relationships, not
     # sure if this is possible
@@ -226,7 +226,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     )
 
     # if /xl/ is not in the path add it
-    xl_path <- ifelse(grepl("/xl/",sheets$Target), "", "/xl/")
+    xl_path <- ifelse(grepl("/xl/", sheets$Target), "", "/xl/")
 
     ## sheetId does not mean sheet order. Sheet order is defined in the index position here
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
@@ -568,7 +568,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
         wb$workbook.xml.rels,
         sprintf(
           '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink" Target="externalLinks/externalLink%s.xml"/>',
-          ext_ref[i,1],
+          ext_ref[i, 1],
           i
         )
       )

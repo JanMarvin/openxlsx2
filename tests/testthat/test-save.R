@@ -13,7 +13,7 @@ test_that("test return values for wb_save", {
 test_that("regression test for #248", {
 
   # Basic data frame
-  df <- data.frame(number = 1:3, percent = 4:6/100)
+  df <- data.frame(number = 1:3, percent = 4:6 / 100)
   tempFile <- temp_xlsx()
 
   # no formatting
@@ -69,7 +69,7 @@ test_that("write_data2", {
   write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
   file <- tempfile(fileext = ".xlsx")
-  wb_save(wb,file)
+  wb_save(wb, file)
 
   wb1 <- wb_load(file)
 

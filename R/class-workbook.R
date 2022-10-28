@@ -639,7 +639,7 @@ wbWorkbook <- R6::R6Class(
                 chartid <- nrow(self$charts) + 1L
                 newname <- stri_join("chart", chartid, ".xml")
                 old_chart <- as.integer(gsub("\\D+", "", cf))
-                self$charts <- rbind(self$charts, self$charts[old_chart,])
+                self$charts <- rbind(self$charts, self$charts[old_chart, ])
 
                 # Read the chartfile and adjust all formulas to point to the new
                 # sheet name instead of the clone source
@@ -784,7 +784,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets_rels[[newSheetIndex]] <- relship_no(obj = self$worksheets_rels[[newSheetIndex]], x = "table")
 
         # make this the new sheets object
-        tbls <- self$tables[self$tables$tab_sheet == old,]
+        tbls <- self$tables[self$tables$tab_sheet == old, ]
         if (NROW(tbls)) {
 
           # newid and rid can be different. ids must be unique
@@ -1359,7 +1359,7 @@ wbWorkbook <- R6::R6Class(
         for (i in seq_along(tab_ids)) {
 
           # select only active tabs. in future there should only be active tabs
-          tabs <- self$tables[self$tables$tab_act == 1,]
+          tabs <- self$tables[self$tables$tab_act == 1, ]
 
           if (NROW(tabs)) {
             write_file(
@@ -1636,7 +1636,7 @@ wbWorkbook <- R6::R6Class(
       workbookXML$sheets <- stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
 
       if (length(workbookXML$definedNames)) {
-        workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>" )
+        workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>")
       }
 
       # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
@@ -1975,7 +1975,7 @@ wbWorkbook <- R6::R6Class(
           if (any(ind)) {
             nn <- sprintf("'%s'", new_name[i])
             nn <- stringi::stri_replace_all_fixed(self$workbook$definedName[ind], old, nn)
-            nn <- stringi::stri_replace_all(nn, "'+", "'" )
+            nn <- stringi::stri_replace_all(nn, "'+", "'")
             self$workbook$definedNames[ind] <- nn
           }
         }
@@ -2458,7 +2458,7 @@ wbWorkbook <- R6::R6Class(
         # wb_validate_sheet() makes sheet an integer
         # so we need to remove this before getting rid of the sheet names
         self$workbook$definedNames <- self$workbook$definedNames[
-          !get_named_regions_from_definedName(self)$sheets %in% self$sheet_names[sheet]
+          !get_nr_from_definedName(self)$sheets %in% self$sheet_names[sheet]
         ]
       }
 
@@ -2816,7 +2816,7 @@ wbWorkbook <- R6::R6Class(
 
       rows <- range(as.integer(rows))
       cols <- range(as.integer(cols))
-      
+
       sqref <- paste0(int2col(cols), rows)
       sqref <- stri_join(sqref, collapse = ":", sep = " ")
 
@@ -3039,7 +3039,7 @@ wbWorkbook <- R6::R6Class(
       ## check valid rule
       dxfId <- NULL
       if (!is.null(style)) dxfId <- self$styles_mgr$get_dxf_id(style)
-      params <- validate_conditional_formatting_params(params)
+      params <- validate_cf_params(params)
       values <- NULL
 
       sel <- c("expression", "duplicatedValues", "containsText", "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN")
@@ -3394,7 +3394,7 @@ wbWorkbook <- R6::R6Class(
       # If no drawing is found, initiate one. If one is found, append a child to the exisiting node.
       # Might look into updating attributes as well.
       if (all(self$drawings[[drawing_sheet]] == "")) {
-        xml_attr = c(
+        xml_attr <- c(
           "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
           "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
           "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -4473,19 +4473,19 @@ wbWorkbook <- R6::R6Class(
         dim_full_single <- df[1, 1]
 
       if (ncol(df) == 1 && nrow(df) >= 2) {
-        dim_top_single <- df[1,1]
+        dim_top_single <- df[1, 1]
         dim_bottom_single <- df[nrow(df), 1]
         if (nrow(df) >= 3) {
-          mid <- df[,1]
+          mid <- df[, 1]
           dim_middle_single <- mid[!mid %in% c(dim_top_single, dim_bottom_single)]
         }
       }
 
       if (ncol(df) >= 2 && nrow(df) == 1) {
-        dim_left_single <- df[1,1]
+        dim_left_single <- df[1, 1]
         dim_right_single <- df[1, ncol(df)]
         if (ncol(df) >= 3) {
-          ctr <- df[1,]
+          ctr <- df[1, ]
           dim_center_single <- ctr[!ctr %in% c(dim_left_single, dim_right_single)]
         }
       }
@@ -4497,16 +4497,16 @@ wbWorkbook <- R6::R6Class(
         dim_bottom_right <- df[nrow(df), ncol(df)]
 
         if (nrow(df) >= 3) {
-          top_mid <- df[,1]
-          bottom_mid <- df[,ncol(df)]
+          top_mid <- df[, 1]
+          bottom_mid <- df[, ncol(df)]
 
           dim_middle_left <- top_mid[!top_mid %in% c(dim_top_left, dim_bottom_left)]
           dim_middle_right <- bottom_mid[!bottom_mid %in% c(dim_top_right, dim_bottom_right)]
         }
 
         if (ncol(df) >= 3) {
-          top_ctr <- df[1,]
-          bottom_ctr <- df[nrow(df),]
+          top_ctr <- df[1, ]
+          bottom_ctr <- df[nrow(df), ]
 
           dim_top_center <- top_ctr[!top_ctr %in% c(dim_top_left, dim_top_right)]
           dim_bottom_center <- bottom_ctr[!bottom_ctr %in% c(dim_bottom_left, dim_bottom_right)]
@@ -5095,7 +5095,7 @@ wbWorkbook <- R6::R6Class(
         merged_rows[is.na(merged_rows)] <- ""
         merged_rows <- merged_rows[!duplicated(merged_rows["r"]), ]
         ordr <- ordered(order(as.integer(merged_rows$r)))
-        merged_rows <- merged_rows[ordr,]
+        merged_rows <- merged_rows[ordr, ]
 
         self$worksheets[[id_new]]$sheet_data$row_attr <- merged_rows
       }
@@ -5588,12 +5588,12 @@ wbWorkbook <- R6::R6Class(
             # still row_attr is what we want!
 
             rows_attr <- ws$sheet_data$row_attr
-            ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])),]
+            ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
 
             cc_rows <- ws$sheet_data$row_attr$r
             cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_t", "f_ref", "f_ca", "f_si", "is")]
 
-            ws$sheet_data$cc_out <- cc_out[order(as.integer(cc_out[,"row_r"]), col2int(cc_out[, "c_r"])),]
+            ws$sheet_data$cc_out <- cc_out[order(as.integer(cc_out[, "row_r"]), col2int(cc_out[, "c_r"])), ]
           } else {
             ws$sheet_data$row_attr <- NULL
             ws$sheet_data$cc_out <- NULL
@@ -5633,7 +5633,7 @@ wbWorkbook <- R6::R6Class(
 
             ## Check if any tables were deleted - remove these from rels
             # TODO a relship manager should take care of this
-            tabs <- self$tables[self$tables$tab_act == 1,]
+            tabs <- self$tables[self$tables$tab_act == 1, ]
             if (NROW(tabs)) {
               table_inds <- grep("tables/table[0-9].xml", ws_rels)
 
@@ -6051,7 +6051,7 @@ lcr <- function(var) {
 #' @param index Sheet name index
 #' @return The sheet index
 #' @export
-wb_get_sheet_name = function(wb, index = NULL) {
+wb_get_sheet_name <- function(wb, index = NULL) {
   index <- index %||% seq_along(wb$sheet_names)
 
   # index should be integer like

@@ -19,11 +19,11 @@ test_that("fill merged cells", {
   expect_equal(names(read_xlsx(tmp_file, fillMergedCells = FALSE)), c("A", "B", NA_character_, NA_character_))
   expect_equal(names(read_xlsx(tmp_file, fillMergedCells = TRUE)), c("A", "B", "B", "B"))
 
-  r1 <- data.frame("A" = rep(1, 5), "B" = rep(2, 5), "NA1" = rep(3,5), "NA2" = rep(4, 5))
+  r1 <- data.frame("A" = rep(1, 5), "B" = rep(2, 5), "NA1" = rep(3, 5), "NA2" = rep(4, 5))
   rnams <- as.character(seq(2, length.out = nrow(r1)))
   dimnames(r1) <-  list(rnams, c("A", "B", NA_character_, NA_character_))
 
-  r2 <- data.frame("A" = rep(1, 5), "B" = rep(2, 5), "B1" = c(3,2,2,2,3), "B2" = c(4,2,2,2,4))
+  r2 <- data.frame("A" = rep(1, 5), "B" = rep(2, 5), "B1" = c(3, 2, 2, 2, 3), "B2" = c(4, 2, 2, 2, 4))
   dimnames(r2) <-  list(rnams, c("A", "B", "B", "B"))
 
   r2_1 <- r2[1:5, 1:3]

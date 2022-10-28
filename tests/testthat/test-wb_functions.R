@@ -47,16 +47,16 @@ test_that("wb_to_df", {
 
   # read selected cols
   got <- wb_to_df(wb1, cols = c(1:2, 7))
-  expect_equal(exp[c(1,2,7)], got, ignore_attr = TRUE)
+  expect_equal(exp[c(1, 2, 7)], got, ignore_attr = TRUE)
 
   # read selected cols
   got <- wb_to_df(wb1, cols = c("A", "B", "G"))
-  expect_equal(exp[c(1,2,7)], got, ignore_attr = TRUE)
+  expect_equal(exp[c(1, 2, 7)], got, ignore_attr = TRUE)
 
   # read selected rows
   got <- wb_to_df(wb1, rows = c(1, 4, 6))
-  got[c(4,7)] <- lapply(got[c(4,7)], as.character)
-  expect_equal(exp[c(3,5),], got, ignore_attr = TRUE)
+  got[c(4, 7)] <- lapply(got[c(4, 7)], as.character)
+  expect_equal(exp[c(3, 5), ], got, ignore_attr = TRUE)
 
   # convert characters to numerics and date (logical too?)
   got <- wb_to_df(wb1, convert = FALSE)
@@ -84,7 +84,7 @@ test_that("wb_to_df", {
 
   # start in row 5
   got <- wb_to_df(wb1, startRow = 5, colNames = FALSE)
-  test <- exp[4:10,]
+  test <- exp[4:10, ]
   names(test) <- int2col(seq_along(test))
   test[c("D", "G", "H")] <- lapply(test[c("D", "G", "H")], as.numeric)
   expect_equal(test, got, ignore_attr = TRUE)
@@ -105,10 +105,10 @@ test_that("wb_to_df", {
     Response = c(
       -1.79607109448082, 1.01028999064546, 0.449017773620206, 0,
       0.898035547240412, 0.112254443405051, 3.14312441534144,
-      1.45930776426567, 1.68381665107577, -0.78578110383536 ),
+      1.45930776426567, 1.68381665107577, -0.78578110383536),
     concUnit = "nM",
     stringsAsFactors = FALSE)
-  rownames(exp) <- seq(2, nrow(exp)+ 1)
+  rownames(exp) <- seq(2, nrow(exp) + 1)
   # read dataset with inlinestr
   got <- wb_to_df(wb2)
   expect_equal(exp, got, ignore_attr = TRUE)

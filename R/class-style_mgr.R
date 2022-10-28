@@ -68,7 +68,7 @@
 #' @export
 style_mgr <- R6::R6Class("wbStylesMgr", {
 
-  public = list(
+  public <- list(
 
     #' @field numfmt numfmt-ids
     numfmt = NULL,

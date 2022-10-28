@@ -124,7 +124,7 @@ test_that("xml_node", {
   exp <- "<c><d><e/></d></c>"
   expect_equal(exp, xml_node(xml, "a", "b", "c"))
   # bit cheating, this test returns the same, but not the actual feature of "*"
-  expect_equal(exp, xml_node(xml, "a", "*","c"))
+  expect_equal(exp, xml_node(xml, "a", "*", "c"))
 
 })
 
@@ -163,7 +163,7 @@ test_that("xml_attr", {
 
 
 
-  exp <- list(c(a="1"))
+  exp <- list(c(a = "1"))
 
   xml_str <- "<a a=\"1\"/>"
   xml <- read_xml(xml_str)
@@ -294,11 +294,11 @@ test_that("xml_rm_child", {
   xml_node <- "<x><a><b><c>1</c><c>2</c><c>3</c></b></a></x>"
 
   exp <- "<x><a><b><c>1</c><c>3</c></b></a></x>"
-  got <- xml_rm_child(xml_node, xml_child, level = c("a","b"), which = 2)
+  got <- xml_rm_child(xml_node, xml_child, level = c("a", "b"), which = 2)
   expect_equal(exp, got)
 
   exp <- "<x><a><b/></a></x>"
-  got <- xml_rm_child(xml_node, xml_child, level = c("a","b"), which = 0)
+  got <- xml_rm_child(xml_node, xml_child, level = c("a", "b"), which = 0)
   expect_equal(exp, got)
 
 })

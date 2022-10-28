@@ -46,7 +46,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
     row_attr <- rbind(row_attr, row_attr_missing)
 
     # order
-    row_attr <- row_attr[order(as.numeric(row_attr$r)),]
+    row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
 
     wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
     # provide output
@@ -62,8 +62,8 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
     # create missing cells
     cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
     cc_missing$r     <- missing_cells
-    cc_missing$row_r <- gsub("[[:upper:]]","", cc_missing$r)
-    cc_missing$c_r   <- gsub("[[:digit:]]","", cc_missing$r)
+    cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
+    cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
 
     # assign to cc
     cc <- rbind(cc, cc_missing)
@@ -222,8 +222,8 @@ write_data2 <- function(
   data_nrow <- NROW(data)
   data_ncol <- NCOL(data)
 
-  endRow <- (startRow -1) + data_nrow
-  endCol <- (startCol -1) + data_ncol
+  endRow <- (startRow - 1) + data_nrow
+  endCol <- (startCol - 1) + data_ncol
 
   dims <- paste0(
     int2col(startCol), startRow,
@@ -281,7 +281,7 @@ write_data2 <- function(
     if (colNames) {
       data[-1, i] <- as.integer(as.logical(data[-1, i]))
     } else {
-      data[,i] <- as.integer(as.logical(data[,i]))
+      data[, i] <- as.integer(as.logical(data[, i]))
     }
   }
 
@@ -337,7 +337,7 @@ write_data2 <- function(
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {
-    cc <- cc[cc$r != rtyp[1,1], ]
+    cc <- cc[cc$r != rtyp[1, 1], ]
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
@@ -645,9 +645,12 @@ write_data_table <- function(
     } else {
       # check should be in create_hyperlink and that apply should not be required either
       if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
-        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
+        x[is_hyperlink] <- apply(
+          x[is_hyperlink], 1,
+          FUN = function(str) create_hyperlink(text = str)
+        )
       }
-      class(x[,is_hyperlink]) <- c("character", "hyperlink")
+      class(x[, is_hyperlink]) <- c("character", "hyperlink")
     }
   }
 

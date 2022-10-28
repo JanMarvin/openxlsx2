@@ -12,7 +12,7 @@ test_that("test data validation list and sparklines", {
   s2 <- create_sparklines("Sheet 1", "A4:K4", "L4")
 
   wb <- wb_workbook()$
-    add_worksheet()$add_data(x = iris[1:30,])$
+    add_worksheet()$add_data(x = iris[1:30, ])$
     add_worksheet()$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))$
     add_data_validation(sheet = 1, col = 1, rows = 2:11, type = "list", value = '"O1,O2"')$
     add_sparklines(sheet = 1, sparklines = s1)$

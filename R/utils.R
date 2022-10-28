@@ -167,8 +167,8 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
   rows_out <- NULL
   for (dim in dims) {
     dimensions <- unlist(strsplit(dim, ":"))
-    cols <- gsub("[[:digit:]]","", dimensions)
-    rows <- gsub("[[:upper:]]","", dimensions)
+    cols <- gsub("[[:digit:]]", "", dimensions)
+    rows <- gsub("[[:upper:]]", "", dimensions)
 
     # if "A:B"
     if (any(rows == "")) rows[rows == ""] <- "1"
@@ -226,7 +226,7 @@ relship_no <- function(obj, x) {
   if (length(obj) == 0) return(character())
   relship <- rbindlist(xml_attr(obj, "Relationship"))
   relship$typ <- basename(relship$Type)
-  relship <- relship[relship$typ != x,]
+  relship <- relship[relship$typ != x, ]
   df_to_xml("Relationship", relship[c("Id", "Type", "Target")])
 }
 
@@ -237,7 +237,7 @@ get_relship_id <- function(obj, x) {
   if (length(obj) == 0) return(character())
   relship <- rbindlist(xml_attr(obj, "Relationship"))
   relship$typ <- basename(relship$Type)
-  relship <- relship[relship$typ == x,]
+  relship <- relship[relship$typ == x, ]
   unname(unlist(relship[c("Id")]))
 }
 

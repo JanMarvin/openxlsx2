@@ -112,10 +112,10 @@ wb <- wb_workbook("My name here")$
   add_worksheet("Expenditure", gridLines = FALSE)$
   add_data(x = USPersonalExpenditure, rowNames = TRUE)$
   add_border( # add the outer and inner border
-    dims = "A1:F6", 
+    dims = "A1:F6",
     top_border = "thin", top_color = border_color,
     bottom_border = "thin", bottom_color = border_color,
-    inner_hgrid = "thin", inner_hcolor = border_color, 
+    inner_hgrid = "thin", inner_hcolor = border_color,
     left_border = "", right_border = ""
   )$
   set_col_widths( # set column width

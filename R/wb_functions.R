@@ -14,7 +14,7 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 
   rows_out <- NULL
   cols_out <- NULL
-  for(dim in dims) {
+  for (dim in dims) {
 
     if (!grepl(":", dim)) {
       dim <- paste0(dim, ":", dim)
@@ -26,13 +26,13 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
     } else {
       dimensions <- strsplit(dim, ":")[[1]]
 
-      rows <- as.numeric(gsub("[[:upper:]]","", dimensions))
+      rows <- as.numeric(gsub("[[:upper:]]", "", dimensions))
       rows <- seq.int(rows[1], rows[2])
 
       rows_out <- unique(c(rows_out, rows))
 
       # TODO seq.wb_columns?  make a wb_cols vector?
-      cols <- gsub("[[:digit:]]","", dimensions)
+      cols <- gsub("[[:digit:]]", "", dimensions)
       cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
 
       cols_out <- unique(c(cols_out, cols))
@@ -87,7 +87,7 @@ guess_col_type <- function(tt) {
 numfmt_is_date <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) ==0) return(z <- NULL)
+  if (length(numFmt) == 0) return(z <- NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   num_fmts <- c(
@@ -105,7 +105,7 @@ numfmt_is_date <- function(numFmt) {
   maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)
 
   z <- numFmt_df$numFmtId[maybe_dates & !maybe_num]
-  if (length(z)==0) z <- NULL
+  if (length(z) == 0) z <- NULL
   z
 }
 
@@ -114,7 +114,7 @@ numfmt_is_date <- function(numFmt) {
 numfmt_is_posix <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) ==0) return(z <- NULL)
+  if (length(numFmt) == 0) return(z <- NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   num_fmts <- c(
@@ -134,7 +134,7 @@ numfmt_is_posix <- function(numFmt) {
   maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$formatCode)
 
   z <- numFmt_df$numFmtId[maybe_posix & !maybe_num]
-  if (length(z)==0) z <- NULL
+  if (length(z) == 0) z <- NULL
   z
 }
 
@@ -149,8 +149,8 @@ style_is_date <- function(cellXfs, numfmt_date) {
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
-  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date,])
-  if (length(z)==0) z <- NA
+  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date, ])
+  if (length(z) == 0) z <- NA
   z
 }
 
@@ -165,8 +165,8 @@ style_is_posix <- function(cellXfs, numfmt_date) {
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
-  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date,])
-  if (length(z)==0) z <- NA
+  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date, ])
+  if (length(z) == 0) z <- NA
   z
 }
 
@@ -318,7 +318,7 @@ wb_to_df <- function(
     nr <- get_named_regions(wb)
 
     if ((named_region %in% nr$name) && missing(sheet)) {
-      sel   <- nr[nr$name == named_region, ][1,]
+      sel   <- nr[nr$name == named_region, ][1, ]
       sheet <- sel$sheet
       dims  <- sel$coords
     } else if (named_region %in% nr$name) {
@@ -436,7 +436,7 @@ wb_to_df <- function(
       z <- z[keep_cols]
       tt <- tt[keep_cols]
     }
-    
+
 
       z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
       tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
@@ -495,7 +495,7 @@ wb_to_df <- function(
   # test is sst
   if (isTRUE(cc_tab[c("s")] > 0)) {
     sel <- cc$c_t %in% c("s")
-    cc$val[sel] <- sst[as.numeric(cc$v[sel])+1]
+    cc$val[sel] <- sst[as.numeric(cc$v[sel]) + 1]
     cc$typ[sel] <- "s"
   }
 
@@ -565,8 +565,8 @@ wb_to_df <- function(
   zz$cols <- match(cc$c_r, colnames(z)) - 1L
   zz$rows <- match(cc$row_r, rownames(z)) - 1L
 
-  zz <- zz[order(zz[, "cols"], zz[,"rows"]),]
-  if (any(zz$val == "", na.rm = TRUE)) zz <- zz[zz$val != "",]
+  zz <- zz[order(zz[, "cols"], zz[, "rows"]), ]
+  if (any(zz$val == "", na.rm = TRUE)) zz <- zz[zz$val != "", ]
   long_to_wide(z, tt, zz)
 
   # prepare colnames object
@@ -602,7 +602,7 @@ wb_to_df <- function(
     # missing values and if assigned, convert below might break with unambiguous
     # names.
     nams <- names(xlsx_cols_names)
-    xlsx_cols_names  <- z[1,]
+    xlsx_cols_names  <- z[1, ]
     names(xlsx_cols_names) <- nams
 
     z  <- z[-1, , drop = FALSE]
@@ -610,12 +610,12 @@ wb_to_df <- function(
   }
 
   if (rowNames) {
-    rownames(z)  <- z[,1]
-    rownames(tt) <- z[,1]
+    rownames(z)  <- z[, 1]
+    rownames(tt) <- z[, 1]
     xlsx_cols_names <- xlsx_cols_names[-1]
 
-    z  <- z[ ,-1, drop = FALSE]
-    tt <- tt[ , -1, drop = FALSE]
+    z  <- z[, -1, drop = FALSE]
+    tt <- tt[, -1, drop = FALSE]
   }
 
   # # faster guess_col_type alternative? to avoid tt
@@ -633,10 +633,10 @@ wb_to_df <- function(
     sel <- !is.na(names(types))
 
     if (any(sel)) {
-      nums <- names( which(types[sel] == 1) )
-      dtes <- names( which(types[sel] == 2) )
-      poxs <- names( which(types[sel] == 3) )
-      logs <- names( which(types[sel] == 4) )
+      nums <- names(which(types[sel] == 1))
+      dtes <- names(which(types[sel] == 2))
+      poxs <- names(which(types[sel] == 3))
+      logs <- names(which(types[sel] == 4))
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))

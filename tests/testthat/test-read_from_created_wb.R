@@ -96,7 +96,7 @@ test_that("dims != rows & cols", {
   expect_equal(got1, got2)
 
   got3 <- wb_to_df(wb, rows = c(2:3, 5:6), cols = c(1, 3:5), colNames = FALSE)
-  expect_equal(c(4,4), dim(got3))
+  expect_equal(c(4, 4), dim(got3))
   expect_equal(c("A", "C", "D", "E"), colnames(got3))
   expect_equal(c("2", "3", "5", "6"), rownames(got3))
 

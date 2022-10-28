@@ -85,7 +85,7 @@ wb_check_overwrite_tables <- function(
     if (length(to_check)) {
       ## only look at tables on this sheet
 
-      exTable <- wb$tables[to_check,]
+      exTable <- wb$tables[to_check, ]
 
       exTable$rows <- lapply(
         exTable$tab_ref,
@@ -124,7 +124,7 @@ wb_check_overwrite_tables <- function(
 }
 
 
-validate_conditional_formatting_params <- function(params) {
+validate_cf_params <- function(params) {
   bad <- names(params) %out% c("showValue", "gradient", "border", "percent", "rank")
   if (any(bad)) {
     stop("Invalid parameters: ", toString(names(params)[bad]))
