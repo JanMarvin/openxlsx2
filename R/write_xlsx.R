@@ -38,8 +38,7 @@
 #'  A vector of the form c(startCol, startRow)}
 #'   \item{**colNames or col.names**}{ If `TRUE`, column names of x are written.}
 #'   \item{**rowNames or row.names**}{ If `TRUE`, row names of x are written.}
-#'   \item{**keepNA**} {If `TRUE`, NA values are converted to #N/A (or `na.string`, if not NULL) in Excel, else NA cells will be empty. Defaults to FALSE.}
-#'   \item{**na.string**} {If not NULL, and if `keepNA` is `TRUE`, NA values are converted to this string in Excel. Defaults to NULL.}
+#'   \item{**na.string**} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}
 #' }
 #'
 #' **freezePane Parameters**
@@ -122,7 +121,6 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   ## xy = NULL,
   ## colNames = TRUE,
   ## rowNames = FALSE,
-  ## keepNA = FALSE
   ## na.strings = NULL
 
   #----write_datatable---#
