@@ -5,3 +5,10 @@ linters: linters_with_defaults(
   object_name_linter = NULL,               # more camel case
   single_quotes_linter = NULL              #
   )
+exclusions: list(
+  # otherwise they will throw locally
+  "vignettes/conditional-formatting.R",
+  "vignettes/openxlsx2_basic_manual.R",
+  "vignettes/openxlsx2_style_manual.R",
+  "vignettes/Update-from-openxlsx.R"
+  )
