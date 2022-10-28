@@ -645,7 +645,10 @@ write_data_table <- function(
     } else {
       # check should be in create_hyperlink and that apply should not be required either
       if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
-        x[is_hyperlink] <- apply(x[is_hyperlink], 1, FUN=function(str) create_hyperlink(text = str))
+        x[is_hyperlink] <- apply(
+          x[is_hyperlink], 1,
+          FUN = function(str) create_hyperlink(text = str)
+        )
       }
       class(x[, is_hyperlink]) <- c("character", "hyperlink")
     }
