@@ -788,7 +788,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data("S1", iris)
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
-wb_set_base_font <- function(wb, fontSize = 11, fontColour = "black", fontName = "Calibri") {
+wb_set_base_font <- function(wb, fontSize = 11, fontColour = wb_colour(theme = "1"), fontName = "Calibri") {
   assert_workbook(wb)
   wb$clone()$set_base_font(
     fontSize   = fontSize,
