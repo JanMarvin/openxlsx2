@@ -61,3 +61,40 @@ get_cell_refs <- function(cellCoords) {
   l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])
 }
+
+
+
+#' calculate the required column width
+#'
+#' @param base_font the base font name and fontsize
+#' @param col_width column width
+#' @keywords internal
+#' @examples
+#' base_font <- wb_get_base_font(wb)
+#' calc_col_width(base_font, col_width = 10)
+#' @noRd
+calc_col_width <- function(base_font, col_width) {
+
+  # TODO save this instead as internal package data for quicker loading
+  fw <- system.file("extdata", "fontwidth/FontWidth.csv", package = "openxlsx2")
+  font_width_tab <- read.csv(fw)
+
+  # TODO base font might not be the font used in this column
+  font <- base_font$name$val
+  size <- as.integer(base_font$size$val)
+
+  sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
+  # maximum digit width of selected font
+  mdw <- font_width_tab$Width[sel]
+
+  # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
+  # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
+  # the results were close to the initial col_width sizes. Character width is still bad, numbers are
+  # way larger, therefore characters cells are to wide. Not sure if we need improve this.
+
+  # Note: cannot reproduce the exact values with MS365 on Mac. Nevertheless, these values are closer
+  # to the expected widths
+  widths <- trunc((as.numeric(col_width) * mdw + 5) / mdw * 256) / 256
+  widths <- round(widths, 3)
+  widths
+}

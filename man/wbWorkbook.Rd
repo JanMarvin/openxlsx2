@@ -836,8 +836,8 @@ A list of of the font
 Get the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
-  fontSize = 11,
-  fontColour = "black",
+  fontSize = 12,
+  fontColour = wb_colour(theme = "1"),
   fontName = "Calibri"
 )}\if{html}{\out{</div>}}
 }

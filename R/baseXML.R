@@ -137,7 +137,7 @@ genBaseStyleSheet <- function(dxfs = NULL, tableStyles = NULL, extLst = NULL) {
   list(
     numFmts = NULL,
 
-    fonts = c('<font><sz val="11"/><color rgb="FF000000"/><name val="Calibri"/><family val="2"/><scheme val="minor"/></font>'),
+    fonts = c('<font><sz val="11"/><color theme="1"/><name val="Calibri"/><family val="2"/><scheme val="minor"/></font>'),
 
     fills = c(
       '<fill><patternFill patternType="none"/></fill>',
