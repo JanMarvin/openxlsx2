@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.90000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
       </span>
     </div>
 
@@ -66,6 +66,35 @@
       <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.3.1" id="openxlsx2-031">openxlsx2 0.3.1<small>2022-10-31</small><a class="anchor" aria-label="anchor" href="#openxlsx2-031"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-3-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-1"></a></h3>
+<ul><li><p>Functions adding data to a workbook now bring an <code>applyCellStyle</code> argument. If this is <code>TRUE</code> <code>openxlsx2</code> will apply a numeric style, if <code>FALSE</code> we will simply add the numeric value without additional styling and use the previous cell style. <a href="https://github.com/JanMarvin/openxlsx2/pull/365" class="external-link">365</a></p></li>
+<li><p>Reading from file or workbook with <code>showFormula</code> now returns all formulas found in the workbook. Previously only those with type <code>e</code> or <code>str</code> were returned. Now we will be able to see formulas like hyperlinks too. <a href="https://github.com/JanMarvin/openxlsx2/issues/352" class="external-link">352</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-0-3-1">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-0-3-1"></a></h3>
+<ul><li><p>Moved data validation list from x14 to data validation. This enables data validation lists without x14 extension <a href="https://github.com/ycphs/openxlsx/issues/386" class="external-link">openxlsx 386</a>. <a href="https://github.com/JanMarvin/openxlsx2/pull/347" class="external-link">347</a></p></li>
+<li><p>Removed <code>build_cell_merges()</code> and replaced it with a plain R solution. <a href="https://github.com/JanMarvin/openxlsx2/pull/390" class="external-link">390</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-0-3-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-3-1"></a></h3>
+<ul><li><p>Improvements to setting column widths. Previously values set by <code>set_col_widths()</code> were a little off. This has now been improved. There are still corner cases where the column width set with <code>openxlsx2</code> does not match those shown in spreadsheet software. Notable differences can be seen with floating point values (e.g., <code>10L</code> works while <code>10.1</code> is slightly off) and with column width on Mac. <a href="https://github.com/JanMarvin/openxlsx2/pull/350" class="external-link">350</a></p></li>
+<li><p>Improve <code>rowNames</code> when writing data to worksheet. Previously the name for the rownames column defaulted to <code>1</code>. This has been changed. Now with data it defaults to an empty cell and with a data table it defaults to <code>_rowNames_</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/375" class="external-link">375</a></p></li>
+<li><p>Fix the workbook xml relationship file to not include a reference to shared strings per default. This solves <a href="https://github.com/JanMarvin/openxlsx2/issues/360" class="external-link">360</a> for plain data files written from <code>openxlsx2</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/363" class="external-link">363</a></p></li>
+<li><p>Adding cell styles has been streamlined to increase consistency. This includes all style functions like <code><a href="../reference/wb_add_font.html">wb_add_font()</a></code> and covers all cases of hyperlinks. <a href="https://github.com/JanMarvin/openxlsx2/pull/365" class="external-link">365</a></p></li>
+<li><p>Fix cloning pivot charts. <a href="https://github.com/JanMarvin/openxlsx2/issues/361" class="external-link">361</a></p></li>
+<li><p>Fix loading and writing files with slicers. Loading would add a few empty slicer xml files to <code>Content_Types</code> and <code>workbook.xml.rels</code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/361" class="external-link">361</a></p></li>
+<li><p>Align the logic for writing data to empty worksheets and updating/writing to worksheets with data. This removes <code>update_cell_loop()</code> and changes how <code>update_cell()</code> behaves. Not only does this remove duplicated code, it also brings great speed improvements (issue <a href="https://github.com/JanMarvin/openxlsx2/issues/356" class="external-link">356</a>). <a href="https://github.com/JanMarvin/openxlsx2/issues/356" class="external-link">356</a></p></li>
+<li><p>It is now possible to use special characters in formulas without coding. Previously <code>&amp;</code> had to be encoded like <code>&amp;amp;</code> <a href="https://github.com/JanMarvin/openxlsx2/issues/251" class="external-link">251</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-0-3-1">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-1"></a></h3>
+<ul><li><p>Previously deprecated <code>names.wbWorkbook()</code> and <code>names&lt;-.wbWorkbook()</code> have been removed. <a href="https://github.com/JanMarvin/openxlsx2/pull/367" class="external-link">367</a></p></li>
+<li><p>Conditional style defaults for <code><a href="../reference/create_dxfs_style.html">create_dxfs_style()</a></code> have changed to be more permissive. Previously we shipped a default font, default font size and font color. This has been changed to better reflect a behavior the user expects. <a href="https://github.com/JanMarvin/openxlsx2/issues/343" class="external-link">343</a></p></li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3" id="openxlsx2-03">openxlsx2 0.3<small>2022-09-30</small><a class="anchor" aria-label="anchor" href="#openxlsx2-03"></a></h2>
 <div class="section level3">
