@@ -10,19 +10,19 @@
 |collate  |C.UTF-8                      |
 |ctype    |C.UTF-8                      |
 |tz       |UTC                          |
-|date     |2022-10-03                   |
-|pandoc   |2.14.2 @ /usr/bin/pandoc     |
+|date     |2022-10-30                   |
+|pandoc   |2.19.2 @ /usr/bin/pandoc     |
 
 # Dependencies
 
-|package   |old   |new         |Δ  |
-|:---------|:-----|:-----------|:--|
-|openxlsx2 |0.3   |0.3.0.90000 |*  |
-|magrittr  |2.0.3 |2.0.3       |   |
-|R6        |2.5.1 |2.5.1       |   |
-|Rcpp      |1.0.9 |1.0.9       |   |
-|stringi   |1.7.8 |1.7.8       |   |
-|zip       |2.2.1 |2.2.1       |   |
+|package   |old   |new   |Δ  |
+|:---------|:-----|:-----|:--|
+|openxlsx2 |0.3   |0.3.1 |*  |
+|magrittr  |2.0.3 |2.0.3 |   |
+|R6        |2.5.1 |2.5.1 |   |
+|Rcpp      |1.0.9 |1.0.9 |   |
+|stringi   |1.7.8 |1.7.8 |   |
+|zip       |2.2.2 |2.2.2 |   |
 
 # Revdeps
 
