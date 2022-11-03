@@ -39,3 +39,6 @@ reference:
 - title: All functions
   contents:
   - matches(".*")
+
+development:
+  mode: auto
