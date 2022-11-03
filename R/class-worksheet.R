@@ -226,10 +226,19 @@ wbWorksheet <- R6::R6Class(
         self$dimension,
 
         if (length(self$freezePane)) {
-          gsub("/></sheetViews>", paste0(">", self$freezePane, "</sheetView></sheetViews>"), self$sheetViews, fixed = TRUE)
-        } else if (length(self$sheetViews)) {
+          # get sheetView node and append freezePane
+          # TODO is this extracted correctly? Can we unfreeze a pane?
+          sheetView <- xml_node(self$sheetView, "sheetViews", "sheetView")
+          sheetView <- xml_add_child(sheetView, xml_child = self$freezePane)
+
+          # return the xml node
+          xml_node_create("sheetViews", sheetView)
+        },
+
+        if (length(self$sheetViews)) {
           self$sheetViews
         },
+
         self$sheetFormatPr,
         # cols_attr
         # is this fine if it's just <cols></cols>?
