@@ -57,3 +57,27 @@ test_that("old and new data validations", {
   )
 
 })
+
+test_that("set_sheetview", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  exp <- "<sheetViews><sheetView showGridLines=\"1\" showRowColHeaders=\"1\" tabSelected=\"1\" workbookViewId=\"0\" zoomScale=\"100\"/></sheetViews>"
+  got <- wb$worksheets[[1]]$sheetViews
+  expect_equal(exp, got)
+
+  exp <- "<sheetViews><sheetView rightToLeft=\"1\" showGridLines=\"1\" showRowColHeaders=\"1\" tabSelected=\"1\" workbookViewId=\"0\" zoomScale=\"100\"/></sheetViews>"
+
+  options("openxlsx2.rightToLeft" = TRUE)
+  wb <- wb_workbook()$add_worksheet()
+
+  got <- wb$worksheets[[1]]$sheetViews
+  expect_equal(exp, got)
+
+  options("openxlsx2.rightToLeft" = "1")
+  wb <- wb_workbook()$add_worksheet()
+
+  got <- wb$worksheets[[1]]$sheetViews
+  expect_equal(exp, got)
+
+})

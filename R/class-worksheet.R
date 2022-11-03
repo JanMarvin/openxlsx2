@@ -137,11 +137,7 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorksheet` object
-    #' @param gridLines gridLines
-    #' @param rowColHeaders rowColHeaders
-    #' @param tabSelected tabSelected
     #' @param tabColour tabColour
-    #' @param zoom zoom
     #' @param oddHeader oddHeader
     #' @param oddFooter oddFooter
     #' @param evenHeader evenHeader
@@ -154,11 +150,7 @@ wbWorksheet <- R6::R6Class(
     #' @param vdpi vdpi
     #' @return a `wbWorksheet` object
     initialize = function(
-      gridLines   = TRUE,
-      rowColHeaders = TRUE,
-      tabSelected = FALSE,
       tabColour   = NULL,
-      zoom        = 100,
       oddHeader   = NULL,
       oddFooter   = NULL,
       evenHeader  = NULL,
@@ -174,12 +166,6 @@ wbWorksheet <- R6::R6Class(
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
       } else {
         tabColour <- character()
-      }
-
-      if (zoom < 10) {
-        zoom <- 10
-      } else if (zoom > 400) {
-        zoom <- 400
       }
 
       hf <- list(
@@ -198,7 +184,7 @@ wbWorksheet <- R6::R6Class(
       ## list of all possible children
       self$sheetPr               <- tabColour
       self$dimension             <- '<dimension ref="A1"/>'
-      self$sheetViews            <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" showGridLines="%s" showRowColHeaders="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(gridLines), as.integer(rowColHeaders), as.integer(tabSelected))
+      self$sheetViews            <- character()
       self$sheetFormatPr         <- '<sheetFormatPr baseColWidth="8.43" defaultRowHeight="16" x14ac:dyDescent="0.2"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
@@ -528,6 +514,90 @@ wbWorksheet <- R6::R6Class(
     ) {
 
       private$do_append_x14(sparklines, "x14:sparklineGroup", "x14:sparklineGroups")
+
+      invisible(self)
+    },
+
+    #' @description add sheetview
+    #' @param colorId colorId
+    #' @param defaultGridColor defaultGridColor
+    #' @param rightToLeft rightToLeft
+    #' @param showFormulas showFormulas
+    #' @param showGridLines showGridLines
+    #' @param showOutlineSymbols showOutlineSymbols
+    #' @param showRowColHeaders showRowColHeaders
+    #' @param showRuler showRuler
+    #' @param showWhiteSpace showWhiteSpace
+    #' @param showZeros showZeros
+    #' @param tabSelected tabSelected
+    #' @param topLeftCell topLeftCell
+    #' @param view view
+    #' @param windowProtection windowProtection
+    #' @param workbookViewId workbookViewId
+    #' @param zoomScale zoomScale
+    #' @param zoomScaleNormal zoomScaleNormal
+    #' @param zoomScalePageLayoutView zoomScalePageLayoutView
+    #' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+    #' @return The `wbWorksheetObject`, invisibly
+    set_sheetview = function(
+      colorId                  = NULL,
+      defaultGridColor         = NULL,
+      rightToLeft              = NULL,
+      showFormulas             = NULL,
+      showGridLines            = NULL,
+      showOutlineSymbols       = NULL,
+      showRowColHeaders        = NULL,
+      showRuler                = NULL,
+      showWhiteSpace           = NULL,
+      showZeros                = NULL,
+      tabSelected              = NULL,
+      topLeftCell              = NULL,
+      view                     = NULL,
+      windowProtection         = NULL,
+      workbookViewId           = NULL,
+      zoomScale                = NULL,
+      zoomScaleNormal          = NULL,
+      zoomScalePageLayoutView  = NULL,
+      zoomScaleSheetLayoutView = NULL
+    ) {
+
+      # all zoom scales must be in the range of 10 - 400
+
+      # get existing sheetView
+      sheetView <- xml_node(self$sheetViews, "sheetViews", "sheetView")
+
+      if (length(sheetView) == 0)
+        sheetView <- xml_node_create("sheetView")
+
+      sheetView <- xml_attr_mod(
+        sheetView,
+        xml_attributes = c(
+          colorId                  = as_xml_attr(colorId),
+          defaultGridColor         = as_xml_attr(defaultGridColor),
+          rightToLeft              = as_xml_attr(rightToLeft),
+          showFormulas             = as_xml_attr(showFormulas),
+          showGridLines            = as_xml_attr(showGridLines),
+          showOutlineSymbols       = as_xml_attr(showOutlineSymbols),
+          showRowColHeaders        = as_xml_attr(showRowColHeaders),
+          showRuler                = as_xml_attr(showRuler),
+          showWhiteSpace           = as_xml_attr(showWhiteSpace),
+          showZeros                = as_xml_attr(showZeros),
+          tabSelected              = as_xml_attr(tabSelected),
+          topLeftCell              = as_xml_attr(topLeftCell),
+          view                     = as_xml_attr(view),
+          windowProtection         = as_xml_attr(windowProtection),
+          workbookViewId           = as_xml_attr(workbookViewId),
+          zoomScale                = as_xml_attr(zoomScale),
+          zoomScaleNormal          = as_xml_attr(zoomScaleNormal),
+          zoomScalePageLayoutView  = as_xml_attr(zoomScalePageLayoutView),
+          zoomScaleSheetLayoutView = as_xml_attr(zoomScaleSheetLayoutView)
+        )
+      )
+
+      self$sheetViews <- xml_node_create(
+        "sheetViews",
+        xml_children = sheetView
+      )
 
       invisible(self)
     }

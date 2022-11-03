@@ -117,6 +117,19 @@ as_binary <- function(x) {
   as.integer(x)
 }
 
+
+as_xml_attr <- function(x) {
+  if (inherits(x, "logical")) {
+    x <- as_binary(x)
+  }
+
+  if (inherits(x, "character")) {
+    return(x)
+  } else {
+    return(as.character(x))
+  }
+}
+
 #' random string function that does not alter the seed.
 #'
 #' simple wrapper around `stringi::stri_rand_strings()``

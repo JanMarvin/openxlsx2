@@ -493,11 +493,7 @@ wbWorkbook <- R6::R6Class(
       ## append to worksheets list
       self$append("worksheets",
         wbWorksheet$new(
-          gridLines   = gridLines,
-          rowColHeaders = rowColHeaders,
-          tabSelected = newSheetIndex == 1,
           tabColour   = tabColour,
-          zoom        = zoom,
           oddHeader   = oddHeader,
           oddFooter   = oddFooter,
           evenHeader  = evenHeader,
@@ -509,6 +505,19 @@ wbWorkbook <- R6::R6Class(
           hdpi        = hdpi,
           vdpi        = vdpi
         )
+      )
+
+      # NULL or TRUE/FALSE
+      rightToLeft <- options()[["openxlsx2.rightToLeft"]]
+
+      # set preselected set for sheetview
+      self$worksheets[[newSheetIndex]]$set_sheetview(
+        workbookViewId    = 0,
+        zoomScale         = zoom,
+        showGridLines     = gridLines,
+        showRowColHeaders = rowColHeaders,
+        tabSelected       = newSheetIndex == 1,
+        rightToLeft       = rightToLeft
       )
 
 

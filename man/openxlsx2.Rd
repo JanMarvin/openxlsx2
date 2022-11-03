@@ -23,6 +23,7 @@ The openxlsx package uses global options to simplify formatting:
 \item{\code{options("openxlsx2.paperSize" = 9)}} ## A4
 \item{\code{options("openxlsx2.orientation" = "portrait")}} ## page orientation
 \item{\code{options("openxlsx2.sheet.default_name" = "Sheet")}}
+\item{\code{options("openxlsx2.rightToLeft" = NULL)}}
 }
 \subsection{Authors and contributions}{
 
