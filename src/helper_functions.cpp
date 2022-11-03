@@ -275,7 +275,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
     auto startrow = start_row;
     for (auto j = 0; j < n; ++j) {
 
-      int8_t vtyp = vtyps[i];
+      int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
       if (ColNames & (j == 0)) vtyp = character;
 
