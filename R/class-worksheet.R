@@ -225,7 +225,7 @@ wbWorksheet <- R6::R6Class(
 
         self$dimension,
 
-        if (length(self$freezePane)) {
+        if (length(self$freezePane) && length(self$sheetViews)) {
           # get sheetView node and append freezePane
           # TODO is this extracted correctly? Can we unfreeze a pane?
           sheetView <- xml_node(self$sheetView, "sheetViews", "sheetView")

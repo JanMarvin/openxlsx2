@@ -147,7 +147,7 @@ test_that("select_active_sheet", {
 
   # change the selected sheet to IrisSample
   exp <- structure(
-     list(tabSelected = c("true", "false", "false", "false"),
+     list(tabSelected = c("1", "0", "0", "0"),
           workbookViewId = c("0", "0", "0", "0"),
           names = c("IrisSample", "testing", "mtcars", "mtCars Pivot")),
      row.names = c(NA, 4L), class = "data.frame")

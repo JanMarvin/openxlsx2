@@ -410,6 +410,14 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "zoom must be numeric")
       }
 
+      # nocov start
+      if (zoom < 10) {
+        zoom <- 10
+      } else if (zoom > 400) {
+        zoom <- 400
+      }
+      #nocov end
+
       if (!is.null(oddHeader) & length(oddHeader) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("header"))
@@ -883,11 +891,22 @@ wbWorkbook <- R6::R6Class(
 
       ## append to worksheets list
       self$append("worksheets",
-        wbChartSheet$new(
-          tabSelected = newSheetIndex == 1,
-          tabColour = tabColour,
-          zoom = zoom
-        )
+        wbChartSheet$new(tabColour = tabColour)
+      )
+
+
+      # nocov start
+      if (zoom < 10) {
+        zoom <- 10
+      } else if (zoom > 400) {
+        zoom <- 400
+      }
+      #nocov end
+
+      self$worksheets[[newSheetIndex]]$set_sheetview(
+        workbookViewId = 0,
+        zoomScale      = zoom,
+        tabSelected    = newSheetIndex == 1
       )
 
       self$append("sheet_names", sheet)
@@ -6095,24 +6114,13 @@ wbWorkbook <- R6::R6Class(
           visible_sheet_index - 1L
         )
 
-      self$worksheets[[visible_sheet_index]]$sheetViews <-
-        sub(
-          '( tabSelected="0")|( tabSelected="false")',
-          ' tabSelected="1"',
-          self$worksheets[[visible_sheet_index]]$sheetViews,
-          ignore.case = TRUE
-        )
-      if (nSheets > 1) {
-        for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
-          self$worksheets[[i]]$sheetViews <-
-            sub(
-              ' tabSelected="(1|true|false|0)"',
-              ' tabSelected="0"',
-              self$worksheets[[i]]$sheetViews,
-              ignore.case = TRUE
-            )
-        }
-      }
+      # # TODO what does this code segment do?
+      # self$worksheets[[visible_sheet_index]]$set_sheetview(tabSelected = TRUE)
+      # if (nSheets > 1) {
+      #   for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
+      #     self$worksheets[[i]]$set_sheetview(tabSelected = FALSE)
+      #   }
+      # }
 
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
       if (length(extRefInds)) {

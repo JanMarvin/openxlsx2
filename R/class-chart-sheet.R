@@ -27,31 +27,17 @@ wbChartSheet <- R6::R6Class(
 
     #' @description
     #' Create a new workbook chart sheet object
-    #' @param tabSelected `logical`, if `TRUE` ...
     #' @param tabColour `character` a tab colour to set
-    #' @param zoom The zoom level as a single integer
     #' @return The `wbChartSheet` object
-    initialize = function(
-      tabSelected = FALSE,
-      tabColour = character(),
-      zoom = 100
-    ) {
+    initialize = function(tabColour = tabColour) {
       if (length(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
       } else {
         tabColour <- character()
       }
 
-      # nocov start
-      if (zoom < 10) {
-        zoom <- 10
-      } else if (zoom > 400) {
-        zoom <- 400
-      }
-      #nocov end
-
       self$sheetPr     <- tabColour
-      self$sheetViews  <- sprintf('<sheetViews><sheetView workbookViewId="0" zoomScale="%s" tabSelected="%s"/></sheetViews>', as.integer(zoom), as.integer(tabSelected))
+      self$sheetViews  <- character()
       self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$drawing     <- '<drawing r:id=\"rId1\"/>'
       self$hyperlinks  <- NULL
@@ -73,16 +59,91 @@ wbChartSheet <- R6::R6Class(
         "</chartsheet>",
         sep = " "
       )
+    },
+
+
+    #' @description add sheetview
+    #' @param colorId colorId
+    #' @param defaultGridColor defaultGridColor
+    #' @param rightToLeft rightToLeft
+    #' @param showFormulas showFormulas
+    #' @param showGridLines showGridLines
+    #' @param showOutlineSymbols showOutlineSymbols
+    #' @param showRowColHeaders showRowColHeaders
+    #' @param showRuler showRuler
+    #' @param showWhiteSpace showWhiteSpace
+    #' @param showZeros showZeros
+    #' @param tabSelected tabSelected
+    #' @param topLeftCell topLeftCell
+    #' @param view view
+    #' @param windowProtection windowProtection
+    #' @param workbookViewId workbookViewId
+    #' @param zoomScale zoomScale
+    #' @param zoomScaleNormal zoomScaleNormal
+    #' @param zoomScalePageLayoutView zoomScalePageLayoutView
+    #' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+    #' @return The `wbWorksheetObject`, invisibly
+    set_sheetview = function(
+      colorId                  = NULL,
+      defaultGridColor         = NULL,
+      rightToLeft              = NULL,
+      showFormulas             = NULL,
+      showGridLines            = NULL,
+      showOutlineSymbols       = NULL,
+      showRowColHeaders        = NULL,
+      showRuler                = NULL,
+      showWhiteSpace           = NULL,
+      showZeros                = NULL,
+      tabSelected              = NULL,
+      topLeftCell              = NULL,
+      view                     = NULL,
+      windowProtection         = NULL,
+      workbookViewId           = NULL,
+      zoomScale                = NULL,
+      zoomScaleNormal          = NULL,
+      zoomScalePageLayoutView  = NULL,
+      zoomScaleSheetLayoutView = NULL
+    ) {
+
+      # all zoom scales must be in the range of 10 - 400
+
+      # get existing sheetView
+      sheetView <- xml_node(self$sheetViews, "sheetViews", "sheetView")
+
+      if (length(sheetView) == 0)
+        sheetView <- xml_node_create("sheetView")
+
+      sheetView <- xml_attr_mod(
+        sheetView,
+        xml_attributes = c(
+          colorId                  = as_xml_attr(colorId),
+          defaultGridColor         = as_xml_attr(defaultGridColor),
+          rightToLeft              = as_xml_attr(rightToLeft),
+          showFormulas             = as_xml_attr(showFormulas),
+          showGridLines            = as_xml_attr(showGridLines),
+          showOutlineSymbols       = as_xml_attr(showOutlineSymbols),
+          showRowColHeaders        = as_xml_attr(showRowColHeaders),
+          showRuler                = as_xml_attr(showRuler),
+          showWhiteSpace           = as_xml_attr(showWhiteSpace),
+          showZeros                = as_xml_attr(showZeros),
+          tabSelected              = as_xml_attr(tabSelected),
+          topLeftCell              = as_xml_attr(topLeftCell),
+          view                     = as_xml_attr(view),
+          windowProtection         = as_xml_attr(windowProtection),
+          workbookViewId           = as_xml_attr(workbookViewId),
+          zoomScale                = as_xml_attr(zoomScale),
+          zoomScaleNormal          = as_xml_attr(zoomScaleNormal),
+          zoomScalePageLayoutView  = as_xml_attr(zoomScalePageLayoutView),
+          zoomScaleSheetLayoutView = as_xml_attr(zoomScaleSheetLayoutView)
+        )
+      )
+
+      self$sheetViews <- xml_node_create(
+        "sheetViews",
+        xml_children = sheetView
+      )
+
+      invisible(self)
     }
   )
 )
-
-#' New chart sheet
-#'
-#' Create a new chart sheet
-#'
-#' @returns a `wbChartSheet` object
-#' @export
-wb_chart_sheet <- function() {
-  wbChartSheet$new()
-}
