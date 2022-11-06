@@ -23,7 +23,7 @@ Over the years many people have worked on the tricky task to handle xls and xlsx
 
 ## Importing data
 
-Coming from `openxlsx` you might know about `read.xlsx()`, `readWorkbook()` and `loadWorkbook()` multiple functions that do many different things, but mostly the same. In `openxlsx2` we tried our best to reduce the complexity under the hood and for the user as well. In `openxlsx2` they are replaced with `read_xlsx()`, `wb_read()` and `wb_load()` and they all share the same underlying function `wb_to_df()`.
+Coming from `openxlsx` you might know about `read.xlsx()` (two functions, one for files and one for workbooks) and `readWorkbook()`. Functions that do different things, but mostly the same. In `openxlsx2` we tried our best to reduce the complexity under the hood and for the user as well. In `openxlsx2` they are replaced with `read_xlsx()`, `wb_read()` and they share the same underlying function `wb_to_df()`.
 
 For this example we will use example data provided by the package. You can locate it in our "inst/extdata" folder. The files are included with the package source and you can open them in any calculation software as well.
 
