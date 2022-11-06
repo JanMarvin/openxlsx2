@@ -200,10 +200,10 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       op <- options("openxlsx2.namespace_x" = TRUE)
       on.exit(options(op), add = TRUE)
       out <- paste0(
-        "File has x namespace. We correct this for you, but be careful.\n",
+        "This file was slightly modified to import it. It should be fine, but be careful.\n",
         "This is somewhat experimental.."
       )
-      message(out)
+      warning(out)
       workbook_xml <- read_xml(workbookXML, escapes = TRUE)
     }
 
