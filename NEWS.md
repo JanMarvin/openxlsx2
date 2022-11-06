@@ -1,5 +1,9 @@
 # openxlsx2 (in development)
 
+## New features
+
+* Allow reading files with x namespace created by third party software. [405](https://github.com/JanMarvin/openxlsx2/pull/405)
+
 ## Fixes
 
 * Fixed a case where embedded files were assigned incorrectly in worksheet relationships. This caused corrupted output. [403](https://github.com/JanMarvin/openxlsx2/pull/403)
