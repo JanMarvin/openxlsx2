@@ -954,6 +954,16 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
               if (any(relsInd)) {
                 wb$vml_rels[i] <- read_xml(vmlDrawingRelsXML[relsInd], pointer = FALSE)
               }
+              if (any(relsInd)) {
+                wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[i]], "Relationship"))
+                wb_rels$typ <- basename(wb_rels$Type)
+                is_vmlDrawing <- which(wb_rels$typ == "vmlDrawing")
+
+                if (length(is_vmlDrawing)) {
+                  wb_rels$Target[is_vmlDrawing] <- sprintf("../drawings/vmlDrawing%s.vml", i)
+                  wb$worksheets_rels[[i]][is_vmlDrawing] <- df_to_xml("Relationship", wb_rels[is_vmlDrawing, c("Id", "Target", "Type")])
+                }
+              }
             }
           }
         }

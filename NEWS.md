@@ -1,5 +1,8 @@
 # openxlsx2 (in development)
 
+## Fixes
+
+* Fixed a case where embedded files were assigned incorrectly in worksheet relationships. This caused corrupted output. [403](https://github.com/JanMarvin/openxlsx2/pull/403)
 
 ***************************************************************************
 
