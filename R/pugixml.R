@@ -58,7 +58,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 
   # Clean xml files from x namespace. Otherwise all nodes might look like
   # <x:node/> and not <node/>. https://github.com/JanMarvin/openxlsx2/pull/213
-  has_x_ns <- isTRUE(options()[["openxlsx2.has_x_namespace"]])
+  has_x_ns <- getOption("openxlsx2.namespace_x", default = FALSE)
   if (has_x_ns && isfile && !isvml) {
 
     xml_file <- stringi::stri_join(

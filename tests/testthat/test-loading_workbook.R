@@ -340,6 +340,6 @@ test_that("load file with x namespace", {
     wb <- wb_load(fl),
     "File has x namespace. We correct this for you, but be careful."
   )
-  expect_false(isTRUE(options()[["openxlsx2.has_x_namespace"]]))
+  expect_false(getOption("openxlsx2.namespace_x", default = FALSE))
 
 })

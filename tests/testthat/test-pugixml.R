@@ -366,7 +366,7 @@ test_that("works with x namespace", {
   got <- read_xml(tmp, pointer = FALSE)
   expect_equal(exp, got)
 
-  op <- options("openxlsx2.has_x_namespace" = TRUE)
+  op <- options("openxlsx2.namespace_x" = TRUE)
   on.exit(options(op), add = TRUE)
 
   exp <- "<a><b/></a>"

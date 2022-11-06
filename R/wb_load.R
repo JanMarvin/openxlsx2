@@ -197,7 +197,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     workbook_xml <- read_xml(workbookXML, escapes = TRUE)
 
     if (length(xml_node_name(workbook_xml, stringi::stri_join("x:workbook")))) {
-      op <- options("openxlsx2.has_x_namespace" = TRUE)
+      op <- options("openxlsx2.namespace_x" = TRUE)
       on.exit(options(op), add = TRUE)
       out <- paste0(
         "File has x namespace. We correct this for you, but be careful.\n",
