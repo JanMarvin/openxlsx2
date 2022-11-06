@@ -44,6 +44,8 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 
   z <- NULL
 
+  isvml <- grepl("^.vml$", xml)
+
   isfile <- FALSE
   if (length(xml) == 1 && file.exists(xml))
     isfile <- TRUE
@@ -53,6 +55,25 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
 
   if (identical(xml, ""))
     xml <- "<NA_character_ />"
+
+  # Clean xml files from x namespace. Otherwise all nodes might look like
+  # <x:node/> and not <node/>. https://github.com/JanMarvin/openxlsx2/pull/213
+  has_x_ns = isTRUE(options()[["openxlsx2.has_x_namespace"]])
+  if (has_x_ns && isfile && !isvml) {
+
+    xml_file <- stringi::stri_join(
+      stringi::stri_read_lines(xml, encoding = "UTF-8"),
+      collapse = "")
+
+    if (grepl('xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', xml_file)) {
+      xml_file <- stringi::stri_replace_all_fixed(xml_file, "<x:", "<")
+      xml_file <- stringi::stri_replace_all_fixed(xml_file, "</x:", "</")
+
+      # replace xml with already and cleaned output
+      xml <- xml_file
+      isfile <- FALSE
+    }
+  }
 
   if (pointer) {
     z <- readXMLPtr(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control)

@@ -331,3 +331,15 @@ test_that("vml target is updated on load", {
   expect_equal(exp, got)
 
 })
+
+test_that("load file with x namespace", {
+
+  fl <- "https://github.com/ycphs/openxlsx/files/8480120/2022-04-12-11-42-36-DP_Melanges1.xlsx"
+
+  expect_message(
+    wb <- wb_load(fl),
+    "File has x namespace. We correct this for you, but be careful."
+  )
+  expect_false(isTRUE(options()[["openxlsx2.has_x_namespace"]]))
+
+})
