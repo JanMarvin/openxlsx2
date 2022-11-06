@@ -354,3 +354,23 @@ test_that("xml_node_create", {
   expect_identical(xml_exp, xml_got)
 
 })
+
+test_that("works with x namespace", {
+
+  # create artificial xml file that will trigger x namespace removal
+  tmp <- tempfile(fileext = ".xml")
+  xml <- '<?xml xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ?><x:a><x:b/></x:a>'
+  writeLines(xml, tmp)
+
+  exp <- "<x:a><x:b/></x:a>"
+  got <- read_xml(tmp, pointer = FALSE)
+  expect_equal(exp, got)
+
+  op <- options("openxlsx2.has_x_namespace" = TRUE)
+  on.exit(options(op), add = TRUE)
+
+  exp <- "<a><b/></a>"
+  got <- read_xml(tmp, pointer = FALSE)
+  expect_equal(exp, got)
+
+})
