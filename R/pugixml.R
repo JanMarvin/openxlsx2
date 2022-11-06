@@ -65,7 +65,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
       stringi::stri_read_lines(xml, encoding = "UTF-8"),
       collapse = "")
 
-    if (grepl('xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', xml_file)) {
+    if (grepl('xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', xml_file, fixed = TRUE)) {
       xml_file <- stringi::stri_replace_all_fixed(xml_file, "<x:", "<")
       xml_file <- stringi::stri_replace_all_fixed(xml_file, "</x:", "</")
 
