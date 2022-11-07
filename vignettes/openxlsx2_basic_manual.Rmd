@@ -23,7 +23,9 @@ Over the years many people have worked on the tricky task to handle xls and xlsx
 
 ## Importing data
 
-Coming from `openxlsx` you might know about `read_xlsx()`, `wb_read()` and `wb_load` multiple functions that do may different things, but mostly the same. In `openxlsx2` we tried our best to reduce the complexity under the hood and for the user as well. For this example we will use example data provided by the package. You can locate it in our "inst/extdata" folder. The files are included with the package source and you can open them in any calculation software as well.
+Coming from `openxlsx` you might know about `read.xlsx()` (two functions, one for files and one for workbooks) and `readWorkbook()`. Functions that do different things, but mostly the same. In `openxlsx2` we tried our best to reduce the complexity under the hood and for the user as well. In `openxlsx2` they are replaced with `read_xlsx()`, `wb_read()` and they share the same underlying function `wb_to_df()`.
+
+For this example we will use example data provided by the package. You can locate it in our "inst/extdata" folder. The files are included with the package source and you can open them in any calculation software as well.
 
 ### Basic import
 We begin with the `readTest.xlsx` file by telling R where to find this file on our system
@@ -37,7 +39,7 @@ The object contains a path to the xlsx file and we pass this file to our functio
 wb_to_df(xlsxFile)
 ```
 
-The output is created as a data frame and contains data types date, logical, numeric and character. The function to import the file to R, `wb_to_df()` provides similar options as the `openxlsx` functions `read_xlsx()` and `wb_read()` and a few new functions we will go through the options. As you might have noticed, we return the column of the xlsx file as the row name of the data frame returned.
+The output is created as a data frame and contains data types date, logical, numeric and character. The function to import the file to R, `wb_to_df()` provides similar options as the `openxlsx` functions `read.xlsx()` and `readWorkbook()` and a few new functions we will go through the options. As you might have noticed, we return the column of the xlsx file as the row name of the data frame returned.
 Per default the first sheet in the workbook is imported. If you want to switch this, either provide the `sheet` parameter with the correct index or provide the sheet name. 
 
 ### colNames - first row as column name
