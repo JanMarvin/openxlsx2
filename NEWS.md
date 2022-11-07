@@ -1,5 +1,9 @@
 # openxlsx2 (in development)
 
+## New features
+
+* Add ... as argument to `read_xlsx()` and `wb_read()`. [381](https://github.com/JanMarvin/openxlsx2/pull/381)
+
 ## Fixes
 
 * Fixed a case where embedded files were assigned incorrectly in worksheet relationships. This caused corrupted output. [403](https://github.com/JanMarvin/openxlsx2/pull/403)
