@@ -2,7 +2,7 @@
 
 ## New features
 
-* Allow reading files with x namespace created by third party software. [405](https://github.com/JanMarvin/openxlsx2/pull/405)
+* Allow reading files with xml namespace created by third party software. [405](https://github.com/JanMarvin/openxlsx2/pull/405)
 
 ## Fixes
 

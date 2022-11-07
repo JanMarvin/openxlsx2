@@ -56,18 +56,18 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
   if (identical(xml, ""))
     xml <- "<NA_character_ />"
 
-  # Clean xml files from x namespace. Otherwise all nodes might look like
+  # Clean xml files from xml namespace. Otherwise all nodes might look like
   # <x:node/> and not <node/>. https://github.com/JanMarvin/openxlsx2/pull/213
-  has_x_ns <- getOption("openxlsx2.namespace_x", default = FALSE)
-  if (has_x_ns && isfile && !isvml) {
+  xml_ns <- getOption("openxlsx2.namespace_xml")
+  if (!is.null(xml_ns) && isfile && !isvml) {
 
     xml_file <- stringi::stri_join(
       stringi::stri_read_lines(xml, encoding = "UTF-8"),
       collapse = "")
 
-    if (grepl('xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', xml_file, fixed = TRUE)) {
-      xml_file <- stringi::stri_replace_all_fixed(xml_file, "<x:", "<")
-      xml_file <- stringi::stri_replace_all_fixed(xml_file, "</x:", "</")
+    if (grepl(sprintf('xmlns:%s="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', xml_ns), xml_file, fixed = TRUE)) {
+      xml_file <- stringi::stri_replace_all_fixed(xml_file, sprintf("<%s:", xml_ns), "<")
+      xml_file <- stringi::stri_replace_all_fixed(xml_file, sprintf("</%s:", xml_ns), "</")
 
       # replace xml with already and cleaned output
       xml <- xml_file
