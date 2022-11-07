@@ -863,3 +863,39 @@ wb_add_chart <- function(wb, sheet, srhc, dims, type = "barplot") {
 
   invisible(wb)
 }
+
+#' dummy function to add a chart to an existing workbook
+#' currently only a barplot is possible
+#' @param wb a workbook
+#' @param sheet the sheet on which the graph will appear
+#' @param xml chart xml
+#' @param dims the dimensions where the sheet will appear
+#' @export
+wb_add_chart_xml <- function(wb, sheet, xml, dims = "A1:H8") {
+  ## get sheet id
+  # sheet <- wb$...
+
+  dims_list <- strsplit(dims, ":")[[1]]
+  from <- col2int(dims_list)
+  to <- as.numeric(gsub("\\D+", "", dims_list))
+
+  next_chart <- NROW(wb$charts) + 1
+
+  chart <- data.frame(
+    chart = xml,
+    colors = colors1_xml,
+    style = stylebarplot_xml,
+    rels = chart1_rels_xml(next_chart)
+  )
+
+  wb$charts <- rbind(wb$charts, chart)
+
+  # create Drawing
+  wb$drawings[[sheet]] <- drawings(from = c(from[1]-1, to[1]-1), to = c(from[2], to[2]))
+  wb$drawings_rels[[sheet]] <- drawings_rels(next_chart)
+
+  wb$worksheets[[sheet]]$drawing <- "<drawing r:id=\"rId1\"/>"
+  wb$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
+
+  invisible(wb)
+}
