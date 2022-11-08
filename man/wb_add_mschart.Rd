@@ -21,7 +21,7 @@ dummy function to add a chart to an existing workbook
 currently only a barplot is possible
 }
 \examples{
-if (requireNamespace("ggplot2") {
+if (requireNamespace("mschart")) {
 require(mschart)
 wb <- wb_workbook()
 
