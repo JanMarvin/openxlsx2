@@ -905,7 +905,7 @@ wb_add_chart <- function(wb, sheet, srhc, dims, type = "barplot") {
 #' @export
 wb_add_chart_xml <- function(wb, sheet, xml, dims = "A1:H8") {
   ## get sheet id
-  # sheet <- wb$...
+  sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
 
   dims_list <- strsplit(dims, ":")[[1]]
   from <- col2int(dims_list)
@@ -930,4 +930,49 @@ wb_add_chart_xml <- function(wb, sheet, xml, dims = "A1:H8") {
   wb$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
 
   invisible(wb)
+}
+
+#' dummy function to add a chart to an existing workbook
+#' currently only a barplot is possible
+#' @param wb a workbook
+#' @param sheet the sheet on which the graph will appear
+#' @param dims the dimensions where the sheet will appear
+#' @param graph mschart graph
+#' @examples
+#' if (requireNamespace("ggplot2") {
+#' require(mschart)
+#' wb <- wb_workbook()
+#'
+#' ### Scatter
+#' scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
+#' scatter <- chart_settings(scatter, scatterstyle = "marker")
+#'
+#' wb <- wb_add_mschart(wb, dims = "F4:L20", graph = scatter)
+#' }
+#' @export
+wb_add_mschart <- function(wb, sheet = next_sheet(), dims = "B2:H8", graph) {
+
+  assert_workbook(wb)
+  assert_class(graph, "ms_chart")
+
+  # write the chart data to the workbook
+  wb <- wb$clone()$
+    add_worksheet(sheet)$
+    add_data(x = graph$data_series)
+
+  sheet <- rev(names(wb$get_sheet_names()))[1]
+
+  # format.ms_chart is not exported
+  out_xml <- mschart:::format.ms_chart(
+    graph,
+    sheetname = sheet,
+    id_x = "64451712",
+    id_y = "64453248"
+  )
+
+  # add the chart to the sheet
+  wb_add_chart_xml(wb, sheet, xml = out_xml, dims = dims)
+
+  # return the workbook
+  wb
 }

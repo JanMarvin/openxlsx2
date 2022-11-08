@@ -31,6 +31,7 @@ Suggests:
     covr,
     ggplot2,
     knitr,
+    mschart,
     rmarkdown,
     roxygen2,
     testthat (>= 3.0.0),
