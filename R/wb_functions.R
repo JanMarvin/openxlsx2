@@ -907,7 +907,7 @@ wb_add_chart_xml <- function(wb, sheet, xml, dims = "A1:H8") {
 #' @param dims the dimensions where the sheet will appear
 #' @param graph mschart graph
 #' @examples
-#' if (requireNamespace("ggplot2") {
+#' if (requireNamespace("mschart")) {
 #' require(mschart)
 #' wb <- wb_workbook()
 #'
