@@ -1870,6 +1870,25 @@ wb_add_image <- function(
   )
 }
 
+
+#' dummy function to add a chart to an existing workbook
+#' currently only a barplot is possible
+#' @param wb a workbook
+#' @param sheet the sheet on which the graph will appear
+#' @param xml chart xml
+#' @param dims the dimensions where the sheet will appear
+#' @export
+wb_add_chart_xml <- function(
+  wb,
+  sheet = next_sheet(),
+  xml,
+  dims = "A1:H8"
+) {
+  assert_workbook(wb)
+  wb$clone()$add_chart_xml(sheet, xml, dims)
+}
+
+
 #' clean sheet (remove all values)
 #'
 #' @param wb workbook

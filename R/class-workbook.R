@@ -3468,6 +3468,43 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    #' @description Add xml chart
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param xml xml
+    #' @returns The `wbWorkbook` object
+    add_chart_xml = function(
+      sheet = current_sheet(),
+      xml,
+      dims = "A1:H8"
+    ) {
+      sheet <- private$get_sheet_index(sheet)
+
+      dims_list <- strsplit(dims, ":")[[1]]
+      from <- col2int(dims_list)
+      to <- as.numeric(gsub("\\D+", "", dims_list))
+
+      next_chart <- NROW(self$charts) + 1
+
+      chart <- data.frame(
+        chart = xml,
+        colors = colors1_xml,
+        style = stylebarplot_xml,
+        rels = chart1_rels_xml(next_chart)
+      )
+
+      self$charts <- rbind(self$charts, chart)
+
+      # create Drawing
+      self$drawings[[sheet]] <- drawings(from = c(from[1] - 1, to[1] - 1), to = c(from[2], to[2]))
+      self$drawings_rels[[sheet]] <- drawings_rels(next_chart)
+
+      self$worksheets[[sheet]]$drawing <- "<drawing r:id=\"rId1\"/>"
+      self$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
+
+      invisible(self)
+    },
+
 
     #' @description
     #' Prints the `wbWorkbook` object

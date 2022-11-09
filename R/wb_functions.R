@@ -807,99 +807,6 @@ wb_set_selected <- function(wb, sheet) {
   wb
 }
 
-
-#' dummy function to add a chart to an existing workbook
-#' currently only a barplot is possible
-#' @param wb a workbook
-#' @param sheet the sheet on which the graph will appear
-#' @param srhc a somewhat complex created list object containing data
-#' @param dims the dimensions where the sheet will appear
-#' @param type the chart type, currently only "barplot"
-#' @export
-#' @examples
-#' wb <- wb_workbook()$
-#'   add_worksheet("S1")$add_data("S1", cars)$
-#'   add_worksheet("S2")$add_data("S2", mtcars, rowNames = TRUE)
-#'
-#' # create Chart input
-#' srhc <- list(
-#'   list(sheet = "'S2'",
-#'        head = "$B$1",
-#'        body = "$B$2:$B$33",
-#'        cat = "$A$2:$A$33")
-#'   ,list(sheet = "'S2'",
-#'         head = "$C$1",
-#'         body = "$C$2:$C33",
-#'         cat = "$A$2:$A$33")
-#' )
-#'
-#' wb <- wb_add_chart(wb, sheet = 2, srhc, dims = "A1:H18")
-#'
-wb_add_chart <- function(wb, sheet, srhc, dims, type = "barplot") {
-  ## get sheet id
-  # sheet <- wb$...
-
-  dims_list <- strsplit(dims, ":")[[1]]
-  from <- col2int(dims_list)
-  to <- as.numeric(gsub("\\D+", "", dims_list))
-
-  next_chart <- NROW(wb$charts) + 1
-
-  chart <- data.frame(
-    chart = barchart(srhc),
-    colors = colors1_xml,
-    style = stylebarplot_xml,
-    rels = chart1_rels_xml(next_chart)
-  )
-
-  wb$charts <- rbind(wb$charts, chart)
-
-  # create Drawing
-  wb$drawings[[sheet]] <- drawings(from = c(from[1]+1, to[1]+1), to = c(from[2] + 1, to[2] + 1))
-  wb$drawings_rels[[sheet]] <- drawings_rels(next_chart)
-
-  wb$worksheets[[sheet]]$drawing <- "<drawing r:id=\"rId1\"/>"
-  wb$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
-
-  invisible(wb)
-}
-
-#' dummy function to add a chart to an existing workbook
-#' currently only a barplot is possible
-#' @param wb a workbook
-#' @param sheet the sheet on which the graph will appear
-#' @param xml chart xml
-#' @param dims the dimensions where the sheet will appear
-#' @export
-wb_add_chart_xml <- function(wb, sheet, xml, dims = "A1:H8") {
-  ## get sheet id
-  sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
-
-  dims_list <- strsplit(dims, ":")[[1]]
-  from <- col2int(dims_list)
-  to <- as.numeric(gsub("\\D+", "", dims_list))
-
-  next_chart <- NROW(wb$charts) + 1
-
-  chart <- data.frame(
-    chart = xml,
-    colors = colors1_xml,
-    style = stylebarplot_xml,
-    rels = chart1_rels_xml(next_chart)
-  )
-
-  wb$charts <- rbind(wb$charts, chart)
-
-  # create Drawing
-  wb$drawings[[sheet]] <- drawings(from = c(from[1]-1, to[1]-1), to = c(from[2], to[2]))
-  wb$drawings_rels[[sheet]] <- drawings_rels(next_chart)
-
-  wb$worksheets[[sheet]]$drawing <- "<drawing r:id=\"rId1\"/>"
-  wb$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
-
-  invisible(wb)
-}
-
 #' dummy function to add a chart to an existing workbook
 #' currently only a barplot is possible
 #' @param wb a workbook
@@ -909,38 +816,40 @@ wb_add_chart_xml <- function(wb, sheet, xml, dims = "A1:H8") {
 #' @examples
 #' if (requireNamespace("mschart")) {
 #' require(mschart)
-#' wb <- wb_workbook()
 #'
 #' ### Scatter
 #' scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
 #' scatter <- chart_settings(scatter, scatterstyle = "marker")
 #'
-#' wb <- wb_add_mschart(wb, dims = "F4:L20", graph = scatter)
+#' wb <- wb_workbook() %>%
+#'  wb_add_worksheet() %>%
+#'  wb_add_mschart(dims = "F4:L20", graph = scatter)
 #' }
 #' @export
-wb_add_mschart <- function(wb, sheet = next_sheet(), dims = "B2:H8", graph) {
+wb_add_mschart <- function(
+  wb,
+  sheet = current_sheet(),
+  dims = "B2:H8",
+  graph
+) {
 
   assert_workbook(wb)
   assert_class(graph, "ms_chart")
 
-  # write the chart data to the workbook
-  wb <- wb$clone()$
-    add_worksheet(sheet)$
-    add_data(x = graph$data_series)
+  requireNamespace("mschart")
 
-  sheet <- rev(names(wb$get_sheet_names()))[1]
+  sheetname <- wb$.__enclos_env__$private$get_sheet_name(sheet)
 
   # format.ms_chart is not exported
   out_xml <- mschart:::format.ms_chart(
     graph,
-    sheetname = sheet,
-    id_x = "64451712",
+    sheetname = sheetname,
+    id_x = "64451212",
     id_y = "64453248"
   )
 
-  # add the chart to the sheet
-  wb_add_chart_xml(wb, sheet, xml = out_xml, dims = dims)
-
-  # return the workbook
-  wb
+  # write the chart data to the workbook
+  wb$clone()$
+    add_data(sheet = sheet, x = graph$data_series)$
+    add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
 }
