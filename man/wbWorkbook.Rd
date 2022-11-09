@@ -32,6 +32,8 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 The sheet tables.  \code{character()} if empty
 
 The \code{wbWorkbook} object
@@ -286,6 +288,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wbWorkbook-add_drawing}{\code{wbWorkbook$add_drawing()}}
+\item \href{#method-wbWorkbook-add_chart_xml}{\code{wbWorkbook$add_chart_xml()}}
 \item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
 \item \href{#method-wbWorkbook-protect}{\code{wbWorkbook$protect()}}
 \item \href{#method-wbWorkbook-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
@@ -1566,6 +1569,30 @@ Add plot. A wrapper for add_image()
 Add xml drawing
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(sheet = current_sheet(), xml, dims = "A1:H8")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{xml}}{xml}
+
+\item{\code{dims}}{dims}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_chart_xml"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_chart_xml}{}}}
+\subsection{Method \code{add_chart_xml()}}{
+Add xml drawing
+
+
+Add xml chart
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(sheet = current_sheet(), xml, dims = "A1:H8")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
