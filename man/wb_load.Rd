@@ -24,6 +24,14 @@ Workbook object.
 wb_load returns a workbook object conserving styles and
 formatting of the original .xlsx file.
 }
+\details{
+A warning is displayed if an xml namespace for main is found in the
+xlsx file. Certain xlsx files created by third-party applications contain a
+namespace (usually \code{x}). This namespace is not required for the file to work
+in spreadsheet software and is not expected by \code{openxlsx2}. Therefore it is
+removed when the file is loaded into a workbook. Removal is generally
+expected to be safe, but the feature is still experimental.
+}
 \examples{
 ## load existing workbook from package folder
 wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
