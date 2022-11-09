@@ -126,6 +126,13 @@ test_that("wb_set_base_font() is a wrapper", {
   expect_wrapper("set_base_font", params = params)
 })
 
+# wb_set_bookview() -----------------------------------------------------------
+
+test_that("wb_set_bookview() is a wrapper", {
+  params <- list(activeTab = "1")
+  expect_wrapper("set_bookview", params = params)
+})
+
 # wb_set_header_footer() ------------------------------------------------------
 
 test_that("wb_set_header_footer() is a wrapper", {
