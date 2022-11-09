@@ -5,7 +5,7 @@
 \title{dummy function to add a chart to an existing workbook
 currently only a barplot is possible}
 \usage{
-wb_add_mschart(wb, sheet = next_sheet(), dims = "B2:H8", graph)
+wb_add_mschart(wb, sheet = current_sheet(), dims = "B2:H8", graph)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -23,12 +23,13 @@ currently only a barplot is possible
 \examples{
 if (requireNamespace("mschart")) {
 require(mschart)
-wb <- wb_workbook()
 
 ### Scatter
 scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
 scatter <- chart_settings(scatter, scatterstyle = "marker")
 
-wb <- wb_add_mschart(wb, dims = "F4:L20", graph = scatter)
+wb <- wb_workbook() \%>\%
+ wb_add_worksheet() \%>\%
+ wb_add_mschart(dims = "F4:L20", graph = scatter)
 }
 }
