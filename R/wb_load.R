@@ -8,6 +8,12 @@
 #'  strips the wbWorkbook to a bare minimum.
 #' @description  wb_load returns a workbook object conserving styles and
 #' formatting of the original .xlsx file.
+#' @details A warning is displayed if an xml namespace for main is found in the
+#' xlsx file. Certain xlsx files created by third-party applications contain a
+#' namespace (usually `x`). This namespace is not required for the file to work
+#' in spreadsheet software and is not expected by `openxlsx2`. Therefore it is
+#' removed when the file is loaded into a workbook. Removal is generally
+#' expected to be safe, but the feature is still experimental.
 #' @return Workbook object.
 #' @export
 #' @seealso [wb_remove_worksheet()]
@@ -195,6 +201,22 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     # escape
     workbook_xml <- read_xml(workbookXML, escapes = TRUE)
+
+    xml_name <- xml_node_name(workbook_xml)[1]
+
+    if (xml_name != "workbook") {
+      xml_ns <- stringi::stri_split_fixed(xml_name, ":")[[1]][[1]]
+      op <- options("openxlsx2.namespace_xml" = xml_ns)
+      on.exit(options(op), add = TRUE)
+      msg <- paste0(
+        "The `{%s}` namespace(s) has been removed from the xml files, for example:\n",
+        "\t<%s:field> changed to:\n",
+        "\t<field>\n",
+        "See 'Details' in ?openxlsx2::wb_load() for more information."
+      )
+      warning(sprintf(msg, xml_ns, xml_ns))
+      workbook_xml <- read_xml(workbookXML, escapes = TRUE)
+    }
 
     wb$workbook$fileVersion <- xml_node(workbook_xml, "workbook", "fileVersion")
     wb$workbook$alternateContent <- xml_node(workbook_xml, "workbook", "mc:AlternateContent")

@@ -4,6 +4,8 @@
 
 * Add ... as argument to `read_xlsx()` and `wb_read()`. [381](https://github.com/JanMarvin/openxlsx2/pull/381)
 
+* Allow reading files with xml namespace created by third party software. [405](https://github.com/JanMarvin/openxlsx2/pull/405)
+
 ## Fixes
 
 * Fixed a case where embedded files were assigned incorrectly in worksheet relationships. This caused corrupted output. [403](https://github.com/JanMarvin/openxlsx2/pull/403)
