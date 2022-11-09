@@ -103,6 +103,15 @@ strips the wbWorkbook to a bare minimum.</p></dd>
 
 <p>Workbook object.</p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>A warning is displayed if an xml namespace for main is found in the
+xlsx file. Certain xlsx files created by third-party applications contain a
+namespace (usually <code>x</code>). This namespace is not required for the file to work
+in spreadsheet software and is not expected by <code>openxlsx2</code>. Therefore it is
+removed when the file is loaded into a workbook. Removal is generally
+expected to be safe, but the feature is still experimental.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="wb_remove_worksheet.html">wb_remove_worksheet()</a></code></p></div>
