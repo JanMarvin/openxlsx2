@@ -260,6 +260,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-buildTable}{\code{wbWorkbook$buildTable()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
+\item \href{#method-wbWorkbook-set_bookview}{\code{wbWorkbook$set_bookview()}}
 \item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
 \item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
 \item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
@@ -854,6 +855,64 @@ Get the base font
 \item{\code{fontColour}}{fontColour}
 
 \item{\code{fontName}}{fontName}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_bookview"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_bookview}{}}}
+\subsection{Method \code{set_bookview()}}{
+Set the book views
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_bookview(
+  activeTab = NULL,
+  autoFilterDateGrouping = NULL,
+  firstSheet = NULL,
+  minimized = NULL,
+  showHorizontalScroll = NULL,
+  showSheetTabs = NULL,
+  showVerticalScroll = NULL,
+  tabRatio = NULL,
+  visibility = NULL,
+  windowHeight = NULL,
+  windowWidth = NULL,
+  xWindow = NULL,
+  yWindow = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{activeTab}}{activeTab}
+
+\item{\code{autoFilterDateGrouping}}{autoFilterDateGrouping}
+
+\item{\code{firstSheet}}{firstSheet}
+
+\item{\code{minimized}}{minimized}
+
+\item{\code{showHorizontalScroll}}{showHorizontalScroll}
+
+\item{\code{showSheetTabs}}{showSheetTabs}
+
+\item{\code{showVerticalScroll}}{showVerticalScroll}
+
+\item{\code{tabRatio}}{tabRatio}
+
+\item{\code{visibility}}{visibility}
+
+\item{\code{windowHeight}}{windowHeight}
+
+\item{\code{windowWidth}}{windowWidth}
+
+\item{\code{xWindow}}{xWindow}
+
+\item{\code{yWindow}}{yWindow}
 }
 \if{html}{\out{</div>}}
 }
