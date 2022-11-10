@@ -6114,13 +6114,13 @@ wbWorkbook <- R6::R6Class(
           visible_sheet_index - 1L
         )
 
-      # # TODO what does this code segment do?
-      # self$worksheets[[visible_sheet_index]]$set_sheetview(tabSelected = TRUE)
-      # if (nSheets > 1) {
-      #   for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
-      #     self$worksheets[[i]]$set_sheetview(tabSelected = FALSE)
-      #   }
-      # }
+      # Failsafe: hidden sheet can not be selected.
+      self$worksheets[[visible_sheet_index]]$set_sheetview(tabSelected = TRUE)
+      if (nSheets > 1) {
+        for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
+          self$worksheets[[i]]$set_sheetview(tabSelected = FALSE)
+        }
+      }
 
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
       if (length(extRefInds)) {
