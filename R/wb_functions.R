@@ -872,6 +872,22 @@ wb_add_mschart <- function(
 
   # write the chart data to the workbook
   wb$clone()$
-    add_data(sheet = sheet, x = graph$data_series)$
     add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+}
+
+#' provide wb_data object for mschart
+#' @param wb a workbook
+#' @param sheet a sheet in the workbook either name or index
+#' @param dims the dimensions
+#' @export
+wb_data <- function(wb, sheet = current_sheet(), dims = "A1") {
+  assert_workbook(wb)
+  sheetname <- wb$.__enclos_env__$private$get_sheet_name(sheet)
+
+  z <- wb_to_df(wb, sheet, dims = dims)
+  attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE)
+  attr(z, "sheet") <- sheetname
+
+  class(z) <- c("data.frame", "wb_data")
+  z
 }
