@@ -871,8 +871,14 @@ wb_add_mschart <- function(
   )
 
   # write the chart data to the workbook
-  wb$clone()$
-    add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+  if (inherits(graph$data_series, "wb_data")) {
+    wb$clone()$
+      add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+  } else {
+    wb$clone()$
+      add_data(x = graph$data_series)$
+      add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+  }
 }
 
 #' provide wb_data object for mschart
