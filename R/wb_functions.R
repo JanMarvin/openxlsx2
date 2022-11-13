@@ -342,9 +342,9 @@ wb_to_df <- function(
   }
 
   # the sheet has no data
-  if (is.null(wb$worksheets[[sheet]]$sheet_data$cc)) {
+  if (is.null(wb$worksheets[[sheet]]$sheet_data$cc) ||
+      nrow(wb$worksheets[[sheet]]$sheet_data$cc) == 0) {
     # TODO do we need more checks or do we need to initialize a new cc object?
-    # TODO would this also apply of nrow(cc) == 0?
     message("sheet found, but contains no data")
     return(NULL)
   }
