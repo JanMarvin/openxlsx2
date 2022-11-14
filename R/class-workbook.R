@@ -4045,16 +4045,42 @@ wbWorkbook <- R6::R6Class(
     #' @param cols cols
     #' @param rows rows
     #' @param name name
-    #' @param localSheetId localSheetId
+    #' @param localSheet localSheet
     #' @param overwrite overwrite
+    #' @param comment comment
+    #' @param customMenu customMenu
+    #' @param description description
+    #' @param is_function function
+    #' @param functionGroupId function group id
+    #' @param help help
+    #' @param hidden hidden
+    #' @param localName localName
+    #' @param publishToServer publish to server
+    #' @param statusBar status bar
+    #' @param vbProcedure wbProcedure
+    #' @param workbookParameter workbookParameter
+    #' @param xml xml
     #' @returns The `wbWorkbook` object
     add_named_region = function(
       sheet = current_sheet(),
       cols,
       rows,
       name,
-      localSheetId = NULL,
-      overwrite = FALSE
+      localSheet        = FALSE,
+      overwrite         = FALSE,
+      comment           = NULL,
+      customMenu        = NULL,
+      description       = NULL,
+      is_function       = NULL,
+      functionGroupId   = NULL,
+      help              = NULL,
+      hidden            = NULL,
+      localName         = NULL,
+      publishToServer   = NULL,
+      statusBar         = NULL,
+      vbProcedure       = NULL,
+      workbookParameter = NULL,
+      xml               = NULL
     ) {
       sheet <- private$get_sheet_index(sheet)
 
@@ -4066,16 +4092,25 @@ wbWorkbook <- R6::R6Class(
         stop("cols argument must be a numeric/integer vector")
       }
 
+      localSheetId <- ""
+      if (localSheet) localSheetId <- as.character(sheet)
+
       ## check name doesn't already exist
       ## named region
 
-      # TODO use reg_match0?
-      ex_names <- regmatches(self$workbook$definedNames, regexpr('(?<=name=")[^"]+', self$workbook$definedNames, perl = TRUE))
-      ex_names <- tolower(replaceXMLEntities(ex_names))
+      definedNames <- rbindlist(xml_attr(self$workbook$definedNames, level1 = "definedName"))
+      sel1 <- tolower(definedNames$name) == tolower(name)
+      sel2 <- definedNames$localSheetId == localSheetId
+      if (!is.null(definedNames$localSheetId)) {
+        sel <- sel1 & sel2
+      } else {
+         sel <- sel1
+      }
+      match_dn <- which(sel)
 
-      if (tolower(name) %in% ex_names) {
+      if (any(match_dn)) {
         if (overwrite)
-          self$workbook$definedNames <- self$workbook$definedNames[!ex_names %in% tolower(name)]
+          self$workbook$definedNames <- self$workbook$definedNames[-match_dn]
         else
           stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
       } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
@@ -4094,12 +4129,27 @@ wbWorkbook <- R6::R6Class(
       ref1 <- paste0("$", int2col(startCol), "$", startRow)
       ref2 <- paste0("$", int2col(endCol), "$", endRow)
 
+      if (localSheetId == "") localSheetId <- NULL
+
       private$create_named_region(
-        ref1         = ref1,
-        ref2         = ref2,
-        name         = name,
-        sheet        = self$sheet_names[sheet],
-        localSheetId = localSheetId
+        ref1               = ref1,
+        ref2               = ref2,
+        name               = name,
+        sheet              = self$sheet_names[sheet],
+        localSheetId       = localSheetId,
+        comment            = comment,
+        customMenu         = customMenu,
+        description        = description,
+        is_function        = is_function,
+        functionGroupId    = functionGroupId,
+        help               = help,
+        hidden             = hidden,
+        localName          = localName,
+        publishToServer    = publishToServer,
+        statusBar          = statusBar,
+        vbProcedure        = vbProcedure,
+        workbookParameter  = workbookParameter,
+        xml                = xml
       )
 
       invisible(self)
@@ -5637,28 +5687,69 @@ wbWorkbook <- R6::R6Class(
     },
 
     # old add_named_region()
-    create_named_region = function(ref1, ref2, name, sheet = current_sheet(), localSheetId = NULL) {
+    create_named_region = function(
+      ref1,
+      ref2,
+      name,
+      sheet = current_sheet(),
+      localSheetId      = NULL,
+      comment           = NULL,
+      customMenu        = NULL,
+      description       = NULL,
+      is_function       = NULL,
+      functionGroupId   = NULL,
+      help              = NULL,
+      hidden            = NULL,
+      localName         = NULL,
+      publishToServer   = NULL,
+      statusBar         = NULL,
+      vbProcedure       = NULL,
+      workbookParameter = NULL,
+      xml               = NULL
+    ) {
       name <- replace_legal_chars(name)
-      value <- if (is.null(localSheetId)) {
-        sprintf(
-          '<definedName name="%s">\'%s\'!%s:%s</definedName>',
-          name,
-          sheet,
-          ref1,
-          ref2
-        )
-      } else {
-        sprintf(
-          '<definedName name="%s" localSheetId="%s">\'%s\'!%s:%s</definedName>',
-          name,
-          localSheetId,
-          sheet,
-          ref1,
-          ref2
-        )
-      }
+      
+      # special names
 
-      private$append_workbook_field("definedNames", value)
+      ## print
+      # _xlnm .Print_Area
+      # _xlnm .Print_Titles
+
+      ## filters
+      # _xlnm .Criteria
+      # _xlnm ._FilterDatabase
+      # _xlnm .Extract
+
+      ## misc
+      # _xlnm .Consolidate_Area
+      # _xlnm .Database
+      # _xlnm .Sheet_Title
+
+      named_region <- c(
+        comment          = comment,
+        customMenu        = customMenu,
+        description       = description,
+        `function`        = is_function,
+        functionGroupId   = functionGroupId,
+        help              = help,
+        hidden            = hidden,
+        localName         = localName,
+        localSheetId      = localSheetId,
+        name              = name,
+        publishToServer   = publishToServer,
+        statusBar         = statusBar,
+        vbProcedure       = vbProcedure,
+        workbookParameter = workbookParameter,
+        xml               = xml
+      )
+
+      xml <- xml_node_create(
+        "definedName",
+        xml_children = sprintf("\'%s\'!%s:%s", sheet, ref1, ref2),
+        xml_attributes = named_region
+      )
+
+      private$append_workbook_field("definedNames", xml)
     },
 
     get_sheet_id = function(type = c("rId", "sheetId"), i = NULL) {

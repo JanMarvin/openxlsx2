@@ -1867,8 +1867,21 @@ add a named region
   cols,
   rows,
   name,
-  localSheetId = NULL,
-  overwrite = FALSE
+  localSheet = FALSE,
+  overwrite = FALSE,
+  comment = NULL,
+  customMenu = NULL,
+  description = NULL,
+  is_function = NULL,
+  functionGroupId = NULL,
+  help = NULL,
+  hidden = NULL,
+  localName = NULL,
+  publishToServer = NULL,
+  statusBar = NULL,
+  vbProcedure = NULL,
+  workbookParameter = NULL,
+  xml = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -1883,9 +1896,35 @@ add a named region
 
 \item{\code{name}}{name}
 
-\item{\code{localSheetId}}{localSheetId}
+\item{\code{localSheet}}{localSheet}
 
 \item{\code{overwrite}}{overwrite}
+
+\item{\code{comment}}{comment}
+
+\item{\code{customMenu}}{customMenu}
+
+\item{\code{description}}{description}
+
+\item{\code{is_function}}{function}
+
+\item{\code{functionGroupId}}{function group id}
+
+\item{\code{help}}{help}
+
+\item{\code{hidden}}{hidden}
+
+\item{\code{localName}}{localName}
+
+\item{\code{publishToServer}}{publish to server}
+
+\item{\code{statusBar}}{status bar}
+
+\item{\code{vbProcedure}}{wbProcedure}
+
+\item{\code{workbookParameter}}{workbookParameter}
+
+\item{\code{xml}}{xml}
 }
 \if{html}{\out{</div>}}
 }

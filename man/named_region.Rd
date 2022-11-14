@@ -12,8 +12,21 @@ wb_add_named_region(
   cols,
   rows,
   name,
-  localSheetId = NULL,
-  overwrite = FALSE
+  localSheet = FALSE,
+  overwrite = FALSE,
+  comment = NULL,
+  customMenu = NULL,
+  description = NULL,
+  is_function = NULL,
+  functionGroupId = NULL,
+  help = NULL,
+  hidden = NULL,
+  localName = NULL,
+  publishToServer = NULL,
+  statusBar = NULL,
+  vbProcedure = NULL,
+  workbookParameter = NULL,
+  xml = NULL
 )
 
 wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
@@ -29,9 +42,35 @@ wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 
 \item{name}{Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.}
 
-\item{localSheetId}{localSheetId}
+\item{localSheet}{If \code{TRUE} the named region will be local for this sheet}
 
 \item{overwrite}{Boolean. Overwrite if exists? Default to FALSE}
+
+\item{comment}{description text for named region}
+
+\item{customMenu}{customMenu (unknown xml feature)}
+
+\item{description}{description (unknown xml feature)}
+
+\item{is_function}{function (unknown xml feature)}
+
+\item{functionGroupId}{function group id (unknown xml feature)}
+
+\item{help}{help (unknown xml feature)}
+
+\item{hidden}{hidden if the named region should be hidden}
+
+\item{localName}{localName (unknown xml feature)}
+
+\item{publishToServer}{publish to server (unknown xml feature)}
+
+\item{statusBar}{status bar (unknown xml feature)}
+
+\item{vbProcedure}{wbProcedure (unknown xml feature)}
+
+\item{workbookParameter}{workbookParameter (unknown xml feature)}
+
+\item{xml}{xml (unknown xml feature)}
 }
 \description{
 Create / delete a named region

@@ -80,7 +80,7 @@ test_that("ws_page_setup example", {
   wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 
   exp <- c(
-    "<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"2\">'print_title_rows'!$1:$1</definedName>",
+    "<definedName localSheetId=\"2\" name=\"_xlnm.Print_Titles\">'print_title_rows'!$1:$1</definedName>",
     "<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"3\">'print_title_cols'!$A:$A,'print_title_cols'!$1:$1</definedName>"
   )
   expect_equal(exp, wb$workbook$definedNames)
