@@ -381,8 +381,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   if (!data_only && length(calcChainXML)) {
     wb$calcChain <- read_xml(calcChainXML, pointer = FALSE)
-    wb$Content_Types <- c(
-      wb$Content_Types,
+    wb$append(
+      "Content_Types",
       '<Override PartName="/xl/calcChain.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml"/>'
     )
   }
@@ -406,8 +406,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   ## xl\sharedStrings
   if (!data_only && length(metadataXML)) {
-    wb$Content_Types <- c(
-      wb$Content_Types,
+    wb$append(
+      "Content_Types",
       '<Override PartName="/xl/metadata.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheetMetadata+xml"/>'
     )
     metadata <- read_xml(metadataXML, pointer = FALSE)
@@ -492,7 +492,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     }
 
     ## update content_types
-    wb$Content_Types <- c(wb$Content_Types, pivot_content_type)
+    wb$append("Content_Types", pivot_content_type)
 
     ## workbook rels
     wb$workbook.xml.rels <- c(
@@ -513,7 +513,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   if (!data_only && length(vbaProject)) {
     wb$vbaProject <- vbaProject
     wb$Content_Types[grepl('<Override PartName="/xl/workbook.xml" ', wb$Content_Types)] <- '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.ms-excel.sheet.macroEnabled.main+xml"/>'
-    wb$Content_Types <- c(wb$Content_Types, '<Override PartName="/xl/vbaProject.bin" ContentType="application/vnd.ms-office.vbaProject"/>')
+    wb$append("Content_Types", '<Override PartName="/xl/vbaProject.bin" ContentType="application/vnd.ms-office.vbaProject"/>')
   }
 
 
@@ -584,8 +584,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   if (!data_only && length(extLinksXML)) {
     wb$externalLinks <- lapply(sort(extLinksXML), read_xml, pointer = FALSE)
 
-    wb$Content_Types <- c(
-      wb$Content_Types,
+    wb$append(
+      "Content_Types",
       sprintf('<Override PartName="/xl/externalLinks/externalLink%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml"/>', seq_along(extLinksXML))
     )
 
@@ -815,8 +815,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
           # this will add slicers to Content_Types. Ergo if worksheets with
           # slicers are removed, the slicer needs to remain in the worksheet
-          wb$Content_Types <- c(
-            wb$Content_Types,
+          wb$append(
+            "Content_Types",
             sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', k)
           )
 
@@ -831,8 +831,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       wb$slicerCaches <- vapply(slicerCachesXML, read_xml, pointer = FALSE,
                                 FUN.VALUE = NA_character_, USE.NAMES = FALSE)
 
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds[inds > 0]))
-      wb$workbook.xml.rels <- c(wb$workbook.xml.rels, sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds[inds > 0], inds[inds > 0]))
+      wb$append("Content_Types", sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds[inds > 0]))
+      wb$append("workbook.xml.rels", sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds[inds > 0], inds[inds > 0]))
 
       # get extLst object. select the slicerCaches and replace it
       ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")
@@ -856,7 +856,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       tables_xml <- vapply(tablesXML, FUN = read_xml, pointer = FALSE, FUN.VALUE = NA_character_)
       tabs <- rbindlist(xml_attr(tables_xml, "table"))
 
-      wb$Content_Types <- c(wb$Content_Types, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', nrow(wb$tables)))
+      wb$append("Content_Types", sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', nrow(wb$tables)))
 
       # # TODO When does this happen?
       # if (length(tabs["displayName"]) != length(tablesXML)) {
@@ -959,7 +959,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
     ## VML Drawings --------------------------------------------------------------------------------
     if (length(vmlDrawingXML)) {
-      wb$Content_Types <- c(wb$Content_Types, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
+      wb$append("Content_Types", '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
       drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
 
@@ -1088,8 +1088,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
           }
         }
       }
-      wb$Content_Types <- c(
-        wb$Content_Types,
+      wb$append(
+        "Content_Types",
         sprintf('<Override PartName="/xl/threadedComments/%s" ContentType="application/vnd.ms-excel.threadedcomments+xml"/>',
                 vapply(threadCommentsXML, basename, NA_character_))
       )
@@ -1098,19 +1098,19 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     ## Persons (needed for Threaded Comment)
     if (length(personXML) > 0) {
       wb$persons <- personXML
-      wb$Content_Types <- c(
-        wb$Content_Types,
+      wb$append(
+        "Content_Types",
         '<Override PartName="/xl/persons/person.xml" ContentType="application/vnd.ms-excel.person+xml"/>'
       )
-      wb$workbook.xml.rels <- c(
-        wb$workbook.xml.rels,
+      wb$append(
+        "workbook.xml.rels",
         '<Relationship Id="rId5" Type="http://schemas.microsoft.com/office/2017/10/relationships/person" Target="persons/person.xml"/>')
     }
 
     ## Embedded docx
     if (length(embeddings) > 0) {
       # TODO only valid for docx. need to check xls and doc?
-      wb$Content_Types <- c(wb$Content_Types, '<Default Extension="docx" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>')
+      wb$append("Content_Types", '<Default Extension="docx" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>')
       wb$embeddings <- embeddings
     }
 
@@ -1130,8 +1130,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   if (!data_only && length(queryTablesXML) > 0) {
     ids <- as.numeric(regmatches(queryTablesXML, regexpr("[0-9]+(?=\\.xml)", queryTablesXML, perl = TRUE)))
     wb$queryTables <- unapply(queryTablesXML[order(ids)], read_xml, pointer = FALSE)
-    wb$Content_Types <- c(
-      wb$Content_Types,
+    wb$append(
+      "Content_Types",
       sprintf('<Override PartName="/xl/queryTables/queryTable%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.queryTable+xml"/>', seq_along(queryTablesXML))
     )
   }
@@ -1140,8 +1140,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   ## connections
   if (!data_only && length(connectionsXML) > 0) {
     wb$connections <- read_xml(connectionsXML, pointer = FALSE)
-    wb$workbook.xml.rels <- c(wb$workbook.xml.rels, '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/connections" Target="connections.xml"/>')
-    wb$Content_Types <- c(wb$Content_Types, '<Override PartName="/xl/connections.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.connections+xml"/>')
+    wb$append("workbook.xml.rels", '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/connections" Target="connections.xml"/>')
+    wb$append("Content_Types", '<Override PartName="/xl/connections.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.connections+xml"/>')
   }
 
 
