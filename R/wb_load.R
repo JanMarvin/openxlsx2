@@ -57,6 +57,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   ContentTypesXML   <- grep_xml("\\[Content_Types\\].xml$")
   appXML            <- grep_xml("app.xml$")
   coreXML           <- grep_xml("core.xml$")
+  customXML         <- grep_xml("custom.xml$")
 
   workbookXML       <- grep_xml("workbook.xml$")
   workbookXMLRels   <- grep_xml("workbook.xml.rels")
@@ -123,12 +124,17 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   )
 
   ## core
+  if (length(appXML)) {
+    wb$app <- read_xml(appXML, pointer = FALSE)
+  }
+
   if (length(coreXML) == 1) {
     wb$core <- read_xml(coreXML, pointer = FALSE)
   }
 
-  if (length(appXML)) {
-    wb$app <- read_xml(appXML, pointer = FALSE)
+  if (length(customXML)) {
+    wb$append("Content_Types", '<Override PartName="/docProps/custom.xml" ContentType="application/vnd.openxmlformats-officedocument.custom-properties+xml"/>')
+    wb$custom <- read_xml(customXML, pointer = FALSE)
   }
 
   nSheets <- length(worksheetsXML) + length(chartSheetsXML)

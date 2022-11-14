@@ -152,6 +152,8 @@ create_border
 
 \item{\code{core}}{core}
 
+\item{\code{custom}}{custom}
+
 \item{\code{drawings}}{drawings}
 
 \item{\code{drawings_rels}}{drawings_rels}
