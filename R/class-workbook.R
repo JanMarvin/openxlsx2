@@ -4098,7 +4098,6 @@ wbWorkbook <- R6::R6Class(
       ## check name doesn't already exist
       ## named region
 
-      # TODO use reg_match0?
       definedNames <- rbindlist(xml_attr(self$workbook$definedNames, level1 = "definedName"))
       sel1 <- tolower(definedNames$name) == tolower(name)
       sel2 <- definedNames$localSheetId == localSheetId
