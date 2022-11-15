@@ -5746,7 +5746,7 @@ wbWorkbook <- R6::R6Class(
       xml               = NULL
     ) {
       name <- replace_legal_chars(name)
-      
+
       # special names
 
       ## print
