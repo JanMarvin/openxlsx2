@@ -1306,7 +1306,9 @@ wbWorkbook <- R6::R6Class(
         Targets <- c(Targets, "docProps/custom.xml")
       }
 
-      relship <- df_to_xml("Relationship", data.frame(Id = Ids, Type = Types, Target = Targets))
+      relship <- df_to_xml("Relationship",
+        data.frame(Id = Ids, Type = Types, Target = Targets, stringsAsFactors = FALSE)
+      )
 
 
       ## write .rels
