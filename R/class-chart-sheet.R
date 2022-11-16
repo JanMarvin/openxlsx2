@@ -37,7 +37,7 @@ wbChartSheet <- R6::R6Class(
       zoom = 100
     ) {
       if (length(tabColour)) {
-        tabColour <- sprintf("<sheetPr>%s</sheetPr>", tabColour)
+        tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
       } else {
         tabColour <- character()
       }

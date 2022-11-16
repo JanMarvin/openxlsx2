@@ -231,8 +231,8 @@ wbWorksheet <- R6::R6Class(
         '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
 
         # sheetPr
-        if (length(self$sheetPr) && !any(grepl("<sheetPr>", self$sheetPr, fixed = TRUE))) {
-          paste0("<sheetPr>", paste(self$sheetPr, collapse = ""), "</sheetPr>")
+        if (length(self$sheetPr) && !any(xml_node_name(self$sheetPr) == "sheetPr")) {
+          xml_node_create("sheetPr", xml_children = self$sheetPr)
         } else {
           self$sheetPr
         },

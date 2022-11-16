@@ -203,3 +203,20 @@ test_that("load file with xml namespace", {
   expect_null(getOption("openxlsx2.namespace_xml"))
 
 })
+
+
+test_that("reading file with sheetPr tag", {
+
+  skip_if_offline()
+
+  temp <- temp_xlsx()
+
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/gh_issue_416.xlsm")
+  wb$save(temp)
+  wb <- wb_load(temp)
+
+  exp <- "<sheetPr codeName=\"Sheet1\"/>"
+  got <- wb$worksheets[[1]]$sheetPr
+  expect_equal(exp, got)
+
+})
