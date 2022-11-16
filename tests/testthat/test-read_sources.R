@@ -205,7 +205,7 @@ test_that("load file with xml namespace", {
 })
 
 
-test_that("reading file with sheetPr tag", {
+test_that("reading file with macro and custom xml", {
 
   skip_if_offline()
 
@@ -217,6 +217,10 @@ test_that("reading file with sheetPr tag", {
 
   exp <- "<sheetPr codeName=\"Sheet1\"/>"
   got <- wb$worksheets[[1]]$sheetPr
+  expect_equal(exp, got)
+
+  exp <- "<sheetPr codeName=\"Sheet1\"/>"
+  got <- wb$cust
   expect_equal(exp, got)
 
 })
