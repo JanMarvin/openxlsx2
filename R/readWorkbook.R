@@ -117,7 +117,7 @@ read_xlsx <- function(
 #' @details Creates a data.frame of all data in worksheet.
 #' @param ... additional arguments passed to `wb_to_df()`
 #' @seealso [get_named_regions()] [wb_to_df()] [read_xlsx()]
-#' @return data.frame#' 
+#' @return data.frame
 #' @export
 #' @examples
 #' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")

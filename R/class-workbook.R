@@ -42,6 +42,9 @@ wbWorkbook <- R6::R6Class(
     #' @field core core
     core = character(),
 
+    #' @field custom custom
+    custom = character(),
+
     #' @field drawings drawings
     drawings = NULL,
 
@@ -1284,10 +1287,34 @@ wbWorkbook <- R6::R6Class(
 
       ## Write content
 
+      # if custom is present, we need 4 relationships, otherwise 3
+
+      Ids <- c("rId3", "rId2", "rId1")
+      Types <- c(
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties",
+        "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+      )
+      Targets <- c("docProps/app.xml", "docProps/core.xml", "xl/workbook.xml")
+
+      if (length(self$custom)) {
+        Ids <- c(Ids, "rId4")
+        Types <- c(
+          Types,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties"
+        )
+        Targets <- c(Targets, "docProps/custom.xml")
+      }
+
+      relship <- df_to_xml("Relationship",
+        data.frame(Id = Ids, Type = Types, Target = Targets, stringsAsFactors = FALSE)
+      )
+
+
       ## write .rels
       write_file(
         head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n',
-        body = '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>',
+        body = pxml(relship),
         tail = "</Relationships>",
         fl = file.path(relsDir, ".rels")
       )
@@ -1320,6 +1347,17 @@ wbWorkbook <- R6::R6Class(
         tail = "",
         fl = file.path(docPropsDir, "core.xml")
       )
+
+
+      ## write core.xml
+      if (length(self$custom)) {
+        write_file(
+          head = "",
+          body = pxml(self$custom),
+          tail = "",
+          fl = file.path(docPropsDir, "custom.xml")
+        )
+      }
 
       ## write workbook.xml.rels
       write_file(
@@ -5708,7 +5746,7 @@ wbWorkbook <- R6::R6Class(
       xml               = NULL
     ) {
       name <- replace_legal_chars(name)
-      
+
       # special names
 
       ## print

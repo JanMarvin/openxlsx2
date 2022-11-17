@@ -152,6 +152,8 @@ create_border
 
 \item{\code{core}}{core}
 
+\item{\code{custom}}{custom}
+
 \item{\code{drawings}}{drawings}
 
 \item{\code{drawings_rels}}{drawings_rels}
@@ -836,7 +838,7 @@ A list of of the font
 Get the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
-  fontSize = 12,
+  fontSize = 11,
   fontColour = wb_colour(theme = "1"),
   fontName = "Calibri"
 )}\if{html}{\out{</div>}}

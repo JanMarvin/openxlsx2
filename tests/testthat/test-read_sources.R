@@ -205,7 +205,7 @@ test_that("load file with xml namespace", {
 })
 
 
-test_that("reading file with sheetPr tag", {
+test_that("reading file with macro and custom xml", {
 
   skip_if_offline()
 
@@ -217,6 +217,10 @@ test_that("reading file with sheetPr tag", {
 
   exp <- "<sheetPr codeName=\"Sheet1\"/>"
   got <- wb$worksheets[[1]]$sheetPr
+  expect_equal(exp, got)
+
+  exp <- "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/custom-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"2\" name=\"Source\"><vt:lpwstr>openxlsx2</vt:lpwstr></property></Properties>"
+  got <- wb$custom
   expect_equal(exp, got)
 
 })
