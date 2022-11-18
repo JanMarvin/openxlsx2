@@ -6059,31 +6059,6 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-
-      if (length(self$workbook$definedNames)) {
-        # TODO consider self$get_sheet_names() which orders the sheet names?
-        sheets <- self$sheet_names[self$sheetOrder]
-
-        belongTo <- get_named_regions(self)
-        belongTo <- belongTo$sheets[belongTo$value != "table"]
-
-        ## sheets is in re-ordered order (order it will be displayed)
-        newId <- match(belongTo, sheets) - 1L
-        oldId <- as.integer(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
-
-        for (i in seq_along(self$workbook$definedNames)) {
-          if (!is.na(newId[i])) {
-            self$workbook$definedNames[[i]] <-
-              gsub(
-                sprintf('localSheetId=\"%s\"', oldId[i]),
-                sprintf('localSheetId=\"%s\"', newId[i]),
-                self$workbook$definedNames[[i]],
-                fixed = TRUE
-              )
-          }
-        }
-      }
-
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
       if (length(extRefInds)) {
         newInds <- seq_along(extRefInds) + length(sheetInds)
