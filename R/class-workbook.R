@@ -3558,6 +3558,41 @@ wbWorkbook <- R6::R6Class(
     },
 
 
+    #' @description Add mschart chart to the workbook
+    #' @param sheet the sheet on which the graph will appear
+    #' @param dims the dimensions where the sheet will appear
+    #' @param graph mschart graph
+    #' @returns The `wbWorkbook` object
+    add_mschart = function(
+      sheet = current_sheet(),
+      dims = "B2:H8",
+      graph
+    ) {
+
+      requireNamespace("mschart")
+      assert_class(graph, "ms_chart")
+
+      sheetname <- private$get_sheet_name(sheet)
+
+      # format.ms_chart is not exported
+      out_xml <- format(
+        graph,
+        sheetname = sheetname,
+        id_x = "64451212",
+        id_y = "64453248"
+      )
+
+      # write the chart data to the workbook
+      if (inherits(graph$data_series, "wb_data")) {
+        self$
+          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+      } else {
+        self$
+          add_data(x = graph$data_series)$
+          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+      }
+    },
+
     #' @description
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects

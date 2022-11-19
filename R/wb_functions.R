@@ -864,31 +864,8 @@ wb_add_mschart <- function(
   dims = "B2:H8",
   graph
 ) {
-
   assert_workbook(wb)
-  assert_class(graph, "ms_chart")
-
-  requireNamespace("mschart")
-
-  sheetname <- wb$.__enclos_env__$private$get_sheet_name(sheet)
-
-  # format.ms_chart is not exported
-  out_xml <- mschart:::format.ms_chart(
-    graph,
-    sheetname = sheetname,
-    id_x = "64451212",
-    id_y = "64453248"
-  )
-
-  # write the chart data to the workbook
-  if (inherits(graph$data_series, "wb_data")) {
-    wb$clone()$
-      add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
-  } else {
-    wb$clone()$
-      add_data(x = graph$data_series)$
-      add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
-  }
+  wb$clone()$add_mschart(sheet, dims, graph)
 }
 
 #' provide wb_data object for mschart
