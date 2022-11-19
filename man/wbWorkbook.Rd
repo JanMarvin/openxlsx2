@@ -289,6 +289,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wbWorkbook-add_drawing}{\code{wbWorkbook$add_drawing()}}
 \item \href{#method-wbWorkbook-add_chart_xml}{\code{wbWorkbook$add_chart_xml()}}
+\item \href{#method-wbWorkbook-add_mschart}{\code{wbWorkbook$add_mschart()}}
 \item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
 \item \href{#method-wbWorkbook-protect}{\code{wbWorkbook$protect()}}
 \item \href{#method-wbWorkbook-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
@@ -1603,6 +1604,27 @@ Add xml chart
 \item{\code{xml}}{xml}
 
 \item{\code{dims}}{dims}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_mschart"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_mschart}{}}}
+\subsection{Method \code{add_mschart()}}{
+Add mschart chart to the workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mschart(sheet = current_sheet(), dims = "B2:H8", graph)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{the sheet on which the graph will appear}
+
+\item{\code{dims}}{the dimensions where the sheet will appear}
+
+\item{\code{graph}}{mschart graph}
 }
 \if{html}{\out{</div>}}
 }
