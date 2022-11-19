@@ -3557,7 +3557,6 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-
     #' @description Add mschart chart to the workbook
     #' @param sheet the sheet on which the graph will appear
     #' @param dims the dimensions where the sheet will appear
