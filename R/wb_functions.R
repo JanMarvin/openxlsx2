@@ -56,16 +56,17 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 #' @export
 dataframe_to_dims <- function(df) {
 
+  # get continuous sequences of columns and rows in df
   v <- as.integer(rownames(df))
   rows <- split(v, cumsum(diff(c(-Inf, v)) != 1))
 
   v <- col2int(colnames(df))
   cols <- split(colnames(df), cumsum(diff(c(-Inf, v)) != 1))
 
+  # combine columns and rows to construct dims
   out <- NULL
   for (col in seq_along(cols)) {
     for (row in seq_along(rows)) {
-
       tmp <- paste0(
         cols[[col]][[1]], rows[[row]][[1]],
         ":",
@@ -74,8 +75,8 @@ dataframe_to_dims <- function(df) {
       out <- c(out, tmp)
     }
   }
-  paste0(out, collapse = ";")
 
+  paste0(out, collapse = ";")
 }
 
 # # similar to all, simply check if most of the values match the condition
