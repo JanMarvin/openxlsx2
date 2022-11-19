@@ -2,6 +2,8 @@
 
 ## New features
 
+* Improve writing styles to workbook. Previously every cell was checked, this has been changed to check unique styles. [423](https://github.com/JanMarvin/openxlsx2/pull/423)
+
 * Implement reading custom file properties. [418](https://github.com/JanMarvin/openxlsx2/pull/418)
 
 * Improved `add_named_region()`. This function includes now various xml options. [386](https://github.com/JanMarvin/openxlsx2/pull/386)
