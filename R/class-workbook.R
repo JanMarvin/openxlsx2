@@ -4917,6 +4917,10 @@ wbWorkbook <- R6::R6Class(
       did <- dims_to_dataframe(dims, fill = TRUE)
       dims <- unname(unlist(did))
 
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      cc <- cc[cc$r %in% dims, ]
+      tabs <- table(cc["c_s"])
+
       if (inherits(numfmt, "character")) {
 
         new_numfmt <- create_numfmt(
@@ -4925,8 +4929,9 @@ wbWorkbook <- R6::R6Class(
         )
         self$styles_mgr$add(new_numfmt, new_numfmt)
 
-        for (dim in dims) {
-          xf_prev <- get_cell_styles(self, sheet, dim)
+        for (tab in names(tabs)) {
+          dim <- cc[cc$c_s == tab, "r"]
+          xf_prev <- get_cell_styles(self, sheet, dim[[1]])
           xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(new_numfmt))
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
@@ -4934,9 +4939,9 @@ wbWorkbook <- R6::R6Class(
         }
 
       } else { # format is numeric
-
-        for (dim in dims) {
-          xf_prev <- get_cell_styles(self, sheet, dim)
+        for (tab in names(tabs)) {
+          dim <- cc[cc$c_s == tab, "r"]
+          xf_prev <- get_cell_styles(self, sheet, dim[[1]])
           xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)

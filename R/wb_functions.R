@@ -47,6 +47,37 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   )
 }
 
+#' create dimensions from dataframe
+#' @param df dataframe with spreadsheet columns and rows
+#' @examples {
+#'   df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
+#'   dataframe_to_dims(df)
+#' }
+#' @export
+dataframe_to_dims <- function(df) {
+
+  v <- as.integer(rownames(df))
+  rows <- split(v, cumsum(diff(c(-Inf, v)) != 1))
+
+  v <- col2int(colnames(df))
+  cols <- split(colnames(df), cumsum(diff(c(-Inf, v)) != 1))
+
+  out <- NULL
+  for (col in seq_along(cols)) {
+    for (row in seq_along(rows)) {
+
+      tmp <- paste0(
+        cols[[col]][[1]], rows[[row]][[1]],
+        ":",
+        rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
+        )
+      out <- c(out, tmp)
+    }
+  }
+  paste0(out, collapse = ";")
+
+}
+
 # # similar to all, simply check if most of the values match the condition
 # # in guess_col_type not all bools may be "b" some are "s" (missings)
 # most <- function(x) {
