@@ -472,14 +472,14 @@ test_that("style names are xml", {
 
 })
 
-test_that("add numfmt is no longer slow",{
+test_that("add numfmt is no longer slow", {
 
   beg <- "1900-1-1"
   end <- "2022-11-18"
 
   dat <- seq(
-    from = as.POSIXct(beg, tz="UTC"),
-    to   = as.POSIXct(end, tz="UTC"),
+    from = as.POSIXct(beg, tz = "UTC"),
+    to   = as.POSIXct(end, tz = "UTC"),
     by   = "day"
   )
 
@@ -487,7 +487,7 @@ test_that("add numfmt is no longer slow",{
   out <- data.frame(
     date = dat,
     chr  = as.character(dat),
-    num  = seq_along(dat)-1
+    num  = seq_along(dat) - 1
   )
 
   wb <- wb_workbook() %>%
