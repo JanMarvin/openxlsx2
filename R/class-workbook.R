@@ -4799,7 +4799,12 @@ wbWorkbook <- R6::R6Class(
 
       dims <- unname(unlist(did[rows, cols, drop = FALSE]))
 
-      for (dim in dims) {
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      cc <- cc[cc$r %in% dims, ]
+      styles <- unique(cc[["c_s"]])
+
+      for (style in styles) {
+        dim <- cc[cc$c_s == style, "r"]
 
         new_fill <- create_fill(
           gradientFill = gradient_fill,
@@ -4808,7 +4813,7 @@ wbWorkbook <- R6::R6Class(
         )
         self$styles_mgr$add(new_fill, new_fill)
 
-        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_prev <- get_cell_styles(self, sheet, dim[[1]])
         xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(new_fill))
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
         s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
@@ -4866,7 +4871,12 @@ wbWorkbook <- R6::R6Class(
       did <- dims_to_dataframe(dims, fill = TRUE)
       dims <- unname(unlist(did))
 
-      for (dim in dims) {
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      cc <- cc[cc$r %in% dims, ]
+      styles <- unique(cc[["c_s"]])
+
+      for (style in styles) {
+        dim <- cc[cc$c_s == style, "r"]
 
         new_font <- create_font(
           b = bold,
@@ -4887,7 +4897,7 @@ wbWorkbook <- R6::R6Class(
         )
         self$styles_mgr$add(new_font, new_font)
 
-        xf_prev <- get_cell_styles(self, sheet, dim)
+        xf_prev <- get_cell_styles(self, sheet, dim[[1]])
         xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(new_font))
 
         self$styles_mgr$add(xf_new_font, xf_new_font)
@@ -4919,18 +4929,19 @@ wbWorkbook <- R6::R6Class(
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
-      tabs <- table(cc["c_s"])
+      styles <- unique(cc[["c_s"]])
 
       if (inherits(numfmt, "character")) {
 
-        new_numfmt <- create_numfmt(
-          numFmtId = self$styles_mgr$next_numfmt_id(),
-          formatCode = numfmt
-        )
-        self$styles_mgr$add(new_numfmt, new_numfmt)
+        for (style in styles) {
+          dim <- cc[cc$c_s == style, "r"]
 
-        for (tab in names(tabs)) {
-          dim <- cc[cc$c_s == tab, "r"]
+          new_numfmt <- create_numfmt(
+            numFmtId = self$styles_mgr$next_numfmt_id(),
+            formatCode = numfmt
+          )
+          self$styles_mgr$add(new_numfmt, new_numfmt)
+
           xf_prev <- get_cell_styles(self, sheet, dim[[1]])
           xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(new_numfmt))
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
@@ -4939,8 +4950,8 @@ wbWorkbook <- R6::R6Class(
         }
 
       } else { # format is numeric
-        for (tab in names(tabs)) {
-          dim <- cc[cc$c_s == tab, "r"]
+        for (style in styles) {
+          dim <- cc[cc$c_s == style, "r"]
           xf_prev <- get_cell_styles(self, sheet, dim[[1]])
           xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
@@ -5026,8 +5037,13 @@ wbWorkbook <- R6::R6Class(
       did <- dims_to_dataframe(dims, fill = TRUE)
       dims <- unname(unlist(did))
 
-      for (dim in dims) {
-        xf_prev <- get_cell_styles(self, sheet, dim)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      cc <- cc[cc$r %in% dims, ]
+      styles <- unique(cc[["c_s"]])
+
+      for (style in styles) {
+        dim <- cc[cc$c_s == style, "r"]
+        xf_prev <- get_cell_styles(self, sheet, dim[[1]])
         xf_new_cellstyle <- set_cellstyle(
           xf_node           = xf_prev,
           applyAlignment    = applyAlignment,
