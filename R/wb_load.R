@@ -59,6 +59,8 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   coreXML           <- grep_xml("core.xml$")
   customXML         <- grep_xml("custom.xml$")
 
+  customXmlDir      <- grep_xml("customXml/")
+
   workbookXML       <- grep_xml("workbook.xml$")
   workbookXMLRels   <- grep_xml("workbook.xml.rels")
 
@@ -117,7 +119,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   ## remove all EXCEPT media and charts
   on.exit(
     unlink(
-      grep_xml("media|vmlDrawing|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
+      grep_xml("media|vmlDrawing|customXml|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
       recursive = TRUE, force = TRUE
     ),
     add = TRUE
@@ -1142,6 +1144,38 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     wb$connections <- read_xml(connectionsXML, pointer = FALSE)
     wb$append("workbook.xml.rels", '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/connections" Target="connections.xml"/>')
     wb$append("Content_Types", '<Override PartName="/xl/connections.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.connections+xml"/>')
+  }
+
+  # In files with data querry connections we have a folder called "customXml" at the top file level
+  # We probably will never modify this folder. Therefore we copy it when saving and apped entries to
+  # Content_Types and workbook.xml.rels. The actual rId does not really seem to matter.
+  if (!data_only && length(customXmlDir)) {
+
+    wb$customXml <- customXmlDir
+
+    for (cstxml in seq_along(grep_xml("/customXml/itemProps"))) {
+      wb$append("Content_Types",
+        sprintf('<Override PartName="/customXml/itemProps%s.xml" ContentType="application/vnd.openxmlformats-officedocument.customXmlProperties+xml"/>',
+                cstxml)
+      )
+    }
+
+    for (cstitm in seq_along(grep_xml("customXml/item[0-9].xml"))) {
+
+      # TODO provide a function that creates a wb_rels data frame
+      wb_rels <- rbindlist(xml_attr(wb$workbook.xml.rels, "Relationship"))
+      wb_rels$typ <- basename(wb_rels$Type)
+      wb_rels$id  <- as.numeric(gsub("\\D", "", wb_rels$Id))
+      next_rid <- max(wb_rels$id) + 1
+
+      wb$append("workbook.xml.rels",
+        sprintf(
+          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml" Target="../customXml/item%s.xml"/>',
+          next_rid,
+          cstitm
+        )
+      )
+    }
   }
 
 

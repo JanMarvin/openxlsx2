@@ -144,6 +144,8 @@ create_border
 
 \item{\code{isChartSheet}}{isChartSheet}
 
+\item{\code{customXml}}{customXml}
+
 \item{\code{connections}}{connections}
 
 \item{\code{Content_Types}}{Content_Types}

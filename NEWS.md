@@ -12,6 +12,8 @@
 
 ## Fixes
 
+* Implement reading `customXml` folder for input files with connection. [419](https://github.com/JanMarvin/openxlsx2/pull/419)
+
 * Fixed saving files with `<sheetPr/>` tag. Previously this was wrapped in a second `sheetPr` node. This issue occurs with xlsm files only. [417](https://github.com/JanMarvin/openxlsx2/pull/417)
 
 * Fixed a case where embedded files were assigned incorrectly in worksheet relationships. This caused corrupted output. [403](https://github.com/JanMarvin/openxlsx2/pull/403)

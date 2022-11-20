@@ -194,6 +194,8 @@ test_that("reading charts", {
 
 test_that("load file with xml namespace", {
 
+  skip_if_offline()
+
   fl <- "https://github.com/ycphs/openxlsx/files/8480120/2022-04-12-11-42-36-DP_Melanges1.xlsx"
 
   expect_warning(
@@ -203,7 +205,6 @@ test_that("load file with xml namespace", {
   expect_null(getOption("openxlsx2.namespace_xml"))
 
 })
-
 
 test_that("reading file with macro and custom xml", {
 
@@ -222,5 +223,26 @@ test_that("reading file with macro and custom xml", {
   exp <- "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/custom-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"2\" name=\"Source\"><vt:lpwstr>openxlsx2</vt:lpwstr></property></Properties>"
   got <- wb$custom
   expect_equal(exp, got)
+})
+
+test_that("load file with connection", {
+
+  skip_if_offline()
+
+  temp <- temp_xlsx()
+
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/connection.xlsx")
+
+  expect_true(!is.null(wb$customXml))
+  expect_equal(3, length(wb$customXml))
+
+  wb$save(temp)
+
+  wb <- wb_load(temp)
+  expect_equal(3, length(wb$customXml))
+
+  expect_true(grepl("customXml/_rels/item1.xml.rels", wb$customXml[1]))
+  expect_true(grepl("customXml/item1.xml", wb$customXml[2]))
+  expect_true(grepl("customXml/itemProps1.xml", wb$customXml[3]))
 
 })

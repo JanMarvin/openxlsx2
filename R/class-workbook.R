@@ -30,6 +30,9 @@ wbWorkbook <- R6::R6Class(
     #' @field isChartSheet isChartSheet
     isChartSheet = logical(),
 
+    #' @field customXml customXml
+    customXml = NULL,
+
     #' @field connections connections
     connections = NULL,
 
@@ -1443,6 +1446,17 @@ wbWorkbook <- R6::R6Class(
       ## connections
       if (length(self$connections)) {
         write_file(body = self$connections, fl = file.path(xlDir, "connections.xml"))
+      }
+
+      if (length(self$customXml)) {
+        customXmlDir     <- dir_create(tmpDir, "customXml")
+        customXmlRelsDir <- dir_create(tmpDir, "customXml", "_rels")
+        for (fl in self$customXml[!grepl(".xml.rels$", self$customXml)]) {
+          file.copy(fl, customXmlDir, overwrite = TRUE)
+        }
+        for (fl in self$customXml[grepl(".xml.rels$", self$customXml)]) {
+          file.copy(fl, customXmlRelsDir, overwrite = TRUE)
+        }
       }
 
       ## externalLinks
@@ -5938,6 +5952,7 @@ wbWorkbook <- R6::R6Class(
       stylesInd        <- grep("styles\\.xml",                               self$workbook.xml.rels)
       themeInd         <- grep("theme/theme[0-9]+.xml",                      self$workbook.xml.rels)
       connectionsInd   <- grep("connections.xml",                            self$workbook.xml.rels)
+      customXMLInd     <- grep("customXml/item[0-9].xml",                    self$workbook.xml.rels)
       extRefInds       <- grep("externalLinks/externalLink[0-9]+.xml",       self$workbook.xml.rels)
       sharedStringsInd <- grep("sharedStrings.xml",                          self$workbook.xml.rels)
       tableInds        <- grep("table[0-9]+.xml",                            self$workbook.xml.rels)
@@ -5956,6 +5971,7 @@ wbWorkbook <- R6::R6Class(
           extRefInds,
           themeInd,
           connectionsInd,
+          customXMLInd,
           stylesInd,
           sharedStringsInd,
           tableInds,
@@ -6040,31 +6056,6 @@ wbWorkbook <- R6::R6Class(
               self$worksheets[[i]]$sheetViews,
               ignore.case = TRUE
             )
-        }
-      }
-
-
-      if (length(self$workbook$definedNames)) {
-        # TODO consider self$get_sheet_names() which orders the sheet names?
-        sheets <- self$sheet_names[self$sheetOrder]
-
-        belongTo <- get_named_regions(self)
-        belongTo <- belongTo$sheets[belongTo$value != "table"]
-
-        ## sheets is in re-ordered order (order it will be displayed)
-        newId <- match(belongTo, sheets) - 1L
-        oldId <- as.integer(reg_match0(self$workbook$definedNames, '(?<= localSheetId=")[0-9]+'))
-
-        for (i in seq_along(self$workbook$definedNames)) {
-          if (!is.na(newId[i])) {
-            self$workbook$definedNames[[i]] <-
-              gsub(
-                sprintf('localSheetId=\"%s\"', oldId[i]),
-                sprintf('localSheetId=\"%s\"', newId[i]),
-                self$workbook$definedNames[[i]],
-                fixed = TRUE
-              )
-          }
         }
       }
 
