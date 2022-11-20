@@ -116,11 +116,13 @@ get_date_origin <- function(xlsxFile, origin = FALSE) {
 
 parseOffset <- function(tz) {
   # likely for cases where tz is NA
-  suppressWarnings(
-    z <- ifelse(stringi::stri_sub(tz, 1, 1) == "+", 1L, -1L) *
-      (as.integer(stringi::stri_sub(tz, 2, 3)) +
-        as.integer(stringi::stri_sub(tz, 4, 5)) / 60) / 24
-  )
+  z <- vector("numeric", length = length(tz))
+  z[is.na(tz)] <- NA_real_
+  tz <- tz[!is.na(tz)]
+
+  z[!is.na(z)] <- ifelse(stringi::stri_sub(tz, 1, 1) == "+", 1L, -1L) *
+    (as.integer(stringi::stri_sub(tz, 2, 3)) +
+     as.integer(stringi::stri_sub(tz, 4, 5)) / 60) / 24
 
   ifelse(is.na(z), 0, z)
 }
