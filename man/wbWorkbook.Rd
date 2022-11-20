@@ -148,6 +148,8 @@ create_border
 
 \item{\code{connections}}{connections}
 
+\item{\code{ctrlProps}}{ctrlProps}
+
 \item{\code{Content_Types}}{Content_Types}
 
 \item{\code{app}}{app}

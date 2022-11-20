@@ -276,3 +276,29 @@ test_that("read workbook with chart extension", {
   )
 
 })
+
+test_that("reading of formControl works", {
+
+  skip_if_offline()
+
+  temp <- temp_xlsx()
+
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/form_control.xlsx")
+
+  exp <- c(
+    "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"CheckBox\" checked=\"Checked\" lockText=\"1\" noThreeD=\"1\"/>",
+    "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"Radio\" checked=\"Checked\" firstButton=\"1\" lockText=\"1\" noThreeD=\"1\"/>",
+    "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"Radio\" lockText=\"1\" noThreeD=\"1\"/>",
+    "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"CheckBox\" lockText=\"1\" noThreeD=\"1\"/>",
+    "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"Drop\" dropStyle=\"combo\" dx=\"15\" noThreeD=\"1\" sel=\"0\" val=\"0\"/>"
+  )
+  got <- wb$ctrlProps
+  expect_equal(exp, got)
+
+  wb$save(temp)
+  wb <- wb_load(temp)
+
+  got <- wb$ctrlProps
+  expect_equal(exp, got)
+
+})

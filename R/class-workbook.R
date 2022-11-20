@@ -36,6 +36,9 @@ wbWorkbook <- R6::R6Class(
     #' @field connections connections
     connections = NULL,
 
+    #' @field ctrlProps ctrlProps
+    ctrlProps = NULL,
+
     #' @field Content_Types Content_Types
     Content_Types = genBaseContent_Type(),
 
@@ -1453,6 +1456,15 @@ wbWorkbook <- R6::R6Class(
       ## connections
       if (length(self$connections)) {
         write_file(body = self$connections, fl = file.path(xlDir, "connections.xml"))
+      }
+
+      ## connections
+      if (length(self$ctrlProps)) {
+        ctrlPropsDir <- dir_create(tmpDir, "xl", "ctrlProps")
+
+        for (i in seq_along(self$ctrlProps)) {
+          write_file(body = self$ctrlProps[i], fl = file.path(ctrlPropsDir, sprintf("ctrlProp%i.xml", i)))
+        }
       }
 
       if (length(self$customXml)) {

@@ -257,5 +257,6 @@ read_xml_files <- function(x) {
   vapply(X = x,
          FUN = read_xml,
          pointer = FALSE,
-         FUN.VALUE = NA_character_)
+         FUN.VALUE = NA_character_,
+         USE.NAMES = FALSE)
 }
