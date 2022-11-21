@@ -47,6 +47,38 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   )
 }
 
+#' create dimensions from dataframe
+#' @param df dataframe with spreadsheet columns and rows
+#' @examples {
+#'   df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
+#'   dataframe_to_dims(df)
+#' }
+#' @export
+dataframe_to_dims <- function(df) {
+
+  # get continuous sequences of columns and rows in df
+  v <- as.integer(rownames(df))
+  rows <- split(v, cumsum(diff(c(-Inf, v)) != 1))
+
+  v <- col2int(colnames(df))
+  cols <- split(colnames(df), cumsum(diff(c(-Inf, v)) != 1))
+
+  # combine columns and rows to construct dims
+  out <- NULL
+  for (col in seq_along(cols)) {
+    for (row in seq_along(rows)) {
+      tmp <- paste0(
+        cols[[col]][[1]], rows[[row]][[1]],
+        ":",
+        rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
+        )
+      out <- c(out, tmp)
+    }
+  }
+
+  paste0(out, collapse = ";")
+}
+
 # # similar to all, simply check if most of the values match the condition
 # # in guess_col_type not all bools may be "b" some are "s" (missings)
 # most <- function(x) {
@@ -467,16 +499,16 @@ wb_to_df <- function(
   cc$val <- NA_character_
   cc$typ <- NA_character_
 
-  cc_tab <- table(cc$c_t)
+  cc_tab <- unique(cc$c_t)
 
   # bool
-  if (isTRUE(cc_tab[c("b")] > 0)) {
+  if (any(cc_tab == c("b"))) {
     sel <- cc$c_t %in% c("b")
     cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
     cc$typ[sel] <- "b"
   }
   # text in v
-  if (isTRUE(any(cc_tab[c("str", "e")] > 0))) {
+  if (any(cc_tab %in% c("str", "e"))) {
     sel <- cc$c_t %in% c("str", "e")
     cc$val[sel] <- cc$v[sel]
     cc$typ[sel] <- "s"
@@ -487,13 +519,13 @@ wb_to_df <- function(
     cc$typ[sel] <- "s"
   }
   # text in t
-  if (isTRUE(cc_tab[c("inlineStr")] > 0)) {
+  if (any(cc_tab %in% c("inlineStr"))) {
     sel <- cc$c_t %in% c("inlineStr")
     cc$val[sel] <- is_to_txt(cc$is[sel])
     cc$typ[sel] <- "s"
   }
   # test is sst
-  if (isTRUE(cc_tab[c("s")] > 0)) {
+  if (any(cc_tab %in% c("s"))) {
     sel <- cc$c_t %in% c("s")
     cc$val[sel] <- sst[as.numeric(cc$v[sel]) + 1]
     cc$typ[sel] <- "s"

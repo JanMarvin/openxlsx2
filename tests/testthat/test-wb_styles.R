@@ -471,3 +471,33 @@ test_that("style names are xml", {
   expect_equal(exp, got)
 
 })
+
+test_that("add numfmt is no longer slow", {
+
+  beg <- "1900-1-1"
+  end <- "2022-11-18"
+
+  dat <- seq(
+    from = as.POSIXct(beg, tz = "UTC"),
+    to   = as.POSIXct(end, tz = "UTC"),
+    by   = "day"
+  )
+
+  # when writing this creates the 29Feb1900 (#421)
+  out <- data.frame(
+    date = dat,
+    chr  = as.character(dat),
+    num  = seq_along(dat) - 1
+  )
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet()
+
+  # just a tiny test to check that this does not run forever
+  expect_silent(
+    wb <- wb %>%
+      wb_add_data(x = out) %>%
+      wb_add_numfmt(dims = "C1:C44882", numfmt = "#.0")
+  )
+
+})

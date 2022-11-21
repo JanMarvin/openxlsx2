@@ -377,14 +377,7 @@ write_data2 <- function(
       # ignore first row if colNames
       if (colNames) sel_rows <- sel_rows[-1]
 
-      paste(
-        unname(
-          unlist(
-            rtyp[rownames(rtyp) %in% sel_rows, sel_cols, drop = FALSE]
-          )
-        ),
-        collapse = ";"
-      )
+      dataframe_to_dims(rtyp[rownames(rtyp) %in% sel_rows, sel_cols, drop = FALSE])
     }
 
     # if hyperlinks are found, Excel sets something like the following font
