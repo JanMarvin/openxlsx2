@@ -5978,6 +5978,7 @@ wbWorkbook <- R6::R6Class(
       sharedStringsInd <- grep("sharedStrings.xml",                          self$workbook.xml.rels)
       tableInds        <- grep("table[0-9]+.xml",                            self$workbook.xml.rels)
       personInds       <- grep("person.xml",                                 self$workbook.xml.rels)
+      calcChainInd     <- grep("calcChain.xml",                              self$workbook.xml.rels)
 
 
       ## Reordering of workbook.xml.rels
@@ -5996,7 +5997,8 @@ wbWorkbook <- R6::R6Class(
           stylesInd,
           sharedStringsInd,
           tableInds,
-          personInds
+          personInds,
+          calcChainInd
         )]
 
       ## Re assign rIds to children of workbook.xml.rels

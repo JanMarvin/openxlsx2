@@ -387,9 +387,15 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       "Content_Types",
       '<Override PartName="/xl/calcChain.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml"/>'
     )
+
+    ## workbook rels
+    wb$append(
+      "workbook.xml.rels",
+      sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain" Target="calcChain.xml"/>',
+        length(wb$workbook.xml.rels) + 1
+      )
+    )
   }
-
-
 
   ## xl\sharedStrings
   if (length(sharedStringsXML)) {
