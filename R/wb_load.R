@@ -311,8 +311,15 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       wb$workbook$revisionPtr <- revisionPtr
     }
 
+    # no clue what calcPr does. If a calcChain is available, this prevents
+    # formulas from getting reevaluated unless they are visited manually.
     calcPr <- xml_node(workbook_xml, "workbook", "calcPr")
     if (!data_only && length(calcPr)) {
+      # we override the default unless explicitly requested
+      if (!getOption("openxlsx2.disableFullCalcOnLoad")) {
+        calcPr <- xml_attr_mod(calcPr, c(fullCalcOnLoad = "1"))
+      }
+
       wb$workbook$calcPr <- calcPr
     }
 
