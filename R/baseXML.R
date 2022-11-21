@@ -108,6 +108,7 @@ genBaseWorkbook <- function() {
     fileSharing = NULL,
     workbookPr = '<workbookPr date1904="false"/>',
     alternateContent = NULL,
+    revisionPtr = NULL,
     absPath = NULL, # "x15ac:absPath"
     workbookProtection = NULL,
     bookViews = NULL,

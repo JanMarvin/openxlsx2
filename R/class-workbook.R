@@ -1696,10 +1696,10 @@ wbWorkbook <- R6::R6Class(
       # workbook order, therefore we have to make sure that the expected order is written.
       # Othterwise spreadsheet software will complain.
       workbook_openxml281 <- c(
-        "fileVersion", "fileSharing", "workbookPr", "alternateContent", "absPath", "workbookProtection",
-        "bookViews", "sheets", "functionGroups", "externalReferences", "definedNames", "calcPr",
-        "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr", "smartTagTypes", "webPublishing",
-        "fileRecoveryPr", "webPublishObjects", "extLst"
+        "fileVersion", "fileSharing", "workbookPr", "alternateContent", "revisionPtr", "absPath",
+        "workbookProtection", "bookViews", "sheets", "functionGroups", "externalReferences",
+        "definedNames", "calcPr", "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr",
+        "smartTagTypes", "webPublishing", "fileRecoveryPr", "webPublishObjects", "extLst"
       )
 
       write_file(

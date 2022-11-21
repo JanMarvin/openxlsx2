@@ -306,6 +306,11 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     }
 
     ## additional workbook attributes
+    revisionPtr <- xml_node(workbook_xml, "workbook", "xr:revisionPtr")
+    if (!data_only && length(revisionPtr)) {
+      wb$workbook$revisionPtr <- revisionPtr
+    }
+
     calcPr <- xml_node(workbook_xml, "workbook", "calcPr")
     if (!data_only && length(calcPr)) {
       wb$workbook$calcPr <- calcPr
