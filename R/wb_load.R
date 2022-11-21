@@ -316,7 +316,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     calcPr <- xml_node(workbook_xml, "workbook", "calcPr")
     if (!data_only && length(calcPr)) {
       # we override the default unless explicitly requested
-      if (!getOption("openxlsx2.disableFullCalcOnLoad")) {
+      if (is.null(getOption("openxlsx2.disableFullCalcOnLoad"))) {
         calcPr <- xml_attr_mod(calcPr, c(fullCalcOnLoad = "1"))
       }
 
