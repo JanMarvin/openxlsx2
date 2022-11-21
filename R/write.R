@@ -314,6 +314,8 @@ write_data2 <- function(
     } else {
       cc[is_na, "v"]  <- ""
       if (is.null(na.strings)) {
+        cc[is_na, "c_t"] <- ""
+        cc[is_na, "is"]  <- ""
         # do nothing
       } else {
         cc[is_na, "c_t"] <- "inlineStr"
