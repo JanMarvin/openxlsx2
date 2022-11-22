@@ -290,8 +290,7 @@ test_that("NA works as expected", {
       dims = "A2",
       x = NA_character_,
       na.strings = NULL
-    )$
-    save("/tmp/test.xlsx")
+    )
 
   exp <- c(NA_real_, NA_real_)
   got <- wb_to_df(wb, colNames = FALSE)$A
