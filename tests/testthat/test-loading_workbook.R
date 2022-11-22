@@ -312,11 +312,23 @@ test_that("loading slicers works", {
     "<Relationship Id=\"rId0\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet2.xml\"/>",
     "<Relationship Id=\"rId0\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet3.xml\"/>",
     "<Relationship Id=\"rId0\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet4.xml\"/>",
+    "<Relationship Id=\"rId8\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain\" Target=\"calcChain.xml\"/>",
     "<Relationship Id=\"rId20001\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"pivotCache/pivotCacheDefinition1.xml\"/>",
     "<Relationship Id=\"rId20002\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"pivotCache/pivotCacheDefinition2.xml\"/>",
     "<Relationship Id=\"rId100001\" Type=\"http://schemas.microsoft.com/office/2007/relationships/slicerCache\" Target=\"slicerCaches/slicerCache1.xml\"/>"
   )
   got <- wb$workbook.xml.rels
+  expect_equal(exp, got)
+
+  exp <- "<calcPr calcId=\"152511\" fullCalcOnLoad=\"1\"/>"
+  got <- wb$workbook$calcPr
+  expect_equal(exp, got)
+
+  options("openxlsx2.disableFullCalcOnLoad" = TRUE)
+  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+
+  exp <- "<calcPr calcId=\"152511\"/>"
+  got <- wb$workbook$calcPr
   expect_equal(exp, got)
 
 })

@@ -1696,10 +1696,10 @@ wbWorkbook <- R6::R6Class(
       # workbook order, therefore we have to make sure that the expected order is written.
       # Othterwise spreadsheet software will complain.
       workbook_openxml281 <- c(
-        "fileVersion", "fileSharing", "workbookPr", "alternateContent", "absPath", "workbookProtection",
-        "bookViews", "sheets", "functionGroups", "externalReferences", "definedNames", "calcPr",
-        "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr", "smartTagTypes", "webPublishing",
-        "fileRecoveryPr", "webPublishObjects", "extLst"
+        "fileVersion", "fileSharing", "workbookPr", "alternateContent", "revisionPtr", "absPath",
+        "workbookProtection", "bookViews", "sheets", "functionGroups", "externalReferences",
+        "definedNames", "calcPr", "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr",
+        "smartTagTypes", "webPublishing", "fileRecoveryPr", "webPublishObjects", "extLst"
       )
 
       write_file(
@@ -5978,6 +5978,7 @@ wbWorkbook <- R6::R6Class(
       sharedStringsInd <- grep("sharedStrings.xml",                          self$workbook.xml.rels)
       tableInds        <- grep("table[0-9]+.xml",                            self$workbook.xml.rels)
       personInds       <- grep("person.xml",                                 self$workbook.xml.rels)
+      calcChainInd     <- grep("calcChain.xml",                              self$workbook.xml.rels)
 
 
       ## Reordering of workbook.xml.rels
@@ -5996,7 +5997,8 @@ wbWorkbook <- R6::R6Class(
           stylesInd,
           sharedStringsInd,
           tableInds,
-          personInds
+          personInds,
+          calcChainInd
         )]
 
       ## Re assign rIds to children of workbook.xml.rels

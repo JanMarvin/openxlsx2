@@ -20,6 +20,10 @@
 
 * Fixed a case where embedded files were assigned incorrectly in worksheet relationships. This caused corrupted output. [403](https://github.com/JanMarvin/openxlsx2/pull/403)
 
+## Breaking changes
+
+* Previously if a loaded workbook contained formulas pointing to cells modified by `openxlsx2`, these formulas were not updated, once the workbook was opened in spreadsheet software. This is now enforced, unless the option `openxlsx2.disableFullCalcOnLoad` is set. In this case we would respect the original calculation properties of the  workbook.
+
 
 ***************************************************************************
 
