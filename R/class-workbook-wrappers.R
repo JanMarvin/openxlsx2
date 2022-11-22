@@ -50,6 +50,10 @@ wb_workbook <- function(
 #' @export
 #' @family workbook wrappers
 #'
+#' @returns
+#' * [wb_save()] returns the `wbWorkbook` object, invisibly
+#' * [wb_write()] returns the `path` where the workbook was saved
+#'
 #' @examples
 #' ## Create a new workbook and add a worksheet
 #' wb <- wb_workbook("Creator of workbook")
@@ -61,9 +65,14 @@ wb_workbook <- function(
 #' }
 wb_save <- function(wb, path = NULL, overwrite = TRUE) {
   assert_workbook(wb)
-  wb$clone()$save(path = path, overwrite = overwrite)$path
+  wb$clone()$save(path = path, overwrite = overwrite)
 }
 
+#' @rdname wb_save
+#' @export
+wb_write <- function(wb, path = NULL, overwrite = TRUE) {
+  wb_save(wb = wb, path = path, overwrite = overwrite)$path
+}
 
 # add data ----------------------------------------------------------------
 
