@@ -37,7 +37,7 @@ test_that("Load and saving a file with Threaded Comments works", {
   fl <- system.file("extdata", "loadThreadComment.xlsx", package = "openxlsx2")
   expect_silent(wb <- wb_load(fl))
   # Check that wb can be saved without error
-  expect_silent(wb_save(wb, path = temp_xlsx()))
+  expect_silent(wb_write(wb, path = temp_xlsx()))
 
 })
 
@@ -71,7 +71,7 @@ test_that("Read and save file with inlineStr", {
 
   tmp_xlsx <- temp_xlsx()
   # Check that wb can be saved without error and reimported
-  expect_identical(tmp_xlsx, wb_save(wb, path = tmp_xlsx))
+  expect_identical(tmp_xlsx, wb_write(wb, path = tmp_xlsx))
   wb_df_re <- wb_read(wb_load(tmp_xlsx))
   attr(wb_df_re, "tt") <- NULL
   attr(wb_df_re, "types") <- NULL
@@ -145,7 +145,7 @@ test_that("sheet visibility", {
   wb_vis <- wb_get_sheet_visibility(wb)
 
   # save
-  wb_save(wb, tmp_dir)
+  wb_write(wb, tmp_dir)
 
   # re-import
   wb2 <- wb_load(tmp_dir)
@@ -239,7 +239,7 @@ test_that("test headerFooter", {
 
   tmp1 <- temp_xlsx()
   # Save workbook
-  wb_save(wb, tmp1, overwrite = TRUE)
+  wb_write(wb, tmp1, overwrite = TRUE)
   # Load workbook and save again
   wb2 <- wb_load(tmp1)
 
