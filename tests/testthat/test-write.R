@@ -276,3 +276,25 @@ test_that("write_rownames", {
   expect_equal(exp, got)
 
 })
+
+test_that("NA works as expected", {
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet1")$
+    add_data(
+      dims = "A1",
+      x = NA,
+      na.strings = NULL
+    )$
+    add_data(
+      dims = "A2",
+      x = NA_character_,
+      na.strings = NULL
+    )$
+    save("/tmp/test.xlsx")
+
+  exp <- c(NA_real_, NA_real_)
+  got <- wb_to_df(wb, colNames = FALSE)$A
+  expect_equal(exp, got)
+
+})
