@@ -2,9 +2,12 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_save}
 \alias{wb_save}
+\alias{wb_write}
 \title{Save Workbook to file}
 \usage{
 wb_save(wb, path = NULL, overwrite = TRUE)
+
+wb_write(wb, path = NULL, overwrite = TRUE)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
@@ -12,6 +15,12 @@ wb_save(wb, path = NULL, overwrite = TRUE)
 \item{path}{A path to save the workbook to}
 
 \item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
+}
+\value{
+\itemize{
+\item \code{\link[=wb_save]{wb_save()}} returns the \code{wbWorkbook} object, invisibly
+\item \code{\link[=wb_write]{wb_write()}} returns the \code{path} where the workbook was saved
+}
 }
 \description{
 Save Workbook to file
