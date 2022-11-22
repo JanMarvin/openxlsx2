@@ -31,6 +31,16 @@ test_that("wb_save() is a wrapper", {
   expect_wrapper("save", params = NULL, ignore = "path")
 })
 
+test_that("wb_write()", {
+  obj <- temp_xlsx()
+  on.exit(file.remove(obj))
+
+  wb <- wb_workbook()
+  wb$add_worksheet("sheet")
+  exp <- wb_write(wb, obj)
+  expect_identical(obj, exp)
+})
+
 # wb_merge_cells(), wb_unmerge_cells() ------------------------------------
 
 test_that("wb_merge_cells(), wb_unmerge_cells() are wrappers", {
