@@ -192,6 +192,12 @@ write_data2 <- function(
   # TODO need to tell excel that we have a date, apply some kind of numFmt
   data <- convertToExcelDate(df = data, date1904 = hconvert_date1904)
 
+  # backward compatible
+  if (!inherits(data, "data.frame") || inherits(data, "matrix")) {
+    data <- as.data.frame(data)
+    colNames <- FALSE
+  }
+
   if (inherits(data, "data.frame") || inherits(data, "matrix")) {
     is_data_frame <- TRUE
 
@@ -656,7 +662,7 @@ write_data_table <- function(
     colNames <- FALSE
   }
 
-  if (is.vector(x) || is.factor(x) || inherits(x, "Date")) {
+  if (is.vector(x) || is.factor(x) || inherits(x, "Date") || inherits(x, "POSIXt")) {
     colNames <- FALSE
   } ## this will go to coerce.default and rowNames will be ignored
 

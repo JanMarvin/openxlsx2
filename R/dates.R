@@ -24,7 +24,10 @@ as_POSIXct_utc <- function(x) {
 #' convert_date(c(41750, 41751, 41752, 41753, 41754, NA))
 #' convert_date(c(41750.2, 41751.99, NA, 41753))
 convert_date <- function(x, origin = "1900-01-01", ...) {
-  x <- as.numeric(x)
+
+  # use as.integer to only get the integer part of a number.
+  # in openxml dates are integers only.
+  x <- as.integer(x)
   notNa <- !is.na(x)
   earlyDate <- x < 60
 
@@ -111,6 +114,59 @@ get_date_origin <- function(xlsxFile, origin = FALSE) {
   z
 }
 
+parseOffset <- function(tz) {
+  # likely for cases where tz is NA
+  z <- vector("numeric", length = length(tz))
+  z[is.na(tz)] <- NA_real_
+  tz <- tz[!is.na(tz)]
+
+  z[!is.na(z)] <- ifelse(stringi::stri_sub(tz, 1, 1) == "+", 1L, -1L) *
+    (as.integer(stringi::stri_sub(tz, 2, 3)) +
+     as.integer(stringi::stri_sub(tz, 4, 5)) / 60) / 24
+
+  ifelse(is.na(z), 0, z)
+}
+
+conv_to_excel_date <- function(x, date1904 = FALSE) {
+
+  to_convert <- inherits(x, "POSIXlt") || inherits(x, "Date")
+  if (to_convert) {
+    # as.POSIXlt does not use local timezone
+    if (inherits(x, "Date")) x <- as.POSIXlt(x)
+    x <- as.POSIXct(x)
+  }
+
+  if (!inherits(x, "Date") && !inherits(x, "POSIXct")) {
+    warning("could not convert x to Excel date. x is of class: ",
+            class(x))
+    return(x)
+  }
+
+  ## convert any Dates to integers and create date style object
+  origin <- 25569L
+  if (date1904) origin <- 24107L
+
+  if (inherits(x, "POSIXct")) {
+    tz <- format(x, "%z")
+    offSet <- parseOffset(tz)
+
+    z <- as.numeric(x) / 86400L + origin + offSet
+
+    # Excel ships a date 29Feb1900 due to initial backward comparability
+    # with previous spreadsheet software.
+    if (origin == 25569L) {
+      earlyDate <- z <= 60L & !is.na(z)
+      z[earlyDate] <- z[earlyDate] - 1L
+    }
+  }
+
+  if (any(z < 1, na.rm = TRUE)) {
+    warning("Date < 1900-01-01 found. This can not be converted.")
+  }
+
+  z
+}
+
 #' convert back to ExcelDate
 #' @param df dataframe
 #' @param date1904 take different origin
@@ -122,50 +178,11 @@ get_date_origin <- function(xlsxFile, origin = FALSE) {
 #'  convertToExcelDate(df = df["Var5"], date1904 = FALSE)
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
-  isPOSIXlt <- function(data) vapply(data, inherits, NA, "POSIXlt")
-  to_convert <- isPOSIXlt(df)
-
-  if (any(to_convert)) {
-    message("Found POSIXlt. Converting to POSIXct")
-    df[to_convert] <- lapply(df[to_convert], as.POSIXct)
-  }
 
   df_class <- as.data.frame(Map(class, df))
   is_date <- apply(df_class, 2, function(x) any(x %in%  c("Date", "POSIXct")))
 
-  ## convert any Dates to integers and create date style object
-  if (any(is_date)) {
-
-    dInds <- which(apply(df_class, 2, function(x) any(x %in%  c("Date"))))
-    origin <- 25569L
-    if (date1904) origin <- 24107L
-
-    for (i in dInds) {
-      df[[i]] <- as.integer(df[[i]]) + origin
-      if (origin == 25569L) {
-        earlyDate <- which(df[[i]] < 60)
-        df[[i]][earlyDate] <- df[[i]][earlyDate] - 1
-      }
-    }
-
-    pInds <- which(apply(df_class, 2, function(x) any(x %in%  c("POSIXct"))))
-    if (length(pInds) && nrow(df)) {
-      parseOffset <- function(tz) {
-        suppressWarnings(
-          ifelse(stri_sub(tz, 1, 1) == "+", 1L, -1L)
-          * (as.integer(stri_sub(tz, 2, 3)) + as.integer(stri_sub(tz, 4, 5)) / 60) / 24
-        )
-      }
-
-      t <- lapply(df[pInds], function(x) format(x, "%z"))
-      offSet <- lapply(t, parseOffset)
-      offSet <- lapply(offSet, function(x) ifelse(is.na(x), 0, x))
-
-      for (i in seq_along(pInds)) {
-        df[[pInds[i]]] <- as.numeric(as.POSIXct(df[[pInds[i]]])) / 86400 + origin + offSet[[i]]
-      }
-    }
-  }
+  df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
 
   df
 }

@@ -193,3 +193,33 @@ test_that("dataframe_to_dims", {
   expect_equal(df, df2)
 
 })
+
+test_that("handle 29Feb1900", {
+
+  dates <- c("1900-02-28", "1900-03-01")
+  as_date <- as.Date(dates)
+  as_posix <- as.POSIXct(dates)
+
+  exp <- c(59, 61)
+  got <- conv_to_excel_date(as_date)
+  expect_equal(exp, got)
+
+  got <- conv_to_excel_date(as_posix)
+  expect_equal(exp, got)
+
+  expect_warning(
+    conv_to_excel_date("x"),
+    "could not convert x to Excel date. x is of class: character"
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(x = as_date)$
+    add_worksheet()$add_data(x = as_posix)
+
+  got <- wb_to_df(wb, sheet = 1, colNames = FALSE)$A
+  expect_equal(as_date, got)
+
+  got <- wb_to_df(wb, sheet = 2, colNames = FALSE)$A
+  expect_equal(as_posix, got)
+
+})
