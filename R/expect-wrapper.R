@@ -36,9 +36,6 @@ expect_wrapper <- function(
     is.list(params) || is.null(params)
   )
 
-  # TODO if using testthat 3e, safely change `all.equal()` to `waldo::compare()`
-  # as waldo is already a dependency for testing
-
   method_fun <- get(method, wbWorkbook$public_methods)
   fun_fun    <- match.fun(fun)
 
