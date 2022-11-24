@@ -846,7 +846,6 @@ wb_set_selected <- function(wb, sheet) {
 #' wb <- wb_workbook() %>%
 #'  wb_add_worksheet() %>%
 #'  wb_add_mschart(dims = "F4:L20", graph = scatter)
-#' }
 #'
 #' ## Add mschart to worksheet and use available data
 #' wb <- wb_workbook() %>%
@@ -867,6 +866,7 @@ wb_set_selected <- function(wb, sheet) {
 #' # add the scatterplot to the data
 #' wb <- wb %>%
 #'   wb_add_mschart(dims = "F4:L20", graph = data_plot)
+#' }
 #' @seealso [wb_data()]
 #' @export
 wb_add_mschart <- function(
