@@ -3548,8 +3548,13 @@ wbWorkbook <- R6::R6Class(
       self$charts <- rbind(self$charts, chart)
 
       # create Drawing
-      self$drawings[[sheet]] <- drawings(from = c(from[1] - 1, to[1] - 1), to = c(from[2], to[2]))
-      self$drawings_rels[[sheet]] <- drawings_rels(next_chart)
+      self$drawings[[sheet]] <- drawings(
+        drawings = self$drawings[[sheet]],
+        from = c(from[1] - 1, to[1] - 1),
+        to = c(from[2], to[2])
+      )
+
+      self$drawings_rels[[sheet]] <- drawings_rels(self$drawings_rels[[sheet]], next_chart)
 
       self$worksheets[[sheet]]$drawing <- "<drawing r:id=\"rId1\"/>"
       self$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
