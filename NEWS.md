@@ -12,8 +12,6 @@
 
 * Allow reading files with xml namespace created by third party software. [405](https://github.com/JanMarvin/openxlsx2/pull/405)
 
-* `wb_write()` has been added to replace the previous behavior of `wb_save()` (see **Breaking changes**) [378](https://github.com/JanMarvin/openxlsx2/issues/378)
-
 ## Fixes
 
 * Implement reading `customXml` folder for input files with connection. [419](https://github.com/JanMarvin/openxlsx2/pull/419)
@@ -26,7 +24,7 @@
 
 * Previously if a loaded workbook contained formulas pointing to cells modified by `openxlsx2`, these formulas were not updated, once the workbook was opened in spreadsheet software. This is now enforced, unless the option `openxlsx2.disableFullCalcOnLoad` is set. In this case we would respect the original calculation properties of the  workbook.
 
-* `wb_save()` no longer returns the `path` that the object was saved to, but instead the `wbWorkbook` object, invisibly.  This is consistent with the behavior of others wrappers.  `wb_write()` has been added to replace this behavior. [378](https://github.com/JanMarvin/openxlsx2/issues/378)
+* `wb_save()` no longer returns the `path` that the object was saved to, but instead the `wbWorkbook` object, invisibly.  This is consistent with the behavior of others wrappers. [378](https://github.com/JanMarvin/openxlsx2/issues/378)
 
 ***************************************************************************
 
