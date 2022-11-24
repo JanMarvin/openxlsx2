@@ -17,5 +17,9 @@ wb_data(wb, sheet = current_sheet(), dims = "A1")
 provide wb_data object as mschart input
 }
 \examples{
+ wb <- wb_workbook() \%>\%
+   wb_add_worksheet() \%>\%
+   wb_add_data(x = mtcars, dims = "B2")
+
  wb_data(wb, 1, dims = "B2:E6")
 }

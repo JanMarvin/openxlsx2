@@ -884,6 +884,10 @@ wb_add_mschart <- function(
 #' @param sheet a sheet in the workbook either name or index
 #' @param dims the dimensions
 #' @examples
+#'  wb <- wb_workbook() %>%
+#'    wb_add_worksheet() %>%
+#'    wb_add_data(x = mtcars, dims = "B2")
+#'
 #'  wb_data(wb, 1, dims = "B2:E6")
 #' @export
 wb_data <- function(wb, sheet = current_sheet(), dims = "A1") {
