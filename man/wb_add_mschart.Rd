@@ -37,7 +37,7 @@ wb <- wb_workbook() \%>\%
   wb_add_worksheet() \%>\%
   wb_add_data(x = mtcars, dims = "B2")
 
-# create wb_data object this will tell this mschart from this PR to create a file corresponding to openxlsx2
+# create wb_data object
 dat <- wb_data(wb, 1, dims = "B2:E6")
 
 # call ms_scatterplot
