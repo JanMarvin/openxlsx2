@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_functions.R
 \name{wb_data}
 \alias{wb_data}
-\title{provide wb_data object for mschart}
+\title{provide wb_data object as mschart input}
 \usage{
 wb_data(wb, sheet = current_sheet(), dims = "A1")
 }
@@ -14,5 +14,8 @@ wb_data(wb, sheet = current_sheet(), dims = "A1")
 \item{dims}{the dimensions}
 }
 \description{
-provide wb_data object for mschart
+provide wb_data object as mschart input
+}
+\examples{
+ wb_data(wb, 1, dims = "B2:E6")
 }
