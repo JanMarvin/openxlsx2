@@ -225,7 +225,7 @@ test_that("update cell(s)", {
                         row_r = c("2", "2", "2", "2", "2", "2"),
                         c_r = c("B", "C", "D", "E", "F", "G"),
                         c_s = c("1", "1", "1", "1", "1", "1"),
-                        c_t = c("b", "b", "b", "b", "b", "b"),
+                        c_t = c("", "", "", "", "", ""),
                         c_cm = c("", "", "", "", "", ""),
                         c_ph = c("", "", "", "", "", ""),
                         c_vm = c("", "", "", "", "", ""),
@@ -273,6 +273,27 @@ test_that("write_rownames", {
     types = c(A = 0, B = 0)
   )
   got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE)
+  expect_equal(exp, got)
+
+})
+
+test_that("NA works as expected", {
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet1")$
+    add_data(
+      dims = "A1",
+      x = NA,
+      na.strings = NULL
+    )$
+    add_data(
+      dims = "A2",
+      x = NA_character_,
+      na.strings = NULL
+    )
+
+  exp <- c(NA_real_, NA_real_)
+  got <- wb_to_df(wb, colNames = FALSE)$A
   expect_equal(exp, got)
 
 })
