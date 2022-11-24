@@ -5,7 +5,7 @@
 \title{dummy function to add a chart to an existing workbook
 currently only a barplot is possible}
 \usage{
-wb_add_chart_xml(wb, sheet = next_sheet(), xml, dims = "A1:H8")
+wb_add_chart_xml(wb, sheet = current_sheet(), xml, dims = "A1:H8")
 }
 \arguments{
 \item{wb}{a workbook}
