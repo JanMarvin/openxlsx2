@@ -31,7 +31,6 @@ scatter <- chart_settings(scatter, scatterstyle = "marker")
 wb <- wb_workbook() \%>\%
  wb_add_worksheet() \%>\%
  wb_add_mschart(dims = "F4:L20", graph = scatter)
-}
 
 ## Add mschart to worksheet and use available data
 wb <- wb_workbook() \%>\%
@@ -52,6 +51,7 @@ data_plot <- ms_scatterchart(
 # add the scatterplot to the data
 wb <- wb \%>\%
   wb_add_mschart(dims = "F4:L20", graph = data_plot)
+}
 }
 \seealso{
 \code{\link[=wb_data]{wb_data()}}
