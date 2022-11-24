@@ -14,10 +14,7 @@ wb_save(wb, path = NULL, overwrite = TRUE)
 \item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
 }
 \value{
-\itemize{
-\item \code{\link[=wb_save]{wb_save()}} returns the \code{wbWorkbook} object, invisibly
-\item \code{\link[=wb_write]{wb_write()}} returns the \code{path} where the workbook was saved
-}
+the \code{wbWorkbook} object, invisibly
 }
 \description{
 Save Workbook to file

@@ -50,9 +50,7 @@ wb_workbook <- function(
 #' @export
 #' @family workbook wrappers
 #'
-#' @returns
-#' * [wb_save()] returns the `wbWorkbook` object, invisibly
-#' * [wb_write()] returns the `path` where the workbook was saved
+#' @returns the `wbWorkbook` object, invisibly
 #'
 #' @examples
 #' ## Create a new workbook and add a worksheet
