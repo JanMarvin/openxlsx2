@@ -68,12 +68,6 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
   wb$clone()$save(path = path, overwrite = overwrite)
 }
 
-#' @rdname wb_save
-#' @export
-wb_write <- function(wb, path = NULL, overwrite = TRUE) {
-  wb_save(wb = wb, path = path, overwrite = overwrite)$path
-}
-
 # add data ----------------------------------------------------------------
 
 
