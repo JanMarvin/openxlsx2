@@ -330,3 +330,24 @@ test_that("write & load file with chartsheet", {
   expect_silent(wb2 <- wb_load(temp))
 
 })
+
+test_that("escaping of inlinestrings works", {
+
+  temp <- temp_xlsx()
+  wb <- wb_workbook()$
+    add_worksheet("Test")$
+    add_data(dims = "A1", x = "A & B")$
+    save(temp)
+
+  exp <- "A & B"
+  got <- wb_to_df(wb, colNames = FALSE)$A
+  expect_equal(exp, got)
+
+  got <- wb_to_df(temp, colNames = FALSE)$A
+  expect_equal(exp, got)
+
+  wb2 <- wb_load(temp)
+  got <- wb_to_df(wb2, colNames = FALSE)$A
+  expect_equal(exp, got)
+
+})
