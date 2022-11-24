@@ -1032,33 +1032,59 @@ stylebarplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.co
 </cs:chartStyle>')
 
 
-drawings <- function(from, to) {
-  sprintf(
-    '<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">
-<xdr:twoCellAnchor>
-<xdr:from>
-<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
-<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
-</xdr:from>
-<xdr:to>
-<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
-<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
-</xdr:to>
-<xdr:graphicFrame macro=\"\"><xdr:nvGraphicFramePr>
-<xdr:cNvPr id=\"2\" name=\"Chart 1\">
-<a:extLst><a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\"><a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\" id=\"{26250924-C6F2-F6FB-E235-146645DB2CBB}\"/></a:ext></a:extLst>
-</xdr:cNvPr><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/></xdr:xfrm>
-<a:graphic>
-<a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/chart\">
-<c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId1\"/>
-</a:graphicData>
-</a:graphic>
-</xdr:graphicFrame>
-<xdr:clientData/>
-</xdr:twoCellAnchor>
-</xdr:wsDr>',
+drawings <- function(drawings, from, to) {
+
+  has_drawings <- xml_node_name(drawings) == "xdr:wsDr"
+
+  if (!has_drawings) {
+    drawings <- xml_node_create(
+      xml_name = "xdr:wsDr",
+      xml_attributes = c(
+        `xmlns:xdr` = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+        `xmlns:a`   = "http://schemas.openxmlformats.org/drawingml/2006/main"
+      )
+    )
+  }
+
+  len_drawing <- length(xml_node_name(drawings, "xdr:wsDr"))
+
+  drawing <- sprintf(
+    '<xdr:twoCellAnchor>
+    <xdr:from>
+    <xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
+    <xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
+    </xdr:from>
+    <xdr:to>
+    <xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
+    <xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
+    </xdr:to>
+    <xdr:graphicFrame macro=\"\"><xdr:nvGraphicFramePr>
+    <xdr:cNvPr id=\"2\" name=\"Chart %s\">
+    <a:extLst>
+    <a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\">
+    <a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\"/>
+    </a:ext>
+    </a:extLst>
+    </xdr:cNvPr><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/></xdr:xfrm>
+    <a:graphic>
+    <a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/chart\">
+    <c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId%s\"/>
+    </a:graphicData>
+    </a:graphic>
+    </xdr:graphicFrame>
+    <xdr:clientData/>
+    </xdr:twoCellAnchor>', # id=\"{26250924-C6F2-F6FB-E235-146645DB2CBB}\
     from[1], from[2],
-    to[1], to[2]
+    to[1], to[2],
+    len_drawing + 1,
+    len_drawing + 1
+  )
+
+  return(
+    xml_append_child1(
+      node    = read_xml(drawings),
+      child   = read_xml(drawing),
+      pointer = FALSE)
   )
 }
 
@@ -1072,4 +1098,24 @@ chart1_rels_xml <- function(x) {
           x
   )
 }
-drawings_rels <- function(x) sprintf("<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart%s.xml\"/>", x)
+
+drawings_rels <- function(drawings, x) {
+
+  # ignore default case ""
+  if (all(drawings == "")) {
+    drawings <- NULL
+  }
+
+  rel_len <- length(xml_node(drawings, "Relationship"))
+
+  drawings <- c(
+    drawings,
+    sprintf(
+      "<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart%s.xml\"/>",
+      rel_len + 1,
+      x
+    )
+  )
+
+  return(drawings)
+}
