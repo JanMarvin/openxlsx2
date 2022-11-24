@@ -2,12 +2,9 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_save}
 \alias{wb_save}
-\alias{wb_write}
 \title{Save Workbook to file}
 \usage{
 wb_save(wb, path = NULL, overwrite = TRUE)
-
-wb_write(wb, path = NULL, overwrite = TRUE)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
