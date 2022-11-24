@@ -24,7 +24,7 @@ currently only a barplot is possible
 if (requireNamespace("mschart")) {
 require(mschart)
 
-### Scatter
+## Add mschart to worksheet (adds data and chart)
 scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
 scatter <- chart_settings(scatter, scatterstyle = "marker")
 
@@ -32,4 +32,27 @@ wb <- wb_workbook() \%>\%
  wb_add_worksheet() \%>\%
  wb_add_mschart(dims = "F4:L20", graph = scatter)
 }
+
+## Add mschart to worksheet and use available data
+wb <- wb_workbook() \%>\%
+  wb_add_worksheet() \%>\%
+  wb_add_data(x = mtcars, dims = "B2")
+
+# create wb_data object this will tell this mschart from this PR to create a file corresponding to openxlsx2
+dat <- wb_data(wb, 1, dims = "B2:E6")
+
+# call ms_scatterplot
+data_plot <- ms_scatterchart(
+  data = dat,
+  x = "mpg",
+  y = c("disp", "hp"),
+  labels = c("disp", "hp")
+)
+
+# add the scatterplot to the data
+wb <- wb \%>\%
+  wb_add_mschart(dims = "F4:L20", graph = data_plot)
+}
+\seealso{
+\code{\link[=wb_data]{wb_data()}}
 }
