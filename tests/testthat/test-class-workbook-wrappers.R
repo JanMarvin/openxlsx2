@@ -522,6 +522,20 @@ test_that("wb_set_cell_style() is a wrapper", {
 })
 
 
+# wb_add_chart_xml() ------------------------------------------------------
+
+test_that("wb_add_chart_xml() is a wrapper", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_wrapper(
+    "add_chart_xml",
+    wb = wb,
+    params = list(dims = "F4:L20", xml = "<a/>")
+  )
+})
+
+
 # wb_add_mschart() --------------------------------------------------------
 
 test_that("wb_add_mschart() is a wrapper", {

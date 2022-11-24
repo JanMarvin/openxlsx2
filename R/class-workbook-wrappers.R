@@ -2012,7 +2012,7 @@ wb_add_image <- function(
 #' @export
 wb_add_chart_xml <- function(
   wb,
-  sheet = next_sheet(),
+  sheet = current_sheet(),
   xml,
   dims = "A1:H8"
 ) {
