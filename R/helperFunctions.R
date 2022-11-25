@@ -228,6 +228,9 @@ amp_split <- function(x) {
   nam <- gsub(pattern = "&amp;", "", unlist(stri_match_all_regex(x, "&amp;[LCR]")))
   # split the string and assign names to join
   z <- unlist(stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
+
+  if (length(z) == 0) return(character(0))
+
   names(z) <- as.character(nam)
   res[c("L", "C", "R") %in% names(z)] <- z
 
