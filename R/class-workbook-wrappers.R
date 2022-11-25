@@ -50,6 +50,8 @@ wb_workbook <- function(
 #' @export
 #' @family workbook wrappers
 #'
+#' @returns the `wbWorkbook` object, invisibly
+#'
 #' @examples
 #' ## Create a new workbook and add a worksheet
 #' wb <- wb_workbook("Creator of workbook")
@@ -61,9 +63,8 @@ wb_workbook <- function(
 #' }
 wb_save <- function(wb, path = NULL, overwrite = TRUE) {
   assert_workbook(wb)
-  wb$clone()$save(path = path, overwrite = overwrite)$path
+  wb$clone()$save(path = path, overwrite = overwrite)
 }
-
 
 # add data ----------------------------------------------------------------
 

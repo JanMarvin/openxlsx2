@@ -1,11 +1,11 @@
 test_that("test return values for wb_save", {
   tempFile <- temp_xlsx()
   wb <- wb_add_worksheet(wb_workbook(), "name")
-  expect_identical(tempFile, wb_save(wb, tempFile))
+  expect_identical(tempFile, wb_save(wb, tempFile)$path)
   expect_error(wb_save(wb, tempFile), NA)
   expect_error(wb_save(wb, tempFile, overwrite = FALSE))
 
-  expect_identical(tempFile, wb_save(wb, tempFile))
+  expect_identical(tempFile, wb_save(wb, tempFile)$path)
   file.remove(tempFile)
 })
 

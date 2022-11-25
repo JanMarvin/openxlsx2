@@ -13,6 +13,9 @@ wb_save(wb, path = NULL, overwrite = TRUE)
 
 \item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
 }
+\value{
+the \code{wbWorkbook} object, invisibly
+}
 \description{
 Save Workbook to file
 }

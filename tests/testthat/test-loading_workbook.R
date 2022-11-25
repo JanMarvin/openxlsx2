@@ -71,7 +71,7 @@ test_that("Read and save file with inlineStr", {
 
   tmp_xlsx <- temp_xlsx()
   # Check that wb can be saved without error and reimported
-  expect_identical(tmp_xlsx, wb_save(wb, path = tmp_xlsx))
+  expect_identical(tmp_xlsx, wb_save(wb, path = tmp_xlsx)$path)
   wb_df_re <- wb_read(wb_load(tmp_xlsx))
   attr(wb_df_re, "tt") <- NULL
   attr(wb_df_re, "types") <- NULL
