@@ -57,8 +57,10 @@ colorSeries
 colour
 colours
 conditionalFormatting
+customMenu
 customProperties
 customSheetViews
+customXml
 darkDown
 darkGray
 darkGrid
@@ -130,7 +132,8 @@ lightHorizontal
 lightTrellis
 lightUp
 lightVertical
-localSheetId
+localName
+localSheet
 lockStructure
 lockWindows
 magrittr
@@ -237,9 +240,11 @@ veryHidden
 vm
 vml
 wb
+wbProcedure
 wbWorkbook
 webPublishItems
 withFilter
+workbookParameter
 workbooksheet
 ws
 xf
