@@ -14,6 +14,8 @@
 
 ## Fixes
 
+* Update or remove calculation chain when overwriting formulas in a workbook. [438](https://github.com/JanMarvin/openxlsx2/pull/438)
+
 * Fix double xml escaping when saving. [435](https://github.com/JanMarvin/openxlsx2/pull/435)
 
 * Minor tweak for POSIXct dates and try to avoid the notorious 29Feb1900. [424](https://github.com/JanMarvin/openxlsx2/pull/424)
