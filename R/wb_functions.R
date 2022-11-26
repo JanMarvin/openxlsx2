@@ -616,6 +616,11 @@ wb_to_df <- function(
       for (i in seq_along(mc)) {
         dms <- dims_to_dataframe(mc[i])
 
+        # Skip if merged cell is empty
+        if(all(is.na(z[rownames(z) %in% rownames(dms),
+                       colnames(z) %in% colnames(dms)])))
+          next
+
         z[rownames(z) %in% rownames(dms),
           colnames(z) %in% colnames(dms)] <- z[rownames(z) %in% rownames(dms[1, 1, drop = FALSE]),
                                                colnames(z) %in% colnames(dms[1, 1, drop = FALSE])]
