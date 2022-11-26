@@ -30,6 +30,9 @@
 
 * `wb_save()` no longer returns the `path` that the object was saved to, but instead the `wbWorkbook` object, invisibly.  This is consistent with the behavior of others wrappers. [378](https://github.com/JanMarvin/openxlsx2/issues/378)
 
+* Remove never used `all.equal.wbWorkbook()`. The idea was nice, but it never developed into something useful.
+
+
 ***************************************************************************
 
 
@@ -219,7 +222,7 @@
 
 * private `wbWorkbook` field `original_sheet_names` added to track the original names passed to sheets
 * private `$get_sheet()` removed in favor of more explicit
-* private `wbWorkbook` methods additions:  
+* private `wbWorkbook` methods additions:
   * `$get_sheet_id_max()`, `$get_sheet_index()` for getting ids
   * `$get_sheet_name()` for getting a sheet name
   * `$set_single_sheet_name()` for setting sheet names

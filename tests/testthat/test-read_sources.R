@@ -10,7 +10,7 @@ test_that("read_xlsx from different sources", {
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
   df_file <- read_xlsx(xlsxFile)
 
-  expect_true(all.equal(df_url, df_file), label = "Read from URL")
+  expect_equal(df_url, df_file, label = "Read from URL")
 
 
   ## Non-existing URL

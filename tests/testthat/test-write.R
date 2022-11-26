@@ -97,7 +97,7 @@ test_that("update_cells", {
   wb$add_data(x = data)
   cc2 <- wb$worksheets[[1]]$sheet_data$cc
 
-  all.equal(cc1, cc2)
+  expect_equal(cc1, cc2)
 
   ## write na.strings
   data <- matrix(NA, 2, 2)
