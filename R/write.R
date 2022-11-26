@@ -518,6 +518,33 @@ write_data2 <- function(
   }
   ### End styles
 
+  ### Update calcChain
+  if (length(wb$calcChain)) {
+
+    # if we overwrite a formula cell in the calculation chain, we have to update it
+    # At the moment we simply remove it from the calculation chain, in the future
+    # we might want to keep it if we write a formula.
+    xml <- wb$calcChain
+    calcChainR <- rbindlist(xml_attr(xml, "calcChain", "c"))
+    # according to the documentation there can be cases, without the sheetno reference
+    sel <- calcChainR$r %in% rtyp & calcChainR$i == sheetno
+    rmCalcChain <- as.integer(rownames(calcChainR[sel, , drop = FALSE]))
+    if (length(rmCalcChain)) {
+      xml <- xml_rm_child(xml, xml_child = "c", which = rmCalcChain)
+      # xml can not be empty, otherwise excel will complain. If xml is empty, remove all
+      # calcChain references from the workbook
+      if (length(xml_node_name(xml, "calcChain")) == 0) {
+        wb$Content_Types <- wb$Content_Types[-grep("/xl/calcChain", wb$Content_Types)]
+        wb$workbook.xml.rels <- wb$workbook.xml.rels[-grep("calcChain.xml", wb$workbook.xml.rels)]
+        wb$worksheets[[sheetno]]$sheetCalcPr <- character()
+        xml <- character()
+      }
+      wb$calcChain <- xml
+    }
+
+  }
+  ### End update calcChain
+
   return(wb)
 }
 

@@ -246,3 +246,18 @@ test_that("load file with connection", {
   expect_true(grepl("customXml/itemProps1.xml", wb$customXml[3]))
 
 })
+
+test_that("calcChain is updated", {
+
+  skip_if_offline()
+
+  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/overwrite_formula.xlsx"
+
+  wb <- wb_load(fl)$
+    add_data(dims = "A1", x = "Formula overwritten")
+
+  exp <- character()
+  got <- wb$calcChain
+  expect_equal(exp, got)
+
+})
