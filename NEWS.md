@@ -2,6 +2,8 @@
 
 ## New features
 
+* Improve print options. Defaults to printing grid lines, if the worksheet contains grid lines. [440](https://github.com/JanMarvin/openxlsx2/pull/440)
+
 * Support reading files with form control. [426](https://github.com/JanMarvin/openxlsx2/pull/426)
 
 * Handle input files with chart extensions. [443](https://github.com/JanMarvin/openxlsx2/pull/443)
