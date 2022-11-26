@@ -505,6 +505,25 @@ wbWorksheet <- R6::R6Class(
       invisible(self)
     },
 
+    add_print_options = function(
+        gridLines          = NULL,
+        gridLinesSet       = NULL,
+        headings           = NULL,
+        horizontalCentered = NULL,
+        verticalCentered   = NULL
+    ) {
+      self$printOptions <- xml_node_create(
+        xml_name = "printOptions",
+        xml_attributes = c(
+          gridLines          = as_xml_attr(gridLines),
+          gridLinesSet       = as_xml_attr(gridLinesSet),
+          headings           = as_xml_attr(headings),
+          horizontalCentered = as_xml_attr(horizontalCentered),
+          verticalCentered   = as_xml_attr(verticalCentered)
+        )
+      )
+    },
+
     #' @description append a field.  Intended for internal use only.  Not
     #'   guaranteed to remain a public method.
     #' @param field a field name
