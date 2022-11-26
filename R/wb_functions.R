@@ -617,8 +617,8 @@ wb_to_df <- function(
         dms <- dims_to_dataframe(mc[i])
 
         # Skip if merged cell is empty
-        if(all(is.na(z[rownames(z) %in% rownames(dms),
-                       colnames(z) %in% colnames(dms)])))
+        if (all(is.na(z[rownames(z) %in% rownames(dms),
+                        colnames(z) %in% colnames(dms)])))
           next
 
         z[rownames(z) %in% rownames(dms),
