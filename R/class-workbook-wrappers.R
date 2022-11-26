@@ -1196,15 +1196,16 @@ wb_protect <- function(
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param show A logical. If `FALSE`, grid lines are hidden.
+#' @param print A logical. If `FALSE`, grid lines are not printed.
 #' @export
 #' @examples
 #' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
 #' wb$get_sheet_names() ## list worksheets in workbook
 #' wb$grid_lines(1, show = FALSE)
 #' wb$grid_lines("testing", show = FALSE)
-wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE) {
+wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
   assert_workbook(wb)
-  wb$clone()$grid_lines(sheet = sheet, show = show)
+  wb$clone()$grid_lines(sheet = sheet, show = show, print = print)
 }
 
 # TODO hide gridlines?

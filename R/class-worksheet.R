@@ -148,6 +148,7 @@ wbWorksheet <- R6::R6Class(
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
+    #' @param printGridLines printGridLines
     #' @return a `wbWorksheet` object
     initialize = function(
       tabColour   = NULL,
@@ -160,7 +161,8 @@ wbWorksheet <- R6::R6Class(
       paperSize   = 9,
       orientation = "portrait",
       hdpi        = 300,
-      vdpi        = 300
+      vdpi        = 300,
+      printGridLines = gridLines
     ) {
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
@@ -179,6 +181,11 @@ wbWorksheet <- R6::R6Class(
 
       if (all(lengths(hf) == 0)) {
         hf <- list()
+      }
+
+      # only add if printGridLines not TRUE. The openxml default is TRUE
+      if (printGridLines) {
+       self$set_print_options(gridLines = printGridLines, gridLinesSet = printGridLines)
       }
 
       ## list of all possible children
@@ -314,6 +321,7 @@ wbWorksheet <- R6::R6Class(
           )
         },
 
+        self$printOptions,
         self$pageMargins,
         self$pageSetup,
 
@@ -505,7 +513,14 @@ wbWorksheet <- R6::R6Class(
       invisible(self)
     },
 
-    add_print_options = function(
+    #' @description add print options
+    #' @param gridLines gridLines
+    #' @param gridLinesSet gridLinesSet
+    #' @param headings If TRUE prints row and column headings
+    #' @param horizontalCentered If TRUE the page is horizontally centered
+    #' @param verticalCentered If TRUE the page is vertically centered
+    #' @returns The `wbWorksheet` object
+    set_print_options = function(
         gridLines          = NULL,
         gridLinesSet       = NULL,
         headings           = NULL,

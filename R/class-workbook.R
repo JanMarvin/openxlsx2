@@ -4103,24 +4103,23 @@ wbWorkbook <- R6::R6Class(
     #' @description grid lines
     #' @param sheet sheet
     #' @param show show
+    #' @param print print
     #' @returns The `wbWorkbook` object
-    grid_lines = function(sheet = current_sheet(), show = FALSE) {
+    grid_lines = function(sheet = current_sheet(), show = FALSE, print = show) {
       sheet <- private$get_sheet_index(sheet)
 
-      if (!is.logical(show)) {
-        stop("show must be a logical")
-      }
+      assert_class(show, "logical")
+      assert_class(print, "logical")
 
+      ## show
       sv <- self$worksheets[[sheet]]$sheetViews
-      show <- as.integer(show)
-      ## If attribute exists gsub
-      if (grepl("showGridLines", sv)) {
-        sv <- gsub('showGridLines=".?[^"]', sprintf('showGridLines="%s', show), sv, perl = TRUE)
-      } else {
-        sv <- gsub("<sheetView ", sprintf('<sheetView showGridLines="%s" ', show), sv)
-      }
-
+      sv <- xml_attr_mod(sv, c(showGridLines = as_xml_attr(show)))
       self$worksheets[[sheet]]$sheetViews <- sv
+
+      ## print
+      if (print)
+        self$worksheets[[sheet]]$set_print_options(gridLines = print, gridLinesSet = print)
+
       invisible(self)
     },
 

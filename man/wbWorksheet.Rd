@@ -5,6 +5,8 @@
 \title{R6 class for a Workbook Worksheet}
 \value{
 The \code{wbWorksheet} object
+
+The \code{wbWorksheet} object
 }
 \description{
 R6 class for a Workbook Worksheet
@@ -109,6 +111,7 @@ A Worksheet
 \item \href{#method-wbWorksheet-fold_cols}{\code{wbWorksheet$fold_cols()}}
 \item \href{#method-wbWorksheet-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
 \item \href{#method-wbWorksheet-add_page_break}{\code{wbWorksheet$add_page_break()}}
+\item \href{#method-wbWorksheet-set_print_options}{\code{wbWorksheet$set_print_options()}}
 \item \href{#method-wbWorksheet-append}{\code{wbWorksheet$append()}}
 \item \href{#method-wbWorksheet-add_sparklines}{\code{wbWorksheet$add_sparklines()}}
 \item \href{#method-wbWorksheet-set_sheetview}{\code{wbWorksheet$set_sheetview()}}
@@ -132,7 +135,8 @@ Creates a new \code{wbWorksheet} object
   paperSize = 9,
   orientation = "portrait",
   hdpi = 300,
-  vdpi = 300
+  vdpi = 300,
+  printGridLines = gridLines
 )}\if{html}{\out{</div>}}
 }
 
@@ -160,6 +164,8 @@ Creates a new \code{wbWorksheet} object
 \item{\code{hdpi}}{hdpi}
 
 \item{\code{vdpi}}{vdpi}
+
+\item{\code{printGridLines}}{printGridLines}
 }
 \if{html}{\out{</div>}}
 }
@@ -278,6 +284,37 @@ add page break
 \item{\code{row}}{row}
 
 \item{\code{col}}{col}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-set_print_options"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-set_print_options}{}}}
+\subsection{Method \code{set_print_options()}}{
+add print options
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$set_print_options(
+  gridLines = NULL,
+  gridLinesSet = NULL,
+  headings = NULL,
+  horizontalCentered = NULL,
+  verticalCentered = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{gridLines}}{gridLines}
+
+\item{\code{gridLinesSet}}{gridLinesSet}
+
+\item{\code{headings}}{If TRUE prints row and column headings}
+
+\item{\code{horizontalCentered}}{If TRUE the page is horizontally centered}
+
+\item{\code{verticalCentered}}{If TRUE the page is vertically centered}
 }
 \if{html}{\out{</div>}}
 }
