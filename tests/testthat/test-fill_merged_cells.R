@@ -46,3 +46,25 @@ test_that("merge and unmerge cells", {
   expect_silent(wb$merge_cells(rows = 1:2, cols = 1:2))
 
 })
+
+test_that("fill merged NA cells", {
+  wb <- wb_workbook()
+  wb$add_worksheet("sheet1")
+  wb$add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+
+  wb$merge_cells(1, rows = 1:4, cols = 4)
+
+  tmp_file <- temp_xlsx()
+  wb_save(wb, tmp_file)
+
+  r1 <- t(matrix(c(1:3, NA_real_), 4, 4))
+  expect_equal(as.matrix(read_xlsx(tmp_file, fillMergedCells = FALSE,
+                                   rowNames = FALSE, colNames = FALSE)),
+               r1,
+               ignore_attr = TRUE)
+
+  expect_equal(as.matrix(read_xlsx(tmp_file, fillMergedCells = TRUE,
+                                   rowNames = FALSE, colNames = FALSE)),
+               r1,
+               ignore_attr = TRUE)
+})
