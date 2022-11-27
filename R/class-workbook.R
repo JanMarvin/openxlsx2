@@ -658,7 +658,7 @@ wbWorkbook <- R6::R6Class(
                 # sheet name instead of the clone source
 
                 chart <- self$charts$chart[chartid]
-                self$charts$rels[chartid] <- gsub("?drawing[0-9].xml", paste0("drawing", chartid, ".xml"), self$charts$rels[chartid])
+                self$charts$rels[chartid] <- gsub("?drawing[0-9]+.xml", paste0("drawing", chartid, ".xml"), self$charts$rels[chartid])
 
                 guard_ws <- function(x) {
                   if (grepl(" ", x)) x <- shQuote(x, type = "sh")
@@ -5754,7 +5754,7 @@ wbWorkbook <- R6::R6Class(
             # TODO a relship manager should take care of this
             tabs <- self$tables[self$tables$tab_act == 1, ]
             if (NROW(tabs)) {
-              table_inds <- grep("tables/table[0-9].xml", ws_rels)
+              table_inds <- grep("tables/table[0-9]+.xml", ws_rels)
 
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               if (ncol(relship) && nrow(relship)) {
@@ -5996,7 +5996,7 @@ wbWorkbook <- R6::R6Class(
       stylesInd        <- grep("styles\\.xml",                               self$workbook.xml.rels)
       themeInd         <- grep("theme/theme[0-9]+.xml",                      self$workbook.xml.rels)
       connectionsInd   <- grep("connections.xml",                            self$workbook.xml.rels)
-      customXMLInd     <- grep("customXml/item[0-9].xml",                    self$workbook.xml.rels)
+      customXMLInd     <- grep("customXml/item[0-9]+.xml",                   self$workbook.xml.rels)
       extRefInds       <- grep("externalLinks/externalLink[0-9]+.xml",       self$workbook.xml.rels)
       sharedStringsInd <- grep("sharedStrings.xml",                          self$workbook.xml.rels)
       tableInds        <- grep("table[0-9]+.xml",                            self$workbook.xml.rels)
@@ -6006,7 +6006,7 @@ wbWorkbook <- R6::R6Class(
 
       ## Reordering of workbook.xml.rels
       ## don't want to re-assign rIds for pivot tables or slicer caches
-      pivotNode        <- grep("pivotCache/pivotCacheDefinition[0-9].xml",  self$workbook.xml.rels, value = TRUE)
+      pivotNode        <- grep("pivotCache/pivotCacheDefinition[0-9]+.xml", self$workbook.xml.rels, value = TRUE)
       slicerNode       <- grep("slicerCache[0-9]+.xml",                     self$workbook.xml.rels, value = TRUE)
 
       ## Reorder children of workbook.xml.rels

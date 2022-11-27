@@ -466,7 +466,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     cache_keep <- unlist(
       regmatches(
         wb$pivotTables.xml.rels,
-        gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9](?=\\.xml)",
+        gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9]+(?=\\.xml)",
                  wb$pivotTables.xml.rels,
                  perl = TRUE, ignore.case = TRUE
         )
@@ -1196,7 +1196,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       )
     }
 
-    for (cstitm in seq_along(grep_xml("customXml/item[0-9].xml"))) {
+    for (cstitm in seq_along(grep_xml("customXml/item[0-9]+.xml"))) {
 
       # TODO provide a function that creates a wb_rels data frame
       wb_rels <- rbindlist(xml_attr(wb$workbook.xml.rels, "Relationship"))
