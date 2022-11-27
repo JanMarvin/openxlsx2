@@ -261,3 +261,18 @@ test_that("calcChain is updated", {
   expect_equal(exp, got)
 
 })
+
+test_that("read workbook with chart extension", {
+
+  skip_if_offline()
+
+  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/charts.xlsx"
+
+  wb <- wb_load(fl)
+
+  expect_warning(
+    wb$clone_worksheet(),
+    "The file you have loaded contains chart extensions. At the moment, cloning worksheets can damage the output."
+  )
+
+})
