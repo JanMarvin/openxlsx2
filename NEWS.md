@@ -2,6 +2,8 @@
 
 ## New features
 
+* Handle input files with chart extensions. [443](https://github.com/JanMarvin/openxlsx2/pull/443)
+
 * Improve writing styles to workbook. Previously every cell was checked, this has been changed to check unique styles. [423](https://github.com/JanMarvin/openxlsx2/pull/423)
 
 * Implement reading custom file properties. [418](https://github.com/JanMarvin/openxlsx2/pull/418)
