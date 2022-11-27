@@ -186,8 +186,6 @@ create_border
 
 \item{\code{queryTables}}{queryTables}
 
-\item{\code{rowHeights}}{rowHeights}
-
 \item{\code{slicers}}{slicers}
 
 \item{\code{slicerCaches}}{slicerCaches}
