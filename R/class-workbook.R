@@ -569,6 +569,13 @@ wbWorkbook <- R6::R6Class(
       private$set_current_sheet(newSheetIndex)
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
+      if (!all(self$charts$chartEx == "")) {
+        warning(
+          "The file you have loaded contains chart extensions. At the moment,",
+          " cloning worksheets can damage the output."
+        )
+      }
+
       # not the best but a quick fix
       new_raw <- new
       new <- replace_legal_chars(new)
@@ -651,7 +658,7 @@ wbWorkbook <- R6::R6Class(
                 # sheet name instead of the clone source
 
                 chart <- self$charts$chart[chartid]
-                self$charts$rels[chartid] <- gsub("?drawing[0-9].xml", paste0("drawing", chartid, ".xml"), self$charts$rels[chartid])
+                self$charts$rels[chartid] <- gsub("?drawing[0-9]+.xml", paste0("drawing", chartid, ".xml"), self$charts$rels[chartid])
 
                 guard_ws <- function(x) {
                   if (grepl(" ", x)) x <- shQuote(x, type = "sh")
@@ -5555,7 +5562,7 @@ wbWorkbook <- R6::R6Class(
 
         if (!file.exists(xlchartsDir)) {
           dir.create(xlchartsDir, recursive = TRUE)
-          if (any(self$rels != ""))
+          if (any(self$charts$rels != "") || any(self$charts$relsEx != ""))
             dir.create(xlchartsRelsDir, recursive = TRUE)
         }
 
@@ -5567,6 +5574,15 @@ wbWorkbook <- R6::R6Class(
             write_file(
               body = self$charts$chart[crt],
               fl = file.path(xlchartsDir, stri_join("chart", crt, ".xml"))
+            )
+          }
+
+          if (self$charts$chartEx[crt] != "") {
+            ct <- c(ct, sprintf('<Override PartName="/xl/charts/chartEx%s.xml" ContentType="application/vnd.ms-office.chartex+xml"/>', crt))
+
+            write_file(
+              body = self$charts$chartEx[crt],
+              fl = file.path(xlchartsDir, stri_join("chartEx", crt, ".xml"))
             )
           }
 
@@ -5592,6 +5608,13 @@ wbWorkbook <- R6::R6Class(
             write_file(
               body = self$charts$rels[crt],
               fl = file.path(xlchartsRelsDir, stri_join("chart", crt, ".xml.rels"))
+            )
+          }
+
+          if (self$charts$relsEx[crt] != "") {
+            write_file(
+              body = self$charts$relsEx[crt],
+              fl = file.path(xlchartsRelsDir, stri_join("chartEx", crt, ".xml.rels"))
             )
           }
         }
@@ -5731,7 +5754,7 @@ wbWorkbook <- R6::R6Class(
             # TODO a relship manager should take care of this
             tabs <- self$tables[self$tables$tab_act == 1, ]
             if (NROW(tabs)) {
-              table_inds <- grep("tables/table[0-9].xml", ws_rels)
+              table_inds <- grep("tables/table[0-9]+.xml", ws_rels)
 
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               if (ncol(relship) && nrow(relship)) {
@@ -5973,7 +5996,7 @@ wbWorkbook <- R6::R6Class(
       stylesInd        <- grep("styles\\.xml",                               self$workbook.xml.rels)
       themeInd         <- grep("theme/theme[0-9]+.xml",                      self$workbook.xml.rels)
       connectionsInd   <- grep("connections.xml",                            self$workbook.xml.rels)
-      customXMLInd     <- grep("customXml/item[0-9].xml",                    self$workbook.xml.rels)
+      customXMLInd     <- grep("customXml/item[0-9]+.xml",                   self$workbook.xml.rels)
       extRefInds       <- grep("externalLinks/externalLink[0-9]+.xml",       self$workbook.xml.rels)
       sharedStringsInd <- grep("sharedStrings.xml",                          self$workbook.xml.rels)
       tableInds        <- grep("table[0-9]+.xml",                            self$workbook.xml.rels)
@@ -5983,7 +6006,7 @@ wbWorkbook <- R6::R6Class(
 
       ## Reordering of workbook.xml.rels
       ## don't want to re-assign rIds for pivot tables or slicer caches
-      pivotNode        <- grep("pivotCache/pivotCacheDefinition[0-9].xml",  self$workbook.xml.rels, value = TRUE)
+      pivotNode        <- grep("pivotCache/pivotCacheDefinition[0-9]+.xml", self$workbook.xml.rels, value = TRUE)
       slicerNode       <- grep("slicerCache[0-9]+.xml",                     self$workbook.xml.rels, value = TRUE)
 
       ## Reorder children of workbook.xml.rels

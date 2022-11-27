@@ -87,9 +87,11 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
 
   # charts
   chartsXML         <- grep_xml("xl/charts/chart[0-9]+\\.xml$")
+  chartExsXML       <- grep_xml("xl/charts/chartEx[0-9]+\\.xml$")
   chartsXML_colors  <- grep_xml("xl/charts/colors[0-9]+\\.xml$")
   chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
-  chartsRels        <- grep_xml("xl/charts/_rels")
+  chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+.xml.rels")
+  chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+.xml.rels")
   chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+\\.xml")
 
   # tables
@@ -464,7 +466,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
     cache_keep <- unlist(
       regmatches(
         wb$pivotTables.xml.rels,
-        gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9](?=\\.xml)",
+        gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9]+(?=\\.xml)",
                  wb$pivotTables.xml.rels,
                  perl = TRUE, ignore.case = TRUE
         )
@@ -558,38 +560,54 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   }
 
   ## xl\chart
-  if (!data_only && length(chartsXML)) {
+  if (!data_only && (length(chartsXML)) || length(chartExsXML)) {
 
     # Not every chart has chart, color, style and rel. We read the file names
     # into charts first and replace the file name with the content in a second
     # run.
-    empty_chr <- vector("character", length(chartsXML))
+
+    # There are some newer charts (presumably all x14), that are written as
+    # chartEX and ofc they are counted starting at 1. So the total number of
+    # charts is chartsXML + chartsExXML.
+
+    chart_num <- length(chartsXML) + length(chartExsXML)
+    empty_chr <- vector("character", chart_num)
     charts <- data.frame(
-      chart = empty_chr,
-      colors = empty_chr,
-      style = empty_chr,
-      rels = empty_chr
+      chart   = empty_chr,
+      chartEx = empty_chr,
+      colors  = empty_chr,
+      style   = empty_chr,
+      rels    = empty_chr,
+      relsEx  = empty_chr
     )
 
     chartsXML_id        <- filename_id(chartsXML)
+    chartExsXML_id      <- filename_id(chartExsXML)
     chartsXML_colors_id <- filename_id(chartsXML_colors)
     chartsXML_styles_id <- filename_id(chartsXML_styles)
     chartsRels_id       <- filename_id(chartsRels)
+    chartExsRels_id     <- filename_id(chartExsRels)
 
     charts$chart[chartsXML_id]         <- names(chartsXML_id)
+    charts$chartEx[chartExsXML_id]     <- names(chartExsXML_id)
     charts$colors[chartsXML_colors_id] <- names(chartsXML_colors_id)
     charts$style[chartsXML_styles_id]  <- names(chartsXML_styles_id)
     charts$rels[chartsRels_id]         <- names(chartsRels_id)
+    charts$relsEx[chartExsRels_id]     <- names(chartExsRels_id)
 
     crt_ch <- charts$chart != ""
+    crt_ex <- charts$chartEx != ""
     crt_rl <- charts$rels != ""
+    crt_re <- charts$relsEx != ""
     crt_co <- charts$colors != ""
     crt_st <- charts$style != ""
 
-    charts$chart[crt_ch]  <- read_xml_files(charts$chart[crt_ch])
-    charts$colors[crt_co] <- read_xml_files(charts$colors[crt_co])
-    charts$style[crt_st]  <- read_xml_files(charts$style[crt_st])
-    charts$rels[crt_rl]   <- read_xml_files(charts$rels[crt_rl])
+    charts$chart[crt_ch]   <- read_xml_files(charts$chart[crt_ch])
+    charts$chartEx[crt_ex] <- read_xml_files(charts$chartEx[crt_ex])
+    charts$colors[crt_co]  <- read_xml_files(charts$colors[crt_co])
+    charts$style[crt_st]   <- read_xml_files(charts$style[crt_st])
+    charts$rels[crt_rl]    <- read_xml_files(charts$rels[crt_rl])
+    charts$relsEx[crt_re]  <- read_xml_files(charts$relsEx[crt_re])
 
     wb$charts <- charts
 
@@ -1178,7 +1196,7 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
       )
     }
 
-    for (cstitm in seq_along(grep_xml("customXml/item[0-9].xml"))) {
+    for (cstitm in seq_along(grep_xml("customXml/item[0-9]+.xml"))) {
 
       # TODO provide a function that creates a wb_rels data frame
       wb_rels <- rbindlist(xml_attr(wb$workbook.xml.rels, "Relationship"))
