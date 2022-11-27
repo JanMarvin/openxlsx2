@@ -2087,6 +2087,11 @@ wbWorkbook <- R6::R6Class(
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 
+      if (is.null(row_attr)) {
+        warning("There are no initialized rows on this sheet")
+        return(invisible(self))
+      }
+
       sel <- match(rows, row_attr$r)
       row_attr[sel, "ht"] <- ""
       row_attr[sel, "customHeight"] <- ""
