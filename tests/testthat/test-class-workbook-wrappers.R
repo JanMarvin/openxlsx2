@@ -72,10 +72,9 @@ test_that("wb_set_row_heights() is a wrapper", {
 # wb_remove_row_heights() -----------------------------------------------------
 
 test_that("wb_remove_row_heights() is a wrapper", {
-  wb <- wbWorkbook$new()$add_worksheet("sheet")
-  wb$add_worksheet("a")
+  wb <- wbWorkbook$new()$add_worksheet("a")
   wb$set_row_heights("a", 1:3, 20)
-  params <- list(sheet = "sheet", rows = 2)
+  params <- list(sheet = "a", rows = 2)
   expect_wrapper("remove_row_heights", wb = wb, params = params)
 })
 

@@ -96,9 +96,6 @@ wbWorkbook <- R6::R6Class(
     #' @field queryTables queryTables
     queryTables = NULL,
 
-    #' @field rowHeights rowHeights
-    rowHeights = NULL,
-
     #' @field slicers slicers
     slicers = NULL,
 
@@ -230,7 +227,6 @@ wbWorkbook <- R6::R6Class(
       self$pivotDefinitionsRels <- NULL
 
       self$queryTables <- NULL
-      self$rowHeights <- list()
 
       self$slicers <- NULL
       self$slicerCaches <- NULL
@@ -547,7 +543,6 @@ wbWorkbook <- R6::R6Class(
       self$isChartSheet[[newSheetIndex]]     <- FALSE
       self$comments[[newSheetIndex]]         <- list()
       self$threadComments[[newSheetIndex]]   <- list()
-      self$rowHeights[[newSheetIndex]]       <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
@@ -754,7 +749,6 @@ wbWorkbook <- R6::R6Class(
       self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
       self$comments[[newSheetIndex]]       <- self$comments[[old]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
-      self$rowHeights[[newSheetIndex]]     <- self$rowHeights[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
@@ -914,7 +908,6 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
       self$isChartSheet[[newSheetIndex]]     <- TRUE
-      self$rowHeights[[newSheetIndex]]       <- list()
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$append("sheetOrder", newSheetIndex)
@@ -2060,9 +2053,10 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
 
       # TODO move to wbWorksheet method
-      # TODO consider reworking rowHeights
-      # self$worksheets[[sheet]]$set_row_heights(rows = rows, heights = heights)
-      # invisible(self)
+
+      # create all A columns so that row_attr is available
+      dims <- rowcol_to_dims(rows, 1)
+      private$do_cell_init(sheet, dims)
 
       if (length(rows) > length(heights)) {
         heights <- rep(heights, length.out = length(rows))
@@ -2072,28 +2066,14 @@ wbWorkbook <- R6::R6Class(
         stop("Greater number of height values than rows.")
       }
 
-      ## Remove duplicates
-      ok <- !duplicated(rows)
-      heights <- heights[ok]
-      rows <- rows[ok]
+      row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 
-      heights <- as.character(as.numeric(heights))
-      names(heights) <- rows
+      sel <- match(rows, row_attr$r)
+      row_attr[sel, "ht"] <- as.character(as.numeric(heights))
+      row_attr[sel, "customHeight"] <- "1"
 
-      ## remove any conflicting heights
-      flag <- names(self$rowHeights[[sheet]]) %in% rows
-      if (any(flag)) {
-        self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][!flag]
-      }
+      self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
 
-      nms <- c(names(self$rowHeights[[sheet]]), rows)
-      allRowHeights <- unlist(c(self$rowHeights[[sheet]], heights))
-      names(allRowHeights) <- nms
-
-      allRowHeights <-
-        allRowHeights[order(as.integer(names(allRowHeights)))]
-
-      self$rowHeights[[sheet]] <- allRowHeights
       invisible(self)
     },
 
@@ -2104,12 +2084,19 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet = current_sheet(), rows) {
       sheet <- private$get_sheet_index(sheet)
-      customRows <- as.integer(names(self$rowHeights[[sheet]]))
-      removeInds <- which(customRows %in% rows)
 
-      if (length(removeInds)) {
-        self$rowHeights[[sheet]] <- self$rowHeights[[sheet]][-removeInds]
+      row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
+
+      if (is.null(row_attr)) {
+        warning("There are no initialized rows on this sheet")
+        return(invisible(self))
       }
+
+      sel <- match(rows, row_attr$r)
+      row_attr[sel, "ht"] <- ""
+      row_attr[sel, "customHeight"] <- ""
+
+      self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
 
       invisible(self)
     },

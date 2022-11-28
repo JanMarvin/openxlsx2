@@ -373,3 +373,46 @@ test_that("clone worksheet", {
   # wb$open()
 
 })
+
+test_that("set and remove row heights work", {
+
+  ## add row heights
+  wb <- wb_workbook()$
+    add_worksheet()$
+    set_row_heights(
+      rows = c(1, 4, 22, 2, 19),
+      heights = c(24, 28, 32, 42, 33)
+    )
+
+  exp <- structure(
+    list(
+      customHeight = c("1", "1", "1", "1", "1"),
+      ht = c("24", "42", "28", "33", "32"),
+      r = c("1", "2", "4", "19", "22")
+    ),
+    row.names = c(1L, 2L, 4L, 19L, 22L),
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[1]]$sheet_data$row_attr[c(1, 2, 4, 19, 22), c("customHeight", "ht", "r")]
+  expect_equal(exp, got)
+
+  ## remove row heights
+  wb$remove_row_heights(rows = 1:21)
+  exp <- structure(
+    list(
+      customHeight = c("", "", "", "", "1"),
+      ht = c("", "", "", "", "32"),
+      r = c("1", "2", "4", "19", "22")
+    ),
+    row.names = c(1L, 2L, 4L, 19L, 22L),
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[1]]$sheet_data$row_attr[c(1, 2, 4, 19, 22), c("customHeight", "ht", "r")]
+  expect_equal(exp, got)
+
+  expect_warning(
+    wb$add_worksheet()$remove_row_heights(rows = 1:3),
+    "There are no initialized rows on this sheet"
+  )
+
+})
