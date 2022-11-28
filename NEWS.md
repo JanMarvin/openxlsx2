@@ -2,6 +2,8 @@
 
 ## New features
 
+* Support reading files with form control. [426](https://github.com/JanMarvin/openxlsx2/pull/426)
+
 * Handle input files with chart extensions. [443](https://github.com/JanMarvin/openxlsx2/pull/443)
 
 * Improve writing styles to workbook. Previously every cell was checked, this has been changed to check unique styles. [423](https://github.com/JanMarvin/openxlsx2/pull/423)
