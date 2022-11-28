@@ -104,6 +104,9 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
   extLinksXML       <- grep_xml("externalLink[0-9]+.xml$")
   extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
 
+  # form control
+  ctrlPropsXML      <- grep_xml("ctrlProps/ctrlProp[0-9]+.xml")
+
   # pivot tables
   pivotTableXML     <- grep_xml("pivotTable[0-9]+.xml$")
   pivotTableRelsXML <- grep_xml("pivotTable[0-9]+.xml.rels$")
@@ -1209,6 +1212,18 @@ wb_load <- function(file, xlsxFile = NULL, sheet, data_only = FALSE) {
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml" Target="../customXml/item%s.xml"/>',
           next_rid,
           cstitm
+        )
+      )
+    }
+  }
+
+  if (!data_only && length(ctrlPropsXML)) {
+    wb$ctrlProps <- read_xml_files(ctrlPropsXML)
+    for (ctrlProp in seq_along(ctrlPropsXML)) {
+      wb$append("Content_Types",
+        sprintf(
+          '<Override PartName="/xl/ctrlProps/ctrlProp%s.xml" ContentType="application/vnd.ms-excel.controlproperties+xml"/>',
+          ctrlProp
         )
       )
     }
