@@ -516,7 +516,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       # NULL or TRUE/FALSE
-      rightToLeft <- options()[["openxlsx2.rightToLeft"]]
+      rightToLeft <- getOption("openxlsx2.rightToLeft")
 
       # set preselected set for sheetview
       self$worksheets[[newSheetIndex]]$set_sheetview(
