@@ -111,6 +111,7 @@ A Worksheet
 \item \href{#method-wbWorksheet-add_page_break}{\code{wbWorksheet$add_page_break()}}
 \item \href{#method-wbWorksheet-append}{\code{wbWorksheet$append()}}
 \item \href{#method-wbWorksheet-add_sparklines}{\code{wbWorksheet$add_sparklines()}}
+\item \href{#method-wbWorksheet-set_sheetview}{\code{wbWorksheet$set_sheetview()}}
 \item \href{#method-wbWorksheet-clone}{\code{wbWorksheet$clone()}}
 }
 }
@@ -121,11 +122,7 @@ A Worksheet
 Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
-  gridLines = TRUE,
-  rowColHeaders = TRUE,
-  tabSelected = FALSE,
   tabColour = NULL,
-  zoom = 100,
   oddHeader = NULL,
   oddFooter = NULL,
   evenHeader = NULL,
@@ -142,15 +139,7 @@ Creates a new \code{wbWorksheet} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{gridLines}}{gridLines}
-
-\item{\code{rowColHeaders}}{rowColHeaders}
-
-\item{\code{tabSelected}}{tabSelected}
-
 \item{\code{tabColour}}{tabColour}
-
-\item{\code{zoom}}{zoom}
 
 \item{\code{oddHeader}}{oddHeader}
 
@@ -329,6 +318,82 @@ add sparkline
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-set_sheetview"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-set_sheetview}{}}}
+\subsection{Method \code{set_sheetview()}}{
+add sheetview
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$set_sheetview(
+  colorId = NULL,
+  defaultGridColor = NULL,
+  rightToLeft = NULL,
+  showFormulas = NULL,
+  showGridLines = NULL,
+  showOutlineSymbols = NULL,
+  showRowColHeaders = NULL,
+  showRuler = NULL,
+  showWhiteSpace = NULL,
+  showZeros = NULL,
+  tabSelected = NULL,
+  topLeftCell = NULL,
+  view = NULL,
+  windowProtection = NULL,
+  workbookViewId = NULL,
+  zoomScale = NULL,
+  zoomScaleNormal = NULL,
+  zoomScalePageLayoutView = NULL,
+  zoomScaleSheetLayoutView = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{colorId}}{colorId}
+
+\item{\code{defaultGridColor}}{defaultGridColor}
+
+\item{\code{rightToLeft}}{rightToLeft}
+
+\item{\code{showFormulas}}{showFormulas}
+
+\item{\code{showGridLines}}{showGridLines}
+
+\item{\code{showOutlineSymbols}}{showOutlineSymbols}
+
+\item{\code{showRowColHeaders}}{showRowColHeaders}
+
+\item{\code{showRuler}}{showRuler}
+
+\item{\code{showWhiteSpace}}{showWhiteSpace}
+
+\item{\code{showZeros}}{showZeros}
+
+\item{\code{tabSelected}}{tabSelected}
+
+\item{\code{topLeftCell}}{topLeftCell}
+
+\item{\code{view}}{view}
+
+\item{\code{windowProtection}}{windowProtection}
+
+\item{\code{workbookViewId}}{workbookViewId}
+
+\item{\code{zoomScale}}{zoomScale}
+
+\item{\code{zoomScaleNormal}}{zoomScaleNormal}
+
+\item{\code{zoomScalePageLayoutView}}{zoomScalePageLayoutView}
+
+\item{\code{zoomScaleSheetLayoutView}}{zoomScaleSheetLayoutView}
 }
 \if{html}{\out{</div>}}
 }

@@ -10,7 +10,6 @@ test_that("assert_class() works", {
 
 test_that("class assertions work", {
   # nolint start
-  expect_null(assert_chart_sheet(wb_chart_sheet()))
   expect_null(assert_comment(    wb_comment()))
   expect_null(assert_color(      wb_colour()))
   expect_null(assert_hyperlink(  wb_hyperlink()))

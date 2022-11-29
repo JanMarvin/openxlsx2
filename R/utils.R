@@ -117,6 +117,19 @@ as_binary <- function(x) {
   as.integer(x)
 }
 
+
+as_xml_attr <- function(x) {
+  if (inherits(x, "logical")) {
+    x <- as_binary(x)
+  }
+
+  if (inherits(x, "character")) {
+    return(x)
+  } else {
+    return(as.character(x))
+  }
+}
+
 #' random string function that does not alter the seed.
 #'
 #' simple wrapper around `stringi::stri_rand_strings()``
@@ -133,7 +146,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
     seed <- get0(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
 
     # try to get a previous openxlsx2 seed and use this as random seed
-    openxlsx2_seed <- options()[["openxlsx2_seed"]]
+    openxlsx2_seed <- getOption("openxlsx2_seed")
 
     if (!is.null(openxlsx2_seed)) {
       # found one, change the global seed for stri_rand_strings

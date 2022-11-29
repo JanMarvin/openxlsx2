@@ -829,16 +829,8 @@ wb_set_selected <- function(wb, sheet) {
   sheet <- wb_validate_sheet(wb, sheet)
 
   for (i in seq_along(wb$sheet_names)) {
-
-    xml_attr <- c(tabSelected = ifelse(i == sheet, "true", "false"))
-    svs <- wb$worksheets[[i]]$sheetViews
-
-    # might lose other children if any. xml_replace_child?
-    sv <- xml_node(svs, "sheetViews", "sheetView")
-    sv <- xml_attr_mod(sv, xml_attr)
-    svs <- xml_node_create("sheetViews", xml_children = sv)
-
-    wb$worksheets[[i]]$sheetViews <- svs
+    xml_attr <- ifelse(i == sheet, TRUE, FALSE)
+    wb$worksheets[[i]]$set_sheetview(tabSelected = xml_attr)
   }
 
   wb

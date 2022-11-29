@@ -38,6 +38,12 @@
 
 * Remove never used `all.equal.wbWorkbook()`. The idea was nice, but it never developed into something useful.
 
+* Remove never used `wb_chart_sheet()` function. [399](https://github.com/JanMarvin/openxlsx2/pull/399)
+
+## Internal changes
+
+* Provide `set_sheetview()` in sheets. Can be used to provide a `wbWorkbook` function and wrapper in the future. [399](https://github.com/JanMarvin/openxlsx2/pull/399)
+
 
 ***************************************************************************
 
