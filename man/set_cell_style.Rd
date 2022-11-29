@@ -19,31 +19,30 @@ set_cell_style(wb, sheet, cell, value)
 helper set_cell_style
 }
 \examples{
-wb <- wb_workbook()
-wb$add_worksheet("test")
-
+# create a numeric data matrix
 mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
-wb$add_data("test", mat, colNames = FALSE)
+wb <- wb_workbook()$
+  add_worksheet("test")$
+  add_data("test", mat, colNames = FALSE)
 
+# create known builtins 0 is the default
+builtins <- c( # "0",
+  "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
+  "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
+  "47", "48", "49"
+)
 
-x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
-       "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
-       "47", "48", "49")
-
-new_cellxfs <- create_cell_style(numFmtId = x, horizontal = "center")
-
-# combine original and new styles
-wb <- merge_cellXfs(wb, new_cellxfs)
-wb_styles <- attr(wb, "wb_styles")
-
-# new styles are 1:28, because s in a 0-index
-for (i in wb_styles) {
-  cell <- sprintf("\%s1:\%s28", int2col(i), int2col(i))
-  wb$set_cell_style("test", cell, as.character(i))
+# assign the style to the first row
+for (builtin in builtins) {
+  dim <- paste0(int2col(which(builtins \%in\% builtin)), "1")
+  wb$add_cell_style(dims = dim,
+                    numFmtId = builtin)
 }
 
-\donttest{
-# look at the beauty you've created
-if (interactive()) wb_open(wb)
+# new styles are 1:28, because s in a 0-index, they are in the
+# order we just assigned them above
+for (i in seq_along(wb$styles_mgr$styles$cellXfs)) {
+  cell <- sprintf("\%s2:\%s28", int2col(i), int2col(i))
+  wb$set_cell_style("test", cell, as.character(i))
 }
 }

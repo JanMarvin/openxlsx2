@@ -12,7 +12,6 @@ cloneSheetStyle <- function(wb, from_sheet, to_sheet) {
   wb_clone_sheet_style(wb, from_sheet, to_sheet)
 }
 
-
 # internal function used in wb_load
 # @param x character string containing styles.xml
 import_styles <- function(x) {
@@ -87,7 +86,6 @@ import_styles <- function(x) {
 
   z
 }
-
 
 # TODO guessing here
 #' create border
@@ -172,36 +170,6 @@ create_border <- function(
   return(border)
 }
 
-
-#' merge_borders
-#' @param wb a workbook
-#' @param new_borders <fill ...>
-#' @export
-merge_borders <- function(wb, new_borders) {
-
-  # read old and new into dataframe
-  if (length(wb$styles_mgr$styles$borders)) {
-    old <- read_border(read_xml(wb$styles_mgr$styles$borders))
-    new <- read_border(read_xml(new_borders))
-
-    # get new rownames
-    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
-    row.names(new) <- as.character(new_rownames)
-
-    # both have identical length, therefore can be rbind
-    borders <- rbind(old, new)
-
-    wb$styles_mgr$styles$borders <- write_border(borders)
-  } else {
-    wb$styles_mgr$styles$borders <- new_borders
-    new_rownames <- seq_along(new_borders)
-  }
-
-  attr(wb, "new_borders") <- new_rownames
-  # let the user now, which styles are new
-  return(wb)
-}
-
 #' create number format
 #' @param numFmtId an id
 #' @param formatCode a format code
@@ -216,38 +184,6 @@ create_numfmt <- function(numFmtId, formatCode) {
   numfmt <- write_numfmt(df_numfmt)
 
   return(numfmt)
-}
-
-# TODO should not be required to check for uniqueness of numFmts. This should
-# have been done prior to calling this function.
-
-#' merge_numFmts
-#' @param wb a workbook
-#' @param new_numfmts <numFmt ...>
-#' @export
-merge_numFmts <- function(wb, new_numfmts) {
-
-  if (length(wb$styles_mgr$styles$numFmts)) {
-    # read old and new into dataframe
-    old <- read_numfmt(read_xml(wb$styles_mgr$styles$numFmts))
-    new <- read_numfmt(read_xml(new_numfmts))
-
-    # get new rownames
-    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
-    row.names(new) <- as.character(new_rownames)
-
-    # both have identical length, therefore can be rbind
-    numfmts <- rbind(old, new)
-
-    wb$styles_mgr$styles$numFmts <- write_numfmt(numfmts)
-  } else {
-    wb$styles_mgr$styles$numFmts <- new_numfmts
-    new_rownames <- seq_along(new_numfmts)
-  }
-
-  attr(wb, "new_numfmts") <- new_rownames
-  # let the user now, which styles are new
-  return(wb)
 }
 
 #' create font format
@@ -381,36 +317,6 @@ create_font <- function(
   return(font)
 }
 
-#' merge_fonts
-#' @param wb a workbook
-#' @param new_fonts <font ...>
-#' @export
-merge_fonts <- function(wb, new_fonts) {
-
-  # read old and new into dataframe
-
-  if (length(wb$styles_mgr$styles$fonts)) {
-    old <- read_font(read_xml(wb$styles_mgr$styles$fonts))
-    new <- read_font(read_xml(new_fonts))
-
-    # get new rownames
-    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
-    row.names(new) <- as.character(new_rownames)
-
-    # both have identical length, therefore can be rbind
-    fonts <- rbind(old, new)
-
-    wb$styles_mgr$styles$fonts <- write_font(fonts)
-  } else {
-    wb$styles_mgr$styles$fonts <- new_fonts
-    new_rownames <- seq_along(new_fonts)
-  }
-
-  attr(wb, "new_fonts") <- new_rownames
-  # let the user now, which styles are new
-  return(wb)
-}
-
 #' create fill
 #'
 #' @param gradientFill complex fills
@@ -452,36 +358,6 @@ create_fill <- function(
   fill <- write_fill(df_fill)
 
   return(fill)
-}
-
-
-#' merge_fills
-#' @param wb a workbook
-#' @param new_fills <fill ...>
-#' @export
-merge_fills <- function(wb, new_fills) {
-
-  # read old and new into dataframe
-  if (length(wb$styles_mgr$styles$fills)) {
-    old <- read_fill(read_xml(wb$styles_mgr$styles$fills))
-    new <- read_fill(read_xml(new_fills))
-
-    # get new rownames
-    new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
-    row.names(new) <- as.character(new_rownames)
-
-    # both have identical length, therefore can be rbind
-    fills <- rbind(old, new)
-
-    wb$styles_mgr$styles$fills <- write_fill(fills)
-  } else {
-    wb$styles_mgr$styles$fills <- new_fills
-    new_rownames <- seq_along(new_fills)
-  }
-
-  attr(wb, "new_fills") <- new_rownames
-  # let the user now, which styles are new
-  return(wb)
 }
 
 # TODO can be further generalized with additional xf attributes and children
@@ -616,31 +492,6 @@ create_cell_style <- function(
   cellXfs
 }
 
-#' merge cellXfs styles from workbook and new
-#' @param wb a workbook
-#' @param new_cellxfs new character vector of <xf ...>
-#' @export
-merge_cellXfs <- function(wb, new_cellxfs) {
-
-  # read old and new into dataframe
-  old <- read_xf(read_xml(wb$styles_mgr$styles$cellXfs))
-  new <- read_xf(read_xml(new_cellxfs))
-
-  # get new rownames
-  new_rownames <- seq.int(max(as.numeric(rownames(old))) + 1, length.out = NROW(new))
-  row.names(new) <- as.character(new_rownames)
-
-  # both have identical length, therefore can be rbind
-  cellxfs <- rbind(old, new)
-
-  wb$styles_mgr$styles$cellXfs <- write_xf(cellxfs)
-
-  attr(wb, "wb_styles") <- new_rownames
-  # let the user now, which styles are new
-  return(wb)
-}
-
-
 #' internal function to set border to a style
 #' @param xf_node some xf node
 #' @param border_id some numeric value as character
@@ -746,7 +597,6 @@ set_cellstyle <- function(
   write_xf(z)
 }
 
-
 #' get all styles on a sheet
 #'
 #' @param wb workbook
@@ -758,7 +608,6 @@ styles_on_sheet <- function(wb, sheet) {
   z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
   as.numeric(z)
 }
-
 
 #' get xml node for a specific style of a cell. function for internal use
 #' @param wb workbook
@@ -781,7 +630,6 @@ get_cell_styles <- function(wb, sheet, cell) {
   out
 }
 
-
 #' helper get_cell_style
 #' @param wb a workbook
 #' @param sheet a worksheet
@@ -792,39 +640,37 @@ get_cell_style <- function(wb, sheet, cell) {
   wb_get_cell_style(wb, sheet, dims = cell)
 }
 
-
 #' helper set_cell_style
 #' @param wb a workbook
 #' @param sheet a worksheet
 #' @param cell a cell
 #' @param value a value to assign
 #' @examples
-#' wb <- wb_workbook()
-#' wb$add_worksheet("test")
-#'
+#' # create a numeric data matrix
 #' mat <- matrix(rnorm(28*28, mean = 44444, sd = 555), ncol = 28)
-#' wb$add_data("test", mat, colNames = FALSE)
+#' wb <- wb_workbook()$
+#'   add_worksheet("test")$
+#'   add_data("test", mat, colNames = FALSE)
 #'
+#' # create known builtins 0 is the default
+#' builtins <- c( # "0",
+#'   "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
+#'   "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
+#'   "47", "48", "49"
+#' )
 #'
-#' x <- c("0", "1", "2", "3", "4", "9", "10", "11", "12", "13", "14", "15", "16",
-#'        "17", "18", "19", "20", "21", "22", "37", "38", "39", "40", "45", "46",
-#'        "47", "48", "49")
-#'
-#' new_cellxfs <- create_cell_style(numFmtId = x, horizontal = "center")
-#'
-#' # combine original and new styles
-#' wb <- merge_cellXfs(wb, new_cellxfs)
-#' wb_styles <- attr(wb, "wb_styles")
-#'
-#' # new styles are 1:28, because s in a 0-index
-#' for (i in wb_styles) {
-#'   cell <- sprintf("%s1:%s28", int2col(i), int2col(i))
-#'   wb$set_cell_style("test", cell, as.character(i))
+#' # assign the style to the first row
+#' for (builtin in builtins) {
+#'   dim <- paste0(int2col(which(builtins %in% builtin)), "1")
+#'   wb$add_cell_style(dims = dim,
+#'                     numFmtId = builtin)
 #' }
 #'
-#' \donttest{
-#' # look at the beauty you've created
-#' if (interactive()) wb_open(wb)
+#' # new styles are 1:28, because s in a 0-index, they are in the
+#' # order we just assigned them above
+#' for (i in seq_along(wb$styles_mgr$styles$cellXfs)) {
+#'   cell <- sprintf("%s2:%s28", int2col(i), int2col(i))
+#'   wb$set_cell_style("test", cell, as.character(i))
 #' }
 #' @export
 set_cell_style <- function(wb, sheet, cell, value) {
