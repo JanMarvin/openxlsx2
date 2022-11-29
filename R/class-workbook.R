@@ -510,7 +510,8 @@ wbWorkbook <- R6::R6Class(
           paperSize   = paperSize,
           orientation = orientation,
           hdpi        = hdpi,
-          vdpi        = vdpi
+          vdpi        = vdpi,
+          printGridLines = gridLines
         )
       )
 

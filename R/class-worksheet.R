@@ -162,7 +162,7 @@ wbWorksheet <- R6::R6Class(
       orientation = "portrait",
       hdpi        = 300,
       vdpi        = 300,
-      printGridLines = gridLines
+      printGridLines = FALSE
     ) {
       if (!is.null(tabColour)) {
         tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)

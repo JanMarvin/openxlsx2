@@ -136,7 +136,7 @@ Creates a new \code{wbWorksheet} object
   orientation = "portrait",
   hdpi = 300,
   vdpi = 300,
-  printGridLines = gridLines
+  printGridLines = FALSE
 )}\if{html}{\out{</div>}}
 }
 
