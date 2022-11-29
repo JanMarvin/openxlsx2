@@ -51,21 +51,6 @@ match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.f
   y[m]
 }
 
-match_allof <- function(x, y, or_null = FALSE, envir = parent.frame()) {
-  sx <- as.character(substitute(x, envir))
-
-  if (or_null && is.null(x)) return(NULL)
-
-  m <- match(x, y, nomatch = NA_integer_)
-
-  if (anyNA(m)) {
-    msg <- sprintf("%s must be: '%s'", sx, paste(y, collapse = "', '"))
-    stop(simpleError(msg))
-  }
-
-  invisible(x)
-}
-
 validate_colour <- function(colour = NULL, or_null = FALSE, envir = parent.frame()) {
   sx <- as.character(substitute(colour, envir))
 
