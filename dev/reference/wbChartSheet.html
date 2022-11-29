@@ -116,26 +116,19 @@ R6 class for a Workbook Chart Sheet"><meta name="robots" content="noindex"><!-- 
 
 <ul><li><p><a href="#method-wbChartSheet-new"><code>wbChartSheet$new()</code></a></p></li>
 <li><p><a href="#method-wbChartSheet-get_prior_sheet_data"><code>wbChartSheet$get_prior_sheet_data()</code></a></p></li>
+<li><p><a href="#method-wbChartSheet-set_sheetview"><code>wbChartSheet$set_sheetview()</code></a></p></li>
 <li><p><a href="#method-wbChartSheet-clone"><code>wbChartSheet$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbChartSheet-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new workbook chart sheet object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/wbChartSheet.html">wbChartSheet</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>tabSelected <span class="op">=</span> <span class="cn">FALSE</span>, tabColour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, zoom <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/wbChartSheet.html">wbChartSheet</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>tabColour <span class="op">=</span> <span class="va">tabColour</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>tabSelected</code></dt>
-<dd><p><code>logical</code>, if <code>TRUE</code> ...</p></dd>
-
-
-<dt><code>tabColour</code></dt>
+<p></p><div class="arguments"><dl><dt><code>tabColour</code></dt>
 <dd><p><code>character</code> a tab colour to set</p></dd>
-
-
-<dt><code>zoom</code></dt>
-<dd><p>The zoom level as a single integer</p></dd>
 
 
 </dl><p></p></div>
@@ -153,15 +146,127 @@ R6 class for a Workbook Chart Sheet"><meta name="robots" content="noindex"><!-- 
 </div>
 
 
-</div><p></p><hr><a id="method-wbChartSheet-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbChartSheet-set_sheetview"></a><div class="section">
+<h3 id="method-set-sheetview-">Method <code>set_sheetview()</code><a class="anchor" aria-label="anchor" href="#method-set-sheetview-"></a></h3>
+<p>add sheetview</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbChartSheet</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbChartSheet</span><span class="op">$</span><span class="fu">set_sheetview</span><span class="op">(</span></span>
+<span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  defaultGridColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rightToLeft <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showFormulas <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showGridLines <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showOutlineSymbols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showRowColHeaders <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showRuler <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showWhiteSpace <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showZeros <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tabSelected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  topLeftCell <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  view <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  windowProtection <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbookViewId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScaleNormal <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScalePageLayoutView <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScaleSheetLayoutView <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>colorId</code></dt>
+<dd><p>colorId</p></dd>
+
+
+<dt><code>defaultGridColor</code></dt>
+<dd><p>defaultGridColor</p></dd>
+
+
+<dt><code>rightToLeft</code></dt>
+<dd><p>rightToLeft</p></dd>
+
+
+<dt><code>showFormulas</code></dt>
+<dd><p>showFormulas</p></dd>
+
+
+<dt><code>showGridLines</code></dt>
+<dd><p>showGridLines</p></dd>
+
+
+<dt><code>showOutlineSymbols</code></dt>
+<dd><p>showOutlineSymbols</p></dd>
+
+
+<dt><code>showRowColHeaders</code></dt>
+<dd><p>showRowColHeaders</p></dd>
+
+
+<dt><code>showRuler</code></dt>
+<dd><p>showRuler</p></dd>
+
+
+<dt><code>showWhiteSpace</code></dt>
+<dd><p>showWhiteSpace</p></dd>
+
+
+<dt><code>showZeros</code></dt>
+<dd><p>showZeros</p></dd>
+
+
+<dt><code>tabSelected</code></dt>
+<dd><p>tabSelected</p></dd>
+
+
+<dt><code>topLeftCell</code></dt>
+<dd><p>topLeftCell</p></dd>
+
+
+<dt><code>view</code></dt>
+<dd><p>view</p></dd>
+
+
+<dt><code>windowProtection</code></dt>
+<dd><p>windowProtection</p></dd>
+
+
+<dt><code>workbookViewId</code></dt>
+<dd><p>workbookViewId</p></dd>
+
+
+<dt><code>zoomScale</code></dt>
+<dd><p>zoomScale</p></dd>
+
+
+<dt><code>zoomScaleNormal</code></dt>
+<dd><p>zoomScaleNormal</p></dd>
+
+
+<dt><code>zoomScalePageLayoutView</code></dt>
+<dd><p>zoomScalePageLayoutView</p></dd>
+
+
+<dt><code>zoomScaleSheetLayoutView</code></dt>
+<dd><p>zoomScaleSheetLayoutView</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+
+</div><p></p><hr><a id="method-wbChartSheet-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbChartSheet</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 

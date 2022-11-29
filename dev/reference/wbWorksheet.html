@@ -263,17 +263,14 @@ R6 class for a Workbook Worksheet"><meta name="robots" content="noindex"><!-- ma
 <li><p><a href="#method-wbWorksheet-add_page_break"><code>wbWorksheet$add_page_break()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-append"><code>wbWorksheet$append()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-add_sparklines"><code>wbWorksheet$add_sparklines()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-set_sheetview"><code>wbWorksheet$set_sheetview()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-clone"><code>wbWorksheet$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorksheet-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new <code>wbWorksheet</code> object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/wbWorksheet.html">wbWorksheet</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tabSelected <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  oddHeader <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  oddFooter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  evenHeader <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -289,24 +286,8 @@ R6 class for a Workbook Worksheet"><meta name="robots" content="noindex"><!-- ma
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>gridLines</code></dt>
-<dd><p>gridLines</p></dd>
-
-
-<dt><code>rowColHeaders</code></dt>
-<dd><p>rowColHeaders</p></dd>
-
-
-<dt><code>tabSelected</code></dt>
-<dd><p>tabSelected</p></dd>
-
-
-<dt><code>tabColour</code></dt>
+<p></p><div class="arguments"><dl><dt><code>tabColour</code></dt>
 <dd><p>tabColour</p></dd>
-
-
-<dt><code>zoom</code></dt>
-<dd><p>zoom</p></dd>
 
 
 <dt><code>oddHeader</code></dt>
@@ -520,15 +501,127 @@ guaranteed to remain a public method.</p><div class="section">
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
-</div><p></p><hr><a id="method-wbWorksheet-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-set_sheetview"></a><div class="section">
+<h3 id="method-set-sheetview-">Method <code>set_sheetview()</code><a class="anchor" aria-label="anchor" href="#method-set-sheetview-"></a></h3>
+<p>add sheetview</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">set_sheetview</span><span class="op">(</span></span>
+<span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  defaultGridColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rightToLeft <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showFormulas <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showGridLines <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showOutlineSymbols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showRowColHeaders <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showRuler <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showWhiteSpace <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showZeros <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tabSelected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  topLeftCell <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  view <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  windowProtection <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbookViewId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScaleNormal <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScalePageLayoutView <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScaleSheetLayoutView <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>colorId</code></dt>
+<dd><p>colorId</p></dd>
+
+
+<dt><code>defaultGridColor</code></dt>
+<dd><p>defaultGridColor</p></dd>
+
+
+<dt><code>rightToLeft</code></dt>
+<dd><p>rightToLeft</p></dd>
+
+
+<dt><code>showFormulas</code></dt>
+<dd><p>showFormulas</p></dd>
+
+
+<dt><code>showGridLines</code></dt>
+<dd><p>showGridLines</p></dd>
+
+
+<dt><code>showOutlineSymbols</code></dt>
+<dd><p>showOutlineSymbols</p></dd>
+
+
+<dt><code>showRowColHeaders</code></dt>
+<dd><p>showRowColHeaders</p></dd>
+
+
+<dt><code>showRuler</code></dt>
+<dd><p>showRuler</p></dd>
+
+
+<dt><code>showWhiteSpace</code></dt>
+<dd><p>showWhiteSpace</p></dd>
+
+
+<dt><code>showZeros</code></dt>
+<dd><p>showZeros</p></dd>
+
+
+<dt><code>tabSelected</code></dt>
+<dd><p>tabSelected</p></dd>
+
+
+<dt><code>topLeftCell</code></dt>
+<dd><p>topLeftCell</p></dd>
+
+
+<dt><code>view</code></dt>
+<dd><p>view</p></dd>
+
+
+<dt><code>windowProtection</code></dt>
+<dd><p>windowProtection</p></dd>
+
+
+<dt><code>workbookViewId</code></dt>
+<dd><p>workbookViewId</p></dd>
+
+
+<dt><code>zoomScale</code></dt>
+<dd><p>zoomScale</p></dd>
+
+
+<dt><code>zoomScaleNormal</code></dt>
+<dd><p>zoomScaleNormal</p></dd>
+
+
+<dt><code>zoomScalePageLayoutView</code></dt>
+<dd><p>zoomScalePageLayoutView</p></dd>
+
+
+<dt><code>zoomScaleSheetLayoutView</code></dt>
+<dd><p>zoomScaleSheetLayoutView</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+
+</div><p></p><hr><a id="method-wbWorksheet-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
