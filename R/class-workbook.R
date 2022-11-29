@@ -3624,6 +3624,91 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
+    #' @description Add xml drawing
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param xml xml
+    #' @returns The `wbWorkbook` object
+    add_drawing = function(
+      sheet = current_sheet(),
+      xml,
+      dims = "A1:H8"
+    ) {
+      sheet <- private$get_sheet_index(sheet)
+
+      xml <- read_xml(xml, pointer = FALSE)
+
+      if (!(xml_node_name(xml) == "xdr:wsDr")) {
+        error("xml needs to be a drawing.")
+      }
+
+      # include rvg graphic from specific position to two cell anchor
+      if (!is.null(dims) || xml_node_name(xml, "xdr:wsDr") == "xdr:twoCellAnchor") {
+
+        dims_list <- strsplit(dims, ":")[[1]]
+        cols <- col2int(dims_list)
+        rows <- as.numeric(gsub("\\D+", "", dims_list))
+
+        from_to <- paste0(
+          "<xdr:from>",
+          "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
+          "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+          "</xdr:from>",
+          "<xdr:to>",
+          "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
+          "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+          "</xdr:to>"
+        )
+        from_to <- sprintf(from_to, cols[1] - 1L, rows[1] - 1L, cols[2], rows[2])
+
+        grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
+
+        xml <- read_xml(
+          paste0(
+            "<xdr:wsDr xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:pic=\"http://schemas.openxmlformats.org/drawingml/2006/picture\" xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\">",
+            "<xdr:twoCellAnchor>",
+            from_to,
+            grpSp,
+            "<xdr:clientData/>",
+            "</xdr:twoCellAnchor>",
+            "</xdr:wsDr>"
+          ),
+          pointer = FALSE
+        )
+      }
+
+      # check if sheet already contains drawing. if yes, try to integrate
+      # our drawing into this else we only use our drawing.
+      drawings <- self$drawings[[sheet]]
+      if (drawings == "") {
+        drawings <- xml
+      } else {
+        drawing_type <- xml_node_name(xml, "xdr:wsDr")
+        xml_drawing <- xml_node(xml, "xdr:wsDr", drawing_type)
+        drawings <- xml_add_child(drawings, xml_drawing)
+      }
+      self$drawings[[sheet]] <- drawings
+
+      # get the correct next free relship id
+      if (length(self$worksheets_rels[[sheet]]) == 0) {
+        next_relship <- 1
+        has_no_drawing <- TRUE
+      } else {
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
+        has_no_drawing <- !all(relship$typ == "drawing")
+      }
+
+      # if a drawing exisits, we already added ourself to it. Otherwise we
+      # create a new drawing.
+      if (has_no_drawing) {
+        self$worksheets_rels[[sheet]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing1.xml\"/>", next_relship)
+        self$worksheets[[sheet]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
+      }
+
+      invisible(self)
+    },
 
     #' @description
     #' Prints the `wbWorkbook` object
