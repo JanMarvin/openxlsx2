@@ -117,7 +117,6 @@ as_binary <- function(x) {
   as.integer(x)
 }
 
-
 as_xml_attr <- function(x) {
   if (inherits(x, "logical")) {
     x <- as_binary(x)
