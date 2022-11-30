@@ -79,6 +79,9 @@ R6 class for a Workbook Worksheet"><meta name="robots" content="noindex"><!-- ma
     
 
 <p>The <code>wbWorksheet</code> object</p>
+
+
+<p>The <code>wbWorksheet</code> object</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -261,6 +264,7 @@ R6 class for a Workbook Worksheet"><meta name="robots" content="noindex"><!-- ma
 <li><p><a href="#method-wbWorksheet-fold_cols"><code>wbWorksheet$fold_cols()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-clean_sheet"><code>wbWorksheet$clean_sheet()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-add_page_break"><code>wbWorksheet$add_page_break()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-set_print_options"><code>wbWorksheet$set_print_options()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-append"><code>wbWorksheet$append()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-add_sparklines"><code>wbWorksheet$add_sparklines()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-set_sheetview"><code>wbWorksheet$set_sheetview()</code></a></p></li>
@@ -280,7 +284,8 @@ R6 class for a Workbook Worksheet"><meta name="robots" content="noindex"><!-- ma
 <span>  paperSize <span class="op">=</span> <span class="fl">9</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="st">"portrait"</span>,</span>
 <span>  hdpi <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  vdpi <span class="op">=</span> <span class="fl">300</span></span>
+<span>  vdpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  printGridLines <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -328,6 +333,10 @@ R6 class for a Workbook Worksheet"><meta name="robots" content="noindex"><!-- ma
 
 <dt><code>vdpi</code></dt>
 <dd><p>vdpi</p></dd>
+
+
+<dt><code>printGridLines</code></dt>
+<dd><p>printGridLines</p></dd>
 
 
 </dl><p></p></div>
@@ -456,16 +465,54 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-wbWorksheet-append"></a><div class="section">
-<h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
-<p>append a field.  Intended for internal use only.  Not
-guaranteed to remain a public method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorksheet-set_print_options"></a><div class="section">
+<h3 id="method-set-print-options-">Method <code>set_print_options()</code><a class="anchor" aria-label="anchor" href="#method-set-print-options-"></a></h3>
+<p>add print options</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">field</span>, value <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">set_print_options</span><span class="op">(</span></span>
+<span>  gridLines <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gridLinesSet <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  headings <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  horizontalCentered <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verticalCentered <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>gridLines</code></dt>
+<dd><p>gridLines</p></dd>
+
+
+<dt><code>gridLinesSet</code></dt>
+<dd><p>gridLinesSet</p></dd>
+
+
+<dt><code>headings</code></dt>
+<dd><p>If TRUE prints row and column headings</p></dd>
+
+
+<dt><code>horizontalCentered</code></dt>
+<dd><p>If TRUE the page is horizontally centered</p></dd>
+
+
+<dt><code>verticalCentered</code></dt>
+<dd><p>If TRUE the page is vertically centered</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-wbWorksheet-append"></a><div class="section">
+<h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
+<p>append a field.  Intended for internal use only.  Not
+guaranteed to remain a public method.</p><div class="section">
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">field</span>, value <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>field</code></dt>
 <dd><p>a field name</p></dd>
 
@@ -484,12 +531,12 @@ guaranteed to remain a public method.</p><div class="section">
 </div><p></p><hr><a id="method-wbWorksheet-add_sparklines"></a><div class="section">
 <h3 id="method-add-sparklines-">Method <code>add_sparklines()</code><a class="anchor" aria-label="anchor" href="#method-add-sparklines-"></a></h3>
 <p>add sparkline</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">add_sparklines</span><span class="op">(</span><span class="va">sparklines</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sparklines</code></dt>
 <dd><p>sparkline created by <code>create_sparkline()</code></p></dd>
 
@@ -504,7 +551,7 @@ guaranteed to remain a public method.</p><div class="section">
 </div><p></p><hr><a id="method-wbWorksheet-set_sheetview"></a><div class="section">
 <h3 id="method-set-sheetview-">Method <code>set_sheetview()</code><a class="anchor" aria-label="anchor" href="#method-set-sheetview-"></a></h3>
 <p>add sheetview</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">set_sheetview</span><span class="op">(</span></span>
 <span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  defaultGridColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -529,7 +576,7 @@ guaranteed to remain a public method.</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>colorId</code></dt>
 <dd><p>colorId</p></dd>
 
@@ -616,12 +663,12 @@ guaranteed to remain a public method.</p><div class="section">
 </div><p></p><hr><a id="method-wbWorksheet-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
