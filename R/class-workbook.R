@@ -2025,11 +2025,16 @@ wbWorkbook <- R6::R6Class(
       yWindow                = NULL
     ) {
 
-      if (is.null(self$workbook$bookViews))
+      wbv <- self$workbook$bookViews
+
+      if (is.null(wbv)) {
         wbv <- xml_node_create("workbookView")
+      } else {
+        wbv <- xml_node(wbv, "bookViews", "workbookView")
+      }
 
       wbv <- xml_attr_mod(
-        vbw,
+        wbv,
         xml_attributes = c(
           activeTab              = as_xml_attr(activeTab),
           autoFilterDateGrouping = as_xml_attr(autoFilterDateGrouping),
@@ -6170,11 +6175,11 @@ wbWorkbook <- R6::R6Class(
       visible_sheet_index <- which(!hidden)[1] # first visible
 
       if (is.null(self$workbook$bookViews))
-        self$workbook$set_bookview(
+        self$set_bookview(
           xWindow      = 0,
           yWindow      = 0,
           windowWidth  = 13125,
-          windowHeight = 6105,
+          windowHeight = 13125,
           firstSheet   = visible_sheet_index - 1L,
           activeTab    = visible_sheet_index - 1L
         )

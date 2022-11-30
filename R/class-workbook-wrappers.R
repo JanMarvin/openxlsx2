@@ -858,7 +858,7 @@ wb_set_bookview <- function(
     yWindow                = NULL
 ) {
   assert_workbook(wb)
-  wb$clone()$set_bookviews(
+  wb$clone()$set_bookview(
     activeTab              = activeTab,
     autoFilterDateGrouping = autoFilterDateGrouping,
     firstSheet             = firstSheet,

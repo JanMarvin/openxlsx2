@@ -779,6 +779,7 @@ wb_ws <- wb_get_worksheet
 #'   wb <- wb_set_active_sheet(wb, sheet = "IrisSample")
 #' @name select_active_sheet
 wb_get_active_sheet <- function(wb) {
+  assert_workbook(wb)
   at <- rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))["activeTab"]
   # return c index as R index
   as.numeric(at) + 1
@@ -789,12 +790,16 @@ wb_get_active_sheet <- function(wb) {
 #' @export
 wb_set_active_sheet <- function(wb, sheet) {
   # active tab requires a c index
-  wb$clone()$set_bookview(activeTab = as.character(sheet - 1))
+  assert_workbook(wb)
+  sheet <- wb_validate_sheet(wb, sheet)
+  wb$clone()$set_bookview(activeTab = sheet - 1L)
 }
 
 #' @name select_active_sheet
 #' @export
 wb_get_selected <- function(wb) {
+
+  assert_workbook(wb)
 
   len <- length(wb$sheet_names)
   sv <- vector("list", length = len)
