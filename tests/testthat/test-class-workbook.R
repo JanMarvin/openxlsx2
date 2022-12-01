@@ -416,3 +416,33 @@ test_that("set and remove row heights work", {
   )
 
 })
+
+test_that("add_drawing works", {
+
+  skip_if_not_installed("rvg")
+  skip_if_not_installed("ggplot2")
+
+  require(rvg)
+  require(ggplot2)
+
+  tmp <- tempfile(fileext = "drawing.xml")
+
+  ## rvg example
+  dml_xlsx(file =  tmp, fonts = list(sans = "Bradley Hand"))
+  print(
+    ggplot(data = iris,
+           mapping = aes(x = Sepal.Length, y = Petal.Width)) +
+      geom_point() + labs(title = "With font Bradley Hand") +
+      theme_minimal(base_family = "sans", base_size = 18)
+  )
+  dev.off()
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_drawing(xml = tmp)$
+    add_drawing(xml = tmp, dims = "A9:H16")$
+    add_drawing(xml = tmp, dims = NULL)
+
+  expect_equal(1L, length(wb$drawings))
+
+})
