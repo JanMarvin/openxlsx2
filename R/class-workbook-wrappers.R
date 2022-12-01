@@ -822,6 +822,59 @@ wb_get_base_font <- function(wb) {
   wb$get_base_font()
 }
 
+
+#' Set the workbook position, size and filter
+#'
+#' Get the base font used in the workbook.
+#' @param wb A [wbWorkbook] object
+#' @param activeTab activeTab
+#' @param autoFilterDateGrouping autoFilterDateGrouping
+#' @param firstSheet firstSheet
+#' @param minimized minimized
+#' @param showHorizontalScroll showHorizontalScroll
+#' @param showSheetTabs showSheetTabs
+#' @param showVerticalScroll showVerticalScroll
+#' @param tabRatio tabRatio
+#' @param visibility visibility
+#' @param windowHeight windowHeight
+#' @param windowWidth windowWidth
+#' @param xWindow xWindow
+#' @param yWindow yWindow
+#' @return The `wbWorkbook` object
+wb_set_bookview <- function(
+    wb,
+    activeTab              = NULL,
+    autoFilterDateGrouping = NULL,
+    firstSheet             = NULL,
+    minimized              = NULL,
+    showHorizontalScroll   = NULL,
+    showSheetTabs          = NULL,
+    showVerticalScroll     = NULL,
+    tabRatio               = NULL,
+    visibility             = NULL,
+    windowHeight           = NULL,
+    windowWidth            = NULL,
+    xWindow                = NULL,
+    yWindow                = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$set_bookview(
+    activeTab              = activeTab,
+    autoFilterDateGrouping = autoFilterDateGrouping,
+    firstSheet             = firstSheet,
+    minimized              = minimized,
+    showHorizontalScroll   = showHorizontalScroll,
+    showSheetTabs          = showSheetTabs,
+    showVerticalScroll     = showVerticalScroll,
+    tabRatio               = tabRatio,
+    visibility             = visibility,
+    windowHeight           = windowHeight,
+    windowWidth            = windowWidth,
+    xWindow                = xWindow,
+    yWindow                = yWindow
+  )
+}
+
 #' Set document headers and footers
 #'
 #' Set document headers and footers

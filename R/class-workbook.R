@@ -1992,6 +1992,75 @@ wbWorkbook <- R6::R6Class(
       self$styles_mgr$styles$fonts[[1]] <- create_font(sz = as.character(fontSize), color = fontColour, name = fontName)
     },
 
+    ### book views ----
+
+    #' @description
+    #' Set the book views
+    #' @param activeTab activeTab
+    #' @param autoFilterDateGrouping autoFilterDateGrouping
+    #' @param firstSheet firstSheet
+    #' @param minimized minimized
+    #' @param showHorizontalScroll showHorizontalScroll
+    #' @param showSheetTabs showSheetTabs
+    #' @param showVerticalScroll showVerticalScroll
+    #' @param tabRatio tabRatio
+    #' @param visibility visibility
+    #' @param windowHeight windowHeight
+    #' @param windowWidth windowWidth
+    #' @param xWindow xWindow
+    #' @param yWindow yWindow
+    #' @return The `wbWorkbook` object
+    set_bookview = function(
+      activeTab              = NULL,
+      autoFilterDateGrouping = NULL,
+      firstSheet             = NULL,
+      minimized              = NULL,
+      showHorizontalScroll   = NULL,
+      showSheetTabs          = NULL,
+      showVerticalScroll     = NULL,
+      tabRatio               = NULL,
+      visibility             = NULL,
+      windowHeight           = NULL,
+      windowWidth            = NULL,
+      xWindow                = NULL,
+      yWindow                = NULL
+    ) {
+
+      wbv <- self$workbook$bookViews
+
+      if (is.null(wbv)) {
+        wbv <- xml_node_create("workbookView")
+      } else {
+        wbv <- xml_node(wbv, "bookViews", "workbookView")
+      }
+
+      wbv <- xml_attr_mod(
+        wbv,
+        xml_attributes = c(
+          activeTab              = as_xml_attr(activeTab),
+          autoFilterDateGrouping = as_xml_attr(autoFilterDateGrouping),
+          firstSheet             = as_xml_attr(firstSheet),
+          minimized              = as_xml_attr(minimized),
+          showHorizontalScroll   = as_xml_attr(showHorizontalScroll),
+          showSheetTabs          = as_xml_attr(showSheetTabs),
+          showVerticalScroll     = as_xml_attr(showVerticalScroll),
+          tabRatio               = as_xml_attr(tabRatio),
+          visibility             = as_xml_attr(visibility),
+          windowHeight           = as_xml_attr(windowHeight),
+          windowWidth            = as_xml_attr(windowWidth),
+          xWindow                = as_xml_attr(xWindow),
+          yWindow                = as_xml_attr(yWindow)
+        )
+      )
+
+      self$workbook$bookViews <- xml_node_create(
+        "bookViews",
+        xml_children = wbv
+      )
+
+      invisible(self)
+    },
+
     ### sheet names ----
 
     #' @description Get sheet names
@@ -6106,11 +6175,13 @@ wbWorkbook <- R6::R6Class(
       visible_sheet_index <- which(!hidden)[1] # first visible
 
       if (is.null(self$workbook$bookViews))
-        self$workbook$bookViews <-
-        sprintf(
-          '<bookViews><workbookView xWindow="0" yWindow="0" windowWidth="13125" windowHeight="6105" firstSheet="%s" activeTab="%s"/></bookViews>',
-          visible_sheet_index - 1L,
-          visible_sheet_index - 1L
+        self$set_bookview(
+          xWindow      = 0,
+          yWindow      = 0,
+          windowWidth  = 13125,
+          windowHeight = 13125,
+          firstSheet   = visible_sheet_index - 1L,
+          activeTab    = visible_sheet_index - 1L
         )
 
       # Failsafe: hidden sheet can not be selected.
