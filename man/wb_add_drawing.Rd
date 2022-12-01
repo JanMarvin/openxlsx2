@@ -18,3 +18,19 @@ wb_add_drawing(wb, sheet = current_sheet(), xml, dims = "A1:H8")
 \description{
 add drawings to workbook
 }
+\examples{
+if (requireNamespace("rvg") && interactive()) {
+
+## rvg example
+require(rvg)
+tmp <- tempfile(fileext = ".xml")
+dml_xlsx(file =  tmp)
+plot(1,1)
+dev.off()
+
+wb <- wb_workbook()$
+  add_worksheet()$
+  add_drawing(xml = tmp)$
+  add_drawing(xml = tmp, dims = NULL)
+}
+}
