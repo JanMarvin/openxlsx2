@@ -3642,38 +3642,71 @@ wbWorkbook <- R6::R6Class(
         error("xml needs to be a drawing.")
       }
 
-      # include rvg graphic from specific position to two cell anchor
+      grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
+      ext   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:ext")
+
+      # include rvg graphic from specific position to one or two cell anchor
       if (!is.null(dims) && xml_node_name(xml, "xdr:wsDr") == "xdr:absoluteAnchor") {
 
-        dims_list <- strsplit(dims, ":")[[1]]
-        cols <- col2int(dims_list)
-        rows <- as.numeric(gsub("\\D+", "", dims_list))
+        twocell <- grepl(":", dims)
 
-        from_to <- paste0(
-          "<xdr:from>",
-          "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
-          "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
-          "</xdr:from>",
-          "<xdr:to>",
-          "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
-          "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
-          "</xdr:to>"
-        )
-        from_to <- sprintf(from_to, cols[1] - 1L, rows[1] - 1L, cols[2], rows[2])
+        if (twocell) {
 
-        grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
+          xdr_typ <- "xdr:twoCellAnchor"
+          ext <- NULL
 
-        xml <- read_xml(
-          paste0(
-            "<xdr:wsDr xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:pic=\"http://schemas.openxmlformats.org/drawingml/2006/picture\" xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\">",
-            "<xdr:twoCellAnchor>",
-            from_to,
+          dims_list <- strsplit(dims, ":")[[1]]
+          cols <- col2int(dims_list)
+          rows <- as.numeric(gsub("\\D+", "", dims_list))
+
+          anchor <- paste0(
+            "<xdr:from>",
+            "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
+            "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+            "</xdr:from>",
+            "<xdr:to>",
+            "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
+            "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+            "</xdr:to>"
+          )
+          anchor <- sprintf(anchor, cols[1] - 1L, rows[1] - 1L, cols[2], rows[2])
+
+        } else {
+
+          xdr_typ <- "xdr:oneCellAnchor"
+
+          cols <- col2int(dims)
+          rows <- as.numeric(gsub("\\D+", "", dims))
+
+          anchor <- paste0(
+            "<xdr:from>",
+            "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
+            "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+            "</xdr:from>"
+          )
+          anchor <- sprintf(anchor, cols[1] - 1L, rows[1] - 1L)
+
+        }
+
+        xdr_typ_xml <- xml_node_create(
+          xdr_typ,
+          xml_children = c(
+            anchor,
+            ext,
             grpSp,
-            "<xdr:clientData/>",
-            "</xdr:twoCellAnchor>",
-            "</xdr:wsDr>"
+            "<xdr:clientData/>"
+          )
+        )
+
+        xml <- xml_node_create(
+          "xdr:wsDr",
+          xml_attributes = c(
+            "xmlns:a"   = "http://schemas.openxmlformats.org/drawingml/2006/main",
+            "xmlns:r"   = "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+            "xmlns:pic" = "http://schemas.openxmlformats.org/drawingml/2006/picture",
+            "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"
           ),
-          pointer = FALSE
+          xml_children = xdr_typ_xml
         )
       }
 

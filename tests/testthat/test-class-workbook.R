@@ -440,8 +440,10 @@ test_that("add_drawing works", {
   wb <- wb_workbook()$
     add_worksheet()$
     add_drawing(xml = tmp)$
-    add_drawing(xml = tmp, dims = "A9:H16")$
-    add_drawing(xml = tmp, dims = NULL)
+    add_drawing(xml = tmp, dims = "A1:H10")$
+    add_drawing(xml = tmp, dims = "L1")$
+    add_drawing(xml = tmp, dims = NULL)$
+    add_drawing(xml = tmp, dims = "L19")
 
   expect_equal(1L, length(wb$drawings))
 
