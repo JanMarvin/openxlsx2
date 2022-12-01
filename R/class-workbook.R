@@ -3643,7 +3643,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       # include rvg graphic from specific position to two cell anchor
-      if (!is.null(dims) || xml_node_name(xml, "xdr:wsDr") == "xdr:twoCellAnchor") {
+      if (!is.null(dims) && xml_node_name(xml, "xdr:wsDr") != "xdr:twoCellAnchor") {
 
         dims_list <- strsplit(dims, ":")[[1]]
         cols <- col2int(dims_list)

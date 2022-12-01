@@ -749,6 +749,20 @@ wb_add_plot <- function(
   )
 }
 
+#' add drawings to workbook
+#' @param wb a wbWorkbook
+#' @param sheet a sheet in the workbook
+#' @param xml the drawing xml as character or file
+#' @param dims the dimension where the drawing is added. Can be NULL
+wb_add_drawing <- function(
+  wb,
+  sheet = current_sheet(),
+  xml,
+  dims = "A1:H8"
+) {
+  assert_workbook(wb)
+  wb$clone()$add_drawing(sheet = sheet, xml = xml, dims = dims)
+}
 
 #' @title Remove a worksheet from a workbook
 #' @description Remove a worksheet from a Workbook object
