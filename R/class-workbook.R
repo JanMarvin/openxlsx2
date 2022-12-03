@@ -3736,7 +3736,8 @@ wbWorkbook <- R6::R6Class(
       # if a drawing exisits, we already added ourself to it. Otherwise we
       # create a new drawing.
       if (has_no_drawing) {
-        self$worksheets_rels[[sheet]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing1.xml\"/>", next_relship)
+        no_drawing <- length(self$drawings)
+        self$worksheets_rels[[sheet]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, no_drawing)
         self$worksheets[[sheet]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
       }
 
