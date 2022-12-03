@@ -3755,32 +3755,42 @@ wbWorkbook <- R6::R6Class(
       xml,
       dims = "A1:H8"
     ) {
+
       dims_list <- strsplit(dims, ":")[[1]]
-      from <- col2int(dims_list)
-      to <- as.numeric(gsub("\\D+", "", dims_list))
+      cols <- col2int(dims_list)
+      rows <- as.numeric(gsub("\\D+", "", dims_list))
+
+      sheet <- private$get_sheet_index(sheet)
 
       next_chart <- NROW(self$charts) + 1
 
       chart <- data.frame(
         chart = xml,
         colors = colors1_xml,
-        style = stylebarplot_xml,
-        rels = chart1_rels_xml(next_chart)
+        style = styleplot_xml,
+        rels = chart1_rels_xml(next_chart),
+        chartEx = "",
+        relsEx = ""
       )
 
       self$charts <- rbind(self$charts, chart)
 
-      # create Drawing
-      self$drawings[[sheet]] <- drawings(
-        drawings = self$drawings[[sheet]],
-        from = c(from[1] - 1, to[1] - 1),
-        to = c(from[2], to[2])
+      len_drawing <- length(xml_node_name(self$drawings[[sheet]], "xdr:wsDr")) + 1L
+
+      from <- c(cols[1] - 1L, rows[1] - 1L)
+      to   <- c(cols[2], rows[2])
+
+      # create drawing. add it to self$drawings, the worksheet and rels
+      self$add_drawing(
+        sheet = sheet,
+        xml = drawings(len_drawing, from, to),
+        dims = dims
       )
 
       self$drawings_rels[[sheet]] <- drawings_rels(self$drawings_rels[[sheet]], next_chart)
 
-      self$worksheets[[sheet]]$drawing <- "<drawing r:id=\"rId1\"/>"
-      self$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
+
+      # self$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
 
       invisible(self)
     },
@@ -3802,11 +3812,14 @@ wbWorkbook <- R6::R6Class(
       sheetname <- private$get_sheet_name(sheet)
 
       # format.ms_chart is not exported
-      out_xml <- format(
-        graph,
-        sheetname = sheetname,
-        id_x = "64451212",
-        id_y = "64453248"
+      out_xml <- read_xml(
+        format(
+          graph,
+          sheetname = sheetname,
+          id_x = "64451212",
+          id_y = "64453248"
+        ),
+        pointer = FALSE
       )
 
       # write the chart data to the workbook

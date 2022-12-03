@@ -530,7 +530,7 @@ colors1_xml <- "<cs:colorStyle xmlns:cs=\"http://schemas.microsoft.com/office/dr
 <cs:variation><a:lumMod val=\"50000\"/><a:lumOff val=\"50000\"/></cs:variation>
 </cs:colorStyle>"
 
-stylebarplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.com/office/drawing/2012/chartStyle" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" id="201">
+styleplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.com/office/drawing/2012/chartStyle" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" id="201">
  <cs:axisTitle>
   <cs:lnRef idx="0" />
   <cs:fillRef idx="0" />
@@ -1032,21 +1032,15 @@ stylebarplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.co
 </cs:chartStyle>')
 
 
-drawings <- function(drawings, from, to) {
+drawings <- function(drawing_id, from, to) {
 
-  has_drawings <- xml_node_name(drawings) == "xdr:wsDr"
-
-  if (!has_drawings) {
-    drawings <- xml_node_create(
-      xml_name = "xdr:wsDr",
-      xml_attributes = c(
-        `xmlns:xdr` = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
-        `xmlns:a`   = "http://schemas.openxmlformats.org/drawingml/2006/main"
-      )
+  drawings <- xml_node_create(
+    xml_name = "xdr:wsDr",
+    xml_attributes = c(
+      `xmlns:xdr` = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+      `xmlns:a`   = "http://schemas.openxmlformats.org/drawingml/2006/main"
     )
-  }
-
-  len_drawing <- length(xml_node_name(drawings, "xdr:wsDr"))
+  )
 
   drawing <- sprintf(
     '<xdr:twoCellAnchor>
@@ -1076,8 +1070,8 @@ drawings <- function(drawings, from, to) {
     </xdr:twoCellAnchor>', # id=\"{26250924-C6F2-F6FB-E235-146645DB2CBB}\
     from[1], from[2],
     to[1], to[2],
-    len_drawing + 1,
-    len_drawing + 1
+    drawing_id,
+    drawing_id
   )
 
   return(
