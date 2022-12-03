@@ -3730,7 +3730,7 @@ wbWorkbook <- R6::R6Class(
         relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
         relship$typ <- basename(relship$Type)
         next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
-        has_no_drawing <- !all(relship$typ == "drawing")
+        has_no_drawing <- !any(relship$typ == "drawing")
       }
 
       # if a drawing exisits, we already added ourself to it. Otherwise we
