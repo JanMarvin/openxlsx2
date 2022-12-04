@@ -584,7 +584,8 @@ Rcpp::CharacterVector xml_node_create(
 
       // check if result is a valid xml_node, else append as is
       if (result) {
-        cld.append_copy(is_node.first_child());
+        for (auto is_n : is_node.children())
+          cld.append_copy(is_n);
       } else {
         cld.append_child(pugi::node_pcdata).set_value(xml_cld.c_str());
       }

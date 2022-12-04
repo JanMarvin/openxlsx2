@@ -353,6 +353,10 @@ test_that("xml_node_create", {
   xml_got <- xml_node_create(xml_name, xml_children = xml_child, xml_attributes = xml_attr)
   expect_identical(xml_exp, xml_got)
 
+  xml_exp <- "<a><b/><c/></a>"
+  xml_got <- xml_node_create("a", xml_children = c("<b/><c/>"))
+  expect_identical(xml_exp, xml_got)
+
 })
 
 test_that("works with x namespace", {

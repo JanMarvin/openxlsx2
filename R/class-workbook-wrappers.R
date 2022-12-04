@@ -749,6 +749,36 @@ wb_add_plot <- function(
   )
 }
 
+#' add drawings to workbook
+#' @param wb a wbWorkbook
+#' @param sheet a sheet in the workbook
+#' @param xml the drawing xml as character or file
+#' @param dims the dimension where the drawing is added. Can be NULL
+#' @examples
+#' if (requireNamespace("rvg") && interactive()) {
+#'
+#' ## rvg example
+#' require(rvg)
+#' tmp <- tempfile(fileext = ".xml")
+#' dml_xlsx(file =  tmp)
+#' plot(1,1)
+#' dev.off()
+#'
+#' wb <- wb_workbook()$
+#'   add_worksheet()$
+#'   add_drawing(xml = tmp)$
+#'   add_drawing(xml = tmp, dims = NULL)
+#' }
+#‘ @export
+wb_add_drawing <- function(
+  wb,
+  sheet = current_sheet(),
+  xml,
+  dims = "A1:H8"
+) {
+  assert_workbook(wb)
+  wb$clone()$add_drawing(sheet = sheet, xml = xml, dims = dims)
+}
 
 #' @title Remove a worksheet from a workbook
 #' @description Remove a worksheet from a Workbook object

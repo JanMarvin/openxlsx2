@@ -2,6 +2,8 @@
 
 ## New features
 
+* Provide `rvg` support via `wb_add_drawing()`. This allows integrating `rvg` plots into xlsx files. [449](https://github.com/JanMarvin/openxlsx2/pull/449)
+
 * Improve print options. Defaults to printing grid lines, if the worksheet contains grid lines. [440](https://github.com/JanMarvin/openxlsx2/pull/440)
 
 * Support reading files with form control. [426](https://github.com/JanMarvin/openxlsx2/pull/426)

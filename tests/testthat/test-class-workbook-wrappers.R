@@ -181,6 +181,18 @@ test_that("wb_add_plot() is a wrapper", {
   }
 })
 
+test_that("wb_add_drawing is a wrapper", {
+
+  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  wb <- wb_load(file = fl)
+
+  xml <- wb$drawings[[2]]
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_wrapper("add_drawing", wb = wb, params = list(xml = xml))
+})
+
 # wb_get_tables(), wb_remove_tables() -------------------------------------
 
 test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
