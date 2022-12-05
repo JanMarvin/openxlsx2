@@ -520,3 +520,44 @@ test_that("wb_set_cell_style() is a wrapper", {
   )
 
 })
+
+
+# wb_add_chart_xml() ------------------------------------------------------
+
+test_that("wb_add_chart_xml() is a wrapper", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_wrapper(
+    "add_chart_xml",
+    wb = wb,
+    params = list(dims = "F4:L20", xml = "<a/>")
+  )
+})
+
+
+# wb_add_mschart() --------------------------------------------------------
+
+test_that("wb_add_mschart() is a wrapper", {
+
+  skip_if_not_installed("mschart")
+
+  require(mschart)
+
+  ### Scatter
+  scatter <- ms_scatterchart(data = iris, x = "Sepal.Length",
+                             y = "Sepal.Width", group = "Species")
+  scatter <- chart_settings(scatter, scatterstyle = "marker")
+
+  wb <- wb_workbook()$add_worksheet()
+
+  # get style from b1 to assign it to a1
+  numfmt <- wb$get_cell_style(dims = "B1")
+
+  expect_wrapper(
+    "add_mschart",
+    wb = wb,
+    params = list(dims = "F4:L20", graph = scatter)
+  )
+
+})

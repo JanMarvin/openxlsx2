@@ -25,18 +25,19 @@ Imports:
     stringi,
     utils,
     zip
-LinkingTo: 
+LinkingTo:
     Rcpp
 Suggests:
     covr,
     ggplot2,
     knitr,
+    mschart (>= 0.4),
     rmarkdown,
     roxygen2,
     rvg,
     testthat (>= 3.0.0),
     waldo
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Encoding: UTF-8
 RoxygenNote: 7.2.2

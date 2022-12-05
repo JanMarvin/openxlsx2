@@ -3744,6 +3744,92 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description Add xml drawing
+    #' @description Add xml chart
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param xml xml
+    #' @returns The `wbWorkbook` object
+    add_chart_xml = function(
+      sheet = current_sheet(),
+      xml,
+      dims = "A1:H8"
+    ) {
+
+      dims_list <- strsplit(dims, ":")[[1]]
+      cols <- col2int(dims_list)
+      rows <- as.numeric(gsub("\\D+", "", dims_list))
+
+      sheet <- private$get_sheet_index(sheet)
+
+      next_chart <- NROW(self$charts) + 1
+
+      chart <- data.frame(
+        chart = xml,
+        colors = colors1_xml,
+        style = styleplot_xml,
+        rels = chart1_rels_xml(next_chart),
+        chartEx = "",
+        relsEx = ""
+      )
+
+      self$charts <- rbind(self$charts, chart)
+
+      len_drawing <- length(xml_node_name(self$drawings[[sheet]], "xdr:wsDr")) + 1L
+
+      from <- c(cols[1] - 1L, rows[1] - 1L)
+      to   <- c(cols[2], rows[2])
+
+      # create drawing. add it to self$drawings, the worksheet and rels
+      self$add_drawing(
+        sheet = sheet,
+        xml = drawings(len_drawing, from, to),
+        dims = dims
+      )
+
+      self$drawings_rels[[sheet]] <- drawings_rels(self$drawings_rels[[sheet]], next_chart)
+
+      invisible(self)
+    },
+
+    #' @description Add mschart chart to the workbook
+    #' @param sheet the sheet on which the graph will appear
+    #' @param dims the dimensions where the sheet will appear
+    #' @param graph mschart graph
+    #' @returns The `wbWorkbook` object
+    add_mschart = function(
+      sheet = current_sheet(),
+      dims = "B2:H8",
+      graph
+    ) {
+
+      requireNamespace("mschart")
+      assert_class(graph, "ms_chart")
+
+      sheetname <- private$get_sheet_name(sheet)
+
+      # format.ms_chart is exported in mschart >= 0.4
+      out_xml <- read_xml(
+        format(
+          graph,
+          sheetname = sheetname,
+          id_x = "64451212",
+          id_y = "64453248"
+        ),
+        pointer = FALSE
+      )
+
+      # write the chart data to the workbook
+      if (inherits(graph$data_series, "wb_data")) {
+        self$
+          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+      } else {
+        self$
+          add_data(x = graph$data_series)$
+          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+      }
+    },
+
     #' @description
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects

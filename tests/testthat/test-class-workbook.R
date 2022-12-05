@@ -448,3 +448,90 @@ test_that("add_drawing works", {
   expect_equal(1L, length(wb$drawings))
 
 })
+
+test_that("add_drawing works", {
+
+  skip_if_not_installed("mschart")
+
+  require(mschart)
+
+  # write data starting at B2
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = mtcars, dims = "B2")$
+    add_data(x = data.frame(name = rownames(mtcars)), dims = "A2")
+
+  # create wb_data object this will tell this mschart from this PR to create a file corresponding to openxlsx2
+  dat <- wb_data(wb, 1, dims = "A2:G6")
+
+  exp <- structure(
+    list(
+      name = c("Mazda RX4", "Mazda RX4 Wag", "Datsun 710", "Hornet 4 Drive"),
+      mpg = c(21, 21, 22.8, 21.4),
+      cyl = c(6, 6, 4, 6),
+      disp = c(160, 160, 108, 258),
+      hp = c(110, 110, 93, 110),
+      drat = c(3.9, 3.9, 3.85, 3.08),
+      wt = c(2.62, 2.875, 2.32, 3.215)
+    ),
+    row.names = 3:6,
+    class = c("data.frame", "wb_data"),
+    tt = structure(
+      list(
+        name = c("s", "s", "s", "s"),
+        mpg = c("n", "n", "n", "n"),
+        cyl = c("n", "n", "n", "n"),
+        disp = c("n", "n", "n", "n"),
+        hp = c("n", "n", "n", "n"),
+        drat = c("n", "n", "n", "n"),
+        wt = c("n", "n", "n", "n")
+      ),
+      row.names = 3:6,
+      class = "data.frame"),
+    types = c(A = 0, B = 1, C = 1, D = 1, E = 1, F = 1, G = 1),
+    dims = structure(
+      list(
+        A = c("A2", "A3", "A4", "A5", "A6"),
+        B = c("B2", "B3", "B4", "B5", "B6"),
+        C = c("C2", "C3", "C4", "C5", "C6"),
+        D = c("D2", "D3", "D4", "D5", "D6"),
+        E = c("E2", "E3", "E4", "E5", "E6"),
+        F = c("F2", "F3", "F4", "F5", "F6"),
+        G = c("G2", "G3", "G4", "G5", "G6")
+      ),
+      row.names = 2:6,
+      class = "data.frame"),
+    sheet = "Sheet 1")
+
+  expect_equal(exp, dat)
+
+  # call ms_scatterplot
+  scatter_plot <- ms_scatterchart(
+    data = dat,
+    x = "mpg",
+    y = c("disp", "hp"),
+    labels = c("disp", "hp")
+  )
+
+  # add the scatterplots to the data
+  wb <- wb %>%
+    wb_add_mschart(dims = "F4:L20", graph = scatter_plot)
+
+  expect_equal(1L, NROW(wb$charts))
+
+  chart_01 <- ms_linechart(
+    data = us_indus_prod,
+    x = "date", y = "value",
+    group = "type"
+  )
+
+  wb$add_worksheet()
+  wb$add_mschart(dims = "F4:L20", graph = chart_01)
+
+  exp <- list(
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart1.xml\"/>",
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart2.xml\"/>"
+  )
+  got <- wb$drawings_rels
+  expect_equal(exp, got)
+
+})

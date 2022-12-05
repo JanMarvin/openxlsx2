@@ -83,25 +83,25 @@ genBaseWorkbook.xml.rels <- function() {
 
 genBaseWorkbook <- function() {
 
-    # bookViews
-    # calcPr
-    # customWorkbookViews
-    # definedNames
-    # externalReferences
-    # extLst
-    # fileRecoveryPr
-    # fileSharing
-    # fileVersion
-    # functionGroups
-    # oleSize
-    # pivotCaches
-    # sheets
-    # smartTagPr
-    # smartTagTypes
-    # webPublishing
-    # webPublishObjects
-    # workbookPr
-    # workbookProtection
+  # bookViews
+  # calcPr
+  # customWorkbookViews
+  # definedNames
+  # externalReferences
+  # extLst
+  # fileRecoveryPr
+  # fileSharing
+  # fileVersion
+  # functionGroups
+  # oleSize
+  # pivotCaches
+  # sheets
+  # smartTagPr
+  # smartTagTypes
+  # webPublishing
+  # webPublishObjects
+  # workbookPr
+  # workbookProtection
 
   list(
     fileVersion = NULL,
@@ -509,4 +509,606 @@ genSlicerCachesExtLst <- function(i) {
     paste(sprintf('<x14:slicerCache r:id="rId%s"/>', i), collapse = ""),
     "</x14:slicerCaches></ext>"
   )
+}
+
+
+colors1_xml <- "<cs:colorStyle xmlns:cs=\"http://schemas.microsoft.com/office/drawing/2012/chartStyle\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" meth=\"cycle\" id=\"10\">
+<a:schemeClr val=\"accent1\"/>
+<a:schemeClr val=\"accent2\"/>
+<a:schemeClr val=\"accent3\"/>
+<a:schemeClr val=\"accent4\"/>
+<a:schemeClr val=\"accent5\"/>
+<a:schemeClr val=\"accent6\"/>
+<cs:variation/>
+<cs:variation><a:lumMod val=\"60000\"/></cs:variation>
+<cs:variation><a:lumMod val=\"80000\"/><a:lumOff val=\"20000\"/></cs:variation>
+<cs:variation><a:lumMod val=\"80000\"/></cs:variation>
+<cs:variation><a:lumMod val=\"60000\"/><a:lumOff val=\"40000\"/></cs:variation>
+<cs:variation><a:lumMod val=\"50000\"/></cs:variation>
+<cs:variation><a:lumMod val=\"70000\"/><a:lumOff val=\"30000\"/></cs:variation>
+<cs:variation><a:lumMod val=\"70000\"/></cs:variation>
+<cs:variation><a:lumMod val=\"50000\"/><a:lumOff val=\"50000\"/></cs:variation>
+</cs:colorStyle>"
+
+styleplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.com/office/drawing/2012/chartStyle" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" id="201">
+ <cs:axisTitle>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:defRPr sz="1000" kern="1200" />
+ </cs:axisTitle>
+ <cs:categoryAxis>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="15000" />
+      <a:lumOff val="85000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+  <cs:defRPr sz="900" kern="1200" />
+ </cs:categoryAxis>
+ <cs:chartArea mods="allowNoFillOverride allowNoLineOverride">
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:solidFill>
+    <a:schemeClr val="bg1" />
+   </a:solidFill>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="15000" />
+      <a:lumOff val="85000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+  <cs:defRPr sz="1000" kern="1200" />
+ </cs:chartArea>
+ <cs:dataLabel>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="75000" />
+    <a:lumOff val="25000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:defRPr sz="900" kern="1200" />
+ </cs:dataLabel>
+ <cs:dataLabelCallout>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="dk1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:spPr>
+   <a:solidFill>
+    <a:schemeClr val="lt1" />
+   </a:solidFill>
+   <a:ln>
+    <a:solidFill>
+     <a:schemeClr val="dk1">
+      <a:lumMod val="25000" />
+      <a:lumOff val="75000" />
+     </a:schemeClr>
+    </a:solidFill>
+   </a:ln>
+  </cs:spPr>
+  <cs:defRPr sz="900" kern="1200" />
+  <cs:bodyPr rot="0" spcFirstLastPara="1" vertOverflow="clip" horzOverflow="clip" vert="horz" wrap="square" lIns="36576" tIns="18288" rIns="36576" bIns="18288" anchor="ctr" anchorCtr="1">
+   <a:spAutoFit />
+  </cs:bodyPr>
+ </cs:dataLabelCallout>
+ <cs:dataPoint>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="1">
+   <cs:styleClr val="auto" />
+  </cs:fillRef>
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+ </cs:dataPoint>
+ <cs:dataPoint3D>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="1">
+   <cs:styleClr val="auto" />
+  </cs:fillRef>
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+ </cs:dataPoint3D>
+ <cs:dataPointLine>
+  <cs:lnRef idx="0">
+   <cs:styleClr val="auto" />
+  </cs:lnRef>
+  <cs:fillRef idx="1" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="28575" cap="rnd">
+    <a:solidFill>
+     <a:schemeClr val="phClr" />
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:dataPointLine>
+ <cs:dataPointMarker>
+  <cs:lnRef idx="0">
+   <cs:styleClr val="auto" />
+  </cs:lnRef>
+  <cs:fillRef idx="1">
+   <cs:styleClr val="auto" />
+  </cs:fillRef>
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525">
+    <a:solidFill>
+     <a:schemeClr val="phClr" />
+    </a:solidFill>
+   </a:ln>
+  </cs:spPr>
+ </cs:dataPointMarker>
+ <cs:dataPointMarkerLayout symbol="circle" size="5" />
+ <cs:dataPointWireframe>
+  <cs:lnRef idx="0">
+   <cs:styleClr val="auto" />
+  </cs:lnRef>
+  <cs:fillRef idx="1" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="rnd">
+    <a:solidFill>
+     <a:schemeClr val="phClr" />
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:dataPointWireframe>
+ <cs:dataTable>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:spPr>
+   <a:noFill />
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="15000" />
+      <a:lumOff val="85000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+  <cs:defRPr sz="900" kern="1200" />
+ </cs:dataTable>
+ <cs:downBar>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="dk1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:solidFill>
+    <a:schemeClr val="dk1">
+     <a:lumMod val="65000" />
+     <a:lumOff val="35000" />
+    </a:schemeClr>
+   </a:solidFill>
+   <a:ln w="9525">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="65000" />
+      <a:lumOff val="35000" />
+     </a:schemeClr>
+    </a:solidFill>
+   </a:ln>
+  </cs:spPr>
+ </cs:downBar>
+ <cs:dropLine>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="35000" />
+      <a:lumOff val="65000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:dropLine>
+ <cs:errorBar>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="65000" />
+      <a:lumOff val="35000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:errorBar>
+ <cs:floor>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:noFill />
+   <a:ln>
+    <a:noFill />
+   </a:ln>
+  </cs:spPr>
+ </cs:floor>
+ <cs:gridlineMajor>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="15000" />
+      <a:lumOff val="85000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:gridlineMajor>
+ <cs:gridlineMinor>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="5000" />
+      <a:lumOff val="95000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:gridlineMinor>
+ <cs:hiLoLine>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="75000" />
+      <a:lumOff val="25000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:hiLoLine>
+ <cs:leaderLine>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="35000" />
+      <a:lumOff val="65000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:leaderLine>
+ <cs:legend>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:defRPr sz="900" kern="1200" />
+ </cs:legend>
+ <cs:plotArea mods="allowNoFillOverride allowNoLineOverride">
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+ </cs:plotArea>
+ <cs:plotArea3D mods="allowNoFillOverride allowNoLineOverride">
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+ </cs:plotArea3D>
+ <cs:seriesAxis>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:defRPr sz="900" kern="1200" />
+ </cs:seriesAxis>
+ <cs:seriesLine>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="9525" cap="flat" cmpd="sng" algn="ctr">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="35000" />
+      <a:lumOff val="65000" />
+     </a:schemeClr>
+    </a:solidFill>
+    <a:round />
+   </a:ln>
+  </cs:spPr>
+ </cs:seriesLine>
+ <cs:title>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:defRPr sz="1400" b="0" kern="1200" spc="0" baseline="0" />
+ </cs:title>
+ <cs:trendline>
+  <cs:lnRef idx="0">
+   <cs:styleClr val="auto" />
+  </cs:lnRef>
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:ln w="19050" cap="rnd">
+    <a:solidFill>
+     <a:schemeClr val="phClr" />
+    </a:solidFill>
+    <a:prstDash val="sysDot" />
+   </a:ln>
+  </cs:spPr>
+ </cs:trendline>
+ <cs:trendlineLabel>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:defRPr sz="900" kern="1200" />
+ </cs:trendlineLabel>
+ <cs:upBar>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="dk1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:solidFill>
+    <a:schemeClr val="lt1" />
+   </a:solidFill>
+   <a:ln w="9525">
+    <a:solidFill>
+     <a:schemeClr val="tx1">
+      <a:lumMod val="15000" />
+      <a:lumOff val="85000" />
+     </a:schemeClr>
+    </a:solidFill>
+   </a:ln>
+  </cs:spPr>
+ </cs:upBar>
+ <cs:valueAxis>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1">
+    <a:lumMod val="65000" />
+    <a:lumOff val="35000" />
+   </a:schemeClr>
+  </cs:fontRef>
+  <cs:defRPr sz="900" kern="1200" />
+ </cs:valueAxis>
+ <cs:wall>
+  <cs:lnRef idx="0" />
+  <cs:fillRef idx="0" />
+  <cs:effectRef idx="0" />
+  <cs:fontRef idx="minor">
+   <a:schemeClr val="tx1" />
+  </cs:fontRef>
+  <cs:spPr>
+   <a:noFill />
+   <a:ln>
+    <a:noFill />
+   </a:ln>
+  </cs:spPr>
+ </cs:wall>
+</cs:chartStyle>')
+
+
+drawings <- function(drawing_id, from, to) {
+
+  drawings <- xml_node_create(
+    xml_name = "xdr:wsDr",
+    xml_attributes = c(
+      `xmlns:xdr` = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+      `xmlns:a`   = "http://schemas.openxmlformats.org/drawingml/2006/main"
+    )
+  )
+
+  drawing <- sprintf(
+    '<xdr:twoCellAnchor>
+    <xdr:from>
+    <xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
+    <xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
+    </xdr:from>
+    <xdr:to>
+    <xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
+    <xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
+    </xdr:to>
+    <xdr:graphicFrame macro=\"\"><xdr:nvGraphicFramePr>
+    <xdr:cNvPr id=\"2\" name=\"Chart %s\">
+    <a:extLst>
+    <a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\">
+    <a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\"/>
+    </a:ext>
+    </a:extLst>
+    </xdr:cNvPr><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/></xdr:xfrm>
+    <a:graphic>
+    <a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/chart\">
+    <c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId%s\"/>
+    </a:graphicData>
+    </a:graphic>
+    </xdr:graphicFrame>
+    <xdr:clientData/>
+    </xdr:twoCellAnchor>', # id=\"{26250924-C6F2-F6FB-E235-146645DB2CBB}\
+    from[1], from[2],
+    to[1], to[2],
+    drawing_id,
+    drawing_id
+  )
+
+  return(
+    xml_append_child1(
+      node    = read_xml(drawings),
+      child   = read_xml(drawing),
+      pointer = FALSE)
+  )
+}
+
+chart1_rels_xml <- function(x) {
+  sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">
+<Relationship Id=\"rId2\" Type=\"http://schemas.microsoft.com/office/2011/relationships/chartColorStyle\" Target=\"colors%s.xml\"/>
+<Relationship Id=\"rId1\" Type=\"http://schemas.microsoft.com/office/2011/relationships/chartStyle\" Target=\"style%s.xml\"/>
+</Relationships>",
+          x,
+          x
+  )
+}
+
+drawings_rels <- function(drawings, x) {
+
+  # ignore default case ""
+  if (all(drawings == "")) {
+    drawings <- NULL
+  }
+
+  rel_len <- length(xml_node(drawings, "Relationship"))
+
+  drawings <- c(
+    drawings,
+    sprintf(
+      "<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart%s.xml\"/>",
+      rel_len + 1,
+      x
+    )
+  )
+
+  return(drawings)
 }
