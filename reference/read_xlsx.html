@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
       </span>
     </div>
 
@@ -89,7 +89,8 @@
 <span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  check.names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sep.names <span class="op">=</span> <span class="st">"."</span>,</span>
-<span>  fillMergedCells <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  fillMergedCells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -166,6 +167,10 @@ are checked to ensure that they are syntactically valid variable names</p></dd>
 <dt>fillMergedCells</dt>
 <dd><p>If TRUE, the value in a merged cell is given to all cells within the merge.</p></dd>
 
+
+<dt>...</dt>
+<dd><p>additional arguments passed to <code><a href="wb_to_df.html">wb_to_df()</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -181,7 +186,7 @@ Opening, saving and closing the file with Excel will resolve this.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="NamedRegions.html">get_named_regions()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="NamedRegions.html">get_named_regions()</a></code> <code><a href="wb_to_df.html">wb_to_df()</a></code></p></div>
     </div>
 
     <div id="ref-examples">

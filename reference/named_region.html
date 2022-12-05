@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
       </span>
     </div>
 
@@ -78,8 +78,21 @@
 <span>  <span class="va">cols</span>,</span>
 <span>  <span class="va">rows</span>,</span>
 <span>  <span class="va">name</span>,</span>
-<span>  localSheetId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  localSheet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  comment <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  customMenu <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  is_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  functionGroupId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  help <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hidden <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  localName <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  publishToServer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  statusBar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vbProcedure <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbookParameter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xml <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_remove_named_region</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
@@ -107,12 +120,64 @@
 <dd><p>Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.</p></dd>
 
 
-<dt>localSheetId</dt>
-<dd><p>localSheetId</p></dd>
+<dt>localSheet</dt>
+<dd><p>If <code>TRUE</code> the named region will be local for this sheet</p></dd>
 
 
 <dt>overwrite</dt>
 <dd><p>Boolean. Overwrite if exists? Default to FALSE</p></dd>
+
+
+<dt>comment</dt>
+<dd><p>description text for named region</p></dd>
+
+
+<dt>customMenu</dt>
+<dd><p>customMenu (unknown xml feature)</p></dd>
+
+
+<dt>description</dt>
+<dd><p>description (unknown xml feature)</p></dd>
+
+
+<dt>is_function</dt>
+<dd><p>function (unknown xml feature)</p></dd>
+
+
+<dt>functionGroupId</dt>
+<dd><p>function group id (unknown xml feature)</p></dd>
+
+
+<dt>help</dt>
+<dd><p>help (unknown xml feature)</p></dd>
+
+
+<dt>hidden</dt>
+<dd><p>hidden if the named region should be hidden</p></dd>
+
+
+<dt>localName</dt>
+<dd><p>localName (unknown xml feature)</p></dd>
+
+
+<dt>publishToServer</dt>
+<dd><p>publish to server (unknown xml feature)</p></dd>
+
+
+<dt>statusBar</dt>
+<dd><p>status bar (unknown xml feature)</p></dd>
+
+
+<dt>vbProcedure</dt>
+<dd><p>wbProcedure (unknown xml feature)</p></dd>
+
+
+<dt>workbookParameter</dt>
+<dd><p>workbookParameter (unknown xml feature)</p></dd>
+
+
+<dt>xml</dt>
+<dd><p>xml (unknown xml feature)</p></dd>
 
 </dl></div>
     <div id="details">
@@ -141,7 +206,6 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="va">out_file</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpARO9Rm/temp_xlsx_2e8e4ce8f32d.xlsx"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## see named regions</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="NamedRegions.html">get_named_regions</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span> <span class="co">## From Workbook object</span></span></span>

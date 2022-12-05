@@ -91,6 +91,9 @@
     <loc>/reference/create_sparklines.html</loc>
   </url>
   <url>
+    <loc>/reference/dataframe_to_dims.html</loc>
+  </url>
+  <url>
     <loc>/reference/dims_to_dataframe.html</loc>
   </url>
   <url>
@@ -110,21 +113,6 @@
   </url>
   <url>
     <loc>/reference/int2col.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_borders.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_cellXfs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_fills.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_fonts.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_numFmts.html</loc>
   </url>
   <url>
     <loc>/reference/named_region.html</loc>
@@ -208,6 +196,9 @@
     <loc>/reference/wb_add_cell_style.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_add_chart_xml.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_add_conditional_formatting.html</loc>
   </url>
   <url>
@@ -215,6 +206,9 @@
   </url>
   <url>
     <loc>/reference/wb_add_data_validation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_add_drawing.html</loc>
   </url>
   <url>
     <loc>/reference/wb_add_fill.html</loc>
@@ -230,6 +224,9 @@
   </url>
   <url>
     <loc>/reference/wb_add_image.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_add_mschart.html</loc>
   </url>
   <url>
     <loc>/reference/wb_add_numfmt.html</loc>
@@ -250,9 +247,6 @@
     <loc>/reference/wb_add_worksheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_chart_sheet.html</loc>
-  </url>
-  <url>
     <loc>/reference/wb_clone_sheet_style.html</loc>
   </url>
   <url>
@@ -260,6 +254,9 @@
   </url>
   <url>
     <loc>/reference/wb_creators.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_data.html</loc>
   </url>
   <url>
     <loc>/reference/wb_freeze_pane.html</loc>
@@ -320,6 +317,9 @@
   </url>
   <url>
     <loc>/reference/wb_save.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_set_bookview.html</loc>
   </url>
   <url>
     <loc>/reference/wb_set_col_widths.html</loc>

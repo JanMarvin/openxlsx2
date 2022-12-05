@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
       </span>
     </div>
 
@@ -114,13 +114,17 @@ your experience. Open an issue on github or write us a mail.</p>
 <h2 id="importing-data">Importing data<a class="anchor" aria-label="anchor" href="#importing-data"></a>
 </h2>
 <p>Coming from <code>openxlsx</code> you might know about
-<code><a href="../reference/read_xlsx.html">read_xlsx()</a></code>, <code><a href="../reference/wb_read.html">wb_read()</a></code> and
-<code>wb_load</code> multiple functions that do may different things,
-but mostly the same. In <code>openxlsx2</code> we tried our best to
-reduce the complexity under the hood and for the user as well. For this
-example we will use example data provided by the package. You can locate
-it in our “inst/extdata” folder. The files are included with the package
-source and you can open them in any calculation software as well.</p>
+<code>read.xlsx()</code> (two functions, one for files and one for
+workbooks) and <code>readWorkbook()</code>. Functions that do different
+things, but mostly the same. In <code>openxlsx2</code> we tried our best
+to reduce the complexity under the hood and for the user as well. In
+<code>openxlsx2</code> they are replaced with <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code>,
+<code><a href="../reference/wb_read.html">wb_read()</a></code> and they share the same underlying function
+<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>.</p>
+<p>For this example we will use example data provided by the package.
+You can locate it in our “inst/extdata” folder. The files are included
+with the package source and you can open them in any calculation
+software as well.</p>
 <div class="section level3">
 <h3 id="basic-import">Basic import<a class="anchor" aria-label="anchor" href="#basic-import"></a>
 </h3>
@@ -147,9 +151,9 @@ our function to read the workbook into R</p>
 <p>The output is created as a data frame and contains data types date,
 logical, numeric and character. The function to import the file to R,
 <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> provides similar options as the
-<code>openxlsx</code> functions <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code> and
-<code><a href="../reference/wb_read.html">wb_read()</a></code> and a few new functions we will go through the
-options. As you might have noticed, we return the column of the xlsx
+<code>openxlsx</code> functions <code>read.xlsx()</code> and
+<code>readWorkbook()</code> and a few new functions we will go through
+the options. As you might have noticed, we return the column of the xlsx
 file as the row name of the data frame returned. Per default the first
 sheet in the workbook is imported. If you want to switch this, either
 provide the <code>sheet</code> parameter with the correct index or
