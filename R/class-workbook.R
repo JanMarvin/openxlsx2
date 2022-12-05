@@ -3789,9 +3789,6 @@ wbWorkbook <- R6::R6Class(
 
       self$drawings_rels[[sheet]] <- drawings_rels(self$drawings_rels[[sheet]], next_chart)
 
-
-      # self$worksheets_rels[[sheet]] <- worksheet_rels(sheet)
-
       invisible(self)
     },
 
@@ -3811,7 +3808,7 @@ wbWorkbook <- R6::R6Class(
 
       sheetname <- private$get_sheet_name(sheet)
 
-      # format.ms_chart is not exported
+      # format.ms_chart is exported in mschart >= 0.4
       out_xml <- read_xml(
         format(
           graph,

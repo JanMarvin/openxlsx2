@@ -1082,7 +1082,6 @@ drawings <- function(drawing_id, from, to) {
   )
 }
 
-worksheet_rels <- function(x) sprintf("<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", x)
 chart1_rels_xml <- function(x) {
   sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">
 <Relationship Id=\"rId2\" Type=\"http://schemas.microsoft.com/office/2011/relationships/chartColorStyle\" Target=\"colors%s.xml\"/>

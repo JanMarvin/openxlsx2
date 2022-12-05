@@ -540,7 +540,7 @@ test_that("wb_add_chart_xml() is a wrapper", {
 
 test_that("wb_add_mschart() is a wrapper", {
 
-  requireNamespace("mschart")
+  skip_if_not_installed("mschart")
 
   require(mschart)
 
