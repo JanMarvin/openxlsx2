@@ -193,6 +193,9 @@
     <loc>/reference/wb_add_cell_style.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_add_chart_xml.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_add_conditional_formatting.html</loc>
   </url>
   <url>
@@ -220,6 +223,9 @@
     <loc>/reference/wb_add_image.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_add_mschart.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_add_numfmt.html</loc>
   </url>
   <url>
@@ -245,6 +251,9 @@
   </url>
   <url>
     <loc>/reference/wb_creators.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_data.html</loc>
   </url>
   <url>
     <loc>/reference/wb_freeze_pane.html</loc>
