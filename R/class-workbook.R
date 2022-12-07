@@ -1538,41 +1538,6 @@ wbWorkbook <- R6::R6Class(
         file.copy(self$vbaProject, xlDir)
       }
 
-      # ## Drawings
-      # for (draw in seq_along(self$drawings)) {
-
-      #   relship <- data.frame()
-      #   if (!all(identical(self$worksheets_rels[[draw]], character()))) {
-      #     relship <- rbindlist(xml_attr(unlist(self$worksheets_rels[[draw]]), "Relationship"))
-      #     relship$typ <- basename(relship$Type)
-      #     relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-      #   }
-
-      #   rid <- max(0, relship$tid)
-
-      #   if (!any(relship$typ == "drawing")) {
-
-      #     # check if drawings required
-      #     drawing_rel <- NULL
-      #     if (length(self$drawings) != 0 && length(self$drawings[[draw]])) {
-      #       rid <- rid + 1
-      #       drawing_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', rid, draw)
-      #     }
-
-      #     drawing_vml_rel <- NULL
-      #     # if drawings_vml is set or if file has comments. comments create drawings_vml when writing
-      #     if ((length(self$drawings_vml) > 0 && length(self$drawings_vml[[draw]]) > 0) || (length(self$comments) > 0 && length(self$comments[[draw]]) > 0)) {
-      #       rid <- rid + 1
-      #       drawing_vml_rel <- sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>', rid, draw)
-      #     }
-
-      #     self$worksheets_rels[[draw]] <-  unique(c(self$worksheets_rels[[draw]], drawing_rel, drawing_vml_rel))
-
-      #   }
-
-
-      # }
-
       ## write worksheet, worksheet_rels, drawings, drawing_rels
       ct <- private$writeSheetDataXML(
         ct,
@@ -3736,7 +3701,7 @@ wbWorkbook <- R6::R6Class(
       # if a drawing exisits, we already added ourself to it. Otherwise we
       # create a new drawing.
       if (has_no_drawing) {
-        no_drawing <- length(self$drawings)
+        no_drawing <- sum(self$drawings != "")
         self$worksheets_rels[[sheet]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, no_drawing)
         self$worksheets[[sheet]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
       }
