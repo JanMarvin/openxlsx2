@@ -461,6 +461,9 @@ test_that("add_drawing works", {
     add_data(x = data.frame(name = rownames(mtcars)), dims = "A2")
 
   # create wb_data object this will tell this mschart from this PR to create a file corresponding to openxlsx2
+  dat <- wb_data(wb, 1)
+  expect_equal(c(32L, 12L), dim(dat))
+
   dat <- wb_data(wb, 1, dims = "A2:G6")
 
   exp <- structure(
