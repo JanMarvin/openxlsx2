@@ -871,27 +871,56 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param tabColour tabColour
     #' @param zoom zoom
+    #' @param visible visible
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheet = current_sheet(), tabColour = NULL, zoom = 100) {
-      # TODO private$new_sheet_index()?
-      newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- private$get_sheet_id_max() # checks for length of worksheets
+    addChartSheet = function(sheet = next_sheet(), tabColour = NULL, zoom = 100, visible = TRUE) {
 
-      ##  Add sheet to workbook.xml
+      # set up so that a single error can be reported on fail
+      fail <- FALSE
+      msg <- NULL
+
+      private$validate_new_sheet(sheet)
+
+      if (is_waiver(sheet)) {
+        if (sheet == "current_sheet") {
+          stop("cannot add worksheet to current sheet")
+        }
+
+        # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
+        # a better check for this
+        sheet <- paste0(
+          getOption("openxlsx2.sheet.default_name", "Sheet "),
+          length(self$sheet_names) + 1L
+        )
+      }
+
+      sheet <- as.character(sheet)
+      sheet_name <- replace_legal_chars(sheet)
+      private$validate_new_sheet(sheet_name)
+
+
+      newSheetIndex <- length(self$worksheets) + 1L
+      private$set_current_sheet(newSheetIndex)
+      sheetId <- private$get_sheet_id_max() # checks for self$worksheet length
+
       self$append_sheets(
         sprintf(
-          '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          sheet,
+          '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
+          sheet_name,
           sheetId,
+          visible,
           newSheetIndex
         )
       )
 
-      ## append to worksheets list
-      self$append("worksheets",
-        wbChartSheet$new(tabColour = tabColour)
-      )
+      if (!is.null(tabColour)) {
+        tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
+      }
 
+      if (!is.numeric(zoom)) {
+        fail <- TRUE
+        msg <- c(msg, "zoom must be numeric")
+      }
 
       # nocov start
       if (zoom < 10) {
@@ -900,6 +929,12 @@ wbWorkbook <- R6::R6Class(
         zoom <- 400
       }
       #nocov end
+
+      self$append("worksheets",
+        wbChartSheet$new(
+          tabColour   = tabColour
+        )
+      )
 
       self$worksheets[[newSheetIndex]]$set_sheetview(
         workbookViewId = 0,
