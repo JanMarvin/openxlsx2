@@ -91,13 +91,29 @@ test_that("strings_xml", {
   )
 
   amp <- temp_xlsx()
-  wb_workbook()$
+  wb <- wb_workbook()$
     add_worksheet()$
     add_data(dims = "A1", x = "A & B")$
     save(amp)
 
   exp <- "A & B"
   got <- wb_to_df(amp, colNames = FALSE)[1, 1]
+  expect_equal(exp, got)
+
+  # a couple of saves and loads later ...
+  exp <- "<is><t>A &amp; B</t></is>"
+  got <- wb$worksheets[[1]]$sheet_data$cc$is
+  expect_equal(exp, got)
+
+  wb <- wb_load(amp)
+
+  got <- wb$worksheets[[1]]$sheet_data$cc$is
+  expect_equal(exp, got)
+
+  wb$save(amp)
+
+  wb <- wb_load(amp)
+  got <- wb$worksheets[[1]]$sheet_data$cc$is
   expect_equal(exp, got)
 
 })

@@ -521,13 +521,13 @@ wb_to_df <- function(
   # text in t
   if (any(cc_tab %in% c("inlineStr"))) {
     sel <- cc$c_t %in% c("inlineStr")
-    cc$val[sel] <- replaceXMLEntities(is_to_txt(cc$is[sel]))
+    cc$val[sel] <- is_to_txt(cc$is[sel])
     cc$typ[sel] <- "s"
   }
   # test is sst
   if (any(cc_tab %in% c("s"))) {
     sel <- cc$c_t %in% c("s")
-    cc$val[sel] <- replaceXMLEntities(sst[as.numeric(cc$v[sel]) + 1])
+    cc$val[sel] <- sst[as.numeric(cc$v[sel]) + 1]
     cc$typ[sel] <- "s"
   }
 
