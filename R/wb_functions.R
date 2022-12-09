@@ -883,6 +883,9 @@ wb_add_mschart <- function(
 #' @param wb a workbook
 #' @param sheet a sheet in the workbook either name or index
 #' @param dims the dimensions
+#' @param ... additional arguments for wb_to_df. Be aware that not every
+#' argument is valid.
+#' @seealso [wb_to_df()] [wb_add_mschart()]
 #' @examples
 #'  wb <- wb_workbook() %>%
 #'    wb_add_worksheet() %>%
@@ -890,11 +893,16 @@ wb_add_mschart <- function(
 #'
 #'  wb_data(wb, 1, dims = "B2:E6")
 #' @export
-wb_data <- function(wb, sheet = current_sheet(), dims = "A1") {
+wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   assert_workbook(wb)
   sheetname <- wb$.__enclos_env__$private$get_sheet_name(sheet)
 
-  z <- wb_to_df(wb, sheet, dims = dims)
+  if (missing(dims)) {
+    sheetno <- wb_validate_sheet(wb, sheet)
+    dims <- unname(unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension")))
+  }
+
+  z <- wb_to_df(wb, sheet, dims = dims, ...)
   attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE)
   attr(z, "sheet") <- sheetname
 
