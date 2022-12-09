@@ -736,7 +736,37 @@ wb_load <- function(
         wb$worksheets[[i]]$webPublishItems <- xml_node(worksheet_xml, "worksheet", "webPublishItems")
 
         wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
-        wb$worksheets[[i]]$sheetViews    <- xml_node(worksheet_xml, "worksheet", "sheetViews")
+
+        # extract freezePane from sheetViews. This intends to match our freeze
+        # pane approach. Though I do not really like it. This blindly shovels
+        # everything into sheetViews and freezePane.
+        sheetViews    <- xml_node(worksheet_xml, "worksheet", "sheetViews")
+
+        if (length(sheetViews)) {
+
+          # extract only in single sheetView case
+          if (length(xml_node(sheetViews, "sheetViews", "sheetView")) == 1) {
+            xml_nams <- xml_node_name(sheetViews, "sheetViews", "sheetView")
+
+            freezePane <- paste0(
+              vapply(
+                xml_nams,
+                function(x) xml_node(sheetViews, "sheetViews", "sheetView", x),
+                NA_character_
+              ),
+              collapse = ""
+            )
+
+            for (xml_nam in xml_nams) {
+              sheetViews <- xml_rm_child(sheetViews, xml_child = xml_nam, level = "sheetView")
+            }
+
+            wb$worksheets[[i]]$freezePane <- freezePane
+          }
+
+        }
+        wb$worksheets[[i]]$sheetViews <- sheetViews
+
         wb$worksheets[[i]]$cols_attr     <- xml_node(worksheet_xml, "worksheet", "cols", "col")
 
         wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
