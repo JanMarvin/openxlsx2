@@ -89,4 +89,15 @@ test_that("strings_xml", {
     "<is><t>foo'abcd'</t></is>",
     txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = TRUE)
   )
+
+  amp <- temp_xlsx()
+  wb_workbook()$
+    add_worksheet()$
+    add_data(dims = "A1", x = "A & B")$
+    save(amp)
+
+  exp <- "A & B"
+  got <- wb_to_df(amp, colNames = FALSE)[1,1]
+  expect_equal(exp, got)
+
 })
