@@ -97,7 +97,7 @@ test_that("strings_xml", {
     save(amp)
 
   exp <- "A & B"
-  got <- wb_to_df(amp, colNames = FALSE)[1,1]
+  got <- wb_to_df(amp, colNames = FALSE)[1, 1]
   expect_equal(exp, got)
 
 })
