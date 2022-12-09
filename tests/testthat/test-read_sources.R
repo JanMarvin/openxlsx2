@@ -269,6 +269,8 @@ test_that("calcChain is updated", {
   got <- wb$calcChain
   expect_equal(exp, got)
 
+  expect_silent(wb$save(temp))
+
 })
 
 test_that("read workbook with chart extension", {
