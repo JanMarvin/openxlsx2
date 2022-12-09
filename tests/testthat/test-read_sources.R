@@ -253,7 +253,7 @@ test_that("calcChain is updated", {
 
   fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/overwrite_formula.xlsx"
 
-  wb <- wb_load(fl)$
+  wb <- wb_load(fl, calc_chain = TRUE)$
     add_data(dims = "A1", x = "Formula overwritten")
 
   exp <- character()

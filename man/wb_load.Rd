@@ -4,7 +4,7 @@
 \alias{wb_load}
 \title{Load an existing .xlsx file}
 \usage{
-wb_load(file, xlsxFile = NULL, sheet, data_only = FALSE)
+wb_load(file, xlsxFile = NULL, sheet, data_only = FALSE, calc_chain = FALSE)
 }
 \arguments{
 \item{file}{A path to an existing .xlsx or .xlsm file}
@@ -16,6 +16,13 @@ sheet will be loaded.}
 
 \item{data_only}{mode to import if only a data frame should be returned. This
 strips the wbWorkbook to a bare minimum.}
+
+\item{calc_chain}{optionally you can keep the calculation chain intact. This
+is used by spreadsheet software to identify the order in which formulas are
+evaluated. Removing the calculation chain is considered harmless. The calc
+chain will be created upon the next time the worksheet is loaded in
+spreadsheet software. Keeping it, might only speed loading time in said
+software.}
 }
 \value{
 Workbook object.
