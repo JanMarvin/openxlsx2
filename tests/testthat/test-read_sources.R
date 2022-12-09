@@ -251,6 +251,8 @@ test_that("calcChain is updated", {
 
   skip_if_offline()
 
+  temp <- temp_xlsx()
+
   fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/overwrite_formula.xlsx"
 
   wb <- wb_load(fl, calc_chain = TRUE)$
@@ -259,6 +261,8 @@ test_that("calcChain is updated", {
   exp <- character()
   got <- wb$calcChain
   expect_equal(exp, got)
+
+  expect_silent(wb$save(temp))
 
 })
 
