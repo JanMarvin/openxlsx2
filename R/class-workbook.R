@@ -3653,6 +3653,8 @@ wbWorkbook <- R6::R6Class(
     ) {
       sheet <- private$get_sheet_index(sheet)
 
+      is_chartsheet <- inherits(self$worksheets[[sheet]], "wbChartSheet")
+
       xml <- read_xml(xml, pointer = FALSE)
 
       if (!(xml_node_name(xml) == "xdr:wsDr")) {
@@ -3663,7 +3665,7 @@ wbWorkbook <- R6::R6Class(
       ext   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:ext")
 
       # include rvg graphic from specific position to one or two cell anchor
-      if (!is.null(dims) && xml_node_name(xml, "xdr:wsDr") == "xdr:absoluteAnchor") {
+      if (!is.null(dims) && !is_chartsheet && xml_node_name(xml, "xdr:wsDr") == "xdr:absoluteAnchor") {
 
         twocell <- grepl(":", dims)
 
@@ -3777,6 +3779,7 @@ wbWorkbook <- R6::R6Class(
       rows <- as.numeric(gsub("\\D+", "", dims_list))
 
       sheet <- private$get_sheet_index(sheet)
+      is_chartsheet <- inherits(self$worksheets[[sheet]], "wbChartSheet")
 
       next_chart <- NROW(self$charts) + 1
 
@@ -3799,7 +3802,7 @@ wbWorkbook <- R6::R6Class(
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet = sheet,
-        xml = drawings(len_drawing, from, to),
+        xml = drawings(len_drawing, from, to, is_chartsheet),
         dims = dims
       )
 
