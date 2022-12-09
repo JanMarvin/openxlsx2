@@ -221,16 +221,10 @@ wbWorksheet <- R6::R6Class(
     #' @return A character vector of xml
     get_prior_sheet_data = function() {
 
-      sheetViews <- NULL
-      if (length(self$sheetViews)) {
-        sheetViews <- self$sheetViews
-      }
+      # apparently every sheet needs to have a sheetView
+      sheetViews <- self$sheetViews
 
       if (length(self$freezePane)) {
-        if (!length(sheetViews)) {
-          sheetViews <- xml_node_create("sheetViews", "<sheetView/>")
-        }
-
         if (length(xml_node(sheetViews, "sheetViews", "sheetView")) == 1) {
           # get sheetView node and append freezePane
           # TODO Can we unfreeze a pane? It should be possible to simply null freezePane
