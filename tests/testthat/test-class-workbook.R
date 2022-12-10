@@ -534,4 +534,23 @@ test_that("add_drawing works", {
   got <- wb$drawings_rels
   expect_equal(exp, got)
 
+
+  # write data starting at B2
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(x = mtcars)$
+    add_worksheet()$add_data(x = mtcars)$
+    add_worksheet()$add_data(x = mtcars)$
+    add_worksheet()$add_data(x = mtcars)$
+    add_mschart(dims = "F4:L20", 2, graph = chart_01)$
+    add_mschart(dims = "F4:L20", 3, graph = chart_01)
+
+  exp <- list(
+    character(0),
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing2.xml\"/>",
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing3.xml\"/>",
+    character(0)
+  )
+  got <- wb$worksheets_rels
+  expect_equal(exp, got)
+
 })

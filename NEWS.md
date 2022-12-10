@@ -1,5 +1,15 @@
 # openxlsx2 (in development)
 
+## Fixes
+
+* Previously, adding mscharts to sheets was only possible if (1) the worksheet already contained a drawing (if the workbook was loaded) or (2) to the last sheet of the workbook. This has now been fixed. Adding mscharts to any worksheet in the workbook is now possible as intended. [458](https://github.com/JanMarvin/openxlsx2/pull/458)
+
+
+***************************************************************************
+
+
+# openxlsx2 0.4
+
 ## New features
 
 * Provide `rvg` support via `wb_add_drawing()`. This allows integrating `rvg` plots into xlsx files. [449](https://github.com/JanMarvin/openxlsx2/pull/449)
