@@ -342,6 +342,20 @@ test_that("loading slicers works", {
   got <- wb$workbook$calcPr
   expect_null(got)
 
+  exp <- character()
+  got <- wb$calcChain
+  expect_equal(exp, got)
+
+  # check the default once again
+  wb <- wb_load(file = fl)
+
+  got <- wb$workbook$calcPr
+  expect_null(got)
+
+  exp <- character()
+  got <- wb$calcChain
+  expect_equal(exp, got)
+
 })
 
 test_that("vml target is updated on load", {
