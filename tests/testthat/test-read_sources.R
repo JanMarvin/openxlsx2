@@ -251,14 +251,25 @@ test_that("calcChain is updated", {
 
   skip_if_offline()
 
+  temp <- temp_xlsx()
+
   fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/overwrite_formula.xlsx"
 
-  wb <- wb_load(fl)$
-    add_data(dims = "A1", x = "Formula overwritten")
+  wb <- wb_load(fl, calc_chain = TRUE)
+
+  exp <- "<calcChain xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><c r=\"A1\" i=\"1\" l=\"1\"/></calcChain>"
+  got <- wb$calcChain
+  expect_equal(exp, got)
+
+  expect_silent(wb$save(temp))
+
+  wb$add_data(dims = "A1", x = "Formula overwritten")
 
   exp <- character()
   got <- wb$calcChain
   expect_equal(exp, got)
+
+  expect_silent(wb$save(temp))
 
 })
 
