@@ -74,7 +74,7 @@ formatting of the original .xlsx file.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_load</span><span class="op">(</span><span class="va">file</span>, xlsxFile <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">sheet</span>, data_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_load</span><span class="op">(</span><span class="va">file</span>, xlsxFile <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">sheet</span>, data_only <span class="op">=</span> <span class="cn">FALSE</span>, calc_chain <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -95,6 +95,15 @@ sheet will be loaded.</p></dd>
 <dt>data_only</dt>
 <dd><p>mode to import if only a data frame should be returned. This
 strips the wbWorkbook to a bare minimum.</p></dd>
+
+
+<dt>calc_chain</dt>
+<dd><p>optionally you can keep the calculation chain intact. This
+is used by spreadsheet software to identify the order in which formulas are
+evaluated. Removing the calculation chain is considered harmless. The calc
+chain will be created upon the next time the worksheet is loaded in
+spreadsheet software. Keeping it, might only speed loading time in said
+software.</p></dd>
 
 </dl></div>
     <div id="value">
