@@ -3649,11 +3649,11 @@ wbWorkbook <- R6::R6Class(
     add_drawing = function(
       sheet = current_sheet(),
       xml,
-      dims = "A1:H8"
+      dims = NULL
     ) {
       sheet <- private$get_sheet_index(sheet)
 
-      is_chartsheet <- inherits(self$worksheets[[sheet]], "wbChartSheet")
+      is_chartsheet <- self$isChartSheet[sheet]
 
       xml <- read_xml(xml, pointer = FALSE)
 
@@ -3661,8 +3661,10 @@ wbWorkbook <- R6::R6Class(
         error("xml needs to be a drawing.")
       }
 
-      grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
       ext   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:ext")
+      grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
+      grFrm <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:graphicFrame")
+      clDt  <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:clientData")
 
       # include rvg graphic from specific position to one or two cell anchor
       if (!is.null(dims) && !is_chartsheet && xml_node_name(xml, "xdr:wsDr") == "xdr:absoluteAnchor") {
@@ -3713,6 +3715,8 @@ wbWorkbook <- R6::R6Class(
             anchor,
             ext,
             grpSp,
+            grFrm,
+            clDt,
             "<xdr:clientData/>"
           )
         )
@@ -3771,15 +3775,11 @@ wbWorkbook <- R6::R6Class(
     add_chart_xml = function(
       sheet = current_sheet(),
       xml,
-      dims = "A1:H8"
+      dims = NULL
     ) {
 
-      dims_list <- strsplit(dims, ":")[[1]]
-      cols <- col2int(dims_list)
-      rows <- as.numeric(gsub("\\D+", "", dims_list))
-
       sheet <- private$get_sheet_index(sheet)
-      is_chartsheet <- inherits(self$worksheets[[sheet]], "wbChartSheet")
+      is_chartsheet <- self$isChartSheet[sheet]
 
       next_chart <- NROW(self$charts) + 1
 
@@ -3796,13 +3796,10 @@ wbWorkbook <- R6::R6Class(
 
       len_drawing <- length(xml_node_name(self$drawings[[sheet]], "xdr:wsDr")) + 1L
 
-      from <- c(cols[1] - 1L, rows[1] - 1L)
-      to   <- c(cols[2], rows[2])
-
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet = sheet,
-        xml = drawings(len_drawing, from, to, is_chartsheet),
+        xml = drawings(len_drawing),
         dims = dims
       )
 
@@ -3818,7 +3815,7 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     add_mschart = function(
       sheet = current_sheet(),
-      dims = "B2:H8",
+      dims = NULL,
       graph
     ) {
 

@@ -775,7 +775,7 @@ wb_add_drawing <- function(
   wb,
   sheet = current_sheet(),
   xml,
-  dims = "A1:H8"
+  dims = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$add_drawing(sheet = sheet, xml = xml, dims = dims)
@@ -2015,7 +2015,7 @@ wb_add_chart_xml <- function(
   wb,
   sheet = current_sheet(),
   xml,
-  dims = "A1:H8"
+  dims = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$add_chart_xml(sheet, xml, dims)

@@ -2,10 +2,9 @@
 % Please edit documentation in R/wb_functions.R
 \name{wb_add_mschart}
 \alias{wb_add_mschart}
-\title{dummy function to add a chart to an existing workbook
-currently only a barplot is possible}
+\title{Add mschart object to an existing workbook}
 \usage{
-wb_add_mschart(wb, sheet = current_sheet(), dims = "B2:H8", graph)
+wb_add_mschart(wb, sheet = current_sheet(), dims = NULL, graph)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -14,11 +13,10 @@ wb_add_mschart(wb, sheet = current_sheet(), dims = "B2:H8", graph)
 
 \item{dims}{the dimensions where the sheet will appear}
 
-\item{graph}{mschart graph}
+\item{graph}{mschart object}
 }
 \description{
-dummy function to add a chart to an existing workbook
-currently only a barplot is possible
+Add mschart object to an existing workbook
 }
 \examples{
 if (requireNamespace("mschart")) {

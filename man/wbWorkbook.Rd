@@ -515,7 +515,12 @@ Clone a workbooksheet
 \subsection{Method \code{addChartSheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet = current_sheet(), tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(
+  sheet = next_sheet(),
+  tabColour = NULL,
+  zoom = 100,
+  visible = TRUE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -526,6 +531,8 @@ Add a chart sheet to the workbook
 \item{\code{tabColour}}{tabColour}
 
 \item{\code{zoom}}{zoom}
+
+\item{\code{visible}}{visible}
 }
 \if{html}{\out{</div>}}
 }
@@ -1578,7 +1585,7 @@ Add plot. A wrapper for add_image()
 \subsection{Method \code{add_drawing()}}{
 Add xml drawing
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(sheet = current_sheet(), xml, dims = "A1:H8")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(sheet = current_sheet(), xml, dims = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1602,7 +1609,7 @@ Add xml drawing
 
 Add xml chart
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(sheet = current_sheet(), xml, dims = "A1:H8")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(sheet = current_sheet(), xml, dims = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1623,7 +1630,7 @@ Add xml chart
 \subsection{Method \code{add_mschart()}}{
 Add mschart chart to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mschart(sheet = current_sheet(), dims = "B2:H8", graph)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mschart(sheet = current_sheet(), dims = NULL, graph)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
