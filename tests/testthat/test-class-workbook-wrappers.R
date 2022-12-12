@@ -463,11 +463,8 @@ test_that("wb_add_style() is a wrapper", {
   # with name
   style <- create_numfmt(numFmtId = "165", formatCode = "#.#")
   wb <- wb_workbook()
-  expect_wrapper(
-    "add_style",
-    wb = wb,
-    params = list(style = style, style_name = "numfmt")
-  )
+  params <- list(style = style, style_name = "numfmt")
+  expect_wrapper("add_style", wb = wb, params = params)
 
   # without name
   wb <- wb_workbook()

@@ -85,17 +85,16 @@ workbook_add_chartsheet <- function(self, private, sheet, tabColour, zoom) {
   invisible(self)
 }
 
-workbook_add_style <- function(self, private, style = NULL, style_name = NULL) {
+workbook_add_style <- function(
+    self,
+    private,
+    style = NULL,
+    style_name = substitute(style)
+) {
+  style_name <- format(style_name)
   assert_class(style, "character")
-
-  if (is.null(style_name)) {
-    style_name <- deparse1(substitute(style, parent.frame()))
-  } else {
-    assert_class(style_name, "character")
-  }
-
+  assert_class(style_name, "character")
   self$styles_mgr$add(style, style_name)
-
   invisible(self)
 }
 

@@ -319,13 +319,10 @@ test_that("add_style", {
                    class = "data.frame")
   got <- wb$styles_mgr$numfmt
   expect_equal(exp, got)
-
 })
 
 test_that("assigning styles to loaded workbook works", {
-
   wb <- wb_load(file = system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2"))
-
   # previously it would break on xml_import, because NA was returned
   expect_silent(wb$add_font()$add_font())
 
@@ -334,8 +331,9 @@ test_that("assigning styles to loaded workbook works", {
 test_that("get & set cell style(s)", {
 
   # set a style in b1
-  wb <- wb_workbook()$add_worksheet()$
-    add_numfmt(dims = "B1", numfmt = "#,0")
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_numfmt(dims = "B1", numfmt = "#,0")
 
   # get style from b1 to assign it to a1
   numfmt <- wb$get_cell_style(dims = "B1")

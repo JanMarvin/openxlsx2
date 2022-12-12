@@ -2066,7 +2066,7 @@ wb_open <- function(wb) {
 #' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
 #' wb <- wb_workbook() %>% wb_add_style(yellow)
 #' @export
-wb_add_style <- function(wb, style = NULL, style_name = NULL) {
+wb_add_style <- function(wb, style = NULL, style_name = substitute(style)) {
   assert_workbook(wb)
   wb$clone()$add_style(style, style_name)
 }

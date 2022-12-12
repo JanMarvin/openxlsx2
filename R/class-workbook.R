@@ -483,7 +483,8 @@ wbWorkbook <- R6::R6Class(
     #' @param style style
     #' @param style_name style_name
     #' @returns The `wbWorkbook` object
-    add_style = function(style = NULL, style_name = NULL) {
+    add_style = function(style = NULL, style_name = substitute(style)) {
+      force(style_name)
       workbook_add_style(self, private, style = style, style_name = style_name)
     },
 
