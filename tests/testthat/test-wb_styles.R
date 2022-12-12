@@ -292,10 +292,10 @@ test_that("test add_cell_style()", {
 })
 
 test_that("add_style", {
-
   # without name
   num <- create_numfmt(numFmtId = "165", formatCode = "#.#")
-  wb <- wb_workbook() %>% wb_add_style(num)
+  wb <- wb_workbook()
+  wb$add_style(num)
 
   exp <- num
   got <- wb$styles_mgr$styles$numFmts
