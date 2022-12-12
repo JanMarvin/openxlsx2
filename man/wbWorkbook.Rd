@@ -256,7 +256,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-validate_sheet}{\code{wbWorkbook$validate_sheet()}}
 \item \href{#method-wbWorkbook-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
-\item \href{#method-wbWorkbook-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
+\item \href{#method-wbWorkbook-add_chartsheet}{\code{wbWorkbook$add_chartsheet()}}
 \item \href{#method-wbWorkbook-add_data}{\code{wbWorkbook$add_data()}}
 \item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
@@ -510,16 +510,16 @@ Clone a workbooksheet
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-addChartSheet"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-addChartSheet}{}}}
-\subsection{Method \code{addChartSheet()}}{
+\if{html}{\out{<a id="method-wbWorkbook-add_chartsheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_chartsheet}{}}}
+\subsection{Method \code{add_chartsheet()}}{
 Add a chart sheet to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chartsheet(
   sheet = next_sheet(),
   tabColour = NULL,
   zoom = 100,
-  visible = TRUE
+  visible = c("true", "false", "hidden", "visible", "veryhidden")
 )}\if{html}{\out{</div>}}
 }
 

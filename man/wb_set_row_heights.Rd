@@ -47,6 +47,7 @@ wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
 \code{\link[=wb_remove_row_heights]{wb_remove_row_heights()}}
 
 Other workbook wrappers: 
+\code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},

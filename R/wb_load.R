@@ -290,7 +290,7 @@ wb_load <- function(
     for (i in seq_len(nrow(sheets))) {
       if (sheets$typ[i] == "chartsheet") {
         txt <- read_xml(sheets$target[i], pointer = FALSE)
-        wb$addChartSheet(sheet = sheets$name[i], visible = is_visible[i])
+        wb$add_chartsheet(sheet = sheets$name[i], visible = is_visible[i])
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")

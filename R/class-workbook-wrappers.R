@@ -343,7 +343,37 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 }
 
 
-# worksheets --------------------------------------------------------------
+# sheets ------------------------------------------------------------------
+
+#' Add a chartsheet to a workbook
+#'
+#' @param wb A Workbook object to attach the new worksheet
+#' @param sheet A name for the new worksheet
+#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
+#'   colours()) or a valid hex colour beginning with "#"
+#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
+#'   percentage.
+#' @param visible If FALSE, sheet is hidden else visible.
+#' @details After chartsheet creation a chart must be added to the sheet. 
+#' Otherwise the chartsheet will break the workbook.
+#' @family workbook wrappers
+#' @seealso [wb_add_mschart()]
+#' @export
+wb_add_chartsheet <- function(
+  wb,
+  sheet       = next_sheet(),
+  tabColour   = NULL,
+  zoom        = 100,
+  visible     = c("true", "false", "hidden", "visible", "veryhidden")
+) {
+  assert_workbook(wb)
+  wb$clone()$add_chartsheet(
+    sheet       = sheet,
+    tabColour   = tabColour,
+    zoom        = zoom,
+    visible     = visible
+  )
+}
 
 #' Add a worksheet to a workbook
 #'
@@ -491,6 +521,7 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
   wb$clone()$clone_worksheet(old = old, new = new)
 }
 
+# worksheets --------------------------------------------------------------
 
 #' @name wb_freeze_pane
 #' @title Freeze a worksheet pane

@@ -873,7 +873,12 @@ wbWorkbook <- R6::R6Class(
     #' @param zoom zoom
     #' @param visible visible
     #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheet = next_sheet(), tabColour = NULL, zoom = 100, visible = TRUE) {
+    add_chartsheet = function(
+      sheet = next_sheet(),
+      tabColour = NULL,
+      zoom = 100,      
+      visible     = c("true", "false", "hidden", "visible", "veryhidden")
+    ) {
 
       # set up so that a single error can be reported on fail
       fail <- FALSE

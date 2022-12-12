@@ -29,6 +29,7 @@ wb$clone_worksheet("Sheet 1", "Sheet 2")
 }
 \seealso{
 Other workbook wrappers: 
+\code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
