@@ -231,7 +231,7 @@ workbook_add_plot <- function(
 workbook_add_drawing <- function(
     self,
     private,
-    heet  = current_sheet(),
+    sheet = current_sheet(),
     xml,
     dims  = "A1:H8"
 ) {

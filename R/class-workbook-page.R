@@ -1,4 +1,4 @@
-page_setup = function(
+workbook_page_setup = function(
     self,
     private,
     sheet          = current_sheet(),

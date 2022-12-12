@@ -1,6 +1,7 @@
 workbook_build_table <- function(
     self,
     private,
+    sheet             = current_sheet(),
     colNames,
     ref,
     showColNames,

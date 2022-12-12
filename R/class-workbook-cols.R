@@ -8,7 +8,7 @@ workbook_add_cols <- function(
 ) {
   sheet <- private$get_sheet_index(sheet)
   self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
-  private(self)
+  invisible(self)
 }
 
 workbook_group_cols <- function(
@@ -158,7 +158,7 @@ workbook_set_col_widths <- function(
   # should do nothing if the cols' length is zero
   # TODO why would cols ever be 0?  Can we just signal this as an error?
   if (length(cols) == 0L) {
-    return(self)
+    return(invisible(self))
   }
 
   cols <- col2int(cols)
@@ -190,7 +190,7 @@ workbook_set_col_widths <- function(
   cols <- cols[ok]
 
   col_df <- self$worksheets[[sheet]]$unfold_cols()
-  base_font <- wb_get_base_font(self)
+  base_font <- self$get_base_font()
 
   if (any(widths == "auto")) {
     df <- wb_to_df(self, sheet = sheet, cols = cols, colNames = FALSE)
@@ -198,13 +198,14 @@ workbook_set_col_widths <- function(
     col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
   }
 
-
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
   widths <- calc_col_width(base_font = base_font, col_width = col_width)
 
   # create empty cols
-  if (NROW(col_df) == 0)
-    col_df <- col_to_df(read_xml(self$createCols(sheet, n = max(cols))))
+  if (NROW(col_df) == 0) {
+    self$createCols(sheet, n = max(cols))
+    col_df <- col_to_df(read_xml(self$worksheets[[sheet]]$cols_attr))
+  }
 
   # found a few cols, but not all required cols. create the missing columns
   if (any(!cols %in% as.numeric(col_df$min))) {
@@ -212,7 +213,8 @@ workbook_set_col_widths <- function(
     end <- max(cols)
 
     # new columns
-    new_cols <- col_to_df(read_xml(self$createCols(sheet, beg = beg, end = end)))
+    self$createCols(sheet, beg = beg, end = end)
+    new_cols <- col_to_df(read_xml(self$worksheets[[sheet]]$cols_attr))
 
     # rbind only the missing columns. avoiding dups
     sel <- !new_cols$min %in% col_df$min
@@ -228,4 +230,3 @@ workbook_set_col_widths <- function(
   self$worksheets[[sheet]]$fold_cols(col_df)
   invisible(self)
 }
-

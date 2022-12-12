@@ -63,7 +63,7 @@ workbook_add_data_table <- function(
     removeCellStyle = FALSE,
     na.strings
 ) {
-  write_data_table(
+  write_datatable(
     wb              = self,
     sheet           = sheet,
     x               = x,

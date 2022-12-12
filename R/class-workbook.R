@@ -311,7 +311,7 @@ wbWorkbook <- R6::R6Class(
     addChartSheet = function(sheet = current_sheet(), tabColour = NULL, zoom = 100) {
       workbook_add_chartsheet(
         self      = self,
-        private   = priate,
+        private   = private,
         sheet     = sheet,
         tabColour = tabColour,
         zoom      = zoom
@@ -356,7 +356,24 @@ wbWorkbook <- R6::R6Class(
       ) {
       # TODO shouldn't this have a default?
       if (missing(na.strings)) na.strings <- substitute()
-      workbook_add_data()
+      workbook_add_data(
+        self            = self,
+        private         = private,
+        sheet           = sheet,
+        x               = x,
+        startCol        = startCol,
+        startRow        = startRow,
+        dims            = dims,
+        array           = array,
+        xy              = xy,
+        colNames        = colNames,
+        rowNames        = rowNames,
+        withFilter      = withFilter,
+        name            = name,
+        sep             = sep,
+        applyCellStyle  = applyCellStyle,
+        removeCellStyle = removeCellStyle
+      )
     },
 
     #' @description add a data table
@@ -403,7 +420,29 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       if (missing(na.strings)) na.strings <- substitute()
-      workbook_add_data_table()
+      workbook_add_data_table(
+        self            = self,
+        private         = private,
+        sheet           = sheet,
+        x               = x,
+        startCol        = startCol,
+        startRow        = startRow,
+        dims            = dims,
+        xy              = xy,
+        colNames        = colNames,
+        rowNames        = rowNames,
+        tableStyle      = tableStyle,
+        tableName       = tableName,
+        withFilter      = withFilter,
+        sep             = sep,
+        firstColumn     = firstColumn,
+        lastColumn      = lastColumn,
+        bandedRows      = bandedRows,
+        bandedCols      = bandedCols,
+        applyCellStyle  = applyCellStyle,
+        removeCellStyle = removeCellStyle,
+        na.strings      = na.strings
+      )
     },
 
     #' @description add formula
@@ -471,7 +510,7 @@ wbWorkbook <- R6::R6Class(
     #'   the value returned from [base::interactive()]
     #' @return The `wbWorkbook`, invisibly
     open = function(interactive = NA) {
-      workbook_open(self, private, interactive = interactie)
+      workbook_open(self, private, interactive)
     },
 
     #' @description
@@ -506,6 +545,7 @@ wbWorkbook <- R6::R6Class(
       workbook_build_table(
         self              = self,
         private           = private,
+        sheet             = sheet,
         colNames          = colNames,
         ref               = ref,
         showColNames      = showColNames,
@@ -545,7 +585,7 @@ wbWorkbook <- R6::R6Class(
         private    = private,
         fontSize   = fontSize,
         fontColour = fontColour,
-        fontSize   = fontSize
+        fontName   = fontName
       )
     },
 
@@ -608,7 +648,7 @@ wbWorkbook <- R6::R6Class(
     #'   names represent the original value of the worksheet prior to any
     #'   character substitutions.
     get_sheet_names = function() {
-      workbook_get_sheet_names()
+      workbook_get_sheet_names(self, private)
     },
 
     #' @description
@@ -671,6 +711,7 @@ wbWorkbook <- R6::R6Class(
     #' @param beg beg
     #' @param end end
     createCols = function(sheet = current_sheet(), n, beg, end) {
+      # TODO replace with $add_cols()
       workbook_add_cols(
         self    = self,
         private = private,
@@ -1034,8 +1075,6 @@ wbWorkbook <- R6::R6Class(
       workbook_add_image(
         self      = self,
         private   = private,
-        self      = self,
-        private   = private,
         sheet     = sheet,
         file      = file,
         width     = width,
@@ -1105,7 +1144,7 @@ wbWorkbook <- R6::R6Class(
       workbook_add_drawing(
         self    = self,
         private = private,
-        heet    = heet,
+        sheet   = sheet,
         xml     = xml,
         dims    = dims
       )
@@ -1504,7 +1543,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheets sheets
     #' @return The `wbWorkbook` object
     set_order = function(sheets) {
-      workbook_shet_order(self, private, sheets)
+      workbook_set_order(self, private, sheets)
     },
 
     ### sheet visibility ----

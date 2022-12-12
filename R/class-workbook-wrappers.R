@@ -2073,8 +2073,6 @@ wb_open <- function(wb) {
 #' @export
 wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   assert_workbook(wb)
-  # deparse this name, otherwise it will remain "style"
-  if (is.null(style_name)) style_name <- deparse(substitute(style))
   wb$clone()$add_style(style, style_name)
 }
 

@@ -1,4 +1,4 @@
-class_workbook_add_data_validations <- function(
+workbook_add_data_validations <- function(
     self,
     private,
     sheet        = current_sheet(),
