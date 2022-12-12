@@ -89,7 +89,7 @@ workbook_add_style <- function(self, private, style = NULL, style_name = NULL) {
   assert_class(style, "character")
 
   if (is.null(style_name)) {
-    style_name <- deparse(substitute(style))
+    style_name <- deparse1(substitute(style, parent.frame()))
   } else {
     assert_class(style_name, "character")
   }
