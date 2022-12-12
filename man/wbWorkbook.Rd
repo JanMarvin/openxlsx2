@@ -148,7 +148,7 @@ create_border
 
 \item{\code{charts}}{charts}
 
-\item{\code{isChartSheet}}{isChartSheet}
+\item{\code{is_chartsheet}}{is_chartsheet}
 
 \item{\code{customXml}}{customXml}
 

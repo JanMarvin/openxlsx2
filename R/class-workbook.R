@@ -27,8 +27,8 @@ wbWorkbook <- R6::R6Class(
     #' @field charts charts
     charts = list(),
 
-    #' @field isChartSheet isChartSheet
-    isChartSheet = logical(),
+    #' @field is_chartsheet is_chartsheet
+    is_chartsheet = logical(),
 
     #' @field customXml customXml
     customXml = NULL,
@@ -193,7 +193,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       self$apps <- character()
       self$charts <- list()
-      self$isChartSheet <- logical()
+      self$is_chartsheet <- logical()
 
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
@@ -561,7 +561,7 @@ wbWorkbook <- R6::R6Class(
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
-      self$isChartSheet[[newSheetIndex]]     <- FALSE
+      self$is_chartsheet[[newSheetIndex]]     <- FALSE
       self$comments[[newSheetIndex]]         <- list()
       self$threadComments[[newSheetIndex]]   <- list()
 
@@ -620,7 +620,7 @@ wbWorkbook <- R6::R6Class(
       # FIXME only add what is needed. If no previous drawing is found, don't
       # add a new one
       self$append("Content_Types", c(
-        if (self$isChartSheet[old]) {
+        if (self$is_chartsheet[old]) {
           sprintf('<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>', newSheetIndex)
         } else {
           sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex)
@@ -630,7 +630,7 @@ wbWorkbook <- R6::R6Class(
       ## Update xl/rels
       self$append(
         "workbook.xml.rels",
-        if (self$isChartSheet[old]) {
+        if (self$is_chartsheet[old]) {
           sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>', newSheetIndex)
         } else {
           sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>', newSheetIndex)
@@ -767,7 +767,7 @@ wbWorkbook <- R6::R6Class(
       # cloned sheet the same IDs can be used => no need to modify drawings
       self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
       self$vml[[newSheetIndex]]            <- self$vml[[old]]
-      self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
+      self$is_chartsheet[[newSheetIndex]]   <- self$is_chartsheet[[old]]
       self$comments[[newSheetIndex]]       <- self$comments[[old]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
@@ -979,7 +979,7 @@ wbWorkbook <- R6::R6Class(
       self$drawings_rels[[new_drawings_idx]] <- ""
 
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$isChartSheet[[newSheetIndex]]     <- TRUE
+      self$is_chartsheet[[newSheetIndex]]     <- TRUE
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
       self$append("sheetOrder", newSheetIndex)
@@ -2656,7 +2656,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      self$isChartSheet <- self$isChartSheet[-sheet]
+      self$is_chartsheet <- self$is_chartsheet[-sheet]
 
       ## remove highest sheet
       # (don't chagne this to a "grep(value = TRUE)" ... )
@@ -3658,7 +3658,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       sheet <- private$get_sheet_index(sheet)
 
-      is_chartsheet <- self$isChartSheet[sheet]
+      is_chartsheet <- self$is_chartsheet[sheet]
 
       xml <- read_xml(xml, pointer = FALSE)
 
@@ -3784,7 +3784,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       sheet <- private$get_sheet_index(sheet)
-      is_chartsheet <- self$isChartSheet[sheet]
+      is_chartsheet <- self$is_chartsheet[sheet]
 
       next_chart <- NROW(self$charts) + 1
 
@@ -5986,7 +5986,7 @@ wbWorkbook <- R6::R6Class(
 
       for (i in seq_len(nSheets)) {
 
-        if (self$isChartSheet[i]) {
+        if (self$is_chartsheet[i]) {
           chartSheetDir <- file.path(dirname(xlworksheetsDir), "chartsheets")
           chartSheetRelsDir <-
             file.path(dirname(xlworksheetsDir), "chartsheets", "_rels")
@@ -6098,7 +6098,7 @@ wbWorkbook <- R6::R6Class(
               fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i))
             )
           }
-        } ## end of isChartSheet[i]
+        } ## end of is_chartsheet[i]
       } ## end of loop through nSheets
 
       return(ct)
