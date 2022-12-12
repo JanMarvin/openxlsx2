@@ -195,17 +195,16 @@ test_that("dataframe_to_dims", {
 })
 
 test_that("handle 29Feb1900", {
-
   dates <- c("1900-02-28", "1900-03-01")
   as_date <- as.Date(dates)
   as_posix <- as.POSIXct(dates)
 
   exp <- c(59, 61)
   got <- conv_to_excel_date(as_date)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   got <- conv_to_excel_date(as_posix)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_warning(
     conv_to_excel_date("x"),
@@ -217,9 +216,9 @@ test_that("handle 29Feb1900", {
   wb$add_worksheet()$add_data(x = as_posix)
 
   got <- wb_to_df(wb, sheet = 1, colNames = FALSE)$A
-  expect_equal(as_date, got)
+  expect_equal(got, as_date)
 
   got <- wb_to_df(wb, sheet = 2, colNames = FALSE)$A
-  expect_equal(as_posix, got)
+  expect_equal(got, as_posix)
 })
 
