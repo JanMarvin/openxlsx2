@@ -306,7 +306,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         break;
       case character:
         cell.c_t = "inlineStr";
-        cell.is  = txt_to_is(vals, 1, 1, 1);
+        cell.is  = txt_to_is(vals, 0, 1, 1);
         break;
       case hyperlink:
       case formula:
