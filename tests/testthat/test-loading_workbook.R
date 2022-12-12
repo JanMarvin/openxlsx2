@@ -302,7 +302,12 @@ test_that("Sheet not found", {
 
 test_that("loading slicers works", {
 
-  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  wb <- wb_load(file = fl, calc_chain = TRUE)
+
+  exp <- "<calcPr calcId=\"152511\" fullCalcOnLoad=\"1\"/>"
+  got <- wb$workbook$calcPr
+  expect_equal(exp, got)
 
   exp <- c(
     "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>",
@@ -320,15 +325,35 @@ test_that("loading slicers works", {
   got <- wb$workbook.xml.rels
   expect_equal(exp, got)
 
-  exp <- "<calcPr calcId=\"152511\" fullCalcOnLoad=\"1\"/>"
-  got <- wb$workbook$calcPr
-  expect_equal(exp, got)
+  wb <- wb_load(file = fl, calc_chain = FALSE)
+  got <- wb$workbook.xml.rels
+  expect_equal(exp[-8], got)
+
 
   options("openxlsx2.disableFullCalcOnLoad" = TRUE)
-  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  wb <- wb_load(file = fl, calc_chain = TRUE)
 
   exp <- "<calcPr calcId=\"152511\"/>"
   got <- wb$workbook$calcPr
+  expect_equal(exp, got)
+
+  wb <- wb_load(file = fl, calc_chain = FALSE)
+
+  got <- wb$workbook$calcPr
+  expect_null(got)
+
+  exp <- character()
+  got <- wb$calcChain
+  expect_equal(exp, got)
+
+  # check the default once again
+  wb <- wb_load(file = fl)
+
+  got <- wb$workbook$calcPr
+  expect_null(got)
+
+  exp <- character()
+  got <- wb$calcChain
   expect_equal(exp, got)
 
 })
