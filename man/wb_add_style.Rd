@@ -4,7 +4,7 @@
 \alias{wb_add_style}
 \title{add style to workbook}
 \usage{
-wb_add_style(wb, style = NULL, style_name = substitue(style))
+wb_add_style(wb, style = NULL, style_name = substitute(style))
 }
 \arguments{
 \item{wb}{workbook}
