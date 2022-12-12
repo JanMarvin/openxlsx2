@@ -212,14 +212,14 @@ test_that("handle 29Feb1900", {
     "could not convert x to Excel date. x is of class: character"
   )
 
-  wb <- wb_workbook()$
-    add_worksheet()$add_data(x = as_date)$
-    add_worksheet()$add_data(x = as_posix)
+  wb <- wb_workbook()
+  wb$add_worksheet()$add_data(x = as_date)
+  wb$add_worksheet()$add_data(x = as_posix)
 
   got <- wb_to_df(wb, sheet = 1, colNames = FALSE)$A
   expect_equal(as_date, got)
 
   got <- wb_to_df(wb, sheet = 2, colNames = FALSE)$A
   expect_equal(as_posix, got)
-
 })
+

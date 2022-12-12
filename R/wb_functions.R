@@ -7,7 +7,6 @@
 #' }
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
-
   if (grepl(";", dims)) {
     dims <- unlist(strsplit(dims, ";"))
   }
@@ -311,7 +310,7 @@ wb_to_df <- function(
   rows            = NULL,
   cols            = NULL,
   detectDates     = TRUE,
-  na.strings      = "#N/A",
+  na.strings      = getOption("openxlsx2.na.strings", "#N/A"),
   na.numbers      = NA,
   fillMergedCells = FALSE,
   dims,

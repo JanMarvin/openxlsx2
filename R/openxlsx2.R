@@ -7,7 +7,7 @@
 #' or chains, `openxlsx2` allows to break many new ground.
 #'
 #' @name openxlsx2
-#' @docType package
+#' @docType packages
 #' @useDynLib openxlsx2, .registration=TRUE
 #'
 #' @import Rcpp
@@ -63,6 +63,28 @@
 #' This package is licensed under the MIT license and is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
 #'
 NULL
+
+# TODO export op.openxlsx2
+op.openxlsx2 <- list(
+  openxlsx2.borderColour       = "black",
+  openxlsx2.borderStyle        = "thin",
+  openxlsx2.dateFormat         = "mm/dd/yyy",
+  openxlsx2.datetimeFormat     = "yyyy-mm-dd hh:mm:ss",
+  openxlsx2.na.strings         = "#N/A",
+  openxlsx2.numFmt             = NULL,
+  openxlsx2.paperSize          = 9,
+  openxlsx2.orientation        = "portrait",
+  openxlsx2.sheet.default_name = "Sheet ",
+  openxlsx2.rightToLeft        = NULL
+)
+
+.onLoad <- function(libname, pkgname) {
+  options(op.openxlsx2[names(op.openxlsx2) %out% names(options())])
+}
+
+.onUnload <- function(libpath) {
+  library.dynam.unload("openxlsx2", libpath) # nocov
+}
 
 # matches enum celltype
 openxlsx2_celltype <- c(

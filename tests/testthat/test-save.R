@@ -240,14 +240,13 @@ test_that("writing NA, NaN and Inf", {
 
 
 test_that("write cells without data", {
-
   temp <- temp_xlsx()
   tmp <- temp_dir()
 
   dat <- as.data.frame(matrix(NA, 2, 2))
-  wb <- wb_workbook()$
-    add_worksheet()$
-    add_data(x = dat, startRow = 2, startCol = 2, na.strings = NULL, colNames = FALSE)
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_data(x = dat, startRow = 2, startCol = 2, na.strings = NULL, colNames = FALSE)
 
   wb$worksheets[[1]]$sheet_data$cc$c_t <- ""
 
@@ -259,27 +258,26 @@ test_that("write cells without data", {
 
   unzip(temp, exdir = tmp)
 
-  exp <- structure(
-    list(
-      r = c("B2", "C2", "B3", "C3"),
-      row_r = c("2", "2", "3", "3"),
-      c_r = c("B", "C", "B", "C"),
-      c_s = c("", "", "", ""),
-      c_t = c("", "", "", ""),
-      c_cm = c("", "", "", ""),
-      c_ph = c("", "", "", ""),
-      c_vm = c("", "", "", ""),
-      v = c("", "", "", ""),
-      f = c("", "", "", ""),
-      f_t = c("", "", "", ""),
-      f_ref = c("", "", "", ""),
-      f_ca = c("", "", "", ""),
-      f_si = c("", "", "", ""),
-      is = c("", "", "", ""),
-      typ = c("3", "3", "3", "3")
-    ),
-    row.names = c(NA, 4L),
-    class = "data.frame")
+  exp <- data.frame(
+    r     = c("B2", "C2", "B3", "C3"),
+    row_r = c("2", "2", "3", "3"),
+    c_r   = c("B", "C", "B", "C"),
+    c_s   = c("", "", "", ""),
+    c_t   = c("", "", "", ""),
+    c_cm  = c("", "", "", ""),
+    c_ph  = c("", "", "", ""),
+    c_vm  = c("", "", "", ""),
+    v     = c("", "", "", ""),
+    f     = c("", "", "", ""),
+    f_t   = c("", "", "", ""),
+    f_ref = c("", "", "", ""),
+    f_ca  = c("", "", "", ""),
+    f_si  = c("", "", "", ""),
+    is    = c("", "", "", ""),
+    typ   = c("3", "3", "3", "3"),
+    stringsAsFactors = FALSE
+  )
+
   got <- wb$worksheets[[1]]$sheet_data$cc
   expect_equal(exp, got)
 
@@ -287,7 +285,6 @@ test_that("write cells without data", {
   exp <- "<sheetData><row r=\"2\"><c r=\"B2\"/><c r=\"C2\"/></row><row r=\"3\"><c r=\"B3\"/><c r=\"C3\"/></row></sheetData>"
   got <- xml_node(sheet, "worksheet", "sheetData")
   expect_equal(exp, got)
-
 })
 
 test_that("write_xlsx with na.strings", {

@@ -15,7 +15,7 @@ workbook_add_data <- function(
     sep             = ", ",
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
 ) {
   # TODO copy over the actual write_data()
   write_data(
@@ -43,25 +43,25 @@ workbook_add_data <- function(
 workbook_add_data_table <- function(
     self,
     private,
-    sheet       = current_sheet(),
+    sheet           = current_sheet(),
     x,
-    startCol    = 1,
-    startRow    = 1,
-    dims        = rowcol_to_dims(startRow, startCol),
-    xy          = NULL,
-    colNames    = TRUE,
-    rowNames    = FALSE,
-    tableStyle  = "TableStyleLight9",
-    tableName   = NULL,
-    withFilter  = TRUE,
-    sep         = ", ",
-    firstColumn = FALSE,
-    lastColumn  = FALSE,
-    bandedRows  = TRUE,
-    bandedCols  = FALSE,
-    applyCellStyle = TRUE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    tableStyle      = "TableStyleLight9",
+    tableName       = NULL,
+    withFilter      = TRUE,
+    sep             = ", ",
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = TRUE,
+    bandedCols      = FALSE,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
 ) {
   write_datatable(
     wb              = self,
@@ -93,27 +93,28 @@ workbook_add_data_table <- function(
 workbook_add_formula <- function(
     self,
     private,
-    sheet    = current_sheet(),
+    sheet           = current_sheet(),
     x,
-    startCol = 1,
-    startRow = 1,
-    dims     = rowcol_to_dims(startRow, startCol),
-    array    = FALSE,
-    xy       = NULL,
-    applyCellStyle = TRUE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    xy              = NULL,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE
 ) {
   write_formula(
-    wb       = self,
-    sheet    = sheet,
-    x        = x,
-    startCol = startCol,
-    startRow = startRow,
-    dims     = dims,
-    array    = array,
-    xy       = xy,
-    applyCellStyle = applyCellStyle,
+    wb              = self,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    xy              = xy,
+    applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle
   )
+
   invisible(self)
 }

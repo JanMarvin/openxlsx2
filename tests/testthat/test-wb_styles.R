@@ -1,16 +1,16 @@
 test_that("wb_clone_sheet_style", {
-
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
-  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
-  wb <- wb_clone_sheet_style(wb, "SUM", "clone")
+  wb <- wb_load(fl)
+  wb$clone_worksheet("SUM", "clone")
+  wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb$clone_sheet_style("SUM", "clone")
 
   expect_warning(cloneSheetStyle(wb, "SUM", "clone"), "deprecated")
 
   # clone style to empty sheet (creates cells and style)
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)$add_worksheet("copy")
-  wb <- wb_clone_sheet_style(wb, "SUM", "copy")
+  wb$clone_sheet_style("SUM", "copy")
   expect_equal(dim(wb$worksheets[[1]]$sheet_data$cc),
                dim(wb$worksheets[[1]]$sheet_data$cc))
   expect_equal(dim(wb$worksheets[[1]]$sheet_data$row_attr),
@@ -18,15 +18,18 @@ test_that("wb_clone_sheet_style", {
 
   # clone style to sheet with data
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$add_worksheet("copy")$add_data(x = mtcars, startRow = 5, startCol = 2)
-  wb <- wb_clone_sheet_style(wb, "SUM", "copy")
+  wb <- wb_load(fl)
+  wb$add_worksheet("copy")
+  wb$add_data(x = mtcars, startRow = 5, startCol = 2)
+  wb$clone_sheet_style("SUM", "copy")
   expect_equal(c(36, 13), dim(wb$worksheets[[2]]$sheet_data$row_attr))
 
   # clone style on cloned and cleaned worksheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
-  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
-  wb <- wb_clone_sheet_style(wb, "SUM", "clone")
+  wb <- wb_load(fl)
+  wb$clone_worksheet("SUM", "clone")
+  wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb$clone_sheet_style("SUM", "clone")
 
   # sort for this test, does not matter later, because we will sort prior to saving
   ord <- match(
@@ -41,23 +44,23 @@ test_that("wb_clone_sheet_style", {
 
   # output if copying from empty sheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$add_worksheet("copy")
+  wb <- wb_load(fl)
+  wb$add_worksheet("copy")
   expect_message(
     expect_message(
-      wb <- wb_clone_sheet_style(wb, "copy", "SUM"),
+      wb$clone_sheet_style("copy", "SUM"),
       "'from' has no sheet data styles to clone"
     ),
     "'from' has no row styles to clone"
   )
-
 })
 
 
 test_that("test add_border()", {
-
   wb <- wb_workbook()
-  wb$add_worksheet("S1")$add_data("S1", mtcars)
-  expect_silent(wb$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double"))
+  wb$add_worksheet("S1")
+  wb$add_data("S1", mtcars)
+  expect_silent(wb$add_border(dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double"))
 
   # check xf
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",

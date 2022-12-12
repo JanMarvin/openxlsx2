@@ -8,13 +8,19 @@
 #' @param cell the cell you want to update in Excel connotation e.g. "A1"
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings na.strings argument. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #'
 #' @keywords internal
 #' @noRd
-update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
-                        removeCellStyle = FALSE, na.strings) {
-
+update_cell <- function(
+    x,
+    wb,
+    sheet,
+    cell,
+    colNames = FALSE,
+    removeCellStyle = FALSE,
+    na.strings = getOption("openxlsx2.na.strings", "#N/A")
+  ) {
   sheet_id <- wb$validate_sheet(sheet)
 
   dims <- dims_to_dataframe(cell, fill = TRUE)
@@ -82,10 +88,6 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
     wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  if (missing(na.strings)) {
-    na.strings <- NULL
-  }
-
   if (removeCellStyle) {
     cell_style <- "c_s"
   } else {
@@ -133,7 +135,7 @@ nmfmt_df <- function(x) {
 #' @param startCol col to place it
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings na.strings argument. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
@@ -160,18 +162,16 @@ write_data2 <- function(
     wb,
     sheet,
     data,
-    name = NULL,
-    colNames = TRUE,
-    rowNames = FALSE,
-    startRow = 1,
-    startCol = 1,
-    applyCellStyle = TRUE,
+    name            = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    startRow        = 1,
+    startCol        = 1,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings,
-    data_table = FALSE
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A"),
+    data_table      = FALSE
   ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
@@ -576,32 +576,32 @@ write_data2 <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings na.strings argument. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @noRd
 write_data_table <- function(
     wb,
     sheet,
     x,
-    startCol = 1,
-    startRow = 1,
+    startCol        = 1,
+    startRow        = 1,
     dims,
-    array = FALSE,
-    xy = NULL,
-    colNames = TRUE,
-    rowNames = FALSE,
-    tableStyle = "TableStyleLight9",
-    tableName = NULL,
-    withFilter = TRUE,
-    sep = ", ",
-    firstColumn = FALSE,
-    lastColumn = FALSE,
-    bandedRows = TRUE,
-    bandedCols = FALSE,
-    name = NULL,
-    applyCellStyle = TRUE,
+    array           = FALSE,
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    tableStyle      = "TableStyleLight9",
+    tableName       = NULL,
+    withFilter      = TRUE,
+    sep             = ", ",
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = TRUE,
+    bandedCols      = FALSE,
+    name            = NULL,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    data_table = FALSE,
-    na.strings
+    data_table      = FALSE,
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
 ) {
 
   op <- openxlsx2_options()
@@ -624,8 +624,6 @@ write_data_table <- function(
     startCol <- min(dims[[1]])
     startRow <- min(dims[[2]])
   }
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   ## common part ---------------------------------------------------------------
   if ((!is.character(sep)) || (length(sep) != 1))
@@ -853,7 +851,7 @@ write_data_table <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings na.strings argument. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @seealso [write_datatable()]
 #' @export write_data
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -918,47 +916,45 @@ write_data <- function(
     wb,
     sheet,
     x,
-    startCol = 1,
-    startRow = 1,
-    dims = rowcol_to_dims(startRow, startCol),
-    array = FALSE,
-    xy = NULL,
-    colNames = TRUE,
-    rowNames = FALSE,
-    withFilter = FALSE,
-    sep = ", ",
-    name = NULL,
-    applyCellStyle = TRUE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    withFilter      = FALSE,
+    sep             = ", ",
+    name            = NULL,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
 ) {
 
-  if (missing(na.strings)) na.strings <- substitute()
-
   write_data_table(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    startCol = startCol,
-    startRow = startRow,
-    dims = dims,
-    array = array,
-    xy = xy,
-    colNames = colNames,
-    rowNames = rowNames,
-    tableStyle = NULL,
-    tableName = NULL,
-    withFilter = withFilter,
-    sep = sep,
-    firstColumn = FALSE,
-    lastColumn = FALSE,
-    bandedRows = FALSE,
-    bandedCols = FALSE,
-    name = name,
-    applyCellStyle = applyCellStyle,
+    wb              = wb,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    tableStyle      = NULL,
+    tableName       = NULL,
+    withFilter      = withFilter,
+    sep             = sep,
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = FALSE,
+    bandedCols      = FALSE,
+    name            = name,
+    applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    data_table = FALSE,
-    na.strings = na.strings
+    data_table      = FALSE,
+    na.strings      = na.strings
   )
 }
 
@@ -1058,12 +1054,12 @@ write_formula <- function(
   wb,
   sheet,
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
-  array = FALSE,
-  xy = NULL,
-  applyCellStyle = TRUE,
+  startCol        = 1,
+  startRow        = 1,
+  dims            = rowcol_to_dims(startRow, startCol),
+  array           = FALSE,
+  xy              = NULL,
+  applyCellStyle  = TRUE,
   removeCellStyle = FALSE
 ) {
   assert_class(x, "character")
@@ -1078,17 +1074,17 @@ write_formula <- function(
   }
 
   write_data(
-    wb = wb,
-    sheet = sheet,
-    x = dfx,
-    startCol = startCol,
-    startRow = startRow,
-    dims = dims,
-    array = array,
-    xy = xy,
-    colNames = FALSE,
-    rowNames = FALSE,
-    applyCellStyle = applyCellStyle,
+    wb              = wb,
+    sheet           = sheet,
+    x               = dfx,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    xy              = xy,
+    colNames        = FALSE,
+    rowNames        = FALSE,
+    applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle
   )
 }
@@ -1123,7 +1119,7 @@ write_formula <- function(
 #' @param bandedCols logical. If TRUE, the columns are colour banded
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings na.strings argument. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.
@@ -1220,50 +1216,47 @@ write_datatable <- function(
     wb,
     sheet,
     x,
-    startCol = 1,
-    startRow = 1,
-    dims = rowcol_to_dims(startRow, startCol),
-    xy = NULL,
-    colNames = TRUE,
-    rowNames = FALSE,
-    tableStyle = "TableStyleLight9",
-    tableName = NULL,
-    withFilter = TRUE,
-    sep = ", ",
-    firstColumn = FALSE,
-    lastColumn = FALSE,
-    bandedRows = TRUE,
-    bandedCols = FALSE,
-    applyCellStyle = TRUE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    tableStyle      = "TableStyleLight9",
+    tableName       = NULL,
+    withFilter      = TRUE,
+    sep             = ", ",
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = TRUE,
+    bandedCols      = FALSE,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
 ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
-
   write_data_table(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    startCol = startCol,
-    startRow = startRow,
-    dims = dims,
-    array = FALSE,
-    xy = xy,
-    colNames = colNames,
-    rowNames = rowNames,
-    tableStyle = tableStyle,
-    tableName = tableName,
-    withFilter = withFilter,
-    sep = sep,
-    firstColumn = firstColumn,
-    lastColumn = lastColumn,
-    bandedRows = bandedRows,
-    bandedCols = bandedCols,
-    name = NULL,
-    data_table = TRUE,
-    applyCellStyle = applyCellStyle,
+    wb              = wb,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = FALSE,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    tableStyle      = tableStyle,
+    tableName       = tableName,
+    withFilter      = withFilter,
+    sep             = sep,
+    firstColumn     = firstColumn,
+    lastColumn      = lastColumn,
+    bandedRows      = bandedRows,
+    bandedCols      = bandedCols,
+    name            = NULL,
+    data_table      = TRUE,
+    applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings = na.strings
+    na.strings      = na.strings
   )
 }

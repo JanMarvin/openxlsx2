@@ -185,11 +185,11 @@ wbWorkbook <- R6::R6Class(
     #'   is created, not when the Excel files are saved.
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator         = NULL,
-      title           = NULL,
-      subject         = NULL,
-      category        = NULL,
-      datetimeCreated = Sys.time()
+    creator         = NULL,
+    title           = NULL,
+    subject         = NULL,
+    category        = NULL,
+    datetimeCreated = Sys.time()
     ) {
       workbook_initialize(
         self            = self,
@@ -338,24 +338,23 @@ wbWorkbook <- R6::R6Class(
     #' @param na.strings na.strings
     #' @param return The `wbWorkbook` object
     add_data = function(
-        sheet           = current_sheet(),
-        x,
-        startCol        = 1,
-        startRow        = 1,
-        dims            = rowcol_to_dims(startRow, startCol),
-        array           = FALSE,
-        xy              = NULL,
-        colNames        = TRUE,
-        rowNames        = FALSE,
-        withFilter      = FALSE,
-        name            = NULL,
-        sep             = ", ",
-        applyCellStyle  = TRUE,
-        removeCellStyle = FALSE,
-        na.strings
-      ) {
+      sheet           = current_sheet(),
+      x,
+      startCol        = 1,
+      startRow        = 1,
+      dims            = rowcol_to_dims(startRow, startCol),
+      array           = FALSE,
+      xy              = NULL,
+      colNames        = TRUE,
+      rowNames        = FALSE,
+      withFilter      = FALSE,
+      name            = NULL,
+      sep             = ", ",
+      applyCellStyle  = TRUE,
+      removeCellStyle = FALSE,
+      na.strings      = getOption("openxlsx2.na.strings", "#N/A")
+    ) {
       # TODO shouldn't this have a default?
-      if (missing(na.strings)) na.strings <- substitute()
       workbook_add_data(
         self            = self,
         private         = private,
@@ -372,7 +371,8 @@ wbWorkbook <- R6::R6Class(
         name            = name,
         sep             = sep,
         applyCellStyle  = applyCellStyle,
-        removeCellStyle = removeCellStyle
+        removeCellStyle = removeCellStyle,
+        na.strings      = na.strings
       )
     },
 
@@ -398,28 +398,26 @@ wbWorkbook <- R6::R6Class(
     #' @param na.strings na.strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
-        sheet       = current_sheet(),
-        x,
-        startCol    = 1,
-        startRow    = 1,
-        dims        = rowcol_to_dims(startRow, startCol),
-        xy          = NULL,
-        colNames    = TRUE,
-        rowNames    = FALSE,
-        tableStyle  = "TableStyleLight9",
-        tableName   = NULL,
-        withFilter  = TRUE,
-        sep         = ", ",
-        firstColumn = FALSE,
-        lastColumn  = FALSE,
-        bandedRows  = TRUE,
-        bandedCols  = FALSE,
-        applyCellStyle = TRUE,
-        removeCellStyle = FALSE,
-        na.strings
+      sheet           = current_sheet(),
+      x,
+      startCol        = 1,
+      startRow        = 1,
+      dims            = rowcol_to_dims(startRow, startCol),
+      xy              = NULL,
+      colNames        = TRUE,
+      rowNames        = FALSE,
+      tableStyle      = "TableStyleLight9",
+      tableName       = NULL,
+      withFilter      = TRUE,
+      sep             = ", ",
+      firstColumn     = FALSE,
+      lastColumn      = FALSE,
+      bandedRows      = TRUE,
+      bandedCols      = FALSE,
+      applyCellStyle  = TRUE,
+      removeCellStyle = FALSE,
+      na.strings      = getOption("openxlsx2.na.strings", "#N/A")
     ) {
-
-      if (missing(na.strings)) na.strings <- substitute()
       workbook_add_data_table(
         self            = self,
         private         = private,
@@ -444,7 +442,6 @@ wbWorkbook <- R6::R6Class(
         na.strings      = na.strings
       )
     },
-
     #' @description add formula
     #' @param sheet sheet
     #' @param x x
@@ -457,15 +454,15 @@ wbWorkbook <- R6::R6Class(
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @returns The `wbWorkbook` object
     add_formula = function(
-        sheet    = current_sheet(),
-        x,
-        startCol = 1,
-        startRow = 1,
-        dims     = rowcol_to_dims(startRow, startCol),
-        array    = FALSE,
-        xy       = NULL,
-        applyCellStyle = TRUE,
-        removeCellStyle = FALSE
+      sheet    = current_sheet(),
+      x,
+      startCol = 1,
+      startRow = 1,
+      dims     = rowcol_to_dims(startRow, startCol),
+      array    = FALSE,
+      xy       = NULL,
+      applyCellStyle = TRUE,
+      removeCellStyle = FALSE
     ) {
       workbook_add_formula(
         self            = self,
@@ -959,11 +956,11 @@ wbWorkbook <- R6::R6Class(
     #' @param comment a comment to apply to the worksheet
     #' @returns The `wbWorkbook` object
     add_comment = function(
-        sheet = current_sheet(),
-        col,
-        row,
-        dims  = rowcol_to_dims(row, col),
-        comment
+      sheet = current_sheet(),
+      col,
+      row,
+      dims  = rowcol_to_dims(row, col),
+      comment
     ) {
       workbook_add_comment(
         self    = self,
@@ -1015,22 +1012,22 @@ wbWorkbook <- R6::R6Class(
     #' @param params Additional parameters
     #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
-        sheet = current_sheet(),
-        cols,
-        rows,
-        rule  = NULL,
-        style = NULL,
-        # TODO add vector of possible values
-        type = c("expression", "colorScale", "dataBar", "duplicatedValues",
-                 "containsText", "notContainsText", "beginsWith", "endsWith",
-                 "between", "topN", "bottomN"),
-        params = list(
-          showValue = TRUE,
-          gradient  = TRUE,
-          border    = TRUE,
-          percent   = FALSE,
-          rank      = 5L
-        )
+      sheet = current_sheet(),
+      cols,
+      rows,
+      rule  = NULL,
+      style = NULL,
+      # TODO add vector of possible values
+      type = c("expression", "colorScale", "dataBar", "duplicatedValues",
+               "containsText", "notContainsText", "beginsWith", "endsWith",
+               "between", "topN", "bottomN"),
+      params = list(
+        showValue = TRUE,
+        gradient  = TRUE,
+        border    = TRUE,
+        percent   = FALSE,
+        rank      = 5L
+      )
     ) {
       workbook_add_conditional_formatting(
         self    = self,
@@ -1247,10 +1244,10 @@ wbWorkbook <- R6::R6Class(
     #'   `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
     #' @returns The `wbWorkbook` object
     protect_worksheet = function(
-        sheet = current_sheet(),
-        protect    = TRUE,
-        password   = NULL,
-        properties = NULL
+      sheet = current_sheet(),
+      protect    = TRUE,
+      password   = NULL,
+      properties = NULL
     ) {
       workbook_protect_worksheet(
         self       = self,
@@ -1594,11 +1591,11 @@ wbWorkbook <- R6::R6Class(
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
-        sheet        = current_sheet(),
-        numbers      = TRUE,
-        characters   = TRUE,
-        styles       = TRUE,
-        merged_cells = TRUE
+      sheet        = current_sheet(),
+      numbers      = TRUE,
+      characters   = TRUE,
+      styles       = TRUE,
+      merged_cells = TRUE
     ) {
       workbook_clean_sheet(
         self         = self,
@@ -1646,20 +1643,20 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
-      sheet         = current_sheet(),
-      dims          = "A1",
-      bottom_color  = wb_colour(hex = "FF000000"),
-      left_color    = wb_colour(hex = "FF000000"),
-      right_color   = wb_colour(hex = "FF000000"),
-      top_color     = wb_colour(hex = "FF000000"),
-      bottom_border = "thin",
-      left_border   = "thin",
-      right_border  = "thin",
-      top_border    = "thin",
-      inner_hgrid   = NULL,
-      inner_hcolor  = NULL,
-      inner_vgrid   = NULL,
-      inner_vcolor  = NULL
+    sheet         = current_sheet(),
+    dims          = "A1",
+    bottom_color  = wb_colour(hex = "FF000000"),
+    left_color    = wb_colour(hex = "FF000000"),
+    right_color   = wb_colour(hex = "FF000000"),
+    top_color     = wb_colour(hex = "FF000000"),
+    bottom_border = "thin",
+    left_border   = "thin",
+    right_border  = "thin",
+    top_border    = "thin",
+    inner_hgrid   = NULL,
+    inner_hcolor  = NULL,
+    inner_vgrid   = NULL,
+    inner_vcolor  = NULL
     ) {
       workbook_add_border(
         self          = self,
@@ -1701,13 +1698,13 @@ wbWorkbook <- R6::R6Class(
     #'   </gradientFill>"
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
-        sheet         = current_sheet(),
-        dims          = "A1",
-        color         = wb_colour(hex = "FFFFFF00"),
-        pattern       = "solid",
-        gradient_fill = "",
-        every_nth_col = 1,
-        every_nth_row = 1
+      sheet         = current_sheet(),
+      dims          = "A1",
+      color         = wb_colour(hex = "FFFFFF00"),
+      pattern       = "solid",
+      gradient_fill = "",
+      every_nth_col = 1,
+      every_nth_row = 1
     ) {
       workbook_add_fill(
         self          = self,
@@ -1745,24 +1742,24 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
-        sheet     = current_sheet(),
-        dims      = "A1",
-        name      = "Calibri",
-        color     = wb_colour(hex = "FF000000"),
-        size      = "11",
-        bold      = "",
-        italic    = "",
-        outline   = "",
-        strike    = "",
-        underline = "",
-        # fine tuning
-        charset   = "",
-        condense  = "",
-        extend    = "",
-        family    = "",
-        scheme    = "",
-        shadow    = "",
-        vertAlign = ""
+      sheet     = current_sheet(),
+      dims      = "A1",
+      name      = "Calibri",
+      color     = wb_colour(hex = "FF000000"),
+      size      = "11",
+      bold      = "",
+      italic    = "",
+      outline   = "",
+      strike    = "",
+      underline = "",
+      # fine tuning
+      charset   = "",
+      condense  = "",
+      extend    = "",
+      family    = "",
+      scheme    = "",
+      shadow    = "",
+      vertAlign = ""
     ) {
       workbook_add_font(
         self      = self,
@@ -1796,9 +1793,9 @@ wbWorkbook <- R6::R6Class(
     #'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
     #' @return The `wbWorksheetObject`, invisibly
     add_numfmt = function(
-        sheet = current_sheet(),
-        dims  = "A1",
-        numfmt
+      sheet = current_sheet(),
+      dims  = "A1",
+      numfmt
     ) {
       workbook_add_numfmt(
         self    = self,
@@ -1848,33 +1845,33 @@ wbWorkbook <- R6::R6Class(
     #'                    wrapText = "1")
     #' @return The `wbWorksheetObject`, invisibly
     add_cell_style = function(
-        sheet             = current_sheet(),
-        dims              = "A1",
-        applyAlignment    = NULL,
-        applyBorder       = NULL,
-        applyFill         = NULL,
-        applyFont         = NULL,
-        applyNumberFormat = NULL,
-        applyProtection   = NULL,
-        borderId          = NULL,
-        extLst            = NULL,
-        fillId            = NULL,
-        fontId            = NULL,
-        hidden            = NULL,
-        horizontal        = NULL,
-        indent            = NULL,
-        justifyLastLine   = NULL,
-        locked            = NULL,
-        numFmtId          = NULL,
-        pivotButton       = NULL,
-        quotePrefix       = NULL,
-        readingOrder      = NULL,
-        relativeIndent    = NULL,
-        shrinkToFit       = NULL,
-        textRotation      = NULL,
-        vertical          = NULL,
-        wrapText          = NULL,
-        xfId              = NULL
+      sheet             = current_sheet(),
+      dims              = "A1",
+      applyAlignment    = NULL,
+      applyBorder       = NULL,
+      applyFill         = NULL,
+      applyFont         = NULL,
+      applyNumberFormat = NULL,
+      applyProtection   = NULL,
+      borderId          = NULL,
+      extLst            = NULL,
+      fillId            = NULL,
+      fontId            = NULL,
+      hidden            = NULL,
+      horizontal        = NULL,
+      indent            = NULL,
+      justifyLastLine   = NULL,
+      locked            = NULL,
+      numFmtId          = NULL,
+      pivotButton       = NULL,
+      quotePrefix       = NULL,
+      readingOrder      = NULL,
+      relativeIndent    = NULL,
+      shrinkToFit       = NULL,
+      textRotation      = NULL,
+      vertical          = NULL,
+      wrapText          = NULL,
+      xfId              = NULL
     ) {
       workbook_add_cell_style(
         self              = self,
@@ -1947,10 +1944,7 @@ wbWorkbook <- R6::R6Class(
     #' @description apply sparkline to worksheet
     #' @param sheet the worksheet you are using
     #' @param sparklines sparkline created by `create_sparkline()`
-    add_sparklines = function(
-      sheet = current_sheet(),
-      sparklines
-    ) {
+    add_sparklines = function(sheet = current_sheet(), sparklines) {
       workbook_add_sparklines(self, private, sheet, sparklines)
     }
   ),
@@ -2229,10 +2223,10 @@ wbWorkbook <- R6::R6Class(
 
           ## write vml output
           write_file(
-              head = '',
-              body = pxml(vml_xml),
-              tail = '',
-              fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
+            head = '',
+            body = pxml(vml_xml),
+            tail = '',
+            fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
           )
 
           ## vml drawing
@@ -2569,16 +2563,16 @@ wbWorkbook <- R6::R6Class(
     },
 
     do_conditional_formatting = function(
-        sheet,
-        startRow,
-        endRow,
-        startCol,
-        endCol,
-        dxfId,
-        formula,
-        type,
-        values,
-        params
+      sheet,
+      startRow,
+      endRow,
+      startCol,
+      endCol,
+      dxfId,
+      formula,
+      type,
+      values,
+      params
     ) {
       # TODO consider defaults for logicals
       # TODO rename: setConditionFormatting?  Or addConditionalFormatting
@@ -2734,9 +2728,9 @@ wbWorkbook <- R6::R6Class(
           seq_along(self$workbook.xml.rels),
           function(i) {
             gsub('(?<=Relationship Id="rId)[0-9]+',
-              i,
-              self$workbook.xml.rels[[i]],
-              perl = TRUE
+                 i,
+                 self$workbook.xml.rels[[i]],
+                 perl = TRUE
             )
           }
         )
@@ -2745,19 +2739,19 @@ wbWorkbook <- R6::R6Class(
 
       if (length(self$metadata)) {
         self$append("workbook.xml.rels",
-          sprintf(
-            '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sheetMetadata" Target="metadata.xml"/>',
-            1L + length(self$workbook.xml.rels)
-          )
+                    sprintf(
+                      '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sheetMetadata" Target="metadata.xml"/>',
+                      1L + length(self$workbook.xml.rels)
+                    )
         )
       }
 
       if (!is.null(self$vbaProject)) {
         self$append("workbook.xml.rels",
-          sprintf(
-            '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
-            1L + length(self$workbook.xml.rels)
-          )
+                    sprintf(
+                      '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
+                      1L + length(self$workbook.xml.rels)
+                    )
         )
       }
 

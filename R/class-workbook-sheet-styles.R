@@ -640,8 +640,10 @@ workbook_get_cell_style <- function(
     sheet = current_sheet(),
     dims
 ) {
-  if (length(dims) == 1 && grepl(":", dims)) {}
+  if (length(dims) == 1 && grepl(":", dims)) {
     dims <- dims_to_dataframe(dims, fill = TRUE)
+  }
+
   sheet <- private$get_sheet_index(sheet)
 
   # This alters the workbook
