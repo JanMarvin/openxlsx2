@@ -1,4 +1,4 @@
-workbook_set_row_heights <- function(
+wb_set_row_heights_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -32,7 +32,7 @@ workbook_set_row_heights <- function(
   invisible(self)
 }
 
-workbook_remove_row_heights <- function(
+wb_remove_row_heights_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -56,7 +56,7 @@ workbook_remove_row_heights <- function(
   invisible(self)
 }
 
-workbook_group_rows <- function(
+wb_group_rows_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -121,7 +121,7 @@ workbook_group_rows <- function(
   invisible(self)
 }
 
-workbook_ungroup_rows <- function(
+wb_ungroup_rows_impl <- function(
     self,
     private,
     sheet = current_sheet(),

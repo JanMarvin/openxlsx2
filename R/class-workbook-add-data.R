@@ -1,4 +1,4 @@
-workbook_add_data <- function(
+wb_add_data_impl <- function(
     self,
     private,
     sheet           = current_sheet(),
@@ -40,7 +40,7 @@ workbook_add_data <- function(
   invisible(self)
 }
 
-workbook_add_data_table <- function(
+wb_add_data_table_impl <- function(
     self,
     private,
     sheet           = current_sheet(),
@@ -90,7 +90,7 @@ workbook_add_data_table <- function(
 }
 
 
-workbook_add_formula <- function(
+wb_add_formula_impl <- function(
     self,
     private,
     sheet           = current_sheet(),

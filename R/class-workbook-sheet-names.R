@@ -1,10 +1,10 @@
-workbook_get_sheet_names <- function(self, private) {
+wb_get_sheet_names_impl <- function(self, private) {
   res <- self$sheet_names
   names(res) <- private$original_sheet_names
   res[self$sheetOrder]
 }
 
-workbook_set_sheet_names <- function(self, private, old = NULL, new) {
+wb_set_sheet_names_impl <- function(self, private, old = NULL, new) {
   # assume all names.  Default values makes the test check for wrappers a
   # little weird
   old <- old %||% seq_along(self$sheet_names)

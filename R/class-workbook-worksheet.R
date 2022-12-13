@@ -1,4 +1,4 @@
-workbook_remove_worksheet <- function(self, private, sheet = current_sheet()) {
+wb_remove_worksheet_impl <- function(self, private, sheet = current_sheet()) {
 
   # To delete a worksheet
   # Remove colwidths element

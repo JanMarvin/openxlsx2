@@ -1,4 +1,4 @@
-workbook_add_worksheet <- function(
+wb_add_worksheet_impl <- function(
     self,
     private,
     sheet       = next_sheet(),

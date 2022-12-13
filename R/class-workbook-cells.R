@@ -125,7 +125,7 @@ workbook_add_data_validations <- function(
   invisible(self)
 }
 
-workbook_merge_cells <- function(
+wb_merge_cells_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -170,7 +170,7 @@ workbook_merge_cells <- function(
   invisible(self)
 }
 
-workbook_unmerge_cells <- function(
+wb_unmerge_cells_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -199,7 +199,7 @@ workbook_unmerge_cells <- function(
   invisible(self)
 }
 
-workbook_free_panes <- function(
+wb_free_panes_impl <- function(
     self,
     private,
     sheet          = current_sheet(),

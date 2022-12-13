@@ -1,4 +1,4 @@
-workbook_page_setup = function(
+wb_page_setup_impl = function(
     self,
     private,
     sheet          = current_sheet(),

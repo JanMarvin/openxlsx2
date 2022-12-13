@@ -1,4 +1,4 @@
-workbook_validate_sheet <- function(self, private, sheet) {
+wb_validate_sheet_impl <- function(self, private, sheet) {
   # workbook has no sheets
   if (!length(self$sheet_names)) {
     return(NA_integer_)

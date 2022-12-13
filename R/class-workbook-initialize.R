@@ -1,4 +1,4 @@
-workbook_initialize <- function(
+wb_initialize_impl <- function(
     self,
     private,
     creator         = NULL,

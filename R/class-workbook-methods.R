@@ -1,15 +1,15 @@
 
-workbook_append <- function(self, private, field, value) {
+wb_append_impl <- function(self, private, field, value) {
   self[[field]] <- c(self[[field]], value)
   invisible(self)
 }
 
-workbook_append_sheets <- function(self, private, value) {
+wb_append_sheets_impl <- function(self, private, value) {
   self$workbook$sheets <- c(self$workbook$sheets, value)
   invisible(self)
 }
 
-workbook_add_chartsheet <- function(self, private, sheet, tabColour, zoom) {
+wb_add_chartsheet_impl <- function(self, private, sheet, tabColour, zoom) {
   # TODO private$new_sheet_index()?
   newSheetIndex <- length(self$worksheets) + 1L
   sheetId <- private$get_sheet_id_max() # checks for length of worksheets
@@ -85,7 +85,7 @@ workbook_add_chartsheet <- function(self, private, sheet, tabColour, zoom) {
   invisible(self)
 }
 
-workbook_add_style <- function(
+wb_add_style_impl <- function(
     self,
     private,
     style = NULL,
@@ -98,12 +98,12 @@ workbook_add_style <- function(
   invisible(self)
 }
 
-workbook_open <- function(self, private, interactive = NA) {
+wb_open_impl <- function(self, private, interactive = NA) {
   xl_open(self, interactive = interactive)
   invisible(self)
 }
 
-workbook_get_base_font <- function(self, private) {
+wb_get_base_font_impl <- function(self, private) {
   baseFont <- self$styles_mgr$styles$fonts[[1]]
 
   sz     <- unlist(xml_attr(baseFont, "font", "sz"))
@@ -135,7 +135,7 @@ workbook_get_base_font <- function(self, private) {
   )
 }
 
-workbook_set_base_font <- function(
+wb_set_base_font_impl <- function(
     self,
     private,
     fontSize = 11,
@@ -159,7 +159,7 @@ workbook_set_base_font <- function(
   invisible(self)
 }
 
-workbook_set_bookview <- function(
+wb_set_bookview_impl <- function(
     self,
     private,
     activeTab              = NULL,
@@ -211,7 +211,7 @@ workbook_set_bookview <- function(
   invisible(self)
 }
 
-workbook_print <- function(self, private) {
+wb_print_impl <- function(self, private) {
   exSheets <- self$get_sheet_names()
   nSheets <- length(exSheets)
   nImages <- length(self$media)
@@ -242,7 +242,7 @@ workbook_print <- function(self, private) {
   invisible(self)
 }
 
-workbook_set_last_modified_by <- function(self, private, LastModifiedBy = NULL) {
+wb_set_last_modified_by_impl <- function(self, private, LastModifiedBy = NULL) {
   # TODO rename to wb_set_last_modified_by() ?
   if (!is.null(LastModifiedBy)) {
     current_LastModifiedBy <-
@@ -258,7 +258,7 @@ workbook_set_last_modified_by <- function(self, private, LastModifiedBy = NULL) 
   invisible(self)
 }
 
-workbook_grid_lines <- function(
+wb_grid_lines_impl <- function(
     self,
     private,
     sheet   = current_sheet(),
@@ -282,7 +282,7 @@ workbook_grid_lines <- function(
   invisible(self)
 }
 
-workbook_set_order <- function(self, private, sheets) {
+wb_set_order_impl <- function(self, private, sheets) {
   sheets <- private$get_sheet_index(sheet = sheets)
 
   if (anyDuplicated(sheets)) {
@@ -301,7 +301,7 @@ workbook_set_order <- function(self, private, sheets) {
   invisible(self)
 }
 
-workbook_add_page_breaks <- function(
+wb_add_page_breaks_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -313,7 +313,7 @@ workbook_add_page_breaks <- function(
   invisible(self)
 }
 
-workbook_clean_sheet <- function(
+wb_clean_sheet_impl <- function(
     self,
     private,
     sheet        = current_sheet(),

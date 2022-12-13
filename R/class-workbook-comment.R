@@ -1,4 +1,4 @@
-workbook_add_comment <- function(
+wb_add_comment_impl <- function(
     self,
     private,
     sheet   = current_sheet(),
@@ -24,7 +24,7 @@ workbook_add_comment <- function(
   invisible(self)
 }
 
-workbook_remove_comment <- function(
+wb_remove_comment_impl <- function(
     self,
     private,
     sheet      = current_sheet(),

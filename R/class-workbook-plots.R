@@ -1,4 +1,4 @@
-workbook_add_image <- function(
+wb_add_image_impl <- function(
     self,
     private,
     sheet     = current_sheet(),
@@ -156,7 +156,7 @@ workbook_add_image <- function(
   invisible(self)
 }
 
-workbook_add_plot <- function(
+wb_add_plot_impl <- function(
     self,
     private,
     sheet     = current_sheet(),
@@ -228,7 +228,7 @@ workbook_add_plot <- function(
   )
 }
 
-workbook_add_drawing <- function(
+wb_add_drawing_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -344,7 +344,7 @@ workbook_add_drawing <- function(
   invisible(self)
 }
 
-workbook_add_chart_xml <- function(
+wb_add_chart_xml_impl <- function(
     self,
     private,
     sheet   = current_sheet(),
@@ -386,7 +386,7 @@ workbook_add_chart_xml <- function(
   invisible(self)
 }
 
-workbook_add_mschart <- function(
+wb_add_mschart_impl <- function(
     self,
     private,
     sheet   = current_sheet(),

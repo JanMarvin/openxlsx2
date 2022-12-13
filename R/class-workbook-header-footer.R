@@ -1,4 +1,4 @@
-workbook_set_header_footer <- function(
+wb_set_header_footer_impl <- function(
     self,
     private,
     sheet       = current_sheet(),

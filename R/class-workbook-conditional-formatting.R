@@ -1,4 +1,4 @@
-workbook_add_conditional_formatting <- function(
+wb_add_conditional_formatting_impl <- function(
     self,
     private,
     sheet = current_sheet(),

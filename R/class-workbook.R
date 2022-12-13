@@ -191,7 +191,7 @@ wbWorkbook <- R6::R6Class(
     category        = NULL,
     datetimeCreated = Sys.time()
     ) {
-      workbook_initialize(
+      wb_initialize_impl(
         self            = self,
         private         = private,
         creator         = creator,
@@ -207,21 +207,21 @@ wbWorkbook <- R6::R6Class(
     #' @param field A valid field name
     #' @param value A value for the field
     append = function(field, value) {
-      workbook_append(self, private, field, value)
+      wb_append_impl(self, private, field, value)
     },
 
     #' @description
     #' Append to `self$workbook$sheets` This method is intended for internal use
     #' @param value A value for `self$workbook$sheets`
     append_sheets = function(value) {
-      workbook_append_sheets(self, private, value)
+      wb_append_sheets_impl(self, private, value)
     },
 
     #' @description validate sheet
     #' @param sheet A character sheet name or integer location
     #' @returns The integer position of the sheet
     validate_sheet = function(sheet) {
-      workbook_validate_sheet(self, private, sheet)
+      wb_validate_sheet_impl(self, private, sheet)
     },
 
     #' @description
@@ -267,7 +267,7 @@ wbWorkbook <- R6::R6Class(
       hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
       vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
     ) {
-      workbook_add_worksheet(
+      wb_add_worksheet_impl(
         self          = self,
         private       = private,
         sheet         = sheet,
@@ -299,7 +299,7 @@ wbWorkbook <- R6::R6Class(
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
     clone_worksheet = function(old = current_sheet(), new = next_sheet()) {
-      workbook_clone_worksheet(self, private, old = old, new = new)
+      wb_clone_worksheet_impl(self, private, old = old, new = new)
     },
 
     #' @description
@@ -309,7 +309,7 @@ wbWorkbook <- R6::R6Class(
     #' @param zoom zoom
     #' @return The `wbWorkbook` object, invisibly
     addChartSheet = function(sheet = current_sheet(), tabColour = NULL, zoom = 100) {
-      workbook_add_chartsheet(
+      wb_add_chartsheet_impl(
         self      = self,
         private   = private,
         sheet     = sheet,
@@ -355,7 +355,7 @@ wbWorkbook <- R6::R6Class(
       na.strings      = getOption("openxlsx2.na.strings", "#N/A")
     ) {
       # TODO shouldn't this have a default?
-      workbook_add_data(
+      wb_add_data_impl(
         self            = self,
         private         = private,
         sheet           = sheet,
@@ -418,7 +418,7 @@ wbWorkbook <- R6::R6Class(
       removeCellStyle = FALSE,
       na.strings      = getOption("openxlsx2.na.strings", "#N/A")
     ) {
-      workbook_add_data_table(
+      wb_add_data_table_impl(
         self            = self,
         private         = private,
         sheet           = sheet,
@@ -464,7 +464,7 @@ wbWorkbook <- R6::R6Class(
       applyCellStyle = TRUE,
       removeCellStyle = FALSE
     ) {
-      workbook_add_formula(
+      wb_add_formula_impl(
         self            = self,
         private         = private,
         sheet           = sheet,
@@ -485,7 +485,7 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     add_style = function(style = NULL, style_name = substitute(style)) {
       force(style_name)
-      workbook_add_style(self, private, style = style, style_name = style_name)
+      wb_add_style_impl(self, private, style = style, style_name = style_name)
     },
 
     # TODO wb_save can be shortened a lot by some formatting and by using a
@@ -498,7 +498,7 @@ wbWorkbook <- R6::R6Class(
     #' @param overwrite If `FALSE`, will not overwrite when `path` exists
     #' @return The `wbWorkbook` object invisibly
     save = function(path = self$path, overwrite = TRUE) {
-      workbook_save(self, private, path = path, overwrite = overwrite)
+      wb_save_impl(self, private, path = path, overwrite = overwrite)
     },
 
     #' @description open wbWorkbook in Excel.
@@ -508,7 +508,7 @@ wbWorkbook <- R6::R6Class(
     #'   the value returned from [base::interactive()]
     #' @return The `wbWorkbook`, invisibly
     open = function(interactive = NA) {
-      workbook_open(self, private, interactive)
+      wb_open_impl(self, private, interactive)
     },
 
     #' @description
@@ -540,7 +540,7 @@ wbWorkbook <- R6::R6Class(
       showRowStripes = 1,
       showColumnStripes = 0
     ) {
-      workbook_build_table(
+      wb_build_table_impl(
         self              = self,
         private           = private,
         sheet             = sheet,
@@ -564,7 +564,7 @@ wbWorkbook <- R6::R6Class(
     #' Get the base font
     #' @return A list of of the font
     get_base_font = function() {
-      workbook_get_base_font(self, private)
+      wb_get_base_font_impl(self, private)
     },
 
     #' @description
@@ -578,7 +578,7 @@ wbWorkbook <- R6::R6Class(
       fontColour = wb_colour(theme = "1"),
       fontName = "Calibri"
     ) {
-      workbook_set_base_font(
+      wb_set_base_font_impl(
         self       = self,
         private    = private,
         fontSize   = fontSize,
@@ -620,7 +620,7 @@ wbWorkbook <- R6::R6Class(
       xWindow                = NULL,
       yWindow                = NULL
     ) {
-      workbook_set_bookview(
+      wb_set_bookview_impl(
         self                   = self,
         private                = private,
         activeTab              = activeTab,
@@ -646,7 +646,7 @@ wbWorkbook <- R6::R6Class(
     #'   names represent the original value of the worksheet prior to any
     #'   character substitutions.
     get_sheet_names = function() {
-      workbook_get_sheet_names(self, private)
+      wb_get_sheet_names_impl(self, private)
     },
 
     #' @description
@@ -655,7 +655,7 @@ wbWorkbook <- R6::R6Class(
     #' @param new New sheet name
     #' @return The `wbWorkbook` object, invisibly
     set_sheet_names = function(old = NULL, new) {
-      workbook_set_sheet_names(self, private, old, new)
+      wb_set_sheet_names_impl(self, private, old, new)
     },
 
     #' @description
@@ -677,7 +677,7 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @return The `wbWorkbook` object, invisibly
     set_row_heights = function(sheet = current_sheet(), rows, heights) {
-      workbook_set_row_heights(
+      wb_set_row_heights_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -692,7 +692,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet = current_sheet(), rows) {
-      workbook_remove_row_heights(
+      wb_remove_row_heights_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -710,7 +710,7 @@ wbWorkbook <- R6::R6Class(
     #' @param end end
     createCols = function(sheet = current_sheet(), n, beg, end) {
       # TODO replace with $add_cols()
-      workbook_add_cols(
+      wb_add_cols_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -733,7 +733,7 @@ wbWorkbook <- R6::R6Class(
       collapsed = FALSE,
       levels = NULL
     ) {
-      workbook_group_cols(
+      wb_group_cols_impl(
         self      = self,
         private   = private,
         sheet     = sheet,
@@ -748,7 +748,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols = cols
     #' @returns The `wbWorkbook` object
     ungroup_cols = function(sheet = current_sheet(), cols) {
-      workbook_ungroup_cols(self, private, sheet, cols)
+      wb_ungroup_cols_impl(self, private, sheet, cols)
     },
 
     #' @description Remove row heights from a worksheet
@@ -756,7 +756,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols Indices of columns to remove custom width (if any) from.
     #' @return The `wbWorkbook` object, invisibly
     remove_col_widths = function(sheet = current_sheet(), cols) {
-      workbook_remove_col_widths(
+      wb_remove_col_widths_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -779,7 +779,7 @@ wbWorkbook <- R6::R6Class(
       widths = 8.43,
       hidden = FALSE
     ) {
-      workbook_set_col_widths(
+      wb_set_col_widths_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -807,7 +807,7 @@ wbWorkbook <- R6::R6Class(
       collapsed = FALSE,
       levels = NULL
     ) {
-      workbook_group_rows(
+      wb_group_rows_impl(
         self      = self,
         private   = private,
         sheet     = sheet,
@@ -822,7 +822,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @return The `wbWorkbook` object
     ungroup_rows = function(sheet = current_sheet(), rows) {
-      workbook_ungroup_rows(self, private, sheet = sheet, rows = rows)
+      wb_ungroup_rows_impl(self, private, sheet = sheet, rows = rows)
     },
 
     #' @description
@@ -830,7 +830,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet The worksheet to delete
     #' @return The `wbWorkbook` object, invisibly
     remove_worksheet = function(sheet = current_sheet()) {
-      workbook_remove_worksheet(self, private, sheet = sheet)
+      wb_remove_worksheet_impl(self, private, sheet = sheet)
     },
 
     ### cells ----
@@ -893,7 +893,7 @@ wbWorkbook <- R6::R6Class(
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
-      workbook_merge_cells(
+      wb_merge_cells_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -912,7 +912,7 @@ wbWorkbook <- R6::R6Class(
       rows = NULL,
       cols = NULL
     ) {
-      workbook_unmerge_cells(
+      wb_unmerge_cells_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -936,7 +936,7 @@ wbWorkbook <- R6::R6Class(
       firstRow       = FALSE,
       firstCol       = FALSE
     ) {
-      workbook_free_panes(
+      wb_free_panes_impl(
         self           = self,
         private        = private,
         sheet          = sheet,
@@ -963,7 +963,7 @@ wbWorkbook <- R6::R6Class(
       dims  = rowcol_to_dims(row, col),
       comment
     ) {
-      workbook_add_comment(
+      wb_add_comment_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -988,7 +988,7 @@ wbWorkbook <- R6::R6Class(
       dims       = rowcol_to_dims(row, col),
       gridExpand = TRUE
     ) {
-      workbook_remove_comment(
+      wb_remove_comment_impl(
         self       = self,
         private    = private,
         sheet      = sheet,
@@ -1030,7 +1030,7 @@ wbWorkbook <- R6::R6Class(
         rank      = 5L
       )
     ) {
-      workbook_add_conditional_formatting(
+      wb_add_conditional_formatting_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1070,7 +1070,7 @@ wbWorkbook <- R6::R6Class(
       units     = "in",
       dpi       = 300
     ) {
-      workbook_add_image(
+      wb_add_image_impl(
         self      = self,
         private   = private,
         sheet     = sheet,
@@ -1112,7 +1112,7 @@ wbWorkbook <- R6::R6Class(
       units     = "in",
       dpi       = 300
     ) {
-      workbook_add_plot(
+      wb_add_plot_impl(
         self      = self,
         private   = private,
         sheet     = sheet,
@@ -1139,7 +1139,7 @@ wbWorkbook <- R6::R6Class(
       xml,
       dims  = "A1:H8"
     ) {
-      workbook_add_drawing(
+      wb_add_drawing_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1159,7 +1159,7 @@ wbWorkbook <- R6::R6Class(
       xml,
       dims  = "A1:H8"
     ) {
-      workbook_add_chart_xml(
+      wb_add_chart_xml_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1178,7 +1178,7 @@ wbWorkbook <- R6::R6Class(
       dims = "B2:H8",
       graph
     ) {
-      workbook_add_mschart(
+      wb_add_mschart_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1193,7 +1193,7 @@ wbWorkbook <- R6::R6Class(
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
-      workbook_print(self, private)
+      wb_print_impl(self, private)
     },
 
     ### protect ---
@@ -1219,7 +1219,7 @@ wbWorkbook <- R6::R6Class(
       username            = unname(Sys.info()["user"]),
       readOnlyRecommended = FALSE
     ) {
-      workbook_protect(
+      wb_protect_impl(
         self                = self,
         private             = private,
         protect             = protect,
@@ -1250,7 +1250,7 @@ wbWorkbook <- R6::R6Class(
       password   = NULL,
       properties = NULL
     ) {
-      workbook_protect_worksheet(
+      wb_protect_worksheet_impl(
         self       = self,
         private    = private,
         sheet      = sheet,
@@ -1266,21 +1266,21 @@ wbWorkbook <- R6::R6Class(
     #' @param creators A character vector of creators to set.  Duplicates are
     #'   ignored.
     set_creators = function(creators) {
-      workbook_modify_creators(self, private, "set", creators)
+      wb_modify_creators_impl(self, private, "set", creators)
     },
 
     #' @description Add creator(s)
     #' @param creators A character vector of creators to add.  Duplicates are
     #'   ignored.
     add_creators = function(creators) {
-      workbook_modify_creators(self, private, "add", creators)
+      wb_modify_creators_impl(self, private, "add", creators)
     },
 
     #' @description Remove creator(s)
     #' @param creators A character vector of creators to remove.  All duplicated
     #'   are removed.
     remove_creators = function(creators) {
-      workbook_modify_creators(self, private, "remove", creators)
+      wb_modify_creators_impl(self, private, "remove", creators)
     },
 
     ### last modified by ----
@@ -1290,7 +1290,7 @@ wbWorkbook <- R6::R6Class(
     #' @param LastModifiedBy A new value
     #' @return The `wbWorkbook` object, invisibly
     set_last_modified_by = function(LastModifiedBy = NULL) {
-      workbook_set_last_modified_by(self, private, LastModifiedBy)
+      wb_set_last_modified_by_impl(self, private, LastModifiedBy)
     },
 
     ### page setup ----
@@ -1331,7 +1331,7 @@ wbWorkbook <- R6::R6Class(
       summaryRow     = NULL,
       summaryCol     = NULL
     ) {
-      workbook_page_setup(
+      wb_page_setup_impl(
         self           = self,
         private        = private,
         sheet          = sheet,
@@ -1373,7 +1373,7 @@ wbWorkbook <- R6::R6Class(
       firstHeader = NULL,
       firstFooter = NULL
     ) {
-      workbook_set_header_footer(
+      wb_set_header_footer_impl(
         self        = self,
         private     = private,
         sheet       = sheet,
@@ -1392,7 +1392,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @returns The sheet tables.  `character()` if empty
     get_tables = function(sheet = current_sheet()) {
-      workbook_get_tables(
+      wb_get_tables_impl(
         self    = self,
         private = private,
         sheet   = sheet
@@ -1404,7 +1404,7 @@ wbWorkbook <- R6::R6Class(
     #' @param table table
     #' @returns The `wbWorkbook` object
     remove_tables = function(sheet = current_sheet(), table) {
-      workbook_remove_tables(
+      wb_remove_tables_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1420,7 +1420,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols cols
     #' @returns The `wbWorkbook` object
     add_filter = function(sheet = current_sheet(), rows, cols) {
-      workbook_add_filter(
+      wb_add_filter_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1433,7 +1433,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
     remove_filter = function(sheet = current_sheet()) {
-      workbook_remove_filter(self, private, sheet)
+      wb_remove_filter_impl(self, private, sheet)
     },
 
     ### grid lines ----
@@ -1444,7 +1444,7 @@ wbWorkbook <- R6::R6Class(
     #' @param print print
     #' @returns The `wbWorkbook` object
     grid_lines = function(sheet = current_sheet(), show = FALSE, print = show) {
-      workbook_grid_lines(
+      wb_grid_lines_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1497,7 +1497,7 @@ wbWorkbook <- R6::R6Class(
       workbookParameter = NULL,
       xml               = NULL
     ) {
-      workbook_add_named_region(
+      wb_add_named_region_impl(
         self              = self,
         private           = private,
         sheet             = sheet,
@@ -1527,7 +1527,7 @@ wbWorkbook <- R6::R6Class(
     #' @param name name
     #' @returns The `wbWorkbook` object
     remove_named_region = function(sheet = current_sheet(), name = NULL) {
-      workbook_remove_named_region(
+      wb_remove_named_region_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1541,7 +1541,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheets sheets
     #' @return The `wbWorkbook` object
     set_order = function(sheets) {
-      workbook_set_order(self, private, sheets)
+      wb_set_order_impl(self, private, sheets)
     },
 
     ### sheet visibility ----
@@ -1549,7 +1549,7 @@ wbWorkbook <- R6::R6Class(
     #' @description Get sheet visibility
     #' @returns Returns sheet visibility
     get_sheet_visibility = function() {
-      workbook_get_sheet_visibility(self, private)
+      wb_get_sheet_visibility_impl(self, private)
     },
 
     #' @description Set sheet visibility
@@ -1557,7 +1557,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @returns The `wbWorkbook` object
     set_sheet_visibility = function(sheet = current_sheet(), value) {
-      workbook_set_sheet_visibility(
+      wb_set_sheet_visibility_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1573,7 +1573,7 @@ wbWorkbook <- R6::R6Class(
     #' @param col col
     #' @returns The `wbWorkbook` object
     add_page_break = function(sheet = current_sheet(), row = NULL, col = NULL) {
-      workbook_add_page_breaks(
+      wb_add_page_breaks_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1598,7 +1598,7 @@ wbWorkbook <- R6::R6Class(
       styles       = TRUE,
       merged_cells = TRUE
     ) {
-      workbook_clean_sheet(
+      wb_clean_sheet_impl(
         self         = self,
         private      = private,
         sheet        = sheet,
@@ -1659,7 +1659,7 @@ wbWorkbook <- R6::R6Class(
     inner_vgrid   = NULL,
     inner_vcolor  = NULL
     ) {
-      workbook_add_border(
+      wb_add_border_impl(
         self          = self,
         private       = private,
         sheet         = sheet,
@@ -1707,7 +1707,7 @@ wbWorkbook <- R6::R6Class(
       every_nth_col = 1,
       every_nth_row = 1
     ) {
-      workbook_add_fill(
+      wb_add_fill_impl(
         self          = self,
         private       = private,
         sheet         = sheet,
@@ -1762,7 +1762,7 @@ wbWorkbook <- R6::R6Class(
       shadow    = "",
       vertAlign = ""
     ) {
-      workbook_add_font(
+      wb_add_font_impl(
         self      = self,
         private   = private,
         sheet     = sheet,
@@ -1798,7 +1798,7 @@ wbWorkbook <- R6::R6Class(
       dims  = "A1",
       numfmt
     ) {
-      workbook_add_numfmt(
+      wb_add_numfmt_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1874,7 +1874,7 @@ wbWorkbook <- R6::R6Class(
       wrapText          = NULL,
       xfId              = NULL
     ) {
-      workbook_add_cell_style(
+      wb_add_cell_style_impl(
         self              = self,
         private           = private,
         sheet             = sheet,
@@ -1912,7 +1912,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dims
     #' @returns a character vector of cell styles
     get_cell_style = function(sheet = current_sheet(), dims) {
-      workbook_get_cell_style(
+      wb_get_cell_style_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1926,7 +1926,7 @@ wbWorkbook <- R6::R6Class(
     #' @param style style
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
-      workbook_set_cell_style(
+      wb_set_cell_style_impl(
         self    = self,
         private = private,
         sheet   = sheet,
@@ -1939,14 +1939,14 @@ wbWorkbook <- R6::R6Class(
     #' @param from the worksheet you are cloning
     #' @param to the worksheet the style is applied to
     clone_sheet_style = function(from = current_sheet(), to) {
-      workbook_clone_sheet_style(self, private, from, to)
+      wb_clone_sheet_style_impl(self, private, from, to)
     },
 
     #' @description apply sparkline to worksheet
     #' @param sheet the worksheet you are using
     #' @param sparklines sparkline created by `create_sparkline()`
     add_sparklines = function(sheet = current_sheet(), sparklines) {
-      workbook_add_sparklines(self, private, sheet, sparklines)
+      wb_add_sparklines_impl(self, private, sheet, sparklines)
     }
   ),
 

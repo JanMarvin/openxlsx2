@@ -1,11 +1,11 @@
-workbook_get_sheet_visibility <- function(self, private) {
+wb_get_sheet_visibility_impl <- function(self, private) {
   state <- rep("visible", length(self$workbook$sheets))
   state[grepl("hidden", self$workbook$sheets)] <- "hidden"
   state[grepl("veryHidden", self$workbook$sheets, ignore.case = TRUE)] <- "veryHidden"
   state
 }
 
-workbook_set_sheet_visibility = function(
+wb_set_sheet_visibility_impl = function(
     self,
     private,
     sheet = current_sheet(),

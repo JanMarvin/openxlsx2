@@ -1,4 +1,4 @@
-workbook_add_border <- function(
+wb_add_border_impl <- function(
     self,
     private,
     sheet         = current_sheet(),
@@ -393,7 +393,7 @@ workbook_add_border <- function(
   invisible(self)
 }
 
-workbook_add_fill <- function(
+wb_add_fill_impl <- function(
     self,
     private,
     sheet         = current_sheet(),
@@ -439,7 +439,7 @@ workbook_add_fill <- function(
   invisible(self)
 }
 
-workbook_add_font <- function(
+wb_add_font_impl <- function(
     self,
     private,
     sheet     = current_sheet(),
@@ -504,7 +504,7 @@ workbook_add_font <- function(
   invisible(self)
 }
 
-workbook_add_numfmt <- function(
+wb_add_numfmt_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -554,7 +554,7 @@ workbook_add_numfmt <- function(
   invisible(self)
 }
 
-workbook_add_cell_style <- function(
+wb_add_cell_style_impl <- function(
     self,
     private,
     sheet             = current_sheet(),
@@ -634,7 +634,7 @@ workbook_add_cell_style <- function(
   invisible(self)
 }
 
-workbook_get_cell_style <- function(
+wb_get_cell_style_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -657,7 +657,7 @@ workbook_get_cell_style <- function(
   temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
 }
 
-workbook_set_cell_style <- function(
+wb_set_cell_style_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -677,7 +677,7 @@ workbook_set_cell_style <- function(
   invisible(self)
 }
 
-workbook_clone_sheet_style = function(
+wb_clone_sheet_style_impl = function(
     self,
     private,
     from = current_sheet(),
@@ -747,7 +747,7 @@ workbook_clone_sheet_style = function(
   invisible(self)
 }
 
-workbook_add_sparklines <- function(
+wb_add_sparklines_impl <- function(
     self,
     private,
     sheet = current_sheet(),

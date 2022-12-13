@@ -1,4 +1,4 @@
-workbook_clone_worksheet <- function(self, private, old, new) {
+wb_clone_worksheet_impl <- function(self, private, old, new) {
   private$validate_new_sheet(new)
   old <- private$get_sheet_index(old)
 

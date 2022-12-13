@@ -1,4 +1,4 @@
-workbook_add_cols <- function(
+wb_add_cols_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -11,7 +11,7 @@ workbook_add_cols <- function(
   invisible(self)
 }
 
-workbook_group_cols <- function(
+wb_group_cols_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -80,7 +80,7 @@ workbook_group_cols <- function(
   invisible(self)
 }
 
-workbook_ungroup_cols <- function(
+wb_ungroup_cols_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -117,7 +117,7 @@ workbook_ungroup_cols <- function(
   invisible(self)
 }
 
-workbook_remove_col_widths <- function(
+wb_remove_col_widths_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -145,7 +145,7 @@ workbook_remove_col_widths <- function(
   invisible(self)
 }
 
-workbook_set_col_widths <- function(
+wb_set_col_widths_impl <- function(
     self,
     private,
     sheet = current_sheet(),

@@ -1,4 +1,4 @@
-workbook_add_named_region = function(
+wb_add_named_region_impl = function(
     self,
     private,
     sheet = current_sheet(),
@@ -95,7 +95,7 @@ workbook_add_named_region = function(
   invisible(self)
 }
 
-workbook_remove_named_region = function(
+wb_remove_named_region_impl = function(
     self,
     private,
     sheet = current_sheet(),

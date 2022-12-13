@@ -1,4 +1,4 @@
-workbook_build_table <- function(
+wb_build_table_impl <- function(
     self,
     private,
     sheet             = current_sheet(),

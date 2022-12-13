@@ -1,4 +1,4 @@
-workbook_protect <- function(
+wb_protect_impl <- function(
     self,
     private,
     protect             = TRUE,
@@ -46,7 +46,7 @@ workbook_protect <- function(
   invisible(self)
 }
 
-workbook_protect_worksheet <- function(
+wb_protect_worksheet_impl <- function(
     self,
     private,
     sheet      = current_sheet(),

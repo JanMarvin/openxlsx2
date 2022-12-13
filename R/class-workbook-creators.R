@@ -1,4 +1,4 @@
-workbook_modify_creators <- function(
+wb_modify_creators_impl <- function(
     self,
     private,
     method = c("add", "set", "remove"),

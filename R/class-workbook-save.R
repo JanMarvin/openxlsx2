@@ -1,4 +1,4 @@
-workbook_save <- function(self, private, path = self$path, overwrite = TRUE) {
+wb_save_impl <- function(self, private, path = self$path, overwrite = TRUE) {
 
   assert_class(path, "character")
   assert_class(overwrite, "logical")

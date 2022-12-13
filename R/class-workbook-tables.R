@@ -1,4 +1,4 @@
-workbook_get_tables <- function(self, private, sheet = current_sheet()) {
+wb_get_tables_impl <- function(self, private, sheet = current_sheet()) {
   if (length(sheet) != 1) {
     stop("sheet argument must be length 1")
   }
@@ -21,7 +21,7 @@ workbook_get_tables <- function(self, private, sheet = current_sheet()) {
   tables
 }
 
-workbook_remove_tables <- function(
+wb_remove_tables_impl <- function(
     self,
     private,
     sheet = current_sheet(),

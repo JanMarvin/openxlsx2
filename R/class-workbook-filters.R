@@ -1,4 +1,4 @@
-workbook_add_filter <- function(
+wb_add_filter_impl <- function(
     self,
     private,
     sheet = current_sheet(),
@@ -23,7 +23,7 @@ workbook_add_filter <- function(
   invisible(self)
 }
 
-workbook_remove_filter <- function(self, private, sheet = current_sheet()) {
+wb_remove_filter_impl <- function(self, private, sheet = current_sheet()) {
   for (s in private$get_sheet_index(sheet)) {
     self$worksheets[[s]]$autoFilter <- character()
   }
