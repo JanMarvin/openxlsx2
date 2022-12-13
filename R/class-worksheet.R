@@ -220,6 +220,20 @@ wbWorksheet <- R6::R6Class(
     #' Get prior sheet data
     #' @return A character vector of xml
     get_prior_sheet_data = function() {
+
+      # apparently every sheet needs to have a sheetView
+      sheetViews <- self$sheetViews
+
+      if (length(self$freezePane)) {
+        if (length(xml_node(sheetViews, "sheetViews", "sheetView")) == 1) {
+          # get sheetView node and append freezePane
+          # TODO Can we unfreeze a pane? It should be possible to simply null freezePane
+          sheetViews <- xml_add_child(sheetViews, xml_child = self$freezePane, level = "sheetView")
+        } else {
+          message("Sheet contains multiple sheetViews. Could not freeze pane") #nocov
+        }
+      }
+
       paste_c(
         '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">',
 
@@ -232,19 +246,7 @@ wbWorksheet <- R6::R6Class(
 
         self$dimension,
 
-        if (length(self$freezePane) && length(self$sheetViews)) {
-          # get sheetView node and append freezePane
-          # TODO is this extracted correctly? Can we unfreeze a pane?
-          sheetView <- xml_node(self$sheetView, "sheetViews", "sheetView")
-          sheetView <- xml_add_child(sheetView, xml_child = self$freezePane)
-
-          # return the xml node
-          xml_node_create("sheetViews", sheetView)
-        },
-
-        if (length(self$sheetViews)) {
-          self$sheetViews
-        },
+        sheetViews,
 
         self$sheetFormatPr,
         # cols_attr
