@@ -982,10 +982,8 @@ wbWorkbook <- R6::R6Class(
         sep             = ", ",
         applyCellStyle  = TRUE,
         removeCellStyle = FALSE,
-        na.strings
+        na.strings = na_strings()
       ) {
-
-      if (missing(na.strings)) na.strings <- substitute()
 
       write_data(
         wb              = self,
@@ -1048,10 +1046,8 @@ wbWorkbook <- R6::R6Class(
         bandedCols  = FALSE,
         applyCellStyle = TRUE,
         removeCellStyle = FALSE,
-        na.strings
+        na.strings = na_strings()
     ) {
-
-      if (missing(na.strings)) na.strings <- substitute()
 
       write_datatable(
         wb          = self,

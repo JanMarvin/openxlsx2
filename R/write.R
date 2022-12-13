@@ -13,7 +13,7 @@
 #' @keywords internal
 #' @noRd
 update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
-                        removeCellStyle = FALSE, na.strings) {
+                        removeCellStyle = FALSE, na.strings = na_strings()) {
 
   sheet_id <- wb$validate_sheet(sheet)
 
@@ -82,7 +82,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
     wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  if (missing(na.strings)) {
+  if (is_na_strings(na.strings)) {
     na.strings <- NULL
   }
 
@@ -167,11 +167,9 @@ write_data2 <- function(
     startCol = 1,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings,
+    na.strings = na_strings(),
     data_table = FALSE
   ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
@@ -313,7 +311,7 @@ write_data2 <- function(
   ## replace NA, NaN, and Inf
   is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
   if (length(is_na)) {
-    if (missing(na.strings)) {
+    if (is_na_strings(na.strings)) {
       cc[is_na, "v"]   <- "#N/A"
       cc[is_na, "c_t"] <- "e"
       cc[is_na, "is"]  <- ""
@@ -601,7 +599,7 @@ write_data_table <- function(
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     data_table = FALSE,
-    na.strings
+    na.strings = na_strings()
 ) {
 
   op <- openxlsx2_options()
@@ -624,8 +622,6 @@ write_data_table <- function(
     startCol <- min(dims[[1]])
     startRow <- min(dims[[2]])
   }
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   ## common part ---------------------------------------------------------------
   if ((!is.character(sep)) || (length(sep) != 1))
@@ -930,10 +926,8 @@ write_data <- function(
     name = NULL,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings = na_strings()
 ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   write_data_table(
     wb = wb,
@@ -1236,10 +1230,8 @@ write_datatable <- function(
     bandedCols = FALSE,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings = na_strings()
 ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   write_data_table(
     wb = wb,

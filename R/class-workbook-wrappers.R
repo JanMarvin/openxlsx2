@@ -114,12 +114,9 @@ wb_add_data <- function(
     sep             = ", ",
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings = na_strings()
 ) {
   assert_workbook(wb)
-
-  if (missing(na.strings)) na.strings <- substitute()
-
   wb$clone(deep = TRUE)$add_data(
     sheet           = sheet,
     x               = x,
@@ -201,11 +198,9 @@ wb_add_data_table <- function(
     bandedCols  = FALSE,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings = na_strings()
 ) {
   assert_workbook(wb)
-  if (missing(na.strings)) na.strings <- substitute()
-
   wb$clone()$add_data_table(
     sheet       = sheet,
     x           = x,
