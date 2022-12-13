@@ -104,7 +104,7 @@ test_that("update_cells", {
 
   exp <- c("<is><t>V1</t></is>", "<is><t>V2</t></is>", "<is><t>N/A</t></is>")
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   ### write logical
   xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
@@ -117,7 +117,7 @@ test_that("update_cells", {
 
   exp <- c("inlineStr", "", "b", "e")
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$c_t)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   set.seed(123)
   df <- data.frame(C = rnorm(10), D = rnorm(10))
@@ -140,7 +140,7 @@ test_that("update_cells", {
          f_t = c("array", "", "")),
     row.names = c("23", "110", "111"), class = "data.frame")
   got <- wb$worksheets[[1]]$sheet_data$cc[c(5, 8, 11), c("c_t", "f", "f_t")]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("write dims", {
@@ -198,7 +198,7 @@ test_that("update cell(s)", {
     class = "data.frame")
 
   got <- wb_to_df(wb)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   ####
   wb <- wb_workbook()
@@ -225,7 +225,7 @@ test_that("update cell(s)", {
                    row.names = c("1", "8", "17", "114", "121", "128"),
                    class = "data.frame")
   got <- head(wb$worksheets[[1]]$sheet_data$cc)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("write_rownames", {
@@ -244,7 +244,7 @@ test_that("write_rownames", {
     types = c(A = 0, B = 0)
   )
   got <- wb_to_df(wb, 1, dims = "A1:B2", colNames = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- structure(
     list(A = c("_rowNames_", "Mazda RX4"), B = c("mpg", "21")),
@@ -257,7 +257,7 @@ test_that("write_rownames", {
     types = c(A = 0, B = 0)
   )
   got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("NA works as expected", {
@@ -268,5 +268,5 @@ test_that("NA works as expected", {
 
   exp <- c(NA_real_, NA_real_)
   got <- wb_to_df(wb, colNames = FALSE)$A
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })

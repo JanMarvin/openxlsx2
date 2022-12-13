@@ -122,19 +122,19 @@ test_that("encoding", {
     )
   }
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   exp <- "<xml>\n <a0>äöüß</a0>\n <A0>ÄÖÜ</A0>\n <a1>€</a1>\n</xml>"
   got <- paste(capture.output(
     read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2"))
     ), collapse = "\n")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<xml><a0>äöüß</a0><A0>ÄÖÜ</A0><a1>€</a1></xml>"
   got <- read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2"),
                   pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -148,7 +148,7 @@ test_that("reading charts", {
 
   exp <- c("", "", "", "", "", "", "", "", "", "", "", "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartUserShapes\" Target=\"../drawings/drawing18.xml\"/></Relationships>", "", "", "")
   got <- wb$charts$rels
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 
@@ -175,7 +175,7 @@ test_that("reading charts", {
     "<Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image7.jpg\"/>"
   )
   got <- wb$drawings_rels[[20]]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb$add_worksheet()
@@ -218,11 +218,11 @@ test_that("reading file with macro and custom xml", {
 
   exp <- "<sheetPr codeName=\"Sheet1\"/>"
   got <- wb$worksheets[[1]]$sheetPr
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/custom-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"2\" name=\"Source\"><vt:lpwstr>openxlsx2</vt:lpwstr></property></Properties>"
   got <- wb$custom
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("load file with connection", {
@@ -259,7 +259,7 @@ test_that("calcChain is updated", {
 
   exp <- "<calcChain xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><c r=\"A1\" i=\"1\" l=\"1\"/></calcChain>"
   got <- wb$calcChain
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_silent(wb$save(temp))
 
@@ -267,7 +267,7 @@ test_that("calcChain is updated", {
 
   exp <- character()
   got <- wb$calcChain
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_silent(wb$save(temp))
 
@@ -304,12 +304,12 @@ test_that("reading of formControl works", {
     "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"Drop\" dropStyle=\"combo\" dx=\"15\" noThreeD=\"1\" sel=\"0\" val=\"0\"/>"
   )
   got <- wb$ctrlProps
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$save(temp)
   wb <- wb_load(temp)
 
   got <- wb$ctrlProps
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

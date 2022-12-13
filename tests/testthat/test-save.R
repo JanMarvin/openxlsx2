@@ -186,11 +186,11 @@ test_that("writing NA, NaN and Inf", {
   # we wont get the same input back
   exp <- c(NA_character_, "#NUM!", "#NUM!", "#VALUE!")
   got <- unname(unlist(wb_to_df(tmp)))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$clone_worksheet(old = "Test1", new = "Clone1")$add_data(x = x)$save(tmp)
   got <- unname(unlist(wb_to_df(tmp, "Clone1")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # distinguish between "NA" and NA_character_
   x <- data.frame(x = c(NA, "NA"))
@@ -198,11 +198,11 @@ test_that("writing NA, NaN and Inf", {
 
   exp <- c(NA_character_, "NA")
   got <- unname(unlist(wb_to_df(tmp, "Test2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$clone_worksheet(old = "Test2", new = "Clone2")$add_data(x = x)$save(tmp)
   got <- unname(unlist(wb_to_df(tmp, "Clone2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -219,22 +219,22 @@ test_that("writing NA, NaN and Inf", {
 
   exp <- c(NA, "s", "s", "s")
   got <- unname(unlist(attr(wb_to_df(tmp, "Test1"), "tt")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
   got <- unname(unlist(wb_to_df(tmp, "Test2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$clone_worksheet("Test1", "Clone1")$add_data(x = x, na.strings = NULL)$save(tmp)
   wb$clone_worksheet("Test3", "Clone3")$add_data(x = x, na.strings = "N/A")$save(tmp)
 
   exp <- c(NA, "s", "s", "s")
   got <- unname(unlist(attr(wb_to_df(tmp, "Test1"), "tt")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
   got <- unname(unlist(wb_to_df(tmp, "Test2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -279,12 +279,12 @@ test_that("write cells without data", {
   )
 
   got <- wb$worksheets[[1]]$sheet_data$cc
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   sheet <- paste0(tmp, "/xl/worksheets/sheet1.xml")
   exp <- "<sheetData><row r=\"2\"><c r=\"B2\"/><c r=\"C2\"/></row><row r=\"3\"><c r=\"B3\"/><c r=\"C3\"/></row></sheetData>"
   got <- xml_node(sheet, "worksheet", "sheetData")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("write_xlsx with na.strings", {
@@ -299,15 +299,15 @@ test_that("write_xlsx with na.strings", {
 
   exp <- df
   got <- read_xlsx(test)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   write_xlsx(df, file = test, na.strings = "N/A")
   got <- read_xlsx(test, na.strings = "N/A")
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   exp$num[exp$num == -99] <- NA
   got <- read_xlsx(test, na.strings = "N/A", na.numbers = -99)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
 })
 
@@ -338,13 +338,13 @@ test_that("escaping of inlinestrings works", {
 
   exp <- "A & B"
   got <- wb_to_df(wb, colNames = FALSE)$A
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   got <- wb_to_df(temp, colNames = FALSE)$A
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb2 <- wb_load(temp)
   got <- wb_to_df(wb2, colNames = FALSE)$A
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

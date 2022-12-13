@@ -3,11 +3,11 @@ test_that("read_xml", {
 
   exp <- "<a/>"
   got <- read_xml("<a/>", empty_tags = FALSE, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<a></a>"
   got <- read_xml("<a/>", empty_tags = TRUE, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # a pointer
   x <- read_xml("<a><b/></a>")
@@ -65,25 +65,25 @@ test_that("read_xml", {
 
   exp <- "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><t xml:space=\"preserve\"> </t>"
   got <- readLines(tmp, warn = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   xml <- '<a><b><c1/></b></a><a><b><c2/></b></a>'
 
   exp <- c("<a><b><c1/></b></a>", "<a><b><c2/></b></a>")
   got <- xml_node(xml, "a")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("<b><c1/></b>", "<b><c2/></b>")
   got <- xml_node(xml, "a", "b")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<c1/>"
   got <- xml_node(xml, "a", "b", "c1")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<c2/>"
   got <- xml_node(xml, "a", "b", "c2")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -275,31 +275,31 @@ test_that("xml_rm_child", {
 
   exp <- "<a><b><c><d/></c><c/></b><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, "b", which = 1)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   xml_node <- exp
 
   exp <- "<a><b><c/></b><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, xml_child, "b", which = 1)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<a><b><c><d/></c></b><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, xml_child, level = "b", which = 2)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<a><b/><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, xml_child, "b", which = 0)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   xml_node <- "<x><a><b><c>1</c><c>2</c><c>3</c></b></a></x>"
 
   exp <- "<x><a><b><c>1</c><c>3</c></b></a></x>"
   got <- xml_rm_child(xml_node, xml_child, level = c("a", "b"), which = 2)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<x><a><b/></a></x>"
   got <- xml_rm_child(xml_node, xml_child, level = c("a", "b"), which = 0)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -368,13 +368,13 @@ test_that("works with x namespace", {
 
   exp <- "<x:a><x:b/></x:a>"
   got <- read_xml(tmp, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   op <- options("openxlsx2.namespace_xml" = "x")
   on.exit(options(op), add = TRUE)
 
   exp <- "<a><b/></a>"
   got <- read_xml(tmp, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

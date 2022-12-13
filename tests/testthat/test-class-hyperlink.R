@@ -38,6 +38,6 @@ test_that("formulas with hyperlinks works", {
 
   exp <- "=IF(2017 = VALUE(A1), HYPERLINK(\"github.com\",\"github.com\"), A1)"
   got <- wb$worksheets[[1]]$sheet_data$cc["12", "f"]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

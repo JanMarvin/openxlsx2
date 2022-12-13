@@ -175,13 +175,13 @@ test_that("additional wb tests", {
   # showFormula
   exp <- data.frame(Var7 = "1/0", row.names = "2")
   got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 8)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 
   # detectDates
   exp <- data.frame(Var5 = as.Date("2015-02-07"), row.names = "2")
   got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 6)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 
   # types
@@ -190,7 +190,7 @@ test_that("additional wb tests", {
                     Var3 = c(1.00, NaN, 1.34, NA))
   got <- wb_to_df(wb1, cols = c(1, 4),
                   types = c("Var1" = 0, "Var3" = 1))[seq_len(4), ]
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 })
 
@@ -307,7 +307,7 @@ test_that("loading slicers works", {
 
   exp <- "<calcPr calcId=\"152511\" fullCalcOnLoad=\"1\"/>"
   got <- wb$workbook$calcPr
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c(
     "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>",
@@ -323,7 +323,7 @@ test_that("loading slicers works", {
     "<Relationship Id=\"rId100001\" Type=\"http://schemas.microsoft.com/office/2007/relationships/slicerCache\" Target=\"slicerCaches/slicerCache1.xml\"/>"
   )
   got <- wb$workbook.xml.rels
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_load(file = fl, calc_chain = FALSE)
   got <- wb$workbook.xml.rels
@@ -335,7 +335,7 @@ test_that("loading slicers works", {
 
   exp <- "<calcPr calcId=\"152511\"/>"
   got <- wb$workbook$calcPr
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_load(file = fl, calc_chain = FALSE)
 
@@ -344,7 +344,7 @@ test_that("loading slicers works", {
 
   exp <- character()
   got <- wb$calcChain
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the default once again
   wb <- wb_load(file = fl)
@@ -354,7 +354,7 @@ test_that("loading slicers works", {
 
   exp <- character()
   got <- wb$calcChain
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -365,6 +365,6 @@ test_that("vml target is updated on load", {
 
   exp <- "<Relationship Id=\"rId2\" Target=\"../drawings/vmlDrawing4.vml\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\"/>"
   got <- wb$worksheets_rels[[4]][2]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

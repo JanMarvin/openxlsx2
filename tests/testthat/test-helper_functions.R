@@ -44,7 +44,7 @@ test_that("openxlsx2_types", {
   )
 
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -109,11 +109,11 @@ test_that("amp_split & genHeaderFooterNode", {
     oddFooter = c("", "&amp;&quot;Times New Roman,Standard&quot;&amp;12Seite &amp;P", "")
   )
   got <- getHeaderFooterNode(xml)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- xml
   got <- genHeaderFooterNode(got)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -191,7 +191,7 @@ test_that("add_sparklines", {
  </x14:sparklineGroups>
 </ext>', pointer = FALSE)
   got <- wb$worksheets[[1]]$extLst
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_error(
     wb$add_sparklines(sparklines = xml_node_create("sparklines", sparklines)),
