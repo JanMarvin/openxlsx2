@@ -4,6 +4,8 @@
 
 * Provide new argument `calc_chain` to `wb_load()`. This is set to `FALSE` per default, to ignore the calculation chain if it is found. This change only reflects files imported from third party spreadsheet software and should not be visible to the user. [461](https://github.com/JanMarvin/openxlsx2/pull/461)
 
+* Tweaks to `wb_data()`. Dims is now optional and will select data similar to `wb_to_df()`, similar it allows passing down other `wb_to_df()` arguments. Though, it probably is a good idea not be to creative passing down arguments, not all will result in a useable `wb_data` object. [462](https://github.com/JanMarvin/openxlsx2/pull/462)
+
 ## Fixes
 
 * Fix `wb_freeze_pane()`. This changes the load logic a bit. Previously we put everything into `sheetViews` (the frozen pane is part of this). Though `wb_freeze_pane()` assumes that `freezePane` is used. We now try to be smart and split sheetViews upon loading. [465](https://github.com/JanMarvin/openxlsx2/pull/465)
