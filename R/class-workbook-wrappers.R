@@ -354,7 +354,7 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param visible If FALSE, sheet is hidden else visible.
-#' @details After chartsheet creation a chart must be added to the sheet. 
+#' @details After chartsheet creation a chart must be added to the sheet.
 #' Otherwise the chartsheet will break the workbook.
 #' @family workbook wrappers
 #' @seealso [wb_add_mschart()]
