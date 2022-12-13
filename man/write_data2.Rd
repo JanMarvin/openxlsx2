@@ -15,7 +15,7 @@ write_data2(
   startCol = 1,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings,
+  na.strings = na_strings(),
   data_table = FALSE
 )
 }

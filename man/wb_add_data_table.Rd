@@ -24,7 +24,7 @@ wb_add_data_table(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = na_strings()
 )
 }
 \arguments{

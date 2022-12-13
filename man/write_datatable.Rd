@@ -24,7 +24,7 @@ write_datatable(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = na_strings()
 )
 }
 \arguments{

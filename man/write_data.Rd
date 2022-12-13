@@ -21,7 +21,7 @@ wb_add_data(
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = na_strings()
 )
 
 write_data(
@@ -40,7 +40,7 @@ write_data(
   name = NULL,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = na_strings()
 )
 }
 \arguments{

@@ -554,7 +554,7 @@ add data
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = na_strings()
 )}\if{html}{\out{</div>}}
 }
 
@@ -621,7 +621,7 @@ add a data table
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = na_strings()
 )}\if{html}{\out{</div>}}
 }
 
