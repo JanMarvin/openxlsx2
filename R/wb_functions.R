@@ -895,10 +895,10 @@ wb_add_mschart <- function(
 #' @export
 wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   assert_workbook(wb)
-  sheetname <- wb$.__enclos_env__$private$get_sheet_name(sheet)
+  sheetno <- wb_validate_sheet(wb, sheet)
+  sheetname <- wb$get_sheet_names()[[sheetno]]
 
   if (missing(dims)) {
-    sheetno <- wb_validate_sheet(wb, sheet)
     dims <- unname(unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension")))
   }
 
