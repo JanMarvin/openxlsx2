@@ -1,5 +1,3 @@
-
-
 test_that("Freeze Panes", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
@@ -85,4 +83,23 @@ test_that("Freeze Panes", {
 
   expected <- "<pane ySplit=\"1\" xSplit=\"1\" topLeftCell=\"B2\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
   expect_equal(wb$worksheets[[7]]$freezePane, expected)
+
+  # check that pre and post saving match
+  temp <- temp_xlsx()
+  wb$save(temp)
+
+  wb2 <- wb_load(temp)
+
+  for (i in seq_along(wb$worksheets)) {
+    expect_equal(
+      wb$worksheets[[i]]$sheetViews,
+      wb2$worksheets[[i]]$sheetViews
+    )
+
+    expect_equal(
+      wb$worksheets[[i]]$freezePane,
+      wb2$worksheets[[i]]$freezePane
+    )
+  }
+
 })
