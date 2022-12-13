@@ -440,7 +440,7 @@ wbWorkbook <- R6::R6Class(
       self$drawings_rels[[new_drawings_idx]] <- ""
 
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$is_chartsheet[[newSheetIndex]]     <- TRUE
+      self$is_chartsheet[[newSheetIndex]]    <- TRUE
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
 
@@ -686,7 +686,7 @@ wbWorkbook <- R6::R6Class(
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
-      self$is_chartsheet[[newSheetIndex]]     <- FALSE
+      self$is_chartsheet[[newSheetIndex]]    <- FALSE
       self$comments[[newSheetIndex]]         <- list()
       self$threadComments[[newSheetIndex]]   <- list()
 
@@ -892,7 +892,7 @@ wbWorkbook <- R6::R6Class(
       # cloned sheet the same IDs can be used => no need to modify drawings
       self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
       self$vml[[newSheetIndex]]            <- self$vml[[old]]
-      self$is_chartsheet[[newSheetIndex]]   <- self$is_chartsheet[[old]]
+      self$is_chartsheet[[newSheetIndex]]  <- self$is_chartsheet[[old]]
       self$comments[[newSheetIndex]]       <- self$comments[[old]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
