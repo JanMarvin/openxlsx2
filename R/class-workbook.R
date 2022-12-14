@@ -3724,8 +3724,7 @@ wbWorkbook <- R6::R6Class(
             ext,
             grpSp,
             grFrm,
-            clDt,
-            "<xdr:clientData/>"
+            clDt
           )
         )
 
@@ -3849,7 +3848,7 @@ wbWorkbook <- R6::R6Class(
           add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
       } else {
         self$
-          add_data(x = graph$data_series)$
+          add_data(sheet = sheet, x = graph$data_series)$
           add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
       }
     },
