@@ -114,7 +114,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
     "x14ac:dyDescent",
     "outlineLevel",
     "ph",
-    "thickBottom",
+    "thickBot",
     "thickTop"
   };
 

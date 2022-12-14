@@ -50,7 +50,7 @@ empty_row_attr <- function(n) {
   create_char_dataframe(
     colnames = c("collapsed", "customFormat", "customHeight", "x14ac:dyDescent",
                  "ht", "hidden", "outlineLevel", "r", "ph", "spans", "s",
-                 "thickBottom", "thickTop"),
+                 "thickBot", "thickTop"),
     n = n
   )
 }
