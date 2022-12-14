@@ -989,7 +989,12 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{set_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(sheet = current_sheet(), rows, heights)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(
+  sheet = current_sheet(),
+  rows,
+  heights = NULL,
+  hidden = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1000,6 +1005,8 @@ Sets a row height for a sheet
 \item{\code{rows}}{rows}
 
 \item{\code{heights}}{heights}
+
+\item{\code{hidden}}{hidden}
 }
 \if{html}{\out{</div>}}
 }
