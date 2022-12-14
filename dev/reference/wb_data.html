@@ -72,7 +72,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -88,7 +88,16 @@
 <dt>dims</dt>
 <dd><p>the dimensions</p></dd>
 
+
+<dt>...</dt>
+<dd><p>additional arguments for wb_to_df. Be aware that not every
+argument is valid.</p></dd>
+
 </dl></div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="wb_to_df.html">wb_to_df()</a></code> <code><a href="wb_add_mschart.html">wb_add_mschart()</a></code></p></div>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
