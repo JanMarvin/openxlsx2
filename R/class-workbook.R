@@ -3451,14 +3451,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Convert to EMUs
-      width <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
+      width  <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
       height <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
-
-      ## within the sheet the drawing node's Id refernce an id in the sheetRels
-      ## sheet rels reference the drawingi.xml file
-      ## drawingi.xml refernece drawingRels
-      ## drawing rels reference an image in the media folder
-      ## worksheetRels(sheet(i)) references drawings(j)
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -3466,18 +3460,7 @@ wbWorkbook <- R6::R6Class(
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
 
-      drawing_sheet <- 1
-      if (length(self$worksheets_rels[[sheet]])) {
-        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-        relship$typ <- basename(relship$Type)
-        drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
-      }
-
-      drawing_len <- 0
-      if (!all(self$drawings_rels[[drawing_sheet]] == ""))
-        drawing_len <- length(xml_node(unlist(self$drawings_rels[[drawing_sheet]]), "Relationship"))
-
-      imageNo <- drawing_len + 1L
+      imageNo <- length(xml_node_name(self$drawings[[sheet]], "xdr:wsDr")) + 1L
       mediaNo <- length(self$media) + 1L
 
       startCol <- col2int(startCol)
@@ -3495,16 +3478,12 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
-      # update worksheets_rels
-      if (length(self$worksheets_rels[[sheet]]) == 0) {
-        self$worksheets_rels[[sheet]] <- sprintf('<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing%s.xml"/>', imageNo) ## will always be 1
-      }
-
-      # update drawings_rels
-      old_drawings_rels <- unlist(self$drawings_rels[[drawing_sheet]])
+      # add image to drawings_rels
+      old_drawings_rels <- unlist(self$drawings_rels[[sheet]])
       if (all(old_drawings_rels == "")) old_drawings_rels <- NULL
+
       ## drawings rels (Reference from drawings.xml to image file in media folder)
-      self$drawings_rels[[drawing_sheet]] <- c(
+      self$drawings_rels[[sheet]] <- c(
         old_drawings_rels,
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
@@ -3520,8 +3499,6 @@ wbWorkbook <- R6::R6Class(
       self$append("media", tmp)
 
       ## create drawing.xml
-      anchor <- '<xdr:oneCellAnchor>'
-
       from <- sprintf(
         '<xdr:from>
         <xdr:col>%s</xdr:col>
@@ -3536,7 +3513,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       drawingsXML <- stri_join(
-        anchor,
+        '<xdr:oneCellAnchor>',
         from,
         sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
         genBasePic(imageNo),
@@ -3544,24 +3521,19 @@ wbWorkbook <- R6::R6Class(
         "</xdr:oneCellAnchor>"
       )
 
+      xml_attr <- c(
+        "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+        "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
+        "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+      )
 
-      # If no drawing is found, initiate one. If one is found, append a child to the exisiting node.
-      # Might look into updating attributes as well.
-      if (all(self$drawings[[drawing_sheet]] == "")) {
-        xml_attr <- c(
-          "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
-          "xmlns:a" = "http://schemas.openxmlformats.org/drawingml/2006/main",
-          "xmlns:r" = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-        )
-        self$drawings[[drawing_sheet]] <- xml_node_create("xdr:wsDr", xml_children = drawingsXML, xml_attributes = xml_attr)
-      } else {
-        self$drawings[[drawing_sheet]] <- xml_add_child(self$drawings[[drawing_sheet]], drawingsXML)
-      }
+      drawing <- xml_node_create(
+        "xdr:wsDr",
+        xml_children = drawingsXML,
+        xml_attributes = xml_attr
+      )
 
-      # Finally we must assign the drawing to the sheet, if no drawing is assigned. If drawing is not
-      # empty, we must assume that the rId matches another drawing rId in worksheets_rels
-      if (identical(self$worksheets[[sheet]]$drawing, character()))
-        self$worksheets[[sheet]]$drawing <- '<drawing r:id=\"rId1\"/>' ## will always be 1
+      self$add_drawing(sheet, drawing)
 
       invisible(self)
     },
