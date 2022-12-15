@@ -56,20 +56,20 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   # compare sheet 1
   exp <- df$timeval
   got <- wb_s1$timeval
-  expect_equal(exp, got, tolerance = 10 ^ -10, ignore_attr = "tzone")
+  expect_equal(got, exp, tolerance = 10 ^ -10, ignore_attr = "tzone")
 
   exp <- df$timetxt
   got <- wb_s1$timetxt
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # compare sheet 2
   exp <- df$timeval
   got <- wb_s2$timeval
-  expect_equal(exp, got, tolerance = 10 ^ -10, ignore_attr = "tzone")
+  expect_equal(got, exp, tolerance = 10 ^ -10, ignore_attr = "tzone")
 
   exp <- df$timetxt
   got <- wb_s2$timetxt
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 })

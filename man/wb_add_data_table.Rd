@@ -24,7 +24,7 @@ wb_add_data_table(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = getOption("openxlsx2.na.strings", "#N/A")
 )
 }
 \arguments{

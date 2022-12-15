@@ -186,11 +186,11 @@ test_that("writing NA, NaN and Inf", {
   # we wont get the same input back
   exp <- c(NA_character_, "#NUM!", "#NUM!", "#VALUE!")
   got <- unname(unlist(wb_to_df(tmp)))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$clone_worksheet(old = "Test1", new = "Clone1")$add_data(x = x)$save(tmp)
   got <- unname(unlist(wb_to_df(tmp, "Clone1")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # distinguish between "NA" and NA_character_
   x <- data.frame(x = c(NA, "NA"))
@@ -198,11 +198,11 @@ test_that("writing NA, NaN and Inf", {
 
   exp <- c(NA_character_, "NA")
   got <- unname(unlist(wb_to_df(tmp, "Test2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$clone_worksheet(old = "Test2", new = "Clone2")$add_data(x = x)$save(tmp)
   got <- unname(unlist(wb_to_df(tmp, "Clone2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -219,35 +219,34 @@ test_that("writing NA, NaN and Inf", {
 
   exp <- c(NA, "s", "s", "s")
   got <- unname(unlist(attr(wb_to_df(tmp, "Test1"), "tt")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
   got <- unname(unlist(wb_to_df(tmp, "Test2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$clone_worksheet("Test1", "Clone1")$add_data(x = x, na.strings = NULL)$save(tmp)
   wb$clone_worksheet("Test3", "Clone3")$add_data(x = x, na.strings = "N/A")$save(tmp)
 
   exp <- c(NA, "s", "s", "s")
   got <- unname(unlist(attr(wb_to_df(tmp, "Test1"), "tt")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
   got <- unname(unlist(wb_to_df(tmp, "Test2")))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
 
 test_that("write cells without data", {
-
   temp <- temp_xlsx()
   tmp <- temp_dir()
 
   dat <- as.data.frame(matrix(NA, 2, 2))
-  wb <- wb_workbook()$
-    add_worksheet()$
-    add_data(x = dat, startRow = 2, startCol = 2, na.strings = NULL, colNames = FALSE)
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_data(x = dat, startRow = 2, startCol = 2, na.strings = NULL, colNames = FALSE)
 
   wb$worksheets[[1]]$sheet_data$cc$c_t <- ""
 
@@ -259,35 +258,33 @@ test_that("write cells without data", {
 
   unzip(temp, exdir = tmp)
 
-  exp <- structure(
-    list(
-      r = c("B2", "C2", "B3", "C3"),
-      row_r = c("2", "2", "3", "3"),
-      c_r = c("B", "C", "B", "C"),
-      c_s = c("", "", "", ""),
-      c_t = c("", "", "", ""),
-      c_cm = c("", "", "", ""),
-      c_ph = c("", "", "", ""),
-      c_vm = c("", "", "", ""),
-      v = c("", "", "", ""),
-      f = c("", "", "", ""),
-      f_t = c("", "", "", ""),
-      f_ref = c("", "", "", ""),
-      f_ca = c("", "", "", ""),
-      f_si = c("", "", "", ""),
-      is = c("", "", "", ""),
-      typ = c("3", "3", "3", "3")
-    ),
-    row.names = c(NA, 4L),
-    class = "data.frame")
+  exp <- data.frame(
+    r     = c("B2", "C2", "B3", "C3"),
+    row_r = c("2", "2", "3", "3"),
+    c_r   = c("B", "C", "B", "C"),
+    c_s   = c("", "", "", ""),
+    c_t   = c("", "", "", ""),
+    c_cm  = c("", "", "", ""),
+    c_ph  = c("", "", "", ""),
+    c_vm  = c("", "", "", ""),
+    v     = c("", "", "", ""),
+    f     = c("", "", "", ""),
+    f_t   = c("", "", "", ""),
+    f_ref = c("", "", "", ""),
+    f_ca  = c("", "", "", ""),
+    f_si  = c("", "", "", ""),
+    is    = c("", "", "", ""),
+    typ   = c("3", "3", "3", "3"),
+    stringsAsFactors = FALSE
+  )
+
   got <- wb$worksheets[[1]]$sheet_data$cc
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   sheet <- paste0(tmp, "/xl/worksheets/sheet1.xml")
   exp <- "<sheetData><row r=\"2\"><c r=\"B2\"/><c r=\"C2\"/></row><row r=\"3\"><c r=\"B3\"/><c r=\"C3\"/></row></sheetData>"
   got <- xml_node(sheet, "worksheet", "sheetData")
-  expect_equal(exp, got)
-
+  expect_equal(got, exp)
 })
 
 test_that("write_xlsx with na.strings", {
@@ -302,15 +299,15 @@ test_that("write_xlsx with na.strings", {
 
   exp <- df
   got <- read_xlsx(test)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   write_xlsx(df, file = test, na.strings = "N/A")
   got <- read_xlsx(test, na.strings = "N/A")
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   exp$num[exp$num == -99] <- NA
   got <- read_xlsx(test, na.strings = "N/A", na.numbers = -99)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
 })
 
@@ -341,13 +338,13 @@ test_that("escaping of inlinestrings works", {
 
   exp <- "A & B"
   got <- wb_to_df(wb, colNames = FALSE)$A
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   got <- wb_to_df(temp, colNames = FALSE)$A
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb2 <- wb_load(temp)
   got <- wb_to_df(wb2, colNames = FALSE)$A
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

@@ -16,7 +16,7 @@ wb_to_df(
   rows = NULL,
   cols = NULL,
   detectDates = TRUE,
-  na.strings = "#N/A",
+  na.strings = getOption("openxlsx2.na.strings", "#N/A"),
   na.numbers = NA,
   fillMergedCells = FALSE,
   dims,

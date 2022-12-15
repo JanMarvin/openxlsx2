@@ -182,14 +182,10 @@ test_that("wb_add_plot() is a wrapper", {
 })
 
 test_that("wb_add_drawing is a wrapper", {
-
   fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
-  wb <- wb_load(file = fl)
-
-  xml <- wb$drawings[[2]]
-
-  wb <- wb_workbook()$add_worksheet()
-
+  xml <- wb_load(file = fl)$drawings[[2]]
+  wb <- wb_workbook()
+  wb$add_worksheet()
   expect_wrapper("add_drawing", wb = wb, params = list(xml = xml))
 })
 
@@ -464,25 +460,16 @@ test_that("wb_add_sparklines() is a wrapper", {
 # wb_add_style() ----------------------------------------------------------
 
 test_that("wb_add_style() is a wrapper", {
-
   # with name
   style <- create_numfmt(numFmtId = "165", formatCode = "#.#")
   wb <- wb_workbook()
-  expect_wrapper(
-    "add_style",
-    wb = wb,
-    params = list(style = style, style_name = "numfmt")
-  )
+  params <- list(style = style, style_name = "numfmt")
+  expect_wrapper("add_style", wb = wb, params = params)
 
   # without name
   wb <- wb_workbook()
   numfmt <- create_numfmt(numFmtId = "165", formatCode = "#.#")
-  expect_wrapper(
-    "add_style",
-    wb = wb,
-    params = list(style = numfmt)
-  )
-
+  expect_wrapper("add_style", wb = wb, params = list(style = numfmt))
 })
 
 

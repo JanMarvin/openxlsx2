@@ -4,7 +4,7 @@ test_that("sheet.default_name", {
 
   exp <- "Sheet 1"
   got <- names(wb$get_sheet_names())
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   op <- options("openxlsx2.sheet.default_name" = "Tabelle")
   on.exit(options(op), add = TRUE)
@@ -12,6 +12,6 @@ test_that("sheet.default_name", {
 
   exp <- "Tabelle1"
   got <- names(wb$get_sheet_names())
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

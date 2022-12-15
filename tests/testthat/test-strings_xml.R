@@ -98,22 +98,22 @@ test_that("strings_xml", {
 
   exp <- "A & B"
   got <- wb_to_df(amp, colNames = FALSE)[1, 1]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # a couple of saves and loads later ...
   exp <- "<is><t>A &amp; B</t></is>"
   got <- wb$worksheets[[1]]$sheet_data$cc$is
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_load(amp)
 
   got <- wb$worksheets[[1]]$sheet_data$cc$is
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$save(amp)
 
   wb <- wb_load(amp)
   got <- wb$worksheets[[1]]$sheet_data$cc$is
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

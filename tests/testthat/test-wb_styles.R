@@ -1,16 +1,16 @@
 test_that("wb_clone_sheet_style", {
-
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
-  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
-  wb <- wb_clone_sheet_style(wb, "SUM", "clone")
+  wb <- wb_load(fl)
+  wb$clone_worksheet("SUM", "clone")
+  wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb$clone_sheet_style("SUM", "clone")
 
   expect_warning(cloneSheetStyle(wb, "SUM", "clone"), "deprecated")
 
   # clone style to empty sheet (creates cells and style)
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)$add_worksheet("copy")
-  wb <- wb_clone_sheet_style(wb, "SUM", "copy")
+  wb$clone_sheet_style("SUM", "copy")
   expect_equal(dim(wb$worksheets[[1]]$sheet_data$cc),
                dim(wb$worksheets[[1]]$sheet_data$cc))
   expect_equal(dim(wb$worksheets[[1]]$sheet_data$row_attr),
@@ -18,15 +18,18 @@ test_that("wb_clone_sheet_style", {
 
   # clone style to sheet with data
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$add_worksheet("copy")$add_data(x = mtcars, startRow = 5, startCol = 2)
-  wb <- wb_clone_sheet_style(wb, "SUM", "copy")
+  wb <- wb_load(fl)
+  wb$add_worksheet("copy")
+  wb$add_data(x = mtcars, startRow = 5, startCol = 2)
+  wb$clone_sheet_style("SUM", "copy")
   expect_equal(c(36, 13), dim(wb$worksheets[[2]]$sheet_data$row_attr))
 
   # clone style on cloned and cleaned worksheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
-  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
-  wb <- wb_clone_sheet_style(wb, "SUM", "clone")
+  wb <- wb_load(fl)
+  wb$clone_worksheet("SUM", "clone")
+  wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb$clone_sheet_style("SUM", "clone")
 
   # sort for this test, does not matter later, because we will sort prior to saving
   ord <- match(
@@ -41,23 +44,23 @@ test_that("wb_clone_sheet_style", {
 
   # output if copying from empty sheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$add_worksheet("copy")
+  wb <- wb_load(fl)
+  wb$add_worksheet("copy")
   expect_message(
     expect_message(
-      wb <- wb_clone_sheet_style(wb, "copy", "SUM"),
+      wb$clone_sheet_style("copy", "SUM"),
       "'from' has no sheet data styles to clone"
     ),
     "'from' has no row styles to clone"
   )
-
 })
 
 
 test_that("test add_border()", {
-
   wb <- wb_workbook()
-  wb$add_worksheet("S1")$add_data("S1", mtcars)
-  expect_silent(wb$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double"))
+  wb$add_worksheet("S1")
+  wb$add_data("S1", mtcars)
+  expect_silent(wb$add_border(dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double"))
 
   # check xf
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
@@ -67,7 +70,7 @@ test_that("test add_border()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check borders
   exp <- c("<border><left/><right/><top/><bottom/><diagonal/></border>",
@@ -77,7 +80,7 @@ test_that("test add_border()", {
   )
   got <- wb$styles_mgr$styles$borders
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -85,7 +88,7 @@ test_that("test add_border()", {
 
   exp <- c("1", "3", "3", "3", "3", "3", "3", "3", "3", "3", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -101,7 +104,7 @@ test_that("test add_fill()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # check fill
@@ -111,7 +114,7 @@ test_that("test add_fill()", {
   )
   got <- wb$styles_mgr$styles$fills
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # every_nth_col/row
   wb <- wb_workbook()
@@ -126,21 +129,21 @@ test_that("test add_fill()", {
   )
   got <- wb$styles_mgr$styles$fills
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
            "<xf applyFill=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
            "<xf applyFill=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>")
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("", "1", "", "1", "", "2", "2", "2", "2", "2", "", "1", "",
            "1", "", "2", "2", "2", "2", "2", "", "1", "", "1", "", "2",
            "2", "2", "2", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -148,7 +151,7 @@ test_that("test add_fill()", {
 
   exp <- rep("1", 8)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -165,7 +168,7 @@ test_that("test add_font()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # check font
@@ -175,20 +178,20 @@ test_that("test add_font()", {
   )
   got <- wb$styles_mgr$styles$fonts
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "",
            "", "", "", "", "", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_font("S1", dims = "A1:K1", color = wb_colour(hex = "FFFFFF00"))
 
   exp <- rep("1", 11)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -206,20 +209,20 @@ test_that("test add_numfmt()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # check numfmt
   exp <- "<numFmt numFmtId=\"165\" formatCode=\"#.0\"/>"
   got <- wb$styles_mgr$styles$numFmts
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
            "", "", "2", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -227,7 +230,7 @@ test_that("test add_numfmt()", {
 
   exp <- rep("1", 33)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -245,13 +248,13 @@ test_that("test add_cell_style()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
            "", "", "2", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -259,7 +262,7 @@ test_that("test add_cell_style()", {
 
   exp <- rep("1", 33)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   ###
   exp <- "<xf applyAlignment=\"1\" applyBorder=\"1\" applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" applyProtection=\"1\" borderId=\"1\" fillId=\"1\" fontId=\"1\" numFmtId=\"1\" pivotButton=\"0\" quotePrefix=\"0\" xfId=\"1\"><alignment horizontal=\"1\" indent=\"1\" justifyLastLine=\"1\" readingOrder=\"1\" relativeIndent=\"1\" shrinkToFit=\"1\" textRotation=\"1\" vertical=\"1\" wrapText=\"1\"/><extLst extLst=\"1\"/><protection hidden=\"1\" locked=\"1\"/></xf>"
@@ -284,45 +287,42 @@ test_that("test add_cell_style()", {
     hidden = "1",
     locked = "1"
   )
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
 test_that("add_style", {
-
   # without name
   num <- create_numfmt(numFmtId = "165", formatCode = "#.#")
-  wb <- wb_workbook() %>% wb_add_style(num)
+  wb <- wb_workbook()
+  wb$add_style(num)
 
   exp <- num
   got <- wb$styles_mgr$styles$numFmts
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- structure(list(typ = "numFmt", id = "165", name = "num"),
                    row.names = c(NA, -1L),
                    class = "data.frame")
   got <- wb$styles_mgr$numfmt
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # with name
   wb <- wb_workbook() %>% wb_add_style(num, "num")
 
   exp <- num
   got <- wb$styles_mgr$styles$numFmts
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- structure(list(typ = "numFmt", id = "165", name = "num"),
                    row.names = c(NA, -1L),
                    class = "data.frame")
   got <- wb$styles_mgr$numfmt
-  expect_equal(exp, got)
-
+  expect_equal(got, exp)
 })
 
 test_that("assigning styles to loaded workbook works", {
-
   wb <- wb_load(file = system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2"))
-
   # previously it would break on xml_import, because NA was returned
   expect_silent(wb$add_font()$add_font())
 
@@ -331,8 +331,9 @@ test_that("assigning styles to loaded workbook works", {
 test_that("get & set cell style(s)", {
 
   # set a style in b1
-  wb <- wb_workbook()$add_worksheet()$
-    add_numfmt(dims = "B1", numfmt = "#,0")
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_numfmt(dims = "B1", numfmt = "#,0")
 
   # get style from b1 to assign it to a1
   numfmt <- wb$get_cell_style(dims = "B1")
@@ -374,19 +375,19 @@ test_that("get_cell_styles()", {
 
   exp <- "1"
   got <- wb$get_cell_style(dims = "B2")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
   got <- get_cell_styles(wb, 1, "B2")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "3"
   got <- wb$get_cell_style(dims = "B3")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>"
   got <- get_cell_styles(wb, 1, "B3")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$add_cell_style(dims = "B3:L3",
                     textRotation = "45",
@@ -396,25 +397,23 @@ test_that("get_cell_styles()", {
 
   exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"center\" textRotation=\"45\" vertical=\"center\" wrapText=\"1\"/></xf>"
   got <- get_cell_styles(wb, 1, "B3")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
 test_that("applyCellStyle works", {
-
-  wb <- wb_workbook()$
-    add_worksheet()$
-    add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
-    add_data(dims = "C3", x = Sys.Date())$
-    add_data(dims = "E3", x = Sys.Date(), applyCellStyle = FALSE)$
-    add_data(dims = "E5", x = Sys.Date(), removeCellStyle = TRUE)$
-    add_data(dims = "A1", x = Sys.Date())
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_fill(dims = "B2:G8", color = wb_colour("yellow"))
+  wb$add_data(dims = "C3", x = Sys.Date())
+  wb$add_data(dims = "E3", x = Sys.Date(), applyCellStyle = FALSE)
+  wb$add_data(dims = "E5", x = Sys.Date(), removeCellStyle = TRUE)
+  wb$add_data(dims = "A1", x = Sys.Date())
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   exp <- c("3", "2", "1", "3")
   got <- cc[cc$r %in% c("A1", "C3", "E3", "E5"), "c_s"]
-  expect_equal(exp, got)
-
+  expect_equal(got, exp)
 })
 
 test_that("style names are xml", {
@@ -468,7 +467,7 @@ test_that("style names are xml", {
     extLst = NULL
   )
   got <- wb$styles_mgr$styles
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 

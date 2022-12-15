@@ -130,6 +130,6 @@ test_that("print comment", {
 
   exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\n\n\n\n\nFont name: Calibri\nFont size: 11\nFont colour: #000000\n\n"
   got <- capture_output(print(c2), print = TRUE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

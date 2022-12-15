@@ -1,0 +1,120 @@
+wb_add_data_impl <- function(
+    self,
+    private,
+    sheet           = current_sheet(),
+    x,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    withFilter      = FALSE,
+    name            = NULL,
+    sep             = ", ",
+    applyCellStyle  = TRUE,
+    removeCellStyle = FALSE,
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
+) {
+  # TODO copy over the actual write_data()
+  write_data(
+    wb              = self,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    withFilter      = withFilter,
+    name            = name,
+    sep             = sep,
+    applyCellStyle  = applyCellStyle,
+    removeCellStyle = removeCellStyle,
+    na.strings      = na.strings
+  )
+
+  invisible(self)
+}
+
+wb_add_data_table_impl <- function(
+    self,
+    private,
+    sheet           = current_sheet(),
+    x,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    tableStyle      = "TableStyleLight9",
+    tableName       = NULL,
+    withFilter      = TRUE,
+    sep             = ", ",
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = TRUE,
+    bandedCols      = FALSE,
+    applyCellStyle  = TRUE,
+    removeCellStyle = FALSE,
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
+) {
+  write_datatable(
+    wb              = self,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    tableStyle      = tableStyle,
+    tableName       = tableName,
+    withFilter      = withFilter,
+    sep             = sep,
+    firstColumn     = firstColumn,
+    lastColumn      = lastColumn,
+    bandedRows      = bandedRows,
+    bandedCols      = bandedCols,
+    applyCellStyle  = applyCellStyle,
+    removeCellStyle = removeCellStyle,
+    na.strings      = na.strings
+  )
+
+  invisible(self)
+}
+
+
+wb_add_formula_impl <- function(
+    self,
+    private,
+    sheet           = current_sheet(),
+    x,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    xy              = NULL,
+    applyCellStyle  = TRUE,
+    removeCellStyle = FALSE
+) {
+  write_formula(
+    wb              = self,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    xy              = xy,
+    applyCellStyle  = applyCellStyle,
+    removeCellStyle = removeCellStyle
+  )
+
+  invisible(self)
+}

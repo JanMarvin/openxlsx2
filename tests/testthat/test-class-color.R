@@ -12,6 +12,6 @@ test_that("get()", {
   got <- wb_colour("black")
 
   expect_true(is_wbColour(got))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

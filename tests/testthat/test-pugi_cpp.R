@@ -178,7 +178,7 @@ test_that("getXMLPtr1con", {
   xml <- "<xml><a/><a/><b/></xml>"
   exp <- c("<a/>", "<a/>", "<b/>")
   got <- getXMLPtr1con(read_xml(xml))
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 

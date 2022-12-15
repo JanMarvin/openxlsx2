@@ -23,7 +23,7 @@ test_that("wb_to_df", {
     class = "data.frame"
   )
   got <- wb_to_df(wb1)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   # do not convert first row to colNames
   got <- wb_to_df(wb1, colNames = FALSE)
@@ -111,7 +111,7 @@ test_that("wb_to_df", {
   rownames(exp) <- seq(2, nrow(exp) + 1)
   # read dataset with inlinestr
   got <- wb_to_df(wb2)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
 
   ###########################################################################
@@ -122,12 +122,12 @@ test_that("wb_to_df", {
   # read dataset with named_region (returns global first)
   exp <- data.frame(A = "S2A1", B = "S2B1")
   got <- wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   # read named_region from sheet
   exp <- data.frame(A = "S3A1", B = "S3B1")
   got <- wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
 })
 
@@ -173,14 +173,14 @@ test_that("dims_to_dataframe", {
     class = "data.frame"
   )
   got <- dims_to_dataframe("A1:A2;C1:C2", fill = TRUE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   got <- dims_to_dataframe("A1;A2;C1;C2", fill = TRUE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- list(c("A", "B"), "1")
   got <- dims_to_rowcol("A1;B1")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -195,31 +195,30 @@ test_that("dataframe_to_dims", {
 })
 
 test_that("handle 29Feb1900", {
-
   dates <- c("1900-02-28", "1900-03-01")
   as_date <- as.Date(dates)
   as_posix <- as.POSIXct(dates)
 
   exp <- c(59, 61)
   got <- conv_to_excel_date(as_date)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   got <- conv_to_excel_date(as_posix)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_warning(
     conv_to_excel_date("x"),
     "could not convert x to Excel date. x is of class: character"
   )
 
-  wb <- wb_workbook()$
-    add_worksheet()$add_data(x = as_date)$
-    add_worksheet()$add_data(x = as_posix)
+  wb <- wb_workbook()
+  wb$add_worksheet()$add_data(x = as_date)
+  wb$add_worksheet()$add_data(x = as_posix)
 
   got <- wb_to_df(wb, sheet = 1, colNames = FALSE)$A
-  expect_equal(as_date, got)
+  expect_equal(got, as_date)
 
   got <- wb_to_df(wb, sheet = 2, colNames = FALSE)$A
-  expect_equal(as_posix, got)
-
+  expect_equal(got, as_posix)
 })
+

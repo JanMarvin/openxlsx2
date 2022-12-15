@@ -15,7 +15,7 @@ write_data2(
   startCol = 1,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings,
+  na.strings = getOption("openxlsx2.na.strings", "#N/A"),
   data_table = FALSE
 )
 }
@@ -40,7 +40,7 @@ write_data2(
 
 \item{removeCellStyle}{keep the cell style?}
 
-\item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
+\item{na.strings}{na.strings argument. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
 
 \item{data_table}{logical. if \code{TRUE} and \code{rowNames = TRUE}, do not write the cell containing  \code{"_rowNames_"}}
 }

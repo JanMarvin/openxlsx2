@@ -114,12 +114,9 @@ wb_add_data <- function(
     sep             = ", ",
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
 ) {
   assert_workbook(wb)
-
-  if (missing(na.strings)) na.strings <- substitute()
-
   wb$clone(deep = TRUE)$add_data(
     sheet           = sheet,
     x               = x,
@@ -183,49 +180,47 @@ wb_add_data <- function(
 #' @export
 wb_add_data_table <- function(
     wb,
-    sheet       = current_sheet(),
+    sheet           = current_sheet(),
     x,
-    startCol    = 1,
-    startRow    = 1,
-    dims        = rowcol_to_dims(startRow, startCol),
-    xy          = NULL,
-    colNames    = TRUE,
-    rowNames    = FALSE,
-    tableStyle  = "TableStyleLight9",
-    tableName   = NULL,
-    withFilter  = TRUE,
-    sep         = ", ",
-    firstColumn = FALSE,
-    lastColumn  = FALSE,
-    bandedRows  = TRUE,
-    bandedCols  = FALSE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    xy              = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    tableStyle      = "TableStyleLight9",
+    tableName       = NULL,
+    withFilter      = TRUE,
+    sep             = ", ",
+    firstColumn     = FALSE,
+    lastColumn      = FALSE,
+    bandedRows      = TRUE,
+    bandedCols      = FALSE,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings      = getOption("openxlsx2.na.strings", "#N/A")
 ) {
   assert_workbook(wb)
-  if (missing(na.strings)) na.strings <- substitute()
-
   wb$clone()$add_data_table(
-    sheet       = sheet,
-    x           = x,
-    startCol    = startCol,
-    startRow    = startRow,
-    dims        = dims,
-    xy          = xy,
-    colNames    = colNames,
-    rowNames    = rowNames,
-    tableStyle  = tableStyle,
-    tableName   = tableName,
-    withFilter  = withFilter,
-    sep         = sep,
-    firstColumn = firstColumn,
-    lastColumn  = lastColumn,
-    bandedRows  = bandedRows,
-    bandedCols  = bandedCols,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    xy              = xy,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    tableStyle      = tableStyle,
+    tableName       = tableName,
+    withFilter      = withFilter,
+    sep             = sep,
+    firstColumn     = firstColumn,
+    lastColumn      = lastColumn,
+    bandedRows      = bandedRows,
+    bandedCols      = bandedCols,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings  = na.strings
+    na.strings      = na.strings
   )
 }
 
@@ -424,26 +419,26 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' wb$add_data(sheet = 7, 1:400)
 #' wb$add_data(sheet = 8, 1:400)
 wb_add_worksheet <- function(
-  wb,
-  sheet       = next_sheet(),
-  gridLines   = TRUE,
-  rowColHeaders = TRUE,
-  tabColour   = NULL,
-  zoom        = 100,
-  header      = NULL,
-  footer      = NULL,
-  oddHeader   = header,
-  oddFooter   = footer,
-  evenHeader  = header,
-  evenFooter  = footer,
-  firstHeader = header,
-  firstFooter = footer,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
-  hasDrawing  = FALSE,
-  paperSize   = getOption("openxlsx2.paperSize", default = 9),
-  orientation = getOption("openxlsx2.orientation", default = "portrait"),
-  hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+    wb,
+    sheet       = next_sheet(),
+    gridLines   = TRUE,
+    rowColHeaders = TRUE,
+    tabColour   = NULL,
+    zoom        = 100,
+    header      = NULL,
+    footer      = NULL,
+    oddHeader   = header,
+    oddFooter   = footer,
+    evenHeader  = header,
+    evenFooter  = footer,
+    firstHeader = header,
+    firstFooter = footer,
+    visible     = c("true", "false", "hidden", "visible", "veryhidden"),
+    hasDrawing  = FALSE,
+    paperSize   = getOption("openxlsx2.paperSize", default = 9),
+    orientation = getOption("openxlsx2.orientation", default = "portrait"),
+    hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+    vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
 ) {
   assert_workbook(wb)
   wb$clone()$add_worksheet(
@@ -771,10 +766,10 @@ wb_add_plot <- function(
 #' }
 #‘ @export
 wb_add_drawing <- function(
-  wb,
-  sheet = current_sheet(),
-  xml,
-  dims = "A1:H8"
+    wb,
+    sheet = current_sheet(),
+    xml,
+    dims = "A1:H8"
 ) {
   assert_workbook(wb)
   wb$clone()$add_drawing(sheet = sheet, xml = xml, dims = dims)
@@ -1407,26 +1402,26 @@ NULL
 #' @rdname named_region
 #' @export
 wb_add_named_region <- function(
-  wb,
-  sheet             = current_sheet(),
-  cols,
-  rows,
-  name,
-  localSheet        = FALSE,
-  overwrite         = FALSE,
-  comment           = NULL,
-  customMenu        = NULL,
-  description       = NULL,
-  is_function       = NULL,
-  functionGroupId   = NULL,
-  help              = NULL,
-  hidden            = NULL,
-  localName         = NULL,
-  publishToServer   = NULL,
-  statusBar         = NULL,
-  vbProcedure       = NULL,
-  workbookParameter = NULL,
-  xml               = NULL
+    wb,
+    sheet             = current_sheet(),
+    cols,
+    rows,
+    name,
+    localSheet        = FALSE,
+    overwrite         = FALSE,
+    comment           = NULL,
+    customMenu        = NULL,
+    description       = NULL,
+    is_function       = NULL,
+    functionGroupId   = NULL,
+    help              = NULL,
+    hidden            = NULL,
+    localName         = NULL,
+    publishToServer   = NULL,
+    statusBar         = NULL,
+    vbProcedure       = NULL,
+    workbookParameter = NULL,
+    xml               = NULL
 ) {
   assert_workbook(wb)
   wb$clone()$add_named_region(
@@ -1975,17 +1970,17 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #' wb$add_image(2, img, startRow = 2, startCol = 2)
 #' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
 wb_add_image <- function(
-  wb,
-  sheet     = current_sheet(),
-  file,
-  width     = 6,
-  height    = 3,
-  startRow  = 1,
-  startCol  = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  units     = "in",
-  dpi       = 300
+    wb,
+    sheet     = current_sheet(),
+    file,
+    width     = 6,
+    height    = 3,
+    startRow  = 1,
+    startCol  = 1,
+    rowOffset = 0,
+    colOffset = 0,
+    units     = "in",
+    dpi       = 300
 ) {
   assert_workbook(wb)
   wb$clone()$add_image(
@@ -2011,10 +2006,10 @@ wb_add_image <- function(
 #' @param dims the dimensions where the sheet will appear
 #' @export
 wb_add_chart_xml <- function(
-  wb,
-  sheet = current_sheet(),
-  xml,
-  dims = "A1:H8"
+    wb,
+    sheet = current_sheet(),
+    xml,
+    dims = "A1:H8"
 ) {
   assert_workbook(wb)
   wb$clone()$add_chart_xml(sheet, xml, dims)
@@ -2071,10 +2066,8 @@ wb_open <- function(wb) {
 #' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
 #' wb <- wb_workbook() %>% wb_add_style(yellow)
 #' @export
-wb_add_style <- function(wb, style = NULL, style_name = NULL) {
+wb_add_style <- function(wb, style = NULL, style_name = substitute(style)) {
   assert_workbook(wb)
-  # deparse this name, otherwise it will remain "style"
-  if (is.null(style_name)) style_name <- deparse(substitute(style))
   wb$clone()$add_style(style, style_name)
 }
 
@@ -2261,25 +2254,25 @@ wb_add_fill <- function(
 #' @family styles
 #' @export
 wb_add_font <- function(
-      wb,
-      sheet     = current_sheet(),
-      dims      = "A1",
-      name      = "Calibri",
-      color     = wb_colour(hex = "FF000000"),
-      size      = "11",
-      bold      = "",
-      italic    = "",
-      outline   = "",
-      strike    = "",
-      underline = "",
-      # fine tuning
-      charset   = "",
-      condense  = "",
-      extend    = "",
-      family    = "",
-      scheme    = "",
-      shadow    = "",
-      vertAlign = ""
+    wb,
+    sheet     = current_sheet(),
+    dims      = "A1",
+    name      = "Calibri",
+    color     = wb_colour(hex = "FF000000"),
+    size      = "11",
+    bold      = "",
+    italic    = "",
+    outline   = "",
+    strike    = "",
+    underline = "",
+    # fine tuning
+    charset   = "",
+    condense  = "",
+    extend    = "",
+    family    = "",
+    scheme    = "",
+    shadow    = "",
+    vertAlign = ""
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
@@ -2457,7 +2450,7 @@ wb_add_comment <- function(
     row,
     dims  = rowcol_to_dims(row, col),
     comment
-  ) {
+) {
 
   assert_workbook(wb)
   assert_comment(comment)
@@ -2492,7 +2485,7 @@ wb_remove_comment <- function(
     row,
     dims  = rowcol_to_dims(row, col),
     gridExpand = TRUE
-  ) {
+) {
 
   assert_workbook(wb)
 

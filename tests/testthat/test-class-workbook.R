@@ -61,7 +61,7 @@ test_that("wb_set_col_widths", {
     "<col min=\"10\" max=\"10\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"18.211\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -108,7 +108,7 @@ test_that("$set_sheet_names() and $get_sheet_names() work", {
 
   exp <- c(`Sheet 1` = "Sheet 1")
   got <- wb$get_sheet_names()
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 # data validation ---------------------------------------------------------
@@ -158,7 +158,7 @@ test_that("data validation", {
     "<dataValidation type=\"textLength\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"E2:E151\"><formula1>7</formula1><formula2>9</formula2></dataValidation>"
   )
   got <- wb$worksheets[[1]]$dataValidations
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   exp <- c(
@@ -166,14 +166,14 @@ test_that("data validation", {
     "<dataValidation type=\"time\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"B2:B12\"><formula1>42369.7685185185</formula1><formula2>42370.2314814815</formula2></dataValidation>"
   )
   got <- wb$worksheets[[2]]$dataValidations
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   exp <- c(
     "<dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:A31\"><formula1>'Sheet 4'!$A$1:$A$10</formula1></dataValidation>"
   )
   got <- wb$worksheets[[3]]$dataValidations
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$save(temp)
 
@@ -206,7 +206,7 @@ test_that("data validation", {
     "<dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"B2:B31\"><formula1>'Sheet 4'!$A$1:$A$10</formula1></dataValidation>"
   )
   got <- wb2$worksheets[[3]]$dataValidations
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   ### tests if conditions
 
@@ -221,7 +221,7 @@ test_that("data validation", {
 
   exp <- "<dataValidation type=\"whole\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:A151\"><formula1>1</formula1><formula2>9</formula2></dataValidation>"
   got <- wb$worksheets[[1]]$dataValidations
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # to many values
@@ -297,7 +297,7 @@ test_that("data validation", {
 
   exp <- "<dataValidation type=\"whole\" operator=\"greaterThan\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A1:A3\" errorStyle=\"information\" errorTitle=\"ERROR!\" error=\"Some error ocurred!\" promptTitle=\"PROMPT!\" prompt=\"Choose something!\"><formula1>0</formula1></dataValidation>"
   got <- wb$worksheets[[1]]$dataValidations
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # add custom data
   wb <- wb_workbook()$
@@ -308,7 +308,7 @@ test_that("data validation", {
 
   exp <- "<dataValidation type=\"custom\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A1:A3\"><formula1>A1=B1</formula1></dataValidation>"
   got <- wb$worksheets[[1]]$dataValidations
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -337,7 +337,7 @@ test_that("clone worksheet", {
     "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing5.xml\"/>"
   )
   got <- wb$worksheets_rels[[5]]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
   # wb$open()
 
   # clone drawing ---------------------------------------------------------
@@ -394,7 +394,7 @@ test_that("set and remove row heights work", {
     class = "data.frame"
   )
   got <- wb$worksheets[[1]]$sheet_data$row_attr[c(1, 2, 4, 19, 22), c("customHeight", "ht", "r")]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   ## remove row heights
   wb$remove_row_heights(rows = 1:21)
@@ -408,7 +408,7 @@ test_that("set and remove row heights work", {
     class = "data.frame"
   )
   got <- wb$worksheets[[1]]$sheet_data$row_attr[c(1, 2, 4, 19, 22), c("customHeight", "ht", "r")]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_warning(
     wb$add_worksheet()$remove_row_heights(rows = 1:3),
@@ -535,7 +535,7 @@ test_that("add_drawing works", {
     "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart2.xml\"/>"
   )
   got <- wb$drawings_rels
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # write data starting at B2
@@ -554,6 +554,6 @@ test_that("add_drawing works", {
     character(0)
   )
   got <- wb$worksheets_rels
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })

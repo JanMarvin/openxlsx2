@@ -554,7 +554,7 @@ add data
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = getOption("openxlsx2.na.strings", "#N/A")
 )}\if{html}{\out{</div>}}
 }
 
@@ -621,7 +621,7 @@ add a data table
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings = getOption("openxlsx2.na.strings", "#N/A")
 )}\if{html}{\out{</div>}}
 }
 
@@ -718,7 +718,7 @@ add formula
 \subsection{Method \code{add_style()}}{
 add style
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_style(style = NULL, style_name = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_style(style = NULL, style_name = substitute(style))}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
