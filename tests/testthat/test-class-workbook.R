@@ -626,5 +626,21 @@ test_that("add_chartsheet works", {
 
   expect_true(wb$is_chartsheet[[2]])
 
+  # add new worksheet and replace chart on chartsheet
+  wb$add_worksheet()$add_data(x = mtcars)
+  dat <- wb_data(wb, dims = "A1:E1;A7:E15")
+  data_plot <- ms_scatterchart(
+    data = dat,
+    x = "mpg",
+    y = c("disp", "hp"),
+    labels = c("disp", "hp")
+  )
+  wb$add_mschart(sheet = 2, graph = data_plot)
+
+  expect_equal(2L, nrow(wb$charts))
+
+  exp <- "xdr:absoluteAnchor"
+  got <- xml_node_name(wb$drawings, "xdr:wsDr")
+  expect_equal(exp, got)
 
 })

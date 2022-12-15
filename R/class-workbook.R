@@ -3788,6 +3788,12 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       is_chartsheet <- self$is_chartsheet[sheet]
 
+      # chartsheets can not have multiple drawings
+      if (is_chartsheet) {
+        self$drawings[[sheet]]      <- ""
+        self$drawings_rels[[sheet]] <- ""
+      }
+
       next_chart <- NROW(self$charts) + 1
 
       chart <- data.frame(
