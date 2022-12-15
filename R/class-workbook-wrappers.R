@@ -544,6 +544,7 @@ wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, f
 #' @param sheet A name or index of a worksheet
 #' @param rows Indices of rows to set height
 #' @param heights Heights to set rows to specified in Excel column height units.
+#' @param hidden Option to hide rows.
 #'
 #' @export
 #' @family workbook wrappers
@@ -565,9 +566,9 @@ wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, f
 #'
 #' ## overwrite row 1 height
 #' wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
-wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights) {
+wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
   assert_workbook(wb)
-  wb$clone()$set_row_heights(sheet = sheet, rows, heights)
+  wb$clone()$set_row_heights(sheet = sheet, rows, heights, hidden)
 }
 
 

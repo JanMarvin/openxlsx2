@@ -415,6 +415,26 @@ test_that("set and remove row heights work", {
     "There are no initialized rows on this sheet"
   )
 
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = mtcars)$
+    set_row_heights(rows = 5:15, hidden = TRUE)
+
+  exp <- structure(
+    c(22L, `1` = 11L),
+    dim = 2L,
+    dimnames = structure(
+      list(
+        c("", "1")
+      ),
+      names = ""
+    ),
+    class = "table"
+  )
+  got <- table(wb$worksheets[[1]]$sheet_data$row_attr$hidden)
+
+  expect_equal(exp, got)
+
 })
 
 test_that("add_drawing works", {

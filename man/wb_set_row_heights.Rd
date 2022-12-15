@@ -4,7 +4,13 @@
 \alias{wb_set_row_heights}
 \title{Set worksheet row heights}
 \usage{
-wb_set_row_heights(wb, sheet = current_sheet(), rows, heights)
+wb_set_row_heights(
+  wb,
+  sheet = current_sheet(),
+  rows,
+  heights = NULL,
+  hidden = FALSE
+)
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}
@@ -14,6 +20,8 @@ wb_set_row_heights(wb, sheet = current_sheet(), rows, heights)
 \item{rows}{Indices of rows to set height}
 
 \item{heights}{Heights to set rows to specified in Excel column height units.}
+
+\item{hidden}{Option to hide rows.}
 }
 \description{
 Set worksheet row heights

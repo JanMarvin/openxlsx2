@@ -2123,29 +2123,46 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows rows
     #' @param heights heights
+    #' @param hidden hidden
     #' @return The `wbWorkbook` object, invisibly
-    set_row_heights = function(sheet = current_sheet(), rows, heights) {
+    set_row_heights = function(sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
       sheet <- private$get_sheet_index(sheet)
 
       # TODO move to wbWorksheet method
 
-      # create all A columns so that row_attr is available
+      # create all A columns so that row_attr is available.
+      # Someone thought that it would be a splendid idea, if
+      # all row_attr needs to match cc. This is fine, though
+      # it brings the downside that these cells have to be
+      # initialized.
       dims <- rowcol_to_dims(rows, 1)
       private$do_cell_init(sheet, dims)
 
-      if (length(rows) > length(heights)) {
-        heights <- rep(heights, length.out = length(rows))
-      }
-
-      if (length(heights) > length(rows)) {
-        stop("Greater number of height values than rows.")
-      }
-
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
-
       sel <- match(rows, row_attr$r)
-      row_attr[sel, "ht"] <- as.character(as.numeric(heights))
-      row_attr[sel, "customHeight"] <- "1"
+
+      if (!is.null(heights)) {
+        if (length(rows) > length(heights)) {
+          heights <- rep(heights, length.out = length(rows))
+        }
+
+        if (length(heights) > length(rows)) {
+          stop("Greater number of height values than rows.")
+        }
+
+        row_attr[sel, "ht"] <- as.character(as.numeric(heights))
+        row_attr[sel, "customHeight"] <- "1"
+      }
+
+      ## hide empty rows per default
+      # xml_attr_mod(
+      #   wb$worksheets[[1]]$sheetFormatPr,
+      #   xml_attributes = c(zeroHeight = "1")
+      # )
+
+      if (hidden) {
+        row_attr[sel, "hidden"] <- "1"
+      }
 
       self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
 
