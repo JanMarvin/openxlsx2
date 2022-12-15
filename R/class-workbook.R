@@ -3478,12 +3478,22 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
+      # with userShape we might need to skip one ahead
+      sheet_drawing <- sheet
+      if (length(self$worksheets_rels[[sheet]])) {
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        if (any(relship$typ == "drawing")) {
+          sheet_drawing  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
+        }
+      }
+
       # add image to drawings_rels
-      old_drawings_rels <- unlist(self$drawings_rels[[sheet]])
+      old_drawings_rels <- unlist(self$drawings_rels[[sheet_drawing]])
       if (all(old_drawings_rels == "")) old_drawings_rels <- NULL
 
       ## drawings rels (Reference from drawings.xml to image file in media folder)
-      self$drawings_rels[[sheet]] <- c(
+      self$drawings_rels[[sheet_drawing]] <- c(
         old_drawings_rels,
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
@@ -3712,9 +3722,20 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
+      # usually sheet_drawing is sheet. If we have userShapes, sheet_drawing
+      # can skip ahead. see test: unemployment-nrw202208.xlsx
+      sheet_drawing <- sheet
+      if (length(self$worksheets_rels[[sheet]])) {
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        if (any(relship$typ == "drawing")) {
+          sheet_drawing  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
+        }
+      }
+
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.
-      drawings <- self$drawings[[sheet]]
+      drawings <- self$drawings[[sheet_drawing]]
       if (drawings == "") {
         drawings <- xml
       } else {
@@ -3722,14 +3743,14 @@ wbWorkbook <- R6::R6Class(
         xml_drawing <- xml_node(xml, "xdr:wsDr", drawing_type)
         drawings <- xml_add_child(drawings, xml_drawing)
       }
-      self$drawings[[sheet]] <- drawings
+      self$drawings[[sheet_drawing]] <- drawings
 
       # get the correct next free relship id
-      if (length(self$worksheets_rels[[sheet]]) == 0) {
+      if (length(self$worksheets_rels[[sheet_drawing]]) == 0) {
         next_relship <- 1
         has_no_drawing <- TRUE
       } else {
-        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet_drawing]], "Relationship"))
         relship$typ <- basename(relship$Type)
         next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
         has_no_drawing <- !any(relship$typ == "drawing")
@@ -3738,8 +3759,8 @@ wbWorkbook <- R6::R6Class(
       # if a drawing exisits, we already added ourself to it. Otherwise we
       # create a new drawing.
       if (has_no_drawing) {
-        self$worksheets_rels[[sheet]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, sheet)
-        self$worksheets[[sheet]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
+        self$worksheets_rels[[sheet_drawing]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, sheet_drawing)
+        self$worksheets[[sheet_drawing]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
       }
 
       invisible(self)
