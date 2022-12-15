@@ -62,13 +62,11 @@ wb$add_worksheet("Sheet 1", gridLines = FALSE)
 
 ## create plot objects
 require(ggplot2)
-p1 <- qplot(mpg,
-  data = mtcars, geom = "density",
-  fill = as.factor(gear), alpha = I(.5), main = "Distribution of Gas Mileage"
-)
-p2 <- qplot(age, circumference,
-  data = Orange, geom = c("point", "line"), colour = Tree
-)
+p1 <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
+  ggtitle("Distribution of Gas Mileage") +
+  geom_density(alpha = I(.5))
+p2 <- ggplot(Orange, aes(x = age, y = circumference, colour = Tree)) +
+  geom_point() + geom_line()
 
 ## Insert currently displayed plot to sheet 1, row 1, column 1
 print(p1) # plot needs to be showing
