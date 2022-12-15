@@ -3459,8 +3459,6 @@ wbWorkbook <- R6::R6Class(
       # TODO tools::file_ext() ...
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
-
-      imageNo <- length(xml_node_name(self$drawings[[sheet]], "xdr:wsDr")) + 1L
       mediaNo <- length(self$media) + 1L
 
       startCol <- col2int(startCol)
@@ -3491,6 +3489,8 @@ wbWorkbook <- R6::R6Class(
       # add image to drawings_rels
       old_drawings_rels <- unlist(self$drawings_rels[[sheet_drawing]])
       if (all(old_drawings_rels == "")) old_drawings_rels <- NULL
+
+      imageNo <- length(xml_node_name(self$drawings[[sheet_drawing]], "xdr:wsDr")) + 1L
 
       ## drawings rels (Reference from drawings.xml to image file in media folder)
       self$drawings_rels[[sheet_drawing]] <- c(
@@ -3746,11 +3746,11 @@ wbWorkbook <- R6::R6Class(
       self$drawings[[sheet_drawing]] <- drawings
 
       # get the correct next free relship id
-      if (length(self$worksheets_rels[[sheet_drawing]]) == 0) {
+      if (length(self$worksheets_rels[[sheet]]) == 0) {
         next_relship <- 1
         has_no_drawing <- TRUE
       } else {
-        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet_drawing]], "Relationship"))
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
         relship$typ <- basename(relship$Type)
         next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
         has_no_drawing <- !any(relship$typ == "drawing")
@@ -3759,8 +3759,8 @@ wbWorkbook <- R6::R6Class(
       # if a drawing exisits, we already added ourself to it. Otherwise we
       # create a new drawing.
       if (has_no_drawing) {
-        self$worksheets_rels[[sheet_drawing]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, sheet_drawing)
-        self$worksheets[[sheet_drawing]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
+        self$worksheets_rels[[sheet]] <- sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, sheet_drawing)
+        self$worksheets[[sheet]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
       }
 
       invisible(self)
