@@ -3477,13 +3477,11 @@ wbWorkbook <- R6::R6Class(
       }
 
       # with userShape we might need to skip one ahead
-      sheet_drawing <- sheet
-      if (length(self$worksheets_rels[[sheet]])) {
-        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-        relship$typ <- basename(relship$Type)
-        if (any(relship$typ == "drawing")) {
-          sheet_drawing  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
-        }
+      found <- private$get_drawingsref()
+      if (sheet %in% found$sheet) {
+        sheet_drawing <- found$id[found$sheet == sheet]
+      } else {
+        sheet_drawing <- max(sheet, found$id + 1)
       }
 
       # add image to drawings_rels
@@ -3724,13 +3722,11 @@ wbWorkbook <- R6::R6Class(
 
       # usually sheet_drawing is sheet. If we have userShapes, sheet_drawing
       # can skip ahead. see test: unemployment-nrw202208.xlsx
-      sheet_drawing <- sheet
-      if (length(self$worksheets_rels[[sheet]])) {
-        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-        relship$typ <- basename(relship$Type)
-        if (any(relship$typ == "drawing")) {
-          sheet_drawing  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
-        }
+      found <- private$get_drawingsref()
+      if (sheet %in% found$sheet) {
+        sheet_drawing <- found$id[found$sheet == sheet]
+      } else {
+        sheet_drawing <- max(sheet, found$id + 1)
       }
 
       # check if sheet already contains drawing. if yes, try to integrate
@@ -5772,6 +5768,22 @@ wbWorkbook <- R6::R6Class(
       # core is made on initialization
       private$generate_base_core()
       invisible(self)
+    },
+
+    get_drawingsref = function() {
+      has_drawing <- which(grepl("drawings", self$worksheets_rels))
+
+      rlshp <- NULL
+      for (i in has_drawing) {
+        rblst <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
+        rblst$type <- basename(rblst$Type)
+        rblst$id   <- as.integer(gsub("\\D+", "", rblst$Target))
+        rblst$sheet <- i
+
+        rlshp <- rbind(rlshp, rblst[rblst$type == "drawing", c("type", "id", "sheet")])
+      }
+
+      invisible(rlshp)
     },
 
     get_worksheet = function(sheet) {
