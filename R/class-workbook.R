@@ -3481,7 +3481,8 @@ wbWorkbook <- R6::R6Class(
       if (sheet %in% found$sheet) {
         sheet_drawing <- found$id[found$sheet == sheet]
       } else {
-        sheet_drawing <- max(sheet, found$id + 1)
+        sel <- which.min(abs(found$sheet - sheet))
+        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
       }
 
       # add image to drawings_rels
@@ -3726,7 +3727,8 @@ wbWorkbook <- R6::R6Class(
       if (sheet %in% found$sheet) {
         sheet_drawing <- found$id[found$sheet == sheet]
       } else {
-        sheet_drawing <- max(sheet, found$id + 1)
+        sel <- which.min(abs(found$sheet - sheet))
+        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
       }
 
       # check if sheet already contains drawing. if yes, try to integrate
@@ -3782,7 +3784,8 @@ wbWorkbook <- R6::R6Class(
       if (sheet %in% found$sheet) {
         sheet_drawing <- found$id[found$sheet == sheet]
       } else {
-        sheet_drawing <- max(sheet, found$id + 1)
+        sel <- which.min(abs(found$sheet - sheet))
+        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
       }
 
       # chartsheets can not have multiple drawings
