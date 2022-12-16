@@ -3777,10 +3777,18 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       is_chartsheet <- self$is_chartsheet[sheet]
 
+
+      found <- private$get_drawingsref()
+      if (sheet %in% found$sheet) {
+        sheet_drawing <- found$id[found$sheet == sheet]
+      } else {
+        sheet_drawing <- max(sheet, found$id + 1)
+      }
+
       # chartsheets can not have multiple drawings
       if (is_chartsheet) {
-        self$drawings[[sheet]]      <- ""
-        self$drawings_rels[[sheet]] <- ""
+        self$drawings[[sheet_drawing]]      <- ""
+        self$drawings_rels[[sheet_drawing]] <- ""
       }
 
       next_chart <- NROW(self$charts) + 1
@@ -3796,7 +3804,7 @@ wbWorkbook <- R6::R6Class(
 
       self$charts <- rbind(self$charts, chart)
 
-      len_drawing <- length(xml_node_name(self$drawings[[sheet]], "xdr:wsDr")) + 1L
+      len_drawing <- length(xml_node_name(self$drawings[[sheet_drawing]], "xdr:wsDr")) + 1L
 
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
