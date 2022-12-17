@@ -47,6 +47,7 @@ wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
 }
 \seealso{
 Other workbook wrappers: 
+\code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},

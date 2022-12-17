@@ -635,7 +635,7 @@ write_data_table <- function(
   sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
   # sheet <- wb$validate_sheet(sheet)
 
-  if (wb$isChartSheet[[sheet]]) stop("Cannot write to chart sheet.")
+  if (wb$is_chartsheet[[sheet]]) stop("Cannot write to chart sheet.")
 
   ## All input conversions/validations
   if (!is.null(xy)) {

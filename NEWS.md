@@ -8,11 +8,13 @@
 
 * Add `hidden` argument and change the default for `heights` to `NULL` in `set_row_heights()`. This allows changing the row height and/or hiding selected rows. This does not yet provide a way to hide rows per default. [475](https://github.com/JanMarvin/openxlsx2/pull/475)
 
+* Add `wb_add_chartsheet()` for chart sheet support. Along with internal cleanup around chart sheet code. [466](https://github.com/JanMarvin/openxlsx2/pull/466)
+
 ## Fixes
 
 * Fix `wb_freeze_pane()`. This changes the load logic a bit. Previously we put everything into `sheetViews` (the frozen pane is part of this). Though `wb_freeze_pane()` assumes that `freezePane` is used. We now try to be smart and split sheetViews upon loading. [465](https://github.com/JanMarvin/openxlsx2/pull/465)
 
-* Previously, adding mscharts to sheets was only possible if (1) the worksheet already contained a drawing (if the workbook was loaded) or (2) to the last sheet of the workbook. This has now been fixed. Adding mscharts to any worksheet in the workbook is now possible as intended. [458](https://github.com/JanMarvin/openxlsx2/pull/458)
+* Previously, adding mschart objects to sheets was only possible if (1) the worksheet already contained a drawing (if the workbook was loaded) or (2) to the last sheet of the workbook. This has now been fixed. Adding mschart objects to any worksheet in the workbook is now possible as intended. [458](https://github.com/JanMarvin/openxlsx2/pull/458)
 
 * Really fix double xml escaping when saving. [467](https://github.com/JanMarvin/openxlsx2/pull/467)
 

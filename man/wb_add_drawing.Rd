@@ -4,7 +4,7 @@
 \alias{wb_add_drawing}
 \title{add drawings to workbook}
 \usage{
-wb_add_drawing(wb, sheet = current_sheet(), xml, dims = "A1:H8")
+wb_add_drawing(wb, sheet = current_sheet(), xml, dims = NULL)
 }
 \arguments{
 \item{wb}{a wbWorkbook}

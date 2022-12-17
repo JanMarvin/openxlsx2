@@ -289,20 +289,8 @@ wb_load <- function(
     # TODO only loop over import_sheets
     for (i in seq_len(nrow(sheets))) {
       if (sheets$typ[i] == "chartsheet") {
-
         txt <- read_xml(sheets$target[i], pointer = FALSE)
-
-        zoom <- regmatches(txt, regexpr('(?<=zoomScale=")[0-9]+', txt, perl = TRUE))
-        if (length(zoom) == 0) {
-          zoom <- 100
-        }
-
-        tabColour <- xml_node(txt, "chartsheet", "sheetPr", "tabColor")
-        if (length(tabColour) == 0) {
-          tabColour <- NULL
-        }
-
-        wb$addChartSheet(sheet = sheets$name[i], tabColour = tabColour, zoom = as.numeric(zoom))
+        wb$add_chartsheet(sheet = sheets$name[i], visible = is_visible[i])
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")

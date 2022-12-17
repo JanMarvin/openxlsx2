@@ -1032,7 +1032,7 @@ styleplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.com/o
 </cs:chartStyle>')
 
 
-drawings <- function(drawing_id, from, to) {
+drawings <- function(drawing_id) {
 
   drawings <- xml_node_create(
     xml_name = "xdr:wsDr",
@@ -1042,36 +1042,39 @@ drawings <- function(drawing_id, from, to) {
     )
   )
 
-  drawing <- sprintf(
-    '<xdr:twoCellAnchor>
-    <xdr:from>
-    <xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
-    <xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
-    </xdr:from>
-    <xdr:to>
-    <xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>
-    <xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>
-    </xdr:to>
-    <xdr:graphicFrame macro=\"\"><xdr:nvGraphicFramePr>
-    <xdr:cNvPr id=\"2\" name=\"Chart %s\">
-    <a:extLst>
-    <a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\">
-    <a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\"/>
-    </a:ext>
-    </a:extLst>
-    </xdr:cNvPr><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/></xdr:xfrm>
-    <a:graphic>
-    <a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/chart\">
-    <c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId%s\"/>
-    </a:graphicData>
-    </a:graphic>
-    </xdr:graphicFrame>
-    <xdr:clientData/>
-    </xdr:twoCellAnchor>', # id=\"{26250924-C6F2-F6FB-E235-146645DB2CBB}\
-    from[1], from[2],
-    to[1], to[2],
-    drawing_id,
-    drawing_id
+  drawing <- paste0(
+    sprintf(
+     '<xdr:absoluteAnchor>
+        <xdr:pos x="0" y="0" />
+        <xdr:ext cx="9313333" cy="6070985" />
+        <xdr:graphicFrame macro="">
+        <xdr:nvGraphicFramePr>
+          <xdr:cNvPr id="2" name="Chart %s">
+          <a:extLst>
+            <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+            <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" />
+            </a:ext>
+          </a:extLst>
+          </xdr:cNvPr>
+          <xdr:cNvGraphicFramePr>
+          <a:graphicFrameLocks noGrp="1" />
+          </xdr:cNvGraphicFramePr>
+        </xdr:nvGraphicFramePr>
+        <xdr:xfrm>
+          <a:off x="0" y="0" />
+          <a:ext cx="0" cy="0" />
+        </xdr:xfrm>
+        <a:graphic>
+          <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart">
+          <c:chart xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:id="rId%s" />
+          </a:graphicData>
+        </a:graphic>
+        </xdr:graphicFrame>
+        <xdr:clientData />
+      </xdr:absoluteAnchor>',
+      drawing_id,
+      drawing_id
+    )
   )
 
   return(

@@ -35,11 +35,13 @@ bandedCols
 bandedRows
 bgFill
 bool
+calc
 calcChain
 cellWatches
 cellXfs
 charset
 chartShapes
+chartsheet
 chartsheets
 cloneable
 codecov
@@ -126,7 +128,6 @@ hdpi
 headFoot
 headerFooter
 ignoredErrors
-isChartSheet
 lastColumn
 legacyDrawing
 legacyDrawingHF

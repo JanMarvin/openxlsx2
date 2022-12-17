@@ -829,12 +829,11 @@ wb_set_selected <- function(wb, sheet) {
   wb
 }
 
-#' dummy function to add a chart to an existing workbook
-#' currently only a barplot is possible
+#' Add mschart object to an existing workbook
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear
-#' @param graph mschart graph
+#' @param graph mschart object
 #' @examples
 #' if (requireNamespace("mschart")) {
 #' require(mschart)
@@ -872,11 +871,11 @@ wb_set_selected <- function(wb, sheet) {
 wb_add_mschart <- function(
   wb,
   sheet = current_sheet(),
-  dims = "B2:H8",
+  dims = NULL,
   graph
 ) {
   assert_workbook(wb)
-  wb$clone()$add_mschart(sheet, dims, graph)
+  wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph)
 }
 
 #' provide wb_data object as mschart input

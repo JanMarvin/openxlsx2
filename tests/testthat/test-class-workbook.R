@@ -576,4 +576,71 @@ test_that("add_drawing works", {
   got <- wb$worksheets_rels
   expect_equal(exp, got)
 
+  ## write different anchors
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(x = mtcars)
+
+  scatter_plot <- ms_scatterchart(
+    data = wb_data(wb),
+    x = "mpg",
+    y = c("disp", "hp")
+  )
+
+  wb$
+    add_mschart(graph = scatter_plot)$
+    add_mschart(dims = "A1", graph = scatter_plot)$
+    add_mschart(dims = "F4:L20", graph = scatter_plot)
+
+  expect_true(grepl("absoluteAnchor", wb$drawings))
+  expect_true(grepl("oneCellAnchor", wb$drawings))
+  expect_true(grepl("twoCellAnchor", wb$drawings))
+
+})
+
+test_that("add_chartsheet works", {
+
+  skip_if_not_installed("mschart")
+
+  require(mschart)
+
+  wb <- wb_workbook()$
+    add_worksheet("A & B")$
+    add_data(x = mtcars)$
+    add_chartsheet(tabColour = "red")
+
+  dat <- wb_data(wb, 1, dims = "A1:E6")
+
+  # call ms_scatterplot
+  data_plot <- ms_scatterchart(
+    data = dat,
+    x = "mpg",
+    y = c("disp", "hp"),
+    labels = c("disp", "hp")
+  )
+
+  wb$add_mschart(graph = data_plot)
+
+  expect_equal(1, nrow(wb$charts))
+
+  expect_true(grepl("A &amp; B", wb$charts$chart))
+
+  expect_true(wb$is_chartsheet[[2]])
+
+  # add new worksheet and replace chart on chartsheet
+  wb$add_worksheet()$add_data(x = mtcars)
+  dat <- wb_data(wb, dims = "A1:E1;A7:E15")
+  data_plot <- ms_scatterchart(
+    data = dat,
+    x = "mpg",
+    y = c("disp", "hp"),
+    labels = c("disp", "hp")
+  )
+  wb$add_mschart(sheet = 2, graph = data_plot)
+
+  expect_equal(2L, nrow(wb$charts))
+
+  exp <- "xdr:absoluteAnchor"
+  got <- xml_node_name(wb$drawings, "xdr:wsDr")
+  expect_equal(exp, got)
+
 })

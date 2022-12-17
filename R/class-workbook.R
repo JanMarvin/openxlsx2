@@ -27,8 +27,8 @@ wbWorkbook <- R6::R6Class(
     #' @field charts charts
     charts = list(),
 
-    #' @field isChartSheet isChartSheet
-    isChartSheet = logical(),
+    #' @field is_chartsheet is_chartsheet
+    is_chartsheet = logical(),
 
     #' @field customXml customXml
     customXml = NULL,
@@ -193,7 +193,7 @@ wbWorkbook <- R6::R6Class(
     ) {
       self$apps <- character()
       self$charts <- list()
-      self$isChartSheet <- logical()
+      self$is_chartsheet <- logical()
 
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
@@ -323,6 +323,131 @@ wbWorkbook <- R6::R6Class(
       }
 
       which(replaceXMLEntities(self$sheet_names) == sheet)
+    },
+
+    #' @description
+    #' Add a chart sheet to the workbook
+    #' @param sheet sheet
+    #' @param tabColour tabColour
+    #' @param zoom zoom
+    #' @param visible visible
+    #' @return The `wbWorkbook` object, invisibly
+    add_chartsheet = function(
+      sheet     = next_sheet(),
+      tabColour = NULL,
+      zoom      = 100,
+      visible   = c("true", "false", "hidden", "visible", "veryhidden")
+    ) {
+      visible <- tolower(as.character(visible))
+      visible <- match.arg(visible)
+
+      # set up so that a single error can be reported on fail
+      fail <- FALSE
+      msg <- NULL
+
+      private$validate_new_sheet(sheet)
+
+      if (is_waiver(sheet)) {
+        if (sheet == "current_sheet") {
+          stop("cannot add worksheet to current sheet")
+        }
+
+        # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
+        # a better check for this
+        sheet <- paste0(
+          getOption("openxlsx2.sheet.default_name", "Sheet "),
+          length(self$sheet_names) + 1L
+        )
+      }
+
+      sheet <- as.character(sheet)
+      sheet_name <- replace_legal_chars(sheet)
+      private$validate_new_sheet(sheet_name)
+
+
+      newSheetIndex <- length(self$worksheets) + 1L
+      private$set_current_sheet(newSheetIndex)
+      sheetId <- private$get_sheet_id_max() # checks for self$worksheet length
+
+      self$append_sheets(
+        sprintf(
+          '<sheet name="%s" sheetId="%s" state="%s" r:id="rId%s"/>',
+          sheet_name,
+          sheetId,
+          visible,
+          newSheetIndex
+        )
+      )
+
+      if (!is.null(tabColour)) {
+        tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
+      }
+
+      if (!is.numeric(zoom)) {
+        fail <- TRUE
+        msg <- c(msg, "zoom must be numeric")
+      }
+
+      # nocov start
+      if (zoom < 10) {
+        zoom <- 10
+      } else if (zoom > 400) {
+        zoom <- 400
+      }
+      #nocov end
+
+      self$append("worksheets",
+        wbChartSheet$new(
+          tabColour   = tabColour
+        )
+      )
+
+      self$worksheets[[newSheetIndex]]$set_sheetview(
+        workbookViewId = 0,
+        zoomScale      = zoom,
+        tabSelected    = newSheetIndex == 1
+      )
+
+      self$append("sheet_names", sheet)
+
+      ## update content_tyes
+      self$append("Content_Types",
+        sprintf(
+          '<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>',
+          newSheetIndex
+        )
+      )
+
+      ## Update xl/rels
+      self$append("workbook.xml.rels",
+        sprintf(
+          '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>',
+          newSheetIndex
+        )
+      )
+
+      ## add a drawing.xml for the worksheet
+      self$append("Content_Types",
+        sprintf(
+          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
+          newSheetIndex
+        )
+      )
+
+      ## create sheet.rels to simplify id assignment
+      new_drawings_idx <- length(self$drawings) + 1
+      self$drawings[[new_drawings_idx]]      <- ""
+      self$drawings_rels[[new_drawings_idx]] <- ""
+
+      self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
+      self$is_chartsheet[[newSheetIndex]]    <- TRUE
+      self$vml_rels[[newSheetIndex]]         <- list()
+      self$vml[[newSheetIndex]]              <- list()
+
+      self$append("sheetOrder", newSheetIndex)
+      private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
+
+      invisible(self)
     },
 
     #' @description
@@ -561,7 +686,7 @@ wbWorkbook <- R6::R6Class(
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
       self$vml_rels[[newSheetIndex]]         <- list()
       self$vml[[newSheetIndex]]              <- list()
-      self$isChartSheet[[newSheetIndex]]     <- FALSE
+      self$is_chartsheet[[newSheetIndex]]    <- FALSE
       self$comments[[newSheetIndex]]         <- list()
       self$threadComments[[newSheetIndex]]   <- list()
 
@@ -620,7 +745,7 @@ wbWorkbook <- R6::R6Class(
       # FIXME only add what is needed. If no previous drawing is found, don't
       # add a new one
       self$append("Content_Types", c(
-        if (self$isChartSheet[old]) {
+        if (self$is_chartsheet[old]) {
           sprintf('<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>', newSheetIndex)
         } else {
           sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex)
@@ -630,7 +755,7 @@ wbWorkbook <- R6::R6Class(
       ## Update xl/rels
       self$append(
         "workbook.xml.rels",
-        if (self$isChartSheet[old]) {
+        if (self$is_chartsheet[old]) {
           sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>', newSheetIndex)
         } else {
           sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>', newSheetIndex)
@@ -767,7 +892,7 @@ wbWorkbook <- R6::R6Class(
       # cloned sheet the same IDs can be used => no need to modify drawings
       self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
       self$vml[[newSheetIndex]]            <- self$vml[[old]]
-      self$isChartSheet[[newSheetIndex]]   <- self$isChartSheet[[old]]
+      self$is_chartsheet[[newSheetIndex]]  <- self$is_chartsheet[[old]]
       self$comments[[newSheetIndex]]       <- self$comments[[old]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
@@ -863,88 +988,6 @@ wbWorkbook <- R6::R6Class(
       #   - Comments ???
       #   - Slicers
 
-      invisible(self)
-    },
-
-    #' @description
-    #' Add a chart sheet to the workbook
-    #' @param sheet sheet
-    #' @param tabColour tabColour
-    #' @param zoom zoom
-    #' @return The `wbWorkbook` object, invisibly
-    addChartSheet = function(sheet = current_sheet(), tabColour = NULL, zoom = 100) {
-      # TODO private$new_sheet_index()?
-      newSheetIndex <- length(self$worksheets) + 1L
-      sheetId <- private$get_sheet_id_max() # checks for length of worksheets
-
-      ##  Add sheet to workbook.xml
-      self$append_sheets(
-        sprintf(
-          '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-          sheet,
-          sheetId,
-          newSheetIndex
-        )
-      )
-
-      ## append to worksheets list
-      self$append("worksheets",
-        wbChartSheet$new(tabColour = tabColour)
-      )
-
-
-      # nocov start
-      if (zoom < 10) {
-        zoom <- 10
-      } else if (zoom > 400) {
-        zoom <- 400
-      }
-      #nocov end
-
-      self$worksheets[[newSheetIndex]]$set_sheetview(
-        workbookViewId = 0,
-        zoomScale      = zoom,
-        tabSelected    = newSheetIndex == 1
-      )
-
-      self$append("sheet_names", sheet)
-
-      ## update content_tyes
-      self$append("Content_Types",
-        sprintf(
-          '<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>',
-          newSheetIndex
-        )
-      )
-
-      ## Update xl/rels
-      self$append("workbook.xml.rels",
-        sprintf(
-          '<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>',
-          newSheetIndex
-        )
-      )
-
-      ## add a drawing.xml for the worksheet
-      self$append("Content_Types",
-        sprintf(
-          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-          newSheetIndex
-        )
-      )
-
-      ## create sheet.rels to simplify id assignment
-      new_drawings_idx <- length(self$drawings) + 1
-      self$drawings[[new_drawings_idx]]      <- ""
-      self$drawings_rels[[new_drawings_idx]] <- ""
-
-      self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$isChartSheet[[newSheetIndex]]     <- TRUE
-      self$vml_rels[[newSheetIndex]]         <- list()
-      self$vml[[newSheetIndex]]              <- list()
-      self$append("sheetOrder", newSheetIndex)
-
-      # invisible(newSheetIndex)
       invisible(self)
     },
 
@@ -2616,7 +2659,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      self$isChartSheet <- self$isChartSheet[-sheet]
+      self$is_chartsheet <- self$is_chartsheet[-sheet]
 
       ## remove highest sheet
       # (don't chagne this to a "grep(value = TRUE)" ... )
@@ -3614,9 +3657,11 @@ wbWorkbook <- R6::R6Class(
     add_drawing = function(
       sheet = current_sheet(),
       xml,
-      dims = "A1:H8"
+      dims = NULL
     ) {
       sheet <- private$get_sheet_index(sheet)
+
+      is_chartsheet <- self$is_chartsheet[sheet]
 
       xml <- read_xml(xml, pointer = FALSE)
 
@@ -3624,11 +3669,13 @@ wbWorkbook <- R6::R6Class(
         error("xml needs to be a drawing.")
       }
 
-      grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
       ext   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:ext")
+      grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
+      grFrm <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:graphicFrame")
+      clDt  <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:clientData")
 
       # include rvg graphic from specific position to one or two cell anchor
-      if (!is.null(dims) && xml_node_name(xml, "xdr:wsDr") == "xdr:absoluteAnchor") {
+      if (!is.null(dims) && !is_chartsheet && xml_node_name(xml, "xdr:wsDr") == "xdr:absoluteAnchor") {
 
         twocell <- grepl(":", dims)
 
@@ -3676,7 +3723,8 @@ wbWorkbook <- R6::R6Class(
             anchor,
             ext,
             grpSp,
-            "<xdr:clientData/>"
+            grFrm,
+            clDt
           )
         )
 
@@ -3734,14 +3782,17 @@ wbWorkbook <- R6::R6Class(
     add_chart_xml = function(
       sheet = current_sheet(),
       xml,
-      dims = "A1:H8"
+      dims = NULL
     ) {
 
-      dims_list <- strsplit(dims, ":")[[1]]
-      cols <- col2int(dims_list)
-      rows <- as.numeric(gsub("\\D+", "", dims_list))
-
       sheet <- private$get_sheet_index(sheet)
+      is_chartsheet <- self$is_chartsheet[sheet]
+
+      # chartsheets can not have multiple drawings
+      if (is_chartsheet) {
+        self$drawings[[sheet]]      <- ""
+        self$drawings_rels[[sheet]] <- ""
+      }
 
       next_chart <- NROW(self$charts) + 1
 
@@ -3758,13 +3809,10 @@ wbWorkbook <- R6::R6Class(
 
       len_drawing <- length(xml_node_name(self$drawings[[sheet]], "xdr:wsDr")) + 1L
 
-      from <- c(cols[1] - 1L, rows[1] - 1L)
-      to   <- c(cols[2], rows[2])
-
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet = sheet,
-        xml = drawings(len_drawing, from, to),
+        xml = drawings(len_drawing),
         dims = dims
       )
 
@@ -3780,7 +3828,7 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     add_mschart = function(
       sheet = current_sheet(),
-      dims = "B2:H8",
+      dims = NULL,
       graph
     ) {
 
@@ -3806,7 +3854,7 @@ wbWorkbook <- R6::R6Class(
           add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
       } else {
         self$
-          add_data(x = graph$data_series)$
+          add_data(sheet = sheet, x = graph$data_series)$
           add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
       }
     },
@@ -5946,7 +5994,7 @@ wbWorkbook <- R6::R6Class(
 
       for (i in seq_len(nSheets)) {
 
-        if (self$isChartSheet[i]) {
+        if (self$is_chartsheet[i]) {
           chartSheetDir <- file.path(dirname(xlworksheetsDir), "chartsheets")
           chartSheetRelsDir <-
             file.path(dirname(xlworksheetsDir), "chartsheets", "_rels")
@@ -6058,7 +6106,7 @@ wbWorkbook <- R6::R6Class(
               fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i))
             )
           }
-        } ## end of isChartSheet[i]
+        } ## end of is_chartsheet[i]
       } ## end of loop through nSheets
 
       return(ct)
