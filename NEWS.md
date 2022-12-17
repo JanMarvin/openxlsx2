@@ -8,6 +8,8 @@
 
 * Add `hidden` argument and change the default for `heights` to `NULL` in `set_row_heights()`. This allows changing the row height and/or hiding selected rows. This does not yet provide a way to hide rows per default. [475](https://github.com/JanMarvin/openxlsx2/pull/475)
 
+* Add `wb_add_chartsheet()` for chart sheet support. Along with internal cleanup around chart sheet code. [466](https://github.com/JanMarvin/openxlsx2/pull/466)
+
 ## Fixes
 
 * Fix `wb_freeze_pane()`. This changes the load logic a bit. Previously we put everything into `sheetViews` (the frozen pane is part of this). Though `wb_freeze_pane()` assumes that `freezePane` is used. We now try to be smart and split sheetViews upon loading. [465](https://github.com/JanMarvin/openxlsx2/pull/465)
