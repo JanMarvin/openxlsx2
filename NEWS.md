@@ -18,6 +18,8 @@
 
 * Really fix double xml escaping when saving. [467](https://github.com/JanMarvin/openxlsx2/pull/467)
 
+* Improving the drawing logic. There are some workbooks with various drawings per sheet and previously there were combinations possible that were not reflecting this. [478](https://github.com/JanMarvin/openxlsx2/pull/478)
+
 
 ***************************************************************************
 
