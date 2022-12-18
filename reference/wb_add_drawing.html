@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -39,6 +39,9 @@
     </li>
     <li>
       <a href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
+    </li>
+    <li>
+      <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     </li>
     <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -72,7 +75,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_drawing</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="st">"A1:H8"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_drawing</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -99,7 +102,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"rvg"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## rvg example</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://davidgohel.github.io/rvg" class="external-link">rvg</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/officeverse/" class="external-link">rvg</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xml"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://davidgohel.github.io/rvg/reference/dml_xlsx.html" class="external-link">dml_xlsx</a></span><span class="op">(</span>file <span class="op">=</span>  <span class="va">tmp</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span></span></span>
@@ -125,7 +128,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

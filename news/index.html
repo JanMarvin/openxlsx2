@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -39,6 +39,9 @@
     </li>
     <li>
       <a href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
+    </li>
+    <li>
+      <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     </li>
     <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -66,6 +69,60 @@
       <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.1" id="openxlsx2-041">openxlsx2 0.4.1<a class="anchor" aria-label="anchor" href="#openxlsx2-041"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-4-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-1"></a></h3>
+<ul><li><p>Provide new argument <code>calc_chain</code> to <code><a href="../reference/wb_load.html">wb_load()</a></code>. This is set to <code>FALSE</code> per default, to ignore the calculation chain if it is found. This change only reflects files imported from third party spreadsheet software and should not be visible to the user. <a href="https://github.com/JanMarvin/openxlsx2/pull/461" class="external-link">461</a></p></li>
+<li><p>Tweaks to <code><a href="../reference/wb_data.html">wb_data()</a></code>. Dims is now optional and will select data similar to <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, similar it allows passing down other <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> arguments. Though, it probably is a good idea not be to creative passing down arguments, not all will result in a usable <code>wb_data</code> object. <a href="https://github.com/JanMarvin/openxlsx2/pull/462" class="external-link">462</a></p></li>
+<li><p>Add <code>hidden</code> argument and change the default for <code>heights</code> to <code>NULL</code> in <code>set_row_heights()</code>. This allows changing the row height and/or hiding selected rows. This does not yet provide a way to hide rows per default. <a href="https://github.com/JanMarvin/openxlsx2/pull/475" class="external-link">475</a></p></li>
+<li><p>Add <code><a href="../reference/wb_add_chartsheet.html">wb_add_chartsheet()</a></code> for chart sheet support. Along with internal cleanup around chart sheet code. <a href="https://github.com/JanMarvin/openxlsx2/pull/466" class="external-link">466</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-0-4-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-4-1"></a></h3>
+<ul><li><p>Fix <code><a href="../reference/wb_freeze_pane.html">wb_freeze_pane()</a></code>. This changes the load logic a bit. Previously we put everything into <code>sheetViews</code> (the frozen pane is part of this). Though <code><a href="../reference/wb_freeze_pane.html">wb_freeze_pane()</a></code> assumes that <code>freezePane</code> is used. We now try to be smart and split sheetViews upon loading. <a href="https://github.com/JanMarvin/openxlsx2/pull/465" class="external-link">465</a></p></li>
+<li><p>Previously, adding mschart objects to sheets was only possible if (1) the worksheet already contained a drawing (if the workbook was loaded) or (2) to the last sheet of the workbook. This has now been fixed. Adding mschart objects to any worksheet in the workbook is now possible as intended. <a href="https://github.com/JanMarvin/openxlsx2/pull/458" class="external-link">458</a></p></li>
+<li><p>Really fix double xml escaping when saving. <a href="https://github.com/JanMarvin/openxlsx2/pull/467" class="external-link">467</a></p></li>
+<li><p>Improving the drawing logic. There are some workbooks with various drawings per sheet and previously there were combinations possible that were not reflecting this. <a href="https://github.com/JanMarvin/openxlsx2/pull/478" class="external-link">478</a></p></li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4" id="openxlsx2-04">openxlsx2 0.4<small>2022-12-05</small><a class="anchor" aria-label="anchor" href="#openxlsx2-04"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-4">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4"></a></h3>
+<ul><li><p>Provide <code>rvg</code> support via <code><a href="../reference/wb_add_drawing.html">wb_add_drawing()</a></code>. This allows integrating <code>rvg</code> plots into xlsx files. <a href="https://github.com/JanMarvin/openxlsx2/pull/449" class="external-link">449</a></p></li>
+<li><p>Improve print options. Defaults to printing grid lines, if the worksheet contains grid lines. <a href="https://github.com/JanMarvin/openxlsx2/pull/440" class="external-link">440</a></p></li>
+<li><p>Support reading files with form control. <a href="https://github.com/JanMarvin/openxlsx2/pull/426" class="external-link">426</a></p></li>
+<li><p>Handle input files with chart extensions. <a href="https://github.com/JanMarvin/openxlsx2/pull/443" class="external-link">443</a></p></li>
+<li><p>Improve writing styles to workbook. Previously every cell was checked, this has been changed to check unique styles. <a href="https://github.com/JanMarvin/openxlsx2/pull/423" class="external-link">423</a></p></li>
+<li><p>Implement reading custom file properties. <a href="https://github.com/JanMarvin/openxlsx2/pull/418" class="external-link">418</a></p></li>
+<li><p>Improved <code>add_named_region()</code>. This function includes now various xml options. <a href="https://github.com/JanMarvin/openxlsx2/pull/386" class="external-link">386</a></p></li>
+<li><p>Add … as argument to <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code> and <code><a href="../reference/wb_read.html">wb_read()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/381" class="external-link">381</a></p></li>
+<li><p>Allow reading files with xml namespace created by third party software. <a href="https://github.com/JanMarvin/openxlsx2/pull/405" class="external-link">405</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-0-4">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-4"></a></h3>
+<ul><li><p>Update or remove calculation chain when overwriting formulas in a workbook. <a href="https://github.com/JanMarvin/openxlsx2/pull/438" class="external-link">438</a></p></li>
+<li><p>Fix double xml escaping when saving. <a href="https://github.com/JanMarvin/openxlsx2/pull/435" class="external-link">435</a></p></li>
+<li><p>Minor tweak for POSIXct dates and try to avoid the notorious 29Feb1900. <a href="https://github.com/JanMarvin/openxlsx2/pull/424" class="external-link">424</a></p></li>
+<li><p>Implement reading <code>customXml</code> folder for input files with connection. <a href="https://github.com/JanMarvin/openxlsx2/pull/419" class="external-link">419</a></p></li>
+<li><p>Fixed saving files with <code>&lt;sheetPr/&gt;</code> tag. Previously this was wrapped in a second <code>sheetPr</code> node. This issue occurs with xlsm files only. <a href="https://github.com/JanMarvin/openxlsx2/pull/417" class="external-link">417</a></p></li>
+<li><p>Fixed a case where embedded files were assigned incorrectly in worksheet relationships. This caused corrupted output. <a href="https://github.com/JanMarvin/openxlsx2/pull/403" class="external-link">403</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-0-4">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4"></a></h3>
+<ul><li><p>Remove <code>merge_</code> functions for styles. <a href="https://github.com/JanMarvin/openxlsx2/issues/450" class="external-link">450</a></p></li>
+<li><p>Previously if a loaded workbook contained formulas pointing to cells modified by <code>openxlsx2</code>, these formulas were not updated, once the workbook was opened in spreadsheet software. This is now enforced, unless the option <code>openxlsx2.disableFullCalcOnLoad</code> is set. In this case we would respect the original calculation properties of the workbook.</p></li>
+<li><p><code><a href="../reference/wb_save.html">wb_save()</a></code> no longer returns the <code>path</code> that the object was saved to, but instead the <code>wbWorkbook</code> object, invisibly. This is consistent with the behavior of others wrappers. <a href="https://github.com/JanMarvin/openxlsx2/issues/378" class="external-link">378</a></p></li>
+<li><p>Remove never used <code>all.equal.wbWorkbook()</code>. The idea was nice, but it never developed into something useful.</p></li>
+<li><p>Remove never used <code>wb_chart_sheet()</code> function. <a href="https://github.com/JanMarvin/openxlsx2/pull/399" class="external-link">399</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-0-4">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-0-4"></a></h3>
+<ul><li>Provide <code>set_sheetview()</code> in sheets. Can be used to provide a <code>wbWorkbook</code> function and wrapper in the future. <a href="https://github.com/JanMarvin/openxlsx2/pull/399" class="external-link">399</a>
+</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.1" id="openxlsx2-031">openxlsx2 0.3.1<small>2022-10-31</small><a class="anchor" aria-label="anchor" href="#openxlsx2-031"></a></h2>
 <div class="section level3">
@@ -238,7 +295,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

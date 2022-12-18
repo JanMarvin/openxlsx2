@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -39,6 +39,9 @@
     </li>
     <li>
       <a href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
+    </li>
+    <li>
+      <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     </li>
     <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -72,7 +75,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_set_row_heights</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span>, <span class="va">heights</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_set_row_heights</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -92,11 +101,16 @@
 <dt>heights</dt>
 <dd><p>Heights to set rows to specified in Excel column height units.</p></dd>
 
+
+<dt>hidden</dt>
+<dd><p>Option to hide rows.</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="wb_remove_row_heights.html">wb_remove_row_heights()</a></code></p>
 <p>Other workbook wrappers: 
+<code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
 <code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
 <code><a href="write_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
@@ -144,7 +158,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

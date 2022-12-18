@@ -18,7 +18,7 @@ R6 class for a Workbook"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -40,6 +40,9 @@ R6 class for a Workbook"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
     </li>
     <li>
       <a href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
+    </li>
+    <li>
+      <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     </li>
     <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -186,8 +189,8 @@ character substitutions.</p>
 <dd><p>charts</p></dd>
 
 
-<dt><code>isChartSheet</code></dt>
-<dd><p>isChartSheet</p></dd>
+<dt><code>is_chartsheet</code></dt>
+<dd><p>is_chartsheet</p></dd>
 
 
 <dt><code>customXml</code></dt>
@@ -389,9 +392,9 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-append"><code>wbWorkbook$append()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-append_sheets"><code>wbWorkbook$append_sheets()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-validate_sheet"><code>wbWorkbook$validate_sheet()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_chartsheet"><code>wbWorkbook$add_chartsheet()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_worksheet"><code>wbWorkbook$add_worksheet()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone_worksheet"><code>wbWorkbook$clone_worksheet()</code></a></p></li>
-<li><p><a href="#method-wbWorkbook-addChartSheet"><code>wbWorkbook$addChartSheet()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_data"><code>wbWorkbook$add_data()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_data_table"><code>wbWorkbook$add_data_table()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_formula"><code>wbWorkbook$add_formula()</code></a></p></li>
@@ -554,10 +557,47 @@ is created, not when the Excel files are saved.</p></dd>
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-wbWorkbook-add_chartsheet"></a><div class="section">
+<h3 id="method-add-chartsheet-">Method <code>add_chartsheet()</code><a class="anchor" aria-label="anchor" href="#method-add-chartsheet-"></a></h3>
+<p>Add a chart sheet to the workbook</p><div class="section">
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chartsheet</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>sheet</p></dd>
+
+
+<dt><code>tabColour</code></dt>
+<dd><p>tabColour</p></dd>
+
+
+<dt><code>zoom</code></dt>
+<dd><p>zoom</p></dd>
+
+
+<dt><code>visible</code></dt>
+<dd><p>visible</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
+<p>The <code>wbWorkbook</code> object, invisibly</p>
+</div>
+
 </div><p></p><hr><a id="method-wbWorkbook-add_worksheet"></a><div class="section">
 <h3 id="method-add-worksheet-">Method <code>add_worksheet()</code><a class="anchor" aria-label="anchor" href="#method-add-worksheet-"></a></h3>
 <p>Add worksheet to the <code>wbWorkbook</code> object</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -582,7 +622,7 @@ is created, not when the Excel files are saved.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -662,19 +702,19 @@ is created, not when the Excel files are saved.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
+<h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
 <p>The <code>wbWorkbook</code> object, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorkbook-clone_worksheet"></a><div class="section">
 <h3 id="method-clone-worksheet-">Method <code>clone_worksheet()</code><a class="anchor" aria-label="anchor" href="#method-clone-worksheet-"></a></h3>
 <p>Clone a workbooksheet</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone_worksheet</span><span class="op">(</span>old <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, new <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>old</code></dt>
 <dd><p>name of worksheet to clone</p></dd>
 
@@ -684,34 +724,6 @@ is created, not when the Excel files are saved.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-
-</div><p></p><hr><a id="method-wbWorkbook-addChartSheet"></a><div class="section">
-<h3 id="method-addchartsheet-">Method <code>addChartSheet()</code><a class="anchor" aria-label="anchor" href="#method-addchartsheet-"></a></h3>
-<p>Add a chart sheet to the workbook</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">addChartSheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, tabColour <span class="op">=</span> <span class="cn">NULL</span>, zoom <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
-<dd><p>sheet</p></dd>
-
-
-<dt><code>tabColour</code></dt>
-<dd><p>tabColour</p></dd>
-
-
-<dt><code>zoom</code></dt>
-<dd><p>zoom</p></dd>
-
-
-</dl><p></p></div>
-</div>
-<div class="section">
-<h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
-<p>The <code>wbWorkbook</code> object, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorkbook-add_data"></a><div class="section">
@@ -1301,7 +1313,12 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h3 id="method-set-row-heights-">Method <code>set_row_heights()</code><a class="anchor" aria-label="anchor" href="#method-set-row-heights-"></a></h3>
 <p>Sets a row height for a sheet</p><div class="section">
 <h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_row_heights</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span>, <span class="va">heights</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_row_heights</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">rows</span>,</span>
+<span>  heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -1316,6 +1333,10 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 
 <dt><code>heights</code></dt>
 <dd><p>heights</p></dd>
+
+
+<dt><code>hidden</code></dt>
+<dd><p>hidden</p></dd>
 
 
 </dl><p></p></div>
@@ -2018,7 +2039,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-drawing-">Method <code>add_drawing()</code><a class="anchor" aria-label="anchor" href="#method-add-drawing-"></a></h3>
 <p>Add xml drawing</p><div class="section">
 <h4 id="usage-39">Usage<a class="anchor" aria-label="anchor" href="#usage-39"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_drawing</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="st">"A1:H8"</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_drawing</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2044,7 +2065,7 @@ are repeated across length of <code>cols</code></p></dd>
 
 <p>Add xml chart</p><div class="section">
 <h4 id="usage-40">Usage<a class="anchor" aria-label="anchor" href="#usage-40"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chart_xml</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="st">"A1:H8"</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chart_xml</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2068,7 +2089,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-mschart-">Method <code>add_mschart()</code><a class="anchor" aria-label="anchor" href="#method-add-mschart-"></a></h3>
 <p>Add mschart chart to the workbook</p><div class="section">
 <h4 id="usage-41">Usage<a class="anchor" aria-label="anchor" href="#usage-41"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_mschart</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"B2:H8"</span>, <span class="va">graph</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_mschart</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">graph</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -3389,7 +3410,7 @@ are removed.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
