@@ -1844,6 +1844,27 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 
 #' @export
 #' @rdname workbook_grouping
+#' @examples
+#' ### create grouping levels
+#' wb <- wb_workbook()$
+#'   add_worksheet('Sheet1')$add_data(x = iris)$
+#'   add_worksheet('Sheet2')$add_data(x = iris)
+#'
+#' ## create list of groups
+#' # lines used for grouping (here: species)
+#' grp <- list(
+#'   seq(2, 51),
+#'   seq(52, 101),
+#'   seq(102, 151)
+#' )
+#'
+#' # assign group levels
+#' names(grp) <- c("1","0","1")
+#' wb$group_rows("Sheet1", rows = grp)
+#'
+#' # different grouping
+#' names(grp) <- c("1","2","3")
+#' wb$group_rows("Sheet2", rows = grp)
 wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_rows(

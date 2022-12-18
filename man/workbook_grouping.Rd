@@ -67,6 +67,26 @@ wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
 wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
 wb <- wb_group_cols(wb, "AirPass", 11:13)
 
+### create grouping levels
+wb <- wb_workbook()$
+  add_worksheet('Sheet1')$add_data(x = iris)$
+  add_worksheet('Sheet2')$add_data(x = iris)
+
+## create list of groups
+# lines used for grouping (here: species)
+grp <- list(
+  seq(2, 51),
+  seq(52, 101),
+  seq(102, 151)
+)
+
+# assign group levels
+names(grp) <- c("1","0","1")
+wb$group_rows("Sheet1", rows = grp)
+
+# different grouping
+names(grp) <- c("1","2","3")
+wb$group_rows("Sheet2", rows = grp)
 }
 \seealso{
 Other workbook wrappers: 

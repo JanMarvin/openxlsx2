@@ -2482,6 +2482,13 @@ wbWorkbook <- R6::R6Class(
     group_rows = function(sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
+      if (is.list(rows)) {
+        levels <- unlist(lapply(names(rows), function(x) rep(as.character(x), length(rows[[x]]))))
+        rows <- unlist(rows)
+      } else {
+        levels <- levels %||% rep("1", length(rows))
+      }
+
       if (length(collapsed) > length(rows)) {
         stop("Collapses argument is of greater length than number of rows.")
       }
@@ -2495,8 +2502,6 @@ wbWorkbook <- R6::R6Class(
       }
 
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
-
-      levels <- levels %||% rep("1", length(rows))
 
       # Remove duplicates
       ok <- !duplicated(rows)
