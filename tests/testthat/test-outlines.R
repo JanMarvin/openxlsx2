@@ -29,7 +29,7 @@ test_that("group columns", {
 
   exp <- c(
     "<col min=\"1\" max=\"1\" collapsed=\"1\" hidden=\"1\" outlineLevel=\"1\" width=\"8.43\"/>",
-    "<col min=\"2\" max=\"2\" bestFit=\"1\" collapsed=\"1\" customWidth=\"1\" hidden=\"false\" width=\"18.711\"/>",
+    "<col min=\"2\" max=\"2\" bestFit=\"1\" collapsed=\"1\" customWidth=\"1\" width=\"18.711\"/>",
     "<col min=\"3\" max=\"3\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"18.711\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
@@ -51,34 +51,56 @@ test_that("group rows", {
 
 })
 
-test_that("group rows 2", {
+test_that("grouping levels", {
 
-  wb <- wb_workbook()$
-    add_worksheet('Sheet1')$add_data(x = iris)$
-    add_worksheet('Sheet2')$add_data(x = iris)
+  # create matrix
+  t1 <- AirPassengers
+  t2 <- do.call(cbind, split(t1, cycle(t1)))
+  dimnames(t2) <- dimnames(.preformat.ts(t1))
 
-  ## create list of groups
+  wb <- wb_workbook()
+  wb$add_worksheet("AirPass")
+  wb$add_data("AirPass", t2, rowNames = TRUE)
+
   # lines used for grouping (here: species)
-  grp <- list(
-    seq(2, 51),
-    seq(52, 101),
-    seq(102, 151)
+  grp_rows <- list(
+    "1" = seq(2, 3),
+    "2" = seq(4, 8),
+    "3" = seq(9, 13)
   )
 
-  # assign group levels
-  names(grp) <- c("1", "0", "1")
-  wb$group_rows("Sheet1", rows = grp)
+  # lines used for grouping (here: quarter)
+  grp_cols <- list(
+    "1" = seq(2, 4),
+    "2" = seq(5, 7),
+    "3" = seq(8, 10),
+    "4" = seq(11, 13)
+  )
 
-  # different grouping
-  names(grp) <- c("1", "2", "3")
-  wb$group_rows("Sheet2", rows = grp)
+  wb <- wb_workbook()
+  wb$add_worksheet("AirPass")
+  wb$add_data("AirPass", t2, rowNames = TRUE)
 
-  exp <- c("", "1", "0")
+  wb$createCols("AirPass", 13)
+
+  wb$group_cols("AirPass", cols = grp_cols)
+  wb$group_rows("AirPass", rows = grp_rows)
+
+  exp <- c("", "1", "2", "3")
   got <- unique(wb$worksheets[[1]]$sheet_data$row_attr$outlineLevel)
   expect_equal(exp, got)
 
-  exp <- c("", "1", "2", "3")
-  got <- unique(wb$worksheets[[2]]$sheet_data$row_attr$outlineLevel)
+  exp <- c(
+    "<col min=\"1\" max=\"1\" width=\"8.43\"/>", "<col min=\"2\" max=\"3\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"1\" width=\"8.43\"/>",
+    "<col min=\"4\" max=\"4\" collapsed=\"0\" hidden=\"0\" width=\"8.43\"/>",
+    "<col min=\"5\" max=\"6\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"2\" width=\"8.43\"/>",
+    "<col min=\"7\" max=\"7\" collapsed=\"0\" hidden=\"0\" width=\"8.43\"/>",
+    "<col min=\"8\" max=\"9\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"3\" width=\"8.43\"/>",
+    "<col min=\"10\" max=\"10\" collapsed=\"0\" hidden=\"0\" width=\"8.43\"/>",
+    "<col min=\"11\" max=\"12\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"4\" width=\"8.43\"/>",
+    "<col min=\"13\" max=\"13\" collapsed=\"0\" width=\"8.43\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
   expect_equal(exp, got)
 })
 

@@ -1846,25 +1846,36 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 #' @rdname workbook_grouping
 #' @examples
 #' ### create grouping levels
-#' wb <- wb_workbook()$
-#'   add_worksheet('Sheet1')$add_data(x = iris)$
-#'   add_worksheet('Sheet2')$add_data(x = iris)
-#'
 #' ## create list of groups
 #' # lines used for grouping (here: species)
-#' grp <- list(
-#'   seq(2, 51),
-#'   seq(52, 101),
-#'   seq(102, 151)
+#' grp_rows <- list(
+#'   seq(2, 3),
+#'   seq(4, 8),
+#'   seq(9, 13)
 #' )
 #'
 #' # assign group levels
-#' names(grp) <- c("1","0","1")
-#' wb$group_rows("Sheet1", rows = grp)
+#' names(grp_rows) <- c("1", "2", "3")
 #'
-#' # different grouping
-#' names(grp) <- c("1","2","3")
-#' wb$group_rows("Sheet2", rows = grp)
+#' # lines used for grouping (here: quarter)
+#' grp_cols <- list(
+#'   seq(2, 4),
+#'   seq(5, 7),
+#'   seq(8, 10),
+#'   seq(11, 13)
+#' )
+#'
+#' # assign group levels
+#' names(grp_cols) <- c("1", "2", "3", "4")
+#'
+#' wb <- wb_workbook()
+#' wb$add_worksheet("AirPass")
+#' wb$add_data("AirPass", t2, rowNames = TRUE)
+#'
+#' wb$createCols("AirPass", 13)
+#'
+#' wb$group_cols("AirPass", cols = grp_cols)
+#' wb$group_rows("AirPass", rows = grp_rows)
 wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_rows(
