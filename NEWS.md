@@ -1,5 +1,7 @@
 # openxlsx2 (development version)
 
+* improves file extension checking [477](https://github.com/JanMarvin/openxlsx2/issues/477)
+
 # openxlsx2  0.4.1
 
 ## New features
