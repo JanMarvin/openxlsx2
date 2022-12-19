@@ -1846,27 +1846,18 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 #' @rdname workbook_grouping
 #' @examples
 #' ### create grouping levels
-#' ## create list of groups
-#' # lines used for grouping (here: species)
 #' grp_rows <- list(
-#'   seq(2, 3),
-#'   seq(4, 8),
-#'   seq(9, 13)
+#'   "1" = seq(2, 3),
+#'   "2" = seq(4, 8),
+#'   "3" = seq(9, 13)
 #' )
 #'
-#' # assign group levels
-#' names(grp_rows) <- c("1", "2", "3")
-#'
-#' # lines used for grouping (here: quarter)
 #' grp_cols <- list(
-#'   seq(2, 4),
-#'   seq(5, 7),
-#'   seq(8, 10),
-#'   seq(11, 13)
+#'   "1" = seq(2, 4),
+#'   "2" = seq(5, 7),
+#'   "3" = seq(8, 10),
+#'   "4" = seq(11, 13)
 #' )
-#'
-#' # assign group levels
-#' names(grp_cols) <- c("1", "2", "3", "4")
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("AirPass")
