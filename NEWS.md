@@ -1,3 +1,5 @@
+# openxlsx2 (development version)
+
 # openxlsx2  0.4.1
 
 ## New features
