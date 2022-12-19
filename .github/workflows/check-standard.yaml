@@ -48,18 +48,3 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-
-      - name: Build binary package
-        if: success() && runner.os != 'Linux'
-        run: |
-          dir.create("build")
-          install.packages("devtools")
-          devtools::build(path = "build", binary = TRUE)
-        shell: Rscript {0}
-
-      - name: Upload build results
-        if: success() && runner.os != 'Linux'
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r-${{ matrix.config.r }}-pkg
-          path: build
