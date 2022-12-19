@@ -177,13 +177,7 @@ wb_read <- function(
 #' read_sheet_names(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
 #' @export
 read_sheet_names <- function(file) {
-  if (!file.exists(file)) {
-    stop("file does not exist.")
-  }
-
-  if (grepl("\\.xls$|\\.xlm$", file)) {
-    stop("openxlsx can not read .xls or .xlm files!")
-  }
+  check_xlsx_path(file)
 
   ## create temp dir and unzip
   xmlDir <- temp_dir("_excelXMLRead")
@@ -204,4 +198,25 @@ read_sheet_names <- function(file) {
   sheets <- replaceXMLEntities(sheets)
 
   return(sheets)
+}
+
+check_xlsx_path <- function(x, warn = TRUE) {
+  stopifnot(
+    is.character(x),
+    length(x) == 1,
+    file.exists(x)
+  )
+
+  bad <- stringi::stri_detect_regex(x, "\\.xls[mb]?$", case_insensitive = TRUE)
+  ok <- stringi::stri_detect_regex(x, "\\.xlsx$", case_insensitive = TRUE)
+
+  if (bad) {
+    stop("openxlsx2 cannot read xls, xlsm, or xlsb extensions")
+  }
+
+  if (warn && !ok) {
+    warning("path extension is not xlsx; you may experience problems")
+  }
+
+  invisible()
 }
