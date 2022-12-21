@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.4.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.4.1.9000</span>
       </span>
     </div>
 
@@ -69,6 +69,26 @@
       <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.1" id="openxlsx2-041">openxlsx2 0.4.1<small>2022-12-18</small><a class="anchor" aria-label="anchor" href="#openxlsx2-041"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-4-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-1"></a></h3>
+<ul><li><p>Provide new argument <code>calc_chain</code> to <code><a href="../reference/wb_load.html">wb_load()</a></code>. This is set to <code>FALSE</code> per default, to ignore the calculation chain if it is found. This change only reflects files imported from third party spreadsheet software and should not be visible to the user. <a href="https://github.com/JanMarvin/openxlsx2/pull/461" class="external-link">461</a></p></li>
+<li><p>Tweaks to <code><a href="../reference/wb_data.html">wb_data()</a></code>. Dims is now optional and will select data similar to <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, similar it allows passing down other <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> arguments. Though, it probably is a good idea not be to creative passing down arguments, not all will result in a usable <code>wb_data</code> object. <a href="https://github.com/JanMarvin/openxlsx2/pull/462" class="external-link">462</a></p></li>
+<li><p>Add <code>hidden</code> argument and change the default for <code>heights</code> to <code>NULL</code> in <code>set_row_heights()</code>. This allows changing the row height and/or hiding selected rows. This does not yet provide a way to hide rows per default. <a href="https://github.com/JanMarvin/openxlsx2/pull/475" class="external-link">475</a></p></li>
+<li><p>Add <code><a href="../reference/wb_add_chartsheet.html">wb_add_chartsheet()</a></code> for chart sheet support. Along with internal cleanup around chart sheet code. <a href="https://github.com/JanMarvin/openxlsx2/pull/466" class="external-link">466</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-0-4-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-4-1"></a></h3>
+<ul><li><p>Fix <code><a href="../reference/wb_freeze_pane.html">wb_freeze_pane()</a></code>. This changes the load logic a bit. Previously we put everything into <code>sheetViews</code> (the frozen pane is part of this). Though <code><a href="../reference/wb_freeze_pane.html">wb_freeze_pane()</a></code> assumes that <code>freezePane</code> is used. We now try to be smart and split sheetViews upon loading. <a href="https://github.com/JanMarvin/openxlsx2/pull/465" class="external-link">465</a></p></li>
+<li><p>Previously, adding mschart objects to sheets was only possible if (1) the worksheet already contained a drawing (if the workbook was loaded) or (2) to the last sheet of the workbook. This has now been fixed. Adding mschart objects to any worksheet in the workbook is now possible as intended. <a href="https://github.com/JanMarvin/openxlsx2/pull/458" class="external-link">458</a></p></li>
+<li><p>Really fix double xml escaping when saving. <a href="https://github.com/JanMarvin/openxlsx2/pull/467" class="external-link">467</a></p></li>
+<li><p>Improving the drawing logic. There are some workbooks with various drawings per sheet and previously there were combinations possible that were not reflecting this. <a href="https://github.com/JanMarvin/openxlsx2/pull/478" class="external-link">478</a></p></li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4" id="openxlsx2-04">openxlsx2 0.4<small>2022-12-05</small><a class="anchor" aria-label="anchor" href="#openxlsx2-04"></a></h2>
 <div class="section level3">
