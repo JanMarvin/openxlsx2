@@ -1,5 +1,13 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Improve column and row grouping. It is now possible to group by list, so that you can create various levels of groupings. [486](https://github.com/JanMarvin/openxlsx2/pull/486)
+
+
+***************************************************************************
+
+
 # openxlsx2  0.4.1
 
 ## New features
