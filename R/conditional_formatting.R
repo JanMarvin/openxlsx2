@@ -471,3 +471,37 @@ cf_isnoerror <- function(dxfId, sqref) {
 
   cf_rule
 }
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_isblank <- function(dxfId, sqref) {
+  cf_rule <- sprintf(
+    '<cfRule type="containsBlanks" dxfId="%s" priority="1">
+      <formula>LEN(TRIM(%s))=0</formula>
+    </cfRule>',
+    # cfRule
+    dxfId,
+    # formula
+    sqref
+  )
+
+  cf_rule
+}
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_isnoblank <- function(dxfId, sqref) {
+  cf_rule <- sprintf(
+    '<cfRule type="notContainsBlanks" dxfId="%s" priority="1">
+      <formula>LEN(TRIM(%s))>0</formula>
+    </cfRule>',
+    # cfRule
+    dxfId,
+    # formula
+    sqref
+  )
+
+  cf_rule
+}
