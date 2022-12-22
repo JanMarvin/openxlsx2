@@ -165,6 +165,28 @@
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">10</span>, collapsed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_group_cols</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"AirPass"</span>, <span class="fl">11</span><span class="op">:</span><span class="fl">13</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### create grouping levels</span></span></span>
+<span class="r-in"><span><span class="va">grp_rows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"1"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"2"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"3"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">13</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">grp_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"1"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"2"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">7</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"3"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">10</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"4"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"AirPass"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"AirPass"</span>, <span class="va">t2</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">createCols</span><span class="op">(</span><span class="st">"AirPass"</span>, <span class="fl">13</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">group_cols</span><span class="op">(</span><span class="st">"AirPass"</span>, cols <span class="op">=</span> <span class="va">grp_cols</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">group_rows</span><span class="op">(</span><span class="st">"AirPass"</span>, rows <span class="op">=</span> <span class="va">grp_rows</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
