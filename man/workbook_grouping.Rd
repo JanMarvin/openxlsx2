@@ -67,6 +67,28 @@ wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
 wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
 wb <- wb_group_cols(wb, "AirPass", 11:13)
 
+### create grouping levels
+grp_rows <- list(
+  "1" = seq(2, 3),
+  "2" = seq(4, 8),
+  "3" = seq(9, 13)
+)
+
+grp_cols <- list(
+  "1" = seq(2, 4),
+  "2" = seq(5, 7),
+  "3" = seq(8, 10),
+  "4" = seq(11, 13)
+)
+
+wb <- wb_workbook()
+wb$add_worksheet("AirPass")
+wb$add_data("AirPass", t2, rowNames = TRUE)
+
+wb$createCols("AirPass", 13)
+
+wb$group_cols("AirPass", cols = grp_cols)
+wb$group_rows("AirPass", rows = grp_rows)
 }
 \seealso{
 Other workbook wrappers: 

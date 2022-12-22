@@ -2259,6 +2259,20 @@ wbWorkbook <- R6::R6Class(
     group_cols = function(sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
+      if (is.list(cols)) {
+        levels <- unlist(
+          lapply(names(cols), function(x) {
+            lvls <- rep(as.character(x), length(cols[[x]]))
+            lvls[length(lvls)] <- ""
+            lvls
+          })
+        )
+        cols <- unlist(cols)
+      } else {
+        levels <- levels %||% rep("1", length(cols))
+        levels[length(levels)] <- ""
+      }
+
       if (length(collapsed) > length(cols)) {
         stop("Collapses argument is of greater length than number of cols.")
       }
@@ -2272,7 +2286,6 @@ wbWorkbook <- R6::R6Class(
       }
 
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
-      levels <- levels %||% rep("1", length(cols))
 
       # Remove duplicates
       ok <- !duplicated(cols)
@@ -2294,17 +2307,18 @@ wbWorkbook <- R6::R6Class(
       # get the selection based on the col_attr frame.
 
       # the first n -1 cols get outlineLevel
-      select <- col_attr$min %in% as.character(cols_rev[-1])
+      select <- col_attr$min %in% as.character(cols_rev)
       if (length(select)) {
-        col_attr$outlineLevel[select] <- as.character(levels[-1])
-        col_attr$collapsed[select] <- as.character(as.integer(collapsed[-1]))
-        col_attr$hidden[select] <- as.character(as.integer(collapsed[-1]))
+        col_attr$outlineLevel[select] <- as.character(levels)
+        col_attr$collapsed[select] <- as_binary(collapsed)
+        col_attr$hidden[select] <- as_binary(collapsed)
       }
 
-      # the n-th row gets only collapsed
+      # the n-th col gets only collapsed
       select <- col_attr$min %in% as.character(cols_rev[1])
       if (length(select)) {
-        col_attr$collapsed[select] <- as.character(as.integer(collapsed[1]))
+        col_attr$collapsed[select] <- as_binary(collapsed[1])
+        col_attr$hidden[select] <- ""
       }
 
       self$worksheets[[sheet]]$fold_cols(col_attr)
@@ -2312,7 +2326,9 @@ wbWorkbook <- R6::R6Class(
 
       # check if there are valid outlineLevel in col_attr and assign outlineLevelRow the max outlineLevel (thats in the documentation)
       if (any(col_attr$outlineLevel != "")) {
-        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel), na.rm = TRUE))))
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(
+          self$worksheets[[sheet]]$sheetFormatPr,
+          xml_attributes = c(outlineLevelCol = as.character(max(as.integer(col_attr$outlineLevel), na.rm = TRUE))))
       }
 
       invisible(self)
@@ -2482,6 +2498,20 @@ wbWorkbook <- R6::R6Class(
     group_rows = function(sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
+      if (is.list(rows)) {
+        levels <- unlist(
+          lapply(names(rows), function(x) {
+            lvls <- rep(as.character(x), length(rows[[x]]))
+            lvls[length(lvls)] <- ""
+            lvls
+          })
+        )
+        rows <- unlist(rows)
+      } else {
+        levels <- levels %||% rep("1", length(rows))
+        levels[length(levels)] <- ""
+      }
+
       if (length(collapsed) > length(rows)) {
         stop("Collapses argument is of greater length than number of rows.")
       }
@@ -2495,8 +2525,6 @@ wbWorkbook <- R6::R6Class(
       }
 
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
-
-      levels <- levels %||% rep("1", length(rows))
 
       # Remove duplicates
       ok <- !duplicated(rows)
@@ -2513,24 +2541,27 @@ wbWorkbook <- R6::R6Class(
       # get the selection based on the row_attr frame.
 
       # the first n -1 rows get outlineLevel
-      select <- row_attr$r %in% as.character(rows_rev[-1])
+      select <- row_attr$r %in% as.character(rows_rev)
       if (length(select)) {
-        row_attr$outlineLevel[select] <- as.character(levels[-1])
-        row_attr$collapsed[select] <- as.character(as.integer(collapsed[-1]))
-        row_attr$hidden[select] <- as.character(as.integer(collapsed[-1]))
+        row_attr$outlineLevel[select] <- as.character(levels)
+        row_attr$collapsed[select] <- as_binary(collapsed)
+        row_attr$hidden[select] <- as_binary(collapsed)
       }
 
       # the n-th row gets only collapsed
       select <- row_attr$r %in% as.character(rows_rev[1])
       if (length(select)) {
-        row_attr$collapsed[select] <- as.character(as.integer(collapsed[1]))
+        row_attr$collapsed[select] <- as_binary(collapsed[1])
+        row_attr$hidden[select] <- ""
       }
 
       self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
 
       # check if there are valid outlineLevel in row_attr and assign outlineLevelRow the max outlineLevel (thats in the documentation)
       if (any(row_attr$outlineLevel != "")) {
-        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(self$worksheets[[sheet]]$sheetFormatPr, xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel), na.rm = TRUE))))
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(
+          self$worksheets[[sheet]]$sheetFormatPr,
+          xml_attributes = c(outlineLevelRow = as.character(max(as.integer(row_attr$outlineLevel), na.rm = TRUE))))
       }
 
       invisible(self)
