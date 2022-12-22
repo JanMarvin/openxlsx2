@@ -3346,27 +3346,7 @@ wbWorkbook <- R6::R6Class(
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
           msg <- "When type == 'iconSet', "
 
-          # TODO use inherits() not class()
-          if (!inherits(style, "character")) {
-            stop(msg, "style must be a vector of colours of length 1 or 2.")
-          }
-
-          if (!length(style) %in% 1:2) {
-            stop(msg, "style must be a vector of length 1 or 2.")
-          }
-
-          # if (!is.null(rule)) {
-          #   if (length(rule) != length(style)) {
-          #     stop(msg, "rule and style must have equal lengths.")
-          #   }
-          # }
-
-          if (isFALSE(style)) {
-            stop(msg, "style must be valid colors")
-          }
-
           values <- rule
-          rule <- style
         },
 
         duplicatedValues = {
