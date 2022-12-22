@@ -12,9 +12,10 @@ wb_add_conditional_formatting(
   rows,
   rule = NULL,
   style = NULL,
-  type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
-    "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN",
-    "uniqueValues", "iconSet", "containsErrors", "notContainsErrors"),
+  type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
+    "uniqueValues", "containsErrors", "notContainsErrors", "containsBlanks",
+    "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
+    "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
     5L)
 )
