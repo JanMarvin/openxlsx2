@@ -2259,18 +2259,28 @@ wbWorkbook <- R6::R6Class(
     group_cols = function(sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
+      sPr <- self$worksheets[[sheet]]$sheetPr
+      xml_sumRig <- unlist(xml_attr(sPr, "sheetPr", "outlinePr"))["summaryRight"]
+
+      if (!is.null(xml_sumRig) && xml_sumRig == "0")
+        right <- FALSE
+      else
+        right <- TRUE
+
       if (is.list(cols)) {
         levels <- unlist(
           lapply(names(cols), function(x) {
             lvls <- rep(as.character(x), length(cols[[x]]))
-            lvls[length(lvls)] <- ""
+            collapse_in <- ifelse(right, length(lvls), 1)
+            lvls[collapse_in] <- ""
             lvls
           })
         )
         cols <- unlist(cols)
       } else {
         levels <- levels %||% rep("1", length(cols))
-        levels[length(levels)] <- ""
+        collapse_in <- ifelse(right, length(levels), 1)
+        levels[collapse_in] <- ""
       }
 
       if (length(collapsed) > length(cols)) {
@@ -2285,6 +2295,7 @@ wbWorkbook <- R6::R6Class(
         stop("Invalid rows entered (<= 0).")
       }
 
+      hidden <- all(collapsed == TRUE)
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
 
       # Remove duplicates
@@ -2301,24 +2312,16 @@ wbWorkbook <- R6::R6Class(
         message("worksheet has no columns. please create some with createCols")
       }
 
-      # reverse to make it easier to get the fist
-      cols_rev <- rev(cols)
-
       # get the selection based on the col_attr frame.
 
       # the first n -1 cols get outlineLevel
-      select <- col_attr$min %in% as.character(cols_rev)
+      select <- col_attr$min %in% as.character(cols)
+      collapse_in <- ifelse(right, length(cols), 1)
+      select_n1 <- col_attr$min %in% as.character(cols[-collapse_in])
       if (length(select)) {
         col_attr$outlineLevel[select] <- as.character(levels)
         col_attr$collapsed[select] <- as_binary(collapsed)
-        col_attr$hidden[select] <- as_binary(collapsed)
-      }
-
-      # the n-th col gets only collapsed
-      select <- col_attr$min %in% as.character(cols_rev[1])
-      if (length(select)) {
-        col_attr$collapsed[select] <- as_binary(collapsed[1])
-        col_attr$hidden[select] <- ""
+        col_attr$hidden[select_n1] <- as_binary(hidden)
       }
 
       self$worksheets[[sheet]]$fold_cols(col_attr)
@@ -2498,18 +2501,29 @@ wbWorkbook <- R6::R6Class(
     group_rows = function(sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
       sheet <- private$get_sheet_index(sheet)
 
+      sPr <- self$worksheets[[sheet]]$sheetPr
+      xml_sumBel <- unlist(xml_attr(sPr, "sheetPr", "outlinePr"))["summaryBelow"]
+
+      if (!is.null(xml_sumBel) && xml_sumBel == "0") {
+        below <- FALSE
+      } else {
+        below <- TRUE
+      }
+
       if (is.list(rows)) {
         levels <- unlist(
           lapply(names(rows), function(x) {
             lvls <- rep(as.character(x), length(rows[[x]]))
-            lvls[length(lvls)] <- ""
+            collapse_in <- ifelse(below, length(lvls), 1)
+            lvls[collapse_in] <- ""
             lvls
           })
         )
         rows <- unlist(rows)
       } else {
         levels <- levels %||% rep("1", length(rows))
-        levels[length(levels)] <- ""
+        collapse_in <- ifelse(below, length(levels), 1)
+        levels[collapse_in] <- ""
       }
 
       if (length(collapsed) > length(rows)) {
@@ -2524,6 +2538,7 @@ wbWorkbook <- R6::R6Class(
         stop("Invalid rows entered (<= 0).")
       }
 
+      hidden <- all(collapsed == TRUE)
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
 
       # Remove duplicates
@@ -2536,23 +2551,16 @@ wbWorkbook <- R6::R6Class(
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 
-      rows_rev <- rev(rows)
-
       # get the selection based on the row_attr frame.
 
       # the first n -1 rows get outlineLevel
-      select <- row_attr$r %in% as.character(rows_rev)
+      select <- row_attr$r %in% as.character(rows)
+      collapse_in <- ifelse(below, length(rows), 1)
+      select_n1 <- row_attr$min %in% as.character(rows[-collapse_in])
       if (length(select)) {
         row_attr$outlineLevel[select] <- as.character(levels)
         row_attr$collapsed[select] <- as_binary(collapsed)
-        row_attr$hidden[select] <- as_binary(collapsed)
-      }
-
-      # the n-th row gets only collapsed
-      select <- row_attr$r %in% as.character(rows_rev[1])
-      if (length(select)) {
-        row_attr$collapsed[select] <- as_binary(collapsed[1])
-        row_attr$hidden[select] <- ""
+        row_attr$hidden[select_n1] <- as_binary(hidden)
       }
 
       self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
