@@ -6,6 +6,10 @@
 
 * `writeData()` calls `force(x)` to evaluate the object before options are set ([#264](https://github.com/ycphs/openxlsx/issues/264))
 
+## Breaking changes
+
+* Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
+
 
 ***************************************************************************
 

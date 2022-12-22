@@ -154,8 +154,8 @@ nmfmt_df <- function(x) {
 #'
 #' wb$add_worksheet("sheet4")
 #' write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
-#'
-#' @export
+#' @keywords internal
+#' @noRd
 write_data2 <- function(
     wb,
     sheet,
