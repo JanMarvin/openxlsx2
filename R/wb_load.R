@@ -746,7 +746,11 @@ wb_load <- function(
             )
 
             for (xml_nam in xml_nams) {
-              sheetViews <- xml_rm_child(sheetViews, xml_child = xml_nam, level = "sheetView")
+              sheetViews <- xml_rm_child(
+                sheetViews,
+                xml_child = xml_nam,
+                level = "sheetView"
+              )
             }
 
             wb$worksheets[[i]]$freezePane <- freezePane
