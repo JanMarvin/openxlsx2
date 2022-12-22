@@ -738,8 +738,11 @@ wb_load <- function(
 
             freezePane <- paste0(
               vapply(
-                xml_nams,
-                function(x) xml_node(sheetViews, "sheetViews", "sheetView", x),
+                unique(xml_nams),
+                function(x) {
+                  xml <- xml_node(sheetViews, "sheetViews", "sheetView", x)
+                  paste(xml, collapse = "")
+                },
                 NA_character_
               ),
               collapse = ""
