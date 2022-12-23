@@ -73,8 +73,12 @@
 <h2 class="page-header" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>Improve column and row grouping. It is now possible to group by list, so that you can create various levels of groupings. <a href="https://github.com/JanMarvin/openxlsx2/pull/486" class="external-link">486</a>
-</li>
+<ul><li><p>Improve column and row grouping. It is now possible to group by list, so that you can create various levels of groupings. <a href="https://github.com/JanMarvin/openxlsx2/pull/486" class="external-link">486</a></p></li>
+<li><p><code>writeData()</code> calls <code>force(x)</code> to evaluate the object before options are set (<a href="https://github.com/ycphs/openxlsx/issues/264" class="external-link">#264</a>)</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>Do not export <code>write_data2()</code> anymore. This was used in development in the early stages of the package and should not be used directly anymore.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
