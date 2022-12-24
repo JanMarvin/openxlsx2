@@ -208,6 +208,22 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL,  ...) {
   z
 }
 
+#' unescape xml via piping through pugi
+#' @param x character input
+#' @examples
+#' pugi_unescape("a &amp; b")
+#'
+#' @keywords internal
+#' @noRd
+pugi_unescape <- function(x) {
+  xml_str <- vapply(
+    x,
+    function(y) xml_node_create("a", xml_children = y),
+    NA_character_
+  )
+  xml_value(xml_str, "a", escapes = TRUE)
+}
+
 #' print pugi_xml
 #' @method print pugi_xml
 #' @param x something to print
