@@ -417,7 +417,7 @@ wb_load <- function(
   ## xl\sharedStrings
   if (length(sharedStringsXML)) {
 
-    sst <- read_xml(sharedStringsXML)
+    sst <- read_xml(sharedStringsXML, escapes = TRUE)
     sst_attr <- xml_attr(sst, "sst")
     uniqueCount <- as.character(sst_attr[[1]]["uniqueCount"])
     vals <- xml_node(sst, "sst", "si")
