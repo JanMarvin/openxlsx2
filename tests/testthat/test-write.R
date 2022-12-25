@@ -297,3 +297,26 @@ test_that("NA works as expected", {
   expect_equal(exp, got)
 
 })
+
+test_that("writeData() forces evaluation of x (#264)", {
+
+  x <- format(123.4)
+  df <- data.frame(d = format(123.4))
+  df2 <- data.frame(e = x)
+
+  wb <- wb_workbook()
+  wb$add_worksheet("sheet")
+  wb$add_data(startCol = 1, x = data.frame(a = format(123.4)))
+  wb$add_data(startCol = 2, x = data.frame(b = as.character(123.4)))
+  wb$add_data(startCol = 3, x = data.frame(c = "123.4"))
+  wb$add_data(startCol = 4, x = df)
+  wb$add_data(startCol = 5, x = df2)
+
+  exp <- c(
+    "<is><t>a</t></is>", "<is><t>b</t></is>", "<is><t>c</t></is>",
+    "<is><t>d</t></is>", "<is><t>e</t></is>", "<is><t>123.4</t></is>"
+  )
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
+  expect_equal(exp, got)
+
+})
