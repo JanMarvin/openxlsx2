@@ -123,3 +123,11 @@ test_that("read startCol", {
   expect_equal(LETTERS[6], names(got))
 
 })
+
+test_that("reading with multiple sections in freezePane works", {
+  temp <- temp_xlsx()
+  wb <- wb_workbook()$add_worksheet()
+  wb$worksheets[[1]]$freezePane <- "<pane xSplit=\"7320\" ySplit=\"1640\"/><selection pane=\"topRight\"/><selection pane=\"bottomLeft\"/><selection pane=\"bottomRight\" activeCell=\"C5\" sqref=\"C5\"/>"
+  wb$save(temp)
+  expect_silent(wb <- wb_load(temp))
+})
