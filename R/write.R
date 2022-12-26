@@ -170,7 +170,7 @@ write_data2 <- function(
     removeCellStyle = FALSE,
     na.strings,
     data_table = FALSE,
-    inline_strings = FALSE
+    inline_strings = TRUE
   ) {
 
   if (missing(na.strings)) na.strings <- substitute()
@@ -673,7 +673,7 @@ write_data_table <- function(
     removeCellStyle = FALSE,
     data_table = FALSE,
     na.strings,
-    inline_strings = FALSE
+    inline_strings = TRUE
 ) {
 
   ## Input validating
@@ -1008,7 +1008,7 @@ write_data <- function(
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     na.strings,
-    inline_strings = FALSE
+    inline_strings = TRUE
 ) {
 
   if (missing(na.strings)) na.strings <- substitute()
@@ -1317,7 +1317,7 @@ write_datatable <- function(
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     na.strings,
-    inline_strings = FALSE
+    inline_strings = TRUE
 ) {
 
   if (missing(na.strings)) na.strings <- substitute()

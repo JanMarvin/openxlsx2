@@ -25,7 +25,7 @@ write_datatable(
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
   na.strings,
-  inline_strings = FALSE
+  inline_strings = TRUE
 )
 }
 \arguments{
