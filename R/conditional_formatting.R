@@ -383,7 +383,7 @@ cf_icon_set <- function(
     if (!params$showValue) showValue <- "0"
 
   if (!is.null(params$reverse))
-    if (!params$reverse) reverse <- "1"
+    if (params$reverse) reverse <- "1"
 
   # create cfRule with iconset and cfvo
 
