@@ -4782,28 +4782,28 @@ wbWorkbook <- R6::R6Class(
         top = top_border, top_color = top_color,
         bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
-        right = left_border, right_color = right_color
+        right = right_border, right_color = right_color
       )
 
       top_single <- create_border(
         top = top_border, top_color = top_color,
         bottom = inner_hgrid, bottom_color = inner_hcolor,
         left = left_border, left_color = left_color,
-        right = left_border, right_color = right_color
+        right = right_border, right_color = right_color
       )
 
       middle_single <- create_border(
         top = inner_hgrid, top_color = inner_hcolor,
         bottom = inner_hgrid, bottom_color = inner_hcolor,
         left = left_border, left_color = left_color,
-        right = left_border, right_color = right_color
+        right = right_border, right_color = right_color
       )
 
       bottom_single <- create_border(
         top = inner_hgrid, top_color = inner_hcolor,
         bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
-        right = left_border, right_color = right_color
+        right = right_border, right_color = right_color
       )
 
       left_single <- create_border(
@@ -4838,7 +4838,7 @@ wbWorkbook <- R6::R6Class(
         top = top_border, top_color = top_color,
         bottom = inner_hgrid, bottom_color = inner_hcolor,
         left = inner_vgrid, left_color = inner_vcolor,
-        right = left_border, right_color = right_color
+        right = right_border, right_color = right_color
       )
 
       bottom_left <- create_border(
@@ -4852,7 +4852,7 @@ wbWorkbook <- R6::R6Class(
         top = inner_hgrid, top_color = inner_hcolor,
         bottom = bottom_border, bottom_color = bottom_color,
         left = inner_vgrid, left_color = inner_vcolor,
-        right = left_border, right_color = right_color
+        right = right_border, right_color = right_color
       )
 
       top_center <- create_border(
