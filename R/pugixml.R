@@ -216,11 +216,7 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL,  ...) {
 #' @keywords internal
 #' @noRd
 pugi_unescape <- function(x) {
-  xml_str <- vapply(
-    x,
-    function(y) xml_node_create("a", xml_children = y),
-    NA_character_
-  )
+  xml_str <- paste0("<a>", x, "</a>", collapse = "")
   xml_value(xml_str, "a", escapes = TRUE)
 }
 
