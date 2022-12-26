@@ -295,16 +295,19 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
       if (ColNames & (j == 0)) vtyp = character;
-
       std::string vals = Rcpp::as<std::string>(Rcpp::as<Rcpp::CharacterVector>(z[i])[j]);
       std::string row = std::to_string(startrow);
       std::string col = int_to_col(startcol);
+
+      bool is_na = 0;
+
+      if (!inline_strings) // in sharedStrings case, we have numbers or strings
+        is_na = vals.compare("NA") == 0;
 
       auto pos = (j * m) + i;
 
       // create struct
       celltyp cell;
-
       switch(vtyp)
       {
 
@@ -337,8 +340,13 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
             cell.is  = txt_to_is(vals, 0, 1, 1);
           }
         } else {
-          cell.c_t = "s";
-          cell.v   = vals;
+          if (is_na) {
+            cell.v   = "#N/A";
+            cell.c_t = "e";
+          } else {
+            cell.c_t = "s";
+            cell.v   = vals;
+          }
         }
         break;
       case hyperlink:

@@ -294,7 +294,7 @@ write_data2 <- function(
   }
 
   sel <- which(dc == openxlsx2_celltype[["character"]]) # character
-  if (length(sel)) {
+  if (colNames || length(sel)) {
     if (inline_strings) {
       data[sel][is.na(data[sel])] <- "_openxlsx_NA"
     } else {
@@ -315,9 +315,18 @@ write_data2 <- function(
       }
 
       base_len <- length(attr(wb$sharedStrings, "text"))
-      unis <- unique(unlist(as.vector(data[sel])))
+      # unis <- unique(unlist(as.vector(data[sel])))
+      unis <- stringi::stri_unique(unlist(data[sel]))
+      if (colNames) {
+       unis <- stringi::stri_unique(c(data[1,], unis))
+      }
+      unis <- unis[!is.na(unis)]
 
-      data[sel] <- lapply(data[sel], function(x) match(x, unis) + base_len - 1L)
+      data[sel] <- lapply(data[sel], function(x) as.character(match(x, unis) + base_len - 1L))
+      if (colNames) {
+        sel <- as.character(data[1, ]) %in% unis
+        data[1, sel] <- lapply(data[1, sel], function(x) as.character(match(x, unis) + base_len - 1L))
+      }
 
       new_sst <- vapply(unis, txt_to_si, NA_character_, USE.NAMES = FALSE)
       wb$sharedStrings <- c(as.character(wb$sharedStrings), new_sst)
@@ -351,37 +360,39 @@ write_data2 <- function(
   # values, but contains a string. To avoid issues, set it to the missing
   # value expression
 
-  ## replace NA, NaN, and Inf
-  is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
-  if (length(is_na)) {
-    if (missing(na.strings)) {
-      cc[is_na, "v"]   <- "#N/A"
-      cc[is_na, "c_t"] <- "e"
-      cc[is_na, "is"]  <- ""
-    } else {
-      cc[is_na, "v"]  <- ""
-      if (is.null(na.strings)) {
-        cc[is_na, "c_t"] <- ""
+  if (inline_strings) {
+    ## replace NA, NaN, and Inf
+    is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
+    if (length(is_na)) {
+      if (missing(na.strings)) {
+        cc[is_na, "v"]   <- "#N/A"
+        cc[is_na, "c_t"] <- "e"
         cc[is_na, "is"]  <- ""
-        # do nothing
-      } else if (inline_strings) {
-        cc[is_na, "c_t"] <- "inlineStr"
-        cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
-                                     no_escapes = TRUE, raw = TRUE)
+      } else {
+        cc[is_na, "v"]  <- ""
+        if (is.null(na.strings)) {
+          cc[is_na, "c_t"] <- ""
+          cc[is_na, "is"]  <- ""
+          # do nothing
+        } else {
+          cc[is_na, "c_t"] <- "inlineStr"
+          cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
+                                      no_escapes = TRUE, raw = TRUE)
+        }
       }
     }
-  }
 
-  is_nan <- which(cc$v == "NaN")
-  if (length(is_nan)) {
-    cc[is_nan, "v"]   <- "#VALUE!"
-    cc[is_nan, "c_t"] <- "e"
-  }
+    is_nan <- which(cc$v == "NaN")
+    if (length(is_nan)) {
+      cc[is_nan, "v"]   <- "#VALUE!"
+      cc[is_nan, "c_t"] <- "e"
+    }
 
-  is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
-  if (length(is_inf)) {
-    cc[is_inf, "v"]   <- "#NUM!"
-    cc[is_inf, "c_t"] <- "e"
+    is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+    if (length(is_inf)) {
+      cc[is_inf, "v"]   <- "#NUM!"
+      cc[is_inf, "c_t"] <- "e"
+    }
   }
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
