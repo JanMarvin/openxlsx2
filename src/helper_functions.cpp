@@ -280,7 +280,8 @@ bool is_double(std::string x) {
 // [[Rcpp::export]]
 void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
                   bool ColNames, int32_t start_col, int32_t start_row,
-                  Rcpp::CharacterVector ref, int32_t string_nums) {
+                  Rcpp::CharacterVector ref, int32_t string_nums,
+                  bool inline_strings) {
 
   auto n = z.nrow();
   auto m = z.ncol();
@@ -321,16 +322,23 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         cell.c_t = "b";
         break;
       case character:
-        if (string_nums && is_double(vals)) {
-          cell.v   = vals;
-          if (string_nums == 1) {
-            vtyp = string_num;
+        // check if we write sst or inlineStr
+        if (inline_strings) {
+          // test if string can be written as number
+          if (string_nums && is_double(vals)) {
+            cell.v   = vals;
+            if (string_nums == 1) {
+              vtyp = string_num;
+            } else {
+              vtyp = numeric;
+            }
           } else {
-            vtyp = numeric;
+            cell.c_t = "inlineStr";
+            cell.is  = txt_to_is(vals, 0, 1, 1);
           }
         } else {
-          cell.c_t = "inlineStr";
-          cell.is  = txt_to_is(vals, 0, 1, 1);
+          cell.c_t = "s";
+          cell.v   = vals;
         }
         break;
       case hyperlink:

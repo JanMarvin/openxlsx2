@@ -29,8 +29,8 @@ long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
-wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums) {
-    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums))
+wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, inline_strings) {
+    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, inline_strings))
 }
 
 #' @param colnames a vector of the names of the data frame

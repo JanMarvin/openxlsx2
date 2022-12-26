@@ -24,7 +24,8 @@ write_datatable(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = FALSE
 )
 }
 \arguments{
@@ -73,6 +74,8 @@ A vector of the form c(startCol, startRow)}
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 
 \item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
+
+\item{inline_strings}{write characters as inline strings}
 }
 \description{
 Write to a worksheet and format as an Excel table

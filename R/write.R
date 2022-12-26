@@ -135,6 +135,7 @@ nmfmt_df <- function(x) {
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
+#' @param inline_strings write characters as inline strings
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -168,7 +169,8 @@ write_data2 <- function(
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     na.strings,
-    data_table = FALSE
+    data_table = FALSE,
+    inline_strings = FALSE
   ) {
 
   if (missing(na.strings)) na.strings <- substitute()
@@ -293,7 +295,42 @@ write_data2 <- function(
 
   sel <- which(dc == openxlsx2_celltype[["character"]]) # character
   if (length(sel)) {
-    data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+    if (inline_strings) {
+      data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+    } else {
+      is_na <- is.na(data[sel])
+
+      if (length(is_na)) {
+        if (missing(na.strings)) {
+          # FIXME: do something
+        } else {
+          cc[is_na, "v"]  <- ""
+          if (is.null(na.strings)) {
+            # FIXME: writes empty cell
+            data[sel][is.na(data[sel])] <- ""
+          } else {
+            data[sel][is.na(data[sel])] <- as.character(na.strings)
+          }
+        }
+      }
+
+      base_len <- length(attr(wb$sharedStrings, "text"))
+      unis <- unique(unlist(as.vector(data[sel])))
+
+      data[sel] <- lapply(data[sel], function(x) match(x, unis) + base_len - 1L)
+
+      new_sst <- vapply(unis, txt_to_si, NA_character_, USE.NAMES = FALSE)
+      wb$sharedStrings <- c(as.character(wb$sharedStrings), new_sst)
+      attr(wb$sharedStrings, "uniqueCount") <- length(unis)
+      attr(wb$sharedStrings, "text") <- unis
+
+      if (!any(grepl("sharedStrings", wb$workbook.xml.rels))) {
+        wb$append(
+          "workbook.xml.rels",
+          "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
+        )
+      }
+    }
   }
 
   string_nums <- getOption("openxlsx2.string_nums", default = 0)
@@ -306,7 +343,8 @@ write_data2 <- function(
     start_col = startCol,
     start_row = startRow,
     ref = dims,
-    string_nums = string_nums
+    string_nums = string_nums,
+    inline_strings = inline_strings
   )
 
   # if any v is missing, set typ to 'e'. v is only filled for non character
@@ -326,7 +364,7 @@ write_data2 <- function(
         cc[is_na, "c_t"] <- ""
         cc[is_na, "is"]  <- ""
         # do nothing
-      } else {
+      } else if (inline_strings) {
         cc[is_na, "c_t"] <- "inlineStr"
         cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
                                      no_escapes = TRUE, raw = TRUE)
@@ -598,6 +636,7 @@ write_data2 <- function(
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param inline_strings optional write strings as inline strings
 #' @noRd
 write_data_table <- function(
     wb,
@@ -622,7 +661,8 @@ write_data_table <- function(
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     data_table = FALSE,
-    na.strings
+    na.strings,
+    inline_strings = FALSE
 ) {
 
   ## Input validating
@@ -791,7 +831,8 @@ write_data_table <- function(
     applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle,
     na.strings = na.strings,
-    data_table = data_table
+    data_table = data_table,
+    inline_strings = inline_strings
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -878,6 +919,7 @@ write_data_table <- function(
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param inline_strings write characters as inline strings
 #' @seealso [write_datatable()]
 #' @export write_data
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -954,7 +996,8 @@ write_data <- function(
     name = NULL,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings,
+    inline_strings = FALSE
 ) {
 
   if (missing(na.strings)) na.strings <- substitute()
@@ -982,7 +1025,8 @@ write_data <- function(
     applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle,
     data_table = FALSE,
-    na.strings = na.strings
+    na.strings = na.strings,
+    inline_strings = inline_strings
   )
 }
 
@@ -1148,6 +1192,7 @@ write_formula <- function(
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param inline_strings write characters as inline strings
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.
@@ -1260,7 +1305,8 @@ write_datatable <- function(
     bandedCols = FALSE,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings,
+    inline_strings = FALSE
 ) {
 
   if (missing(na.strings)) na.strings <- substitute()
@@ -1288,6 +1334,7 @@ write_datatable <- function(
     data_table = TRUE,
     applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings = na.strings
+    na.strings = na.strings,
+    inline_strings = inline_strings
   )
 }
