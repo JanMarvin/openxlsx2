@@ -510,12 +510,12 @@ wb_to_df <- function(
   # text in v
   if (any(cc_tab %in% c("str", "e"))) {
     sel <- cc$c_t %in% c("str", "e")
-    cc$val[sel] <- pugi_unescape(cc$v[sel])
+    cc$val[sel] <- replaceXMLEntities(cc$v[sel])
     cc$typ[sel] <- "s"
   }
   if (showFormula) {
     sel <- cc$f != ""
-    cc$val[sel] <- pugi_unescape(cc$f[sel])
+    cc$val[sel] <- replaceXMLEntities(cc$f[sel])
     cc$typ[sel] <- "s"
   }
   # text in t
