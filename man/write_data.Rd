@@ -21,7 +21,8 @@ wb_add_data(
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = TRUE
 )
 
 write_data(

@@ -24,7 +24,8 @@ wb_add_data_table(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = TRUE
 )
 }
 \arguments{
@@ -76,6 +77,8 @@ sep).
 \item{removeCellStyle}{keep the cell style?}
 
 \item{na.strings}{optional}
+
+\item{inline_strings}{write characters as inline strings}
 }
 \description{
 Add data to a worksheet and format as an Excel table

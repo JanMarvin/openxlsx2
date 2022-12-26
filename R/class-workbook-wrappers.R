@@ -91,6 +91,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings na.strings
+#' @param inline_strings write characters as inline strings
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
@@ -114,7 +115,8 @@ wb_add_data <- function(
     sep             = ", ",
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings,
+    inline_strings  = TRUE
 ) {
   assert_workbook(wb)
 
@@ -135,7 +137,8 @@ wb_add_data <- function(
     sep             = sep,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings      = na.strings
+    na.strings      = na.strings,
+    inline_strings  = inline_strings
   )
 }
 
@@ -173,6 +176,7 @@ wb_add_data <- function(
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional
+#' @param inline_strings write characters as inline strings
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,
@@ -201,7 +205,8 @@ wb_add_data_table <- function(
     bandedCols  = FALSE,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings,
+    inline_strings = TRUE
 ) {
   assert_workbook(wb)
   if (missing(na.strings)) na.strings <- substitute()
@@ -225,7 +230,8 @@ wb_add_data_table <- function(
     bandedCols  = bandedCols,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings  = na.strings
+    na.strings  = na.strings,
+    inline_strings = inline_strings
   )
 }
 

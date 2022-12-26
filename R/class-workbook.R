@@ -1023,6 +1023,7 @@ wbWorkbook <- R6::R6Class(
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @param na.strings na.strings
+    #' @param inline_strings write characters as inline strings
     #' @param return The `wbWorkbook` object
     add_data = function(
         sheet           = current_sheet(),
@@ -1039,7 +1040,8 @@ wbWorkbook <- R6::R6Class(
         sep             = ", ",
         applyCellStyle  = TRUE,
         removeCellStyle = FALSE,
-        na.strings
+        na.strings,
+        inline_strings  = TRUE
       ) {
 
       if (missing(na.strings)) na.strings <- substitute()
@@ -1085,6 +1087,7 @@ wbWorkbook <- R6::R6Class(
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @param na.strings na.strings
+    #' @param inline_strings write characters as inline strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
         sheet       = current_sheet(),
@@ -1105,7 +1108,8 @@ wbWorkbook <- R6::R6Class(
         bandedCols  = FALSE,
         applyCellStyle = TRUE,
         removeCellStyle = FALSE,
-        na.strings
+        na.strings,
+        inline_strings = TRUE
     ) {
 
       if (missing(na.strings)) na.strings <- substitute()
@@ -1130,7 +1134,8 @@ wbWorkbook <- R6::R6Class(
         bandedCols  = bandedCols,
         applyCellStyle = applyCellStyle,
         removeCellStyle = removeCellStyle,
-        na.strings  = na.strings
+        na.strings  = na.strings,
+        inline_strings = inline_strings
       )
       invisible(self)
     },
