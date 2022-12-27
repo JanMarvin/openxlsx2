@@ -300,9 +300,15 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       std::string col = int_to_col(startcol);
 
       bool is_na = 0;
+      bool is_null = 0;
 
-      if (!inline_strings) // in sharedStrings case, we have numbers or strings
-        is_na = vals.compare("NA") == 0;
+      if (!inline_strings) {
+        // in sharedStrings case, we have numbers or strings
+        is_na   = vals.compare("NA") == 0;
+        is_null = vals.compare("_openxlsx_NULL") == 0;
+        if (is_na || is_null)
+           vtyp = 4; // characters
+      }
 
       auto pos = (j * m) + i;
 
@@ -343,7 +349,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
           if (is_na) {
             cell.v   = "#N/A";
             cell.c_t = "e";
-          } else {
+          } else if (!is_null) {
             cell.c_t = "s";
             cell.v   = vals;
           }

@@ -414,4 +414,49 @@ test_that("writing as shared string works", {
   expect_true(all(wb$worksheets[[1]]$sheet_data$cc$c_t == "s"))
   expect_true(all(wb$worksheets[[2]]$sheet_data$cc$c_t == "inlineStr"))
 
+  # test missing cases in characters
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c("a", NA, "b", "NA"), dims = "A1", inline_strings = FALSE)$
+    add_worksheet()$
+    add_data(x = c("a", NA, "b", "NA"), dims = "A1", inline_strings = FALSE, na.strings = "N/A")$
+    add_worksheet()$
+    add_data(x = c("a", NA, "b", "NA"), dims = "A1", inline_strings = FALSE, na.strings = NULL)
+
+  exp <- structure(
+    list(c_t = "e", v = "#N/A"),
+    row.names = 2L,
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[1]]$sheet_data$cc[2, c("c_t", "v")]
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(c_t = "s", v = "6"),
+    row.names = 2L,
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[2]]$sheet_data$cc[2, c("c_t", "v")]
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(c_t = "", v = ""),
+    row.names = 2L,
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[3]]$sheet_data$cc[2, c("c_t", "v")]
+  expect_equal(exp, got)
+
+  # test missing cases in numerics
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE)$
+    add_worksheet()$
+    add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE, na.strings = "N/A")$
+    add_worksheet()$
+    add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE, na.strings = NULL)
+
+  expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 3))
+  expect_equal("N/A", wb_to_df(wb, 2)[1, 1])
+
 })

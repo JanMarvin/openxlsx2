@@ -137,8 +137,9 @@ nmfmt_df <- function(x) {
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
 #' @details
-#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
-#' contains this string, the output will be broken.
+#' The strings `"_openxlsx_NA"` and `"_openxlsx_NULL"` are reserved for
+#' `openxlsx2`. If the data frame contains this string, the output will
+#' be broken.
 #'
 #' @examples
 #' # create a workbook and add some sheets
@@ -293,36 +294,49 @@ write_data2 <- function(
     }
   }
 
+  # At this stage we have only a single data frame of characters.
+  # Every operation needs to consider this, otherwise we create
+  # strings for every digit in the data frame.
   sel <- which(dc == openxlsx2_celltype[["character"]]) # character
-  if (colNames || length(sel)) {
+  if (colNames || length(sel) || !inline_strings) {
     if (inline_strings) {
       data[sel][is.na(data[sel])] <- "_openxlsx_NA"
     } else {
-      is_na <- is.na(data[sel])
+      is_na <- is.na(data)
 
       if (length(is_na)) {
         if (missing(na.strings)) {
-          # FIXME: do something
+          # writes open xml #N/A expression
         } else {
-          cc[is_na, "v"]  <- ""
           if (is.null(na.strings)) {
-            # FIXME: writes empty cell
-            data[sel][is.na(data[sel])] <- ""
+            # writes open xml empty cell
+            data[is.na(data)] <- "_openxlsx_NULL"
           } else {
-            data[sel][is.na(data[sel])] <- as.character(na.strings)
+            # writes string
+            # data[is.na(data)] <- as.character(na.strings)
           }
         }
       }
 
       base_len <- length(attr(wb$sharedStrings, "text"))
-      # unis <- unique(unlist(as.vector(data[sel])))
       unis <- stringi::stri_unique(unlist(data[sel]))
       if (colNames) {
        unis <- stringi::stri_unique(c(data[1, ], unis))
       }
-      unis <- unis[!is.na(unis)]
+      if (!missing(na.strings) && !is.null(na.strings)) {
+        unis <- stringi::stri_unique(c(unis, na.strings))
+      }
+      unis <- unis[!(is.na(unis) | unis == "_openxlsx_NULL")]
 
-      data[sel] <- lapply(data[sel], function(x) as.character(match(x, unis) + base_len - 1L))
+      # update all characters
+      data[sel] <- lapply(data[sel], function(x) {
+        mm <- match(x, unis)
+        mm_is_na <- !is.na(mm)
+        x[mm_is_na] <- as.character(mm[mm_is_na] + base_len - 1L)
+        x
+      })
+
+      # update remaining column names
       if (colNames) {
         sel <- as.character(data[1, ]) %in% unis
         data[1, sel] <- lapply(data[1, sel], function(x) as.character(match(x, unis) + base_len - 1L))
@@ -382,6 +396,27 @@ write_data2 <- function(
           cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
                                       no_escapes = TRUE, raw = TRUE)
         }
+      }
+    }
+
+    is_nan <- which(cc$v == "NaN")
+    if (length(is_nan)) {
+      cc[is_nan, "v"]   <- "#VALUE!"
+      cc[is_nan, "c_t"] <- "e"
+    }
+
+    is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+    if (length(is_inf)) {
+      cc[is_inf, "v"]   <- "#NUM!"
+      cc[is_inf, "c_t"] <- "e"
+    }
+  } else {
+    ## replace NA, NaN, and Inf
+    is_na <- which(cc$c_t == "e" | cc$v == "#N/A")
+    if (length(is_na)) {
+      if (!missing(na.strings) && !is.null(na.strings)) {
+        cc[is_na, "c_t"] <- "s"
+        cc[is_na, "v"] <- which(wb$sharedStrings == txt_to_si(as.character(na.strings))) - 1L
       }
     }
 
