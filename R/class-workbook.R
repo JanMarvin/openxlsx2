@@ -1062,7 +1062,8 @@ wbWorkbook <- R6::R6Class(
         sep             = sep,
         applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle,
-        na.strings      = na.strings
+        na.strings      = na.strings,
+        inline_strings  = inline_strings
       )
       invisible(self)
     },
@@ -1090,52 +1091,52 @@ wbWorkbook <- R6::R6Class(
     #' @param inline_strings write characters as inline strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
-        sheet       = current_sheet(),
+        sheet           = current_sheet(),
         x,
-        startCol    = 1,
-        startRow    = 1,
-        dims        = rowcol_to_dims(startRow, startCol),
-        xy          = NULL,
-        colNames    = TRUE,
-        rowNames    = FALSE,
-        tableStyle  = "TableStyleLight9",
-        tableName   = NULL,
-        withFilter  = TRUE,
-        sep         = ", ",
-        firstColumn = FALSE,
-        lastColumn  = FALSE,
-        bandedRows  = TRUE,
-        bandedCols  = FALSE,
-        applyCellStyle = TRUE,
+        startCol        = 1,
+        startRow        = 1,
+        dims            = rowcol_to_dims(startRow, startCol),
+        xy              = NULL,
+        colNames        = TRUE,
+        rowNames        = FALSE,
+        tableStyle      = "TableStyleLight9",
+        tableName       = NULL,
+        withFilter      = TRUE,
+        sep             = ", ",
+        firstColumn     = FALSE,
+        lastColumn      = FALSE,
+        bandedRows      = TRUE,
+        bandedCols      = FALSE,
+        applyCellStyle  = TRUE,
         removeCellStyle = FALSE,
         na.strings,
-        inline_strings = TRUE
+        inline_strings  = TRUE
     ) {
 
       if (missing(na.strings)) na.strings <- substitute()
 
       write_datatable(
-        wb          = self,
-        sheet       = sheet,
-        x           = x,
-        dims        = dims,
-        startCol    = startCol,
-        startRow    = startRow,
-        xy          = xy,
-        colNames    = colNames,
-        rowNames    = rowNames,
-        tableStyle  = tableStyle,
-        tableName   = tableName,
-        withFilter  = withFilter,
-        sep         = sep,
-        firstColumn = firstColumn,
-        lastColumn  = lastColumn,
-        bandedRows  = bandedRows,
-        bandedCols  = bandedCols,
-        applyCellStyle = applyCellStyle,
+        wb              = self,
+        sheet           = sheet,
+        x               = x,
+        dims            = dims,
+        startCol        = startCol,
+        startRow        = startRow,
+        xy              = xy,
+        colNames        = colNames,
+        rowNames        = rowNames,
+        tableStyle      = tableStyle,
+        tableName       = tableName,
+        withFilter      = withFilter,
+        sep             = sep,
+        firstColumn     = firstColumn,
+        lastColumn      = lastColumn,
+        bandedRows      = bandedRows,
+        bandedCols      = bandedCols,
+        applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle,
-        na.strings  = na.strings,
-        inline_strings = inline_strings
+        na.strings      = na.strings,
+        inline_strings  = inline_strings
       )
       invisible(self)
     },
@@ -1163,15 +1164,15 @@ wbWorkbook <- R6::R6Class(
         removeCellStyle = FALSE
     ) {
       write_formula(
-        wb       = self,
-        sheet    = sheet,
-        x        = x,
-        startCol = startCol,
-        startRow = startRow,
-        dims     = dims,
-        array    = array,
-        xy       = xy,
-        applyCellStyle = applyCellStyle,
+        wb              = self,
+        sheet           = sheet,
+        x               = x,
+        startCol        = startCol,
+        startRow        = startRow,
+        dims            = dims,
+        array           = array,
+        xy              = xy,
+        applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle
       )
       invisible(self)

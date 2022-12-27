@@ -321,7 +321,6 @@ test_that("writeData() forces evaluation of x (#264)", {
 
 })
 
-
 test_that("write character numerics with a correct cell style", {
 
   ## current default
@@ -385,5 +384,34 @@ test_that("write character numerics with a correct cell style", {
   exp <- c("4", "2", "4", "4", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$typ
   expect_equal(exp, got)
+})
+
+test_that("writing as shared string works", {
+
+  df <- data.frame(
+    x = letters,
+    y = letters,
+    stringsAsFactors = FALSE
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = letters, dims = "A1", inline_strings = FALSE)$
+    add_data(x = letters, dims = "B1", inline_strings = FALSE)$
+    add_worksheet()$
+    add_data(x = letters, dims = "A1", inline_strings = TRUE)$
+    add_data(x = letters, dims = "B1", inline_strings = TRUE)$
+    add_worksheet()$
+    add_data_table(x = df, inline_strings = FALSE)$
+    add_worksheet()$
+    add_data_table(x = df, inline_strings = TRUE)
+
+  expect_equal(letters, wb_to_df(wb, colNames = FALSE)$A)
+  expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 2))
+  expect_equal(df, wb_to_df(wb, 3), ignore_attr = TRUE)
+  expect_equal(wb_to_df(wb, 3), wb_to_df(wb, 4))
+
+  expect_true(all(wb$worksheets[[1]]$sheet_data$cc$c_t == "s"))
+  expect_true(all(wb$worksheets[[2]]$sheet_data$cc$c_t == "inlineStr"))
 
 })

@@ -328,10 +328,13 @@ write_data2 <- function(
         data[1, sel] <- lapply(data[1, sel], function(x) as.character(match(x, unis) + base_len - 1L))
       }
 
+      # We use this for wb_to_df()
+      old_text <- attr(wb$sharedStrings, "text")
+
       new_sst <- vapply(unis, txt_to_si, NA_character_, USE.NAMES = FALSE)
       wb$sharedStrings <- c(as.character(wb$sharedStrings), new_sst)
       attr(wb$sharedStrings, "uniqueCount") <- length(unis)
-      attr(wb$sharedStrings, "text") <- c(attr(wb$sharedStrings, "text"), unis)
+      attr(wb$sharedStrings, "text") <- c(old_text, unis)
 
       if (!any(grepl("sharedStrings", wb$workbook.xml.rels))) {
         wb$append(
