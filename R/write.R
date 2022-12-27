@@ -318,7 +318,7 @@ write_data2 <- function(
       # unis <- unique(unlist(as.vector(data[sel])))
       unis <- stringi::stri_unique(unlist(data[sel]))
       if (colNames) {
-       unis <- stringi::stri_unique(c(data[1,], unis))
+       unis <- stringi::stri_unique(c(data[1, ], unis))
       }
       unis <- unis[!is.na(unis)]
 
@@ -331,7 +331,7 @@ write_data2 <- function(
       new_sst <- vapply(unis, txt_to_si, NA_character_, USE.NAMES = FALSE)
       wb$sharedStrings <- c(as.character(wb$sharedStrings), new_sst)
       attr(wb$sharedStrings, "uniqueCount") <- length(unis)
-      attr(wb$sharedStrings, "text") <- unis
+      attr(wb$sharedStrings, "text") <- c(attr(wb$sharedStrings, "text"), unis)
 
       if (!any(grepl("sharedStrings", wb$workbook.xml.rels))) {
         wb$append(
