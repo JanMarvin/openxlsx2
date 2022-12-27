@@ -313,3 +313,25 @@ test_that("reading of formControl works", {
   expect_equal(exp, got)
 
 })
+
+test_that("reading xml escapes works", {
+
+  skip_if_offline()
+
+  fl <- "https://github.com/ycphs/openxlsx/files/10032200/sample_data.xlsx"
+  wb <- wb_load(fl)
+
+  df <- wb_to_df(wb)
+
+  exp <- "US & Canada"
+  got <- unique(df$colB)
+  expect_equal(exp, got)
+
+
+  df <- wb_to_df(wb, showFormula = TRUE)
+
+  exp <- c("US & Canada", "B2")
+  got <- df$colB
+  expect_equal(exp, got)
+
+})

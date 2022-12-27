@@ -12,6 +12,8 @@
 
 * Fixed a copy and paste mistake in `add_border()` which used left borders for right borders. [496](https://github.com/JanMarvin/openxlsx2/pull/496)
 
+* Improve XML unescaping. [497](https://github.com/JanMarvin/openxlsx2/pull/497)
+
 ## Breaking changes
 
 * Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
