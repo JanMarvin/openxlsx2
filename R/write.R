@@ -8,7 +8,8 @@
 #' @param cell the cell you want to update in Excel connotation e.g. "A1"
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #'
 #' @keywords internal
 #' @noRd
@@ -133,7 +134,8 @@ nmfmt_df <- function(x) {
 #' @param startCol col to place it
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
@@ -574,7 +576,8 @@ write_data2 <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @noRd
 write_data_table <- function(
     wb,
@@ -852,7 +855,8 @@ write_data_table <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @seealso [write_datatable()]
 #' @export write_data
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -1120,7 +1124,8 @@ write_formula <- function(
 #' @param bandedCols logical. If TRUE, the columns are colour banded
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
 #' hyperlinks, percentages respectively.

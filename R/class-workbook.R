@@ -1008,7 +1008,8 @@ wbWorkbook <- R6::R6Class(
     #' @param sep sep
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-    #' @param na.strings na.strings
+    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param return The `wbWorkbook` object
     add_data = function(
         sheet           = current_sheet(),
@@ -1068,7 +1069,8 @@ wbWorkbook <- R6::R6Class(
     #' @param bandedCols bandedCols
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-    #' @param na.strings na.strings
+    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @returns The `wbWorkbook` object
     add_data_table = function(
         sheet       = current_sheet(),

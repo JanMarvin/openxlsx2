@@ -90,7 +90,8 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings na.strings
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
@@ -169,7 +170,8 @@ wb_add_data <- function(
 #' @param bandedCols logical. If TRUE, the columns are colour banded
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,

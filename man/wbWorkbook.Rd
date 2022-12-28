@@ -596,7 +596,8 @@ add data
 
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
-\item{\code{na.strings}}{na.strings}
+\item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{return}}{The \code{wbWorkbook} object}
 }
@@ -671,7 +672,8 @@ add a data table
 
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
-\item{\code{na.strings}}{na.strings}
+\item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 }
 \if{html}{\out{</div>}}
 }

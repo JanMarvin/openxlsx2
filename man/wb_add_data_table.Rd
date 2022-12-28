@@ -75,7 +75,8 @@ sep).
 
 \item{removeCellStyle}{keep the cell style?}
 
-\item{na.strings}{optional}
+\item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 }
 \description{
 Add data to a worksheet and format as an Excel table

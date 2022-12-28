@@ -76,7 +76,8 @@ write_data(
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 
-\item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
+\item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 }
 \value{
 A clone of `wb``
