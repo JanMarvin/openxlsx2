@@ -5,7 +5,11 @@
 * Improve column and row grouping. It is now possible to group by list, so that you can create various levels of groupings. [486](https://github.com/JanMarvin/openxlsx2/pull/486)
 
 * `writeData()` calls `force(x)` to evaluate the object before options are set ([#264](https://github.com/ycphs/openxlsx/issues/264))
- 
+
+* `na_strings()` is now used as the explicit default value for `na.strings` parameters in exported workbook functions ([#473](https://github.com/ycphs/openxlsx/issues/473))
+
+* waiver functions (i.e., `next_worksheet()`, `current_worksheet()`, and `na_strings()`) are now exports ([#474](https://github.com/ycphs/openxlsx/issues/474))
+
 ## Fixes
 
 * Reading of files with frozen panes and more than one section node was restored. [495](https://github.com/JanMarvin/openxlsx2/pull/495)
@@ -17,7 +21,6 @@
 ## Breaking changes
 
 * Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
-
 
 
 ***************************************************************************
