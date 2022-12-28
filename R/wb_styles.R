@@ -331,6 +331,7 @@ create_font <- function(
 #' @param patternType various default is "none", but also "solid", or a color like "gray125"
 #' @param bgColor hex8 color with alpha, red, green, blue only for patternFill
 #' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
+#' @param ... ...
 #'
 #' @export
 create_fill <- function(
