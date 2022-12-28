@@ -4,7 +4,6 @@ CMD
 Calibri
 Calligra
 Colorscale
-Color
 DL
 Databars
 ExcelDate
@@ -59,8 +58,6 @@ colorLow
 colorMarkers
 colorNegative
 colorSeries
-color
-colors
 conditionalFormatting
 ctrlProps
 customMenu
@@ -253,6 +250,7 @@ threadComments
 threadedComments
 topLeftCell
 totalsRowCount
+unescaping
 ungroup
 unicode
 unprotect
@@ -262,6 +260,7 @@ veryHidden
 vm
 vml
 wb
+wbColour
 wbProcedure
 wbWorkbook
 webPublishItems
