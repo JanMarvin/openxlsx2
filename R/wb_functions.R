@@ -510,7 +510,7 @@ wb_to_df <- function(
   # text in v
   if (any(cc_tab %in% c("str", "e"))) {
     sel <- cc$c_t %in% c("str", "e")
-    cc$val[sel] <- cc$v[sel]
+    cc$val[sel] <- replaceXMLEntities(cc$v[sel])
     cc$typ[sel] <- "s"
   }
   if (showFormula) {
