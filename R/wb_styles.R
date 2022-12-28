@@ -109,6 +109,7 @@ import_styles <- function(x) {
 #' @param top x
 #' @param top_color x
 #' @param vertical x
+#' @param ... x
 #'
 #' @export
 create_border <- function(
@@ -128,8 +129,11 @@ create_border <- function(
     start = "",
     top = NULL,
     top_color = NULL,
-    vertical = ""
+    vertical = "",
+    ...
 ) {
+
+  standardize_colour_names(...)
 
   if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
   if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
@@ -202,6 +206,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' @param sz font size: default "11",
 #' @param u underline
 #' @param vertAlign vertical alignment
+#' @param ... ...
 #' @examples
 #' font <- create_font()
 #' # openxml has the alpha value leading
@@ -227,8 +232,11 @@ create_font <- function(
     strike = "",
     sz = "11",
     u = "",
-    vertAlign = ""
+    vertAlign = "",
+    ...
 ) {
+
+  standardize_colour_names(...)
 
   if (b != "") {
     b <- xml_node_create("b", xml_attributes = c("val" = b))
@@ -329,8 +337,11 @@ create_fill <- function(
     gradientFill = "",
     patternType = "",
     bgColor = NULL,
-    fgColor = NULL
+    fgColor = NULL,
+    ...
 ) {
+
+  standardize_colour_names(...)
 
   if (!is.null(bgColor) && all(bgColor != "")) {
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
@@ -698,6 +709,7 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #' @param text_strike strikeout
 #' @param text_italic italic
 #' @param text_underline underline 1, true, single or double
+#' @param ... ...
 #' @return A dxfs style node
 #' @seealso [wb_add_style()]
 #' @examples
@@ -733,8 +745,11 @@ create_dxfs_style <- function(
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
-    text_underline = NULL # "true" or "double"
+    text_underline = NULL, # "true" or "double"
+    ...
 ) {
+
+  standardize_colour_names(...)
 
   if (is.null(font_color)) font_color <- ""
   if (is.null(font_size)) font_size <- ""

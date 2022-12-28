@@ -2185,6 +2185,7 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
 #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @param ... ...
 #' @seealso [create_border()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
@@ -2221,7 +2222,8 @@ wb_add_border <- function(
     inner_hgrid    = NULL,
     inner_hcolor   = NULL,
     inner_vgrid    = NULL,
-    inner_vcolor   = NULL
+    inner_vcolor   = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_border(
@@ -2238,7 +2240,8 @@ wb_add_border <- function(
     inner_hgrid   = inner_hgrid,
     inner_hcolor  = inner_hcolor,
     inner_vgrid   = inner_vgrid,
-    inner_vcolor  = inner_vcolor
+    inner_vcolor  = inner_vcolor,
+    ...           = ...
   )
 
 }
@@ -2258,6 +2261,7 @@ wb_add_border <- function(
 #' @param gradient_fill a gradient fill xml pattern.
 #' @param every_nth_col which col should be filled
 #' @param every_nth_row which row should be filled
+#' @param ... ...
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_colour(hex = "FFFFFF00"))
@@ -2287,7 +2291,8 @@ wb_add_fill <- function(
     pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,
-    every_nth_row = 1
+    every_nth_row = 1,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_fill(
@@ -2297,7 +2302,8 @@ wb_add_fill <- function(
     pattern       = pattern,
     gradient_fill = gradient_fill,
     every_nth_col = every_nth_col,
-    every_nth_row = every_nth_row
+    every_nth_row = every_nth_row,
+    ...           = ...
   )
 }
 
@@ -2321,6 +2327,7 @@ wb_add_fill <- function(
 #' @param shadow shadow
 #' @param extend extend
 #' @param vertAlign vertical alignment
+#' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
@@ -2346,7 +2353,8 @@ wb_add_font <- function(
       family    = "",
       scheme    = "",
       shadow    = "",
-      vertAlign = ""
+      vertAlign = "",
+      ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
@@ -2367,7 +2375,8 @@ wb_add_font <- function(
     family    = family,
     scheme    = scheme,
     shadow    = shadow,
-    vertAlign = vertAlign
+    vertAlign = vertAlign,
+    ...       = ...
   )
 }
 

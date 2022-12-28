@@ -22,7 +22,8 @@ wb_add_font(
   family = "",
   scheme = "",
   shadow = "",
-  vertAlign = ""
+  vertAlign = "",
+  ...
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ wb_add_font(
 \item{shadow}{shadow}
 
 \item{vertAlign}{vertical alignment}
+
+\item{...}{...}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly

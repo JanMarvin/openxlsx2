@@ -12,7 +12,8 @@ wb_add_fill(
   pattern = "solid",
   gradient_fill = "",
   every_nth_col = 1,
-  every_nth_row = 1
+  every_nth_row = 1,
+  ...
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ wb_add_fill(
 \item{every_nth_col}{which col should be filled}
 
 \item{every_nth_row}{which row should be filled}
+
+\item{...}{...}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly

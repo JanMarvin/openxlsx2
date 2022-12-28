@@ -2237,7 +2237,8 @@ create borders for cell region
   inner_hgrid = NULL,
   inner_hcolor = NULL,
   inner_vgrid = NULL,
-  inner_vcolor = NULL
+  inner_vcolor = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2251,6 +2252,8 @@ create borders for cell region
 \item{\code{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}}{a color, either something openxml knows or some RGB color}
 
 \item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2302,7 +2305,8 @@ provide simple fill function
   pattern = "solid",
   gradient_fill = "",
   every_nth_col = 1,
-  every_nth_row = 1
+  every_nth_row = 1,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2326,6 +2330,8 @@ provide simple fill function
 \item{\code{every_nth_col}}{which col should be filled}
 
 \item{\code{every_nth_row}}{which row should be filled}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2368,7 +2374,8 @@ provide simple font function
   family = "",
   scheme = "",
   shadow = "",
-  vertAlign = ""
+  vertAlign = "",
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2408,6 +2415,8 @@ provide simple font function
 \item{\code{shadow}}{shadow}
 
 \item{\code{vertAlign}}{vertical alignment}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }

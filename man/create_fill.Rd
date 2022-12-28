@@ -8,7 +8,8 @@ create_fill(
   gradientFill = "",
   patternType = "",
   bgColor = NULL,
-  fgColor = NULL
+  fgColor = NULL,
+  ...
 )
 }
 \arguments{

@@ -4799,7 +4799,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
     #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
     #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
-    #' @param ...
+    #' @param ... ...
     #' @seealso create_border
     #' @examples
     #'
@@ -4850,6 +4850,8 @@ wbWorkbook <- R6::R6Class(
 
       # cc <- wb$worksheets[[sheet]]$sheet_data$cc
       # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
+
+      standardize_colour_names(...)
 
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
@@ -5233,6 +5235,7 @@ wbWorkbook <- R6::R6Class(
     #' @param gradient_fill a gradient fill xml pattern.
     #' @param every_nth_col which col should be filled
     #' @param every_nth_row which row should be filled
+    #' @param ... ...
     #' @examples
     #'  # example from the gradient fill manual page
     #'  gradient_fill <- "<gradientFill degree=\"90\">
@@ -5247,7 +5250,8 @@ wbWorkbook <- R6::R6Class(
         pattern       = "solid",
         gradient_fill = "",
         every_nth_col = 1,
-        every_nth_row = 1
+        every_nth_row = 1,
+        ...
     ) {
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
@@ -5263,6 +5267,8 @@ wbWorkbook <- R6::R6Class(
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
+
+      standardize_colour_names(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -5302,6 +5308,7 @@ wbWorkbook <- R6::R6Class(
     #' @param shadow shadow
     #' @param extend extend
     #' @param vertAlign vertical alignment
+    #' @param ... ...
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
     #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
@@ -5324,7 +5331,8 @@ wbWorkbook <- R6::R6Class(
         family    = "",
         scheme    = "",
         shadow    = "",
-        vertAlign = ""
+        vertAlign = "",
+        ...
     ) {
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
@@ -5335,6 +5343,8 @@ wbWorkbook <- R6::R6Class(
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
+
+      standardize_colour_names(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]

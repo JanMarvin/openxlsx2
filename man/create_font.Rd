@@ -19,7 +19,8 @@ create_font(
   strike = "",
   sz = "11",
   u = "",
-  vertAlign = ""
+  vertAlign = "",
+  ...
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ create_font(
 \item{u}{underline}
 
 \item{vertAlign}{vertical alignment}
+
+\item{...}{...}
 }
 \description{
 create font format
