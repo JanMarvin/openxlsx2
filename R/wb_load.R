@@ -417,7 +417,7 @@ wb_load <- function(
   ## xl\sharedStrings
   if (length(sharedStringsXML)) {
 
-    sst <- read_xml(sharedStringsXML)
+    sst <- read_xml(sharedStringsXML, escapes = TRUE)
     sst_attr <- xml_attr(sst, "sst")
     uniqueCount <- as.character(sst_attr[[1]]["uniqueCount"])
     vals <- xml_node(sst, "sst", "si")
@@ -738,15 +738,22 @@ wb_load <- function(
 
             freezePane <- paste0(
               vapply(
-                xml_nams,
-                function(x) xml_node(sheetViews, "sheetViews", "sheetView", x),
+                unique(xml_nams),
+                function(x) {
+                  xml <- xml_node(sheetViews, "sheetViews", "sheetView", x)
+                  paste(xml, collapse = "")
+                },
                 NA_character_
               ),
               collapse = ""
             )
 
             for (xml_nam in xml_nams) {
-              sheetViews <- xml_rm_child(sheetViews, xml_child = xml_nam, level = "sheetView")
+              sheetViews <- xml_rm_child(
+                sheetViews,
+                xml_child = xml_nam,
+                level = "sheetView"
+              )
             }
 
             wb$worksheets[[i]]$freezePane <- freezePane

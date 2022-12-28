@@ -154,8 +154,8 @@ nmfmt_df <- function(x) {
 #'
 #' wb$add_worksheet("sheet4")
 #' write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
-#'
-#' @export
+#' @keywords internal
+#' @noRd
 write_data2 <- function(
     wb,
     sheet,
@@ -602,9 +602,6 @@ write_data_table <- function(
     na.strings = na_strings()
 ) {
 
-  op <- openxlsx2_options()
-  on.exit(options(op), add = TRUE)
-
   ## Input validating
   assert_workbook(wb)
   if (missing(x)) stop("`x` is missing")
@@ -616,6 +613,12 @@ write_data_table <- function(
   assert_class(lastColumn, "logical")
   assert_class(bandedRows, "logical")
   assert_class(bandedCols, "logical")
+
+  # force with globalenv() options
+  x <- force(x)
+
+  op <- openxlsx2_options()
+  on.exit(options(op), add = TRUE)
 
   if (!is.null(dims)) {
     dims <- dims_to_rowcol(dims, as_integer = TRUE)

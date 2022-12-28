@@ -1839,6 +1839,29 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 
 #' @export
 #' @rdname workbook_grouping
+#' @examples
+#' ### create grouping levels
+#' grp_rows <- list(
+#'   "1" = seq(2, 3),
+#'   "2" = seq(4, 8),
+#'   "3" = seq(9, 13)
+#' )
+#'
+#' grp_cols <- list(
+#'   "1" = seq(2, 4),
+#'   "2" = seq(5, 7),
+#'   "3" = seq(8, 10),
+#'   "4" = seq(11, 13)
+#' )
+#'
+#' wb <- wb_workbook()
+#' wb$add_worksheet("AirPass")
+#' wb$add_data("AirPass", t2, rowNames = TRUE)
+#'
+#' wb$createCols("AirPass", 13)
+#'
+#' wb$group_cols("AirPass", cols = grp_cols)
+#' wb$group_rows("AirPass", rows = grp_rows)
 wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_rows(
