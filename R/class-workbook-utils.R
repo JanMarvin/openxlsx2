@@ -154,7 +154,6 @@ validate_cf_params <- function(params) {
 #'
 #' Waiver functions for `openxlsx2` functions
 #'
-#' @param x
 #' @name waivers
 #' @returns An object of class `openxlsx2_waiver`
 NULL
