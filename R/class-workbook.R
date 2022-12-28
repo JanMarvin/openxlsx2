@@ -380,7 +380,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       if (!is.null(tabColour)) {
-        if (inherits(tabColour, "wbColour")) {
+        if (is_wbColour(tabColour)) {
           tabColour <- as.character(tabColour)
         } else {
           tabColour <- validateColour(tabColour, "Invalid tabColour in add_chartsheet.")
@@ -530,7 +530,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(tabColour)) {
-        if (inherits(tabColour, "wbColour")) {
+        if (is_wbColour(tabColour)) {
           tabColour <- as.character(tabColour)
         } else {
           tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
