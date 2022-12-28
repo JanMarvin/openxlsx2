@@ -60,6 +60,7 @@ wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 \code{\link[=wb_remove_col_widths]{wb_remove_col_widths()}}
 
 Other workbook wrappers: 
+\code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},

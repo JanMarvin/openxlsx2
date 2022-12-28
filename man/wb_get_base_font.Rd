@@ -24,6 +24,7 @@ wb_get_base_font(wb)
 }
 \seealso{
 Other workbook wrappers: 
+\code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},

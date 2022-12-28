@@ -11,6 +11,12 @@ test_that("wb_workbook() is a wrapper", {
   )
 })
 
+# wb_add_chartsheet() ------------------------------------------------------
+
+test_that("wb_add_chartsheet() is a wrapper", {
+  expect_wrapper("add_chartsheet", params = list(sheet = "this"))
+})
+
 # wb_add_worksheet() ------------------------------------------------------
 
 test_that("wb_add_worksheet() is a wrapper", {

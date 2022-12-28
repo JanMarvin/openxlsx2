@@ -4,7 +4,7 @@
 \alias{wb_data}
 \title{provide wb_data object as mschart input}
 \usage{
-wb_data(wb, sheet = current_sheet(), dims = "A1")
+wb_data(wb, sheet = current_sheet(), dims, ...)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -12,6 +12,9 @@ wb_data(wb, sheet = current_sheet(), dims = "A1")
 \item{sheet}{a sheet in the workbook either name or index}
 
 \item{dims}{the dimensions}
+
+\item{...}{additional arguments for wb_to_df. Be aware that not every
+argument is valid.}
 }
 \description{
 provide wb_data object as mschart input
@@ -22,4 +25,7 @@ provide wb_data object as mschart input
    wb_add_data(x = mtcars, dims = "B2")
 
  wb_data(wb, 1, dims = "B2:E6")
+}
+\seealso{
+\code{\link[=wb_to_df]{wb_to_df()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}}
 }

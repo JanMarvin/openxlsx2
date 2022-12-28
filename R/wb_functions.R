@@ -829,12 +829,11 @@ wb_set_selected <- function(wb, sheet) {
   wb
 }
 
-#' dummy function to add a chart to an existing workbook
-#' currently only a barplot is possible
+#' Add mschart object to an existing workbook
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear
-#' @param graph mschart graph
+#' @param graph mschart object
 #' @examples
 #' if (requireNamespace("mschart")) {
 #' require(mschart)
@@ -872,17 +871,20 @@ wb_set_selected <- function(wb, sheet) {
 wb_add_mschart <- function(
   wb,
   sheet = current_sheet(),
-  dims = "B2:H8",
+  dims = NULL,
   graph
 ) {
   assert_workbook(wb)
-  wb$clone()$add_mschart(sheet, dims, graph)
+  wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph)
 }
 
 #' provide wb_data object as mschart input
 #' @param wb a workbook
 #' @param sheet a sheet in the workbook either name or index
 #' @param dims the dimensions
+#' @param ... additional arguments for wb_to_df. Be aware that not every
+#' argument is valid.
+#' @seealso [wb_to_df()] [wb_add_mschart()]
 #' @examples
 #'  wb <- wb_workbook() %>%
 #'    wb_add_worksheet() %>%
@@ -890,11 +892,16 @@ wb_add_mschart <- function(
 #'
 #'  wb_data(wb, 1, dims = "B2:E6")
 #' @export
-wb_data <- function(wb, sheet = current_sheet(), dims = "A1") {
+wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   assert_workbook(wb)
-  sheetname <- wb$.__enclos_env__$private$get_sheet_name(sheet)
+  sheetno <- wb_validate_sheet(wb, sheet)
+  sheetname <- wb$get_sheet_names()[[sheetno]]
 
-  z <- wb_to_df(wb, sheet, dims = dims)
+  if (missing(dims)) {
+    dims <- unname(unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension")))
+  }
+
+  z <- wb_to_df(wb, sheet, dims = dims, ...)
   attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE)
   attr(z, "sheet") <- sheetname
 

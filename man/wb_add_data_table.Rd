@@ -89,6 +89,7 @@ output will be broken.
 }
 \seealso{
 Other workbook wrappers: 
+\code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
 \code{\link{wb_add_worksheet}()},

@@ -122,6 +122,7 @@ wb$add_data(sheet = 8, 1:400)
 }
 \seealso{
 Other workbook wrappers: 
+\code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},

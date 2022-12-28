@@ -1,16 +1,24 @@
-# openxlsx2 (in development)
+# openxlsx2  0.4.1
 
 ## New features
 
 * Provide new argument `calc_chain` to `wb_load()`. This is set to `FALSE` per default, to ignore the calculation chain if it is found. This change only reflects files imported from third party spreadsheet software and should not be visible to the user. [461](https://github.com/JanMarvin/openxlsx2/pull/461)
 
+* Tweaks to `wb_data()`. Dims is now optional and will select data similar to `wb_to_df()`, similar it allows passing down other `wb_to_df()` arguments. Though, it probably is a good idea not be to creative passing down arguments, not all will result in a usable `wb_data` object. [462](https://github.com/JanMarvin/openxlsx2/pull/462)
+
+* Add `hidden` argument and change the default for `heights` to `NULL` in `set_row_heights()`. This allows changing the row height and/or hiding selected rows. This does not yet provide a way to hide rows per default. [475](https://github.com/JanMarvin/openxlsx2/pull/475)
+
+* Add `wb_add_chartsheet()` for chart sheet support. Along with internal cleanup around chart sheet code. [466](https://github.com/JanMarvin/openxlsx2/pull/466)
+
 ## Fixes
 
 * Fix `wb_freeze_pane()`. This changes the load logic a bit. Previously we put everything into `sheetViews` (the frozen pane is part of this). Though `wb_freeze_pane()` assumes that `freezePane` is used. We now try to be smart and split sheetViews upon loading. [465](https://github.com/JanMarvin/openxlsx2/pull/465)
 
-* Previously, adding mscharts to sheets was only possible if (1) the worksheet already contained a drawing (if the workbook was loaded) or (2) to the last sheet of the workbook. This has now been fixed. Adding mscharts to any worksheet in the workbook is now possible as intended. [458](https://github.com/JanMarvin/openxlsx2/pull/458)
+* Previously, adding mschart objects to sheets was only possible if (1) the worksheet already contained a drawing (if the workbook was loaded) or (2) to the last sheet of the workbook. This has now been fixed. Adding mschart objects to any worksheet in the workbook is now possible as intended. [458](https://github.com/JanMarvin/openxlsx2/pull/458)
 
 * Really fix double xml escaping when saving. [467](https://github.com/JanMarvin/openxlsx2/pull/467)
+
+* Improving the drawing logic. There are some workbooks with various drawings per sheet and previously there were combinations possible that were not reflecting this. [478](https://github.com/JanMarvin/openxlsx2/pull/478)
 
 
 ***************************************************************************

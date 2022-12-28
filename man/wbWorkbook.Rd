@@ -148,7 +148,7 @@ create_border
 
 \item{\code{charts}}{charts}
 
-\item{\code{isChartSheet}}{isChartSheet}
+\item{\code{is_chartsheet}}{is_chartsheet}
 
 \item{\code{customXml}}{customXml}
 
@@ -254,9 +254,9 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-append}{\code{wbWorkbook$append()}}
 \item \href{#method-wbWorkbook-append_sheets}{\code{wbWorkbook$append_sheets()}}
 \item \href{#method-wbWorkbook-validate_sheet}{\code{wbWorkbook$validate_sheet()}}
+\item \href{#method-wbWorkbook-add_chartsheet}{\code{wbWorkbook$add_chartsheet()}}
 \item \href{#method-wbWorkbook-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
-\item \href{#method-wbWorkbook-addChartSheet}{\code{wbWorkbook$addChartSheet()}}
 \item \href{#method-wbWorkbook-add_data}{\code{wbWorkbook$add_data()}}
 \item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
@@ -415,6 +415,37 @@ validate sheet
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_chartsheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_chartsheet}{}}}
+\subsection{Method \code{add_chartsheet()}}{
+Add a chart sheet to the workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chartsheet(
+  sheet = next_sheet(),
+  tabColour = NULL,
+  zoom = 100,
+  visible = c("true", "false", "hidden", "visible", "veryhidden")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{tabColour}}{tabColour}
+
+\item{\code{zoom}}{zoom}
+
+\item{\code{visible}}{visible}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_worksheet"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_worksheet}{}}}
 \subsection{Method \code{add_worksheet()}}{
@@ -507,30 +538,6 @@ Clone a workbooksheet
 \item{\code{new}}{name of new worksheet to add}
 }
 \if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-addChartSheet"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-addChartSheet}{}}}
-\subsection{Method \code{addChartSheet()}}{
-Add a chart sheet to the workbook
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$addChartSheet(sheet = current_sheet(), tabColour = NULL, zoom = 100)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{sheet}
-
-\item{\code{tabColour}}{tabColour}
-
-\item{\code{zoom}}{zoom}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
@@ -989,7 +996,12 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{set_row_heights()}}{
 Sets a row height for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(sheet = current_sheet(), rows, heights)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(
+  sheet = current_sheet(),
+  rows,
+  heights = NULL,
+  hidden = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1000,6 +1012,8 @@ Sets a row height for a sheet
 \item{\code{rows}}{rows}
 
 \item{\code{heights}}{heights}
+
+\item{\code{hidden}}{hidden}
 }
 \if{html}{\out{</div>}}
 }
@@ -1571,7 +1585,7 @@ Add plot. A wrapper for add_image()
 \subsection{Method \code{add_drawing()}}{
 Add xml drawing
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(sheet = current_sheet(), xml, dims = "A1:H8")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(sheet = current_sheet(), xml, dims = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1595,7 +1609,7 @@ Add xml drawing
 
 Add xml chart
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(sheet = current_sheet(), xml, dims = "A1:H8")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(sheet = current_sheet(), xml, dims = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1616,7 +1630,7 @@ Add xml chart
 \subsection{Method \code{add_mschart()}}{
 Add mschart chart to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mschart(sheet = current_sheet(), dims = "B2:H8", graph)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mschart(sheet = current_sheet(), dims = NULL, graph)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
