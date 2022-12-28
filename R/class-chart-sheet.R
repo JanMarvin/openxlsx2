@@ -27,16 +27,16 @@ wbChartSheet <- R6::R6Class(
 
     #' @description
     #' Create a new workbook chart sheet object
-    #' @param tabColour `character` a tab colour to set
+    #' @param tabColor `character` a tab color to set
     #' @return The `wbChartSheet` object
-    initialize = function(tabColour = tabColour) {
-      if (length(tabColour)) {
-        tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
+    initialize = function(tabColor = tabColor) {
+      if (length(tabColor)) {
+        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColor)
       } else {
-        tabColour <- character()
+        tabColor <- character()
       }
 
-      self$sheetPr     <- tabColour
+      self$sheetPr     <- tabColor
       self$sheetViews  <- character()
       self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$drawing     <- '<drawing r:id=\"rId1\"/>'

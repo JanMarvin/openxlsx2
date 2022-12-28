@@ -65,7 +65,7 @@ require(ggplot2)
 p1 <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
   ggtitle("Distribution of Gas Mileage") +
   geom_density(alpha = I(.5))
-p2 <- ggplot(Orange, aes(x = age, y = circumference, colour = Tree)) +
+p2 <- ggplot(Orange, aes(x = age, y = circumference, color = Tree)) +
   geom_point() + geom_line()
 
 ## Insert currently displayed plot to sheet 1, row 1, column 1

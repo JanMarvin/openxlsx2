@@ -44,13 +44,13 @@ A chart sheet
 \subsection{Method \code{new()}}{
 Create a new workbook chart sheet object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbChartSheet$new(tabColour = tabColour)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbChartSheet$new(tabColor = tabColor)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{tabColour}}{\code{character} a tab colour to set}
+\item{\code{tabColor}}{\code{character} a tab color to set}
 }
 \if{html}{\out{</div>}}
 }

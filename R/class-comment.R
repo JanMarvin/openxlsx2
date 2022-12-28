@@ -66,7 +66,7 @@ wbComment <- R6::R6Class(
           styleShow,
           sprintf("Font name: %s\n", unname(unlist(xml_attr(s[[i]], "font", "name")))), ## Font name
           sprintf("Font size: %s\n", unname(unlist(xml_attr(s[[i]], "font", "sz")))), ## Font size
-          sprintf("Font colour: %s\n", gsub("^FF", "#", unname(unlist(xml_attr(s[[i]], "font", "color"))))), ## Font colour
+          sprintf("Font color: %s\n", gsub("^FF", "#", unname(unlist(xml_attr(s[[i]], "font", "color"))))), ## Font color
           "\n\n"
         )
       }
@@ -111,8 +111,8 @@ wbComment <- R6::R6Class(
 #' write_comment(wb, 1, col = "C", row = 10, comment = c2)
 #'
 #' # write a styled comment with system author
-#' s1 <- create_font(b = "true", color = wb_colour(hex = "FFFF0000"), sz = "12")
-#' s2 <- create_font(color = wb_colour(hex = "FF000000"), sz = "9")
+#' s1 <- create_font(b = "true", color = wb_color(hex = "FFFF0000"), sz = "12")
+#' s2 <- create_font(color = wb_color(hex = "FF000000"), sz = "9")
 #' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
 #' write_comment(wb, 1, col = 6, row = 3, comment = c3)

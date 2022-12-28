@@ -15,7 +15,7 @@ or chains, \code{openxlsx2} allows to break many new ground.
 The openxlsx package uses global options to simplify formatting:
 
 \itemize{
-\item{\code{options("openxlsx2.borderColour" = "black")}}
+\item{\code{options("openxlsx2.borderColor" = "black")}}
 \item{\code{options("openxlsx2.borderStyle" = "thin")}}
 \item{\code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}}
 \item{\code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}}

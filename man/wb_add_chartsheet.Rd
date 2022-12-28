@@ -7,7 +7,7 @@
 wb_add_chartsheet(
   wb,
   sheet = next_sheet(),
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
   ...
@@ -18,8 +18,8 @@ wb_add_chartsheet(
 
 \item{sheet}{A name for the new worksheet}
 
-\item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
-colours()) or a valid hex colour beginning with "#"}
+\item{tabColor}{Color of the worksheet tab. A valid color (belonging to
+colors()) or a valid hex color beginning with "#"}
 
 \item{zoom}{A numeric between 10 and 400. Worksheet zoom level as a
 percentage.}

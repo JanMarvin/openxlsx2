@@ -73,7 +73,7 @@ unlisted parameters are ignored.
 \verb{[style]}\cr A \code{character} vector of valid colors with length \code{2} or \code{3}\cr\cr
 \verb{[rule]}\cr A \code{numeric} vector specifying the range of the databar colors. Must be equal length to \code{style}\cr\cr
 \verb{[params$showValue]}\cr If \code{FALSE} the cell value is hidden. Default \code{TRUE}\cr\cr
-\verb{[params$gradient]}\cr If \code{FALSE} colour gradient is removed. Default \code{TRUE}\cr\cr
+\verb{[params$gradient]}\cr If \code{FALSE} color gradient is removed. Default \code{TRUE}\cr\cr
 \verb{[params$border]}\cr If \code{FALSE} the border around the database is hidden. Default \code{TRUE}
 }
 \item{duplicatedValues/uniqueValues/containsErrors}{

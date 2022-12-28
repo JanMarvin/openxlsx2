@@ -12,7 +12,7 @@
 #'
 #' @import Rcpp
 #' @import R6
-#' @importFrom grDevices bmp col2rgb colours dev.copy dev.list dev.off jpeg png rgb tiff
+#' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg png rgb tiff
 #' @importFrom magrittr %>%
 #' @importFrom stringi stri_c stri_isempty stri_join stri_match stri_match_all_regex stri_order stri_opts_collator stri_rand_strings stri_read_lines stri_replace_all_fixed stri_split_fixed stri_split_regex stri_sub stri_unescape_unicode
 #' @importFrom utils download.file head menu read.csv unzip
@@ -32,7 +32,7 @@
 #' The openxlsx package uses global options to simplify formatting:
 #'
 #' \itemize{
-#'    \item{`options("openxlsx2.borderColour" = "black")`}
+#'    \item{`options("openxlsx2.borderColor" = "black")`}
 #'    \item{`options("openxlsx2.borderStyle" = "thin")`}
 #'    \item{`options("openxlsx2.dateFormat" = "mm/dd/yyyy")`}
 #'    \item{`options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`}
