@@ -9,7 +9,8 @@ wb_set_base_font(
   wb,
   fontSize = 11,
   fontColour = wb_colour(theme = "1"),
-  fontName = "Calibri"
+  fontName = "Calibri",
+  ...
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ wb_set_base_font(
 \item{fontColour}{font colour}
 
 \item{fontName}{Name of a font}
+
+\item{...}{...}
 }
 \description{
 Modify the default font for this workbook

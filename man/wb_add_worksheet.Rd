@@ -24,7 +24,8 @@ wb_add_worksheet(
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 )
 }
 \arguments{
@@ -63,6 +64,8 @@ options("openxlsx2.hdpi" = X)}
 
 \item{vdpi}{Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
 options("openxlsx2.vdpi" = X)}
+
+\item{...}{...}
 }
 \value{
 The \link{wbWorkbook} object \code{wb}

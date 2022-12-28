@@ -354,6 +354,7 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param visible If FALSE, sheet is hidden else visible.
+#' @param ... ...
 #' @details After chartsheet creation a chart must be added to the sheet.
 #' Otherwise the chartsheet will break the workbook.
 #' @family workbook wrappers
@@ -364,14 +365,16 @@ wb_add_chartsheet <- function(
   sheet       = next_sheet(),
   tabColour   = NULL,
   zoom        = 100,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden")
+  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
     sheet       = sheet,
     tabColour   = tabColour,
     zoom        = zoom,
-    visible     = visible
+    visible     = visible,
+    ...         = ...
   )
 }
 
@@ -401,6 +404,7 @@ wb_add_chartsheet <- function(
 #'   options("openxlsx2.hdpi" = X)
 #' @param vdpi Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
 #'   options("openxlsx2.vdpi" = X)
+#' @param ... ...
 #' @details Headers and footers can contain special tags \itemize{
 #'   \item{**&\[Page\]**}{ Page number} \item{**&\[Pages\]**}{ Number of pages}
 #'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
@@ -473,7 +477,8 @@ wb_add_worksheet <- function(
   paperSize   = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_worksheet(
@@ -492,7 +497,8 @@ wb_add_worksheet <- function(
     paperSize   = paperSize,
     orientation = orientation,
     vdpi        = vdpi,
-    hdpi        = hdpi
+    hdpi        = hdpi,
+    ...         = ...
   )
 }
 
@@ -837,6 +843,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @param fontSize font size
 #' @param fontColour font colour
 #' @param fontName Name of a font
+#' @param ... ...
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
 #' @export
@@ -849,12 +856,19 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data("S1", iris)
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
-wb_set_base_font <- function(wb, fontSize = 11, fontColour = wb_colour(theme = "1"), fontName = "Calibri") {
+wb_set_base_font <- function(
+  wb,
+  fontSize = 11,
+  fontColour = wb_colour(theme = "1"),
+  fontName = "Calibri",
+  ...
+) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
     fontSize   = fontSize,
     fontColour = fontColour,
-    fontName   = fontName
+    fontName   = fontName,
+    ...        = ...
   )
 }
 

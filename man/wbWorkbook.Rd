@@ -424,7 +424,8 @@ Add a chart sheet to the workbook
   sheet = next_sheet(),
   tabColour = NULL,
   zoom = 100,
-  visible = c("true", "false", "hidden", "visible", "veryhidden")
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -438,6 +439,8 @@ Add a chart sheet to the workbook
 \item{\code{zoom}}{zoom}
 
 \item{\code{visible}}{visible}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -470,7 +473,8 @@ Add worksheet to the \code{wbWorkbook} object
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -514,6 +518,8 @@ Add worksheet to the \code{wbWorkbook} object
 \item{\code{hdpi}}{hdpi}
 
 \item{\code{vdpi}}{vdpi}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -859,7 +865,8 @@ Get the base font
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
   fontSize = 11,
   fontColour = wb_colour(theme = "1"),
-  fontName = "Calibri"
+  fontName = "Calibri",
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -871,6 +878,8 @@ Get the base font
 \item{\code{fontColour}}{fontColour}
 
 \item{\code{fontName}}{fontName}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
