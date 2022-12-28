@@ -185,4 +185,3 @@ is_waiver <- function(x) {
 is_na_strings <- function(x) {
   is_waiver(x) && isTRUE(x == "na_strings")
 }
-
