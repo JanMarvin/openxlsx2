@@ -685,7 +685,7 @@ test_that("containsBlanks works", {
 
   exp <- c(
     "<cfRule type=\"containsBlanks\" dxfId=\"0\" priority=\"2\"><formula>LEN(TRIM(A1:A4))=0</formula></cfRule>",
-    "<cfRule type=\"containsBlanks\" dxfId=\"1\" priority=\"1\"><formula>LEN(TRIM(B1:B4))=0</formula></cfRule>"
+    "<cfRule type=\"notContainsBlanks\" dxfId=\"1\" priority=\"1\"><formula>LEN(TRIM(B1:B4))>0</formula></cfRule>"
   )
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
   expect_equal(exp, got)
