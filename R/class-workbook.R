@@ -6408,7 +6408,7 @@ wbWorkbook <- R6::R6Class(
         containsBlanks = cf_isblank(dxfId, sqref),
 
         ## notContainsBlanks ----
-        notContainsBlanks = cf_isblank(dxfId, sqref),
+        notContainsBlanks = cf_isnoblank(dxfId, sqref),
 
         # do we have a match.arg() anywhere or will it just be showned in this switch()?
         stop("type `", type, "` is not a valid formatting rule")
