@@ -6474,9 +6474,8 @@ wbWorkbook <- R6::R6Class(
         )
 
       # Failsafe: hidden sheet can not be selected.
-      self$worksheets[[visible_sheet_index]]$set_sheetview(tabSelected = TRUE)
-      if (nSheets > 1) {
-        for (i in setdiff(seq_len(nSheets), visible_sheet_index)) {
+      if (any(hidden)) {
+        for (i in which(hidden)) {
           self$worksheets[[i]]$set_sheetview(tabSelected = FALSE)
         }
       }
