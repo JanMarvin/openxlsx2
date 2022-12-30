@@ -649,8 +649,23 @@ test_that("iconSet works", {
                                   iconSet = "5Arrows",
                                   reverse = TRUE)
                                 )
+  wb$add_data(x = c(100, 50, 30), colNames = FALSE, startCol = 2)
+  wb$add_conditional_formatting(cols = 2,
+                                rows = 1:6,
+                                rule = c(-67, -33, 0, 33, 67),
+                                type = "iconSet",
+                                params = list(
+                                  percent = FALSE,
+                                  iconSet = "5Arrows",
+                                  reverse = FALSE,
+                                  showValue = FALSE
+                                  )
+                                )
 
-  exp <- "<cfRule type=\"iconSet\" priority=\"1\"><iconSet iconSet=\"5Arrows\" reverse=\"1\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>"
+  exp <-c(
+    "<cfRule type=\"iconSet\" priority=\"2\"><iconSet iconSet=\"5Arrows\" reverse=\"1\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>",
+    "<cfRule type=\"iconSet\" priority=\"1\"><iconSet iconSet=\"5Arrows\" showValue=\"0\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>"
+  )
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
   expect_equal(exp, got)
 

@@ -371,10 +371,6 @@ cf_icon_set <- function(
   reverse   <- NULL
   iconSet   <- NULL
 
-  # assume the user knows whats up
-  if (!is.null(params$priority))
-    priority <- params$priority
-
   if (!is.null(params$iconSet))
     iconSet <- params$iconSet
 

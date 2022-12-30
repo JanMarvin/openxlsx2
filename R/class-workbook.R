@@ -3339,10 +3339,8 @@ wbWorkbook <- R6::R6Class(
         },
 
         iconSet = {
-          # - style is a vector of colours of length 2 or 3
-          # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
+          # - rule is the iconSet values
           msg <- "When type == 'iconSet', "
-
           values <- rule
         },
 
