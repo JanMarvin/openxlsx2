@@ -881,26 +881,15 @@ wb_load <- function(
       wb$slicers <- vapply(slicerXML, read_xml, pointer = FALSE,
                            FUN.VALUE = NA_character_, USE.NAMES = FALSE)
 
-      slicersFiles <- lapply(xml, function(x) as.integer(regmatches(x, regexpr("(?<=slicer)[0-9]+(?=\\.xml)", x, perl = TRUE))))
-      inds <- lengths(slicersFiles)
-
       ## worksheet_rels Id for slicer will be rId0
-      k <- 1L
-      for (i in seq_len(nSheets)) {
-
-        ## read in slicer[j].XML sheets into sheet[i]
-        if (inds[i]) {
+      for (i in seq_along(wb$slicers)) {
 
           # this will add slicers to Content_Types. Ergo if worksheets with
           # slicers are removed, the slicer needs to remain in the worksheet
           wb$append(
             "Content_Types",
-            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', k)
+            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', i)
           )
-
-          k <- k + 1L
-
-        }
       }
     }
 
@@ -909,8 +898,10 @@ wb_load <- function(
       wb$slicerCaches <- vapply(slicerCachesXML, read_xml, pointer = FALSE,
                                 FUN.VALUE = NA_character_, USE.NAMES = FALSE)
 
-      wb$append("Content_Types", sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', inds[inds > 0]))
-      wb$append("workbook.xml.rels", sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + inds[inds > 0], inds[inds > 0]))
+      for (i in seq_along(wb$slicerCaches)) {
+        wb$append("Content_Types", sprintf('<Override PartName="/xl/slicerCaches/slicerCache%s.xml" ContentType="application/vnd.ms-excel.slicerCache+xml"/>', i))
+        wb$append("workbook.xml.rels", sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + i, i))
+      }
 
       # get extLst object. select the slicerCaches and replace it
       ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")

@@ -368,3 +368,17 @@ test_that("vml target is updated on load", {
   expect_equal(exp, got)
 
 })
+
+test_that("sheetView is not switched", {
+
+  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+
+  exp <- "<sheetViews><sheetView workbookViewId=\"0\"/></sheetViews>"
+  got <- wb$worksheets[[1]]$sheetViews
+  expect_equal(exp, got)
+
+  exp <- "<sheetViews><sheetView tabSelected=\"1\" workbookViewId=\"0\"/></sheetViews>"
+  got <- wb$worksheets[[2]]$sheetViews
+  expect_equal(exp, got)
+
+})

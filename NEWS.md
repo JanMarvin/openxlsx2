@@ -5,7 +5,9 @@
 * Improve column and row grouping. It is now possible to group by list, so that you can create various levels of groupings. [486](https://github.com/JanMarvin/openxlsx2/pull/486)
 
 * `writeData()` calls `force(x)` to evaluate the object before options are set ([#264](https://github.com/ycphs/openxlsx/issues/264))
- 
+
+* `tabColour` in `wb_add_worksheet()` now allows passing `wb_colour()`. [500](https://github.com/JanMarvin/openxlsx2/pull/500)
+
 ## Fixes
 
 * Reading of files with frozen panes and more than one section node was restored. [495](https://github.com/JanMarvin/openxlsx2/pull/495)
@@ -14,10 +16,13 @@
 
 * Improve XML unescaping. [497](https://github.com/JanMarvin/openxlsx2/pull/497)
 
+* Fix reading and saving workbooks with multiple slicers per sheet. [505](https://github.com/JanMarvin/openxlsx2/pull/505)
+
+* Fix tab selection always selecting the first sheet since #303. [506](https://github.com/JanMarvin/openxlsx2/pull/506)
+
 ## Breaking changes
 
 * Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
-
 
 
 ***************************************************************************

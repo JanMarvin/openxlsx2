@@ -649,6 +649,7 @@ test_that("iconSet works", {
                                   iconSet = "5Arrows",
                                   reverse = TRUE)
                                 )
+
   wb$add_data(x = c(100, 50, 30), colNames = FALSE, startCol = 2)
   wb$add_conditional_formatting(cols = 2,
                                 rows = 1:6,
@@ -662,7 +663,7 @@ test_that("iconSet works", {
                                   )
                                 )
 
-  exp <-c(
+  exp <- c(
     "<cfRule type=\"iconSet\" priority=\"2\"><iconSet iconSet=\"5Arrows\" reverse=\"1\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>",
     "<cfRule type=\"iconSet\" priority=\"1\"><iconSet iconSet=\"5Arrows\" showValue=\"0\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>"
   )
