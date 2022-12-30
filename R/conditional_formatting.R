@@ -356,3 +356,148 @@ cf_bottom_n <- function(dxfId, values) {
 
   cf_rule
 }
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_icon_set <- function(
+    values,
+    params
+  ) {
+
+  type      <- ifelse(params$percent, "percent", "num")
+  priority  <- "1"
+  showValue <- NULL
+  reverse   <- NULL
+  iconSet   <- NULL
+
+  if (!is.null(params$iconSet))
+    iconSet <- params$iconSet
+
+  # only if non default
+  if (!is.null(params$showValue))
+    if (!params$showValue) showValue <- "0"
+
+  if (!is.null(params$reverse))
+    if (params$reverse) reverse <- "1"
+
+  # create cfRule with iconset and cfvo
+
+  cf_rule <- xml_node_create(
+    "cfRule",
+    xml_attributes = c(
+      type     = "iconSet",
+      priority = priority
+    )
+  )
+
+  iconset <- xml_node_create(
+    "iconSet",
+    xml_attributes = c(
+      iconSet   = iconSet,
+      showValue = showValue,
+      reverse   = reverse
+    )
+  )
+
+  for (i in seq_along(values)) {
+    iconset <- xml_add_child(
+      iconset,
+      xml_child = c(
+        xml_node_create(
+          "cfvo",
+          xml_attributes = c(
+            type = type,
+            val = values[i]
+          )
+        )
+      )
+    )
+  }
+
+  # return
+  xml_add_child(
+    cf_rule,
+    xml_child = iconset
+  )
+}
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_unique_values <- function(dxfId) {
+  cf_rule <- sprintf(
+    '<cfRule type="uniqueValues" dxfId="%s" priority="1"/>',
+    dxfId
+  )
+
+  cf_rule
+}
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_iserror <- function(dxfId, sqref) {
+  cf_rule <- sprintf(
+    '<cfRule type="containsErrors" dxfId="%s" priority="1">
+      <formula>ISERROR(%s)</formula>
+    </cfRule>',
+    # cfRule
+    dxfId,
+    # formula
+    sqref
+  )
+
+  cf_rule
+}
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_isnoerror <- function(dxfId, sqref) {
+  cf_rule <- sprintf(
+    '<cfRule type="notContainsErrors" dxfId="%s" priority="1">
+      <formula>NOT(ISERROR(%s))</formula>
+    </cfRule>',
+    # cfRule
+    dxfId,
+    # formula
+    sqref
+  )
+
+  cf_rule
+}
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_isblank <- function(dxfId, sqref) {
+  cf_rule <- sprintf(
+    '<cfRule type="containsBlanks" dxfId="%s" priority="1">
+      <formula>LEN(TRIM(%s))=0</formula>
+    </cfRule>',
+    # cfRule
+    dxfId,
+    # formula
+    sqref
+  )
+
+  cf_rule
+}
+
+#' @rdname cf_rules
+#' @keywords internal
+#' @noRd
+cf_isnoblank <- function(dxfId, sqref) {
+  cf_rule <- sprintf(
+    '<cfRule type="notContainsBlanks" dxfId="%s" priority="1">
+      <formula>LEN(TRIM(%s))>0</formula>
+    </cfRule>',
+    # cfRule
+    dxfId,
+    # formula
+    sqref
+  )
+
+  cf_rule
+}

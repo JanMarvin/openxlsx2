@@ -182,7 +182,7 @@ wb$add_conditional_formatting(
   "containsText",
   cols = 1,
   rows = 1:10,
-  type = "contains",
+  type = "containsText",
   rule = "A"
 )
 wb$add_worksheet("notcontainsText")

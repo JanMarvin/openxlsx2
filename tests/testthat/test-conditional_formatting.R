@@ -621,3 +621,89 @@ test_that("create dxfs style without font family and size", {
   expect_equal(exp, got)
 
 })
+
+test_that("uniqueValues works", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_data(x = c(1:4, 1:2), colNames = FALSE)
+  wb$add_conditional_formatting(cols = 1, rows = 1:6, type = "uniqueValues")
+
+  exp <- "<cfRule type=\"uniqueValues\" dxfId=\"0\" priority=\"1\"/>"
+  got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
+  expect_equal(exp, got)
+
+})
+
+test_that("iconSet works", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_data(x = c(100, 50, 30), colNames = FALSE)
+  wb$add_conditional_formatting(cols = 1,
+                                rows = 1:6,
+                                rule = c(-67, -33, 0, 33, 67),
+                                type = "iconSet",
+                                params = list(
+                                  percent = FALSE,
+                                  iconSet = "5Arrows",
+                                  reverse = TRUE)
+                                )
+
+  wb$add_data(x = c(100, 50, 30), colNames = FALSE, startCol = 2)
+  wb$add_conditional_formatting(cols = 2,
+                                rows = 1:6,
+                                rule = c(-67, -33, 0, 33, 67),
+                                type = "iconSet",
+                                params = list(
+                                  percent = FALSE,
+                                  iconSet = "5Arrows",
+                                  reverse = FALSE,
+                                  showValue = FALSE
+                                  )
+                                )
+
+  exp <- c(
+    "<cfRule type=\"iconSet\" priority=\"2\"><iconSet iconSet=\"5Arrows\" reverse=\"1\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>",
+    "<cfRule type=\"iconSet\" priority=\"1\"><iconSet iconSet=\"5Arrows\" showValue=\"0\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>"
+  )
+  got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
+  expect_equal(exp, got)
+
+})
+
+test_that("containsErrors works", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_data(x = c(1, NaN), colNames = FALSE)
+  wb$add_data(x = c(1, NaN), colNames = FALSE, startCol = 2)
+  wb$add_conditional_formatting(cols = 1, rows = 1:3, type = "containsErrors")
+  wb$add_conditional_formatting(col = 2, rows = 1:3, type = "notContainsErrors")
+
+  exp <- c(
+    "<cfRule type=\"containsErrors\" dxfId=\"0\" priority=\"2\"><formula>ISERROR(A1:A3)</formula></cfRule>",
+    "<cfRule type=\"notContainsErrors\" dxfId=\"1\" priority=\"1\"><formula>NOT(ISERROR(B1:B3))</formula></cfRule>"
+  )
+  got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
+  expect_equal(exp, got)
+
+})
+
+test_that("containsBlanks works", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_data(x = c(NA, 1, 2, ''), colNames = FALSE, na.strings = NULL)
+  wb$add_data(x = c(NA, 1, 2, ''), colNames = FALSE, na.strings = NULL, startCol = 2)
+  wb$add_conditional_formatting(cols = 1, rows = 1:4, type = "containsBlanks")
+  wb$add_conditional_formatting(cols = 2, rows = 1:4, type = "notContainsBlanks")
+
+  exp <- c(
+    "<cfRule type=\"containsBlanks\" dxfId=\"0\" priority=\"2\"><formula>LEN(TRIM(A1:A4))=0</formula></cfRule>",
+    "<cfRule type=\"notContainsBlanks\" dxfId=\"1\" priority=\"1\"><formula>LEN(TRIM(B1:B4))>0</formula></cfRule>"
+  )
+  got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
+  expect_equal(exp, got)
+
+})

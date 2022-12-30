@@ -3212,8 +3212,13 @@ wbWorkbook <- R6::R6Class(
         rule  = NULL,
         style = NULL,
         # TODO add vector of possible values
-        type = c("expression", "colorScale", "dataBar", "duplicatedValues",
-                 "containsText", "notContainsText", "beginsWith", "endsWith",
+        type = c("expression", "colorScale",
+                 "dataBar", "iconSet",
+                 "duplicatedValues", "uniqueValues",
+                 "containsErrors", "notContainsErrors",
+                 "containsBlanks", "notContainsBlanks",
+                 "containsText", "notContainsText",
+                 "beginsWith", "endsWith",
                  "between", "topN", "bottomN"),
         params = list(
           showValue = TRUE,
@@ -3243,7 +3248,9 @@ wbWorkbook <- R6::R6Class(
       params <- validate_cf_params(params)
       values <- NULL
 
-      sel <- c("expression", "duplicatedValues", "containsText", "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN")
+      sel <- c("expression", "duplicatedValues", "containsText", "notContainsText", "beginsWith",
+               "endsWith", "between", "topN", "bottomN", "uniqueValues", "iconSet",
+               "containsErrors", "notContainsErrors", "containsBlanks", "notContainsBlanks")
       if (is.null(style) && type %in% sel) {
         smp <- random_string()
         style <- create_dxfs_style(font_color = wb_colour(hex = "FF9C0006"), bgFill = wb_colour(hex = "FFFFC7CE"))
@@ -3339,10 +3346,56 @@ wbWorkbook <- R6::R6Class(
           rule <- style
         },
 
+        iconSet = {
+          # - rule is the iconSet values
+          msg <- "When type == 'iconSet', "
+          values <- rule
+        },
+
         duplicatedValues = {
           # type == "duplicatedValues"
           # - style is a Style object
           # - rule is ignored
+
+          rule <- style
+        },
+
+        uniqueValues = {
+          # type == "uniqueValues"
+          # - style is a Style object
+          # - rule is ignored
+
+          rule <- style
+        },
+
+        containsBlanks = {
+          # - style is Style object
+          # - rule is cell to check for errors
+          msg <- "When type == 'containsBlanks', "
+
+          rule <- style
+        },
+
+        notContainsBlanks = {
+          # - style is Style object
+          # - rule is cell to check for errors
+          msg <- "When type == 'notContainsBlanks', "
+
+          rule <- style
+        },
+
+        containsErrors = {
+          # - style is Style object
+          # - rule is cell to check for errors
+          msg <- "When type == 'containsErrors', "
+
+          rule <- style
+        },
+
+        notContainsErrors = {
+          # - style is Style object
+          # - rule is cell to check for errors
+          msg <- "When type == 'notContainsErrors', "
 
           rule <- style
         },
@@ -6336,6 +6389,24 @@ wbWorkbook <- R6::R6Class(
 
         ## bottomN ----
         bottomN = cf_bottom_n(dxfId, values),
+
+        ## uniqueValues ---
+        uniqueValues = cf_unique_values(dxfId),
+
+        ## iconSet ----
+        iconSet = cf_icon_set(values, params),
+
+        ## containsErrors ----
+        containsErrors = cf_iserror(dxfId, sqref),
+
+        ## notContainsErrors ----
+        notContainsErrors = cf_isnoerror(dxfId, sqref),
+
+        ## containsBlanks ----
+        containsBlanks = cf_isblank(dxfId, sqref),
+
+        ## notContainsBlanks ----
+        notContainsBlanks = cf_isnoblank(dxfId, sqref),
 
         # do we have a match.arg() anywhere or will it just be showned in this switch()?
         stop("type `", type, "` is not a valid formatting rule")
