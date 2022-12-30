@@ -97,7 +97,8 @@ import_styles <- function(x) {
 #' @param outline x
 #' @param bottom X
 #' @param bottom_color X
-#' @param diagonal X
+#' @param diagonal_up X
+#' @param diagonal_down X
 #' @param diagonal_color X,
 #' @param end x,
 #' @param horizontal x
@@ -117,7 +118,8 @@ create_border <- function(
     outline = "",
     bottom = NULL,
     bottom_color = NULL,
-    diagonal = NULL,
+    diagonal_up = NULL,
+    diagonal_down = NULL,
     diagonal_color = NULL,
     end = "",
     horizontal = "",
@@ -138,11 +140,14 @@ create_border <- function(
   if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
 
   # excel dies on style=\"\"
-  if (!is.null(left))     left     <- c(style = left)
-  if (!is.null(right))    right    <- c(style = right)
-  if (!is.null(top))      top      <- c(style = top)
-  if (!is.null(bottom))   bottom   <- c(style = bottom)
-  if (!is.null(diagonal)) diagonal <- c(style = diagonal)
+  if (!is.null(left))          left     <- c(style = left)
+  if (!is.null(right))         right    <- c(style = right)
+  if (!is.null(top))           top      <- c(style = top)
+  if (!is.null(bottom))        bottom   <- c(style = bottom)
+  # there is only one diagonal: up or down
+  diagonal <- NULL
+  if (!is.null(diagonal_down)) diagonal <- c(style = diagonal_down)
+  if (!is.null(diagonal_up))   diagonal <- c(style = diagonal_up)
 
   left     <- xml_node_create("left", xml_children = left_color, xml_attributes = left)
   right    <- xml_node_create("right", xml_children = right_color, xml_attributes = right)
@@ -157,15 +162,26 @@ create_border <- function(
     right = right,
     top = top,
     bottom = bottom,
-    diagonalDown = diagonalDown,
-    diagonalUp = diagonalUp,
     diagonal = diagonal,
     vertical = vertical,
     horizontal = horizontal,
-    outline = outline, # unknown position in border
+    outline = outline, # attribute
     stringsAsFactors = FALSE
   )
   border <- write_border(df_border)
+  if (!is.null(diagonal_up) || !is.null(diagonal_down)) {
+
+    if (!is.null(diagonal_up))   diagonal_up   <- "1"
+    if (!is.null(diagonal_down)) diagonal_down <- "1"
+
+    border <- xml_attr_mod(
+      border,
+      xml_attributes = c(
+        diagonalDown = diagonal_down,
+        diagonalUp = diagonal_up
+      )
+    )
+  }
 
   return(border)
 }

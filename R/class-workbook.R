@@ -4758,20 +4758,23 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
     #' @return The `wbWorksheetObject`, invisibly
     add_border = function(
-      sheet         = current_sheet(),
-      dims          = "A1",
-      bottom_color  = wb_colour(hex = "FF000000"),
-      left_color    = wb_colour(hex = "FF000000"),
-      right_color   = wb_colour(hex = "FF000000"),
-      top_color     = wb_colour(hex = "FF000000"),
-      bottom_border = "thin",
-      left_border   = "thin",
-      right_border  = "thin",
-      top_border    = "thin",
-      inner_hgrid   = NULL,
-      inner_hcolor  = NULL,
-      inner_vgrid   = NULL,
-      inner_vcolor  = NULL
+      sheet          = current_sheet(),
+      dims           = "A1",
+      bottom_color   = wb_colour(hex = "FF000000"),
+      left_color     = wb_colour(hex = "FF000000"),
+      right_color    = wb_colour(hex = "FF000000"),
+      top_color      = wb_colour(hex = "FF000000"),
+      bottom_border  = "thin",
+      left_border    = "thin",
+      right_border   = "thin",
+      top_border     = "thin",
+      inner_hgrid    = NULL,
+      inner_hcolor   = NULL,
+      inner_vgrid    = NULL,
+      inner_vcolor   = NULL,
+      diagonal_down  = NULL,
+      diagonal_up    = NULL,
+      diagonal_color = NULL
     ) {
 
       # TODO merge styles and if a style is already present, only add the newly
@@ -4790,7 +4793,9 @@ wbWorkbook <- R6::R6Class(
         top = top_border, top_color = top_color,
         bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
-        right = right_border, right_color = right_color
+        right = right_border, right_color = right_color,
+        diagonal_up = diagonal_up, diagonal_down = diagonal_down,
+        diagonal_color = diagonal_color
       )
 
       top_single <- create_border(
