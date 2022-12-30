@@ -6,7 +6,7 @@
 
 * `writeData()` calls `force(x)` to evaluate the object before options are set ([#264](https://github.com/ycphs/openxlsx/issues/264))
 
-* `tabColour` in `wb_add_worksheet()` now allows passing `wb_colour()`. [500](https://github.com/JanMarvin/openxlsx2/pull/500)
+* `tabColor` in `wb_add_worksheet()` now allows passing `wb_color()`. [500](https://github.com/JanMarvin/openxlsx2/pull/500)
 
 ## Fixes
 
