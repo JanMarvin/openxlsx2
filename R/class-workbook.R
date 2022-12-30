@@ -380,7 +380,11 @@ wbWorkbook <- R6::R6Class(
       )
 
       if (!is.null(tabColour)) {
-        tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
+        if (is_wbColour(tabColour)) {
+          tabColour <- as.character(tabColour)
+        } else {
+          tabColour <- validateColour(tabColour, "Invalid tabColour in add_chartsheet.")
+        }
       }
 
       if (!is.numeric(zoom)) {
@@ -526,7 +530,11 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(tabColour)) {
-        tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
+        if (is_wbColour(tabColour)) {
+          tabColour <- as.character(tabColour)
+        } else {
+          tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
+        }
       }
 
       if (!is.numeric(zoom)) {
