@@ -42,7 +42,7 @@
 #'    \item{`options("openxlsx2.sheet.default_name" = "Sheet")`}
 #'    \item{`options("openxlsx2.rightToLeft" = NULL)`}
 #' }
-#'
+#' By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou'). However, both spellings are supported. So where the documentation uses a 'color', the function should also accept a 'color'. However, this is not indicated by the autocompletion.
 #'
 #' ## Authors and contributions
 #'

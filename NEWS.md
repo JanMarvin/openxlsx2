@@ -24,6 +24,8 @@
 
 * Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
 
+* Only documentation: `openxlsx2` defaults to american english 'color' from now on. Though, we fully support the previous 'colour'. Users will not have to adjust their code. Our documentation only lists `color`, but you can pass `colour` just the same way you used to. [501](https://github.com/JanMarvin/openxlsx2/pull/501) [502](https://github.com/JanMarvin/openxlsx2/pull/502)
+
 
 ***************************************************************************
 
