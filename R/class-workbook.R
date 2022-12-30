@@ -4772,9 +4772,9 @@ wbWorkbook <- R6::R6Class(
       inner_hcolor   = NULL,
       inner_vgrid    = NULL,
       inner_vcolor   = NULL,
-      diagonal_down  = NULL,
-      diagonal_up    = NULL,
-      diagonal_color = NULL
+      diagonal       = NULL,
+      diagonal_color = NULL,
+      diagonal_type  = NULL
     ) {
 
       # TODO merge styles and if a style is already present, only add the newly
@@ -4794,8 +4794,8 @@ wbWorkbook <- R6::R6Class(
         bottom = bottom_border, bottom_color = bottom_color,
         left = left_border, left_color = left_color,
         right = right_border, right_color = right_color,
-        diagonal_up = diagonal_up, diagonal_down = diagonal_down,
-        diagonal_color = diagonal_color
+        diagonal = diagonal, diagonal_color = diagonal_color,
+        diagonal_type = diagonal_type
       )
 
       top_single <- create_border(

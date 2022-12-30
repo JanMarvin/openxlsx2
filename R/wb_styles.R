@@ -92,14 +92,11 @@ import_styles <- function(x) {
 #' @description
 #' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
 #' Border colors are of the following type: c(rgb="FF000000")
-#' @param diagonalDown x
-#' @param diagonalUp x
-#' @param outline x
 #' @param bottom X
 #' @param bottom_color X
 #' @param diagonal_up X
-#' @param diagonal_down X
 #' @param diagonal_color X,
+#' @param diagonal_type c("up", "down")
 #' @param end x,
 #' @param horizontal x
 #' @param left x
@@ -113,14 +110,12 @@ import_styles <- function(x) {
 #'
 #' @export
 create_border <- function(
-    diagonalDown = "",
-    diagonalUp = "",
-    outline = "",
+    # outline = "",
     bottom = NULL,
     bottom_color = NULL,
-    diagonal_up = NULL,
-    diagonal_down = NULL,
+    diagonal = NULL,
     diagonal_color = NULL,
+    diagonal_type = NULL,
     end = "",
     horizontal = "",
     left = NULL,
@@ -140,14 +135,11 @@ create_border <- function(
   if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
 
   # excel dies on style=\"\"
-  if (!is.null(left))          left     <- c(style = left)
-  if (!is.null(right))         right    <- c(style = right)
-  if (!is.null(top))           top      <- c(style = top)
-  if (!is.null(bottom))        bottom   <- c(style = bottom)
-  # there is only one diagonal: up or down
-  diagonal <- NULL
-  if (!is.null(diagonal_down)) diagonal <- c(style = diagonal_down)
-  if (!is.null(diagonal_up))   diagonal <- c(style = diagonal_up)
+  if (!is.null(left))     left     <- c(style = left)
+  if (!is.null(right))    right    <- c(style = right)
+  if (!is.null(top))      top      <- c(style = top)
+  if (!is.null(bottom))   bottom   <- c(style = bottom)
+  if (!is.null(diagonal)) diagonal <- c(style = diagonal)
 
   left     <- xml_node_create("left", xml_children = left_color, xml_attributes = left)
   right    <- xml_node_create("right", xml_children = right_color, xml_attributes = right)
@@ -165,14 +157,17 @@ create_border <- function(
     diagonal = diagonal,
     vertical = vertical,
     horizontal = horizontal,
-    outline = outline, # attribute
     stringsAsFactors = FALSE
   )
   border <- write_border(df_border)
-  if (!is.null(diagonal_up) || !is.null(diagonal_down)) {
 
-    if (!is.null(diagonal_up))   diagonal_up   <- "1"
-    if (!is.null(diagonal_down)) diagonal_down <- "1"
+  # diagonalDown, diagonalUp and outline (only draw border around cell region)
+  # are attributes to the border node
+  if (length(diagonal_type)) {
+    diagonal_down <- NULL
+    diagonal_up   <- NULL
+    if (any(diagonal_type == "down")) diagonal_down <- "1"
+    if (any(diagonal_type == "up"))   diagonal_up   <- "1"
 
     border <- xml_attr_mod(
       border,
