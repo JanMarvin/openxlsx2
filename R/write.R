@@ -398,7 +398,7 @@ write_data2 <- function(
       wb$add_font(
           sheet = sheetno,
           dim = dim_sel,
-          color = wb_colour(hex = "FF0000FF"),
+          color = wb_color(hex = "FF0000FF"),
           name = wb_get_base_font(wb)$name$val,
           u = "single"
       )
@@ -570,8 +570,8 @@ write_data2 <- function(
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are colour banded
-#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedRows logical. If TRUE, rows are color banded
+#' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param bandedCols logical. If TRUE, a data table is created
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
@@ -1122,8 +1122,8 @@ write_formula <- function(
 #'
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are colour banded
-#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedRows logical. If TRUE, rows are color banded
+#' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)

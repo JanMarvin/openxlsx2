@@ -8,7 +8,7 @@
 wb_set_base_font(
   wb,
   fontSize = 11,
-  fontColour = wb_colour(theme = "1"),
+  fontColor = wb_color(theme = "1"),
   fontName = "Calibri",
   ...
 )
@@ -18,7 +18,7 @@ wb_set_base_font(
 
 \item{fontSize}{font size}
 
-\item{fontColour}{font colour}
+\item{fontColor}{font color}
 
 \item{fontName}{Name of a font}
 
@@ -36,8 +36,8 @@ with Arial. Base font is black, size 11, Calibri.
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 ## modify base font to size 10 Arial Narrow in red
-wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 
 wb$add_data("S1", iris)
-wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
+wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
 }

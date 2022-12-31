@@ -328,14 +328,14 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Add a chart sheet to the workbook
     #' @param sheet sheet
-    #' @param tabColour tabColour
+    #' @param tabColor tabColor
     #' @param zoom zoom
     #' @param visible visible
     #' @param ... ...
     #' @return The `wbWorkbook` object, invisibly
     add_chartsheet = function(
       sheet     = next_sheet(),
-      tabColour = NULL,
+      tabColor  = NULL,
       zoom      = 100,
       visible   = c("true", "false", "hidden", "visible", "veryhidden"),
       ...
@@ -381,12 +381,12 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      standardise_color_names(...)
-      if (!is.null(tabColour)) {
-        if (is_wbColour(tabColour)) {
-          tabColour <- as.character(tabColour)
+      standardize_color_names(...)
+      if (!is.null(tabColor)) {
+        if (is_wbColour(tabColor)) {
+          tabColor <- as.character(tabColor)
         } else {
-          tabColour <- validateColour(tabColour, "Invalid tabColour in add_chartsheet.")
+          tabColor <- validateColor(tabColor, "Invalid tabColor in add_chartsheet.")
         }
       }
 
@@ -405,7 +405,7 @@ wbWorkbook <- R6::R6Class(
 
       self$append("worksheets",
         wbChartSheet$new(
-          tabColour   = tabColour
+          tabColor = tabColor
         )
       )
 
@@ -462,7 +462,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param gridLines gridLines
     #' @param rowColHeaders rowColHeaders
-    #' @param tabColour tabColour
+    #' @param tabColor tabColor
     #' @param zoom zoom
     #' @param header header
     #' @param footer footer
@@ -484,7 +484,7 @@ wbWorkbook <- R6::R6Class(
       sheet       = next_sheet(),
       gridLines   = TRUE,
       rowColHeaders = TRUE,
-      tabColour   = NULL,
+      tabColor    = NULL,
       zoom        = 100,
       header      = NULL,
       footer      = NULL,
@@ -534,12 +534,12 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "gridLines must be a logical of length 1.")
       }
 
-      standardise_color_names(...)
-      if (!is.null(tabColour)) {
-        if (is_wbColour(tabColour)) {
-          tabColour <- as.character(tabColour)
+      standardize_color_names(...)
+      if (!is.null(tabColor)) {
+        if (is_wbColour(tabColor)) {
+          tabColor <- as.character(tabColor)
         } else {
-          tabColour <- validateColour(tabColour, "Invalid tabColour in add_worksheet.")
+          tabColor <- validateColor(tabColor, "Invalid tabColor in add_worksheet.")
         }
       }
 
@@ -639,7 +639,7 @@ wbWorkbook <- R6::R6Class(
       ## append to worksheets list
       self$append("worksheets",
         wbWorksheet$new(
-          tabColour   = tabColour,
+          tabColor   = tabColor,
           oddHeader   = oddHeader,
           oddFooter   = oddFooter,
           evenHeader  = evenHeader,
@@ -1974,7 +1974,7 @@ wbWorkbook <- R6::R6Class(
       baseFont <- self$styles_mgr$styles$fonts[[1]]
 
       sz     <- unlist(xml_attr(baseFont, "font", "sz"))
-      colour <- unlist(xml_attr(baseFont, "font", "color"))
+      color <- unlist(xml_attr(baseFont, "font", "color"))
       name   <- unlist(xml_attr(baseFont, "font", "name"))
 
       if (length(sz[[1]]) == 0) {
@@ -1983,10 +1983,10 @@ wbWorkbook <- R6::R6Class(
         sz <- as.list(sz)
       }
 
-      if (length(colour[[1]]) == 0) {
-        colour <- list("rgb" = "#000000")
+      if (length(color[[1]]) == 0) {
+        color <- list("rgb" = "#000000")
       } else {
-        colour <- as.list(colour)
+        color <- as.list(color)
       }
 
       if (length(name[[1]]) == 0) {
@@ -1997,7 +1997,7 @@ wbWorkbook <- R6::R6Class(
 
       list(
         size   = sz,
-        colour = colour,
+        color = color,
         name   = name
       )
     },
@@ -2005,15 +2005,15 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Get the base font
     #' @param fontSize fontSize
-    #' @param fontColour fontColour
+    #' @param fontColor fontColor
     #' @param fontName fontName
     #' @param ... ...
     #' @return The `wbWorkbook` object
-    set_base_font = function(fontSize = 11, fontColour = wb_colour(theme = "1"), fontName = "Calibri", ...) {
+    set_base_font = function(fontSize = 11, fontColor = wb_color(theme = "1"), fontName = "Calibri", ...) {
       if (fontSize < 0) stop("Invalid fontSize")
-      standardise_color_names(...)
-      if (is.character(fontColour) && is.null(names(fontColour))) fontColour <- wb_colour(fontColour)
-      self$styles_mgr$styles$fonts[[1]] <- create_font(sz = as.character(fontSize), color = fontColour, name = fontName)
+      standardize_color_names(...)
+      if (is.character(fontColor) && is.null(names(fontColor))) fontColor <- wb_color(fontColor)
+      self$styles_mgr$styles$fonts[[1]] <- create_font(sz = as.character(fontSize), color = fontColor, name = fontName)
     },
 
     ### book views ----
@@ -3261,7 +3261,7 @@ wbWorkbook <- R6::R6Class(
                "containsErrors", "notContainsErrors", "containsBlanks", "notContainsBlanks")
       if (is.null(style) && type %in% sel) {
         smp <- random_string()
-        style <- create_dxfs_style(font_color = wb_colour(hex = "FF9C0006"), bgFill = wb_colour(hex = "FFFFC7CE"))
+        style <- create_dxfs_style(font_color = wb_color(hex = "FF9C0006"), bgFill = wb_color(hex = "FFFFC7CE"))
         self$styles_mgr$add(style, smp)
         dxfId <- self$styles_mgr$get_dxf_id(smp)
       }
@@ -3293,12 +3293,12 @@ wbWorkbook <- R6::R6Class(
         },
 
         colorScale = {
-          # - style is a vector of colours with length 2 or 3
+          # - style is a vector of colors with length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
-          msg <- "When type == 'colourScale', "
+          msg <- "When type == 'colorScale', "
 
           if (!is.character(style)) {
-            stop(msg, "style must be a vector of colours of length 2 or 3.")
+            stop(msg, "style must be a vector of colors of length 2 or 3.")
           }
 
           if (!length(style) %in% 2:3) {
@@ -3311,7 +3311,7 @@ wbWorkbook <- R6::R6Class(
             }
           }
 
-          style <- check_valid_colour(style)
+          style <- check_valid_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
@@ -3322,14 +3322,14 @@ wbWorkbook <- R6::R6Class(
         },
 
         dataBar = {
-          # - style is a vector of colours of length 2 or 3
+          # - style is a vector of colors of length 2 or 3
           # - rule specifies the quantiles (numeric vector of length 2 or 3), if NULL min and max are used
           msg <- "When type == 'dataBar', "
           style <- style %||% "#638EC6"
 
           # TODO use inherits() not class()
           if (!inherits(style, "character")) {
-            stop(msg, "style must be a vector of colours of length 1 or 2.")
+            stop(msg, "style must be a vector of colors of length 1 or 2.")
           }
 
           if (!length(style) %in% 1:2) {
@@ -3344,7 +3344,7 @@ wbWorkbook <- R6::R6Class(
 
           ## Additional parameters passed by ...
           # showValue, gradient, border
-          style <- check_valid_colour(style)
+          style <- check_valid_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
@@ -4814,12 +4814,12 @@ wbWorkbook <- R6::R6Class(
     #' wb$add_border(1, dims = "C2:C5")
     #' wb$add_border(1, dims = "G2:H3")
     #' wb$add_border(1, dims = "G12:H13",
-    #'  left_color = wb_colour(hex = "FF9400D3"), right_color = wb_colour(hex = "FF4B0082"),
-    #'  top_color = wb_colour(hex = "FF0000FF"), bottom_color = wb_colour(hex = "FF00FF00"))
+    #'  left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+    #'  top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
     #' wb$add_border(1, dims = "A20:C23")
     #' wb$add_border(1, dims = "B12:D14",
-    #'  left_color = wb_colour(hex = "FFFFFF00"), right_color = wb_colour(hex = "FFFF7F00"),
-    #'  bottom_color = wb_colour(hex = "FFFF0000"))
+    #'  left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+    #'  bottom_color = wb_color(hex = "FFFF0000"))
     #' wb$add_border(1, dims = "D28:E28")
     #' # if (interactive()) wb$open()
     #'
@@ -4830,10 +4830,10 @@ wbWorkbook <- R6::R6Class(
     add_border = function(
       sheet         = current_sheet(),
       dims          = "A1",
-      bottom_color  = wb_colour(hex = "FF000000"),
-      left_color    = wb_colour(hex = "FF000000"),
-      right_color   = wb_colour(hex = "FF000000"),
-      top_color     = wb_colour(hex = "FF000000"),
+      bottom_color  = wb_color(hex = "FF000000"),
+      left_color    = wb_color(hex = "FF000000"),
+      right_color   = wb_color(hex = "FF000000"),
+      top_color     = wb_color(hex = "FF000000"),
       bottom_border = "thin",
       left_border   = "thin",
       right_border  = "thin",
@@ -4851,7 +4851,7 @@ wbWorkbook <- R6::R6Class(
       # cc <- wb$worksheets[[sheet]]$sheet_data$cc
       # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
 
-      standardize_colour_names(...)
+      standardize_color_names(...)
 
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
@@ -5226,7 +5226,7 @@ wbWorkbook <- R6::R6Class(
     #' @description provide simple fill function
     #' @param sheet the worksheet
     #' @param dims the cell range
-    #' @param color the colors to apply, e.g. yellow: wb_colour(hex = "FFFFFF00")
+    #' @param color the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")
     #' @param pattern various default "none" but others are possible:
     #'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
     #'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
@@ -5246,7 +5246,7 @@ wbWorkbook <- R6::R6Class(
     add_fill = function(
         sheet         = current_sheet(),
         dims          = "A1",
-        color         = wb_colour(hex = "FFFFFF00"),
+        color         = wb_color(hex = "FFFFFF00"),
         pattern       = "solid",
         gradient_fill = "",
         every_nth_col = 1,
@@ -5268,7 +5268,7 @@ wbWorkbook <- R6::R6Class(
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
 
-      standardize_colour_names(...)
+      standardize_color_names(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -5311,13 +5311,13 @@ wbWorkbook <- R6::R6Class(
     #' @param ... ...
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
+    #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
         sheet     = current_sheet(),
         dims      = "A1",
         name      = "Calibri",
-        color     = wb_colour(hex = "FF000000"),
+        color     = wb_color(hex = "FF000000"),
         size      = "11",
         bold      = "",
         italic    = "",
@@ -5344,7 +5344,7 @@ wbWorkbook <- R6::R6Class(
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
 
-      standardize_colour_names(...)
+      standardize_color_names(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -6377,7 +6377,7 @@ wbWorkbook <- R6::R6Class(
       cfRule <- switch(
         type,
 
-        ## colourScale ----
+        ## colorScale ----
         colorScale = cf_create_colorscale(formula, values),
 
         ## dataBar ----

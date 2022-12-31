@@ -10,7 +10,7 @@ create_dxfs_style(
   font_color = NULL,
   numFmt = NULL,
   border = NULL,
-  border_color = wb_colour(getOption("openxlsx2.borderColour", "black")),
+  border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
   bgFill = NULL,
   text_bold = NULL,
@@ -27,8 +27,8 @@ the workbook base font is used. (Defaults to Calibri)}
 \item{font_size}{Font size. A numeric greater than 0.
 If fontSize is NULL, the workbook base font size is used. (Defaults to 11)}
 
-\item{font_color}{Colour of text in cell.  A valid hex colour beginning with "#"
-or one of colours(). If fontColour is NULL, the workbook base font colours is used.
+\item{font_color}{Color of text in cell.  A valid hex color beginning with "#"
+or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 (Defaults to black)}
 
 \item{numFmt}{Cell formatting. Some custom openxml format}
@@ -64,8 +64,8 @@ style1 <- create_dxfs_style()
 
 # change font color and background color
 style2 <- create_dxfs_style(
-  font_color = wb_colour(hex = "FF9C0006"),
-  bgFill = wb_colour(hex = "FFFFC7CE")
+  font_color = wb_color(hex = "FF9C0006"),
+  bgFill = wb_color(hex = "FFFFC7CE")
 )
 
 # change font (type, size and color) and background
@@ -73,8 +73,8 @@ style2 <- create_dxfs_style(
 style3 <- create_dxfs_style(
   font_name = "Calibri",
   font_size = 11,
-  font_color = wb_colour(hex = "FF9C0006"),
-  bgFill = wb_colour(hex = "FFFFC7CE")
+  font_color = wb_color(hex = "FF9C0006"),
+  bgFill = wb_color(hex = "FFFFC7CE")
 )
 
 ## See package vignettes for further examples

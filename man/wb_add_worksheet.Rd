@@ -9,7 +9,7 @@ wb_add_worksheet(
   sheet = next_sheet(),
   gridLines = TRUE,
   rowColHeaders = TRUE,
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
   header = NULL,
   footer = NULL,
@@ -39,8 +39,8 @@ hidden.}
 \item{rowColHeaders}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
 hidden.}
 
-\item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
-colours()) or a valid hex colour beginning with "#"}
+\item{tabColor}{Color of the worksheet tab. A valid color (belonging to
+colors()) or a valid hex color beginning with "#"}
 
 \item{zoom}{A numeric between 10 and 400. Worksheet zoom level as a
 percentage.}
@@ -87,8 +87,8 @@ wb <- wb_workbook("Fred")
 ## Add 3 worksheets
 wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2", gridLines = FALSE)
-wb$add_worksheet("Sheet 3", tabColour = "red")
-wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+wb$add_worksheet("Sheet 3", tabColor = "red")
+wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColor = "#4F81BD")
 
 ## Headers and Footers
 wb$add_worksheet("Sheet 5",

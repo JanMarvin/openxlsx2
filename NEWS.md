@@ -6,7 +6,7 @@
 
 * `writeData()` calls `force(x)` to evaluate the object before options are set ([#264](https://github.com/ycphs/openxlsx/issues/264))
 
-* `tabColour` in `wb_add_worksheet()` now allows passing `wb_colour()`. [500](https://github.com/JanMarvin/openxlsx2/pull/500)
+* `tabColor` in `wb_add_worksheet()` now allows passing `wb_color()`. [500](https://github.com/JanMarvin/openxlsx2/pull/500)
 
 ## Fixes
 
@@ -23,6 +23,8 @@
 ## Breaking changes
 
 * Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
+
+* Only documentation: `openxlsx2` defaults to american english 'color' from now on. Though, we fully support the previous 'colour'. Users will not have to adjust their code. Our documentation only lists `color`, but you can pass `colour` just the same way you used to. [501](https://github.com/JanMarvin/openxlsx2/pull/501) [502](https://github.com/JanMarvin/openxlsx2/pull/502)
 
 
 ***************************************************************************
@@ -158,7 +160,7 @@
 
 * New argument `startCol` in read to data frame functions `wb_to_df()`, `wb_read()` and `read_xlsx()`. [330](https://github.com/JanMarvin/openxlsx2/issues/330)
 
-* New function `wb_colour()` to ease working with colour vectors used in `openxlsx2` styles. [292](https://github.com/JanMarvin/openxlsx2/issues/292)
+* New function `wb_colour()` to ease working with color vectors used in `openxlsx2` styles. [292](https://github.com/JanMarvin/openxlsx2/issues/292)
 
 * Deprecated `get_cell_style()` and `set_cell_style()` in favor of newly introduced wrapper functions `wb_get_cell_style()` and `wb_set_cell_style()`. [306](https://github.com/JanMarvin/openxlsx2/issues/306)
 

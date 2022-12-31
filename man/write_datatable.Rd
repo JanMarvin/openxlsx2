@@ -64,9 +64,9 @@ A vector of the form c(startCol, startRow)}
 
 \item{lastColumn}{logical. If TRUE, the last column is bold}
 
-\item{bandedRows}{logical. If TRUE, rows are colour banded}
+\item{bandedRows}{logical. If TRUE, rows are color banded}
 
-\item{bandedCols}{logical. If TRUE, the columns are colour banded}
+\item{bandedCols}{logical. If TRUE, the columns are color banded}
 
 \item{applyCellStyle}{apply styles when writing on the sheet}
 

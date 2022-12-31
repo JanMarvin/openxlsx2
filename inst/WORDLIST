@@ -4,7 +4,6 @@ CMD
 Calibri
 Calligra
 Colorscale
-Colour
 DL
 Databars
 ExcelDate
@@ -59,8 +58,6 @@ colorLow
 colorMarkers
 colorNegative
 colorSeries
-colour
-colours
 conditionalFormatting
 ctrlProps
 customMenu
@@ -111,7 +108,7 @@ firstRow
 firstSheet
 fitToHeight
 fitToWidth
-fontColour
+fontColor
 fontName
 fontSize
 freezePane
@@ -241,7 +238,7 @@ startRow
 summaryCol
 summaryRow
 swiss
-tabColour
+tabColor
 tabRatio
 tabSelected
 tableName
@@ -253,6 +250,7 @@ threadComments
 threadedComments
 topLeftCell
 totalsRowCount
+unescaping
 ungroup
 unicode
 unprotect
@@ -262,6 +260,7 @@ veryHidden
 vm
 vml
 wb
+wbColour
 wbProcedure
 wbWorkbook
 webPublishItems

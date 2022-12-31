@@ -168,8 +168,8 @@ wb_add_data <- function(
 #'
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are colour banded
-#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedRows logical. If TRUE, rows are color banded
+#' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional
@@ -349,8 +349,8 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #'
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheet A name for the new worksheet
-#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
-#'   colours()) or a valid hex colour beginning with "#"
+#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param visible If FALSE, sheet is hidden else visible.
@@ -363,7 +363,7 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 wb_add_chartsheet <- function(
   wb,
   sheet       = next_sheet(),
-  tabColour   = NULL,
+  tabColor    = NULL,
   zoom        = 100,
   visible     = c("true", "false", "hidden", "visible", "veryhidden"),
   ...
@@ -371,7 +371,7 @@ wb_add_chartsheet <- function(
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
     sheet       = sheet,
-    tabColour   = tabColour,
+    tabColor    = tabColor,
     zoom        = zoom,
     visible     = visible,
     ...         = ...
@@ -386,8 +386,8 @@ wb_add_chartsheet <- function(
 #'   hidden.
 #' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
-#'   colours()) or a valid hex colour beginning with "#"
+#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param header,oddHeader,evenHeader,firstHeader,footer,oddFooter,evenFooter,firstFooter
@@ -422,8 +422,8 @@ wb_add_chartsheet <- function(
 #' ## Add 3 worksheets
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2", gridLines = FALSE)
-#' wb$add_worksheet("Sheet 3", tabColour = "red")
-#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+#' wb$add_worksheet("Sheet 3", tabColor = "red")
+#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColor = "#4F81BD")
 #'
 #' ## Headers and Footers
 #' wb$add_worksheet("Sheet 5",
@@ -462,7 +462,7 @@ wb_add_worksheet <- function(
   sheet       = next_sheet(),
   gridLines   = TRUE,
   rowColHeaders = TRUE,
-  tabColour   = NULL,
+  tabColor    = NULL,
   zoom        = 100,
   header      = NULL,
   footer      = NULL,
@@ -485,7 +485,7 @@ wb_add_worksheet <- function(
     sheet       = sheet,
     gridLines   = gridLines,
     rowColHeaders = rowColHeaders,
-    tabColour   = tabColour,
+    tabColor    = tabColor,
     zoom        = zoom,
     oddHeader   = headerFooterSub(oddHeader),
     oddFooter   = headerFooterSub(oddFooter),
@@ -743,7 +743,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' p1 <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
 #'   ggtitle("Distribution of Gas Mileage") +
 #'   geom_density(alpha = I(.5))
-#' p2 <- ggplot(Orange, aes(x = age, y = circumference, colour = Tree)) +
+#' p2 <- ggplot(Orange, aes(x = age, y = circumference, color = Tree)) +
 #'   geom_point() + geom_line()
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
@@ -841,7 +841,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @description Modify the default font for this workbook
 #' @param wb A workbook object
 #' @param fontSize font size
-#' @param fontColour font colour
+#' @param fontColor font color
 #' @param fontName Name of a font
 #' @param ... ...
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
@@ -852,21 +852,21 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb$add_data("S1", iris)
-#' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
+#' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
 wb_set_base_font <- function(
   wb,
-  fontSize = 11,
-  fontColour = wb_colour(theme = "1"),
-  fontName = "Calibri",
+  fontSize  = 11,
+  fontColor = wb_color(theme = "1"),
+  fontName  = "Calibri",
   ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
     fontSize   = fontSize,
-    fontColour = fontColour,
+    fontColor  = fontColor,
     fontName   = fontName,
     ...        = ...
   )
@@ -887,7 +887,7 @@ wb_set_base_font <- function(
 #' wb_get_base_font(wb)
 #'
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb_get_base_font(wb)
 wb_get_base_font <- function(wb) {
@@ -2132,8 +2132,8 @@ wb_open <- function(wb) {
 #' @param style_name style name used optional argument
 #' @seealso [create_border()], [create_cell_style()], [create_dxfs_style()], [create_fill()], [create_font()], [create_numfmt()]
 #' @examples
-#' yellow_f <- wb_colour(hex = "FF9C6500")
-#' yellow_b <- wb_colour(hex = "FFFFEB9C")
+#' yellow_f <- wb_color(hex = "FF9C6500")
+#' yellow_b <- wb_color(hex = "FFFFEB9C")
 #'
 #' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
 #' wb <- wb_workbook() %>% wb_add_style(yellow)
@@ -2198,12 +2198,12 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' wb <- wb_add_border(wb, 1, dims = "C2:C5")
 #' wb <- wb_add_border(wb, 1, dims = "G2:H3")
 #' wb <- wb_add_border(wb, 1, dims = "G12:H13",
-#'  left_color = wb_colour(hex = "FF9400D3"), right_color = wb_colour(hex = "FF4B0082"),
-#'  top_color = wb_colour(hex = "FF0000FF"), bottom_color = wb_colour(hex = "FF00FF00"))
+#'  left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+#'  top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
 #' wb <- wb_add_border(wb, 1, dims = "A20:C23")
 #' wb <- wb_add_border(wb, 1, dims = "B12:D14",
-#'  left_color = wb_colour(hex = "FFFFFF00"), right_color = wb_colour(hex = "FFFF7F00"),
-#'  bottom_color = wb_colour(hex = "FFFF0000"))
+#'  left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+#'  bottom_color = wb_color(hex = "FFFF0000"))
 #' wb <- wb_add_border(wb, 1, dims = "D28:E28")
 #' @family styles
 #' @export
@@ -2211,10 +2211,10 @@ wb_add_border <- function(
     wb,
     sheet          = current_sheet(),
     dims           = "A1",
-    bottom_color   = wb_colour(hex = "FF000000"),
-    left_color     = wb_colour(hex = "FF000000"),
-    right_color    = wb_colour(hex = "FF000000"),
-    top_color      = wb_colour(hex = "FF000000"),
+    bottom_color   = wb_color(hex = "FF000000"),
+    left_color     = wb_color(hex = "FF000000"),
+    right_color    = wb_color(hex = "FF000000"),
+    top_color      = wb_color(hex = "FF000000"),
     bottom_border  = "thin",
     left_border    = "thin",
     right_border   = "thin",
@@ -2252,7 +2252,7 @@ wb_add_border <- function(
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
-#' @param color the colors to apply, e.g. yellow: wb_colour(hex = "FFFFFF00")
+#' @param color the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")
 #' @param pattern various default "none" but others are possible:
 #'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
 #'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
@@ -2264,8 +2264,8 @@ wb_add_border <- function(
 #' @param ... ...
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_colour(hex = "FFFFFF00"))
-#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = wb_colour(hex = "FF00FF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = wb_color(hex = "FF00FF00"))
 #'
 #' wb <- wb %>%  wb_add_worksheet("S2") %>% wb_add_data("S2", mtcars)
 #'
@@ -2287,7 +2287,7 @@ wb_add_fill <- function(
     wb,
     sheet         = current_sheet(),
     dims          = "A1",
-    color         = wb_colour(hex = "FFFFFF00"),
+    color         = wb_color(hex = "FFFFFF00"),
     pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,
@@ -2330,7 +2330,7 @@ wb_add_fill <- function(
 #' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
+#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 #' @return The `wbWorksheetObject`, invisibly
 #' @family styles
 #' @export
@@ -2339,7 +2339,7 @@ wb_add_font <- function(
       sheet     = current_sheet(),
       dims      = "A1",
       name      = "Calibri",
-      color     = wb_colour(hex = "FF000000"),
+      color     = wb_color(hex = "FF000000"),
       size      = "11",
       bold      = "",
       italic    = "",
@@ -2615,7 +2615,7 @@ wb_remove_comment <- function(
 #'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
 #'     `[rule]`\cr A `numeric` vector specifying the range of the databar colors. Must be equal length to `style`\cr\cr
 #'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
-#'     `[params$gradient]`\cr If `FALSE` colour gradient is removed. Default `TRUE`\cr\cr
+#'     `[params$gradient]`\cr If `FALSE` color gradient is removed. Default `TRUE`\cr\cr
 #'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE`
 #'   }
 #'   \item{duplicatedValues/uniqueValues/containsErrors}{

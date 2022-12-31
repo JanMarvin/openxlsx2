@@ -6,7 +6,7 @@
 #' @noRd
 cf_create_colorscale <- function(formula, values) {
 
-  ## formula contains the colours
+  ## formula contains the colors
   ## values contains numerics or is NULL
 
   if (is.null(values)) {
@@ -92,11 +92,11 @@ cf_create_colorscale <- function(formula, values) {
 #' @noRd
 cf_create_databar <- function(extLst, formula, params, sqref, values) {
   if (length(formula) == 2L) {
-    negColour <- formula[[1]]
-    posColour <- formula[[2]]
+    negColor <- formula[[1]]
+    posColor <- formula[[2]]
   } else {
-    posColour <- formula
-    negColour <- "FFFF0000"
+    posColor <- formula
+    negColor <- "FFFF0000"
   }
 
   guid <- stri_join(
@@ -116,8 +116,8 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
   newExtLst <- gen_databar_extlst(
     guid      = guid,
     sqref     = sqref,
-    posColour = posColour,
-    negColour = negColour,
+    posColor = posColor,
+    negColor = negColor,
     values    = values,
     border    = border,
     gradient  = gradient
@@ -168,7 +168,7 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
       # dataBar
       showValue,
       # color
-      posColour,
+      posColor,
       # extLst
       cf_rule_extLst
     )
@@ -188,7 +188,7 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
       values[[1]],
       values[[2]],
       # color
-      posColour,
+      posColor,
       # extLst
       cf_rule_extLst
     )
