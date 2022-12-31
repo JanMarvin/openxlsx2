@@ -354,6 +354,7 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param visible If FALSE, sheet is hidden else visible.
+#' @param ... ...
 #' @details After chartsheet creation a chart must be added to the sheet.
 #' Otherwise the chartsheet will break the workbook.
 #' @family workbook wrappers
@@ -364,14 +365,16 @@ wb_add_chartsheet <- function(
   sheet       = next_sheet(),
   tabColour   = NULL,
   zoom        = 100,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden")
+  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
     sheet       = sheet,
     tabColour   = tabColour,
     zoom        = zoom,
-    visible     = visible
+    visible     = visible,
+    ...         = ...
   )
 }
 
@@ -401,6 +404,7 @@ wb_add_chartsheet <- function(
 #'   options("openxlsx2.hdpi" = X)
 #' @param vdpi Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
 #'   options("openxlsx2.vdpi" = X)
+#' @param ... ...
 #' @details Headers and footers can contain special tags \itemize{
 #'   \item{**&\[Page\]**}{ Page number} \item{**&\[Pages\]**}{ Number of pages}
 #'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
@@ -473,7 +477,8 @@ wb_add_worksheet <- function(
   paperSize   = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_worksheet(
@@ -492,7 +497,8 @@ wb_add_worksheet <- function(
     paperSize   = paperSize,
     orientation = orientation,
     vdpi        = vdpi,
-    hdpi        = hdpi
+    hdpi        = hdpi,
+    ...         = ...
   )
 }
 
@@ -837,6 +843,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @param fontSize font size
 #' @param fontColour font colour
 #' @param fontName Name of a font
+#' @param ... ...
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
 #' @export
@@ -849,12 +856,19 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data("S1", iris)
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
-wb_set_base_font <- function(wb, fontSize = 11, fontColour = wb_colour(theme = "1"), fontName = "Calibri") {
+wb_set_base_font <- function(
+  wb,
+  fontSize = 11,
+  fontColour = wb_colour(theme = "1"),
+  fontName = "Calibri",
+  ...
+) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
     fontSize   = fontSize,
     fontColour = fontColour,
-    fontName   = fontName
+    fontName   = fontName,
+    ...        = ...
   )
 }
 
@@ -2171,6 +2185,7 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
 #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @param ... ...
 #' @seealso [create_border()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
@@ -2207,7 +2222,8 @@ wb_add_border <- function(
     inner_hgrid    = NULL,
     inner_hcolor   = NULL,
     inner_vgrid    = NULL,
-    inner_vcolor   = NULL
+    inner_vcolor   = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_border(
@@ -2224,7 +2240,8 @@ wb_add_border <- function(
     inner_hgrid   = inner_hgrid,
     inner_hcolor  = inner_hcolor,
     inner_vgrid   = inner_vgrid,
-    inner_vcolor  = inner_vcolor
+    inner_vcolor  = inner_vcolor,
+    ...           = ...
   )
 
 }
@@ -2244,6 +2261,7 @@ wb_add_border <- function(
 #' @param gradient_fill a gradient fill xml pattern.
 #' @param every_nth_col which col should be filled
 #' @param every_nth_row which row should be filled
+#' @param ... ...
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_colour(hex = "FFFFFF00"))
@@ -2273,7 +2291,8 @@ wb_add_fill <- function(
     pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,
-    every_nth_row = 1
+    every_nth_row = 1,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_fill(
@@ -2283,7 +2302,8 @@ wb_add_fill <- function(
     pattern       = pattern,
     gradient_fill = gradient_fill,
     every_nth_col = every_nth_col,
-    every_nth_row = every_nth_row
+    every_nth_row = every_nth_row,
+    ...           = ...
   )
 }
 
@@ -2307,6 +2327,7 @@ wb_add_fill <- function(
 #' @param shadow shadow
 #' @param extend extend
 #' @param vertAlign vertical alignment
+#' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
@@ -2332,7 +2353,8 @@ wb_add_font <- function(
       family    = "",
       scheme    = "",
       shadow    = "",
-      vertAlign = ""
+      vertAlign = "",
+      ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
@@ -2353,7 +2375,8 @@ wb_add_font <- function(
     family    = family,
     scheme    = scheme,
     shadow    = shadow,
-    vertAlign = vertAlign
+    vertAlign = vertAlign,
+    ...       = ...
   )
 }
 

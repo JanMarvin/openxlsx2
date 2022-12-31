@@ -2,7 +2,8 @@
 % Please edit documentation in R/class-color.R
 \name{wb_colour}
 \alias{wb_colour}
-\title{Create a new hyperlink object}
+\alias{wb_color}
+\title{Create a new wbColour object}
 \usage{
 wb_colour(
   name = NULL,
@@ -30,5 +31,5 @@ wb_colour(
 a \code{wbColour} object
 }
 \description{
-Create a new hyperlink object
+Create a new wbColour object
 }

@@ -9,7 +9,8 @@ wb_add_chartsheet(
   sheet = next_sheet(),
   tabColour = NULL,
   zoom = 100,
-  visible = c("true", "false", "hidden", "visible", "veryhidden")
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ colours()) or a valid hex colour beginning with "#"}
 percentage.}
 
 \item{visible}{If FALSE, sheet is hidden else visible.}
+
+\item{...}{...}
 }
 \description{
 Add a chartsheet to a workbook

@@ -424,7 +424,8 @@ Add a chart sheet to the workbook
   sheet = next_sheet(),
   tabColour = NULL,
   zoom = 100,
-  visible = c("true", "false", "hidden", "visible", "veryhidden")
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -438,6 +439,8 @@ Add a chart sheet to the workbook
 \item{\code{zoom}}{zoom}
 
 \item{\code{visible}}{visible}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -470,7 +473,8 @@ Add worksheet to the \code{wbWorkbook} object
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -514,6 +518,8 @@ Add worksheet to the \code{wbWorkbook} object
 \item{\code{hdpi}}{hdpi}
 
 \item{\code{vdpi}}{vdpi}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -859,7 +865,8 @@ Get the base font
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
   fontSize = 11,
   fontColour = wb_colour(theme = "1"),
-  fontName = "Calibri"
+  fontName = "Calibri",
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -871,6 +878,8 @@ Get the base font
 \item{\code{fontColour}}{fontColour}
 
 \item{\code{fontName}}{fontName}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2228,7 +2237,8 @@ create borders for cell region
   inner_hgrid = NULL,
   inner_hcolor = NULL,
   inner_vgrid = NULL,
-  inner_vcolor = NULL
+  inner_vcolor = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2242,6 +2252,8 @@ create borders for cell region
 \item{\code{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}}{a color, either something openxml knows or some RGB color}
 
 \item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2293,7 +2305,8 @@ provide simple fill function
   pattern = "solid",
   gradient_fill = "",
   every_nth_col = 1,
-  every_nth_row = 1
+  every_nth_row = 1,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2317,6 +2330,8 @@ provide simple fill function
 \item{\code{every_nth_col}}{which col should be filled}
 
 \item{\code{every_nth_row}}{which row should be filled}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2359,7 +2374,8 @@ provide simple font function
   family = "",
   scheme = "",
   shadow = "",
-  vertAlign = ""
+  vertAlign = "",
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2399,6 +2415,8 @@ provide simple font function
 \item{\code{shadow}}{shadow}
 
 \item{\code{vertAlign}}{vertical alignment}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }

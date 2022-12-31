@@ -331,12 +331,14 @@ wbWorkbook <- R6::R6Class(
     #' @param tabColour tabColour
     #' @param zoom zoom
     #' @param visible visible
+    #' @param ... ...
     #' @return The `wbWorkbook` object, invisibly
     add_chartsheet = function(
       sheet     = next_sheet(),
       tabColour = NULL,
       zoom      = 100,
-      visible   = c("true", "false", "hidden", "visible", "veryhidden")
+      visible   = c("true", "false", "hidden", "visible", "veryhidden"),
+      ...
     ) {
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
@@ -379,6 +381,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
+      standardise_color_names(...)
       if (!is.null(tabColour)) {
         if (is_wbColour(tabColour)) {
           tabColour <- as.character(tabColour)
@@ -475,6 +478,7 @@ wbWorkbook <- R6::R6Class(
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
+    #' @param ... ...
     #' @return The `wbWorkbook` object, invisibly
     add_worksheet = function(
       sheet       = next_sheet(),
@@ -495,7 +499,8 @@ wbWorkbook <- R6::R6Class(
       paperSize   = getOption("openxlsx2.paperSize", default = 9),
       orientation = getOption("openxlsx2.orientation", default = "portrait"),
       hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-      vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+      vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+      ...
     ) {
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
@@ -529,6 +534,7 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "gridLines must be a logical of length 1.")
       }
 
+      standardise_color_names(...)
       if (!is.null(tabColour)) {
         if (is_wbColour(tabColour)) {
           tabColour <- as.character(tabColour)
@@ -2001,9 +2007,11 @@ wbWorkbook <- R6::R6Class(
     #' @param fontSize fontSize
     #' @param fontColour fontColour
     #' @param fontName fontName
+    #' @param ... ...
     #' @return The `wbWorkbook` object
-    set_base_font = function(fontSize = 11, fontColour = wb_colour(theme = "1"), fontName = "Calibri") {
+    set_base_font = function(fontSize = 11, fontColour = wb_colour(theme = "1"), fontName = "Calibri", ...) {
       if (fontSize < 0) stop("Invalid fontSize")
+      standardise_color_names(...)
       if (is.character(fontColour) && is.null(names(fontColour))) fontColour <- wb_colour(fontColour)
       self$styles_mgr$styles$fonts[[1]] <- create_font(sz = as.character(fontSize), color = fontColour, name = fontName)
     },
@@ -4791,6 +4799,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
     #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
     #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+    #' @param ... ...
     #' @seealso create_border
     #' @examples
     #'
@@ -4832,7 +4841,8 @@ wbWorkbook <- R6::R6Class(
       inner_hgrid   = NULL,
       inner_hcolor  = NULL,
       inner_vgrid   = NULL,
-      inner_vcolor  = NULL
+      inner_vcolor  = NULL,
+      ...
     ) {
 
       # TODO merge styles and if a style is already present, only add the newly
@@ -4840,6 +4850,8 @@ wbWorkbook <- R6::R6Class(
 
       # cc <- wb$worksheets[[sheet]]$sheet_data$cc
       # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
+
+      standardize_colour_names(...)
 
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
@@ -5223,6 +5235,7 @@ wbWorkbook <- R6::R6Class(
     #' @param gradient_fill a gradient fill xml pattern.
     #' @param every_nth_col which col should be filled
     #' @param every_nth_row which row should be filled
+    #' @param ... ...
     #' @examples
     #'  # example from the gradient fill manual page
     #'  gradient_fill <- "<gradientFill degree=\"90\">
@@ -5237,7 +5250,8 @@ wbWorkbook <- R6::R6Class(
         pattern       = "solid",
         gradient_fill = "",
         every_nth_col = 1,
-        every_nth_row = 1
+        every_nth_row = 1,
+        ...
     ) {
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
@@ -5253,6 +5267,8 @@ wbWorkbook <- R6::R6Class(
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
+
+      standardize_colour_names(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -5292,6 +5308,7 @@ wbWorkbook <- R6::R6Class(
     #' @param shadow shadow
     #' @param extend extend
     #' @param vertAlign vertical alignment
+    #' @param ... ...
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
     #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
@@ -5314,7 +5331,8 @@ wbWorkbook <- R6::R6Class(
         family    = "",
         scheme    = "",
         shadow    = "",
-        vertAlign = ""
+        vertAlign = "",
+        ...
     ) {
       sheet <- private$get_sheet_index(sheet)
       private$do_cell_init(sheet, dims)
@@ -5325,6 +5343,8 @@ wbWorkbook <- R6::R6Class(
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
+
+      standardize_colour_names(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]

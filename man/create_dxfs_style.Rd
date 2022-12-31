@@ -16,7 +16,8 @@ create_dxfs_style(
   text_bold = NULL,
   text_strike = NULL,
   text_italic = NULL,
-  text_underline = NULL
+  text_underline = NULL,
+  ...
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ or one of colours(). If fontColour is NULL, the workbook base font colours is us
 \item{text_italic}{italic}
 
 \item{text_underline}{underline 1, true, single or double}
+
+\item{...}{...}
 }
 \value{
 A dxfs style node
