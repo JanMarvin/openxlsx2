@@ -80,7 +80,7 @@
 <span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tabColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -120,9 +120,9 @@ hidden.</p></dd>
 hidden.</p></dd>
 
 
-<dt>tabColour</dt>
-<dd><p>Colour of the worksheet tab. A valid colour (belonging to
-colours()) or a valid hex colour beginning with "#"</p></dd>
+<dt>tabColor</dt>
+<dd><p>Color of the worksheet tab. A valid color (belonging to
+colors()) or a valid hex color beginning with "#"</p></dd>
 
 
 <dt>zoom</dt>
@@ -214,8 +214,8 @@ options("openxlsx2.vdpi" = X)</p></dd>
 <span class="r-in"><span><span class="co">## Add 3 worksheets</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 1"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 2"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 3"</span>, tabColour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 4"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span>, tabColour <span class="op">=</span> <span class="st">"#4F81BD"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 3"</span>, tabColor <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 4"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span>, tabColor <span class="op">=</span> <span class="st">"#4F81BD"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Headers and Footers</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 5"</span>,</span></span>

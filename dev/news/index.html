@@ -75,7 +75,7 @@
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li><p>Improve column and row grouping. It is now possible to group by list, so that you can create various levels of groupings. <a href="https://github.com/JanMarvin/openxlsx2/pull/486" class="external-link">486</a></p></li>
 <li><p><code>writeData()</code> calls <code>force(x)</code> to evaluate the object before options are set (<a href="https://github.com/ycphs/openxlsx/issues/264" class="external-link">#264</a>)</p></li>
-<li><p><code>tabColour</code> in <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code> now allows passing <code><a href="../reference/wbColour.html">wb_colour()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/500" class="external-link">500</a></p></li>
+<li><p><code>tabColor</code> in <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code> now allows passing <code><a href="../reference/wbColour.html">wb_color()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/500" class="external-link">500</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
@@ -87,7 +87,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>Do not export <code>write_data2()</code> anymore. This was used in development in the early stages of the package and should not be used directly anymore.</li>
+<ul><li><p>Do not export <code>write_data2()</code> anymore. This was used in development in the early stages of the package and should not be used directly anymore.</p></li>
+<li><p>Only documentation: <code>openxlsx2</code> defaults to american english ‘color’ from now on. Though, we fully support the previous ‘colour’. Users will not have to adjust their code. Our documentation only lists <code>color</code>, but you can pass <code>colour</code> just the same way you used to. <a href="https://github.com/JanMarvin/openxlsx2/pull/501" class="external-link">501</a> <a href="https://github.com/JanMarvin/openxlsx2/pull/502" class="external-link">502</a></p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -178,7 +179,7 @@
 <div class="section level3">
 <h3 id="new-features-0-3">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3"></a></h3>
 <ul><li><p>New argument <code>startCol</code> in read to data frame functions <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, <code><a href="../reference/wb_read.html">wb_read()</a></code> and <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/330" class="external-link">330</a></p></li>
-<li><p>New function <code><a href="../reference/wbColour.html">wb_colour()</a></code> to ease working with colour vectors used in <code>openxlsx2</code> styles. <a href="https://github.com/JanMarvin/openxlsx2/issues/292" class="external-link">292</a></p></li>
+<li><p>New function <code><a href="../reference/wbColour.html">wb_colour()</a></code> to ease working with color vectors used in <code>openxlsx2</code> styles. <a href="https://github.com/JanMarvin/openxlsx2/issues/292" class="external-link">292</a></p></li>
 <li><p>Deprecated <code><a href="../reference/get_cell_style.html">get_cell_style()</a></code> and <code><a href="../reference/set_cell_style.html">set_cell_style()</a></code> in favor of newly introduced wrapper functions <code><a href="../reference/cell_style.html">wb_get_cell_style()</a></code> and <code><a href="../reference/cell_style.html">wb_set_cell_style()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/306" class="external-link">306</a></p></li>
 <li><p>Improvements to <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code>. Cloning of chartsheets as well as worksheets containing charts, pivot tables, drawings and tables is now possible or tweaked. Slicers are removed from the cloned worksheet. <a href="https://github.com/JanMarvin/openxlsx2/issues/305" class="external-link">305</a></p></li>
 <li><p>Allow writing class <code>data.table</code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/313" class="external-link">313</a></p></li>

@@ -563,7 +563,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chartsheet</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tabColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -576,8 +576,8 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>tabColour</code></dt>
-<dd><p>tabColour</p></dd>
+<dt><code>tabColor</code></dt>
+<dd><p>tabColor</p></dd>
 
 
 <dt><code>zoom</code></dt>
@@ -607,7 +607,7 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tabColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -641,8 +641,8 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>rowColHeaders</p></dd>
 
 
-<dt><code>tabColour</code></dt>
-<dd><p>tabColour</p></dd>
+<dt><code>tabColor</code></dt>
+<dd><p>tabColor</p></dd>
 
 
 <dt><code>zoom</code></dt>
@@ -1155,7 +1155,7 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_base_font</span><span class="op">(</span></span>
 <span>  fontSize <span class="op">=</span> <span class="fl">11</span>,</span>
-<span>  fontColour <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span>,</span>
+<span>  fontColor <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span>,</span>
 <span>  fontName <span class="op">=</span> <span class="st">"Calibri"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
@@ -1167,8 +1167,8 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <dd><p>fontSize</p></dd>
 
 
-<dt><code>fontColour</code></dt>
-<dd><p>fontColour</p></dd>
+<dt><code>fontColor</code></dt>
+<dd><p>fontColor</p></dd>
 
 
 <dt><code>fontName</code></dt>
@@ -2802,10 +2802,10 @@ are removed.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
-<span>  bottom_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
-<span>  left_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
-<span>  right_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
-<span>  top_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  bottom_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  left_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  right_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  top_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
 <span>  bottom_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
 <span>  left_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
 <span>  right_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
@@ -2860,12 +2860,12 @@ are removed.</p></dd>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span>
-<span> left_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span>
-<span> top_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span>
+<span> left_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span>
+<span> top_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span>
-<span> left_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span>
-<span> bottom_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span>
+<span> left_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span>
+<span> bottom_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span>
 <span><span class="co"># if (interactive()) wb$open()</span></span>
 <span></span>
@@ -2882,7 +2882,7 @@ are removed.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_fill</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
-<span>  color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>,</span>
+<span>  color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>,</span>
 <span>  pattern <span class="op">=</span> <span class="st">"solid"</span>,</span>
 <span>  gradient_fill <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  every_nth_col <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -2902,7 +2902,7 @@ are removed.</p></dd>
 
 
 <dt><code>color</code></dt>
-<dd><p>the colors to apply, e.g. yellow: wb_colour(hex = "FFFFFF00")</p></dd>
+<dd><p>the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")</p></dd>
 
 
 <dt><code>pattern</code></dt>
@@ -2953,7 +2953,7 @@ are removed.</p></dd>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"Calibri"</span>,</span>
-<span>  color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
 <span>  size <span class="op">=</span> <span class="st">"11"</span>,</span>
 <span>  bold <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  italic <span class="op">=</span> <span class="st">""</span>,</span>
@@ -3054,7 +3054,7 @@ are removed.</p></dd>
 <div class="section">
 <h4 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span>
-<span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -3381,12 +3381,12 @@ are removed.</p></dd>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span></span>
-<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span> top_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> top_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span></span>
-<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span> bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># if (interactive()) wb$open()</span></span></span>
 <span class="r-in"><span></span></span>
@@ -3409,7 +3409,7 @@ are removed.</p></dd>
 <span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
 <span class="r-in"><span><span class="co">## Method `wbWorkbook$add_numfmt`</span></span></span>
