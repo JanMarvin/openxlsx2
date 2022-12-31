@@ -565,7 +565,8 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span></span>
+<span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -585,6 +586,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>visible</code></dt>
 <dd><p>visible</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>...</p></dd>
 
 
 </dl><p></p></div>
@@ -617,7 +622,8 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  paperSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.paperSize"</span>, default <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.orientation"</span>, default <span class="op">=</span> <span class="st">"portrait"</span><span class="op">)</span>,</span>
 <span>  hdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.hdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  vdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.vdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span></span>
+<span>  vdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.vdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -697,6 +703,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>vdpi</code></dt>
 <dd><p>vdpi</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>...</p></dd>
 
 
 </dl><p></p></div>
@@ -1146,7 +1156,8 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_base_font</span><span class="op">(</span></span>
 <span>  fontSize <span class="op">=</span> <span class="fl">11</span>,</span>
 <span>  fontColour <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_colour</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span>,</span>
-<span>  fontName <span class="op">=</span> <span class="st">"Calibri"</span></span>
+<span>  fontName <span class="op">=</span> <span class="st">"Calibri"</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -1162,6 +1173,10 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 
 <dt><code>fontName</code></dt>
 <dd><p>fontName</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>...</p></dd>
 
 
 </dl><p></p></div>
@@ -2798,7 +2813,8 @@ are removed.</p></dd>
 <span>  inner_hgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inner_hcolor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2818,6 +2834,10 @@ are removed.</p></dd>
 
 <dt><code>left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid</code></dt>
 <dd><p>the border style, if NULL no border is drawn. See create_border for possible border styles</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>...</p></dd>
 
 
 </dl><p></p></div>
@@ -2866,7 +2886,8 @@ are removed.</p></dd>
 <span>  pattern <span class="op">=</span> <span class="st">"solid"</span>,</span>
 <span>  gradient_fill <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  every_nth_col <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  every_nth_row <span class="op">=</span> <span class="fl">1</span></span>
+<span>  every_nth_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2902,6 +2923,10 @@ are removed.</p></dd>
 
 <dt><code>every_nth_row</code></dt>
 <dd><p>which row should be filled</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>...</p></dd>
 
 
 </dl><p></p></div>
@@ -2941,7 +2966,8 @@ are removed.</p></dd>
 <span>  family <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  scheme <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  shadow <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  vertAlign <span class="op">=</span> <span class="st">""</span></span>
+<span>  vertAlign <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -3013,6 +3039,10 @@ are removed.</p></dd>
 
 <dt><code>vertAlign</code></dt>
 <dd><p>vertical alignment</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>...</p></dd>
 
 
 </dl><p></p></div>
