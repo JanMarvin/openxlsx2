@@ -1342,15 +1342,38 @@ wbWorkbook <- R6::R6Class(
         pivotCacheDir      <- dir_create(tmpDir, "xl", "pivotCache")
         pivotCacheRelsDir  <- dir_create(tmpDir, "xl", "pivotCache", "_rels")
 
-        file_copy_wb_save(self$pivotTables,          "pivotTable%i.xml",                pivotTablesDir)
-        file_copy_wb_save(self$pivotDefinitions,     "pivotCacheDefinition%i.xml",      pivotCacheDir)
-        file_copy_wb_save(self$pivotRecords,         "pivotCacheRecords%i.xml",         pivotCacheDir)
-        file_copy_wb_save(self$pivotDefinitionsRels, "pivotCacheDefinition%i.xml.rels", pivotCacheRelsDir)
+        for (i in seq_along(self$pivotTables)) {
+          write_file(
+            body = self$pivotTables[[i]],
+            fl = file.path(pivotTablesDir, sprintf("pivotTable%s.xml", i))
+          )
+        }
 
         for (i in seq_along(self$pivotTables.xml.rels)) {
           write_file(
             body = self$pivotTables.xml.rels[[i]],
             fl = file.path(pivotTablesRelsDir, sprintf("pivotTable%s.xml.rels", i))
+          )
+        }
+
+        for (i in seq_along(self$pivotRecords)) {
+          write_file(
+            body = self$pivotRecords[[i]],
+            fl = file.path(pivotCacheDir, sprintf("pivotCacheRecords%s.xml", i))
+          )
+        }
+
+        for (i in seq_along(self$pivotDefinitions)) {
+          write_file(
+            body = self$pivotDefinitions[[i]],
+            fl = file.path(pivotCacheDir, sprintf("pivotCacheDefinition%s.xml", i))
+          )
+        }
+
+        for (i in seq_along(self$pivotDefinitionsRels)) {
+          write_file(
+            body = self$pivotDefinitionsRels[[i]],
+            fl = file.path(pivotCacheRelsDir, sprintf("pivotCacheDefinition%s.xml.rels", i))
           )
         }
       }
