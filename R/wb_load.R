@@ -136,7 +136,8 @@ wb_load <- function(
   ## remove all EXCEPT media and charts
   on.exit(
     unlink(
-      grep_xml("media|vmlDrawing|customXml|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
+      # TODO: this removes all files, the folders remain. grep instead grep_xml?
+      grep_xml("media|vmlDrawing|customXml|comment|embeddings|vbaProject|person", ignore.case = TRUE, invert = TRUE),
       recursive = TRUE, force = TRUE
     ),
     add = TRUE
