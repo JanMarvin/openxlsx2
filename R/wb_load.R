@@ -136,7 +136,8 @@ wb_load <- function(
   ## remove all EXCEPT media and charts
   on.exit(
     unlink(
-      grep_xml("media|vmlDrawing|customXml|comment|embeddings|pivot|slicer|vbaProject|person", ignore.case = TRUE, invert = TRUE),
+      # TODO: this removes all files, the folders remain. grep instead grep_xml?
+      grep_xml("media|vmlDrawing|customXml|comment|embeddings|vbaProject|person", ignore.case = TRUE, invert = TRUE),
       recursive = TRUE, force = TRUE
     ),
     add = TRUE
@@ -447,73 +448,40 @@ wb_load <- function(
     nPivotTables <- length(pivotDefXML)
     rIds <- 20000L + seq_len(nPivotTables)
 
-    ## pivot tables
-    pivotTableXML <- pivotTableXML[order(nchar(pivotTableXML), pivotTableXML)]
-    pivotTableRelsXML <- pivotTableRelsXML[order(nchar(pivotTableRelsXML), pivotTableRelsXML)]
-
-    ## Cache
-    pivotDefXML <- pivotDefXML[order(nchar(pivotDefXML), pivotDefXML)]
-    pivotDefRelsXML <- pivotDefRelsXML[order(nchar(pivotDefRelsXML), pivotDefRelsXML)]
-    pivotCacheRecords <- pivotCacheRecords[order(nchar(pivotCacheRecords), pivotCacheRecords)]
-
-
     wb$pivotDefinitionsRels <- character(nPivotTables)
 
     pivot_content_type <- NULL
 
-    if (length(pivotTableRelsXML)) {
-      wb$pivotTables.xml.rels <- unapply(pivotTableRelsXML, read_xml, pointer = FALSE)
-    }
-
-    # ## Check what caches are used
-    cache_keep <- unlist(
-      regmatches(
-        wb$pivotTables.xml.rels,
-        gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9]+(?=\\.xml)",
-                 wb$pivotTables.xml.rels,
-                 perl = TRUE, ignore.case = TRUE
-        )
-      )
-    )
-
-    ## pivot cache records
-    tmp <- unlist(regmatches(pivotCacheRecords, gregexpr("(?<=pivotCache/pivotCacheRecords)[0-9]+(?=\\.xml)", pivotCacheRecords, perl = TRUE, ignore.case = TRUE)))
-    pivotCacheRecords <- pivotCacheRecords[tmp %in% cache_keep]
-
-    ## pivot cache definitions rels
-    tmp <- unlist(regmatches(pivotDefRelsXML, gregexpr("(?<=_rels/pivotCacheDefinition)[0-9]+(?=\\.xml)", pivotDefRelsXML, perl = TRUE, ignore.case = TRUE)))
-    pivotDefRelsXML <- pivotDefRelsXML[tmp %in% cache_keep]
-
-    ## pivot cache definitions
-    tmp <- unlist(regmatches(pivotDefXML, gregexpr("(?<=pivotCache/pivotCacheDefinition)[0-9]+(?=\\.xml)", pivotDefXML, perl = TRUE, ignore.case = TRUE)))
-    pivotDefXML <- pivotDefXML[tmp %in% cache_keep]
-
     if (length(pivotTableXML)) {
-      wb$pivotTables[seq_along(pivotTableXML)] <- pivotTableXML
+      wb$pivotTables <- unapply(pivotTableXML, read_xml, pointer = FALSE)
       pivot_content_type <- c(
         pivot_content_type,
         sprintf('<Override PartName="/xl/pivotTables/pivotTable%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml"/>', seq_along(pivotTableXML))
       )
     }
 
+    if (length(pivotTableRelsXML)) {
+      wb$pivotTables.xml.rels <- unapply(pivotTableRelsXML, read_xml, pointer = FALSE)
+    }
+
     if (length(pivotDefXML)) {
-      wb$pivotDefinitions[seq_along(pivotDefXML)] <- pivotDefXML
+      wb$pivotDefinitions <- unapply(pivotDefXML, read_xml, pointer = FALSE)
       pivot_content_type <- c(
         pivot_content_type,
         sprintf('<Override PartName="/xl/pivotCache/pivotCacheDefinition%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml"/>', seq_along(pivotDefXML))
       )
     }
 
+    if (length(pivotDefRelsXML)) {
+      wb$pivotDefinitionsRels <- unapply(pivotDefRelsXML, read_xml, pointer = FALSE)
+    }
+
     if (length(pivotCacheRecords)) {
-      wb$pivotRecords[seq_along(pivotCacheRecords)] <- pivotCacheRecords
+      wb$pivotRecords <- unapply(pivotCacheRecords, read_xml, pointer = FALSE)
       pivot_content_type <- c(
         pivot_content_type,
         sprintf('<Override PartName="/xl/pivotCache/pivotCacheRecords%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml"/>', seq_along(pivotCacheRecords))
       )
-    }
-
-    if (length(pivotDefRelsXML)) {
-      wb$pivotDefinitionsRels[seq_along(pivotDefRelsXML)] <- pivotDefRelsXML
     }
 
     ## update content_types
