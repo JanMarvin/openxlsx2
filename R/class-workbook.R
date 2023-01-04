@@ -2572,7 +2572,7 @@ wbWorkbook <- R6::R6Class(
       # the first n -1 rows get outlineLevel
       select <- row_attr$r %in% as.character(rows)
       collapse_in <- ifelse(below, length(rows), 1)
-      select_n1 <- row_attr$min %in% as.character(rows[-collapse_in])
+      select_n1 <- row_attr$r %in% as.character(rows[-collapse_in])
       if (length(select)) {
         row_attr$outlineLevel[select] <- as.character(levels)
         row_attr$collapsed[select] <- as_binary(collapsed)
