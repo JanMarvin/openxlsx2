@@ -49,6 +49,17 @@ test_that("group rows", {
   got <- wb$worksheets[[1]]$sheet_data$row_attr$r
   expect_equal(c("1", "2", "3", "4"), got)
 
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, colNames = FALSE)$
+    group_rows("Sheet 1", 1:4, collapsed = TRUE)
+
+  got <- wb$worksheets[[1]]$sheet_data$row_attr$collapsed
+  expect_equal(c("1", "1", "1", "1"), got)
+
+  got <- wb$worksheets[[1]]$sheet_data$row_attr$hidden
+  expect_equal(c("1", "1", "1", ""), got)
+
 })
 
 test_that("grouping levels", {
