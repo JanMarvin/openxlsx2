@@ -6652,26 +6652,6 @@ wbWorkbook <- R6::R6Class(
 
 # helpers -----------------------------------------------------------------
 
-
-file_copy_wb_save <- function(from, pattern, dir) {
-  # specifically used within wbWoorkbook$save()
-
-  stopifnot(
-    dir.exists(dir),
-    is.character(pattern),
-    length(pattern) == 1L
-  )
-
-  if (length(from)) {
-    file.copy(
-      from = from,
-      to = file.path(dir, sprintf(pattern, seq_along(from))),
-      overwrite = TRUE,
-      copy.date = TRUE
-    )
-  }
-}
-
 lcr <- function(var) {
   # quick function for specifying error message
   paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
