@@ -283,6 +283,51 @@ wb_add_formula <- function(
   )
 }
 
+#' copy cells around
+#' @param wb workbook
+#' @param sheet a worksheet
+#' @param dims cell used as start
+#' @param data a wb_data object
+#' @param as_value should a copy of the value be written
+#' @param as_ref should references to the cell be written
+#' @param transpose should the data be written transposed
+#' @examples
+#' wb <- wb_workbook()$
+#' add_worksheet()$
+#'   add_data(x = mtcars)$
+#'   add_fill(dims = "A1:F1", color = wb_color("yellow"))
+#'
+#' dat <- wb_data(wb, dims = "A1:D4", colNames = FALSE)
+#'
+#' wb$
+#'   # 1:1 copy to M2
+#'   clone_worksheet(old = 1, new = "Clone1")$
+#'   copy_cells(data = dat, dims = "M2")
+#' @family workbook wrappers
+#' @export
+#' @returns the wbWorkbook invisibly
+wb_copy_cells <- function(
+    wb,
+    sheet     = current_sheet(),
+    dims      = "A1",
+    data,
+    as_value  = FALSE,
+    as_ref    = FALSE,
+    transpose = FALSE
+) {
+  assert_workbook(wb)
+  wb$
+    clone(deep = TRUE)$
+    copy_cells(
+      sheet = sheet,
+      dims = dims,
+      data = data,
+      as_value = as_value,
+      as_ref = as_ref,
+      transpose = transpose
+    )
+}
+
 # merge cells -------------------------------------------------------------
 
 #' Worksheet cell merging

@@ -1987,6 +1987,93 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    ### copy cells ----
+
+    #' @description
+    #' copy cells around in a workbook
+    #' @param sheet a worksheet
+    #' @param dims cell used as start
+    #' @param data a wb_data object
+    #' @param as_value should a copy of the value be written
+    #' @param as_ref should references to the cell be written
+    #' @param transpose should the data be written transposed
+    #' @return The `wbWorksheet` object, invisibly
+    copy_cells = function(
+      sheet     = current_sheet(),
+      dims      = "A1",
+      data,
+      as_value  = FALSE,
+      as_ref    = FALSE,
+      transpose = FALSE
+    ) {
+
+      assert_class(data, "wb_data")
+      sheet <- private$get_sheet_index(sheet)
+
+      to_ncol <- ncol(data) - 1
+      to_nrow <- nrow(data) - 1
+
+      start_col <- col2int(dims)
+      start_row <- as.integer(gsub("\\D+", "", dims))
+
+      to_cols <- seq.int(start_col, start_col + to_ncol)
+      to_rows <- seq.int(start_row, start_row + to_nrow)
+
+      to_dims    <- rowcol_to_dims(to_rows, to_cols)
+      to_dims_i  <- dims_to_dataframe(to_dims, fill = FALSE)
+      to_dims_f  <- dims_to_dataframe(to_dims, fill = TRUE)
+
+      if (transpose) {
+        to_dims_i <- as.data.frame(t(to_dims_i))
+        to_dims_f  <- as.data.frame(t(to_dims_f))
+      }
+
+      to_dims_f <- unname(unlist(to_dims_f))
+
+      from_sheet <- attr(data, "sheet")
+      from_dims  <- attr(data, "dims")
+
+      from_sheet <- wb_validate_sheet(self, from_sheet)
+      from_dims  <- as.character(unlist(from_dims))
+      cc <- self$worksheets[[from_sheet]]$sheet_data$cc
+
+      # TODO improve this. It should use v or inlineStr from cc
+      if (as_value) {
+        to_data <- data
+
+        if (transpose) {
+          data <- t(data)
+        }
+
+        self$add_data(sheet = sheet, x = data, dims = to_dims_f[[1]], colNames = FALSE)
+
+        return(invisible(self))
+      }
+
+      # initialize dims we write to as empty cells
+      private$do_cell_init(sheet, to_dims)
+
+      to_cc <- cc[match(from_dims, cc$r), ]
+      from_cells <- to_cc$r
+      to_cc[c("r", "row_r", "c_r")] <- cbind(
+        to_dims_f,
+        gsub("\\D+", "", to_dims_f),
+        int2col(col2int(to_dims_f))
+      )
+
+      if (as_ref) {
+        from_sheet_name <- self$get_sheet_names()[[from_sheet]]
+        to_cc[c("c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+        to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_cells)
+      }
+
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      cc[match(to_dims_f, cc$r), ] <- to_cc
+
+      self$worksheets[[sheet]]$sheet_data$cc <- cc
+
+      invisible(self)
+    },
 
     ### base font ----
 

@@ -264,6 +264,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-save}{\code{wbWorkbook$save()}}
 \item \href{#method-wbWorkbook-open}{\code{wbWorkbook$open()}}
 \item \href{#method-wbWorkbook-buildTable}{\code{wbWorkbook$buildTable()}}
+\item \href{#method-wbWorkbook-copy_cells}{\code{wbWorkbook$copy_cells()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
 \item \href{#method-wbWorkbook-set_bookview}{\code{wbWorkbook$set_bookview()}}
@@ -836,6 +837,43 @@ Build table
 \item{\code{showRowStripes}}{showRowStripes}
 
 \item{\code{showColumnStripes}}{showColumnStripes}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheet} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-copy_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-copy_cells}{}}}
+\subsection{Method \code{copy_cells()}}{
+copy cells around in a workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$copy_cells(
+  sheet = current_sheet(),
+  dims = "A1",
+  data,
+  as_value = FALSE,
+  as_ref = FALSE,
+  transpose = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{cell used as start}
+
+\item{\code{data}}{a wb_data object}
+
+\item{\code{as_value}}{should a copy of the value be written}
+
+\item{\code{as_ref}}{should references to the cell be written}
+
+\item{\code{transpose}}{should the data be written transposed}
 }
 \if{html}{\out{</div>}}
 }
