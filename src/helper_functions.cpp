@@ -259,12 +259,28 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
     }
   }
 }
+// similar to is.numeric(x)
+// returns true if string can be written as numeric and is not Inf
+// @param x a string input
+bool is_double(std::string x) {
+
+  char *endp;
+  double res;
+
+  res = R_strtod(x.c_str(), &endp);
+
+  if (isBlankString(endp) && isfinite(res)) {
+    return 1;
+  }
+
+  return 0;
+}
 
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
                   bool ColNames, int32_t start_col, int32_t start_row,
-                  Rcpp::CharacterVector ref) {
+                  Rcpp::CharacterVector ref, bool string_nums) {
 
   auto n = z.nrow();
   auto m = z.ncol();
@@ -305,8 +321,13 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         cell.c_t = "b";
         break;
       case character:
-        cell.c_t = "inlineStr";
-        cell.is  = txt_to_is(vals, 0, 1, 1);
+        if (string_nums && is_double(vals)) {
+          cell.v   = vals;
+          vtyp = 6;
+        } else {
+          cell.c_t = "inlineStr";
+          cell.is  = txt_to_is(vals, 0, 1, 1);
+        }
         break;
       case hyperlink:
       case formula:
