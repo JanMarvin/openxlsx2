@@ -296,7 +296,7 @@ write_data2 <- function(
     data[sel][is.na(data[sel])] <- "_openxlsx_NA"
   }
 
-  string_nums <- getOption("openxlsx2.string_nums", default = FALSE)
+  string_nums <- getOption("openxlsx2.string_nums", default = 0)
 
   wide_to_long(
     data,
@@ -408,9 +408,9 @@ write_data2 <- function(
     }
 
     if (any(dc == openxlsx2_celltype[["character"]])) {
-      if (any(cc$typ == "6")) {
+      if (any(sel <- cc$typ == openxlsx2_celltype[["string_nums"]])) {
 
-        dim_sel <- paste0(cc$r[cc$typ == "6"], collapse = ";")
+        dim_sel <- paste0(cc$r[sel], collapse = ";")
 
         wb$add_cell_style(
           sheet = sheetno,

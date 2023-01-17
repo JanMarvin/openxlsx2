@@ -324,15 +324,31 @@ test_that("writeData() forces evaluation of x (#264)", {
 
 test_that("write character numerics with a correct cell style", {
 
-  options("openxlsx2.string_nums" = TRUE)
+  ## current default
+  options("openxlsx2.string_nums" = 0)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+
+  exp <- NA_character_
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "4", "4", "4", "4")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  ## string numerics correctly flagged
+  options("openxlsx2.string_nums" = 1)
 
   wb <- wb_workbook() %>%
     wb_add_worksheet() %>%
     wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5")) %>%
     wb_add_worksheet() %>%
     wb_add_data(dims = "A1", x = "1992") %>%
-    wb_add_data(dims = "A2", x = 1992)%>%
-    wb_add_data(dims = "A3", x = "1992.a")%>%
+    wb_add_data(dims = "A2", x = 1992) %>%
+    wb_add_data(dims = "A3", x = "1992.a") %>%
     wb_add_worksheet() %>%
     wb_add_data(dims = "A1", x = 1e5) %>%
     wb_add_data(dims = "A2", x = "1e5") %>%
@@ -343,16 +359,31 @@ test_that("write character numerics with a correct cell style", {
   got <- wb$styles_mgr$styles$cellXfs[2]
   expect_equal(exp, got)
 
-  exp <- c("4", "6", "4", "4", "6")
+  exp <- c("4", "13", "4", "4", "13")
   got <- wb$worksheets[[1]]$sheet_data$cc$typ
   expect_equal(exp, got)
 
-  exp <- c("6", "2", "4")
+  exp <- c("13", "2", "4")
   got <- wb$worksheets[[2]]$sheet_data$cc$typ
   expect_equal(exp, got)
 
-  exp <- c("2", "6", "2", "6")
+  exp <- c("2", "13", "2", "13")
   got <- wb$worksheets[[3]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  ## write string numerics as numerics (on the fly conversion)
+  options("openxlsx2.string_nums" = 2)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+
+  exp <- NA_character_
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "2", "4", "4", "2")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
   expect_equal(exp, got)
 
 })

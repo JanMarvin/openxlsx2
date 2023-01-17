@@ -92,7 +92,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // wide_to_long
-void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::CharacterVector ref, bool string_nums);
+void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::CharacterVector ref, int32_t string_nums);
 RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refSEXP, SEXP string_numsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -103,7 +103,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int32_t >::type start_col(start_colSEXP);
     Rcpp::traits::input_parameter< int32_t >::type start_row(start_rowSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type ref(refSEXP);
-    Rcpp::traits::input_parameter< bool >::type string_nums(string_numsSEXP);
+    Rcpp::traits::input_parameter< int32_t >::type string_nums(string_numsSEXP);
     wide_to_long(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums);
     return R_NilValue;
 END_RCPP
