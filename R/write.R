@@ -410,7 +410,10 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["character"]])) {
       if (any(sel <- cc$typ == openxlsx2_celltype[["string_nums"]])) {
 
-        dim_sel <- paste0(cc$r[sel], collapse = ";")
+        # # we cannot select every cell like this, because it is terribly slow.
+        # dim_sel <- paste0(cc$r[sel], collapse = ";")
+        dim_sel <- get_data_class_dims("character")
+        # message("character: ", dim_sel)
 
         wb$add_cell_style(
           sheet = sheetno,
