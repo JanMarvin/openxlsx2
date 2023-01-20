@@ -93,7 +93,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
   }
 
   replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
-                   "f", "f_t", "f_ref", "f_ca", "f_si", "is")
+                   "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
 
   sel <- match(x$r, cc$r)
   cc[sel, replacement] <- x[replacement]
@@ -296,6 +296,8 @@ write_data2 <- function(
     data[sel][is.na(data[sel])] <- "_openxlsx_NA"
   }
 
+  string_nums <- getOption("openxlsx2.string_nums", default = 0)
+
   wide_to_long(
     data,
     dc,
@@ -303,7 +305,8 @@ write_data2 <- function(
     ColNames = colNames,
     start_col = startCol,
     start_row = startRow,
-    ref = dims
+    ref = dims,
+    string_nums = string_nums
   )
 
   # if any v is missing, set typ to 'e'. v is only filled for non character
@@ -402,6 +405,24 @@ write_data2 <- function(
           name = wb_get_base_font(wb)$name$val,
           u = "single"
       )
+    }
+
+    if (any(dc == openxlsx2_celltype[["character"]])) {
+      if (any(sel <- cc$typ == openxlsx2_celltype[["string_nums"]])) {
+
+        # # we cannot select every cell like this, because it is terribly slow.
+        # dim_sel <- paste0(cc$r[sel], collapse = ";")
+        dim_sel <- get_data_class_dims("character")
+        # message("character: ", dim_sel)
+
+        wb$add_cell_style(
+          sheet = sheetno,
+          dim = dim_sel,
+          applyNumberFormat = "1",
+          quotePrefix = "1",
+          numFmtId = "49"
+        )
+      }
     }
 
     # options("openxlsx2.numFmt" = NULL)

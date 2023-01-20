@@ -10,6 +10,13 @@
 
 * Add `wb_copy_cells()` a wrapper that allows copying cell ranges in a workbook as direct copy, as reference or as value. [515](https://github.com/JanMarvin/openxlsx2/pull/515)
 
+* Experimental option: `openxlsx2.string_nums` to write string numerics differently. A string numeric is a numeric in a string like: `as.character(1.5)`. The option can be
+  * 0 = the current default. Writes string numeric as string (the incorrect way according to spreadsheet software)
+  * 1 = writes string numeric as numeric with a character flag (the correct way according to spreadsheet software)
+  * 2 = convert all string numeric to numeric when writing
+  
+  This is experimental, because the impact is somewhat unknown. It might trigger unintended side effects. Feedback is requested.
+
 ## Fixes
 
 * Reading of files with frozen panes and more than one section node was restored. [495](https://github.com/JanMarvin/openxlsx2/pull/495)

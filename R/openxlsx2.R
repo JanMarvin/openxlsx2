@@ -78,5 +78,6 @@ openxlsx2_celltype <- c(
   comma          = 9,
   hyperlink      = 10,
   array_formula  = 11,
-  factor         = 12
+  factor         = 12,
+  string_nums    = 13
 )

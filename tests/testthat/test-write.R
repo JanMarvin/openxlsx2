@@ -11,7 +11,7 @@ test_that("write_formula", {
          v = "", f = "SUM(C2:C11*D2:D11)",
          f_t = "array", f_ref = "E2:E2",
          f_ca = "", f_si = "",
-         is = "", typ = ""),
+         is = "", typ = "11"),
     row.names = 23L, class = "data.frame")
 
   # write data add array formula later
@@ -236,7 +236,7 @@ test_that("update cell(s)", {
                         f_ca = c("", "", "", "", "", ""),
                         f_si = c("", "", "", "", "", ""),
                         is = c("", "", "", "", "", ""),
-                        typ = c("3", "", "", "", "", "")),
+                        typ = c("3", "3", "3", "3", "3", "3")),
                    row.names = c("1", "8", "17", "114", "121", "128"),
                    class = "data.frame")
   got <- head(wb$worksheets[[1]]$sheet_data$cc)
@@ -317,6 +317,73 @@ test_that("writeData() forces evaluation of x (#264)", {
     "<is><t>d</t></is>", "<is><t>e</t></is>", "<is><t>123.4</t></is>"
   )
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
+  expect_equal(exp, got)
+
+})
+
+
+test_that("write character numerics with a correct cell style", {
+
+  ## current default
+  options("openxlsx2.string_nums" = 0)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+
+  exp <- NA_character_
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "4", "4", "4", "4")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  ## string numerics correctly flagged
+  options("openxlsx2.string_nums" = 1)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5")) %>%
+    wb_add_worksheet() %>%
+    wb_add_data(dims = "A1", x = "1992") %>%
+    wb_add_data(dims = "A2", x = 1992) %>%
+    wb_add_data(dims = "A3", x = "1992.a") %>%
+    wb_add_worksheet() %>%
+    wb_add_data(dims = "A1", x = 1e5) %>%
+    wb_add_data(dims = "A2", x = "1e5") %>%
+    wb_add_data(dims = "A3", x = 1e+05) %>%
+    wb_add_data(dims = "A4", x = "1e+05")
+
+  exp <- "<xf applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"49\" quotePrefix=\"1\" xfId=\"0\"/>"
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "13", "4", "4", "13")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  exp <- c("13", "2", "4")
+  got <- wb$worksheets[[2]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  exp <- c("2", "13", "2", "13")
+  got <- wb$worksheets[[3]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  ## write string numerics as numerics (on the fly conversion)
+  options("openxlsx2.string_nums" = 2)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+
+  exp <- NA_character_
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "2", "4", "4", "2")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
   expect_equal(exp, got)
 
 })
