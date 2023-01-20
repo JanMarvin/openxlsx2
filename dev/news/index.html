@@ -77,6 +77,13 @@
 <li><p><code>writeData()</code> calls <code>force(x)</code> to evaluate the object before options are set (<a href="https://github.com/ycphs/openxlsx/issues/264" class="external-link">#264</a>)</p></li>
 <li><p><code>tabColor</code> in <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code> now allows passing <code><a href="../reference/wbColour.html">wb_color()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/500" class="external-link">500</a></p></li>
 <li><p>Add <code><a href="../reference/wb_copy_cells.html">wb_copy_cells()</a></code> a wrapper that allows copying cell ranges in a workbook as direct copy, as reference or as value. <a href="https://github.com/JanMarvin/openxlsx2/pull/515" class="external-link">515</a></p></li>
+<li>
+<p>Experimental option: <code>openxlsx2.string_nums</code> to write string numerics differently. A string numeric is a numeric in a string like: <code>as.character(1.5)</code>. The option can be</p>
+<ul><li>0 = the current default. Writes string numeric as string (the incorrect way according to spreadsheet software)</li>
+<li>1 = writes string numeric as numeric with a character flag (the correct way according to spreadsheet software)</li>
+<li>2 = convert all string numeric to numeric when writing</li>
+</ul><p>This is experimental, because the impact is somewhat unknown. It might trigger unintended side effects. Feedback is requested.</p>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
