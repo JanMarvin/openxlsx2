@@ -84,6 +84,7 @@
 <li>2 = convert all string numeric to numeric when writing</li>
 </ul><p>This is experimental, because the impact is somewhat unknown. It might trigger unintended side effects. Feedback is requested.</p>
 </li>
+<li><p>Enable writing strings as <code>sharedStrings</code> with argument <code>inline_strings = FALSE</code>. This creates a <code>sharedStrings</code> table in openxml that allows to reuse strings in the workbook efficiently and can reduce the file size if a workbook has many cells that are duplicates. <a href="https://github.com/JanMarvin/openxlsx2/pull/499" class="external-link">499</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
