@@ -316,12 +316,12 @@ write_data2 <- function(
   # values, but contains a string. To avoid issues, set it to the missing
   # value expression
 
-  if (inline_strings) {
-    ## replace NA, NaN, and Inf
-    is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
-  } else {
-    is_na <- which(cc$v == "<si><t>_openxlsx_NA</t></si>" | cc$v == "NA")
-  }
+  ## replace NA, NaN, and Inf
+  is_na <- which(
+    cc$is == "<is><t>_openxlsx_NA</t></is>" |
+      cc$v == "<si><t>_openxlsx_NA</t></si>" |
+      cc$v == "NA"
+  )
 
   if (length(is_na)) {
     if (missing(na.strings)) {
