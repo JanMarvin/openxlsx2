@@ -5,7 +5,7 @@ test_that("strings_xml", {
 
   expect_equal(
     c("foo", "bar"),
-    si_to_txt(read_xml(si))
+    xml_si_to_txt(read_xml(si))
   )
 
   txt <- "foo"

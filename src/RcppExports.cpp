@@ -92,8 +92,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // wide_to_long
-void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::CharacterVector ref, int32_t string_nums);
-RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refSEXP, SEXP string_numsSEXP) {
+void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::CharacterVector ref, int32_t string_nums, bool inline_strings);
+RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refSEXP, SEXP string_numsSEXP, SEXP inline_stringsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
@@ -104,7 +104,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int32_t >::type start_row(start_rowSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type ref(refSEXP);
     Rcpp::traits::input_parameter< int32_t >::type string_nums(string_numsSEXP);
-    wide_to_long(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums);
+    Rcpp::traits::input_parameter< bool >::type inline_strings(inline_stringsSEXP);
+    wide_to_long(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, inline_strings);
     return R_NilValue;
 END_RCPP
 }
@@ -529,28 +530,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// si_to_txt
-SEXP si_to_txt(XPtrXML doc);
-RcppExport SEXP _openxlsx2_si_to_txt(SEXP docSEXP) {
+// xml_si_to_txt
+SEXP xml_si_to_txt(XPtrXML doc);
+RcppExport SEXP _openxlsx2_xml_si_to_txt(SEXP docSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    rcpp_result_gen = Rcpp::wrap(si_to_txt(doc));
-    return rcpp_result_gen;
-END_RCPP
-}
-// txt_to_si
-std::string txt_to_si(Rcpp::CharacterVector txt, bool no_escapes, bool raw, bool skip_control);
-RcppExport SEXP _openxlsx2_txt_to_si(SEXP txtSEXP, SEXP no_escapesSEXP, SEXP rawSEXP, SEXP skip_controlSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type txt(txtSEXP);
-    Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
-    Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
-    Rcpp::traits::input_parameter< bool >::type skip_control(skip_controlSEXP);
-    rcpp_result_gen = Rcpp::wrap(txt_to_si(txt, no_escapes, raw, skip_control));
+    rcpp_result_gen = Rcpp::wrap(xml_si_to_txt(doc));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -565,6 +552,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// si_to_txt
+SEXP si_to_txt(Rcpp::CharacterVector si_vec);
+RcppExport SEXP _openxlsx2_si_to_txt(SEXP si_vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type si_vec(si_vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(si_to_txt(si_vec));
+    return rcpp_result_gen;
+END_RCPP
+}
 // txt_to_is
 std::string txt_to_is(std::string text, bool no_escapes, bool raw, bool skip_control);
 RcppExport SEXP _openxlsx2_txt_to_is(SEXP textSEXP, SEXP no_escapesSEXP, SEXP rawSEXP, SEXP skip_controlSEXP) {
@@ -576,6 +574,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
     Rcpp::traits::input_parameter< bool >::type skip_control(skip_controlSEXP);
     rcpp_result_gen = Rcpp::wrap(txt_to_is(text, no_escapes, raw, skip_control));
+    return rcpp_result_gen;
+END_RCPP
+}
+// txt_to_si
+std::string txt_to_si(std::string text, bool no_escapes, bool raw, bool skip_control);
+RcppExport SEXP _openxlsx2_txt_to_si(SEXP textSEXP, SEXP no_escapesSEXP, SEXP rawSEXP, SEXP skip_controlSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type text(textSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
+    Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
+    Rcpp::traits::input_parameter< bool >::type skip_control(skip_controlSEXP);
+    rcpp_result_gen = Rcpp::wrap(txt_to_si(text, no_escapes, raw, skip_control));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -821,7 +833,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 3},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
-    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 8},
+    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 9},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
@@ -854,10 +866,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_remove_child1", (DL_FUNC) &_openxlsx2_xml_remove_child1, 4},
     {"_openxlsx2_xml_remove_child2", (DL_FUNC) &_openxlsx2_xml_remove_child2, 5},
     {"_openxlsx2_xml_remove_child3", (DL_FUNC) &_openxlsx2_xml_remove_child3, 6},
-    {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
-    {"_openxlsx2_txt_to_si", (DL_FUNC) &_openxlsx2_txt_to_si, 4},
+    {"_openxlsx2_xml_si_to_txt", (DL_FUNC) &_openxlsx2_xml_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
+    {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_txt_to_is", (DL_FUNC) &_openxlsx2_txt_to_is, 4},
+    {"_openxlsx2_txt_to_si", (DL_FUNC) &_openxlsx2_txt_to_si, 4},
     {"_openxlsx2_read_xf", (DL_FUNC) &_openxlsx2_read_xf, 1},
     {"_openxlsx2_write_xf", (DL_FUNC) &_openxlsx2_write_xf, 1},
     {"_openxlsx2_read_font", (DL_FUNC) &_openxlsx2_read_font, 1},

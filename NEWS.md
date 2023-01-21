@@ -16,6 +16,8 @@
   * 2 = convert all string numeric to numeric when writing
   
   This is experimental, because the impact is somewhat unknown. It might trigger unintended side effects. Feedback is requested.
+  
+* Enable writing strings as `sharedStrings` with argument `inline_strings = FALSE`. This creates a `sharedStrings` table in openxml that allows to reuse strings in the workbook efficiently and can reduce the file size if a workbook has many cells that are duplicates. [499](https://github.com/JanMarvin/openxlsx2/pull/499)
 
 ## Fixes
 

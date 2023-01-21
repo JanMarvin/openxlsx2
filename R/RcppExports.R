@@ -29,8 +29,8 @@ long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
-wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums) {
-    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums))
+wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, inline_strings) {
+    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, inline_strings))
 }
 
 #' @param colnames a vector of the names of the data frame
@@ -224,20 +224,24 @@ xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
 }
 
-si_to_txt <- function(doc) {
-    .Call(`_openxlsx2_si_to_txt`, doc)
-}
-
-txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
-    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw, skip_control)
+xml_si_to_txt <- function(doc) {
+    .Call(`_openxlsx2_xml_si_to_txt`, doc)
 }
 
 is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
 }
 
+si_to_txt <- function(si_vec) {
+    .Call(`_openxlsx2_si_to_txt`, si_vec)
+}
+
 txt_to_is <- function(text, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
     .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw, skip_control)
+}
+
+txt_to_si <- function(text, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
+    .Call(`_openxlsx2_txt_to_si`, text, no_escapes, raw, skip_control)
 }
 
 read_xf <- function(xml_doc_xf) {

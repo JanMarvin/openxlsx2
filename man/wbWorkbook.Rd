@@ -568,7 +568,8 @@ add data
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -605,6 +606,8 @@ add data
 
 \item{\code{na.strings}}{na.strings}
 
+\item{\code{inline_strings}}{write characters as inline strings}
+
 \item{\code{return}}{The \code{wbWorkbook} object}
 }
 \if{html}{\out{</div>}}
@@ -635,7 +638,8 @@ add a data table
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -679,6 +683,8 @@ add a data table
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
 \item{\code{na.strings}}{na.strings}
+
+\item{\code{inline_strings}}{write characters as inline strings}
 }
 \if{html}{\out{</div>}}
 }
