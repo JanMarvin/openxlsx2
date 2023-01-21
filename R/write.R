@@ -137,9 +137,8 @@ nmfmt_df <- function(x) {
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
 #' @details
-#' The strings `"_openxlsx_NA"` and `"_openxlsx_NULL"` are reserved for
-#' `openxlsx2`. If the data frame contains this string, the output will
-#' be broken.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
+#' contains this string, the output will be broken.
 #'
 #' @examples
 #' # create a workbook and add some sheets
@@ -293,10 +292,6 @@ write_data2 <- function(
       data[, i] <- as.integer(as.logical(data[, i]))
     }
   }
-
-  # At this stage we have only a single data frame of characters.
-  # Every operation needs to consider this, otherwise we create
-  # strings for every digit in the data frame.
 
   sel <- which(dc == openxlsx2_celltype[["character"]]) # character
   if (length(sel)) {
