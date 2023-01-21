@@ -299,9 +299,6 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       std::string row = std::to_string(startrow);
       std::string col = int_to_col(startcol);
 
-      bool is_na = 0;
-      bool is_null = 0;
-
       auto pos = (j * m) + i;
 
       // create struct
@@ -341,16 +338,6 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
               cell.v   = txt_to_si(vals, 0, 1, 1);
           }
         }
-
-        // } else {
-        //   if (is_na) {
-        //     cell.v   = "#N/A";
-        //     cell.c_t = "e";
-        //   } else if (!is_null) {
-        //     cell.c_t = "s";
-        //     cell.v   = vals;
-        //   }
-        // }
         break;
       case hyperlink:
       case formula:
