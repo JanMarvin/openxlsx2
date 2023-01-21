@@ -297,66 +297,10 @@ write_data2 <- function(
   # At this stage we have only a single data frame of characters.
   # Every operation needs to consider this, otherwise we create
   # strings for every digit in the data frame.
+
   sel <- which(dc == openxlsx2_celltype[["character"]]) # character
-  if (colNames || length(sel) || !inline_strings) {
-    if (inline_strings) {
-      data[sel][is.na(data[sel])] <- "_openxlsx_NA"
-    } else {
-      is_na <- is.na(data)
-
-      if (length(is_na)) {
-        if (missing(na.strings)) {
-          # writes open xml #N/A expression
-        } else {
-          if (is.null(na.strings)) {
-            # writes open xml empty cell
-            data[is.na(data)] <- "_openxlsx_NULL"
-          } else {
-            # writes string
-            # data[is.na(data)] <- as.character(na.strings)
-          }
-        }
-      }
-
-      base_len <- length(attr(wb$sharedStrings, "text"))
-      unis <- stringi::stri_unique(unlist(data[sel]))
-      if (colNames) {
-       unis <- stringi::stri_unique(c(data[1, ], unis))
-      }
-      if (!missing(na.strings) && !is.null(na.strings)) {
-        unis <- stringi::stri_unique(c(unis, na.strings))
-      }
-      unis <- unis[!(is.na(unis) | unis == "_openxlsx_NULL")]
-
-      # update all characters
-      data[sel] <- lapply(data[sel], function(x) {
-        mm <- match(x, unis)
-        mm_is_na <- !is.na(mm)
-        x[mm_is_na] <- as.character(mm[mm_is_na] + base_len - 1L)
-        x
-      })
-
-      # update remaining column names
-      if (colNames) {
-        sel <- as.character(data[1, ]) %in% unis
-        data[1, sel] <- lapply(data[1, sel], function(x) as.character(match(x, unis) + base_len - 1L))
-      }
-
-      # We use this for wb_to_df()
-      old_text <- attr(wb$sharedStrings, "text")
-
-      new_sst <- vapply(unis, txt_to_si, NA_character_, USE.NAMES = FALSE)
-      wb$sharedStrings <- c(as.character(wb$sharedStrings), new_sst)
-      attr(wb$sharedStrings, "uniqueCount") <- length(unis)
-      attr(wb$sharedStrings, "text") <- c(old_text, unis)
-
-      if (!any(grepl("sharedStrings", wb$workbook.xml.rels))) {
-        wb$append(
-          "workbook.xml.rels",
-          "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
-        )
-      }
-    }
+  if (length(sel)) {
+    data[sel][is.na(data[sel])] <- "_openxlsx_NA"
   }
 
   string_nums <- getOption("openxlsx2.string_nums", default = 0)
@@ -380,57 +324,45 @@ write_data2 <- function(
   if (inline_strings) {
     ## replace NA, NaN, and Inf
     is_na <- which(cc$is == "<is><t>_openxlsx_NA</t></is>" | cc$v == "NA")
-    if (length(is_na)) {
-      if (missing(na.strings)) {
-        cc[is_na, "v"]   <- "#N/A"
-        cc[is_na, "c_t"] <- "e"
+  } else {
+    is_na <- which(cc$v == "<si><t>_openxlsx_NA</t></si>" | cc$v == "NA")
+  }
+
+  if (length(is_na)) {
+    if (missing(na.strings)) {
+      cc[is_na, "v"]   <- "#N/A"
+      cc[is_na, "c_t"] <- "e"
+      cc[is_na, "is"]  <- ""
+    } else {
+      cc[is_na, "v"]  <- ""
+      if (is.null(na.strings)) {
+        cc[is_na, "c_t"] <- ""
         cc[is_na, "is"]  <- ""
+        # do nothing
       } else {
-        cc[is_na, "v"]  <- ""
-        if (is.null(na.strings)) {
-          cc[is_na, "c_t"] <- ""
-          cc[is_na, "is"]  <- ""
-          # do nothing
-        } else {
+        if (inline_strings) {
           cc[is_na, "c_t"] <- "inlineStr"
           cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
-                                      no_escapes = TRUE, raw = TRUE)
+                                       no_escapes = TRUE, raw = TRUE)
+        } else {
+          cc[is_na, "c_t"] <- "s"
+          cc[is_na, "v"]   <- txt_to_si(as.character(na.strings),
+                                        no_escapes = TRUE, raw = TRUE)
         }
       }
     }
+  }
 
-    is_nan <- which(cc$v == "NaN")
-    if (length(is_nan)) {
-      cc[is_nan, "v"]   <- "#VALUE!"
-      cc[is_nan, "c_t"] <- "e"
-    }
+  is_nan <- which(cc$v == "NaN")
+  if (length(is_nan)) {
+    cc[is_nan, "v"]   <- "#VALUE!"
+    cc[is_nan, "c_t"] <- "e"
+  }
 
-    is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
-    if (length(is_inf)) {
-      cc[is_inf, "v"]   <- "#NUM!"
-      cc[is_inf, "c_t"] <- "e"
-    }
-  } else {
-    ## replace NA, NaN, and Inf
-    is_na <- which(cc$c_t == "e" | cc$v == "#N/A")
-    if (length(is_na)) {
-      if (!missing(na.strings) && !is.null(na.strings)) {
-        cc[is_na, "c_t"] <- "s"
-        cc[is_na, "v"] <- which(wb$sharedStrings == txt_to_si(as.character(na.strings))) - 1L
-      }
-    }
-
-    is_nan <- which(cc$v == "NaN")
-    if (length(is_nan)) {
-      cc[is_nan, "v"]   <- "#VALUE!"
-      cc[is_nan, "c_t"] <- "e"
-    }
-
-    is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
-    if (length(is_inf)) {
-      cc[is_inf, "v"]   <- "#NUM!"
-      cc[is_inf, "c_t"] <- "e"
-    }
+  is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+  if (length(is_inf)) {
+    cc[is_inf, "v"]   <- "#NUM!"
+    cc[is_inf, "c_t"] <- "e"
   }
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
@@ -625,6 +557,35 @@ write_data2 <- function(
     }
   }
   ### End styles
+
+  # update shared strings if we use shared strings
+  if (!inline_strings) {
+
+    cc <- wb$worksheets[[sheetno]]$sheet_data$cc
+
+    sel <- grepl("<si>", cc$v)
+    cc_sst <- stringi::stri_unique(cc[sel, "v"])
+
+    wb$sharedStrings <- stringi::stri_unique(c(wb$sharedStrings, cc_sst))
+
+    sel <- grepl("<si>", cc$v)
+    cc$v[sel] <- as.character(match(cc$v[sel], wb$sharedStrings) - 1L)
+
+    text        <- si_to_txt(wb$sharedStrings)
+    uniqueCount <- length(wb$sharedStrings)
+
+    attr(wb$sharedStrings, "uniqueCount") <- uniqueCount
+    attr(wb$sharedStrings, "text")        <- text
+
+    wb$worksheets[[sheetno]]$sheet_data$cc <- cc
+
+    if (!any(grepl("sharedStrings", wb$workbook.xml.rels))) {
+      wb$append(
+        "workbook.xml.rels",
+        "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
+      )
+    }
+  }
 
   ### Update calcChain
   if (length(wb$calcChain)) {

@@ -224,12 +224,16 @@ xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
 }
 
-si_to_txt <- function(doc) {
-    .Call(`_openxlsx2_si_to_txt`, doc)
+xml_si_to_txt <- function(doc) {
+    .Call(`_openxlsx2_xml_si_to_txt`, doc)
 }
 
-txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
-    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw, skip_control)
+si_to_txt <- function(si_vec) {
+    .Call(`_openxlsx2_si_to_txt`, si_vec)
+}
+
+txt_to_si <- function(text, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
+    .Call(`_openxlsx2_txt_to_si`, text, no_escapes, raw, skip_control)
 }
 
 is_to_txt <- function(is_vec) {

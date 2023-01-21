@@ -432,7 +432,7 @@ test_that("writing as shared string works", {
   expect_equal(exp, got)
 
   exp <- structure(
-    list(c_t = "s", v = "6"),
+    list(c_t = "s", v = "3"),
     row.names = 2L,
     class = "data.frame"
   )

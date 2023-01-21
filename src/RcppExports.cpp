@@ -530,28 +530,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// si_to_txt
-SEXP si_to_txt(XPtrXML doc);
-RcppExport SEXP _openxlsx2_si_to_txt(SEXP docSEXP) {
+// xml_si_to_txt
+SEXP xml_si_to_txt(XPtrXML doc);
+RcppExport SEXP _openxlsx2_xml_si_to_txt(SEXP docSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    rcpp_result_gen = Rcpp::wrap(si_to_txt(doc));
+    rcpp_result_gen = Rcpp::wrap(xml_si_to_txt(doc));
+    return rcpp_result_gen;
+END_RCPP
+}
+// si_to_txt
+SEXP si_to_txt(Rcpp::CharacterVector si_vec);
+RcppExport SEXP _openxlsx2_si_to_txt(SEXP si_vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type si_vec(si_vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(si_to_txt(si_vec));
     return rcpp_result_gen;
 END_RCPP
 }
 // txt_to_si
-std::string txt_to_si(Rcpp::CharacterVector txt, bool no_escapes, bool raw, bool skip_control);
-RcppExport SEXP _openxlsx2_txt_to_si(SEXP txtSEXP, SEXP no_escapesSEXP, SEXP rawSEXP, SEXP skip_controlSEXP) {
+std::string txt_to_si(std::string text, bool no_escapes, bool raw, bool skip_control);
+RcppExport SEXP _openxlsx2_txt_to_si(SEXP textSEXP, SEXP no_escapesSEXP, SEXP rawSEXP, SEXP skip_controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type txt(txtSEXP);
+    Rcpp::traits::input_parameter< std::string >::type text(textSEXP);
     Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
     Rcpp::traits::input_parameter< bool >::type skip_control(skip_controlSEXP);
-    rcpp_result_gen = Rcpp::wrap(txt_to_si(txt, no_escapes, raw, skip_control));
+    rcpp_result_gen = Rcpp::wrap(txt_to_si(text, no_escapes, raw, skip_control));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -855,6 +866,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_remove_child1", (DL_FUNC) &_openxlsx2_xml_remove_child1, 4},
     {"_openxlsx2_xml_remove_child2", (DL_FUNC) &_openxlsx2_xml_remove_child2, 5},
     {"_openxlsx2_xml_remove_child3", (DL_FUNC) &_openxlsx2_xml_remove_child3, 6},
+    {"_openxlsx2_xml_si_to_txt", (DL_FUNC) &_openxlsx2_xml_si_to_txt, 1},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_txt_to_si", (DL_FUNC) &_openxlsx2_txt_to_si, 4},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
