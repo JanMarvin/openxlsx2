@@ -2115,8 +2115,7 @@ wb_add_image <- function(
 }
 
 
-#' dummy function to add a chart to an existing workbook
-#' currently only a barplot is possible
+#' add a chart xml to a workbook
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
 #' @param xml chart xml
