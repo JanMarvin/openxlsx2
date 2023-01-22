@@ -198,8 +198,8 @@ write_comment_xml <- function(comment_list, file_name) {
       }
 
       xml <- c(xml, sprintf('<r>%s%s</r>',
-        comment_list[[i]]$style[[j]],
-        comment))
+                            comment_list[[i]]$style[[j]],
+                            comment))
     }
 
     xml <- c(xml, "</text></comment>")
@@ -213,7 +213,7 @@ write_comment_xml <- function(comment_list, file_name) {
 pxml <- function(x) {
   ## TODO does this break anything? Why is unique called? lengths are off, if non unique values are found.
   # paste(unique(unlist(x)), collapse = "")
-    paste(unlist(x), collapse = "")
+  paste(unlist(x), collapse = "")
 }
 
 #' split headerFooter xml into left, center, and right.
@@ -245,8 +245,8 @@ amp_split <- function(x) {
 getHeaderFooterNode <- function(x) {
 
   head_foot <- c("oddHeader", "oddFooter",
-                  "evenHeader", "evenFooter",
-                  "firstHeader", "firstFooter")
+                 "evenHeader", "evenFooter",
+                 "firstHeader", "firstFooter")
 
   headerFooter <- vector("list", length = length(head_foot))
   names(headerFooter) <- head_foot
@@ -500,3 +500,266 @@ create_sparklines <- function(
 
   sparklineGroup
 }
+
+### beg pivot table helpers
+
+cacheFields <- function(data) {
+  sapply(
+    names(data),
+    function(x) {
+      unis <- unique(data[[x]])
+
+      sharedItem <- sapply(
+        unis,
+        function(x) xml_node_create("s", xml_attributes = c(v = as.character(x)))
+      )
+
+      sharedItems <- xml_node_create(
+        "sharedItems",
+        xml_attributes = c(containsBlank = "1", count = length(sharedItem) + 1L),
+        xml_children = c(sharedItem, "<m/>")
+      )
+
+      xml_node_create(
+        "cacheField",
+        xml_attributes = c(name = x, numFmtId = "0"),
+        xml_children = sharedItems
+      )
+    },
+    USE.NAMES = FALSE
+  )
+}
+
+pivot_def_xml <- function(data) {
+
+  ref   <- dataframe_to_dims(attr(data, "dims"))
+  sheet <- attr(data, "sheet")
+  count <- ncol(data)
+
+  paste0(
+    sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="0" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(data) + 1L),
+    '<cacheSource type="worksheet"><worksheetSource ref="', ref, '" sheet="', sheet, '"/></cacheSource>',
+    '<cacheFields count="', count, '">',
+    paste0(cacheFields(data), collapse = ""),
+    '</cacheFields>',
+    '</pivotCacheDefinition>'
+  )
+}
+
+
+pivot_rec_xml <- function(data) {
+  paste0(
+    sprintf('<pivotCacheRecords xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" count="%s">', nrow(data) + 1L),
+    '</pivotCacheRecords>'
+  )
+}
+
+pivot_def_rel <- function(n) sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords\" Target=\"pivotCacheRecords%s.xml\"/></Relationships>", n)
+
+pivot_xml_rels <- function(n) sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"../pivotCache/pivotCacheDefinition%s.xml\"/></Relationships>", n)
+
+get_items <- function(data, x) {
+  x <- abs(x)
+  item <- sapply(
+    c(0, seq_along(unique(data[[x]])), "default"),
+    function(val) {
+      if (val == "default")
+        xml_node_create("item", xml_attributes = c(t = val))
+      else
+        xml_node_create("item", xml_attributes = c(x = val))
+    },
+    USE.NAMES = FALSE
+  )
+  items <- xml_node_create(
+    "items",
+    xml_attributes = c(count = as.character(length(item))), xml_children = item
+  )
+  items
+}
+
+row_col_items <- function(data, z, var) {
+  var <- abs(var)
+  item <- sapply(
+    c(0, seq_along(unique(data[var])), "grand"),
+    function(val) {
+      if (val == "0") {
+        xml_node_create("i", xml_children = xml_node_create("x"))
+      } else if (val == "grand") {
+        xml_node_create("i", xml_attributes = c(t = val), xml_children = xml_node_create("x"))
+      } else {
+        xml_node_create("i", xml_children = xml_node_create("x", xml_attributes = c(v = val)))
+      }
+    },
+    USE.NAMES = FALSE
+  )
+
+  xml_node_create(z, xml_attributes = c(count = as.character(length(item))), xml_children = item)
+}
+
+create_pivot_table <- function(x, dims, filter, rows, cols, data, n, fun) {
+
+  if (missing(filter)) {
+    filter_pos <- 0
+    use_filter <- FALSE
+    # message("no filter")
+  } else {
+    filter_pos <- match(filter, names(x))
+    use_filter <- TRUE
+  }
+
+  if (missing(rows)) {
+    rows_pos <- 0
+    use_rows <- FALSE
+    # message("no rows")
+  } else {
+    rows_pos <- match(rows, names(x))
+    use_rows <- TRUE
+  }
+
+  if (missing(cols)) {
+    cols_pos <- 0
+    use_cols <- FALSE
+    # message("no cols")
+  } else {
+    cols_pos <- match(cols, names(x))
+    use_cols <- TRUE
+  }
+
+  if (missing(data)) {
+    data_pos <- 0
+    use_data <- FALSE
+    # message("no data")
+  } else {
+    data_pos <- match(data, names(x))
+    use_data <- TRUE
+    if (length(data_pos) > 1) {
+      cols_pos <- c(-1L, cols_pos[cols_pos > 0])
+      use_cols <- TRUE
+    }
+  }
+
+  pivotField <- NULL
+  for (i in seq_along(x)) {
+
+    tmp <- xml_node_create(
+      "pivotField",
+      xml_attributes = c(showAll = "0"))
+
+    if (i %in% filter_pos) {
+      tmp <- xml_node_create(
+        "pivotField",
+        xml_attributes = c(axis = "axisPage", showAll = "0"),
+        xml_children = paste0(get_items(x, i), collapse = ""))
+    }
+
+    if (i %in% rows_pos) {
+      tmp <- xml_node_create(
+        "pivotField",
+        xml_attributes = c(axis = "axisRow", showAll = "0"),
+        xml_children = paste0(get_items(x, i), collapse = ""))
+    }
+
+    if (i %in% cols_pos) {
+      tmp <- xml_node_create(
+        "pivotField",
+        xml_attributes = c(axis = "axisCol", showAll = "0"),
+        xml_children = paste0(get_items(x, i), collapse = ""))
+    }
+
+    if (i %in% data_pos) {
+      tmp <- xml_node_create(
+        "pivotField",
+        xml_attributes = c(dataField = "1", showAll = "0"))
+    }
+
+    pivotField <- c(pivotField, tmp)
+  }
+
+  pivotFields <- xml_node_create(
+    "pivotFields",
+    xml_children = pivotField,
+    xml_attributes = c(count = as.character(length(pivotField))))
+
+  cols_field <- c(cols_pos - 1L)
+  # if (length(data_pos) > 1)
+  #   cols_field <- c(cols_field * -1, rep(1, length(data_pos) -1L))
+
+  dim <- dims
+
+  if (use_filter) {
+    pageFields <- paste0(
+      sprintf('<pageFields count="%s">', length(data_pos)),
+      paste0(sprintf('<pageField fld="%s" hier="-1" />', filter_pos - 1L), collapse = ""),
+      '</pageFields>')
+  } else {
+    pageFields <- ""
+  }
+
+  if (use_cols) {
+    colsFields <- paste0(
+      sprintf('<colFields count="%s">', length(cols_pos)),
+      paste0(sprintf('<field x="%s" />', cols_field), collapse = ""),
+      '</colFields>',
+      paste0(row_col_items(data = x, "colItems", cols_pos), collapse = "")
+    )
+  } else {
+    colsFields <- ""
+  }
+
+  if (use_rows) {
+    rowsFields <- paste0(
+      sprintf('<rowFields count="%s">', length(rows_pos)),
+      paste0(sprintf('<field x="%s" />', rows_pos - 1L), collapse = ""),
+      '</rowFields>',
+      paste0(row_col_items(data = x, "rowItems", rows_pos), collapse = "")
+    )
+  } else {
+    rowsFields <- ""
+  }
+
+  if (use_data) {
+
+    dataField <- NULL
+    for (i in seq_along(data)) {
+
+      if (missing(fun)) fun <- NULL
+
+      dataField <- c(
+        dataField,
+        xml_node_create(
+          "dataField",
+          xml_attributes = c(
+            name      = sprintf("%s of %s", ifelse(is.null(fun[i]), "Sum", fun[i]), data[i]),
+            fld       = sprintf("%s", data_pos[i] - 1L),
+            subtotal  = fun[i],
+            baseField = "0",
+            baseItem  = "0"
+          )
+        )
+      )
+    }
+
+    dataFields <- xml_node_create(
+      "dataFields",
+      xml_attributes = c(count = as.character(length(data_pos))),
+      xml_children = paste0(dataField, collapse = "")
+    )
+  } else {
+    dataFields <- ""
+  }
+
+  paste0(
+    sprintf('<pivotTableDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" name="PivotTable%s" cacheId="%s" applyNumberFormats="0" applyBorderFormats="0" applyFontFormats="0" applyPatternFormats="0" applyAlignmentFormats="0" applyWidthHeightFormats="1" dataCaption="Values" updatedVersion="8" minRefreshableVersion="3" useAutoFormatting="1" itemPrintTitles="1" createdVersion="8" indent="0" outline="1" outlineData="1" multipleFieldFilters="0">', n, n), # xr:uid="{375073AB-E7CA-C149-922E-A999C47476C1}"
+    sprintf('<location ref="%s" firstHeaderRow="1" firstDataRow="2" firstDataCol="1" rowPageCount="%s" colPageCount="%s" />', dim, as.integer(use_filter), as.integer(use_filter)),
+    paste0(pivotFields, collapse = ""),
+    rowsFields,
+    colsFields,
+    pageFields,
+    dataFields,
+    '<pivotTableStyleInfo name="PivotStyleLight16" showRowHeaders="1" showColHeaders="1" showRowStripes="0" showColStripes="0" showLastColumn="1" />',
+    '</pivotTableDefinition>'
+  )
+
+}
+
+### end pivot table helpers

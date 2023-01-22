@@ -235,6 +235,62 @@ wb_add_data_table <- function(
   )
 }
 
+#' Add pivot table to a worksheet
+#'
+#' @description add pivot table
+#' @param wb A Workbook object containing a #' worksheet.
+#' @param x a wb_data object
+#' @param sheet a worksheet
+#' @param dims the worksheet cell where the pivot table is placed
+#' @param filter a character object with names used to filter
+#' @param rows a character object with names used as rows
+#' @param cols a character object with names used as cols
+#' @param data a character object with names used as data
+#' @param fun a character object of functions to be used with the data
+#' @details
+#' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
+#' STDEVP, SUM, VAR, VARP
+#' The sheet will be empty unless it is openend in spreadsheet software.
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
+#'
+#' df <- wb_data(wb)
+#'
+#' wb <- wb %>% wb_add_pivot_table(df, dims = "A3", filter = "am", rows = "cyl", cols = "gear", data = "disp")
+#' @family workbook wrappers
+#' @export
+wb_add_pivot_table <- function(
+    wb,
+    x,
+    sheet = next_sheet(),
+    dims = "A3",
+    filter,
+    rows,
+    cols,
+    data,
+    fun
+) {
+  assert_workbook(wb)
+  if (missing(filter)) filter <- substitute()
+  if (missing(rows))   rows   <- substitute()
+  if (missing(cols))   cols   <- substitute()
+  if (missing(data))   data   <- substitute()
+  if (missing(fun))    fun    <- substitute()
+
+  wb$clone()$add_pivot_table(
+    x      = x,
+    sheet  = sheet,
+    dims   = dims,
+    filter = filter,
+    rows   = rows,
+    cols   = cols,
+    data   = data,
+    fun    = fun
+  )
+
+}
+
+
 #' Add a character vector as an Excel Formula
 #'
 #' Add a character vector containing Excel formula to a worksheet.

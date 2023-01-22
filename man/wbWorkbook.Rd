@@ -12,6 +12,8 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 A \code{named} \code{character} vector of sheet names in their order.  The
 names represent the original value of the worksheet prior to any
 character substitutions.
@@ -65,6 +67,9 @@ R6 class for a Workbook
 }
 \details{
 A Workbook
+
+\code{fun} can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
+STDEVP, SUM, VAR, VARP
 
 minor helper wrapping xl_open which does the entire same thing
 }
@@ -259,6 +264,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-wbWorkbook-add_data}{\code{wbWorkbook$add_data()}}
 \item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
+\item \href{#method-wbWorkbook-add_pivot_table}{\code{wbWorkbook$add_pivot_table()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
 \item \href{#method-wbWorkbook-add_style}{\code{wbWorkbook$add_style()}}
 \item \href{#method-wbWorkbook-save}{\code{wbWorkbook$save()}}
@@ -685,6 +691,46 @@ add a data table
 \item{\code{na.strings}}{na.strings}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_pivot_table"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_pivot_table}{}}}
+\subsection{Method \code{add_pivot_table()}}{
+add pivot table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_pivot_table(
+  x,
+  sheet = next_sheet(),
+  dims = "A3",
+  filter,
+  rows,
+  cols,
+  data,
+  fun
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x}}{a wb_data object}
+
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{the worksheet cell where the pivot table is placed}
+
+\item{\code{filter}}{a character object with names used to filter}
+
+\item{\code{rows}}{a character object with names used as rows}
+
+\item{\code{cols}}{a character object with names used as cols}
+
+\item{\code{data}}{a character object with names used as data}
+
+\item{\code{fun}}{a character object of functions to be used with the data}
 }
 \if{html}{\out{</div>}}
 }
