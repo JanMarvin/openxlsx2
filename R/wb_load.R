@@ -810,6 +810,8 @@ wb_load <- function(
         xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
 
         xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
+
+        if (NROW(xml_relship) == 0) return(character())
         # xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
         # xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
 
