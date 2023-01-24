@@ -13,7 +13,8 @@ wb_add_pivot_table(
   rows,
   cols,
   data,
-  fun
+  fun,
+  params
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ wb_add_pivot_table(
 \item{data}{a character object with names used as data}
 
 \item{fun}{a character object of functions to be used with the data}
+
+\item{params}{a list of parameters to modify pivot table creation}
 }
 \description{
 add pivot table

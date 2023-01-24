@@ -1151,6 +1151,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cols a character object with names used as cols
     #' @param data a character object with names used as data
     #' @param fun a character object of functions to be used with the data
+    #' @param params a list of parameters to modify pivot table creation
     #' @details
     #' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
     #' STDEVP, SUM, VAR, VARP
@@ -1163,7 +1164,8 @@ wbWorkbook <- R6::R6Class(
       rows,
       cols,
       data,
-      fun
+      fun,
+      params
     ) {
 
       if (missing(x))
@@ -1178,6 +1180,7 @@ wbWorkbook <- R6::R6Class(
       if (missing(cols))   cols   <- substitute()
       if (missing(data))   data   <- substitute()
       if (missing(fun))    fun    <- substitute()
+      if (missing(params)) params <- NULL
 
       if (!missing(fun) && !missing(data)) {
         if (length(fun) < length(data)) {
@@ -1198,7 +1201,8 @@ wbWorkbook <- R6::R6Class(
         cols   = cols,
         data   = data,
         n      = length(self$pivotTables) + 1L,
-        fun    = fun
+        fun    = fun,
+        params = params
       )
 
       self$append("pivotTables", pivot_table)

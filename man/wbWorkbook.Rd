@@ -709,7 +709,8 @@ add pivot table
   rows,
   cols,
   data,
-  fun
+  fun,
+  params
 )}\if{html}{\out{</div>}}
 }
 
@@ -731,6 +732,8 @@ add pivot table
 \item{\code{data}}{a character object with names used as data}
 
 \item{\code{fun}}{a character object of functions to be used with the data}
+
+\item{\code{params}}{a list of parameters to modify pivot table creation}
 }
 \if{html}{\out{</div>}}
 }

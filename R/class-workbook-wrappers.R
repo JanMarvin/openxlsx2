@@ -247,6 +247,7 @@ wb_add_data_table <- function(
 #' @param cols a character object with names used as cols
 #' @param data a character object with names used as data
 #' @param fun a character object of functions to be used with the data
+#' @param params a list of parameters to modify pivot table creation
 #' @details
 #' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
 #' STDEVP, SUM, VAR, VARP
@@ -268,7 +269,8 @@ wb_add_pivot_table <- function(
     rows,
     cols,
     data,
-    fun
+    fun,
+    params
 ) {
   assert_workbook(wb)
   if (missing(filter)) filter <- substitute()
@@ -276,6 +278,7 @@ wb_add_pivot_table <- function(
   if (missing(cols))   cols   <- substitute()
   if (missing(data))   data   <- substitute()
   if (missing(fun))    fun    <- substitute()
+  if (missing(params)) params <- substitute()
 
   wb$clone()$add_pivot_table(
     x      = x,
@@ -285,7 +288,8 @@ wb_add_pivot_table <- function(
     rows   = rows,
     cols   = cols,
     data   = data,
-    fun    = fun
+    fun    = fun,
+    params = params
   )
 
 }

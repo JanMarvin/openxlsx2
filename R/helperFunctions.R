@@ -596,7 +596,17 @@ row_col_items <- function(data, z, var) {
   xml_node_create(z, xml_attributes = c(count = as.character(length(item))), xml_children = item)
 }
 
-create_pivot_table <- function(x, dims, filter, rows, cols, data, n, fun) {
+create_pivot_table <- function(
+    x,
+    dims,
+    filter,
+    rows,
+    cols,
+    data,
+    n,
+    fun,
+    params
+  ) {
 
   if (missing(filter)) {
     filter_pos <- 0
@@ -748,16 +758,195 @@ create_pivot_table <- function(x, dims, filter, rows, cols, data, n, fun) {
     dataFields <- ""
   }
 
-  paste0(
-    sprintf('<pivotTableDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" name="PivotTable%s" cacheId="%s" applyNumberFormats="0" applyBorderFormats="0" applyFontFormats="0" applyPatternFormats="0" applyAlignmentFormats="0" applyWidthHeightFormats="1" dataCaption="Values" updatedVersion="8" minRefreshableVersion="3" useAutoFormatting="1" itemPrintTitles="1" createdVersion="8" indent="0" outline="1" outlineData="1" multipleFieldFilters="0">', n, n), # xr:uid="{375073AB-E7CA-C149-922E-A999C47476C1}"
-    sprintf('<location ref="%s" firstHeaderRow="1" firstDataRow="2" firstDataCol="1" rowPageCount="%s" colPageCount="%s" />', dim, as.integer(use_filter), as.integer(use_filter)),
-    paste0(pivotFields, collapse = ""),
-    rowsFields,
-    colsFields,
-    pageFields,
-    dataFields,
-    '<pivotTableStyleInfo name="PivotStyleLight16" showRowHeaders="1" showColHeaders="1" showRowStripes="0" showColStripes="0" showLastColumn="1" />',
-    '</pivotTableDefinition>'
+  location <- xml_node_create(
+    "location",
+    xml_attributes = c(
+      ref            = dim,
+      firstHeaderRow = "1",
+      firstDataRow   = "2",
+      firstDataCol   = "1",
+      rowPageCount   = as_binary(use_filter),
+      colPageCount   = as_binary(use_filter)
+    )
+  )
+
+  name <- "PivotStyleLight16"
+  if (!is.null(params$name))
+    name <- params$name
+
+  dataCaption <- "Values"
+  if (!is.null(params$dataCaption))
+    dataCaption <- params$dataCaption
+
+  showRowHeaders <- "1"
+  if (!is.null(params$showRowHeaders))
+    showRowHeaders <- params$showRowHeaders
+
+  showColHeaders <- "1"
+  if (!is.null(params$showColHeaders))
+    showColHeaders <- params$showColHeaders
+
+  showRowStripes <- "0"
+  if (!is.null(params$showRowStripes))
+    showRowStripes <- params$showRowStripes
+
+  showColStripes <- "0"
+  if (!is.null(params$showColStripes))
+    showColStripes <- params$showColStripes
+
+  showLastColumn <- "1"
+  if (!is.null(params$showLastColumn))
+    showLastColumn <- params$showLastColumn
+
+  pivotTableStyleInfo <- xml_node_create(
+    "pivotTableStyleInfo",
+    xml_attributes = c(
+      name           = name,
+      showRowHeaders = showRowHeaders,
+      showColHeaders = showColHeaders,
+      showRowStripes = showRowStripes,
+      showColStripes = showColStripes,
+      showLastColumn = showLastColumn
+    )
+  )
+
+  if (isTRUE(params$no_style))
+    pivotTableStyleInfo <- ""
+
+  indent <- "0"
+  if (!is.null(params$indent))
+    indent <- params$indent
+
+  itemPrintTitles <- "1"
+  if (!is.null(params$itemPrintTitles))
+    itemPrintTitles <- params$itemPrintTitles
+
+  multipleFieldFilters <- "0"
+  if (!is.null(params$multipleFieldFilters))
+    multipleFieldFilters <- params$multipleFieldFilters
+
+  outline <- "1"
+  if (!is.null(params$outline))
+    outline <- params$outline
+
+  outlineData <- "1"
+  if (!is.null(params$outlineData))
+    outlineData <- params$outlineData
+
+  useAutoFormatting <- "1"
+  if (!is.null(params$useAutoFormatting))
+    useAutoFormatting <- params$useAutoFormatting
+
+  applyAlignmentFormats <- "0"
+  if (!is.null(params$applyAlignmentFormats))
+    applyAlignmentFormats <- params$applyAlignmentFormats
+
+  applyNumberFormats <- "0"
+  if (!is.null(params$applyNumberFormats))
+    applyNumberFormats <- params$applyNumberFormats
+
+  applyBorderFormats <- "0"
+  if (!is.null(params$applyBorderFormats))
+    applyBorderFormats <- params$applyBorderFormats
+
+  applyFontFormats <- "0"
+  if (!is.null(params$applyFontFormats))
+    applyFontFormats <- params$applyFontFormats
+
+  applyPatternFormats <- "0"
+  if (!is.null(params$applyPatternFormats))
+    applyPatternFormats <- params$applyPatternFormats
+
+  applyWidthHeightFormats <- "1"
+  if (!is.null(params$applyWidthHeightFormats))
+    applyWidthHeightFormats <- params$applyWidthHeightFormats
+
+  xml_node_create(
+    "pivotTableDefinition",
+    xml_attributes = c(
+      xmlns                   = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+      `xmlns:mc`              = "http://schemas.openxmlformats.org/markup-compatibility/2006",
+      `mc:Ignorable`          = "xr",
+      `xmlns:xr`              = "http://schemas.microsoft.com/office/spreadsheetml/2014/revision",
+      name                    = sprintf("PivotTable%s", n),
+      cacheId                 = as.character(n),
+      applyNumberFormats      = applyNumberFormats,
+      applyBorderFormats      = applyBorderFormats,
+      applyFontFormats        = applyFontFormats,
+      applyPatternFormats     = applyPatternFormats,
+      applyAlignmentFormats   = applyAlignmentFormats,
+      applyWidthHeightFormats = applyWidthHeightFormats,
+      asteriskTotals          = params$asterixTotals,
+      autoFormatId            = params$autoFormatId,
+      chartFormat             = params$chartFormat,
+      dataCaption             = dataCaption,
+      updatedVersion          = "8",
+      minRefreshableVersion   = "3",
+      useAutoFormatting       = useAutoFormatting,
+      itemPrintTitles         = itemPrintTitles,
+      createdVersion          = "8",
+      indent                  = indent,
+      outline                 = outline,
+      outlineData             = outlineData,
+      multipleFieldFilters    = multipleFieldFilters,
+      colGrandTotals          = params$colGrandTotals,
+      colHeaderCaption        = params$colHeaderCaption,
+      compact                 = params$compact,
+      compactData             = params$compactData,
+      customListSort          = params$customListSort,
+      dataOnRows              = params$dataOnRows,
+      dataPosition            = params$dataPosition,
+      disableFieldList        = params$disableFieldList,
+      editData                = params$editData,
+      enableDrill             = params$enableDrill,
+      enableFieldProperties   = params$enableFieldProperties,
+      enableWizard            = params$enableWizard,
+      errorCaption            = params$errorCaption,
+      fieldListSortAscending  = params$fieldListSortAscending,
+      fieldPrintTitles        = params$fieldPrintTitles,
+      grandTotalCaption       = params$grandTotalCaption,
+      gridDropZones           = params$gridDropZones,
+      immersive               = params$immersive,
+      mdxSubqueries           = params$mdxSubqueries,
+      missingCaption          = params$missingCaption,
+      mergeItem               = params$mergeItem,
+      pageOverThenDown        = params$pageOverThenDown,
+      pageStyle               = params$pageStyle,
+      pageWrap                = params$pageWrap,
+      # pivotTableStyle
+      preserveFormattinn      = params$preserveFormattin,
+      printDrill              = params$printDrill,
+      published               = params$published,
+      rowGrandTotals          = params$rowGrandTotals,
+      rowHeaderCaption        = params$rowHeaderCaption,
+      showCalcMbrs            = params$showCalcMbrs,
+      showDataDropDown        = params$showDataDropDown,
+      showDataTips            = params$showDataTips,
+      showDrill               = params$showDrill,
+      showDropZones           = params$showDropZones,
+      showEmptyCol            = params$showEmptyCol,
+      showEmptyRow            = params$showEmptyRow,
+      showError               = params$showError,
+      showHeaders             = params$showHeaders,
+      showItems               = params$showItems,
+      showMemberPropertyTips  = params$showMemberPropertyTips,
+      showMissing             = params$showMissing,
+      showMultipleLabel       = params$showMultipleLabel,
+      subtotalHiddenItems     = params$subtotalHiddenItems,
+      tag                     = params$tag,
+      vacatedStyle            = params$vacatedStyle,
+      visualTotals            = params$visualTotals
+    ),
+    # xr:uid="{375073AB-E7CA-C149-922E-A999C47476C1}"
+    xml_children =  paste0(
+      location,
+      paste0(pivotFields, collapse = ""),
+      rowsFields,
+      colsFields,
+      pageFields,
+      dataFields,
+      pivotTableStyleInfo
+    )
   )
 
 }
