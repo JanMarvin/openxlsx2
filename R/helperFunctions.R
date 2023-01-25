@@ -507,10 +507,13 @@ cacheFields <- function(data) {
   sapply(
     names(data),
     function(x) {
-      unis <- stringi::stri_unique(data[[x]])
-      is_char <- is.character(data[[x]])
 
-      sharedItem <- sapply(
+      dat <- data[[x]]
+
+      unis <- stringi::stri_unique(dat[!is.na(dat)])
+      is_char <- is.character(dat[!is.na(dat)])
+
+      sharedItem <- vapply(
         unis,
         function(x) {
           if (is_char) {
@@ -518,7 +521,8 @@ cacheFields <- function(data) {
           } else {
             xml_node_create("n", xml_attributes = c(v = as.character(x)))
           }
-        }
+        },
+        FUN.VALUE = ""
       )
 
       if (is_char) {
@@ -529,7 +533,7 @@ cacheFields <- function(data) {
         sharedItem <- c(sharedItem, "<m/>")
       } else {
 
-        is_int <- all(data[[x]] %% 1 == 0)
+        is_int <- all(dat[!is.na(dat)] %% 1 == 0)
 
         count <- length(sharedItem)
         if (count == 0) count <- NULL
@@ -538,8 +542,8 @@ cacheFields <- function(data) {
           containsString = "0",
           containsNumber = "1",
           containsInteger = as_binary(is_int), # double or int?
-          minValue = as.character(min(data[[x]], na.rm = TRUE)),
-          maxValue = as.character(max(data[[x]], na.rm = TRUE)),
+          minValue = as.character(min(dat, na.rm = TRUE)),
+          maxValue = as.character(max(dat, na.rm = TRUE)),
           count = count
         )
       }
@@ -580,7 +584,7 @@ pivot_def_xml <- function(data) {
 
 pivot_rec_xml <- function(data) {
   paste0(
-    sprintf('<pivotCacheRecords xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" count="%s">', nrow(data) + 1L),
+    sprintf('<pivotCacheRecords xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" count="%s">', nrow(data)),
     '</pivotCacheRecords>'
   )
 }
