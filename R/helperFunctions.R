@@ -507,17 +507,48 @@ cacheFields <- function(data) {
   sapply(
     names(data),
     function(x) {
-      unis <- unique(data[[x]])
+      unis <- stringi::stri_unique(data[[x]])
+      is_char <- is.character(data[[x]])
 
       sharedItem <- sapply(
         unis,
-        function(x) xml_node_create("s", xml_attributes = c(v = as.character(x)))
+        function(x) {
+          if (is_char) {
+            xml_node_create("s", xml_attributes = c(v = as.character(x)))
+          } else {
+            xml_node_create("n", xml_attributes = c(v = as.character(x)))
+          }
+        }
       )
+
+      if (is_char) {
+        attr <- c(
+          containsBlank = "1",
+          count = length(sharedItem) + 1L
+        )
+        sharedItem <- c(sharedItem, "<m/>")
+      } else {
+
+        is_int <- all(data[[x]] %% 1 == 0)
+
+        count <- length(sharedItem)
+        if (count == 0) count <- NULL
+        attr <- c(
+          containsSemiMixedTypes = "0",
+          containsString = "0",
+          containsNumber = "1",
+          containsInteger = as_binary(is_int), # double or int?
+          minValue = as.character(min(data[[x]], na.rm = TRUE)),
+          maxValue = as.character(max(data[[x]], na.rm = TRUE)),
+          count = count
+        )
+      }
+
 
       sharedItems <- xml_node_create(
         "sharedItems",
-        xml_attributes = c(containsBlank = "1", count = length(sharedItem) + 1L),
-        xml_children = c(sharedItem, "<m/>")
+        xml_attributes = attr,
+        xml_children = sharedItem
       )
 
       xml_node_create(
@@ -537,7 +568,7 @@ pivot_def_xml <- function(data) {
   count <- ncol(data)
 
   paste0(
-    sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="0" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(data) + 1L),
+    sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" mc:Ignorable="xr" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="1" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(data)),
     '<cacheSource type="worksheet"><worksheetSource ref="', ref, '" sheet="', sheet, '"/></cacheSource>',
     '<cacheFields count="', count, '">',
     paste0(cacheFields(data), collapse = ""),
@@ -561,7 +592,7 @@ pivot_xml_rels <- function(n) sprintf("<Relationships xmlns=\"http://schemas.ope
 get_items <- function(data, x) {
   x <- abs(x)
   item <- sapply(
-    c(0, seq_along(unique(data[[x]])), "default"),
+    c(order(unique(data[[x]])) - 1L, "default"),
     function(val) {
       if (val == "default")
         xml_node_create("item", xml_attributes = c(t = val))
@@ -580,7 +611,7 @@ get_items <- function(data, x) {
 row_col_items <- function(data, z, var) {
   var <- abs(var)
   item <- sapply(
-    c(0, seq_along(unique(data[var])), "grand"),
+    c(seq_along(unique(data[,var])) - 1L, "grand"),
     function(val) {
       if (val == "0") {
         xml_node_create("i", xml_children = xml_node_create("x"))
@@ -810,6 +841,17 @@ create_pivot_table <- function(
     )
   )
 
+  # extLst <- paste0(
+  #   '<extLst>',
+  #   '<ext xmlns:xpdl="http://schemas.microsoft.com/office/spreadsheetml/2016/pivotdefaultlayout" uri="{747A6164-185A-40DC-8AA5-F01512510D54}">',
+  #   '<xpdl:pivotTableDefinition16/>',
+  #   '</ext>',
+  #   '<ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{725AE2AE-9491-48be-B2B4-4EB974FC3084}">',
+  #   '<x14:pivotCacheDefinition/>',
+  #   '</ext>',
+  #   '</extLst>'
+  # )
+
   if (isTRUE(params$no_style))
     pivotTableStyleInfo <- ""
 
@@ -946,6 +988,7 @@ create_pivot_table <- function(
       pageFields,
       dataFields,
       pivotTableStyleInfo
+      # extLst
     )
   )
 
