@@ -503,15 +503,20 @@ create_sparklines <- function(
 
 ### beg pivot table helpers
 
-cacheFields <- function(wbdata, vars, data) {
+cacheFields <- function(wbdata, filter, rows, cols, data) {
   sapply(
     names(wbdata),
     function(x) {
 
       dat <- wbdata[[x]]
 
+      vars <- c(filter, rows, cols, data)
+
       is_vars <- x %in% vars
-      is_data <- x %in% data
+      is_data <- x %in% data &&
+        # there is an exception to every rule in pivot tables ...
+        # if a data variable is col or row we need items
+        !x %in% cols && !x %in% rows && !x %in% filter
       is_char <- is.character(dat)
       is_date <- inherits(dat, "Date") || inherits(dat, "POSIXct")
       if (is_date) {
@@ -615,7 +620,7 @@ cacheFields <- function(wbdata, vars, data) {
   )
 }
 
-pivot_def_xml <- function(wbdata, vars, data) {
+pivot_def_xml <- function(wbdata, filter, rows, cols, data) {
 
   ref   <- dataframe_to_dims(attr(wbdata, "dims"))
   sheet <- attr(wbdata, "sheet")
@@ -625,7 +630,7 @@ pivot_def_xml <- function(wbdata, vars, data) {
     sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" mc:Ignorable="xr" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="1" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(wbdata)),
     '<cacheSource type="worksheet"><worksheetSource ref="', ref, '" sheet="', sheet, '"/></cacheSource>',
     '<cacheFields count="', count, '">',
-    paste0(cacheFields(wbdata, vars, data), collapse = ""),
+    paste0(cacheFields(wbdata, filter, rows, cols, data), collapse = ""),
     '</cacheFields>',
     '</pivotCacheDefinition>'
   )
@@ -667,7 +672,7 @@ get_items <- function(data, x) {
 row_col_items <- function(data, z, var) {
   var <- abs(var)
   item <- sapply(
-    c(seq_along(unique(data[,var])) - 1L, "grand"),
+    c(seq_along(unique(data[, var])) - 1L, "grand"),
     function(val) {
       if (val == "0") {
         xml_node_create("i", xml_children = xml_node_create("x"))
@@ -739,30 +744,23 @@ create_pivot_table <- function(
   for (i in seq_along(x)) {
 
     dataField <- NULL
-    if (i %in% data_pos) dataField <- c(dataField = "1")
+    axis <- NULL
+    if (i %in% data_pos)    dataField <- c(dataField = "1")
+    if (i %in% filter_pos)  axis <- c(axis = "axisPage")
+    if (i %in% rows_pos)    axis <- c(axis = "axisRow")
+    if (i %in% cols_pos)    axis <- c(axis = "axisCol")
+
+    attrs <- c(axis, dataField, showAll = "0")
+
 
     tmp <- xml_node_create(
       "pivotField",
-      xml_attributes = c(showAll = "0"))
+      xml_attributes = attrs)
 
-    if (i %in% filter_pos) {
+    if (i %in% c(filter_pos, rows_pos, cols_pos)) {
       tmp <- xml_node_create(
         "pivotField",
-        xml_attributes = c(axis = "axisPage", dataField, showAll = "0"),
-        xml_children = paste0(get_items(x, i), collapse = ""))
-    }
-
-    if (i %in% rows_pos) {
-      tmp <- xml_node_create(
-        "pivotField",
-        xml_attributes = c(axis = "axisRow", dataField, showAll = "0"),
-        xml_children = paste0(get_items(x, i), collapse = ""))
-    }
-
-    if (i %in% cols_pos) {
-      tmp <- xml_node_create(
-        "pivotField",
-        xml_attributes = c(axis = "axisCol", dataField, showAll = "0"),
+        xml_attributes = attrs,
         xml_children = paste0(get_items(x, i), collapse = ""))
     }
 

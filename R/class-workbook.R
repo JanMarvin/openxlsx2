@@ -1211,13 +1211,7 @@ wbWorkbook <- R6::R6Class(
       if (missing(data))   data   <- ""
 
       self$append("pivotTables", pivot_table)
-      vars <- c(
-        filter,
-        rows,
-        cols,
-        data
-      )
-      self$append("pivotDefinitions", pivot_def_xml(x, vars, data))
+      self$append("pivotDefinitions", pivot_def_xml(x, filter, rows, cols, data))
 
       cacheId <- length(self$pivotTables)
 
