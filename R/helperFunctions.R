@@ -503,51 +503,101 @@ create_sparklines <- function(
 
 ### beg pivot table helpers
 
-cacheFields <- function(data) {
+cacheFields <- function(wbdata, vars, data) {
   sapply(
-    names(data),
+    names(wbdata),
     function(x) {
 
-      dat <- data[[x]]
+      dat <- wbdata[[x]]
 
-      unis <- stringi::stri_unique(dat[!is.na(dat)])
-      is_char <- is.character(dat[!is.na(dat)])
+      is_vars <- x %in% vars
+      is_data <- x %in% data
+      is_char <- is.character(dat)
+      is_date <- inherits(dat, "Date") || inherits(dat, "POSIXct")
+      if (is_date) {
+        dat <- format(dat, format = "%Y-%m-%dT%H:%M:%S")
+      }
+      unis <- stringi::stri_unique(dat)
 
-      sharedItem <- vapply(
-        unis,
-        function(x) {
-          if (is_char) {
-            xml_node_create("s", xml_attributes = c(v = as.character(x)))
-          } else {
-            xml_node_create("n", xml_attributes = c(v = as.character(x)))
-          }
-        },
-        FUN.VALUE = ""
-      )
+      if (is_vars && !is_data) {
+        sharedItem <- vapply(
+          unis,
+          function(uni) {
+            if (is.na(uni)) {
+              xml_node_create("m")
+            } else {
+
+              if (is_char) {
+                xml_node_create("s", xml_attributes = c(v = uni))
+              } else if (is_date) {
+                xml_node_create("d", xml_attributes = c(v = uni))
+              } else {
+                xml_node_create("n", xml_attributes = c(v = uni))
+              }
+            }
+
+          },
+          FUN.VALUE = ""
+        )
+      } else {
+        sharedItem <- NULL
+      }
+
+      if (any(is.na(dat))) {
+        containsBlank <- "1"
+        containsSemiMixedTypes <- NULL
+      } else {
+        containsBlank <- NULL
+        # indicates that cell has no blank values
+        containsSemiMixedTypes <- "0"
+      }
+
+      if (length(sharedItem)) {
+        count <- as.character(length(sharedItem))
+      } else {
+        count <- NULL
+      }
 
       if (is_char) {
         attr <- c(
-          containsBlank = "1",
-          count = length(sharedItem) + 1L
+          containsBlank = containsBlank,
+          count = count
         )
-        sharedItem <- c(sharedItem, "<m/>")
+      } else if (is_date) {
+        attr <- c(
+          containsNonDate = "0",
+          containsDate = "1",
+          # enabled, check side effect
+          containsString = "0",
+          containsSemiMixedTypes = containsSemiMixedTypes,
+          containsBlank = containsBlank,
+          # containsMixedTypes = "1",
+          minDate = format(min(dat, na.rm = TRUE), format = "%Y-%m-%dT%H:%M:%S"),
+          maxDate = format(max(dat, na.rm = TRUE), format = "%Y-%m-%dT%H:%M:%S"),
+          count = count
+        )
+
       } else {
 
+        # numeric or integer
         is_int <- all(dat[!is.na(dat)] %% 1 == 0)
+        if (is_int) {
+          containsInteger <- as_binary(is_int)
+        } else {
+          containsInteger <- NULL
+        }
 
-        count <- length(sharedItem)
-        if (count == 0) count <- NULL
         attr <- c(
-          containsSemiMixedTypes = "0",
+          containsSemiMixedTypes = containsSemiMixedTypes,
           containsString = "0",
+          containsBlank = containsBlank,
           containsNumber = "1",
-          containsInteger = as_binary(is_int), # double or int?
+          containsInteger = containsInteger, # double or int?
           minValue = as.character(min(dat, na.rm = TRUE)),
           maxValue = as.character(max(dat, na.rm = TRUE)),
           count = count
         )
       }
-
 
       sharedItems <- xml_node_create(
         "sharedItems",
@@ -565,17 +615,17 @@ cacheFields <- function(data) {
   )
 }
 
-pivot_def_xml <- function(data) {
+pivot_def_xml <- function(wbdata, vars, data) {
 
-  ref   <- dataframe_to_dims(attr(data, "dims"))
-  sheet <- attr(data, "sheet")
-  count <- ncol(data)
+  ref   <- dataframe_to_dims(attr(wbdata, "dims"))
+  sheet <- attr(wbdata, "sheet")
+  count <- ncol(wbdata)
 
   paste0(
-    sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" mc:Ignorable="xr" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="1" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(data)),
+    sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" mc:Ignorable="xr" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="1" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(wbdata)),
     '<cacheSource type="worksheet"><worksheetSource ref="', ref, '" sheet="', sheet, '"/></cacheSource>',
     '<cacheFields count="', count, '">',
-    paste0(cacheFields(data), collapse = ""),
+    paste0(cacheFields(wbdata, vars, data), collapse = ""),
     '</cacheFields>',
     '</pivotCacheDefinition>'
   )
@@ -597,6 +647,8 @@ get_items <- function(data, x) {
   x <- abs(x)
   item <- sapply(
     c(order(unique(data[[x]])) - 1L, "default"),
+    # # TODO this sets the order of the pivot elements
+    # c(seq_along(unique(data[[x]])) - 1L, "default"),
     function(val) {
       if (val == "default")
         xml_node_create("item", xml_attributes = c(t = val))
@@ -686,6 +738,9 @@ create_pivot_table <- function(
   pivotField <- NULL
   for (i in seq_along(x)) {
 
+    dataField <- NULL
+    if (i %in% data_pos) dataField <- c(dataField = "1")
+
     tmp <- xml_node_create(
       "pivotField",
       xml_attributes = c(showAll = "0"))
@@ -693,28 +748,22 @@ create_pivot_table <- function(
     if (i %in% filter_pos) {
       tmp <- xml_node_create(
         "pivotField",
-        xml_attributes = c(axis = "axisPage", showAll = "0"),
+        xml_attributes = c(axis = "axisPage", dataField, showAll = "0"),
         xml_children = paste0(get_items(x, i), collapse = ""))
     }
 
     if (i %in% rows_pos) {
       tmp <- xml_node_create(
         "pivotField",
-        xml_attributes = c(axis = "axisRow", showAll = "0"),
+        xml_attributes = c(axis = "axisRow", dataField, showAll = "0"),
         xml_children = paste0(get_items(x, i), collapse = ""))
     }
 
     if (i %in% cols_pos) {
       tmp <- xml_node_create(
         "pivotField",
-        xml_attributes = c(axis = "axisCol", showAll = "0"),
+        xml_attributes = c(axis = "axisCol", dataField, showAll = "0"),
         xml_children = paste0(get_items(x, i), collapse = ""))
-    }
-
-    if (i %in% data_pos) {
-      tmp <- xml_node_create(
-        "pivotField",
-        xml_attributes = c(dataField = "1", showAll = "0"))
     }
 
     pivotField <- c(pivotField, tmp)
