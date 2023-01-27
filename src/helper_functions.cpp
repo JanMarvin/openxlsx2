@@ -102,7 +102,7 @@ uint32_t uint_col_to_int(std::string& a) {
   int sum = 0;
   int k = a.length();
 
-  for (int j = 0; j < k; j++) {
+  for (int32_t j = 0; j < k; ++j) {
     sum *= 26;
     sum += (a[j] - aVal);
   }
@@ -220,10 +220,10 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fi
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  for (size_t i = 0; i < nn; ++i) {
-    for (size_t j = 0; j < kk; ++j) {
+  for (size_t i = 0; i < kk; ++i) {
+    for (size_t j = 0; j < nn; ++j) {
       if (fill)
-        Rcpp::as<Rcpp::CharacterVector>(df[j])[i] = cols[j] + std::to_string(rows[i]);
+        Rcpp::as<Rcpp::CharacterVector>(df[i])[j] = cols[i] + std::to_string(rows[j]);
     }
   }
 

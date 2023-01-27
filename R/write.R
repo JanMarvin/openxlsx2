@@ -317,11 +317,9 @@ write_data2 <- function(
   # value expression
 
   ## replace NA, NaN, and Inf
-  is_na <- which(
-    cc$is == "<is><t>_openxlsx_NA</t></is>" |
+  is_na <- cc$is == "<is><t>_openxlsx_NA</t></is>" |
       cc$v == "<si><t>_openxlsx_NA</t></si>" |
       cc$v == "NA"
-  )
 
   if (length(is_na)) {
     if (missing(na.strings)) {
@@ -348,13 +346,13 @@ write_data2 <- function(
     }
   }
 
-  is_nan <- which(cc$v == "NaN")
+  is_nan <- cc$v == "NaN"
   if (length(is_nan)) {
     cc[is_nan, "v"]   <- "#VALUE!"
     cc[is_nan, "c_t"] <- "e"
   }
 
-  is_inf <- which(cc$v == "-Inf" | cc$v == "Inf")
+  is_inf <- cc$v == "-Inf" | cc$v == "Inf"
   if (length(is_inf)) {
     cc[is_inf, "v"]   <- "#NUM!"
     cc[is_inf, "c_t"] <- "e"
@@ -724,30 +722,32 @@ write_data_table <- function(
 
   ## special case - vector of hyperlinks
   is_hyperlink <- FALSE
-  if (is.null(dim(x))) {
-    is_hyperlink <- inherits(x, "hyperlink")
-  } else {
-    is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
-  }
-
-  if (any(is_hyperlink)) {
-    # consider wbHyperlink?
-    # hlinkNames <- names(x)
+  if (applyCellStyle) {
     if (is.null(dim(x))) {
-      colNames <- FALSE
-      if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
-        x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
-      }
-      class(x[is_hyperlink]) <- c("character", "hyperlink")
+      is_hyperlink <- inherits(x, "hyperlink")
     } else {
-      # check should be in create_hyperlink and that apply should not be required either
-      if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
-        x[is_hyperlink] <- apply(
-          x[is_hyperlink], 1,
-          FUN = function(str) create_hyperlink(text = str)
-        )
+      is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
+    }
+
+    if (any(is_hyperlink)) {
+      # consider wbHyperlink?
+      # hlinkNames <- names(x)
+      if (is.null(dim(x))) {
+        colNames <- FALSE
+        if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
+          x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
+        }
+        class(x[is_hyperlink]) <- c("character", "hyperlink")
+      } else {
+        # check should be in create_hyperlink and that apply should not be required either
+        if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
+          x[is_hyperlink] <- apply(
+            x[is_hyperlink], 1,
+            FUN = function(str) create_hyperlink(text = str)
+          )
+        }
+        class(x[, is_hyperlink]) <- c("character", "hyperlink")
       }
-      class(x[, is_hyperlink]) <- c("character", "hyperlink")
     }
   }
 
