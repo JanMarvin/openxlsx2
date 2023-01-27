@@ -42,16 +42,19 @@ wb_add_pivot_table(
 add pivot table
 }
 \details{
-\code{fun} can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
-STDEVP, SUM, VAR, VARP
-The sheet will be empty unless it is openend in spreadsheet software.
+\code{fun} can be either of \code{AVERAGE}, \code{COUNT}, \code{COUNTA}, \code{MAX}, \code{MIN},
+\code{PRODUCT}, \code{STDEV}, \code{STDEVP}, \code{SUM}, \code{VAR}, \code{VARP}.
+
+The sheet will be empty unless it is opened in spreadsheet software.
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\% wb_add_data(x = mtcars)
 
 df <- wb_data(wb)
 
-wb <- wb \%>\% wb_add_pivot_table(df, dims = "A3", filter = "am", rows = "cyl", cols = "gear", data = "disp")
+wb <- wb \%>\%
+wb_add_pivot_table(df, dims = "A3",
+  filter = "am", rows = "cyl", cols = "gear", data = "disp")
 }
 \seealso{
 Other workbook wrappers: 

@@ -249,15 +249,18 @@ wb_add_data_table <- function(
 #' @param fun a character object of functions to be used with the data
 #' @param params a list of parameters to modify pivot table creation
 #' @details
-#' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
-#' STDEVP, SUM, VAR, VARP
-#' The sheet will be empty unless it is openend in spreadsheet software.
+#' `fun` can be either of `AVERAGE`, `COUNT`, `COUNTA`, `MAX`, `MIN`,
+#' `PRODUCT`, `STDEV`, `STDEVP`, `SUM`, `VAR`, `VARP`.
+#'
+#' The sheet will be empty unless it is opened in spreadsheet software.
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
 #'
 #' df <- wb_data(wb)
 #'
-#' wb <- wb %>% wb_add_pivot_table(df, dims = "A3", filter = "am", rows = "cyl", cols = "gear", data = "disp")
+#' wb <- wb %>%
+#' wb_add_pivot_table(df, dims = "A3",
+#'   filter = "am", rows = "cyl", cols = "gear", data = "disp")
 #' @family workbook wrappers
 #' @export
 wb_add_pivot_table <- function(
