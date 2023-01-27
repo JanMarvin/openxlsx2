@@ -501,3 +501,66 @@ test_that("add numfmt is no longer slow", {
   )
 
 })
+
+
+test_that("all borders work as expected", {
+
+  wb <- wb_workbook()
+  # full inner grid
+  wb$add_worksheet("S1", gridLines = FALSE, zoom = 200)
+  wb$add_border(
+    dims = "B2:D4",
+    left_border = "dashDot", right_border = "dashed",
+    top_border = "medium", bottom_border = "thick",
+    top_color = wb_color("orange"), bottom_color = wb_color("green"),
+    left_color = wb_color("black"), right_color = wb_color("gray"),
+    inner_hgrid = "thin", inner_hcolor = wb_color("blue"),
+    inner_vgrid = "double", inner_vcolor = wb_color("red")
+  )
+  wb$add_border(
+    dims = "B10:D10",
+    left_border = "dashDot", right_border = "dashed",
+    top_border = "medium", bottom_border = "thick",
+    top_color = wb_color("orange"), bottom_color = wb_color("green"),
+    left_color = wb_color("black"), right_color = wb_color("gray"),
+    inner_hgrid = "thin", inner_hcolor = wb_color("blue")
+  )
+  wb$add_border(
+    dims = "D6:D8",
+    left_border = "dashDot", right_border = "dashed",
+    top_border = "medium", bottom_border = "thick",
+    top_color = wb_color("orange"), bottom_color = wb_color("green"),
+    left_color = wb_color("black"), right_color = wb_color("gray"),
+    inner_vgrid = "double", inner_vcolor = wb_color("red")
+  )
+  wb$add_border(
+    dims = "B7",
+    left_border = "dashDot", right_border = "dashed",
+    top_border = "medium", bottom_border = "thick",
+    top_color = wb_color("orange"), bottom_color = wb_color("green"),
+    left_color = wb_color("black"), right_color = wb_color("gray")
+  )
+
+  exp <- c(
+    "<border><left/><right/><top/><bottom/><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style=\"thin\"><color rgb=\"FF0000FF\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"thin\"><color rgb=\"FF0000FF\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style=\"thin\"><color rgb=\"FF0000FF\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>",
+    "<border><left style=\"thin\"><color rgb=\"FF0000FF\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style=\"thin\"><color rgb=\"FF0000FF\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"thin\"><color rgb=\"FF0000FF\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"thin\"><color rgb=\"FF0000FF\"/></left><right style=\"thin\"><color rgb=\"FF0000FF\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"thin\"><color rgb=\"FF0000FF\"/></left><right style=\"thin\"><color rgb=\"FF0000FF\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>",
+    "<border><left style=\"thin\"><color rgb=\"FF0000FF\"/></left><right style=\"thin\"><color rgb=\"FF0000FF\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style.rgb=\"FF0000FF\"><color rgb=\"FF0000FF\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>",
+    "<border><left style.rgb=\"FF0000FF\"><color rgb=\"FF0000FF\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>",
+    "<border><left style=\"thin\"><color rgb=\"FF0000FF\"/></left><right style=\"thin\"><color rgb=\"FF0000FF\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"double\"><color rgb=\"FFFF0000\"/></top><bottom style=\"double\"><color rgb=\"FFFF0000\"/></bottom><diagonal/></border>",
+    "<border><left style=\"dashDot\"><color rgb=\"FF000000\"/></left><right style=\"dashed\"><color rgb=\"FFBEBEBE\"/></right><top style=\"medium\"><color rgb=\"FFFFA500\"/></top><bottom style=\"thick\"><color rgb=\"FF00FF00\"/></bottom><diagonal/></border>"
+  )
+  got <- wb$styles_mgr$styles$borders
+  expect_equal(exp, got)
+
+})
