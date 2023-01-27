@@ -281,7 +281,7 @@ write_data2 <- function(
   rows_attr$r <- rownames(rtyp)
 
   # original cc data frame
-  cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
+  # cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
 
 
   sel <- which(dc == openxlsx2_celltype[["logical"]])
@@ -300,10 +300,9 @@ write_data2 <- function(
 
   string_nums <- getOption("openxlsx2.string_nums", default = 0)
 
-  wide_to_long(
+  cc <- wide_to_long(
     data,
     dc,
-    cc,
     ColNames = colNames,
     start_col = startCol,
     start_row = startRow,

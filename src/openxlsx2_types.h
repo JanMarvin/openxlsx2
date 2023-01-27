@@ -23,6 +23,7 @@ typedef struct {
   std::string f_ca;
   std::string f_si;
   std::string is;    // inlineStr
+  std::string typ;
 } xml_col;
 
 
@@ -103,6 +104,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   Rcpp::CharacterVector f_si(no_init(n));      // <f si=""> attribute most likely sharedString
   Rcpp::CharacterVector is(no_init(n));        // <is> tag
 
+  Rcpp::CharacterVector typ(no_init(n));        // openxlsx2 typ
+
   // struct to vector
   for (size_t i = 0; i < n; ++i) {
     r[i]     = as_string(x[i].r);
@@ -119,7 +122,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
     f_ref[i] = as_string(x[i].f_ref);
     f_ca[i]  = as_string(x[i].f_ca);
     f_si[i]  = as_string(x[i].f_si);
-    is[i]    = as_string(x[i].is);
+    is[i]    = as_string(x[i].is);;
+    typ[i]   = as_string(x[i].typ);
   }
 
   // Assign and return a dataframe
@@ -138,7 +142,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
       Rcpp::Named("f_ref") = f_ref,
       Rcpp::Named("f_ca")  = f_ca,
       Rcpp::Named("f_si")  = f_si,
-      Rcpp::Named("is")    = is
+      Rcpp::Named("is")    = is,
+      Rcpp::Named("typ")   = typ
   )
   );
 }

@@ -278,7 +278,7 @@ bool is_double(std::string x) {
 
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
-void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
+SEXP wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps,
                   bool ColNames, int32_t start_col, int32_t start_row,
                   Rcpp::CharacterVector ref, int32_t string_nums,
                   bool inline_strings) {
@@ -286,11 +286,18 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
   auto n = z.nrow();
   auto m = z.ncol();
 
+  std::vector<xml_col> xml_cols;
+
+  xml_cols.reserve(n*m);
+
   auto startcol = start_col;
   for (auto i = 0; i < m; ++i) {
 
     auto startrow = start_row;
     for (auto j = 0; j < n; ++j) {
+
+      // contains all values of a col
+      xml_col single_xml_col;
 
       int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
@@ -299,7 +306,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       std::string row = std::to_string(startrow);
       std::string col = int_to_col(startcol);
 
-      auto pos = (j * m) + i;
+      // auto pos = (j * m) + i;
 
       // create struct
       celltyp cell;
@@ -354,22 +361,25 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
-      Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
-      Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (!cell.v.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]     = cell.v;
-      if (!cell.c_s.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos]   = cell.c_s;
-      if (!cell.c_t.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos]   = cell.c_t;
-      if (!cell.is.empty())    Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]    = cell.is;
-      if (!cell.f.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]     = cell.f;
-      if (!cell.f_t.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["f_t"])[pos]   = cell.f_t;
-      if (!cell.f_ref.empty()) Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"])[pos] = cell.f_ref;
-      if (!cell.typ.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos]   = cell.typ;
-      if (!cell.r.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]     = cell.r;
+      single_xml_col.row_r = row;
+      single_xml_col.c_r   = col;
+      if (!cell.v.empty())     single_xml_col.v     = cell.v;
+      if (!cell.c_s.empty())   single_xml_col.c_s   = cell.c_s;
+      if (!cell.c_t.empty())   single_xml_col.c_t   = cell.c_t;
+      if (!cell.is.empty())    single_xml_col.is    = cell.is;
+      if (!cell.f.empty())     single_xml_col.f     = cell.f;
+      if (!cell.f_t.empty())   single_xml_col.f_t   = cell.f_t;
+      if (!cell.f_ref.empty()) single_xml_col.f_ref = cell.f_ref;
+      if (!cell.typ.empty())   single_xml_col.typ   = cell.typ;
+      if (!cell.r.empty())     single_xml_col.r     = cell.r;
+
+      xml_cols.push_back(single_xml_col);
 
       ++startrow;
     }
     ++startcol;
   }
+  return Rcpp::wrap(xml_cols);
 }
 
 // simple helper function to create a data frame of type character

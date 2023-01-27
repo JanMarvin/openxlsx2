@@ -92,21 +92,21 @@ BEGIN_RCPP
 END_RCPP
 }
 // wide_to_long
-void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::CharacterVector ref, int32_t string_nums, bool inline_strings);
-RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refSEXP, SEXP string_numsSEXP, SEXP inline_stringsSEXP) {
+SEXP wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::CharacterVector ref, int32_t string_nums, bool inline_strings);
+RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refSEXP, SEXP string_numsSEXP, SEXP inline_stringsSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type vtyps(vtypsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type zz(zzSEXP);
     Rcpp::traits::input_parameter< bool >::type ColNames(ColNamesSEXP);
     Rcpp::traits::input_parameter< int32_t >::type start_col(start_colSEXP);
     Rcpp::traits::input_parameter< int32_t >::type start_row(start_rowSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type ref(refSEXP);
     Rcpp::traits::input_parameter< int32_t >::type string_nums(string_numsSEXP);
     Rcpp::traits::input_parameter< bool >::type inline_strings(inline_stringsSEXP);
-    wide_to_long(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, inline_strings);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(wide_to_long(z, vtyps, ColNames, start_col, start_row, ref, string_nums, inline_strings));
+    return rcpp_result_gen;
 END_RCPP
 }
 // create_char_dataframe
@@ -833,7 +833,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 3},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
-    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 9},
+    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 8},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
