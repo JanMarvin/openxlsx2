@@ -27,6 +27,7 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
       dimensions <- strsplit(dim, ":")[[1]]
 
       rows <- as.numeric(gsub("[[:upper:]]", "", dimensions))
+      if (all(is.na(rows))) rows <- c(1, 1048576)
       rows <- seq.int(rows[1], rows[2])
 
       rows_out <- unique(c(rows_out, rows))

@@ -312,6 +312,12 @@ test_that("wb_add_data_table() is a wrapper", {
   expect_wrapper("add_data_table", wb = wb, params = list(sheet = 1, x = data.frame(x = 1)))
 })
 
+test_that("wb_add_pivot_table() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+  df <- wb_data(wb)
+  expect_wrapper("add_pivot_table", wb = wb, params = list(x = df, data = "disp"))
+})
+
 test_that("wb_add_formula() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))

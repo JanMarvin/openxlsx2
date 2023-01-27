@@ -460,3 +460,20 @@ test_that("writing as shared string works", {
   expect_equal("N/A", wb_to_df(wb, 2)[1, 1])
 
 })
+
+test_that("writing pivot tables works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = mtcars)
+
+  df <- wb_data(wb)
+
+  wb$add_pivot_table(df, dims = "A3", filter = "am", rows = "cyl", cols = "gear", data = "hp")
+  wb$add_pivot_table(df, dims = "A10", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = "count")
+  wb$add_pivot_table(df, dims = "A20", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = "average")
+  wb$add_pivot_table(df, dims = "A30", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = c("sum", "average"))
+
+  expect_equal(4L, length(wb$pivotTables))
+
+})

@@ -1141,6 +1141,136 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+
+    #' @description add pivot table
+    #' @param x a wb_data object
+    #' @param sheet a worksheet
+    #' @param dims the worksheet cell where the pivot table is placed
+    #' @param filter a character object with names used to filter
+    #' @param rows a character object with names used as rows
+    #' @param cols a character object with names used as cols
+    #' @param data a character object with names used as data
+    #' @param fun a character object of functions to be used with the data
+    #' @param params a list of parameters to modify pivot table creation
+    #' @details
+    #' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
+    #' STDEVP, SUM, VAR, VARP
+    #' @returns The `wbWorkbook` object
+    add_pivot_table = function(
+      x,
+      sheet = next_sheet(),
+      dims = "A3",
+      filter,
+      rows,
+      cols,
+      data,
+      fun,
+      params
+    ) {
+
+      if (missing(x))
+        stop("x cannot be missing in add_pivot_table")
+
+      assert_class(x, "wb_data")
+      add_sheet <- is_waiver(sheet)
+      sheet <- private$get_sheet_index(sheet)
+
+      if (missing(filter)) filter <- substitute()
+      if (missing(rows))   rows   <- substitute()
+      if (missing(cols))   cols   <- substitute()
+      if (missing(data))   data   <- substitute()
+      if (missing(fun))    fun    <- substitute()
+      if (missing(params)) params <- NULL
+
+      if (!missing(fun) && !missing(data)) {
+        if (length(fun) < length(data)) {
+          fun <- rep(fun[1], length(data))
+        }
+      }
+
+      # for now we use a new worksheet
+      if (add_sheet) {
+        self$add_worksheet()
+      }
+
+      pivot_table <- create_pivot_table(
+        x      = x,
+        dims   = dims,
+        filter = filter,
+        rows   = rows,
+        cols   = cols,
+        data   = data,
+        n      = length(self$pivotTables) + 1L,
+        fun    = fun,
+        params = params
+      )
+
+      if (missing(filter)) filter <- ""
+      if (missing(rows))   rows   <- ""
+      if (missing(cols))   cols   <- ""
+      if (missing(data))   data   <- ""
+
+      self$append("pivotTables", pivot_table)
+      self$append("pivotDefinitions", pivot_def_xml(x, filter, rows, cols, data))
+
+      cacheId <- length(self$pivotTables)
+
+      self$append("pivotDefinitionsRels", pivot_def_rel(cacheId))
+      self$append("pivotRecords", pivot_rec_xml(x))
+      self$append("pivotTables.xml.rels", pivot_xml_rels(cacheId))
+
+
+      rId <- paste0("rId", 20000 + cacheId)
+
+      pivotCache <- sprintf(
+        "<pivotCache cacheId=\"%s\" r:id=\"%s\"/>",
+        cacheId,
+        rId
+      )
+      if (length(self$workbook$pivotCaches)) {
+        self$workbook$pivotCaches <- xml_add_child(self$workbook$pivotCaches, xml_child = pivotCache)
+      } else {
+        self$workbook$pivotCaches <- xml_node_create("pivotCaches", xml_children = pivotCache)
+      }
+
+      if (length(self$worksheets_rels[[sheet]])) {
+        rlshp <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        rlshp$id <- as.integer(gsub("\\D+", "", rlshp$Id))
+        next_id <- paste0("rId", max(rlshp$id) + 1L)
+      } else {
+        next_id <- "rId1"
+      }
+
+      self$worksheets_rels[[sheet]] <- c(
+        self$worksheets_rels[[sheet]],
+        sprintf(
+          '<Relationship Id=\"%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotTable\" Target=\"../pivotTables/pivotTable%s.xml\"/>',
+          next_id,
+          cacheId
+        )
+      )
+
+      self$append("workbook.xml.rels",
+        sprintf(
+          "<Relationship Id=\"%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"pivotCache/pivotCacheDefinition%s.xml\"/>",
+          rId,
+          cacheId
+        )
+      )
+
+      self$append("Content_Types",
+                  c(
+                    sprintf("<Override PartName=\"/xl/pivotTables/pivotTable%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml\"/>", cacheId),
+                    sprintf("<Override PartName=\"/xl/pivotCache/pivotCacheDefinition%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml\"/>", cacheId),
+                    sprintf("<Override PartName=\"/xl/pivotCache/pivotCacheRecords%s.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml\"/>", cacheId)
+                  )
+      )
+
+      self$worksheets[[sheet]]$sheetFormatPr <- "<sheetFormatPr baseColWidth=\"10\" defaultRowHeight=\"15\" x14ac:dyDescent=\"0.2\"/>"
+
+      invisible(self)
+    },
+
     #' @description add formula
     #' @param sheet sheet
     #' @param x x
