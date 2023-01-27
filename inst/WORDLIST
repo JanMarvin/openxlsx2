@@ -1,6 +1,8 @@
 ARGB
 Arial
+ArrowsGray
 CMD
+COUNTA
 Calibri
 Calligra
 Colorscale
@@ -18,11 +20,16 @@ Openoffice
 POSIXct
 POSIXt
 Philipp
+RedToBlack
+STDEV
+STDEVP
 Schauberger
 Sparklines
 SuperA
 SuperB
 Textbox
+TrafficLights
+VARP
 activeTab
 addStyle
 allowBlank
@@ -30,6 +37,7 @@ applyCellStyle
 attr
 autoFilter
 autoFilterDateGrouping
+autocompletion
 bandedCols
 bandedRows
 bgFill
@@ -58,6 +66,7 @@ colorLow
 colorMarkers
 colorNegative
 colorSeries
+colour
 conditionalFormatting
 ctrlProps
 customMenu
@@ -164,6 +173,7 @@ oddHeader
 oleObjects
 openxlsx
 openxml
+ou
 pageMargins
 pageSetup
 paperSize
