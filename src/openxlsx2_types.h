@@ -65,6 +65,16 @@ enum celltype {
 #include <Rcpp.h>
 #endif
 
+#if CE_NATIVE == CE_UTF8
+inline std::string as_string(std::string str) {
+  return(str);
+}
+# else
+inline Rcpp::String as_string(std::string str) {
+  return(Rcpp::String(str));
+}
+#endif
+
 // custom wrap function
 // Converts the imported values from c++ std::vector<xml_col> to an R dataframe.
 // Whenever new fields are spotted they have to be added here
@@ -95,21 +105,21 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
 
   // struct to vector
   for (size_t i = 0; i < n; ++i) {
-    r[i] = Rcpp::String(x[i].r);
-    row_r[i] = Rcpp::String(x[i].row_r);
-    c_r[i]   = Rcpp::String(x[i].c_r);
-    c_s[i]   = Rcpp::String(x[i].c_s);
-    c_t[i]   = Rcpp::String(x[i].c_t);
-    c_cm[i]  = Rcpp::String(x[i].c_cm);
-    c_ph[i]  = Rcpp::String(x[i].c_ph);
-    c_vm[i]  = Rcpp::String(x[i].c_vm);
-    v[i]     = Rcpp::String(x[i].v);
-    f[i]     = Rcpp::String(x[i].f);
-    f_t[i]   = Rcpp::String(x[i].f_t);
-    f_ref[i] = Rcpp::String(x[i].f_ref);
-    f_ca[i]  = Rcpp::String(x[i].f_ca);
-    f_si[i]  = Rcpp::String(x[i].f_si);
-    is[i]    = Rcpp::String(x[i].is);
+    r[i]     = as_string(x[i].r);
+    row_r[i] = as_string(x[i].row_r);
+    c_r[i]   = as_string(x[i].c_r);
+    c_s[i]   = as_string(x[i].c_s);
+    c_t[i]   = as_string(x[i].c_t);
+    c_cm[i]  = as_string(x[i].c_cm);
+    c_ph[i]  = as_string(x[i].c_ph);
+    c_vm[i]  = as_string(x[i].c_vm);
+    v[i]     = as_string(x[i].v);
+    f[i]     = as_string(x[i].f);
+    f_t[i]   = as_string(x[i].f_t);
+    f_ref[i] = as_string(x[i].f_ref);
+    f_ca[i]  = as_string(x[i].f_ca);
+    f_si[i]  = as_string(x[i].f_si);
+    is[i]    = as_string(x[i].is);
   }
 
   // Assign and return a dataframe
@@ -141,7 +151,7 @@ inline SEXP wrap(const vec_string &x) {
   Rcpp::CharacterVector z(no_init(n));
 
   for (size_t i = 0; i < n; ++i) {
-    z[i] = Rcpp::String(x[i]);
+    z[i] = as_string(x[i]);
   }
 
   return Rcpp::wrap(z);
