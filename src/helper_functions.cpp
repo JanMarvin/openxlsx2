@@ -379,17 +379,22 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 // [[Rcpp::export]]
 Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
 
-  R_xlen_t kk = colnames.size();
+  int32_t kk = colnames.size();
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
+  for (int32_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
   }
 
+  Rcpp::IntegerVector rvec(n);
+  for (int64_t i = 0; i < n; ++i) {
+    rvec[i] = i + 1L;
+  }
+
   // 3. Create a data.frame
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, n);
+  df.attr("row.names") = rvec;
   df.attr("names") = colnames;
   df.attr("class") = "data.frame";
 
