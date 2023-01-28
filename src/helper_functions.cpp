@@ -220,10 +220,12 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fi
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  for (size_t i = 0; i < kk; ++i) {
-    for (size_t j = 0; j < nn; ++j) {
-      if (fill)
-        Rcpp::as<Rcpp::CharacterVector>(df[i])[j] = cols[i] + std::to_string(rows[j]);
+  if (fill) {
+    for (size_t i = 0; i < kk; ++i) {
+      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+      for (size_t j = 0; j < nn; ++j) {
+        cvec[j] = cols[i] + std::to_string(rows[j]);
+      }
     }
   }
 
@@ -288,6 +290,21 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 
   auto startcol = start_col;
   for (auto i = 0; i < m; ++i) {
+    Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
+
+    // pointer magic. even though these are extracted, they just point to the
+    // memory in the data frame
+    Rcpp::CharacterVector zz_row_r = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
+    Rcpp::CharacterVector zz_c_r   = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
+    Rcpp::CharacterVector zz_v     = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
+    Rcpp::CharacterVector zz_c_s   = Rcpp::as<Rcpp::CharacterVector>(zz["c_s"]);
+    Rcpp::CharacterVector zz_c_t   = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);
+    Rcpp::CharacterVector zz_is    = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
+    Rcpp::CharacterVector zz_f     = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
+    Rcpp::CharacterVector zz_f_t   = Rcpp::as<Rcpp::CharacterVector>(zz["f_t"]);
+    Rcpp::CharacterVector zz_f_ref = Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"]);
+    Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
+    Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
     auto startrow = start_row;
     for (auto j = 0; j < n; ++j) {
@@ -295,7 +312,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
       if (ColNames & (j == 0)) vtyp = character;
-      std::string vals = Rcpp::as<std::string>(Rcpp::as<Rcpp::CharacterVector>(z[i])[j]);
+      std::string vals = Rcpp::as<std::string>(cvec[j]);
       std::string row = std::to_string(startrow);
       std::string col = int_to_col(startcol);
 
@@ -354,17 +371,17 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
-      Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
-      Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (!cell.v.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]     = cell.v;
-      if (!cell.c_s.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos]   = cell.c_s;
-      if (!cell.c_t.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos]   = cell.c_t;
-      if (!cell.is.empty())    Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]    = cell.is;
-      if (!cell.f.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]     = cell.f;
-      if (!cell.f_t.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["f_t"])[pos]   = cell.f_t;
-      if (!cell.f_ref.empty()) Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"])[pos] = cell.f_ref;
-      if (!cell.typ.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos]   = cell.typ;
-      if (!cell.r.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]     = cell.r;
+      zz_row_r[pos] = row;
+      zz_c_r[pos]   = col;
+      if (!cell.v.empty())     zz_v[pos]     = cell.v;
+      if (!cell.c_s.empty())   zz_c_s[pos]   = cell.c_s;
+      if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
+      if (!cell.is.empty())    zz_is[pos]    = cell.is;
+      if (!cell.f.empty())     zz_f[pos]     = cell.f;
+      if (!cell.f_t.empty())   zz_f_t[pos]   = cell.f_t;
+      if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
+      if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
+      if (!cell.r.empty())     zz_r[pos]     = cell.r;
 
       ++startrow;
     }
@@ -379,17 +396,22 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 // [[Rcpp::export]]
 Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
 
-  R_xlen_t kk = colnames.size();
+  int32_t kk = colnames.size();
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
+  for (int32_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
   }
 
+  Rcpp::IntegerVector rvec(n);
+  for (int64_t i = 0; i < n; ++i) {
+    rvec[i] = i + 1L;
+  }
+
   // 3. Create a data.frame
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, n);
+  df.attr("row.names") = rvec;
   df.attr("names") = colnames;
   df.attr("class") = "data.frame";
 
