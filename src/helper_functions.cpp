@@ -280,10 +280,20 @@ bool is_double(std::string x) {
 
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
-void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
-                  bool ColNames, int32_t start_col, int32_t start_row,
-                  Rcpp::CharacterVector ref, int32_t string_nums,
-                  bool inline_strings) {
+void wide_to_long(
+    Rcpp::DataFrame z,
+    Rcpp::IntegerVector vtyps,
+    Rcpp::DataFrame zz,
+    bool ColNames,
+    int32_t start_col,
+    int32_t start_row,
+    Rcpp::CharacterVector ref,
+    int32_t string_nums,
+    bool na_null,
+    bool na_missing,
+    std::string na_strings,
+    bool inline_strings
+) {
 
   auto n = z.nrow();
   auto m = z.ncol();
@@ -366,6 +376,49 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         cell.f_t = "array";
         cell.f_ref = ref[i];
         break;
+      }
+
+
+      if (
+          cell.is.compare("<is><t>_openxlsx_NA</t></is>") == 0 ||
+            cell.v.compare("<si><t>_openxlsx_NA</t></si>") == 0 ||
+            cell.v.compare("NA") == 0
+      ) {
+
+        if (na_missing) {
+          cell.v   = "#N/A";
+          cell.c_t = "e";
+          cell.is  = "";
+        } else  {
+
+          cell.v = "";
+          // clear cell
+          if (na_null) {
+            cell.c_t = "";
+            cell.is  = "";
+          } else {
+            // inlineStr or s
+            if (inline_strings) {
+              cell.c_t = "inlineStr";
+              cell.is  = txt_to_is(na_strings, 0, 1, 1);
+            } else {
+              cell.c_t = "s";
+              cell.v   = txt_to_si(na_strings, 0, 1, 1);
+            }
+
+          }
+        }
+      }
+
+
+      if (cell.v.compare("NaN") == 0) {
+        cell.v   = "#VALUE!";
+        cell.c_t = "e";
+      }
+
+      if (cell.v.compare("-Inf") == 0 || cell.v.compare("Inf") == 0) {
+        cell.v   = "#NUM!";
+        cell.c_t = "e";
       }
 
       cell.typ = std::to_string(vtyp);
