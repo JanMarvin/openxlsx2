@@ -300,6 +300,16 @@ write_data2 <- function(
 
   string_nums <- getOption("openxlsx2.string_nums", default = 0)
 
+  na_missing <- FALSE
+  na_null    <- FALSE
+  if (missing(na.strings)) {
+    na.strings <- ""
+    na_missing <- TRUE
+  } else if (is.null(na.strings)) {
+    na.strings <- ""
+    na_null    <- TRUE
+  }
+
   wide_to_long(
     data,
     dc,
@@ -309,54 +319,11 @@ write_data2 <- function(
     start_row = startRow,
     ref = dims,
     string_nums = string_nums,
+    na_null = na_null,
+    na_missing = na_missing,
+    na_strings = na.strings,
     inline_strings = inline_strings
   )
-
-  # if any v is missing, set typ to 'e'. v is only filled for non character
-  # values, but contains a string. To avoid issues, set it to the missing
-  # value expression
-
-  ## replace NA, NaN, and Inf
-  is_na <- cc$is == "<is><t>_openxlsx_NA</t></is>" |
-      cc$v == "<si><t>_openxlsx_NA</t></si>" |
-      cc$v == "NA"
-
-  if (length(is_na)) {
-    if (missing(na.strings)) {
-      cc[is_na, "v"]   <- "#N/A"
-      cc[is_na, "c_t"] <- "e"
-      cc[is_na, "is"]  <- ""
-    } else {
-      cc[is_na, "v"]  <- ""
-      if (is.null(na.strings)) {
-        cc[is_na, "c_t"] <- ""
-        cc[is_na, "is"]  <- ""
-        # do nothing
-      } else {
-        if (inline_strings) {
-          cc[is_na, "c_t"] <- "inlineStr"
-          cc[is_na, "is"] <- txt_to_is(as.character(na.strings),
-                                       no_escapes = TRUE, raw = TRUE)
-        } else {
-          cc[is_na, "c_t"] <- "s"
-          cc[is_na, "v"]   <- txt_to_si(as.character(na.strings),
-                                        no_escapes = TRUE, raw = TRUE)
-        }
-      }
-    }
-  }
-
-  is_nan <- cc$v == "NaN"
-  if (length(is_nan)) {
-    cc[is_nan, "v"]   <- "#VALUE!"
-    cc[is_nan, "c_t"] <- "e"
-  }
-
-  is_inf <- cc$v == "-Inf" | cc$v == "Inf"
-  if (length(is_inf)) {
-    cc[is_inf, "v"]   <- "#NUM!"
-    cc[is_inf, "c_t"] <- "e"
-  }
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {
