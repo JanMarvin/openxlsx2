@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5</span>
       </span>
     </div>
 
@@ -79,10 +79,10 @@
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
-<span>  bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
-<span>  left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
-<span>  right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
-<span>  top_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
+<span>  top_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>,</span>
 <span>  bottom_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
 <span>  left_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
 <span>  right_border <span class="op">=</span> <span class="st">"thin"</span>,</span>
@@ -90,7 +90,8 @@
 <span>  inner_hgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inner_hcolor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -114,6 +115,10 @@
 
 <dt>left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid</dt>
 <dd><p>the border style, if NULL no border is drawn. See create_border for possible border styles</p></dd>
+
+
+<dt>...</dt>
+<dd><p>...</p></dd>
 
 </dl></div>
     <div id="see-also">
@@ -139,12 +144,12 @@
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"C2:C5"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G2:H3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"G12:H13"</span>,</span></span>
-<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span> top_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9400D3"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4B0082"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> top_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF0000FF"</span><span class="op">)</span>, bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A20:C23"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"B12:D14"</span>,</span></span>
-<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span> bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_colour</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> left_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFF00"</span><span class="op">)</span>, right_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF7F00"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> bottom_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF0000"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_border</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"D28:E28"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>

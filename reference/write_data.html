@@ -18,7 +18,7 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5</span>
       </span>
     </div>
 
@@ -93,7 +93,8 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
 <span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">na.strings</span></span>
+<span>  <span class="va">na.strings</span>,</span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">write_data</span><span class="op">(</span></span>
@@ -112,7 +113,8 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">na.strings</span></span>
+<span>  <span class="va">na.strings</span>,</span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -183,6 +185,10 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
 <dt>na.strings</dt>
 <dd><p>optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)</p></dd>
 
+
+<dt>inline_strings</dt>
+<dd><p>write characters as inline strings</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -209,8 +215,10 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
 <code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
 <code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
 <code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
+<code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
 <code><a href="wb_creators.html">wb_creators</a></code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
 <code><a href="wb_get_base_font.html">wb_get_base_font</a>()</code>,

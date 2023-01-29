@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5</span>
       </span>
     </div>
 
@@ -78,9 +78,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_chartsheet</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu">next_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  tabColour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tabColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span></span>
+<span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -94,9 +95,9 @@
 <dd><p>A name for the new worksheet</p></dd>
 
 
-<dt>tabColour</dt>
-<dd><p>Colour of the worksheet tab. A valid colour (belonging to
-colours()) or a valid hex colour beginning with "#"</p></dd>
+<dt>tabColor</dt>
+<dd><p>Color of the worksheet tab. A valid color (belonging to
+colors()) or a valid hex color beginning with "#"</p></dd>
 
 
 <dt>zoom</dt>
@@ -106,6 +107,10 @@ percentage.</p></dd>
 
 <dt>visible</dt>
 <dd><p>If FALSE, sheet is hidden else visible.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>...</p></dd>
 
 </dl></div>
     <div id="details">
@@ -120,8 +125,10 @@ Otherwise the chartsheet will break the workbook.</p>
 <code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
 <code><a href="write_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
 <code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
 <code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
+<code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
 <code><a href="wb_creators.html">wb_creators</a></code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
 <code><a href="wb_get_base_font.html">wb_get_base_font</a>()</code>,

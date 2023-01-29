@@ -241,6 +241,9 @@
     <loc>/reference/wb_add_page_break.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_add_pivot_table.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_add_plot.html</loc>
   </url>
   <url>
@@ -257,6 +260,9 @@
   </url>
   <url>
     <loc>/reference/wb_clone_worksheet.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_copy_cells.html</loc>
   </url>
   <url>
     <loc>/reference/wb_creators.html</loc>
@@ -353,9 +359,6 @@
   </url>
   <url>
     <loc>/reference/write_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_data2.html</loc>
   </url>
   <url>
     <loc>/reference/write_datatable.html</loc>

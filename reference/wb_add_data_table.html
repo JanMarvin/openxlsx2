@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5</span>
       </span>
     </div>
 
@@ -95,7 +95,8 @@
 <span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">na.strings</span></span>
+<span>  <span class="va">na.strings</span>,</span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -168,11 +169,11 @@ sep).
 
 
 <dt>bandedRows</dt>
-<dd><p>logical. If TRUE, rows are colour banded</p></dd>
+<dd><p>logical. If TRUE, rows are color banded</p></dd>
 
 
 <dt>bandedCols</dt>
-<dd><p>logical. If TRUE, the columns are colour banded</p></dd>
+<dd><p>logical. If TRUE, the columns are color banded</p></dd>
 
 
 <dt>applyCellStyle</dt>
@@ -185,6 +186,10 @@ sep).
 
 <dt>na.strings</dt>
 <dd><p>optional</p></dd>
+
+
+<dt>inline_strings</dt>
+<dd><p>write characters as inline strings</p></dd>
 
 </dl></div>
     <div id="details">
@@ -201,8 +206,10 @@ output will be broken.</p>
 <code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
 <code><a href="write_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
 <code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
 <code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
+<code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
 <code><a href="wb_creators.html">wb_creators</a></code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
 <code><a href="wb_get_base_font.html">wb_get_base_font</a>()</code>,
