@@ -135,6 +135,9 @@ wbWorksheet <- R6::R6Class(
     #' @field webPublishItems webPublishItems
     webPublishItems = character(),
 
+    # @field is_ordered flag defining if the sheet needs ordering when saving
+    is_ordered = NULL,
+
     #' @description
     #' Creates a new `wbWorksheet` object
     #' @param tabColor tabColor
@@ -212,6 +215,7 @@ wbWorksheet <- R6::R6Class(
       self$extLst                <- character()
       self$freezePane            <- character()
       self$sheet_data            <- wbSheetData$new()
+      self$is_ordered            <- FALSE
 
       invisible(self)
     },

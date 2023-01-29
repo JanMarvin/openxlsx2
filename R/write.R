@@ -68,7 +68,9 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
     # assign to cc
     cc <- rbind(cc, cc_missing)
 
-    # order cc (not really necessary, will be done when saving)
+    # order cc
+    # TODO this reorders cc every time we write to a sheet. We could skip this
+    # here and only order when saving. the output is expected to be ordered.
     cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
 
     # update dimensions (only required if new cols and rows are added) ------
@@ -104,6 +106,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
+  wb$worksheets[[sheet_id]]$is_ordered <- TRUE
 
   wb
 }
@@ -337,6 +340,8 @@ write_data2 <- function(
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
+
+    wb$worksheets[[sheetno]]$is_ordered <- TRUE
 
   } else {
     # update cell(s)
