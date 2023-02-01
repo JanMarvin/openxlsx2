@@ -4222,6 +4222,248 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
+    #' add form control to workbook
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param text text
+    #' @return The `wbWorkbook` object, invisibly
+    add_form_control = function(
+      sheet = current_sheet(),
+      dims = NULL,
+      text = NULL,
+      cell_ref = NULL
+    ) {
+
+      sheet <- private$get_sheet_index(sheet)
+
+      if (!is.null(dims)) {
+        xy <- dims_to_rowcol(dims)
+        col <- col2int(xy[[1]][1])
+        row <- as.integer(xy[[2]])
+      }
+
+      if (is.null(text)) {
+        text <- ""
+      }
+
+        # 1, 57, 0, 8, 1, 47, 2, 6
+      clientData <- genClientDataCB(col, row, 0, 0, cell_ref)
+
+      vml <- read_xml(
+        sprintf(
+          '<o:shapelayout v:ext="edit">
+            <o:idmap v:ext="edit" data="1" />
+          </o:shapelayout>
+          <v:shapetype id="_x0000_t201" coordsize="21600,21600" o:spt="201" path="m,l,21600r21600,l21600,xe">
+            <v:stroke joinstyle="miter" />
+            <v:path shadowok="f" o:extrusionok="f" strokeok="f" fillok="f" o:connecttype="rect" />
+            <o:lock v:ext="edit" shapetype="t" />
+          </v:shapetype>
+          <v:shape id="_x0000_s1025" type="#_x0000_t201" style="position:absolute;  margin-left:57pt;margin-top:40pt;width:120pt;height:30pt;z-index:1;  mso-wrap-style:tight" filled="f" fillcolor="white [65]" stroked="f" strokecolor="black [64]" o:insetmode="auto">
+            <v:path shadowok="t" strokeok="t" fillok="t" />
+            <o:lock v:ext="edit" rotation="t" />
+            <v:textbox style="mso-direction-alt:auto" o:singleclick="f">
+            <div style="text-align:left">
+              <font face="Lucida Grande" size="260" color="auto">%s</font>
+            </div>
+            </v:textbox>
+            %s
+          </v:shape>',
+        text,
+        clientData
+        ), pointer = FALSE
+      )
+
+      if (is.null(unlist(self$vml))) {
+        vml <- xml_node_create(
+          "xml",
+          xml_attributes = c(
+            `xmlns:v` = "urn:schemas-microsoft-com:vml",
+            `xmlns:o` = "urn:schemas-microsoft-com:office:office",
+            `xmlns:x` = "urn:schemas-microsoft-com:office:excel"
+          ),
+          xml_children = c(
+            vml
+          )
+        )
+      } else {
+        vml <- xml_add_child(
+          xml_node = self$vml,
+          xml_child = vml
+        )
+      }
+
+      # self$add_drawing(xml = drawing, dims = dims)
+      self$vml <- vml
+
+      # wb$drawings
+      drawing <- read_xml(
+        sprintf(
+          '<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+          <mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+          <mc:Choice xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" Requires="a14">
+          <xdr:twoCellAnchor editAs="oneCell">
+          <xdr:from>
+          <xdr:col>0</xdr:col>
+          <xdr:colOff>0</xdr:colOff>
+          <xdr:row>2</xdr:row>
+          <xdr:rowOff>0</xdr:rowOff>
+          </xdr:from>
+          <xdr:to>
+          <xdr:col>2</xdr:col>
+          <xdr:colOff>0</xdr:colOff>
+          <xdr:row>4</xdr:row>
+          <xdr:rowOff>0</xdr:rowOff>
+          </xdr:to>
+          <xdr:sp macro="" textlink="">
+          <xdr:nvSpPr>
+          <xdr:cNvPr id="%s" name="Check Box 1" hidden="1">
+          <a:extLst>
+          <a:ext uri="{63B3BB69-23CF-44E3-9099-%s}">
+          <a14:compatExt spid="_x0000_s1025"/>
+          </a:ext>
+          <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-%s}">
+          <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{1EEBA38D-B81F-E55E-AFDB-%s}"/>
+          </a:ext>
+          </a:extLst>
+          </xdr:cNvPr>
+          <xdr:cNvSpPr/>
+          </xdr:nvSpPr>
+          <xdr:spPr bwMode="auto">
+          <a:xfrm>
+          <a:off x="0" y="0"/>
+          <a:ext cx="0" cy="0"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+          <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln>
+          <a:noFill/>
+          </a:ln>
+          <a:extLst>
+          <a:ext uri="{909E8E84-426E-40DD-AFC4-%s}">
+          <a14:hiddenFill>
+          <a:solidFill>
+          <a:srgbClr val="FFFFFF" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="65"/>
+          </a:solidFill>
+          </a14:hiddenFill>
+          </a:ext>
+          <a:ext uri="{91240B29-F687-4F45-9708-%s}">
+          <a14:hiddenLine w="9525">
+          <a:solidFill>
+          <a:srgbClr val="000000" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="64"/>
+          </a:solidFill>
+          <a:miter lim="800000"/>
+          <a:headEnd/>
+          <a:tailEnd/>
+          </a14:hiddenLine>
+          </a:ext>
+          </a:extLst>
+          </xdr:spPr>
+          <xdr:txBody>
+          <a:bodyPr vertOverflow="clip" wrap="square" lIns="27432" tIns="22860" rIns="0" bIns="22860" anchor="ctr" upright="1"/>
+          <a:lstStyle/>
+          <a:p>
+          <a:pPr algn="l" rtl="0">
+          <a:defRPr sz="1000"/>
+          </a:pPr>
+          <a:r>
+          <a:rPr lang="en-GB" sz="1300" b="0" i="0" u="none" strike="noStrike" baseline="0">
+          <a:solidFill>
+          <a:srgbClr val="000000"/>
+          </a:solidFill>
+          <a:latin typeface="Lucida Grande" charset="0"/>
+          <a:cs typeface="Lucida Grande" charset="0"/>
+          </a:rPr>
+          <a:t>Check Box 1</a:t>
+          </a:r>
+          </a:p>
+          </xdr:txBody>
+          </xdr:sp>
+          <xdr:clientData/>
+          </xdr:twoCellAnchor>
+          </mc:Choice>
+          <mc:Fallback/>
+          </mc:AlternateContent>
+          </xdr:wsDr>',
+          length(self$ctrlProps),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12)
+          ), pointer = FALSE
+      )
+
+      self$add_drawing(xml = drawing, dims = dims)
+
+      self$append(
+        "ctrlProps",
+        "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"CheckBox\" checked=\"Checked\" lockText=\"1\" noThreeD=\"1\"/>"
+      )
+
+      ctrlProp <- length(self$ctrlProps)
+
+      self$append(
+        "Content_Types",
+        sprintf(
+          '<Override PartName="/xl/ctrlProps/ctrlProp%s.xml" ContentType="application/vnd.ms-excel.controlproperties+xml"/>',
+          ctrlProp
+        )
+      )
+
+      # usually sheet_drawing is sheet. If we have userShapes, sheet_drawing
+      # can skip ahead. see test: unemployment-nrw202208.xlsx
+      found <- private$get_drawingsref()
+      if (sheet %in% found$sheet) {
+        sheet_drawing <- found$id[found$sheet == sheet]
+      } else {
+        sel <- which.min(abs(found$sheet - sheet))
+        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
+      }
+
+      # get the correct next free relship id
+      if (length(self$worksheets_rels[[sheet]]) == 0) {
+        next_relship <- 1
+        has_no_drawing <- TRUE
+        has_no_vmlDrawing <- TRUE
+      } else {
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
+        has_no_drawing <- !any(relship$typ == "drawing")
+        has_no_vmlDrawing <- !any(relship$typ == "vmlDrawing")
+      }
+
+      # # if a drawing exisits, we already added ourself to it. Otherwise we
+      # # create a new drawing.
+      # if (has_no_drawing) {
+      #   self$worksheets_rels[[sheet]] <-
+      #     sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, sheet_drawing)
+      #   self$worksheets[[sheet]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
+      #   next_relship <- next_relship + 1L
+      # }
+
+      if (has_no_vmlDrawing) {
+
+        self$append(
+          "Content_Types",
+          "<Default Extension=\"vml\" ContentType=\"application/vnd.openxmlformats-officedocument.vmlDrawing\"/>"
+        )
+
+        self$worksheets_rels[[sheet]] <- c(
+          self$worksheets_rels[[sheet]],
+          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\" Target=\"../drawings/vmlDrawing%s.vml\"/>", next_relship, sheet_drawing)
+        )
+
+        self$worksheets[[sheet]]$legacyDrawing <- sprintf("<legacyDrawing r:id=\"rId%s\"/>", next_relship)
+      }
+
+      invisible(self)
+    },
+
+    #' @description
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
@@ -4254,7 +4496,6 @@ wbWorkbook <- R6::R6Class(
       cat(unlist(showText))
       invisible(self)
     },
-
 
     #' @description
     #' Protect a workbook

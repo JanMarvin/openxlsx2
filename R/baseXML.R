@@ -48,6 +48,31 @@ genClientData <- function(col, row, visible, height, width) {
   return(txt)
 }
 
+genClientDataCB <- function(col, row, height, width, fml) {
+  if (is.null(fml)) {
+    fml <- ""
+  } else {
+    fml <- sprintf("<x:FmlaLink>%s</x:FmlaLink>", fml)
+  }
+  txt <- sprintf(
+    '<x:ClientData ObjectType="Checkbox">
+    <x:MoveWithCells/><x:SizeWithCells/>
+    <x:Anchor>%s, 0, %s, 25, %s, 147, %s, 18</x:Anchor>
+    <x:AutoFill>False</x:AutoFill>
+    <x:AutoLine>False</x:AutoLine>
+    <x:Row>%s</x:Row><x:Column>%s</x:Column>
+    <x:TextVAlign>Center</x:TextVAlign>
+    %s
+    <x:Checked>1</x:Checked>
+    <x:NoThreeD />',
+    col - 1L, row - 2L, col + width - 1L, row + height - 1L, row - 1L, col - 1L, fml
+  )
+
+  txt <- paste0(txt, "</x:ClientData>")
+
+  return(txt)
+}
+
 genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL) {
   core <- '<coreProperties xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
 
