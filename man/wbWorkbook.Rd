@@ -1756,7 +1756,13 @@ Add mschart chart to the workbook
 \subsection{Method \code{add_form_control()}}{
 add form control to workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(sheet = current_sheet(), dims = NULL, text = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(
+  sheet = current_sheet(),
+  dims = NULL,
+  type = NULL,
+  text = NULL,
+  cell_ref = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1766,7 +1772,11 @@ add form control to workbook
 
 \item{\code{dims}}{dims}
 
+\item{\code{type}}{type}
+
 \item{\code{text}}{text}
+
+\item{\code{cell_ref}}{cell_ref}
 }
 \if{html}{\out{</div>}}
 }

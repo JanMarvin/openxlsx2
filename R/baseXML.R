@@ -48,14 +48,14 @@ genClientData <- function(col, row, visible, height, width) {
   return(txt)
 }
 
-genClientDataCB <- function(col, row, height, width, fml) {
+genClientDataCB <- function(col, row, height, width, fml, type) {
   if (is.null(fml)) {
     fml <- ""
   } else {
     fml <- sprintf("<x:FmlaLink>%s</x:FmlaLink>", fml)
   }
   txt <- sprintf(
-    '<x:ClientData ObjectType="Checkbox">
+    '<x:ClientData ObjectType="%s">
     <x:MoveWithCells/><x:SizeWithCells/>
     <x:Anchor>%s, 0, %s, 25, %s, 147, %s, 18</x:Anchor>
     <x:AutoFill>False</x:AutoFill>
@@ -65,6 +65,7 @@ genClientDataCB <- function(col, row, height, width, fml) {
     %s
     <x:Checked>1</x:Checked>
     <x:NoThreeD />',
+    type,
     col - 1L, row - 2L, col + width - 1L, row + height - 1L, row - 1L, col - 1L, fml
   )
 
