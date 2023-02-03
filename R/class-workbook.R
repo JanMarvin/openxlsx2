@@ -127,10 +127,10 @@ wbWorkbook <- R6::R6Class(
     vbaProject = NULL,
 
     #' @field vml vml
-    vml = list(),
+    vml = NULL,
 
     #' @field vml_rels vml_rels
-    vml_rels = list(),
+    vml_rels = NULL,
 
     #' @field comments comments
     comments = list(),
@@ -249,8 +249,8 @@ wbWorkbook <- R6::R6Class(
 
 
       self$vbaProject <- NULL
-      self$vml <- list()
-      self$vml_rels <- list()
+      self$vml <- NULL
+      self$vml_rels <- NULL
 
       self$creator <-
         creator %||%
@@ -442,14 +442,14 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
-      new_drawings_idx <- length(self$drawings) + 1
-      self$drawings[[new_drawings_idx]]      <- ""
-      self$drawings_rels[[new_drawings_idx]] <- ""
+      # new_drawings_idx <- length(self$drawings) + 1
+      # self$drawings[[new_drawings_idx]]      <- ""
+      # self$drawings_rels[[new_drawings_idx]] <- ""
 
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
       self$is_chartsheet[[newSheetIndex]]    <- TRUE
-      self$vml_rels[[newSheetIndex]]         <- list()
-      self$vml[[newSheetIndex]]              <- list()
+      # self$vml_rels[[newSheetIndex]]         <- list()
+      # self$vml[[newSheetIndex]]              <- list()
 
       self$append("sheetOrder", newSheetIndex)
       private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
@@ -787,11 +787,13 @@ wbWorkbook <- R6::R6Class(
         old_drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
       }
 
-      if (length(old_drawing_sheet)) {
+      if (length(old_drawing_sheet) && length(self$worksheets[[old_drawing_sheet]]$relships$drawing)) {
 
-        new_drawing_sheet <- length(self$drawings) + 1
+        drawing_id <- self$worksheets[[old_drawing_sheet]]$relships$drawing
 
-        self$drawings_rels[[new_drawing_sheet]] <- self$drawings_rels[[old_drawing_sheet]]
+        new_drawing_sheet <- length(self$drawings) + 1L
+
+        self$append("drawings_rels", self$drawings_rels[[drawing_id]])
 
         # give each chart its own filename (images can re-use the same file, but charts can't)
         self$drawings_rels[[new_drawing_sheet]] <-
@@ -852,12 +854,8 @@ wbWorkbook <- R6::R6Class(
             USE.NAMES = FALSE
           )
 
-        # otherwise an empty drawings relationship is written
-        if (identical(self$drawings_rels[[new_drawing_sheet]], character()))
-          self$drawings_rels[[new_drawing_sheet]] <- list()
 
-
-        self$drawings[[new_drawing_sheet]]       <- self$drawings[[old_drawing_sheet]]
+        self$append("drawings", self$drawings[[drawing_id]])
       }
 
       ## TODO Currently it is not possible to clone a sheet with a slicer in a
@@ -904,10 +902,21 @@ wbWorkbook <- R6::R6Class(
 
       # The IDs in the drawings array are sheet-specific, so within the new
       # cloned sheet the same IDs can be used => no need to modify drawings
-      self$vml_rels[[newSheetIndex]]       <- self$vml_rels[[old]]
-      self$vml[[newSheetIndex]]            <- self$vml[[old]]
+      vml_id <- self$worksheets[[old]]$relships$vml
+      cmt_id <- self$worksheets[[old]]$relships$comments
+
+      if (length(vml_id)) {
+        self$append("vml",      self$vml[[vml_id]])
+        self$append("vml_rels", self$vml_rels[[vml_id]])
+        self$worksheets[[old]]$relships$vml <- length(self$vml)
+      }
+
+      if (length(cmt_id)) {
+        self$append("comments", self$comments[[cmt_id]])
+        self$worksheets[[old]]$relships$comments <- length(self$comments)
+      }
+
       self$is_chartsheet[[newSheetIndex]]  <- self$is_chartsheet[[old]]
-      self$comments[[newSheetIndex]]       <- self$comments[[old]]
       self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
@@ -1363,7 +1372,7 @@ wbWorkbook <- R6::R6Class(
       nThemes         <- length(self$theme)
       nPivots         <- length(self$pivotDefinitions)
       nSlicers        <- length(self$slicers)
-      nComments       <- sum(lengths(self$comments) > 0)
+      nComments       <- length(self$comments)
       nThreadComments <- sum(lengths(self$threadComments) > 0)
       nPersons        <- length(self$persons)
       nVML            <- sum(lengths(self$vml) > 0)
@@ -1411,26 +1420,18 @@ wbWorkbook <- R6::R6Class(
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
 
-        cmts <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
-        cmts$target <- basename(cmts$Target)
-        cmts$typ <- basename(cmts$Type)
-        cmts <- cmts[cmts$typ == "comments", ]
-        cmts$id <- as.integer(gsub("\\D+", "", cmts$target))
-
-        sel <- vapply(self$comments, function(x) length(x) > 0, NA)
-        comments <- self$comments[sel]
-
-        if (length(cmts$id) != length(comments))
-          warning("comments length != comments ids")
 
         # TODO use seq_len() or seq_along()?
-        for (i in seq_along(comments)) {
-          fn <- sprintf("comments%s.xml", cmts$id[i])
+        for (i in seq_along(self$comments)) {
 
-          write_comment_xml(
-            comment_list = comments[[i]],
-            file_name = file.path(tmpDir, "xl", fn)
-          )
+          if (length(self$comments[[i]])) {
+            fn <- sprintf("comments%s.xml", i)
+
+            write_comment_xml(
+              comment_list = self$comments[[i]],
+              file_name = file.path(tmpDir, "xl", fn)
+            )
+          }
         }
 
         private$writeDrawingVML(xldrawingsDir, xldrawingsRelsDir)
@@ -2935,17 +2936,12 @@ wbWorkbook <- R6::R6Class(
           xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
         }
 
-        comment_id    <- xml_rels$target_ind[xml_rels$type == "comments"]
-        # TODO not every sheet has a drawing. this originates from a time where
-        # every sheet created got a drawing assigned.
-        drawing_id    <- xml_rels$target_ind[xml_rels$type == "drawing"]
-        pivotTable_id <- xml_rels$target_ind[xml_rels$type == "pivotTable"]
-        table_id      <- xml_rels$target_ind[xml_rels$type == "table"]
-        thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
-        vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
-
         # Removing these is probably a bad idea
         # NULL the sheets
+        comment_id    <- self$worksheets[[sheet]]$relships$comments
+        drawing_id    <- self$worksheets[[sheet]]$relships$drawing
+        thrComment_id <- self$worksheets[[sheet]]$relships$threadComments
+        vmlDrawing_id <- self$worksheets[[sheet]]$relships$vmlDrawing
         if (length(comment_id))    self$comments[[comment_id]]          <- ""
         if (length(drawing_id))    self$drawings[[drawing_id]]          <- ""
         if (length(drawing_id))    self$drawings_rels[[drawing_id]]     <- ""
@@ -3831,31 +3827,15 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
-      # with userShape we might need to skip one ahead
-      found <- private$get_drawingsref()
-      if (sheet %in% found$sheet) {
-        sheet_drawing <- found$id[found$sheet == sheet]
+      if (length(self$worksheets[[sheet]]$relships$drawing)) {
+        sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
+        imageNo <- length(xml_node_name(self$drawings[[sheet_drawing]], "xdr:wsDr")) + 1L
       } else {
-        sel <- which.min(abs(found$sheet - sheet))
-        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
+        sheet_drawing <- length(self$drawings) + 1L
+        # self$append("drawings", NA_character_)
+        # self$append("drawings_rels", "")
+        imageNo <- 1L
       }
-
-      # add image to drawings_rels
-      old_drawings_rels <- unlist(self$drawings_rels[[sheet_drawing]])
-      if (all(old_drawings_rels == "")) old_drawings_rels <- NULL
-
-      imageNo <- length(xml_node_name(self$drawings[[sheet_drawing]], "xdr:wsDr")) + 1L
-
-      ## drawings rels (Reference from drawings.xml to image file in media folder)
-      self$drawings_rels[[sheet_drawing]] <- c(
-        old_drawings_rels,
-        sprintf(
-          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
-          imageNo,
-          mediaNo,
-          imageType
-        )
-      )
 
       ## write file path to media slot to copy across on save
       tmp <- file
@@ -3898,6 +3878,23 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$add_drawing(sheet, drawing)
+
+
+      # add image to drawings_rels
+      old_drawings_rels <- unlist(self$drawings_rels[[sheet_drawing]])
+      if (all(is.na(old_drawings_rels)) || all(old_drawings_rels == ""))
+        old_drawings_rels <- NULL
+
+      ## drawings rels (Reference from drawings.xml to image file in media folder)
+      self$drawings_rels[[sheet_drawing]] <- c(
+        old_drawings_rels,
+        sprintf(
+          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
+          imageNo,
+          mediaNo,
+          imageType
+        )
+      )
 
       invisible(self)
     },
@@ -4078,18 +4075,24 @@ wbWorkbook <- R6::R6Class(
 
       # usually sheet_drawing is sheet. If we have userShapes, sheet_drawing
       # can skip ahead. see test: unemployment-nrw202208.xlsx
-      found <- private$get_drawingsref()
-      if (sheet %in% found$sheet) {
-        sheet_drawing <- found$id[found$sheet == sheet]
+      if (length(self$worksheets[[sheet]]$relships$drawing)) {
+        sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
+
+        # chartsheets can not have multiple drawings
+        if (is_chartsheet) {
+          self$drawings[[sheet_drawing]]      <- ""
+          self$drawings_rels[[sheet_drawing]] <- ""
+        }
       } else {
-        sel <- which.min(abs(found$sheet - sheet))
-        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
+        sheet_drawing <- length(self$drawings) + 1L
+        self$append("drawings", "")
+        self$append("drawings_rels", "")
       }
 
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.
       drawings <- self$drawings[[sheet_drawing]]
-      if (drawings == "") {
+      if (is.null(drawings) || is.na(drawings) || drawings == "") {
         drawings <- xml
       } else {
         drawing_type <- xml_node_name(xml, "xdr:wsDr")
@@ -4097,6 +4100,8 @@ wbWorkbook <- R6::R6Class(
         drawings <- xml_add_child(drawings, xml_drawing)
       }
       self$drawings[[sheet_drawing]] <- drawings
+
+      self$worksheets[[sheet]]$relships$drawing <- sheet_drawing
 
       # get the correct next free relship id
       if (length(self$worksheets_rels[[sheet]]) == 0) {
@@ -4132,21 +4137,10 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       sheet <- private$get_sheet_index(sheet)
-      is_chartsheet <- self$is_chartsheet[sheet]
-
-
-      found <- private$get_drawingsref()
-      if (sheet %in% found$sheet) {
-        sheet_drawing <- found$id[found$sheet == sheet]
+      if (length(self$worksheets[[sheet]]$relships$drawing)) {
+        sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
       } else {
-        sel <- which.min(abs(found$sheet - sheet))
-        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
-      }
-
-      # chartsheets can not have multiple drawings
-      if (is_chartsheet) {
-        self$drawings[[sheet_drawing]]      <- ""
-        self$drawings_rels[[sheet_drawing]] <- ""
+        sheet_drawing <- length(self$drawings) + 1L
       }
 
       next_chart <- NROW(self$charts) + 1
@@ -4162,16 +4156,19 @@ wbWorkbook <- R6::R6Class(
 
       self$charts <- rbind(self$charts, chart)
 
-      len_drawing <- length(xml_node_name(self$drawings[[sheet_drawing]], "xdr:wsDr")) + 1L
-
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet = sheet,
-        xml = drawings(len_drawing),
+        xml = drawings(sheet_drawing),
         dims = dims
       )
 
-      self$drawings_rels[[sheet]] <- drawings_rels(self$drawings_rels[[sheet]], next_chart)
+      sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
+
+      self$drawings_rels[[sheet_drawing]] <- drawings_rels(
+        self$drawings_rels[[sheet_drawing]],
+        next_chart
+      )
 
       invisible(self)
     },
@@ -6181,79 +6178,24 @@ wbWorkbook <- R6::R6Class(
 
     writeDrawingVML = function(dir, dir_rel) {
 
-      # not sure if comments and vml are the same length
-      counter <- max(length(self$comments), length(self$vml))
-
       # beg vml loop
-      for (i in seq_len(counter)) {
-        id <- 1025
+      for (i in seq_along(self$vml)) {
 
-        vml_ext <- NULL
-
-        ## get additional vml
-        if (!is.null(unlist(self$vml[i]))) {
-          if (length(self$vml[[i]])) {
-            vml_ext <- c(vml_ext, getXMLPtr1con(read_xml(self$vml[[i]])))
-          }
-        }
-
-        vml_comment <- NULL
-
-        ## get comment vml
-        if (!is.null(unlist(self$comments[i]))) {
-          cd <- unapply(self$comments[[i]], "[[", "clientData")
-          nComments <- length(cd)
-
-          vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
-
-          for (j in seq_len(nComments)) {
-            id <- id + 1L
-            vml_comment <- c(
-              vml_comment, genBaseShapeVML(cd[j], id)
-            )
-          }
-        }
-
-        vml_xml <- c(vml_ext, vml_comment)
-
-
-        ## create output only if vml_comment != NULL
-        if (!is.null(vml_xml)) {
-
-          # keep only the first o:shapelayout
-          vml_xml <- xml_node(vml_xml)
-          oshapelayout <- which(xml_node_name(vml_xml) == "o:shapelayout")
-          sel <- which(!seq_along(vml_xml) %in% oshapelayout[-1])
-
-          ## create vml for output
-          vml_xml <-  xml_node_create(
-            xml_name = "xml",
-            xml_attributes = c(
-              `xmlns:v` = "urn:schemas-microsoft-com:vml",
-              `xmlns:o` = "urn:schemas-microsoft-com:office:office",
-              `xmlns:x` = "urn:schemas-microsoft-com:office:excel"
-            ),
-            xml_children = vml_xml[sel]
-          )
-
-          ## write vml output
+        ## write vml output
+        if (self$vml[[i]] != "") {
           write_file(
               head = '',
-              body = pxml(vml_xml),
+              body = pxml(self$vml[[i]]),
               tail = '',
               fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
           )
-        }
 
-        if (length(self$vml_rels) == i) {
-
-          ## vml drawing
-          if (length(self$vml_rels[[i]])) {
+          if (!is.null(unlist(self$vml_rels)) && length(self$vml_rels) >= i && self$vml_rels[[i]] != "") {
             write_file(
               head = '',
               body = pxml(self$vml_rels[[i]]),
               tail = '',
-              fl = file.path(dir_rel, stri_join("vmlDrawing", i, ".vml.rels"))
+              fl = file.path(dir_rel, sprintf("vmlDrawing%s.vml.rels", i))
             )
           }
         }

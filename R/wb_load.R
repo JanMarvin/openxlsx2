@@ -840,6 +840,41 @@ wb_load <- function(
       return(xml)
     })
 
+    for (ws in seq_along(wb$worksheets)) {
+
+      wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[ws]], "Relationship"))
+      cmmts <- integer()
+      drwns <- integer()
+      pvtbl <- integer()
+      slcrs <- integer()
+      table <- integer()
+      trcmt <- integer()
+      vmldr <- integer()
+
+      if (ncol(wb_rels)) {
+        wb_rels$tid <- as.integer(gsub("\\D+", "", basename(wb_rels$Target)))
+        wb_rels$typ <- basename(wb_rels$Type)
+
+        cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
+        drwns <- wb_rels$tid[wb_rels$typ == "drawing"]
+        pvtbl <- wb_rels$tid[wb_rels$typ == "pivotTable"]
+        slcrs <- wb_rels$tid[wb_rels$typ == "slicer"]
+        table <- wb_rels$tid[wb_rels$typ == "table"]
+        trcmt <- wb_rels$tid[wb_rels$typ == "threadedComment"]
+        vmldr <- wb_rels$tid[wb_rels$typ == "vmlDrawing"]
+      }
+
+      wb$worksheets[[ws]]$relships <- list(
+        comments         = cmmts,
+        drawing          = drwns,
+        pivotTable       = pvtbl,
+        slicer           = slcrs,
+        table            = table,
+        threadedComment  = trcmt,
+        vmlDrawing       = vmldr
+      )
+    }
+
 
     ## Slicers -------------------------------------------------------------------------------------
     if (length(slicerXML)) {
@@ -961,8 +996,8 @@ wb_load <- function(
 
       drw_len <- max(as.integer(gsub("\\D+", "", basename(drawingsXML))))
 
-      wb$drawings      <- vector("character", drw_len)
-      wb$drawings_rels <- vector("character", drw_len)
+      wb$drawings      <- rep(list(""), drw_len) # vector("list", drw_len)
+      wb$drawings_rels <- rep(list(""), drw_len) # vector("list", drw_len)
 
 
       for (drw in drawingsXML) {
@@ -972,11 +1007,11 @@ wb_load <- function(
         wb$drawings[drw_file] <- read_xml(drw, pointer = FALSE)
       }
 
-      for (drw_rel in vmlDrawingRelsXML) {
+      for (drw_rel in drawingRelsXML) {
 
         drw_file <- as.integer(gsub("\\D+", "", basename(drw_rel)))
 
-        wb$drawings_rels[vml_file] <- read_xml(drw_rel, pointer = FALSE)
+        wb$drawings_rels[[drw_file]] <- xml_node(drw_rel, "Relationships", "Relationship")
       }
 
     }
@@ -988,22 +1023,26 @@ wb_load <- function(
 
       vml_len <- max(as.integer(gsub("\\D+", "", basename(vmlDrawingXML))))
 
-      wb$vml      <- vector("character", vml_len)
-      wb$vml_rels <- vector("character", vml_len)
+      wb$vml      <- rep(list(""), vml_len) # vector("list", vml_len)
+      wb$vml_rels <- rep(list(""), vml_len) # vector("list", vml_len)
 
 
       for (vml in vmlDrawingXML) {
 
         vml_file <- as.integer(gsub("\\D+", "", basename(vml)))
 
+        # fix broken xml in vml buttons
+        vml <- stringi::stri_read_lines(vml, encoding = "UTF-8")
+        vml <- paste(vml, sep = "", collapse = "")
+        vml <- gsub("<br>", "<br/>", vml)
         wb$vml[vml_file] <- read_xml(vml, pointer = FALSE)
       }
 
       for (vml_rel in vmlDrawingRelsXML) {
 
-        vml_file <- as.integer(gsub("\\D+", "", basename(vml_ref)))
+        vml_file <- as.integer(gsub("\\D+", "", basename(vml_rel)))
 
-        wb$vml_rels[vml_file] <- read_xml(vml_rel, pointer = FALSE)
+        wb$vml_rels[[vml_file]] <- xml_node(vml_rel, "Relationships", "Relationship")
       }
 
     }
