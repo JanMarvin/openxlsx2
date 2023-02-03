@@ -694,14 +694,14 @@ wbWorkbook <- R6::R6Class(
 
       ## create sheet.rels to simplify id assignment
       new_drawings_idx <- length(self$drawings) + 1
-      self$drawings[[new_drawings_idx]]      <- ""
-      self$drawings_rels[[new_drawings_idx]] <- ""
+      # self$drawings[[new_drawings_idx]]      <- ""
+      # self$drawings_rels[[new_drawings_idx]] <- ""
 
       self$worksheets_rels[[newSheetIndex]]  <- genBaseSheetRels(newSheetIndex)
-      self$vml_rels[[newSheetIndex]]         <- list()
-      self$vml[[newSheetIndex]]              <- list()
+      # self$vml_rels[[newSheetIndex]]         <- list()
+      # self$vml[[newSheetIndex]]              <- list()
       self$is_chartsheet[[newSheetIndex]]    <- FALSE
-      self$comments[[newSheetIndex]]         <- list()
+      # self$comments[[newSheetIndex]]         <- list()
       self$threadComments[[newSheetIndex]]   <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
@@ -2944,13 +2944,14 @@ wbWorkbook <- R6::R6Class(
         thrComment_id <- xml_rels$target_ind[xml_rels$type == "threadedComment"]
         vmlDrawing_id <- xml_rels$target_ind[xml_rels$type == "vmlDrawing"]
 
+        # Removing these is probably a bad idea
         # NULL the sheets
-        if (length(comment_id))    self$comments[[comment_id]]          <- NULL
+        if (length(comment_id))    self$comments[[comment_id]]          <- ""
         if (length(drawing_id))    self$drawings[[drawing_id]]          <- ""
         if (length(drawing_id))    self$drawings_rels[[drawing_id]]     <- ""
-        if (length(thrComment_id)) self$threadComments[[thrComment_id]] <- NULL
-        if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]            <- NULL
-        if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]       <- NULL
+        if (length(thrComment_id)) self$threadComments[[thrComment_id]] <- ""
+        if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]            <- ""
+        if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]       <- ""
 
         #### Modify Content_Types
         ## remove last drawings(sheet).xml from Content_Types
@@ -6242,6 +6243,9 @@ wbWorkbook <- R6::R6Class(
               tail = '',
               fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
           )
+        }
+
+        if (length(self$vml_rels) == i) {
 
           ## vml drawing
           if (length(self$vml_rels[[i]])) {
