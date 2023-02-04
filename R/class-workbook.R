@@ -1424,7 +1424,7 @@ wbWorkbook <- R6::R6Class(
         # TODO use seq_len() or seq_along()?
         for (i in seq_along(self$comments)) {
 
-          if (length(self$comments[[i]]) && nchar(self$comments[[i]])) {
+          if (length(self$comments[[i]]) && all(nchar(self$comments[[i]]))) {
             fn <- sprintf("comments%s.xml", i)
 
             write_comment_xml(
