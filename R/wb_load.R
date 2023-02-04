@@ -1060,38 +1060,38 @@ wb_load <- function(
 
       wb$comments <- vector("list", length(commentsXML))
 
-        for (comment_xml in seq_along(commentsXML)) {
-          # read xml and split into authors and comments
-          txt <- read_xml(commentsXML[comment_xml])
-          authors <- xml_value(txt, "comments", "authors", "author")
-          comments <- xml_node(txt, "comments", "commentList", "comment")
+      for (comment_xml in seq_along(commentsXML)) {
+        # read xml and split into authors and comments
+        txt <- read_xml(commentsXML[comment_xml])
+        authors <- xml_value(txt, "comments", "authors", "author")
+        comments <- xml_node(txt, "comments", "commentList", "comment")
 
-          comments_attr <- rbindlist(xml_attr(comments, "comment"))
+        comments_attr <- rbindlist(xml_attr(comments, "comment"))
 
-          refs <- comments_attr$ref
-          authorsInds <- as.integer(comments_attr$authorId) + 1
-          authors <- authors[authorsInds]
+        refs <- comments_attr$ref
+        authorsInds <- as.integer(comments_attr$authorId) + 1
+        authors <- authors[authorsInds]
 
-          text <- xml_node(comments, "comment", "text")
+        text <- xml_node(comments, "comment", "text")
 
-          comments <- lapply(comments, function(x) {
-            text <- xml_node(x, "comment", "text")
-            list(
-              style = xml_node(text, "text", "r", "rPr"),
-              comments = xml_node(text, "text", "r", "t")
-            )
-          })
+        comments <- lapply(comments, function(x) {
+          text <- xml_node(x, "comment", "text")
+          list(
+            style = xml_node(text, "text", "r", "rPr"),
+            comments = xml_node(text, "text", "r", "t")
+          )
+        })
 
-          wb$comments[[comment_xml]] <- lapply(seq_along(comments), function(j) {
-            list(
-              #"refId" = com_rId[j],
-              "ref" = refs[j],
-              "author" = authors[j],
-              "comment" = comments[[j]]$comments,
-              "style" = comments[[j]]$style
-            )
-          })
-        }
+        wb$comments[[comment_xml]] <- lapply(seq_along(comments), function(j) {
+          list(
+            #"refId" = com_rId[j],
+            "ref" = refs[j],
+            "author" = authors[j],
+            "comment" = comments[[j]]$comments,
+            "style" = comments[[j]]$style
+          )
+        })
+      }
     }
 
     ## Threaded comments
