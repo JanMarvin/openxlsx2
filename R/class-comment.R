@@ -184,7 +184,7 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
   if (is.null(comment$style)) {
     rPr <- create_font()
-    } else {
+  } else {
     rPr <- comment$style
   }
 
@@ -206,13 +206,13 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
   ref <- paste0(int2col(col), row)
 
-  comment_list <- list(
+  comment_list <- list(list(
     "ref" = ref,
     "author" = comment$author,
     "comment" = comment$text,
     "style" = rPr,
     "clientData" = genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
-  )
+  ))
 
   # guard against integer(0) which is returned if no comment is found
   iterator <- function(x) {
@@ -224,10 +224,8 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
   # check if relationships for this sheet already has comment entry and get next free rId
   if (length(wb$worksheets_rels[[sheet]]) == 0) wb$worksheets_rels[[sheet]] <- genBaseSheetRels(sheet)
 
-  rels     <- data.frame()
-  rs       <- data.frame()
   next_rid <- 1
-  next_id  <- 1
+  next_id  <- wb$worksheets[[sheet]]$relships$comments
 
   if (!all(identical(wb$worksheets_rels[[sheet]], character()))) {
     rels <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
@@ -236,20 +234,21 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
     next_rid <- iterator(rels$id)
   }
 
-  if (!all(identical(unlist(wb$worksheets_rels), character()))) {
-    # check Content_Types for comment entries and get next free comment id
-    rs <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
-    rs$target <- basename(rs$Target)
-    rs$typ <- basename(rs$Type)
-    rs$id <- as.integer(gsub("\\D+", "", rs$target))
-    cmts <- rs[rs$typ == "comments", ]
-    next_id <- iterator(cmts$id)
-  }
+
+  id <- 1025 + sum(lengths(wb$comments))
+
+
+  # create new commment vml
+  cd <- unapply(comment_list, "[[", "clientData")
+  vml_xml <- read_xml(genBaseShapeVML(cd, id), pointer = FALSE)
+  vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
+  vml_xml <- paste0(vml_xml, vml_comment)
 
   # if this sheet has no comment entry in relationships, add a new relationship
   # 1) to Content_Types
   # 2) to worksheets_rels
-  if (all(rels$typ != "comments")) {
+  if (length(wb$worksheets[[sheet]]$relships$comments) == 0) {
+    next_id <- length(wb$comments) + 1L
 
     wb$Content_Types <- c(
       wb$Content_Types,
@@ -259,7 +258,12 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
       )
     )
 
-    if (!any(rels$typ == "vmlDrawing")) {
+    wb$worksheets[[sheet]]$relships$comments <- next_id
+
+    # check if we have a vmlDrawing attached to the worksheet
+    # if no) create one
+    # if yes) update it
+    if (length(wb$worksheets[[sheet]]$relships$vmlDrawing) == 0) {
 
       wb$worksheets_rels[[sheet]] <- c(
         wb$worksheets_rels[[sheet]],
@@ -270,13 +274,27 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
         )
       )
 
+      ## create vml for output
+      vml_xml <-  xml_node_create(
+        xml_name = "xml",
+        xml_attributes = c(
+          `xmlns:v` = "urn:schemas-microsoft-com:vml",
+          `xmlns:o` = "urn:schemas-microsoft-com:office:office",
+          `xmlns:x` = "urn:schemas-microsoft-com:office:excel"
+        ),
+        xml_children = vml_xml
+      )
+      wb$vml <- c(wb$vml, vml_xml)
 
-      # unique? keep prev legacyDrawing?
-      #self$worksheets[[i]]$legacyDrawing <- '<legacyDrawing r:id="rId2"/>'
+      wb$worksheets[[sheet]]$relships$vmlDrawing <- next_id
+
       # TODO hardcoded 2. Marvin fears that this is not good enough
       wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_rid)
 
       next_rid <- next_rid + 1
+    } else {
+      vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
+      wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
     }
 
     wb$worksheets_rels[[sheet]] <- c(
@@ -287,10 +305,26 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
         next_id
       )
     )
+  } else {
+    vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
+    wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
   }
 
-  wb$comments[[sheet]] <- c(wb$comments[[sheet]], list(comment_list))
+  cmmnt_id <- wb$worksheets[[sheet]]$relships$comments
 
+  if (length(wb$comments) == 0) {
+    wb$comments <- list(NA)
+  } else if (length(wb$comments) < cmmnt_id) {
+    wb$comments <- append(wb$comments, NA)
+  }
+
+  if (all(is.na(wb$comments[[cmmnt_id]]))) {
+    previous_comment <- NULL
+  } else {
+    previous_comment <- wb$comments[[cmmnt_id]]
+  }
+
+  wb$comments[[cmmnt_id]] <- c(previous_comment, comment_list)
 
   invisible(wb)
 }

@@ -105,6 +105,9 @@ wbWorksheet <- R6::R6Class(
     #' @field drawingHF drawingHF
     drawingHF = character(),
 
+    #' @field relships relships
+    relships = NULL,
+
     #' @field ignoredErrors ignoredErrors
     ignoredErrors = character(),
 
@@ -212,6 +215,15 @@ wbWorksheet <- R6::R6Class(
       self$extLst                <- character()
       self$freezePane            <- character()
       self$sheet_data            <- wbSheetData$new()
+      self$relships              <- list(
+        comments         = integer(),
+        drawing          = integer(),
+        pivotTable       = integer(),
+        slicer           = integer(),
+        table            = integer(),
+        threadedComment  = integer(),
+        vmlDrawing       = integer()
+      )
 
       invisible(self)
     },

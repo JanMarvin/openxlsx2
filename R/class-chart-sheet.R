@@ -21,9 +21,11 @@ wbChartSheet <- R6::R6Class(
     #' @field drawing drawing
     drawing = character(),
 
-
     #' @field hyperlinks hyperlinks
     hyperlinks = NULL,
+
+    #' @field relships relships
+    relships = NULL,
 
     #' @description
     #' Create a new workbook chart sheet object
@@ -41,6 +43,15 @@ wbChartSheet <- R6::R6Class(
       self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$drawing     <- '<drawing r:id=\"rId1\"/>'
       self$hyperlinks  <- NULL
+      self$relships              <- list(
+        comments         = integer(),
+        drawing          = integer(),
+        pivotTable       = integer(),
+        slicer           = integer(),
+        table            = integer(),
+        threadedComments = integer(),
+        vmlDrawing       = integer()
+      )
 
       invisible(self)
     },

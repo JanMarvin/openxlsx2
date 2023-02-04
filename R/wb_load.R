@@ -31,11 +31,11 @@
 #' ## Add a worksheet
 #' wb$add_worksheet("A new worksheet")
 wb_load <- function(
-  file,
-  xlsxFile = NULL,
-  sheet,
-  data_only = FALSE,
-  calc_chain = FALSE
+    file,
+    xlsxFile = NULL,
+    sheet,
+    data_only = FALSE,
+    calc_chain = FALSE
 ) {
 
   file <- xlsxFile %||% file
@@ -95,7 +95,6 @@ wb_load <- function(
   commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
   personXML         <- grep_xml("xl/persons/person.xml$")
   threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
-  commentsrelXML    <- grep_xml("xl/worksheets/_rels/sheet[0-9]+\\.xml")
 
   # charts
   chartsXML         <- grep_xml("xl/charts/chart[0-9]+\\.xml$")
@@ -410,7 +409,7 @@ wb_load <- function(
     wb$append(
       "workbook.xml.rels",
       sprintf('<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain" Target="calcChain.xml"/>',
-        length(wb$workbook.xml.rels) + 1L
+              length(wb$workbook.xml.rels) + 1L
       )
     )
   }
@@ -840,6 +839,46 @@ wb_load <- function(
       return(xml)
     })
 
+    for (ws in seq_along(wb$worksheets)) {
+
+      wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[ws]], "Relationship"))
+      cmmts <- integer()
+      drwns <- integer()
+      hlink <- integer()
+      pvtbl <- integer()
+      slcrs <- integer()
+      table <- integer()
+      trcmt <- integer()
+      vmldr <- integer()
+
+      if (ncol(wb_rels)) {
+        wb_rels$tid <- as.integer(gsub("\\D+", "", basename(wb_rels$Target)))
+        wb_rels$typ <- basename(wb_rels$Type)
+
+        cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
+        drwns <- wb_rels$tid[wb_rels$typ == "drawing"]
+        hlink <- wb_rels$tid[wb_rels$typ == "hyperlink"]
+        pvtbl <- wb_rels$tid[wb_rels$typ == "pivotTable"]
+        slcrs <- wb_rels$tid[wb_rels$typ == "slicer"]
+        table <- wb_rels$tid[wb_rels$typ == "table"]
+        trcmt <- wb_rels$tid[wb_rels$typ == "threadedComment"]
+        vmldr <- wb_rels$tid[wb_rels$typ == "vmlDrawing"]
+      }
+
+      # currently we use only a selected set of these
+      # as of 0.5.9000: we use comments, drawing, and vmlDrawing
+      wb$worksheets[[ws]]$relships <- list(
+        comments         = cmmts,
+        drawing          = drwns,
+        hyperlink        = hlink,
+        pivotTable       = pvtbl,
+        slicer           = slcrs,
+        table            = table,
+        threadedComment  = trcmt,
+        vmlDrawing       = vmldr
+      )
+    }
+
 
     ## Slicers -------------------------------------------------------------------------------------
     if (length(slicerXML)) {
@@ -853,12 +892,12 @@ wb_load <- function(
       ## worksheet_rels Id for slicer will be rId0
       for (i in seq_along(wb$slicers)) {
 
-          # this will add slicers to Content_Types. Ergo if worksheets with
-          # slicers are removed, the slicer needs to remain in the worksheet
-          wb$append(
-            "Content_Types",
-            sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', i)
-          )
+        # this will add slicers to Content_Types. Ergo if worksheets with
+        # slicers are removed, the slicer needs to remain in the worksheet
+        wb$append(
+          "Content_Types",
+          sprintf('<Override PartName="/xl/slicers/slicer%s.xml" ContentType="application/vnd.ms-excel.slicer+xml"/>', i)
+        )
       }
     }
 
@@ -957,40 +996,27 @@ wb_load <- function(
 
 
     ## Drawings ------------------------------------------------------------------------------------
+    if (length(drawingsXML)) {
 
-    ## xml is in the order of the sheets, drawIngs is toes to sheet position of hasDrawing
-    ## Not every sheet has a drawing.xml
+      drw_len <- max(as.integer(gsub("\\D+", "", basename(drawingsXML))))
 
-    drawXMLrelationship <- lapply(xml, function(x) grep("drawings/drawing", x, value = TRUE))
-    # TODO use lengths()
-    hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
+      wb$drawings      <- rep(list(""), drw_len) # vector("list", drw_len)
+      wb$drawings_rels <- rep(list(""), drw_len) # vector("list", drw_len)
 
-    # loop over all worksheets and assign drawing to sheet
-    if (any(hasDrawing)) {
-      empty_chr <- vector("character", length(drawingsXML))
-      drawing <- data.frame(
-        drawing = empty_chr,
-        rels = empty_chr
-      )
 
-      drawingsXML_id <- filename_id(drawingsXML)
-      drawingRels_id <- filename_id(drawingRelsXML)
+      for (drw in drawingsXML) {
 
-      drawing$drawing[drawingsXML_id] <- names(drawingsXML_id)
-      drawing$rels[drawingRels_id]    <- names(drawingRels_id)
+        drw_file <- as.integer(gsub("\\D+", "", basename(drw)))
 
-      drw_dr <- drawing$drawing != ""
-      drw_rl <- drawing$rels != ""
+        wb$drawings[drw_file] <- read_xml(drw, pointer = FALSE)
+      }
 
-      drawing$drawing[drw_dr]  <- read_xml_files(drawing$drawing[drw_dr])
-      drawing$rels[drw_rl]     <- read_xml_files(drawing$rels[drw_rl])
+      for (drw_rel in drawingRelsXML) {
 
-      # get Relationship and return a list
-      drawing$rels[drw_rl] <- lapply(drawing$rels[drw_rl], function(x) xml_node(x, "Relationships", "Relationship"))
-      if (length(drawing$rels) == 0) drawing$rels <- list()
+        drw_file <- as.integer(gsub("\\D+", "", basename(drw_rel)))
 
-      wb$drawings      <- as.list(drawing$drawing)
-      wb$drawings_rels <- drawing$rels
+        wb$drawings_rels[[drw_file]] <- xml_node(drw_rel, "Relationships", "Relationship")
+      }
 
     }
 
@@ -999,41 +1025,30 @@ wb_load <- function(
     if (length(vmlDrawingXML)) {
       wb$append("Content_Types", '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
-      drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing", x, value = TRUE))
+      vml_len <- max(as.integer(gsub("\\D+", "", basename(vmlDrawingXML))))
 
-      # TODO use lengths()
-      hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
+      wb$vml      <- rep(list(""), vml_len) # vector("list", vml_len)
+      wb$vml_rels <- rep(list(""), vml_len) # vector("list", vml_len)
 
-      ## loop over all worksheets and assign drawing to sheet
-      if (any(hasDrawing)) {
-        for (i in seq_along(xml)) {
-          if (hasDrawing[i]) {
-            target <- apply_reg_match(drawXMLrelationship[[i]], '(?<=Target=").*?"')
-            target <- basename(gsub('"$', "", target))
-            ind <- grepl(target, vmlDrawingXML)
 
-            if (any(ind)) {
-              vml <- paste(stringi::stri_read_lines(vmlDrawingXML[ind], encoding = "UTF-8"), sep = "", collapse = "")
-              wb$vml[[i]] <- read_xml(gsub("<br>", "<br/>", vml), pointer = FALSE)
+      for (vml in vmlDrawingXML) {
 
-              relsInd <- grepl(target, vmlDrawingRelsXML)
-              if (any(relsInd)) {
-                wb$vml_rels[i] <- read_xml(vmlDrawingRelsXML[relsInd], pointer = FALSE)
-              }
-              if (any(relsInd)) {
-                wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[i]], "Relationship"))
-                wb_rels$typ <- basename(wb_rels$Type)
-                is_vmlDrawing <- which(wb_rels$typ == "vmlDrawing")
+        vml_file <- as.integer(gsub("\\D+", "", basename(vml)))
 
-                if (length(is_vmlDrawing)) {
-                  wb_rels$Target[is_vmlDrawing] <- sprintf("../drawings/vmlDrawing%s.vml", i)
-                  wb$worksheets_rels[[i]][is_vmlDrawing] <- df_to_xml("Relationship", wb_rels[is_vmlDrawing, c("Id", "Target", "Type")])
-                }
-              }
-            }
-          }
-        }
+        # fix broken xml in vml buttons
+        vml <- stringi::stri_read_lines(vml, encoding = "UTF-8")
+        vml <- paste(vml, sep = "", collapse = "")
+        vml <- gsub("<br>", "<br/>", vml)
+        wb$vml[vml_file] <- read_xml(vml, pointer = FALSE)
       }
+
+      for (vml_rel in vmlDrawingRelsXML) {
+
+        vml_file <- as.integer(gsub("\\D+", "", basename(vml_rel)))
+
+        wb$vml_rels[[vml_file]] <- xml_node(vml_rel, "Relationships", "Relationship")
+      }
+
     }
 
     # remove drawings from Content_Types. These drawings are the old imported drawings.
@@ -1043,71 +1058,39 @@ wb_load <- function(
     ## vmlDrawing and comments
     if (length(commentsXML)) {
 
-      com_rId <- vector("list", length(commentsrelXML))
-      names(com_rId) <- commentsrelXML
-      for (com_rel in commentsrelXML) {
-        rel_xml <- read_xml(com_rel)
-        attrs <- xml_attr(rel_xml, "Relationships", "Relationship")
-        rel <- rbindlist(attrs)
-        com_rId[[com_rel]] <- rel
-      }
+      wb$comments <- vector("list", length(commentsXML))
 
-      drawXMLrelationship <- lapply(xml, function(x) grep("drawings/vmlDrawing[0-9]+\\.vml", x, value = TRUE))
-      hasDrawing <- lengths(drawXMLrelationship) > 0 ## which sheets have a drawing
+      for (comment_xml in seq_along(commentsXML)) {
+        # read xml and split into authors and comments
+        txt <- read_xml(commentsXML[comment_xml])
+        authors <- xml_value(txt, "comments", "authors", "author")
+        comments <- xml_node(txt, "comments", "commentList", "comment")
 
-      commentXMLrelationship <- lapply(xml, function(x) grep("comments[0-9]+\\.xml", x, value = TRUE))
-      hasComment <- lengths(commentXMLrelationship) > 0 ## which sheets have a comment
+        comments_attr <- rbindlist(xml_attr(comments, "comment"))
 
-      for (i in seq_along(xml)) {
-        if (hasComment[i]) {
-          target <- apply_reg_match(drawXMLrelationship[[i]], '(?<=Target=").*?"')
-          target <- basename(gsub('"$', "", target))
-          ind <- grepl(target, vmlDrawingXML)
+        refs <- comments_attr$ref
+        authorsInds <- as.integer(comments_attr$authorId) + 1
+        authors <- authors[authorsInds]
 
-          if (any(ind)) {
-            txt <- read_xml(vmlDrawingXML[ind], pointer = FALSE)
+        text <- xml_node(comments, "comment", "text")
 
-            cd <- unique(xml_node(txt, "xml", "*", "x:ClientData"))
-            cd <- grep('ObjectType="Note"', cd, value = TRUE)
-            cd <- paste0(cd, ">")
+        comments <- lapply(comments, function(x) {
+          text <- xml_node(x, "comment", "text")
+          list(
+            style = xml_node(text, "text", "r", "rPr"),
+            comments = xml_node(text, "text", "r", "t")
+          )
+        })
 
-            ## now loada comment
-            target <- apply_reg_match(commentXMLrelationship[[i]], '(?<=Target=").*?"')
-            target <- basename(gsub('"$', "", target))
-
-            # read xml and split into authors and comments
-            txt <- read_xml(grep(target, commentsXML, value = TRUE))
-            authors <- xml_value(txt, "comments", "authors", "author")
-            comments <- xml_node(txt, "comments", "commentList", "comment")
-
-            comments_attr <- rbindlist(xml_attr(comments, "comment"))
-
-            refs <- comments_attr$ref
-            authorsInds <- as.integer(comments_attr$authorId) + 1
-            authors <- authors[authorsInds]
-
-            text <- xml_node(comments, "comment", "text")
-
-            comments <- lapply(comments, function(x) {
-              text <- xml_node(x, "comment", "text")
-              list(
-                style = xml_node(text, "text", "r", "rPr"),
-                comments = xml_node(text, "text", "r", "t")
-              )
-            })
-
-            wb$comments[[i]] <- lapply(seq_along(comments), function(j) {
-              list(
-                #"refId" = com_rId[j],
-                "ref" = refs[j],
-                "author" = authors[j],
-                "comment" = comments[[j]]$comments,
-                "style" = comments[[j]]$style,
-                "clientData" = cd[[j]]
-              )
-            })
-          }
-        }
+        wb$comments[[comment_xml]] <- lapply(seq_along(comments), function(j) {
+          list(
+            #"refId" = com_rId[j],
+            "ref" = refs[j],
+            "author" = authors[j],
+            "comment" = comments[[j]]$comments,
+            "style" = comments[[j]]$style
+          )
+        })
       }
     }
 
@@ -1191,8 +1174,8 @@ wb_load <- function(
 
     for (cstxml in seq_along(grep_xml("/customXml/itemProps"))) {
       wb$append("Content_Types",
-        sprintf('<Override PartName="/customXml/itemProps%s.xml" ContentType="application/vnd.openxmlformats-officedocument.customXmlProperties+xml"/>',
-                cstxml)
+                sprintf('<Override PartName="/customXml/itemProps%s.xml" ContentType="application/vnd.openxmlformats-officedocument.customXmlProperties+xml"/>',
+                        cstxml)
       )
     }
 
@@ -1205,11 +1188,11 @@ wb_load <- function(
       next_rid <- max(wb_rels$id) + 1
 
       wb$append("workbook.xml.rels",
-        sprintf(
-          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml" Target="../customXml/item%s.xml"/>',
-          next_rid,
-          cstitm
-        )
+                sprintf(
+                  '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml" Target="../customXml/item%s.xml"/>',
+                  next_rid,
+                  cstitm
+                )
       )
     }
   }
@@ -1218,10 +1201,10 @@ wb_load <- function(
     wb$ctrlProps <- read_xml_files(ctrlPropsXML)
     for (ctrlProp in seq_along(ctrlPropsXML)) {
       wb$append("Content_Types",
-        sprintf(
-          '<Override PartName="/xl/ctrlProps/ctrlProp%s.xml" ContentType="application/vnd.ms-excel.controlproperties+xml"/>',
-          ctrlProp
-        )
+                sprintf(
+                  '<Override PartName="/xl/ctrlProps/ctrlProp%s.xml" ContentType="application/vnd.ms-excel.controlproperties+xml"/>',
+                  ctrlProp
+                )
       )
     }
   }

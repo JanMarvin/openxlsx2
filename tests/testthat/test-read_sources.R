@@ -85,6 +85,20 @@ test_that("read <br> node in vml", {
 
   # test
   expect_silent(wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/macro2.xlsm"))
+
+})
+
+
+test_that("read vml from sheet two works as expected", {
+
+  skip_if_offline()
+
+  # test
+  expect_silent(wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/vml_numbering.xlsx"))
+
+  expect_equal(1L, length(wb$vml))
+  expect_equal(1L, length(wb$vml_rels))
+
 })
 
 

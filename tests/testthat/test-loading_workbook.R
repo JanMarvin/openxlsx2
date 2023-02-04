@@ -363,7 +363,7 @@ test_that("vml target is updated on load", {
   fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
 
-  exp <- "<Relationship Id=\"rId2\" Target=\"../drawings/vmlDrawing4.vml\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\"/>"
+  exp <- "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\" Target=\"../drawings/vmlDrawing1.vml\"/>"
   got <- wb$worksheets_rels[[4]][2]
   expect_equal(exp, got)
 

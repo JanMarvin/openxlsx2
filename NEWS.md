@@ -1,3 +1,14 @@
+
+# openxlsx2 (in development)
+
+## Fixes
+
+* Fixed a bug when loading input with multiple sheets where not every sheet contains a drawing/comment. Previously we assumed that every sheet had a comment and ordered them incorrectly. This caused confusion in spreadsheet software.
+
+
+***************************************************************************
+
+
 # openxlsx2 (0.5)
 
 ## New features

@@ -569,8 +569,8 @@ test_that("add_drawing works", {
 
   exp <- list(
     character(0),
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing1.xml\"/>",
     "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing2.xml\"/>",
-    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing3.xml\"/>",
     character(0)
   )
   got <- wb$worksheets_rels
@@ -640,7 +640,7 @@ test_that("add_chartsheet works", {
   expect_equal(2L, nrow(wb$charts))
 
   exp <- "xdr:absoluteAnchor"
-  got <- xml_node_name(wb$drawings, "xdr:wsDr")
+  got <- xml_node_name(unlist(wb$drawings), "xdr:wsDr")
   expect_equal(exp, got)
 
 })
