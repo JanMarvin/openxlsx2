@@ -2531,14 +2531,19 @@ wbWorkbook <- R6::R6Class(
         right <- TRUE
 
       if (is.list(cols)) {
-        levels <- unlist(
-          lapply(names(cols), function(x) {
-            lvls <- rep(as.character(x), length(cols[[x]]))
-            collapse_in <- ifelse(right, length(lvls), 1)
-            lvls[collapse_in] <- ""
-            lvls
-          })
-        )
+        unis <- unique(unlist(cols))
+        levels <- vector("character", length(unis))
+
+        lvls <- names(cols)
+        for (lvl in lvls) {
+          grp_col_lvls <- cols[[lvl]]
+          if (!is.list(grp_col_lvls)) grp_col_lvls <- list(grp_col_lvls)
+          for (grp_col in grp_col_lvls) {
+            collapse_in <- ifelse(right, length(grp_col), 1)
+            sel <- unis %in% grp_col[-collapse_in]
+            levels[sel] <- lvl
+          }
+        }
         cols <- unlist(cols)
       } else {
         levels <- levels %||% rep("1", length(cols))
@@ -2774,14 +2779,19 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.list(rows)) {
-        levels <- unlist(
-          lapply(names(rows), function(x) {
-            lvls <- rep(as.character(x), length(rows[[x]]))
-            collapse_in <- ifelse(below, length(lvls), 1)
-            lvls[collapse_in] <- ""
-            lvls
-          })
-        )
+        unis <- unique(unlist(rows))
+        levels <- vector("character", length(unis))
+
+        lvls <- names(rows)
+        for (lvl in lvls) {
+          grp_row_lvls <- rows[[lvl]]
+          if (!is.list(grp_row_lvls)) grp_row_lvls <- list(grp_row_lvls)
+          for (grp_row in grp_row_lvls) {
+            collapse_in <- ifelse(below, length(grp_row), 1)
+            sel <- unis %in% grp_row[-collapse_in]
+            levels[sel] <- lvl
+          }
+        }
         rows <- unlist(rows)
       } else {
         levels <- levels %||% rep("1", length(rows))
