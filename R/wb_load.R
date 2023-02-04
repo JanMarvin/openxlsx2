@@ -95,7 +95,6 @@ wb_load <- function(
   commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
   personXML         <- grep_xml("xl/persons/person.xml$")
   threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
-  commentsrelXML    <- grep_xml("xl/worksheets/_rels/sheet[0-9]+\\.xml")
 
   # charts
   chartsXML         <- grep_xml("xl/charts/chart[0-9]+\\.xml$")
@@ -845,6 +844,7 @@ wb_load <- function(
       wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[ws]], "Relationship"))
       cmmts <- integer()
       drwns <- integer()
+      hlink <- integer()
       pvtbl <- integer()
       slcrs <- integer()
       table <- integer()
@@ -857,6 +857,7 @@ wb_load <- function(
 
         cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
         drwns <- wb_rels$tid[wb_rels$typ == "drawing"]
+        hlink <- wb_rels$tid[wb_rels$typ == "hyperlink"]
         pvtbl <- wb_rels$tid[wb_rels$typ == "pivotTable"]
         slcrs <- wb_rels$tid[wb_rels$typ == "slicer"]
         table <- wb_rels$tid[wb_rels$typ == "table"]
@@ -864,9 +865,12 @@ wb_load <- function(
         vmldr <- wb_rels$tid[wb_rels$typ == "vmlDrawing"]
       }
 
+      # currently we use only a selected set of these
+      # as of 0.5.9000: we use comments, drawing, and vmlDrawing
       wb$worksheets[[ws]]$relships <- list(
         comments         = cmmts,
         drawing          = drwns,
+        hyperlink        = hlink,
         pivotTable       = pvtbl,
         slicer           = slcrs,
         table            = table,

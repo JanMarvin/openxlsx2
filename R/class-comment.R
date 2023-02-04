@@ -311,7 +311,7 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
   } else if (length(wb$comments) < cmmnt_id) {
     wb$comments <- append(wb$comments, NA)
   }
-  
+
   if (all(is.na(wb$comments[[cmmnt_id]]))) {
     previous_comment <- NULL
   } else {

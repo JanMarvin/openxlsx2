@@ -382,4 +382,3 @@ test_that("sheetView is not switched", {
   expect_equal(exp, got)
 
 })
-
