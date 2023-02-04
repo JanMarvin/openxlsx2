@@ -234,6 +234,16 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
     next_rid <- iterator(rels$id)
   }
 
+
+  id <- 1025 + sum(lengths(wb$comments))
+
+
+  # create new commment vml
+  cd <- unapply(comment_list, "[[", "clientData")
+  vml_xml <- read_xml(genBaseShapeVML(cd, id), pointer = FALSE)
+  vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
+  vml_xml <- paste0(vml_xml, vml_comment)
+
   # if this sheet has no comment entry in relationships, add a new relationship
   # 1) to Content_Types
   # 2) to worksheets_rels
@@ -250,16 +260,9 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
     wb$worksheets[[sheet]]$relships$comments <- next_id
 
-
-    id <- 1025 + sum(lengths(wb$comments))
-
-
-    # create new commment vml
-    cd <- unapply(comment_list, "[[", "clientData")
-    vml_xml <- read_xml(genBaseShapeVML(cd, id), pointer = FALSE)
-    vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
-    vml_xml <- paste0(vml_xml, vml_comment)
-
+    # check if we have a vmlDrawing attached to the worksheet
+    # if no) create one
+    # if yes) update it
     if (length(wb$worksheets[[sheet]]$relships$vmlDrawing) == 0) {
 
       wb$worksheets_rels[[sheet]] <- c(
@@ -302,6 +305,9 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
         next_id
       )
     )
+  } else {
+    vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
+    wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
   }
 
   cmmnt_id <- wb$worksheets[[sheet]]$relships$comments
