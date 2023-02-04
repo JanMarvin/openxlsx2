@@ -4227,14 +4227,16 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dims
     #' @param type type
     #' @param text text
-    #' @param cell_ref cell_ref
+    #' @param link link
+    #' @param range range
     #' @return The `wbWorkbook` object, invisibly
     add_form_control = function(
       sheet = current_sheet(),
       dims = NULL,
       type = NULL,
       text = NULL,
-      cell_ref = NULL
+      link = NULL,
+      range = NULL
     ) {
 
       sheet <- private$get_sheet_index(sheet)
@@ -4254,7 +4256,7 @@ wbWorkbook <- R6::R6Class(
       }
 
         # 1, 57, 0, 8, 1, 47, 2, 6
-      clientData <- genClientDataCB(col, row, 0, 0, cell_ref, type)
+      clientData <- genClientDataCB(col, row, 0, 0, link, range, type)
 
       if (type == "Checkbox") {
         vml <- read_xml(
@@ -4281,9 +4283,7 @@ wbWorkbook <- R6::R6Class(
             clientData
           ), pointer = FALSE
         )
-
       } else if (type == "Radio") {
-
         vml <- read_xml(
           sprintf(
             '<v:shape id="_x0000_s1027" type="#_x0000_t201" style="position:absolute;  margin-left:69pt;margin-top:155pt;width:120pt;height:30pt;z-index:3;  mso-wrap-style:tight" filled="f" fillcolor="white [65]" stroked="f" strokecolor="black [64]" o:insetmode="auto">
@@ -4300,9 +4300,23 @@ wbWorkbook <- R6::R6Class(
             clientData
           ), pointer = FALSE
         )
+      } else if (type == "Drop") {
+        vml <- read_xml(
+          sprintf(
+            '<v:shape id="_x0000_s1029" type="#_x0000_t201" style="position:absolute;  margin-left:336pt;margin-top:54pt;width:180pt;height:60pt;z-index:5" stroked="f" strokecolor="black [64]" o:insetmode="auto">
+            <o:lock v:ext="edit" rotation="t" text="t" />
+            %s
+            </v:shape>',
+            clientData
+          ), pointer = FALSE
+        )
       }
 
-      if (is.null(unlist(self$vml))) {
+
+      # self$add_drawing(xml = drawing, dims = dims)
+      vml_id <- self$worksheets[[sheet]]$relships$vmlDrawing
+
+      if (is.null(unlist(self$vml[vml_id]))) {
         vml <- xml_node_create(
           "xml",
           xml_attributes = c(
@@ -4314,217 +4328,18 @@ wbWorkbook <- R6::R6Class(
             vml
           )
         )
+        self$append("vml", list(vml))
+        self$worksheets[[sheet]]$relships$vmlDrawing <- length(self$vml)
       } else {
-        vml <- xml_add_child(
-          xml_node = self$vml,
+        self$vml[[vml_id]] <- xml_add_child(
+          xml_node = self$vml[[vml_id]],
           xml_child = vml
         )
       }
 
-      # self$add_drawing(xml = drawing, dims = dims)
-      self$vml <- vml
-
       # wb$drawings
 
-      if (type == "Checkbox") {
-      drawing <- read_xml(
-        sprintf(
-          '<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-          <mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
-          <mc:Choice xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" Requires="a14">
-          <xdr:twoCellAnchor editAs="oneCell">
-          <xdr:from>
-          <xdr:col>0</xdr:col>
-          <xdr:colOff>0</xdr:colOff>
-          <xdr:row>2</xdr:row>
-          <xdr:rowOff>0</xdr:rowOff>
-          </xdr:from>
-          <xdr:to>
-          <xdr:col>2</xdr:col>
-          <xdr:colOff>0</xdr:colOff>
-          <xdr:row>4</xdr:row>
-          <xdr:rowOff>0</xdr:rowOff>
-          </xdr:to>
-          <xdr:sp macro="" textlink="">
-          <xdr:nvSpPr>
-          <xdr:cNvPr id="%s" name="Check Box 1" hidden="1">
-          <a:extLst>
-          <a:ext uri="{63B3BB69-23CF-44E3-9099-%s}">
-          <a14:compatExt spid="_x0000_s1025"/>
-          </a:ext>
-          <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-%s}">
-          <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{1EEBA38D-B81F-E55E-AFDB-%s}"/>
-          </a:ext>
-          </a:extLst>
-          </xdr:cNvPr>
-          <xdr:cNvSpPr/>
-          </xdr:nvSpPr>
-          <xdr:spPr bwMode="auto">
-          <a:xfrm>
-          <a:off x="0" y="0"/>
-          <a:ext cx="0" cy="0"/>
-          </a:xfrm>
-          <a:prstGeom prst="rect">
-          <a:avLst/>
-          </a:prstGeom>
-          <a:noFill/>
-          <a:ln>
-          <a:noFill/>
-          </a:ln>
-          <a:extLst>
-          <a:ext uri="{909E8E84-426E-40DD-AFC4-%s}">
-          <a14:hiddenFill>
-          <a:solidFill>
-          <a:srgbClr val="FFFFFF" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="65"/>
-          </a:solidFill>
-          </a14:hiddenFill>
-          </a:ext>
-          <a:ext uri="{91240B29-F687-4F45-9708-%s}">
-          <a14:hiddenLine w="9525">
-          <a:solidFill>
-          <a:srgbClr val="000000" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="64"/>
-          </a:solidFill>
-          <a:miter lim="800000"/>
-          <a:headEnd/>
-          <a:tailEnd/>
-          </a14:hiddenLine>
-          </a:ext>
-          </a:extLst>
-          </xdr:spPr>
-          <xdr:txBody>
-          <a:bodyPr vertOverflow="clip" wrap="square" lIns="27432" tIns="22860" rIns="0" bIns="22860" anchor="ctr" upright="1"/>
-          <a:lstStyle/>
-          <a:p>
-          <a:pPr algn="l" rtl="0">
-          <a:defRPr sz="1000"/>
-          </a:pPr>
-          <a:r>
-          <a:rPr lang="en-GB" sz="1300" b="0" i="0" u="none" strike="noStrike" baseline="0">
-          <a:solidFill>
-          <a:srgbClr val="000000"/>
-          </a:solidFill>
-          <a:latin typeface="Lucida Grande" charset="0"/>
-          <a:cs typeface="Lucida Grande" charset="0"/>
-          </a:rPr>
-          <a:t>Check Box 1</a:t>
-          </a:r>
-          </a:p>
-          </xdr:txBody>
-          </xdr:sp>
-          <xdr:clientData/>
-          </xdr:twoCellAnchor>
-          </mc:Choice>
-          <mc:Fallback/>
-          </mc:AlternateContent>
-          </xdr:wsDr>',
-          length(self$ctrlProps),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12)
-          ), pointer = FALSE
-      )
-      } else if (type == "Radio") {
-        drawing <- read_xml(
-          sprintf(
-            '<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-            <mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
-            <mc:Choice xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" Requires="a14">
-            <xdr:twoCellAnchor editAs="oneCell">
-            <xdr:from>
-            <xdr:col>0</xdr:col>
-            <xdr:colOff>800100</xdr:colOff>
-            <xdr:row>7</xdr:row>
-            <xdr:rowOff>114300</xdr:rowOff>
-            </xdr:from>
-            <xdr:to>
-            <xdr:col>2</xdr:col>
-            <xdr:colOff>673100</xdr:colOff>
-            <xdr:row>9</xdr:row>
-            <xdr:rowOff>88900</xdr:rowOff>
-            </xdr:to>
-            <xdr:sp macro="" textlink="">
-            <xdr:nvSpPr>
-            <xdr:cNvPr id="%s" name="Option Button 2" hidden="1">
-            <a:extLst>
-            <a:ext uri="{63B3BB69-23CF-44E3-9099-%s}">
-            <a14:compatExt spid="_x0000_s1026" />
-            </a:ext>
-            <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-%s}">
-            <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{BF281B22-8B3D-E7A6-DB69-%s}" />
-            </a:ext>
-            </a:extLst>
-            </xdr:cNvPr>
-            <xdr:cNvSpPr />
-            </xdr:nvSpPr>
-            <xdr:spPr bwMode="auto">
-            <a:xfrm>
-            <a:off x="0" y="0" />
-            <a:ext cx="0" cy="0" />
-            </a:xfrm>
-            <a:prstGeom prst="rect">
-            <a:avLst />
-            </a:prstGeom>
-            <a:noFill />
-            <a:ln>
-            <a:noFill />
-            </a:ln>
-            <a:extLst>
-            <a:ext uri="{909E8E84-426E-40DD-AFC4-%s}">
-            <a14:hiddenFill>
-            <a:solidFill>
-            <a:srgbClr val="FFFFFF" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="65" />
-            </a:solidFill>
-            </a14:hiddenFill>
-            </a:ext>
-            <a:ext uri="{91240B29-F687-4F45-9708-%s}">
-            <a14:hiddenLine w="9525">
-            <a:solidFill>
-            <a:srgbClr val="000000" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="64" />
-            </a:solidFill>
-            <a:miter lim="800000" />
-            <a:headEnd />
-            <a:tailEnd />
-            </a14:hiddenLine>
-            </a:ext>
-            </a:extLst>
-            </xdr:spPr>
-            <xdr:txBody>
-            <a:bodyPr vertOverflow="clip" wrap="square" lIns="27432" tIns="22860" rIns="0" bIns="22860" anchor="ctr" upright="1" />
-            <a:lstStyle />
-            <a:p>
-            <a:pPr algn="l" rtl="0">
-            <a:defRPr sz="1000" />
-            </a:pPr>
-            <a:r>
-            <a:rPr lang="en-GB" sz="1300" b="0" i="0" u="none" strike="noStrike" baseline="0">
-            <a:solidFill>
-            <a:srgbClr val="000000" />
-            </a:solidFill>
-            <a:latin typeface="Lucida Grande" charset="0" />
-            <a:cs typeface="Lucida Grande" charset="0" />
-            </a:rPr>
-            <a:t>Option Button 2</a:t>
-            </a:r>
-            </a:p>
-            </xdr:txBody>
-            </xdr:sp>
-            <xdr:clientData />
-            </xdr:twoCellAnchor>
-            </mc:Choice>
-            <mc:Fallback />
-            </mc:AlternateContent>
-          </xdr:wsDr>',
-          length(self$ctrlProps),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12)
-          ), pointer = FALSE
-      )
-      }
+      drawing <- formCntrlDrawing(type, length(self$ctrlProps))
 
       self$add_drawing(xml = drawing, dims = dims)
 
@@ -4532,6 +4347,8 @@ wbWorkbook <- R6::R6Class(
         frmCntrl <- "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"CheckBox\" checked=\"Checked\" lockText=\"1\" noThreeD=\"1\"/>"
       } else if (type == "Radio") {
         frmCntrl <- "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"Radio\" checked=\"Checked\" lockText=\"0\" noThreeD=\"1\"/>"
+      } else if (type == "Drop") {
+        frmCntrl <- '<formControlPr xmlns="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" objectType="Drop" dropStyle="combo" dx="15" noThreeD="1" sel="0" val="0"/>'
       }
 
       self$append(
@@ -4572,21 +4389,13 @@ wbWorkbook <- R6::R6Class(
         has_no_vmlDrawing <- !any(relship$typ == "vmlDrawing")
       }
 
-      # # if a drawing exisits, we already added ourself to it. Otherwise we
-      # # create a new drawing.
-      # if (has_no_drawing) {
-      #   self$worksheets_rels[[sheet]] <-
-      #     sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing%s.xml\"/>", next_relship, sheet_drawing)
-      #   self$worksheets[[sheet]]$drawing <- sprintf("<drawing r:id=\"rId%s\"/>", next_relship)
-      #   next_relship <- next_relship + 1L
-      # }
-
       if (has_no_vmlDrawing) {
-
-        self$append(
-          "Content_Types",
-          "<Default Extension=\"vml\" ContentType=\"application/vnd.openxmlformats-officedocument.vmlDrawing\"/>"
-        )
+        if (!any(grepl("vmlDrawing", self$Content_Types))) {
+          self$append(
+            "Content_Types",
+            "<Default Extension=\"vml\" ContentType=\"application/vnd.openxmlformats-officedocument.vmlDrawing\"/>"
+          )
+        }
 
         self$worksheets_rels[[sheet]] <- c(
           self$worksheets_rels[[sheet]],
