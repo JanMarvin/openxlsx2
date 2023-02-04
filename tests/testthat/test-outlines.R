@@ -251,11 +251,11 @@ test_that("with outlinePr", {
 test_that("hierarchical grouping works", {
   # create data
   testig <- data.frame(
-    Var1 = c("A","A","A","A","A","A","A"),
-    Var2 = c("B","B","B","C","C","C",""),
-    Var3 = c("BA","BB","","CA","CB","",""),
-    Var4 = c("BA","BB","","CA","CB","",""),
-    Result = c(1,2,3,4,5,9,12)
+    Var1 = c("A", "A", "A", "A", "A", "A", "A"),
+    Var2 = c("B", "B", "B", "C", "C", "C", ""),
+    Var3 = c("BA", "BB", "", "CA", "CB", "", ""),
+    Var4 = c("BA", "BB", "", "CA", "CB", "", ""),
+    Result = c(1, 2, 3, 4, 5, 9, 12)
   )
 
   wb <- wb_workbook()$
@@ -265,7 +265,7 @@ test_that("hierarchical grouping works", {
   # group rows hierarchical
   grp_rows <- list(
     "1" = 2:8,
-    "3" = list(2:4,5:7)
+    "3" = list(2:4, 5:7)
   )
   wb$group_rows(rows = grp_rows)
 
@@ -274,7 +274,7 @@ test_that("hierarchical grouping works", {
   # group cols hierarchical
   grp_cols <- list(
     "1" = 1:5,
-    "3" = list(1:2,3:4)
+    "3" = list(1:2, 3:4)
   )
   wb$group_cols(cols = grp_cols)
 
