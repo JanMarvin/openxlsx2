@@ -9,6 +9,8 @@
 
 * Fixed a bug when loading input with multiple sheets where not every sheet contains a drawing/comment. Previously we assumed that every sheet had a comment and ordered them incorrectly. This caused confusion in spreadsheet software. [536](https://github.com/JanMarvin/openxlsx2/pull/536)
 
+* Fixed a bug with files containing 10 or more external references. In this case we did not load the references in numeric order and instead as "1.xml", "10.xml", ..., "2.xml", ... This jumbled up the external references. [538](https://github.com/JanMarvin/openxlsx2/pull/538)
+
 
 ***************************************************************************
 
