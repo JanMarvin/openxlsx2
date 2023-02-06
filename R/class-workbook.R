@@ -4229,14 +4229,16 @@ wbWorkbook <- R6::R6Class(
     #' @param text text
     #' @param link link
     #' @param range range
+    #' @param checked checked
     #' @return The `wbWorkbook` object, invisibly
     add_form_control = function(
-      sheet = current_sheet(),
-      dims = NULL,
-      type = NULL,
-      text = NULL,
-      link = NULL,
-      range = NULL
+      sheet   = current_sheet(),
+      dims    = "A1",
+      type    = NULL,
+      text    = NULL,
+      link    = NULL,
+      range   = NULL,
+      checked = FALSE
     ) {
 
       sheet <- private$get_sheet_index(sheet)
@@ -4256,7 +4258,7 @@ wbWorkbook <- R6::R6Class(
       }
 
         # 1, 57, 0, 8, 1, 47, 2, 6
-      clientData <- genClientDataCB(col, row, 0, 0, link, range, type)
+      clientData <- genClientDataCB(col, row, 0, 0, link, range, type, checked)
 
       if (type == "Checkbox") {
         vml <- read_xml(

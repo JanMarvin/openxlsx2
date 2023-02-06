@@ -26,6 +26,8 @@ A chart sheet
 \item{\code{drawing}}{drawing}
 
 \item{\code{hyperlinks}}{hyperlinks}
+
+\item{\code{relships}}{relships}
 }
 \if{html}{\out{</div>}}
 }

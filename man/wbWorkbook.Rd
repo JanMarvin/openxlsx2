@@ -1758,10 +1758,12 @@ add form control to workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(
   sheet = current_sheet(),
-  dims = NULL,
+  dims = "A1",
   type = NULL,
   text = NULL,
-  cell_ref = NULL
+  link = NULL,
+  range = NULL,
+  checked = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -1776,7 +1778,11 @@ add form control to workbook
 
 \item{\code{text}}{text}
 
-\item{\code{cell_ref}}{cell_ref}
+\item{\code{link}}{link}
+
+\item{\code{range}}{range}
+
+\item{\code{checked}}{checked}
 }
 \if{html}{\out{</div>}}
 }

@@ -48,7 +48,7 @@ genClientData <- function(col, row, visible, height, width) {
   return(txt)
 }
 
-genClientDataCB <- function(col, row, height, width, link, range, type) {
+genClientDataCB <- function(col, row, height, width, link, range, type, checked) {
 
   if (is.null(link)) {
     link <- ""
@@ -79,14 +79,13 @@ genClientDataCB <- function(col, row, height, width, link, range, type) {
     <x:Row>%s</x:Row><x:Column>%s</x:Column>
     <x:TextVAlign>Center</x:TextVAlign>
     %s %s
-    <x:Checked>1</x:Checked>
+    <x:Checked>%s</x:Checked>
     <x:NoThreeD />
-    %s',
+    %s
+    </x:ClientData>',
     type,
-    col - 1L, row - 2L, col + width - 1L, row + height - 1L, row - 1L, col - 1L, link, range, drop
+    col - 1L, row - 2L, col + width - 1L, row + height - 1L, row - 1L, col - 1L, link, range, as_binary(checked), drop
   )
-
-  txt <- paste0(txt, "</x:ClientData>")
 
   return(txt)
 }
