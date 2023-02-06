@@ -590,7 +590,7 @@ wb_load <- function(
 
   ## externalLinks
   if (!data_only && length(extLinksXML)) {
-    wb$externalLinks <- lapply(sort(extLinksXML), read_xml, pointer = FALSE)
+    wb$externalLinks <- lapply(extLinksXML, read_xml, pointer = FALSE)
 
     wb$append(
       "Content_Types",
@@ -613,7 +613,7 @@ wb_load <- function(
 
   ## externalLinksRels
   if (!data_only && length(extLinksRelsXML)) {
-    wb$externalLinksRels <- lapply(sort(extLinksRelsXML), read_xml, pointer = FALSE)
+    wb$externalLinksRels <- lapply(extLinksRelsXML, read_xml, pointer = FALSE)
   }
 
 
