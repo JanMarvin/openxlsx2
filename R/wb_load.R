@@ -590,7 +590,7 @@ wb_load <- function(
 
   ## externalLinks
   if (!data_only && length(extLinksXML)) {
-    wb$externalLinks <- lapply(sort(extLinksXML), read_xml, pointer = FALSE)
+    wb$externalLinks <- lapply(extLinksXML, read_xml, pointer = FALSE)
 
     wb$append(
       "Content_Types",
@@ -613,7 +613,7 @@ wb_load <- function(
 
   ## externalLinksRels
   if (!data_only && length(extLinksRelsXML)) {
-    wb$externalLinksRels <- lapply(sort(extLinksRelsXML), read_xml, pointer = FALSE)
+    wb$externalLinksRels <- lapply(extLinksRelsXML, read_xml, pointer = FALSE)
   }
 
 
@@ -841,10 +841,11 @@ wb_load <- function(
 
     for (ws in seq_along(wb$worksheets)) {
 
+      # This relships tracks the file numbering. drawing1.xml or comments2.xml
+      # hyperlinks are not in files, but xml links in the references
       wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[ws]], "Relationship"))
       cmmts <- integer()
       drwns <- integer()
-      hlink <- integer()
       pvtbl <- integer()
       slcrs <- integer()
       table <- integer()
@@ -852,12 +853,12 @@ wb_load <- function(
       vmldr <- integer()
 
       if (ncol(wb_rels)) {
-        wb_rels$tid <- as.integer(gsub("\\D+", "", basename(wb_rels$Target)))
+        # since target can be any hyperlink, we have to expect various things here like uint64
+        wb_rels$tid <- suppressWarnings(as.integer(gsub("\\D+", "", basename(wb_rels$Target))))
         wb_rels$typ <- basename(wb_rels$Type)
 
         cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
         drwns <- wb_rels$tid[wb_rels$typ == "drawing"]
-        hlink <- wb_rels$tid[wb_rels$typ == "hyperlink"]
         pvtbl <- wb_rels$tid[wb_rels$typ == "pivotTable"]
         slcrs <- wb_rels$tid[wb_rels$typ == "slicer"]
         table <- wb_rels$tid[wb_rels$typ == "table"]
@@ -870,7 +871,6 @@ wb_load <- function(
       wb$worksheets[[ws]]$relships <- list(
         comments         = cmmts,
         drawing          = drwns,
-        hyperlink        = hlink,
         pivotTable       = pvtbl,
         slicer           = slcrs,
         table            = table,
