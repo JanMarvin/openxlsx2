@@ -841,10 +841,11 @@ wb_load <- function(
 
     for (ws in seq_along(wb$worksheets)) {
 
+      # This relships tracks the file numbering. drawing1.xml or comments2.xml
+      # hyperlinks are not in files, but xml links in the references
       wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[ws]], "Relationship"))
       cmmts <- integer()
       drwns <- integer()
-      hlink <- integer()
       pvtbl <- integer()
       slcrs <- integer()
       table <- integer()
@@ -857,7 +858,6 @@ wb_load <- function(
 
         cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
         drwns <- wb_rels$tid[wb_rels$typ == "drawing"]
-        hlink <- wb_rels$tid[wb_rels$typ == "hyperlink"]
         pvtbl <- wb_rels$tid[wb_rels$typ == "pivotTable"]
         slcrs <- wb_rels$tid[wb_rels$typ == "slicer"]
         table <- wb_rels$tid[wb_rels$typ == "table"]
@@ -870,7 +870,6 @@ wb_load <- function(
       wb$worksheets[[ws]]$relships <- list(
         comments         = cmmts,
         drawing          = drwns,
-        hyperlink        = hlink,
         pivotTable       = pvtbl,
         slicer           = slcrs,
         table            = table,
