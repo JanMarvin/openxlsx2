@@ -853,7 +853,8 @@ wb_load <- function(
       vmldr <- integer()
 
       if (ncol(wb_rels)) {
-        wb_rels$tid <- as.integer(gsub("\\D+", "", basename(wb_rels$Target)))
+        # since target can be any hyperlink, we have to expect various things here like uint64
+        wb_rels$tid <- suppressWarnings(as.integer(gsub("\\D+", "", basename(wb_rels$Target))))
         wb_rels$typ <- basename(wb_rels$Type)
 
         cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
