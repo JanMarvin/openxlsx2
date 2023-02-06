@@ -4341,7 +4341,7 @@ wbWorkbook <- R6::R6Class(
 
       drawing <- formCntrlDrawing(type, length(self$ctrlProps))
 
-      self$add_drawing(xml = drawing, dims = dims)
+      self$add_drawing(sheet = sheet, xml = drawing, dims = dims)
 
       if (type == "Checkbox") {
         frmCntrl <- "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"CheckBox\" checked=\"Checked\" lockText=\"1\" noThreeD=\"1\"/>"
@@ -4399,7 +4399,7 @@ wbWorkbook <- R6::R6Class(
 
         self$worksheets_rels[[sheet]] <- c(
           self$worksheets_rels[[sheet]],
-          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\" Target=\"../drawings/vmlDrawing%s.vml\"/>", next_relship, sheet_drawing)
+          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\" Target=\"../drawings/vmlDrawing%s.vml\"/>", next_relship, length(self$vml))
         )
 
         self$worksheets[[sheet]]$legacyDrawing <- sprintf("<legacyDrawing r:id=\"rId%s\"/>", next_relship)
