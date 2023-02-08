@@ -2708,6 +2708,9 @@ wb_remove_comment <- function(
 #' @param range A cell range used as input
 #' @param checked A logical indicating if the Checkbox or radio button is checked
 #' @returns The `wbWorkbook` object
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet() %>%
+#'   wb_add_form_control()
 #' @export
 wb_add_form_control <- function(
     wb,

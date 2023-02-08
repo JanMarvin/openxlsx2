@@ -38,3 +38,7 @@ The \code{wbWorkbook} object
 \description{
 Add form control Checkbox, Radiobuttons or Dropmenu
 }
+\examples{
+wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\%
+  wb_add_form_control()
+}

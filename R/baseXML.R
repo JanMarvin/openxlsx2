@@ -48,7 +48,19 @@ genClientData <- function(col, row, visible, height, width) {
   return(txt)
 }
 
-genClientDataCB <- function(col, row, height, width, link, range, type, checked) {
+# # TODO this should be merged with the one above for type Note
+#' Generates Client data xml string for use in wb_add_form_control
+#' @param left left
+#' @param top top
+#' @param right right
+#' @param bottom bottom
+#' @param link link (links this cell to the state to the form control)
+#' @param range range (input cell range)
+#' @param type type (Checkbox, Radio, Drop)
+#' @param checked checked (bool)
+#' @keywords internal
+#' @noRd
+genClientDataFC <- function(left, top, right, bottom, link, range, type, checked) {
 
   if (is.null(link)) {
     link <- ""
@@ -70,13 +82,22 @@ genClientDataCB <- function(col, row, height, width, link, range, type, checked)
     drop <- ""
   }
 
+  # Anchor:
+  # - LeftColumn: Index column starts at 0
+  # - LeftOffset: Offset in pxl
+  # - TopRow: Index column starts at 0
+  # - TopOffset
+  # - RightColumn
+  # - RightOffset
+  # - BottomRow
+  # - BottomOffset
+
   txt <- sprintf(
     '<x:ClientData ObjectType="%s">
     <x:MoveWithCells/><x:SizeWithCells/>
-    <x:Anchor>%s, 0, %s, 25, %s, 147, %s, 18</x:Anchor>
+    <x:Anchor>%s, 0, %s, 0, %s, 0, %s, 0</x:Anchor>
     <x:AutoFill>False</x:AutoFill>
     <x:AutoLine>False</x:AutoLine>
-    <x:Row>%s</x:Row><x:Column>%s</x:Column>
     <x:TextVAlign>Center</x:TextVAlign>
     %s %s
     <x:Checked>%s</x:Checked>
@@ -84,7 +105,14 @@ genClientDataCB <- function(col, row, height, width, link, range, type, checked)
     %s
     </x:ClientData>',
     type,
-    col - 1L, row - 2L, col + width - 1L, row + height - 1L, row - 1L, col - 1L, link, range, as_binary(checked), drop
+    max(0, left),
+    max(0, top),
+    max(1, right),
+    max(1, bottom),
+    link,
+    range,
+    as_binary(checked),
+    drop
   )
 
   return(txt)

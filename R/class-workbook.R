@@ -4245,8 +4245,21 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(dims)) {
         xy <- dims_to_rowcol(dims)
-        col <- col2int(xy[[1]][1])
-        row <- as.integer(xy[[2]])
+        left <- col2int(xy[[1]][1]) - 1L
+        top  <- as.integer(xy[[2]][1]) - 1L
+
+        # for A1:B2
+        if (length(xy[[1]]) > 1) {
+          right  <- max(col2int(xy[[1]]))
+        } else {
+          right  <- left + 1L
+        }
+
+        if (length(xy[[2]]) > 1) {
+          bottom <- max(as.integer(xy[[2]]))
+        } else {
+          bottom <- top + 1L
+        }
       }
 
       if (is.null(text)) {
@@ -4257,8 +4270,7 @@ wbWorkbook <- R6::R6Class(
         type <- "Checkbox"
       }
 
-        # 1, 57, 0, 8, 1, 47, 2, 6
-      clientData <- genClientDataCB(col, row, 0, 0, link, range, type, checked)
+      clientData <- genClientDataFC(left, top, right, bottom, link, range, type, checked)
 
       if (type == "Checkbox") {
         vml <- read_xml(
