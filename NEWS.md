@@ -5,6 +5,8 @@
 
 * Allow hierarchical grouping. `wb_group_cols`/`wb_group_rows` now accept nested lists as grouping variable. [537](https://github.com/JanMarvin/openxlsx2/pull/537)
 
+* It is now possible to add form control types `Checkbox`, `Radio` and `Drop` to a workbook using `wb_add_form_control()`. [533](https://github.com/JanMarvin/openxlsx2/pull/533)
+
 ## Fixes
 
 * Fixed a bug when loading input with multiple sheets where not every sheet contains a drawing/comment. Previously we assumed that every sheet had a comment and ordered them incorrectly. This caused confusion in spreadsheet software. [536](https://github.com/JanMarvin/openxlsx2/pull/536)
