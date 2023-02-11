@@ -621,9 +621,13 @@ wb_to_df <- function(
         # that we do not have to go through large xlsx files multiple times
         z_fill <- wb_to_df(
             dims = filler,
-            xlsxFile = xlsxFile, sheet = sheet,
+            xlsxFile = xlsxFile,
+            sheet = sheet,
             na.strings = na.strings,
-            convert = FALSE, colNames = FALSE
+            convert = FALSE,
+            colNames = FALSE,
+            detectDates = detectDates,
+            showFormula = showFormula
         )
 
         tt_fill <- attr(z_fill, "tt")
