@@ -362,6 +362,16 @@ test_that("wb_remove_comment() is a wrapper", {
 
 })
 
+# wb_add_form_control() ---------------------------------------------------
+
+test_that("wb_add_form_control() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_wrapper(
+    "add_form_control",
+    wb = wb
+  )
+})
+
 # wb_add_conditional_formatting() -----------------------------------------
 
 test_that("wb_add_conditional_formatting() is a wrapper", {

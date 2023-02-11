@@ -2698,6 +2698,44 @@ wb_remove_comment <- function(
   )
 }
 
+#' Add form control Checkbox, Radiobuttons or Dropmenu
+#' @param wb A workbook object
+#' @param sheet A worksheet of the workbook
+#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
+#' @param type A type "Checkbox" (the default), "Radio" a radio button or "Drop" a drop down menu
+#' @param text A text to be shown next to the Checkbox or radio button
+#' @param link A cell range to link to
+#' @param range A cell range used as input
+#' @param checked A logical indicating if the Checkbox or radio button is checked
+#' @returns The `wbWorkbook` object
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet() %>%
+#'   wb_add_form_control()
+#' @export
+wb_add_form_control <- function(
+    wb,
+    sheet   = current_sheet(),
+    dims    = "A1",
+    type    = NULL,
+    text    = NULL,
+    link    = NULL,
+    range   = NULL,
+    checked = FALSE
+) {
+
+  assert_workbook(wb)
+  wb$clone()$add_form_control(
+      sheet   = sheet,
+      dims    = dims,
+      type    = type,
+      text    = text,
+      link    = link,
+      range   = range,
+      checked = checked
+  )
+
+}
+
 #' Add conditional formatting to cells
 #'
 #' Add conditional formatting to cells

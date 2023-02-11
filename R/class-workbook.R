@@ -4222,6 +4222,207 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description
+    #' add form control to workbook
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param type type
+    #' @param text text
+    #' @param link link
+    #' @param range range
+    #' @param checked checked
+    #' @return The `wbWorkbook` object, invisibly
+    add_form_control = function(
+      sheet   = current_sheet(),
+      dims    = "A1",
+      type    = NULL,
+      text    = NULL,
+      link    = NULL,
+      range   = NULL,
+      checked = FALSE
+    ) {
+
+      sheet <- private$get_sheet_index(sheet)
+
+      if (!is.null(dims)) {
+        xy <- dims_to_rowcol(dims)
+        left <- col2int(xy[[1]][1]) - 1L
+        top  <- as.integer(xy[[2]][1]) - 1L
+
+        # for A1:B2
+        if (length(xy[[1]]) > 1) {
+          right  <- max(col2int(xy[[1]]))
+        } else {
+          right  <- left + 1L
+        }
+
+        if (length(xy[[2]]) > 1) {
+          bottom <- max(as.integer(xy[[2]]))
+        } else {
+          bottom <- top + 1L
+        }
+      }
+
+      if (is.null(text)) {
+        text <- ""
+      }
+
+      if (is.null(type)) {
+        type <- "Checkbox"
+      }
+
+      clientData <- genClientDataFC(left, top, right, bottom, link, range, type, checked)
+
+      if (type == "Checkbox") {
+        vml <- read_xml(
+          sprintf(
+            '<o:shapelayout v:ext="edit">
+            <o:idmap v:ext="edit" data="1" />
+            </o:shapelayout>
+            <v:shapetype id="_x0000_t201" coordsize="21600,21600" o:spt="201" path="m,l,21600r21600,l21600,xe">
+            <v:stroke joinstyle="miter" />
+            <v:path shadowok="f" o:extrusionok="f" strokeok="f" fillok="f" o:connecttype="rect" />
+            <o:lock v:ext="edit" shapetype="t" />
+            </v:shapetype>
+            <v:shape id="_x0000_s1025" type="#_x0000_t201" style="position:absolute;  margin-left:57pt;margin-top:40pt;width:120pt;height:30pt;z-index:1;  mso-wrap-style:tight" filled="f" fillcolor="white [65]" stroked="f" strokecolor="black [64]" o:insetmode="auto">
+            <v:path shadowok="t" strokeok="t" fillok="t" />
+            <o:lock v:ext="edit" rotation="t" />
+            <v:textbox style="mso-direction-alt:auto" o:singleclick="f">
+            <div style="text-align:left">
+            <font face="Lucida Grande" size="260" color="auto">%s</font>
+            </div>
+            </v:textbox>
+            %s
+            </v:shape>',
+            text,
+            clientData
+          ), pointer = FALSE
+        )
+      } else if (type == "Radio") {
+        vml <- read_xml(
+          sprintf(
+            '<v:shape id="_x0000_s1027" type="#_x0000_t201" style="position:absolute;  margin-left:69pt;margin-top:155pt;width:120pt;height:30pt;z-index:3;  mso-wrap-style:tight" filled="f" fillcolor="white [65]" stroked="f" strokecolor="black [64]" o:insetmode="auto">
+            <v:path shadowok="t" strokeok="t" fillok="t" />
+            <o:lock v:ext="edit" rotation="t" />
+            <v:textbox style="mso-direction-alt:auto" o:singleclick="f">
+            <div style="text-align:left">
+            <font face="Lucida Grande" size="260" color="auto">%s</font>
+            </div>
+            </v:textbox>
+            %s
+            </v:shape>',
+            text,
+            clientData
+          ), pointer = FALSE
+        )
+      } else if (type == "Drop") {
+        vml <- read_xml(
+          sprintf(
+            '<v:shape id="_x0000_s1029" type="#_x0000_t201" style="position:absolute;  margin-left:336pt;margin-top:54pt;width:180pt;height:60pt;z-index:5" stroked="f" strokecolor="black [64]" o:insetmode="auto">
+            <o:lock v:ext="edit" rotation="t" text="t" />
+            %s
+            </v:shape>',
+            clientData
+          ), pointer = FALSE
+        )
+      }
+
+
+      # self$add_drawing(xml = drawing, dims = dims)
+      vml_id <- self$worksheets[[sheet]]$relships$vmlDrawing
+
+      if (is.null(unlist(self$vml[vml_id]))) {
+        vml <- xml_node_create(
+          "xml",
+          xml_attributes = c(
+            `xmlns:v` = "urn:schemas-microsoft-com:vml",
+            `xmlns:o` = "urn:schemas-microsoft-com:office:office",
+            `xmlns:x` = "urn:schemas-microsoft-com:office:excel"
+          ),
+          xml_children = c(
+            vml
+          )
+        )
+        self$append("vml", list(vml))
+        self$worksheets[[sheet]]$relships$vmlDrawing <- length(self$vml)
+      } else {
+        self$vml[[vml_id]] <- xml_add_child(
+          xml_node = self$vml[[vml_id]],
+          xml_child = vml
+        )
+      }
+
+      # wb$drawings
+
+      drawing <- formCntrlDrawing(type, length(self$ctrlProps))
+
+      self$add_drawing(sheet = sheet, xml = drawing, dims = dims)
+
+      if (type == "Checkbox") {
+        frmCntrl <- "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"CheckBox\" checked=\"Checked\" lockText=\"1\" noThreeD=\"1\"/>"
+      } else if (type == "Radio") {
+        frmCntrl <- "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"Radio\" checked=\"Checked\" lockText=\"0\" noThreeD=\"1\"/>"
+      } else if (type == "Drop") {
+        frmCntrl <- '<formControlPr xmlns="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" objectType="Drop" dropStyle="combo" dx="15" noThreeD="1" sel="0" val="0"/>'
+      }
+
+      self$append(
+        "ctrlProps",
+        frmCntrl
+      )
+
+      ctrlProp <- length(self$ctrlProps)
+
+      self$append(
+        "Content_Types",
+        sprintf(
+          '<Override PartName="/xl/ctrlProps/ctrlProp%s.xml" ContentType="application/vnd.ms-excel.controlproperties+xml"/>',
+          ctrlProp
+        )
+      )
+
+      # usually sheet_drawing is sheet. If we have userShapes, sheet_drawing
+      # can skip ahead. see test: unemployment-nrw202208.xlsx
+      found <- private$get_drawingsref()
+      if (sheet %in% found$sheet) {
+        sheet_drawing <- found$id[found$sheet == sheet]
+      } else {
+        sel <- which.min(abs(found$sheet - sheet))
+        sheet_drawing <- max(sheet, found$id[found$sheet == sel] + 1)
+      }
+
+      # get the correct next free relship id
+      if (length(self$worksheets_rels[[sheet]]) == 0) {
+        next_relship <- 1
+        has_no_drawing <- TRUE
+        has_no_vmlDrawing <- TRUE
+      } else {
+        relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        relship$typ <- basename(relship$Type)
+        next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
+        has_no_drawing <- !any(relship$typ == "drawing")
+        has_no_vmlDrawing <- !any(relship$typ == "vmlDrawing")
+      }
+
+      if (has_no_vmlDrawing) {
+        if (!any(grepl("vmlDrawing", self$Content_Types))) {
+          self$append(
+            "Content_Types",
+            "<Default Extension=\"vml\" ContentType=\"application/vnd.openxmlformats-officedocument.vmlDrawing\"/>"
+          )
+        }
+
+        self$worksheets_rels[[sheet]] <- c(
+          self$worksheets_rels[[sheet]],
+          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\" Target=\"../drawings/vmlDrawing%s.vml\"/>", next_relship, length(self$vml))
+        )
+
+        self$worksheets[[sheet]]$legacyDrawing <- sprintf("<legacyDrawing r:id=\"rId%s\"/>", next_relship)
+      }
+
+      invisible(self)
+    },
+
+    #' @description
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
@@ -4254,7 +4455,6 @@ wbWorkbook <- R6::R6Class(
       cat(unlist(showText))
       invisible(self)
     },
-
 
     #' @description
     #' Protect a workbook
