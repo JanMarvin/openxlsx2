@@ -223,3 +223,28 @@ test_that("handle 29Feb1900", {
   expect_equal(as_posix, got)
 
 })
+
+
+test_that("fillMergedCells works with dims", {
+
+  # create data frame with emtpy second row
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = t(letters[1:4]), colNames = FALSE)$
+    add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)),
+             startRow = 3, startCol = 1, colNames = FALSE)
+
+  # merge rows 1 and 2 in each column
+  wb$merge_cells(1, rows = 1:2, cols = 1)
+  wb$merge_cells(1, rows = 1:2, cols = 2)
+  wb$merge_cells(1, rows = 1:2, cols = 3)
+  wb$merge_cells(1, rows = 1:2, cols = 4)
+
+  # read from second column and fill merged cells
+  got <- wb_to_df(wb, dims = "A2:D4", fillMergedCells = TRUE)
+
+  exp <- c("a", "b", "c", "d")
+  got <- names(got)
+  expect_equal(exp, got)
+
+})
