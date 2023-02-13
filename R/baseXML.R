@@ -1102,7 +1102,10 @@ styleplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.com/o
 </cs:chartStyle>')
 
 
-drawings <- function(drawing_id) {
+drawings <- function(drawings, drawing_id) {
+
+
+  rel_len <- length(xml_node(drawings, "Relationship"))
 
   drawings <- xml_node_create(
     xml_name = "xdr:wsDr",
@@ -1143,7 +1146,7 @@ drawings <- function(drawing_id) {
         <xdr:clientData />
       </xdr:absoluteAnchor>',
       drawing_id,
-      drawing_id
+      rel_len + 1L
     )
   )
 

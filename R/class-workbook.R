@@ -4006,6 +4006,27 @@ wbWorkbook <- R6::R6Class(
 
       is_chartsheet <- self$is_chartsheet[sheet]
 
+      # usually sheet_drawing is sheet. If we have userShapes, sheet_drawing
+      # can skip ahead. see test: unemployment-nrw202208.xlsx
+      if (length(self$worksheets[[sheet]]$relships$drawing)) {
+        sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
+
+        # chartsheets can not have multiple drawings
+        if (is_chartsheet) {
+          self$drawings[[sheet_drawing]]      <- ""
+          self$drawings_rels[[sheet_drawing]] <- ""
+        }
+      } else {
+        sheet_drawing <- length(self$drawings) + 1L
+        self$append("drawings", "")
+        self$append("drawings_rels", "")
+      }
+
+      # prepare mschart drawing
+      if (inherits(xml, "chart_id")) {
+        xml <- drawings(self$drawings_rels[[sheet_drawing]], xml)
+      }
+
       xml <- read_xml(xml, pointer = FALSE)
 
       if (!(xml_node_name(xml) == "xdr:wsDr")) {
@@ -4083,22 +4104,6 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
-      # usually sheet_drawing is sheet. If we have userShapes, sheet_drawing
-      # can skip ahead. see test: unemployment-nrw202208.xlsx
-      if (length(self$worksheets[[sheet]]$relships$drawing)) {
-        sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
-
-        # chartsheets can not have multiple drawings
-        if (is_chartsheet) {
-          self$drawings[[sheet_drawing]]      <- ""
-          self$drawings_rels[[sheet_drawing]] <- ""
-        }
-      } else {
-        sheet_drawing <- length(self$drawings) + 1L
-        self$append("drawings", "")
-        self$append("drawings_rels", "")
-      }
-
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.
       drawings <- self$drawings[[sheet_drawing]]
@@ -4148,8 +4153,10 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- private$get_sheet_index(sheet)
       if (length(self$worksheets[[sheet]]$relships$drawing)) {
+        # if one is found: we have to select this drawing
         sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
       } else {
+        # if none is found. we need to add a new drawing
         sheet_drawing <- length(self$drawings) + 1L
       }
 
@@ -4166,10 +4173,12 @@ wbWorkbook <- R6::R6Class(
 
       self$charts <- rbind(self$charts, chart)
 
+      class(next_chart) <- c("integer", "chart_id")
+
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet = sheet,
-        xml = drawings(sheet_drawing),
+        xml = next_chart,
         dims = dims
       )
 
