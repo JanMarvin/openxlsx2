@@ -13,14 +13,14 @@
 #' @keywords internal
 #' @noRd
 inner_update <- function(
-  wb,
-  sheet_id,
-  x,
-  rows,
-  cells_needed,
-  colNames = FALSE,
-  removeCellStyle = FALSE,
-  na.strings
+    wb,
+    sheet_id,
+    x,
+    rows,
+    cells_needed,
+    colNames = FALSE,
+    removeCellStyle = FALSE,
+    na.strings
 ) {
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
@@ -227,7 +227,7 @@ write_data2 <- function(
     na.strings,
     data_table = FALSE,
     inline_strings = TRUE
-  ) {
+) {
 
   if (missing(na.strings)) na.strings <- substitute()
 
@@ -434,11 +434,11 @@ write_data2 <- function(
       # message("hyperlink: ", dim_sel)
 
       wb$add_font(
-          sheet = sheetno,
-          dim = dim_sel,
-          color = wb_color(hex = "FF0000FF"),
-          name = wb_get_base_font(wb)$name$val,
-          u = "single"
+        sheet = sheetno,
+        dim = dim_sel,
+        color = wb_color(hex = "FF0000FF"),
+        name = wb_get_base_font(wb)$name$val,
+        u = "single"
       )
     }
 
@@ -1151,16 +1151,16 @@ write_data <- function(
 #'              array = TRUE)
 #'
 write_formula <- function(
-  wb,
-  sheet,
-  x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
-  array = FALSE,
-  xy = NULL,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE
+    wb,
+    sheet,
+    x,
+    startCol = 1,
+    startRow = 1,
+    dims = rowcol_to_dims(startRow, startCol),
+    array = FALSE,
+    xy = NULL,
+    applyCellStyle = TRUE,
+    removeCellStyle = FALSE
 ) {
   assert_class(x, "character")
   # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
