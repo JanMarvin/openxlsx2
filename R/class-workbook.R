@@ -7015,6 +7015,7 @@ wbWorkbook <- R6::R6Class(
         # everythings missing, we can safely write data
 
         self$add_data(
+          sheet = sheet,
           x = dims_to_dataframe(dims),
           na.strings = NULL,
           colNames = FALSE,
