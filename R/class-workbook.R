@@ -7034,7 +7034,7 @@ wbWorkbook <- R6::R6Class(
         # initialize cell
         if (!all(exp_cells %in% got_cells)) {
             missing_cells <- exp_cells[!exp_cells %in% got_cells]
-            initialize_cell(self, sheet = sheet, new_cells = missing_cells)
+            self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
         }
 
       }

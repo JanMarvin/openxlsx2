@@ -1,130 +1,27 @@
-#' Initialize data cell(s)
+#' function to add missing cells to cc and rows
 #'
 #' Create a cell in the workbook
 #'
-#' @param wb the workbook you want to update
-#' @param sheet the sheet you want to update
-#' @param new_cells the cell you want to update in Excel connotation e.g. "A1"
-#'
+#' @param wb the workbook update
+#' @param sheet_id the sheet to update
+#' @param x the newly filled cc frame
+#' @param rows the rows needed
+#' @param cells_needed the cells needed
+#' @param colNames has colNames (only in update_cell)
+#' @param removeCellStyle remove the cell style (only in update_cell)
+#' @param na.strings optional na.string (only in update_cell)
 #' @keywords internal
 #' @noRd
-# TODO this is code duplicated from update_cell need to merge both functions
-initialize_cell <- function(wb, sheet, new_cells) {
-
-  sheet_id <- wb$validate_sheet(sheet)
-
-  # create artificial cc for the missing cells
-  x <- empty_sheet_data_cc(n = length(new_cells))
-  names(x) <- c("r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
-                "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
-  x$r     <- new_cells
-  x$row_r <- gsub("\\D+", "", new_cells)
-  x$c_r   <- gsub("[0-9]+", "", new_cells)
-
-  rows <- x$row_r
-  cells_needed <- new_cells
-
-  # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
-  cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
-  row_attr <- wb$worksheets[[sheet_id]]$sheet_data$row_attr
-
-  # workbooks contain only entries for values currently present.
-  # if A1 is filled, B1 is not filled and C1 is filled the sheet will only
-  # contain fields A1 and C1.
-  cells_in_wb <- cc$r
-  rows_in_wb <- row_attr$r
-
-  # check if there are rows not available
-  if (!all(rows %in% rows_in_wb)) {
-    # message("row(s) not in workbook")
-
-    missing_rows <- rows[!rows %in% rows_in_wb]
-
-    # new row_attr
-    row_attr_missing <- empty_row_attr(n = length(missing_rows))
-    row_attr_missing$r <- missing_rows
-
-    row_attr <- rbind(row_attr, row_attr_missing)
-
-    # order
-    row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
-
-    wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
-    # provide output
-    rows_in_wb <- row_attr$r
-
-  }
-
-  if (!all(cells_needed %in% cells_in_wb)) {
-    # message("cell(s) not in workbook")
-
-    missing_cells <- cells_needed[!cells_needed %in% cells_in_wb]
-
-    # create missing cells
-    cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
-    cc_missing$r     <- missing_cells
-    cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
-    cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
-
-    # assign to cc
-    cc <- rbind(cc, cc_missing)
-
-    # order cc (not really necessary, will be done when saving)
-    cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
-
-    # update dimensions (only required if new cols and rows are added) ------
-    all_rows <- as.numeric(unique(cc$row_r))
-    all_cols <- col2int(unique(cc$c_r))
-
-    min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
-    max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
-
-    # i know, i know, i'm lazy
-    wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
-  }
-
-  cell_style <- NULL
-
-  replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
-                   "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
-
-  sel <- match(x$r, cc$r)
-  cc[sel, replacement] <- x[replacement]
-
-  # avoid missings in cc
-  if (any(is.na(cc)))
-    cc[is.na(cc)] <- ""
-
-  # push everything back to workbook
-  wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
-
-  wb
-}
-
-#' Replace data cell(s)
-#'
-#' Minimal invasive update of cell(s) inside of imported workbooks.
-#'
-#' @param x cc dataframe of the updated cells
-#' @param wb the workbook you want to update
-#' @param sheet the sheet you want to update
-#' @param cell the cell you want to update in Excel connotation e.g. "A1"
-#' @param colNames if TRUE colNames are passed down
-#' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
-#'
-#' @keywords internal
-#' @noRd
-update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
-                        removeCellStyle = FALSE, na.strings) {
-
-  sheet_id <- wb$validate_sheet(sheet)
-
-  dims <- dims_to_dataframe(cell, fill = TRUE)
-  rows <- rownames(dims)
-
-  cells_needed <- unname(unlist(dims))
-
+inner_update <- function(
+  wb,
+  sheet_id,
+  x,
+  rows,
+  cells_needed,
+  colNames = FALSE,
+  removeCellStyle = FALSE,
+  na.strings
+) {
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
   cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
@@ -209,6 +106,62 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
 
   wb
+}
+
+#' Initialize data cell(s)
+#'
+#' Create a cell in the workbook
+#'
+#' @param wb the workbook you want to update
+#' @param sheet the sheet you want to update
+#' @param new_cells the cell you want to update in Excel connotation e.g. "A1"
+#'
+#' @keywords internal
+#' @noRd
+initialize_cell <- function(wb, sheet, new_cells) {
+
+  sheet_id <- wb$validate_sheet(sheet)
+
+  # create artificial cc for the missing cells
+  x <- empty_sheet_data_cc(n = length(new_cells))
+  x$r     <- new_cells
+  x$row_r <- gsub("[[:upper:]]", "", new_cells)
+  x$c_r   <- gsub("[[:digit:]]", "", new_cells)
+
+  rows <- x$row_r
+  cells_needed <- new_cells
+
+  inner_update(wb, sheet_id, x, rows, cells_needed)
+}
+
+#' Replace data cell(s)
+#'
+#' Minimal invasive update of cell(s) inside of imported workbooks.
+#'
+#' @param x cc dataframe of the updated cells
+#' @param wb the workbook you want to update
+#' @param sheet the sheet you want to update
+#' @param cell the cell you want to update in Excel connotation e.g. "A1"
+#' @param colNames if TRUE colNames are passed down
+#' @param removeCellStyle keep the cell style?
+#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#'
+#' @keywords internal
+#' @noRd
+update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
+                        removeCellStyle = FALSE, na.strings) {
+
+  if (missing(na.strings))
+    na.strings <- substitute()
+
+  sheet_id <- wb$validate_sheet(sheet)
+
+  dims <- dims_to_dataframe(cell, fill = TRUE)
+  rows <- rownames(dims)
+
+  cells_needed <- unname(unlist(dims))
+
+  inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle, na.strings)
 }
 
 
