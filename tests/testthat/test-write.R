@@ -236,8 +236,8 @@ test_that("update cell(s)", {
                         f_ca = c("", "", "", "", "", ""),
                         f_si = c("", "", "", "", "", ""),
                         is = c("", "", "", "", "", ""),
-                        typ = c("3", "3", "3", "3", "3", "3")),
-                   row.names = c("1", "8", "17", "114", "121", "128"),
+                        typ = c("4", "4", "4", "4", "4", "4")),
+                   row.names = 1:6,
                    class = "data.frame")
   got <- head(wb$worksheets[[1]]$sheet_data$cc)
   expect_equal(exp, got)
