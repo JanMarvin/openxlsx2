@@ -7010,26 +7010,33 @@ wbWorkbook <- R6::R6Class(
     do_cell_init = function(sheet = current_sheet(), dims) {
 
       sheet <- private$get_sheet_index(sheet)
-      if (length(dims) == 1 && grepl(":|;", dims))
-        dims <- dims_to_dataframe(dims, fill = TRUE)
 
-      exp_cells <- unname(unlist(dims))
-      got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
+      if (is.null(self$worksheets[[sheet]]$sheet_data$cc)) {
+        # everythings missing, we can safely write data
 
-      # initialize cell
-      if (!all(exp_cells %in% got_cells)) {
+        self$add_data(
+          x = dims_to_dataframe(dims),
+          na.strings = NULL,
+          colNames = FALSE,
+          dims = dims
+        )
 
-        init_cells <- NA
-        missing_cells <- exp_cells[!exp_cells %in% got_cells]
+      } else {
+        # there are some cells already available, we have to create the missing cells
 
-        for (exp_cell in missing_cells) {
-          self$add_data(
-            x = init_cells,
-            na.strings = NULL,
-            colNames = FALSE,
-            dims = exp_cell
-          )
+        need_cells <- dims
+        if (length(need_cells) == 1 && grepl(":|;", need_cells))
+          need_cells <- dims_to_dataframe(dims, fill = TRUE)
+
+        exp_cells <- unname(unlist(need_cells))
+        got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
+
+        # initialize cell
+        if (!all(exp_cells %in% got_cells)) {
+            missing_cells <- exp_cells[!exp_cells %in% got_cells]
+            initialize_cell(self, sheet = sheet, new_cells = missing_cells)
         }
+
       }
 
       invisible(self)
