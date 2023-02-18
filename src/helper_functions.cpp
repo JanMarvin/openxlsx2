@@ -1,6 +1,5 @@
 #include "openxlsx2.h"
 #include <algorithm>
-#include <fstream>
 
 // [[Rcpp::export]]
 SEXP openxlsx2_type(SEXP x) {
