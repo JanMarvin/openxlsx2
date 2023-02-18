@@ -554,7 +554,7 @@ wb_to_df <- function(
   # dates
   if (!is.null(cc$c_s)) {
     # if a cell is t="s" the content is a sst and not da date
-    if (detectDates) {
+    if (detectDates && missing(types)) {
       cc$is_string <- FALSE
       if (!is.null(cc$c_t))
         cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
