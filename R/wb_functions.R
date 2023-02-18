@@ -72,19 +72,13 @@ dataframe_to_dims <- function(df) {
         cols[[col]][[1]], rows[[row]][[1]],
         ":",
         rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
-        )
+      )
       out <- c(out, tmp)
     }
   }
 
   paste0(out, collapse = ";")
 }
-
-# # similar to all, simply check if most of the values match the condition
-# # in guess_col_type not all bools may be "b" some are "s" (missings)
-# most <- function(x) {
-#   as.logical(names(sort(table(x), decreasing = TRUE)[1]))
-# }
 
 #' function to estimate the column type.
 #' 0 = character, 1 = numeric, 2 = date.
@@ -123,11 +117,13 @@ numfmt_is_date <- function(numFmt) {
   if (length(numFmt) == 0) return(z <- NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
+  # we have to drop any square bracket part
+  numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
   num_fmts <- c(
     "#", as.character(0:9)
   )
   num_or_fmt <- paste0(num_fmts, collapse = "|")
-  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$formatCode)
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
 
   date_fmts <- c(
     "yy", "yyyy",
@@ -135,7 +131,7 @@ numfmt_is_date <- function(numFmt) {
     "d", "dd", "ddd", "dddd"
   )
   date_or_fmt <- paste0(date_fmts, collapse = "|")
-  maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)
+  maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$fC)
 
   z <- numFmt_df$numFmtId[maybe_dates & !maybe_num]
   if (length(z) == 0) z <- NULL
@@ -150,21 +146,23 @@ numfmt_is_posix <- function(numFmt) {
   if (length(numFmt) == 0) return(z <- NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
+  # we have to drop any square bracket part
+  numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
   num_fmts <- c(
     "#", as.character(0:9)
   )
   num_or_fmt <- paste0(num_fmts, collapse = "|")
-  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$formatCode)
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
 
   posix_fmts <- c(
-    "yy", "yyyy",
-    "m", "mm", "mmm", "mmmm", "mmmmm",
-    "d", "dd", "ddd", "dddd",
-    "h", "hh", "m", "mm", "s", "ss",
+    # "yy", "yyyy",
+    # "m", "mm", "mmm", "mmmm", "mmmmm",
+    # "d", "dd", "ddd", "dddd",
+    "h", "hh", ":m", ":mm", ":s", ":ss",
     "AM", "PM", "A", "P"
   )
   posix_or_fmt <- paste0(posix_fmts, collapse = "|")
-  maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$formatCode)
+  maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$fC)
 
   z <- numFmt_df$numFmtId[maybe_posix & !maybe_num]
   if (length(z) == 0) z <- NULL
@@ -224,7 +222,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
 #' @param definedName (deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.
 #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
-#' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created
+#' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
@@ -301,44 +299,41 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'
 #' @export
 wb_to_df <- function(
-  xlsxFile,
-  sheet,
-  startRow        = 1,
-  startCol        = NULL,
-  rowNames        = FALSE,
-  colNames        = TRUE,
-  skipEmptyRows   = FALSE,
-  skipEmptyCols   = FALSE,
-  rows            = NULL,
-  cols            = NULL,
-  detectDates     = TRUE,
-  na.strings      = "#N/A",
-  na.numbers      = NA,
-  fillMergedCells = FALSE,
-  dims,
-  showFormula     = FALSE,
-  convert         = TRUE,
-  types,
-  definedName,
-  named_region
+    xlsxFile,
+    sheet,
+    startRow        = 1,
+    startCol        = NULL,
+    rowNames        = FALSE,
+    colNames        = TRUE,
+    skipEmptyRows   = FALSE,
+    skipEmptyCols   = FALSE,
+    rows            = NULL,
+    cols            = NULL,
+    detectDates     = TRUE,
+    na.strings      = "#N/A",
+    na.numbers      = NA,
+    fillMergedCells = FALSE,
+    dims,
+    showFormula     = FALSE,
+    convert         = TRUE,
+    types,
+    definedName,
+    named_region
 ) {
 
   # .mc <- match.call() # not (yet) used?
 
   if (!is.null(cols)) cols <- col2int(cols)
 
-  if (is.character(xlsxFile)) {
-    # TODO this should instead check for the Workbook class?  Maybe also check
-    # if the file exists?
-
+  if (inherits(xlsxFile, "wbWorkbook")) {
+    wb <- xlsxFile
+  } else {
     # passes missing further on
     if (missing(sheet))
       sheet <- substitute()
 
     # possible false positive on current lintr runs
     wb <- wb_load(xlsxFile, sheet = sheet, data_only = TRUE) # nolint
-  } else {
-    wb <- xlsxFile
   }
 
   if (!missing(definedName)) {
@@ -462,17 +457,17 @@ wb_to_df <- function(
     if (!all(keep_cols %in% colnames(z))) {
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 
-      z[keep_col] <- NA_character_
+      z[keep_col]  <- NA_character_
       tt[keep_col] <- NA_character_
 
       # return expected order of columns
-      z <- z[keep_cols]
+      z  <- z[keep_cols]
       tt <- tt[keep_cols]
     }
 
 
-      z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
-      tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
+    z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
+    tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
   }
 
   if (!is.null(cols)) {
@@ -485,8 +480,8 @@ wb_to_df <- function(
       tt[keep_col] <- NA_character_
     }
 
-      z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
-      tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
+    z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
+    tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
   }
 
   keep_rows <- keep_rows[keep_rows %in% rnams]
@@ -494,8 +489,6 @@ wb_to_df <- function(
   # reduce data to selected cases only
   if (!is.null(cols) && !is.null(rows) && !missing(dims))
     cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
-
-  # if (!nrow(cc)) browser()
 
   cc$val <- NA_character_
   cc$typ <- NA_character_
@@ -559,7 +552,7 @@ wb_to_df <- function(
   # dates
   if (!is.null(cc$c_s)) {
     # if a cell is t="s" the content is a sst and not da date
-    if (detectDates) {
+    if (detectDates && missing(types)) {
       cc$is_string <- FALSE
       if (!is.null(cc$c_t))
         cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
@@ -617,9 +610,15 @@ wb_to_df <- function(
       for (i in seq_along(mc)) {
         filler <- stringi::stri_split_fixed(mc[i], pattern = ":")[[1]][1]
 
-        # TODO there probably is a better way in not reducing cc above, so
-        # that we do not have to go through large xlsx files multiple times
-        z_fill <- wb_to_df(
+
+        dms <- dims_to_dataframe(mc[i])
+
+        if (any(row_sel <- rownames(z) %in% rownames(dms)) &&
+            any(col_sel <- colnames(z) %in% colnames(dms))) {
+
+          # TODO there probably is a better way in not reducing cc above, so
+          # that we do not have to go through large xlsx files multiple times
+          z_fill <- wb_to_df(
             dims = filler,
             xlsxFile = xlsxFile,
             sheet = sheet,
@@ -628,18 +627,14 @@ wb_to_df <- function(
             colNames = FALSE,
             detectDates = detectDates,
             showFormula = showFormula
-        )
+          )
 
-        tt_fill <- attr(z_fill, "tt")
+          tt_fill <- attr(z_fill, "tt")
 
-        dms <- dims_to_dataframe(mc[i])
-
-        z[rownames(z) %in% rownames(dms),
-          colnames(z) %in% colnames(dms)] <- z_fill
-        tt[rownames(tt) %in% rownames(dms),
-           colnames(tt) %in% colnames(dms)] <- tt_fill
+          z[row_sel,  col_sel] <- z_fill
+          tt[row_sel, col_sel] <- tt_fill
+        }
       }
-
     }
 
   }
@@ -697,7 +692,7 @@ wb_to_df <- function(
   }
 
   if (colNames) {
-    names(z) <- xlsx_cols_names
+    names(z)  <- xlsx_cols_names
     names(tt) <- xlsx_cols_names
   }
 
@@ -880,10 +875,10 @@ wb_set_selected <- function(wb, sheet) {
 #' @seealso [wb_data()]
 #' @export
 wb_add_mschart <- function(
-  wb,
-  sheet = current_sheet(),
-  dims = NULL,
-  graph
+    wb,
+    sheet = current_sheet(),
+    dims = NULL,
+    graph
 ) {
   assert_workbook(wb)
   wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph)
