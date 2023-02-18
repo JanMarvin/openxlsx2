@@ -124,14 +124,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// Rcpp_file_exists
-bool Rcpp_file_exists(std::string name);
-RcppExport SEXP _openxlsx2_Rcpp_file_exists(SEXP nameSEXP) {
+// to_long
+bool to_long(std::string path);
+RcppExport SEXP _openxlsx2_to_long(SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type name(nameSEXP);
-    rcpp_result_gen = Rcpp::wrap(Rcpp_file_exists(name));
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(to_long(path));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -849,7 +849,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 12},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
-    {"_openxlsx2_Rcpp_file_exists", (DL_FUNC) &_openxlsx2_Rcpp_file_exists, 1},
+    {"_openxlsx2_to_long", (DL_FUNC) &_openxlsx2_to_long, 1},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
