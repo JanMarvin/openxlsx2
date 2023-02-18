@@ -62,7 +62,7 @@ wb_to_df(
 
 \item{convert}{If TRUE, a conversion to dates and numerics is attempted.}
 
-\item{types}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created}
+\item{types}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data}
 
 \item{definedName}{(deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.}
 

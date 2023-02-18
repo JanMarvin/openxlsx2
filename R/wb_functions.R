@@ -222,7 +222,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
 #' @param definedName (deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.
 #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
-#' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date. Names must match the created
+#' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
