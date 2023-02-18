@@ -473,12 +473,8 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
   return df;
 }
 
-//' simple file.exists alternative
-//' @description Required while R tinkers with string length on Windows
-//' @param name a character string
-//' @noRd
 // [[Rcpp::export]]
-bool Rcpp_file_exists(std::string name) {
-  std::ifstream f(name.c_str());
-  return f.good();
+bool to_long(std::string path) {
+  return path.size() > PATH_MAX;
 }
+

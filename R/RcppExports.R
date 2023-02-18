@@ -40,12 +40,8 @@ create_char_dataframe <- function(colnames, n) {
     .Call(`_openxlsx2_create_char_dataframe`, colnames, n)
 }
 
-#' simple file.exists alternative
-#' @description Required while R tinkers with string length on Windows
-#' @param name a character string
-#' @noRd
-Rcpp_file_exists <- function(name) {
-    .Call(`_openxlsx2_Rcpp_file_exists`, name)
+to_long <- function(path) {
+    .Call(`_openxlsx2_to_long`, path)
 }
 
 col_to_df <- function(doc) {
