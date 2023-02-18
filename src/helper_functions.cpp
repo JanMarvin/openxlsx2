@@ -471,3 +471,14 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
 
   return df;
 }
+
+//' We use file.exists() to check if a file path is valid. On Windows our input
+//' can be to long, in this case we have to abort, otherwise file.exists() will
+//' throw an error
+//' @param path the file path used in file.exists()
+//' @noRd
+// [[Rcpp::export]]
+bool to_long(std::string path) {
+  return path.size() > PATH_MAX;
+}
+
