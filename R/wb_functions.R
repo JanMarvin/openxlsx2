@@ -327,18 +327,15 @@ wb_to_df <- function(
 
   if (!is.null(cols)) cols <- col2int(cols)
 
-  if (is.character(xlsxFile)) {
-    # TODO this should instead check for the Workbook class?  Maybe also check
-    # if the file exists?
-
+  if (inherits(xlsxFile, "wbWorkbook")) {
+     wb <- xlsxFile
+  } else {
     # passes missing further on
     if (missing(sheet))
       sheet <- substitute()
 
     # possible false positive on current lintr runs
     wb <- wb_load(xlsxFile, sheet = sheet, data_only = TRUE) # nolint
-  } else {
-    wb <- xlsxFile
   }
 
   if (!missing(definedName)) {
@@ -462,11 +459,11 @@ wb_to_df <- function(
     if (!all(keep_cols %in% colnames(z))) {
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 
-      z[keep_col] <- NA_character_
+      z[keep_col]  <- NA_character_
       tt[keep_col] <- NA_character_
 
       # return expected order of columns
-      z <- z[keep_cols]
+      z  <- z[keep_cols]
       tt <- tt[keep_cols]
     }
 
@@ -494,8 +491,6 @@ wb_to_df <- function(
   # reduce data to selected cases only
   if (!is.null(cols) && !is.null(rows) && !missing(dims))
     cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
-
-  # if (!nrow(cc)) browser()
 
   cc$val <- NA_character_
   cc$typ <- NA_character_
@@ -699,7 +694,7 @@ wb_to_df <- function(
   }
 
   if (colNames) {
-    names(z) <- xlsx_cols_names
+    names(z)  <- xlsx_cols_names
     names(tt) <- xlsx_cols_names
   }
 
