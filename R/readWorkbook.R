@@ -207,14 +207,19 @@ check_xlsx_path <- function(x, warn = TRUE) {
     file.exists(x)
   )
 
-  bad <- stringi::stri_detect_regex(x, "\\.xls[mb]?$", case_insensitive = TRUE)
-  ok <- stringi::stri_detect_regex(x, "\\.xlsx$", case_insensitive = TRUE)
+  ext <- tolower(tools::file_ext(x))
 
-  if (bad) {
-    stop("openxlsx2 cannot read xls, xlsm, or xlsb extensions")
+  if (ext %in% c("xlsx", "xltx", "xlsm", "xltm")) {
+    # known good extension
+    return(invisible())
   }
 
-  if (warn && !ok) {
+  if (ext %in% c("xls", "xlm")) {
+    # known bad extensions
+    stop("openxlsx2 cannot read xls or xlm extensions")
+  }
+
+  if (warn) {
     warning("path extension is not xlsx; you may experience problems")
   }
 
