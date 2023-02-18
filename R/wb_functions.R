@@ -154,7 +154,7 @@ numfmt_is_posix <- function(numFmt) {
     "yy", "yyyy",
     "m", "mm", "mmm", "mmmm", "mmmmm",
     "d", "dd", "ddd", "dddd",
-    "h", "hh", "m", "mm", "s", "ss",
+    "h", "hh", ":m", ":mm", ":s", ":ss",
     "AM", "PM", "A", "P"
   )
   posix_or_fmt <- paste0(posix_fmts, collapse = "|")
