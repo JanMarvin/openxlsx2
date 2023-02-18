@@ -117,11 +117,13 @@ numfmt_is_date <- function(numFmt) {
   if (length(numFmt) == 0) return(z <- NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
+  # we have to drop any square bracket part
+  numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
   num_fmts <- c(
     "#", as.character(0:9)
   )
   num_or_fmt <- paste0(num_fmts, collapse = "|")
-  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$formatCode)
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
 
   date_fmts <- c(
     "yy", "yyyy",
@@ -129,7 +131,7 @@ numfmt_is_date <- function(numFmt) {
     "d", "dd", "ddd", "dddd"
   )
   date_or_fmt <- paste0(date_fmts, collapse = "|")
-  maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$formatCode)
+  maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$fC)
 
   z <- numFmt_df$numFmtId[maybe_dates & !maybe_num]
   if (length(z) == 0) z <- NULL
@@ -144,11 +146,13 @@ numfmt_is_posix <- function(numFmt) {
   if (length(numFmt) == 0) return(z <- NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
+  # we have to drop any square bracket part
+  numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
   num_fmts <- c(
     "#", as.character(0:9)
   )
   num_or_fmt <- paste0(num_fmts, collapse = "|")
-  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$formatCode)
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
 
   posix_fmts <- c(
     "yy", "yyyy",
@@ -158,7 +162,7 @@ numfmt_is_posix <- function(numFmt) {
     "AM", "PM", "A", "P"
   )
   posix_or_fmt <- paste0(posix_fmts, collapse = "|")
-  maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$formatCode)
+  maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$fC)
 
   z <- numFmt_df$numFmtId[maybe_posix & !maybe_num]
   if (length(z) == 0) z <- NULL
