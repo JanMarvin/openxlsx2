@@ -91,6 +91,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings na.strings
+#' @param inline_strings write characters as inline strings
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
@@ -114,7 +115,8 @@ wb_add_data <- function(
     sep             = ", ",
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings,
+    inline_strings  = TRUE
 ) {
   assert_workbook(wb)
 
@@ -135,7 +137,8 @@ wb_add_data <- function(
     sep             = sep,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings      = na.strings
+    na.strings      = na.strings,
+    inline_strings  = inline_strings
   )
 }
 
@@ -168,11 +171,12 @@ wb_add_data <- function(
 #'
 #' @param firstColumn logical. If TRUE, the first column is bold
 #' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are colour banded
-#' @param bandedCols logical. If TRUE, the columns are colour banded
+#' @param bandedRows logical. If TRUE, rows are color banded
+#' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional
+#' @param inline_strings write characters as inline strings
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,
@@ -201,7 +205,8 @@ wb_add_data_table <- function(
     bandedCols  = FALSE,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings,
+    inline_strings = TRUE
 ) {
   assert_workbook(wb)
   if (missing(na.strings)) na.strings <- substitute()
@@ -225,9 +230,73 @@ wb_add_data_table <- function(
     bandedCols  = bandedCols,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings  = na.strings
+    na.strings  = na.strings,
+    inline_strings = inline_strings
   )
 }
+
+#' Add pivot table to a worksheet
+#'
+#' @description add pivot table
+#' @param wb A Workbook object containing a #' worksheet.
+#' @param x a wb_data object
+#' @param sheet a worksheet
+#' @param dims the worksheet cell where the pivot table is placed
+#' @param filter a character object with names used to filter
+#' @param rows a character object with names used as rows
+#' @param cols a character object with names used as cols
+#' @param data a character object with names used as data
+#' @param fun a character object of functions to be used with the data
+#' @param params a list of parameters to modify pivot table creation
+#' @details
+#' `fun` can be either of `AVERAGE`, `COUNT`, `COUNTA`, `MAX`, `MIN`,
+#' `PRODUCT`, `STDEV`, `STDEVP`, `SUM`, `VAR`, `VARP`.
+#'
+#' The sheet will be empty unless it is opened in spreadsheet software.
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
+#'
+#' df <- wb_data(wb)
+#'
+#' wb <- wb %>%
+#' wb_add_pivot_table(df, dims = "A3",
+#'   filter = "am", rows = "cyl", cols = "gear", data = "disp")
+#' @family workbook wrappers
+#' @export
+wb_add_pivot_table <- function(
+    wb,
+    x,
+    sheet = next_sheet(),
+    dims = "A3",
+    filter,
+    rows,
+    cols,
+    data,
+    fun,
+    params
+) {
+  assert_workbook(wb)
+  if (missing(filter)) filter <- substitute()
+  if (missing(rows))   rows   <- substitute()
+  if (missing(cols))   cols   <- substitute()
+  if (missing(data))   data   <- substitute()
+  if (missing(fun))    fun    <- substitute()
+  if (missing(params)) params <- substitute()
+
+  wb$clone()$add_pivot_table(
+    x      = x,
+    sheet  = sheet,
+    dims   = dims,
+    filter = filter,
+    rows   = rows,
+    cols   = cols,
+    data   = data,
+    fun    = fun,
+    params = params
+  )
+
+}
+
 
 #' Add a character vector as an Excel Formula
 #'
@@ -281,6 +350,51 @@ wb_add_formula <- function(
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle
   )
+}
+
+#' copy cells around
+#' @param wb workbook
+#' @param sheet a worksheet
+#' @param dims cell used as start
+#' @param data a wb_data object
+#' @param as_value should a copy of the value be written
+#' @param as_ref should references to the cell be written
+#' @param transpose should the data be written transposed
+#' @examples
+#' wb <- wb_workbook()$
+#' add_worksheet()$
+#'   add_data(x = mtcars)$
+#'   add_fill(dims = "A1:F1", color = wb_color("yellow"))
+#'
+#' dat <- wb_data(wb, dims = "A1:D4", colNames = FALSE)
+#'
+#' wb$
+#'   # 1:1 copy to M2
+#'   clone_worksheet(old = 1, new = "Clone1")$
+#'   copy_cells(data = dat, dims = "M2")
+#' @family workbook wrappers
+#' @export
+#' @returns the wbWorkbook invisibly
+wb_copy_cells <- function(
+    wb,
+    sheet     = current_sheet(),
+    dims      = "A1",
+    data,
+    as_value  = FALSE,
+    as_ref    = FALSE,
+    transpose = FALSE
+) {
+  assert_workbook(wb)
+  wb$
+    clone(deep = TRUE)$
+    copy_cells(
+      sheet = sheet,
+      dims = dims,
+      data = data,
+      as_value = as_value,
+      as_ref = as_ref,
+      transpose = transpose
+    )
 }
 
 # merge cells -------------------------------------------------------------
@@ -349,11 +463,12 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #'
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheet A name for the new worksheet
-#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
-#'   colours()) or a valid hex colour beginning with "#"
+#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param visible If FALSE, sheet is hidden else visible.
+#' @param ... ...
 #' @details After chartsheet creation a chart must be added to the sheet.
 #' Otherwise the chartsheet will break the workbook.
 #' @family workbook wrappers
@@ -362,16 +477,18 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 wb_add_chartsheet <- function(
   wb,
   sheet       = next_sheet(),
-  tabColour   = NULL,
+  tabColor    = NULL,
   zoom        = 100,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden")
+  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
     sheet       = sheet,
-    tabColour   = tabColour,
+    tabColor    = tabColor,
     zoom        = zoom,
-    visible     = visible
+    visible     = visible,
+    ...         = ...
   )
 }
 
@@ -383,8 +500,8 @@ wb_add_chartsheet <- function(
 #'   hidden.
 #' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tabColour Colour of the worksheet tab. A valid colour (belonging to
-#'   colours()) or a valid hex colour beginning with "#"
+#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
 #' @param header,oddHeader,evenHeader,firstHeader,footer,oddFooter,evenFooter,firstFooter
@@ -401,6 +518,7 @@ wb_add_chartsheet <- function(
 #'   options("openxlsx2.hdpi" = X)
 #' @param vdpi Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
 #'   options("openxlsx2.vdpi" = X)
+#' @param ... ...
 #' @details Headers and footers can contain special tags \itemize{
 #'   \item{**&\[Page\]**}{ Page number} \item{**&\[Pages\]**}{ Number of pages}
 #'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
@@ -418,8 +536,8 @@ wb_add_chartsheet <- function(
 #' ## Add 3 worksheets
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2", gridLines = FALSE)
-#' wb$add_worksheet("Sheet 3", tabColour = "red")
-#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+#' wb$add_worksheet("Sheet 3", tabColor = "red")
+#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColor = "#4F81BD")
 #'
 #' ## Headers and Footers
 #' wb$add_worksheet("Sheet 5",
@@ -458,7 +576,7 @@ wb_add_worksheet <- function(
   sheet       = next_sheet(),
   gridLines   = TRUE,
   rowColHeaders = TRUE,
-  tabColour   = NULL,
+  tabColor    = NULL,
   zoom        = 100,
   header      = NULL,
   footer      = NULL,
@@ -473,14 +591,15 @@ wb_add_worksheet <- function(
   paperSize   = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_worksheet(
     sheet       = sheet,
     gridLines   = gridLines,
     rowColHeaders = rowColHeaders,
-    tabColour   = tabColour,
+    tabColor    = tabColor,
     zoom        = zoom,
     oddHeader   = headerFooterSub(oddHeader),
     oddFooter   = headerFooterSub(oddFooter),
@@ -492,7 +611,8 @@ wb_add_worksheet <- function(
     paperSize   = paperSize,
     orientation = orientation,
     vdpi        = vdpi,
-    hdpi        = hdpi
+    hdpi        = hdpi,
+    ...         = ...
   )
 }
 
@@ -737,7 +857,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' p1 <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
 #'   ggtitle("Distribution of Gas Mileage") +
 #'   geom_density(alpha = I(.5))
-#' p2 <- ggplot(Orange, aes(x = age, y = circumference, colour = Tree)) +
+#' p2 <- ggplot(Orange, aes(x = age, y = circumference, color = Tree)) +
 #'   geom_point() + geom_line()
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
@@ -835,8 +955,9 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @description Modify the default font for this workbook
 #' @param wb A workbook object
 #' @param fontSize font size
-#' @param fontColour font colour
+#' @param fontColor font color
 #' @param fontName Name of a font
+#' @param ... ...
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
 #' @export
@@ -845,16 +966,23 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb$add_data("S1", iris)
-#' wb$add_data_table("S1", x = iris, startCol = 10) ## font colour does not affect tables
-wb_set_base_font <- function(wb, fontSize = 11, fontColour = wb_colour(theme = "1"), fontName = "Calibri") {
+#' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
+wb_set_base_font <- function(
+  wb,
+  fontSize  = 11,
+  fontColor = wb_color(theme = "1"),
+  fontName  = "Calibri",
+  ...
+) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
     fontSize   = fontSize,
-    fontColour = fontColour,
-    fontName   = fontName
+    fontColor  = fontColor,
+    fontName   = fontName,
+    ...        = ...
   )
 }
 
@@ -873,7 +1001,7 @@ wb_set_base_font <- function(wb, fontSize = 11, fontColour = wb_colour(theme = "
 #' wb_get_base_font(wb)
 #'
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColour = "#FF0000", fontName = "Arial Narrow")
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
 #'
 #' wb_get_base_font(wb)
 wb_get_base_font <- function(wb) {
@@ -2056,8 +2184,7 @@ wb_add_image <- function(
 }
 
 
-#' dummy function to add a chart to an existing workbook
-#' currently only a barplot is possible
+#' add a chart xml to a workbook
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
 #' @param xml chart xml
@@ -2118,8 +2245,8 @@ wb_open <- function(wb) {
 #' @param style_name style name used optional argument
 #' @seealso [create_border()], [create_cell_style()], [create_dxfs_style()], [create_fill()], [create_font()], [create_numfmt()]
 #' @examples
-#' yellow_f <- wb_colour(hex = "FF9C6500")
-#' yellow_b <- wb_colour(hex = "FFFFEB9C")
+#' yellow_f <- wb_color(hex = "FF9C6500")
+#' yellow_b <- wb_color(hex = "FFFFEB9C")
 #'
 #' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
 #' wb <- wb_workbook() %>% wb_add_style(yellow)
@@ -2171,6 +2298,7 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
 #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+#' @param ... ...
 #' @seealso [create_border()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
@@ -2183,12 +2311,12 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' wb <- wb_add_border(wb, 1, dims = "C2:C5")
 #' wb <- wb_add_border(wb, 1, dims = "G2:H3")
 #' wb <- wb_add_border(wb, 1, dims = "G12:H13",
-#'  left_color = wb_colour(hex = "FF9400D3"), right_color = wb_colour(hex = "FF4B0082"),
-#'  top_color = wb_colour(hex = "FF0000FF"), bottom_color = wb_colour(hex = "FF00FF00"))
+#'  left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+#'  top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
 #' wb <- wb_add_border(wb, 1, dims = "A20:C23")
 #' wb <- wb_add_border(wb, 1, dims = "B12:D14",
-#'  left_color = wb_colour(hex = "FFFFFF00"), right_color = wb_colour(hex = "FFFF7F00"),
-#'  bottom_color = wb_colour(hex = "FFFF0000"))
+#'  left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+#'  bottom_color = wb_color(hex = "FFFF0000"))
 #' wb <- wb_add_border(wb, 1, dims = "D28:E28")
 #' @family styles
 #' @export
@@ -2196,10 +2324,10 @@ wb_add_border <- function(
     wb,
     sheet          = current_sheet(),
     dims           = "A1",
-    bottom_color   = wb_colour(hex = "FF000000"),
-    left_color     = wb_colour(hex = "FF000000"),
-    right_color    = wb_colour(hex = "FF000000"),
-    top_color      = wb_colour(hex = "FF000000"),
+    bottom_color   = wb_color(hex = "FF000000"),
+    left_color     = wb_color(hex = "FF000000"),
+    right_color    = wb_color(hex = "FF000000"),
+    top_color      = wb_color(hex = "FF000000"),
     bottom_border  = "thin",
     left_border    = "thin",
     right_border   = "thin",
@@ -2207,7 +2335,8 @@ wb_add_border <- function(
     inner_hgrid    = NULL,
     inner_hcolor   = NULL,
     inner_vgrid    = NULL,
-    inner_vcolor   = NULL
+    inner_vcolor   = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_border(
@@ -2224,7 +2353,8 @@ wb_add_border <- function(
     inner_hgrid   = inner_hgrid,
     inner_hcolor  = inner_hcolor,
     inner_vgrid   = inner_vgrid,
-    inner_vcolor  = inner_vcolor
+    inner_vcolor  = inner_vcolor,
+    ...           = ...
   )
 
 }
@@ -2235,7 +2365,7 @@ wb_add_border <- function(
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
-#' @param color the colors to apply, e.g. yellow: wb_colour(hex = "FFFFFF00")
+#' @param color the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")
 #' @param pattern various default "none" but others are possible:
 #'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
 #'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
@@ -2244,10 +2374,11 @@ wb_add_border <- function(
 #' @param gradient_fill a gradient fill xml pattern.
 #' @param every_nth_col which col should be filled
 #' @param every_nth_row which row should be filled
+#' @param ... ...
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_colour(hex = "FFFFFF00"))
-#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = wb_colour(hex = "FF00FF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
+#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = wb_color(hex = "FF00FF00"))
 #'
 #' wb <- wb %>%  wb_add_worksheet("S2") %>% wb_add_data("S2", mtcars)
 #'
@@ -2269,11 +2400,12 @@ wb_add_fill <- function(
     wb,
     sheet         = current_sheet(),
     dims          = "A1",
-    color         = wb_colour(hex = "FFFFFF00"),
+    color         = wb_color(hex = "FFFFFF00"),
     pattern       = "solid",
     gradient_fill = "",
     every_nth_col = 1,
-    every_nth_row = 1
+    every_nth_row = 1,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_fill(
@@ -2283,7 +2415,8 @@ wb_add_fill <- function(
     pattern       = pattern,
     gradient_fill = gradient_fill,
     every_nth_col = every_nth_col,
-    every_nth_row = every_nth_row
+    every_nth_row = every_nth_row,
+    ...           = ...
   )
 }
 
@@ -2307,9 +2440,10 @@ wb_add_fill <- function(
 #' @param shadow shadow
 #' @param extend extend
 #' @param vertAlign vertical alignment
+#' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
+#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 #' @return The `wbWorksheetObject`, invisibly
 #' @family styles
 #' @export
@@ -2318,7 +2452,7 @@ wb_add_font <- function(
       sheet     = current_sheet(),
       dims      = "A1",
       name      = "Calibri",
-      color     = wb_colour(hex = "FF000000"),
+      color     = wb_color(hex = "FF000000"),
       size      = "11",
       bold      = "",
       italic    = "",
@@ -2332,7 +2466,8 @@ wb_add_font <- function(
       family    = "",
       scheme    = "",
       shadow    = "",
-      vertAlign = ""
+      vertAlign = "",
+      ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
@@ -2353,7 +2488,8 @@ wb_add_font <- function(
     family    = family,
     scheme    = scheme,
     shadow    = shadow,
-    vertAlign = vertAlign
+    vertAlign = vertAlign,
+    ...       = ...
   )
 }
 
@@ -2562,6 +2698,44 @@ wb_remove_comment <- function(
   )
 }
 
+#' Add form control Checkbox, Radiobuttons or Dropmenu
+#' @param wb A workbook object
+#' @param sheet A worksheet of the workbook
+#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
+#' @param type A type "Checkbox" (the default), "Radio" a radio button or "Drop" a drop down menu
+#' @param text A text to be shown next to the Checkbox or radio button
+#' @param link A cell range to link to
+#' @param range A cell range used as input
+#' @param checked A logical indicating if the Checkbox or radio button is checked
+#' @returns The `wbWorkbook` object
+#' @examples
+#' wb <- wb_workbook() %>% wb_add_worksheet() %>%
+#'   wb_add_form_control()
+#' @export
+wb_add_form_control <- function(
+    wb,
+    sheet   = current_sheet(),
+    dims    = "A1",
+    type    = NULL,
+    text    = NULL,
+    link    = NULL,
+    range   = NULL,
+    checked = FALSE
+) {
+
+  assert_workbook(wb)
+  wb$clone()$add_form_control(
+      sheet   = sheet,
+      dims    = dims,
+      type    = type,
+      text    = text,
+      link    = link,
+      range   = range,
+      checked = checked
+  )
+
+}
+
 #' Add conditional formatting to cells
 #'
 #' Add conditional formatting to cells
@@ -2592,10 +2766,10 @@ wb_remove_comment <- function(
 #'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr
 #'     `[rule]`\cr A `numeric` vector specifying the range of the databar colors. Must be equal length to `style`\cr\cr
 #'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
-#'     `[params$gradient]`\cr If `FALSE` colour gradient is removed. Default `TRUE`\cr\cr
+#'     `[params$gradient]`\cr If `FALSE` color gradient is removed. Default `TRUE`\cr\cr
 #'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE`
 #'   }
-#'   \item{duplicated}{
+#'   \item{duplicatedValues/uniqueValues/containsErrors}{
 #'     `[style]`\cr A `Style` object
 #'   }
 #'   \item{contains}{
@@ -2616,6 +2790,15 @@ wb_remove_comment <- function(
 #'     `[params$rank]`\cr A `numeric` vector of length `1` indicating number of lowest values. Default `5L`\cr\cr
 #'     `[params$percent]`\cr If `TRUE` uses percentage
 #'   }
+#'  \item{iconSet}{
+#'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
+#'     `[params$reverse]`\cr If `TRUE` the order is reversed. Default `FALSE`\cr\cr
+#'     `[params$percent]`\cr If `TRUE` uses percentage\cr\cr
+#'     `[params$iconSet]`\cr Uses one of the implemented icon sets. Values must match the length of the icons
+#'      in the set 3Arrows, 3ArrowsGray, 3Flags, 3Signs, 3Symbols, 3Symbols2, 3TrafficLights1, 3TrafficLights2,
+#'      4Arrows, 4ArrowsGray, 4Rating, 4RedToBlack, 4TrafficLights, 5Arrows, 5ArrowsGray, 5Quarters, 5Rating. The
+#'      default is 3TrafficLights1.
+#'  }
 #' }
 #'
 #' @examples
@@ -2631,8 +2814,13 @@ wb_add_conditional_formatting <- function(
     rows,
     rule = NULL,
     style = NULL,
-    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
-             "containsText", "notContainsText", "beginsWith", "endsWith",
+    type = c("expression", "colorScale",
+             "dataBar", "iconSet",
+             "duplicatedValues", "uniqueValues",
+             "containsErrors", "notContainsErrors",
+             "containsBlanks", "notContainsBlanks",
+             "containsText", "notContainsText",
+             "beginsWith", "endsWith",
              "between", "topN", "bottomN"),
     params = list(
       showValue = TRUE,

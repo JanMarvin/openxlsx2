@@ -25,8 +25,8 @@
 #' \itemize{
 #'   \item{**sheetName**}{ Name of the worksheet}
 #'   \item{**gridLines**}{ A logical. If `FALSE`, the worksheet grid lines will be hidden.}
-#'   \item{**tabColour**}{ Colour of the worksheet tab. A valid colour (belonging to colours())
-#'   or a valid hex colour beginning with "#".}
+#'   \item{**tabColor**}{ Color of the worksheet tab. A valid color (belonging to colors())
+#'   or a valid hex color beginning with "#".}
 #'   \item{**zoom**}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
 #' }
 #'
@@ -106,7 +106,7 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   #---add_worksheet---#
   ## sheetName
   ## gridLines
-  ## tabColour = NULL
+  ## tabColor = NULL
   ## zoom = 100
   ## header = NULL
   ## footer = NULL
@@ -166,9 +166,11 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
     }
   }
 
-  tabColour <- NULL
-  if ("tabColour" %in% names(params)) {
-    tabColour <- params$tabColour
+  tabColor <- NULL
+  if ("tabColor" %in% names(params)) {
+    tabColor <- params$tabColor
+  } else if ("tabColor" %in% names(params)) {
+    tabColor <- params$tabColor
   }
 
   zoom <- 100
@@ -315,9 +317,9 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   }
 
   ## make all inputs as long as the list
-  if (!is.null(tabColour)) {
-    if (length(tabColour) != nSheets) {
-      tabColour <- rep_len(tabColour, length.out = nSheets)
+  if (!is.null(tabColor)) {
+    if (length(tabColor) != nSheets) {
+      tabColor <- rep_len(tabColor, length.out = nSheets)
     }
   }
 
@@ -363,7 +365,7 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   }
 
   for (i in seq_len(nSheets)) {
-    wb$add_worksheet(nms[[i]], gridLines = gridLines[i], tabColour = tabColour[i], zoom = zoom[i])
+    wb$add_worksheet(nms[[i]], gridLines = gridLines[i], tabColor = tabColor[i], zoom = zoom[i])
 
     if (asTable[i]) {
       write_datatable(

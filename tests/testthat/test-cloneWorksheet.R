@@ -57,3 +57,48 @@ test_that("clone Worksheet with table", {
   expect_equal(got, exp)
 
 })
+
+test_that("copy cells", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = mtcars)$
+    add_fill(dims = "A1:F1", color = wb_color("yellow"))
+
+  dat <- wb_data(wb, dims = "A1:D4", colNames = FALSE)
+
+  # FIXME there is a bug with next_sheet() in clone_worksheets()
+  wb$
+    # 1:1 copy to M2
+    clone_worksheet(old = 1, new = "Clone1")$
+    copy_cells(data = dat, dims = "M2", as_value = FALSE, as_ref = FALSE, transpose = FALSE)$
+    # 1:1 transposed copy to A20
+    clone_worksheet(old = 1, new = "Clone2")$
+    copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = FALSE, transpose = TRUE)$
+    # reference transposed copy to A20
+    clone_worksheet(old = 1, new = "Clone3")$
+    copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = TRUE, transpose = TRUE)$
+    # value copy to A20
+    clone_worksheet(old = 1, new = "Clone4")$
+    copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = FALSE)$
+    # transposed value copy to A20
+    clone_worksheet(old = 1, new = "Clone5")$
+    copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = TRUE)
+
+  got <- wb_data(wb, sheet = 2, dims = "M2:P5", colNames = FALSE)
+  expect_equal(dat, got, ignore_attr = TRUE)
+
+  got <- wb_data(wb, sheet = 3, dims = "A20:D23", colNames = FALSE)
+  expect_equal(unlist(t(dat)), unlist(got), ignore_attr = TRUE)
+
+  exp <- c("'Sheet 1'!A1", "'Sheet 1'!B1", "'Sheet 1'!C1", "'Sheet 1'!D1")
+  got <- wb_data(wb, sheet = 4, dims = "A20:D23", colNames = FALSE, showFormula = TRUE)[[1]]
+  expect_equal(exp, got)
+
+  got <- wb_data(wb, sheet = 5, dims = "A20:D23", colNames = FALSE)
+  expect_equal(dat, got, ignore_attr = TRUE)
+
+  got <- wb_data(wb, sheet = 6, dims = "A20:D23", colNames = FALSE)
+  expect_equal(unlist(t(dat)), unlist(got), ignore_attr = TRUE)
+
+})

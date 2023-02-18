@@ -79,6 +79,8 @@ A Worksheet
 
 \item{\code{drawingHF}}{drawingHF}
 
+\item{\code{relships}}{relships}
+
 \item{\code{ignoredErrors}}{ignoredErrors}
 
 \item{\code{phoneticPr}}{phoneticPr}
@@ -125,7 +127,7 @@ A Worksheet
 Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
-  tabColour = NULL,
+  tabColor = NULL,
   oddHeader = NULL,
   oddFooter = NULL,
   evenHeader = NULL,
@@ -143,7 +145,7 @@ Creates a new \code{wbWorksheet} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{tabColour}}{tabColour}
+\item{\code{tabColor}}{tabColor}
 
 \item{\code{oddHeader}}{oddHeader}
 

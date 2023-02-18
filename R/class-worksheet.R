@@ -105,6 +105,9 @@ wbWorksheet <- R6::R6Class(
     #' @field drawingHF drawingHF
     drawingHF = character(),
 
+    #' @field relships relships
+    relships = NULL,
+
     #' @field ignoredErrors ignoredErrors
     ignoredErrors = character(),
 
@@ -137,7 +140,7 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorksheet` object
-    #' @param tabColour tabColour
+    #' @param tabColor tabColor
     #' @param oddHeader oddHeader
     #' @param oddFooter oddFooter
     #' @param evenHeader evenHeader
@@ -151,7 +154,7 @@ wbWorksheet <- R6::R6Class(
     #' @param printGridLines printGridLines
     #' @return a `wbWorksheet` object
     initialize = function(
-      tabColour   = NULL,
+      tabColor   = NULL,
       oddHeader   = NULL,
       oddFooter   = NULL,
       evenHeader  = NULL,
@@ -164,10 +167,10 @@ wbWorksheet <- R6::R6Class(
       vdpi        = 300,
       printGridLines = FALSE
     ) {
-      if (!is.null(tabColour)) {
-        tabColour <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColour)
+      if (!is.null(tabColor)) {
+        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColor)
       } else {
-        tabColour <- character()
+        tabColor <- character()
       }
 
       hf <- list(
@@ -189,7 +192,7 @@ wbWorksheet <- R6::R6Class(
       }
 
       ## list of all possible children
-      self$sheetPr               <- tabColour
+      self$sheetPr               <- tabColor
       self$dimension             <- '<dimension ref="A1"/>'
       self$sheetViews            <- character()
       self$sheetFormatPr         <- '<sheetFormatPr baseColWidth="8.43" defaultRowHeight="16" x14ac:dyDescent="0.2"/>'
@@ -212,6 +215,15 @@ wbWorksheet <- R6::R6Class(
       self$extLst                <- character()
       self$freezePane            <- character()
       self$sheet_data            <- wbSheetData$new()
+      self$relships              <- list(
+        comments         = integer(),
+        drawing          = integer(),
+        pivotTable       = integer(),
+        slicer           = integer(),
+        table            = integer(),
+        threadedComment  = integer(),
+        vmlDrawing       = integer()
+      )
 
       invisible(self)
     },

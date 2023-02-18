@@ -7,9 +7,10 @@
 wb_add_chartsheet(
   wb,
   sheet = next_sheet(),
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
-  visible = c("true", "false", "hidden", "visible", "veryhidden")
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 )
 }
 \arguments{
@@ -17,13 +18,15 @@ wb_add_chartsheet(
 
 \item{sheet}{A name for the new worksheet}
 
-\item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
-colours()) or a valid hex colour beginning with "#"}
+\item{tabColor}{Color of the worksheet tab. A valid color (belonging to
+colors()) or a valid hex color beginning with "#"}
 
 \item{zoom}{A numeric between 10 and 400. Worksheet zoom level as a
 percentage.}
 
 \item{visible}{If FALSE, sheet is hidden else visible.}
+
+\item{...}{...}
 }
 \description{
 Add a chartsheet to a workbook
@@ -39,8 +42,10 @@ Other workbook wrappers:
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
+\code{\link{wb_add_pivot_table}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
+\code{\link{wb_copy_cells}()},
 \code{\link{wb_creators}},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},

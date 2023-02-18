@@ -24,7 +24,8 @@ write_datatable(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = TRUE
 )
 }
 \arguments{
@@ -64,15 +65,17 @@ A vector of the form c(startCol, startRow)}
 
 \item{lastColumn}{logical. If TRUE, the last column is bold}
 
-\item{bandedRows}{logical. If TRUE, rows are colour banded}
+\item{bandedRows}{logical. If TRUE, rows are color banded}
 
-\item{bandedCols}{logical. If TRUE, the columns are colour banded}
+\item{bandedCols}{logical. If TRUE, the columns are color banded}
 
 \item{applyCellStyle}{apply styles when writing on the sheet}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 
 \item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
+
+\item{inline_strings}{write characters as inline strings}
 }
 \description{
 Write to a worksheet and format as an Excel table

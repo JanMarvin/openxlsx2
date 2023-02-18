@@ -569,8 +569,8 @@ test_that("add_drawing works", {
 
   exp <- list(
     character(0),
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing1.xml\"/>",
     "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing2.xml\"/>",
-    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing3.xml\"/>",
     character(0)
   )
   got <- wb$worksheets_rels
@@ -640,7 +640,39 @@ test_that("add_chartsheet works", {
   expect_equal(2L, nrow(wb$charts))
 
   exp <- "xdr:absoluteAnchor"
-  got <- xml_node_name(wb$drawings, "xdr:wsDr")
+  got <- xml_node_name(unlist(wb$drawings), "xdr:wsDr")
+  expect_equal(exp, got)
+
+})
+
+test_that("multiple charts on a sheet work as expected", {
+
+  skip_if_not_installed("mschart")
+
+  require(mschart)
+
+  ## Add mschart to worksheet (adds data and chart)
+  scatter <- ms_scatterchart(
+    data = iris,
+    x = "Sepal.Length",
+    y = "Sepal.Width",
+    group = "Species"
+  )
+  scatter <- chart_settings(scatter, scatterstyle = "marker")
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_mschart(dims = "F4:L20", graph = scatter) %>%
+    wb_add_mschart(dims = "F24:L40", graph = scatter) %>%
+    wb_add_worksheet() %>%
+    wb_add_mschart(dims = "F4:L20", graph = scatter) %>%
+    wb_add_mschart(dims = "F24:L40", graph = scatter)
+
+  exp <- c(TRUE, TRUE)
+  got <- grepl(pattern = "<c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId1\"/>", wb$drawings)
+  expect_equal(exp, got)
+
+  got <- grepl(pattern = "<c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId2\"/>", wb$drawings)
   expect_equal(exp, got)
 
 })

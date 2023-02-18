@@ -312,9 +312,21 @@ test_that("wb_add_data_table() is a wrapper", {
   expect_wrapper("add_data_table", wb = wb, params = list(sheet = 1, x = data.frame(x = 1)))
 })
 
+test_that("wb_add_pivot_table() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+  df <- wb_data(wb)
+  expect_wrapper("add_pivot_table", wb = wb, params = list(x = df, data = "disp"))
+})
+
 test_that("wb_add_formula() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
+})
+
+test_that("wb_copy_cells() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)$add_data(x = "1")
+  dat <- wb_data(wb, 1, dims = "A1", colNames = FALSE)
+  expect_wrapper("copy_cells",     wb = wb, params = list(sheet = 1, data = dat, dims = "B1"))
 })
 
 # wb_add_comment() --------------------------------------------------------
@@ -348,6 +360,16 @@ test_that("wb_remove_comment() is a wrapper", {
     params = list(dims = "A1")
   )
 
+})
+
+# wb_add_form_control() ---------------------------------------------------
+
+test_that("wb_add_form_control() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_wrapper(
+    "add_form_control",
+    wb = wb
+  )
 })
 
 # wb_add_conditional_formatting() -----------------------------------------

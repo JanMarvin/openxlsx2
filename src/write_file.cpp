@@ -248,5 +248,5 @@ void write_xmlPtr(
 ) {
   unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
   const bool success = doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
-  if (!success) Rf_error("could not save file");
+  if (!success) Rcpp::stop("could not save file");
 }

@@ -9,7 +9,7 @@ wb_add_worksheet(
   sheet = next_sheet(),
   gridLines = TRUE,
   rowColHeaders = TRUE,
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
   header = NULL,
   footer = NULL,
@@ -24,7 +24,8 @@ wb_add_worksheet(
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 )
 }
 \arguments{
@@ -38,8 +39,8 @@ hidden.}
 \item{rowColHeaders}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
 hidden.}
 
-\item{tabColour}{Colour of the worksheet tab. A valid colour (belonging to
-colours()) or a valid hex colour beginning with "#"}
+\item{tabColor}{Color of the worksheet tab. A valid color (belonging to
+colors()) or a valid hex color beginning with "#"}
 
 \item{zoom}{A numeric between 10 and 400. Worksheet zoom level as a
 percentage.}
@@ -63,6 +64,8 @@ options("openxlsx2.hdpi" = X)}
 
 \item{vdpi}{Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
 options("openxlsx2.vdpi" = X)}
+
+\item{...}{...}
 }
 \value{
 The \link{wbWorkbook} object \code{wb}
@@ -84,8 +87,8 @@ wb <- wb_workbook("Fred")
 ## Add 3 worksheets
 wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2", gridLines = FALSE)
-wb$add_worksheet("Sheet 3", tabColour = "red")
-wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColour = "#4F81BD")
+wb$add_worksheet("Sheet 3", tabColor = "red")
+wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColor = "#4F81BD")
 
 ## Headers and Footers
 wb$add_worksheet("Sheet 5",
@@ -126,7 +129,9 @@ Other workbook wrappers:
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
+\code{\link{wb_add_pivot_table}()},
 \code{\link{wb_clone_worksheet}()},
+\code{\link{wb_copy_cells}()},
 \code{\link{wb_creators}},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},

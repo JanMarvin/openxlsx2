@@ -21,7 +21,8 @@ wb_add_data(
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = TRUE
 )
 
 write_data(
@@ -40,7 +41,8 @@ write_data(
   name = NULL,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings
+  na.strings,
+  inline_strings = TRUE
 )
 }
 \arguments{
@@ -77,6 +79,8 @@ write_data(
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 
 \item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
+
+\item{inline_strings}{write characters as inline strings}
 }
 \value{
 A clone of `wb``
@@ -158,8 +162,10 @@ Other workbook wrappers:
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_formula}()},
+\code{\link{wb_add_pivot_table}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
+\code{\link{wb_copy_cells}()},
 \code{\link{wb_creators}},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},

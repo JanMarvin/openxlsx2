@@ -9,7 +9,7 @@ wb_add_font(
   sheet = current_sheet(),
   dims = "A1",
   name = "Calibri",
-  color = wb_colour(hex = "FF000000"),
+  color = wb_color(hex = "FF000000"),
   size = "11",
   bold = "",
   italic = "",
@@ -22,7 +22,8 @@ wb_add_font(
   family = "",
   scheme = "",
   shadow = "",
-  vertAlign = ""
+  vertAlign = "",
+  ...
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ wb_add_font(
 \item{shadow}{shadow}
 
 \item{vertAlign}{vertical alignment}
+
+\item{...}{...}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly
@@ -73,7 +76,7 @@ add_font provides all the options openxml accepts for a font node, not all have 
 }
 \examples{
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
- wb \%>\% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
+ wb \%>\% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 }
 \seealso{
 Other styles: 

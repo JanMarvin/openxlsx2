@@ -29,8 +29,8 @@ long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
-wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref) {
-    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref))
+wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings) {
+    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings))
 }
 
 #' @param colnames a vector of the names of the data frame
@@ -38,6 +38,15 @@ wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref) {
 #' @noRd
 create_char_dataframe <- function(colnames, n) {
     .Call(`_openxlsx2_create_char_dataframe`, colnames, n)
+}
+
+#' We use file.exists() to check if a file path is valid. On Windows our input
+#' can be to long, in this case we have to abort, otherwise file.exists() will
+#' throw an error
+#' @param path the file path used in file.exists()
+#' @noRd
+to_long <- function(path) {
+    .Call(`_openxlsx2_to_long`, path)
 }
 
 col_to_df <- function(doc) {
@@ -224,20 +233,24 @@ xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
 }
 
-si_to_txt <- function(doc) {
-    .Call(`_openxlsx2_si_to_txt`, doc)
-}
-
-txt_to_si <- function(txt, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
-    .Call(`_openxlsx2_txt_to_si`, txt, no_escapes, raw, skip_control)
+xml_si_to_txt <- function(doc) {
+    .Call(`_openxlsx2_xml_si_to_txt`, doc)
 }
 
 is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
 }
 
+si_to_txt <- function(si_vec) {
+    .Call(`_openxlsx2_si_to_txt`, si_vec)
+}
+
 txt_to_is <- function(text, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
     .Call(`_openxlsx2_txt_to_is`, text, no_escapes, raw, skip_control)
+}
+
+txt_to_si <- function(text, no_escapes = FALSE, raw = TRUE, skip_control = TRUE) {
+    .Call(`_openxlsx2_txt_to_si`, text, no_escapes, raw, skip_control)
 }
 
 read_xf <- function(xml_doc_xf) {

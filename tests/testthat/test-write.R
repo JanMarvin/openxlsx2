@@ -11,7 +11,7 @@ test_that("write_formula", {
          v = "", f = "SUM(C2:C11*D2:D11)",
          f_t = "array", f_ref = "E2:E2",
          f_ca = "", f_si = "",
-         is = "", typ = ""),
+         is = "", typ = "11"),
     row.names = 23L, class = "data.frame")
 
   # write data add array formula later
@@ -236,8 +236,8 @@ test_that("update cell(s)", {
                         f_ca = c("", "", "", "", "", ""),
                         f_si = c("", "", "", "", "", ""),
                         is = c("", "", "", "", "", ""),
-                        typ = c("3", "", "", "", "", "")),
-                   row.names = c("1", "8", "17", "114", "121", "128"),
+                        typ = c("4", "4", "4", "4", "4", "4")),
+                   row.names = 1:6,
                    class = "data.frame")
   got <- head(wb$worksheets[[1]]$sheet_data$cc)
   expect_equal(exp, got)
@@ -318,5 +318,162 @@ test_that("writeData() forces evaluation of x (#264)", {
   )
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
   expect_equal(exp, got)
+
+})
+
+test_that("write character numerics with a correct cell style", {
+
+  ## current default
+  options("openxlsx2.string_nums" = 0)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+
+  exp <- NA_character_
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "4", "4", "4", "4")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  ## string numerics correctly flagged
+  options("openxlsx2.string_nums" = 1)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5")) %>%
+    wb_add_worksheet() %>%
+    wb_add_data(dims = "A1", x = "1992") %>%
+    wb_add_data(dims = "A2", x = 1992) %>%
+    wb_add_data(dims = "A3", x = "1992.a") %>%
+    wb_add_worksheet() %>%
+    wb_add_data(dims = "A1", x = 1e5) %>%
+    wb_add_data(dims = "A2", x = "1e5") %>%
+    wb_add_data(dims = "A3", x = 1e+05) %>%
+    wb_add_data(dims = "A4", x = "1e+05")
+
+  exp <- "<xf applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"49\" quotePrefix=\"1\" xfId=\"0\"/>"
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "13", "4", "4", "13")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  exp <- c("13", "2", "4")
+  got <- wb$worksheets[[2]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  exp <- c("2", "13", "2", "13")
+  got <- wb$worksheets[[3]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+
+  ## write string numerics as numerics (on the fly conversion)
+  options("openxlsx2.string_nums" = 2)
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+
+  exp <- NA_character_
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+  exp <- c("4", "2", "4", "4", "2")
+  got <- wb$worksheets[[1]]$sheet_data$cc$typ
+  expect_equal(exp, got)
+})
+
+test_that("writing as shared string works", {
+
+  df <- data.frame(
+    x = letters,
+    y = letters,
+    stringsAsFactors = FALSE
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = letters, dims = "A1", inline_strings = FALSE)$
+    add_data(x = letters, dims = "B1", inline_strings = FALSE)$
+    add_worksheet()$
+    add_data(x = letters, dims = "A1", inline_strings = TRUE)$
+    add_data(x = letters, dims = "B1", inline_strings = TRUE)$
+    add_worksheet()$
+    add_data_table(x = df, inline_strings = FALSE)$
+    add_worksheet()$
+    add_data_table(x = df, inline_strings = TRUE)
+
+  expect_equal(letters, wb_to_df(wb, colNames = FALSE)$A)
+  expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 2))
+  expect_equal(df, wb_to_df(wb, 3), ignore_attr = TRUE)
+  expect_equal(wb_to_df(wb, 3), wb_to_df(wb, 4))
+
+  expect_true(all(wb$worksheets[[1]]$sheet_data$cc$c_t == "s"))
+  expect_true(all(wb$worksheets[[2]]$sheet_data$cc$c_t == "inlineStr"))
+
+  # test missing cases in characters
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c("a", NA, "b", "NA"), dims = "A1", inline_strings = FALSE)$
+    add_worksheet()$
+    add_data(x = c("a", NA, "b", "NA"), dims = "A1", inline_strings = FALSE, na.strings = "N/A")$
+    add_worksheet()$
+    add_data(x = c("a", NA, "b", "NA"), dims = "A1", inline_strings = FALSE, na.strings = NULL)
+
+  exp <- structure(
+    list(c_t = "e", v = "#N/A"),
+    row.names = 2L,
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[1]]$sheet_data$cc[2, c("c_t", "v")]
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(c_t = "s", v = "3"),
+    row.names = 2L,
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[2]]$sheet_data$cc[2, c("c_t", "v")]
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(c_t = "", v = ""),
+    row.names = 2L,
+    class = "data.frame"
+  )
+  got <- wb$worksheets[[3]]$sheet_data$cc[2, c("c_t", "v")]
+  expect_equal(exp, got)
+
+  # test missing cases in numerics
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE)$
+    add_worksheet()$
+    add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE, na.strings = "N/A")$
+    add_worksheet()$
+    add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE, na.strings = NULL)
+
+  expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 3))
+  expect_equal("N/A", wb_to_df(wb, 2)[1, 1])
+
+})
+
+test_that("writing pivot tables works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = mtcars)
+
+  df <- wb_data(wb)
+
+  wb$add_pivot_table(df, dims = "A3", filter = "am", rows = "cyl", cols = "gear", data = "hp")
+  wb$add_pivot_table(df, dims = "A10", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = "count")
+  wb$add_pivot_table(df, dims = "A20", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = "average")
+  wb$add_pivot_table(df, dims = "A30", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = c("sum", "average"))
+
+  expect_equal(4L, length(wb$pivotTables))
 
 })
