@@ -1,10 +1,11 @@
 ARGB
 Arial
+ArrowsGray
 CMD
+COUNTA
 Calibri
 Calligra
 Colorscale
-Colour
 DL
 Databars
 ExcelDate
@@ -19,11 +20,16 @@ Openoffice
 POSIXct
 POSIXt
 Philipp
+RedToBlack
+STDEV
+STDEVP
 Schauberger
 Sparklines
 SuperA
 SuperB
 Textbox
+TrafficLights
+VARP
 activeTab
 addStyle
 allowBlank
@@ -31,6 +37,7 @@ applyCellStyle
 attr
 autoFilter
 autoFilterDateGrouping
+autocompletion
 bandedCols
 bandedRows
 bgFill
@@ -60,7 +67,6 @@ colorMarkers
 colorNegative
 colorSeries
 colour
-colours
 conditionalFormatting
 ctrlProps
 customMenu
@@ -111,7 +117,7 @@ firstRow
 firstSheet
 fitToHeight
 fitToWidth
-fontColour
+fontColor
 fontName
 fontSize
 freezePane
@@ -167,6 +173,7 @@ oddHeader
 oleObjects
 openxlsx
 openxml
+ou
 pageMargins
 pageSetup
 paperSize
@@ -241,7 +248,7 @@ startRow
 summaryCol
 summaryRow
 swiss
-tabColour
+tabColor
 tabRatio
 tabSelected
 tableName
@@ -253,6 +260,7 @@ threadComments
 threadedComments
 topLeftCell
 totalsRowCount
+unescaping
 ungroup
 unicode
 unprotect
@@ -262,6 +270,7 @@ veryHidden
 vm
 vml
 wb
+wbColour
 wbProcedure
 wbWorkbook
 webPublishItems

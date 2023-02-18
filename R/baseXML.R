@@ -48,6 +48,76 @@ genClientData <- function(col, row, visible, height, width) {
   return(txt)
 }
 
+# # TODO this should be merged with the one above for type Note
+#' Generates Client data xml string for use in wb_add_form_control
+#' @param left left
+#' @param top top
+#' @param right right
+#' @param bottom bottom
+#' @param link link (links this cell to the state to the form control)
+#' @param range range (input cell range)
+#' @param type type (Checkbox, Radio, Drop)
+#' @param checked checked (bool)
+#' @keywords internal
+#' @noRd
+genClientDataFC <- function(left, top, right, bottom, link, range, type, checked) {
+
+  if (is.null(link)) {
+    link <- ""
+  } else {
+    link <- sprintf("<x:FmlaLink>%s</x:FmlaLink>", link)
+  }
+
+  if (is.null(range) || type != "Drop") {
+    range <- ""
+  } else {
+    range <- sprintf("<x:FmlaRange>%s</x:FmlaRange>", range)
+  }
+
+  if (type == "Drop") {
+    drop <- '<x:LCT>Normal</x:LCT>
+    <x:DropStyle>Combo</x:DropStyle>
+    <x:DropLines>8</x:DropLines>'
+  } else {
+    drop <- ""
+  }
+
+  # Anchor:
+  # - LeftColumn: Index column starts at 0
+  # - LeftOffset: Offset in pxl
+  # - TopRow: Index column starts at 0
+  # - TopOffset
+  # - RightColumn
+  # - RightOffset
+  # - BottomRow
+  # - BottomOffset
+
+  txt <- sprintf(
+    '<x:ClientData ObjectType="%s">
+    <x:MoveWithCells/><x:SizeWithCells/>
+    <x:Anchor>%s, 0, %s, 0, %s, 0, %s, 0</x:Anchor>
+    <x:AutoFill>False</x:AutoFill>
+    <x:AutoLine>False</x:AutoLine>
+    <x:TextVAlign>Center</x:TextVAlign>
+    %s %s
+    <x:Checked>%s</x:Checked>
+    <x:NoThreeD />
+    %s
+    </x:ClientData>',
+    type,
+    max(0, left),
+    max(0, top),
+    max(1, right),
+    max(1, bottom),
+    link,
+    range,
+    as_binary(checked),
+    drop
+  )
+
+  return(txt)
+}
+
 genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL) {
   core <- '<coreProperties xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
 
@@ -483,20 +553,20 @@ genBaseTheme <- function() {
   )
 }
 
-gen_databar_extlst <- function(guid, sqref, posColour, negColour, values, border, gradient) {
+gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, border, gradient) {
   xml <- sprintf('<x14:cfRule type="dataBar" id="{%s}"><x14:dataBar minLength="0" maxLength="100" border="%s" gradient = "%s" negativeBarBorderColorSameAsPositive="0">', guid, border, gradient)
 
   if (is.null(values)) {
     xml <- sprintf('<ext uri="{78C0D931-6437-407d-A8EE-F0AAD7539E65}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:conditionalFormattings><x14:conditionalFormatting xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
                       %s
                       <x14:cfvo type="autoMin"/><x14:cfvo type="autoMax"/><x14:borderColor rgb="%s"/><x14:negativeFillColor rgb="%s"/><x14:negativeBorderColor rgb="%s"/><x14:axisColor rgb="FF000000"/>
-                      </x14:dataBar></x14:cfRule><xm:sqref>%s</xm:sqref></x14:conditionalFormatting></x14:conditionalFormattings></ext>', xml, posColour, negColour, negColour, sqref)
+                      </x14:dataBar></x14:cfRule><xm:sqref>%s</xm:sqref></x14:conditionalFormatting></x14:conditionalFormattings></ext>', xml, posColor, negColor, negColor, sqref)
   } else {
     xml <- sprintf('<ext uri="{78C0D931-6437-407d-A8EE-F0AAD7539E65}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:conditionalFormattings><x14:conditionalFormatting xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
                       %s
                       <x14:cfvo type="num"><xm:f>%s</xm:f></x14:cfvo><x14:cfvo type="num"><xm:f>%s</xm:f></x14:cfvo>
                       <x14:borderColor rgb="%s"/><x14:negativeFillColor rgb="%s"/><x14:negativeBorderColor rgb="%s"/><x14:axisColor rgb="FF000000"/>
-                      </x14:dataBar></x14:cfRule><xm:sqref>%s</xm:sqref></x14:conditionalFormatting></x14:conditionalFormattings></ext>', xml, values[[1]], values[[2]], posColour, negColour, negColour, sqref)
+                      </x14:dataBar></x14:cfRule><xm:sqref>%s</xm:sqref></x14:conditionalFormatting></x14:conditionalFormattings></ext>', xml, values[[1]], values[[2]], posColor, negColor, negColor, sqref)
   }
 
   return(xml)
@@ -1032,7 +1102,10 @@ styleplot_xml <- paste0('<cs:chartStyle xmlns:cs="http://schemas.microsoft.com/o
 </cs:chartStyle>')
 
 
-drawings <- function(drawing_id) {
+drawings <- function(drawings, drawing_id) {
+
+
+  rel_len <- length(xml_node(drawings, "Relationship"))
 
   drawings <- xml_node_create(
     xml_name = "xdr:wsDr",
@@ -1073,7 +1146,7 @@ drawings <- function(drawing_id) {
         <xdr:clientData />
       </xdr:absoluteAnchor>',
       drawing_id,
-      drawing_id
+      rel_len + 1L
     )
   )
 
@@ -1114,4 +1187,278 @@ drawings_rels <- function(drawings, x) {
   )
 
   return(drawings)
+}
+
+formCntrlDrawing <- function(type, len) {
+  if (type == "Checkbox") {
+      drawing <- read_xml(
+        sprintf(
+          '<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+          <mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+          <mc:Choice xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" Requires="a14">
+          <xdr:twoCellAnchor editAs="oneCell">
+          <xdr:from>
+          <xdr:col>0</xdr:col>
+          <xdr:colOff>0</xdr:colOff>
+          <xdr:row>2</xdr:row>
+          <xdr:rowOff>0</xdr:rowOff>
+          </xdr:from>
+          <xdr:to>
+          <xdr:col>2</xdr:col>
+          <xdr:colOff>0</xdr:colOff>
+          <xdr:row>4</xdr:row>
+          <xdr:rowOff>0</xdr:rowOff>
+          </xdr:to>
+          <xdr:sp macro="" textlink="">
+          <xdr:nvSpPr>
+          <xdr:cNvPr id="%s" name="Check Box 1" hidden="1">
+          <a:extLst>
+          <a:ext uri="{63B3BB69-23CF-44E3-9099-%s}">
+          <a14:compatExt spid="_x0000_s1025"/>
+          </a:ext>
+          <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-%s}">
+          <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{1EEBA38D-B81F-E55E-AFDB-%s}"/>
+          </a:ext>
+          </a:extLst>
+          </xdr:cNvPr>
+          <xdr:cNvSpPr/>
+          </xdr:nvSpPr>
+          <xdr:spPr bwMode="auto">
+          <a:xfrm>
+          <a:off x="0" y="0"/>
+          <a:ext cx="0" cy="0"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+          <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln>
+          <a:noFill/>
+          </a:ln>
+          <a:extLst>
+          <a:ext uri="{909E8E84-426E-40DD-AFC4-%s}">
+          <a14:hiddenFill>
+          <a:solidFill>
+          <a:srgbClr val="FFFFFF" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="65"/>
+          </a:solidFill>
+          </a14:hiddenFill>
+          </a:ext>
+          <a:ext uri="{91240B29-F687-4F45-9708-%s}">
+          <a14:hiddenLine w="9525">
+          <a:solidFill>
+          <a:srgbClr val="000000" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="64"/>
+          </a:solidFill>
+          <a:miter lim="800000"/>
+          <a:headEnd/>
+          <a:tailEnd/>
+          </a14:hiddenLine>
+          </a:ext>
+          </a:extLst>
+          </xdr:spPr>
+          <xdr:txBody>
+          <a:bodyPr vertOverflow="clip" wrap="square" lIns="27432" tIns="22860" rIns="0" bIns="22860" anchor="ctr" upright="1"/>
+          <a:lstStyle/>
+          <a:p>
+          <a:pPr algn="l" rtl="0">
+          <a:defRPr sz="1000"/>
+          </a:pPr>
+          <a:r>
+          <a:rPr lang="en-GB" sz="1300" b="0" i="0" u="none" strike="noStrike" baseline="0">
+          <a:solidFill>
+          <a:srgbClr val="000000"/>
+          </a:solidFill>
+          <a:latin typeface="Lucida Grande" charset="0"/>
+          <a:cs typeface="Lucida Grande" charset="0"/>
+          </a:rPr>
+          <a:t>Check Box 1</a:t>
+          </a:r>
+          </a:p>
+          </xdr:txBody>
+          </xdr:sp>
+          <xdr:clientData/>
+          </xdr:twoCellAnchor>
+          </mc:Choice>
+          <mc:Fallback/>
+          </mc:AlternateContent>
+          </xdr:wsDr>',
+          len,
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12)
+          ), pointer = FALSE
+      )
+      } else if (type == "Radio") {
+        drawing <- read_xml(
+          sprintf(
+            '<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+            <mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+            <mc:Choice xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" Requires="a14">
+            <xdr:twoCellAnchor editAs="oneCell">
+            <xdr:from>
+            <xdr:col>0</xdr:col>
+            <xdr:colOff>800100</xdr:colOff>
+            <xdr:row>7</xdr:row>
+            <xdr:rowOff>114300</xdr:rowOff>
+            </xdr:from>
+            <xdr:to>
+            <xdr:col>2</xdr:col>
+            <xdr:colOff>673100</xdr:colOff>
+            <xdr:row>9</xdr:row>
+            <xdr:rowOff>88900</xdr:rowOff>
+            </xdr:to>
+            <xdr:sp macro="" textlink="">
+            <xdr:nvSpPr>
+            <xdr:cNvPr id="%s" name="Option Button 2" hidden="1">
+            <a:extLst>
+            <a:ext uri="{63B3BB69-23CF-44E3-9099-%s}">
+            <a14:compatExt spid="_x0000_s1026" />
+            </a:ext>
+            <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-%s}">
+            <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{BF281B22-8B3D-E7A6-DB69-%s}" />
+            </a:ext>
+            </a:extLst>
+            </xdr:cNvPr>
+            <xdr:cNvSpPr />
+            </xdr:nvSpPr>
+            <xdr:spPr bwMode="auto">
+            <a:xfrm>
+            <a:off x="0" y="0" />
+            <a:ext cx="0" cy="0" />
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+            <a:avLst />
+            </a:prstGeom>
+            <a:noFill />
+            <a:ln>
+            <a:noFill />
+            </a:ln>
+            <a:extLst>
+            <a:ext uri="{909E8E84-426E-40DD-AFC4-%s}">
+            <a14:hiddenFill>
+            <a:solidFill>
+            <a:srgbClr val="FFFFFF" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="65" />
+            </a:solidFill>
+            </a14:hiddenFill>
+            </a:ext>
+            <a:ext uri="{91240B29-F687-4F45-9708-%s}">
+            <a14:hiddenLine w="9525">
+            <a:solidFill>
+            <a:srgbClr val="000000" mc:Ignorable="a14" a14:legacySpreadsheetColorIndex="64" />
+            </a:solidFill>
+            <a:miter lim="800000" />
+            <a:headEnd />
+            <a:tailEnd />
+            </a14:hiddenLine>
+            </a:ext>
+            </a:extLst>
+            </xdr:spPr>
+            <xdr:txBody>
+            <a:bodyPr vertOverflow="clip" wrap="square" lIns="27432" tIns="22860" rIns="0" bIns="22860" anchor="ctr" upright="1" />
+            <a:lstStyle />
+            <a:p>
+            <a:pPr algn="l" rtl="0">
+            <a:defRPr sz="1000" />
+            </a:pPr>
+            <a:r>
+            <a:rPr lang="en-GB" sz="1300" b="0" i="0" u="none" strike="noStrike" baseline="0">
+            <a:solidFill>
+            <a:srgbClr val="000000" />
+            </a:solidFill>
+            <a:latin typeface="Lucida Grande" charset="0" />
+            <a:cs typeface="Lucida Grande" charset="0" />
+            </a:rPr>
+            <a:t>Option Button 2</a:t>
+            </a:r>
+            </a:p>
+            </xdr:txBody>
+            </xdr:sp>
+            <xdr:clientData />
+            </xdr:twoCellAnchor>
+            </mc:Choice>
+            <mc:Fallback />
+            </mc:AlternateContent>
+            </xdr:wsDr>',
+          len,
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12)
+          ), pointer = FALSE
+      )
+      } else if (type == "Drop") {
+        drawing <- read_xml(
+          sprintf(
+            '<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+            <mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+            <mc:Choice xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" Requires="a14">
+            <xdr:twoCellAnchor editAs="oneCell">
+            <xdr:from>
+            <xdr:col>5</xdr:col>
+            <xdr:colOff>139700</xdr:colOff>
+            <xdr:row>3</xdr:row>
+            <xdr:rowOff>76200</xdr:rowOff>
+            </xdr:from>
+            <xdr:to>
+            <xdr:col>7</xdr:col>
+            <xdr:colOff>774700</xdr:colOff>
+            <xdr:row>7</xdr:row>
+            <xdr:rowOff>25400</xdr:rowOff>
+            </xdr:to>
+            <xdr:sp macro="" textlink="">
+            <xdr:nvSpPr>
+            <xdr:cNvPr id="%s" name="Drop Down 5" hidden="1">
+            <a:extLst>
+            <a:ext uri="{63B3BB69-23CF-44E3-9099-%s}">
+            <a14:compatExt spid="_x0000_s1029"/>
+            </a:ext>
+            <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-%s}">
+            <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{AAC003F9-B5A3-DB5D-22B2-%s}"/>
+            </a:ext>
+            </a:extLst>
+            </xdr:cNvPr>
+            <xdr:cNvSpPr/>
+            </xdr:nvSpPr>
+            <xdr:spPr bwMode="auto">
+            <a:xfrm>
+            <a:off x="0" y="0"/>
+            <a:ext cx="0" cy="0"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+            <a:avLst/>
+            </a:prstGeom>
+            <a:noFill/>
+            <a:ln>
+            <a:noFill/>
+            </a:ln>
+            <a:extLst>
+            <a:ext uri="{91240B29-F687-4F45-9708-%s}">
+            <a14:hiddenLine w="9525">
+            <a:noFill/>
+            <a:miter lim="800000"/>
+            <a:headEnd/>
+            <a:tailEnd/>
+            </a14:hiddenLine>
+            </a:ext>
+            </a:extLst>
+            </xdr:spPr>
+            </xdr:sp>
+            <xdr:clientData/>
+            </xdr:twoCellAnchor>
+            </mc:Choice>
+            <mc:Fallback/>
+            </mc:AlternateContent>
+            </xdr:wsDr>',
+          len,
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12),
+          random_string(length = 12)
+          ), pointer = FALSE
+      )
+      }
+
+  drawing
 }

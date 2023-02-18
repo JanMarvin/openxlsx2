@@ -3,7 +3,7 @@
 
 // converts sharedstrings xml tree to R-Character Vector
 // [[Rcpp::export]]
-SEXP si_to_txt(XPtrXML doc) {
+SEXP xml_si_to_txt(XPtrXML doc) {
 
   auto sst = doc->child("sst");
   auto n = std::distance(sst.begin(), sst.end());
@@ -37,62 +37,23 @@ SEXP si_to_txt(XPtrXML doc) {
   return res;
 }
 
+SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
 
-// [[Rcpp::export]]
-std::string txt_to_si(Rcpp::CharacterVector txt,
-                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
-
-  pugi::xml_document doc;
-
-  unsigned int pugi_format_flags = pugi::format_indent;
-  if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
-  if (raw)  pugi_format_flags |= pugi::format_raw;
-  if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
-
-  pugi::xml_node si_node = doc.append_child("si");
-
-  auto i = 0;
-  for (auto si = 0; si < txt.length(); ++si)
-  {
-    // text to export
-    std::string text = Rcpp::as<std::string>(txt(si));
-    pugi::xml_node t_node = si_node.append_child("t");
-
-    if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size()-1)))) {
-      t_node.append_attribute("xml:space").set_value("preserve");
-    }
-    t_node.append_child(pugi::node_pcdata).set_value(text.c_str());
-
-    ++i;
-  }
-
-  std::ostringstream oss;
-  doc.print(oss, " ", pugi_format_flags);
-  std::string xml_return = oss.str();
-
-  return xml_return;
-}
-
-
-// converts inlineStr xml tree to R-Character Vector
-// [[Rcpp::export]]
-SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
-
-  auto n = is_vec.length();
+  auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));
 
   for (auto i = 0; i < n; ++i) {
 
-    std::string tmp = Rcpp::as<std::string>(is_vec[i]);
+    std::string tmp = Rcpp::as<std::string>(vec[i]);
 
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_string(tmp.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
 
     if (!result) {
-      Rcpp::stop("inlineStr xml import unsuccessfull");
+      Rcpp::stop(type.c_str(), " xml import unsuccessfull");
     }
 
-    for (auto is : doc.children("is"))
+    for (auto is : doc.children(type.c_str()))
     {
       // text to export
       std::string text = "";
@@ -116,7 +77,7 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
       }
 
       // push everything back
-      res[i] = text;
+      res[i] = Rcpp::String(text);
     }
 
   }
@@ -124,10 +85,23 @@ SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
   return res;
 }
 
+// [[Rcpp::export]]
+SEXP is_to_txt(Rcpp::CharacterVector is_vec) {
+  return xml_to_txt(is_vec, "is");
+}
 
 // [[Rcpp::export]]
-std::string txt_to_is(std::string text,
-                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
+SEXP si_to_txt(Rcpp::CharacterVector si_vec) {
+  return xml_to_txt(si_vec, "si");
+}
+
+std::string txt_to_xml(
+    std::string text,
+    bool no_escapes,
+    bool raw,
+    bool skip_control,
+    std::string type
+) {
 
   pugi::xml_document doc;
 
@@ -136,7 +110,7 @@ std::string txt_to_is(std::string text,
   if (raw)  pugi_format_flags |= pugi::format_raw;
   if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
 
-  pugi::xml_node is_node = doc.append_child("is");
+  pugi::xml_node is_node = doc.append_child(type.c_str());
 
   // text to export
   pugi::xml_node t_node = is_node.append_child("t");;
@@ -152,4 +126,16 @@ std::string txt_to_is(std::string text,
   std::string xml_return = oss.str();
 
   return xml_return;
+}
+
+// [[Rcpp::export]]
+std::string txt_to_is(std::string text,
+                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
+  return txt_to_xml(text, no_escapes, raw, skip_control, "is");
+}
+
+// [[Rcpp::export]]
+std::string txt_to_si(std::string text,
+                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
+  return txt_to_xml(text, no_escapes, raw, skip_control, "si");
 }

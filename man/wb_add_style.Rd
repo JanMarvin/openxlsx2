@@ -17,8 +17,8 @@ wb_add_style(wb, style = NULL, style_name = NULL)
 wb wrapper to add style to workbook
 }
 \examples{
-yellow_f <- wb_colour(hex = "FF9C6500")
-yellow_b <- wb_colour(hex = "FFFFEB9C")
+yellow_f <- wb_color(hex = "FF9C6500")
+yellow_b <- wb_color(hex = "FFFFEB9C")
 
 yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
 wb <- wb_workbook() \%>\% wb_add_style(yellow)

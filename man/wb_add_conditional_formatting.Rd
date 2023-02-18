@@ -12,8 +12,10 @@ wb_add_conditional_formatting(
   rows,
   rule = NULL,
   style = NULL,
-  type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
-    "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
+  type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
+    "uniqueValues", "containsErrors", "notContainsErrors", "containsBlanks",
+    "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
+    "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
     5L)
 )
@@ -71,10 +73,10 @@ unlisted parameters are ignored.
 \verb{[style]}\cr A \code{character} vector of valid colors with length \code{2} or \code{3}\cr\cr
 \verb{[rule]}\cr A \code{numeric} vector specifying the range of the databar colors. Must be equal length to \code{style}\cr\cr
 \verb{[params$showValue]}\cr If \code{FALSE} the cell value is hidden. Default \code{TRUE}\cr\cr
-\verb{[params$gradient]}\cr If \code{FALSE} colour gradient is removed. Default \code{TRUE}\cr\cr
+\verb{[params$gradient]}\cr If \code{FALSE} color gradient is removed. Default \code{TRUE}\cr\cr
 \verb{[params$border]}\cr If \code{FALSE} the border around the database is hidden. Default \code{TRUE}
 }
-\item{duplicated}{
+\item{duplicatedValues/uniqueValues/containsErrors}{
 \verb{[style]}\cr A \code{Style} object
 }
 \item{contains}{
@@ -94,6 +96,15 @@ unlisted parameters are ignored.
 \verb{[style]}\cr A \code{Style} object\cr\cr
 \verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of lowest values. Default \code{5L}\cr\cr
 \verb{[params$percent]}\cr If \code{TRUE} uses percentage
+}
+\item{iconSet}{
+\verb{[params$showValue]}\cr If \code{FALSE} the cell value is hidden. Default \code{TRUE}\cr\cr
+\verb{[params$reverse]}\cr If \code{TRUE} the order is reversed. Default \code{FALSE}\cr\cr
+\verb{[params$percent]}\cr If \code{TRUE} uses percentage\cr\cr
+\verb{[params$iconSet]}\cr Uses one of the implemented icon sets. Values must match the length of the icons
+in the set 3Arrows, 3ArrowsGray, 3Flags, 3Signs, 3Symbols, 3Symbols2, 3TrafficLights1, 3TrafficLights2,
+4Arrows, 4ArrowsGray, 4Rating, 4RedToBlack, 4TrafficLights, 5Arrows, 5ArrowsGray, 5Quarters, 5Rating. The
+default is 3TrafficLights1.
 }
 }
 }

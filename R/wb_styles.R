@@ -109,6 +109,7 @@ import_styles <- function(x) {
 #' @param top x
 #' @param top_color x
 #' @param vertical x
+#' @param ... x
 #'
 #' @export
 create_border <- function(
@@ -128,8 +129,11 @@ create_border <- function(
     start = "",
     top = NULL,
     top_color = NULL,
-    vertical = ""
+    vertical = "",
+    ...
 ) {
+
+  standardize_color_names(...)
 
   if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
   if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
@@ -202,6 +206,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' @param sz font size: default "11",
 #' @param u underline
 #' @param vertAlign vertical alignment
+#' @param ... ...
 #' @examples
 #' font <- create_font()
 #' # openxml has the alpha value leading
@@ -215,7 +220,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 create_font <- function(
     b = "",
     charset = "",
-    color = wb_colour(hex = "FF000000"),
+    color = wb_color(hex = "FF000000"),
     condense = "",
     extend = "",
     family = "2",
@@ -227,8 +232,11 @@ create_font <- function(
     strike = "",
     sz = "11",
     u = "",
-    vertAlign = ""
+    vertAlign = "",
+    ...
 ) {
+
+  standardize_color_names(...)
 
   if (b != "") {
     b <- xml_node_create("b", xml_attributes = c("val" = b))
@@ -323,14 +331,18 @@ create_font <- function(
 #' @param patternType various default is "none", but also "solid", or a color like "gray125"
 #' @param bgColor hex8 color with alpha, red, green, blue only for patternFill
 #' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
+#' @param ... ...
 #'
 #' @export
 create_fill <- function(
     gradientFill = "",
     patternType = "",
     bgColor = NULL,
-    fgColor = NULL
+    fgColor = NULL,
+    ...
 ) {
+
+  standardize_color_names(...)
 
   if (!is.null(bgColor) && all(bgColor != "")) {
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
@@ -684,8 +696,8 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #' assigned to a workbook to use them
 #' @param font_name A name of a font. Note the font name is not validated. If fontName is NULL,
 #' the workbook base font is used. (Defaults to Calibri)
-#' @param font_color Colour of text in cell.  A valid hex colour beginning with "#"
-#' or one of colours(). If fontColour is NULL, the workbook base font colours is used.
+#' @param font_color Color of text in cell.  A valid hex color beginning with "#"
+#' or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 #' (Defaults to black)
 #' @param font_size Font size. A numeric greater than 0.
 #' If fontSize is NULL, the workbook base font size is used. (Defaults to 11)
@@ -698,6 +710,7 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #' @param text_strike strikeout
 #' @param text_italic italic
 #' @param text_underline underline 1, true, single or double
+#' @param ... ...
 #' @return A dxfs style node
 #' @seealso [wb_add_style()]
 #' @examples
@@ -706,8 +719,8 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #'
 #' # change font color and background color
 #' style2 <- create_dxfs_style(
-#'   font_color = wb_colour(hex = "FF9C0006"),
-#'   bgFill = wb_colour(hex = "FFFFC7CE")
+#'   font_color = wb_color(hex = "FF9C0006"),
+#'   bgFill = wb_color(hex = "FFFFC7CE")
 #' )
 #'
 #' # change font (type, size and color) and background
@@ -715,8 +728,8 @@ set_cell_style <- function(wb, sheet, cell, value) {
 #' style3 <- create_dxfs_style(
 #'   font_name = "Calibri",
 #'   font_size = 11,
-#'   font_color = wb_colour(hex = "FF9C0006"),
-#'   bgFill = wb_colour(hex = "FFFFC7CE")
+#'   font_color = wb_color(hex = "FF9C0006"),
+#'   bgFill = wb_color(hex = "FFFFC7CE")
 #' )
 #'
 #' ## See package vignettes for further examples
@@ -727,14 +740,17 @@ create_dxfs_style <- function(
     font_color     = NULL,
     numFmt         = NULL,
     border         = NULL,
-    border_color   = wb_colour(getOption("openxlsx2.borderColour", "black")),
+    border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
     bgFill         = NULL,
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
-    text_underline = NULL # "true" or "double"
+    text_underline = NULL, # "true" or "double"
+    ...
 ) {
+
+  standardize_color_names(...)
 
   if (is.null(font_color)) font_color <- ""
   if (is.null(font_size)) font_size <- ""

@@ -24,7 +24,8 @@ write_datatable(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings = na_strings()
+  na.strings = na_strings(),
+  inline_strings = TRUE
 )
 }
 \arguments{
@@ -64,9 +65,9 @@ A vector of the form c(startCol, startRow)}
 
 \item{lastColumn}{logical. If TRUE, the last column is bold}
 
-\item{bandedRows}{logical. If TRUE, rows are colour banded}
+\item{bandedRows}{logical. If TRUE, rows are color banded}
 
-\item{bandedCols}{logical. If TRUE, the columns are colour banded}
+\item{bandedCols}{logical. If TRUE, the columns are color banded}
 
 \item{applyCellStyle}{apply styles when writing on the sheet}
 
@@ -74,6 +75,8 @@ A vector of the form c(startCol, startRow)}
 
 \item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
+
+\item{inline_strings}{write characters as inline strings}
 }
 \description{
 Write to a worksheet and format as an Excel table

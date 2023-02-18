@@ -1,4 +1,33 @@
-# openxlsx2 (development version)
+
+# openxlsx2 (in development)
+
+## New features
+
+* Allow hierarchical grouping. `wb_group_cols`/`wb_group_rows` now accept nested lists as grouping variable. [537](https://github.com/JanMarvin/openxlsx2/pull/537)
+
+* It is now possible to add form control types `Checkbox`, `Radio` and `Drop` to a workbook using `wb_add_form_control()`. [533](https://github.com/JanMarvin/openxlsx2/pull/533)
+
+* Improve `wb_to_df(fillMergedCells = TRUE)` to work better with dimensions. It is now possible to fill cells where the merged cells intersect with the selected dimensions. [541](https://github.com/JanMarvin/openxlsx2/pull/541)
+
+* Speedup cell initialization. This is used in wb_style functions like `wb_add_numfmt()`. The previous loop was replaced with a faster implementation. [545](https://github.com/JanMarvin/openxlsx2/pull/545)
+
+* Improve date detection in `wb_to_df()`. This improves date and posix detection with custom date formats. [547](https://github.com/JanMarvin/openxlsx2/pull/547)
+
+* `na_strings()` is now used as the explicit default value for `na.strings` parameters in exported workbook functions ([#473](https://github.com/ycphs/openxlsx/issues/473))
+
+* waiver functions (i.e., `next_worksheet()`, `current_worksheet()`, and `na_strings()`) are now exports ([#474](https://github.com/ycphs/openxlsx/issues/474))
+
+## Fixes
+
+* Fixed a bug when loading input with multiple sheets where not every sheet contains a drawing/comment. Previously we assumed that every sheet had a comment and ordered them incorrectly. This caused confusion in spreadsheet software. [536](https://github.com/JanMarvin/openxlsx2/pull/536)
+
+* Fixed a bug with files containing 10 or more external references. In this case we did not load the references in numeric order and instead as "1.xml", "10.xml", ..., "2.xml", ... This jumbled up the external references. [538](https://github.com/JanMarvin/openxlsx2/pull/538)
+
+
+***************************************************************************
+
+
+# openxlsx2 (0.5)
 
 ## New features
 
@@ -6,9 +35,20 @@
 
 * `writeData()` calls `force(x)` to evaluate the object before options are set ([#264](https://github.com/ycphs/openxlsx/issues/264))
 
-* `na_strings()` is now used as the explicit default value for `na.strings` parameters in exported workbook functions ([#473](https://github.com/ycphs/openxlsx/issues/473))
+* `tabColor` in `wb_add_worksheet()` now allows passing `wb_color()`. [500](https://github.com/JanMarvin/openxlsx2/pull/500)
 
-* waiver functions (i.e., `next_worksheet()`, `current_worksheet()`, and `na_strings()`) are now exports ([#474](https://github.com/ycphs/openxlsx/issues/474))
+* Add `wb_copy_cells()` a wrapper that allows copying cell ranges in a workbook as direct copy, as reference or as value. [515](https://github.com/JanMarvin/openxlsx2/pull/515)
+
+* Experimental option: `openxlsx2.string_nums` to write string numerics differently. A string numeric is a numeric in a string like: `as.character(1.5)`. The option can be
+  * 0 = the current default. Writes string numeric as string (the incorrect way according to spreadsheet software)
+  * 1 = writes string numeric as numeric with a character flag (the correct way according to spreadsheet software)
+  * 2 = convert all string numeric to numeric when writing
+  
+  This is experimental, because the impact is somewhat unknown. It might trigger unintended side effects. Feedback is requested.
+  
+* Enable writing strings as `sharedStrings` with argument `inline_strings = FALSE`. This creates a `sharedStrings` table in openxml that allows to reuse strings in the workbook efficiently and can reduce the file size if a workbook has many cells that are duplicates. [499](https://github.com/JanMarvin/openxlsx2/pull/499)
+
+* Initial implementation of `wb_add_pivot_table()`. This allows adding native pivot tables to `openxlsx2` workbooks. The pivot table area will remain empty until the sheet is opened in spreadsheet software and evaluated successfully. This feature is newly developed and can cause unexpected side effects. Be aware that using it might currently break workbooks.
 
 ## Fixes
 
@@ -18,10 +58,15 @@
 
 * Improve XML unescaping. [497](https://github.com/JanMarvin/openxlsx2/pull/497)
 
+* Fix reading and saving workbooks with multiple slicers per sheet. [505](https://github.com/JanMarvin/openxlsx2/pull/505)
+
+* Fix tab selection always selecting the first sheet since #303. [506](https://github.com/JanMarvin/openxlsx2/pull/506)
+
 ## Breaking changes
 
 * Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
 
+* Only documentation: `openxlsx2` defaults to American English 'color' from now on. Though, we fully support the previous 'colour'. Users will not have to adjust their code. Our documentation only lists `color`, but you can pass `colour` just the same way you used to. [501](https://github.com/JanMarvin/openxlsx2/pull/501) [502](https://github.com/JanMarvin/openxlsx2/pull/502)
 
 ***************************************************************************
 
@@ -156,7 +201,7 @@
 
 * New argument `startCol` in read to data frame functions `wb_to_df()`, `wb_read()` and `read_xlsx()`. [330](https://github.com/JanMarvin/openxlsx2/issues/330)
 
-* New function `wb_colour()` to ease working with colour vectors used in `openxlsx2` styles. [292](https://github.com/JanMarvin/openxlsx2/issues/292)
+* New function `wb_colour()` to ease working with color vectors used in `openxlsx2` styles. [292](https://github.com/JanMarvin/openxlsx2/issues/292)
 
 * Deprecated `get_cell_style()` and `set_cell_style()` in favor of newly introduced wrapper functions `wb_get_cell_style()` and `wb_set_cell_style()`. [306](https://github.com/JanMarvin/openxlsx2/issues/306)
 

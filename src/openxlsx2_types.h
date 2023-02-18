@@ -54,7 +54,8 @@ enum celltype {
   comma          = 9,
   hyperlink      = 10,
   array_formula  = 11,
-  factor         = 12
+  factor         = 12,
+  string_num     = 13
 };
 
 // check for 1.0.8.0

@@ -8,7 +8,8 @@ create_fill(
   gradientFill = "",
   patternType = "",
   bgColor = NULL,
-  fgColor = NULL
+  fgColor = NULL,
+  ...
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ create_fill(
 \item{bgColor}{hex8 color with alpha, red, green, blue only for patternFill}
 
 \item{fgColor}{hex8 color with alpha, red, green, blue only for patternFill}
+
+\item{...}{...}
 }
 \description{
 create fill

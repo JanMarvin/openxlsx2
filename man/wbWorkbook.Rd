@@ -12,6 +12,8 @@ The \code{wbWorkbook} object
 
 The \code{wbWorkbook} object
 
+The \code{wbWorkbook} object
+
 A \code{named} \code{character} vector of sheet names in their order.  The
 names represent the original value of the worksheet prior to any
 character substitutions.
@@ -66,6 +68,9 @@ R6 class for a Workbook
 \details{
 A Workbook
 
+\code{fun} can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
+STDEVP, SUM, VAR, VARP
+
 minor helper wrapping xl_open which does the entire same thing
 }
 \examples{
@@ -86,12 +91,12 @@ wb$add_border(1, dims = "A5",
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
 wb$add_border(1, dims = "G12:H13",
- left_color = wb_colour(hex = "FF9400D3"), right_color = wb_colour(hex = "FF4B0082"),
- top_color = wb_colour(hex = "FF0000FF"), bottom_color = wb_colour(hex = "FF00FF00"))
+ left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+ top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
 wb$add_border(1, dims = "B12:D14",
- left_color = wb_colour(hex = "FFFFFF00"), right_color = wb_colour(hex = "FFFF7F00"),
- bottom_color = wb_colour(hex = "FFFF0000"))
+ left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+ bottom_color = wb_color(hex = "FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
 # if (interactive()) wb$open()
 
@@ -114,7 +119,7 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 ## ------------------------------------------------
 
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
+ wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 
 ## ------------------------------------------------
 ## Method `wbWorkbook$add_numfmt`
@@ -259,11 +264,13 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
 \item \href{#method-wbWorkbook-add_data}{\code{wbWorkbook$add_data()}}
 \item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
+\item \href{#method-wbWorkbook-add_pivot_table}{\code{wbWorkbook$add_pivot_table()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
 \item \href{#method-wbWorkbook-add_style}{\code{wbWorkbook$add_style()}}
 \item \href{#method-wbWorkbook-save}{\code{wbWorkbook$save()}}
 \item \href{#method-wbWorkbook-open}{\code{wbWorkbook$open()}}
 \item \href{#method-wbWorkbook-buildTable}{\code{wbWorkbook$buildTable()}}
+\item \href{#method-wbWorkbook-copy_cells}{\code{wbWorkbook$copy_cells()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
 \item \href{#method-wbWorkbook-set_bookview}{\code{wbWorkbook$set_bookview()}}
@@ -292,6 +299,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_drawing}{\code{wbWorkbook$add_drawing()}}
 \item \href{#method-wbWorkbook-add_chart_xml}{\code{wbWorkbook$add_chart_xml()}}
 \item \href{#method-wbWorkbook-add_mschart}{\code{wbWorkbook$add_mschart()}}
+\item \href{#method-wbWorkbook-add_form_control}{\code{wbWorkbook$add_form_control()}}
 \item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
 \item \href{#method-wbWorkbook-protect}{\code{wbWorkbook$protect()}}
 \item \href{#method-wbWorkbook-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
@@ -422,9 +430,10 @@ Add a chart sheet to the workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chartsheet(
   sheet = next_sheet(),
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
-  visible = c("true", "false", "hidden", "visible", "veryhidden")
+  visible = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -433,11 +442,13 @@ Add a chart sheet to the workbook
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{tabColour}}{tabColour}
+\item{\code{tabColor}}{tabColor}
 
 \item{\code{zoom}}{zoom}
 
 \item{\code{visible}}{visible}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -455,7 +466,7 @@ Add worksheet to the \code{wbWorkbook} object
   sheet = next_sheet(),
   gridLines = TRUE,
   rowColHeaders = TRUE,
-  tabColour = NULL,
+  tabColor = NULL,
   zoom = 100,
   header = NULL,
   footer = NULL,
@@ -470,7 +481,8 @@ Add worksheet to the \code{wbWorkbook} object
   paperSize = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300))
+  vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -483,7 +495,7 @@ Add worksheet to the \code{wbWorkbook} object
 
 \item{\code{rowColHeaders}}{rowColHeaders}
 
-\item{\code{tabColour}}{tabColour}
+\item{\code{tabColor}}{tabColor}
 
 \item{\code{zoom}}{zoom}
 
@@ -514,6 +526,8 @@ Add worksheet to the \code{wbWorkbook} object
 \item{\code{hdpi}}{hdpi}
 
 \item{\code{vdpi}}{vdpi}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -561,7 +575,8 @@ add data
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings = na_strings()
+  na.strings = na_strings(),
+  inline_strings = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -599,6 +614,8 @@ add data
 \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
+\item{\code{inline_strings}}{write characters as inline strings}
+
 \item{\code{return}}{The \code{wbWorkbook} object}
 }
 \if{html}{\out{</div>}}
@@ -629,7 +646,8 @@ add a data table
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings = na_strings()
+  na.strings = na_strings(),
+  inline_strings = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -674,6 +692,51 @@ add a data table
 
 \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
+
+\item{\code{inline_strings}}{write characters as inline strings}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_pivot_table"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_pivot_table}{}}}
+\subsection{Method \code{add_pivot_table()}}{
+add pivot table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_pivot_table(
+  x,
+  sheet = next_sheet(),
+  dims = "A3",
+  filter,
+  rows,
+  cols,
+  data,
+  fun,
+  params
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x}}{a wb_data object}
+
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{the worksheet cell where the pivot table is placed}
+
+\item{\code{filter}}{a character object with names used to filter}
+
+\item{\code{rows}}{a character object with names used as rows}
+
+\item{\code{cols}}{a character object with names used as cols}
+
+\item{\code{data}}{a character object with names used as data}
+
+\item{\code{fun}}{a character object of functions to be used with the data}
+
+\item{\code{params}}{a list of parameters to modify pivot table creation}
 }
 \if{html}{\out{</div>}}
 }
@@ -840,6 +903,43 @@ The \code{wbWorksheet} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-copy_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-copy_cells}{}}}
+\subsection{Method \code{copy_cells()}}{
+copy cells around in a workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$copy_cells(
+  sheet = current_sheet(),
+  dims = "A1",
+  data,
+  as_value = FALSE,
+  as_ref = FALSE,
+  transpose = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{cell used as start}
+
+\item{\code{data}}{a wb_data object}
+
+\item{\code{as_value}}{should a copy of the value be written}
+
+\item{\code{as_ref}}{should references to the cell be written}
+
+\item{\code{transpose}}{should the data be written transposed}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheet} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-get_base_font"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-get_base_font}{}}}
 \subsection{Method \code{get_base_font()}}{
@@ -860,8 +960,9 @@ Get the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
   fontSize = 11,
-  fontColour = wb_colour(theme = "1"),
-  fontName = "Calibri"
+  fontColor = wb_color(theme = "1"),
+  fontName = "Calibri",
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -870,9 +971,11 @@ Get the base font
 \describe{
 \item{\code{fontSize}}{fontSize}
 
-\item{\code{fontColour}}{fontColour}
+\item{\code{fontColor}}{fontColor}
 
 \item{\code{fontName}}{fontName}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -1456,8 +1559,10 @@ Add conditional formatting
   rows,
   rule = NULL,
   style = NULL,
-  type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
-    "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
+  type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
+    "uniqueValues", "containsErrors", "notContainsErrors", "containsBlanks",
+    "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
+    "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
     5L)
 )}\if{html}{\out{</div>}}
@@ -1645,6 +1750,46 @@ Add mschart chart to the workbook
 \item{\code{graph}}{mschart graph}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_form_control"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_form_control}{}}}
+\subsection{Method \code{add_form_control()}}{
+add form control to workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(
+  sheet = current_sheet(),
+  dims = "A1",
+  type = NULL,
+  text = NULL,
+  link = NULL,
+  range = NULL,
+  checked = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+
+\item{\code{type}}{type}
+
+\item{\code{text}}{text}
+
+\item{\code{link}}{link}
+
+\item{\code{range}}{range}
+
+\item{\code{checked}}{checked}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
@@ -2217,10 +2362,10 @@ create borders for cell region
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_border(
   sheet = current_sheet(),
   dims = "A1",
-  bottom_color = wb_colour(hex = "FF000000"),
-  left_color = wb_colour(hex = "FF000000"),
-  right_color = wb_colour(hex = "FF000000"),
-  top_color = wb_colour(hex = "FF000000"),
+  bottom_color = wb_color(hex = "FF000000"),
+  left_color = wb_color(hex = "FF000000"),
+  right_color = wb_color(hex = "FF000000"),
+  top_color = wb_color(hex = "FF000000"),
   bottom_border = "thin",
   left_border = "thin",
   right_border = "thin",
@@ -2228,7 +2373,8 @@ create borders for cell region
   inner_hgrid = NULL,
   inner_hcolor = NULL,
   inner_vgrid = NULL,
-  inner_vcolor = NULL
+  inner_vcolor = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2242,6 +2388,8 @@ create borders for cell region
 \item{\code{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}}{a color, either something openxml knows or some RGB color}
 
 \item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2262,12 +2410,12 @@ wb$add_border(1, dims = "A5",
 wb$add_border(1, dims = "C2:C5")
 wb$add_border(1, dims = "G2:H3")
 wb$add_border(1, dims = "G12:H13",
- left_color = wb_colour(hex = "FF9400D3"), right_color = wb_colour(hex = "FF4B0082"),
- top_color = wb_colour(hex = "FF0000FF"), bottom_color = wb_colour(hex = "FF00FF00"))
+ left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+ top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
 wb$add_border(1, dims = "A20:C23")
 wb$add_border(1, dims = "B12:D14",
- left_color = wb_colour(hex = "FFFFFF00"), right_color = wb_colour(hex = "FFFF7F00"),
- bottom_color = wb_colour(hex = "FFFF0000"))
+ left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+ bottom_color = wb_color(hex = "FFFF0000"))
 wb$add_border(1, dims = "D28:E28")
 # if (interactive()) wb$open()
 
@@ -2289,11 +2437,12 @@ provide simple fill function
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_fill(
   sheet = current_sheet(),
   dims = "A1",
-  color = wb_colour(hex = "FFFFFF00"),
+  color = wb_color(hex = "FFFFFF00"),
   pattern = "solid",
   gradient_fill = "",
   every_nth_col = 1,
-  every_nth_row = 1
+  every_nth_row = 1,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2304,7 +2453,7 @@ provide simple fill function
 
 \item{\code{dims}}{the cell range}
 
-\item{\code{color}}{the colors to apply, e.g. yellow: wb_colour(hex = "FFFFFF00")}
+\item{\code{color}}{the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")}
 
 \item{\code{pattern}}{various default "none" but others are possible:
 "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
@@ -2317,6 +2466,8 @@ provide simple fill function
 \item{\code{every_nth_col}}{which col should be filled}
 
 \item{\code{every_nth_row}}{which row should be filled}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2346,7 +2497,7 @@ provide simple font function
   sheet = current_sheet(),
   dims = "A1",
   name = "Calibri",
-  color = wb_colour(hex = "FF000000"),
+  color = wb_color(hex = "FF000000"),
   size = "11",
   bold = "",
   italic = "",
@@ -2359,7 +2510,8 @@ provide simple font function
   family = "",
   scheme = "",
   shadow = "",
-  vertAlign = ""
+  vertAlign = "",
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2399,6 +2551,8 @@ provide simple font function
 \item{\code{shadow}}{shadow}
 
 \item{\code{vertAlign}}{vertical alignment}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }
@@ -2408,7 +2562,7 @@ The \code{wbWorksheetObject}, invisibly
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = wb_colour(theme = "4"))
+ wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 }
 \if{html}{\out{</div>}}
 

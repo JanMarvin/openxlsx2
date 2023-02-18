@@ -24,7 +24,8 @@ wb_add_data_table(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings = na_strings()
+  na.strings = na_strings(),
+  inline_strings = TRUE
 )
 }
 \arguments{
@@ -67,9 +68,9 @@ sep).
 
 \item{lastColumn}{logical. If TRUE, the last column is bold}
 
-\item{bandedRows}{logical. If TRUE, rows are colour banded}
+\item{bandedRows}{logical. If TRUE, rows are color banded}
 
-\item{bandedCols}{logical. If TRUE, the columns are colour banded}
+\item{bandedCols}{logical. If TRUE, the columns are color banded}
 
 \item{applyCellStyle}{Should we write cell styles to the workbook}
 
@@ -77,6 +78,8 @@ sep).
 
 \item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
+
+\item{inline_strings}{write characters as inline strings}
 }
 \description{
 Add data to a worksheet and format as an Excel table
@@ -93,8 +96,10 @@ Other workbook wrappers:
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
+\code{\link{wb_add_pivot_table}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
+\code{\link{wb_copy_cells}()},
 \code{\link{wb_creators}},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},

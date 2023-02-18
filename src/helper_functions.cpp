@@ -102,7 +102,7 @@ uint32_t uint_col_to_int(std::string& a) {
   int sum = 0;
   int k = a.length();
 
-  for (int j = 0; j < k; j++) {
+  for (int32_t j = 0; j < k; ++j) {
     sum *= 26;
     sum += (a[j] - aVal);
   }
@@ -220,10 +220,12 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fi
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  for (size_t i = 0; i < nn; ++i) {
-    for (size_t j = 0; j < kk; ++j) {
-      if (fill)
-        Rcpp::as<Rcpp::CharacterVector>(df[j])[i] = cols[j] + std::to_string(rows[i]);
+  if (fill) {
+    for (size_t i = 0; i < kk; ++i) {
+      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+      for (size_t j = 0; j < nn; ++j) {
+        cvec[j] = cols[i] + std::to_string(rows[j]);
+      }
     }
   }
 
@@ -259,18 +261,61 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
     }
   }
 }
+// similar to is.numeric(x)
+// returns true if string can be written as numeric and is not Inf
+// @param x a string input
+bool is_double(std::string x) {
+
+  char *endp;
+  double res;
+
+  res = R_strtod(x.c_str(), &endp);
+
+  if (isBlankString(endp) && isfinite(res)) {
+    return 1;
+  }
+
+  return 0;
+}
 
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
-void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz,
-                  bool ColNames, int32_t start_col, int32_t start_row,
-                  Rcpp::CharacterVector ref) {
+void wide_to_long(
+    Rcpp::DataFrame z,
+    Rcpp::IntegerVector vtyps,
+    Rcpp::DataFrame zz,
+    bool ColNames,
+    int32_t start_col,
+    int32_t start_row,
+    Rcpp::CharacterVector ref,
+    int32_t string_nums,
+    bool na_null,
+    bool na_missing,
+    std::string na_strings,
+    bool inline_strings
+) {
 
   auto n = z.nrow();
   auto m = z.ncol();
 
   auto startcol = start_col;
+
+  // pointer magic. even though these are extracted, they just point to the
+  // memory in the data frame
+  Rcpp::CharacterVector zz_row_r = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
+  Rcpp::CharacterVector zz_c_r   = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
+  Rcpp::CharacterVector zz_v     = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
+  Rcpp::CharacterVector zz_c_s   = Rcpp::as<Rcpp::CharacterVector>(zz["c_s"]);
+  Rcpp::CharacterVector zz_c_t   = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);
+  Rcpp::CharacterVector zz_is    = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
+  Rcpp::CharacterVector zz_f     = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
+  Rcpp::CharacterVector zz_f_t   = Rcpp::as<Rcpp::CharacterVector>(zz["f_t"]);
+  Rcpp::CharacterVector zz_f_ref = Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"]);
+  Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
+  Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
+
   for (auto i = 0; i < m; ++i) {
+    Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
 
     auto startrow = start_row;
     for (auto j = 0; j < n; ++j) {
@@ -278,8 +323,7 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
       int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
       if (ColNames & (j == 0)) vtyp = character;
-
-      std::string vals = Rcpp::as<std::string>(Rcpp::as<Rcpp::CharacterVector>(z[i])[j]);
+      std::string vals = Rcpp::as<std::string>(cvec[j]);
       std::string row = std::to_string(startrow);
       std::string col = int_to_col(startcol);
 
@@ -287,7 +331,6 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 
       // create struct
       celltyp cell;
-
       switch(vtyp)
       {
 
@@ -305,8 +348,24 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         cell.c_t = "b";
         break;
       case character:
-        cell.c_t = "inlineStr";
-        cell.is  = txt_to_is(vals, 0, 1, 1);
+        // test if string can be written as number
+        if (string_nums && is_double(vals)) {
+          cell.v   = vals;
+          if (string_nums == 1) {
+            vtyp = string_num;
+          } else {
+            vtyp = numeric;
+          }
+        } else {
+          // check if we write sst or inlineStr
+          if (inline_strings) {
+              cell.c_t = "inlineStr";
+              cell.is  = txt_to_is(vals, 0, 1, 1);
+            } else {
+              cell.c_t = "s";
+              cell.v   = txt_to_si(vals, 0, 1, 1);
+          }
+        }
         break;
       case hyperlink:
       case formula:
@@ -320,20 +379,63 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
         break;
       }
 
+
+      if (
+          cell.is.compare("<is><t>_openxlsx_NA</t></is>") == 0 ||
+            cell.v.compare("<si><t>_openxlsx_NA</t></si>") == 0 ||
+            cell.v.compare("NA") == 0
+      ) {
+
+        if (na_missing) {
+          cell.v   = "#N/A";
+          cell.c_t = "e";
+          cell.is  = "";
+        } else  {
+
+          cell.v = "";
+          // clear cell
+          if (na_null) {
+            cell.c_t = "";
+            cell.is  = "";
+          } else {
+            // inlineStr or s
+            if (inline_strings) {
+              cell.c_t = "inlineStr";
+              cell.is  = txt_to_is(na_strings, 0, 1, 1);
+            } else {
+              cell.c_t = "s";
+              cell.v   = txt_to_si(na_strings, 0, 1, 1);
+            }
+
+          }
+        }
+      }
+
+
+      if (cell.v.compare("NaN") == 0) {
+        cell.v   = "#VALUE!";
+        cell.c_t = "e";
+      }
+
+      if (cell.v.compare("-Inf") == 0 || cell.v.compare("Inf") == 0) {
+        cell.v   = "#NUM!";
+        cell.c_t = "e";
+      }
+
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
-      Rcpp::as<Rcpp::CharacterVector>(zz["row_r"])[pos] = row;
-      Rcpp::as<Rcpp::CharacterVector>(zz["c_r"])[pos]   = col;
-      if (!cell.v.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["v"])[pos]     = cell.v;
-      if (!cell.c_s.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["c_s"])[pos]   = cell.c_s;
-      if (!cell.c_t.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["c_t"])[pos]   = cell.c_t;
-      if (!cell.is.empty())    Rcpp::as<Rcpp::CharacterVector>(zz["is"])[pos]    = cell.is;
-      if (!cell.f.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["f"])[pos]     = cell.f;
-      if (!cell.f_t.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["f_t"])[pos]   = cell.f_t;
-      if (!cell.f_ref.empty()) Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"])[pos] = cell.f_ref;
-      if (!cell.typ.empty())   Rcpp::as<Rcpp::CharacterVector>(zz["typ"])[pos]   = cell.typ;
-      if (!cell.r.empty())     Rcpp::as<Rcpp::CharacterVector>(zz["r"])[pos]     = cell.r;
+      zz_row_r[pos] = row;
+      zz_c_r[pos]   = col;
+      if (!cell.v.empty())     zz_v[pos]     = cell.v;
+      if (!cell.c_s.empty())   zz_c_s[pos]   = cell.c_s;
+      if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
+      if (!cell.is.empty())    zz_is[pos]    = cell.is;
+      if (!cell.f.empty())     zz_f[pos]     = cell.f;
+      if (!cell.f_t.empty())   zz_f_t[pos]   = cell.f_t;
+      if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
+      if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
+      if (!cell.r.empty())     zz_r[pos]     = cell.r;
 
       ++startrow;
     }
@@ -348,19 +450,35 @@ void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame 
 // [[Rcpp::export]]
 Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
 
-  R_xlen_t kk = colnames.size();
+  int32_t kk = colnames.size();
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
+  for (int32_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
   }
 
+  Rcpp::IntegerVector rvec(n);
+  for (int64_t i = 0; i < n; ++i) {
+    rvec[i] = i + 1L;
+  }
+
   // 3. Create a data.frame
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, n);
+  df.attr("row.names") = rvec;
   df.attr("names") = colnames;
   df.attr("class") = "data.frame";
 
   return df;
 }
+
+//' We use file.exists() to check if a file path is valid. On Windows our input
+//' can be to long, in this case we have to abort, otherwise file.exists() will
+//' throw an error
+//' @param path the file path used in file.exists()
+//' @noRd
+// [[Rcpp::export]]
+bool to_long(std::string path) {
+  return path.size() > PATH_MAX;
+}
+

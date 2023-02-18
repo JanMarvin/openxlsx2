@@ -7,7 +7,7 @@
 create_font(
   b = "",
   charset = "",
-  color = wb_colour(hex = "FF000000"),
+  color = wb_color(hex = "FF000000"),
   condense = "",
   extend = "",
   family = "2",
@@ -19,7 +19,8 @@ create_font(
   strike = "",
   sz = "11",
   u = "",
-  vertAlign = ""
+  vertAlign = "",
+  ...
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ create_font(
 \item{u}{underline}
 
 \item{vertAlign}{vertical alignment}
+
+\item{...}{...}
 }
 \description{
 create font format

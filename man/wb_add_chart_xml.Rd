@@ -2,8 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_chart_xml}
 \alias{wb_add_chart_xml}
-\title{dummy function to add a chart to an existing workbook
-currently only a barplot is possible}
+\title{add a chart xml to a workbook}
 \usage{
 wb_add_chart_xml(wb, sheet = current_sheet(), xml, dims = NULL)
 }
@@ -17,6 +16,5 @@ wb_add_chart_xml(wb, sheet = current_sheet(), xml, dims = NULL)
 \item{dims}{the dimensions where the sheet will appear}
 }
 \description{
-dummy function to add a chart to an existing workbook
-currently only a barplot is possible
+add a chart xml to a workbook
 }

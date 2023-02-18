@@ -8,11 +8,12 @@ wb_add_fill(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  color = wb_colour(hex = "FFFFFF00"),
+  color = wb_color(hex = "FFFFFF00"),
   pattern = "solid",
   gradient_fill = "",
   every_nth_col = 1,
-  every_nth_row = 1
+  every_nth_row = 1,
+  ...
 )
 }
 \arguments{
@@ -22,7 +23,7 @@ wb_add_fill(
 
 \item{dims}{the cell range}
 
-\item{color}{the colors to apply, e.g. yellow: wb_colour(hex = "FFFFFF00")}
+\item{color}{the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")}
 
 \item{pattern}{various default "none" but others are possible:
 "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
@@ -35,6 +36,8 @@ wb_add_fill(
 \item{every_nth_col}{which col should be filled}
 
 \item{every_nth_row}{which row should be filled}
+
+\item{...}{...}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly
@@ -44,8 +47,8 @@ wb wrapper to create fill for cell region
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
-wb <- wb \%>\% wb_add_fill("S1", dims = "D5:J23", color = wb_colour(hex = "FFFFFF00"))
-wb <- wb \%>\% wb_add_fill("S1", dims = "B22:D27", color = wb_colour(hex = "FF00FF00"))
+wb <- wb \%>\% wb_add_fill("S1", dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
+wb <- wb \%>\% wb_add_fill("S1", dims = "B22:D27", color = wb_color(hex = "FF00FF00"))
 
 wb <- wb \%>\%  wb_add_worksheet("S2") \%>\% wb_add_data("S2", mtcars)
 

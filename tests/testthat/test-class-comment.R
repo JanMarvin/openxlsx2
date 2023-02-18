@@ -128,8 +128,28 @@ test_that("print comment", {
   c2 <- create_comment(text = "this is another comment",
                        author = "Marco Polo")
 
-  exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\n\n\n\n\nFont name: Calibri\nFont size: 11\nFont colour: #000000\n\n"
+  exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\n\n\n\n\nFont name: Calibri\nFont size: 11\nFont color: #000000\n\n"
   got <- capture_output(print(c2), print = TRUE)
   expect_equal(exp, got)
+
+})
+
+test_that("removing comment sheet works", {
+
+
+  temp <- temp_xlsx()
+  c1 <- create_comment(text = "this is a comment", author = "")
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_comment(1, col = "B", row = 10, comment = c1)$
+    add_worksheet()$
+    remove_worksheet(1)
+
+  # # FIXME this still carries a reference to comments1.xml even though the file
+  # # is no longer written. Spreadsheet software does not complain for now
+  # wb$Content_Types[[10]]
+
+  expect_silent(wb$save(temp))
 
 })

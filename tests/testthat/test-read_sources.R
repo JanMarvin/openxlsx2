@@ -85,6 +85,20 @@ test_that("read <br> node in vml", {
 
   # test
   expect_silent(wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/macro2.xlsm"))
+
+})
+
+
+test_that("read vml from sheet two works as expected", {
+
+  skip_if_offline()
+
+  # test
+  expect_silent(wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/vml_numbering.xlsx"))
+
+  expect_equal(1L, length(wb$vml))
+  expect_equal(1L, length(wb$vml_rels))
+
 })
 
 
@@ -332,6 +346,43 @@ test_that("reading xml escapes works", {
 
   exp <- c("US & Canada", "B2")
   got <- df$colB
+  expect_equal(exp, got)
+
+})
+
+test_that("reading multiple slicers on a pivot table works", {
+
+  skip_if_offline()
+
+  temp <- temp_xlsx()
+
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/gh_issue_504.xlsx")
+
+  expect_equal(1L, length(wb$slicers))
+  expect_equal(2L, length(wb$slicerCaches))
+
+  exp <- c(
+    "<Override PartName=\"/xl/slicers/slicer1.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>",
+    "<Override PartName=\"/xl/slicerCaches/slicerCache1.xml\" ContentType=\"application/vnd.ms-excel.slicerCache+xml\"/>",
+    "<Override PartName=\"/xl/slicerCaches/slicerCache2.xml\" ContentType=\"application/vnd.ms-excel.slicerCache+xml\"/>"
+  )
+  got <- wb$Content_Types[14:16]
+  expect_equal(exp, got)
+
+  exp <- c(
+    "<Override PartName=\"/xl/slicers/slicer1.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>",
+    "<Override PartName=\"/xl/slicerCaches/slicerCache1.xml\" ContentType=\"application/vnd.ms-excel.slicerCache+xml\"/>",
+    "<Override PartName=\"/xl/slicerCaches/slicerCache2.xml\" ContentType=\"application/vnd.ms-excel.slicerCache+xml\"/>"
+  )
+  got <- wb$Content_Types[14:16]
+  expect_equal(exp, got)
+
+  exp <- c(
+    "<Relationship Id=\"rId20001\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"pivotCache/pivotCacheDefinition1.xml\"/>",
+    "<Relationship Id=\"rId100001\" Type=\"http://schemas.microsoft.com/office/2007/relationships/slicerCache\" Target=\"slicerCaches/slicerCache1.xml\"/>",
+    "<Relationship Id=\"rId100002\" Type=\"http://schemas.microsoft.com/office/2007/relationships/slicerCache\" Target=\"slicerCaches/slicerCache2.xml\"/>"
+  )
+  got <- wb$workbook.xml.rels[6:8]
   expect_equal(exp, got)
 
 })

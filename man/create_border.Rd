@@ -21,7 +21,8 @@ create_border(
   start = "",
   top = NULL,
   top_color = NULL,
-  vertical = ""
+  vertical = "",
+  ...
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ create_border(
 \item{top_color}{x}
 
 \item{vertical}{x}
+
+\item{...}{x}
 }
 \description{
 Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"

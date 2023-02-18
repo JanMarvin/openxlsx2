@@ -49,6 +49,17 @@ test_that("group rows", {
   got <- wb$worksheets[[1]]$sheet_data$row_attr$r
   expect_equal(c("1", "2", "3", "4"), got)
 
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, colNames = FALSE)$
+    group_rows("Sheet 1", 1:4, collapsed = TRUE)
+
+  got <- wb$worksheets[[1]]$sheet_data$row_attr$collapsed
+  expect_equal(c("1", "1", "1", "1"), got)
+
+  got <- wb$worksheets[[1]]$sheet_data$row_attr$hidden
+  expect_equal(c("1", "1", "1", ""), got)
+
 })
 
 test_that("grouping levels", {
@@ -235,4 +246,49 @@ test_that("with outlinePr", {
   expect_equal(exp, got)
 
 
+})
+
+test_that("hierarchical grouping works", {
+  # create data
+  testig <- data.frame(
+    Var1 = c("A", "A", "A", "A", "A", "A", "A"),
+    Var2 = c("B", "B", "B", "C", "C", "C", ""),
+    Var3 = c("BA", "BB", "", "CA", "CB", "", ""),
+    Var4 = c("BA", "BB", "", "CA", "CB", "", ""),
+    Result = c(1, 2, 3, 4, 5, 9, 12)
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = testig)
+
+  # group rows hierarchical
+  grp_rows <- list(
+    "1" = 2:8,
+    "3" = list(2:4, 5:7)
+  )
+  wb$group_rows(rows = grp_rows)
+
+  wb$createCols(n = 5)
+
+  # group cols hierarchical
+  grp_cols <- list(
+    "1" = 1:5,
+    "3" = list(1:2, 3:4)
+  )
+  wb$group_cols(cols = grp_cols)
+
+  exp <- c("", "3", "3", "1", "3", "3", "1", "")
+  got <- wb$worksheets[[1]]$sheet_data$row_attr$outlineLevel
+  expect_equal(exp, got)
+
+  exp <- c(
+    "<col min=\"1\" max=\"1\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"3\" width=\"8.43\"/>",
+    "<col min=\"2\" max=\"2\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"1\" width=\"8.43\"/>",
+    "<col min=\"3\" max=\"3\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"3\" width=\"8.43\"/>",
+    "<col min=\"4\" max=\"4\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"1\" width=\"8.43\"/>",
+    "<col min=\"5\" max=\"5\" collapsed=\"0\" width=\"8.43\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(exp, got)
 })
