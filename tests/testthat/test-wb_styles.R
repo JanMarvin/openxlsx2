@@ -500,4 +500,25 @@ test_that("add numfmt is no longer slow", {
       wb_add_numfmt(dims = "C1:C44882", numfmt = "#.0")
   )
 
+  expect_silent(
+    wb_workbook()$add_worksheet()$
+      add_fill(dims = "A1:Z10000", color = wb_color("yellow"))
+  )
+
+  mm <- matrix(NA, ncol = 26, nrow = 10000)
+  expect_silent(
+    wb_workbook()$add_worksheet()$
+      add_data(x = mm, colNames = FALSE, na.strings = NULL)$
+      add_fill(dims = "A1:Z10000", color = wb_color("yellow"))
+  )
+
+  expect_silent(
+    wb_workbook()$add_worksheet()$
+      add_data(dims = "A1", x = 1, colNames = FALSE)$
+      add_data(dims = "A10000", x = 1, colNames = FALSE)$
+      add_data(dims = "Z1", x = 5, colNames = FALSE)$
+      add_data(dims = "Z10000", x = 5, colNames = FALSE)$
+      add_fill(dims = "A1:Z10000", color = wb_color("yellow"))
+  )
+
 })
