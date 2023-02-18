@@ -40,6 +40,15 @@ create_char_dataframe <- function(colnames, n) {
     .Call(`_openxlsx2_create_char_dataframe`, colnames, n)
 }
 
+#' We use file.exists() to check if a file path is valid. On Windows our input
+#' can be to long, in this case we have to abort, otherwise file.exists() will
+#' throw an error
+#' @param path the file path used in file.exists()
+#' @noRd
+to_long <- function(path) {
+    .Call(`_openxlsx2_to_long`, path)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
