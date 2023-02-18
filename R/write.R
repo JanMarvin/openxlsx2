@@ -357,7 +357,8 @@ write_data2 <- function(
 
   na_missing <- FALSE
   na_null    <- FALSE
-  if (missing(na.strings)) {
+
+  if (is_na_strings(na.strings)) {
     na.strings <- ""
     na_missing <- TRUE
   } else if (is.null(na.strings)) {
