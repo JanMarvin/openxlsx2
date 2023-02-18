@@ -72,7 +72,7 @@ dataframe_to_dims <- function(df) {
         cols[[col]][[1]], rows[[row]][[1]],
         ":",
         rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
-        )
+      )
       out <- c(out, tmp)
     }
   }
@@ -295,26 +295,26 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'
 #' @export
 wb_to_df <- function(
-  xlsxFile,
-  sheet,
-  startRow        = 1,
-  startCol        = NULL,
-  rowNames        = FALSE,
-  colNames        = TRUE,
-  skipEmptyRows   = FALSE,
-  skipEmptyCols   = FALSE,
-  rows            = NULL,
-  cols            = NULL,
-  detectDates     = TRUE,
-  na.strings      = "#N/A",
-  na.numbers      = NA,
-  fillMergedCells = FALSE,
-  dims,
-  showFormula     = FALSE,
-  convert         = TRUE,
-  types,
-  definedName,
-  named_region
+    xlsxFile,
+    sheet,
+    startRow        = 1,
+    startCol        = NULL,
+    rowNames        = FALSE,
+    colNames        = TRUE,
+    skipEmptyRows   = FALSE,
+    skipEmptyCols   = FALSE,
+    rows            = NULL,
+    cols            = NULL,
+    detectDates     = TRUE,
+    na.strings      = "#N/A",
+    na.numbers      = NA,
+    fillMergedCells = FALSE,
+    dims,
+    showFormula     = FALSE,
+    convert         = TRUE,
+    types,
+    definedName,
+    named_region
 ) {
 
   # .mc <- match.call() # not (yet) used?
@@ -322,7 +322,7 @@ wb_to_df <- function(
   if (!is.null(cols)) cols <- col2int(cols)
 
   if (inherits(xlsxFile, "wbWorkbook")) {
-     wb <- xlsxFile
+    wb <- xlsxFile
   } else {
     # passes missing further on
     if (missing(sheet))
@@ -462,8 +462,8 @@ wb_to_df <- function(
     }
 
 
-      z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
-      tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
+    z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
+    tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
   }
 
   if (!is.null(cols)) {
@@ -476,8 +476,8 @@ wb_to_df <- function(
       tt[keep_col] <- NA_character_
     }
 
-      z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
-      tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
+    z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
+    tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
   }
 
   keep_rows <- keep_rows[keep_rows %in% rnams]
@@ -612,23 +612,23 @@ wb_to_df <- function(
         if (any(row_sel <- rownames(z) %in% rownames(dms)) &&
             any(col_sel <- colnames(z) %in% colnames(dms))) {
 
-            # TODO there probably is a better way in not reducing cc above, so
-            # that we do not have to go through large xlsx files multiple times
-            z_fill <- wb_to_df(
-                dims = filler,
-                xlsxFile = xlsxFile,
-                sheet = sheet,
-                na.strings = na.strings,
-                convert = FALSE,
-                colNames = FALSE,
-                detectDates = detectDates,
-                showFormula = showFormula
-            )
+          # TODO there probably is a better way in not reducing cc above, so
+          # that we do not have to go through large xlsx files multiple times
+          z_fill <- wb_to_df(
+            dims = filler,
+            xlsxFile = xlsxFile,
+            sheet = sheet,
+            na.strings = na.strings,
+            convert = FALSE,
+            colNames = FALSE,
+            detectDates = detectDates,
+            showFormula = showFormula
+          )
 
-            tt_fill <- attr(z_fill, "tt")
+          tt_fill <- attr(z_fill, "tt")
 
-            z[row_sel,  col_sel] <- z_fill
-            tt[row_sel, col_sel] <- tt_fill
+          z[row_sel,  col_sel] <- z_fill
+          tt[row_sel, col_sel] <- tt_fill
         }
       }
     }
@@ -871,10 +871,10 @@ wb_set_selected <- function(wb, sheet) {
 #' @seealso [wb_data()]
 #' @export
 wb_add_mschart <- function(
-  wb,
-  sheet = current_sheet(),
-  dims = NULL,
-  graph
+    wb,
+    sheet = current_sheet(),
+    dims = NULL,
+    graph
 ) {
   assert_workbook(wb)
   wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph)
