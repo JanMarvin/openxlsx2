@@ -617,29 +617,31 @@ wb_to_df <- function(
       for (i in seq_along(mc)) {
         filler <- stringi::stri_split_fixed(mc[i], pattern = ":")[[1]][1]
 
-        # TODO there probably is a better way in not reducing cc above, so
-        # that we do not have to go through large xlsx files multiple times
-        z_fill <- wb_to_df(
-            dims = filler,
-            xlsxFile = xlsxFile,
-            sheet = sheet,
-            na.strings = na.strings,
-            convert = FALSE,
-            colNames = FALSE,
-            detectDates = detectDates,
-            showFormula = showFormula
-        )
-
-        tt_fill <- attr(z_fill, "tt")
 
         dms <- dims_to_dataframe(mc[i])
 
-        z[rownames(z) %in% rownames(dms),
-          colnames(z) %in% colnames(dms)] <- z_fill
-        tt[rownames(tt) %in% rownames(dms),
-           colnames(tt) %in% colnames(dms)] <- tt_fill
-      }
+        if (any(row_sel <- rownames(z) %in% rownames(dms)) &&
+            any(col_sel <- colnames(z) %in% colnames(dms))) {
 
+            # TODO there probably is a better way in not reducing cc above, so
+            # that we do not have to go through large xlsx files multiple times
+            z_fill <- wb_to_df(
+                dims = filler,
+                xlsxFile = xlsxFile,
+                sheet = sheet,
+                na.strings = na.strings,
+                convert = FALSE,
+                colNames = FALSE,
+                detectDates = detectDates,
+                showFormula = showFormula
+            )
+
+            tt_fill <- attr(z_fill, "tt")
+
+            z[row_sel,  col_sel] <- z_fill
+            tt[row_sel, col_sel] <- tt_fill
+        }
+      }
     }
 
   }
