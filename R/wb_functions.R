@@ -80,12 +80,6 @@ dataframe_to_dims <- function(df) {
   paste0(out, collapse = ";")
 }
 
-# # similar to all, simply check if most of the values match the condition
-# # in guess_col_type not all bools may be "b" some are "s" (missings)
-# most <- function(x) {
-#   as.logical(names(sort(table(x), decreasing = TRUE)[1]))
-# }
-
 #' function to estimate the column type.
 #' 0 = character, 1 = numeric, 2 = date.
 #' @param tt dataframe produced by wb_to_df()
