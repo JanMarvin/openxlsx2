@@ -257,7 +257,7 @@ test_that("improve date detection", {
     wb_add_numfmt( numfmt = "[$-1070000]d/mm/yyyy;@") %>%
     wb_to_df(colNames = FALSE)
 
-  exp <- structure(1676674800, class = c("POSIXct", "POSIXt"), tzone = "")
+  exp <- Sys.Date()
   got <- df$A
   expect_equal(exp, got)
 

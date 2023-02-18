@@ -155,9 +155,9 @@ numfmt_is_posix <- function(numFmt) {
   maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
 
   posix_fmts <- c(
-    "yy", "yyyy",
-    "m", "mm", "mmm", "mmmm", "mmmmm",
-    "d", "dd", "ddd", "dddd",
+    # "yy", "yyyy",
+    # "m", "mm", "mmm", "mmmm", "mmmmm",
+    # "d", "dd", "ddd", "dddd",
     "h", "hh", ":m", ":mm", ":s", ":ss",
     "AM", "PM", "A", "P"
   )
