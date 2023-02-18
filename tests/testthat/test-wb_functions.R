@@ -254,7 +254,7 @@ test_that("improve date detection", {
   df <- wb_workbook() %>%
     wb_add_worksheet("Rawdata") %>%
     wb_add_data(x = Sys.Date(), colNames = FALSE) %>%
-    wb_add_numfmt( numfmt = "[$-1070000]d/mm/yyyy;@") %>%
+    wb_add_numfmt(numfmt = "[$-1070000]d/mm/yyyy;@") %>%
     wb_to_df(colNames = FALSE)
 
   exp <- Sys.Date()
