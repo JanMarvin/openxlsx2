@@ -47,7 +47,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
   isvml <- grepl("^.vml$", xml)
 
   isfile <- FALSE
-  if (length(xml) == 1 && !is_xml(xml) && file.exists(xml))
+  if (length(xml) == 1 && Rcpp_file_exists(xml))
     isfile <- TRUE
 
   if (!isfile)

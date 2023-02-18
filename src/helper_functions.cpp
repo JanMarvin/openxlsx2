@@ -1,5 +1,6 @@
 #include "openxlsx2.h"
 #include <algorithm>
+#include <fstream>
 
 // [[Rcpp::export]]
 SEXP openxlsx2_type(SEXP x) {
@@ -470,4 +471,14 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
   df.attr("class") = "data.frame";
 
   return df;
+}
+
+//' simple file.exists alternative
+//' @description Required while R tinkers with string length on Windows
+//' @param name a character string
+//' @noRd
+// [[Rcpp::export]]
+bool Rcpp_file_exists(std::string name) {
+  std::ifstream f(name.c_str());
+  return f.good();
 }
