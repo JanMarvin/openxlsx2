@@ -9,8 +9,8 @@
 #' @param cells_needed the cells needed
 #' @param colNames has colNames (only in update_cell)
 #' @param removeCellStyle remove the cell style (only in update_cell)
-#' @param na.strings optional na.string (only in update_cell)
-#' @keywords internal
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.#' @keywords internal
 #' @noRd
 inner_update <- function(
     wb,
@@ -20,7 +20,7 @@ inner_update <- function(
     cells_needed,
     colNames = FALSE,
     removeCellStyle = FALSE,
-    na.strings
+    na.strings = na_strings()
 ) {
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
@@ -82,7 +82,7 @@ inner_update <- function(
     wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  if (missing(na.strings)) {
+  if (is_na_strings(na.strings)) {
     na.strings <- NULL
   }
 
@@ -189,7 +189,8 @@ nmfmt_df <- function(x) {
 #' @param startCol col to place it
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
 #' @details
@@ -224,12 +225,10 @@ write_data2 <- function(
     startCol = 1,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings,
+    na.strings = na_strings(),
     data_table = FALSE,
     inline_strings = TRUE
 ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
@@ -358,7 +357,8 @@ write_data2 <- function(
 
   na_missing <- FALSE
   na_null    <- FALSE
-  if (missing(na.strings)) {
+
+  if (is_na_strings(na.strings)) {
     na.strings <- ""
     na_missing <- TRUE
   } else if (is.null(na.strings)) {
@@ -661,7 +661,8 @@ write_data2 <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @noRd
 write_data_table <- function(
@@ -687,7 +688,7 @@ write_data_table <- function(
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
     data_table = FALSE,
-    na.strings,
+    na.strings = na_strings(),
     inline_strings = TRUE
 ) {
 
@@ -714,8 +715,6 @@ write_data_table <- function(
     startCol <- min(dims[[1]])
     startRow <- min(dims[[2]])
   }
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   ## common part ---------------------------------------------------------------
   if ((!is.character(sep)) || (length(sep) != 1))
@@ -946,7 +945,8 @@ write_data_table <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
 #' @seealso [write_datatable()]
 #' @export write_data
@@ -1024,11 +1024,9 @@ write_data <- function(
     name = NULL,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings,
+    na.strings = na_strings(),
     inline_strings = TRUE
 ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   write_data_table(
     wb = wb,
@@ -1219,7 +1217,8 @@ write_formula <- function(
 #' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency, accounting,
@@ -1333,11 +1332,9 @@ write_datatable <- function(
     bandedCols = FALSE,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings,
+    na.strings = na_strings(),
     inline_strings = TRUE
 ) {
-
-  if (missing(na.strings)) na.strings <- substitute()
 
   write_data_table(
     wb = wb,

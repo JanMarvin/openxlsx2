@@ -575,7 +575,7 @@ add data
   sep = ", ",
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings,
+  na.strings = na_strings(),
   inline_strings = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -611,7 +611,8 @@ add data
 
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
-\item{\code{na.strings}}{na.strings}
+\item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
 
@@ -645,7 +646,7 @@ add a data table
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings,
+  na.strings = na_strings(),
   inline_strings = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -689,7 +690,8 @@ add a data table
 
 \item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
 
-\item{\code{na.strings}}{na.strings}
+\item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
 }

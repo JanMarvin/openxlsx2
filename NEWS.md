@@ -13,6 +13,10 @@
 
 * Improve date detection in `wb_to_df()`. This improves date and posix detection with custom date formats. [547](https://github.com/JanMarvin/openxlsx2/pull/547)
 
+* `na_strings()` is now used as the explicit default value for `na.strings` parameters in exported workbook functions ([#473](https://github.com/ycphs/openxlsx/issues/473))
+
+* waiver functions (i.e., `next_worksheet()`, `current_worksheet()`, and `na_strings()`) are now exports ([#474](https://github.com/ycphs/openxlsx/issues/474))
+
 ## Fixes
 
 * Fixed a bug when loading input with multiple sheets where not every sheet contains a drawing/comment. Previously we assumed that every sheet had a comment and ordered them incorrectly. This caused confusion in spreadsheet software. [536](https://github.com/JanMarvin/openxlsx2/pull/536)
@@ -63,7 +67,6 @@
 * Do not export `write_data2()` anymore. This was used in development in the early stages of the package and should not be used directly anymore.
 
 * Only documentation: `openxlsx2` defaults to American English 'color' from now on. Though, we fully support the previous 'colour'. Users will not have to adjust their code. Our documentation only lists `color`, but you can pass `colour` just the same way you used to. [501](https://github.com/JanMarvin/openxlsx2/pull/501) [502](https://github.com/JanMarvin/openxlsx2/pull/502)
-
 
 ***************************************************************************
 

@@ -90,7 +90,8 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings na.strings
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -115,13 +116,10 @@ wb_add_data <- function(
     sep             = ", ",
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings,
+    na.strings      = na_strings(),
     inline_strings  = TRUE
 ) {
   assert_workbook(wb)
-
-  if (missing(na.strings)) na.strings <- substitute()
-
   wb$clone(deep = TRUE)$add_data(
     sheet           = sheet,
     x               = x,
@@ -175,7 +173,8 @@ wb_add_data <- function(
 #' @param bandedCols logical. If TRUE, the columns are color banded
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional
+#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
@@ -205,12 +204,10 @@ wb_add_data_table <- function(
     bandedCols  = FALSE,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings,
+    na.strings     = na_strings(),
     inline_strings = TRUE
 ) {
   assert_workbook(wb)
-  if (missing(na.strings)) na.strings <- substitute()
-
   wb$clone()$add_data_table(
     sheet       = sheet,
     x           = x,

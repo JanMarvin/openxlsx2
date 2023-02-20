@@ -1031,7 +1031,8 @@ wbWorkbook <- R6::R6Class(
     #' @param sep sep
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-    #' @param na.strings na.strings
+    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @param return The `wbWorkbook` object
     add_data = function(
@@ -1049,11 +1050,9 @@ wbWorkbook <- R6::R6Class(
         sep             = ", ",
         applyCellStyle  = TRUE,
         removeCellStyle = FALSE,
-        na.strings,
+        na.strings      = na_strings(),
         inline_strings  = TRUE
       ) {
-
-      if (missing(na.strings)) na.strings <- substitute()
 
       write_data(
         wb              = self,
@@ -1096,7 +1095,8 @@ wbWorkbook <- R6::R6Class(
     #' @param bandedCols bandedCols
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-    #' @param na.strings na.strings
+    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @returns The `wbWorkbook` object
     add_data_table = function(
@@ -1118,11 +1118,9 @@ wbWorkbook <- R6::R6Class(
         bandedCols      = FALSE,
         applyCellStyle  = TRUE,
         removeCellStyle = FALSE,
-        na.strings,
+        na.strings      = na_strings(),
         inline_strings  = TRUE
     ) {
-
-      if (missing(na.strings)) na.strings <- substitute()
 
       write_datatable(
         wb              = self,

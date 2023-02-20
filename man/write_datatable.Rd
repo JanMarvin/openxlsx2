@@ -24,7 +24,7 @@ write_datatable(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings,
+  na.strings = na_strings(),
   inline_strings = TRUE
 )
 }
@@ -73,7 +73,8 @@ A vector of the form c(startCol, startRow)}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
 
-\item{na.strings}{optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)}
+\item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
 }

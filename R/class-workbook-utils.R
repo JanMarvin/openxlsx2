@@ -150,14 +150,38 @@ validate_cf_params <- function(params) {
 
 # waivers -----------------------------------------------------------------
 
+#' `openxlsx2` waivers
+#'
+#' Waiver functions for `openxlsx2` functions
+#'
+#' @name waivers
+#' @returns An object of class `openxlsx2_waiver`
+NULL
+
+#' @rdname waivers
+#' @export
 current_sheet <- function() {
   structure("current_sheet", class = "openxlsx2_waiver")
 }
 
+#' @rdname waivers
+#' @export
 next_sheet <- function() {
   structure("next_sheet", class = "openxlsx2_waiver")
 }
 
+#' @rdname waivers
+#' @export
+na_strings <- function() {
+  structure("na_strings", class = "openxlsx2_waiver")
+}
+
+# helpers -----------------------------------------------------------------
+
 is_waiver <- function(x) {
   inherits(x, "openxlsx2_waiver")
+}
+
+is_na_strings <- function(x) {
+  is_waiver(x) && isTRUE(x == "na_strings")
 }

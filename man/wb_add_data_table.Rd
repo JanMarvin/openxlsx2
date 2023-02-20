@@ -24,7 +24,7 @@ wb_add_data_table(
   bandedCols = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE,
-  na.strings,
+  na.strings = na_strings(),
   inline_strings = TRUE
 )
 }
@@ -76,7 +76,8 @@ sep).
 
 \item{removeCellStyle}{keep the cell style?}
 
-\item{na.strings}{optional}
+\item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
 }
