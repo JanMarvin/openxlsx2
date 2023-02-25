@@ -40,7 +40,7 @@ get_nr_from_definedName <- function(wb) {
 #' @param a workbook
 #' @returns a data frame in named_region format
 #' @noRd
-wb_get_named_regions_from_table <- function(wb) {
+wb_get_named_regions_tab <- function(wb) {
   data.frame(
     #localSheetId is not always available
     name = wb$tables$tab_nam,
@@ -116,7 +116,7 @@ wb_get_named_regions <- function(x) {
   }
 
   if (!is.null(wb$tables)) {
-    tb <- wb_get_named_regions_from_table(wb)
+    tb <- wb_get_named_regions_tab(wb)
     z <- merge(z, tb, all = TRUE, sort = FALSE)
   }
 

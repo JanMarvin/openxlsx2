@@ -25,4 +25,3 @@ test_that("names", {
   expect_error(wb$set_sheet_names(new = paste(rep("a", 32), collapse = "")), "31 chars")
   file.remove(tmp)
 })
-
