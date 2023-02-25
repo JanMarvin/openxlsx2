@@ -55,7 +55,6 @@ test_that("ws_page_setup example", {
   wb$add_worksheet("S1")
   wb$add_worksheet("S2")
   wb$add_data_table(1, x = iris[1:30, ])
-  expect_warning(wb$add_data_table(2, x = iris[1:30, ], xy = c("C", 5)))
 
   ## landscape page scaled to 50%
   wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)

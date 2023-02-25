@@ -17,7 +17,6 @@
 #'   Sheets (`calligrasheets`).
 #'
 #' @param x A path to the Excel (xls/xlsx) file or Workbook object.
-#' @param file Deprecated
 #' @param interactive If `FALSE` will throw a warning and not open the path.
 #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses the
 #'   value returned from [base::interactive()]
@@ -36,11 +35,7 @@
 #'   xl_open(wb)
 #' }
 #' }
-xl_open <- function(x, file, interactive = NA) {
-  if (!missing(file))  {
-    warning("xl_open(file = .) is deprecated.  Use xl_open(x = .) instead")
-    x <- file
-  }
+xl_open <- function(x, interactive = NA) {
   UseMethod("xl_open")
 }
 

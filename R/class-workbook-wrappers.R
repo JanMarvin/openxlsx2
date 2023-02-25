@@ -80,9 +80,6 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying `startCol` and
-#' `startRow` individually.  A vector of the form
-#' `c(startCol, startRow)`.
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
@@ -108,7 +105,6 @@ wb_add_data <- function(
     startRow        = 1,
     dims            = rowcol_to_dims(startRow, startCol),
     array           = FALSE,
-    xy              = NULL,
     colNames        = TRUE,
     rowNames        = FALSE,
     withFilter      = FALSE,
@@ -127,7 +123,6 @@ wb_add_data <- function(
     startRow        = startRow,
     dims            = dims,
     array           = array,
-    xy              = xy,
     colNames        = colNames,
     rowNames        = rowNames,
     withFilter      = withFilter,
@@ -150,8 +145,6 @@ wb_add_data <- function(
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param xy An alternative to specifying startCol and startRow individually. A
-#'   vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, row names of x are written.
 #' @param tableStyle Any excel table style name or "none" (see "formatting"
@@ -191,7 +184,6 @@ wb_add_data_table <- function(
     startCol    = 1,
     startRow    = 1,
     dims        = rowcol_to_dims(startRow, startCol),
-    xy          = NULL,
     colNames    = TRUE,
     rowNames    = FALSE,
     tableStyle  = "TableStyleLight9",
@@ -214,7 +206,6 @@ wb_add_data_table <- function(
     startCol    = startCol,
     startRow    = startRow,
     dims        = dims,
-    xy          = xy,
     colNames    = colNames,
     rowNames    = rowNames,
     tableStyle  = tableStyle,
@@ -331,7 +322,6 @@ wb_add_formula <- function(
     startRow = 1,
     dims     = rowcol_to_dims(startRow, startCol),
     array    = FALSE,
-    xy       = NULL,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE
 ) {
@@ -343,7 +333,6 @@ wb_add_formula <- function(
     startRow = startRow,
     dims     = dims,
     array    = array,
-    xy       = xy,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle
   )
@@ -1246,7 +1235,7 @@ wb_set_header_footer <- function(
 #' wb$add_worksheet("S1")
 #' wb$add_worksheet("S2")
 #' wb$add_data_table(1, x = iris[1:30, ])
-#' wb$add_data_table(2, x = iris[1:30, ], xy = c("C", 5))
+#' wb$add_data_table(2, x = iris[1:30, ], dims = c("C5"))
 #'
 #' ## landscape page scaled to 50%
 #' wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)

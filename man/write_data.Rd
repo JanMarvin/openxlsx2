@@ -13,7 +13,6 @@ wb_add_data(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
   withFilter = FALSE,
@@ -33,7 +32,6 @@ write_data(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
   withFilter = FALSE,
@@ -59,10 +57,6 @@ write_data(
 \item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{array}{A bool if the function written is of type array}
-
-\item{xy}{An alternative to specifying \code{startCol} and
-\code{startRow} individually.  A vector of the form
-\code{c(startCol, startRow)}.}
 
 \item{colNames}{If \code{TRUE}, column names of x are written.}
 
@@ -129,7 +123,7 @@ wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 v <- rep("https://CRAN.R-project.org/", 4)
 names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
 class(v) <- "hyperlink"
-wb$add_data("Cars", x = v, xy = c("B", 32))
+wb$add_data("Cars", x = v, dims = c("B32"))
 
 #####################################################################################
 ## Formulas

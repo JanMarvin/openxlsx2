@@ -26,6 +26,3 @@ test_that("names", {
   file.remove(tmp)
 })
 
-test_that("setSheetNames is deprecated", {
-  expect_warning(wb_workbook()$add_worksheet(1)$setSheetName(1, "a"), "deprecated")
-})

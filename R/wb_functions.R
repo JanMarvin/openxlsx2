@@ -220,7 +220,6 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param startCol first column to begin looking for data.
 #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
 #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
-#' @param definedName (deprecated) Character string with a definedName. If no sheet is selected, the first appearance will be selected.
 #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
 #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
@@ -317,7 +316,6 @@ wb_to_df <- function(
     showFormula     = FALSE,
     convert         = TRUE,
     types,
-    definedName,
     named_region
 ) {
 
@@ -336,14 +334,9 @@ wb_to_df <- function(
     wb <- wb_load(xlsxFile, sheet = sheet, data_only = TRUE) # nolint
   }
 
-  if (!missing(definedName)) {
-    warning("wb_to_df(definedName = .) is deprecated.  Use wb_to_df(named_region = .) instead")
-    named_region <- definedName
-  }
-
   if (!missing(named_region)) {
 
-    nr <- get_named_regions(wb)
+    nr <- wb_get_named_regions(wb)
 
     if ((named_region %in% nr$name) && missing(sheet)) {
       sel   <- nr[nr$name == named_region, ][1, ]

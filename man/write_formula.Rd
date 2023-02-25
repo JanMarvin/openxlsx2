@@ -12,7 +12,6 @@ write_formula(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )
@@ -32,13 +31,13 @@ write_formula(
 
 \item{array}{A bool if the function written is of type array}
 
-\item{xy}{An alternative to specifying \code{startCol} and
-\code{startRow} individually.  A vector of the form
-\code{c(startCol, startRow)}.}
-
 \item{applyCellStyle}{apply styles when writing on the sheet}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
+
+\item{xy}{An alternative to specifying \code{startCol} and
+\code{startRow} individually.  A vector of the form
+\code{c(startCol, startRow)}.}
 }
 \description{
 Write a a character vector containing Excel formula to a worksheet.

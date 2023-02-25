@@ -276,7 +276,6 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_bookview}{\code{wbWorkbook$set_bookview()}}
 \item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
 \item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
-\item \href{#method-wbWorkbook-setSheetName}{\code{wbWorkbook$setSheetName()}}
 \item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-wbWorkbook-createCols}{\code{wbWorkbook$createCols()}}
@@ -1066,28 +1065,6 @@ Sets a sheet name
 \item{\code{old}}{Old sheet name}
 
 \item{\code{new}}{New sheet name}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \code{wbWorkbook} object, invisibly
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-setSheetName"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-setSheetName}{}}}
-\subsection{Method \code{setSheetName()}}{
-Deprecated.  Use \code{set_sheet_names()} instead
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$setSheetName(sheet = current_sheet(), name)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sheet}}{Old sheet name}
-
-\item{\code{name}}{New sheet name}
 }
 \if{html}{\out{</div>}}
 }

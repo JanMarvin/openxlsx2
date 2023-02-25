@@ -12,7 +12,6 @@ wb_add_formula(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )
@@ -32,13 +31,13 @@ wb_add_formula(
 
 \item{array}{A bool if the function written is of type array}
 
-\item{xy}{An alternative to specifying \code{startCol} and
-\code{startRow} individually.  A vector of the form
-\code{c(startCol, startRow)}.}
-
 \item{applyCellStyle}{Should we write cell styles to the workbook}
 
 \item{removeCellStyle}{keep the cell style?}
+
+\item{xy}{An alternative to specifying \code{startCol} and
+\code{startRow} individually.  A vector of the form
+\code{c(startCol, startRow)}.}
 }
 \description{
 Add a character vector containing Excel formula to a worksheet.
