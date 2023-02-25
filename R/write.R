@@ -1059,9 +1059,6 @@ write_data <- function(
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying `startCol` and
-#' `startRow` individually.  A vector of the form
-#' `c(startCol, startRow)`.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_data()]

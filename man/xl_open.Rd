@@ -8,9 +8,9 @@
 \usage{
 xl_open(x, interactive = NA)
 
-\method{xl_open}{wbWorkbook}(x, file, interactive = NA)
+\method{xl_open}{wbWorkbook}(x, interactive = NA)
 
-\method{xl_open}{default}(x, file, interactive = NA)
+\method{xl_open}{default}(x, interactive = NA)
 }
 \arguments{
 \item{x}{A path to the Excel (xls/xlsx) file or Workbook object.}

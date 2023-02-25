@@ -41,7 +41,7 @@ xl_open <- function(x, interactive = NA) {
 
 #' @rdname xl_open
 #' @export
-xl_open.wbWorkbook <- function(x, file, interactive = NA) {
+xl_open.wbWorkbook <- function(x, interactive = NA) {
   stopifnot(R6::is.R6(x))
   has_macros <- isTRUE(length(x$vbaProject) > 0)
   xl_open(x$clone()$save(temp_xlsx(macros = has_macros))$path, interactive = interactive)
@@ -49,7 +49,7 @@ xl_open.wbWorkbook <- function(x, file, interactive = NA) {
 
 #' @rdname xl_open
 #' @export
-xl_open.default <- function(x, file, interactive = NA) {
+xl_open.default <- function(x, interactive = NA) {
   stopifnot(file.exists(x))
 
   # nocov start

@@ -34,10 +34,6 @@ write_formula(
 \item{applyCellStyle}{apply styles when writing on the sheet}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
-
-\item{xy}{An alternative to specifying \code{startCol} and
-\code{startRow} individually.  A vector of the form
-\code{c(startCol, startRow)}.}
 }
 \description{
 Write a a character vector containing Excel formula to a worksheet.

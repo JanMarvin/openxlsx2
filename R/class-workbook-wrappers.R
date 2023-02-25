@@ -307,9 +307,6 @@ wb_add_pivot_table <- function(
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying `startCol` and
-#' `startRow` individually.  A vector of the form
-#' `c(startCol, startRow)`.
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @family workbook wrappers
