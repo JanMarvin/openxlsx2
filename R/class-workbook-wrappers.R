@@ -1532,12 +1532,12 @@ wb_set_order <- function(wb, sheets) {
 #' wb_save(wb, out_file, overwrite = TRUE)
 #'
 #' ## see named regions
-#' get_named_regions(wb) ## From Workbook object
-#' get_named_regions(out_file) ## From xlsx file
+#' wb_get_named_regions(wb) ## From Workbook object
+#' wb_get_named_regions(out_file) ## From xlsx file
 #'
 #' ## delete one
 #' wb$remove_named_region(name = "iris2")
-#' get_named_regions(wb)
+#' wb_get_named_regions(wb)
 #'
 #' ## read named regions
 #' df <- read_xlsx(wb, namedRegion = "iris")

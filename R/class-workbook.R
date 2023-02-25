@@ -2387,7 +2387,7 @@ wbWorkbook <- R6::R6Class(
 
         ## rename defined names
         if (length(self$workbook$definedNames)) {
-          ind <- get_named_regions(self)$sheets == old
+          ind <- wb_get_named_regions(self)$sheets == old
           if (any(ind)) {
             nn <- sprintf("'%s'", new_name[i])
             nn <- stringi::stri_replace_all_fixed(self$workbook$definedName[ind], old, nn)
@@ -5100,7 +5100,7 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     remove_named_region = function(sheet = current_sheet(), name = NULL) {
       # get all nown defined names
-      dn <- get_named_regions(self)
+      dn <- wb_get_named_regions(self)
 
       if (is.null(name) && !is.null(sheet)) {
         sheet <- private$get_sheet_index(sheet)

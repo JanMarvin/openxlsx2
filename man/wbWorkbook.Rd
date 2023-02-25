@@ -566,7 +566,6 @@ add data
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
   withFilter = FALSE,
@@ -593,8 +592,6 @@ add data
 \item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
-
-\item{\code{xy}}{xy}
 
 \item{\code{colNames}}{colNames}
 
@@ -632,7 +629,6 @@ add a data table
   startCol = 1,
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
-  xy = NULL,
   colNames = TRUE,
   rowNames = FALSE,
   tableStyle = "TableStyleLight9",
@@ -662,8 +658,6 @@ add a data table
 \item{\code{startRow}}{startRow}
 
 \item{\code{dims}}{dims}
-
-\item{\code{xy}}{xy}
 
 \item{\code{colNames}}{colNames}
 
@@ -753,7 +747,6 @@ add formula
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
-  xy = NULL,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )}\if{html}{\out{</div>}}
@@ -773,8 +766,6 @@ add formula
 \item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
-
-\item{\code{xy}}{xy}
 
 \item{\code{applyCellStyle}}{applyCellStyle}
 
