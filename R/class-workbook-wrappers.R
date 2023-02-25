@@ -2839,41 +2839,6 @@ wb_add_conditional_formatting <- function(
   )
 }
 
-#' @rdname wb_add_conditional_formatting
-#' @export
-#' @param ... passed to `params`
-wb_conditional_formatting <- function(
-    wb,
-    sheet,
-    cols,
-    rows,
-    rule = NULL,
-    style = NULL,
-    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
-             "containsText", "notContainsText", "beginsWith", "endsWith",
-             "between", "topN", "bottomN"),
-    ...
-) {
-  .Deprecated("wb_add_conditional_formatting()")
-
-  params <- list(...)
-  params$showValue <- params$showValue %||% TRUE
-  params$gradient  <- params$gradient  %||% TRUE
-  params$border    <- params$border    %||% TRUE
-  params$percent   <- params$percent   %||% FALSE
-  params$percent   <- params$percent   %||% 5L
-
-  wb$clone()$add_conditional_formatting(
-    sheet  = sheet,
-    cols   = cols,
-    rows   = rows,
-    rule   = rule,
-    style  = style,
-    type   = type,
-    params = params
-  )
-}
-
 #' clone sheets style
 #'
 #' @param wb workbook
