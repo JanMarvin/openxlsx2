@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -77,7 +77,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_data_table</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
-<span>  sheet <span class="op">=</span> <span class="fu">current_sheet</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
 <span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -95,7 +95,7 @@
 <span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">na.strings</span>,</span>
+<span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -185,7 +185,8 @@ sep).
 
 
 <dt>na.strings</dt>
-<dd><p>optional</p></dd>
+<dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
+<code><a href="waivers.html">na_strings()</a></code> uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 
 <dt>inline_strings</dt>

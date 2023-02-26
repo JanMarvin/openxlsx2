@@ -172,6 +172,9 @@
     <loc>/reference/temp_xlsx.html</loc>
   </url>
   <url>
+    <loc>/reference/waivers.html</loc>
+  </url>
+  <url>
     <loc>/reference/wbChartSheet.html</loc>
   </url>
   <url>
@@ -224,6 +227,9 @@
   </url>
   <url>
     <loc>/reference/wb_add_font.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_add_form_control.html</loc>
   </url>
   <url>
     <loc>/reference/wb_add_formula.html</loc>
