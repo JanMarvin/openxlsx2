@@ -13,9 +13,9 @@
 
 * Improve date detection in `wb_to_df()`. This improves date and posix detection with custom date formats. [547](https://github.com/JanMarvin/openxlsx2/pull/547)
 
-* `na_strings()` is now used as the explicit default value for `na.strings` parameters in exported workbook functions ([#473](https://github.com/ycphs/openxlsx/issues/473))
+* `na_strings()` is now used as the explicit default value for `na.strings` parameters in exported workbook functions. [473](https://github.com/JanMarvin/openxlsx2/issues/473)
 
-* waiver functions (i.e., `next_worksheet()`, `current_worksheet()`, and `na_strings()`) are now exports ([#474](https://github.com/ycphs/openxlsx/issues/474))
+* waiver functions (i.e., `next_worksheet()`, `current_worksheet()`, and `na_strings()`) are now exports [474](https://github.com/JanMarvin/openxlsx2/issues/474)
 
 ## Fixes
 
