@@ -1,5 +1,5 @@
 
-# openxlsx2 (in development)
+# openxlsx2 (0.5.1)
 
 ## New features
 
