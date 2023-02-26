@@ -11,6 +11,17 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// to_long
+bool to_long(std::string path);
+RcppExport SEXP _openxlsx2_to_long(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(to_long(path));
+    return rcpp_result_gen;
+END_RCPP
+}
 // openxlsx2_type
 SEXP openxlsx2_type(SEXP x);
 RcppExport SEXP _openxlsx2_openxlsx2_type(SEXP xSEXP) {
@@ -121,17 +132,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type colnames(colnamesSEXP);
     Rcpp::traits::input_parameter< R_xlen_t >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(create_char_dataframe(colnames, n));
-    return rcpp_result_gen;
-END_RCPP
-}
-// to_long
-bool to_long(std::string path);
-RcppExport SEXP _openxlsx2_to_long(SEXP pathSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
-    rcpp_result_gen = Rcpp::wrap(to_long(path));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -840,6 +840,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_openxlsx2_to_long", (DL_FUNC) &_openxlsx2_to_long, 1},
     {"_openxlsx2_openxlsx2_type", (DL_FUNC) &_openxlsx2_openxlsx2_type, 1},
     {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
@@ -849,7 +850,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 12},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
-    {"_openxlsx2_to_long", (DL_FUNC) &_openxlsx2_to_long, 1},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},

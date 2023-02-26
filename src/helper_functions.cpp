@@ -1,6 +1,24 @@
 #include "openxlsx2.h"
 #include <algorithm>
 
+// For R-devel 4.3 character length on Windows was modified. This caused an
+// error when passing large character strings to file.exist() when called in
+// read_xml(). We prevent bailing, by checking if the input is to long to be
+// a path.
+// Most likely this is only required until the dust has settled in R-devel, but
+// CRAN checks must succed on R-devel too.
+#ifndef R_PATH_MAX
+#define R_PATH_MAX PATH_MAX
+#endif
+
+//' Check if path is to long to be an R file path
+//' @param path the file path used in file.exists()
+//' @noRd
+// [[Rcpp::export]]
+bool to_long(std::string path) {
+ return path.size() > R_PATH_MAX;
+}
+
 // [[Rcpp::export]]
 SEXP openxlsx2_type(SEXP x) {
 
@@ -471,14 +489,3 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
 
   return df;
 }
-
-//' We use file.exists() to check if a file path is valid. On Windows our input
-//' can be to long, in this case we have to abort, otherwise file.exists() will
-//' throw an error
-//' @param path the file path used in file.exists()
-//' @noRd
-// [[Rcpp::export]]
-bool to_long(std::string path) {
-  return path.size() > PATH_MAX;
-}
-
