@@ -8,6 +8,7 @@ Calligra
 Colorscale
 DL
 Databars
+Dropmenu
 ExcelDate
 FFFFC
 FFFFFF
@@ -20,6 +21,7 @@ Openoffice
 POSIXct
 POSIXt
 Philipp
+Radiobuttons
 RedToBlack
 STDEV
 STDEVP
@@ -186,6 +188,7 @@ pivotDefinitionsRels
 pivotRecords
 pivotTables
 posix
+posixt
 printGridLines
 printOptions
 printTitleCols
@@ -198,6 +201,7 @@ readOnlyRecommended
 readonly
 reimported
 rels
+relships
 rgb
 rightToLeft
 rowBreaks
