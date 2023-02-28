@@ -286,8 +286,12 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
     tableStyle <- params$tableStyle
   }
 
-  na.strings <- params$na.strings %||% na_strings()
-
+  na.strings <-
+    if ("na.strings" %in% names(params)) {
+      params$na.strings
+    } else {
+      na_strings()
+    }
 
   ## create new Workbook object
   wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
