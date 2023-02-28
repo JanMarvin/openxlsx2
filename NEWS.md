@@ -1,3 +1,8 @@
+# openxlsx2 (development version)
+
+## Bug fixes
+
+* `na.strings = NULL` is no longer ignored in `write_xlsx()` [552](https://github.com/JanMarvin/openxlsx2/issues/552)
 
 # openxlsx2 (0.5.1)
 
