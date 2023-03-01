@@ -637,7 +637,7 @@ wb_to_df <- function(
 
   # is.na needs convert
   if (skipEmptyRows) {
-    empty <- apply(z, 1, function(x) all(is.na(x)), simplify = TRUE)
+    empty <- vapply(seq_len(nrow(z)), function(x) all(is.na(z[x, ])), NA)
 
     z  <- z[!empty, , drop = FALSE]
     tt <- tt[!empty, , drop = FALSE]

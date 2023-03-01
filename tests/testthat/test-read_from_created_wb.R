@@ -138,7 +138,7 @@ test_that("skipEmtpyCols keeps empty named columns", {
   na_mat <- matrix(NA, nrow = 22, ncol = 7)
 
   ## create artificial data with empty column
-  dat    <- iris[1:20,]
+  dat    <- iris[1:20, ]
   dat$Species <- NA_real_
   dat <- rbind(dat, NA)
 
