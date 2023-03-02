@@ -684,11 +684,18 @@ wb_to_df <- function(
   # # faster guess_col_type alternative? to avoid tt
   # types <- ftable(cc$row_r ~ cc$c_r ~ cc$typ)
 
+  date_conv     <- NULL
+  datetime_conv <- NULL
+
   if (missing(types)) {
     types <- guess_col_type(tt)
+    date_conv     <- as.Date
+    datetime_conv <- as.POSIXct
   } else {
     # assign types the correct column name "A", "B" etc.
     names(types) <- names(xlsx_cols_names[names(types) %in% xlsx_cols_names])
+    date_conv     <- convert_date
+    datetime_conv <- convert_datetime
   }
 
   # could make it optional or explicit
@@ -703,8 +710,8 @@ wb_to_df <- function(
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], as.Date)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], as.POSIXct)
+      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
+      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
     } else {
       warning("could not convert. All missing in row used for variable names")
