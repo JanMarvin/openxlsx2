@@ -34,9 +34,6 @@
     <loc>/reference/Hyperlink.html</loc>
   </url>
   <url>
-    <loc>/reference/NamedRegions.html</loc>
-  </url>
-  <url>
     <loc>/reference/as_xml.html</loc>
   </url>
   <url>
@@ -47,9 +44,6 @@
   </url>
   <url>
     <loc>/reference/cleanup.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cloneSheetStyle.html</loc>
   </url>
   <url>
     <loc>/reference/col2int.html</loc>
@@ -100,9 +94,6 @@
     <loc>/reference/get_cell_refs.html</loc>
   </url>
   <url>
-    <loc>/reference/get_cell_style.html</loc>
-  </url>
-  <url>
     <loc>/reference/get_date_origin.html</loc>
   </url>
   <url>
@@ -146,9 +137,6 @@
   </url>
   <url>
     <loc>/reference/select_active_sheet.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_cell_style.html</loc>
   </url>
   <url>
     <loc>/reference/sheet_visibility.html</loc>

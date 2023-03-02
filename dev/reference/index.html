@@ -117,7 +117,7 @@
         </td>
         <td><p>Create, write and remove comments</p></td>
       </tr><tr><td>
-          <p><code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> </p>
+          <p><code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> <code><a href="named_region.html">get_named_regions()</a></code> <code><a href="named_region.html">wb_get_named_regions()</a></code> </p>
         </td>
         <td><p>Create / delete a named region</p></td>
       </tr><tr><td>
@@ -137,7 +137,7 @@
         </td>
         <td><p>Add a chartsheet to a workbook</p></td>
       </tr><tr><td>
-          <p><code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> <code><a href="wb_add_conditional_formatting.html">wb_conditional_formatting()</a></code> </p>
+          <p><code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> </p>
         </td>
         <td><p>Add conditional formatting to cells</p></td>
       </tr><tr><td>
@@ -244,6 +244,10 @@
           <p><code><a href="cell_style.html">wb_get_cell_style()</a></code> <code><a href="cell_style.html">wb_set_cell_style()</a></code> </p>
         </td>
         <td><p>get and set cell style</p></td>
+      </tr><tr><td>
+          <p><code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> <code><a href="named_region.html">get_named_regions()</a></code> <code><a href="named_region.html">wb_get_named_regions()</a></code> </p>
+        </td>
+        <td><p>Create / delete a named region</p></td>
       </tr><tr><td>
           <p><code><a href="select_active_sheet.html">wb_get_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_set_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_get_selected()</a></code> <code><a href="select_active_sheet.html">wb_set_selected()</a></code> </p>
         </td>
@@ -389,10 +393,6 @@
         </td>
         <td><p>Create a new hyperlink object</p></td>
       </tr><tr><td>
-          <p><code><a href="NamedRegions.html">get_named_regions()</a></code> </p>
-        </td>
-        <td><p>Get create or remove named regions</p></td>
-      </tr><tr><td>
           <p><code><a href="as_xml.html">as_xml()</a></code> </p>
         </td>
         <td><p>loads character string to pugixml and returns an externalptr</p></td>
@@ -408,10 +408,6 @@
           <p><code><a href="cleanup.html">wb_clean_sheet()</a></code> <code><a href="cleanup.html">delete_data()</a></code> </p>
         </td>
         <td><p>clean sheet (remove all values)</p></td>
-      </tr><tr><td>
-          <p><code><a href="cloneSheetStyle.html">cloneSheetStyle()</a></code> </p>
-        </td>
-        <td><p>clone sheets style</p></td>
       </tr><tr><td>
           <p><code><a href="col2int.html">col2int()</a></code> </p>
         </td>
@@ -477,10 +473,6 @@
         </td>
         <td><p>Return excel cell coordinates from (x,y) coordinates</p></td>
       </tr><tr><td>
-          <p><code><a href="get_cell_style.html">get_cell_style()</a></code> </p>
-        </td>
-        <td><p>helper get_cell_style</p></td>
-      </tr><tr><td>
           <p><code><a href="get_date_origin.html">get_date_origin()</a></code> </p>
         </td>
         <td><p>Get the date origin an xlsx file is using</p></td>
@@ -494,7 +486,7 @@
         </td>
         <td><p>Convert integer to Excel column</p></td>
       </tr><tr><td>
-          <p><code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> </p>
+          <p><code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> <code><a href="named_region.html">get_named_regions()</a></code> <code><a href="named_region.html">wb_get_named_regions()</a></code> </p>
         </td>
         <td><p>Create / delete a named region</p></td>
       </tr><tr><td>
@@ -533,10 +525,6 @@
           <p><code><a href="select_active_sheet.html">wb_get_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_set_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_get_selected()</a></code> <code><a href="select_active_sheet.html">wb_set_selected()</a></code> </p>
         </td>
         <td><p>get and set table of sheets and their state as selected and active</p></td>
-      </tr><tr><td>
-          <p><code><a href="set_cell_style.html">set_cell_style()</a></code> </p>
-        </td>
-        <td><p>helper set_cell_style</p></td>
       </tr><tr><td>
           <p><code><a href="sheet_visibility.html">wb_get_sheet_visibility()</a></code> <code><a href="sheet_visibility.html">wb_set_sheet_visibility()</a></code> </p>
         </td>
@@ -610,7 +598,7 @@
         </td>
         <td><p>Add a chartsheet to a workbook</p></td>
       </tr><tr><td>
-          <p><code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> <code><a href="wb_add_conditional_formatting.html">wb_conditional_formatting()</a></code> </p>
+          <p><code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> </p>
         </td>
         <td><p>Add conditional formatting to cells</p></td>
       </tr><tr><td>
