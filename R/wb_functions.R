@@ -595,10 +595,6 @@ wb_to_df <- function(
   if (any(zz$val == "", na.rm = TRUE)) zz <- zz[zz$val != "", ]
   long_to_wide(z, tt, zz)
 
-  # prepare colnames object
-  xlsx_cols_names <- colnames(z)
-  names(xlsx_cols_names) <- xlsx_cols_names
-
   # backward compatible option. get the mergedCells dimension and fill it with
   # the value of the first cell in the range. do the same for tt.
   if (fillMergedCells) {
@@ -638,6 +634,30 @@ wb_to_df <- function(
     }
 
   }
+
+  # is.na needs convert
+  if (skipEmptyRows) {
+    empty <- vapply(seq_len(nrow(z)), function(x) all(is.na(z[x, ])), NA)
+
+    z  <- z[!empty, , drop = FALSE]
+    tt <- tt[!empty, , drop = FALSE]
+  }
+
+  if (skipEmptyCols) {
+
+    empty <- vapply(z, function(x) all(is.na(x)), NA)
+
+    if (any(empty)) {
+      sel <- which(empty)
+      z[sel]  <- NULL
+      tt[sel] <- NULL
+    }
+
+  }
+
+  # prepare colnames object
+  xlsx_cols_names <- colnames(z)
+  names(xlsx_cols_names) <- xlsx_cols_names
 
   # if colNames, then change tt too
   if (colNames) {
@@ -694,26 +714,6 @@ wb_to_df <- function(
   if (colNames) {
     names(z)  <- xlsx_cols_names
     names(tt) <- xlsx_cols_names
-  }
-
-  # is.na needs convert
-  if (skipEmptyRows) {
-    empty <- apply(z, 1, function(x) all(is.na(x)), simplify = TRUE)
-
-    z  <- z[!empty, , drop = FALSE]
-    tt <- tt[!empty, , drop = FALSE]
-  }
-
-  if (skipEmptyCols) {
-
-    empty <- vapply(z, function(x) all(is.na(x)), NA)
-
-    if (any(empty)) {
-      sel <- which(names(empty) %in% names(empty[empty == TRUE]))
-      z[sel]  <- NULL
-      tt[sel] <- NULL
-    }
-
   }
 
   attr(z, "tt") <- tt
