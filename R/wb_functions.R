@@ -648,7 +648,7 @@ wb_to_df <- function(
     empty <- vapply(z, function(x) all(is.na(x)), NA)
 
     if (any(empty)) {
-      sel <- which(names(empty) %in% names(empty[empty == TRUE]))
+      sel <- which(empty)
       z[sel]  <- NULL
       tt[sel] <- NULL
     }
