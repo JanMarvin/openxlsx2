@@ -475,3 +475,38 @@ test_that("writing pivot tables works", {
   expect_equal(4L, length(wb$pivotTables))
 
 })
+
+test_that("writing na.strings = NULL works", {
+
+  # write na.strings = na_strings()
+  tmp <- temp_xlsx()
+  write_xlsx(matrix(NA, 2, 2), tmp)
+  wb <- wb_load(tmp)
+
+  exp <- "#N/A"
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$v[3:6])
+  expect_equal(exp, got)
+
+  # write na.strings = ""
+  tmp <- temp_xlsx()
+  write_xlsx(matrix(NA, 2, 2), tmp, na.strings = "")
+  wb <- wb_load(tmp)
+
+  exp <- "<is><t/></is>"
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$is[3:6])
+  expect_equal(exp, got)
+
+  # write na.strings = NULL
+  tmp <- temp_xlsx()
+  write_xlsx(matrix(NA, 2, 2), tmp, na.strings = NULL)
+  wb <- wb_load(tmp)
+
+  exp <- ""
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$v[3:6])
+  expect_equal(exp, got)
+
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$is[3:6])
+  expect_equal(exp, got)
+
+})
+
