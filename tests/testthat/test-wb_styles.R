@@ -1,12 +1,5 @@
 test_that("wb_clone_sheet_style", {
 
-  fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
-  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
-  wb <- wb_clone_sheet_style(wb, "SUM", "clone")
-
-  expect_warning(cloneSheetStyle(wb, "SUM", "clone"), "deprecated")
-
   # clone style to empty sheet (creates cells and style)
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)$add_worksheet("copy")

@@ -582,13 +582,13 @@ test_that("wb_conditional_formatting", {
   wb$add_worksheet("databar")
   ## Databars
   wb$add_data("databar", -5:5, startCol = 1)
-  expect_warning(wb <- wb_conditional_formatting(
+  wb <- wb_add_conditional_formatting(
     wb,
     "databar",
     cols = 1,
     rows = 1:11,
     type = "dataBar"
-  ), "deprecated")
+  )
 
   exp <- c(`A1:A11` = "<cfRule type=\"dataBar\" priority=\"1\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF638EC6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>")
   got <- wb$worksheets[[1]]$conditionalFormatting

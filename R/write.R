@@ -645,8 +645,6 @@ write_data2 <- function(
 #' @param startRow A vector specifying the starting row to write df
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying startCol and startRow individually.
-#' A vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, row names of x are written.
 #' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
@@ -673,7 +671,6 @@ write_data_table <- function(
     startRow = 1,
     dims,
     array = FALSE,
-    xy = NULL,
     colNames = TRUE,
     rowNames = FALSE,
     tableStyle = "TableStyleLight9",
@@ -725,16 +722,6 @@ write_data_table <- function(
   # sheet <- wb$validate_sheet(sheet)
 
   if (wb$is_chartsheet[[sheet]]) stop("Cannot write to chart sheet.")
-
-  ## All input conversions/validations
-  if (!is.null(xy)) {
-    warning("xy is deprecated. Please use dims instead.")
-    if (length(xy) != 2) {
-      stop("xy parameter must have length 2")
-    }
-    startCol <- xy[[1]]
-    startRow <- xy[[2]]
-  }
 
   ## convert startRow and startCol
   if (!is.numeric(startCol)) {
@@ -935,9 +922,6 @@ write_data_table <- function(
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying `startCol` and
-#' `startRow` individually.  A vector of the form
-#' `c(startCol, startRow)`.
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
@@ -982,7 +966,7 @@ write_data_table <- function(
 #' v <- rep("https://CRAN.R-project.org/", 4)
 #' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
 #' class(v) <- "hyperlink"
-#' wb$add_data("Cars", x = v, xy = c("B", 32))
+#' wb$add_data("Cars", x = v, dims = c("B32"))
 #'
 #' #####################################################################################
 #' ## Formulas
@@ -1016,7 +1000,6 @@ write_data <- function(
     startRow = 1,
     dims = rowcol_to_dims(startRow, startCol),
     array = FALSE,
-    xy = NULL,
     colNames = TRUE,
     rowNames = FALSE,
     withFilter = FALSE,
@@ -1036,7 +1019,6 @@ write_data <- function(
     startRow = startRow,
     dims = dims,
     array = array,
-    xy = xy,
     colNames = colNames,
     rowNames = rowNames,
     tableStyle = NULL,
@@ -1077,9 +1059,6 @@ write_data <- function(
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying `startCol` and
-#' `startRow` individually.  A vector of the form
-#' `c(startCol, startRow)`.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_data()]
@@ -1156,7 +1135,6 @@ write_formula <- function(
     startRow = 1,
     dims = rowcol_to_dims(startRow, startCol),
     array = FALSE,
-    xy = NULL,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE
 ) {
@@ -1179,7 +1157,6 @@ write_formula <- function(
     startRow = startRow,
     dims = dims,
     array = array,
-    xy = xy,
     colNames = FALSE,
     rowNames = FALSE,
     applyCellStyle = applyCellStyle,
@@ -1197,8 +1174,6 @@ write_formula <- function(
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param xy An alternative to specifying startCol and startRow individually.
-#' A vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, row names of x are written.
 #' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
@@ -1247,7 +1222,7 @@ write_formula <- function(
 #' wb$add_data_table("S1", x = iris)
 #'
 #' wb$add_data_table("S2",
-#'   x = mtcars, xy = c("B", 3), rowNames = TRUE,
+#'   x = mtcars, dims = c("B3"), rowNames = TRUE,
 #'   tableStyle = "TableStyleLight9"
 #' )
 #'
@@ -1319,7 +1294,6 @@ write_datatable <- function(
     startCol = 1,
     startRow = 1,
     dims = rowcol_to_dims(startRow, startCol),
-    xy = NULL,
     colNames = TRUE,
     rowNames = FALSE,
     tableStyle = "TableStyleLight9",
@@ -1344,7 +1318,6 @@ write_datatable <- function(
     startRow = startRow,
     dims = dims,
     array = FALSE,
-    xy = xy,
     colNames = colNames,
     rowNames = rowNames,
     tableStyle = tableStyle,

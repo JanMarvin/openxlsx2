@@ -118,7 +118,6 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   #---write_data---#
   ## startCol = 1,
   ## startRow = 1,
-  ## xy = NULL,
   ## colNames = TRUE,
   ## rowNames = FALSE,
   ## na.strings = NULL
@@ -126,7 +125,6 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
   #----write_datatable---#
   ## startCol = 1
   ## startRow = 1
-  ## xy = NULL
   ## colNames = TRUE
   ## rowNames = FALSE
   ## tableStyle = "TableStyleLight9"
@@ -266,14 +264,6 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
     }
   }
 
-  xy <- NULL
-  if ("xy" %in% names(params)) {
-    if (length(params$xy) != 2) {
-      stop("xy parameter must have length 2")
-    }
-    xy <- params$xy
-  }
-
   colWidths <- NULL
   if ("colWidths" %in% names(params)) {
     colWidths <- params$colWidths
@@ -375,7 +365,6 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
         x = x[[i]],
         startCol = startCol[[i]],
         startRow = startRow[[i]],
-        xy = xy,
         colNames = colNames[[i]],
         rowNames = rowNames[[i]],
         tableStyle = tableStyle[[i]],
@@ -390,7 +379,6 @@ write_xlsx <- function(x, file, asTable = FALSE, ...) {
         x = x[[i]],
         startCol = startCol[[i]],
         startRow = startRow[[i]],
-        xy = xy,
         colNames = colNames[[i]],
         rowNames = rowNames[[i]],
         na.strings = na.strings

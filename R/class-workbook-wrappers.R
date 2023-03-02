@@ -80,9 +80,6 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying `startCol` and
-#' `startRow` individually.  A vector of the form
-#' `c(startCol, startRow)`.
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, data.frame row names of x are written.
 #' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
@@ -108,7 +105,6 @@ wb_add_data <- function(
     startRow        = 1,
     dims            = rowcol_to_dims(startRow, startCol),
     array           = FALSE,
-    xy              = NULL,
     colNames        = TRUE,
     rowNames        = FALSE,
     withFilter      = FALSE,
@@ -127,7 +123,6 @@ wb_add_data <- function(
     startRow        = startRow,
     dims            = dims,
     array           = array,
-    xy              = xy,
     colNames        = colNames,
     rowNames        = rowNames,
     withFilter      = withFilter,
@@ -150,8 +145,6 @@ wb_add_data <- function(
 #' @param startCol A vector specifying the starting column to write df
 #' @param startRow A vector specifying the starting row to write df
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param xy An alternative to specifying startCol and startRow individually. A
-#'   vector of the form c(startCol, startRow)
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, row names of x are written.
 #' @param tableStyle Any excel table style name or "none" (see "formatting"
@@ -191,7 +184,6 @@ wb_add_data_table <- function(
     startCol    = 1,
     startRow    = 1,
     dims        = rowcol_to_dims(startRow, startCol),
-    xy          = NULL,
     colNames    = TRUE,
     rowNames    = FALSE,
     tableStyle  = "TableStyleLight9",
@@ -214,7 +206,6 @@ wb_add_data_table <- function(
     startCol    = startCol,
     startRow    = startRow,
     dims        = dims,
-    xy          = xy,
     colNames    = colNames,
     rowNames    = rowNames,
     tableStyle  = tableStyle,
@@ -316,9 +307,6 @@ wb_add_pivot_table <- function(
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
-#' @param xy An alternative to specifying `startCol` and
-#' `startRow` individually.  A vector of the form
-#' `c(startCol, startRow)`.
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @family workbook wrappers
@@ -331,7 +319,6 @@ wb_add_formula <- function(
     startRow = 1,
     dims     = rowcol_to_dims(startRow, startCol),
     array    = FALSE,
-    xy       = NULL,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE
 ) {
@@ -343,7 +330,6 @@ wb_add_formula <- function(
     startRow = startRow,
     dims     = dims,
     array    = array,
-    xy       = xy,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle
   )
@@ -1246,7 +1232,7 @@ wb_set_header_footer <- function(
 #' wb$add_worksheet("S1")
 #' wb$add_worksheet("S2")
 #' wb$add_data_table(1, x = iris[1:30, ])
-#' wb$add_data_table(2, x = iris[1:30, ], xy = c("C", 5))
+#' wb$add_data_table(2, x = iris[1:30, ], dims = c("C5"))
 #'
 #' ## landscape page scaled to 50%
 #' wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
@@ -1543,12 +1529,12 @@ wb_set_order <- function(wb, sheets) {
 #' wb_save(wb, out_file, overwrite = TRUE)
 #'
 #' ## see named regions
-#' get_named_regions(wb) ## From Workbook object
-#' get_named_regions(out_file) ## From xlsx file
+#' wb_get_named_regions(wb) ## From Workbook object
+#' wb_get_named_regions(out_file) ## From xlsx file
 #'
 #' ## delete one
 #' wb$remove_named_region(name = "iris2")
-#' get_named_regions(wb)
+#' wb_get_named_regions(wb)
 #'
 #' ## read named regions
 #' df <- read_xlsx(wb, namedRegion = "iris")
@@ -2835,41 +2821,6 @@ wb_add_conditional_formatting <- function(
     rule  = rule,
     style = style,
     type  = type,
-    params = params
-  )
-}
-
-#' @rdname wb_add_conditional_formatting
-#' @export
-#' @param ... passed to `params`
-wb_conditional_formatting <- function(
-    wb,
-    sheet,
-    cols,
-    rows,
-    rule = NULL,
-    style = NULL,
-    type = c("expression", "colorScale", "dataBar", "duplicatedValues",
-             "containsText", "notContainsText", "beginsWith", "endsWith",
-             "between", "topN", "bottomN"),
-    ...
-) {
-  .Deprecated("wb_add_conditional_formatting()")
-
-  params <- list(...)
-  params$showValue <- params$showValue %||% TRUE
-  params$gradient  <- params$gradient  %||% TRUE
-  params$border    <- params$border    %||% TRUE
-  params$percent   <- params$percent   %||% FALSE
-  params$percent   <- params$percent   %||% 5L
-
-  wb$clone()$add_conditional_formatting(
-    sheet  = sheet,
-    cols   = cols,
-    rows   = rows,
-    rule   = rule,
-    style  = style,
-    type   = type,
     params = params
   )
 }

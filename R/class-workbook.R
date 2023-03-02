@@ -1023,7 +1023,6 @@ wbWorkbook <- R6::R6Class(
     #' @param startRow startRow
     #' @param dims dims
     #' @param array array
-    #' @param xy xy
     #' @param colNames colNames
     #' @param rowNames rowNames
     #' @param withFilter withFilter
@@ -1042,7 +1041,6 @@ wbWorkbook <- R6::R6Class(
         startRow        = 1,
         dims            = rowcol_to_dims(startRow, startCol),
         array           = FALSE,
-        xy              = NULL,
         colNames        = TRUE,
         rowNames        = FALSE,
         withFilter      = FALSE,
@@ -1062,7 +1060,6 @@ wbWorkbook <- R6::R6Class(
         startRow        = startRow,
         dims            = dims,
         array           = array,
-        xy              = xy,
         colNames        = colNames,
         rowNames        = rowNames,
         withFilter      = withFilter,
@@ -1082,7 +1079,6 @@ wbWorkbook <- R6::R6Class(
     #' @param startCol startCol
     #' @param startRow startRow
     #' @param dims dims
-    #' @param xy xy
     #' @param colNames colNames
     #' @param rowNames rowNames
     #' @param tableStyle tableStyle
@@ -1105,7 +1101,6 @@ wbWorkbook <- R6::R6Class(
         startCol        = 1,
         startRow        = 1,
         dims            = rowcol_to_dims(startRow, startCol),
-        xy              = NULL,
         colNames        = TRUE,
         rowNames        = FALSE,
         tableStyle      = "TableStyleLight9",
@@ -1129,7 +1124,6 @@ wbWorkbook <- R6::R6Class(
         dims            = dims,
         startCol        = startCol,
         startRow        = startRow,
-        xy              = xy,
         colNames        = colNames,
         rowNames        = rowNames,
         tableStyle      = tableStyle,
@@ -1285,7 +1279,6 @@ wbWorkbook <- R6::R6Class(
     #' @param startRow startRow
     #' @param dims dims
     #' @param array array
-    #' @param xy xy
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @returns The `wbWorkbook` object
@@ -1296,7 +1289,6 @@ wbWorkbook <- R6::R6Class(
         startRow = 1,
         dims     = rowcol_to_dims(startRow, startCol),
         array    = FALSE,
-        xy       = NULL,
         applyCellStyle = TRUE,
         removeCellStyle = FALSE
     ) {
@@ -1308,7 +1300,6 @@ wbWorkbook <- R6::R6Class(
         startRow        = startRow,
         dims            = dims,
         array           = array,
-        xy              = xy,
         applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle
       )
@@ -2396,7 +2387,7 @@ wbWorkbook <- R6::R6Class(
 
         ## rename defined names
         if (length(self$workbook$definedNames)) {
-          ind <- get_named_regions(self)$sheets == old
+          ind <- wb_get_named_regions(self)$sheets == old
           if (any(ind)) {
             nn <- sprintf("'%s'", new_name[i])
             nn <- stringi::stri_replace_all_fixed(self$workbook$definedName[ind], old, nn)
@@ -2407,16 +2398,6 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(self)
-    },
-
-    #' @description
-    #' Deprecated.  Use `set_sheet_names()` instead
-    #' @param sheet Old sheet name
-    #' @param name New sheet name
-    #' @return The `wbWorkbook` object, invisibly
-    setSheetName = function(sheet = current_sheet(), name) {
-      .Deprecated("wbWorkbook$set_sheet_names()")
-      self$set_sheet_names(old = sheet, new = name)
     },
 
 
@@ -5119,7 +5100,7 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     remove_named_region = function(sheet = current_sheet(), name = NULL) {
       # get all nown defined names
-      dn <- get_named_regions(self)
+      dn <- wb_get_named_regions(self)
 
       if (is.null(name) && !is.null(sheet)) {
         sheet <- private$get_sheet_index(sheet)

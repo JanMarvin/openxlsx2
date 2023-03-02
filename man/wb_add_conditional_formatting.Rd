@@ -2,7 +2,6 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_conditional_formatting}
 \alias{wb_add_conditional_formatting}
-\alias{wb_conditional_formatting}
 \title{Add conditional formatting to cells}
 \usage{
 wb_add_conditional_formatting(
@@ -18,18 +17,6 @@ wb_add_conditional_formatting(
     "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
     5L)
-)
-
-wb_conditional_formatting(
-  wb,
-  sheet,
-  cols,
-  rows,
-  rule = NULL,
-  style = NULL,
-  type = c("expression", "colorScale", "dataBar", "duplicatedValues", "containsText",
-    "notContainsText", "beginsWith", "endsWith", "between", "topN", "bottomN"),
-  ...
 )
 }
 \arguments{
@@ -48,8 +35,6 @@ wb_conditional_formatting(
 \item{type}{The type of conditional formatting rule to apply.}
 
 \item{params}{Additional parameters passed.  See \strong{Details} for more}
-
-\item{...}{passed to \code{params}}
 }
 \description{
 Add conditional formatting to cells

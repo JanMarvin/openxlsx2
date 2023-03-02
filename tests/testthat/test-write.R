@@ -49,11 +49,9 @@ test_that("silent with numfmt option", {
   wb$add_worksheet("S2")
 
   wb$add_data_table("S1", x = iris)
-  expect_warning(
-    wb$add_data_table("S2",
-                 x = mtcars, xy = c("B", 3), rowNames = TRUE,
-                 tableStyle = "TableStyleLight9")
-  )
+  wb$add_data_table("S2",
+                    x = mtcars, dims = "B3", rowNames = TRUE,
+                    tableStyle = "TableStyleLight9")
 
   # [1:4] to ignore factor
   expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)

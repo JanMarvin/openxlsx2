@@ -6,16 +6,14 @@
 \alias{xl_open.default}
 \title{Open a Microsoft Excel file (xls/xlsx) or an openxlsx2 wbWorkbook}
 \usage{
-xl_open(x, file, interactive = NA)
+xl_open(x, interactive = NA)
 
-\method{xl_open}{wbWorkbook}(x, file, interactive = NA)
+\method{xl_open}{wbWorkbook}(x, interactive = NA)
 
-\method{xl_open}{default}(x, file, interactive = NA)
+\method{xl_open}{default}(x, interactive = NA)
 }
 \arguments{
 \item{x}{A path to the Excel (xls/xlsx) file or Workbook object.}
-
-\item{file}{Deprecated}
 
 \item{interactive}{If \code{FALSE} will throw a warning and not open the path.
 This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses the

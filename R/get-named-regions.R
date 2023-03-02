@@ -16,7 +16,7 @@ get_nr_from_definedName <- function(wb) {
     dn_pos <- gsub("[$']", "", dn_pos)
     # for ws_page_setup we can have multiple defined names for column and row
     # separated by a colon. This keeps only the first and drops the second.
-    # This will allow saving, but changes get_named_regions()
+    # This will allow saving, but changes wb_get_named_regions()
     dn_pos <- vapply(strsplit(dn_pos, ","), FUN = function(x) x[1], NA_character_)
 
     has_bang <- grepl("!", dn_pos, fixed = TRUE)
@@ -40,7 +40,7 @@ get_nr_from_definedName <- function(wb) {
 #' @param a workbook
 #' @returns a data frame in named_region format
 #' @noRd
-get_named_regions_from_table <- function(wb) {
+wb_get_named_regions_tab <- function(wb) {
   data.frame(
     #localSheetId is not always available
     name = wb$tables$tab_nam,
@@ -54,12 +54,10 @@ get_named_regions_from_table <- function(wb) {
   )
 }
 
-#' @name NamedRegions
 #' @title Get create or remove named regions
 #' @description Return a vector of named regions in a xlsx file or
 #' Workbook object
 #' @param x An xlsx file or Workbook object
-#' @export
 #' @seealso [wb_add_named_region()] [wb_remove_named_region()]
 #' @examples
 #' ## create named regions
@@ -83,8 +81,8 @@ get_named_regions_from_table <- function(wb) {
 #' wb$save(out_file, overwrite = TRUE)
 #'
 #' ## see named regions
-#' get_named_regions(wb) ## From Workbook object
-#' get_named_regions(out_file) ## From xlsx file
+#' wb_get_named_regions(wb) ## From Workbook object
+#' wb_get_named_regions(out_file) ## From xlsx file
 #'
 #' ## read named regions
 #' df <- read_xlsx(wb, namedRegion = "iris")
@@ -92,7 +90,19 @@ get_named_regions_from_table <- function(wb) {
 #'
 #' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
+#' @name named_region
+NULL
+
+#' @rdname named_region
+#' @export
 get_named_regions <- function(x) {
+  .Deprecated("wb_get_named_regions")
+  wb_get_named_regions(x)
+}
+
+#' @rdname named_region
+#' @export
+wb_get_named_regions <- function(x) {
   if (inherits(x, "wbWorkbook")) {
     wb <- x
   } else {
@@ -106,7 +116,7 @@ get_named_regions <- function(x) {
   }
 
   if (!is.null(wb$tables)) {
-    tb <- get_named_regions_from_table(wb)
+    tb <- wb_get_named_regions_tab(wb)
     z <- merge(z, tb, all = TRUE, sort = FALSE)
   }
 

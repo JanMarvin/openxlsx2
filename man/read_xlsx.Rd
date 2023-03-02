@@ -112,5 +112,5 @@ xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTe
 head(read_xlsx(xlsxFile))
 }
 \seealso{
-\code{\link[=get_named_regions]{get_named_regions()}} \code{\link[=wb_to_df]{wb_to_df()}}
+\code{\link[=wb_get_named_regions]{wb_get_named_regions()}} \code{\link[=wb_to_df]{wb_to_df()}}
 }

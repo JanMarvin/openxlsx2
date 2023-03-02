@@ -25,7 +25,3 @@ test_that("names", {
   expect_error(wb$set_sheet_names(new = paste(rep("a", 32), collapse = "")), "31 chars")
   file.remove(tmp)
 })
-
-test_that("setSheetNames is deprecated", {
-  expect_warning(wb_workbook()$add_worksheet(1)$setSheetName(1, "a"), "deprecated")
-})

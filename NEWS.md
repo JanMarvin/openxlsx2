@@ -10,6 +10,21 @@
 
 * `skipEmptyCols` and `skipEmptyRows` behavior in `wb_to_df()` related functions was switched to include empty columns that have a name. Previously we would exclude columns if they were empty, even if they had a name. [555](https://github.com/JanMarvin/openxlsx2/pull/555)
 
+* Cleanups in [548](https://github.com/JanMarvin/openxlsx2/pull/548)
+  * remove deprecated functions
+    * `cloneSheetStyle()`
+    * `get_cell_style()`
+    * `set_cell_style()`
+    * `wb_conditional_formatting()`
+  
+  * remove deprecated arguments
+    * `xy` argument for `write_data_table()` interacting functions
+    * `file` from `xl_open()`
+    * `definedName` from `wb_to_df()` interacting functions
+  
+  * deprecating function
+    * `get_named_regions()` for `wb_get_named_regions()`
+
 
 ***************************************************************************
 
