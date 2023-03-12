@@ -99,3 +99,17 @@ test_that("relship", {
   expect_equal(exp, got)
 
 })
+
+test_that("as_xml_attr works", {
+
+  mm <- matrix("", 2, 2)
+  mm[1, 1] <- openxlsx2:::as_xml_attr(TRUE)
+  mm[2, 1] <- openxlsx2:::as_xml_attr(FALSE)
+
+  mm[1, 2] <- openxlsx2:::as_xml_attr(1)
+  mm[2, 2] <- openxlsx2:::as_xml_attr(NULL)
+
+  exp <- matrix(c("1", "0", "1", ""), 2, 2)
+  expect_equal(exp, mm)
+
+})

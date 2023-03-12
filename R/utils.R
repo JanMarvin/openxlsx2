@@ -118,6 +118,11 @@ as_binary <- function(x) {
 }
 
 as_xml_attr <- function(x) {
+
+  if (is.null(x)) {
+    return("")
+  }
+
   if (inherits(x, "logical")) {
     x <- as_binary(x)
   }
