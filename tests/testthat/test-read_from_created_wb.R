@@ -157,7 +157,7 @@ test_that("reading with pre defined types works", {
 
   dat <- data.frame(
     numeric = rnorm(n = 5),
-    integer = sample(1:5, 5, T),
+    integer = sample(1:5, 5, TRUE),
     date = Sys.Date() - 0:4,
     datetime = Sys.time() - 0:4,
     character = letters[1:5]

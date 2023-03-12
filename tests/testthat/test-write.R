@@ -509,4 +509,3 @@ test_that("writing na.strings = NULL works", {
   expect_equal(exp, got)
 
 })
-
