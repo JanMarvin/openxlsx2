@@ -2310,7 +2310,8 @@ wbWorkbook <- R6::R6Class(
           windowWidth            = as_xml_attr(windowWidth),
           xWindow                = as_xml_attr(xWindow),
           yWindow                = as_xml_attr(yWindow)
-        )
+        ),
+        remove_empty_attr = FALSE
       )
 
       self$workbook$bookViews <- xml_node_create(

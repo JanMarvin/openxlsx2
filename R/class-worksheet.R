@@ -648,7 +648,8 @@ wbWorksheet <- R6::R6Class(
           zoomScaleNormal          = as_xml_attr(zoomScaleNormal),
           zoomScalePageLayoutView  = as_xml_attr(zoomScalePageLayoutView),
           zoomScaleSheetLayoutView = as_xml_attr(zoomScaleSheetLayoutView)
-        )
+        ),
+        remove_empty_attr = FALSE
       )
 
       self$sheetViews <- xml_node_create(
