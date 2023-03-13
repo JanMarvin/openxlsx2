@@ -458,6 +458,7 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 //' @param xml_attributes R vector of named attributes
 //' @param escapes bool if escapes should be used
 //' @param declaration bool if declaration should be imported
+//' @param remove_empty_attr bool remove empty attributes or ignore them
 //'
 //' @examples
 //'   # add single node
@@ -480,7 +481,8 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 //' @export
 // [[Rcpp::export]]
 Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes,
-                                   bool escapes = false, bool declaration = false) {
+                                   bool escapes = false, bool declaration = false,
+                                   bool remove_empty_attr = true) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result result;
@@ -506,8 +508,9 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
 
       // check if attribute_val is empty. if yes, remove the attribute.
       // otherwise add or update the attribute
-      if (new_attr_val[i] == "") {
-        cld.remove_attribute(new_attr_nam[i].c_str());
+      if (new_attr_val[i].empty()) {
+        if (remove_empty_attr)
+          cld.remove_attribute(new_attr_nam[i].c_str());
       } else {
         // update attribute if found else add attribute
         if (cld.attribute(new_attr_nam[i].c_str())) {
@@ -601,7 +604,8 @@ Rcpp::CharacterVector xml_node_create(
     std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attr);
 
     for (auto i = 0; i < xml_attr.length(); ++i){
-      cld.append_attribute(new_attr_nam[i].c_str()) = new_attr_val[i].c_str();
+      if (!new_attr_val[i].empty())
+        cld.append_attribute(new_attr_nam[i].c_str()) = new_attr_val[i].c_str();
     }
   }
 

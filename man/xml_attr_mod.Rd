@@ -4,7 +4,13 @@
 \alias{xml_attr_mod}
 \title{adds or updates attribute(s) in existing xml node}
 \usage{
-xml_attr_mod(xml_content, xml_attributes, escapes = FALSE, declaration = FALSE)
+xml_attr_mod(
+  xml_content,
+  xml_attributes,
+  escapes = FALSE,
+  declaration = FALSE,
+  remove_empty_attr = TRUE
+)
 }
 \arguments{
 \item{xml_content}{some valid xml_node}
@@ -14,6 +20,8 @@ xml_attr_mod(xml_content, xml_attributes, escapes = FALSE, declaration = FALSE)
 \item{escapes}{bool if escapes should be used}
 
 \item{declaration}{bool if declaration should be imported}
+
+\item{remove_empty_attr}{bool remove empty attributes or ignore them}
 }
 \description{
 Needs xml node and named character vector as input. Modifies

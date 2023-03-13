@@ -1,5 +1,9 @@
 # openxlsx2 (in development)
 
+## New features
+
+* Styles arguments now accept logical and numeric arguments where applicable. [558](https://github.com/JanMarvin/openxlsx2/pull/558)
+
 ## Fixes
 
 * `na.strings = NULL` is no longer ignored in `write_xlsx()` [552](https://github.com/JanMarvin/openxlsx2/issues/552)

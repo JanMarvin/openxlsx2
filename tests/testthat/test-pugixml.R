@@ -326,6 +326,13 @@ test_that("xml_attr_mod", {
   xml_got <- xml_attr_mod(xml_node, xml_attr)
   expect_identical(xml_exp, xml_got)
 
+  # only add node
+  xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+  xml_attr <- c(foo = "", qux = "quux")
+  xml_exp <- "<a foo=\"bar\" qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
+  xml_got <- xml_attr_mod(xml_node, xml_attr, remove_empty_attr = FALSE)
+  expect_identical(xml_exp, xml_got)
+
 })
 
 test_that("xml_node_create", {

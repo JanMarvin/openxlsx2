@@ -15,7 +15,7 @@ create_fill(
 \arguments{
 \item{gradientFill}{complex fills}
 
-\item{patternType}{various default is "none", but also "solid", or a color like "gray125"}
+\item{patternType}{various: default is "none", but also "solid", or a color like "gray125"}
 
 \item{bgColor}{hex8 color with alpha, red, green, blue only for patternFill}
 
