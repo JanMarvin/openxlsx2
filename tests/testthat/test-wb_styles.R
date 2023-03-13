@@ -515,3 +515,18 @@ test_that("add numfmt is no longer slow", {
   )
 
 })
+
+test_that("logical and numeric work too", {
+
+  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+
+  wb2 <- wb %>% wb_add_font("S1", "A1:K1", name = "Arial", bold = "1", size = "14")
+
+  wb3 <- wb %>% wb_add_font("S1", "A2:K2", name = "Arial", bold = TRUE, size = 14)
+
+  expect_equal(
+    wb2$styles_mgr$styles$fonts,
+    wb3$styles_mgr$styles$fonts
+  )
+
+})
