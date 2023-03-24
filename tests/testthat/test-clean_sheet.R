@@ -20,4 +20,11 @@ test_that("clean_sheet", {
   wb$worksheets[[1]]$clean_sheet(characters = TRUE)
   expect_true(is.na(wb_to_df(wb, dims = "B2", colNames = FALSE)))
 
+  xlsx <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  wb <- wb_load(xlsx)
+
+  # remove merged cells for dims
+  wb <- wb_clean_sheet(wb = wb, sheet = 1, dims = "B3:F4", numbers = TRUE, characters = TRUE, styles = FALSE, merged_cells = TRUE)
+  expect_identical(c("<mergeCell ref=\"B2:I2\"/>", "<mergeCell ref=\"H3:I3\"/>"), wb$worksheets[[1]]$mergeCells)
+
 })

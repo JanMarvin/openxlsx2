@@ -2295,6 +2295,7 @@ clean sheet (remove all values)
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clean_sheet(
   sheet = current_sheet(),
+  dims = NULL,
   numbers = TRUE,
   characters = TRUE,
   styles = TRUE,
@@ -2306,6 +2307,8 @@ clean sheet (remove all values)
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 
 \item{\code{numbers}}{remove all numbers}
 
