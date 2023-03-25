@@ -9,6 +9,7 @@
 wb_clean_sheet(
   wb,
   sheet = current_sheet(),
+  dims = NULL,
   numbers = TRUE,
   characters = TRUE,
   styles = TRUE,
@@ -21,6 +22,8 @@ delete_data(wb, sheet, cols, rows)
 \item{wb}{workbook}
 
 \item{sheet}{sheet to clean}
+
+\item{dims}{spreadsheet dimensions (optional)}
 
 \item{numbers}{remove all numbers}
 
