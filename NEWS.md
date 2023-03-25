@@ -4,6 +4,8 @@
 
 * Styles arguments now accept logical and numeric arguments where applicable. [558](https://github.com/JanMarvin/openxlsx2/pull/558)
 
+* Adding `dims` argument to `wb_clean_sheet()`. This allows to clean only a selected range. [563](https://github.com/JanMarvin/openxlsx2/pull/563)
+
 ## Fixes
 
 * `na.strings = NULL` is no longer ignored in `write_xlsx()` [552](https://github.com/JanMarvin/openxlsx2/issues/552)
