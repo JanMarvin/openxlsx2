@@ -111,6 +111,7 @@ A Worksheet
 \item \href{#method-wbWorksheet-get_post_sheet_data}{\code{wbWorksheet$get_post_sheet_data()}}
 \item \href{#method-wbWorksheet-unfold_cols}{\code{wbWorksheet$unfold_cols()}}
 \item \href{#method-wbWorksheet-fold_cols}{\code{wbWorksheet$fold_cols()}}
+\item \href{#method-wbWorksheet-merge_cells}{\code{wbWorksheet$merge_cells()}}
 \item \href{#method-wbWorksheet-unmerge_cells}{\code{wbWorksheet$unmerge_cells()}}
 \item \href{#method-wbWorksheet-clean_sheet}{\code{wbWorksheet$clean_sheet()}}
 \item \href{#method-wbWorksheet-add_page_break}{\code{wbWorksheet$add_page_break()}}
@@ -239,6 +240,26 @@ fold the column dataframe back into a node.
 }
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-merge_cells"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-merge_cells}{}}}
+\subsection{Method \code{merge_cells()}}{
+Set cell merging for a sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$merge_cells(rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{rows, cols}}{Row and column specifications.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}

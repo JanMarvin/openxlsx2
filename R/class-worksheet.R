@@ -475,6 +475,46 @@ wbWorksheet <- R6::R6Class(
     },
 
     #' @description
+    #' Set cell merging for a sheet
+    #' @param rows,cols Row and column specifications.
+    #' @return The `wbWorkbook` object, invisibly
+    merge_cells = function(rows = NULL, cols = NULL) {
+
+      rows <- range(as.integer(rows))
+      cols <- range(col2int(cols))
+
+      sqref <- paste0(int2col(cols), rows)
+      sqref <- stri_join(sqref, collapse = ":", sep = " ")
+
+      current <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
+
+      # regmatch0 will return character(0) when x is NULL
+      if (length(current)) {
+
+        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
+        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
+
+        # Error if merge intersects
+        if (any(intersects)) {
+          msg <- sprintf(
+            "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
+            stri_join(current[intersects], collapse = "\n\t\t")
+          )
+          stop(msg, call. = FALSE)
+        }
+      }
+
+      # TODO does this have to be xml?  Can we just save the data.frame or
+      # matrix and then check that?  This would also simplify removing the
+      # merge specifications
+      self$append("mergeCells", sprintf('<mergeCell ref="%s"/>', sqref))
+
+      invisible(self)
+
+    },
+
+    #' @description
     #' Removes cell merging for a sheet
     #' @param rows,cols Row and column specifications.
     #' @return The `wbWorkbook` object, invisibly
