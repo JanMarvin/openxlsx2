@@ -269,6 +269,8 @@ R6 class for a Workbook Worksheet"><meta name="robots" content="noindex"><!-- ma
 <li><p><a href="#method-wbWorksheet-get_post_sheet_data"><code>wbWorksheet$get_post_sheet_data()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-unfold_cols"><code>wbWorksheet$unfold_cols()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-fold_cols"><code>wbWorksheet$fold_cols()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-merge_cells"><code>wbWorksheet$merge_cells()</code></a></p></li>
+<li><p><a href="#method-wbWorksheet-unmerge_cells"><code>wbWorksheet$unmerge_cells()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-clean_sheet"><code>wbWorksheet$clean_sheet()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-add_page_break"><code>wbWorksheet$add_page_break()</code></a></p></li>
 <li><p><a href="#method-wbWorksheet-set_print_options"><code>wbWorksheet$set_print_options()</code></a></p></li>
@@ -415,11 +417,52 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
+</div><p></p><hr><a id="method-wbWorksheet-merge_cells"></a><div class="section">
+<h3 id="method-merge-cells-">Method <code>merge_cells()</code><a class="anchor" aria-label="anchor" href="#method-merge-cells-"></a></h3>
+<p>Set cell merging for a sheet</p><div class="section">
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">merge_cells</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>rows, cols</code></dt>
+<dd><p>Row and column specifications.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<p>The <code>wbWorkbook</code> object, invisibly</p>
+</div>
+
+</div><p></p><hr><a id="method-wbWorksheet-unmerge_cells"></a><div class="section">
+<h3 id="method-unmerge-cells-">Method <code>unmerge_cells()</code><a class="anchor" aria-label="anchor" href="#method-unmerge-cells-"></a></h3>
+<p>Removes cell merging for a sheet</p><div class="section">
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">unmerge_cells</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>rows, cols</code></dt>
+<dd><p>Row and column specifications.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
+<p>The <code>wbWorkbook</code> object, invisibly</p>
+</div>
+
 </div><p></p><hr><a id="method-wbWorksheet-clean_sheet"></a><div class="section">
 <h3 id="method-clean-sheet-">Method <code>clean_sheet()</code><a class="anchor" aria-label="anchor" href="#method-clean-sheet-"></a></h3>
 <p>clean sheet (remove all values)</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">clean_sheet</span><span class="op">(</span></span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  characters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  styles <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -428,8 +471,12 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>numbers</code></dt>
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>dims</code></dt>
+<dd><p>dimensions</p></dd>
+
+
+<dt><code>numbers</code></dt>
 <dd><p>remove all numbers</p></dd>
 
 
@@ -448,19 +495,19 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorksheet-add_page_break"></a><div class="section">
 <h3 id="method-add-page-break-">Method <code>add_page_break()</code><a class="anchor" aria-label="anchor" href="#method-add-page-break-"></a></h3>
 <p>add page break</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">add_page_break</span><span class="op">(</span>row <span class="op">=</span> <span class="cn">NULL</span>, col <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>row</code></dt>
 <dd><p>row</p></dd>
 
@@ -475,7 +522,7 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </div><p></p><hr><a id="method-wbWorksheet-set_print_options"></a><div class="section">
 <h3 id="method-set-print-options-">Method <code>set_print_options()</code><a class="anchor" aria-label="anchor" href="#method-set-print-options-"></a></h3>
 <p>add print options</p><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">set_print_options</span><span class="op">(</span></span>
 <span>  gridLines <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gridLinesSet <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -486,7 +533,7 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>gridLines</code></dt>
 <dd><p>gridLines</p></dd>
 
@@ -514,12 +561,12 @@ TODO might replace the xml nodes with the data frame?</p><div class="section">
 <h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
 <p>append a field.  Intended for internal use only.  Not
 guaranteed to remain a public method.</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">field</span>, value <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>field</code></dt>
 <dd><p>a field name</p></dd>
 
@@ -531,19 +578,19 @@ guaranteed to remain a public method.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
+<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorksheet-add_sparklines"></a><div class="section">
 <h3 id="method-add-sparklines-">Method <code>add_sparklines()</code><a class="anchor" aria-label="anchor" href="#method-add-sparklines-"></a></h3>
 <p>add sparkline</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">add_sparklines</span><span class="op">(</span><span class="va">sparklines</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sparklines</code></dt>
 <dd><p>sparkline created by <code>create_sparkline()</code></p></dd>
 
@@ -551,14 +598,14 @@ guaranteed to remain a public method.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
+<h4 id="returns-9">Returns<a class="anchor" aria-label="anchor" href="#returns-9"></a></h4>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorksheet-set_sheetview"></a><div class="section">
 <h3 id="method-set-sheetview-">Method <code>set_sheetview()</code><a class="anchor" aria-label="anchor" href="#method-set-sheetview-"></a></h3>
 <p>add sheetview</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">set_sheetview</span><span class="op">(</span></span>
 <span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  defaultGridColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -583,7 +630,7 @@ guaranteed to remain a public method.</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>colorId</code></dt>
 <dd><p>colorId</p></dd>
 
@@ -663,19 +710,19 @@ guaranteed to remain a public method.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
+<h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorksheet-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
+<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorksheet</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
