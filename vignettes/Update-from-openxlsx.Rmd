@@ -127,6 +127,38 @@ wb <- wb_workbook("My name here")$
 
 The code above uses chaining. If you prefer piping, we provide the chained functions with the prefix `wb_` so `wb_add_worksheet()`, `wb_add_data()`, `wb_add_border()` and `wb_set_col_widths()` would be the functions to use with pipes `%>%` or `|>`.
 
+With pipes the code from above becomes
+
+```{r new_style_pipes}
+border_color <- wb_color(hex = "FF4F81BD")
+wb <- wb_workbook("My name here") %>%
+  wb_add_worksheet("Expenditure", gridLines = FALSE) %>%
+  wb_add_data(x = USPersonalExpenditure, rowNames = TRUE) %>%
+  wb_add_border( # add the outer and inner border
+    dims = "A1:F6",
+    top_border = "thin", top_color = border_color,
+    bottom_border = "thin", bottom_color = border_color,
+    inner_hgrid = "thin", inner_hcolor = border_color,
+    left_border = "", right_border = ""
+  ) %>%
+  wb_set_col_widths( # set column width
+    cols = 1:6,
+    widths = c("20", rep("10", 5))
+  ) %>% # remove the value in A1
+  wb_add_data(dims = "A1", x = "")
+```
+
+Be aware that chains modify an object in place and pipes do not.
+
+```{r pipe_chain}
+wbp <- wb_workbook() %>% wb_add_worksheet()
+wbc <- wb_workbook()$add_worksheet()
+
+# need to assign wbp
+wbp <- wbp %>% wb_add_data(x = iris)
+wbc$add_data(x = iris)
+```
+
 You can re-use styles with `wb_get_cell_style()` and `wb_set_cell_style()`. Abandoning `stylesObject` in `openxlsx2` has the huge benefit that we can import and export a spreadsheet without changing any cell style. It is still possible to modify a cell style with `wb_add_border()`, `wb_add_fill()`, `wb_add_font()` and `wb_add_numfmt()`.
 
 Additional examples regarding styles can be found in the styles vignette.
@@ -136,10 +168,17 @@ Additional examples regarding styles can be found in the styles vignette.
 Extended examples for conditional formatting can be found in the conditional formatting vignette. A minimal example is the following:
 
 ```{r new_cf}
+# with chains
 wb <- wb_workbook()$
   add_worksheet("a")$
   add_data(x = 1:4, colNames = FALSE)$
   add_conditional_formatting(cols = 1, rows = 1:4, rule = ">2")
+
+# with pipes
+wb <- wb_workbook() %>%
+  wb_add_worksheet("a") %>%
+  wb_add_data(x = 1:4, colNames = FALSE) %>%
+  wb_add_conditional_formatting(cols = 1, rows = 1:4, rule = ">2")
 ```
 
 ### Data validation
@@ -159,10 +198,20 @@ dataValidation(wb, 1,
 looks in `openxlsx2` something like this:
 
 ```{r new_dv}
+# with chains
 wb <- wb_workbook()$
   add_worksheet("Sheet 1")$
   add_data_table(1, x = iris[1:30, ])$
   add_data_validation(1,
+    col = 1:3, rows = 2:31, type = "whole",
+    operator = "between", value = c(1, 9)
+  )
+
+# with pipes
+wb <- wb_workbook() %>%
+  wb_add_worksheet("Sheet 1") %>%
+  wb_add_data_table(1, x = iris[1:30, ]) %>%
+  wb_add_data_validation(1,
     col = 1:3, rows = 2:31, type = "whole",
     operator = "between", value = c(1, 9)
   )
