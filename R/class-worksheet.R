@@ -474,34 +474,116 @@ wbWorksheet <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description
+    #' Set cell merging for a sheet
+    #' @param rows,cols Row and column specifications.
+    #' @return The `wbWorkbook` object, invisibly
+    merge_cells = function(rows = NULL, cols = NULL) {
+
+      rows <- range(as.integer(rows))
+      cols <- range(col2int(cols))
+
+      sqref <- paste0(int2col(cols), rows)
+      sqref <- stri_join(sqref, collapse = ":", sep = " ")
+
+      current <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
+
+      # regmatch0 will return character(0) when x is NULL
+      if (length(current)) {
+
+        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
+        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
+
+        # Error if merge intersects
+        if (any(intersects)) {
+          msg <- sprintf(
+            "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
+            stri_join(current[intersects], collapse = "\n\t\t")
+          )
+          stop(msg, call. = FALSE)
+        }
+      }
+
+      # TODO does this have to be xml?  Can we just save the data.frame or
+      # matrix and then check that?  This would also simplify removing the
+      # merge specifications
+      self$append("mergeCells", sprintf('<mergeCell ref="%s"/>', sqref))
+
+      invisible(self)
+
+    },
+
+    #' @description
+    #' Removes cell merging for a sheet
+    #' @param rows,cols Row and column specifications.
+    #' @return The `wbWorkbook` object, invisibly
+    unmerge_cells = function(rows = NULL, cols = NULL) {
+
+      rows <- range(as.integer(rows))
+      cols <- range(col2int(cols))
+
+      sqref <- paste0(int2col(cols), rows)
+      sqref <- stri_join(sqref, collapse = ":", sep = " ")
+
+      current <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
+
+      if (!is.null(current)) {
+        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
+        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
+
+        # Remove intersection
+        self$mergeCells <- self$mergeCells[!intersects]
+      }
+
+      invisible(self)
+
+    },
 
     #' @description clean sheet (remove all values)
+    #' @param dims dimensions
     #' @param numbers remove all numbers
     #' @param characters remove all characters
     #' @param styles remove all styles
     #' @param merged_cells remove all merged_cells
     #' @return The `wbWorksheetObject`, invisibly
-    clean_sheet = function(numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
+    clean_sheet = function(dims = NULL, numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = TRUE) {
 
       cc <- self$sheet_data$cc
 
       if (NROW(cc) == 0) return(invisible(self))
+      sel <- rep(TRUE, nrow(cc))
+
+      if (!is.null(dims)) {
+        ddims <- dims_to_dataframe(dims, fill = TRUE)
+        rows <- rownames(ddims)
+        cols <- colnames(ddims)
+
+        dims <- unname(unlist(ddims))
+        sel <- cc$r %in% dims
+      }
 
       if (numbers)
-        cc[cc$c_t %in% c("n", ""),
+        cc[sel & cc$c_t %in% c("n", ""),
           c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (characters)
-        cc[cc$c_t %in% c("inlineStr", "s"),
+        cc[sel & cc$c_t %in% c("inlineStr", "s"),
           c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (styles)
-        cc[c("c_s")] <- ""
+        cc[sel, c("c_s")] <- ""
 
       self$sheet_data$cc <- cc
 
-      if (merged_cells)
-        self$mergeCells <- character(0)
+      if (merged_cells) {
+        if (is.null(dims)) {
+          self$mergeCells <- character(0)
+        } else {
+          self$unmerge_cells(cols = cols, rows = rows)
+        }
+      }
 
       invisible(self)
 

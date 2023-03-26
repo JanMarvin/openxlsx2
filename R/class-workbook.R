@@ -3211,40 +3211,10 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
       sheet <- private$get_sheet_index(sheet)
-
-      # TODO send to wbWorksheet() method
-      # self$worksheets[[sheet]]$merge_cells(rows = rows, cols = cols)
-      # invisible(self)
-
-      rows <- range(as.integer(rows))
-      cols <- range(as.integer(cols))
-
-      sqref <- paste0(int2col(cols), rows)
-      sqref <- stri_join(sqref, collapse = ":", sep = " ")
-
-      current <- rbindlist(xml_attr(xml = self$worksheets[[sheet]]$mergeCells, "mergeCell"))$ref
-
-      # regmatch0 will return character(0) when x is NULL
-      if (length(current)) {
-
-        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
-        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
-        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
-
-        # Error if merge intersects
-        if (any(intersects)) {
-          msg <- sprintf(
-            "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
-            stri_join(current[intersects], collapse = "\n\t\t")
-          )
-          stop(msg, call. = FALSE)
-        }
-      }
-
-        # TODO does this have to be xml?  Can we just save the data.frame or
-        # matrix and then check that?  This would also simplify removing the
-        # merge specifications
-      private$append_sheet_field(sheet, "mergeCells", sprintf('<mergeCell ref="%s"/>', sqref))
+      self$worksheets[[sheet]]$merge_cells(
+        rows   = rows,
+        cols   = cols
+      )
       invisible(self)
     },
 
@@ -3255,24 +3225,10 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     unmerge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
       sheet <- private$get_sheet_index(sheet)
-
-      rows <- range(as.integer(rows))
-      cols <- range(as.integer(cols))
-
-      sqref <- paste0(int2col(cols), rows)
-      sqref <- stri_join(sqref, collapse = ":", sep = " ")
-
-      current <- rbindlist(xml_attr(xml = self$worksheets[[sheet]]$mergeCells, "mergeCell"))$ref
-
-      if (!is.null(current)) {
-        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
-        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
-        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
-
-        # Remove intersection
-        self$worksheets[[sheet]]$mergeCells <- self$worksheets[[sheet]]$mergeCells[!intersects]
-      }
-
+      self$worksheets[[sheet]]$unmerge_cells(
+        rows   = rows,
+        cols   = cols
+      )
       invisible(self)
     },
 
@@ -5217,6 +5173,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description clean sheet (remove all values)
     #' @param sheet sheet
+    #' @param dims dims
     #' @param numbers remove all numbers
     #' @param characters remove all characters
     #' @param styles remove all styles
@@ -5224,13 +5181,17 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
         sheet        = current_sheet(),
+        dims         = NULL,
         numbers      = TRUE,
         characters   = TRUE,
         styles       = TRUE,
         merged_cells = TRUE
     ) {
       sheet <- private$get_sheet_index(sheet)
-      self$worksheets[[sheet]]$clean_sheet(numbers = numbers, characters = characters,
+      self$worksheets[[sheet]]$clean_sheet(
+        dims         = dims,
+        numbers      = numbers,
+        characters   = characters,
         styles       = styles,
         merged_cells = merged_cells
       )

@@ -2188,6 +2188,7 @@ wb_add_chart_xml <- function(
 #'
 #' @param wb workbook
 #' @param sheet sheet to clean
+#' @param dims spreadsheet dimensions (optional)
 #' @param numbers remove all numbers
 #' @param characters remove all characters
 #' @param styles remove all styles
@@ -2197,6 +2198,7 @@ wb_add_chart_xml <- function(
 wb_clean_sheet <- function(
     wb,
     sheet        = current_sheet(),
+    dims         = NULL,
     numbers      = TRUE,
     characters   = TRUE,
     styles       = TRUE,
@@ -2205,6 +2207,7 @@ wb_clean_sheet <- function(
   assert_workbook(wb)
   wb$clone(deep = TRUE)$clean_sheet(
     sheet        = sheet,
+    dims         = dims,
     numbers      = numbers,
     characters   = characters,
     styles       = styles,
