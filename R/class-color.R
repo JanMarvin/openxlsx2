@@ -50,7 +50,8 @@ is_wbColour <- function(x) inherits(x, "wbColour")
 standardize_color_names <- function(...) {
 
   # since R 4.1.0: ...names()
-  got <- names(list(...))
+  args <- list(...)
+  got <- names(args)
   # can be Color or color
   got_color <- which(grepl("colour", tolower(got)))
 
@@ -59,7 +60,7 @@ standardize_color_names <- function(...) {
       color <- got[got_col]
       name_color <- stringi::stri_replace_all_fixed(color, "olour", "olor", )
       # since R 3.5.0: ...elt(got_col)
-      value_color <- eval(paste0("..", got_col))
+      value_color <- args[[got_col]]
       assign(name_color, value_color, parent.frame())
     }
   }
