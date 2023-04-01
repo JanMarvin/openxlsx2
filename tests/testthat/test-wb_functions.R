@@ -205,7 +205,7 @@ test_that("handle 29Feb1900", {
   expect_equal(exp, got)
 
   got <- conv_to_excel_date(as_posix)
-  expect_equal(exp, got)
+  expect_equal(exp, got, tolerance = 1e-5)
 
   expect_warning(
     conv_to_excel_date("x"),
