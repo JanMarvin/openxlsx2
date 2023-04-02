@@ -105,11 +105,6 @@ df3 <- read_xlsx(wb,
   sheet = 2, skipEmptyRows = FALSE,
   cols = c(1, 4), rows = c(1, 3, 4)
 )
-
-## URL
-##
-xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
-head(read_xlsx(xlsxFile))
 }
 \seealso{
 \code{\link[=wb_get_named_regions]{wb_get_named_regions()}} \code{\link[=wb_to_df]{wb_to_df()}}

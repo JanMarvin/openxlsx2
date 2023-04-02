@@ -57,11 +57,6 @@
 #'   sheet = 2, skipEmptyRows = FALSE,
 #'   cols = c(1, 4), rows = c(1, 3, 4)
 #' )
-#'
-#' ## URL
-#' ##
-#' xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
-#' head(read_xlsx(xlsxFile))
 #' @export
 read_xlsx <- function(
   xlsxFile,
