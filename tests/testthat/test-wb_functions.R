@@ -205,7 +205,8 @@ test_that("handle 29Feb1900", {
   expect_equal(exp, got)
 
   got <- conv_to_excel_date(as_posix)
-  expect_equal(exp, got, tolerance = 1e-5)
+  skip_on_os(os = "mac", arch = "ppc") # gh issue 566
+  expect_equal(exp, got)
 
   expect_warning(
     conv_to_excel_date("x"),
