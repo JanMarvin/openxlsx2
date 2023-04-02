@@ -19,7 +19,7 @@ the attribute vector."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6</span>
       </span>
     </div>
 
@@ -79,7 +79,13 @@ the attribute vector.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xml_attr_mod</span><span class="op">(</span><span class="va">xml_content</span>, <span class="va">xml_attributes</span>, escapes <span class="op">=</span> <span class="cn">FALSE</span>, declaration <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xml_attr_mod</span><span class="op">(</span></span>
+<span>  <span class="va">xml_content</span>,</span>
+<span>  <span class="va">xml_attributes</span>,</span>
+<span>  escapes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  declaration <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  remove_empty_attr <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -98,6 +104,10 @@ the attribute vector.</p>
 
 <dt>declaration</dt>
 <dd><p>bool if declaration should be imported</p></dd>
+
+
+<dt>remove_empty_attr</dt>
+<dd><p>bool remove empty attributes or ignore them</p></dd>
 
 </dl></div>
     <div id="details">

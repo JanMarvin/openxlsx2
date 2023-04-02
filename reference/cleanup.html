@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6</span>
       </span>
     </div>
 
@@ -78,6 +78,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_clean_sheet</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  characters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  styles <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -95,6 +96,10 @@
 
 <dt>sheet</dt>
 <dd><p>sheet to clean</p></dd>
+
+
+<dt>dims</dt>
+<dd><p>spreadsheet dimensions (optional)</p></dd>
 
 
 <dt>numbers</dt>
