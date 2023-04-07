@@ -16,9 +16,9 @@ test_that("col2int", {
   expect_error(col2int(list()), "x must be character")
 
   expect_equal(1, col2int("A"))
-  expect_equal(c(1, 3, 4), col2int(c("A","C:D")))
-  expect_equal(c(1, 3, 4, 11), col2int(c("A","C:D", "K")))
-  expect_equal(c(1, 3, 4, 11, 27, 28, 29, 30), col2int(c("A","C:D", "K", "AA:AD")))
+  expect_equal(c(1, 3, 4), col2int(c("A", "C:D")))
+  expect_equal(c(1, 3, 4, 11), col2int(c("A", "C:D", "K")))
+  expect_equal(c(1, 3, 4, 11, 27, 28, 29, 30), col2int(c("A", "C:D", "K", "AA:AD")))
 
 })
 
