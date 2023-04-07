@@ -3700,24 +3700,34 @@ wbWorkbook <- R6::R6Class(
     #' @param file file
     #' @param startRow startRow
     #' @param startCol startCol
+    #' @param endRow endRow
+    #' @param endCol endCol
     #' @param width width
     #' @param height height
-    #' @param rowOffset rowOffset
-    #' @param colOffset colOffset
+    #' @param startRowOffset startRowOffset
+    #' @param startColOffset startColOffset
+    #' @param endRowOffset endRowOffset
+    #' @param endColOffset endColOffset
     #' @param units units
     #' @param dpi dpi
+    #' @param editAs editAs
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
       sheet = current_sheet(),
       file,
-      width     = 6,
-      height    = 3,
-      startRow  = 1,
-      startCol  = 1,
-      rowOffset = 0,
-      colOffset = 0,
-      units     = "in",
-      dpi       = 300
+      width          = 6,
+      height         = 3,
+      startRow       = 1,
+      startCol       = 1,
+      startRowOffset = 0,
+      startColOffset = 0,
+      endRow         = NULL,
+      endCol         = NULL,
+      endRowOffset   = 0,
+      endColOffset   = 0,
+      units          = "in",
+      dpi            = 300,
+      editAs         = "absolute"
     ) {
       if (!file.exists(file)) {
         stop("File does not exist.")
@@ -3728,37 +3738,12 @@ wbWorkbook <- R6::R6Class(
         file <- file.path(getwd(), file, fsep = .Platform$file.sep)
       }
 
-      units <- tolower(units)
-
-      # TODO use match.arg()
-      if (!units %in% c("cm", "in", "px")) {
-        stop("Invalid units.\nunits must be one of: cm, in, px")
-      }
-
-      startCol <- col2int(startCol)
-      startRow <- as.integer(startRow)
-
-      ## convert to inches
-      if (units == "px") {
-        width <- width / dpi
-        height <- height / dpi
-      } else if (units == "cm") {
-        width <- width / 2.54
-        height <- height / 2.54
-      }
-
-      ## Convert to EMUs
-      width  <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
-      height <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
-
       sheet <- private$get_sheet_index(sheet)
 
       # TODO tools::file_ext() ...
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
       mediaNo <- length(self$media) + 1L
-
-      startCol <- col2int(startCol)
 
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
@@ -3788,28 +3773,102 @@ wbWorkbook <- R6::R6Class(
       names(tmp) <- stri_join("image", mediaNo, ".", imageType)
       self$append("media", tmp)
 
-      ## create drawing.xml
-      from <- sprintf(
-        '<xdr:from>
+      ## One Cell Anchor
+      if (is.null(endRow) && is.null(endCol)) {
+
+        ## image extent
+        units <- match.arg(arg = tolower(units), choices = c("cm", "in", "px"), several.ok = FALSE)
+
+        ## Convert to EMUs
+        widthEMU <-  as.integer(round(switch(
+          units,
+          "px" = width / dpi,
+          "cm" = width / 2.54,
+          width
+        ) * 914400L, 0))
+
+        heightEMU <- as.integer(round(switch(
+          units,
+          "px" = height / dpi,
+          "cm" = height / 2.54,
+          height
+        ) * 914400L, 0))
+
+        xdr_ext <- sprintf('<xdr:ext cx="%s" cy="%s"/>', widthEMU, heightEMU)
+
+        ## Starting Anchor
+        startCol <- col2int(startCol)
+        startRow <- as.integer(startRow)
+        from <- sprintf(
+          '<xdr:from>
         <xdr:col>%s</xdr:col>
         <xdr:colOff>%s</xdr:colOff>
         <xdr:row>%s</xdr:row>
         <xdr:rowOff>%s</xdr:rowOff>
         </xdr:from>',
         startCol - 1L,
-        colOffset,
+        startColOffset,
         startRow - 1L,
-        rowOffset
+        startRowOffset
       )
 
-      drawingsXML <- stri_join(
-        '<xdr:oneCellAnchor>',
-        from,
-        sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
-        genBasePic(imageNo),
-        "<xdr:clientData/>",
-        "</xdr:oneCellAnchor>"
-      )
+        ## create drawing.xml
+        drawingsXML <- stri_join(
+          "<xdr:oneCellAnchor>",
+          from,
+          xdr_ext,
+          genBasePic(imageNo),
+          "<xdr:clientData/>",
+          "</xdr:oneCellAnchor>"
+        )
+
+      } else {
+        ## Two Cell Anchor
+
+        ## editAs options
+        editAs <- match.arg(arg = editAs, choices = c("absolute", "oneCell", "twoCell"))
+
+        ## Starting Anchor
+        startCol <- col2int(startCol)
+        startRow <- as.integer(startRow)
+        from <- sprintf(
+          '<xdr:from>
+        <xdr:col>%s</xdr:col>
+        <xdr:colOff>%s</xdr:colOff>
+        <xdr:row>%s</xdr:row>
+        <xdr:rowOff>%s</xdr:rowOff>
+        </xdr:from>',
+          startCol - 1L,
+          startColOffset,
+          startRow - 1L,
+          startRowOffset
+        )
+
+        ## Ending Anchor
+        endCol <- col2int(endCol)
+        endRow <- as.integer(endRow)
+        to <- sprintf(
+          '<xdr:to>
+        <xdr:col>%s</xdr:col>
+        <xdr:colOff>%s</xdr:colOff>
+        <xdr:row>%s</xdr:row>
+        <xdr:rowOff>%s</xdr:rowOff>
+        </xdr:to>',
+          endCol - 1L,
+          endColOffset,
+          endRow - 1L,
+          endRowOffset
+        )
+
+        ## create drawing.xml
+        drawingsXML <- stri_join(
+          sprintf('<xdr:twoCellAnchor editAs = "%s">', editAs),
+          from, to,
+          genBasePic(imageNo),
+          "<xdr:clientData/>",
+          "</xdr:twoCellAnchor>"
+        )
+      }
 
       xml_attr <- c(
         "xmlns:xdr" = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
@@ -3921,8 +3980,8 @@ wbWorkbook <- R6::R6Class(
         height    = height,
         startRow  = startRow,
         startCol  = startCol,
-        rowOffset = rowOffset,
-        colOffset = colOffset,
+        startRowOffset = rowOffset,
+        startColOffset = colOffset,
         units     = units,
         dpi       = dpi
       )

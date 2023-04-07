@@ -2118,10 +2118,15 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #' @param height Height of figure.
 #' @param startRow Row coordinate of upper left corner of the image
 #' @param startCol Column coordinate of upper left corner of the image
-#' @param rowOffset offset within cell (row)
-#' @param colOffset offset within cell (column)
+#' @param startRowOffset offset within cell (starting row)
+#' @param startColOffset offset within cell (starting column)
+#' @param endRow Row coordinate of bottom right corner of the image
+#' @param endCol Column coordinate of bottom right corner of the image
+#' @param endRowOffset offset within cell (ending row)
+#' @param endColOffset offset within cell (ending column)
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
+#' @param editAs Specifies how the object should be moved or resized. Can be `"absolute"`, `"oneCell"` or `"twoCell"`
 #' @seealso [wb_add_plot()]
 #' @export
 #' @examples
@@ -2132,37 +2137,49 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_worksheet("Sheet 3")
+#' wb$add_worksheet("Sheet 4")
 #'
 #' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 #' wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
 #' wb$add_image(2, img, startRow = 2, startCol = 2)
 #' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#' wb$add_image(4, img, startRow = 2, startCol = 2, endRow = 16, endCol = 8, editAs = "twoCell")
 wb_add_image <- function(
   wb,
-  sheet     = current_sheet(),
+  sheet          = current_sheet(),
   file,
-  width     = 6,
-  height    = 3,
-  startRow  = 1,
-  startCol  = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  units     = "in",
-  dpi       = 300
+  width          = 6,
+  height         = 3,
+  startRow       = 1,
+  startCol       = 1,
+  startRowOffset = 0,
+  startColOffset = 0,
+  endRow         = NULL,
+  endCol         = NULL,
+  endRowOffset   = 0,
+  endColOffset   = 0,
+  units          = "in",
+  dpi            = 300,
+  editAs         = "absolute"
 ) {
   assert_workbook(wb)
   wb$clone()$add_image(
-    sheet     = sheet,
-    file      = file,
-    startRow  = startRow,
-    startCol  = startCol,
-    width     = width,
-    height    = height,
-    rowOffset = rowOffset,
-    colOffset = colOffset,
-    units     = units,
-    dpi       = dpi
+    sheet          = sheet,
+    file           = file,
+    startRow       = startRow,
+    startCol       = startCol,
+    width          = width,
+    height         = height,
+    startRowOffset = startRowOffset,
+    startColOffset = startColOffset,
+    endRow         = endRow,
+    endCol         = endCol,
+    endRowOffset   = endRowOffset,
+    endColOffset   = endColOffset,
+    units          = units,
+    dpi            = dpi,
+    editAs         = editAs
   )
 }
 
