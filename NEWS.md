@@ -1,3 +1,13 @@
+# openxlsx2 (in development)
+
+## New features
+
+* Improve `col2int()` to accept column ranges like `col2int("A:Z")`. This should allow using column ranges in various places like `wb_merge_cells(cols = "B:D", ...)` or `wb_read(cols = c("A","C:D"))`. [575](https://github.com/JanMarvin/openxlsx2/pull/575)
+
+
+***************************************************************************
+
+
 # openxlsx2 (0.6)
 
 ## New features
