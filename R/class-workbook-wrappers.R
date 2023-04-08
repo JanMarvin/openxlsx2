@@ -2187,15 +2187,18 @@ wb_add_image <- function(
 #' @param sheet the sheet on which the graph will appear
 #' @param xml chart xml
 #' @param dims the dimensions where the sheet will appear
+#' @param colOffset,rowOffset startCol and startRow
 #' @export
 wb_add_chart_xml <- function(
   wb,
-  sheet = current_sheet(),
+  sheet     = current_sheet(),
   xml,
-  dims = NULL
+  dims      = NULL,
+  colOffset = 0,
+  rowOffset = 0
 ) {
   assert_workbook(wb)
-  wb$clone()$add_chart_xml(sheet, xml, dims)
+  wb$clone()$add_chart_xml(sheet, xml, dims, colOffset, rowOffset)
 }
 
 

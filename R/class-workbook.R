@@ -4095,11 +4095,14 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param dims dims
     #' @param xml xml
+    #' @param colOffset,rowOffset startCol and startRow
     #' @returns The `wbWorkbook` object
     add_chart_xml = function(
-      sheet = current_sheet(),
+      sheet     = current_sheet(),
       xml,
-      dims = NULL
+      dims      = NULL,
+      colOffset = 0,
+      rowOffset = 0
     ) {
 
       sheet <- private$get_sheet_index(sheet)
@@ -4128,9 +4131,11 @@ wbWorkbook <- R6::R6Class(
 
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
-        sheet = sheet,
-        xml = next_chart,
-        dims = dims
+        sheet     = sheet,
+        xml       = next_chart,
+        dims      = dims,
+        colOffset = colOffset,
+        rowOffset = rowOffset
       )
 
       sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
@@ -4147,11 +4152,14 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet the sheet on which the graph will appear
     #' @param dims the dimensions where the sheet will appear
     #' @param graph mschart graph
+    #' @param colOffset,rowOffset startCol and startRow
     #' @returns The `wbWorkbook` object
     add_mschart = function(
-      sheet = current_sheet(),
-      dims = NULL,
-      graph
+      sheet     = current_sheet(),
+      dims      = NULL,
+      graph,
+      colOffset = 0,
+      rowOffset = 0
     ) {
 
       requireNamespace("mschart")
@@ -4173,11 +4181,11 @@ wbWorkbook <- R6::R6Class(
       # write the chart data to the workbook
       if (inherits(graph$data_series, "wb_data")) {
         self$
-          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims, colOffset = colOffset, rowOffset = rowOffset)
       } else {
         self$
           add_data(sheet = sheet, x = graph$data_series)$
-          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims)
+          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims, colOffset = colOffset, rowOffset = rowOffset)
       }
     },
 

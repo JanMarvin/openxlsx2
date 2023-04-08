@@ -4,7 +4,14 @@
 \alias{wb_add_mschart}
 \title{Add mschart object to an existing workbook}
 \usage{
-wb_add_mschart(wb, sheet = current_sheet(), dims = NULL, graph)
+wb_add_mschart(
+  wb,
+  sheet = current_sheet(),
+  dims = NULL,
+  graph,
+  colOffset = 0,
+  rowOffset = 0
+)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -14,6 +21,8 @@ wb_add_mschart(wb, sheet = current_sheet(), dims = NULL, graph)
 \item{dims}{the dimensions where the sheet will appear}
 
 \item{graph}{mschart object}
+
+\item{colOffset, rowOffset}{startCol and startRow}
 }
 \description{
 Add mschart object to an existing workbook

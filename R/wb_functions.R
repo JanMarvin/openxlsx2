@@ -840,6 +840,7 @@ wb_set_selected <- function(wb, sheet) {
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear
 #' @param graph mschart object
+#' @param colOffset,rowOffset startCol and startRow
 #' @examples
 #' if (requireNamespace("mschart")) {
 #' require(mschart)
@@ -876,12 +877,14 @@ wb_set_selected <- function(wb, sheet) {
 #' @export
 wb_add_mschart <- function(
     wb,
-    sheet = current_sheet(),
-    dims = NULL,
-    graph
+    sheet     = current_sheet(),
+    dims      = NULL,
+    graph,
+    colOffset = 0,
+    rowOffset = 0
 ) {
   assert_workbook(wb)
-  wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph)
+  wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph, colOffset = colOffset, rowOffset = rowOffset)
 }
 
 #' provide wb_data object as mschart input
