@@ -213,10 +213,24 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   list(cols_out, rows_out)
 }
+#' row and col to dims
+#' @param row a numeric vector of rows
+#' @param col a numeric or character vector of cols
+#' @noRd
+rowcol_to_dim <- function(row, col) {
+  # no assert for col. will output character anyways
+  # assert_class(row, "numeric") - complains if integer
+  col_int <- col2int(col)
+  min_col <- int2col(min(col_int))
+  min_row <- min(row)
+
+  # we will always return something like "A1"
+  stringi::stri_join(min_col, min_row)
+}
 
 #' row and col to dims
-#' @param rows a numeric vector of rows
-#' @param cols a numeric or character vector of cols
+#' @param row a numeric vector of rows
+#' @param col a numeric or character vector of cols
 #' @noRd
 rowcol_to_dims <- function(row, col) {
 

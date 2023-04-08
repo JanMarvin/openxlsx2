@@ -676,3 +676,38 @@ test_that("multiple charts on a sheet work as expected", {
   expect_equal(exp, got)
 
 })
+
+test_that("various image functions work as expected", {
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_image(file = img, width = 6, height = 5, dims = NULL)$
+    add_worksheet()$
+    add_image(dims = "B2", file = img, rowOffset = 90000, colOffset = 90000)$
+    add_worksheet()$
+    add_image(dims = "B2:K8", file = img)
+
+  exp <- c("xdr:absoluteAnchor", "xdr:oneCellAnchor", "xdr:twoCellAnchor")
+  got <- wb$drawings %>% xml_node_name(level1 = "xdr:wsDr")
+  expect_equal(exp, got)
+
+  exp <- "<xdr:from><xdr:col>1</xdr:col><xdr:colOff>90000</xdr:colOff><xdr:row>1</xdr:row><xdr:rowOff>90000</xdr:rowOff></xdr:from>"
+  got <- wb$drawings[[2]] %>% xml_node("xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+
+  exp <- "<xdr:from><xdr:col>1</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>1</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
+  got <- wb$drawings[[3]] %>% xml_node("xdr:wsDr", "xdr:twoCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+
+  exp <- "<xdr:to><xdr:col>11</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>8</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>"
+  got <- wb$drawings[[3]] %>% xml_node("xdr:wsDr", "xdr:twoCellAnchor", "xdr:to")
+  expect_equal(exp, got)
+
+  expect_warning(
+    wb$add_worksheet()$add_image(file = img, width = 6, height = 5, dims = NULL, startRow = 2, startCol = 2),
+    "dims is NULL, startRow/startCol will have no impact"
+  )
+
+})

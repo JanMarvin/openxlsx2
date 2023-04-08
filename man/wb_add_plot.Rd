@@ -16,7 +16,8 @@ wb_add_plot(
   colOffset = 0,
   fileType = "png",
   units = "in",
-  dpi = 300
+  dpi = 300,
+  dims = rowcol_to_dim(startRow, startCol)
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ when \code{xy} is given.}
 \item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution}
+
+\item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
 }
 \description{
 The current plot is saved to a temporary image file using
@@ -74,7 +77,7 @@ wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
 
 ## Insert plot 2
 print(p2)
-wb$add_plot(1, xy = c("J", 2), width = 16, height = 10, fileType = "png", units = "cm")
+wb$add_plot(1, dims = "J2", width = 16, height = 10, fileType = "png", units = "cm")
 
 }
 }

@@ -15,7 +15,8 @@ wb_add_image(
   rowOffset = 0,
   colOffset = 0,
   units = "in",
-  dpi = 300
+  dpi = 300,
+  dims = rowcol_to_dim(startRow, startCol)
 )
 }
 \arguments{
@@ -33,13 +34,15 @@ wb_add_image(
 
 \item{startCol}{Column coordinate of upper left corner of the image}
 
-\item{rowOffset}{offset within cell (row)}
+\item{rowOffset}{offset vector for one or two cell anchor within cell (row)}
 
-\item{colOffset}{offset within cell (column)}
+\item{colOffset}{offset vector for one or two cell anchor within cell (column)}
 
 \item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution used for conversion between units.}
+
+\item{dims}{Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor}
 }
 \description{
 Insert an image into a worksheet

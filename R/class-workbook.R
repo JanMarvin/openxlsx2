@@ -3706,6 +3706,7 @@ wbWorkbook <- R6::R6Class(
     #' @param colOffset colOffset
     #' @param units units
     #' @param dpi dpi
+    #' @param dims dims
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
       sheet = current_sheet(),
@@ -3717,10 +3718,15 @@ wbWorkbook <- R6::R6Class(
       rowOffset = 0,
       colOffset = 0,
       units     = "in",
-      dpi       = 300
+      dpi       = 300,
+      dims      = rowcol_to_dim(startRow, startCol)
     ) {
       if (!file.exists(file)) {
         stop("File does not exist.")
+      }
+
+      if (is.null(dims) && (startRow > 1 || startCol > 1)) {
+        warning("dims is NULL, startRow/startCol will have no impact")
       }
 
       # TODO require user to pass a valid path
@@ -3788,27 +3794,15 @@ wbWorkbook <- R6::R6Class(
       names(tmp) <- stri_join("image", mediaNo, ".", imageType)
       self$append("media", tmp)
 
-      ## create drawing.xml
-      from <- sprintf(
-        '<xdr:from>
-        <xdr:col>%s</xdr:col>
-        <xdr:colOff>%s</xdr:colOff>
-        <xdr:row>%s</xdr:row>
-        <xdr:rowOff>%s</xdr:rowOff>
-        </xdr:from>',
-        startCol - 1L,
-        colOffset,
-        startRow - 1L,
-        rowOffset
-      )
+      pos <- '<xdr:pos x="0" y="0" />'
 
       drawingsXML <- stri_join(
-        '<xdr:oneCellAnchor>',
-        from,
+        '<xdr:absoluteAnchor>',
+        pos,
         sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
         genBasePic(imageNo),
         "<xdr:clientData/>",
-        "</xdr:oneCellAnchor>"
+        "</xdr:absoluteAnchor>"
       )
 
       xml_attr <- c(
@@ -3823,7 +3817,7 @@ wbWorkbook <- R6::R6Class(
         xml_attributes = xml_attr
       )
 
-      self$add_drawing(sheet, drawing)
+      self$add_drawing(sheet, drawing, dims, colOffset, rowOffset)
 
 
       # add image to drawings_rels
@@ -3857,6 +3851,7 @@ wbWorkbook <- R6::R6Class(
     #' @param fileType fileType
     #' @param units units
     #' @param dpi dpi
+    #' @param dims dims
     #' @returns The `wbWorkbook` object
     add_plot = function(
       sheet = current_sheet(),
@@ -3869,7 +3864,8 @@ wbWorkbook <- R6::R6Class(
       colOffset = 0,
       fileType  = "png",
       units     = "in",
-      dpi       = 300
+      dpi       = 300,
+      dims      = rowcol_to_dim(startRow, startCol)
     ) {
       if (is.null(dev.list()[[1]])) {
         warning("No plot to insert.")
@@ -3877,6 +3873,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(xy)) {
+        .Deprecated("dims", old = "xy")
         startCol <- xy[[1]]
         startRow <- xy[[2]]
       }
@@ -3924,7 +3921,8 @@ wbWorkbook <- R6::R6Class(
         rowOffset = rowOffset,
         colOffset = colOffset,
         units     = units,
-        dpi       = dpi
+        dpi       = dpi,
+        dims      = dims
       )
     },
 
@@ -3932,11 +3930,14 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param dims dims
     #' @param xml xml
+    #' @param colOffset,rowOffset offsets for column and row
     #' @returns The `wbWorkbook` object
     add_drawing = function(
       sheet = current_sheet(),
       xml,
-      dims = NULL
+      dims = NULL,
+      colOffset = 0,
+      rowOffset = 0
     ) {
       sheet <- private$get_sheet_index(sheet)
 
@@ -3970,6 +3971,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ext   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:ext")
+      pic   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:pic")
       grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
       grFrm <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:graphicFrame")
       clDt  <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:clientData")
@@ -3987,18 +3989,26 @@ wbWorkbook <- R6::R6Class(
           dims_list <- strsplit(dims, ":")[[1]]
           cols <- col2int(dims_list)
           rows <- as.numeric(gsub("\\D+", "", dims_list))
+          if (length(colOffset) != 2) colOffset <- rep(colOffset, 2)
+          if (length(rowOffset) != 2) rowOffset <- rep(rowOffset, 2)
 
           anchor <- paste0(
             "<xdr:from>",
-            "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
-            "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+            "<xdr:col>%s</xdr:col><xdr:colOff>%s</xdr:colOff>",
+            "<xdr:row>%s</xdr:row><xdr:rowOff>%s</xdr:rowOff>",
             "</xdr:from>",
             "<xdr:to>",
-            "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
-            "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+            "<xdr:col>%s</xdr:col><xdr:colOff>%s</xdr:colOff>",
+            "<xdr:row>%s</xdr:row><xdr:rowOff>%s</xdr:rowOff>",
             "</xdr:to>"
           )
-          anchor <- sprintf(anchor, cols[1] - 1L, rows[1] - 1L, cols[2], rows[2])
+          anchor <- sprintf(
+            anchor,
+            cols[1] - 1L, colOffset[1],
+            rows[1] - 1L, rowOffset[1],
+            cols[2], colOffset[2],
+            rows[2], rowOffset[2]
+          )
 
         } else {
 
@@ -4009,11 +4019,15 @@ wbWorkbook <- R6::R6Class(
 
           anchor <- paste0(
             "<xdr:from>",
-            "<xdr:col>%s</xdr:col><xdr:colOff>0</xdr:colOff>",
-            "<xdr:row>%s</xdr:row><xdr:rowOff>0</xdr:rowOff>",
+            "<xdr:col>%s</xdr:col><xdr:colOff>%s</xdr:colOff>",
+            "<xdr:row>%s</xdr:row><xdr:rowOff>%s</xdr:rowOff>",
             "</xdr:from>"
           )
-          anchor <- sprintf(anchor, cols[1] - 1L, rows[1] - 1L)
+          anchor <- sprintf(
+            anchor,
+            cols[1] - 1L, colOffset[1],
+            rows[1] - 1L, rowOffset[1]
+          )
 
         }
 
@@ -4022,6 +4036,7 @@ wbWorkbook <- R6::R6Class(
           xml_children = c(
             anchor,
             ext,
+            pic,
             grpSp,
             grFrm,
             clDt
