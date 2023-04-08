@@ -75,7 +75,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_chart_xml</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_chart_xml</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">xml</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -94,6 +101,10 @@
 
 <dt>dims</dt>
 <dd><p>the dimensions where the sheet will appear</p></dd>
+
+
+<dt>colOffset, rowOffset</dt>
+<dd><p>startCol and startRow</p></dd>
 
 </dl></div>
 

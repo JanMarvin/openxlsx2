@@ -2016,7 +2016,8 @@ are repeated across length of <code>cols</code></p></dd>
 <span>  rowOffset <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
-<span>  dpi <span class="op">=</span> <span class="fl">300</span></span>
+<span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2062,6 +2063,10 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>dpi</p></dd>
 
 
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
 </dl><p></p></div>
 </div>
 <div class="section">
@@ -2084,7 +2089,8 @@ are repeated across length of <code>cols</code></p></dd>
 <span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  fileType <span class="op">=</span> <span class="st">"png"</span>,</span>
 <span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
-<span>  dpi <span class="op">=</span> <span class="fl">300</span></span>
+<span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2134,6 +2140,10 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>dpi</p></dd>
 
 
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
 </dl><p></p></div>
 </div>
 
@@ -2141,7 +2151,13 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-drawing-">Method <code>add_drawing()</code><a class="anchor" aria-label="anchor" href="#method-add-drawing-"></a></h3>
 <p>Add xml drawing</p><div class="section">
 <h4 id="usage-40">Usage<a class="anchor" aria-label="anchor" href="#usage-40"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_drawing</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_drawing</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">xml</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2158,6 +2174,10 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>dims</p></dd>
 
 
+<dt><code>colOffset, rowOffset</code></dt>
+<dd><p>offsets for column and row</p></dd>
+
+
 </dl><p></p></div>
 </div>
 
@@ -2167,7 +2187,13 @@ are repeated across length of <code>cols</code></p></dd>
 
 <p>Add xml chart</p><div class="section">
 <h4 id="usage-41">Usage<a class="anchor" aria-label="anchor" href="#usage-41"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chart_xml</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">xml</span>, dims <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chart_xml</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">xml</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2184,6 +2210,10 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>dims</p></dd>
 
 
+<dt><code>colOffset, rowOffset</code></dt>
+<dd><p>startCol and startRow</p></dd>
+
+
 </dl><p></p></div>
 </div>
 
@@ -2191,7 +2221,13 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-mschart-">Method <code>add_mschart()</code><a class="anchor" aria-label="anchor" href="#method-add-mschart-"></a></h3>
 <p>Add mschart chart to the workbook</p><div class="section">
 <h4 id="usage-42">Usage<a class="anchor" aria-label="anchor" href="#usage-42"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_mschart</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">graph</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_mschart</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">graph</span>,</span>
+<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2206,6 +2242,10 @@ are repeated across length of <code>cols</code></p></dd>
 
 <dt><code>graph</code></dt>
 <dd><p>mschart graph</p></dd>
+
+
+<dt><code>colOffset, rowOffset</code></dt>
+<dd><p>startCol and startRow</p></dd>
 
 
 </dl><p></p></div>
