@@ -4,6 +4,8 @@
 
 * Improve `col2int()` to accept column ranges like `col2int("A:Z")`. This should allow using column ranges in various places like `wb_merge_cells(cols = "B:D", ...)` or `wb_read(cols = c("A","C:D"))`. [575](https://github.com/JanMarvin/openxlsx2/pull/575)
 
+* Add `dims` argument to `wb_add_image()` and `wb_add_plot()`. This can be used to place images starting at a cell or span a cell range. This deprecates `xy` in `wb_add_plot()`. This adds colOffset and rowOffset to `wb_add_drawing()` and `wb_add_mschart()` and `wb_add_chart_xml()`. [578](https://github.com/JanMarvin/openxlsx2/pull/578)
+
 
 ***************************************************************************
 
