@@ -166,25 +166,28 @@ test_that("wb_add_image() is a wrapper", {
 # wb_add_plot() -----------------------------------------------------------
 
 test_that("wb_add_plot() is a wrapper", {
-  # plot is written to file. test can only be completed in interactive mode
-  if (interactive()) {
 
-    plot(1:5, 1:5)
-    wb <- wb_workbook()$add_worksheet("a")
+  # workaround: this filename is inserted to the wrapper function
+  options("openxlsx2.temp_png" = tempfile(pattern = "figureImage", fileext = ".png"))
 
-    # okay, not the best but the results have different field names.  Maybe that's
-    # a feature to add to expect_wrapper()
-    expect_error(
-      expect_wrapper(
-        "add_plot",
-        "wb_add_plot",
-        wb = wb,
-        params = list(sheet = "a")
-      ),
-      "wbWorkbook$add_plot$media$image1.png vs wb_add_plot$media$image1.png",
-      fixed = TRUE
-    )
-  }
+  # create a device we can dev.copy() from
+  graphics::plot.new()
+  grDevices::dev.control("enable")
+  plot(1:5, 1:5)
+
+  wb <- wb_workbook()$add_worksheet("a")
+
+  expect_wrapper(
+    "add_plot",
+    "wb_add_plot",
+    wb = wb,
+    params = list(sheet = "a")
+  )
+
+  # # check that it is actually working
+  # wb$add_plot(sheet = "a")$save("~/test.xlsx")
+
+  graphics.off()
 })
 
 test_that("wb_add_drawing is a wrapper", {
