@@ -4,7 +4,14 @@
 \alias{wb_add_drawing}
 \title{add drawings to workbook}
 \usage{
-wb_add_drawing(wb, sheet = current_sheet(), xml, dims = NULL)
+wb_add_drawing(
+  wb,
+  sheet = current_sheet(),
+  xml,
+  dims = NULL,
+  colOffset = 0,
+  rowOffset = 0
+)
 }
 \arguments{
 \item{wb}{a wbWorkbook}
@@ -14,6 +21,8 @@ wb_add_drawing(wb, sheet = current_sheet(), xml, dims = NULL)
 \item{xml}{the drawing xml as character or file}
 
 \item{dims}{the dimension where the drawing is added. Can be NULL}
+
+\item{colOffset, rowOffset}{offsets for column and row}
 }
 \description{
 add drawings to workbook

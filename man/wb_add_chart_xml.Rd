@@ -4,7 +4,14 @@
 \alias{wb_add_chart_xml}
 \title{add a chart xml to a workbook}
 \usage{
-wb_add_chart_xml(wb, sheet = current_sheet(), xml, dims = NULL)
+wb_add_chart_xml(
+  wb,
+  sheet = current_sheet(),
+  xml,
+  dims = NULL,
+  colOffset = 0,
+  rowOffset = 0
+)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -14,6 +21,8 @@ wb_add_chart_xml(wb, sheet = current_sheet(), xml, dims = NULL)
 \item{xml}{chart xml}
 
 \item{dims}{the dimensions where the sheet will appear}
+
+\item{colOffset, rowOffset}{startCol and startRow}
 }
 \description{
 add a chart xml to a workbook

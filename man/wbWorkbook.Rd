@@ -1572,7 +1572,8 @@ Insert an image into a sheet
   rowOffset = 0,
   colOffset = 0,
   units = "in",
-  dpi = 300
+  dpi = 300,
+  dims = rowcol_to_dim(startRow, startCol)
 )}\if{html}{\out{</div>}}
 }
 
@@ -1598,6 +1599,8 @@ Insert an image into a sheet
 \item{\code{units}}{units}
 
 \item{\code{dpi}}{dpi}
+
+\item{\code{dims}}{dims}
 }
 \if{html}{\out{</div>}}
 }
@@ -1622,7 +1625,8 @@ Add plot. A wrapper for add_image()
   colOffset = 0,
   fileType = "png",
   units = "in",
-  dpi = 300
+  dpi = 300,
+  dims = rowcol_to_dim(startRow, startCol)
 )}\if{html}{\out{</div>}}
 }
 
@@ -1650,6 +1654,8 @@ Add plot. A wrapper for add_image()
 \item{\code{units}}{units}
 
 \item{\code{dpi}}{dpi}
+
+\item{\code{dims}}{dims}
 }
 \if{html}{\out{</div>}}
 }
@@ -1660,7 +1666,13 @@ Add plot. A wrapper for add_image()
 \subsection{Method \code{add_drawing()}}{
 Add xml drawing
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(sheet = current_sheet(), xml, dims = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(
+  sheet = current_sheet(),
+  xml,
+  dims = NULL,
+  colOffset = 0,
+  rowOffset = 0
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1671,6 +1683,8 @@ Add xml drawing
 \item{\code{xml}}{xml}
 
 \item{\code{dims}}{dims}
+
+\item{\code{colOffset, rowOffset}}{offsets for column and row}
 }
 \if{html}{\out{</div>}}
 }
@@ -1684,7 +1698,13 @@ Add xml drawing
 
 Add xml chart
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(sheet = current_sheet(), xml, dims = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(
+  sheet = current_sheet(),
+  xml,
+  dims = NULL,
+  colOffset = 0,
+  rowOffset = 0
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1695,6 +1715,8 @@ Add xml chart
 \item{\code{xml}}{xml}
 
 \item{\code{dims}}{dims}
+
+\item{\code{colOffset, rowOffset}}{startCol and startRow}
 }
 \if{html}{\out{</div>}}
 }
@@ -1705,7 +1727,13 @@ Add xml chart
 \subsection{Method \code{add_mschart()}}{
 Add mschart chart to the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mschart(sheet = current_sheet(), dims = NULL, graph)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mschart(
+  sheet = current_sheet(),
+  dims = NULL,
+  graph,
+  colOffset = 0,
+  rowOffset = 0
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1716,6 +1744,8 @@ Add mschart chart to the workbook
 \item{\code{dims}}{the dimensions where the sheet will appear}
 
 \item{\code{graph}}{mschart graph}
+
+\item{\code{colOffset, rowOffset}}{startCol and startRow}
 }
 \if{html}{\out{</div>}}
 }
