@@ -3722,7 +3722,7 @@ wbWorkbook <- R6::R6Class(
       dims      = rowcol_to_dim(startRow, startCol)
     ) {
       if (!file.exists(file)) {
-        stop("File does not exist.")
+        stop("File ", file, " does not exist.")
       }
 
       if (is.null(dims) && (startRow > 1 || startCol > 1)) {
@@ -3897,6 +3897,11 @@ wbWorkbook <- R6::R6Class(
 
       fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
 
+      # Workaround for wrapper test. Otherwise tempfile names differ
+      if (requireNamespace("testthat")) {
+        if (testthat::is_testing()) fileName <- getOption("openxlsx2.temp_png")
+      }
+
       # TODO use switch()
       if (fileType == "bmp") {
         dev.copy(bmp, filename = fileName, width = width, height = height, units = units, res = dpi)
@@ -3910,6 +3915,7 @@ wbWorkbook <- R6::R6Class(
 
       ## write image
       invisible(dev.off())
+      stopifnot(file.exists(fileName))
 
       self$add_image(
         sheet     = sheet,
