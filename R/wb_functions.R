@@ -216,6 +216,8 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param convert If TRUE, a conversion to dates and numerics is attempted.
 #' @param skipEmptyCols If TRUE, empty columns are skipped.
 #' @param skipEmptyRows If TRUE, empty rows are skipped.
+#' @param skipHiddenCols If TRUE, hidden columns are skipped.
+#' @param skipHiddenRows If TRUE, hidden rows are skipped.
 #' @param startRow first row to begin looking for data.
 #' @param startCol first column to begin looking for data.
 #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
@@ -306,6 +308,8 @@ wb_to_df <- function(
     colNames        = TRUE,
     skipEmptyRows   = FALSE,
     skipEmptyCols   = FALSE,
+    skipHiddenRows  = FALSE,
+    skipHiddenCols  = FALSE,
     rows            = NULL,
     cols            = NULL,
     detectDates     = TRUE,
@@ -646,6 +650,27 @@ wb_to_df <- function(
       tt[sel] <- NULL
     }
 
+  }
+
+  if (skipHiddenRows) {
+    sel <- row_attr$hidden == "1" | row_attr$hidden == "true"
+    if (any(sel)) {
+      hide   <- rownames(row_attr[!sel, ])
+
+      z  <- z[hide, , drop = FALSE]
+      tt <- tt[hide, , drop = FALSE]
+    }
+  }
+
+  if (skipHiddenCols) {
+    col_attr <- wb$worksheets[[sheet]]$unfold_cols()
+    sel <- col_attr$hidden == "1" | col_attr$hidden == "true"
+    if (any(sel)) {
+      hide     <- as.numeric(col_attr$min[sel])
+
+      z[hide]  <- NULL
+      tt[hide] <- NULL
+    }
   }
 
   # prepare colnames object

@@ -13,6 +13,8 @@ wb_to_df(
   colNames = TRUE,
   skipEmptyRows = FALSE,
   skipEmptyCols = FALSE,
+  skipHiddenRows = FALSE,
+  skipHiddenCols = FALSE,
   rows = NULL,
   cols = NULL,
   detectDates = TRUE,
@@ -42,6 +44,10 @@ wb_to_df(
 \item{skipEmptyRows}{If TRUE, empty rows are skipped.}
 
 \item{skipEmptyCols}{If TRUE, empty columns are skipped.}
+
+\item{skipHiddenRows}{If TRUE, hidden rows are skipped.}
+
+\item{skipHiddenCols}{If TRUE, hidden columns are skipped.}
 
 \item{rows}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
 
