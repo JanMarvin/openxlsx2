@@ -171,7 +171,7 @@ test_that("wb_add_plot() is a wrapper", {
   options("openxlsx2.temp_png" = tempfile(pattern = "figureImage", fileext = ".png"))
 
   # create a device we can dev.copy() from
-  graphics::plot.new()
+  grDevices::pdf(NULL) # do not create "Rplots.pdf"
   grDevices::dev.control("enable")
   plot(1:5, 1:5)
 
@@ -187,7 +187,8 @@ test_that("wb_add_plot() is a wrapper", {
   # # check that it is actually working
   # wb$add_plot(sheet = "a")$save("~/test.xlsx")
 
-  graphics.off()
+  grDevices::dev.off()
+
 })
 
 test_that("wb_add_drawing is a wrapper", {
