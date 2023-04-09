@@ -269,9 +269,10 @@ test_that("skip hidden columns and rows works", {
     add_worksheet()$
     add_data(x = mtcars)$
     set_col_widths(cols = c(1, 4, 6, 7, 9), hidden = TRUE)$
-    set_row_heights(rows = c(3, 5, 8:30), hidden = TRUE)
+    set_row_heights(rows = c(3, 5, 8:30), hidden = TRUE)$
+    add_data(dims = "M1", x = iris)
 
-  dat <- wb_to_df(wb, skipHiddenRows = TRUE, skipHiddenCols = TRUE)
+  dat <- wb_to_df(wb, dims = "A1:K33", skipHiddenRows = TRUE, skipHiddenCols = TRUE)
 
   exp <- c("2", "4", "6", "7", "31", "32", "33")
   got <- rownames(dat)

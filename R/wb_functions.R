@@ -632,6 +632,29 @@ wb_to_df <- function(
 
   }
 
+  # the following two skip hidden columns and row and need a valid keep_rows and
+  # keep_cols length.
+  if (skipHiddenRows) {
+    sel <- row_attr$hidden == "1" | row_attr$hidden == "true"
+    if (any(sel)) {
+      hide   <- !keep_rows %in% row_attr$r[sel]
+
+      z  <- z[hide, , drop = FALSE]
+      tt <- tt[hide, , drop = FALSE]
+    }
+  }
+
+  if (skipHiddenCols) {
+    col_attr <- wb$worksheets[[sheet]]$unfold_cols()
+    sel <- col_attr$hidden == "1" | col_attr$hidden == "true"
+    if (any(sel)) {
+      hide     <- col2int(keep_cols) %in% as.integer(col_attr$min[sel])
+
+      z[hide]  <- NULL
+      tt[hide] <- NULL
+    }
+  }
+
   # is.na needs convert
   if (skipEmptyRows) {
     empty <- vapply(seq_len(nrow(z)), function(x) all(is.na(z[x, ])), NA)
@@ -650,27 +673,6 @@ wb_to_df <- function(
       tt[sel] <- NULL
     }
 
-  }
-
-  if (skipHiddenRows) {
-    sel <- row_attr$hidden == "1" | row_attr$hidden == "true"
-    if (any(sel)) {
-      hide   <- rownames(row_attr[!sel, ])
-
-      z  <- z[hide, , drop = FALSE]
-      tt <- tt[hide, , drop = FALSE]
-    }
-  }
-
-  if (skipHiddenCols) {
-    col_attr <- wb$worksheets[[sheet]]$unfold_cols()
-    sel <- col_attr$hidden == "1" | col_attr$hidden == "true"
-    if (any(sel)) {
-      hide     <- as.numeric(col_attr$min[sel])
-
-      z[hide]  <- NULL
-      tt[hide] <- NULL
-    }
   }
 
   # prepare colnames object
