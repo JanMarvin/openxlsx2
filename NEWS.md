@@ -6,6 +6,8 @@
 
 * Add `dims` argument to `wb_add_image()` and `wb_add_plot()`. This can be used to place images starting at a cell or span a cell range. This deprecates `xy` in `wb_add_plot()`. This adds colOffset and rowOffset to `wb_add_drawing()` and `wb_add_mschart()` and `wb_add_chart_xml()`. [578](https://github.com/JanMarvin/openxlsx2/pull/578)
 
+* Add `skipHiddenCols` and `skipHiddenRows` to `wb_to_df()`. In this way, hidden columns and rows are ignored, assuming that the person who has hidden them assumes that they are not important. [579](https://github.com/JanMarvin/openxlsx2/pull/579)
+
 
 ***************************************************************************
 
