@@ -8,6 +8,8 @@
 
 * Add `skipHiddenCols` and `skipHiddenRows` to `wb_to_df()`. In this way, hidden columns and rows are ignored, assuming that the person who has hidden them assumes that they are not important. [579](https://github.com/JanMarvin/openxlsx2/pull/579)
 
+* When writing `tibble` use `to.data.frame()` just like in the `data.table` case. [582](https://github.com/JanMarvin/openxlsx2/pull/582)
+
 
 ***************************************************************************
 
