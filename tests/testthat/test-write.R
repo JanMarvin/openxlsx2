@@ -509,3 +509,21 @@ test_that("writing na.strings = NULL works", {
   expect_equal(exp, got)
 
 })
+
+test_that("write tibbles", {
+
+  tbl <- structure(
+    list(
+      a_number = c(1234, 4321),
+      a_string = c("hello", "world"),
+      a_date = structure(c(19358, 19448), class = "Date"),
+      a_boolean = c(FALSE, TRUE)
+    ),
+    class = c("tbl_df", "tbl", "data.frame"),
+    row.names = c(NA, -2L)
+  )
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data(x = tbl)
+})
