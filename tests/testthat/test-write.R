@@ -165,17 +165,6 @@ test_that("write dims", {
 
 })
 
-test_that("write data.table class", {
-
-  df <- mtcars
-  class(df) <- c("data.table", "data.frame")
-
-  tmp <- temp_xlsx()
-  expect_silent(write_xlsx(df, tmp))
-  expect_equal(mtcars, read_xlsx(tmp), ignore_attr = TRUE)
-
-})
-
 test_that("update cell(s)", {
 
   xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
@@ -510,7 +499,27 @@ test_that("writing na.strings = NULL works", {
 
 })
 
-test_that("write tibbles", {
+# write third party data.frame classes
+test_that("write data.table class", {
+
+  dt <- structure(
+    list(
+      a_number = c(1234, 4321),
+      a_string = c("hello", "world"),
+      a_date = structure(c(19358, 19448), class = "Date"),
+      a_boolean = c(FALSE, TRUE)
+    ),
+    class = c("data.table", "data.frame"),
+    row.names = c(NA, -2L)
+  )
+
+  tmp <- temp_xlsx()
+  expect_silent(write_xlsx(dt, tmp))
+  expect_equal(dt, read_xlsx(tmp), ignore_attr = TRUE)
+
+})
+
+test_that("write tibble class", {
 
   tbl <- structure(
     list(
@@ -523,7 +532,8 @@ test_that("write tibbles", {
     row.names = c(NA, -2L)
   )
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_data(x = tbl)
+  tmp <- temp_xlsx()
+  expect_silent(write_xlsx(tbl, tmp))
+  expect_equal(tbl, read_xlsx(tmp), ignore_attr = TRUE)
+
 })
