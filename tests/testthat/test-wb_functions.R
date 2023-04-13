@@ -79,7 +79,7 @@ test_that("wb_to_df", {
   got <- wb_to_df(wb1, cols = c(1, 4), types = c("Var1" = 0, "Var3" = 1))
   test <- exp[c("Var1", "Var3")]
   test["Var1"] <- lapply(test["Var1"], as.character)
-  suppressWarnings(test["Var3"] <- lapply(test["Var3"], as.numeric))
+  suppressWarnings(test["Var3"] <- lapply(test["Var3"], function (x) as.numeric(replace (x, x == "#NUM!", "NaN"))))
   expect_equal(test, got, ignore_attr = TRUE)
 
   # start in row 5
