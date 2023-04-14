@@ -2646,18 +2646,14 @@ wb_add_cell_style <- function(
 wb_add_comment <- function(
     wb,
     sheet = current_sheet(),
-    col,
-    row,
-    dims  = rowcol_to_dims(row, col),
+    col   = NULL,
+    row   = NULL,
+    dims  = rowcol_to_dim(row, col),
     comment
   ) {
 
   assert_workbook(wb)
   assert_comment(comment)
-
-  if (missing(col))  col <- substitute()
-  if (missing(row))  row <- substitute()
-  if (missing(dims)) dims <- substitute()
 
   wb$clone()$add_comment(
     sheet   = sheet,
@@ -2681,17 +2677,13 @@ wb_add_comment <- function(
 wb_remove_comment <- function(
     wb,
     sheet = current_sheet(),
-    col,
-    row,
+    col   = NULL,
+    row   = NULL,
     dims  = rowcol_to_dims(row, col),
     gridExpand = TRUE
   ) {
 
   assert_workbook(wb)
-
-  if (missing(col))  col <- substitute()
-  if (missing(row))  row <- substitute()
-  if (missing(dims)) dims <- substitute()
 
   wb$clone()$remove_comment(
     sheet = sheet,

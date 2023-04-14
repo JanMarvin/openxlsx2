@@ -3339,23 +3339,19 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     add_comment = function(
         sheet = current_sheet(),
-        col,
-        row,
-        dims  = rowcol_to_dims(row, col),
-        comment) {
-
-      if (!missing(dims)) {
-        xy <- unlist(dims_to_rowcol(dims))
-        col <- xy[[1]]
-        row <- as.integer(xy[[2]])
-      }
+        col   = NULL,
+        row   = NULL,
+        dims  = rowcol_to_dim(row, col),
+        comment
+    ) {
 
       write_comment(
-        wb = self,
-        sheet = sheet,
-        col = col,
-        row = row,
-        comment = comment
+        wb      = self,
+        sheet   = sheet,
+        col     = col,
+        row     = row,
+        comment = comment,
+        dims    = dims
       ) # has no use: xy
 
       invisible(self)
@@ -3370,21 +3366,20 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     remove_comment = function(
       sheet = current_sheet(),
-      col,
-      row,
+      col = NULL,
+      row = NULL,
       dims  = rowcol_to_dims(row, col),
       gridExpand = TRUE
     ) {
 
-      if (!missing(dims)) {
-        xy <- unlist(dims_to_rowcol(dims))
-        col <- xy[[1]]
-        row <- as.integer(xy[[2]])
-        # with gridExpand this is always true
-        gridExpand <- TRUE
-      }
-
-      remove_comment(wb = self, sheet = sheet, col = col, row = row, gridExpand = TRUE)
+      remove_comment(
+        wb         = self,
+        sheet      = sheet,
+        col        = col,
+        row        = row,
+        dims       = dims,
+        gridExpand = gridExpand
+      )
 
       invisible(self)
     },

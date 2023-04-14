@@ -175,9 +175,19 @@ create_comment <- function(text,
 #' @param xy An alternative to specifying `col` and
 #' `row` individually.  A vector of the form
 #' `c(col, row)`.
+#' @param dims worksheet cell "A1"
 #' @rdname comment
 #' @export
-write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
+write_comment <- function(
+    wb,
+    sheet,
+    col     = NULL,
+    row     = NULL,
+    comment,
+    xy      = NULL,
+    dims    = rowcol_to_dim(row, col)
+  ) {
+
   # TODO add as method: wbWorkbook$addComment(); add param for replace?
   assert_workbook(wb)
   assert_comment(comment)
@@ -193,6 +203,7 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
 
   ## All input conversions/validations
   if (!is.null(xy)) {
+    .Deprecated("dims", old = "xy")
     if (length(xy) != 2) {
       stop("xy parameter must have length 2")
     }
@@ -200,11 +211,16 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
     row <- xy[[2]]
   }
 
-  if (!is.numeric(col)) {
-    col <- col2int(col)
+  if (!is.null(dims)) {
+    ref <- dims
+    col <- col2int(dims_to_rowcol(dims)[[1]])
+    row <- as.integer(dims_to_rowcol(dims)[[2]])
+  } else {
+    if (!is.numeric(col)) {
+      col <- col2int(col)
+    }
+    ref <- paste0(int2col(col), row)
   }
-
-  ref <- paste0(int2col(col), row)
 
   comment_list <- list(list(
     "ref" = ref,
@@ -228,15 +244,13 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
   next_id  <- wb$worksheets[[sheet]]$relships$comments
 
   if (!all(identical(wb$worksheets_rels[[sheet]], character()))) {
-    rels <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
+    rels     <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
     rels$typ <- basename(rels$Type)
-    rels$id <- as.integer(gsub("\\D+", "", rels$Id))
+    rels$id  <- as.integer(gsub("\\D+", "", rels$Id))
     next_rid <- iterator(rels$id)
   }
 
-
   id <- 1025 + sum(lengths(wb$comments))
-
 
   # create new commment vml
   cd <- unapply(comment_list, "[[", "clientData")
@@ -335,28 +349,42 @@ write_comment <- function(wb, sheet, col, row, comment, xy = NULL) {
 #' will be removed.
 #' @rdname comment
 #' @export
-remove_comment <- function(wb, sheet, col, row, gridExpand = TRUE) {
+remove_comment <- function(
+    wb,
+    sheet,
+    col        = NULL,
+    row        = NULL,
+    gridExpand = TRUE,
+    dims       = NULL
+  ) {
   # TODO add as method; wbWorkbook$remove_comment()
   assert_workbook(wb)
 
   sheet <- wb_validate_sheet(wb, sheet)
 
-  # col2int checks for numeric
-  col <- col2int(col)
-  row <- as.integer(row)
+  if (!is.null(col) && !is.null(row)) {
+    # col2int checks for numeric
+    col <- col2int(col)
+    row <- as.integer(row)
 
-  ## rows and cols need to be the same length
-  if (gridExpand) {
-    combs <- expand.grid(row, col)
-    row <- combs[, 1]
-    col <- combs[, 2]
+    ## rows and cols need to be the same length
+    if (gridExpand) {
+      combs <- expand.grid(row, col)
+      row <- combs[, 1]
+      col <- combs[, 2]
+    }
+
+    if (length(row) != length(col)) {
+      stop("Length of rows and cols must be equal.")
+    }
+
+    comb <- paste0(int2col(col), row)
   }
 
-  if (length(row) != length(col)) {
-    stop("Length of rows and cols must be equal.")
+  if (!is.null(dims)) {
+    comb <- unlist(dims_to_dataframe(dims, fill = TRUE))
   }
 
-  comb <- paste0(int2col(col), row)
   toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
 
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
