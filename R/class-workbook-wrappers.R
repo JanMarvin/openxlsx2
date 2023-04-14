@@ -2645,10 +2645,10 @@ wb_add_cell_style <- function(
 #' @export
 wb_add_comment <- function(
     wb,
-    sheet = current_sheet(),
-    col   = NULL,
-    row   = NULL,
-    dims  = rowcol_to_dim(row, col),
+    sheet   = current_sheet(),
+    col     = NULL,
+    row     = NULL,
+    dims    = rowcol_to_dim(row, col),
     comment
   ) {
 
@@ -2676,20 +2676,20 @@ wb_add_comment <- function(
 #' @export
 wb_remove_comment <- function(
     wb,
-    sheet = current_sheet(),
-    col   = NULL,
-    row   = NULL,
-    dims  = rowcol_to_dims(row, col),
+    sheet      = current_sheet(),
+    col        = NULL,
+    row        = NULL,
+    dims       = rowcol_to_dims(row, col),
     gridExpand = TRUE
   ) {
 
   assert_workbook(wb)
 
   wb$clone()$remove_comment(
-    sheet = sheet,
-    col = col,
-    row = row,
-    dims = dims,
+    sheet      = sheet,
+    col        = col,
+    row        = row,
+    dims       = dims,
     gridExpand = gridExpand
   )
 }

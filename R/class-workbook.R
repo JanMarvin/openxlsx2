@@ -3338,10 +3338,10 @@ wbWorkbook <- R6::R6Class(
     #' @param comment a comment to apply to the worksheet
     #' @returns The `wbWorkbook` object
     add_comment = function(
-        sheet = current_sheet(),
-        col   = NULL,
-        row   = NULL,
-        dims  = rowcol_to_dim(row, col),
+        sheet   = current_sheet(),
+        col     = NULL,
+        row     = NULL,
+        dims    = rowcol_to_dim(row, col),
         comment
     ) {
 
@@ -3365,10 +3365,10 @@ wbWorkbook <- R6::R6Class(
     #' @param gridExpand Remove all comments inside the grid. Similar to dims "A1:B2"
     #' @returns The `wbWorkbook` object
     remove_comment = function(
-      sheet = current_sheet(),
-      col = NULL,
-      row = NULL,
-      dims  = rowcol_to_dims(row, col),
+      sheet      = current_sheet(),
+      col        = NULL,
+      row        = NULL,
+      dims       = rowcol_to_dims(row, col),
       gridExpand = TRUE
     ) {
 
