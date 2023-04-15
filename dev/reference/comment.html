@@ -90,24 +90,39 @@ are called comments in openxml. Modification of what Excel now calls comment
 <span>  height <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">write_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span>, <span class="va">col</span>, <span class="va">row</span>, <span class="va">comment</span>, xy <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">write_comment</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="va">sheet</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">comment</span>,</span>
+<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">remove_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="va">sheet</span>, <span class="va">col</span>, <span class="va">row</span>, gridExpand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">remove_comment</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  <span class="va">sheet</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gridExpand <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_add_comment</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">col</span>,</span>
-<span>  <span class="va">row</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
 <span>  <span class="va">comment</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_remove_comment</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">col</span>,</span>
-<span>  <span class="va">row</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
 <span>  gridExpand <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -165,12 +180,12 @@ are called comments in openxml. Modification of what Excel now calls comment
 <code>c(col, row)</code>.</p></dd>
 
 
-<dt>gridExpand</dt>
-<dd><p>Remove all comments inside the grid. Similar to dims "A1:B2"</p></dd>
-
-
 <dt>dims</dt>
 <dd><p>Optional row and column as spreadsheet dimension, e.g. "A1"</p></dd>
+
+
+<dt>gridExpand</dt>
+<dd><p>Remove all comments inside the grid. Similar to dims "A1:B2"</p></dd>
 
 </dl></div>
     <div id="value">

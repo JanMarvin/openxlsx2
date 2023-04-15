@@ -1880,9 +1880,9 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-35">Usage<a class="anchor" aria-label="anchor" href="#usage-35"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_comment</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">col</span>,</span>
-<span>  <span class="va">row</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
 <span>  <span class="va">comment</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -1918,8 +1918,8 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-36">Usage<a class="anchor" aria-label="anchor" href="#usage-36"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_comment</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">col</span>,</span>
-<span>  <span class="va">row</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
 <span>  gridExpand <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
