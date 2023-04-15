@@ -17,6 +17,8 @@
 #'   executed functions
 #' @param ignore_fields Ignore immediate fields by removing them from the
 #'   objects for comparison
+#' @param ignore_wb for pseudo wbWorkbook wrappers such as wb_load() we have
+#'   to ignore wb
 #' @returns Nothing, called for its side-effects
 #' @noRd
 expect_wrapper <- function(
@@ -26,7 +28,8 @@ expect_wrapper <- function(
   params        = list(),
   ignore        = NULL,
   ignore_attr   = "waldo_opts",
-  ignore_fields = NULL
+  ignore_fields = NULL,
+  ignore_wb     = FALSE
 ) {
   stopifnot(
     requireNamespace("waldo", quietly = TRUE),
@@ -112,7 +115,11 @@ expect_wrapper <- function(
 
     # the style names are generated at random: use matching seeds for both calls
     options("openxlsx2_seed" = NULL)
-    res_fun    <- try(do.call(fun, c(wb = wb_fun, params)), silent = TRUE)
+    if (ignore_wb) {
+      res_fun    <- try(do.call(fun, c(params)), silent = TRUE)
+    } else {
+      res_fun    <- try(do.call(fun, c(wb = wb_fun, params)), silent = TRUE)
+    }
 
     options("openxlsx2_seed" = NULL)
     res_method <- try(do.call(wb_method[[method]], params), silent = TRUE)
