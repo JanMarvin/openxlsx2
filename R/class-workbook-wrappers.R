@@ -2645,19 +2645,15 @@ wb_add_cell_style <- function(
 #' @export
 wb_add_comment <- function(
     wb,
-    sheet = current_sheet(),
-    col,
-    row,
-    dims  = rowcol_to_dims(row, col),
+    sheet   = current_sheet(),
+    col     = NULL,
+    row     = NULL,
+    dims    = rowcol_to_dim(row, col),
     comment
   ) {
 
   assert_workbook(wb)
   assert_comment(comment)
-
-  if (missing(col))  col <- substitute()
-  if (missing(row))  row <- substitute()
-  if (missing(dims)) dims <- substitute()
 
   wb$clone()$add_comment(
     sheet   = sheet,
@@ -2680,24 +2676,20 @@ wb_add_comment <- function(
 #' @export
 wb_remove_comment <- function(
     wb,
-    sheet = current_sheet(),
-    col,
-    row,
-    dims  = rowcol_to_dims(row, col),
+    sheet      = current_sheet(),
+    col        = NULL,
+    row        = NULL,
+    dims       = rowcol_to_dims(row, col),
     gridExpand = TRUE
   ) {
 
   assert_workbook(wb)
 
-  if (missing(col))  col <- substitute()
-  if (missing(row))  row <- substitute()
-  if (missing(dims)) dims <- substitute()
-
   wb$clone()$remove_comment(
-    sheet = sheet,
-    col = col,
-    row = row,
-    dims = dims,
+    sheet      = sheet,
+    col        = col,
+    row        = row,
+    dims       = dims,
     gridExpand = gridExpand
   )
 }

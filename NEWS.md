@@ -10,6 +10,8 @@
 
 * When writing `tibble` use `to.data.frame()` just like in the `data.table` case. [582](https://github.com/JanMarvin/openxlsx2/pull/582)
 
+* Add cleanup internal comment code in `write_comment()`. This should not impact the workbook wrapper code in `wb_add_comment()`. [586](https://github.com/JanMarvin/openxlsx2/pull/586)
+
 
 ***************************************************************************
 

@@ -1461,9 +1461,9 @@ Add comment
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_comment(
   sheet = current_sheet(),
-  col,
-  row,
-  dims = rowcol_to_dims(row, col),
+  col = NULL,
+  row = NULL,
+  dims = rowcol_to_dim(row, col),
   comment
 )}\if{html}{\out{</div>}}
 }
@@ -1492,8 +1492,8 @@ Remove comment
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_comment(
   sheet = current_sheet(),
-  col,
-  row,
+  col = NULL,
+  row = NULL,
   dims = rowcol_to_dims(row, col),
   gridExpand = TRUE
 )}\if{html}{\out{</div>}}

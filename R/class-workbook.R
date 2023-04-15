@@ -3338,24 +3338,20 @@ wbWorkbook <- R6::R6Class(
     #' @param comment a comment to apply to the worksheet
     #' @returns The `wbWorkbook` object
     add_comment = function(
-        sheet = current_sheet(),
-        col,
-        row,
-        dims  = rowcol_to_dims(row, col),
-        comment) {
-
-      if (!missing(dims)) {
-        xy <- unlist(dims_to_rowcol(dims))
-        col <- xy[[1]]
-        row <- as.integer(xy[[2]])
-      }
+        sheet   = current_sheet(),
+        col     = NULL,
+        row     = NULL,
+        dims    = rowcol_to_dim(row, col),
+        comment
+    ) {
 
       write_comment(
-        wb = self,
-        sheet = sheet,
-        col = col,
-        row = row,
-        comment = comment
+        wb      = self,
+        sheet   = sheet,
+        col     = col,
+        row     = row,
+        comment = comment,
+        dims    = dims
       ) # has no use: xy
 
       invisible(self)
@@ -3369,22 +3365,21 @@ wbWorkbook <- R6::R6Class(
     #' @param gridExpand Remove all comments inside the grid. Similar to dims "A1:B2"
     #' @returns The `wbWorkbook` object
     remove_comment = function(
-      sheet = current_sheet(),
-      col,
-      row,
-      dims  = rowcol_to_dims(row, col),
+      sheet      = current_sheet(),
+      col        = NULL,
+      row        = NULL,
+      dims       = rowcol_to_dims(row, col),
       gridExpand = TRUE
     ) {
 
-      if (!missing(dims)) {
-        xy <- unlist(dims_to_rowcol(dims))
-        col <- xy[[1]]
-        row <- as.integer(xy[[2]])
-        # with gridExpand this is always true
-        gridExpand <- TRUE
-      }
-
-      remove_comment(wb = self, sheet = sheet, col = col, row = row, gridExpand = TRUE)
+      remove_comment(
+        wb         = self,
+        sheet      = sheet,
+        col        = col,
+        row        = row,
+        dims       = dims,
+        gridExpand = gridExpand
+      )
 
       invisible(self)
     },

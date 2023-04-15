@@ -17,24 +17,39 @@ create_comment(
   height = 4
 )
 
-write_comment(wb, sheet, col, row, comment, xy = NULL)
+write_comment(
+  wb,
+  sheet,
+  col = NULL,
+  row = NULL,
+  comment,
+  xy = NULL,
+  dims = rowcol_to_dim(row, col)
+)
 
-remove_comment(wb, sheet, col, row, gridExpand = TRUE)
+remove_comment(
+  wb,
+  sheet,
+  col = NULL,
+  row = NULL,
+  gridExpand = TRUE,
+  dims = NULL
+)
 
 wb_add_comment(
   wb,
   sheet = current_sheet(),
-  col,
-  row,
-  dims = rowcol_to_dims(row, col),
+  col = NULL,
+  row = NULL,
+  dims = rowcol_to_dim(row, col),
   comment
 )
 
 wb_remove_comment(
   wb,
   sheet = current_sheet(),
-  col,
-  row,
+  col = NULL,
+  row = NULL,
   dims = rowcol_to_dims(row, col),
   gridExpand = TRUE
 )
@@ -66,9 +81,9 @@ wb_remove_comment(
 \code{row} individually.  A vector of the form
 \code{c(col, row)}.}
 
-\item{gridExpand}{Remove all comments inside the grid. Similar to dims "A1:B2"}
-
 \item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
+
+\item{gridExpand}{Remove all comments inside the grid. Similar to dims "A1:B2"}
 }
 \value{
 The \code{wbWorkbook} object
