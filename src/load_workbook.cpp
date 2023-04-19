@@ -283,7 +283,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
       // val ------------------------------------------------------------------
       if (nn > 0) {
-        auto val_itr = 0;
         for (auto val: col.children()) {
 
           val_name = val.name();
@@ -321,7 +320,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           // <v>
           if (val_name == v_str)  single_xml_col.v = val.child_value();
 
-          ++val_itr;
         }
 
         /* row is done */
