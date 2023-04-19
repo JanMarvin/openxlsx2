@@ -17,7 +17,10 @@
 #'   executed functions
 #' @param ignore_fields Ignore immediate fields by removing them from the
 #'   objects for comparison
+#' @param ignore_wb for pseudo wbWorkbook wrappers such as wb_load() we have
+#'   to ignore wb
 #' @returns Nothing, called for its side-effects
+#' @name expect_wrapper
 #' @noRd
 expect_wrapper <- function(
   method,
@@ -26,7 +29,8 @@ expect_wrapper <- function(
   params        = list(),
   ignore        = NULL,
   ignore_attr   = "waldo_opts",
-  ignore_fields = NULL
+  ignore_fields = NULL,
+  ignore_wb     = FALSE
 ) {
   stopifnot(
     requireNamespace("waldo", quietly = TRUE),
@@ -112,7 +116,11 @@ expect_wrapper <- function(
 
     # the style names are generated at random: use matching seeds for both calls
     options("openxlsx2_seed" = NULL)
-    res_fun    <- try(do.call(fun, c(wb = wb_fun, params)), silent = TRUE)
+    if (ignore_wb) {
+      res_fun    <- try(do.call(fun, c(params)), silent = TRUE)
+    } else {
+      res_fun    <- try(do.call(fun, c(wb = wb_fun, params)), silent = TRUE)
+    }
 
     options("openxlsx2_seed" = NULL)
     res_method <- try(do.call(wb_method[[method]], params), silent = TRUE)
@@ -166,6 +174,66 @@ expect_wrapper <- function(
       testthat::fail(bad)
       return(invisible())
     }
+  }
+
+  testthat::succeed()
+  return(invisible())
+}
+
+#' @description
+#' A trimmed down pseudo wrapper to check internal wrapped functions.
+#' @rdname expect_wrapper
+expect_pseudo_wrapper <- function(
+    method,
+    fun           = paste0("wb_", method)
+) {
+  method_fun <- get(method, wbWorkbook$public_methods)
+  fun_fun    <- match.fun(fun)
+
+  method_forms <- as.list(formals(method_fun))
+  fun_forms    <- as.list(formals(fun_fun))
+
+  method_args <- names(method_forms)
+  fun_args    <- names(fun_forms)
+
+  ignore <- "xlsxFile"
+
+  # remove ignores from fun
+  m <- match(ignore, fun_args, 0L)
+  if (!identical(m, 0L)) {
+    # remove wb from both the args and formals
+    fun_args  <- fun_args[-m]
+    fun_forms <- fun_forms[-m]
+  }
+
+  # remove ignores from method
+  m <- match(ignore, method_args, 0L)
+  if (!identical(m, 0L)) {
+    # remove wb from both the args and formals
+    method_args  <- method_args[-m]
+    method_forms <- method_forms[-m]
+  }
+
+  # expectation that the names are the same (possibly redundant but quicker to)
+  bad <- waldo::compare(
+    x     = method_args,
+    y     = setdiff(fun_args, "wb")
+  )
+
+  if (length(bad)) {
+    testthat::fail(bad)
+    return(invisible())
+  }
+
+  # expectation that the default values are the same
+  bad <- waldo::compare(
+    x     = method_forms,
+    y     = fun_forms
+  )
+
+  if (length(bad)) {
+    testthat::fail(bad)
+    return(invisible())
   }
 
   testthat::succeed()

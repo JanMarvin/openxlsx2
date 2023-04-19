@@ -1325,6 +1325,107 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    ### to dataframe ----
+    #' @description to_df
+    #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
+    #' @param colNames If TRUE, the first row of data will be used as column names.
+    #' @param rowNames If TRUE, the first col of data will be used as row names.
+    #' @param dims Character string of type "A1:B2" as optional dimensions to be imported.
+    #' @param detectDates If TRUE, attempt to recognize dates and perform conversion.
+    #' @param showFormula If TRUE, the underlying Excel formulas are shown.
+    #' @param convert If TRUE, a conversion to dates and numerics is attempted.
+    #' @param skipEmptyCols If TRUE, empty columns are skipped.
+    #' @param skipEmptyRows If TRUE, empty rows are skipped.
+    #' @param skipHiddenCols If TRUE, hidden columns are skipped.
+    #' @param skipHiddenRows If TRUE, hidden rows are skipped.
+    #' @param startRow first row to begin looking for data.
+    #' @param startCol first column to begin looking for data.
+    #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
+    #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
+    #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
+    #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
+    #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+    #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
+    #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+    #' @return a data frame
+    to_df = function(
+      sheet,
+      startRow        = 1,
+      startCol        = NULL,
+      rowNames        = FALSE,
+      colNames        = TRUE,
+      skipEmptyRows   = FALSE,
+      skipEmptyCols   = FALSE,
+      skipHiddenRows  = FALSE,
+      skipHiddenCols  = FALSE,
+      rows            = NULL,
+      cols            = NULL,
+      detectDates     = TRUE,
+      na.strings      = "#N/A",
+      na.numbers      = NA,
+      fillMergedCells = FALSE,
+      dims,
+      showFormula     = FALSE,
+      convert         = TRUE,
+      types,
+      named_region
+    ) {
+
+      if (missing(sheet)) sheet <- substitute()
+      if (missing(dims)) dims <- substitute()
+      if (missing(named_region)) named_region <- substitute()
+
+      wb_to_df(
+        xlsxFile        = self,
+        sheet           = sheet,
+        startRow        = startRow,
+        startCol        = startCol,
+        rowNames        = rowNames,
+        colNames        = colNames,
+        skipEmptyRows   = skipEmptyRows,
+        skipEmptyCols   = skipEmptyCols,
+        skipHiddenRows  = skipHiddenRows,
+        skipHiddenCols  = skipHiddenCols,
+        rows            = rows,
+        cols            = cols,
+        detectDates     = detectDates,
+        na.strings      = na.strings,
+        na.numbers      = na.numbers,
+        fillMergedCells = fillMergedCells,
+        dims            = dims,
+        showFormula     = showFormula,
+        convert         = convert,
+        types           = types,
+        named_region    = named_region
+      )
+    },
+
+    ### load workbook ----
+    #' @description load workbook
+    #' @param file file
+    #' @param xlsxFile xlsxFile
+    #' @param sheet sheet
+    #' @param data_only data_only
+    #' @param calc_chain calc_chain
+    #' @return The `wbWorkbook` object invisibly
+    load = function(
+      file,
+      xlsxFile   = NULL,
+      sheet,
+      data_only  = FALSE,
+      calc_chain = FALSE
+    ) {
+      if (missing(file)) file <- substitute()
+      if (missing(sheet)) sheet <- substitute()
+      wb_load(
+        file       = file,
+        xlsxFile   = xlsxFile,
+        sheet      = sheet,
+        data_only  = data_only,
+        calc_chain = calc_chain
+        )
+    },
+
     # TODO wb_save can be shortened a lot by some formatting and by using a
     # function that creates all the temporary directories and subdirectries as a
     # named list

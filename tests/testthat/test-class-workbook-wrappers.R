@@ -30,6 +30,24 @@ test_that("wb_remove_worksheet() is a wrapper", {
   expect_wrapper("remove_worksheet", wb = wb, params = list(sheet = "sheet"))
 })
 
+
+# wb_to_df() ---------------------------------------------------------------
+
+# does not work as expected
+test_that("wb_to_df() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = iris)
+  expect_pseudo_wrapper("to_df")
+})
+
+# wb_load() ---------------------------------------------------------------
+
+test_that("wb_load() is a wrapper", {
+  tmp_xlsx <- temp_xlsx()
+  wb_workbook()$add_worksheet()$add_data(x = iris)$save(tmp_xlsx)
+  expect_wrapper("load", params = list(file = tmp_xlsx), ignore_wb = TRUE,
+                 ignore_fields = "datetimeCreated")
+})
+
 # wb_save() ---------------------------------------------------------------
 
 test_that("wb_save() is a wrapper", {
