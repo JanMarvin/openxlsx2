@@ -97,6 +97,7 @@ displayEmptyCellsAs
 drawingHF
 dxf
 dxfs
+eg
 embeddings
 evenFooter
 evenHeader
@@ -172,6 +173,7 @@ numfmts
 oddFooter
 oddHeader
 oleObjects
+oneCellAnchor
 openxlsx
 openxml
 ou
@@ -263,6 +265,7 @@ threadComments
 threadedComments
 topLeftCell
 totalsRowCount
+twoCellAnchor
 unescaping
 ungroup
 unicode
@@ -291,6 +294,7 @@ xl
 xls
 xlsm
 xlsx
+xlsxFile
 xy
 yWindow
 yy
