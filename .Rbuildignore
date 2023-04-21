@@ -21,3 +21,4 @@ cran-comments.md
 ^Meta$
 ^README\.Rmd$
 ^inst/img$
+^tests/testthat/_snaps$
