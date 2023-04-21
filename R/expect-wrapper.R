@@ -20,7 +20,8 @@
 #' @param ignore_wb for pseudo wbWorkbook wrappers such as wb_load() we have
 #'   to ignore wb
 #' @returns Nothing, called for its side-effects
-#' @name expect_wrapper
+#' @rdname expect_wrapper
+#' @keywords internal
 #' @noRd
 expect_wrapper <- function(
   method,
@@ -183,6 +184,8 @@ expect_wrapper <- function(
 #' @description
 #' A trimmed down pseudo wrapper to check internal wrapped functions.
 #' @rdname expect_wrapper
+#' @keywords internal
+#' @noRd
 expect_pseudo_wrapper <- function(
     method,
     fun           = paste0("wb_", method)
