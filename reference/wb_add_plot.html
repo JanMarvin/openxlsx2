@@ -19,7 +19,7 @@ wb_add_image()."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -91,7 +91,8 @@ wb_add_image()."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
 <span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  fileType <span class="op">=</span> <span class="st">"png"</span>,</span>
 <span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
-<span>  dpi <span class="op">=</span> <span class="fl">300</span></span>
+<span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -147,6 +148,10 @@ when <code>xy</code> is given.</p></dd>
 <dt>dpi</dt>
 <dd><p>Image resolution</p></dd>
 
+
+<dt>dims</dt>
+<dd><p>Worksheet dimension, single cell ("A1") or cell range ("A1:D4")</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -176,7 +181,7 @@ when <code>xy</code> is given.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Insert plot 2</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">p2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_plot</span><span class="op">(</span><span class="fl">1</span>, xy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"J"</span>, <span class="fl">2</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">16</span>, height <span class="op">=</span> <span class="fl">10</span>, fileType <span class="op">=</span> <span class="st">"png"</span>, units <span class="op">=</span> <span class="st">"cm"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_plot</span><span class="op">(</span><span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"J2"</span>, width <span class="op">=</span> <span class="fl">16</span>, height <span class="op">=</span> <span class="fl">10</span>, fileType <span class="op">=</span> <span class="st">"png"</span>, units <span class="op">=</span> <span class="st">"cm"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: ggplot2</span>
