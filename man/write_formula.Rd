@@ -13,7 +13,6 @@ write_formula(
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   cm = FALSE,
-  ref = NULL,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )
@@ -34,8 +33,6 @@ write_formula(
 \item{array}{A bool if the function written is of type array}
 
 \item{cm}{A bool if the function is of type cm (array with hidden curly braces)}
-
-\item{ref}{A worksheet region the formula output references. Usefull for array formulas that return more than one cell.}
 
 \item{applyCellStyle}{apply styles when writing on the sheet}
 

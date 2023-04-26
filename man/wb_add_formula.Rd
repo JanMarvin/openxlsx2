@@ -13,7 +13,6 @@ wb_add_formula(
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
   cm = FALSE,
-  ref = NULL,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )
@@ -34,8 +33,6 @@ wb_add_formula(
 \item{array}{A bool if the function written is of type array}
 
 \item{cm}{A special kind of array function that hides the curly braces in the cell. Add this, if you see "@" inserted into your formulas}
-
-\item{ref}{A worksheet region the formula references. Usefull for array formulas that return more than one cell.}
 
 \item{applyCellStyle}{Should we write cell styles to the workbook}
 

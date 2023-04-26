@@ -1,5 +1,5 @@
 ---
-title: "openxlsx2 formulass manual"
+title: "openxlsx2 formulas manual"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{openxlsx2 formulas manual}
@@ -109,7 +109,7 @@ wb <- wb_workbook()$add_worksheet()$
 
 Similar to array formulas, these cell metadata formulas hide to the user that they are array formulas. Using these is implemented in `openxlsx2` > 0.6.1:
 
-````{r}
+```{r}
 wb <- wb_workbook()$add_worksheet()$
   add_data(x = head(cars))$
   add_formula(dims = "D2", x = 'SUM(ABS(A2:A7))', cm = TRUE)

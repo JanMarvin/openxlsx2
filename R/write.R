@@ -1076,7 +1076,6 @@ write_data <- function(
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param cm A bool if the function is of type cm (array with hidden curly braces)
-#' @param ref A worksheet region the formula output references. Usefull for array formulas that return more than one cell.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_data()]
@@ -1154,7 +1153,6 @@ write_formula <- function(
     dims            = rowcol_to_dims(startRow, startCol),
     array           = FALSE,
     cm              = FALSE,
-    ref             = NULL,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE
 ) {
@@ -1216,11 +1214,10 @@ write_formula <- function(
   }
 
   class(dfx$X) <- c("character", formula)
-  if (!is.null(ref) || !is.null(dims)) {
+  if (!is.null(dims)) {
     if (array || cm) {
-      ref <- dims
+      attr(dfx, "f_ref") <- dims
     }
-    attr(dfx, "f_ref") <- ref
   }
 
   if (any(grepl("=([\\s]*?)HYPERLINK\\(", x, perl = TRUE))) {
