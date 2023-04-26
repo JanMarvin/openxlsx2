@@ -14,6 +14,7 @@ FFFFC
 FFFFFF
 Github
 Gnumeric
+GrossProfit
 JIS
 LastModifiedBy
 Libreoffice
@@ -25,6 +26,8 @@ Radiobuttons
 RedToBlack
 STDEV
 STDEVP
+SalesPrice
+SalesQuantity
 Schauberger
 Sparklines
 SuperA
@@ -131,6 +134,7 @@ greatful
 gridLines
 gridLinesSet
 gridlines
+grossprofit
 hasDrawing
 hdpi
 headFoot

@@ -1,5 +1,9 @@
 # openxlsx2 (in development)
 
+## New features
+
+* The `dims` argument of `wb_add_formula()` can be used to create a array references. A new `cm` argument was added which might be useful, if formulas previously created addition `@` in spreadsheet software. Examples how to use formulas were added to a new vignette. [593](https://github.com/JanMarvin/openxlsx2/pull/593)
+
 
 ***************************************************************************
 

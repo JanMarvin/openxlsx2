@@ -749,6 +749,7 @@ add formula
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
+  cm = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )}\if{html}{\out{</div>}}
@@ -768,6 +769,8 @@ add formula
 \item{\code{dims}}{dims}
 
 \item{\code{array}}{array}
+
+\item{\code{cm}}{cm}
 
 \item{\code{applyCellStyle}}{applyCellStyle}
 

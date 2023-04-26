@@ -12,6 +12,7 @@ write_formula(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
+  cm = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )
@@ -30,6 +31,8 @@ write_formula(
 \item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{array}{A bool if the function written is of type array}
+
+\item{cm}{A bool if the function is of type cm (array with hidden curly braces)}
 
 \item{applyCellStyle}{apply styles when writing on the sheet}
 

@@ -294,6 +294,20 @@ write_data2 <- function(
     int2col(endCol), endRow
   )
 
+  ### ref for formulas from write_formula caring ref attr
+  if (!is.null(attr(data, "f_ref"))) {
+    ref <- attr(data, "f_ref")
+  } else {
+    ref <- dims
+  }
+
+  if (!is.null(attr(data, "c_cm"))) {
+    warning("modifications with cm formulas are experimental. use at own risk")
+    c_cm <- attr(data, "c_cm")
+  } else {
+    c_cm <- ""
+  }
+
   # TODO writing defined name should handle global and local: localSheetId
   # this requires access to wb$workbook.
   # TODO The check for existing names is in write_data()
@@ -370,15 +384,16 @@ write_data2 <- function(
     data,
     dc,
     cc,
-    ColNames = colNames,
-    start_col = startCol,
-    start_row = startRow,
-    ref = dims,
-    string_nums = string_nums,
-    na_null = na_null,
-    na_missing = na_missing,
-    na_strings = na.strings,
-    inline_strings = inline_strings
+    ColNames       = colNames,
+    start_col      = startCol,
+    start_row      = startRow,
+    ref            = ref,
+    string_nums    = string_nums,
+    na_null        = na_null,
+    na_missing     = na_missing,
+    na_strings     = na.strings,
+    inline_strings = inline_strings,
+    c_cm           = c_cm
   )
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
@@ -763,6 +778,7 @@ write_data_table <- function(
   ### Create data frame --------------------------------------------------------
 
   ## special case - formula
+  # only for data frame case where a data frame is passed down containing formulas
   if (inherits(x, "formula")) {
     x <- data.frame("X" = x, stringsAsFactors = FALSE)
     class(x[[1]]) <- if (array) "array_formula" else "formula"
@@ -1059,6 +1075,7 @@ write_data <- function(
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
+#' @param cm A bool if the function is of type cm (array with hidden curly braces)
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_data()]
@@ -1131,11 +1148,12 @@ write_formula <- function(
     wb,
     sheet,
     x,
-    startCol = 1,
-    startRow = 1,
-    dims = rowcol_to_dims(startRow, startCol),
-    array = FALSE,
-    applyCellStyle = TRUE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    cm              = FALSE,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE
 ) {
   assert_class(x, "character")
@@ -1143,7 +1161,64 @@ write_formula <- function(
   x <- replaceXMLEntities(x)
   x <- vapply(x, function(val) xml_value(xml_node_create("fml", val, escapes = TRUE), "fml"), NA_character_)
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
-  class(dfx$X) <- c("character", if (array) "array_formula" else "formula")
+
+  formula <- "formula"
+  if (array) formula <- "array_formula"
+  if (cm)    {
+    # need to set cell metadata in wb$metadata
+    if (is.null(wb$metadata)) {
+
+      wb$append("Content_Types", "<Override PartName=\"/xl/metadata.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheetMetadata+xml\"/>")
+
+      wb$metadata <- # danger danger no clue what this means!
+        xml_node_create(
+          "metadata",
+          xml_attributes = c(
+            xmlns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+            "xmlns:xda" = "http://schemas.microsoft.com/office/spreadsheetml/2017/dynamicarray"
+          ),
+          xml_children = read_xml(
+            "<metadataTypes count=\"1\">
+            <metadataType name=\"XLDAPR\" minSupportedVersion=\"120000\" copy=\"1\" pasteAll=\"1\" pasteValues=\"1\" merge=\"1\" splitFirst=\"1\" rowColShift=\"1\" clearFormats=\"1\" clearComments=\"1\" assign=\"1\" coerce=\"1\" cellMeta=\"1\"/>
+            </metadataTypes>
+            <futureMetadata name=\"XLDAPR\" count=\"1\">
+            <bk>
+            <extLst>
+            <ext uri=\"{bdbb8cdc-fa1e-496e-a857-3c3f30c029c3}\">
+            <xda:dynamicArrayProperties fDynamic=\"1\" fCollapsed=\"0\"/>
+            </ext>
+            </extLst>
+            </bk>
+            </futureMetadata>,
+            <cellMetadata/>",
+            pointer = FALSE
+          )
+        )
+    }
+
+    ## TODO Not sure if there are more cases
+    # add new cell metadata record
+    cM <- xml_node(wb$metadata, "metadata", "cellMetadata")
+    cM <- xml_add_child(cM, xml_child = "<bk><rc t=\"1\" v=\"0\"/></bk>")
+
+    # we need to update count
+    cnt <- as_xml_attr(length(xml_node(cM, "cellMetadata", "bk")))
+    cM <- xml_attr_mod(cM, xml_attributes = c(count = cnt))
+
+    # remove current cellMetadata update new
+    wb$metadata <- xml_rm_child(wb$metadata, "cellMetadata")
+    wb$metadata <- xml_add_child(wb$metadata, cM)
+
+    attr(dfx, "c_cm") <- cnt
+    formula <- "cm_formula"
+  }
+
+  class(dfx$X) <- c("character", formula)
+  if (!is.null(dims)) {
+    if (array || cm) {
+      attr(dfx, "f_ref") <- dims
+    }
+  }
 
   if (any(grepl("=([\\s]*?)HYPERLINK\\(", x, perl = TRUE))) {
     class(dfx$X) <- c("character", "formula", "hyperlink")
@@ -1162,6 +1237,7 @@ write_formula <- function(
     applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle
   )
+
 }
 
 

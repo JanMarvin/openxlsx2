@@ -54,6 +54,8 @@ SEXP openxlsx2_type(SEXP x) {
         type[i] = 10;
       } else if (Rf_inherits(z, "array_formula")) {
         type[i] = 11;
+      } else if (Rf_inherits(z, "cm_formula")) {
+        type[i] = 14;
       } else {
         type[i] = 4;
       }
@@ -310,7 +312,8 @@ void wide_to_long(
     bool na_null,
     bool na_missing,
     std::string na_strings,
-    bool inline_strings
+    bool inline_strings,
+    std::string c_cm
 ) {
 
   auto n = z.nrow();
@@ -321,6 +324,7 @@ void wide_to_long(
   // pointer magic. even though these are extracted, they just point to the
   // memory in the data frame
   Rcpp::CharacterVector zz_row_r = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
+  Rcpp::CharacterVector zz_c_cm  = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
   Rcpp::CharacterVector zz_c_r   = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
   Rcpp::CharacterVector zz_v     = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
   Rcpp::CharacterVector zz_c_s   = Rcpp::as<Rcpp::CharacterVector>(zz["c_s"]);
@@ -391,8 +395,14 @@ void wide_to_long(
         cell.f   = vals;
         break;
       case array_formula:
-        cell.f   = vals;
-        cell.f_t = "array";
+        cell.f     = vals;
+        cell.f_t   = "array";
+        cell.f_ref = ref[i];
+        break;
+      case cm_formula:
+        cell.c_cm  = c_cm;
+        cell.f     = vals;
+        cell.f_t   = "array";
         cell.f_ref = ref[i];
         break;
       }
@@ -446,6 +456,7 @@ void wide_to_long(
       zz_row_r[pos] = row;
       zz_c_r[pos]   = col;
       if (!cell.v.empty())     zz_v[pos]     = cell.v;
+      if (!cell.c_cm.empty())  zz_c_cm[pos]  = cell.c_cm;
       if (!cell.c_s.empty())   zz_c_s[pos]   = cell.c_s;
       if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
       if (!cell.is.empty())    zz_is[pos]    = cell.is;

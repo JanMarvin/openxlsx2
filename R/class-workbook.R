@@ -1279,17 +1279,19 @@ wbWorkbook <- R6::R6Class(
     #' @param startRow startRow
     #' @param dims dims
     #' @param array array
+    #' @param cm cm
     #' @param applyCellStyle applyCellStyle
     #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
     #' @returns The `wbWorkbook` object
     add_formula = function(
-        sheet    = current_sheet(),
+        sheet           = current_sheet(),
         x,
-        startCol = 1,
-        startRow = 1,
-        dims     = rowcol_to_dims(startRow, startCol),
-        array    = FALSE,
-        applyCellStyle = TRUE,
+        startCol        = 1,
+        startRow        = 1,
+        dims            = rowcol_to_dims(startRow, startCol),
+        array           = FALSE,
+        cm              = FALSE,
+        applyCellStyle  = TRUE,
         removeCellStyle = FALSE
     ) {
       write_formula(
@@ -1300,6 +1302,7 @@ wbWorkbook <- R6::R6Class(
         startRow        = startRow,
         dims            = dims,
         array           = array,
+        cm              = cm,
         applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle
       )

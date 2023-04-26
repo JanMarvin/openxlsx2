@@ -12,6 +12,7 @@ wb_add_formula(
   startRow = 1,
   dims = rowcol_to_dims(startRow, startCol),
   array = FALSE,
+  cm = FALSE,
   applyCellStyle = TRUE,
   removeCellStyle = FALSE
 )
@@ -30,6 +31,8 @@ wb_add_formula(
 \item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
 \item{array}{A bool if the function written is of type array}
+
+\item{cm}{A special kind of array function that hides the curly braces in the cell. Add this, if you see "@" inserted into your formulas}
 
 \item{applyCellStyle}{Should we write cell styles to the workbook}
 

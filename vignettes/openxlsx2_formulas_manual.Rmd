@@ -1,0 +1,263 @@
+---
+title: "openxlsx2 formulas manual"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{openxlsx2 formulas manual}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+set.seed(123)
+```
+
+```{r setup}
+library(openxlsx2)
+```
+
+Below you find various examples how to create formulas with `openxlsx2`. Though, before we start with the examples, let us begin with a word of warning. Please be aware, while it is possible to create all these formulas, they are not evaluated unless they are opened in spreadsheet software. Even worse, if there are cells containing the result of some formula, it can not be trusted unless the formula is evaluated in spreadsheet software.
+
+This can be shown in a simple example: We have a spreadsheet with a formula `A1 + B1`. This formula was evaluated with spreadsheet software as `A1 + B1 = 2`. Therefore if we read the cell, we see the value 2. Lets recreate this output in `openxlsx2`
+
+```{r}
+# Create artificial xlsx file
+wb <- wb_workbook()$add_worksheet()$add_data(x = t(c(1, 1)), colNames = FALSE)$
+  add_formula(dims = "C1", x = "A1 + B1")
+# Users should never modify cc as shown here
+wb$worksheets[[1]]$sheet_data$cc$v[3] <- 2
+
+# we expect a value of 2
+wb_to_df(wb, colNames = FALSE)
+```
+Now, lets assume we modify the data in cell `A1`.
+
+```{r}
+wb$add_data(x = 2)
+
+# we expect 3
+wb_to_df(wb, colNames = FALSE)
+```
+
+What happened? Even though we see cells `A1` and `B1` show a value of `2` and `1` our formula in `C1` was not updated. It still shows a value of `2`. This is because `openxlsx2` does not evaluate formulas and workbooks on a more general scale. In the open xml style the cell looks something like this:
+
+```
+<c r="C1">
+  <f>A1 + B1</f>
+  <v>2</v>
+</c>
+```
+
+And when we read from this cell, we always return the value of `v`. In this case it is obvious, but still wrong and it is a good idea to check if underlying fields contain formulas.
+
+```{r}
+wb_to_df(wb, colNames = FALSE, showFormula = TRUE)
+```
+
+If `openxlsx2` writes formulas, as shown in the examples below, the fields will be entirely blank. These fields will only be evaluated and filled, once the output file is opened in spreadsheet software.
+
+The only way to avoid surprises is to be aware of this all the time and similar, checking for similar things all the time.
+
+# Simple formulas
+
+```{r}
+wb <- wb_workbook()$add_worksheet()$
+  add_data(x = head(cars))$
+  add_formula(dims = "D2", x = "SUM(A2, B2)")$
+  add_formula(dims = "D3", x = "A2 + B2")
+# wb$open()
+```
+
+# Array formulas
+
+```{r}
+wb <- wb_workbook()$add_worksheet()$
+  add_data(x = head(cars))$
+  add_formula(dims = "C2:C7", x = "A2:A7 * B2:B7", array = TRUE)
+# wb$open()
+```
+
+# Array formulas creating multiple fields
+
+In the example below we want to use `MMULT()` which creates a matrix multiplication. This requires us to write an array formula and to specify the region where the output will be written to.
+
+```{r}
+m1 <- matrix(1:6, ncol = 2)
+m2 <- matrix(7:12, nrow = 2)
+
+wb <- wb_workbook()$add_worksheet()$
+  add_data(x = m1, startCol = 1)$
+  add_data(x = m2, startCol = 4)$
+  add_formula(dims = "H2:J4", x = "MMULT(A2:B4, D2:F3)", array = TRUE)
+# wb$open()
+```
+
+Similar a the coefficients of a linear regression
+```{r}
+# we expect to find this in D1:E1
+coef(lm(head(cars)))
+wb <- wb_workbook()$add_worksheet()$
+  add_data(x = head(cars))$
+  add_formula(dims = "D2:E2", x = "LINEST(A2:A7, B2:B7, TRUE)", array = TRUE)
+# wb$open()
+```
+
+# cm formulas
+
+Similar to array formulas, these cell metadata formulas hide to the user that they are array formulas. Using these is implemented in `openxlsx2` > 0.6.1:
+
+```{r}
+wb <- wb_workbook()$add_worksheet()$
+  add_data(x = head(cars))$
+  add_formula(dims = "D2", x = 'SUM(ABS(A2:A7))', cm = TRUE)
+# wb$open()
+```
+
+# `dataTable` formulas^[this example was originally provided by @zykezero for `openxlsx`.]
+
+#### `dataTable` formula differences ####
+|   |     A       |  B   |      C        |
+|---|-------------|------|---------------|
+| 1 | SalesPrice  | COGS | SalesQuantity |
+| 2 |     20      |  5   |      1        |
+| 3 |     30      |  11  |      2        |
+| 4 |     40      |  13  |      3        |
+
+Given a basic table like the above, a similarly basic formula for "Total_Sales" would be "=A2 * C2" with the row value changing at each row.
+
+An implementation for this formula using `wb_add_formula()` would look this (taken from current documentation) lets say we've read in the data and assigned it to the table "company_sales"
+
+```{r}
+## creating example data
+example_data <- data.frame(
+    SalesPrice = c(20, 30, 40),
+    COGS = c(5, 11, 13),
+    SalesQuantity = c(1, 2, 3)
+)
+
+## write in the formula
+example_data$Total_Sales  <- paste(paste0("A", 1:3 + 1L), paste0("C", 1:3 + 1L), sep = " + ")
+## add the formula class
+class(example_data$Total_Sales) <- c(class(example_data$Total_Sales), "formula")
+
+## write a workbook
+wb <- wb_workbook()$
+  add_worksheet("Total Sales")$
+  add_data_table(x = example_data)
+```
+
+Then we create the workbook, worksheet, and use `wb_add_data_table()`.
+
+One of the advantages of the open xml `dataTable` syntax is that we don't have to specify row numbers or columns as letters. The table also grows dynamically, adding new rows as new data is appended and extending formulas to the new rows. These `dataTable` have named columns that we can use instead of letters.
+When writing the formulas within the `dataTable` we would use the following syntax `[@[column_name]]` to reference the current row. So the "Total_Sales" formula written in open xml in `dataTable` would look like this; `=[@[SalesPrice]] * [@[SalesQuantity]]`
+
+If we are writing the formula outside of the `dataTable` we have to reference the table name. In this case lets say the table name is 'daily_sales' `=daily_sales[@[SalesPrice]] * daily_sales[@[SalesQuantity]]`
+
+However, if we were to pass this as the text for the formula to be written it would cause an error because the syntax that open xml requires for selecting the current row is different.
+
+In open xml the `dataTable` formula looks like this:
+```
+<calculatedColumnFormula>
+  daily_sales[[#This Row],[SalesPrice]]*daily_sales[[#ThisRow],[SalesQuantity]]
+</calculatedColumnFormula>
+```
+
+Now we can see that open xml replaces `[@[SalesPrice]]` with `daily_sales[[#This Row],[SalesPrice]]` We must then use this syntax when writing formulas for `dataTable`
+
+```{r}
+## Because we want the `dataTable` formula to propagate down the entire column of the data
+## we can assign the formula by itself to any column and allow that single string to be repeated for each row.
+
+## creating example data
+example_data <-
+  data.frame(
+    SalesPrice = c(20, 30, 40),
+    COGS = c(5, 11, 13),
+    SalesQuantity = c(1, 2, 3)
+  )
+
+## base R method
+example_data$GrossProfit       <- "daily_sales[[#This Row],[SalesPrice]] - daily_sales[[#This Row],[COGS]]"
+example_data$Total_COGS        <- "daily_sales[[#This Row],[COGS]] * daily_sales[[#This Row],[SalesQuantity]]"
+example_data$Total_Sales       <- "daily_sales[[#This Row],[SalesPrice]] * daily_sales[[#This Row],[SalesQuantity]]"
+example_data$Total_GrossProfit <- "daily_sales[[#This Row],[Total_Sales]] - daily_sales[[#This Row],[Total_COGS]]"
+
+class(example_data$GrossProfit)       <- c(class(example_data$GrossProfit),       "formula")
+class(example_data$Total_COGS)        <- c(class(example_data$Total_COGS),        "formula")
+class(example_data$Total_Sales)       <- c(class(example_data$Total_Sales),       "formula")
+class(example_data$Total_GrossProfit) <- c(class(example_data$Total_GrossProfit), "formula")
+```
+
+```{r}
+wb$
+  add_worksheet('Daily Sales')$
+  add_data_table(
+    x          = example_data,
+    tableStyle = "TableStyleMedium2",
+    tableName  = 'daily_sales'
+  )
+```
+
+And if we open the workbook to view the table we created we can see that the formula has worked.
+
+|   |     A       |  B   |      C        |D|E|F|G|
+|---|-------------|------|---------------|-|-|-|-|
+| 1 | SalesPrice  | COGS | SalesQuantity |GrossProfit|	Total_COGS|	Total_Sales|	Total_GrossProfit|
+| 2 |     20      |  5   |      1        |15|	5|	20|	15|
+| 3 |     30      |  11  |      2        |19|	22|	60|	38|
+| 4 |     40      |  13  |      3        |27|	39|	120|	81|
+
+We can also see that it has replaced `[#This Row]` with `@`.
+
+|   |     A       |  B   |      C        |           D             |               E               |                  F                  |                  G                 |
+|---|-------------|------|---------------|-------------------------|-------------------------------|-------------------------------------|------------------------------------|
+| 1 | SalesPrice  | COGS | SalesQuantity |  GrossProfit            |	         Total_COGS           |	         Total_Sales                |	        Total_GrossProfit          |
+| 2 |     20      |  5   |      1        |=[@SalesPrice] - [@COGS] |	=[@COGS] \* [@SalesQuantity]  |	=[@SalesPrice] \* [@SalesQuantity]  | =[@[Total\_Sales]] - [@[Total\_COGS]]|
+| 3 |     30      |  11  |      2        |=[@SalesPrice] - [@COGS] |	=[@COGS] \* [@SalesQuantity]  |	=[@SalesPrice] \* [@SalesQuantity]  | =[@[Total\_Sales]] - [@[Total\_COGS]]|
+| 4 |     40      |  13  |      3        |=[@SalesPrice] - [@COGS] |	=[@COGS] \* [@SalesQuantity]  |	=[@SalesPrice] \* [@SalesQuantity]  | =[@[Total\_Sales]] - [@[Total\_COGS]]|
+
+
+For completion, the formula as we wrote it appears as;
+
+|           D             |               E               |                  F                  |                  G                 |
+|-------------------------|-------------------------------|-------------------------------------|------------------------------------|
+|  GrossProfit            |	         Total_COGS           |	         Total_Sales                |	        Total_GrossProfit          |
+|=grossprofit[[#This Row],[SalesPrice]] - grossprofit[[#This Row],[COGS]] |	=grossprofit[[#This Row],[COGS]] \* grossprofit[[#This Row],[SalesQuantity]]  |	=grossprofit[[#This Row],[SalesPrice]] \* grossprofit[[#This Row],[SalesQuantity]]  | =grossprofit[[#This Row],[Total\_Sales]] - grossprofit[[#This Row],[Total\_COGS]]|
+|=grossprofit[[#This Row],[SalesPrice]] - grossprofit[[#This Row],[COGS]] |	=grossprofit[[#This Row],[COGS]] \* grossprofit[[#This Row],[SalesQuantity]]  |	=grossprofit[[#This Row],[SalesPrice]] \* grossprofit[[#This Row],[SalesQuantity]]  | =grossprofit[[#This Row],[Total\_Sales]] - grossprofit[[#This Row],[Total\_COGS]]|
+|=grossprofit[[#This Row],[SalesPrice]] - grossprofit[[#This Row],[COGS]] |	=grossprofit[[#This Row],[COGS]] \* grossprofit[[#This Row],[SalesQuantity]]  |	=grossprofit[[#This Row],[SalesPrice]] \* grossprofit[[#This Row],[SalesQuantity]]  | =grossprofit[[#This Row],[Total\_Sales]] - grossprofit[[#This Row],[Total\_COGS]]|
+
+
+```{r}
+#### sum dataTable examples
+wb$add_worksheet('sum_examples')
+
+### Note: dataTable formula do not need to be used inside of dataTables. dataTable formula are for referencing the data within the dataTable.
+sum_examples <- data.frame(
+    description = c("sum_SalesPrice", "sum_product_Price_Quantity"),
+    formula = c(
+      "sum(daily_sales[[#Data],[SalesPrice]])",
+      "sum(daily_sales[[#Data],[SalesPrice]] * daily_sales[[#Data],[SalesQuantity]])"
+    )
+  )
+class(sum_examples$formula) <- c(class(sum_examples$formula), "formula")
+
+wb$add_data(x = sum_examples)
+
+#### dataTable referencing
+wb$add_worksheet('dt_references')
+
+### Adding the headers by themselves.
+wb$add_formula(
+  x = "daily_sales[[#Headers],[SalesPrice]:[Total_GrossProfit]]",
+)
+
+### Adding the raw data by reference and selecting them directly.
+wb$add_formula(
+  x = "daily_sales[[#Data],[SalesPrice]:[Total_GrossProfit]]",
+  startRow = 2
+)
+# wb$open()
+```

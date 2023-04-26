@@ -28,6 +28,7 @@ typedef struct {
 
 typedef struct {
   std::string v;
+  std::string c_cm;
   std::string c_s;
   std::string c_t;
   std::string is;
@@ -55,7 +56,8 @@ enum celltype {
   hyperlink      = 10,
   array_formula  = 11,
   factor         = 12,
-  string_num     = 13
+  string_num     = 13,
+  cm_formula     = 14
 };
 
 // check for 1.0.8.0
