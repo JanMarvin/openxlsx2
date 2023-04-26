@@ -307,29 +307,34 @@ wb_add_pivot_table <- function(
 #' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
+#' @param cm A special kind of array function that hides the curly braces in the cell. Add this, if you see "@" inserted into your formulas
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @family workbook wrappers
 #' @export
 wb_add_formula <- function(
     wb,
-    sheet    = current_sheet(),
+    sheet           = current_sheet(),
     x,
-    startCol = 1,
-    startRow = 1,
-    dims     = rowcol_to_dims(startRow, startCol),
-    array    = FALSE,
+    startCol        = 1,
+    startRow        = 1,
+    dims            = rowcol_to_dims(startRow, startCol),
+    array           = FALSE,
+    cm              = FALSE,
+    ref             = NULL,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE
 ) {
   assert_workbook(wb)
   wb$clone()$add_formula(
-    sheet    = sheet,
-    x        = x,
-    startCol = startCol,
-    startRow = startRow,
-    dims     = dims,
-    array    = array,
+    sheet           = sheet,
+    x               = x,
+    startCol        = startCol,
+    startRow        = startRow,
+    dims            = dims,
+    array           = array,
+    cm              = cm,
+    ref             = ref,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle
   )
