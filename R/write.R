@@ -1076,6 +1076,7 @@ write_data <- function(
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param cm A bool if the function is of type cm (array with hidden curly braces)
+#' @param ref A worksheet region the formula output references. Usefull for array formulas that return more than one cell.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @seealso [write_data()]

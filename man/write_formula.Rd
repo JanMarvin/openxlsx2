@@ -35,6 +35,8 @@ write_formula(
 
 \item{cm}{A bool if the function is of type cm (array with hidden curly braces)}
 
+\item{ref}{A worksheet region the formula output references. Usefull for array formulas that return more than one cell.}
+
 \item{applyCellStyle}{apply styles when writing on the sheet}
 
 \item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}

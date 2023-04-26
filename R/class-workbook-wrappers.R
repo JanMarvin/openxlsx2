@@ -308,6 +308,7 @@ wb_add_pivot_table <- function(
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
 #' @param array A bool if the function written is of type array
 #' @param cm A special kind of array function that hides the curly braces in the cell. Add this, if you see "@" inserted into your formulas
+#' @param ref A worksheet region the formula references. Usefull for array formulas that return more than one cell.
 #' @param applyCellStyle Should we write cell styles to the workbook
 #' @param removeCellStyle keep the cell style?
 #' @family workbook wrappers
