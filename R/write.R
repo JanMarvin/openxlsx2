@@ -1191,32 +1191,26 @@ write_formula <- function(
             </extLst>
             </bk>
             </futureMetadata>,
-            <cellMetadata count=\"1\">
-            <bk>
-            <rc t=\"1\" v=\"0\"/>
-            </bk>
-            </cellMetadata>",
+            <cellMetadata/>",
             pointer = FALSE
           )
         )
     }
 
-    ## From the documentation I had the impression that we have to update the counter
-    ## but apparently it is alway 1 for the case above. Not sure if there are more
-    ## cases.
-    # # add new cell metadata record
-    # cM <- xml_node(wb$metadata, "metadata", "cellMetadata")
-    # cM <- xml_add_child(cM, xml_child = "<rc t=\"1\" v=\"0\"/>", level = "bk")
+    ## TODO Not sure if there are more cases
+    # add new cell metadata record
+    cM <- xml_node(wb$metadata, "metadata", "cellMetadata")
+    cM <- xml_add_child(cM, xml_child = "<bk><rc t=\"1\" v=\"0\"/></bk>")
 
-    # # we need to update count
-    # cnt <- as_xml_attr(length(xml_node(cM, "cellMetadata", "bk", "rc")))
-    # cM <- xml_attr_mod(cM, xml_attributes = c(count = cnt))
+    # we need to update count
+    cnt <- as_xml_attr(length(xml_node(cM, "cellMetadata", "bk")))
+    cM <- xml_attr_mod(cM, xml_attributes = c(count = cnt))
 
-    # # remove current cellMetadata update new
-    # wb$metadata <- xml_rm_child(wb$metadata, "cellMetadata")
-    # wb$metadata <- xml_add_child(wb$metadata, cM)
+    # remove current cellMetadata update new
+    wb$metadata <- xml_rm_child(wb$metadata, "cellMetadata")
+    wb$metadata <- xml_add_child(wb$metadata, cM)
 
-    attr(dfx, "c_cm") <- "1" # cnt
+    attr(dfx, "c_cm") <- cnt
     formula <- "cm_formula"
   }
 
