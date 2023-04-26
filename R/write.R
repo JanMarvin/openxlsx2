@@ -1216,7 +1216,10 @@ write_formula <- function(
   }
 
   class(dfx$X) <- c("character", formula)
-  if (!is.null(ref)) {
+  if (!is.null(ref) || !is.null(dims)) {
+    if (array || cm) {
+      ref <- dims
+    }
     attr(dfx, "f_ref") <- ref
   }
 
