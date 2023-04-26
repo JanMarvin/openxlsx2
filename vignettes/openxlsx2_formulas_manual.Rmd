@@ -33,7 +33,7 @@ wb$worksheets[[1]]$sheet_data$cc$v[3] <- 2
 # we expect a value of 2
 wb_to_df(wb, colNames = FALSE)
 ```
-Now, lets asume we modify the data in cell `A1`.
+Now, lets assume we modify the data in cell `A1`.
 
 ```{r}
 wb$add_data(x = 2)
@@ -116,9 +116,9 @@ wb <- wb_workbook()$add_worksheet()$
 # wb$open()
 ```
 
-# dataTable formulas^[this example was originally provided by @zykezero for `openxlsx`.]
+# `dataTable` formulas^[this example was originally provided by @zykezero for `openxlsx`.]
 
-#### dataTable formula differences ####
+#### `dataTable` formula differences ####
 |   |     A       |  B   |      C        |
 |---|-------------|------|---------------|
 | 1 | SalesPrice  | COGS | SalesQuantity |
