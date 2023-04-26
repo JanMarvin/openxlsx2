@@ -44,6 +44,9 @@
       <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     </li>
     <li>
+      <a href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
+    </li>
+    <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
     </li>
   </ul></li>
@@ -83,6 +86,7 @@
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -116,6 +120,10 @@
 
 <dt>array</dt>
 <dd><p>A bool if the function written is of type array</p></dd>
+
+
+<dt>cm</dt>
+<dd><p>A bool if the function is of type cm (array with hidden curly braces)</p></dd>
 
 
 <dt>applyCellStyle</dt>
