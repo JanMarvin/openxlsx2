@@ -1027,6 +1027,7 @@ wb_get_base_font <- function(wb) {
 #' @param xWindow xWindow
 #' @param yWindow yWindow
 #' @return The `wbWorkbook` object
+#' @export
 wb_set_bookview <- function(
     wb,
     activeTab              = NULL,
