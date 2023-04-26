@@ -1,8 +1,8 @@
 ---
-title: "Formulas"
+title: "openxlsx2 formulass manual"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Formulas}
+  %\VignetteIndexEntry{openxlsx2 formulas manual}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -133,7 +133,7 @@ An implementation for this formula using `wb_add_formula()` would look this (tak
 ```{r}
 ## creating example data
 example_data <- data.frame(
-    SalesPrice = c(20, 30, 40), 
+    SalesPrice = c(20, 30, 40),
     COGS = c(5, 11, 13),
     SalesQuantity = c(1, 2, 3)
 )
@@ -172,9 +172,9 @@ Now we can see that open xml replaces `[@[SalesPrice]]` with `daily_sales[[#This
 ## we can assign the formula by itself to any column and allow that single string to be repeated for each row.
 
 ## creating example data
-example_data <- 
+example_data <-
   data.frame(
-    SalesPrice = c(20, 30, 40), 
+    SalesPrice = c(20, 30, 40),
     COGS = c(5, 11, 13),
     SalesQuantity = c(1, 2, 3)
   )
