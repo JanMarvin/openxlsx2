@@ -171,7 +171,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       dxfs <- self$styles$dxfs
       if (length(dxfs)) {
         typ <- xml_node_name(dxfs)
-        id  <- rownames(read_xf(read_xml(dxfs)))
+        id  <- rownames(read_dxf(read_xml(dxfs)))
         name <- paste0(typ, "-", id)
 
         self$dxf <- data.frame(

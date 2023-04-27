@@ -20,12 +20,14 @@ wb_color <- function(
   if (!is.null(name)) hex <-  validate_color(name)
 
   z <- c(
-    auto    = auto,
-    indexed = indexed,
-    rgb     = hex,
-    theme   = theme,
-    tint    = tint
+    auto    = as_xml_attr(auto),
+    indexed = as_xml_attr(indexed),
+    rgb     = as_xml_attr(hex),
+    theme   = as_xml_attr(theme),
+    tint    = as_xml_attr(tint)
   )
+
+  z <- z[z != ""]
 
   if (is.null(z))
     z <- c(name = "black")

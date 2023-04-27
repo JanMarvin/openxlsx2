@@ -883,13 +883,13 @@ write_data_table <- function(
     }
 
     ## If 0 rows append a blank row
-    validNames <- c("none", paste0("TableStyleLight", seq_len(21)), paste0("TableStyleMedium", seq_len(28)), paste0("TableStyleDark", seq_len(11)))
+    cstm_tableStyles <- rbindlist(xml_attr(wb$styles_mgr$styles$tableStyles, "tableStyles", "tableStyle"))$name
+    validNames <- c("none", paste0("TableStyleLight", seq_len(21)), paste0("TableStyleMedium", seq_len(28)), paste0("TableStyleDark", seq_len(11)), cstm_tableStyles)
     if (!tolower(tableStyle) %in% tolower(validNames)) {
       stop("Invalid table style.")
-    } else {
-      tableStyle <- grep(paste0("^", tableStyle, "$"), validNames, ignore.case = TRUE, value = TRUE)
     }
 
+    tableStyle <- grep(paste0("^", tableStyle, "$"), validNames, ignore.case = TRUE, value = TRUE)
     tableStyle <- tableStyle[!is.na(tableStyle)]
     if (length(tableStyle) == 0) {
       stop("Unknown table style.")

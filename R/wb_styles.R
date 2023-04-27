@@ -235,7 +235,7 @@ create_font <- function(
     charset <- xml_node_create("charset", xml_attributes = c("val" = charset))
   }
 
-  if (!is.null(color) && all(color != "")) {
+  if (!is.null(color) && !all(color == "")) {
     # alt xml_attributes(theme:)
     color <- xml_node_create("color", xml_attributes = color)
   }
@@ -331,11 +331,11 @@ create_fill <- function(
 
   standardize_color_names(...)
 
-  if (!is.null(bgColor) && all(bgColor != "")) {
+  if (!is.null(bgColor) && !all(bgColor == "")) {
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
   }
 
-  if (!is.null(fgColor) && all(fgColor != "")) {
+  if (!is.null(fgColor) && !all(fgColor == "")) {
     fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
   }
 
@@ -707,7 +707,7 @@ create_dxfs_style <- function(
                       u = text_underline,
                       family = "", scheme = "")
 
-  if (!is.null(bgFill) && bgFill != "")
+  if (!is.null(bgFill) && !all(bgFill == ""))
     fill <- create_fill(patternType = "solid", bgColor = bgFill)
   else
     fill <- NULL
