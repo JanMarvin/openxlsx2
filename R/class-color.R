@@ -27,6 +27,8 @@ wb_color <- function(
     tint    = as_xml_attr(tint)
   )
 
+  z <- z[z != ""]
+
   if (is.null(z))
     z <- c(name = "black")
 
