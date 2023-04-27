@@ -139,20 +139,35 @@ test_that("custom table styles work", {
   wb <- wb_workbook() %>%
     wb_add_worksheet()
 
-  wb$styles_mgr$styles$dxfs <- c(
-    "<dxf><fill><patternFill><bgColor theme=\"7\" tint=\"0.79998168889431442\"/></patternFill></fill></dxf>",
-    "<dxf><fill><patternFill><bgColor theme=\"5\" tint=\"0.79998168889431442\"/></patternFill></fill></dxf>",
-    "<dxf><border><left style=\"slantDashDot\"><color auto=\"1\"/></left><right style=\"slantDashDot\"><color auto=\"1\"/></right><top style=\"slantDashDot\"><color auto=\"1\"/></top><bottom style=\"slantDashDot\"><color auto=\"1\"/></bottom><vertical style=\"slantDashDot\"><color auto=\"1\"/></vertical><horizontal style=\"slantDashDot\"><color auto=\"1\"/></horizontal></border></dxf>",
-    "<dxf><fill><patternFill><bgColor rgb=\"FFC00000\"/></patternFill></fill></dxf>"
-  )
-  wb$styles_mgr$dxf <- data.frame(
-    typ = "dxf",
-    id = seq_along(wb$styles_mgr$styles$dxfs) - 1L,
-    name = wb$styles_mgr$styles$dxfs
-  )
+  # create dxf elements to be used in the table style
+  tabCol1 <- create_dxfs_style(bgFill = wb_color(theme = 7))
+  tabCol2 <- create_dxfs_style(bgFill = wb_color(theme = 5))
+  tabBrd1 <- create_dxfs_style(border = TRUE)
+  tabCol3 <- create_dxfs_style(bgFill = wb_color(hex = "FFC00000"), font_color = wb_color("white"))
 
-  wb$styles_mgr$styles$tableStyles <- "<tableStyles count=\"1\" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\"><tableStyle name=\"RedTableStyle\" pivot=\"0\" count=\"4\" xr9:uid=\"{91A57EDA-14C5-4643-B7E3-C78161B6BBA4}\"><tableStyleElement type=\"wholeTable\" dxfId=\"2\"/><tableStyleElement type=\"headerRow\" dxfId=\"3\"/><tableStyleElement type=\"firstRowStripe\" dxfId=\"0\"/><tableStyleElement type=\"secondColumnStripe\" dxfId=\"1\"/></tableStyle></tableStyles>"
+  # dont forget to assign them to the workbook
+  wb$add_style(tabCol1)
+  wb$add_style(tabCol2)
+  wb$add_style(tabBrd1)
+  wb$add_style(tabCol3)
 
+  # tweak a working style with 4 elements
+  wb$styles_mgr$styles$tableStyles <-
+    sprintf(
+      "<tableStyles count=\"1\" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\">
+         <tableStyle name=\"RedTableStyle\" pivot=\"0\" count=\"%s\" xr9:uid=\"{91A57EDA-14C5-4643-B7E3-C78161B6BBA4}\">
+           <tableStyleElement type=\"wholeTable\" dxfId=\"%s\"/>
+           <tableStyleElement type=\"headerRow\" dxfId=\"%s\"/>
+           <tableStyleElement type=\"firstRowStripe\" dxfId=\"%s\"/>
+           <tableStyleElement type=\"secondColumnStripe\" dxfId=\"%s\"/>
+         </tableStyle>
+      </tableStyles>",
+      length(c(tabCol1, tabCol2, tabCol3, tabBrd1)),
+      wb$styles_mgr$get_dxf_id("tabBrd1"),
+      wb$styles_mgr$get_dxf_id("tabCol3"),
+      wb$styles_mgr$get_dxf_id("tabCol1"),
+      wb$styles_mgr$get_dxf_id("tabCol2")
+    )
 
   expect_silent(wb$add_data_table(x = mtcars, tableStyle = "RedTableStyle"))
   wb$add_worksheet()
