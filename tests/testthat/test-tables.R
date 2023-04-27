@@ -1,3 +1,4 @@
+
 test_that("write_datatable over tables", {
 
   overwrite_table_error <- "Cannot overwrite existing table with another table"
@@ -90,4 +91,71 @@ test_that("write_data over tables", {
 
   wb$add_data_table(sheet = 1, x = head(iris)[, 1:3], startCol = 1, startRow = 30)
   wb$add_data(sheet = 1, x = tail(iris), startCol = 1, startRow = 31, colNames = FALSE)
+})
+
+test_that("Validate Table Names", {
+  wb <- wb_add_worksheet(wb_workbook(), "Sheet 1")
+
+  ## case
+  expect_equal(wb_validate_table_name(wb, "test"), "test")
+  expect_equal(wb_validate_table_name(wb, "TEST"), "test")
+  expect_equal(wb_validate_table_name(wb, "Test"), "test")
+
+  ## length
+  expect_error(wb_validate_table_name(wb, paste(sample(LETTERS, size = 300, replace = TRUE), collapse = "")), regexp = "tableName must be less than 255 characters")
+
+  ## look like cell ref
+  expect_error(wb_validate_table_name(wb, "R1C2"), regexp = "tableName cannot be the same as a cell reference, such as R1C1", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "A1"), regexp = "tableName cannot be the same as a cell reference", fixed = TRUE)
+
+  expect_error(wb_validate_table_name(wb, "R06821C9682"), regexp = "tableName cannot be the same as a cell reference, such as R1C1", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "ABD918751"), regexp = "tableName cannot be the same as a cell reference", fixed = TRUE)
+
+  expect_error(wb_validate_table_name(wb, "A$100"), regexp = "'$' character cannot exist in a tableName", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "A12$100"), regexp = "'$' character cannot exist in a tableName", fixed = TRUE)
+
+  tbl_nm <- "性別"
+  expect_equal(wb_validate_table_name(wb, tbl_nm), tbl_nm)
+})
+
+test_that("Existing Table Names", {
+  wb <- wb_add_worksheet(wb_workbook(), "Sheet 1")
+
+  ## Existing names - case in-sensitive
+  wb$add_data_table(sheet = 1, x = head(iris), tableName = "Table1")
+  expect_error(wb_validate_table_name(wb, "Table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "Table1", startCol = 10), regexp = "table with name 'table1' already exists", fixed = TRUE)
+
+  expect_error(wb_validate_table_name(wb, "TABLE1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "TABLE1", startCol = 20), regexp = "table with name 'table1' already exists", fixed = TRUE)
+
+  expect_error(wb_validate_table_name(wb, "table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "table1", startCol = 30), regexp = "table with name 'table1' already exists", fixed = TRUE)
+})
+
+test_that("custom table styles work", {
+
+  # at the moment we have no interface to add custom table styles
+  wb <- wb_workbook() %>%
+    wb_add_worksheet()
+
+  wb$styles_mgr$styles$dxfs <- c(
+    "<dxf><fill><patternFill><bgColor theme=\"7\" tint=\"0.79998168889431442\"/></patternFill></fill></dxf>",
+    "<dxf><fill><patternFill><bgColor theme=\"5\" tint=\"0.79998168889431442\"/></patternFill></fill></dxf>",
+    "<dxf><border><left style=\"slantDashDot\"><color auto=\"1\"/></left><right style=\"slantDashDot\"><color auto=\"1\"/></right><top style=\"slantDashDot\"><color auto=\"1\"/></top><bottom style=\"slantDashDot\"><color auto=\"1\"/></bottom><vertical style=\"slantDashDot\"><color auto=\"1\"/></vertical><horizontal style=\"slantDashDot\"><color auto=\"1\"/></horizontal></border></dxf>",
+    "<dxf><fill><patternFill><bgColor rgb=\"FFC00000\"/></patternFill></fill></dxf>"
+  )
+  wb$styles_mgr$dxf <- data.frame(
+    typ = "dxf",
+    id = seq_along(wb$styles_mgr$styles$dxfs) - 1L,
+    name = wb$styles_mgr$styles$dxfs
+  )
+
+  wb$styles_mgr$styles$tableStyles <- "<tableStyles count=\"1\" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\"><tableStyle name=\"RedTableStyle\" pivot=\"0\" count=\"4\" xr9:uid=\"{91A57EDA-14C5-4643-B7E3-C78161B6BBA4}\"><tableStyleElement type=\"wholeTable\" dxfId=\"2\"/><tableStyleElement type=\"headerRow\" dxfId=\"3\"/><tableStyleElement type=\"firstRowStripe\" dxfId=\"0\"/><tableStyleElement type=\"secondColumnStripe\" dxfId=\"1\"/></tableStyle></tableStyles>"
+
+
+  expect_silent(wb$add_data_table(x = mtcars, tableStyle = "RedTableStyle"))
+  wb$add_worksheet()
+  expect_error(wb$add_data_table(x = mtcars, tableStyle = "RedTableStyle1"), "Invalid table style.")
+
 })
