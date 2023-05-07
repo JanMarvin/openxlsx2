@@ -18,8 +18,6 @@ test_that("convert to date", {
 
 })
 
-
-
 test_that("convert to datetime", {
   x <- 43037 + 2 / 1440
   res <- convert_datetime(x, tx = Sys.timezone())
@@ -39,4 +37,22 @@ test_that("convert to datetime", {
   x <- 43037 + 2 / 1440 + 12.12 / 86400
   x_datetime <- convert_datetime(x, tx = "UTC")
   attr(x_datetime, "tzone") <- "UTC"
+})
+
+test_that("convert hms works", {
+
+  x <- structure(43994, units = "secs", class = c("hms", "difftime"))
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x, colNames = FALSE)
+
+  exp <- data.frame(
+    r = "A1", row_r = "1", c_r = "A", c_s = "1", c_t = "",
+    c_cm = "", c_ph = "", c_vm = "", v = "0.509189814814815",
+    f = "", f_t = "", f_ref = "", f_ca = "", f_si = "", is = "", typ = "15")
+  got <- wb$worksheets[[1]]$sheet_data$cc
+  expect_equal(exp, got)
+
+  z <- wb_to_df(wb, colNames = FALSE)
+  expect_equal(attr(z, "tt")$A, "h")
+
 })
