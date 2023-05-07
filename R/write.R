@@ -164,20 +164,6 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
   inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle, na.strings)
 }
 
-
-nmfmt_df <- function(x) {
-  data.frame(
-    numFmtId = as.character(x),
-    fontId = "0",
-    fillId = "0",
-    borderId = "0",
-    xfId = "0",
-    applyNumberFormat = "1",
-    stringsAsFactors = FALSE
-  )
-}
-
-
 #' dummy function to write data
 #' @param wb workbook
 #' @param sheet sheet
