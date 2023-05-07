@@ -143,6 +143,12 @@ create_border <- function(
   bottom   <- xml_node_create("bottom", xml_children = bottom_color, xml_attributes = bottom)
   diagonal <- xml_node_create("diagonal", xml_children = diagonal_color, xml_attributes = diagonal)
 
+  if (left     == "<left/>")     left     <- ""
+  if (right    == "<right/>")    right    <- ""
+  if (top      == "<top/>")      top      <- ""
+  if (bottom   == "<bottom/>")   bottom   <- ""
+  if (diagonal == "<diagonal/>") diagonal <- ""
+
   df_border <- data.frame(
     start = start,
     end = end,
@@ -309,6 +315,9 @@ create_font <- function(
   )
   font <- write_font(df_font)
 
+  if (font == "<font/>")
+    font <- ""
+
   return(font)
 }
 
@@ -343,7 +352,7 @@ create_fill <- function(
   # we end up with a solid black fill
   if (gradientFill == "") {
     patternFill <- xml_node_create("patternFill",
-                                   xml_children = c(bgColor, fgColor),
+                                   xml_children = c(fgColor, bgColor),
                                    xml_attributes = c(patternType = patternType))
   } else {
     patternFill <- ""
@@ -679,9 +688,16 @@ create_dxfs_style <- function(
     font_color     = NULL,
     numFmt         = NULL,
     border         = NULL,
-    border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
-    border_style   = getOption("openxlsx2.borderStyle", "thin"),
+    left_color     = wb_color(getOption("openxlsx2.borderColor", "black")),
+    left_style     = getOption("openxlsx2.borderStyle", "thin"),
+    right_color    = wb_color(getOption("openxlsx2.borderColor", "black")),
+    right_style    = getOption("openxlsx2.borderStyle", "thin"),
+    top_color      = wb_color(getOption("openxlsx2.borderColor", "black")),
+    top_style      = getOption("openxlsx2.borderStyle", "thin"),
+    bottom_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
+    bottom_style   = getOption("openxlsx2.borderStyle", "thin"),
     bgFill         = NULL,
+    fgColor        = NULL,
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
@@ -707,21 +723,31 @@ create_dxfs_style <- function(
                       u = text_underline,
                       family = "", scheme = "")
 
+  if (is.null(list(...)) || !any(names(list(...)) %in% "patternType")) {
+    patternType <- "solid"
+  } else {
+    patternType <- list(...)$patternType
+  }
+
   if (!is.null(bgFill) && !all(bgFill == ""))
-    fill <- create_fill(patternType = "solid", bgColor = bgFill)
+    fill <- create_fill(patternType = patternType, bgColor = bgFill, fgColor = fgColor)
   else
     fill <- NULL
 
   # untested
-  if (!is.null(border))
-    border <- create_border(left = border_style,
-                            left_color = border_color,
-                            right = border_style,
-                            right_color = border_color,
-                            top = border_style,
-                            top_color = border_color,
-                            bottom = border_style,
-                            bottom_color = border_color)
+  if (!is.null(border)) {
+
+    border <- create_border(
+      left         = left_style,
+      left_color   = left_color,
+      right        = right_style,
+      right_color  = right_color,
+      top          = top_style,
+      top_color    = top_color,
+      bottom       = bottom_style,
+      bottom_color = bottom_color
+    )
+  }
 
   xml_node_create(
     "dxf",
