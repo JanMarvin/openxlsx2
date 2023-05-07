@@ -38,7 +38,7 @@
 #'  A vector of the form c(startCol, startRow)}
 #'   \item{**colNames or col.names**}{ If `TRUE`, column names of x are written.}
 #'   \item{**rowNames or row.names**}{ If `TRUE`, row names of x are written.}
-#'   \item{**na.string**} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}
+#'   \item{**na.strings**} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}
 #' }
 #'
 #' **freezePane Parameters**
