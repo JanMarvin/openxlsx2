@@ -885,7 +885,7 @@ write_data_table <- function(
     }
 
     ## If 0 rows append a blank row
-    cstm_tableStyles <- rbindlist(xml_attr(wb$styles_mgr$styles$tableStyles, "tableStyles", "tableStyle"))$name
+    cstm_tableStyles <- wb$styles_mgr$tableStyle$name
     validNames <- c("none", paste0("TableStyleLight", seq_len(21)), paste0("TableStyleMedium", seq_len(28)), paste0("TableStyleDark", seq_len(11)), cstm_tableStyles)
     if (!tolower(tableStyle) %in% tolower(validNames)) {
       stop("Invalid table style.")

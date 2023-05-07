@@ -62,7 +62,7 @@ import_styles <- function(x) {
 
   # Table Styles Maybe position Id?
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.tablestyle?view=openxml-2.8.1
-  z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles")
+  z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles", "tableStyle")
 
   # Colors
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
