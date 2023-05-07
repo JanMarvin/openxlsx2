@@ -55,7 +55,7 @@ or a valid hex color beginning with "#".}
 A vector of the form c(startCol, startRow)}
 \item{\strong{colNames or col.names}}{ If \code{TRUE}, column names of x are written.}
 \item{\strong{rowNames or row.names}}{ If \code{TRUE}, row names of x are written.}
-\item{\strong{na.string}} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}
+\item{\strong{na.strings}} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}
 }
 
 \strong{freezePane Parameters}
