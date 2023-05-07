@@ -74,8 +74,13 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #' x <- 0.50918982
 #' convert_difftime(x)
 convert_difftime <- function(x) {
-  x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
-  class(x) <- c("hms", "difftime")
+  if (exists("hms")) {
+    x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
+    class(x) <- c("hms", "difftime")
+  } else {
+    x <- convert_datetime(x, origin = "1970-01-01")
+    x <- format(x, format = "%H:%M:%S")
+  }
   x
 }
 

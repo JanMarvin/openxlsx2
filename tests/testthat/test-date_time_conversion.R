@@ -53,6 +53,7 @@ test_that("convert hms works", {
   expect_equal(exp, got)
 
   z <- wb_to_df(wb, colNames = FALSE)
+  expect_equal(z$A, "12:13:14")
   expect_equal(attr(z, "tt")$A, "h")
 
 })

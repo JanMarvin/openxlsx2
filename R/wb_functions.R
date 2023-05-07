@@ -623,7 +623,11 @@ wb_to_df <- function(
 
       if (any(sel <- cc$c_s %in% xlsx_hms_style)) {
         sel <- sel & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_difftime(cc$v[sel])))
+        if (exists("hms")) {
+          cc$val[sel] <- cc$v[sel]
+        } else {
+          cc$val[sel] <- suppressWarnings(as.character(convert_difftime(cc$v[sel])))
+        }
         cc$typ[sel]  <- "h"
       }
 
@@ -773,19 +777,17 @@ wb_to_df <- function(
 
   date_conv     <- NULL
   datetime_conv <- NULL
-  difftime_conv <- NULL
+  difftime_conv <- convert_difftime
 
   if (missing(types)) {
     types <- guess_col_type(tt)
     date_conv     <- as.Date
     datetime_conv <- as.POSIXct
-    difftime_conv <- as.difftime
   } else {
     # assign types the correct column name "A", "B" etc.
     names(types) <- names(xlsx_cols_names[names(types) %in% xlsx_cols_names])
     date_conv     <- convert_date
     datetime_conv <- convert_datetime
-    difftime_conv <- convert_difftime
   }
 
   # could make it optional or explicit
@@ -803,8 +805,8 @@ wb_to_df <- function(
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
-      if (length(difs)) z[poxs] <- lapply(z[poxs], difftime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
+      if (length(difs)) z[difs] <- lapply(z[difs], difftime_conv)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }
