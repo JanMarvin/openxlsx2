@@ -120,6 +120,8 @@ genClientDataFC <- function(left, top, right, bottom, link, range, type, checked
 
 genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL) {
 
+  if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
+
   dc_creator <- xml_node_create("dc:creator", xml_children = creator)
   cp_lastMod <- xml_node_create("cp:lastModifiedBy", xml_children = creator)
   dc_terms   <- xml_node_create("dcterms:created",

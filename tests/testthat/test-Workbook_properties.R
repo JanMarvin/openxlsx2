@@ -61,3 +61,30 @@ test_that("Workbook properties", {
 
   file.remove(temp_file)
 })
+
+test_that("escaping in wbWorkbooks genBaseCore works as expected", {
+
+  got <- genBaseCore(
+    creator = "crea & tor",
+    title = "ti & tle",
+    subject = "sub & ject",
+    category = "cate & gory"
+  )
+
+  wb <- wb_workbook(
+    creator = "crea & tor",
+    title = "ti & tle",
+    subject = "sub & ject",
+    category = "cate & gory"
+  )
+
+  nms <- xml_node_name(got, "cp:coreProperties")
+
+  for (nm in nms[nms != "cp:lastModifiedBy"]) {
+    expect_equal(
+      xml_node(got, "cp:coreProperties", nm),
+      xml_node(wb$core, "cp:coreProperties", nm)
+    )
+  }
+
+})
