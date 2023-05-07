@@ -11,7 +11,7 @@ as_POSIXct_utc <- function(x) {
 
 
 #' @name convert_date
-#' @title Convert from excel date number to R Date type
+#' @title Convert from excel date, datetime or difftime number to R Date type
 #' @description Convert from excel date number to R Date type
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
@@ -39,14 +39,7 @@ convert_date <- function(x, origin = "1900-01-01", ...) {
   as.Date(x, origin = origin, ...)
 }
 
-
-#' @name convert_datetime
-#' @title Convert from excel time number to R POSIXct type.
-#' @description Convert from excel time number to R POSIXct type.
-#' @param x A numeric vector
-#' @param origin date. Default value is for Windows Excel 2010
-#' @param ... Additional parameters passed to as.POSIXct
-#' @details Excel stores dates as number of days from some origin date
+#' @rdname convert_date
 #' @export
 #' @examples
 #' ## 2014-07-01, 2014-06-30, 2014-06-29
@@ -74,7 +67,17 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
   .POSIXct(date_time)
 }
 
-
+#' @rdname convert_date
+#' @export
+#' @examples
+#' ## 12:13:14
+#' x <- 0.50918982
+#' convert_difftime(x)
+convert_difftime <- function(x) {
+  x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
+  class(x) <- c("hms", "difftime")
+  x
+}
 
 #' @name get_date_origin
 #' @title Get the date origin an xlsx file is using

@@ -106,6 +106,10 @@ guess_col_type <- function(tt) {
   col_log <- vapply(tt[!col_num], function(x) any(x == "b", na.rm = TRUE), NA)
   types[names(col_log[col_log])] <- 4
 
+  # or even difftime
+  col_dte <- vapply(tt[!col_num], function(x) all(x == "h", na.rm = TRUE), NA)
+  types[names(col_dte[col_dte])] <- 5
+
   types
 }
 
@@ -173,6 +177,8 @@ numfmt_is_posix <- function(numFmt) {
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
+#' @keywords internal
+#' @noRd
 style_is_date <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
@@ -189,10 +195,30 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
+#' @keywords internal
+#' @noRd
 style_is_posix <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
-  date_numfmts <- as.character(18:22)
+  date_numfmts <- as.character(22)
+  numfmt_date <- c(numfmt_date, date_numfmts)
+
+  cellXfs_df <- read_xf(read_xml(cellXfs))
+  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date, ])
+  if (length(z) == 0) z <- NA
+  z
+}
+
+#' check if style is hms. internal function
+#'
+#' @param cellXfs cellXfs xml nodes
+#' @param numfmt_date custom numFmtId dates
+#' @keywords internal
+#' @noRd
+style_is_hms <- function(cellXfs, numfmt_date) {
+
+  # numfmt_date: some basic date formats and custom formats
+  date_numfmts <- as.character(18:21)
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
@@ -408,6 +434,9 @@ wb_to_df <- function(
   numfmt_posix <- numfmt_is_posix(wb$styles_mgr$styles$numFmts)
   xlsx_posix_style <- style_is_posix(wb$styles_mgr$styles$cellXfs, numfmt_posix)
 
+  # numfmt_posix <- numfmt_is_posix(wb$styles_mgr$styles$numFmts)
+  xlsx_hms_style <- style_is_hms(wb$styles_mgr$styles$cellXfs, numfmt_posix)
+
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
   tt <- copy(z)
@@ -565,6 +594,12 @@ wb_to_df <- function(
         cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
         cc$typ[sel]  <- "p"
       }
+
+      if (any(sel <- cc$c_s %in% xlsx_hms_style)) {
+        sel <- sel & !cc$is_string & cc$v != ""
+        cc$val[sel] <- suppressWarnings(as.character(convert_difftime(cc$v[sel])))
+        cc$typ[sel]  <- "h"
+      }
     }
   }
 
@@ -706,16 +741,19 @@ wb_to_df <- function(
 
   date_conv     <- NULL
   datetime_conv <- NULL
+  difftime_conv <- NULL
 
   if (missing(types)) {
     types <- guess_col_type(tt)
     date_conv     <- as.Date
     datetime_conv <- as.POSIXct
+    difftime_conv <- as.difftime
   } else {
     # assign types the correct column name "A", "B" etc.
     names(types) <- names(xlsx_cols_names[names(types) %in% xlsx_cols_names])
     date_conv     <- convert_date
     datetime_conv <- convert_datetime
+    difftime_conv <- convert_difftime
   }
 
   # could make it optional or explicit
@@ -727,11 +765,13 @@ wb_to_df <- function(
       dtes <- names(which(types[sel] == 2))
       poxs <- names(which(types[sel] == 3))
       logs <- names(which(types[sel] == 4))
+      difs <- names(which(types[sel] == 5))
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
+      if (length(difs)) z[poxs] <- lapply(z[poxs], difftime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
     } else {
       warning("could not convert. All missing in row used for variable names")

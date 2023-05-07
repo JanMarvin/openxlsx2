@@ -80,6 +80,8 @@ SEXP openxlsx2_type(SEXP x) {
       type[i] = 9;
     } else if (Rf_inherits(z, "factor")) {
       type[i] = 12;
+    } else if (Rf_inherits(z, "difftime")) {
+      type[i] = 15;
     } else {
       type[i] = 2; // numeric or integer
     }
@@ -362,6 +364,7 @@ void wide_to_long(
       case percentage:
       case scientific:
       case comma:
+      case diff_time:
       case numeric:
         cell.v   = vals;
         break;
