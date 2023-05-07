@@ -119,27 +119,51 @@ genClientDataFC <- function(left, top, right, bottom, link, range, type, checked
 }
 
 genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL) {
-  core <- '<coreProperties xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
 
-  core <- stri_c(core, sprintf("<dc:creator>%s</dc:creator>", creator))
-  core <- stri_c(core, sprintf("<cp:lastModifiedBy>%s</cp:lastModifiedBy>", creator))
-  core <- stri_c(core, sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(as_POSIXct_utc(Sys.time()), "%Y-%m-%dT%H:%M:%SZ")))
+  if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
 
+  dc_creator <- xml_node_create("dc:creator", xml_children = creator)
+  cp_lastMod <- xml_node_create("cp:lastModifiedBy", xml_children = creator)
+  dc_terms   <- xml_node_create("dcterms:created",
+    xml_attributes = c(
+      `xsi:type` = "dcterms:W3CDTF"
+    ),
+    xml_children = format(as_POSIXct_utc(Sys.time()), "%Y-%m-%dT%H:%M:%SZ")
+  )
+
+  dc_title <- NULL
   if (!is.null(title)) {
-    core <- stri_c(core, sprintf("<dc:title>%s</dc:title>", replace_legal_chars(title)))
+    dc_title <- xml_node_create("dc:title", xml_children = title)
   }
 
+  dc_subject <- NULL
   if (!is.null(subject)) {
-    core <- stri_c(core, sprintf("<dc:subject>%s</dc:subject>", replace_legal_chars(subject)))
+    dc_subject <- xml_node_create("dc:subject", xml_children = subject)
   }
 
+  cp_category <- NULL
   if (!is.null(category)) {
-    core <- stri_c(core, sprintf("<cp:category>%s</cp:category>", replace_legal_chars(category)))
+    cp_category <- xml_node_create("cp:category", xml_children = category)
   }
 
-  core <- stri_c(core, "</coreProperties>")
-
-  return(core)
+  xml_node_create("cp:coreProperties",
+    xml_attributes = c(
+      `xmlns:cp`       = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+      `xmlns:dc`       = "http://purl.org/dc/elements/1.1/",
+      `xmlns:dcterms`  = "http://purl.org/dc/terms/",
+      `xmlns:dcmitype` = "http://purl.org/dc/dcmitype/",
+      `xmlns:xsi`      = "http://www.w3.org/2001/XMLSchema-instance"
+    ),
+    xml_children = c(
+      dc_creator,
+      cp_lastMod,
+      dc_terms,
+      dc_title,
+      dc_subject,
+      cp_category
+    ),
+    escapes = TRUE
+  )
 }
 
 # All relationships here must be matched with files inside of the xlsx files.
