@@ -115,6 +115,8 @@ guess_col_type <- function(tt) {
 
 #' check if numFmt is date. internal function
 #' @param numFmt numFmt xml nodes
+#' @keywords internal
+#' @noRd
 numfmt_is_date <- function(numFmt) {
 
   # if numFmt is character(0)
@@ -144,6 +146,8 @@ numfmt_is_date <- function(numFmt) {
 
 #' check if numFmt is posix. internal function
 #' @param numFmt numFmt xml nodes
+#' @keywords internal
+#' @noRd
 numfmt_is_posix <- function(numFmt) {
 
   # if numFmt is character(0)
@@ -175,6 +179,8 @@ numfmt_is_posix <- function(numFmt) {
 
 #' check if numFmt is posix. internal function
 #' @param numFmt numFmt xml nodes
+#' @keywords internal
+#' @noRd
 numfmt_is_hms <- function(numFmt) {
 
   # if numFmt is character(0)
@@ -806,7 +812,7 @@ wb_to_df <- function(
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
-      if (length(difs)) z[difs] <- lapply(z[difs], difftime_conv)
+      if (exists("hms")) z[difs] <- lapply(z[difs], difftime_conv)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }
