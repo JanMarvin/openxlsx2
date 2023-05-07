@@ -523,6 +523,22 @@ write_data2 <- function(
         numfmt = numfmt_posix
       )
     }
+    if (any(dc == openxlsx2_celltype[["diff_time"]])) {
+      if (is.null(unlist(options("openxlsx2.difftimeFormat")))) {
+        numfmt_difftime <- 21
+      } else {
+        numfmt_difftime <- unlist(options("openxlsx2.difftimeFormat"))
+      }
+
+      dim_sel <- get_data_class_dims("diff_time")
+      # message("long_date: ", dim_sel)
+
+      wb$add_numfmt(
+        sheet = sheetno,
+        dim = dim_sel,
+        numfmt = numfmt_difftime
+      )
+    }
     if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
       if (is.null(unlist(options("openxlsx2.accountingFormat")))) {
         numfmt_accounting <- 4

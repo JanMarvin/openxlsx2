@@ -129,7 +129,8 @@ parseOffset <- function(tz) {
 
 conv_to_excel_date <- function(x, date1904 = FALSE) {
 
-  to_convert <- inherits(x, "POSIXlt") || inherits(x, "Date")
+  is_difftime <- inherits(x, "difftime")
+  to_convert  <- inherits(x, "POSIXlt") || inherits(x, "Date") || is_difftime
   if (to_convert) {
     # as.POSIXlt does not use local timezone
     if (inherits(x, "Date")) x <- as.POSIXlt(x)
@@ -145,6 +146,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
   ## convert any Dates to integers and create date style object
   origin <- 25569L
   if (date1904) origin <- 24107L
+  if (is_difftime) origin <- 0
 
   if (inherits(x, "POSIXct")) {
     tz <- format(x, "%z")
@@ -160,7 +162,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
     }
   }
 
-  if (any(z < 1, na.rm = TRUE)) {
+  if (!is_difftime && any(z < 1, na.rm = TRUE)) {
     warning("Date < 1900-01-01 found. This can not be converted.")
   }
 
@@ -179,8 +181,13 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
 
-  df_class <- as.data.frame(Map(class, df))
-  is_date <- apply(df_class, 2, function(x) any(x %in%  c("Date", "POSIXct")))
+  is_date <- vapply(
+    df,
+    function(x) {
+      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "difftime")
+    },
+    NA
+  )
 
   df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
 
