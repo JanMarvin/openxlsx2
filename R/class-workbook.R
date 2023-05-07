@@ -6381,34 +6381,8 @@ wbWorkbook <- R6::R6Class(
     },
 
     generate_base_core = function() {
-
-      self$core <-
-        paste_c(
-          # base
-          paste(
-            '<coreProperties xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"',
-            'xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"',
-            'xmlns:dc="http://purl.org/dc/elements/1.1/"',
-            'xmlns:dcterms="http://purl.org/dc/terms/"',
-            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-          ),
-
-          # non-optional
-          sprintf("<dc:creator>%s</dc:creator>",                                     paste(self$creator, collapse = ";")),
-          sprintf("<cp:lastModifiedBy>%s</cp:lastModifiedBy>",                       paste(self$creator, collapse = ";")),
-          sprintf('<dcterms:created xsi:type="dcterms:W3CDTF">%s</dcterms:created>', format(self$datetimeCreated, "%Y-%m-%dT%H:%M:%SZ")),
-
-          # optional
-          if (!is.null(self$title))    sprintf("<dc:title>%s</dc:title>",       replace_legal_chars(self$title)),
-          if (!is.null(self$subject))  sprintf("<dc:subject>%s</dc:subject>",   replace_legal_chars(self$subject)),
-          if (!is.null(self$category)) sprintf("<cp:category>%s</cp:category>", replace_legal_chars(self$category)),
-
-          # end
-          "</coreProperties>",
-          collapse = "",
-          unlist = TRUE
-        )
-
+      # how do self$datetimeCreated and genBaseCore time differ?
+      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category)
       invisible(self)
     },
 
