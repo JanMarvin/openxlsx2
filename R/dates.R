@@ -130,6 +130,14 @@ parseOffset <- function(tz) {
   ifelse(is.na(z), 0, z)
 }
 
+# helper function to convert hms to posix
+as_POSIXlt_difftime <- function(x) {
+  z <- as.POSIXlt("1970-01-01")
+  # TODO all units(x) == sec?
+  z$sec <- as.numeric(x)
+  z
+}
+
 conv_to_excel_date <- function(x, date1904 = FALSE) {
 
   is_difftime <- inherits(x, "difftime")
@@ -137,6 +145,16 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
   if (to_convert) {
     # as.POSIXlt does not use local timezone
     if (inherits(x, "Date")) x <- as.POSIXlt(x)
+    if (is_difftime) {
+      class(x) <- "difftime"
+      # helper function if other conversion function is available.
+      # e.g. when testing without hms loaded
+      x <- tryCatch({
+        as.POSIXlt(x)
+      }, error = function(e) {
+          as_POSIXlt_difftime(x)
+      })
+    }
     x <- as.POSIXct(x)
   }
 

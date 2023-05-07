@@ -173,6 +173,37 @@ numfmt_is_posix <- function(numFmt) {
   z
 }
 
+#' check if numFmt is posix. internal function
+#' @param numFmt numFmt xml nodes
+numfmt_is_hms <- function(numFmt) {
+
+  # if numFmt is character(0)
+  if (length(numFmt) == 0) return(z <- NULL)
+
+  numFmt_df <- read_numfmt(read_xml(numFmt))
+  # we have to drop any square bracket part
+  numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  num_fmts <- c(
+    "#", as.character(0:9)
+  )
+  num_or_fmt <- paste0(num_fmts, collapse = "|")
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
+
+  hms_fmts <- c(
+    "?!^yy$", "?!^yyyy$",
+    "?!^mmm$", "?!^mmmm$", "?!^mmmmm$",
+    "?!^d$", "?!^dd$", "?!^ddd$", "?!^dddd$",
+    "h", "hh", ":m", ":mm", ":s", ":ss",
+    "AM", "PM", "A", "P"
+  )
+  hms_or_fmt <- paste0(hms_fmts, collapse = "|")
+  maybe_hms <- grepl(pattern = hms_or_fmt, x = numFmt_df$fC)
+
+  z <- numFmt_df$numFmtId[maybe_hms & !maybe_num]
+  if (length(z) == 0) z <- NULL
+  z
+}
+
 #' check if style is date. internal function
 #'
 #' @param cellXfs cellXfs xml nodes
@@ -431,11 +462,12 @@ wb_to_df <- function(
   numfmt_date <- numfmt_is_date(wb$styles_mgr$styles$numFmts)
   xlsx_date_style <- style_is_date(wb$styles_mgr$styles$cellXfs, numfmt_date)
 
+  # exclude if year, month or day are suspected
+  numfmt_hms <- numfmt_is_hms(wb$styles_mgr$styles$numFmts)
+  xlsx_hms_style <- style_is_hms(wb$styles_mgr$styles$cellXfs, numfmt_hms)
+
   numfmt_posix <- numfmt_is_posix(wb$styles_mgr$styles$numFmts)
   xlsx_posix_style <- style_is_posix(wb$styles_mgr$styles$cellXfs, numfmt_posix)
-
-  # numfmt_posix <- numfmt_is_posix(wb$styles_mgr$styles$numFmts)
-  xlsx_hms_style <- style_is_hms(wb$styles_mgr$styles$cellXfs, numfmt_posix)
 
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims)
@@ -589,16 +621,16 @@ wb_to_df <- function(
         cc$typ[sel]  <- "d"
       }
 
-      if (any(sel <- cc$c_s %in% xlsx_posix_style)) {
-        sel <- sel & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
-        cc$typ[sel]  <- "p"
-      }
-
       if (any(sel <- cc$c_s %in% xlsx_hms_style)) {
         sel <- sel & !cc$is_string & cc$v != ""
         cc$val[sel] <- suppressWarnings(as.character(convert_difftime(cc$v[sel])))
         cc$typ[sel]  <- "h"
+      }
+
+      if (any(sel <- cc$c_s %in% xlsx_posix_style)) {
+        sel <- sel & !cc$is_string & cc$v != ""
+        cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
+        cc$typ[sel]  <- "p"
       }
     }
   }
