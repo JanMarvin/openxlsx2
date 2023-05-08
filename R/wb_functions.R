@@ -267,7 +267,7 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #' Create Dataframe from Workbook
 #'
 #' Simple function to create a dataframe from a workbook. Simple as in simply
-#' written down and not optimized etc. The goal was to have something working.
+#' written down.
 #'
 #' @param xlsxFile An xlsx file, Workbook object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
@@ -290,6 +290,8 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+#' @details
+#' Depending if the R package `hms` is loaded, `wb_to_df()` returns `hms` variables or string variables in the `hh:mm:ss` format.
 #' @examples
 #'
 #'   ###########################################################################
@@ -309,7 +311,7 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #'   # return the underlying Excel formula instead of their values
 #'   wb_to_df(wb1, showFormula = TRUE)
 #'
-#'   # read dimension withot colNames
+#'   # read dimension without colNames
 #'   wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
 #'
 #'   # read selected cols
@@ -321,10 +323,10 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #'   # convert characters to numerics and date (logical too?)
 #'   wb_to_df(wb1, convert = FALSE)
 #'
-#'   # erase empty Rows from dataset
+#'   # erase empty rows from dataset
 #'   wb_to_df(wb1, sheet = 3, skipEmptyRows = TRUE)
 #'
-#'   # erase rmpty Cols from dataset
+#'   # erase empty columns from dataset
 #'   wb_to_df(wb1, skipEmptyCols = TRUE)
 #'
 #'   # convert first row to rownames
@@ -629,7 +631,8 @@ wb_to_df <- function(
 
       if (any(sel <- cc$c_s %in% xlsx_hms_style)) {
         sel <- sel & !cc$is_string & cc$v != ""
-        if (exists("hms")) {
+        if (isNamespaceLoaded("hms")) {
+          # if hms is loaded, we have to avoid applying convert_difftime() twice
           cc$val[sel] <- cc$v[sel]
         } else {
           cc$val[sel] <- suppressWarnings(as.character(convert_difftime(cc$v[sel])))
@@ -758,7 +761,7 @@ wb_to_df <- function(
 
   # if colNames, then change tt too
   if (colNames) {
-    # select first row as colnames, but do not yet assing. it might contain
+    # select first row as colnames, but do not yet assign. it might contain
     # missing values and if assigned, convert below might break with unambiguous
     # names.
     nams <- names(xlsx_cols_names)
@@ -812,7 +815,7 @@ wb_to_df <- function(
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
-      if (exists("hms")) z[difs] <- lapply(z[difs], difftime_conv)
+      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], difftime_conv)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }

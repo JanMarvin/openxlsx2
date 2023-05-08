@@ -74,7 +74,7 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #' x <- 0.50918982
 #' convert_difftime(x)
 convert_difftime <- function(x) {
-  if (exists("hms")) {
+  if (isNamespaceLoaded("hms")) {
     x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
     class(x) <- c("hms", "difftime")
   } else {
@@ -135,14 +135,22 @@ parseOffset <- function(tz) {
   ifelse(is.na(z), 0, z)
 }
 
-# helper function to convert hms to posix
+#' helper function to convert hms to posix
+#' @param x a difftime object
+#' @keywords internal
+#' @noRd
 as_POSIXlt_difftime <- function(x) {
   z <- as.POSIXlt("1970-01-01")
-  # TODO all units(x) == sec?
+  units(x) <- "secs"
   z$sec <- as.numeric(x)
   z
 }
 
+#' conversion helper function
+#' @param x a date, posixct or difftime object
+#' @param date1904 a special time format in openxml
+#' @keywords internal
+#' @noRd
 conv_to_excel_date <- function(x, date1904 = FALSE) {
 
   is_difftime <- inherits(x, "difftime")

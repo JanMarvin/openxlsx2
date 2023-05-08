@@ -73,7 +73,10 @@ wb_to_df(
 }
 \description{
 Simple function to create a dataframe from a workbook. Simple as in simply
-written down and not optimized etc. The goal was to have something working.
+written down.
+}
+\details{
+Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns \code{hms} variables or string variables in the \code{hh:mm:ss} format.
 }
 \examples{
 
@@ -94,7 +97,7 @@ written down and not optimized etc. The goal was to have something working.
   # return the underlying Excel formula instead of their values
   wb_to_df(wb1, showFormula = TRUE)
 
-  # read dimension withot colNames
+  # read dimension without colNames
   wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
 
   # read selected cols
@@ -106,10 +109,10 @@ written down and not optimized etc. The goal was to have something working.
   # convert characters to numerics and date (logical too?)
   wb_to_df(wb1, convert = FALSE)
 
-  # erase empty Rows from dataset
+  # erase empty rows from dataset
   wb_to_df(wb1, sheet = 3, skipEmptyRows = TRUE)
 
-  # erase rmpty Cols from dataset
+  # erase empty columns from dataset
   wb_to_df(wb1, skipEmptyCols = TRUE)
 
   # convert first row to rownames

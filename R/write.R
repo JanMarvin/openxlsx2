@@ -517,7 +517,7 @@ write_data2 <- function(
       }
 
       dim_sel <- get_data_class_dims("diff_time")
-      # message("long_date: ", dim_sel)
+      # message("difftime: ", dim_sel)
 
       wb$add_numfmt(
         sheet = sheetno,
