@@ -152,22 +152,22 @@ test_that("custom table styles work", {
   wb$add_style(tabCol3)
 
   # tweak a working style with 4 elements
-  wb$styles_mgr$styles$tableStyles <-
-    sprintf(
-      "<tableStyles count=\"1\" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\">
-         <tableStyle name=\"RedTableStyle\" pivot=\"0\" count=\"%s\" xr9:uid=\"{91A57EDA-14C5-4643-B7E3-C78161B6BBA4}\">
-           <tableStyleElement type=\"wholeTable\" dxfId=\"%s\"/>
-           <tableStyleElement type=\"headerRow\" dxfId=\"%s\"/>
-           <tableStyleElement type=\"firstRowStripe\" dxfId=\"%s\"/>
-           <tableStyleElement type=\"secondColumnStripe\" dxfId=\"%s\"/>
-         </tableStyle>
-      </tableStyles>",
-      length(c(tabCol1, tabCol2, tabCol3, tabBrd1)),
-      wb$styles_mgr$get_dxf_id("tabBrd1"),
-      wb$styles_mgr$get_dxf_id("tabCol3"),
-      wb$styles_mgr$get_dxf_id("tabCol1"),
-      wb$styles_mgr$get_dxf_id("tabCol2")
-    )
+  tab_xml <- sprintf(
+    "
+     <tableStyle name=\"RedTableStyle\" pivot=\"0\" count=\"%s\" xr9:uid=\"{91A57EDA-14C5-4643-B7E3-C78161B6BBA4}\">
+       <tableStyleElement type=\"wholeTable\" dxfId=\"%s\"/>
+       <tableStyleElement type=\"headerRow\" dxfId=\"%s\"/>
+       <tableStyleElement type=\"firstRowStripe\" dxfId=\"%s\"/>
+       <tableStyleElement type=\"secondColumnStripe\" dxfId=\"%s\"/>
+     </tableStyle>
+    ",
+    length(c(tabCol1, tabCol2, tabCol3, tabBrd1)),
+    wb$styles_mgr$get_dxf_id("tabBrd1"),
+    wb$styles_mgr$get_dxf_id("tabCol3"),
+    wb$styles_mgr$get_dxf_id("tabCol1"),
+    wb$styles_mgr$get_dxf_id("tabCol2")
+  )
+  wb$add_style(tab_xml)
 
   expect_silent(wb$add_data_table(x = mtcars, tableStyle = "RedTableStyle"))
   wb$add_worksheet()

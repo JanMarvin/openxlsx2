@@ -598,7 +598,7 @@ test_that("wb_conditional_formatting", {
 test_that("create dxfs style without font family and size", {
 
   # a workbook with this style loads, but has no highlighting
-  exp <- "<dxf><font/></dxf>"
+  exp <- "<dxf></dxf>"
   got <- create_dxfs_style()
   expect_equal(exp, got)
 
