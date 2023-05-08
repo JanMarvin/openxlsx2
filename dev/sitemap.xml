@@ -61,9 +61,6 @@
     <loc>/reference/convert_date.html</loc>
   </url>
   <url>
-    <loc>/reference/convert_datetime.html</loc>
-  </url>
-  <url>
     <loc>/reference/create_border.html</loc>
   </url>
   <url>
@@ -112,12 +109,6 @@
     <loc>/reference/named_region.html</loc>
   </url>
   <url>
-    <loc>/reference/numfmt_is_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/numfmt_is_posix.html</loc>
-  </url>
-  <url>
     <loc>/reference/openxlsx2.html</loc>
   </url>
   <url>
@@ -143,12 +134,6 @@
   </url>
   <url>
     <loc>/reference/sheet_visibility.html</loc>
-  </url>
-  <url>
-    <loc>/reference/style_is_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/style_is_posix.html</loc>
   </url>
   <url>
     <loc>/reference/style_mgr.html</loc>
