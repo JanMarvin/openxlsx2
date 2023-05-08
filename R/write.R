@@ -164,20 +164,6 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
   inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle, na.strings)
 }
 
-
-nmfmt_df <- function(x) {
-  data.frame(
-    numFmtId = as.character(x),
-    fontId = "0",
-    fillId = "0",
-    borderId = "0",
-    xfId = "0",
-    applyNumberFormat = "1",
-    stringsAsFactors = FALSE
-  )
-}
-
-
 #' dummy function to write data
 #' @param wb workbook
 #' @param sheet sheet
@@ -521,6 +507,22 @@ write_data2 <- function(
         sheet = sheetno,
         dim = dim_sel,
         numfmt = numfmt_posix
+      )
+    }
+    if (any(dc == openxlsx2_celltype[["diff_time"]])) {
+      if (is.null(unlist(options("openxlsx2.difftimeFormat")))) {
+        numfmt_difftime <- 21
+      } else {
+        numfmt_difftime <- unlist(options("openxlsx2.difftimeFormat"))
+      }
+
+      dim_sel <- get_data_class_dims("diff_time")
+      # message("difftime: ", dim_sel)
+
+      wb$add_numfmt(
+        sheet = sheetno,
+        dim = dim_sel,
+        numfmt = numfmt_difftime
       )
     }
     if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting

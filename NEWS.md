@@ -6,6 +6,8 @@
 
 * Allow using custom data table styles. This fixes a few minor style inconsistencies. [594](https://github.com/JanMarvin/openxlsx2/pull/594)
 
+* Allow reading and writing `hms` columns. [601](https://github.com/JanMarvin/openxlsx2/pull/601)
+
 
 ***************************************************************************
 

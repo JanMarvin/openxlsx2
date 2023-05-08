@@ -106,11 +106,17 @@ guess_col_type <- function(tt) {
   col_log <- vapply(tt[!col_num], function(x) any(x == "b", na.rm = TRUE), NA)
   types[names(col_log[col_log])] <- 4
 
+  # or even difftime
+  col_dte <- vapply(tt[!col_num], function(x) all(x == "h", na.rm = TRUE), NA)
+  types[names(col_dte[col_dte])] <- 5
+
   types
 }
 
 #' check if numFmt is date. internal function
 #' @param numFmt numFmt xml nodes
+#' @keywords internal
+#' @noRd
 numfmt_is_date <- function(numFmt) {
 
   # if numFmt is character(0)
@@ -140,6 +146,8 @@ numfmt_is_date <- function(numFmt) {
 
 #' check if numFmt is posix. internal function
 #' @param numFmt numFmt xml nodes
+#' @keywords internal
+#' @noRd
 numfmt_is_posix <- function(numFmt) {
 
   # if numFmt is character(0)
@@ -169,10 +177,45 @@ numfmt_is_posix <- function(numFmt) {
   z
 }
 
+#' check if numFmt is posix. internal function
+#' @param numFmt numFmt xml nodes
+#' @keywords internal
+#' @noRd
+numfmt_is_hms <- function(numFmt) {
+
+  # if numFmt is character(0)
+  if (length(numFmt) == 0) return(z <- NULL)
+
+  numFmt_df <- read_numfmt(read_xml(numFmt))
+  # we have to drop any square bracket part
+  numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  num_fmts <- c(
+    "#", as.character(0:9)
+  )
+  num_or_fmt <- paste0(num_fmts, collapse = "|")
+  maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
+
+  hms_fmts <- c(
+    "?!^yy$", "?!^yyyy$",
+    "?!^mmm$", "?!^mmmm$", "?!^mmmmm$",
+    "?!^d$", "?!^dd$", "?!^ddd$", "?!^dddd$",
+    "h", "hh", ":m", ":mm", ":s", ":ss",
+    "AM", "PM", "A", "P"
+  )
+  hms_or_fmt <- paste0(hms_fmts, collapse = "|")
+  maybe_hms <- grepl(pattern = hms_or_fmt, x = numFmt_df$fC)
+
+  z <- numFmt_df$numFmtId[maybe_hms & !maybe_num]
+  if (length(z) == 0) z <- NULL
+  z
+}
+
 #' check if style is date. internal function
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
+#' @keywords internal
+#' @noRd
 style_is_date <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
@@ -189,10 +232,30 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
+#' @keywords internal
+#' @noRd
 style_is_posix <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
-  date_numfmts <- as.character(18:22)
+  date_numfmts <- as.character(22)
+  numfmt_date <- c(numfmt_date, date_numfmts)
+
+  cellXfs_df <- read_xf(read_xml(cellXfs))
+  z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date, ])
+  if (length(z) == 0) z <- NA
+  z
+}
+
+#' check if style is hms. internal function
+#'
+#' @param cellXfs cellXfs xml nodes
+#' @param numfmt_date custom numFmtId dates
+#' @keywords internal
+#' @noRd
+style_is_hms <- function(cellXfs, numfmt_date) {
+
+  # numfmt_date: some basic date formats and custom formats
+  date_numfmts <- as.character(18:21)
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
@@ -204,7 +267,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' Create Dataframe from Workbook
 #'
 #' Simple function to create a dataframe from a workbook. Simple as in simply
-#' written down and not optimized etc. The goal was to have something working.
+#' written down.
 #'
 #' @param xlsxFile An xlsx file, Workbook object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
@@ -227,6 +290,8 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+#' @details
+#' Depending if the R package `hms` is loaded, `wb_to_df()` returns `hms` variables or string variables in the `hh:mm:ss` format.
 #' @examples
 #'
 #'   ###########################################################################
@@ -246,7 +311,7 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'   # return the underlying Excel formula instead of their values
 #'   wb_to_df(wb1, showFormula = TRUE)
 #'
-#'   # read dimension withot colNames
+#'   # read dimension without colNames
 #'   wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
 #'
 #'   # read selected cols
@@ -258,10 +323,10 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'   # convert characters to numerics and date (logical too?)
 #'   wb_to_df(wb1, convert = FALSE)
 #'
-#'   # erase empty Rows from dataset
+#'   # erase empty rows from dataset
 #'   wb_to_df(wb1, sheet = 3, skipEmptyRows = TRUE)
 #'
-#'   # erase rmpty Cols from dataset
+#'   # erase empty columns from dataset
 #'   wb_to_df(wb1, skipEmptyCols = TRUE)
 #'
 #'   # convert first row to rownames
@@ -404,6 +469,10 @@ wb_to_df <- function(
 
   numfmt_date <- numfmt_is_date(wb$styles_mgr$styles$numFmts)
   xlsx_date_style <- style_is_date(wb$styles_mgr$styles$cellXfs, numfmt_date)
+
+  # exclude if year, month or day are suspected
+  numfmt_hms <- numfmt_is_hms(wb$styles_mgr$styles$numFmts)
+  xlsx_hms_style <- style_is_hms(wb$styles_mgr$styles$cellXfs, numfmt_hms)
 
   numfmt_posix <- numfmt_is_posix(wb$styles_mgr$styles$numFmts)
   xlsx_posix_style <- style_is_posix(wb$styles_mgr$styles$cellXfs, numfmt_posix)
@@ -560,6 +629,17 @@ wb_to_df <- function(
         cc$typ[sel]  <- "d"
       }
 
+      if (any(sel <- cc$c_s %in% xlsx_hms_style)) {
+        sel <- sel & !cc$is_string & cc$v != ""
+        if (isNamespaceLoaded("hms")) {
+          # if hms is loaded, we have to avoid applying convert_difftime() twice
+          cc$val[sel] <- cc$v[sel]
+        } else {
+          cc$val[sel] <- suppressWarnings(as.character(convert_difftime(cc$v[sel])))
+        }
+        cc$typ[sel]  <- "h"
+      }
+
       if (any(sel <- cc$c_s %in% xlsx_posix_style)) {
         sel <- sel & !cc$is_string & cc$v != ""
         cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
@@ -681,7 +761,7 @@ wb_to_df <- function(
 
   # if colNames, then change tt too
   if (colNames) {
-    # select first row as colnames, but do not yet assing. it might contain
+    # select first row as colnames, but do not yet assign. it might contain
     # missing values and if assigned, convert below might break with unambiguous
     # names.
     nams <- names(xlsx_cols_names)
@@ -706,6 +786,7 @@ wb_to_df <- function(
 
   date_conv     <- NULL
   datetime_conv <- NULL
+  difftime_conv <- convert_difftime
 
   if (missing(types)) {
     types <- guess_col_type(tt)
@@ -727,12 +808,14 @@ wb_to_df <- function(
       dtes <- names(which(types[sel] == 2))
       poxs <- names(which(types[sel] == 3))
       logs <- names(which(types[sel] == 4))
+      difs <- names(which(types[sel] == 5))
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
+      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], difftime_conv)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }

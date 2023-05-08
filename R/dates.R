@@ -11,7 +11,7 @@ as_POSIXct_utc <- function(x) {
 
 
 #' @name convert_date
-#' @title Convert from excel date number to R Date type
+#' @title Convert from excel date, datetime or difftime number to R Date type
 #' @description Convert from excel date number to R Date type
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
@@ -39,14 +39,7 @@ convert_date <- function(x, origin = "1900-01-01", ...) {
   as.Date(x, origin = origin, ...)
 }
 
-
-#' @name convert_datetime
-#' @title Convert from excel time number to R POSIXct type.
-#' @description Convert from excel time number to R POSIXct type.
-#' @param x A numeric vector
-#' @param origin date. Default value is for Windows Excel 2010
-#' @param ... Additional parameters passed to as.POSIXct
-#' @details Excel stores dates as number of days from some origin date
+#' @rdname convert_date
 #' @export
 #' @examples
 #' ## 2014-07-01, 2014-06-30, 2014-06-29
@@ -74,7 +67,22 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
   .POSIXct(date_time)
 }
 
-
+#' @rdname convert_date
+#' @export
+#' @examples
+#' ## 12:13:14
+#' x <- 0.50918982
+#' convert_difftime(x)
+convert_difftime <- function(x) {
+  if (isNamespaceLoaded("hms")) {
+    x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
+    class(x) <- c("hms", "difftime")
+  } else {
+    x <- convert_datetime(x, origin = "1970-01-01")
+    x <- format(x, format = "%H:%M:%S")
+  }
+  x
+}
 
 #' @name get_date_origin
 #' @title Get the date origin an xlsx file is using
@@ -127,12 +135,39 @@ parseOffset <- function(tz) {
   ifelse(is.na(z), 0, z)
 }
 
+#' helper function to convert hms to posix
+#' @param x a difftime object
+#' @keywords internal
+#' @noRd
+as_POSIXlt_difftime <- function(x) {
+  z <- as.POSIXlt("1970-01-01")
+  units(x) <- "secs"
+  z$sec <- as.numeric(x)
+  z
+}
+
+#' conversion helper function
+#' @param x a date, posixct or difftime object
+#' @param date1904 a special time format in openxml
+#' @keywords internal
+#' @noRd
 conv_to_excel_date <- function(x, date1904 = FALSE) {
 
-  to_convert <- inherits(x, "POSIXlt") || inherits(x, "Date")
+  is_difftime <- inherits(x, "difftime")
+  to_convert  <- inherits(x, "POSIXlt") || inherits(x, "Date") || is_difftime
   if (to_convert) {
     # as.POSIXlt does not use local timezone
     if (inherits(x, "Date")) x <- as.POSIXlt(x)
+    if (is_difftime) {
+      class(x) <- "difftime"
+      # helper function if other conversion function is available.
+      # e.g. when testing without hms loaded
+      x <- tryCatch({
+        as.POSIXlt(x)
+      }, error = function(e) {
+          as_POSIXlt_difftime(x)
+      })
+    }
     x <- as.POSIXct(x)
   }
 
@@ -145,6 +180,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
   ## convert any Dates to integers and create date style object
   origin <- 25569L
   if (date1904) origin <- 24107L
+  if (is_difftime) origin <- 0
 
   if (inherits(x, "POSIXct")) {
     tz <- format(x, "%z")
@@ -160,7 +196,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
     }
   }
 
-  if (any(z < 1, na.rm = TRUE)) {
+  if (!is_difftime && any(z < 1, na.rm = TRUE)) {
     warning("Date < 1900-01-01 found. This can not be converted.")
   }
 
@@ -179,8 +215,13 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
 
-  df_class <- as.data.frame(Map(class, df))
-  is_date <- apply(df_class, 2, function(x) any(x %in%  c("Date", "POSIXct")))
+  is_date <- vapply(
+    df,
+    function(x) {
+      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "difftime")
+    },
+    NA
+  )
 
   df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
 

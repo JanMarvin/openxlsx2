@@ -44,9 +44,6 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   wb$add_data("write_data", df, startCol = 2, startRow = 3, rowNames = FALSE)
   wb$add_data_table("write_datatable", df, startCol = 2, startRow = 3)
 
-  # xlsx file is broken‚ <NA> where some missing value is expected.
-  # TODO check: looks alright in LibreOffice
-  # wb_open(wb)
   xlsxFile <- temp_xlsx()
   wb_save(wb, xlsxFile, TRUE)
 
