@@ -13,6 +13,7 @@ create_dxfs_style(
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
   bgFill = NULL,
+  fgColor = NULL,
   text_bold = NULL,
   text_strike = NULL,
   text_italic = NULL,
@@ -41,6 +42,8 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 
 \item{bgFill}{Cell background fill color.}
 
+\item{fgColor}{Cell foreground fill color.}
+
 \item{text_bold}{bold}
 
 \item{text_strike}{strikeout}
@@ -57,6 +60,9 @@ A dxfs style node
 \description{
 Create a new style to apply to worksheet cells. Created styles have to be
 assigned to a workbook to use them
+}
+\details{
+It is possible to override border_color and border_style with {left, right, top, bottom}_color, {left, right, top, bottom}_style.
 }
 \examples{
 # do not apply anthing

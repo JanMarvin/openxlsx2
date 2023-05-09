@@ -207,8 +207,6 @@ create_border
 
 \item{\code{styles_mgr}}{styles_mgr}
 
-\item{\code{styles_xml}}{styles_xml}
-
 \item{\code{tables}}{tables}
 
 \item{\code{tables.xml.rels}}{tables.xml.rels}
