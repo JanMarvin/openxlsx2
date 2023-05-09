@@ -88,6 +88,15 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @field dxf dxf-ids
     dxf = NULL,
 
+    #' @field tableStyle tableStyle-ids
+    tableStyle = NULL,
+
+    #' @field defaultTableStyle defaultTableStyle
+    defaultTableStyle = "TableStyleMedium2",
+
+    #' @field defaultPivotStyle defaultPivotStyle
+    defaultPivotStyle = "PivotStyleLight16",
+
     #' @field styles styles as xml
     styles = NULL,
 
@@ -181,6 +190,35 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
+
+      tableStyles <- self$styles$tableStyles
+      if (length(tableStyles)) {
+
+        tab_attrs <- rbindlist(xml_attr(tableStyles, "tableStyles"))
+
+        if (!is.null(tab_attrs$defaultTableStyle))
+          self$defaultTableStyle <- tab_attrs$defaultTableStyle
+
+        if (!is.null(tab_attrs$defaultPivotStyle))
+          self$defaultPivotStyle <- tab_attrs$defaultPivotStyle
+
+        tableStyles <- self$styles$tableStyles <-
+          xml_node(tableStyles, "tableStyles", "tableStyle")
+
+        if (length(tableStyles)) {
+
+          typ <- xml_node_name(tableStyles)
+          id  <- rownames(read_tableStyle(read_xml(tableStyles)))
+          name <- rbindlist(xml_attr(tableStyles, "tableStyle"))$name
+
+          self$tableStyle <- data.frame(
+            typ,
+            id,
+            name
+          )
+        }
+      }
+
       invisible(self)
     },
 
@@ -256,6 +294,13 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       dxf$id[match(name, dxf$name)]
     },
 
+    #' @description get tableStyle id by name
+    #' @param name name
+    get_tableStyle_id = function(name) {
+      tableStyle <- self$tableStyles
+      tableStyle$id[match(name, tableStyle$name)]
+    },
+
     #' @description get next numfmt id
     next_numfmt_id = function() {
       # TODO check: first free custom format begins at 165?
@@ -282,9 +327,14 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       invisible(as.character(max(as.numeric(self$xf$id), -1) + 1))
     },
 
-    #' @description get next xf id
+    #' @description get next dxf id
     next_dxf_id = function() {
       invisible(as.character(max(as.numeric(self$dxf$id), -1) + 1))
+    },
+
+    #' @description get next tableStyle id
+    next_tableStyle_id = function() {
+      invisible(as.character(max(as.numeric(self$tableStyle$id), -1) + 1))
     },
 
     ### adds
@@ -310,6 +360,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         is_border <- any(ifelse(xml_node_name(style[sty]) == "border", TRUE, FALSE))
         is_xf     <- any(ifelse(xml_node_name(style[sty]) == "xf", TRUE, FALSE))
         is_dxf    <- any(ifelse(xml_node_name(style[sty]) == "dxf", TRUE, FALSE))
+        is_tabSty <- any(ifelse(xml_node_name(style[sty]) == "tableStyle", TRUE, FALSE))
 
         if (skip_duplicates && is_numfmt && style_name[sty] %in% self$numfmt$name) next
         if (skip_duplicates && is_font   && style_name[sty] %in% self$font$name) next
@@ -317,6 +368,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         if (skip_duplicates && is_border && style_name[sty] %in% self$border$name) next
         if (skip_duplicates && is_xf     && style_name[sty] %in% self$xf$name) next
         if (skip_duplicates && is_dxf    && style_name[sty] %in% self$dxf$name) next
+        if (skip_duplicates && is_tabSty && style_name[sty] %in% self$tableStyle$name) next
 
         if (is_numfmt) {
           typ <- "numFmt"
@@ -359,18 +411,26 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
           self$styles$dxfs <- dxfs
         }
 
+        if (is_tabSty) {
+          typ <- "tableStyle"
+          tableStyles <- c(self$styles$tableStyles, style[sty])
+          id  <- rownames(read_tableStyle(read_xml(tableStyles)))
+          self$styles$tableStyles <- tableStyles
+        }
+
         new_entry <- data.frame(
           typ = typ,
           id = id[length(id)],
           name = style_name[sty]
         )
 
-        if (is_numfmt) self$numfmt <- rbind(self$numfmt, new_entry)
-        if (is_font)   self$font   <- rbind(self$font, new_entry)
-        if (is_fill)   self$fill   <- rbind(self$fill, new_entry)
-        if (is_border) self$border <- rbind(self$border, new_entry)
-        if (is_xf)     self$xf     <- rbind(self$xf, new_entry)
-        if (is_dxf)    self$dxf    <- rbind(self$dxf, new_entry)
+        if (is_numfmt) self$numfmt     <- rbind(self$numfmt, new_entry)
+        if (is_font)   self$font       <- rbind(self$font, new_entry)
+        if (is_fill)   self$fill       <- rbind(self$fill, new_entry)
+        if (is_border) self$border     <- rbind(self$border, new_entry)
+        if (is_xf)     self$xf         <- rbind(self$xf, new_entry)
+        if (is_dxf)    self$dxf        <- rbind(self$dxf, new_entry)
+        if (is_tabSty) self$tableStyle <- rbind(self$tableStyle, new_entry)
 
       }
 

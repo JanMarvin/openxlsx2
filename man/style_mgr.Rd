@@ -89,6 +89,12 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 
 \item{\code{dxf}}{dxf-ids}
 
+\item{\code{tableStyle}}{tableStyle-ids}
+
+\item{\code{defaultTableStyle}}{defaultTableStyle}
+
+\item{\code{defaultPivotStyle}}{defaultPivotStyle}
+
 \item{\code{styles}}{styles as xml}
 }
 \if{html}{\out{</div>}}
@@ -109,12 +115,14 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 \item \href{#method-wbStylesMgr-get_border_id}{\code{style_mgr$get_border_id()}}
 \item \href{#method-wbStylesMgr-get_xf_id}{\code{style_mgr$get_xf_id()}}
 \item \href{#method-wbStylesMgr-get_dxf_id}{\code{style_mgr$get_dxf_id()}}
+\item \href{#method-wbStylesMgr-get_tableStyle_id}{\code{style_mgr$get_tableStyle_id()}}
 \item \href{#method-wbStylesMgr-next_numfmt_id}{\code{style_mgr$next_numfmt_id()}}
 \item \href{#method-wbStylesMgr-next_font_id}{\code{style_mgr$next_font_id()}}
 \item \href{#method-wbStylesMgr-next_fill_id}{\code{style_mgr$next_fill_id()}}
 \item \href{#method-wbStylesMgr-next_border_id}{\code{style_mgr$next_border_id()}}
 \item \href{#method-wbStylesMgr-next_xf_id}{\code{style_mgr$next_xf_id()}}
 \item \href{#method-wbStylesMgr-next_dxf_id}{\code{style_mgr$next_dxf_id()}}
+\item \href{#method-wbStylesMgr-next_tableStyle_id}{\code{style_mgr$next_tableStyle_id()}}
 \item \href{#method-wbStylesMgr-add}{\code{style_mgr$add()}}
 \item \href{#method-wbStylesMgr-clone}{\code{style_mgr$clone()}}
 }
@@ -322,6 +330,23 @@ get dxf id by name
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-get_tableStyle_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_tableStyle_id}{}}}
+\subsection{Method \code{get_tableStyle_id()}}{
+get tableStyle id by name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_tableStyle_id(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbStylesMgr-next_numfmt_id"></a>}}
 \if{latex}{\out{\hypertarget{method-wbStylesMgr-next_numfmt_id}{}}}
 \subsection{Method \code{next_numfmt_id()}}{
@@ -375,9 +400,19 @@ get next xf id
 \if{html}{\out{<a id="method-wbStylesMgr-next_dxf_id"></a>}}
 \if{latex}{\out{\hypertarget{method-wbStylesMgr-next_dxf_id}{}}}
 \subsection{Method \code{next_dxf_id()}}{
-get next xf id
+get next dxf id
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{style_mgr$next_dxf_id()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-next_tableStyle_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_tableStyle_id}{}}}
+\subsection{Method \code{next_tableStyle_id()}}{
+get next tableStyle id
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$next_tableStyle_id()}\if{html}{\out{</div>}}
 }
 
 }

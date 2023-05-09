@@ -111,9 +111,6 @@ wbWorkbook <- R6::R6Class(
     #' @field styles_mgr styles_mgr
     styles_mgr = NULL,
 
-    #' @field styles_xml styles_xml
-    styles_xml = NULL,
-
     #' @field tables tables
     tables = NULL,
 
@@ -1319,6 +1316,10 @@ wbWorkbook <- R6::R6Class(
 
       if (is.null(style_name)) {
         style_name <- deparse(substitute(style))
+
+        if (xml_node_name(style) == "tableStyle")
+          style_name <- rbindlist(xml_attr(style, "tableStyle"))$name
+
       } else {
         assert_class(style_name, "character")
       }
@@ -1944,13 +1945,6 @@ wbWorkbook <- R6::R6Class(
           pxml(styleXML$cellStyles),
           "</cellStyles>"
         )
-      # styleXML$cellStyles <-
-      #   stri_join(
-      #     pxml(self$styles_mgr$tableStyles)
-      #   )
-      # TODO
-      # tableStyles
-      # extLst
 
       styleXML$dxfs <-
         if (length(styleXML$dxfs)) {
@@ -1962,6 +1956,22 @@ wbWorkbook <- R6::R6Class(
         } else {
           '<dxfs count="0"/>'
         }
+
+      if (length(styleXML$tableStyles)) {
+        styleXML$tableStyles <-
+          xml_node_create(
+            "tableStyles",
+            xml_attributes = c(
+              count = length(styleXML$tableStyles),
+              defaultTableStyle = self$styles_mgr$defaultTableStyle,
+              defaultPivotStyle = self$styles_mgr$defaultPivotStyle
+            ),
+            xml_children = styleXML$tableStyles
+          )
+      }
+
+      # TODO
+      # extLst
 
       ## write styles.xml
       if (length(unlist(self$styles_mgr$styles))) {

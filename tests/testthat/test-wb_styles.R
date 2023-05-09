@@ -64,9 +64,9 @@ test_that("test add_border()", {
 
   # check borders
   exp <- c("<border><left/><right/><top/><bottom/><diagonal/></border>",
-           "<border><left><color rgb=\"FF000000\"/></left><right/><top><color rgb=\"FF000000\"/></top><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom><diagonal/></border>",
-           "<border><left/><right><color rgb=\"FF000000\"/></right><top><color rgb=\"FF000000\"/></top><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom><diagonal/></border>",
-           "<border><left/><right/><top><color rgb=\"FF000000\"/></top><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom><diagonal/></border>"
+           "<border><left><color rgb=\"FF000000\"/></left><top><color rgb=\"FF000000\"/></top><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom></border>",
+           "<border><right><color rgb=\"FF000000\"/></right><top><color rgb=\"FF000000\"/></top><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom></border>",
+           "<border><top><color rgb=\"FF000000\"/></top><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom></border>"
   )
   got <- wb$styles_mgr$styles$borders
 

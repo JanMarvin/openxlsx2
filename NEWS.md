@@ -8,6 +8,8 @@
 
 * Allow reading and writing `hms` columns. [601](https://github.com/JanMarvin/openxlsx2/pull/601)
 
+* Import `tableStyles` with `wb_load()` and improve `dxf` style creation. [603](https://github.com/JanMarvin/openxlsx2/pull/603)
+
 
 ***************************************************************************
 

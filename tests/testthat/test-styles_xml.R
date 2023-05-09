@@ -96,7 +96,7 @@ test_that("tableStyle", {
   # likely not ordered entirely correct
   exp <- c("name", "pivot", "count", "xr9:uid", "table", "tableStyleElement")
 
-  input <- xml_node(wb$styles_mgr$styles$tableStyles, "tableStyles", "tableStyle")
+  input <- wb$styles_mgr$styles$tableStyles
   got <- read_tableStyle(as_xml(input))
   expect_equal(sort(exp), sort(names(got)))
 
