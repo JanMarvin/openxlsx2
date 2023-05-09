@@ -516,6 +516,18 @@ test_that("wb_add_sparklines() is a wrapper", {
 })
 
 
+# wb_set_sheetview() ------------------------------------------------------
+
+test_that("wb_set_sheetview() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_wrapper(
+    "set_sheetview",
+    wb = wb,
+    params = list(rightToLeft = TRUE)
+  )
+})
+
+
 # wb_add_style() ----------------------------------------------------------
 
 test_that("wb_add_style() is a wrapper", {

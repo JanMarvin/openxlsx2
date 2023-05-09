@@ -6333,7 +6333,6 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-
     #' @description apply sparkline to worksheet
     #' @param sheet the worksheet you are using
     #' @param sparklines sparkline created by `create_sparkline()`
@@ -6383,6 +6382,74 @@ wbWorkbook <- R6::R6Class(
         numberStoredAsText = numberStoredAsText,
         twoDigitTextYear   = twoDigitTextYear,
         unlockedFormula    = unlockedFormula
+      )
+    },
+
+    #' @description add sheetview
+    #' @param sheet sheet
+    #' @param colorId colorId
+    #' @param defaultGridColor defaultGridColor
+    #' @param rightToLeft rightToLeft
+    #' @param showFormulas showFormulas
+    #' @param showGridLines showGridLines
+    #' @param showOutlineSymbols showOutlineSymbols
+    #' @param showRowColHeaders showRowColHeaders
+    #' @param showRuler showRuler
+    #' @param showWhiteSpace showWhiteSpace
+    #' @param showZeros showZeros
+    #' @param tabSelected tabSelected
+    #' @param topLeftCell topLeftCell
+    #' @param view view
+    #' @param windowProtection windowProtection
+    #' @param workbookViewId workbookViewId
+    #' @param zoomScale zoomScale
+    #' @param zoomScaleNormal zoomScaleNormal
+    #' @param zoomScalePageLayoutView zoomScalePageLayoutView
+    #' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+    #' @return The `wbWorksheetObject`, invisibly
+    set_sheetview = function(
+      sheet                    = current_sheet(),
+      colorId                  = NULL,
+      defaultGridColor         = NULL,
+      rightToLeft              = NULL,
+      showFormulas             = NULL,
+      showGridLines            = NULL,
+      showOutlineSymbols       = NULL,
+      showRowColHeaders        = NULL,
+      showRuler                = NULL,
+      showWhiteSpace           = NULL,
+      showZeros                = NULL,
+      tabSelected              = NULL,
+      topLeftCell              = NULL,
+      view                     = NULL,
+      windowProtection         = NULL,
+      workbookViewId           = NULL,
+      zoomScale                = NULL,
+      zoomScaleNormal          = NULL,
+      zoomScalePageLayoutView  = NULL,
+      zoomScaleSheetLayoutView = NULL
+    ) {
+      sheet <- private$get_sheet_index(sheet)
+      self$worksheets[[sheet]]$set_sheetview(
+        colorId                  = colorId,
+        defaultGridColor         = defaultGridColor,
+        rightToLeft              = rightToLeft,
+        showFormulas             = showFormulas,
+        showGridLines            = showGridLines,
+        showOutlineSymbols       = showOutlineSymbols,
+        showRowColHeaders        = showRowColHeaders,
+        showRuler                = showRuler,
+        showWhiteSpace           = showWhiteSpace,
+        showZeros                = showZeros,
+        tabSelected              = tabSelected,
+        topLeftCell              = topLeftCell,
+        view                     = view,
+        windowProtection         = windowProtection,
+        workbookViewId           = workbookViewId,
+        zoomScale                = zoomScale,
+        zoomScaleNormal          = zoomScaleNormal,
+        zoomScalePageLayoutView  = zoomScalePageLayoutView,
+        zoomScaleSheetLayoutView = zoomScaleSheetLayoutView
       )
       invisible(self)
     }

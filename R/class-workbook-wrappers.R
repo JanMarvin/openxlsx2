@@ -2889,7 +2889,6 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }
 
-
 #' Ignore error on worksheet
 #'
 #' @param wb workbook
@@ -2932,4 +2931,76 @@ wb_add_ignore_error <- function(
     twoDigitTextYear   = twoDigitTextYear,
     unlockedFormula    = unlockedFormula
     )
+}
+
+#' add sheetview
+#' @param wb workbook
+#' @param sheet sheet
+#' @param colorId colorId
+#' @param defaultGridColor defaultGridColor
+#' @param rightToLeft rightToLeft
+#' @param showFormulas showFormulas
+#' @param showGridLines showGridLines
+#' @param showOutlineSymbols showOutlineSymbols
+#' @param showRowColHeaders showRowColHeaders
+#' @param showRuler showRuler
+#' @param showWhiteSpace showWhiteSpace
+#' @param showZeros showZeros
+#' @param tabSelected tabSelected
+#' @param topLeftCell topLeftCell
+#' @param view view
+#' @param windowProtection windowProtection
+#' @param workbookViewId workbookViewId
+#' @param zoomScale zoomScale
+#' @param zoomScaleNormal zoomScaleNormal
+#' @param zoomScalePageLayoutView zoomScalePageLayoutView
+#' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_set_sheetview <- function(
+    wb,
+    sheet                    = current_sheet(),
+    colorId                  = NULL,
+    defaultGridColor         = NULL,
+    rightToLeft              = NULL,
+    showFormulas             = NULL,
+    showGridLines            = NULL,
+    showOutlineSymbols       = NULL,
+    showRowColHeaders        = NULL,
+    showRuler                = NULL,
+    showWhiteSpace           = NULL,
+    showZeros                = NULL,
+    tabSelected              = NULL,
+    topLeftCell              = NULL,
+    view                     = NULL,
+    windowProtection         = NULL,
+    workbookViewId           = NULL,
+    zoomScale                = NULL,
+    zoomScaleNormal          = NULL,
+    zoomScalePageLayoutView  = NULL,
+    zoomScaleSheetLayoutView = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$set_sheetview(
+    sheet                    = sheet,
+    colorId                  = colorId,
+    defaultGridColor         = defaultGridColor,
+    rightToLeft              = rightToLeft,
+    showFormulas             = showFormulas,
+    showGridLines            = showGridLines,
+    showOutlineSymbols       = showOutlineSymbols,
+    showRowColHeaders        = showRowColHeaders,
+    showRuler                = showRuler,
+    showWhiteSpace           = showWhiteSpace,
+    showZeros                = showZeros,
+    tabSelected              = tabSelected,
+    topLeftCell              = topLeftCell,
+    view                     = view,
+    windowProtection         = windowProtection,
+    workbookViewId           = workbookViewId,
+    zoomScale                = zoomScale,
+    zoomScaleNormal          = zoomScaleNormal,
+    zoomScalePageLayoutView  = zoomScalePageLayoutView,
+    zoomScaleSheetLayoutView = zoomScaleSheetLayoutView
+  )
 }
