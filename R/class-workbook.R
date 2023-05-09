@@ -1957,14 +1957,18 @@ wbWorkbook <- R6::R6Class(
           '<dxfs count="0"/>'
         }
 
-      styleXML$tableStyles <-
-        if (length(styleXML$tableStyles)) {
-          stri_join(
-            sprintf('<tableStyles count="%s" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\">', length(styleXML$tableStyles)),
-            stri_join(unlist(styleXML$tableStyles), sep = " ", collapse = ""),
-            "</tableStyles>"
+      if (length(styleXML$tableStyles)) {
+        styleXML$tableStyles <-
+          xml_node_create(
+            "tableStyles",
+            xml_attributes = c(
+              count = length(styleXML$tableStyles),
+              defaultTableStyle = self$styles_mgr$defaultTableStyle,
+              defaultPivotStyle = self$styles_mgr$defaultPivotStyle
+            ),
+            xml_children = styleXML$tableStyles
           )
-        }
+      }
 
       # TODO
       # extLst

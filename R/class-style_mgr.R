@@ -91,6 +91,12 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @field tableStyle tableStyle-ids
     tableStyle = NULL,
 
+    #' @field defaultTableStyle defaultTableStyle
+    defaultTableStyle = "TableStyleMedium2",
+
+    #' @field defaultPivotStyle defaultPivotStyle
+    defaultPivotStyle = "PivotStyleLight16",
+
     #' @field styles styles as xml
     styles = NULL,
 
@@ -187,6 +193,18 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
       tableStyles <- self$styles$tableStyles
       if (length(tableStyles)) {
+
+        tab_attrs <- rbindlist(xml_attr(tableStyles, "tableStyles"))
+
+        if (!is.null(tab_attrs$defaultTableStyle))
+          self$defaultTableStyle <- tab_attrs$defaultTableStyle
+
+        if (!is.null(tab_attrs$defaultPivotStyle))
+          self$defaultPivotStyle <- tab_attrs$defaultPivotStyle
+
+        tableStyles <- self$styles$tableStyles <-
+          xml_node(tableStyles, "tableStyles", "tableStyle")
+
         typ <- xml_node_name(tableStyles)
         id  <- rownames(read_tableStyle(read_xml(tableStyles)))
         name <- rbindlist(xml_attr(tableStyles, "tableStyle"))$name

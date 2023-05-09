@@ -91,6 +91,10 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 
 \item{\code{tableStyle}}{tableStyle-ids}
 
+\item{\code{defaultTableStyle}}{defaultTableStyle}
+
+\item{\code{defaultPivotStyle}}{defaultPivotStyle}
+
 \item{\code{styles}}{styles as xml}
 }
 \if{html}{\out{</div>}}

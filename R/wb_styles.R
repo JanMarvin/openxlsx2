@@ -62,7 +62,7 @@ import_styles <- function(x) {
 
   # Table Styles Maybe position Id?
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.tablestyle?view=openxml-2.8.1
-  z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles", "tableStyle")
+  z$tableStyles <- xml_node(sxml, "styleSheet", "tableStyles")
 
   # Colors
   # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
@@ -744,8 +744,6 @@ create_dxfs_style <- function(
     top_style    <- if ("top_style" %in% nams)    args$top_style    else border_style
     bottom_color <- if ("bottom_color" %in% nams) args$bottom_color else border_color
     bottom_style <- if ("bottom_style" %in% nams) args$bottom_style else border_style
-
-    print(left_color)
 
     border <- create_border(
       left         = left_style,
