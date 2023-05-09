@@ -205,15 +205,18 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         tableStyles <- self$styles$tableStyles <-
           xml_node(tableStyles, "tableStyles", "tableStyle")
 
-        typ <- xml_node_name(tableStyles)
-        id  <- rownames(read_tableStyle(read_xml(tableStyles)))
-        name <- rbindlist(xml_attr(tableStyles, "tableStyle"))$name
+        if (length(tableStyles)) {
 
-        self$tableStyle <- data.frame(
-          typ,
-          id,
-          name
-        )
+          typ <- xml_node_name(tableStyles)
+          id  <- rownames(read_tableStyle(read_xml(tableStyles)))
+          name <- rbindlist(xml_attr(tableStyles, "tableStyle"))$name
+
+          self$tableStyle <- data.frame(
+            typ,
+            id,
+            name
+          )
+        }
       }
 
       invisible(self)
