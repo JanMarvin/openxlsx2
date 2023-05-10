@@ -4283,16 +4283,7 @@ wbWorkbook <- R6::R6Class(
       sheetname <- private$get_sheet_name(sheet)
 
       # for wrapper tests
-      seed <- get0(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
-      openxlsx2_seed <- getOption("openxlsx2_seed")
-      if (is.null(openxlsx2_seed)) {
-        set.seed(123)
-      }
-
-      ids <- sample(seq.int(60000000, 70000000), size = 2, replace = FALSE)
-      ids <- as.character(ids)
-
-      assign(".Random.seed", seed, globalenv())
+      ids <- random_string(n = 2, length = 8, pattern = "[1-9]")
 
       # format.ms_chart is exported in mschart >= 0.4
       out_xml <- read_xml(
