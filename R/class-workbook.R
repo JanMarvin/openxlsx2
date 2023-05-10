@@ -4283,12 +4283,13 @@ wbWorkbook <- R6::R6Class(
       sheetname <- private$get_sheet_name(sheet)
 
       # format.ms_chart is exported in mschart >= 0.4
+      ids <- random_string(n = 2, length = 8, pattern = "[1-9]")
       out_xml <- read_xml(
         format(
           graph,
           sheetname = sheetname,
-          id_x = "64451212",
-          id_y = "64453248"
+          id_x = ids[1],
+          id_y = ids[2]
         ),
         pointer = FALSE
       )
