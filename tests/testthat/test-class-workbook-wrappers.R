@@ -346,7 +346,7 @@ test_that("wb_add_formula() is a wrapper", {
 })
 
 test_that("wb_update_table() is a wrapper", {
-  wb <- wb_workbook()$add_worksheet()$add_data_table(x = iris[1:10,])
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = iris[1:10, ])
   expect_wrapper("update_table", wb = wb, params = list(sheet = 1, tabname = "Table1", dims = "A1:D4"))
 })
 

@@ -94,7 +94,7 @@ test_that("Deleting a Table Object", {
   ))
 
 
-  expect_equal(wb_get_tables(wb, sheet = 1), exp[2,], ignore_attr = TRUE)
+  expect_equal(wb_get_tables(wb, sheet = 1), exp[2, ], ignore_attr = TRUE)
   file.remove(temp)
 })
 
