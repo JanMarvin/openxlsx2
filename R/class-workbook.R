@@ -4282,13 +4282,16 @@ wbWorkbook <- R6::R6Class(
 
       sheetname <- private$get_sheet_name(sheet)
 
+      ids <- sample(seq.int(60000000, 70000000), size = 2, replace = FALSE)
+      ids <- as.character(ids)
+
       # format.ms_chart is exported in mschart >= 0.4
       out_xml <- read_xml(
         format(
           graph,
           sheetname = sheetname,
-          id_x = "64451212",
-          id_y = "64453248"
+          id_x = ids[1],
+          id_y = ids[2]
         ),
         pointer = FALSE
       )
