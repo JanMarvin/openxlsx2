@@ -601,9 +601,6 @@ test_that("wb_add_mschart() is a wrapper", {
 
   wb <- wb_workbook()$add_worksheet()
 
-  # get style from b1 to assign it to a1
-  numfmt <- wb$get_cell_style(dims = "B1")
-
   expect_wrapper(
     "add_mschart",
     wb = wb,
