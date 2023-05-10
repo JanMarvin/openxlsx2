@@ -5000,17 +5000,8 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
       attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
 
-
-      ## Now delete data from the worksheet
-      refs <- strsplit(refs, split = ":")[[1]]
-      rows <- as.integer(gsub("[A-Z]", "", refs))
-      rows <- seq(from = rows[1], to = rows[2], by = 1)
-
-      cols <- col2int(refs)
-      cols <- seq(from = cols[1], to = cols[2], by = 1)
-
       ## now delete data
-      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols)
+      self$clean_sheet(sheet = sheet, dims = refs)
       invisible(self)
     },
 
