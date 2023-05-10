@@ -174,3 +174,21 @@ test_that("custom table styles work", {
   expect_error(wb$add_data_table(x = mtcars, tableStyle = "RedTableStyle1"), "Invalid table style.")
 
 })
+
+test_that("updating table works", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet()$add_data_table(x = mtcars)
+  wb$add_worksheet()$add_data_table(x = mtcars[1:2])
+
+  wb_to_df(wb, named_region = "Table2")
+
+  wb$add_data(dims = "C1", x = mtcars[-1:-2], name = "test")
+
+  wb <- wb_update_table(wb, "Table2", sheet = 2, dims = "A1:J4")
+
+  exp <- mtcars[1:3, 1:10]
+  got <- wb_to_df(wb, named_region = "Table2")
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+})

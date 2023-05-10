@@ -345,6 +345,11 @@ test_that("wb_add_formula() is a wrapper", {
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))
 })
 
+test_that("wb_update_table() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = iris[1:10,])
+  expect_wrapper("update_table", wb = wb, params = list(sheet = 1, tabname = "Table1", dims = "A1:D4"))
+})
+
 test_that("wb_copy_cells() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)$add_data(x = "1")
   dat <- wb_data(wb, 1, dims = "A1", colNames = FALSE)

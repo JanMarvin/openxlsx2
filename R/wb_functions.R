@@ -405,7 +405,7 @@ wb_to_df <- function(
 
   if (!missing(named_region)) {
 
-    nr <- wb_get_named_regions(wb)
+    nr <- wb_get_named_regions(wb, tables = TRUE)
 
     if ((named_region %in% nr$name) && missing(sheet)) {
       sel   <- nr[nr$name == named_region, ][1, ]

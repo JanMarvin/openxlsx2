@@ -339,6 +339,17 @@ wb_add_formula <- function(
   )
 }
 
+#' update a data_table
+#' @param wb workbook
+#' @param sheet a worksheet
+#' @param dims cell used as start
+#' @param tabname a tablename
+#' @export
+wb_update_table <- function(wb, sheet = current_sheet(), dims = "A1", tabname) {
+  assert_workbook(wb)
+  wb$clone()$update_table(sheet = sheet, dims = dims, tabname = tabname)
+}
+
 #' copy cells around
 #' @param wb workbook
 #' @param sheet a worksheet

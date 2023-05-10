@@ -270,6 +270,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-save}{\code{wbWorkbook$save()}}
 \item \href{#method-wbWorkbook-open}{\code{wbWorkbook$open()}}
 \item \href{#method-wbWorkbook-buildTable}{\code{wbWorkbook$buildTable()}}
+\item \href{#method-wbWorkbook-update_table}{\code{wbWorkbook$update_table()}}
 \item \href{#method-wbWorkbook-copy_cells}{\code{wbWorkbook$copy_cells()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
@@ -1002,6 +1003,30 @@ Build table
 \item{\code{showRowStripes}}{showRowStripes}
 
 \item{\code{showColumnStripes}}{showColumnStripes}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheet} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-update_table"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-update_table}{}}}
+\subsection{Method \code{update_table()}}{
+update a data_table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$update_table(sheet = current_sheet(), dims = "A1", tabname)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{cell used as start}
+
+\item{\code{tabname}}{a tablename}
 }
 \if{html}{\out{</div>}}
 }
