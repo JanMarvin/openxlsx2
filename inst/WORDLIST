@@ -50,7 +50,6 @@ bool
 calc
 calcChain
 cellWatches
-cellXfs
 charset
 chartShapes
 chartsheet
@@ -94,8 +93,11 @@ datatable
 datetime
 datetimes
 defaultGridColor
+defaultPivotStyle
+defaultTableStyle
 detectDates
 df
+difftime
 displayEmptyCellsAs
 drawingHF
 dxf
@@ -171,7 +173,6 @@ nestings
 notBetween
 notEqual
 numFmt
-numFmtId
 numfmt
 numfmts
 oddFooter
@@ -263,6 +264,7 @@ tabSelected
 tableName
 tableParts
 tableStyle
+tablename
 textLength
 th
 threadComments
