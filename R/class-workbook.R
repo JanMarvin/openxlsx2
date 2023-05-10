@@ -4955,14 +4955,7 @@ wbWorkbook <- R6::R6Class(
       if (is.na(sheet)) stop("No such sheet in workbook")
 
       sel <- self$tables$tab_sheet == sheet & self$tables$tab_act == 1
-      tables <- self$tables$tab_name[sel]
-      refs <- self$tables$tab_ref[sel]
-
-      if (length(tables)) {
-        attr(tables, "refs") <- refs
-      }
-
-      return(tables)
+      self$tables[sel, c("tab_name", "tab_ref")]
     },
 
 
