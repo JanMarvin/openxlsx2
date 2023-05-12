@@ -291,3 +291,84 @@ read_xml_files <- function(x) {
          FUN.VALUE = NA_character_,
          USE.NAMES = FALSE)
 }
+
+#' format strings independent of the cell style.
+#' @details
+#' The result is an xml string. It is possible to paste multiple `fmt_txt()`
+#' strings together to create a string with differing styles.
+#' @param x a string or part of a string
+#' @param bold bold
+#' @param italic italic
+#' @param underline underline
+#' @param strike strike
+#' @param size the font size
+#' @param color a wbColor color for the font
+#' @param font the font name
+#' @examples
+#' fmt_txt("bla", underline = TRUE)
+#' @export
+fmt_txt <- function(
+    x,
+    bold      = FALSE,
+    italic    = FALSE,
+    underline = FALSE,
+    strike    = FALSE,
+    size      = NULL,
+    color     = NULL,
+    font      = NULL
+) {
+
+  xml_b     <- NULL
+  xml_i     <- NULL
+  xml_u     <- NULL
+  xml_strk  <- NULL
+  xml_sz    <- NULL
+  xml_color <- NULL
+  xml_font  <- NULL
+
+  if (bold) {
+    xml_b <-  xml_node_create("b")
+  }
+  if (italic) {
+    xml_i <-  xml_node_create("i")
+  }
+  if (underline) {
+    xml_u <-  xml_node_create("u")
+  }
+  if (strike) {
+    xml_strk <- xml_node_create("strike")
+  }
+  if (length(size)) {
+    xml_sz <- xml_node_create("sz", xml_attributes = c(val = as_xml_attr(size)))
+  }
+  if (inherits(color, "wbColour")) {
+    xml_color <- xml_node_create("color", xml_attributes = color)
+  }
+  if (length(font)) {
+    xml_font <- xml_node_create("rFont", xml_attributes = c(val = font))
+  }
+
+  xml_t_attr <- if (grepl("(^\\s+)|(\\s+$)", x)) c("xml:space" = "preserve") else NULL
+  xml_t <- xml_node_create("t", xml_children = x, xml_attributes = xml_t_attr)
+
+  xml_rpr <- xml_node_create(
+    "rPr",
+    xml_children = c(
+      xml_b,
+      xml_i,
+      xml_u,
+      xml_strk,
+      xml_sz,
+      xml_color,
+      xml_font
+    )
+  )
+
+  xml_node_create(
+    "r",
+    xml_children = c(
+      xml_rpr,
+      xml_t
+    )
+  )
+}
