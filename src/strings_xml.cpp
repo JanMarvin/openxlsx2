@@ -120,7 +120,7 @@ std::string txt_to_xml(
           is_node.append_copy(is_n);
   } else {
     // text to export
-    pugi::xml_node t_node = is_node.append_child("t");;
+    pugi::xml_node t_node = is_node.append_child("t");
 
     if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size()-1)))) {
       t_node.append_attribute("xml:space").set_value("preserve");
