@@ -10,6 +10,8 @@
 
 * Import `tableStyles` with `wb_load()` and improve `dxf` style creation. [603](https://github.com/JanMarvin/openxlsx2/pull/603)
 
+* Add `fmt_txt()` to style character strings. [607](https://github.com/JanMarvin/openxlsx2/pull/607)
+
 
 ***************************************************************************
 

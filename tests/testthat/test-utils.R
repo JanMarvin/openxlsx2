@@ -113,3 +113,25 @@ test_that("as_xml_attr works", {
   expect_equal(exp, mm)
 
 })
+
+test_that("string formating", {
+
+  foo <- fmt_txt("foo: ", bold = TRUE, size = 16, color = wb_color("green"))
+  bar <- fmt_txt("bar", underline = TRUE)
+  txt <- paste0(foo, bar)
+
+  exp <- "<is><r><rPr><b/><sz val=\"16\"/><color rgb=\"FF00FF00\"/></rPr><t xml:space=\"preserve\">foo: </t></r></is>"
+  got <- txt_to_is(foo)
+  expect_equal(exp, got)
+
+  exp <- "<si><r><rPr><b/><sz val=\"16\"/><color rgb=\"FF00FF00\"/></rPr><t xml:space=\"preserve\">foo: </t></r></si>"
+  got <- txt_to_si(foo)
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(txt))
+
+  exp <- "foo: bar"
+  got <- wb_to_df(wb)$txt
+  expect_equal(exp, got)
+
+})

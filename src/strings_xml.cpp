@@ -112,14 +112,22 @@ std::string txt_to_xml(
 
   pugi::xml_node is_node = doc.append_child(type.c_str());
 
-  // text to export
-  pugi::xml_node t_node = is_node.append_child("t");;
+  pugi::xml_document txt_node;
+  pugi::xml_parse_result result = txt_node.load_string(text.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
 
-  if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size()-1)))) {
-    t_node.append_attribute("xml:space").set_value("preserve");
+  if (result) {
+    for (auto is_n : txt_node.children())
+          is_node.append_copy(is_n);
+  } else {
+    // text to export
+    pugi::xml_node t_node = is_node.append_child("t");
+
+    if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size()-1)))) {
+      t_node.append_attribute("xml:space").set_value("preserve");
+    }
+
+    t_node.append_child(pugi::node_pcdata).set_value(text.c_str());
   }
-
-  t_node.append_child(pugi::node_pcdata).set_value(text.c_str());
 
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags);
