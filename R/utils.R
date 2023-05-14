@@ -130,6 +130,8 @@ as_xml_attr <- function(x) {
   if (inherits(x, "character")) {
     return(x)
   } else {
+    op <- options(OutDec = ".")
+    on.exit(options(op), add = TRUE)
     return(as.character(x))
   }
 }

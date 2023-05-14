@@ -2550,7 +2550,7 @@ wbWorkbook <- R6::R6Class(
           stop("Greater number of height values than rows.")
         }
 
-        row_attr[sel, "ht"] <- as.character(as.numeric(heights))
+        row_attr[sel, "ht"] <- as_xml_attr(heights)
         row_attr[sel, "customHeight"] <- "1"
       }
 
@@ -2840,7 +2840,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       select <- as.numeric(col_df$min) %in% cols
-      col_df$width[select] <- widths
+      col_df$width[select] <- as_xml_attr(widths)
       col_df$hidden[select] <- tolower(hidden)
       col_df$bestFit[select] <- bestFit
       col_df$customWidth[select] <- customWidth
