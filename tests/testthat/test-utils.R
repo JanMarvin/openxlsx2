@@ -135,3 +135,26 @@ test_that("string formating", {
   expect_equal(exp, got)
 
 })
+
+test_that("outdec = \",\" works", {
+
+  options(OutDec = ",")
+
+  exp <- "[1] 1,1"
+  got <- capture.output(print(1.1))
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()$add_worksheet()$set_col_widths(
+    cols = c(1, 4, 6, 7, 9),
+    widths = c(16, 15, 12, 18, 33)
+  )
+
+  exp <- c("16.711", "8.43", "15.711", "8.43", "12.711", "18.711", "8.43", "33.711")
+  got <- rbindlist(xml_attr(wb$worksheets[[1]]$cols_attr, "col"))$width
+  expect_equal(exp, got)
+
+  exp <- "[1] 1,1"
+  got <- capture.output(print(1.1))
+  expect_equal(exp, got)
+
+})
