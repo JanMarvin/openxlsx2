@@ -81,5 +81,5 @@ openxlsx2_celltype <- c(
   factor         = 12,
   string_nums    = 13,
   cm_formula     = 14,
-  diff_time      = 15
+  hms_time       = 15
 )

@@ -106,7 +106,7 @@ guess_col_type <- function(tt) {
   col_log <- vapply(tt[!col_num], function(x) any(x == "b", na.rm = TRUE), NA)
   types[names(col_log[col_log])] <- 4
 
-  # or even difftime
+  # or even hms
   col_dte <- vapply(tt[!col_num], function(x) all(x == "h", na.rm = TRUE), NA)
   types[names(col_dte[col_dte])] <- 5
 
@@ -632,10 +632,10 @@ wb_to_df <- function(
       if (any(sel <- cc$c_s %in% xlsx_hms_style)) {
         sel <- sel & !cc$is_string & cc$v != ""
         if (isNamespaceLoaded("hms")) {
-          # if hms is loaded, we have to avoid applying convert_difftime() twice
+          # if hms is loaded, we have to avoid applying convert_hms() twice
           cc$val[sel] <- cc$v[sel]
         } else {
-          cc$val[sel] <- suppressWarnings(as.character(convert_difftime(cc$v[sel])))
+          cc$val[sel] <- suppressWarnings(as.character(convert_hms(cc$v[sel])))
         }
         cc$typ[sel]  <- "h"
       }
@@ -786,7 +786,7 @@ wb_to_df <- function(
 
   date_conv     <- NULL
   datetime_conv <- NULL
-  difftime_conv <- convert_difftime
+  hms_conv      <- convert_hms
 
   if (missing(types)) {
     types <- guess_col_type(tt)
@@ -815,7 +815,7 @@ wb_to_df <- function(
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
-      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], difftime_conv)
+      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
     } else {
       warning("could not convert. All missing in row used for variable names")
     }

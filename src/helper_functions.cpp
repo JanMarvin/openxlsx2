@@ -80,7 +80,7 @@ SEXP openxlsx2_type(SEXP x) {
       type[i] = 9;
     } else if (Rf_inherits(z, "factor")) {
       type[i] = 12;
-    } else if (Rf_inherits(z, "difftime")) {
+    } else if (Rf_inherits(z, "hms")) {
       type[i] = 15;
     } else {
       SEXP Rclass = Rf_getAttrib(z, R_ClassSymbol);
@@ -369,7 +369,7 @@ void wide_to_long(
       case percentage:
       case scientific:
       case comma:
-      case diff_time:
+      case hms_time:
       case numeric:
         cell.v   = vals;
         break;
