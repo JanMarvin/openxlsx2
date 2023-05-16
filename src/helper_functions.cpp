@@ -83,7 +83,12 @@ SEXP openxlsx2_type(SEXP x) {
     } else if (Rf_inherits(z, "difftime")) {
       type[i] = 15;
     } else {
-      type[i] = 2; // numeric or integer
+      SEXP Rclass = Rf_getAttrib(z, R_ClassSymbol);
+      if (Rf_isNull(Rclass)) {
+        type[i] = 2; // numeric and integer
+      } else {
+        type[i] = 12; // probably some custom class
+      }
     }
     break;
 
