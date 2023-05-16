@@ -91,7 +91,7 @@ SEXP openxlsx2_type(SEXP x) {
 
     // whatever is not covered from above
     default: {
-      type[i] = 4;
+      type[i] = 2;
       break;
     }
 
