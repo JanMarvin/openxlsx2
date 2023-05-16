@@ -11,7 +11,7 @@ as_POSIXct_utc <- function(x) {
 
 
 #' @name convert_date
-#' @title Convert from excel date, datetime or difftime number to R Date type
+#' @title Convert from excel date, datetime, or hms number to R Date type
 #' @description Convert from excel date number to R Date type
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
@@ -72,8 +72,8 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #' @examples
 #' ## 12:13:14
 #' x <- 0.50918982
-#' convert_difftime(x)
-convert_difftime <- function(x) {
+#' convert_hms(x)
+convert_hms <- function(x) {
   if (isNamespaceLoaded("hms")) {
     x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
     class(x) <- c("hms", "difftime")
@@ -136,10 +136,10 @@ parseOffset <- function(tz) {
 }
 
 #' helper function to convert hms to posix
-#' @param x a difftime object
+#' @param x a hms object
 #' @keywords internal
 #' @noRd
-as_POSIXlt_difftime <- function(x) {
+as_POSIXlt_hms <- function(x) {
   z <- as.POSIXlt("1970-01-01")
   units(x) <- "secs"
   z$sec <- as.numeric(x)
@@ -147,25 +147,25 @@ as_POSIXlt_difftime <- function(x) {
 }
 
 #' conversion helper function
-#' @param x a date, posixct or difftime object
+#' @param x a date, posixct, or hms object
 #' @param date1904 a special time format in openxml
 #' @keywords internal
 #' @noRd
 conv_to_excel_date <- function(x, date1904 = FALSE) {
 
-  is_difftime <- inherits(x, "difftime")
-  to_convert  <- inherits(x, "POSIXlt") || inherits(x, "Date") || is_difftime
+  is_hms     <- inherits(x, "hms")
+  to_convert <- inherits(x, "POSIXlt") || inherits(x, "Date") || is_hms
   if (to_convert) {
     # as.POSIXlt does not use local timezone
     if (inherits(x, "Date")) x <- as.POSIXlt(x)
-    if (is_difftime) {
-      class(x) <- "difftime"
+    if (is_hms) {
+      class(x) <- "hms"
       # helper function if other conversion function is available.
       # e.g. when testing without hms loaded
       x <- tryCatch({
         as.POSIXlt(x)
       }, error = function(e) {
-          as_POSIXlt_difftime(x)
+          as_POSIXlt_hms(x)
       })
     }
     x <- as.POSIXct(x)
@@ -180,7 +180,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
   ## convert any Dates to integers and create date style object
   origin <- 25569L
   if (date1904) origin <- 24107L
-  if (is_difftime) origin <- 0
+  if (is_hms) origin <- 0
 
   if (inherits(x, "POSIXct")) {
     tz <- format(x, "%z")
@@ -196,7 +196,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
     }
   }
 
-  if (!is_difftime && any(z < 1, na.rm = TRUE)) {
+  if (!is_hms && any(z < 1, na.rm = TRUE)) {
     warning("Date < 1900-01-01 found. This can not be converted.")
   }
 
@@ -218,7 +218,7 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
   is_date <- vapply(
     df,
     function(x) {
-      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "difftime")
+      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "hms")
     },
     NA
   )
