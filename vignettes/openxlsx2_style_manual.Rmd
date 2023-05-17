@@ -375,3 +375,127 @@ wb <- wb_load(system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb_set_cell_style(1, "A30:G35", wb_get_cell_style(., 1, "A10:G15"))
 # wb_open(wb)
 ```
+
+### Style strings
+
+Using `fmt_txt()` is possible to style strings indepentenly of the cell containing the string.
+
+```{r}
+txt <- paste(
+  fmt_txt("Embracing the full potential of "),
+  fmt_txt("openxlsx2", bold = TRUE, size = 16),
+  fmt_txt(" with "),
+  fmt_txt("fmt_txt()", font = "Courier"),
+  fmt_txt(" !")
+)
+wb <- wb_workbook()$add_worksheet()$add_data(x = txt)
+```
+
+As shown above it is possible to combine multiple styles together into a longer string.
+
+### Create custom table styles
+
+With `create_tablestyle()` it is possible to create your own table styles. This function uses `create_dxfs_style()` (just like your spreadsheet software does). Therefore, it is not quite as user-friendly. The following example shows how the function creates a red table style. The various dxfs styles must be created and assigned to the workbook (similar styles are used in conditional formatting). In `create_tablestyle()` these styles are assigned to the table style elements. Once the table style is created, it must also be assigned to the workbook. After that you can use it in the workbook like any other table style.
+
+```{r}
+# a red table style
+dx0 <- create_dxfs_style(
+  border = TRUE,
+  left_color = wb_color("red"),
+  right_color = NULL, right_style = NULL,
+  top_color = NULL, top_style = NULL,
+  bottom_color = NULL, bottom_style = NULL
+)
+
+dx1 <- create_dxfs_style(
+  border = TRUE,
+  left_color = wb_color("red"),
+  right_color = NULL, right_style = NULL,
+  top_color = NULL, top_style = NULL,
+  bottom_color = NULL, bottom_style = NULL
+)
+
+dx2 <- create_dxfs_style(
+  border = TRUE,
+  top_color = wb_color("red"),
+  left_color = NULL, left_style = NULL,
+  right_color = NULL, right_style = NULL,
+  bottom_color = NULL, bottom_style = NULL
+)
+
+dx3 <- create_dxfs_style(
+  border = TRUE,
+  top_color = wb_color("red"),
+  left_color = NULL, left_style = NULL,
+  right_color = NULL, right_style = NULL,
+  bottom_color = NULL, bottom_style = NULL
+)
+
+dx4 <- create_dxfs_style(
+  text_bold = TRUE
+)
+
+dx5 <- create_dxfs_style(
+  text_bold = TRUE
+)
+
+dx6 <- create_dxfs_style(
+  font_color = wb_color("red"),
+  text_bold = TRUE,
+  border = TRUE,
+  top_style = "double",
+  left_color = NULL, left_style = NULL,
+  right_color = NULL, right_style = NULL,
+  bottom_color = NULL, bottom_style = NULL
+)
+
+dx7 <- create_dxfs_style(
+  font_color = wb_color("white"),
+  text_bold = TRUE,
+  bgFill = wb_color("red"),
+  fgColor = wb_color("red")
+)
+
+dx8 <- create_dxfs_style(
+  border = TRUE,
+  left_color = wb_color("red"),
+  top_color = wb_color("red"),
+  right_color = wb_color("red"),
+  bottom_color = wb_color("red")
+)
+
+
+wb <- wb_workbook() %>%
+  wb_add_worksheet(gridLines = FALSE)
+
+wb$add_style(dx0)
+wb$add_style(dx1)
+wb$add_style(dx2)
+wb$add_style(dx3)
+wb$add_style(dx4)
+wb$add_style(dx5)
+wb$add_style(dx6)
+wb$add_style(dx7)
+wb$add_style(dx8)
+
+# finally create the table
+xml <- create_tablestyle(
+  name               = "red_table",
+  wholeTable         = wb$styles_mgr$get_dxf_id("dx8"),
+  headerRow          = wb$styles_mgr$get_dxf_id("dx7"),
+  totalRow           = wb$styles_mgr$get_dxf_id("dx6"),
+  firstColumn        = wb$styles_mgr$get_dxf_id("dx5"),
+  lastColumn         = wb$styles_mgr$get_dxf_id("dx4"),
+  firstRowStripe     = wb$styles_mgr$get_dxf_id("dx3"),
+  secondRowStripe    = wb$styles_mgr$get_dxf_id("dx2"),
+  firstColumnStripe  = wb$styles_mgr$get_dxf_id("dx1"),
+  secondColumnStripe = wb$styles_mgr$get_dxf_id("dx0")
+)
+
+
+wb$add_style(xml)
+
+# create a table and apply the custom style
+wb <- wb %>% 
+  wb_add_data_table(x = mtcars, tableStyle = "red_table")
+```
