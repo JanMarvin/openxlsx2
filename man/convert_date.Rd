@@ -3,14 +3,14 @@
 \name{convert_date}
 \alias{convert_date}
 \alias{convert_datetime}
-\alias{convert_difftime}
-\title{Convert from excel date, datetime or difftime number to R Date type}
+\alias{convert_hms}
+\title{Convert from excel date, datetime or hms number to R Date type}
 \usage{
 convert_date(x, origin = "1900-01-01", ...)
 
 convert_datetime(x, origin = "1900-01-01", ...)
 
-convert_difftime(x)
+convert_hms(x)
 }
 \arguments{
 \item{x}{A vector of integers}
@@ -36,7 +36,7 @@ convert_datetime(x, tz = "Australia/Perth")
 convert_datetime(x, tz = "UTC")
 ## 12:13:14
 x <- 0.50918982
-convert_difftime(x)
+convert_hms(x)
 }
 \seealso{
 \code{\link[=write_data]{write_data()}}

@@ -509,20 +509,20 @@ write_data2 <- function(
         numfmt = numfmt_posix
       )
     }
-    if (any(dc == openxlsx2_celltype[["diff_time"]])) {
-      if (is.null(unlist(options("openxlsx2.difftimeFormat")))) {
-        numfmt_difftime <- 21
+    if (any(dc == openxlsx2_celltype[["hms_time"]])) {
+      if (is.null(unlist(options("openxlsx2.hmsFormat")))) {
+        numfmt_hms <- 21
       } else {
-        numfmt_difftime <- unlist(options("openxlsx2.difftimeFormat"))
+        numfmt_hms <- unlist(options("openxlsx2.hmsFormat"))
       }
 
-      dim_sel <- get_data_class_dims("diff_time")
-      # message("difftime: ", dim_sel)
+      dim_sel <- get_data_class_dims("hms_time")
+      # message("hms: ", dim_sel)
 
       wb$add_numfmt(
         sheet = sheetno,
         dim = dim_sel,
-        numfmt = numfmt_difftime
+        numfmt = numfmt_hms
       )
     }
     if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting

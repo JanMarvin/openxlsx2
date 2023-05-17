@@ -94,6 +94,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
+#' Many base classes are covered, though not all and far from all third-party classes. When data of an unknown class is written, it is handled with `as.character()`.
 #' @rdname write_data
 #' @family workbook wrappers
 #' @return A clone of `wb``

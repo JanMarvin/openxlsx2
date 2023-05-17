@@ -16,6 +16,8 @@
 
 * Improve handling of non standard `OutDec` options. [611](https://github.com/JanMarvin/openxlsx2/pull/611)
 
+* `openxlsx2` now does a better job of trying to return `character` values from classes that are foreign to it. This has been going on for quite some time, although previously we had a bug that treated such classes as `numeric`, resulting in corrupted xlsx files. [615](https://github.com/JanMarvin/openxlsx2/pull/615)
+
 
 ***************************************************************************
 
