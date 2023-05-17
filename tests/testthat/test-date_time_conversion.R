@@ -65,6 +65,15 @@ test_that("custom classes are treated independently", {
   assign("as.character.myclass", as.character.myclass, envir = globalenv())
   on.exit(rm("as.character.myclass", envir = globalenv()), add = TRUE)
 
+  # provide as.data.frame.class for R < 4.3.0
+  as.data.frame.myclass <- function(x, ...) {
+    nm <- deparse1(substitute(x))
+    as.data.frame(as.character.myclass(x, nm = nm),
+                  stringsAsFactors = FALSE)
+  }
+  assign("as.data.frame.myclass", as.data.frame.myclass, envir = globalenv())
+  on.exit(rm("as.data.frame.myclass", envir = globalenv()), add = TRUE)
+
   obj <- structure(1L, class = "myclass")
   wb <- wb_workbook()$add_worksheet()$add_data(x = obj)
 
