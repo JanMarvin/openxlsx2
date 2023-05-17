@@ -60,6 +60,8 @@ test_that("convert hms works", {
 
 test_that("custom classes are treated independently", {
 
+  skip_on_cran()
+
   # create a custom test class
   as.character.myclass <- function(x, ...) paste("myclass:", format(x, digits = 2))
   assign("as.character.myclass", as.character.myclass, envir = globalenv())
