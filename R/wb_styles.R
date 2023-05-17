@@ -768,3 +768,147 @@ create_dxfs_style <- function(
   )
 
 }
+
+#' create tableStyle
+#' @param name name
+#' @param wholeTable wholeTable
+#' @param headerRow headerRow
+#' @param totalRow totalRow
+#' @param firstColumn firstColumn
+#' @param lastColumn lastColumn
+#' @param firstRowStripe firstRowStripe
+#' @param secondRowStripe secondRowStripe
+#' @param firstColumnStripe firstColumnStripe
+#' @param secondColumnStripe secondColumnStripe
+#' @param firstHeaderCell firstHeaderCell
+#' @param lastHeaderCell lastHeaderCell
+#' @param firstTotalCell firstTotalCell
+#' @param lastTotalCell lastTotalCell
+#' @export
+create_tablestyle <- function(
+    name,
+    wholeTable         = NULL,
+    headerRow          = NULL,
+    totalRow           = NULL,
+    firstColumn        = NULL,
+    lastColumn         = NULL,
+    firstRowStripe     = NULL,
+    secondRowStripe    = NULL,
+    firstColumnStripe  = NULL,
+    secondColumnStripe = NULL,
+    firstHeaderCell    = NULL,
+    lastHeaderCell     = NULL,
+    firstTotalCell     = NULL,
+    lastTotalCell      = NULL
+) {
+
+  tab_wholeTable <- NULL
+  if (length(wholeTable)) {
+    tab_wholeTable <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "wholeTable", dxfId = wholeTable))
+  }
+  tab_headerRow <- NULL
+  if (length(headerRow)) {
+    tab_headerRow <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "headerRow", dxfId = headerRow))
+  }
+  tab_totalRow <- NULL
+  if (length(totalRow)) {
+    tab_totalRow <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "totalRow", dxfId = totalRow))
+  }
+  tab_firstColumn <- NULL
+  if (length(firstColumn)) {
+    tab_firstColumn <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstColumn", dxfId = firstColumn))
+  }
+  tab_lastColumn <- NULL
+  if (length(lastColumn)) {
+    tab_lastColumn <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "lastColumn", dxfId = lastColumn))
+  }
+  tab_firstRowStripe <- NULL
+  if (length(firstRowStripe)) {
+    tab_firstRowStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstRowStripe", dxfId = firstRowStripe))
+  }
+  tab_secondRowStripe <- NULL
+  if (length(secondRowStripe)) {
+    tab_secondRowStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondRowStripe", dxfId = secondRowStripe))
+  }
+  tab_firstColumnStripe <- NULL
+  if (length(firstColumnStripe)) {
+    tab_firstColumnStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstColumnStripe", dxfId = firstColumnStripe))
+  }
+  tab_secondColumnStripe <- NULL
+  if (length(secondColumnStripe)) {
+    tab_secondColumnStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondColumnStripe", dxfId = secondColumnStripe))
+  }
+  tab_firstHeaderCell <- NULL
+  if (length(firstHeaderCell)) {
+    tab_firstHeaderCell <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstHeaderCell", dxfId = firstHeaderCell))
+  }
+  tab_lastHeaderCell <- NULL
+  if (length(lastHeaderCell)) {
+    tab_lastHeaderCell <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "lastHeaderCell", dxfId = lastHeaderCell))
+  }
+  tab_firstTotalCell <- NULL
+  if (length(firstTotalCell)) {
+    tab_firstTotalCell <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstTotalCell", dxfId = firstTotalCell))
+  }
+  tab_lastTotalCell <- NULL
+  if (length(lastTotalCell)) {
+    tab_lastTotalCell <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "lastTotalCell", dxfId = lastTotalCell))
+  }
+
+  xml_elements <- c(
+    tab_wholeTable,
+    tab_headerRow,
+    tab_totalRow,
+    tab_firstColumn,
+    tab_lastColumn,
+    tab_firstRowStripe,
+    tab_secondRowStripe,
+    tab_firstColumnStripe,
+    tab_secondColumnStripe,
+    tab_firstHeaderCell,
+    tab_lastHeaderCell,
+    tab_firstTotalCell,
+    tab_lastTotalCell
+  )
+
+  rand_str <- random_string(length = 12, pattern = "[A-Z0-9]")
+
+  xml_node_create(
+    "tableStyle",
+    xml_attributes = c(
+      name      = name,
+      pivot     = "0", # pivot uses different styles
+      count     = as_xml_attr(length(xml_elements)),
+      `xr9:uid` = sprintf("{CE23B8CA-E823-724F-9713-%s}", rand_str
+      )
+    ),
+    xml_children = xml_elements
+  )
+
+}
