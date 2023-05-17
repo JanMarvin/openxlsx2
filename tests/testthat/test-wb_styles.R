@@ -530,3 +530,24 @@ test_that("logical and numeric work too", {
   )
 
 })
+
+test_that("create_tablestyle() works", {
+
+  exp <- "<tableStyle name=\"red_table\" pivot=\"0\" count=\"9\" xr9:uid=\"{CE23B8CA-E823-724F-9713-ASEVX1JWJGYG}\"><tableStyleElement type=\"wholeTable\" dxfId=\"8\"/><tableStyleElement type=\"headerRow\" dxfId=\"7\"/><tableStyleElement type=\"totalRow\" dxfId=\"6\"/><tableStyleElement type=\"firstColumn\" dxfId=\"5\"/><tableStyleElement type=\"lastColumn\" dxfId=\"4\"/><tableStyleElement type=\"firstRowStripe\" dxfId=\"3\"/><tableStyleElement type=\"secondRowStripe\" dxfId=\"2\"/><tableStyleElement type=\"firstColumnStripe\" dxfId=\"1\"/><tableStyleElement type=\"secondColumnStripe\" dxfId=\"0\"/></tableStyle>"
+  set.seed(123)
+  options("openxlsx2_seed" = NULL)
+  got <- create_tablestyle(
+    name               = "red_table",
+    wholeTable         = 8,
+    headerRow          = 7,
+    totalRow           = 6,
+    firstColumn        = 5,
+    lastColumn         = 4,
+    firstRowStripe     = 3,
+    secondRowStripe    = 2,
+    firstColumnStripe  = 1,
+    secondColumnStripe = 0
+  )
+  expect_equal(exp, got)
+
+})

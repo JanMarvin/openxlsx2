@@ -800,7 +800,7 @@ create_tablestyle <- function(
     lastHeaderCell     = NULL,
     firstTotalCell     = NULL,
     lastTotalCell      = NULL
-){
+) {
 
   tab_wholeTable <- NULL
   if (length(wholeTable)) {
@@ -894,18 +894,18 @@ create_tablestyle <- function(
     tab_firstHeaderCell,
     tab_lastHeaderCell,
     tab_firstTotalCell,
-    tab_lastTotalCell,
+    tab_lastTotalCell
   )
+
+  rand_str <- random_string(length = 12, pattern = "[A-Z0-9]")
 
   xml_node_create(
     "tableStyle",
     xml_attributes = c(
-      name = name,
-      pivot = "0", # pivot uses different styles
-      count = as_xml_attr(length(xml_elements)),
-      `xr9:uid` = sprintf(
-        "{CE23B8CA-E823-724F-9713-%s}",
-        random_string(length = 12, pattern = "[A-Z0-9]")
+      name      = name,
+      pivot     = "0", # pivot uses different styles
+      count     = as_xml_attr(length(xml_elements)),
+      `xr9:uid` = sprintf("{CE23B8CA-E823-724F-9713-%s}", rand_str
       )
     ),
     xml_children = xml_elements
