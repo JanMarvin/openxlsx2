@@ -61,10 +61,9 @@ test_that("convert hms works", {
 test_that("custom classes are treated independently", {
 
   # create a custom test class
-  rlang::local_bindings(
-    .env = globalenv(),
-    as.character.myclass = function(x, ...) paste("myclass:", format(x, digits = 2))
-  )
+  as.character.myclass <- function(x, ...) paste("myclass:", format(x, digits = 2))
+  assign("as.character.myclass", as.character.myclass, envir = globalenv())
+  on.exit(rm("as.character.myclass", envir = globalenv()), add = TRUE)
 
   obj <- structure(1L, class = "myclass")
   wb <- wb_workbook()$add_worksheet()$add_data(x = obj)
