@@ -38,11 +38,17 @@ SEXP openxlsx2_type(SEXP x) {
       z = VECTOR_ELT(x, i);
     }
 
+    SEXP Rclass = Rf_getAttrib(z, R_ClassSymbol);
+
     switch (TYPEOF(z)) {
 
     // logical
     case LGLSXP:
-      type[i] =  3;
+      if (Rf_isNull(Rclass)) {
+        type[i] = 3; // logical
+      } else {
+        type[i] = 12; // probably some custom class
+      };
       break;
 
       // character, formula, hyperlink, array_formula
@@ -83,7 +89,6 @@ SEXP openxlsx2_type(SEXP x) {
     } else if (Rf_inherits(z, "hms")) {
       type[i] = 15;
     } else {
-      SEXP Rclass = Rf_getAttrib(z, R_ClassSymbol);
       if (Rf_isNull(Rclass)) {
         type[i] = 2; // numeric and integer
       } else {
