@@ -57,3 +57,34 @@ test_that("convert hms works", {
   expect_equal(attr(z, "tt")$A, "h")
 
 })
+
+test_that("custom classes are treated independently", {
+
+  # create a custom test class
+  rlang::local_bindings(
+    .env = globalenv(),
+    as.character.myclass = function(x, ...) paste("myclass:", format(x, digits = 2))
+  )
+
+  obj <- structure(1L, class = "myclass")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = obj)
+
+  exp <- "<is><t>myclass: 1</t></is>"
+  got <- wb$worksheets[[1]]$sheet_data$cc$is[2]
+  expect_equal(exp, got)
+
+  obj <- structure(1.1, class = "myclass")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = obj)
+
+  exp <- "<is><t>myclass: 1.1</t></is>"
+  got <- wb$worksheets[[1]]$sheet_data$cc$is[2]
+  expect_equal(exp, got)
+
+  obj <- structure(TRUE, class = "myclass")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = obj)
+
+  exp <- "<is><t>myclass: TRUE</t></is>"
+  got <- wb$worksheets[[1]]$sheet_data$cc$is[2]
+  expect_equal(exp, got)
+
+})
