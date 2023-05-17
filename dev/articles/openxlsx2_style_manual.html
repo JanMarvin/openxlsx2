@@ -503,7 +503,15 @@ indepentenly of the cell containing the string.</p>
 <span><span class="op">)</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">txt</span><span class="op">)</span></span></code></pre></div>
 <p>As shown above it is possible to combine multiple styles together
-into a longer string.</p>
+into a longer string. It is even possible to use <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code>
+as <code>na.strings</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">mtcars</span></span>
+<span><span class="va">df</span><span class="op">[</span><span class="va">df</span> <span class="op">&lt;</span> <span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span></span>
+<span><span class="va">na_red</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fmt_txt.html">fmt_txt</a></span><span class="op">(</span><span class="st">"N/A"</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span><span class="st">"red"</span><span class="op">)</span>, italic <span class="op">=</span> <span class="cn">TRUE</span>, bold <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">df</span>, na.strings <span class="op">=</span> <span class="va">na_red</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="create-custom-table-styles">Create custom table styles<a class="anchor" aria-label="anchor" href="#create-custom-table-styles"></a>
@@ -518,7 +526,7 @@ the workbook (similar styles are used in conditional formatting). In
 style elements. Once the table style is created, it must also be
 assigned to the workbook. After that you can use it in the workbook like
 any other table style.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># a red table style</span></span>
 <span><span class="va">dx0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span></span>
 <span>  border <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -617,7 +625,7 @@ any other table style.</p>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_style</span><span class="op">(</span><span class="va">xml</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a table and apply the custom style</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_data_table.html">wb_add_data_table</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, tableStyle <span class="op">=</span> <span class="st">"red_table"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
