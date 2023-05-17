@@ -375,3 +375,20 @@ wb <- wb_load(system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb_set_cell_style(1, "A30:G35", wb_get_cell_style(., 1, "A10:G15"))
 # wb_open(wb)
 ```
+
+### Style strings
+
+Using `fmt_txt()` is possible to style strings indepentenly of the cell containing the string.
+
+```{r}
+txt <- paste(
+  fmt_txt("Embracing the full potential of "),
+  fmt_txt("openxlsx2", bold = TRUE, size = 16),
+  fmt_txt(" with "),
+  fmt_txt("fmt_txt()", font = "Courier"),
+  fmt_txt(" !")
+)
+wb <- wb_workbook()$add_worksheet()$add_data(x = txt)
+```
+
+As shown above it is possible to combine multiple styles together into a longer string.
