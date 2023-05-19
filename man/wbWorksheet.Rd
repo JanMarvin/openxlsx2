@@ -493,7 +493,7 @@ The \code{wbWorksheetObject}, invisibly
 Ignore error on worksheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$ignore_error(
-  dims,
+  dims = "A1",
   calculatedColumn = FALSE,
   emptyCellReference = FALSE,
   evalError = FALSE,

@@ -329,6 +329,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_cell_style}{\code{wbWorkbook$set_cell_style()}}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
 \item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
+\item \href{#method-wbWorkbook-add_ignore_error}{\code{wbWorkbook$add_ignore_error()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -2909,6 +2910,55 @@ apply sparkline to worksheet
 \item{\code{sheet}}{the worksheet you are using}
 
 \item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_ignore_error"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_ignore_error}{}}}
+\subsection{Method \code{add_ignore_error()}}{
+Ignore error on worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_ignore_error(
+  sheet = current_sheet(),
+  dims = "A1",
+  calculatedColumn = FALSE,
+  emptyCellReference = FALSE,
+  evalError = FALSE,
+  formula = FALSE,
+  formulaRange = FALSE,
+  listDataValidation = FALSE,
+  numberStoredAsText = FALSE,
+  twoDigitTextYear = FALSE,
+  unlockedFormula = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+
+\item{\code{calculatedColumn}}{calculatedColumn}
+
+\item{\code{emptyCellReference}}{emptyCellReference}
+
+\item{\code{evalError}}{evalError}
+
+\item{\code{formula}}{formula}
+
+\item{\code{formulaRange}}{formulaRange}
+
+\item{\code{listDataValidation}}{listDataValidation}
+
+\item{\code{numberStoredAsText}}{numberStoredAsText}
+
+\item{\code{twoDigitTextYear}}{twoDigitTextYear}
+
+\item{\code{unlockedFormula}}{unlockedFormula}
 }
 \if{html}{\out{</div>}}
 }
