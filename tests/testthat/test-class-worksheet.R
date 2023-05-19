@@ -108,3 +108,25 @@ test_that("print options work", {
   expect_equal(exp, got)
 
 })
+
+test_that("ignore_error works", {
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_data(dims = "B1", x = t(c(1, 2, 3)), colNames = FALSE)
+  wb$add_formula(dims = "A1", x = "SUM(B1:C1)")
+
+  # 1
+  wb$worksheets[[1]]$ignore_error(dims = "A1", formulaRange = TRUE)
+
+  exp <- "<ignoredErrors><ignoredError sqref=\"A1\" formulaRange=\"1\"/></ignoredErrors>"
+  got <- wb$worksheets[[1]]$ignoredErrors
+  expect_equal(exp, got)
+
+  # 2
+  wb$worksheets[[1]]$ignore_error(dims = "A2", formula = TRUE)
+
+  exp <- "<ignoredErrors><ignoredError formulaRange=\"1\" sqref=\"A1\"/><ignoredError sqref=\"A2\" formula=\"1\"/></ignoredErrors>"
+  got <- wb$worksheets[[1]]$ignoredErrors
+  expect_equal(exp, got)
+
+})
