@@ -123,9 +123,9 @@ test_that("ignore_error works", {
   expect_equal(exp, got)
 
   # 2
-  wb$worksheets[[1]]$ignore_error(dims = "A2", formula = TRUE)
+  wb$worksheets[[1]]$ignore_error(dims = "A2", calculatedColumn = TRUE, emptyCellReference = TRUE, evalError = TRUE, formula = TRUE, formulaRange = TRUE, listDataValidation = TRUE, numberStoredAsText = TRUE, twoDigitTextYear = TRUE, unlockedFormula = TRUE)
 
-  exp <- "<ignoredErrors><ignoredError formulaRange=\"1\" sqref=\"A1\"/><ignoredError sqref=\"A2\" formula=\"1\"/></ignoredErrors>"
+  exp <- "<ignoredErrors><ignoredError formulaRange=\"1\" sqref=\"A1\"/><ignoredError formulaRange=\"1\" sqref=\"A2\" calculatedColumn=\"1\" emptyCellReference=\"1\" evalError=\"1\" formula=\"1\" listDataValidation=\"1\" numberStoredAsText=\"1\" twoDigitTextYear=\"1\" unlockedFormula=\"1\"/></ignoredErrors>"
   got <- wb$worksheets[[1]]$ignoredErrors
   expect_equal(exp, got)
 
