@@ -276,8 +276,14 @@ wbWorksheet <- R6::R6Class(
     #' @return A character vector of xml
     get_post_sheet_data = function() {
       paste_c(
+        # self$sheetCalcPr -- we do not provide calcPr
         self$sheetProtection,
+        self$protectedRanges,
+        self$scenarios,
         self$autoFilter,
+        self$sortState,
+        self$dataConsolidate,
+        self$customSheetViews,
 
         # mergeCells
         if (length(self$mergeCells)) {
@@ -287,6 +293,8 @@ wbWorksheet <- R6::R6Class(
             "</mergeCells>"
           )
         },
+
+        self$phoneticPr,
 
         # conditionalFormatting
         if (length(self$conditionalFormatting)) {
@@ -361,11 +369,18 @@ wbWorksheet <- R6::R6Class(
           )
         },
 
+        self$customProperties,
+        self$cellWatches,
         self$ignoredErrors,
+        self$smartTags,
         self$drawing,
-        self$legacyDrawing,
-        self$legacyDrawingHF,
+        self$drawingHF,
+        self$legacyDrawing,   # these appear to be removed in 2.8.1
+        self$legacyDrawingHF, # these appear to be removed in 2.8.1
+        self$picture,
         self$oleObjects,
+        self$controls,
+        self$webPublishItems,
 
         # tableParts
         if (n <- length(self$tableParts)) {
