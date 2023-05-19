@@ -276,8 +276,14 @@ wbWorksheet <- R6::R6Class(
     #' @return A character vector of xml
     get_post_sheet_data = function() {
       paste_c(
+        # self$sheetCalcPr -- we do not provide calcPr
         self$sheetProtection,
+        self$protectedRanges,
+        self$scenarios,
         self$autoFilter,
+        self$sortState,
+        self$dataConsolidate,
+        self$customSheetViews,
 
         # mergeCells
         if (length(self$mergeCells)) {
@@ -287,6 +293,8 @@ wbWorksheet <- R6::R6Class(
             "</mergeCells>"
           )
         },
+
+        self$phoneticPr,
 
         # conditionalFormatting
         if (length(self$conditionalFormatting)) {
@@ -361,10 +369,18 @@ wbWorksheet <- R6::R6Class(
           )
         },
 
+        self$customProperties,
+        self$cellWatches,
+        self$ignoredErrors,
+        self$smartTags,
         self$drawing,
-        self$legacyDrawing,
-        self$legacyDrawingHF,
+        self$drawingHF,
+        self$legacyDrawing,   # these appear to be removed in 2.8.1
+        self$legacyDrawingHF, # these appear to be removed in 2.8.1
+        self$picture,
         self$oleObjects,
+        self$controls,
+        self$webPublishItems,
 
         # tableParts
         if (n <- length(self$tableParts)) {
@@ -738,6 +754,106 @@ wbWorksheet <- R6::R6Class(
         "sheetViews",
         xml_children = sheetView
       )
+
+      invisible(self)
+    },
+
+    #' @description Ignore error on worksheet
+    #' @param dims dims
+    #' @param calculatedColumn calculatedColumn
+    #' @param emptyCellReference emptyCellReference
+    #' @param evalError evalError
+    #' @param formula formula
+    #' @param formulaRange formulaRange
+    #' @param listDataValidation listDataValidation
+    #' @param numberStoredAsText numberStoredAsText
+    #' @param twoDigitTextYear twoDigitTextYear
+    #' @param unlockedFormula unlockedFormula
+    #' @return The `wbWorksheetObject`, invisibly
+    ignore_error = function(
+      dims               = "A1",
+      calculatedColumn   = FALSE,
+      emptyCellReference = FALSE,
+      evalError          = FALSE,
+      formula            = FALSE,
+      formulaRange       = FALSE,
+      listDataValidation = FALSE,
+      numberStoredAsText = FALSE,
+      twoDigitTextYear   = FALSE,
+      unlockedFormula    = FALSE
+    ) {
+
+      dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+
+      iEs <- self$ignoredErrors
+      if (xml_node_name(iEs) == "ignoredErrors") {
+        iE <- xml_node(iEs, "ignoredErrors", "ignoredError")
+        iE_df <- rbindlist(xml_attr(iE, "ignoredError"))
+
+        need <- dims[!dims %in% iE_df$sref]
+        need_df <- as.data.frame(
+          matrix("", ncol = ncol(iE_df), nrow = length(need)),
+          stringsAsFactors = FALSE
+        )
+        names(need_df) <- names(iE_df)
+        need_df$sqref <- need
+
+        iE_df <- rbind(iE_df, need_df)
+
+      } else {
+        iE_df <- data.frame(sqref = dims, stringsAsFactors = FALSE)
+      }
+
+      sel <- match(dims, iE_df$sqref)
+
+      if (calculatedColumn) {
+        if (is.null(iE_df[["calculatedColumn"]])) iE_df$calculatedColumn <- ""
+        iE_df[sel, "calculatedColumn"]   <- as_xml_attr(calculatedColumn)
+      }
+
+      if (emptyCellReference) {
+        if (is.null(iE_df[["emptyCellReference"]])) iE_df$emptyCellReference <- ""
+        iE_df[sel, "emptyCellReference"] <- as_xml_attr(emptyCellReference)
+      }
+
+      if (evalError) {
+        if (is.null(iE_df[["evalError"]])) iE_df$evalError <- ""
+        iE_df[sel, "evalError"]          <- as_xml_attr(evalError)
+      }
+
+      if (formula) {
+        if (is.null(iE_df[["formula"]])) iE_df$formula <- ""
+        iE_df[sel, "formula"]            <- as_xml_attr(formula)
+      }
+
+      if (formulaRange) {
+        if (is.null(iE_df[["formulaRange"]])) iE_df$formulaRange <- ""
+        iE_df[sel, "formulaRange"]       <- as_xml_attr(formulaRange)
+      }
+
+      if (listDataValidation) {
+        if (is.null(iE_df[["listDataValidation"]])) iE_df$listDataValidation <- ""
+        iE_df[sel, "listDataValidation"] <- as_xml_attr(listDataValidation)
+      }
+
+      if (numberStoredAsText) {
+        if (is.null(iE_df[["numberStoredAsText"]])) iE_df$numberStoredAsText <- ""
+        iE_df[sel, "numberStoredAsText"] <- as_xml_attr(numberStoredAsText)
+      }
+
+      if (twoDigitTextYear) {
+        if (is.null(iE_df[["twoDigitTextYear"]])) iE_df$twoDigitTextYear <- ""
+        iE_df[sel, "twoDigitTextYear"]   <- as_xml_attr(twoDigitTextYear)
+      }
+
+      if (unlockedFormula) {
+        if (is.null(iE_df[["unlockedFormula"]])) iE_df$unlockedFormula <- ""
+        iE_df[sel, "unlockedFormula"]    <- as_xml_attr(unlockedFormula)
+      }
+
+      iE <- df_to_xml("ignoredError", iE_df)
+
+      self$ignoredErrors <- xml_node_create("ignoredErrors", iE)
 
       invisible(self)
     }

@@ -12,11 +12,15 @@
 
 * Add `fmt_txt()` to style character strings. [607](https://github.com/JanMarvin/openxlsx2/pull/607)
 
+* Add new wrapper to ignore worksheet errors `wb_add_ignore_error()`. [617](https://github.com/JanMarvin/openxlsx2/pull/617)
+
 ## Fixes
 
 * Improve handling of non standard `OutDec` options. [611](https://github.com/JanMarvin/openxlsx2/pull/611)
 
 * `openxlsx2` now does a better job of trying to return `character` values from classes that are foreign to it. This has been going on for quite some time, although previously we had a bug that treated such classes as `numeric`, resulting in corrupted xlsx files. [615](https://github.com/JanMarvin/openxlsx2/pull/615)
+
+* We now return a few additional xml arguments from worksheets. [617](https://github.com/JanMarvin/openxlsx2/pull/617)
 
 
 ***************************************************************************

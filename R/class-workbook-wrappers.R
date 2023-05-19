@@ -2872,3 +2872,48 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }
+
+
+#' Ignore error on worksheet
+#'
+#' @param wb workbook
+#' @param sheet sheet
+#' @param dims dims
+#' @param calculatedColumn calculatedColumn
+#' @param emptyCellReference emptyCellReference
+#' @param evalError evalError
+#' @param formula formula
+#' @param formulaRange formulaRange
+#' @param listDataValidation listDataValidation
+#' @param numberStoredAsText numberStoredAsText
+#' @param twoDigitTextYear twoDigitTextYear
+#' @param unlockedFormula unlockedFormula
+wb_add_ignore_error <- function(
+    wb,
+    sheet              = current_sheet(),
+    dims               = "A1",
+    calculatedColumn   = FALSE,
+    emptyCellReference = FALSE,
+    evalError          = FALSE,
+    formula            = FALSE,
+    formulaRange       = FALSE,
+    listDataValidation = FALSE,
+    numberStoredAsText = FALSE,
+    twoDigitTextYear   = FALSE,
+    unlockedFormula    = FALSE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_ignore_error(
+    sheet              = sheet,
+    dims               = dims,
+    calculatedColumn   = calculatedColumn,
+    emptyCellReference = emptyCellReference,
+    evalError          = evalError,
+    formula            = formula,
+    formulaRange       = formulaRange,
+    listDataValidation = listDataValidation,
+    numberStoredAsText = numberStoredAsText,
+    twoDigitTextYear   = twoDigitTextYear,
+    unlockedFormula    = unlockedFormula
+    )
+}

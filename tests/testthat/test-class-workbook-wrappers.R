@@ -608,3 +608,17 @@ test_that("wb_add_mschart() is a wrapper", {
   )
 
 })
+
+# wb_add_ignore_error() ---------------------------------------------------
+
+test_that("add_ignore_error is a wrapper", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_wrapper(
+    "add_ignore_error",
+    wb = wb,
+    params = list(dims = "F4:L20", formula = TRUE)
+  )
+
+})

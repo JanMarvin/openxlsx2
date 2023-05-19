@@ -119,6 +119,7 @@ A Worksheet
 \item \href{#method-wbWorksheet-append}{\code{wbWorksheet$append()}}
 \item \href{#method-wbWorksheet-add_sparklines}{\code{wbWorksheet$add_sparklines()}}
 \item \href{#method-wbWorksheet-set_sheetview}{\code{wbWorksheet$set_sheetview()}}
+\item \href{#method-wbWorksheet-ignore_error}{\code{wbWorksheet$ignore_error()}}
 \item \href{#method-wbWorksheet-clone}{\code{wbWorksheet$clone()}}
 }
 }
@@ -478,6 +479,55 @@ add sheetview
 \item{\code{zoomScalePageLayoutView}}{zoomScalePageLayoutView}
 
 \item{\code{zoomScaleSheetLayoutView}}{zoomScaleSheetLayoutView}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorksheet-ignore_error"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorksheet-ignore_error}{}}}
+\subsection{Method \code{ignore_error()}}{
+Ignore error on worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$ignore_error(
+  dims = "A1",
+  calculatedColumn = FALSE,
+  emptyCellReference = FALSE,
+  evalError = FALSE,
+  formula = FALSE,
+  formulaRange = FALSE,
+  listDataValidation = FALSE,
+  numberStoredAsText = FALSE,
+  twoDigitTextYear = FALSE,
+  unlockedFormula = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{dims}}{dims}
+
+\item{\code{calculatedColumn}}{calculatedColumn}
+
+\item{\code{emptyCellReference}}{emptyCellReference}
+
+\item{\code{evalError}}{evalError}
+
+\item{\code{formula}}{formula}
+
+\item{\code{formulaRange}}{formulaRange}
+
+\item{\code{listDataValidation}}{listDataValidation}
+
+\item{\code{numberStoredAsText}}{numberStoredAsText}
+
+\item{\code{twoDigitTextYear}}{twoDigitTextYear}
+
+\item{\code{unlockedFormula}}{unlockedFormula}
 }
 \if{html}{\out{</div>}}
 }
