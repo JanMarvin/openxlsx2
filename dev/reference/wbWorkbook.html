@@ -468,6 +468,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-set_cell_style"><code>wbWorkbook$set_cell_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone_sheet_style"><code>wbWorkbook$clone_sheet_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_sparklines"><code>wbWorkbook$add_sparklines()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_ignore_error"><code>wbWorkbook$add_ignore_error()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorkbook-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -3689,15 +3690,83 @@ are removed.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-add_ignore_error"></a><div class="section">
+<h3 id="method-add-ignore-error-">Method <code>add_ignore_error()</code><a class="anchor" aria-label="anchor" href="#method-add-ignore-error-"></a></h3>
+<p>Ignore error on worksheet</p><div class="section">
 <h4 id="usage-76">Usage<a class="anchor" aria-label="anchor" href="#usage-76"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_ignore_error</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
+<span>  calculatedColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  emptyCellReference <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  evalError <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  formula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  formulaRange <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  listDataValidation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  numberStoredAsText <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  twoDigitTextYear <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  unlockedFormula <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-72">Arguments<a class="anchor" aria-label="anchor" href="#arguments-72"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
+<dt><code>calculatedColumn</code></dt>
+<dd><p>calculatedColumn</p></dd>
+
+
+<dt><code>emptyCellReference</code></dt>
+<dd><p>emptyCellReference</p></dd>
+
+
+<dt><code>evalError</code></dt>
+<dd><p>evalError</p></dd>
+
+
+<dt><code>formula</code></dt>
+<dd><p>formula</p></dd>
+
+
+<dt><code>formulaRange</code></dt>
+<dd><p>formulaRange</p></dd>
+
+
+<dt><code>listDataValidation</code></dt>
+<dd><p>listDataValidation</p></dd>
+
+
+<dt><code>numberStoredAsText</code></dt>
+<dd><p>numberStoredAsText</p></dd>
+
+
+<dt><code>twoDigitTextYear</code></dt>
+<dd><p>twoDigitTextYear</p></dd>
+
+
+<dt><code>unlockedFormula</code></dt>
+<dd><p>unlockedFormula</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-77">Usage<a class="anchor" aria-label="anchor" href="#usage-77"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-73">Arguments<a class="anchor" aria-label="anchor" href="#arguments-73"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
