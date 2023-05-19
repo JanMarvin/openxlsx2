@@ -2888,7 +2888,7 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
 #' @param numberStoredAsText numberStoredAsText
 #' @param twoDigitTextYear twoDigitTextYear
 #' @param unlockedFormula unlockedFormula
-wb_add_ignore_error = function(
+wb_add_ignore_error <- function(
     wb,
     sheet              = current_sheet(),
     dims               = "A1",
