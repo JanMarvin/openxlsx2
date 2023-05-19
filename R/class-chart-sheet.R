@@ -15,14 +15,35 @@ wbChartSheet <- R6::R6Class(
     #' @field sheetViews Something
     sheetViews = character(),
 
+    #' @field sheetProtection sheetProtection
+    sheetProtection = character(),
+
+    #' @field customSheetViews customSheetViews
+    customSheetViews = character(),
+
     #' @field pageMargins page margins
     pageMargins = character(),
+
+    #' @field pageSetup pageSetup
+    pageSetup = character(),
+
+    #' @field headerFooter headerFooter
+    headerFooter = character(),
 
     #' @field drawing drawing
     drawing = character(),
 
-    #' @field hyperlinks hyperlinks
-    hyperlinks = NULL,
+    #' @field drawingHF drawingHF
+    drawingHF = character(),
+
+    #' @field picture picture
+    picture = character(),
+
+    #' @field webPublishItems webPublishItems
+    webPublishItems = character(),
+
+    #' #' @field hyperlinks hyperlinks
+    #' hyperlinks = NULL,
 
     #' @field relships relships
     relships = NULL,
@@ -42,7 +63,6 @@ wbChartSheet <- R6::R6Class(
       self$sheetViews  <- character()
       self$pageMargins <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
       self$drawing     <- '<drawing r:id=\"rId1\"/>'
-      self$hyperlinks  <- NULL
       self$relships              <- list(
         comments         = integer(),
         drawing          = integer(),
@@ -65,8 +85,15 @@ wbChartSheet <- R6::R6Class(
         '<chartsheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3" mc:Ignorable="xr xr3">',
         self$sheetPr,
         self$sheetViews,
+        self$customSheetViews,
+        # self$hyperlinks,
         self$pageMargins,
+        self$pageSetup,
+        self$headerFooter,
         self$drawing,
+        self$drawingHF,
+        self$picture,
+        self$webPublishItems,
         "</chartsheet>",
         sep = " "
       )
