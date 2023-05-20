@@ -136,7 +136,6 @@ test_that("print comment", {
 
 test_that("removing comment sheet works", {
 
-
   temp <- temp_xlsx()
   c1 <- create_comment(text = "this is a comment", author = "")
 
@@ -145,10 +144,6 @@ test_that("removing comment sheet works", {
     add_comment(1, col = "B", row = 10, comment = c1)$
     add_worksheet()$
     remove_worksheet(1)
-
-  # # FIXME this still carries a reference to comments1.xml even though the file
-  # # is no longer written. Spreadsheet software does not complain for now
-  # wb$Content_Types[[10]]
 
   expect_silent(wb$save(temp))
 

@@ -436,14 +436,6 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      ## add a drawing.xml for the worksheet
-      self$append("Content_Types",
-        sprintf(
-          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-          newSheetIndex
-        )
-      )
-
       ## create sheet.rels to simplify id assignment
       # new_drawings_idx <- length(self$drawings) + 1
       # self$drawings[[new_drawings_idx]]      <- ""
@@ -1891,12 +1883,13 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (nComments > 0) {
+        # FIXME why is this needed at all? We should not be required to modify Content_Types here ...
+        # TODO This default extension is most likely wrong here and should be set when searching for and writing the vml entrys
+        need_comments_xml <- which(self$comments != "")
         ct <- c(
           ct,
-          # TODO this default extension is most likely wrong here and should be set when searching for and writing the vml entrys
           '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>',
-          sprintf('<Override PartName="/xl/comments%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>', seq_len(nComments)
-          )
+          sprintf('<Override PartName="/xl/comments%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>', need_comments_xml)
         )
       }
 
@@ -2032,7 +2025,7 @@ wbWorkbook <- R6::R6Class(
       # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
       # assured that the order of entries is still valid when we write the file. Functions can change the
       # workbook order, therefore we have to make sure that the expected order is written.
-      # Othterwise spreadsheet software will complain.
+      # Otherwise spreadsheet software will complain.
       workbook_openxml281 <- c(
         "fileVersion", "fileSharing", "workbookPr", "alternateContent", "revisionPtr", "absPath",
         "workbookProtection", "bookViews", "sheets", "functionGroups", "externalReferences",
@@ -2051,6 +2044,75 @@ wbWorkbook <- R6::R6Class(
       self$workbook$sheets <- self$workbook$sheets[order(self$sheetOrder)]
 
       ## compress to xlsx
+
+      CT <- read_xml(paste0(tmpDir, "/[Content_Types].xml"))
+      CT <- rbindlist(xml_attr(CT, "Types", "Override"))
+      CT$tmpDirPartName <- paste0(tmpDir, CT$PartName)
+      CT$fileExists <- file.exists(CT$tmpDirPartName)
+
+      if (any(!CT$fileExists)) {
+        missing_in_tmp <- CT$PartName[!CT$fileExists]
+        warning(
+          "[CT] file expected to be in output is missing: ",
+          paste(missing_in_tmp, collapse = " ")
+        )
+      }
+
+      WR <- read_xml(paste0(tmpDir, "/xl/_rels/workbook.xml.rels"))
+      WR <- rbindlist(xml_attr(WR, "Relationships", "Relationship"))
+      WR$tmpDirPartName <- paste0(tmpDir, "/xl/", WR$Target)
+      WR$fileExists <- file.exists(WR$tmpDirPartName)
+
+      if (any(!WR$fileExists)) {
+        missing_in_tmp <- WR$Target[!WR$fileExists]
+        warning(
+          "[WR] file expected to be in output is missing: ",
+          paste(missing_in_tmp, collapse = " ")
+        )
+      }
+
+      folders <- c(
+        # other tables to add?
+        # pivotTables
+        # embeddings
+        "charts",
+        "chartsheets",
+        "drawings",
+        "tables",
+        "worksheets"
+      )
+
+      for (folder in folders) {
+
+        path_ws_rels <- paste0(tmpDir, "/xl/", folder, "/_rels")
+
+        ws_rels <- dir.exists(path_ws_rels)
+        if (ws_rels) {
+          # this somehow returned character(0)
+          WR <- dir(path_ws_rels, full.names = TRUE)
+          WR <- paste(vapply(WR, FUN = function(x) {
+            paste(
+              stringi::stri_read_lines(x, encoding = "UTF-8"),
+              collapse = ""
+            )
+          }, FUN.VALUE = ""), collapse = "")
+          if (WR != "") {
+            WR <- rbindlist(xml_attr(WR, "Relationships", "Relationship"))
+            WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
+            WR$fileExists <- file.exists(WR$tmpDirPartName)
+
+            if (any(!WR$fileExists)) {
+              missing_in_tmp <- WR$Target[!WR$fileExists]
+              warning(
+                "[", folder, "] file expected to be in output is missing: ",
+                paste(missing_in_tmp, collapse = " ")
+              )
+            }
+          }
+        }
+
+      }
+
 
       # TODO make self$vbaProject be TRUE/FALSE
       tmpFile <- tempfile(tmpdir = tmpDir, fileext = if (isTRUE(self$vbaProject)) ".xlsm" else ".xlsx")
@@ -3131,10 +3193,15 @@ wbWorkbook <- R6::R6Class(
         if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]       <- ""
 
         #### Modify Content_Types
-        ## remove last drawings(sheet).xml from Content_Types
-        drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
+        ## remove drawing
+        drawing_name <- xml_rels$target[xml_rels$type == "drawings"]
         if (!is.null(drawing_name) && !identical(drawing_name, character()))
           self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
+
+        # remove comment
+        comment_name <- xml_rels$target[xml_rels$type == "comments"]
+        if (!is.null(comment_name) && !identical(comment_name, character()))
+          self$Content_Types <- grep(comment_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       }
 
