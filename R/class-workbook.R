@@ -353,9 +353,15 @@ wbWorkbook <- R6::R6Class(
 
         # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
         # a better check for this
+        default_sheet_name <- getOption("openxlsx2.sheet.default_name", "Sheet ")
+        default_sheets <- self$sheet_names[grepl(default_sheet_name, self$sheet_names)]
+        max_sheet_num <- max(
+          0,
+          as.integer(gsub("\\D+", "", default_sheets))
+        )
         sheet <- paste0(
-          getOption("openxlsx2.sheet.default_name", "Sheet "),
-          length(self$sheet_names) + 1L
+          default_sheet_name,
+          max_sheet_num + 1L
         )
       }
 
@@ -516,9 +522,15 @@ wbWorkbook <- R6::R6Class(
 
         # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
         # a better check for this
+        default_sheet_name <- getOption("openxlsx2.sheet.default_name", "Sheet ")
+        default_sheets <- self$sheet_names[grepl(default_sheet_name, self$sheet_names)]
+        max_sheet_num <- max(
+          0,
+          as.integer(gsub("\\D+", "", default_sheets))
+        )
         sheet <- paste0(
-          getOption("openxlsx2.sheet.default_name", "Sheet "),
-          length(self$sheet_names) + 1L
+          default_sheet_name,
+          max_sheet_num + 1L
         )
       }
 

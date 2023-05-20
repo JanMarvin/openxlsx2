@@ -119,4 +119,15 @@ test_that("removing leading chartsheets works", {
 
   unlink(tmp_dir, recursive = TRUE)
 
+  ### avoid duplicated names
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_worksheet()$
+    remove_worksheet(1)$
+    add_worksheet()
+
+  exp <- c("Sheet 2", "Sheet 3")
+  got <- wb$sheet_names
+  expect_equal(exp, got)
+
 })
