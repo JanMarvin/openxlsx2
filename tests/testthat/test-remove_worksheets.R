@@ -58,3 +58,25 @@ test_that("Deleting worksheets", {
   expect_silent(wb$remove_worksheet())
 
 })
+
+test_that("removing leading chartsheets works", {
+
+  # We remove sheet 1 which is a chartsheet and the only chartsheet in the file.
+  # We remember the first worksheet id. And even though the first worksheet
+  # could be sheet 1, we keep it at 2. Otherwise our reference counter would get
+  # in trouble. Similar things could happen if all worksheets are removed and
+  # only chartsheets remain. Though that is currently not implemented.
+  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  tmp <- temp_xlsx()
+  wb <- wb_load(fl)$
+    remove_worksheet(1)$
+    save(tmp)
+  tmp_dir <- tempdir()
+  unzip(tmp, exdir = tmp_dir)
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+
+  exp <- c("sheet2.xml", "sheet3.xml", "sheet4.xml")
+  got <- dir(paste0(tmp_dir, "/xl/worksheets"), pattern = "*.xml")
+  expect_equal(exp, got)
+
+})
