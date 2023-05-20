@@ -18,3 +18,10 @@ wb_update_table(wb, sheet = current_sheet(), dims = "A1", tabname)
 \description{
 update a data_table
 }
+\details{
+Be aware that this function does not alter any filter. Excluding or adding rows does not make rows appear nor will it hide them.
+}
+\examples{
+wb <- wb_workbook()$add_worksheet()$add_data_table(x = mtcars)
+wb$update_table(tabname = "Table1", dims = "A1:J4")
+}
