@@ -2050,9 +2050,19 @@ wbWorkbook <- R6::R6Class(
       CT$tmpDirPartName <- paste0(tmpDir, CT$PartName)
       CT$fileExists <- file.exists(CT$tmpDirPartName)
 
-      if (any(CT$fileExists == FALSE)) {
-        missing_in_tmp <- CT$PartName[CT$tmpDirPartName == FALSE]
-        warning("file expected to be in output is missing: ", paste(missing_in_tmp, collapse = " "))
+      if (any(!CT$fileExists)) {
+        missing_in_tmp <- CT$PartName[!CT$fileExists]
+        warning("[CT] file expected to be in output is missing: ", paste(missing_in_tmp, collapse = " "))
+      }
+
+      WR <- read_xml(paste0(tmpDir, "/xl/_rels/workbook.xml.rels"))
+      WR <- rbindlist(xml_attr(WR, "Relationships", "Relationship"))
+      WR$tmpDirPartName <- paste0(tmpDir, "/xl/", WR$Target)
+      WR$fileExists <- file.exists(WR$tmpDirPartName)
+
+      if (any(!WR$fileExists)) {
+        missing_in_tmp <- WR$Target[!WR$fileExists]
+        warning("[WR] file expected to be in output is missing: ", paste(missing_in_tmp, collapse = " "))
       }
 
       # TODO make self$vbaProject be TRUE/FALSE
