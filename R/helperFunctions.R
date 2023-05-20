@@ -1113,4 +1113,3 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
   if (is.null(wxr[["TargetMode"]])) wxr$TargetMode <- ""
   df_to_xml("Relationship", df_col = wxr[c("Id", "Type", "Target", "TargetMode")])
 }
-

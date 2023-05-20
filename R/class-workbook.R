@@ -3064,21 +3064,11 @@ wbWorkbook <- R6::R6Class(
       nCharts <- max(which(self$is_chartsheet), 0)
       nWorks  <- max(which(!self$is_chartsheet), nSheets)
 
-      is_chartsheet <- self$is_chartsheet[sheet]
       self$is_chartsheet <- self$is_chartsheet[-sheet]
 
       ## remove the sheet
       ct <- read_Content_Types(self$Content_Types)
       self$Content_Types <- write_Content_Types(ct, rm_sheet = sheet)
-
-      ## Is this still required?
-      # The names for the other drawings have changed
-      de <- xml_node(read_xml(self$Content_Types), "Default")
-      ct <- rbindlist(xml_attr(read_xml(self$Content_Types), "Override"))
-      ct[grepl("drawing", ct$PartName), "PartName"] <- sprintf("/xl/drawings/drawing%i.xml", seq_along(self$drawings))
-      ct <- df_to_xml("Override", ct[c("PartName", "ContentType")])
-      self$Content_Types <- c(de, ct)
-
 
       ## sheetOrder
       toRemove <- which(self$sheetOrder == sheet)
