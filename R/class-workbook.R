@@ -147,9 +147,6 @@ wbWorkbook <- R6::R6Class(
     #' @field worksheets_rels worksheets_rels
     worksheets_rels = list(),
 
-    #' @field min_worksheet min_worksheet
-    min_worksheet = NULL,
-
     #' @field sheetOrder The sheet order.  Controls ordering for worksheets and
     #'   worksheet names.
     sheetOrder = integer(),
@@ -356,9 +353,15 @@ wbWorkbook <- R6::R6Class(
 
         # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
         # a better check for this
+        default_sheet_name <- getOption("openxlsx2.sheet.default_name", "Sheet ")
+        default_sheets <- self$sheet_names[grepl(default_sheet_name, self$sheet_names)]
+        max_sheet_num <- max(
+          0,
+          as.integer(gsub("\\D+", "", default_sheets))
+        )
         sheet <- paste0(
-          getOption("openxlsx2.sheet.default_name", "Sheet "),
-          length(self$sheet_names) + 1L
+          default_sheet_name,
+          max_sheet_num + 1L
         )
       }
 
@@ -519,9 +522,15 @@ wbWorkbook <- R6::R6Class(
 
         # TODO openxlsx2.sheet.default_name is undocumented. should incorporate
         # a better check for this
+        default_sheet_name <- getOption("openxlsx2.sheet.default_name", "Sheet ")
+        default_sheets <- self$sheet_names[grepl(default_sheet_name, self$sheet_names)]
+        max_sheet_num <- max(
+          0,
+          as.integer(gsub("\\D+", "", default_sheets))
+        )
         sheet <- paste0(
-          getOption("openxlsx2.sheet.default_name", "Sheet "),
-          length(self$sheet_names) + 1L
+          default_sheet_name,
+          max_sheet_num + 1L
         )
       }
 
@@ -3064,34 +3073,14 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      nCharts <- max(which(self$is_chartsheet), nSheets)
+      nCharts <- max(which(self$is_chartsheet), 0)
       nWorks  <- max(which(!self$is_chartsheet), nSheets)
 
-      # run only once. This is required if chartsheets are in front of worksheets.
-      # Maybe need to add this in wb_load and wb_add_worksheet/wb_add_chartsheet
-      if (is.null(self$min_worksheet))
-        self$min_worksheet <- min(which(!self$is_chartsheet)) - 1L
-
-      is_chartsheet <- self$is_chartsheet[sheet]
       self$is_chartsheet <- self$is_chartsheet[-sheet]
 
-      ## remove highest sheet
-      # (don't chagne this to a "grep(value = TRUE)" ... )
-
-      if (is_chartsheet) {
-        self$Content_Types <- self$Content_Types[!grepl(sprintf("chartsheets/sheet%s.xml", nCharts), self$Content_Types)]
-      } else {
-        self$Content_Types <- self$Content_Types[!grepl(sprintf("worksheets/sheet%s.xml", nWorks), self$Content_Types)]
-      }
-
-
-      # The names for the other drawings have changed
-      de <- xml_node(read_xml(self$Content_Types), "Default")
-      ct <- rbindlist(xml_attr(read_xml(self$Content_Types), "Override"))
-      ct[grepl("drawing", ct$PartName), "PartName"] <- sprintf("/xl/drawings/drawing%i.xml", seq_along(self$drawings))
-      ct <- df_to_xml("Override", ct[c("PartName", "ContentType")])
-      self$Content_Types <- c(de, ct)
-
+      ## remove the sheet
+      ct <- read_Content_Types(self$Content_Types)
+      self$Content_Types <- write_Content_Types(ct, rm_sheet = sheet)
 
       ## sheetOrder
       toRemove <- which(self$sheetOrder == sheet)
@@ -3187,14 +3176,8 @@ wbWorkbook <- R6::R6Class(
         self$workbook$sheets <- NULL
       }
 
-      ## Can remove highest sheet
-      # (don't use grepl(value = TRUE))
-      if (is_chartsheet) {
-        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("chartsheets/sheet%s.xml", nCharts), self$workbook.xml.rels)]
-      } else {
-        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("worksheets/sheet%s.xml", nWorks), self$workbook.xml.rels)]
-      }
-
+      wxr <- read_workbook.xml.rels(self$workbook.xml.rels)
+      self$workbook.xml.rels <- write_workbook.xml.rels(wxr, rm_sheet = sheet)
 
       invisible(self)
     },
@@ -6656,8 +6639,6 @@ wbWorkbook <- R6::R6Class(
 
       # TODO just seq_along()
       nSheets <- length(self$worksheets)
-      min_ws   <- self$min_worksheet
-      if (is.null(min_ws)) min_ws <- 0
 
       for (i in seq_len(nSheets)) {
 
@@ -6732,7 +6713,7 @@ wbWorkbook <- R6::R6Class(
             post = post,
             sheet_data = ws$sheet_data
           )
-          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i + min_ws)))
+          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {
@@ -6770,7 +6751,7 @@ wbWorkbook <- R6::R6Class(
               head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(ws_rels),
               tail = "</Relationships>",
-              fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i + min_ws))
+              fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i))
             )
           }
         } ## end of is_chartsheet[i]

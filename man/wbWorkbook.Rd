@@ -231,8 +231,6 @@ create_border
 
 \item{\code{worksheets_rels}}{worksheets_rels}
 
-\item{\code{min_worksheet}}{min_worksheet}
-
 \item{\code{sheetOrder}}{The sheet order.  Controls ordering for worksheets and
 worksheet names.}
 

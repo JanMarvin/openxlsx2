@@ -69,15 +69,65 @@ test_that("removing leading chartsheets works", {
   fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
   tmp <- temp_xlsx()
   wb <- wb_load(fl)$
-    remove_worksheet(1)$
-    save(tmp)
+    remove_worksheet(1)
+
+  wb$save(tmp)
   tmp_dir <- paste0(tempdir(), "/openxlsx2_unzip")
   dir.create(tmp_dir)
   unzip(tmp, exdir = tmp_dir)
 
-  exp <- c("sheet2.xml", "sheet3.xml", "sheet4.xml")
+  exp <- c("sheet1.xml", "sheet2.xml", "sheet3.xml")
   got <- dir(paste0(tmp_dir, "/xl/worksheets"), pattern = "*.xml")
   expect_equal(exp, got)
 
   unlink(tmp_dir, recursive = TRUE)
+
+  ###
+
+  ## broken
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = mtcars)
+
+  # create wb_data object
+  dat <- wb_data(wb, 1)
+
+  # call ms_scatterplot
+  data_plot <- ms_scatterchart(
+    data = dat,
+    x = "mpg",
+    y = c("disp", "hp"),
+    labels = c("disp", "hp")
+  )
+
+  wb$
+    add_chartsheet()$
+    add_mschart(graph = data_plot)$
+    add_worksheet()$
+    add_data(x = "something")
+
+  wb$remove_worksheet(2)
+
+  wb$save(tmp)
+  tmp_dir <- paste0(tempdir(), "/openxlsx2_unzip")
+  dir.create(tmp_dir)
+  unzip(tmp, exdir = tmp_dir)
+
+  exp <- c("sheet1.xml", "sheet2.xml")
+  got <- dir(paste0(tmp_dir, "/xl/worksheets"), pattern = "*.xml")
+  expect_equal(exp, got)
+
+  unlink(tmp_dir, recursive = TRUE)
+
+  ### avoid duplicated names
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_worksheet()$
+    remove_worksheet(1)$
+    add_worksheet()
+
+  exp <- c("Sheet 2", "Sheet 3")
+  got <- wb$sheet_names
+  expect_equal(exp, got)
+
 })

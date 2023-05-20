@@ -1046,3 +1046,70 @@ create_pivot_table <- function(
 }
 
 ### end pivot table helpers
+
+### modify xml file names
+
+read_Content_Types <- function(x) {
+
+  df <- rbindlist(xml_attr(x, "Default"))
+  or <- rbindlist(xml_attr(x, "Override"))
+
+  sel <- grepl("/sheet[0-9]+.xml$", or$PartName)
+  or$sheet_id <- NA
+  or$sheet_id[sel] <- as.integer(gsub("\\D+", "", basename(or$PartName)[sel]))
+
+
+  list(df, or)
+}
+
+write_Content_Types <- function(x, rm_sheet = NULL) {
+  df_df <- x[[1]]
+  or_df <- x[[2]]
+
+  if (!is.null(rm_sheet)) {
+    # remove a sheet and rename the remaining
+    or_df <- or_df[order(or_df$sheet_id), ]
+    sel <- which(or_df$sheet_id == rm_sheet)
+    or_df <- or_df[-sel, ]
+    or_df$PartName[!is.na(or_df$sheet_id)] <- sprintf(
+      "%s/sheet%s.xml",
+      dirname(or_df$PartName[!is.na(or_df$sheet_id)]),
+      seq_along(or_df$sheet_id[!is.na(or_df$sheet_id)])
+    )
+
+    or_df <- or_df[order(as.integer(row.names(or_df))), ]
+  }
+
+  df_xml <- df_to_xml("Default", df_df[c("Extension", "ContentType")])
+  or_xml <- df_to_xml("Override", or_df[c("PartName", "ContentType")])
+  c(df_xml, or_xml)
+}
+
+read_workbook.xml.rels <- function(x) {
+
+  wxr <- rbindlist(xml_attr(x, "Relationship"))
+
+  sel <- grepl("/sheet[0-9]+.xml$", wxr$Target)
+  wxr$sheet_id <- NA
+  wxr$sheet_id[sel] <- as.integer(gsub("\\D+", "", basename(wxr$Target)[sel]))
+  wxr
+}
+
+write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
+  wxr <- x
+
+  if (!is.null(rm_sheet)) {
+    # remove a sheet and rename the remaining
+    wxr <- wxr[order(wxr$sheet_id), ]
+    sel <- which(wxr$sheet_id == rm_sheet)
+    wxr <- wxr[-sel, ]
+    wxr$Target[!is.na(wxr$sheet_id)] <- sprintf(
+      "%s/sheet%s.xml",
+      dirname(wxr$Target[!is.na(wxr$sheet_id)]),
+      seq_along(wxr$sheet_id[!is.na(wxr$sheet_id)])
+    )
+  }
+
+  if (is.null(wxr[["TargetMode"]])) wxr$TargetMode <- ""
+  df_to_xml("Relationship", df_col = wxr[c("Id", "Type", "Target", "TargetMode")])
+}
