@@ -1883,12 +1883,13 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (nComments > 0) {
+        # FIXME why is this needed at all? We should not be required to modify Content_Types here ...
+        # TODO This default extension is most likely wrong here and should be set when searching for and writing the vml entrys
+        need_comments_xml <- which(self$comments != "")
         ct <- c(
           ct,
-          # TODO this default extension is most likely wrong here and should be set when searching for and writing the vml entrys
           '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>',
-          sprintf('<Override PartName="/xl/comments%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>', seq_len(nComments)
-          )
+          sprintf('<Override PartName="/xl/comments%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"/>', need_comments_xml)
         )
       }
 
@@ -3133,10 +3134,15 @@ wbWorkbook <- R6::R6Class(
         if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]       <- ""
 
         #### Modify Content_Types
-        ## remove last drawings(sheet).xml from Content_Types
-        drawing_name <- xml_rels$target[xml_rels$type == "drawing"]
+        ## remove drawing
+        drawing_name <- xml_rels$target[xml_rels$type == "drawings"]
         if (!is.null(drawing_name) && !identical(drawing_name, character()))
           self$Content_Types <- grep(drawing_name, self$Content_Types, invert = TRUE, value = TRUE)
+
+        # remove comment
+        comment_name <- xml_rels$target[xml_rels$type == "comments"]
+        if (!is.null(comment_name) && !identical(comment_name, character()))
+          self$Content_Types <- grep(comment_name, self$Content_Types, invert = TRUE, value = TRUE)
 
       }
 
