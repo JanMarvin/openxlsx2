@@ -147,9 +147,6 @@ wbWorkbook <- R6::R6Class(
     #' @field worksheets_rels worksheets_rels
     worksheets_rels = list(),
 
-    #' @field min_worksheet min_worksheet
-    min_worksheet = NULL,
-
     #' @field sheetOrder The sheet order.  Controls ordering for worksheets and
     #'   worksheet names.
     sheetOrder = integer(),
@@ -3064,7 +3061,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      nCharts <- max(which(self$is_chartsheet), nSheets)
+      nCharts <- max(which(self$is_chartsheet), 0)
       nWorks  <- max(which(!self$is_chartsheet), nSheets)
 
       is_chartsheet <- self$is_chartsheet[sheet]
