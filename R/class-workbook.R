@@ -2239,6 +2239,71 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description update a data_table
+    #' @param sheet a worksheet
+    #' @param dims cell used as start
+    #' @param tabname a tablename
+    #' @return The `wbWorksheet` object, invisibly
+    update_table = function(sheet = current_sheet(), dims = "A1", tabname) {
+
+      sheet <- private$get_sheet_index(sheet)
+
+      tabs <- self$get_tables(sheet = sheet)
+      sel <- row.names(tabs[tabs$tab_name %in% tabname])
+
+      wb_tabs <- self$tables[rownames(self$tables) %in% sel, ]
+
+      xml <- wb_tabs$tab_xml
+      tab_nams <- xml_node_name(xml, "table")
+
+      tab_attr <- xml_attr(xml, "table")[[1]]
+      tab_attr[["ref"]] <- dims
+
+      tab_autofilter <- xml_node(xml, "table", "autoFilter")
+      tab_autofilter <- xml_attr_mod(tab_autofilter, xml_attributes = c(ref = dims))
+
+
+      tab_tabColumns <- xml_node(xml, "table", "tableColumns")
+      tab_cols <- names(self$to_df(sheet = sheet, dims = dims))
+
+      fun <- function(tab_cols) {
+        tabCols <- NULL
+        for (i in seq_along(tab_cols)) {
+          tmp <- xml_node_create(
+            "tableColumn",
+            xml_attributes = c(id = as.character(i), name = tab_cols[i])
+          )
+          tabCols <- c(tabCols, tmp)
+        }
+
+        xml_node_create(
+          "tableColumns",
+          xml_attributes = c(count = as.character(length(tabCols))),
+          xml_children = tabCols
+        )
+      }
+      tab_tabColumns <- fun(tab_cols)
+
+      tab_tabStyleIn <- xml_node(xml, "table", "tableStyleInfo")
+
+      xml <- xml_node_create(
+        "table",
+        xml_attributes = tab_attr,
+        xml_children = c(
+          tab_autofilter,
+          tab_tabColumns,
+          tab_tabStyleIn
+        )
+      )
+
+      wb_tabs$tab_xml <- xml
+      wb_tabs$tab_ref <- dims
+
+      self$tables[rownames(self$tables) %in% sel, ] <- wb_tabs
+
+      invisible(self)
+    },
+
     ### copy cells ----
 
     #' @description
@@ -4955,22 +5020,16 @@ wbWorkbook <- R6::R6Class(
       if (is.na(sheet)) stop("No such sheet in workbook")
 
       sel <- self$tables$tab_sheet == sheet & self$tables$tab_act == 1
-      tables <- self$tables$tab_name[sel]
-      refs <- self$tables$tab_ref[sel]
-
-      if (length(tables)) {
-        attr(tables, "refs") <- refs
-      }
-
-      return(tables)
+      self$tables[sel, c("tab_name", "tab_ref")]
     },
 
 
     #' @description remove tables
     #' @param sheet sheet
     #' @param table table
+    #' @param remove_data removes the data as well
     #' @returns The `wbWorkbook` object
-    remove_tables = function(sheet = current_sheet(), table) {
+    remove_tables = function(sheet = current_sheet(), table, remove_data = TRUE) {
       if (length(table) != 1) {
         stop("table argument must be length 1")
       }
@@ -5007,17 +5066,10 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
       attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
 
-
-      ## Now delete data from the worksheet
-      refs <- strsplit(refs, split = ":")[[1]]
-      rows <- as.integer(gsub("[A-Z]", "", refs))
-      rows <- seq(from = rows[1], to = rows[2], by = 1)
-
-      cols <- col2int(refs)
-      cols <- seq(from = cols[1], to = cols[2], by = 1)
-
       ## now delete data
-      delete_data(wb = self, sheet = sheet, rows = rows, cols = cols)
+      if (remove_data)
+        self$clean_sheet(sheet = sheet, dims = refs)
+
       invisible(self)
     },
 

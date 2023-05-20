@@ -339,6 +339,21 @@ wb_add_formula <- function(
   )
 }
 
+#' update a data_table
+#' @param wb workbook
+#' @param sheet a worksheet
+#' @param dims cell used as start
+#' @param tabname a tablename
+#' @details Be aware that this function does not alter any filter. Excluding or adding rows does not make rows appear nor will it hide them.
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()$add_data_table(x = mtcars)
+#' wb$update_table(tabname = "Table1", dims = "A1:J4")
+#' @export
+wb_update_table <- function(wb, sheet = current_sheet(), dims = "A1", tabname) {
+  assert_workbook(wb)
+  wb$clone()$update_table(sheet = sheet, dims = dims, tabname = tabname)
+}
+
 #' copy cells around
 #' @param wb workbook
 #' @param sheet a worksheet
@@ -1880,6 +1895,7 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param table Name of table to remove. See [wb_get_tables()]
+#' @param remove_data Removes the data as well
 #' @return character vector of table names on the specified sheet
 #' @examples
 #'
@@ -1904,9 +1920,9 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 #' wb$remove_tables(sheet = 1, table = "iris")
 #' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' @export
-wb_remove_tables <- function(wb, sheet = current_sheet(), table) {
+wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = TRUE) {
   assert_workbook(wb)
-  wb$clone()$remove_tables(sheet = sheet, table = table)
+  wb$clone()$remove_tables(sheet = sheet, table = table, remove_data = remove_data)
 }
 
 

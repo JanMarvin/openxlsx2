@@ -58,6 +58,7 @@ wb_get_named_regions_tab <- function(wb) {
 #' @description Return a vector of named regions in a xlsx file or
 #' Workbook object
 #' @param x An xlsx file or Workbook object
+#' @param tables add tables too
 #' @seealso [wb_add_named_region()] [wb_remove_named_region()]
 #' @examples
 #' ## create named regions
@@ -102,7 +103,7 @@ get_named_regions <- function(x) {
 
 #' @rdname named_region
 #' @export
-wb_get_named_regions <- function(x) {
+wb_get_named_regions <- function(x, tables = FALSE) {
   if (inherits(x, "wbWorkbook")) {
     wb <- x
   } else {
@@ -115,9 +116,15 @@ wb_get_named_regions <- function(x) {
     z <- get_nr_from_definedName(wb)
   }
 
-  if (!is.null(wb$tables)) {
+  if (tables && !is.null(wb$tables)) {
     tb <- wb_get_named_regions_tab(wb)
-    z <- merge(z, tb, all = TRUE, sort = FALSE)
+
+    if (is.null(z)) {
+      z <- tb
+    } else {
+      z <- merge(z, tb, all = TRUE, sort = FALSE)
+    }
+
   }
 
   z

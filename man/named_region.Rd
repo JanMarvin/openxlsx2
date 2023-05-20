@@ -36,7 +36,7 @@ wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 
 get_named_regions(x)
 
-wb_get_named_regions(x)
+wb_get_named_regions(x, tables = FALSE)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -80,6 +80,8 @@ wb_get_named_regions(x)
 \item{xml}{xml (unknown xml feature)}
 
 \item{x}{An xlsx file or Workbook object}
+
+\item{tables}{add tables too}
 }
 \description{
 Create / delete a named region
