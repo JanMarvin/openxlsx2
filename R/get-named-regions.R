@@ -127,9 +127,5 @@ wb_get_named_regions <- function(x, tables = FALSE) {
 
   }
 
-  if (NROW(z) == 0) {
-    z <- NULL
-  }
-
   z
 }

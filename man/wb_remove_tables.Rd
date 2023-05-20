@@ -4,7 +4,7 @@
 \alias{wb_remove_tables}
 \title{Remove an Excel table in a workbook}
 \usage{
-wb_remove_tables(wb, sheet = current_sheet(), table)
+wb_remove_tables(wb, sheet = current_sheet(), table, remove_data = TRUE)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -12,6 +12,8 @@ wb_remove_tables(wb, sheet = current_sheet(), table)
 \item{sheet}{A name or index of a worksheet}
 
 \item{table}{Name of table to remove. See \code{\link[=wb_get_tables]{wb_get_tables()}}}
+
+\item{remove_data}{Removes the data as well}
 }
 \value{
 character vector of table names on the specified sheet

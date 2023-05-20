@@ -2225,7 +2225,7 @@ get tables
 \subsection{Method \code{remove_tables()}}{
 remove tables
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_tables(sheet = current_sheet(), table)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_tables(sheet = current_sheet(), table, remove_data = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -2234,6 +2234,8 @@ remove tables
 \item{\code{sheet}}{sheet}
 
 \item{\code{table}}{table}
+
+\item{\code{remove_data}}{removes the data as well}
 }
 \if{html}{\out{</div>}}
 }

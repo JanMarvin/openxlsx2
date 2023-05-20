@@ -1891,6 +1891,7 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param table Name of table to remove. See [wb_get_tables()]
+#' @param remove_data Removes the data as well
 #' @return character vector of table names on the specified sheet
 #' @examples
 #'
@@ -1915,9 +1916,9 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 #' wb$remove_tables(sheet = 1, table = "iris")
 #' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' @export
-wb_remove_tables <- function(wb, sheet = current_sheet(), table) {
+wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = TRUE) {
   assert_workbook(wb)
-  wb$clone()$remove_tables(sheet = sheet, table = table)
+  wb$clone()$remove_tables(sheet = sheet, table = table, remove_data = remove_data)
 }
 
 

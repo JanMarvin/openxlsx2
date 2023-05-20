@@ -5027,8 +5027,9 @@ wbWorkbook <- R6::R6Class(
     #' @description remove tables
     #' @param sheet sheet
     #' @param table table
+    #' @param remove_data removes the data as well
     #' @returns The `wbWorkbook` object
-    remove_tables = function(sheet = current_sheet(), table) {
+    remove_tables = function(sheet = current_sheet(), table, remove_data = TRUE) {
       if (length(table) != 1) {
         stop("table argument must be length 1")
       }
@@ -5066,7 +5067,9 @@ wbWorkbook <- R6::R6Class(
       attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
 
       ## now delete data
-      # self$clean_sheet(sheet = sheet, dims = refs)
+      if (remove_data)
+        self$clean_sheet(sheet = sheet, dims = refs)
+
       invisible(self)
     },
 
