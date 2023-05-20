@@ -2052,7 +2052,10 @@ wbWorkbook <- R6::R6Class(
 
       if (any(!CT$fileExists)) {
         missing_in_tmp <- CT$PartName[!CT$fileExists]
-        warning("[CT] file expected to be in output is missing: ", paste(missing_in_tmp, collapse = " "))
+        warning(
+          "[CT] file expected to be in output is missing: ",
+          paste(missing_in_tmp, collapse = " ")
+        )
       }
 
       WR <- read_xml(paste0(tmpDir, "/xl/_rels/workbook.xml.rels"))
@@ -2062,8 +2065,54 @@ wbWorkbook <- R6::R6Class(
 
       if (any(!WR$fileExists)) {
         missing_in_tmp <- WR$Target[!WR$fileExists]
-        warning("[WR] file expected to be in output is missing: ", paste(missing_in_tmp, collapse = " "))
+        warning(
+          "[WR] file expected to be in output is missing: ",
+          paste(missing_in_tmp, collapse = " ")
+        )
       }
+
+      folders <- c(
+        # other tables to add?
+        # pivotTables
+        # embeddings
+        "charts",
+        "chartsheets",
+        "drawings",
+        "tables",
+        "worksheets"
+      )
+
+      for (folder in folders) {
+
+        path_ws_rels <- paste0(tmpDir, "/xl/", folder, "/_rels")
+
+        ws_rels <- dir.exists(path_ws_rels)
+        if (ws_rels) {
+          # this somehow returned character(0)
+          WR <- dir(path_ws_rels, full.names = TRUE)
+          WR <- paste(vapply(WR, FUN = function(x) {
+            paste(
+              stringi::stri_read_lines(x, encoding = "UTF-8"),
+              collapse = ""
+            )
+          }, FUN.VALUE = ""), collapse = "")
+          if (WR != "") {
+            WR <- rbindlist(xml_attr(WR, "Relationships", "Relationship"))
+            WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
+            WR$fileExists <- file.exists(WR$tmpDirPartName)
+
+            if (any(!WR$fileExists)) {
+              missing_in_tmp <- WR$Target[!WR$fileExists]
+              warning(
+                "[", folder, "] file expected to be in output is missing: ",
+                paste(missing_in_tmp, collapse = " ")
+              )
+            }
+          }
+        }
+
+      }
+
 
       # TODO make self$vbaProject be TRUE/FALSE
       tmpFile <- tempfile(tmpdir = tmpDir, fileext = if (isTRUE(self$vbaProject)) ".xlsm" else ".xlsx")
