@@ -14,6 +14,8 @@
 
 * Add new wrapper to ignore worksheet errors `wb_add_ignore_error()`. [617](https://github.com/JanMarvin/openxlsx2/pull/617)
 
+* Add new wrapper to update table references `wb_update_table()`. [606](https://github.com/JanMarvin/openxlsx2/pull/606)
+
 ## Fixes
 
 * Improve handling of non standard `OutDec` options. [611](https://github.com/JanMarvin/openxlsx2/pull/611)
