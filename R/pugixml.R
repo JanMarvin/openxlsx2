@@ -300,7 +300,7 @@ xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, ...) {
   if (missing(xml_child))
     stop("need xml_child")
 
-  if (xml_child == "") return(xml_node)
+  if (all(xml_child == "")) return(xml_node)
 
   xml_node <- read_xml(xml_node, ...)
   xml_child <- read_xml(xml_child, ...)

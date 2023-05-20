@@ -3064,8 +3064,8 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      nCharts <- max(which(self$is_chartsheet))
-      nWorks  <- max(which(!self$is_chartsheet))
+      nCharts <- max(which(self$is_chartsheet), nSheets)
+      nWorks  <- max(which(!self$is_chartsheet), nSheets)
 
       # run only once. This is required if chartsheets are in front of worksheets.
       # Maybe need to add this in wb_load and wb_add_worksheet/wb_add_chartsheet
