@@ -436,14 +436,6 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      ## add a drawing.xml for the worksheet
-      self$append("Content_Types",
-        sprintf(
-          '<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>',
-          newSheetIndex
-        )
-      )
-
       ## create sheet.rels to simplify id assignment
       # new_drawings_idx <- length(self$drawings) + 1
       # self$drawings[[new_drawings_idx]]      <- ""
