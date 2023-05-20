@@ -21,11 +21,25 @@ A chart sheet
 
 \item{\code{sheetViews}}{Something}
 
+\item{\code{sheetProtection}}{sheetProtection}
+
+\item{\code{customSheetViews}}{customSheetViews}
+
 \item{\code{pageMargins}}{page margins}
+
+\item{\code{pageSetup}}{pageSetup}
+
+\item{\code{headerFooter}}{headerFooter}
 
 \item{\code{drawing}}{drawing}
 
-\item{\code{hyperlinks}}{hyperlinks}
+\item{\code{drawingHF}}{drawingHF}
+
+\item{\code{picture}}{picture}
+
+\item{\code{webPublishItems}}{webPublishItems
+#' @field hyperlinks hyperlinks
+hyperlinks = NULL,}
 
 \item{\code{relships}}{relships}
 }

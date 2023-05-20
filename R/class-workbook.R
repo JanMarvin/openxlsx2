@@ -147,6 +147,9 @@ wbWorkbook <- R6::R6Class(
     #' @field worksheets_rels worksheets_rels
     worksheets_rels = list(),
 
+    #' @field min_worksheet min_worksheet
+    min_worksheet = NULL,
+
     #' @field sheetOrder The sheet order.  Controls ordering for worksheets and
     #'   worksheet names.
     sheetOrder = integer(),
@@ -3061,11 +3064,26 @@ wbWorkbook <- R6::R6Class(
 
       }
 
+      nCharts <- max(which(self$is_chartsheet), nSheets)
+      nWorks  <- max(which(!self$is_chartsheet), nSheets)
+
+      # run only once. This is required if chartsheets are in front of worksheets.
+      # Maybe need to add this in wb_load and wb_add_worksheet/wb_add_chartsheet
+      if (is.null(self$min_worksheet))
+        self$min_worksheet <- min(which(!self$is_chartsheet)) - 1L
+
+      is_chartsheet <- self$is_chartsheet[sheet]
       self$is_chartsheet <- self$is_chartsheet[-sheet]
 
       ## remove highest sheet
       # (don't chagne this to a "grep(value = TRUE)" ... )
-      self$Content_Types <- self$Content_Types[!grepl(sprintf("sheet%s.xml", nSheets), self$Content_Types)]
+
+      if (is_chartsheet) {
+        self$Content_Types <- self$Content_Types[!grepl(sprintf("chartsheets/sheet%s.xml", nCharts), self$Content_Types)]
+      } else {
+        self$Content_Types <- self$Content_Types[!grepl(sprintf("worksheets/sheet%s.xml", nWorks), self$Content_Types)]
+      }
+
 
       # The names for the other drawings have changed
       de <- xml_node(read_xml(self$Content_Types), "Default")
@@ -3171,7 +3189,12 @@ wbWorkbook <- R6::R6Class(
 
       ## Can remove highest sheet
       # (don't use grepl(value = TRUE))
-      self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("sheet%s.xml", nSheets), self$workbook.xml.rels)]
+      if (is_chartsheet) {
+        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("chartsheets/sheet%s.xml", nCharts), self$workbook.xml.rels)]
+      } else {
+        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("worksheets/sheet%s.xml", nWorks), self$workbook.xml.rels)]
+      }
+
 
       invisible(self)
     },
@@ -6506,9 +6529,9 @@ wbWorkbook <- R6::R6Class(
 
           if (!is.null(unlist(self$vml_rels)) && length(self$vml_rels) >= i && self$vml_rels[[i]] != "") {
             write_file(
-              head = '',
+              head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(self$vml_rels[[i]]),
-              tail = '',
+              tail = '</Relationships>',
               fl = file.path(dir_rel, sprintf("vmlDrawing%s.vml.rels", i))
             )
           }
@@ -6633,6 +6656,8 @@ wbWorkbook <- R6::R6Class(
 
       # TODO just seq_along()
       nSheets <- length(self$worksheets)
+      min_ws   <- self$min_worksheet
+      if (is.null(min_ws)) min_ws <- 0
 
       for (i in seq_len(nSheets)) {
 
@@ -6707,7 +6732,7 @@ wbWorkbook <- R6::R6Class(
             post = post,
             sheet_data = ws$sheet_data
           )
-          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
+          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i + min_ws)))
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {
@@ -6745,7 +6770,7 @@ wbWorkbook <- R6::R6Class(
               head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(ws_rels),
               tail = "</Relationships>",
-              fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i))
+              fl = file.path(xlworksheetsRelsDir, sprintf("sheet%s.xml.rels", i + min_ws))
             )
           }
         } ## end of is_chartsheet[i]
