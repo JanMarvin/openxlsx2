@@ -33,47 +33,57 @@ wb_set_sheetview(
 
 \item{sheet}{sheet}
 
-\item{colorId}{colorId}
+\item{colorId, defaultGridColor}{Integer: A color, default is 64}
 
-\item{defaultGridColor}{defaultGridColor}
+\item{rightToLeft}{Logical: if TRUE column ordering is right  to left}
 
-\item{rightToLeft}{rightToLeft}
+\item{showFormulas}{Logical: if TRUE cell formulas are shown}
 
-\item{showFormulas}{showFormulas}
+\item{showGridLines}{Logical: if TRUE the worksheet grid is shown}
 
-\item{showGridLines}{showGridLines}
+\item{showOutlineSymbols}{Logical: if TRUE outline symbols are shown}
 
-\item{showOutlineSymbols}{showOutlineSymbols}
+\item{showRowColHeaders}{Logical: if TRUE row and column headers are shown}
 
-\item{showRowColHeaders}{showRowColHeaders}
+\item{showRuler}{Logical: if TRUE a ruler is shown in page layout view}
 
-\item{showRuler}{showRuler}
+\item{showWhiteSpace}{Logical: if TRUE margins are shown in page layout view}
 
-\item{showWhiteSpace}{showWhiteSpace}
+\item{showZeros}{Logical: if FALSE cells containg zero are shown blank if !showFormulas}
 
-\item{showZeros}{showZeros}
+\item{tabSelected}{Integer: zero vector indicating the selected tab}
 
-\item{tabSelected}{tabSelected}
+\item{topLeftCell}{Cell: the cell shown in the top left corner / or top right with rightToLeft}
 
-\item{topLeftCell}{topLeftCell}
+\item{view}{View: "normal", "pageBreakPreview" or "pageLayout"}
 
-\item{view}{view}
+\item{windowProtection}{Logical: if TRUE the panes are protected}
 
-\item{windowProtection}{windowProtection}
+\item{workbookViewId}{Interger: Pointing to some other view inside the workbook}
 
-\item{workbookViewId}{workbookViewId}
-
-\item{zoomScale}{zoomScale}
-
-\item{zoomScaleNormal}{zoomScaleNormal}
-
-\item{zoomScalePageLayoutView}{zoomScalePageLayoutView}
-
-\item{zoomScaleSheetLayoutView}{zoomScaleSheetLayoutView}
+\item{zoomScale, zoomScaleNormal, zoomScalePageLayoutView, zoomScaleSheetLayoutView}{Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly
 }
 \description{
 add sheetview
+}
+\examples{
+wb <- wb_workbook()$add_worksheet()
+
+wb$set_sheetview(
+  zoomScale = 75,
+  rightToLeft = FALSE,
+  showFormulas = TRUE,
+  showGridLines = TRUE,
+  showOutlineSymbols = FALSE,
+  showRowColHeaders = TRUE,
+  showRuler = TRUE,
+  showWhiteSpace = FALSE,
+  tabSelected = 1,
+  topLeftCell = "B1",
+  view = "normal",
+  windowProtection = TRUE
+)
 }

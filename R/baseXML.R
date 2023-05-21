@@ -118,6 +118,41 @@ genClientDataFC <- function(left, top, right, bottom, link, range, type, checked
   return(txt)
 }
 
+# This is just a list to remember possible combinations
+genBaseApp <- function() {
+  list(
+    Application = "<Application>Microsoft Excel</Application>",
+    AppVersion = NULL,
+    Characters = NULL,
+    CharactersWithSpaces = NULL,
+    Company = NULL,
+    DigSig = NULL,
+    DocSecurity = NULL,
+    HeadingPairs = NULL,
+    HiddenSlides = NULL,
+    HLinks = NULL,
+    HyperlinkBase = NULL,
+    HyperlinksChanged = NULL,
+    Lines = NULL,
+    LinksUpToDate = NULL,
+    Manager = NULL,
+    MMClips = NULL,
+    Notes = NULL,
+    Pages = NULL,
+    Paragraphs = NULL,
+    PresentationFormat = NULL,
+    Properties = NULL,
+    ScaleCrop = NULL,
+    SharedDoc = NULL,
+    Slides = NULL,
+    Template = NULL,
+    TitlesOfParts = NULL,
+    TotalTime = NULL,
+    VectorVariantType = NULL,
+    Words = NULL
+  )
+}
+
 genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL) {
 
   if (length(creator) > 1) creator <- paste0(creator, collapse = ";")

@@ -1424,7 +1424,7 @@ wb_protect <- function(
     password            = NULL,
     lockStructure       = FALSE,
     lockWindows         = FALSE,
-    type                = c("1", "2", "4", "8"),
+    type                = 1,
     fileSharing         = FALSE,
     username            = unname(Sys.info()["user"]),
     readOnlyRecommended = FALSE
@@ -2936,25 +2936,38 @@ wb_add_ignore_error <- function(
 #' add sheetview
 #' @param wb workbook
 #' @param sheet sheet
-#' @param colorId colorId
-#' @param defaultGridColor defaultGridColor
-#' @param rightToLeft rightToLeft
-#' @param showFormulas showFormulas
-#' @param showGridLines showGridLines
-#' @param showOutlineSymbols showOutlineSymbols
-#' @param showRowColHeaders showRowColHeaders
-#' @param showRuler showRuler
-#' @param showWhiteSpace showWhiteSpace
-#' @param showZeros showZeros
-#' @param tabSelected tabSelected
-#' @param topLeftCell topLeftCell
-#' @param view view
-#' @param windowProtection windowProtection
-#' @param workbookViewId workbookViewId
-#' @param zoomScale zoomScale
-#' @param zoomScaleNormal zoomScaleNormal
-#' @param zoomScalePageLayoutView zoomScalePageLayoutView
-#' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+#' @param colorId,defaultGridColor Integer: A color, default is 64
+#' @param rightToLeft Logical: if TRUE column ordering is right  to left
+#' @param showFormulas Logical: if TRUE cell formulas are shown
+#' @param showGridLines Logical: if TRUE the worksheet grid is shown
+#' @param showOutlineSymbols Logical: if TRUE outline symbols are shown
+#' @param showRowColHeaders Logical: if TRUE row and column headers are shown
+#' @param showRuler Logical: if TRUE a ruler is shown in page layout view
+#' @param showWhiteSpace Logical: if TRUE margins are shown in page layout view
+#' @param showZeros Logical: if FALSE cells containg zero are shown blank if !showFormulas
+#' @param tabSelected Integer: zero vector indicating the selected tab
+#' @param topLeftCell Cell: the cell shown in the top left corner / or top right with rightToLeft
+#' @param view View: "normal", "pageBreakPreview" or "pageLayout"
+#' @param windowProtection Logical: if TRUE the panes are protected
+#' @param workbookViewId Interger: Pointing to some other view inside the workbook
+#' @param zoomScale,zoomScaleNormal,zoomScalePageLayoutView,zoomScaleSheetLayoutView Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()
+#'
+#' wb$set_sheetview(
+#'   zoomScale = 75,
+#'   rightToLeft = FALSE,
+#'   showFormulas = TRUE,
+#'   showGridLines = TRUE,
+#'   showOutlineSymbols = FALSE,
+#'   showRowColHeaders = TRUE,
+#'   showRuler = TRUE,
+#'   showWhiteSpace = FALSE,
+#'   tabSelected = 1,
+#'   topLeftCell = "B1",
+#'   view = "normal",
+#'   windowProtection = TRUE
+#' )
 #' @return The `wbWorksheetObject`, invisibly
 #' @export
 wb_set_sheetview <- function(

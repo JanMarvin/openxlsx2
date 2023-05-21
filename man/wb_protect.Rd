@@ -10,7 +10,7 @@ wb_protect(
   password = NULL,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  type = c("1", "2", "4", "8"),
+  type = 1,
   fileSharing = FALSE,
   username = unname(Sys.info()["user"]),
   readOnlyRecommended = FALSE

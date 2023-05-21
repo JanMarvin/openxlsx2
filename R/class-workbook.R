@@ -21,9 +21,6 @@ wbWorkbook <- R6::R6Class(
     #' @field calcChain calcChain
     calcChain = character(),
 
-    #' @field apps apps
-    apps = character(),
-
     #' @field charts charts
     charts = list(),
 
@@ -188,7 +185,7 @@ wbWorkbook <- R6::R6Class(
       category        = NULL,
       datetimeCreated = Sys.time()
     ) {
-      self$apps <- character()
+      self$app <- genBaseApp()
       self$charts <- list()
       self$is_chartsheet <- logical()
 
@@ -1669,26 +1666,13 @@ wbWorkbook <- R6::R6Class(
         fl = file.path(relsDir, ".rels")
       )
 
-      app <- "<Application>Microsoft Excel</Application>"
-      # further protect argument (might be extended with: <ScaleCrop>, <HeadingPairs>, <TitlesOfParts>, <LinksUpToDate>, <SharedDoc>, <HyperlinksChanged>, <AppVersion>)
-      if (!is.null(self$apps)) app <- paste0(app, self$apps)
-
       ## write app.xml
-      if (length(self$app) == 0) {
-        write_file(
-          head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
-          body = app,
-          tail = "</Properties>",
-          fl = file.path(docPropsDir, "app.xml")
-        )
-      } else {
-        write_file(
-          head = '',
-          body = pxml(self$app),
-          tail = '',
-          fl = file.path(docPropsDir, "app.xml")
-        )
-      }
+      write_file(
+        head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
+        body = pxml(self$app),
+        tail = "</Properties>",
+        fl = file.path(docPropsDir, "app.xml")
+      )
 
       ## write core.xml
       write_file(
@@ -4694,7 +4678,7 @@ wbWorkbook <- R6::R6Class(
       password            = NULL,
       lockStructure       = FALSE,
       lockWindows         = FALSE,
-      type                = c("1", "2", "4", "8"),
+      type                = 1,
       fileSharing         = FALSE,
       username            = unname(Sys.info()["user"]),
       readOnlyRecommended = FALSE
@@ -4706,7 +4690,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       # match.arg() doesn't handle numbers too well
-      type <- if (!is.character(type)) as.character(type)
+      type <- as_xml_attr(type)
       password <- if (is.null(password)) "" else hashPassword(password)
 
       # TODO: Shall we parse the existing protection settings and preserve all
@@ -4732,7 +4716,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      self$workbook$apps <- xml_node_create("DocSecurity", type)
+      self$app$DocSecurity <- xml_node_create("DocSecurity", xml_children = type)
       invisible(self)
     },
 

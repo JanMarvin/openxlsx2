@@ -149,8 +149,6 @@ create_border
 
 \item{\code{calcChain}}{calcChain}
 
-\item{\code{apps}}{apps}
-
 \item{\code{charts}}{charts}
 
 \item{\code{is_chartsheet}}{is_chartsheet}
@@ -1957,7 +1955,7 @@ Protect a workbook
   password = NULL,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  type = c("1", "2", "4", "8"),
+  type = 1,
   fileSharing = FALSE,
   username = unname(Sys.info()["user"]),
   readOnlyRecommended = FALSE

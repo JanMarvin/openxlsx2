@@ -154,25 +154,26 @@ wbChartSheet <- R6::R6Class(
       sheetView <- xml_attr_mod(
         sheetView,
         xml_attributes = c(
-          colorId                  = as_xml_attr(colorId),
-          defaultGridColor         = as_xml_attr(defaultGridColor),
-          rightToLeft              = as_xml_attr(rightToLeft),
+          # order according to Ecma Office Open XML Part 1. p3929
+          windowProtection         = as_xml_attr(windowProtection),
           showFormulas             = as_xml_attr(showFormulas),
           showGridLines            = as_xml_attr(showGridLines),
-          showOutlineSymbols       = as_xml_attr(showOutlineSymbols),
-          showRowColHeaders        = as_xml_attr(showRowColHeaders),
-          showRuler                = as_xml_attr(showRuler),
-          showWhiteSpace           = as_xml_attr(showWhiteSpace),
           showZeros                = as_xml_attr(showZeros),
+          rightToLeft              = as_xml_attr(rightToLeft),
           tabSelected              = as_xml_attr(tabSelected),
-          topLeftCell              = as_xml_attr(topLeftCell),
+          showRuler                = as_xml_attr(showRuler),
+          showOutlineSymbols       = as_xml_attr(showOutlineSymbols),
+          defaultGridColor         = as_xml_attr(defaultGridColor),
+          showWhiteSpace           = as_xml_attr(showWhiteSpace),
           view                     = as_xml_attr(view),
-          windowProtection         = as_xml_attr(windowProtection),
-          workbookViewId           = as_xml_attr(workbookViewId),
+          topLeftCell              = as_xml_attr(topLeftCell),
+          colorId                  = as_xml_attr(colorId),
           zoomScale                = as_xml_attr(zoomScale),
+          showRowColHeaders        = as_xml_attr(showRowColHeaders),
           zoomScaleNormal          = as_xml_attr(zoomScaleNormal),
           zoomScalePageLayoutView  = as_xml_attr(zoomScalePageLayoutView),
-          zoomScaleSheetLayoutView = as_xml_attr(zoomScaleSheetLayoutView)
+          zoomScaleSheetLayoutView = as_xml_attr(zoomScaleSheetLayoutView),
+          workbookViewId           = as_xml_attr(workbookViewId)
         )
       )
 
