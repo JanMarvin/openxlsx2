@@ -189,10 +189,6 @@ STDEVP, SUM, VAR, VARP</p>
 <dd><p>calcChain</p></dd>
 
 
-<dt><code>apps</code></dt>
-<dd><p>apps</p></dd>
-
-
 <dt><code>charts</code></dt>
 <dd><p>charts</p></dd>
 
@@ -470,6 +466,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-clone_sheet_style"><code>wbWorkbook$clone_sheet_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_sparklines"><code>wbWorkbook$add_sparklines()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_ignore_error"><code>wbWorkbook$add_ignore_error()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-set_sheetview"><code>wbWorkbook$set_sheetview()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorkbook-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -2519,7 +2516,7 @@ are repeated across length of <code>cols</code></p></dd>
 <span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lockStructure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lockWindows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"4"</span>, <span class="st">"8"</span><span class="op">)</span>,</span>
+<span>  type <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  fileSharing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.info.html" class="external-link">Sys.info</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="st">"user"</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>  readOnlyRecommended <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -3791,15 +3788,132 @@ are removed.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-set_sheetview"></a><div class="section">
+<h3 id="method-set-sheetview-">Method <code>set_sheetview()</code><a class="anchor" aria-label="anchor" href="#method-set-sheetview-"></a></h3>
+<p>add sheetview</p><div class="section">
 <h4 id="usage-78">Usage<a class="anchor" aria-label="anchor" href="#usage-78"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheetview</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  defaultGridColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rightToLeft <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showFormulas <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showGridLines <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showOutlineSymbols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showRowColHeaders <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showRuler <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showWhiteSpace <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  showZeros <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tabSelected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  topLeftCell <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  view <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  windowProtection <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbookViewId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScaleNormal <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScalePageLayoutView <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoomScaleSheetLayoutView <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-74">Arguments<a class="anchor" aria-label="anchor" href="#arguments-74"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>sheet</p></dd>
+
+
+<dt><code>colorId</code></dt>
+<dd><p>colorId</p></dd>
+
+
+<dt><code>defaultGridColor</code></dt>
+<dd><p>defaultGridColor</p></dd>
+
+
+<dt><code>rightToLeft</code></dt>
+<dd><p>rightToLeft</p></dd>
+
+
+<dt><code>showFormulas</code></dt>
+<dd><p>showFormulas</p></dd>
+
+
+<dt><code>showGridLines</code></dt>
+<dd><p>showGridLines</p></dd>
+
+
+<dt><code>showOutlineSymbols</code></dt>
+<dd><p>showOutlineSymbols</p></dd>
+
+
+<dt><code>showRowColHeaders</code></dt>
+<dd><p>showRowColHeaders</p></dd>
+
+
+<dt><code>showRuler</code></dt>
+<dd><p>showRuler</p></dd>
+
+
+<dt><code>showWhiteSpace</code></dt>
+<dd><p>showWhiteSpace</p></dd>
+
+
+<dt><code>showZeros</code></dt>
+<dd><p>showZeros</p></dd>
+
+
+<dt><code>tabSelected</code></dt>
+<dd><p>tabSelected</p></dd>
+
+
+<dt><code>topLeftCell</code></dt>
+<dd><p>topLeftCell</p></dd>
+
+
+<dt><code>view</code></dt>
+<dd><p>view</p></dd>
+
+
+<dt><code>windowProtection</code></dt>
+<dd><p>windowProtection</p></dd>
+
+
+<dt><code>workbookViewId</code></dt>
+<dd><p>workbookViewId</p></dd>
+
+
+<dt><code>zoomScale</code></dt>
+<dd><p>zoomScale</p></dd>
+
+
+<dt><code>zoomScaleNormal</code></dt>
+<dd><p>zoomScaleNormal</p></dd>
+
+
+<dt><code>zoomScalePageLayoutView</code></dt>
+<dd><p>zoomScalePageLayoutView</p></dd>
+
+
+<dt><code>zoomScaleSheetLayoutView</code></dt>
+<dd><p>zoomScaleSheetLayoutView</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-40">Returns<a class="anchor" aria-label="anchor" href="#returns-40"></a></h4>
+<p>The <code>wbWorksheetObject</code>, invisibly</p>
+</div>
+
+</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-79">Usage<a class="anchor" aria-label="anchor" href="#usage-79"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-75">Arguments<a class="anchor" aria-label="anchor" href="#arguments-75"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
