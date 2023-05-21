@@ -1338,3 +1338,110 @@ basename2 <- function(path) {
     return(basename(path))
   }
 }
+
+## get cell styles for a worksheet
+get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
+
+  st_ids <- NULL
+  if (missing(dims)) {
+    st_ids <- styles_on_sheet(wb = wb, sheet = sheet) %>% as.character()
+    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
+  } else {
+    xf_xml <- get_cell_styles(wb = wb, sheet = sheet, cell = dims)
+  }
+
+  lst_out <- vector("list", length = length(xf_xml))
+
+  for (i in seq_along(xf_xml)) {
+
+    xf_df <- read_xf(read_xml(xf_xml[[i]]))
+
+    border_id <- which(wb$styles_mgr$border$id == xf_df$borderId)
+    fill_id   <- which(wb$styles_mgr$fill$id == xf_df$fillId)
+    font_id   <- which(wb$styles_mgr$font$id == xf_df$fontId)
+    numFmt_id <- which(wb$styles_mgr$numfmt$id == xf_df$numFmtId)
+
+    border_xml <- wb$styles_mgr$styles$borders[border_id]
+    fill_xml   <- wb$styles_mgr$styles$fills[fill_id]
+    font_xml   <- wb$styles_mgr$styles$fonts[font_id]
+    numfmt_xml <- wb$styles_mgr$styles$numFmts[numFmt_id]
+
+    out <- list(
+      xf_df,
+      border_xml,
+      fill_xml,
+      font_xml,
+      numfmt_xml
+    )
+    names(out) <- c("xf_df", "border_xml", "fill_xml", "font_xml", "numfmt_xml")
+    lst_out[[i]] <- out
+
+  }
+
+  attr(lst_out, "st_ids") <- st_ids
+
+  lst_out
+}
+
+## apply cell styles to a worksheet and return reference ids
+set_cellstyles <- function(wb, style) {
+
+  session_ids <- random_string(n = length(style))
+
+  for (i in seq_along(style)) {
+    session_id <- session_ids[i]
+
+    has_border <- FALSE
+    if (length(style[[i]]$border_xml)) {
+      has_border <- TRUE
+      wb$styles_mgr$add(style[[i]]$border_xml, session_id)
+    }
+
+    has_fill <- FALSE
+    if (length(style[[i]]$fill_xml)) {
+      has_fill <- TRUE
+      wb$styles_mgr$add(style[[i]]$fill_xml, session_id)
+    }
+
+    has_font <- FALSE
+    if (length(style[[i]]$font_xml)) {
+      has_font <- TRUE
+      wb$styles_mgr$add(style[[i]]$font_xml, session_id)
+    }
+
+    has_numfmt <- FALSE
+    if (length(style[[i]]$numfmt_xml)) {
+      has_numfmt <- TRUE
+      wb$styles_mgr$add(style[[i]]$numfmt_xml, session_id)
+    }
+
+    ## create new xf_df. This has to reference updated style ids
+    xf_df <- style[[i]]$xf_df
+
+    if (has_border)
+      xf_df$borderId <- wb$styles_mgr$get_border_id(session_id)
+
+    if (has_fill)
+      xf_df$fillId <- wb$styles_mgr$get_fill_id(session_id)
+
+    if (has_font)
+      xf_df$fontId <- wb$styles_mgr$get_font_id(session_id)
+
+    if (has_numfmt)
+      xf_df$numFmtId <- wb$styles_mgr$get_numfmt_id(session_id)
+
+    xf_xml <- write_xf(xf_df)
+
+    wb$styles_mgr$add(xf_xml, session_id)
+  }
+
+  # return updated style id
+  st_ids <- wb$styles_mgr$get_xf_id(session_ids)
+
+  if (!is.null(attr(style, "st_ids"))) {
+    names(st_ids) <- attr(style, "st_ids")
+  }
+
+  st_ids
+}
