@@ -144,7 +144,13 @@ wb_load <- function(
 
   ## core
   if (length(appXML)) {
-    wb$app <- read_xml(appXML, pointer = FALSE)
+    app_xml <- read_xml(appXML)
+    nodes <- xml_node_name(app_xml, "Properties")
+    app_list <- lapply(
+      nodes,
+      FUN = function(x) xml_node(app_xml, "Properties", x)
+    )
+    names(app_list) <- nodes
   }
 
   if (length(coreXML) == 1) {

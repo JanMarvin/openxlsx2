@@ -21,9 +21,6 @@ wbWorkbook <- R6::R6Class(
     #' @field calcChain calcChain
     calcChain = character(),
 
-    #' @field apps apps
-    apps = character(),
-
     #' @field charts charts
     charts = list(),
 
@@ -188,7 +185,7 @@ wbWorkbook <- R6::R6Class(
       category        = NULL,
       datetimeCreated = Sys.time()
     ) {
-      self$apps <- character()
+      self$app <- genBaseApp()
       self$charts <- list()
       self$is_chartsheet <- logical()
 
@@ -1669,26 +1666,13 @@ wbWorkbook <- R6::R6Class(
         fl = file.path(relsDir, ".rels")
       )
 
-      app <- "<Application>Microsoft Excel</Application>"
-      # further protect argument (might be extended with: <ScaleCrop>, <HeadingPairs>, <TitlesOfParts>, <LinksUpToDate>, <SharedDoc>, <HyperlinksChanged>, <AppVersion>)
-      if (!is.null(self$apps)) app <- paste0(app, self$apps)
-
       ## write app.xml
-      if (length(self$app) == 0) {
-        write_file(
-          head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
-          body = app,
-          tail = "</Properties>",
-          fl = file.path(docPropsDir, "app.xml")
-        )
-      } else {
-        write_file(
-          head = '',
-          body = pxml(self$app),
-          tail = '',
-          fl = file.path(docPropsDir, "app.xml")
-        )
-      }
+      write_file(
+        head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
+        body = pxml(self$app),
+        tail = "</Properties>",
+        fl = file.path(docPropsDir, "app.xml")
+      )
 
       ## write core.xml
       write_file(
@@ -4694,7 +4678,7 @@ wbWorkbook <- R6::R6Class(
       password            = NULL,
       lockStructure       = FALSE,
       lockWindows         = FALSE,
-      type                = c("1", "2", "4", "8"),
+      type                = 1,
       fileSharing         = FALSE,
       username            = unname(Sys.info()["user"]),
       readOnlyRecommended = FALSE
@@ -4706,7 +4690,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       # match.arg() doesn't handle numbers too well
-      type <- if (!is.character(type)) as.character(type)
+      type <- as_xml_attr(type)
       password <- if (is.null(password)) "" else hashPassword(password)
 
       # TODO: Shall we parse the existing protection settings and preserve all
@@ -4732,7 +4716,7 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      self$workbook$apps <- xml_node_create("DocSecurity", type)
+      self$app$DocSecurity <- xml_node_create("DocSecurity", xml_children = type)
       invisible(self)
     },
 
@@ -6333,7 +6317,6 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-
     #' @description apply sparkline to worksheet
     #' @param sheet the worksheet you are using
     #' @param sparklines sparkline created by `create_sparkline()`
@@ -6383,6 +6366,74 @@ wbWorkbook <- R6::R6Class(
         numberStoredAsText = numberStoredAsText,
         twoDigitTextYear   = twoDigitTextYear,
         unlockedFormula    = unlockedFormula
+      )
+    },
+
+    #' @description add sheetview
+    #' @param sheet sheet
+    #' @param colorId colorId
+    #' @param defaultGridColor defaultGridColor
+    #' @param rightToLeft rightToLeft
+    #' @param showFormulas showFormulas
+    #' @param showGridLines showGridLines
+    #' @param showOutlineSymbols showOutlineSymbols
+    #' @param showRowColHeaders showRowColHeaders
+    #' @param showRuler showRuler
+    #' @param showWhiteSpace showWhiteSpace
+    #' @param showZeros showZeros
+    #' @param tabSelected tabSelected
+    #' @param topLeftCell topLeftCell
+    #' @param view view
+    #' @param windowProtection windowProtection
+    #' @param workbookViewId workbookViewId
+    #' @param zoomScale zoomScale
+    #' @param zoomScaleNormal zoomScaleNormal
+    #' @param zoomScalePageLayoutView zoomScalePageLayoutView
+    #' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+    #' @return The `wbWorksheetObject`, invisibly
+    set_sheetview = function(
+      sheet                    = current_sheet(),
+      colorId                  = NULL,
+      defaultGridColor         = NULL,
+      rightToLeft              = NULL,
+      showFormulas             = NULL,
+      showGridLines            = NULL,
+      showOutlineSymbols       = NULL,
+      showRowColHeaders        = NULL,
+      showRuler                = NULL,
+      showWhiteSpace           = NULL,
+      showZeros                = NULL,
+      tabSelected              = NULL,
+      topLeftCell              = NULL,
+      view                     = NULL,
+      windowProtection         = NULL,
+      workbookViewId           = NULL,
+      zoomScale                = NULL,
+      zoomScaleNormal          = NULL,
+      zoomScalePageLayoutView  = NULL,
+      zoomScaleSheetLayoutView = NULL
+    ) {
+      sheet <- private$get_sheet_index(sheet)
+      self$worksheets[[sheet]]$set_sheetview(
+        colorId                  = colorId,
+        defaultGridColor         = defaultGridColor,
+        rightToLeft              = rightToLeft,
+        showFormulas             = showFormulas,
+        showGridLines            = showGridLines,
+        showOutlineSymbols       = showOutlineSymbols,
+        showRowColHeaders        = showRowColHeaders,
+        showRuler                = showRuler,
+        showWhiteSpace           = showWhiteSpace,
+        showZeros                = showZeros,
+        tabSelected              = tabSelected,
+        topLeftCell              = topLeftCell,
+        view                     = view,
+        windowProtection         = windowProtection,
+        workbookViewId           = workbookViewId,
+        zoomScale                = zoomScale,
+        zoomScaleNormal          = zoomScaleNormal,
+        zoomScalePageLayoutView  = zoomScalePageLayoutView,
+        zoomScaleSheetLayoutView = zoomScaleSheetLayoutView
       )
       invisible(self)
     }

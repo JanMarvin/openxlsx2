@@ -1424,7 +1424,7 @@ wb_protect <- function(
     password            = NULL,
     lockStructure       = FALSE,
     lockWindows         = FALSE,
-    type                = c("1", "2", "4", "8"),
+    type                = 1,
     fileSharing         = FALSE,
     username            = unname(Sys.info()["user"]),
     readOnlyRecommended = FALSE
@@ -2889,7 +2889,6 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }
 
-
 #' Ignore error on worksheet
 #'
 #' @param wb workbook
@@ -2932,4 +2931,89 @@ wb_add_ignore_error <- function(
     twoDigitTextYear   = twoDigitTextYear,
     unlockedFormula    = unlockedFormula
     )
+}
+
+#' add sheetview
+#' @param wb workbook
+#' @param sheet sheet
+#' @param colorId,defaultGridColor Integer: A color, default is 64
+#' @param rightToLeft Logical: if TRUE column ordering is right  to left
+#' @param showFormulas Logical: if TRUE cell formulas are shown
+#' @param showGridLines Logical: if TRUE the worksheet grid is shown
+#' @param showOutlineSymbols Logical: if TRUE outline symbols are shown
+#' @param showRowColHeaders Logical: if TRUE row and column headers are shown
+#' @param showRuler Logical: if TRUE a ruler is shown in page layout view
+#' @param showWhiteSpace Logical: if TRUE margins are shown in page layout view
+#' @param showZeros Logical: if FALSE cells containg zero are shown blank if !showFormulas
+#' @param tabSelected Integer: zero vector indicating the selected tab
+#' @param topLeftCell Cell: the cell shown in the top left corner / or top right with rightToLeft
+#' @param view View: "normal", "pageBreakPreview" or "pageLayout"
+#' @param windowProtection Logical: if TRUE the panes are protected
+#' @param workbookViewId Interger: Pointing to some other view inside the workbook
+#' @param zoomScale,zoomScaleNormal,zoomScalePageLayoutView,zoomScaleSheetLayoutView Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()
+#'
+#' wb$set_sheetview(
+#'   zoomScale = 75,
+#'   rightToLeft = FALSE,
+#'   showFormulas = TRUE,
+#'   showGridLines = TRUE,
+#'   showOutlineSymbols = FALSE,
+#'   showRowColHeaders = TRUE,
+#'   showRuler = TRUE,
+#'   showWhiteSpace = FALSE,
+#'   tabSelected = 1,
+#'   topLeftCell = "B1",
+#'   view = "normal",
+#'   windowProtection = TRUE
+#' )
+#' @return The `wbWorksheetObject`, invisibly
+#' @export
+wb_set_sheetview <- function(
+    wb,
+    sheet                    = current_sheet(),
+    colorId                  = NULL,
+    defaultGridColor         = NULL,
+    rightToLeft              = NULL,
+    showFormulas             = NULL,
+    showGridLines            = NULL,
+    showOutlineSymbols       = NULL,
+    showRowColHeaders        = NULL,
+    showRuler                = NULL,
+    showWhiteSpace           = NULL,
+    showZeros                = NULL,
+    tabSelected              = NULL,
+    topLeftCell              = NULL,
+    view                     = NULL,
+    windowProtection         = NULL,
+    workbookViewId           = NULL,
+    zoomScale                = NULL,
+    zoomScaleNormal          = NULL,
+    zoomScalePageLayoutView  = NULL,
+    zoomScaleSheetLayoutView = NULL
+) {
+  assert_workbook(wb)
+  wb$clone()$set_sheetview(
+    sheet                    = sheet,
+    colorId                  = colorId,
+    defaultGridColor         = defaultGridColor,
+    rightToLeft              = rightToLeft,
+    showFormulas             = showFormulas,
+    showGridLines            = showGridLines,
+    showOutlineSymbols       = showOutlineSymbols,
+    showRowColHeaders        = showRowColHeaders,
+    showRuler                = showRuler,
+    showWhiteSpace           = showWhiteSpace,
+    showZeros                = showZeros,
+    tabSelected              = tabSelected,
+    topLeftCell              = topLeftCell,
+    view                     = view,
+    windowProtection         = windowProtection,
+    workbookViewId           = workbookViewId,
+    zoomScale                = zoomScale,
+    zoomScaleNormal          = zoomScaleNormal,
+    zoomScalePageLayoutView  = zoomScalePageLayoutView,
+    zoomScaleSheetLayoutView = zoomScaleSheetLayoutView
+  )
 }

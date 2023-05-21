@@ -149,8 +149,6 @@ create_border
 
 \item{\code{calcChain}}{calcChain}
 
-\item{\code{apps}}{apps}
-
 \item{\code{charts}}{charts}
 
 \item{\code{is_chartsheet}}{is_chartsheet}
@@ -331,6 +329,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
 \item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-add_ignore_error}{\code{wbWorkbook$add_ignore_error()}}
+\item \href{#method-wbWorkbook-set_sheetview}{\code{wbWorkbook$set_sheetview()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1956,7 +1955,7 @@ Protect a workbook
   password = NULL,
   lockStructure = FALSE,
   lockWindows = FALSE,
-  type = c("1", "2", "4", "8"),
+  type = 1,
   fileSharing = FALSE,
   username = unname(Sys.info()["user"]),
   readOnlyRecommended = FALSE
@@ -2988,6 +2987,85 @@ Ignore error on worksheet
 \item{\code{unlockedFormula}}{unlockedFormula}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_sheetview"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_sheetview}{}}}
+\subsection{Method \code{set_sheetview()}}{
+add sheetview
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheetview(
+  sheet = current_sheet(),
+  colorId = NULL,
+  defaultGridColor = NULL,
+  rightToLeft = NULL,
+  showFormulas = NULL,
+  showGridLines = NULL,
+  showOutlineSymbols = NULL,
+  showRowColHeaders = NULL,
+  showRuler = NULL,
+  showWhiteSpace = NULL,
+  showZeros = NULL,
+  tabSelected = NULL,
+  topLeftCell = NULL,
+  view = NULL,
+  windowProtection = NULL,
+  workbookViewId = NULL,
+  zoomScale = NULL,
+  zoomScaleNormal = NULL,
+  zoomScalePageLayoutView = NULL,
+  zoomScaleSheetLayoutView = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{colorId}}{colorId}
+
+\item{\code{defaultGridColor}}{defaultGridColor}
+
+\item{\code{rightToLeft}}{rightToLeft}
+
+\item{\code{showFormulas}}{showFormulas}
+
+\item{\code{showGridLines}}{showGridLines}
+
+\item{\code{showOutlineSymbols}}{showOutlineSymbols}
+
+\item{\code{showRowColHeaders}}{showRowColHeaders}
+
+\item{\code{showRuler}}{showRuler}
+
+\item{\code{showWhiteSpace}}{showWhiteSpace}
+
+\item{\code{showZeros}}{showZeros}
+
+\item{\code{tabSelected}}{tabSelected}
+
+\item{\code{topLeftCell}}{topLeftCell}
+
+\item{\code{view}}{view}
+
+\item{\code{windowProtection}}{windowProtection}
+
+\item{\code{workbookViewId}}{workbookViewId}
+
+\item{\code{zoomScale}}{zoomScale}
+
+\item{\code{zoomScaleNormal}}{zoomScaleNormal}
+
+\item{\code{zoomScalePageLayoutView}}{zoomScalePageLayoutView}
+
+\item{\code{zoomScaleSheetLayoutView}}{zoomScaleSheetLayoutView}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
