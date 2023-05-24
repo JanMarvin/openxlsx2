@@ -2085,6 +2085,10 @@ wbWorkbook <- R6::R6Class(
             WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
             WR$fileExists <- file.exists(WR$tmpDirPartName)
 
+            # exclude hyperlinks
+            WR$type <- basename(WR$Type)
+            WR <- WR[WR$type != "hyperlink", ]
+
             if (any(!WR$fileExists)) {
               missing_in_tmp <- WR$Target[!WR$fileExists]
               warning(
@@ -6886,7 +6890,7 @@ wbWorkbook <- R6::R6Class(
           write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
 
           ## write worksheet rels
-          if (length(self$worksheets_rels[[i]])) {
+          if (length(self$worksheets_rels[[i]]) || hasHL) {
             ws_rels <- self$worksheets_rels[[i]]
             if (hasHL) {
               h_inds <- stri_join(seq_along(self$worksheets[[i]]$hyperlinks), "h")

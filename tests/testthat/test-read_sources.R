@@ -354,8 +354,6 @@ test_that("reading multiple slicers on a pivot table works", {
 
   skip_if_offline()
 
-  temp <- temp_xlsx()
-
   wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/gh_issue_504.xlsx")
 
   expect_equal(1L, length(wb$slicers))
@@ -385,4 +383,22 @@ test_that("reading multiple slicers on a pivot table works", {
   got <- wb$workbook.xml.rels[6:8]
   expect_equal(exp, got)
 
+})
+
+test_that("hyperlinks work", {
+
+  skip_if_offline()
+
+  tmp <- temp_xlsx()
+  wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/Single_hyperlink.xlsx")$save(tmp)
+
+  temp_uzip <- paste0(tempdir(), "/unzip_openxlsx2")
+  dir.create(temp_uzip)
+  unzip(tmp, exdir = temp_uzip)
+
+  exp <- "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1h\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://www.github.com/JanMarvin/openxlsx2\" TargetMode=\"External\"/></Relationships>"
+  got <- read_xml(paste0(temp_uzip, "/xl/worksheets/_rels/sheet1.xml.rels"), pointer = FALSE)
+  expect_equal(exp, got)
+
+  unlink(temp_uzip, recursive = TRUE)
 })
