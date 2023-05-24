@@ -2085,6 +2085,10 @@ wbWorkbook <- R6::R6Class(
             WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
             WR$fileExists <- file.exists(WR$tmpDirPartName)
 
+            # exclude hyperlinks
+            WR$type <- basename(WR$Type)
+            WR <- WR[WR$type != "hyperlink", ]
+
             if (any(!WR$fileExists)) {
               missing_in_tmp <- WR$Target[!WR$fileExists]
               warning(
