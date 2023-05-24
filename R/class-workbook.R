@@ -6886,7 +6886,7 @@ wbWorkbook <- R6::R6Class(
           write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
 
           ## write worksheet rels
-          # if (length(self$worksheets_rels[[i]])) {
+          if (length(self$worksheets_rels[[i]]) || hasHL) {
             ws_rels <- self$worksheets_rels[[i]]
             if (hasHL) {
               h_inds <- stri_join(seq_along(self$worksheets[[i]]$hyperlinks), "h")
@@ -6896,7 +6896,7 @@ wbWorkbook <- R6::R6Class(
                     self$worksheets[[i]]$hyperlinks[[j]]$to_target_xml(h_inds[j])
                   })
                 ))
-            # }
+            }
 
             ## Check if any tables were deleted - remove these from rels
             # TODO a relship manager should take care of this
