@@ -18,7 +18,7 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7</span>
       </span>
     </div>
 
@@ -43,6 +43,9 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
     </li>
     <li>
       <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
+    </li>
+    <li>
+      <a href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     </li>
     <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -196,7 +199,8 @@ Write an object to worksheet with optional styling."><!-- mathjax --><script src
     <h2>Details</h2>
     <p>Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
-The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. If the data frame contains this string, the output will be broken.</p>
+The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. If the data frame contains this string, the output will be broken.
+Many base classes are covered, though not all and far from all third-party classes. When data of an unknown class is written, it is handled with <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code>.</p>
 <p>Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. If the data frame contains this string, the output will be broken.</p>

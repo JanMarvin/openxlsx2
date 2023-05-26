@@ -18,7 +18,7 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7</span>
       </span>
     </div>
 
@@ -43,6 +43,9 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
     </li>
     <li>
       <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
+    </li>
+    <li>
+      <a href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     </li>
     <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -103,6 +106,18 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 <dd><p>dxf-ids</p></dd>
 
 
+<dt><code>tableStyle</code></dt>
+<dd><p>tableStyle-ids</p></dd>
+
+
+<dt><code>defaultTableStyle</code></dt>
+<dd><p>defaultTableStyle</p></dd>
+
+
+<dt><code>defaultPivotStyle</code></dt>
+<dd><p>defaultPivotStyle</p></dd>
+
+
 <dt><code>styles</code></dt>
 <dd><p>styles as xml</p></dd>
 
@@ -128,12 +143,14 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 <li><p><a href="#method-wbStylesMgr-get_border_id"><code>style_mgr$get_border_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-get_xf_id"><code>style_mgr$get_xf_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-get_dxf_id"><code>style_mgr$get_dxf_id()</code></a></p></li>
+<li><p><a href="#method-wbStylesMgr-get_tableStyle_id"><code>style_mgr$get_tableStyle_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-next_numfmt_id"><code>style_mgr$next_numfmt_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-next_font_id"><code>style_mgr$next_font_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-next_fill_id"><code>style_mgr$next_fill_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-next_border_id"><code>style_mgr$next_border_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-next_xf_id"><code>style_mgr$next_xf_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-next_dxf_id"><code>style_mgr$next_dxf_id()</code></a></p></li>
+<li><p><a href="#method-wbStylesMgr-next_tableStyle_id"><code>style_mgr$next_tableStyle_id()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-add"><code>style_mgr$add()</code></a></p></li>
 <li><p><a href="#method-wbStylesMgr-clone"><code>style_mgr$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbStylesMgr-new"></a><div class="section">
@@ -332,10 +349,26 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-wbStylesMgr-get_tableStyle_id"></a><div class="section">
+<h3 id="method-get-tablestyle-id-">Method <code>get_tableStyle_id()</code><a class="anchor" aria-label="anchor" href="#method-get-tablestyle-id-"></a></h3>
+<p>get tableStyle id by name</p><div class="section">
+<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">get_tableStyle_id</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>name</code></dt>
+<dd><p>name</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
 </div><p></p><hr><a id="method-wbStylesMgr-next_numfmt_id"></a><div class="section">
 <h3 id="method-next-numfmt-id-">Method <code>next_numfmt_id()</code><a class="anchor" aria-label="anchor" href="#method-next-numfmt-id-"></a></h3>
 <p>get next numfmt id</p><div class="section">
-<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
+<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">next_numfmt_id</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -343,7 +376,7 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 </div><p></p><hr><a id="method-wbStylesMgr-next_font_id"></a><div class="section">
 <h3 id="method-next-font-id-">Method <code>next_font_id()</code><a class="anchor" aria-label="anchor" href="#method-next-font-id-"></a></h3>
 <p>get next font id</p><div class="section">
-<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
+<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">next_font_id</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -351,7 +384,7 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 </div><p></p><hr><a id="method-wbStylesMgr-next_fill_id"></a><div class="section">
 <h3 id="method-next-fill-id-">Method <code>next_fill_id()</code><a class="anchor" aria-label="anchor" href="#method-next-fill-id-"></a></h3>
 <p>get next fill id</p><div class="section">
-<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
+<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">next_fill_id</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -359,7 +392,7 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 </div><p></p><hr><a id="method-wbStylesMgr-next_border_id"></a><div class="section">
 <h3 id="method-next-border-id-">Method <code>next_border_id()</code><a class="anchor" aria-label="anchor" href="#method-next-border-id-"></a></h3>
 <p>get next border id</p><div class="section">
-<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">next_border_id</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -367,28 +400,36 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 </div><p></p><hr><a id="method-wbStylesMgr-next_xf_id"></a><div class="section">
 <h3 id="method-next-xf-id-">Method <code>next_xf_id()</code><a class="anchor" aria-label="anchor" href="#method-next-xf-id-"></a></h3>
 <p>get next xf id</p><div class="section">
-<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
+<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">next_xf_id</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
 </div><p></p><hr><a id="method-wbStylesMgr-next_dxf_id"></a><div class="section">
 <h3 id="method-next-dxf-id-">Method <code>next_dxf_id()</code><a class="anchor" aria-label="anchor" href="#method-next-dxf-id-"></a></h3>
-<p>get next xf id</p><div class="section">
-<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
+<p>get next dxf id</p><div class="section">
+<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">next_dxf_id</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-wbStylesMgr-next_tableStyle_id"></a><div class="section">
+<h3 id="method-next-tablestyle-id-">Method <code>next_tableStyle_id()</code><a class="anchor" aria-label="anchor" href="#method-next-tablestyle-id-"></a></h3>
+<p>get next tableStyle id</p><div class="section">
+<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">next_tableStyle_id</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
 </div><p></p><hr><a id="method-wbStylesMgr-add"></a><div class="section">
 <h3 id="method-add-">Method <code>add()</code><a class="anchor" aria-label="anchor" href="#method-add-"></a></h3>
 <p>add entry</p><div class="section">
-<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
+<h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">style</span>, <span class="va">style_name</span>, skip_duplicates <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>style</code></dt>
 <dd><p>new_style</p></dd>
 
@@ -407,12 +448,12 @@ style manager"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 </div><p></p><hr><a id="method-wbStylesMgr-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
+<h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">style_mgr</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 

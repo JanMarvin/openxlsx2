@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">openxlsx2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7</span>
       </span>
     </div>
 
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
+    </li>
+    <li>
+      <a href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     </li>
     <li>
       <a href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -172,6 +175,10 @@
           <p><code><a href="wb_add_formula.html">wb_add_formula()</a></code> </p>
         </td>
         <td><p>Add a character vector as an Excel Formula</p></td>
+      </tr><tr><td>
+          <p><code><a href="wb_add_ignore_error.html">wb_add_ignore_error()</a></code> </p>
+        </td>
+        <td><p>Ignore error on worksheet</p></td>
       </tr><tr><td>
           <p><code><a href="wb_add_image.html">wb_add_image()</a></code> </p>
         </td>
@@ -312,6 +319,10 @@
           <p><code><a href="wb_set_sheet_names.html">wb_set_sheet_names()</a></code> </p>
         </td>
         <td><p>Set worksheet names for a workbook</p></td>
+      </tr><tr><td>
+          <p><code><a href="wb_set_sheetview.html">wb_set_sheetview()</a></code> </p>
+        </td>
+        <td><p>add sheetview</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="create-functions">create functions <a href="#create-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -352,6 +363,10 @@
           <p><code><a href="create_sparklines.html">create_sparklines()</a></code> </p>
         </td>
         <td><p>create sparklines used in <code>add_sparline()</code></p></td>
+      </tr><tr><td>
+          <p><code><a href="create_tablestyle.html">create_tablestyle()</a></code> </p>
+        </td>
+        <td><p>create tableStyle</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="xml-functions">XML functions <a href="#xml-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>A curated list of XML functions used in openxlsx2.</p>
@@ -421,13 +436,9 @@
         </td>
         <td><p>convert back to ExcelDate</p></td>
       </tr><tr><td>
-          <p><code><a href="convert_date.html">convert_date()</a></code> </p>
+          <p><code><a href="convert_date.html">convert_date()</a></code> <code><a href="convert_date.html">convert_datetime()</a></code> <code><a href="convert_date.html">convert_hms()</a></code> </p>
         </td>
-        <td><p>Convert from excel date number to R Date type</p></td>
-      </tr><tr><td>
-          <p><code><a href="convert_datetime.html">convert_datetime()</a></code> </p>
-        </td>
-        <td><p>Convert from excel time number to R POSIXct type.</p></td>
+        <td><p>Convert from excel date, datetime or hms number to R Date type</p></td>
       </tr><tr><td>
           <p><code><a href="create_border.html">create_border()</a></code> </p>
         </td>
@@ -461,6 +472,10 @@
         </td>
         <td><p>create sparklines used in <code>add_sparline()</code></p></td>
       </tr><tr><td>
+          <p><code><a href="create_tablestyle.html">create_tablestyle()</a></code> </p>
+        </td>
+        <td><p>create tableStyle</p></td>
+      </tr><tr><td>
           <p><code><a href="dataframe_to_dims.html">dataframe_to_dims()</a></code> </p>
         </td>
         <td><p>create dimensions from dataframe</p></td>
@@ -468,6 +483,10 @@
           <p><code><a href="dims_to_dataframe.html">dims_to_dataframe()</a></code> </p>
         </td>
         <td><p>create dataframe from dimensions</p></td>
+      </tr><tr><td>
+          <p><code><a href="fmt_txt.html">fmt_txt()</a></code> </p>
+        </td>
+        <td><p>format strings independent of the cell style.</p></td>
       </tr><tr><td>
           <p><code><a href="get_cell_refs.html">get_cell_refs()</a></code> </p>
         </td>
@@ -489,14 +508,6 @@
           <p><code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> <code><a href="named_region.html">get_named_regions()</a></code> <code><a href="named_region.html">wb_get_named_regions()</a></code> </p>
         </td>
         <td><p>Create / delete a named region</p></td>
-      </tr><tr><td>
-          <p><code><a href="numfmt_is_date.html">numfmt_is_date()</a></code> </p>
-        </td>
-        <td><p>check if numFmt is date. internal function</p></td>
-      </tr><tr><td>
-          <p><code><a href="numfmt_is_posix.html">numfmt_is_posix()</a></code> </p>
-        </td>
-        <td><p>check if numFmt is posix. internal function</p></td>
       </tr><tr><td>
           <p><code><a href="openxlsx2.html">openxlsx2</a></code> </p>
         </td>
@@ -529,14 +540,6 @@
           <p><code><a href="sheet_visibility.html">wb_get_sheet_visibility()</a></code> <code><a href="sheet_visibility.html">wb_set_sheet_visibility()</a></code> </p>
         </td>
         <td><p>Get/set worksheet visible state</p></td>
-      </tr><tr><td>
-          <p><code><a href="style_is_date.html">style_is_date()</a></code> </p>
-        </td>
-        <td><p>check if style is date. internal function</p></td>
-      </tr><tr><td>
-          <p><code><a href="style_is_posix.html">style_is_posix()</a></code> </p>
-        </td>
-        <td><p>check if style is posix. internal function</p></td>
       </tr><tr><td>
           <p><code><a href="style_mgr.html">style_mgr</a></code> </p>
         </td>
@@ -633,6 +636,10 @@
           <p><code><a href="wb_add_formula.html">wb_add_formula()</a></code> </p>
         </td>
         <td><p>Add a character vector as an Excel Formula</p></td>
+      </tr><tr><td>
+          <p><code><a href="wb_add_ignore_error.html">wb_add_ignore_error()</a></code> </p>
+        </td>
+        <td><p>Ignore error on worksheet</p></td>
       </tr><tr><td>
           <p><code><a href="wb_add_image.html">wb_add_image()</a></code> </p>
         </td>
@@ -794,9 +801,17 @@
         </td>
         <td><p>Set worksheet names for a workbook</p></td>
       </tr><tr><td>
+          <p><code><a href="wb_set_sheetview.html">wb_set_sheetview()</a></code> </p>
+        </td>
+        <td><p>add sheetview</p></td>
+      </tr><tr><td>
           <p><code><a href="wb_to_df.html">wb_to_df()</a></code> </p>
         </td>
         <td><p>Create Dataframe from Workbook</p></td>
+      </tr><tr><td>
+          <p><code><a href="wb_update_table.html">wb_update_table()</a></code> </p>
+        </td>
+        <td><p>update a data_table</p></td>
       </tr><tr><td>
           <p><code><a href="wb_workbook.html">wb_workbook()</a></code> </p>
         </td>

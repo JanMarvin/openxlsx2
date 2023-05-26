@@ -22,6 +22,9 @@
     <loc>/articles/openxlsx2_charts_manual.html</loc>
   </url>
   <url>
+    <loc>/articles/openxlsx2_formulas_manual.html</loc>
+  </url>
+  <url>
     <loc>/articles/openxlsx2_style_manual.html</loc>
   </url>
   <url>
@@ -61,9 +64,6 @@
     <loc>/reference/convert_date.html</loc>
   </url>
   <url>
-    <loc>/reference/convert_datetime.html</loc>
-  </url>
-  <url>
     <loc>/reference/create_border.html</loc>
   </url>
   <url>
@@ -88,10 +88,16 @@
     <loc>/reference/create_sparklines.html</loc>
   </url>
   <url>
+    <loc>/reference/create_tablestyle.html</loc>
+  </url>
+  <url>
     <loc>/reference/dataframe_to_dims.html</loc>
   </url>
   <url>
     <loc>/reference/dims_to_dataframe.html</loc>
+  </url>
+  <url>
+    <loc>/reference/fmt_txt.html</loc>
   </url>
   <url>
     <loc>/reference/get_cell_refs.html</loc>
@@ -110,12 +116,6 @@
   </url>
   <url>
     <loc>/reference/named_region.html</loc>
-  </url>
-  <url>
-    <loc>/reference/numfmt_is_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/numfmt_is_posix.html</loc>
   </url>
   <url>
     <loc>/reference/openxlsx2.html</loc>
@@ -143,12 +143,6 @@
   </url>
   <url>
     <loc>/reference/sheet_visibility.html</loc>
-  </url>
-  <url>
-    <loc>/reference/style_is_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/style_is_posix.html</loc>
   </url>
   <url>
     <loc>/reference/style_mgr.html</loc>
@@ -221,6 +215,9 @@
   </url>
   <url>
     <loc>/reference/wb_add_formula.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_add_ignore_error.html</loc>
   </url>
   <url>
     <loc>/reference/wb_add_image.html</loc>
@@ -343,7 +340,13 @@
     <loc>/reference/wb_set_sheet_names.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_set_sheetview.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_to_df.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_update_table.html</loc>
   </url>
   <url>
     <loc>/reference/wb_workbook.html</loc>
