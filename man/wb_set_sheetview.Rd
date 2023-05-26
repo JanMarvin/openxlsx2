@@ -49,7 +49,7 @@ wb_set_sheetview(
 
 \item{showWhiteSpace}{Logical: if TRUE margins are shown in page layout view}
 
-\item{showZeros}{Logical: if FALSE cells containg zero are shown blank if !showFormulas}
+\item{showZeros}{Logical: if FALSE cells containing zero are shown blank if !showFormulas}
 
 \item{tabSelected}{Integer: zero vector indicating the selected tab}
 

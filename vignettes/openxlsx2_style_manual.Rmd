@@ -376,7 +376,7 @@ wb <- wb_load(system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
 
 # Style strings
 
-Using `fmt_txt()` is possible to style strings indepentenly of the cell containing the string.
+Using `fmt_txt()` is possible to style strings independently of the cell containing the string.
 
 ```{r}
 txt <- paste(

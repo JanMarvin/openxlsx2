@@ -2944,7 +2944,7 @@ wb_add_ignore_error <- function(
 #' @param showRowColHeaders Logical: if TRUE row and column headers are shown
 #' @param showRuler Logical: if TRUE a ruler is shown in page layout view
 #' @param showWhiteSpace Logical: if TRUE margins are shown in page layout view
-#' @param showZeros Logical: if FALSE cells containg zero are shown blank if !showFormulas
+#' @param showZeros Logical: if FALSE cells containing zero are shown blank if !showFormulas
 #' @param tabSelected Integer: zero vector indicating the selected tab
 #' @param topLeftCell Cell: the cell shown in the top left corner / or top right with rightToLeft
 #' @param view View: "normal", "pageBreakPreview" or "pageLayout"
