@@ -88,6 +88,9 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @field cellStyle cellStyle-ids
     cellStyle = NULL,
 
+    #' @field cellStyleXf cellStyleXf-ids
+    cellStyleXf = NULL,
+
     #' @field dxf dxf-ids
     dxf = NULL,
 
@@ -110,11 +113,12 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param fill fill
     #' @param border border
     #' @param xf xf
+    #' @param cellStyle cellStyles
+    #' @param cellStyleXf cellStylesXf
     #' @param dxf dxf
     #' @param styles styles
-    #' @param cellStyle cellStyles
     #' @return a `wbStylesMgr` object
-    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA, dxf = NA, styles = NA, cellStyle = NA) {
+    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA, cellStyle = NA, cellStyleXf = NA, dxf = NA, styles = NA) {
 
       numfmts <- self$styles$numFmts
       if (length(numfmts)) {
@@ -195,6 +199,20 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
       }
 
+      cellStyleXfs <- self$styles$cellStyleXfs
+      if (length(cellStyleXfs)) {
+
+        typ <- xml_node_name(cellStyleXfs)
+        id  <- rownames(read_xf(read_xml(cellStyleXfs)))
+        name <- paste0(typ, "-", id)
+
+        self$cellStyleXf <- data.frame(
+          typ,
+          id,
+          name
+        )
+      }
+
       dxfs <- self$styles$dxfs
       if (length(dxfs)) {
         typ <- xml_node_name(dxfs)
@@ -207,7 +225,6 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
           name
         )
       }
-
 
       tableStyles <- self$styles$tableStyles
       if (length(tableStyles)) {
@@ -265,9 +282,14 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       invisible(self$xf)
     },
 
-    #' @description get cellstyls ids
-    get_cellstyle = function() {
+    #' @description get cellstyle ids
+    get_cellStyle = function() {
       invisible(self$cellStyle)
+    },
+
+    #' @description get cellstylexf ids
+    get_cellStyleXf = function() {
+      invisible(self$cellStyleXf)
     },
 
     #' @description get dxf ids
@@ -317,6 +339,13 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       cellstyle$id[match(name, cellstyle$name)]
     },
 
+    #' @description get cellstyleXf id by name
+    #' @param name name
+    get_cellstyleXf_id = function(name) {
+      cellstylexf <- self$cellStyleXf
+      cellstylexf$id[match(name, cellstylexf$name)]
+    },
+
     #' @description get dxf id by name
     #' @param name name
     get_dxf_id = function(name) {
@@ -362,6 +391,11 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       invisible(as.character(max(as.numeric(self$cellStyle$id), -1) + 1))
     },
 
+    #' @description get next xf id
+    next_cellstylexf_id = function() {
+      invisible(as.character(max(as.numeric(self$cellStyleXf$id), -1) + 1))
+    },
+
     #' @description get next dxf id
     next_dxf_id = function() {
       invisible(as.character(max(as.numeric(self$dxf$id), -1) + 1))
@@ -398,12 +432,15 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         is_dxf    <- any(ifelse(xml_node_name(style[sty]) == "dxf", TRUE, FALSE))
         is_tabSty <- any(ifelse(xml_node_name(style[sty]) == "tableStyle", TRUE, FALSE))
 
+        is_xf_fr  <- isTRUE(attr(style, "cellStyleXf"))
+
         if (skip_duplicates && is_numfmt && style_name[sty] %in% self$numfmt$name) next
         if (skip_duplicates && is_font   && style_name[sty] %in% self$font$name) next
         if (skip_duplicates && is_fill   && style_name[sty] %in% self$fill$name) next
         if (skip_duplicates && is_border && style_name[sty] %in% self$border$name) next
         if (skip_duplicates && is_xf     && style_name[sty] %in% self$xf$name) next
         if (skip_duplicates && is_celSty && style_name[sty] %in% self$cellStyle$name) next
+        if (skip_duplicates && is_xf_fr  && style_name[sty] %in% self$cellStyleXf$name) next
         if (skip_duplicates && is_dxf    && style_name[sty] %in% self$dxf$name) next
         if (skip_duplicates && is_tabSty && style_name[sty] %in% self$tableStyle$name) next
 
@@ -448,6 +485,13 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
           self$styles$cellStyles <- cellStyles
         }
 
+        if (is_xf_fr) {
+          typ <- "xf"
+          xfs <- c(self$styles$cellStyleXfs, style[sty])
+          id  <- rownames(read_xf(read_xml(xfs)))
+          self$styles$cellStyleXfs <- xfs
+        }
+
         if (is_dxf) {
           typ <- "dxf"
           dxfs <- c(self$styles$dxfs, style[sty])
@@ -468,14 +512,15 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
           name = style_name[sty]
         )
 
-        if (is_numfmt) self$numfmt     <- rbind(self$numfmt, new_entry)
-        if (is_font)   self$font       <- rbind(self$font, new_entry)
-        if (is_fill)   self$fill       <- rbind(self$fill, new_entry)
-        if (is_border) self$border     <- rbind(self$border, new_entry)
-        if (is_xf)     self$xf         <- rbind(self$xf, new_entry)
-        if (is_celSty) self$cellStyle  <- rbind(self$cellStyle, new_entry)
-        if (is_dxf)    self$dxf        <- rbind(self$dxf, new_entry)
-        if (is_tabSty) self$tableStyle <- rbind(self$tableStyle, new_entry)
+        if (is_numfmt) self$numfmt      <- rbind(self$numfmt, new_entry)
+        if (is_font)   self$font        <- rbind(self$font, new_entry)
+        if (is_fill)   self$fill        <- rbind(self$fill, new_entry)
+        if (is_border) self$border      <- rbind(self$border, new_entry)
+        if (is_xf)     self$xf          <- rbind(self$xf, new_entry)
+        if (is_celSty) self$cellStyle   <- rbind(self$cellStyle, new_entry)
+        if (is_xf_fr)  self$cellStyleXf <- rbind(self$cellStyleXf, new_entry)
+        if (is_dxf)    self$dxf         <- rbind(self$dxf, new_entry)
+        if (is_tabSty) self$tableStyle  <- rbind(self$tableStyle, new_entry)
 
       }
 

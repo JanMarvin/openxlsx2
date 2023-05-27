@@ -89,6 +89,8 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 
 \item{\code{cellStyle}}{cellStyle-ids}
 
+\item{\code{cellStyleXf}}{cellStyleXf-ids}
+
 \item{\code{dxf}}{dxf-ids}
 
 \item{\code{tableStyle}}{tableStyle-ids}
@@ -144,9 +146,10 @@ Creates a new \code{wbStylesMgr} object
   fill = NA,
   border = NA,
   xf = NA,
+  cellStyle = NA,
+  cellStyleXf = NA,
   dxf = NA,
-  styles = NA,
-  cellStyle = NA
+  styles = NA
 )}\if{html}{\out{</div>}}
 }
 
@@ -163,11 +166,13 @@ Creates a new \code{wbStylesMgr} object
 
 \item{\code{xf}}{xf}
 
+\item{\code{cellStyle}}{cellStyles}
+
+\item{\code{cellStyleXf}}{cellStylesXf}
+
 \item{\code{dxf}}{dxf}
 
 \item{\code{styles}}{styles}
-
-\item{\code{cellStyle}}{cellStyles}
 }
 \if{html}{\out{</div>}}
 }
