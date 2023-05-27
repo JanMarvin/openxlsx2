@@ -85,7 +85,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @field xf xf-ids
     xf = NULL,
 
-    #' @field cellstyle
+    #' @field cellStyle cellStyle-ids
     cellStyle = NULL,
 
     #' @field dxf dxf-ids
@@ -112,8 +112,9 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param xf xf
     #' @param dxf dxf
     #' @param styles styles
+    #' @param cellStyle cellStyles
     #' @return a `wbStylesMgr` object
-    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA, dxf = NA, styles = NA, cellstyle = NA) {
+    initialize = function(numfmt = NA, font = NA, fill = NA, border = NA, xf = NA, dxf = NA, styles = NA, cellStyle = NA) {
 
       numfmts <- self$styles$numFmts
       if (length(numfmts)) {
