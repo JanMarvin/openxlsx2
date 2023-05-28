@@ -924,3 +924,453 @@ create_tablestyle <- function(
     xml_children = xml_elements
   )
 }
+
+#' WIP init_named_style
+#' @param wb wbWorkbook
+#' @param name style name
+#' @details
+#' possible styles are
+#' 20% - Accent1
+#' 20% - Accent2
+#' 20% - Accent3
+#' 20% - Accent4
+#' 20% - Accent5
+#' 20% - Accent6
+#' 40% - Accent1
+#' 40% - Accent2
+#' 40% - Accent3
+#' 40% - Accent4
+#' 40% - Accent5
+#' 40% - Accent6
+#' 60% - Accent1
+#' 60% - Accent2
+#' 60% - Accent3
+#' 60% - Accent4
+#' 60% - Accent5
+#' 60% - Accent6
+#' Accent1
+#' Accent2
+#' Accent3
+#' Accent4
+#' Accent5
+#' Accent6
+#' Bad
+#' Calculation
+#' Check Cell
+#' Comma
+#' Comma [0]
+#' Currency
+#' Currency [0]
+#' Explanatory Text
+#' Good
+#' Heading 1
+#' Heading 2
+#' Heading 3
+#' Heading 4
+#' Input
+#' Linked Cell
+#' Neutral
+#' Normal
+#' Note
+#' Output
+#' Per cent
+#' Title
+#' Total
+#' Warning Text
+#' @export
+init_named_style <- function(wb, name) {
+
+  font_xml <- NULL
+  fill_xml <- NULL
+  border_xml <- NULL
+  cell_style_xml <- NULL
+
+  numFmtId  <- ""
+  builtinId <- ""
+
+  if (name == "Bad") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF9C0006"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFC7CE"))
+
+    builtinId <- "27"
+
+  }
+
+  if (name == "Good") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF006100"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFC6EFCE"))
+
+    builtinId <- "26"
+
+  }
+
+  if (name == "Neutral") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF9C5700"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFEB9C"))
+
+    builtinId <- "28"
+
+  }
+
+  if (name == "Calculation") {
+
+    font_xml <- create_font(b = TRUE, sz = 12, color = wb_color(hex = "FFFA7D00"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFF2F2F2"))
+
+    border_xml <- create_border(
+      left = "thin",  left_color = wb_color(hex = "FF7F7F7F"),
+      right = "thin",  right_color = wb_color(hex = "FF7F7F7F"),
+      top = "thin",  top_color = wb_color(hex = "FF7F7F7F"),
+      bottom = "thin",  bottom_color = wb_color(hex = "FF7F7F7F")
+    )
+
+    builtinId <- "22"
+  }
+
+  if (name == "Check Cell") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 0), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFA5A5A5"))
+
+    border_xml <- create_border(
+      left = "double",  left_color = wb_color(hex = "FF3F3F3F"),
+      right = "double",  right_color = wb_color(hex = "FF3F3F3F"),
+      top = "double",  top_color = wb_color(hex = "FF3F3F3F"),
+      bottom = "double",  bottom_color = wb_color(hex = "FF3F3F3F")
+    )
+
+    builtinId <- "23"
+  }
+
+  if (name == "Explanatory Text") {
+
+    font_xml <- create_font(i = TRUE, sz = 12, color = wb_color(hex = "FF7F7F7F"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    builtinId <- "53"
+  }
+
+  if (name == "Input") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF3F3F76"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFCC99"))
+
+    border_xml <- create_border(
+      left = "thin",  left_color = wb_color(hex = "FF7F7F7F"),
+      right = "thin",  right_color = wb_color(hex = "FF7F7F7F"),
+      top = "thin",  top_color = wb_color(hex = "FF7F7F7F"),
+      bottom = "thin",  bottom_color = wb_color(hex = "FF7F7F7F")
+    )
+
+    builtinId <- "20"
+  }
+
+  if (name == "Linked Cell") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(hex = "FFFA7D00"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    border_xml <- create_border(
+      left = NULL,
+      right = NULL,
+      top = NULL,
+      bottom = "double",  bottom_color = wb_color(hex = "FFFF8001")
+    )
+
+    builtinId <- "24"
+  }
+
+  if (name == "Note") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFFFCC"))
+
+    border_xml <- create_border(
+      left = "thin",  left_color = wb_color(hex = "FFB2B2B2"),
+      right = "thin",  right_color = wb_color(hex = "FFB2B2B2"),
+      top = "thin",  top_color = wb_color(hex = "FFB2B2B2"),
+      bottom = "thin",  bottom_color = wb_color(hex = "FFB2B2B2")
+    )
+
+    builtinId <- "10"
+
+  }
+
+  if (name == "Output") {
+
+    font_xml <- create_font(b = TRUE, sz = 12, color = wb_color(hex = "FF3F3F3F"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFF2F2F2"))
+
+    border_xml <- create_border(
+      left = "thin",  left_color = wb_color(hex = "FF3F3F3F"),
+      right = "thin",  right_color = wb_color(hex = "FF3F3F3F"),
+      top = "thin",  top_color = wb_color(hex = "FF3F3F3F"),
+      bottom = "thin",  bottom_color = wb_color(hex = "FF3F3F3F")
+    )
+
+    builtinId <- "21"
+  }
+
+  if (name == "Warning Text") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(hex = "FFFF0000"), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    builtinId <- "11"
+  }
+
+  if (name == "Heading 1") {
+
+    font_xml <- create_font(b = TRUE, sz = 15, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    border_xml <- create_border(
+      left = NULL,
+      right = NULL,
+      top = NULL,
+      bottom = "thick",  bottom_color = wb_color(theme = 4)
+    )
+
+    builtinId <- "16"
+  }
+
+  if (name == "Heading 2") {
+
+    font_xml <- create_font(b = TRUE, sz = 13, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    border_xml <- create_border(
+      left = NULL,
+      right = NULL,
+      top = NULL,
+      bottom = "thick",  bottom_color = wb_color(theme = 4, tint = "0.499984740745262")
+    )
+
+    builtinId <- "17"
+  }
+
+  if (name == "Heading 3") {
+
+    font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    border_xml <- create_border(
+      left = NULL,
+      right = NULL,
+      top = NULL,
+      bottom = "medium",  bottom_color = wb_color(theme = 4, tint = "0.39997558519241921")
+    )
+
+    builtinId <- "18"
+  }
+
+  if (name == "Heading 4") {
+
+    font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    builtinId <- "19"
+  }
+
+  if (name == "Title") {
+
+    font_xml <- create_font(sz = 18, color = wb_color(theme = 3), name = "Calibri Light", family = "2", scheme = "major")
+
+    builtinId <- "15"
+
+  }
+
+  if (name == "Total") {
+
+    font_xml <- create_font(b = TRUE, sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    fill_xml <- create_fill(patternType = "none")
+
+    border_xml <- create_border(
+      left = NULL,
+      right = NULL,
+      top = "thin", top_color = wb_color(theme = 4),
+      bottom = "double",  bottom_color = wb_color(theme = 4)
+    )
+
+    builtinId <- "25"
+  }
+
+
+  if (name %in% paste0("Accent", 1:6)) {
+
+    accent_id <- gsub("\\D+", "", name)
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 0), name = "Rockwell", family = "2", scheme = "minor")
+
+    theme_id <- as.integer(accent_id) + 3L
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id))
+
+    if (accent_id == "1") builtinId <- "29"
+    if (accent_id == "2") builtinId <- "33"
+    if (accent_id == "3") builtinId <- "37"
+    if (accent_id == "4") builtinId <- "41"
+    if (accent_id == "5") builtinId <- "45"
+    if (accent_id == "6") builtinId <- "49"
+  }
+
+  if (name %in% paste0("20% - Accent", 1:6)) {
+
+    accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    theme_id <- as.integer(accent_id) + 3L
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.79998168889431442"), bgColor = wb_color(indexed = 65))
+
+    if (accent_id == "1") builtinId <- "30"
+    if (accent_id == "2") builtinId <- "34"
+    if (accent_id == "3") builtinId <- "38"
+    if (accent_id == "4") builtinId <- "42"
+    if (accent_id == "5") builtinId <- "46"
+    if (accent_id == "6") builtinId <- "50"
+  }
+
+  if (name %in% paste0("40% - Accent", 1:6)) {
+
+    accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    theme_id <- as.integer(accent_id) + 3L
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.59999389629810485"), bgColor = wb_color(indexed = 65))
+
+    if (accent_id == "1") builtinId <- "31"
+    if (accent_id == "2") builtinId <- "35"
+    if (accent_id == "3") builtinId <- "39"
+    if (accent_id == "4") builtinId <- "43"
+    if (accent_id == "5") builtinId <- "47"
+    if (accent_id == "6") builtinId <- "51"
+  }
+
+  if (name %in% paste0("60% - Accent", 1:6)) {
+
+    accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    theme_id <- as.integer(accent_id) + 3L
+    fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.39997558519241921"), bgColor = wb_color(indexed = 65))
+
+    if (accent_id == "1") builtinId <- "32"
+    if (accent_id == "2") builtinId <- "36"
+    if (accent_id == "3") builtinId <- "40"
+    if (accent_id == "4") builtinId <- "44"
+    if (accent_id == "5") builtinId <- "48"
+    if (accent_id == "6") builtinId <- "52"
+  }
+
+  if (name == "Comma") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    numFmtId  <- "43"
+    builtinId <- "3"
+  }
+
+  if (name == "Comma [0]") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    numFmtId  <- "41"
+    builtinId <- "6"
+  }
+
+  if (name == "Currency") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    numFmtId  <- "44"
+    builtinId <- "4"
+  }
+
+  if (name == "Currency [0]") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    numFmtId  <- "42"
+    builtinId <- "7"
+  }
+
+  if (name == "Per cent") {
+
+    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+
+    numFmtId  <- "9"
+    builtinId <- "5"
+  }
+
+  font_id <- ""
+  if (!is.null(font_xml)) {
+    wb$styles_mgr$add(font_xml, name)
+    font_id <- wb$styles_mgr$get_font_id(name)
+  }
+
+  fill_id <- ""
+  if (!is.null(fill_xml)) {
+    wb$styles_mgr$add(fill_xml, name)
+    fill_id <- wb$styles_mgr$get_fill_id(name)
+  }
+
+  border_id <- ""
+  if (!is.null(border_xml)) {
+    wb$styles_mgr$add(border_xml, name)
+    border_id <- wb$styles_mgr$get_border_id(name)
+  }
+
+  cell_style_xml <- create_cell_style(numFmtId = numFmtId, fontId = font_id, fillId = fill_id, borderId = border_id, is_cell_style_xf = TRUE)
+  attr(cell_style_xml, "cellStyleXf") <- TRUE
+  wb$styles_mgr$add(cell_style_xml, name)
+  xf_fr_id <- wb$styles_mgr$get_cellStyleXf_id(name)
+
+  cell_style <- xml_node_create("cellStyle", xml_attributes = c(name = name, xfId = xf_fr_id, builtinId = builtinId))
+  wb$styles_mgr$add(cell_style, name)
+
+  wb
+}
+
+#' WIP wb_add_named_style
+#' @param wb wbWorkbook
+#' @param sheet a worksheet
+#' @param dims worksheet dimensions
+#' @param name a style name
+#' @export
+wb_add_named_style <- function(wb, sheet = current_sheet(), dims = "A1", name) {
+  wb <- wb$clone(deep = TRUE)
+  wb <- init_named_style(wb, name = name)
+  border_id  <- wb$styles_mgr$get_border_id(name)
+  fill_id    <- wb$styles_mgr$get_fill_id(name)
+  font_id    <- wb$styles_mgr$get_font_id(name)
+  title_id   <- wb$styles_mgr$get_cellStyleXf_id(name)
+
+  wb$add_cell_style(
+    dims     = dims,
+    borderId = border_id,
+    fillId   = fill_id,
+    fontId   = font_id,
+    xfId     = title_id
+  )
+  invisible(wb)

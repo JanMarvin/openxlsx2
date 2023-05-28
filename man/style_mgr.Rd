@@ -112,14 +112,16 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 \item \href{#method-wbStylesMgr-get_fill}{\code{style_mgr$get_fill()}}
 \item \href{#method-wbStylesMgr-get_border}{\code{style_mgr$get_border()}}
 \item \href{#method-wbStylesMgr-get_xf}{\code{style_mgr$get_xf()}}
-\item \href{#method-wbStylesMgr-get_cellstyle}{\code{style_mgr$get_cellstyle()}}
+\item \href{#method-wbStylesMgr-get_cellStyle}{\code{style_mgr$get_cellStyle()}}
+\item \href{#method-wbStylesMgr-get_cellStyleXf}{\code{style_mgr$get_cellStyleXf()}}
 \item \href{#method-wbStylesMgr-get_dxf}{\code{style_mgr$get_dxf()}}
 \item \href{#method-wbStylesMgr-get_numfmt_id}{\code{style_mgr$get_numfmt_id()}}
 \item \href{#method-wbStylesMgr-get_font_id}{\code{style_mgr$get_font_id()}}
 \item \href{#method-wbStylesMgr-get_fill_id}{\code{style_mgr$get_fill_id()}}
 \item \href{#method-wbStylesMgr-get_border_id}{\code{style_mgr$get_border_id()}}
 \item \href{#method-wbStylesMgr-get_xf_id}{\code{style_mgr$get_xf_id()}}
-\item \href{#method-wbStylesMgr-get_cellstyle_id}{\code{style_mgr$get_cellstyle_id()}}
+\item \href{#method-wbStylesMgr-get_cellStyle_id}{\code{style_mgr$get_cellStyle_id()}}
+\item \href{#method-wbStylesMgr-get_cellStyleXf_id}{\code{style_mgr$get_cellStyleXf_id()}}
 \item \href{#method-wbStylesMgr-get_dxf_id}{\code{style_mgr$get_dxf_id()}}
 \item \href{#method-wbStylesMgr-get_tableStyle_id}{\code{style_mgr$get_tableStyle_id()}}
 \item \href{#method-wbStylesMgr-next_numfmt_id}{\code{style_mgr$next_numfmt_id()}}
@@ -128,6 +130,7 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 \item \href{#method-wbStylesMgr-next_border_id}{\code{style_mgr$next_border_id()}}
 \item \href{#method-wbStylesMgr-next_xf_id}{\code{style_mgr$next_xf_id()}}
 \item \href{#method-wbStylesMgr-next_cellstyle_id}{\code{style_mgr$next_cellstyle_id()}}
+\item \href{#method-wbStylesMgr-next_cellstylexf_id}{\code{style_mgr$next_cellstylexf_id()}}
 \item \href{#method-wbStylesMgr-next_dxf_id}{\code{style_mgr$next_dxf_id()}}
 \item \href{#method-wbStylesMgr-next_tableStyle_id}{\code{style_mgr$next_tableStyle_id()}}
 \item \href{#method-wbStylesMgr-add}{\code{style_mgr$add()}}
@@ -231,12 +234,22 @@ get xf ids
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_cellstyle"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellstyle}{}}}
-\subsection{Method \code{get_cellstyle()}}{
-get cellstyls ids
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyle"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyle}{}}}
+\subsection{Method \code{get_cellStyle()}}{
+get cellstyle ids
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellstyle()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyle()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyleXf"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyleXf}{}}}
+\subsection{Method \code{get_cellStyleXf()}}{
+get cellstylexf ids
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyleXf()}\if{html}{\out{</div>}}
 }
 
 }
@@ -336,12 +349,29 @@ get xf id by name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbStylesMgr-get_cellstyle_id"></a>}}
-\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellstyle_id}{}}}
-\subsection{Method \code{get_cellstyle_id()}}{
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyle_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyle_id}{}}}
+\subsection{Method \code{get_cellStyle_id()}}{
 get cellstyle id by name
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellstyle_id(name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyle_id(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyleXf_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyleXf_id}{}}}
+\subsection{Method \code{get_cellStyleXf_id()}}{
+get cellstyleXf id by name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyleXf_id(name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -443,6 +473,16 @@ get next xf id
 get next xf id
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{style_mgr$next_cellstyle_id()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-next_cellstylexf_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_cellstylexf_id}{}}}
+\subsection{Method \code{next_cellstylexf_id()}}{
+get next xf id
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$next_cellstylexf_id()}\if{html}{\out{</div>}}
 }
 
 }
