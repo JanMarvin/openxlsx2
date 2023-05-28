@@ -68,13 +68,13 @@ test_that("cellStyle", {
   wb <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
-  exp <- c("name", "xfId", "builtinId", "customBuiltin", "extLst", "hidden", "iLevel")
+  exp <- c("name", "xfId", "xr:uid", "builtinId", "customBuiltin", "extLst", "hidden", "iLevel")
 
   input <- wb$styles_mgr$styles$cellStyles
   got <- read_cellStyle(as_xml(input))
   expect_equal(sort(exp), sort(names(got)))
 
-  exp_dim <- c(2, 7)
+  exp_dim <- c(2, 8)
   expect_equal(exp_dim, dim(got))
 
   expect_equal(input,

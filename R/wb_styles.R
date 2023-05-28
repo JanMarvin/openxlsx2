@@ -459,15 +459,15 @@ create_cell_style <- function(
 
   applyBorder <- ""
   if (any(borderId != "")) applyBorder <- "1"
-  if (is_cell_style_xf) applyBorder <- "0"
+  if (is_cell_style_xf && isTRUE(borderId == "")) applyBorder <- "0"
 
   applyFill <- ""
   if (any(fillId != "")) applyFill <- "1"
-  if (is_cell_style_xf) applyFill <- "0"
+  if (is_cell_style_xf && isTRUE(fillId == "")) applyFill <- "0"
 
   applyFont <- ""
   if (any(fontId != "")) applyFont <- "1"
-  if (is_cell_style_xf) applyFont <- "0"
+  if (is_cell_style_xf && isTRUE(fontId > "1")) applyFont <- "0"
 
   applyNumberFormat <- ""
   if (any(numFmtId != "")) applyNumberFormat <- "1"
@@ -929,54 +929,54 @@ create_tablestyle <- function(
 #' @param wb wbWorkbook
 #' @param name style name
 #' @details
-#' possible styles are
-#' 20% - Accent1
-#' 20% - Accent2
-#' 20% - Accent3
-#' 20% - Accent4
-#' 20% - Accent5
-#' 20% - Accent6
-#' 40% - Accent1
-#' 40% - Accent2
-#' 40% - Accent3
-#' 40% - Accent4
-#' 40% - Accent5
-#' 40% - Accent6
-#' 60% - Accent1
-#' 60% - Accent2
-#' 60% - Accent3
-#' 60% - Accent4
-#' 60% - Accent5
-#' 60% - Accent6
-#' Accent1
-#' Accent2
-#' Accent3
-#' Accent4
-#' Accent5
-#' Accent6
-#' Bad
-#' Calculation
-#' Check Cell
-#' Comma
-#' Comma [0]
-#' Currency
-#' Currency [0]
-#' Explanatory Text
-#' Good
-#' Heading 1
-#' Heading 2
-#' Heading 3
-#' Heading 4
-#' Input
-#' Linked Cell
-#' Neutral
-#' Normal
-#' Note
-#' Output
-#' Per cent
-#' Title
-#' Total
-#' Warning Text
+#' possible styles are:
+#' "20% - Accent1"
+#' "20% - Accent2"
+#' "20% - Accent3"
+#' "20% - Accent4"
+#' "20% - Accent5"
+#' "20% - Accent6"
+#' "40% - Accent1"
+#' "40% - Accent2"
+#' "40% - Accent3"
+#' "40% - Accent4"
+#' "40% - Accent5"
+#' "40% - Accent6"
+#' "60% - Accent1"
+#' "60% - Accent2"
+#' "60% - Accent3"
+#' "60% - Accent4"
+#' "60% - Accent5"
+#' "60% - Accent6"
+#' "Accent1"
+#' "Accent2"
+#' "Accent3"
+#' "Accent4"
+#' "Accent5"
+#' "Accent6"
+#' "Bad"
+#' "Calculation"
+#' "Check Cell"
+#' "Comma"
+#' "Comma \[0\]"
+#' "Currency"
+#' "Currency \[0\]"
+#' "Explanatory Text"
+#' "Good"
+#' "Heading 1"
+#' "Heading 2"
+#' "Heading 3"
+#' "Heading 4"
+#' "Input"
+#' "Linked Cell"
+#' ”Neutral"
+#' "Normal"
+#' "Note"
+#' "Output"
+#' "Per cent"
+#' "Title"
+#' "Total"
+#' "Warning Text"
 #' @export
 init_named_style <- function(wb, name) {
 
@@ -1374,3 +1374,4 @@ wb_add_named_style <- function(wb, sheet = current_sheet(), dims = "A1", name) {
     xfId     = title_id
   )
   invisible(wb)
+}
