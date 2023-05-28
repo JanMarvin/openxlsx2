@@ -34,10 +34,10 @@ Create a new Workbook object
 }
 \details{
 "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
-"Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion Boardroom",
-"Ion", "Madison", "Main Event", "Mesh", "Office Theme", "Organic",
-"Parallax", "Parcel", "Retrospect", "Savon", "Slice", "Vapor Trail",
-"View", "Wisp", "Wood Type", "Office Theme", "Old Office Theme"
+"Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
+"Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
+"Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
+"Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 }
 \examples{
 ## Create a new workbook

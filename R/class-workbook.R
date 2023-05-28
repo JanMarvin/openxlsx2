@@ -257,7 +257,7 @@ wbWorkbook <- R6::R6Class(
           self$theme <- stringi::stri_unescape_unicode(themes[[sel]])
 
           # create the default font for the style
-          font_scheme <- xml_node(wb$theme, "a:theme", "a:themeElements", "a:fontScheme")
+          font_scheme <- xml_node(self$theme, "a:theme", "a:themeElements", "a:fontScheme")
           minor_font <- xml_attr(font_scheme, "a:fontScheme", "a:minorFont", "a:latin")[[1]][["typeface"]]
 
           self$styles_mgr$styles$fonts <- create_font(
