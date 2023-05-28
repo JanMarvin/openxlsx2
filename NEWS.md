@@ -1,3 +1,13 @@
+# openxlsx2 (in development)
+
+## Fixes
+
+* On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned.
+
+
+***************************************************************************
+
+
 # openxlsx2 (0.7)
 
 ## New features
