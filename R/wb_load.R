@@ -143,7 +143,7 @@ wb_load <- function(
   )
 
   ## core
-  if (length(appXML)) {
+  if (!data_only && length(appXML)) {
     app_xml <- read_xml(appXML)
     nodes <- xml_node_name(app_xml, "Properties")
     app_list <- lapply(
@@ -151,13 +151,14 @@ wb_load <- function(
       FUN = function(x) xml_node(app_xml, "Properties", x)
     )
     names(app_list) <- nodes
+    wb$app[names(app_list)] <- app_list
   }
 
-  if (length(coreXML) == 1) {
+  if (!data_only && length(coreXML) == 1) {
     wb$core <- read_xml(coreXML, pointer = FALSE)
   }
 
-  if (length(customXML)) {
+  if (!data_only && length(customXML)) {
     wb$append("Content_Types", '<Override PartName="/docProps/custom.xml" ContentType="application/vnd.openxmlformats-officedocument.custom-properties+xml"/>')
     wb$custom <- read_xml(customXML, pointer = FALSE)
   }
