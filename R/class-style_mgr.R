@@ -301,63 +301,72 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param name name
     get_numfmt_id = function(name) {
       numfmt <- self$numfmt
-      numfmt$id[numfmt$name == name]
+      id <- numfmt$id[numfmt$name == name]
+      if (length(id)) id else NULL
     },
 
     #' @description get font id by name
     #' @param name name
     get_font_id = function(name) {
       font <- self$font
-      font$id[font$name == name]
+      id <- font$id[font$name == name]
+      if (length(id)) id else NULL
     },
 
     #' @description get fill id by name
     #' @param name name
     get_fill_id = function(name) {
       fill <- self$fill
-      fill$id[fill$name == name]
+      id <- fill$id[fill$name == name]
+      if (length(id)) id else NULL
     },
 
     #' @description get border id by name
     #' @param name name
     get_border_id = function(name) {
       border <- self$border
-      border$id[border$name == name]
+      id <- border$id[border$name == name]
+      if (length(id)) id else NULL
     },
 
     #' @description get xf id by name
     #' @param name name
     get_xf_id = function(name) {
       xf <- self$xf
-      xf$id[match(name, xf$name)]
+      id <- xf$id[match(name, xf$name)]
+      if (length(id)) id else NULL
     },
 
     #' @description get cellstyle id by name
     #' @param name name
-    get_cellstyle_id = function(name) {
+    get_cellStyle_id = function(name) {
       cellstyle <- self$cellStyle
-      cellstyle$id[match(name, cellstyle$name)]
+      id <- cellstyle$id[match(name, cellstyle$name)]
+      if (length(id)) id else NULL
     },
 
     #' @description get cellstyleXf id by name
     #' @param name name
-    get_cellstyleXf_id = function(name) {
+    get_cellStyleXf_id = function(name) {
       cellstylexf <- self$cellStyleXf
-      cellstylexf$id[match(name, cellstylexf$name)]
+      id <- cellstylexf$id[match(name, cellstylexf$name)]
+      if (length(id)) id else NULL
     },
 
     #' @description get dxf id by name
     #' @param name name
     get_dxf_id = function(name) {
       dxf <- self$dxf
-      dxf$id[match(name, dxf$name)]
+      id <- dxf$id[match(name, dxf$name)]
+      if (length(id)) id else NULL
     },
 
     #' @description get tableStyle id by name
     #' @param name name
     get_tableStyle_id = function(name) {
       tableStyle <- self$tableStyles
-      tableStyle$id[match(name, tableStyle$name)]
+      id <- tableStyle$id[match(name, tableStyle$name)]
+      if (length(id)) id else NULL
     },
 
     #' @description get next numfmt id
