@@ -255,6 +255,19 @@ wbWorkbook <- R6::R6Class(
 
         if (sel <= length(themes)) {
           self$theme <- stringi::stri_unescape_unicode(themes[[sel]])
+
+          # create the default font for the style
+          font_scheme <- xml_node(wb$theme, "a:theme", "a:themeElements", "a:fontScheme")
+          minor_font <- xml_attr(font_scheme, "a:fontScheme", "a:minorFont", "a:latin")[[1]][["typeface"]]
+
+          self$styles_mgr$styles$fonts <- create_font(
+            sz = 11,
+            color = wb_color(theme = 1),
+            name = minor_font,
+            family = "2",
+            scheme = "minor"
+          )
+
         } else {
           message("theme not found")
         }
