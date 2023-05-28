@@ -177,13 +177,15 @@ wbWorkbook <- R6::R6Class(
     #' @param datetimeCreated The datetime (as `POSIXt`) the workbook is
     #'   created.  Defaults to the current `Sys.time()` when the workbook object
     #'   is created, not when the Excel files are saved.
+    #' @param theme Optional theme identified by string or number
     #' @return a `wbWorkbook` object
     initialize = function(
       creator         = NULL,
       title           = NULL,
       subject         = NULL,
       category        = NULL,
-      datetimeCreated = Sys.time()
+      datetimeCreated = Sys.time(),
+      theme           = NULL
     ) {
       self$app <- genBaseApp()
       self$charts <- list()
@@ -239,8 +241,24 @@ wbWorkbook <- R6::R6Class(
 
       self$tables <- NULL
       self$tables.xml.rels <- NULL
-      self$theme <- NULL
+      if (is.null(theme)) {
+        self$theme <- NULL
+      } else {
+        # read predefined themes
+        thm_rds <- system.file("extdata", "themes.rds", package = "openxlsx2")
+        themes <- readRDS(thm_rds)
 
+        sel <- theme
+        if (is.character(theme)) {
+          sel <- match(theme, names(themes))
+        }
+
+        if (sel <= length(themes)) {
+          self$theme <- stringi::stri_unescape_unicode(themes[[sel]])
+        } else {
+          message("theme not found")
+        }
+      }
 
       self$vbaProject <- NULL
       self$vml <- NULL

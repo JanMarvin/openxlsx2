@@ -344,7 +344,8 @@ Creates a new \code{wbWorkbook} object
   title = NULL,
   subject = NULL,
   category = NULL,
-  datetimeCreated = Sys.time()
+  datetimeCreated = Sys.time(),
+  theme = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -362,6 +363,8 @@ Creates a new \code{wbWorkbook} object
 \item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
 is created, not when the Excel files are saved.}
+
+\item{\code{theme}}{Optional theme identified by string or number}
 }
 \if{html}{\out{</div>}}
 }
