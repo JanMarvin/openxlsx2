@@ -177,13 +177,15 @@ wbWorkbook <- R6::R6Class(
     #' @param datetimeCreated The datetime (as `POSIXt`) the workbook is
     #'   created.  Defaults to the current `Sys.time()` when the workbook object
     #'   is created, not when the Excel files are saved.
+    #' @param theme Optional theme identified by string or number
     #' @return a `wbWorkbook` object
     initialize = function(
       creator         = NULL,
       title           = NULL,
       subject         = NULL,
       category        = NULL,
-      datetimeCreated = Sys.time()
+      datetimeCreated = Sys.time(),
+      theme           = NULL
     ) {
       self$app <- genBaseApp()
       self$charts <- list()
@@ -239,8 +241,40 @@ wbWorkbook <- R6::R6Class(
 
       self$tables <- NULL
       self$tables.xml.rels <- NULL
-      self$theme <- NULL
+      if (is.null(theme)) {
+        self$theme <- NULL
+      } else {
+        # read predefined themes
+        thm_rds <- system.file("extdata", "themes.rds", package = "openxlsx2")
+        themes <- readRDS(thm_rds)
 
+        if (is.character(theme)) {
+          sel <- match(theme, names(themes))
+          err <- is.na(sel)
+        } else {
+          sel <- theme
+          err <- sel > length(themes)
+        }
+
+        if (err) {
+          message("theme ", theme, " not found falling back to default theme")
+        } else {
+          self$theme <- stringi::stri_unescape_unicode(themes[[sel]])
+
+          # create the default font for the style
+          font_scheme <- xml_node(self$theme, "a:theme", "a:themeElements", "a:fontScheme")
+          minor_font <- xml_attr(font_scheme, "a:fontScheme", "a:minorFont", "a:latin")[[1]][["typeface"]]
+
+          self$styles_mgr$styles$fonts <- create_font(
+            sz = 11,
+            color = wb_color(theme = 1),
+            name = minor_font,
+            family = "2",
+            scheme = "minor"
+          )
+
+        }
+      }
 
       self$vbaProject <- NULL
       self$vml <- NULL

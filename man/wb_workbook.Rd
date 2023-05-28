@@ -9,7 +9,8 @@ wb_workbook(
   title = NULL,
   subject = NULL,
   category = NULL,
-  datetimeCreated = Sys.time()
+  datetimeCreated = Sys.time(),
+  theme = NULL
 )
 }
 \arguments{
@@ -22,12 +23,21 @@ wb_workbook(
 \item{category}{Workbook properties category}
 
 \item{datetimeCreated}{The time of the workbook is created}
+
+\item{theme}{Optional theme identified by string or number}
 }
 \value{
 A \link{wbWorkbook} object
 }
 \description{
 Create a new Workbook object
+}
+\details{
+"Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
+"Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
+"Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
+"Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
+"Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 }
 \examples{
 ## Create a new workbook

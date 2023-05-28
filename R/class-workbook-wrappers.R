@@ -8,10 +8,18 @@
 #' @param subject Workbook properties subject
 #' @param category Workbook properties category
 #' @param datetimeCreated The time of the workbook is created
+#' @param theme Optional theme identified by string or number
 #' @return A [wbWorkbook] object
 #'
 #' @export
 #' @family workbook wrappers
+#'
+#' @details
+#' "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
+#' "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
+#' "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
+#' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
+#' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 #'
 #' @examples
 #' ## Create a new workbook
@@ -29,14 +37,16 @@ wb_workbook <- function(
   title           = NULL,
   subject         = NULL,
   category        = NULL,
-  datetimeCreated = Sys.time()
+  datetimeCreated = Sys.time(),
+  theme           = NULL
 ) {
   wbWorkbook$new(
     creator         = creator,
     title           = title,
     subject         = subject,
     category        = category,
-    datetimeCreated = datetimeCreated
+    datetimeCreated = datetimeCreated,
+    theme           = theme
   )
 }
 
