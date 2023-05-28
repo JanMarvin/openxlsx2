@@ -711,3 +711,30 @@ test_that("various image functions work as expected", {
   )
 
 })
+
+test_that("workbook themes work", {
+
+  wb <- wb_workbook()$add_worksheet()
+  exp <- "Calibri"
+  got <- wb$get_base_font()$name$val
+  expect_equal(exp, got)
+
+  wb <- wb_workbook(theme = "Old Office Theme")$add_worksheet()
+  exp <- "Calibri"
+  got <- wb$get_base_font()$name$val
+  expect_equal(exp, got)
+
+  wb <- wb_workbook(theme = 1)$add_worksheet()
+  exp <- "Rockwell"
+  got <- wb$get_base_font()$name$val
+  expect_equal(exp, got)
+
+  expect_message(
+    wb <- wb_workbook(theme = "Foo")$add_worksheet(),
+    "theme Foo not found falling back to default theme"
+  )
+  exp <- "Calibri"
+  got <- wb$get_base_font()$name$val
+  expect_equal(exp, got)
+
+})

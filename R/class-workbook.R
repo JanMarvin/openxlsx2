@@ -248,12 +248,17 @@ wbWorkbook <- R6::R6Class(
         thm_rds <- system.file("extdata", "themes.rds", package = "openxlsx2")
         themes <- readRDS(thm_rds)
 
-        sel <- theme
         if (is.character(theme)) {
           sel <- match(theme, names(themes))
+          err <- is.na(sel)
+        } else {
+          sel <- theme
+          err <- sel > length(themes)
         }
 
-        if (sel <= length(themes)) {
+        if (err) {
+          message("theme ", theme, " not found falling back to default theme")
+        } else {
           self$theme <- stringi::stri_unescape_unicode(themes[[sel]])
 
           # create the default font for the style
@@ -268,8 +273,6 @@ wbWorkbook <- R6::R6Class(
             scheme = "minor"
           )
 
-        } else {
-          message("theme not found")
         }
       }
 
