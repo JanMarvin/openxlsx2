@@ -985,12 +985,15 @@ init_named_style <- function(wb, name) {
   border_xml <- NULL
   cell_style_xml <- NULL
 
+  font_name <- wb$get_base_font()$name$val
+  font_size <- wb$get_base_font()$size$val
+
   numFmtId  <- ""
   builtinId <- ""
 
   if (name == "Bad") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF9C0006"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF9C0006"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFC7CE"))
 
@@ -1000,7 +1003,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Good") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF006100"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF006100"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFC6EFCE"))
 
@@ -1010,7 +1013,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Neutral") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF9C5700"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF9C5700"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFEB9C"))
 
@@ -1020,7 +1023,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Calculation") {
 
-    font_xml <- create_font(b = TRUE, sz = 12, color = wb_color(hex = "FFFA7D00"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(b = TRUE, sz = font_size, color = wb_color(hex = "FFFA7D00"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFF2F2F2"))
 
@@ -1036,7 +1039,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Check Cell") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 0), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 0), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFA5A5A5"))
 
@@ -1052,7 +1055,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Explanatory Text") {
 
-    font_xml <- create_font(i = TRUE, sz = 12, color = wb_color(hex = "FF7F7F7F"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(i = TRUE, sz = font_size, color = wb_color(hex = "FF7F7F7F"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1061,7 +1064,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Input") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(hex = "FF3F3F76"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF3F3F76"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFCC99"))
 
@@ -1077,7 +1080,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Linked Cell") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(hex = "FFFA7D00"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(hex = "FFFA7D00"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1093,7 +1096,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Note") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFFFCC"))
 
@@ -1110,7 +1113,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Output") {
 
-    font_xml <- create_font(b = TRUE, sz = 12, color = wb_color(hex = "FF3F3F3F"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(b = TRUE, sz = font_size, color = wb_color(hex = "FF3F3F3F"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFF2F2F2"))
 
@@ -1126,7 +1129,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Warning Text") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(hex = "FFFF0000"), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(hex = "FFFF0000"), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1135,7 +1138,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Heading 1") {
 
-    font_xml <- create_font(b = TRUE, sz = 15, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(b = TRUE, sz = 15, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1151,7 +1154,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Heading 2") {
 
-    font_xml <- create_font(b = TRUE, sz = 13, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(b = TRUE, sz = 13, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1167,7 +1170,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Heading 3") {
 
-    font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1183,7 +1186,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Heading 4") {
 
-    font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1200,7 +1203,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Total") {
 
-    font_xml <- create_font(b = TRUE, sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(b = TRUE, sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     fill_xml <- create_fill(patternType = "none")
 
@@ -1214,12 +1217,11 @@ init_named_style <- function(wb, name) {
     builtinId <- "25"
   }
 
-
   if (name %in% paste0("Accent", 1:6)) {
 
     accent_id <- gsub("\\D+", "", name)
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 0), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 0), name = font_name, family = "2", scheme = "minor")
 
     theme_id <- as.integer(accent_id) + 3L
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id))
@@ -1236,7 +1238,7 @@ init_named_style <- function(wb, name) {
 
     accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     theme_id <- as.integer(accent_id) + 3L
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.79998168889431442"), bgColor = wb_color(indexed = 65))
@@ -1253,7 +1255,7 @@ init_named_style <- function(wb, name) {
 
     accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     theme_id <- as.integer(accent_id) + 3L
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.59999389629810485"), bgColor = wb_color(indexed = 65))
@@ -1270,7 +1272,7 @@ init_named_style <- function(wb, name) {
 
     accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     theme_id <- as.integer(accent_id) + 3L
     fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.39997558519241921"), bgColor = wb_color(indexed = 65))
@@ -1285,7 +1287,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Comma") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     numFmtId  <- "43"
     builtinId <- "3"
@@ -1293,7 +1295,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Comma [0]") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     numFmtId  <- "41"
     builtinId <- "6"
@@ -1301,7 +1303,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Currency") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     numFmtId  <- "44"
     builtinId <- "4"
@@ -1309,7 +1311,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Currency [0]") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     numFmtId  <- "42"
     builtinId <- "7"
@@ -1317,7 +1319,7 @@ init_named_style <- function(wb, name) {
 
   if (name == "Per cent") {
 
-    font_xml <- create_font(sz = 12, color = wb_color(theme = 1), name = "Rockwell", family = "2", scheme = "minor")
+    font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
     numFmtId  <- "9"
     builtinId <- "5"
