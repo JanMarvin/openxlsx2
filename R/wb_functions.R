@@ -290,6 +290,7 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+#' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
 #' @details
 #' Depending if the R package `hms` is loaded, `wb_to_df()` returns `hms` variables or string variables in the `hh:mm:ss` format.
 #' @examples
@@ -385,7 +386,8 @@ wb_to_df <- function(
     showFormula     = FALSE,
     convert         = TRUE,
     types,
-    named_region
+    named_region,
+    keep_attributes = FALSE
 ) {
 
   # .mc <- match.call() # not (yet) used?
@@ -690,14 +692,15 @@ wb_to_df <- function(
           # TODO there probably is a better way in not reducing cc above, so
           # that we do not have to go through large xlsx files multiple times
           z_fill <- wb_to_df(
-            dims = filler,
-            xlsxFile = xlsxFile,
+            xlsxFile = wb,
             sheet = sheet,
+            dims = filler,
             na.strings = na.strings,
             convert = FALSE,
             colNames = FALSE,
             detectDates = detectDates,
-            showFormula = showFormula
+            showFormula = showFormula,
+            keep_attributes = TRUE
           )
 
           tt_fill <- attr(z_fill, "tt")
@@ -824,10 +827,12 @@ wb_to_df <- function(
     names(tt) <- xlsx_cols_names
   }
 
-  attr(z, "tt") <- tt
-  attr(z, "types") <- types
-  # attr(z, "sd") <- sd
-  if (!missing(named_region)) attr(z, "dn") <- nr
+  if (keep_attributes) {
+    attr(z, "tt") <- tt
+    attr(z, "types") <- types
+    # attr(z, "sd") <- sd
+    if (!missing(named_region)) attr(z, "dn") <- nr
+  }
   z
 }
 

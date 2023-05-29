@@ -246,7 +246,7 @@ test_that("write_rownames", {
       class = "data.frame"),
     types = c(A = 0, B = 0)
   )
-  got <- wb_to_df(wb, 1, dims = "A1:B2", colNames = FALSE)
+  got <- wb_to_df(wb, 1, dims = "A1:B2", colNames = FALSE, keep_attributes = TRUE)
   expect_equal(exp, got)
 
   exp <- structure(
@@ -259,7 +259,7 @@ test_that("write_rownames", {
       class = "data.frame"),
     types = c(A = 0, B = 0)
   )
-  got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE)
+  got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE, keep_attributes = TRUE)
   expect_equal(exp, got)
 
 })

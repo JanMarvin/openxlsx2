@@ -116,7 +116,7 @@ test_that("encoding", {
                                   row.names = 2L, class = "data.frame"),
                    types = c(A = 0, B = 0))
 
-  expect_equal(exp, wb_to_df(wb))
+  expect_equal(exp, wb_to_df(wb, keep_attributes = TRUE))
 
   fl <- system.file("extdata", "eurosymbol.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
