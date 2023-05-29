@@ -16,7 +16,7 @@ License: MIT + file LICENSE
 URL: https://github.com/JanMarvin/openxlsx2
 BugReports: https://github.com/JanMarvin/openxlsx2/issues
 Depends:
-    R (>= 3.4.0)
+    R (>= 3.5.0)
 Imports:
     R6,
     Rcpp,
