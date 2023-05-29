@@ -779,7 +779,11 @@ download_testfiles <- function() {
 testfile_path <- function(x) {
   # apparently this runs in a different folder
   fl <- testthat::test_path("testfiles", x)
-  if (!file.exists(fl)) testthat::skip("Testfile does not exist") else fl
+  if (!file.exists(fl)) {
+    return(testthat::skip("Testfile does not exist"))
+  } else {
+    return(fl)
+  }
 }
 
 #nocov end
