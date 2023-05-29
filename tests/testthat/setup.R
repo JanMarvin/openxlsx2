@@ -1,9 +1,5 @@
 download_testfiles <- function() {
 
-  if (dir.exists("testfiles")) unlink("testfiles", recursive = TRUE)
-  dir.create("testfiles")
-  testfiles_path <- list.dirs(path = "testfiles")
-
   fls <- c(
     "pivot_notes.xlsx",
     "loadExample.xlsx",
@@ -35,6 +31,17 @@ download_testfiles <- function() {
     "oxlsx2_sheet.xlsx"
   )
 
+  if (dir.exists("testfiles"))  {
+    if (all(file.exists(paste0("testfiles/", fls)))) {
+      return(TRUE)
+    }
+
+    unlink("testfiles", recursive = TRUE)
+  }
+
+  dir.create("testfiles")
+  testfiles_path <- list.dirs(path = "testfiles")
+
   for (fl in fls) {
     out <- paste0(testfiles_path, "/", fl)
     url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", fl)
@@ -44,9 +51,3 @@ download_testfiles <- function() {
 }
 
 download_testfiles()
-
-testfile_path <- function(x) {
-  # apparently this runs in a different folder
-  fl <- testthat::test_path("testfiles", x)
-  if (!file.exists(fl)) testthat::skip("Testfile does not exist") else fl
-}

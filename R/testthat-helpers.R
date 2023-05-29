@@ -709,3 +709,13 @@ expected_shared_strings <- function() {
     "<si><t>Var7</t></si>", "<si><t>col 1</t></si>", "<si><t>col 2</t></si>", "<si><t>g</t></si>", "<si><t>x</t></si>"
   ), uniqueCount = "2114")
 }
+
+#' provides testfile path for testthat
+#' @param x a file assumed in testfiles folder
+#' @keywords internal
+#' @noRd
+testfile_path <- function(x) {
+  # apparently this runs in a different folder
+  fl <- testthat::test_path("testfiles", x)
+  if (!file.exists(fl)) testthat::skip("Testfile does not exist") else fl
+}

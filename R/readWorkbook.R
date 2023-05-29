@@ -144,7 +144,7 @@ wb_read <- function(
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples
-#' read_sheet_names(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+#' wb_load(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))$get_sheet_names()
 #' @export
 read_sheet_names <- function(file) {
   if (!inherits(file, "wbWorkbook")) {
