@@ -343,23 +343,15 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #'   wb_to_df(wb1, na.strings = "a")
 #'
 #'   ###########################################################################
-#'   # inlinestr
-#'   xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
-#'   wb2 <- wb_load(xlsxFile)
-#'
-#'   # read dataset with inlinestr
-#'   wb_to_df(wb2)
-#'
-#'   ###########################################################################
 #'   # named_region // namedRegion
 #'   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
-#'   wb3 <- wb_load(xlsxFile)
+#'   wb2 <- wb_load(xlsxFile)
 #'
 #'   # read dataset with named_region (returns global first)
-#'   wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
+#'   wb_to_df(wb2, named_region = "MyRange", colNames = FALSE)
 #'
 #'   # read named_region from sheet
-#'   wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
+#'   wb_to_df(wb2, named_region = "MyRange", sheet = 4, colNames = FALSE)
 #'
 #' @export
 wb_to_df <- function(

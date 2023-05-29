@@ -96,7 +96,7 @@ test_that("wb_to_df", {
 
   ###########################################################################
   # inlinestr
-  xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
+  xlsxFile <- testfile_path("inline_str.xlsx")
   expect_silent(wb2 <- wb_load(xlsxFile))
 
   exp <- data.frame(

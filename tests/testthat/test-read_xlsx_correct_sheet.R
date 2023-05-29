@@ -1,7 +1,5 @@
 test_that("read_xlsx correct sheet", {
 
-  skip_if_offline()
-
   fl <- testfile_path("readTest.xlsx")
   expect_warning(sheet_names <- read_sheet_names(file = fl),
                  "'read_sheet_names' is deprecated.")

@@ -167,7 +167,7 @@ test_that("write dims", {
 
 test_that("update cell(s)", {
 
-  xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
+  xlsxFile <- testfile_path("update_test.xlsx")
   wb <- wb_load(xlsxFile)
 
   # update Cells D4:D6 with 1:3

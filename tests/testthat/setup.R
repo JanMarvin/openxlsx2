@@ -28,7 +28,9 @@ download_testfiles <- function() {
     "form_control.xlsx",
     "gh_issue_504.xlsx",
     "Single_hyperlink.xlsx",
-    "oxlsx2_sheet.xlsx"
+    "oxlsx2_sheet.xlsx",
+    "update_test.xlsx",
+    "inline_str.xlsx"
   )
 
   if (dir.exists("testfiles"))  {
@@ -42,11 +44,10 @@ download_testfiles <- function() {
   dir.create("testfiles")
   testfiles_path <- list.dirs(path = "testfiles")
 
-  for (fl in fls) {
-    out <- paste0(testfiles_path, "/", fl)
-    url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", fl)
-    download.file(url, destfile = out, quiet = TRUE)
-  }
+  # relies on libcurl and was optional in R < 4.2.0 on Windows
+  out <- paste0(testfiles_path, "/", fls)
+  url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", fls)
+  try({download.file(url, destfile = out, quiet = TRUE, method = "libcurl")})
 
 }
 
