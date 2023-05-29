@@ -1,10 +1,16 @@
 # openxlsx2 (development version)
 
+## New features
+
+* It is now possible to apply a specific theme to a workbook. [630](https://github.com/JanMarvin/openxlsx2/pull/630)
+
+* Removed a few of the former example files and updated the code to use a new default example. This changes internal testing to only run locally if online and external files are required. This reduces the package footprint a little, because 1MB of xlsx files are now excluded. [632](https://github.com/JanMarvin/openxlsx2/pull/632)
+
 ## Fixes
 
-* On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned.
+* On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned. [629](https://github.com/JanMarvin/openxlsx2/pull/629)
 
-* Previously if `wb_to_df()` was used with argument `cols`, columns that were missing were created at the end of the output frame. Now columns are returned ordered.
+* Previously if `wb_to_df()` was used with argument `cols`, columns that were missing were created at the end of the output frame. Now columns are returned ordered. [631](https://github.com/JanMarvin/openxlsx2/pull/631)
 
 
 ***************************************************************************
