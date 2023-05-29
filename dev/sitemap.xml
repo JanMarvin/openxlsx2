@@ -1,390 +1,390 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>/dev/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/articles/Update-from-openxlsx.html</loc>
+    <loc>/dev/articles/Update-from-openxlsx.html</loc>
   </url>
   <url>
-    <loc>/articles/conditional-formatting.html</loc>
+    <loc>/dev/articles/conditional-formatting.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>/dev/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/openxlsx2_basic_manual.html</loc>
+    <loc>/dev/articles/openxlsx2_basic_manual.html</loc>
   </url>
   <url>
-    <loc>/articles/openxlsx2_charts_manual.html</loc>
+    <loc>/dev/articles/openxlsx2_charts_manual.html</loc>
   </url>
   <url>
-    <loc>/articles/openxlsx2_formulas_manual.html</loc>
+    <loc>/dev/articles/openxlsx2_formulas_manual.html</loc>
   </url>
   <url>
-    <loc>/articles/openxlsx2_style_manual.html</loc>
+    <loc>/dev/articles/openxlsx2_style_manual.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>/dev/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>/dev/index.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>/dev/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/Hyperlink.html</loc>
+    <loc>/dev/reference/Hyperlink.html</loc>
   </url>
   <url>
-    <loc>/reference/as_xml.html</loc>
+    <loc>/dev/reference/as_xml.html</loc>
   </url>
   <url>
-    <loc>/reference/cell_style.html</loc>
+    <loc>/dev/reference/cell_style.html</loc>
   </url>
   <url>
-    <loc>/reference/clean_worksheet_name.html</loc>
+    <loc>/dev/reference/clean_worksheet_name.html</loc>
   </url>
   <url>
-    <loc>/reference/cleanup.html</loc>
+    <loc>/dev/reference/cleanup.html</loc>
   </url>
   <url>
-    <loc>/reference/col2int.html</loc>
+    <loc>/dev/reference/col2int.html</loc>
   </url>
   <url>
-    <loc>/reference/comment.html</loc>
+    <loc>/dev/reference/comment.html</loc>
   </url>
   <url>
-    <loc>/reference/convertToExcelDate.html</loc>
+    <loc>/dev/reference/convertToExcelDate.html</loc>
   </url>
   <url>
-    <loc>/reference/convert_date.html</loc>
+    <loc>/dev/reference/convert_date.html</loc>
   </url>
   <url>
-    <loc>/reference/create_border.html</loc>
+    <loc>/dev/reference/create_border.html</loc>
   </url>
   <url>
-    <loc>/reference/create_cell_style.html</loc>
+    <loc>/dev/reference/create_cell_style.html</loc>
   </url>
   <url>
-    <loc>/reference/create_dxfs_style.html</loc>
+    <loc>/dev/reference/create_dxfs_style.html</loc>
   </url>
   <url>
-    <loc>/reference/create_fill.html</loc>
+    <loc>/dev/reference/create_fill.html</loc>
   </url>
   <url>
-    <loc>/reference/create_font.html</loc>
+    <loc>/dev/reference/create_font.html</loc>
   </url>
   <url>
-    <loc>/reference/create_hyperlink.html</loc>
+    <loc>/dev/reference/create_hyperlink.html</loc>
   </url>
   <url>
-    <loc>/reference/create_numfmt.html</loc>
+    <loc>/dev/reference/create_numfmt.html</loc>
   </url>
   <url>
-    <loc>/reference/create_sparklines.html</loc>
+    <loc>/dev/reference/create_sparklines.html</loc>
   </url>
   <url>
-    <loc>/reference/create_tablestyle.html</loc>
+    <loc>/dev/reference/create_tablestyle.html</loc>
   </url>
   <url>
-    <loc>/reference/dataframe_to_dims.html</loc>
+    <loc>/dev/reference/dataframe_to_dims.html</loc>
   </url>
   <url>
-    <loc>/reference/dims_to_dataframe.html</loc>
+    <loc>/dev/reference/dims_to_dataframe.html</loc>
   </url>
   <url>
-    <loc>/reference/fmt_txt.html</loc>
+    <loc>/dev/reference/fmt_txt.html</loc>
   </url>
   <url>
-    <loc>/reference/get_cell_refs.html</loc>
+    <loc>/dev/reference/get_cell_refs.html</loc>
   </url>
   <url>
-    <loc>/reference/get_date_origin.html</loc>
+    <loc>/dev/reference/get_date_origin.html</loc>
   </url>
   <url>
-    <loc>/reference/guess_col_type.html</loc>
+    <loc>/dev/reference/guess_col_type.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>/dev/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/int2col.html</loc>
+    <loc>/dev/reference/int2col.html</loc>
   </url>
   <url>
-    <loc>/reference/named_region.html</loc>
+    <loc>/dev/reference/named_region.html</loc>
   </url>
   <url>
-    <loc>/reference/openxlsx2.html</loc>
+    <loc>/dev/reference/openxlsx2.html</loc>
   </url>
   <url>
-    <loc>/reference/pipe.html</loc>
+    <loc>/dev/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>/reference/print.pugi_xml.html</loc>
+    <loc>/dev/reference/print.pugi_xml.html</loc>
   </url>
   <url>
-    <loc>/reference/pugixml.html</loc>
+    <loc>/dev/reference/pugixml.html</loc>
   </url>
   <url>
-    <loc>/reference/read_sheet_names.html</loc>
+    <loc>/dev/reference/read_sheet_names.html</loc>
   </url>
   <url>
-    <loc>/reference/read_xlsx.html</loc>
+    <loc>/dev/reference/read_xlsx.html</loc>
   </url>
   <url>
-    <loc>/reference/read_xml.html</loc>
+    <loc>/dev/reference/read_xml.html</loc>
   </url>
   <url>
-    <loc>/reference/select_active_sheet.html</loc>
+    <loc>/dev/reference/select_active_sheet.html</loc>
   </url>
   <url>
-    <loc>/reference/sheet_visibility.html</loc>
+    <loc>/dev/reference/sheet_visibility.html</loc>
   </url>
   <url>
-    <loc>/reference/style_mgr.html</loc>
+    <loc>/dev/reference/style_mgr.html</loc>
   </url>
   <url>
-    <loc>/reference/styles_on_sheet.html</loc>
+    <loc>/dev/reference/styles_on_sheet.html</loc>
   </url>
   <url>
-    <loc>/reference/temp_xlsx.html</loc>
+    <loc>/dev/reference/temp_xlsx.html</loc>
   </url>
   <url>
-    <loc>/reference/waivers.html</loc>
+    <loc>/dev/reference/waivers.html</loc>
   </url>
   <url>
-    <loc>/reference/wbChartSheet.html</loc>
+    <loc>/dev/reference/wbChartSheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wbColour.html</loc>
+    <loc>/dev/reference/wbColour.html</loc>
   </url>
   <url>
-    <loc>/reference/wbComment.html</loc>
+    <loc>/dev/reference/wbComment.html</loc>
   </url>
   <url>
-    <loc>/reference/wbHyperlink.html</loc>
+    <loc>/dev/reference/wbHyperlink.html</loc>
   </url>
   <url>
-    <loc>/reference/wbSheetData.html</loc>
+    <loc>/dev/reference/wbSheetData.html</loc>
   </url>
   <url>
-    <loc>/reference/wbWorkbook.html</loc>
+    <loc>/dev/reference/wbWorkbook.html</loc>
   </url>
   <url>
-    <loc>/reference/wbWorksheet.html</loc>
+    <loc>/dev/reference/wbWorksheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_border.html</loc>
+    <loc>/dev/reference/wb_add_border.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_cell_style.html</loc>
+    <loc>/dev/reference/wb_add_cell_style.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_chart_xml.html</loc>
+    <loc>/dev/reference/wb_add_chart_xml.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_chartsheet.html</loc>
+    <loc>/dev/reference/wb_add_chartsheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_conditional_formatting.html</loc>
+    <loc>/dev/reference/wb_add_conditional_formatting.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_data_table.html</loc>
+    <loc>/dev/reference/wb_add_data_table.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_data_validation.html</loc>
+    <loc>/dev/reference/wb_add_data_validation.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_drawing.html</loc>
+    <loc>/dev/reference/wb_add_drawing.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_fill.html</loc>
+    <loc>/dev/reference/wb_add_fill.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_filter.html</loc>
+    <loc>/dev/reference/wb_add_filter.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_font.html</loc>
+    <loc>/dev/reference/wb_add_font.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_form_control.html</loc>
+    <loc>/dev/reference/wb_add_form_control.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_formula.html</loc>
+    <loc>/dev/reference/wb_add_formula.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_ignore_error.html</loc>
+    <loc>/dev/reference/wb_add_ignore_error.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_image.html</loc>
+    <loc>/dev/reference/wb_add_image.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_mschart.html</loc>
+    <loc>/dev/reference/wb_add_mschart.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_numfmt.html</loc>
+    <loc>/dev/reference/wb_add_numfmt.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_page_break.html</loc>
+    <loc>/dev/reference/wb_add_page_break.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_pivot_table.html</loc>
+    <loc>/dev/reference/wb_add_pivot_table.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_plot.html</loc>
+    <loc>/dev/reference/wb_add_plot.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_sparklines.html</loc>
+    <loc>/dev/reference/wb_add_sparklines.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_style.html</loc>
+    <loc>/dev/reference/wb_add_style.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_add_worksheet.html</loc>
+    <loc>/dev/reference/wb_add_worksheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_clone_sheet_style.html</loc>
+    <loc>/dev/reference/wb_clone_sheet_style.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_clone_worksheet.html</loc>
+    <loc>/dev/reference/wb_clone_worksheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_copy_cells.html</loc>
+    <loc>/dev/reference/wb_copy_cells.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_creators.html</loc>
+    <loc>/dev/reference/wb_creators.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_data.html</loc>
+    <loc>/dev/reference/wb_data.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_freeze_pane.html</loc>
+    <loc>/dev/reference/wb_freeze_pane.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_get_base_font.html</loc>
+    <loc>/dev/reference/wb_get_base_font.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_get_sheet_name.html</loc>
+    <loc>/dev/reference/wb_get_sheet_name.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_get_sheet_names.html</loc>
+    <loc>/dev/reference/wb_get_sheet_names.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_get_tables.html</loc>
+    <loc>/dev/reference/wb_get_tables.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_get_worksheet.html</loc>
+    <loc>/dev/reference/wb_get_worksheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_grid_lines.html</loc>
+    <loc>/dev/reference/wb_grid_lines.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_load.html</loc>
+    <loc>/dev/reference/wb_load.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_modify_basefont.html</loc>
+    <loc>/dev/reference/wb_modify_basefont.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_open.html</loc>
+    <loc>/dev/reference/wb_open.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_order.html</loc>
+    <loc>/dev/reference/wb_order.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_protect.html</loc>
+    <loc>/dev/reference/wb_protect.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_protect_worksheet.html</loc>
+    <loc>/dev/reference/wb_protect_worksheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_read.html</loc>
+    <loc>/dev/reference/wb_read.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_remove_col_widths.html</loc>
+    <loc>/dev/reference/wb_remove_col_widths.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_remove_filter.html</loc>
+    <loc>/dev/reference/wb_remove_filter.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_remove_row_heights.html</loc>
+    <loc>/dev/reference/wb_remove_row_heights.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_remove_tables.html</loc>
+    <loc>/dev/reference/wb_remove_tables.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_remove_worksheet.html</loc>
+    <loc>/dev/reference/wb_remove_worksheet.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_save.html</loc>
+    <loc>/dev/reference/wb_save.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_set_bookview.html</loc>
+    <loc>/dev/reference/wb_set_bookview.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_set_col_widths.html</loc>
+    <loc>/dev/reference/wb_set_col_widths.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_set_header_footer.html</loc>
+    <loc>/dev/reference/wb_set_header_footer.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_set_last_modified_by.html</loc>
+    <loc>/dev/reference/wb_set_last_modified_by.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_set_row_heights.html</loc>
+    <loc>/dev/reference/wb_set_row_heights.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_set_sheet_names.html</loc>
+    <loc>/dev/reference/wb_set_sheet_names.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_set_sheetview.html</loc>
+    <loc>/dev/reference/wb_set_sheetview.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_to_df.html</loc>
+    <loc>/dev/reference/wb_to_df.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_update_table.html</loc>
+    <loc>/dev/reference/wb_update_table.html</loc>
   </url>
   <url>
-    <loc>/reference/wb_workbook.html</loc>
+    <loc>/dev/reference/wb_workbook.html</loc>
   </url>
   <url>
-    <loc>/reference/workbook_grouping.html</loc>
+    <loc>/dev/reference/workbook_grouping.html</loc>
   </url>
   <url>
-    <loc>/reference/write_data.html</loc>
+    <loc>/dev/reference/write_data.html</loc>
   </url>
   <url>
-    <loc>/reference/write_datatable.html</loc>
+    <loc>/dev/reference/write_datatable.html</loc>
   </url>
   <url>
-    <loc>/reference/write_file.html</loc>
+    <loc>/dev/reference/write_file.html</loc>
   </url>
   <url>
-    <loc>/reference/write_formula.html</loc>
+    <loc>/dev/reference/write_formula.html</loc>
   </url>
   <url>
-    <loc>/reference/write_xlsx.html</loc>
+    <loc>/dev/reference/write_xlsx.html</loc>
   </url>
   <url>
-    <loc>/reference/ws_cell_merge.html</loc>
+    <loc>/dev/reference/ws_cell_merge.html</loc>
   </url>
   <url>
-    <loc>/reference/ws_page_setup.html</loc>
+    <loc>/dev/reference/ws_page_setup.html</loc>
   </url>
   <url>
-    <loc>/reference/xl_open.html</loc>
+    <loc>/dev/reference/xl_open.html</loc>
   </url>
   <url>
-    <loc>/reference/xml_add_child.html</loc>
+    <loc>/dev/reference/xml_add_child.html</loc>
   </url>
   <url>
-    <loc>/reference/xml_attr_mod.html</loc>
+    <loc>/dev/reference/xml_attr_mod.html</loc>
   </url>
   <url>
-    <loc>/reference/xml_node_create.html</loc>
+    <loc>/dev/reference/xml_node_create.html</loc>
   </url>
   <url>
-    <loc>/reference/xml_rm_child.html</loc>
+    <loc>/dev/reference/xml_rm_child.html</loc>
   </url>
 </urlset>
