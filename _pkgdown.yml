@@ -40,5 +40,8 @@ reference:
   contents:
   - matches(".*")
 
+template:
+  bootstrap: 5
+
 development:
   mode: auto

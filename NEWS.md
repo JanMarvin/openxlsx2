@@ -1,4 +1,4 @@
-# openxlsx2 (in development)
+# openxlsx2 (development version)
 
 ## Fixes
 
@@ -8,7 +8,7 @@
 ***************************************************************************
 
 
-# openxlsx2 (0.7)
+# openxlsx2 0.7
 
 ## New features
 
@@ -38,7 +38,7 @@
 ***************************************************************************
 
 
-# openxlsx2 (0.6.1)
+# openxlsx2 0.6.1
 
 ## New features
 
@@ -58,7 +58,7 @@
 ***************************************************************************
 
 
-# openxlsx2 (0.6)
+# openxlsx2 0.6
 
 ## New features
 
@@ -95,7 +95,7 @@
 ***************************************************************************
 
 
-# openxlsx2 (0.5.1)
+# openxlsx2 0.5.1
 
 ## New features
 
@@ -123,7 +123,7 @@
 ***************************************************************************
 
 
-# openxlsx2 (0.5)
+# openxlsx2 0.5
 
 ## New features
 
@@ -164,10 +164,11 @@
 
 * Only documentation: `openxlsx2` defaults to American English 'color' from now on. Though, we fully support the previous 'colour'. Users will not have to adjust their code. Our documentation only lists `color`, but you can pass `colour` just the same way you used to. [501](https://github.com/JanMarvin/openxlsx2/pull/501) [502](https://github.com/JanMarvin/openxlsx2/pull/502)
 
+
 ***************************************************************************
 
 
-# openxlsx2  0.4.1
+# openxlsx2 0.4.1
 
 ## New features
 
