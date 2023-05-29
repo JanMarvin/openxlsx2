@@ -3,11 +3,11 @@ test_that("read_xlsx from different sources", {
   skip_if_offline()
 
   ## URL
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
+  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/oxlsx2_sheet.xlsx"
   df_url <- read_xlsx(xlsxFile)
 
   ## File
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xlsxFile <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   df_file <- read_xlsx(xlsxFile)
 
   expect_equal(df_url, df_file, label = "Read from URL")
@@ -29,11 +29,11 @@ test_that("wb_load from different sources", {
   skip_if_offline()
 
   ## URL
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
+  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/oxlsx2_sheet.xlsx"
   wb_url <- wb_load(xlsxFile)
 
   ## File
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xlsxFile <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb_file <- wb_load(xlsxFile)
 
   # Loading from URL vs local not equal
@@ -45,16 +45,9 @@ test_that("get_date_origin from different sources", {
 
   skip_if_offline()
 
-  ## URL
   xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
   origin_url <- get_date_origin(xlsxFile)
 
-  ## File
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  origin_file <- get_date_origin(xlsxFile)
-
-  ## check
-  expect_equal(origin_url, origin_file)
   expect_equal(origin_url, "1900-01-01")
 })
 
@@ -118,7 +111,7 @@ test_that("encoding", {
 
   expect_equal(exp, wb_to_df(wb, keep_attributes = TRUE))
 
-  fl <- system.file("extdata", "eurosymbol.xlsx", package = "openxlsx2")
+  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/eurosymbol.xlsx"
   wb <- wb_load(fl)
   got <- wb$sharedStrings
 

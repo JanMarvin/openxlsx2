@@ -88,7 +88,9 @@ test_that("temp_dir works", {
 
 test_that("relship", {
 
-  wb <- wb_load(system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  skip_if_offline()
+
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx")
 
   exp <- "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing3.xml\"/>"
   got <- relship_no(obj = wb$worksheets_rels[[3]], x = "table")

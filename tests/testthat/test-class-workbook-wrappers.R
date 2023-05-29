@@ -211,7 +211,9 @@ test_that("wb_add_plot() is a wrapper", {
 
 test_that("wb_add_drawing is a wrapper", {
 
-  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  skip_if_offline()
+
+  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx"
   wb <- wb_load(file = fl)
 
   xml <- wb$drawings[[2]]

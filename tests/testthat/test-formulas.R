@@ -1,6 +1,8 @@
 test_that("load various formulas", {
 
-  fl <- system.file("extdata", "formula.xlsx", package = "openxlsx2")
+  skip_if_offline()
+
+  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/formula.xlsx"
   wb <- wb_load(fl)
 
   expect_true(!is.null(wb$metadata))

@@ -50,10 +50,12 @@ test_that("Maintaining Named Regions on Load", {
 
 test_that("Correctly Loading Named Regions Created in Excel", {
 
+  skip_if_offline()
+
   # Load an excel workbook (in the repo, it's located in the /inst folder;
   # when installed on the user's system, it is located in the installation folder
   # of the package)
-  filename <- system.file("extdata", "namedRegions.xlsx", package = "openxlsx2")
+  filename <- "https://github.com/JanMarvin/openxlsx-data/raw/main/namedRegions.xlsx"
 
   # Load this workbook. We will test read_xlsx by passing both the object wb and
   # the filename. Both should produce the same results.
@@ -113,7 +115,7 @@ test_that("Correctly Loading Named Regions Created in Excel", {
 
 # Ordering locally and in testthat differs.
 test_that("Load names from an Excel file with funky non-region names", {
-  filename <- system.file("extdata", "namedRegions2.xlsx", package = "openxlsx2")
+  filename <- "https://github.com/JanMarvin/openxlsx-data/raw/main/namedRegions2.xlsx"
   wb <- wb_load(filename)
   dn <- wb_get_named_regions(wb)
 
@@ -331,7 +333,8 @@ test_that("Read namedRegion from specific sheet", {
   filename <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 
   namedR <- "MyRange"
-  sheets <- read_sheet_names(filename)
+  expect_warning(sheets <- read_sheet_names(filename),
+                 "'read_sheet_names' is deprecated.")
 
   # read the correct sheets
   expect_equal(data.frame(X1 = "S1A1", X2 = "S1B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet1", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)

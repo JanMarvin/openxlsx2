@@ -61,12 +61,14 @@ test_that("Deleting worksheets", {
 
 test_that("removing leading chartsheets works", {
 
+  skip_if_offline()
+
   # We remove sheet 1 which is a chartsheet and the only chartsheet in the file.
   # We remember the first worksheet id. And even though the first worksheet
   # could be sheet 1, we keep it at 2. Otherwise our reference counter would get
   # in trouble. Similar things could happen if all worksheets are removed and
   # only chartsheets remain. Though that is currently not implemented.
-  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/mtcars_chart.xlsx"
   tmp <- temp_xlsx()
   wb <- wb_load(fl)$
     remove_worksheet(1)

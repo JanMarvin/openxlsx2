@@ -104,33 +104,31 @@ Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns \code
   wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
 
   # read selected cols
-  wb_to_df(wb1, cols = c(1:2, 7))
+  wb_to_df(wb1, cols = c("A:B", "G"))
 
   # read selected rows
-  wb_to_df(wb1, rows = c(1, 4, 6))
+  wb_to_df(wb1, rows = c(2, 4, 6))
 
   # convert characters to numerics and date (logical too?)
   wb_to_df(wb1, convert = FALSE)
 
   # erase empty rows from dataset
-  wb_to_df(wb1, sheet = 3, skipEmptyRows = TRUE)
+  wb_to_df(wb1, skipEmptyRows = TRUE)
 
   # erase empty columns from dataset
   wb_to_df(wb1, skipEmptyCols = TRUE)
 
   # convert first row to rownames
-  wb_to_df(wb1, sheet = 3, dims = "C6:G9", rowNames = TRUE)
+  wb_to_df(wb1, sheet = 2, dims = "C6:G9", rowNames = TRUE)
 
   # define type of the data.frame
-  wb_to_df(wb1, cols = c(1, 4), types = c("Var1" = 0, "Var3" = 1))
+  wb_to_df(wb1, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
 
   # start in row 5
   wb_to_df(wb1, startRow = 5, colNames = FALSE)
 
   # na string
-  wb_to_df(wb1, na.strings = "")
-
-  # read_xlsx(wb1)
+  wb_to_df(wb1, na.strings = "a")
 
   ###########################################################################
   # inlinestr
@@ -139,7 +137,6 @@ Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns \code
 
   # read dataset with inlinestr
   wb_to_df(wb2)
-  # read_xlsx(wb2)
 
   ###########################################################################
   # named_region // namedRegion

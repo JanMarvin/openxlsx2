@@ -1,8 +1,10 @@
 test_that("wb_to_df", {
 
+  skip_if_offline()
+
   ###########################################################################
   # numerics, dates, missings, bool and string
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx"
   expect_silent(wb1 <- wb_load(xlsxFile))
 
   # import workbook
@@ -134,7 +136,9 @@ test_that("wb_to_df", {
 
 test_that("select_active_sheet", {
 
-  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  skip_if_offline()
+
+  wb <- wb_load(file = "https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx")
 
   exp <- structure(
     list(tabSelected = c("", "1", "", ""),

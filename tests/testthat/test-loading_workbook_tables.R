@@ -1,7 +1,9 @@
 
-
 test_that("Tables loaded correctly", {
-  wb <- wb_load(system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+
+  skip_if_offline()
+
+  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx")
 
   expect_equal(wb$tables$tab_name, c("Table2", "Table3"))
   expect_equal(wb$tables$tab_ref, c("A1:E51", "A1:K30"))

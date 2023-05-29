@@ -1,10 +1,13 @@
 test_that("clone Worksheet with data", {
+
+  skip_if_offline()
+
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_data("Sheet 1", 1)
   wb$clone_worksheet("Sheet 1", "Sheet 2")
 
-  file_name <- system.file("extdata", "cloneWorksheetExample.xlsx", package = "openxlsx2")
+  file_name <- "https://github.com/JanMarvin/openxlsx-data/raw/main/cloneWorksheetExample.xlsx"
   refwb <- wb_load(file = file_name)
 
   expect_equal(wb$get_sheet_names(), refwb$get_sheet_names())
@@ -13,11 +16,14 @@ test_that("clone Worksheet with data", {
 
 
 test_that("clone empty Worksheet", {
+
+  skip_if_offline()
+
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$clone_worksheet("Sheet 1", "Sheet 2")
 
-  file_name <- system.file("extdata", "cloneEmptyWorksheetExample.xlsx", package = "openxlsx2")
+  file_name <- "https://github.com/JanMarvin/openxlsx-data/raw/main/cloneEmptyWorksheetExample.xlsx"
   refwb <- wb_load(file = file_name)
 
   expect_equal(wb$get_sheet_names(), refwb$get_sheet_names())

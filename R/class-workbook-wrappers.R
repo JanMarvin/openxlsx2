@@ -798,7 +798,7 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
 #'
 #' ## remove column widths in columns 1 to 20
 #' wb_remove_col_widths(wb, 1, cols = 1:20)
@@ -820,7 +820,7 @@ wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
 #' @export
 #' @examples
 #' ## Create a new workbook
-#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
 #'
 #' ## remove any custom row heights in rows 1 to 10
 #' wb$remove_row_heights(1, rows = 1:10)
@@ -962,7 +962,7 @@ wb_add_drawing <- function(
 #' @export
 #' @examples
 #' ## load a workbook
-#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
 #'
 #' ## Remove sheet 2
 #' wb <- wb_remove_worksheet(wb, 2)
@@ -1465,10 +1465,10 @@ wb_protect <- function(
 #' @param print A logical. If `FALSE`, grid lines are not printed.
 #' @export
 #' @examples
-#' wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+#' wb <- wb_workbook()$add_worksheet()$add_worksheet()
 #' wb$get_sheet_names() ## list worksheets in workbook
 #' wb$grid_lines(1, show = FALSE)
-#' wb$grid_lines("testing", show = FALSE)
+#' wb$grid_lines("Sheet 2", show = FALSE)
 wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
   assert_workbook(wb)
   wb$clone()$grid_lines(sheet = sheet, show = show, print = print)
