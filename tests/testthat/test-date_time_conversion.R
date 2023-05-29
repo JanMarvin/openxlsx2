@@ -52,7 +52,7 @@ test_that("convert hms works", {
   got <- wb$worksheets[[1]]$sheet_data$cc
   expect_equal(exp, got)
 
-  z <- wb_to_df(wb, colNames = FALSE)
+  z <- wb_to_df(wb, colNames = FALSE, keep_attributes = TRUE)
   expect_equal(z$A, "12:13:14")
   expect_equal(attr(z, "tt")$A, "h")
 

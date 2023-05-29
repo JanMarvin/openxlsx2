@@ -25,7 +25,8 @@ wb_to_df(
   showFormula = FALSE,
   convert = TRUE,
   types,
-  named_region
+  named_region,
+  keep_attributes = FALSE
 )
 }
 \arguments{
@@ -70,6 +71,8 @@ wb_to_df(
 \item{types}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data}
 
 \item{named_region}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
+
+\item{keep_attributes}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
 }
 \description{
 Simple function to create a dataframe from a workbook. Simple as in simply

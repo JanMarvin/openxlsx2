@@ -1386,6 +1386,7 @@ wbWorkbook <- R6::R6Class(
     #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
     #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
     #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+    #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
     #' @return a data frame
     to_df = function(
       sheet,
@@ -1407,7 +1408,8 @@ wbWorkbook <- R6::R6Class(
       showFormula     = FALSE,
       convert         = TRUE,
       types,
-      named_region
+      named_region,
+      keep_attributes = FALSE
     ) {
 
       if (missing(sheet)) sheet <- substitute()

@@ -498,19 +498,6 @@ test_that("add_drawing works", {
     ),
     row.names = 3:6,
     class = c("data.frame", "wb_data"),
-    tt = structure(
-      list(
-        name = c("s", "s", "s", "s"),
-        mpg = c("n", "n", "n", "n"),
-        cyl = c("n", "n", "n", "n"),
-        disp = c("n", "n", "n", "n"),
-        hp = c("n", "n", "n", "n"),
-        drat = c("n", "n", "n", "n"),
-        wt = c("n", "n", "n", "n")
-      ),
-      row.names = 3:6,
-      class = "data.frame"),
-    types = c(A = 0, B = 1, C = 1, D = 1, E = 1, F = 1, G = 1),
     dims = structure(
       list(
         A = c("A2", "A3", "A4", "A5", "A6"),

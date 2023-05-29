@@ -826,7 +826,8 @@ to_df
   showFormula = FALSE,
   convert = TRUE,
   types,
-  named_region
+  named_region,
+  keep_attributes = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -872,6 +873,8 @@ to_df
 \item{\code{types}}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data}
 
 \item{\code{named_region}}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
+
+\item{\code{keep_attributes}}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
 }
 \if{html}{\out{</div>}}
 }
