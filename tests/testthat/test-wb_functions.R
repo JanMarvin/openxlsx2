@@ -283,3 +283,22 @@ test_that("skip hidden columns and rows works", {
   expect_equal(exp, got)
 
 })
+
+test_that("cols return order is correct", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(dims = "B2", x = head(iris))
+
+  exp <- structure(
+    list(
+      c(NA_real_, NA_real_, NA_real_, NA_real_, NA_real_, NA_real_),
+      c(5.1, 4.9, 4.7, 4.6, 5, 5.4),
+      c(3.5, 3, 3.2, 3.1, 3.6, 3.9)
+    ),
+    names = c(NA, "Sepal.Length", "Sepal.Width"),
+    row.names = 3:8,
+    class = "data.frame"
+  )
+  got <- wb_to_df(wb, cols = c(1:3))
+  expect_equal(exp, got)
+
+})

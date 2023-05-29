@@ -4,6 +4,8 @@
 
 * On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned.
 
+* Previously if `wb_to_df()` was used with argument `cols`, columns that were missing were created at the end of the output frame. Now columns are returned ordered.
+
 
 ***************************************************************************
 

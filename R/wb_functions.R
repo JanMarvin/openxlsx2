@@ -526,14 +526,12 @@ wb_to_df <- function(
       z[keep_col]  <- NA_character_
       tt[keep_col] <- NA_character_
 
-      # return expected order of columns
       z  <- z[keep_cols]
       tt <- tt[keep_cols]
     }
 
-
-    z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
-    tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
+    z  <- z[, match(keep_cols, colnames(z)), drop = FALSE]
+    tt <- tt[, match(keep_cols, colnames(tt)), drop = FALSE]
   }
 
   if (!is.null(cols)) {
@@ -546,8 +544,8 @@ wb_to_df <- function(
       tt[keep_col] <- NA_character_
     }
 
-    z  <- z[, colnames(z) %in% keep_cols, drop = FALSE]
-    tt <- tt[, colnames(tt) %in% keep_cols, drop = FALSE]
+    z  <- z[, match(keep_cols, colnames(z)), drop = FALSE]
+    tt <- tt[, match(keep_cols, colnames(tt)), drop = FALSE]
   }
 
   keep_rows <- keep_rows[keep_rows %in% rnams]
