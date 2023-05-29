@@ -59,7 +59,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>On load <code>app.xml</code> is now assigned to <code>wb$app</code>. Previously it was loaded but not assigned.</li>
+<ul><li><p>On load <code>app.xml</code> is now assigned to <code>wb$app</code>. Previously it was loaded but not assigned.</p></li>
+<li><p>Previously if <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> was used with argument <code>cols</code>, columns that were missing were created at the end of the output frame. Now columns are returned ordered.</p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">

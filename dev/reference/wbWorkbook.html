@@ -1094,7 +1094,8 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  showFormula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  convert <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">types</span>,</span>
-<span>  <span class="va">named_region</span></span>
+<span>  <span class="va">named_region</span>,</span>
+<span>  keep_attributes <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -1178,6 +1179,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>named_region</code></dt>
 <dd><p>Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.</p></dd>
+
+
+<dt><code>keep_attributes</code></dt>
+<dd><p>If TRUE additional attributes are returned. (These are used internally to define a cell type.)</p></dd>
 
 
 </dl><p></p></div>
