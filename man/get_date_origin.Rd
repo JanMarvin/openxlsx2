@@ -29,7 +29,7 @@ write_xlsx(as.Date("2015-01-10") - (0:4), file = temp)
 m <- read_xlsx(temp)
 
 ## convert to dates
-do <- get_date_origin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+do <- get_date_origin(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
 convert_date(m[[1]], do)
 
 get_date_origin(wb_workbook())

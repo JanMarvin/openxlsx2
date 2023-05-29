@@ -58,7 +58,7 @@ test_that("comments", {
 
 test_that("load comments", {
 
-  fl <- system.file("extdata", "pivot_notes.xlsx", package = "openxlsx2")
+  fl <- testfile_path("pivot_notes.xlsx")
   wb <- wb_load(fl)
 
   temp <- temp_xlsx()

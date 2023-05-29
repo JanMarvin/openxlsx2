@@ -22,7 +22,7 @@ While previous `openxlsx` functions used the `.` in function calls, as well as c
 The basic read function changed from `read.xlsx` to `read_xlsx`. Using a default xlsx file included in the package:
 
 ```{r read}
-xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
 
 The old syntax looked like this:

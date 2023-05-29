@@ -1,6 +1,6 @@
 test_that("load various formulas", {
 
-  fl <- system.file("extdata", "formula.xlsx", package = "openxlsx2")
+  fl <- testfile_path("formula.xlsx")
   wb <- wb_load(fl)
 
   expect_true(!is.null(wb$metadata))

@@ -30,33 +30,8 @@
 #' @return data.frame
 #' @export
 #' @examples
-#'
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-#' df1 <- read_xlsx(xlsxFile = xlsxFile, sheet = 1, skipEmptyRows = FALSE)
-#' sapply(df1, class)
-#'
-#' df2 <- read_xlsx(xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE)
-#' df2$Date <- convert_date(df2$Date)
-#' sapply(df2, class)
-#' head(df2)
-#'
-#' df2 <- read_xlsx(
-#'   xlsxFile = xlsxFile, sheet = 3, skipEmptyRows = TRUE,
-#'   detectDates = TRUE
-#' )
-#' sapply(df2, class)
-#' head(df2)
-#'
-#' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' df3 <- read_xlsx(wb, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
-#' df4 <- read_xlsx(xlsxFile, sheet = 2, skipEmptyRows = FALSE, colNames = TRUE)
-#' all.equal(df3, df4)
-#'
-#' wb <- wb_load(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
-#' df3 <- read_xlsx(wb,
-#'   sheet = 2, skipEmptyRows = FALSE,
-#'   cols = c(1, 4), rows = c(1, 3, 4)
-#' )
+#' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' read_xlsx(xlsxFile = xlsxFile)
 #' @export
 read_xlsx <- function(
   xlsxFile,
@@ -115,10 +90,10 @@ read_xlsx <- function(
 #' @return data.frame
 #' @export
 #' @examples
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+#' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #' df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1)
 #'
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+#' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #' df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 wb_read <- function(
   xlsxFile,
@@ -169,34 +144,13 @@ wb_read <- function(
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples
-#' read_sheet_names(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' wb_load(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))$get_sheet_names()
 #' @export
 read_sheet_names <- function(file) {
-  if (!file.exists(file)) {
-    stop("file does not exist.")
+  if (!inherits(file, "wbWorkbook")) {
+    wb <- wb_load(file)
   }
+  .Deprecated(old = "read_sheet_names", new = "wb_get_sheet_names")
 
-  if (grepl("\\.xls$|\\.xlm$", file)) {
-    stop("openxlsx can not read .xls or .xlm files!")
-  }
-
-  ## create temp dir and unzip
-  xmlDir <- temp_dir("_excelXMLRead")
-  on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
-  xmlFiles <- unzip(file, exdir = xmlDir)
-
-  workbook <- grep("workbook.xml$", xmlFiles, perl = TRUE, value = TRUE)
-  workbook <- read_xml(workbook)
-  sheets <- xml_node(workbook, "workbook", "sheets", "sheet")
-  sheets <- xml_attr(sheets, "sheet")
-  sheets <- rbindlist(sheets)
-
-  ## Some veryHidden sheets do not have a sheet content and their rId is empty.
-  ## Such sheets need to be filtered out because otherwise their sheet names
-  ## occur in the list of all sheet names, leading to a wrong association
-  ## of sheet names with sheet indeces.
-  sheets <- sheets$name[sheets$`r:id` != ""]
-  sheets <- replaceXMLEntities(sheets)
-
-  return(sheets)
+  unname(wb$get_sheet_names())
 }

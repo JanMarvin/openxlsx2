@@ -1,13 +1,14 @@
 test_that("read_xlsx correct sheet", {
-  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  sheet_names <- read_sheet_names(file = fl)
+
+  fl <- testfile_path("readTest.xlsx")
+  expect_warning(sheet_names <- read_sheet_names(file = fl),
+                 "'read_sheet_names' is deprecated.")
 
   expected_sheet_names <- c(
     "Sheet1", "Sheet2", "Sheet 3",
     "Sheet 4", "Sheet 5", "Sheet 6",
     "1", "11", "111", "1111", "11111", "111111"
   )
-
 
   expect_equal(object = sheet_names, expected = expected_sheet_names)
 

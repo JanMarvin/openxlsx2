@@ -318,7 +318,7 @@ test_that("clone worksheet", {
   ## Dummy tests - not sure how to test these from R ##
 
   # # clone chartsheet ----------------------------------------------------
-  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  fl <- testfile_path("mtcars_chart.xlsx")
   wb <- wb_load(fl)
   # wb$get_sheet_names() # chartsheet has no named name?
   expect_silent(wb$clone_worksheet(1, "Clone 1"))
@@ -326,7 +326,7 @@ test_that("clone worksheet", {
   # wb$open()
 
   # clone pivot table and drawing -----------------------------------------
-  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  fl <- testfile_path("loadExample.xlsx")
   wb <- wb_load(fl)
   expect_silent(wb$clone_worksheet(4, "Clone 1"))
 
@@ -341,7 +341,6 @@ test_that("clone worksheet", {
   # wb$open()
 
   # clone drawing ---------------------------------------------------------
-  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)
   expect_silent(wb$clone_worksheet("testing", "Clone1"))
 
@@ -349,7 +348,7 @@ test_that("clone worksheet", {
   # wb$open()
 
   # clone sheet with table ------------------------------------------------
-  fl <- system.file("extdata", "tableStyles.xlsx", package = "openxlsx2")
+  fl <- testfile_path("tableStyles.xlsx")
   wb <- wb_load(fl)
   expect_silent(wb$clone_worksheet(1, "clone"))
 
@@ -357,7 +356,7 @@ test_that("clone worksheet", {
   # wb$open()
 
   # clone sheet with chart ------------------------------------------------
-  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  fl <- testfile_path("mtcars_chart.xlsx")
   wb <- wb_load(fl)
   wb$clone_worksheet(2, "Clone 1")
 
@@ -366,7 +365,7 @@ test_that("clone worksheet", {
   # wb$open()
 
   # clone slicer ----------------------------------------------------------
-  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  fl <- testfile_path("loadExample.xlsx")
   wb <- wb_load(fl)
   expect_warning(wb$clone_worksheet("IrisSample", "Clone1"),
                  "Cloning slicers is not yet supported. It will not appear on the sheet.")

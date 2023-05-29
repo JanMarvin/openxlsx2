@@ -30,7 +30,7 @@ For this example we will use example data provided by the package. You can locat
 ### Basic import
 We begin with the `readTest.xlsx` file by telling R where to find this file on our system
 ```{r}
-xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
 
 The object contains a path to the xlsx file and we pass this file to our function to read the workbook into R
@@ -40,7 +40,7 @@ wb_to_df(xlsxFile)
 ```
 
 The output is created as a data frame and contains data types date, logical, numeric and character. The function to import the file to R, `wb_to_df()` provides similar options as the `openxlsx` functions `read.xlsx()` and `readWorkbook()` and a few new functions we will go through the options. As you might have noticed, we return the column of the xlsx file as the row name of the data frame returned.
-Per default the first sheet in the workbook is imported. If you want to switch this, either provide the `sheet` parameter with the correct index or provide the sheet name. 
+Per default the first sheet in the workbook is imported. If you want to switch this, either provide the `sheet` parameter with the correct index or provide the sheet name.
 
 ### colNames - first row as column name
 In the previous example the first imported row was used as column name for the data frame. This is the default behavior, but not always wanted or expected. Therefore this behavior can be disabled by the user.
@@ -74,14 +74,14 @@ wb_to_df(xlsxFile, dims = "A2:C5", colNames = FALSE)
 If you do not want to read a specific cell, but a cell range you can use the column attribute. This attribute takes a numeric vector as argument
 ```{r}
 # read selected cols
-wb_to_df(xlsxFile, cols = c(1:2, 7))
+wb_to_df(xlsxFile, cols = c("A:B", "G"))
 ```
 
 ### rows - read selected rows
 The same goes with rows. You can select them using numeric vectors
 ```{r}
 # read selected rows
-wb_to_df(xlsxFile, rows = c(1, 4, 6))
+wb_to_df(xlsxFile, rows = c(2, 4, 6))
 ```
 
 ### convert - convert input to guessed type
@@ -95,11 +95,11 @@ wb_to_df(xlsxFile, convert = FALSE)
 Even though `openxlsx2` imports everything as requested, sometimes it might be helpful to remove empty lines from the data. These might be either left empty intentional or empty because they are were formatted, but the cell value was removed afterwards. This was added mostly for backward comparability, but the default has been changed to `FALSE`. The behavior has changed a bit as well. Previously empty cells were removed prior to the conversion to R data frames, now they are removed after the conversion and are removed only if they are completely empty
 ```{r}
 # erase empty Rows from dataset
-wb_to_df(xlsxFile, sheet = 3, skipEmptyRows = TRUE) |> head()
+wb_to_df(xlsxFile, sheet = 1, skipEmptyRows = TRUE) |> tail()
 ```
 
 ### skipEmptyCols - remove empty columns
-The same for columns 
+The same for columns
 ```{r}
 # erase empty Cols from dataset
 wb_to_df(xlsxFile, skipEmptyCols = TRUE)
@@ -109,14 +109,14 @@ wb_to_df(xlsxFile, skipEmptyCols = TRUE)
 Sometimes the data source might provide rownames as well. In such a case you can `openxlsx2` to treat the first column as rowname
 ```{r}
 # convert first row to rownames
-wb_to_df(xlsxFile, sheet = 3, dims = "C6:G9", rowNames = TRUE)
+wb_to_df(xlsxFile, sheet = 2, dims = "C6:G9", rowNames = TRUE)
 ```
 
 ### types - convert column to specific type
 If the user know better than the software what type to expect in a worksheet, this can be provided via types. This parameter takes a named numeric. `0` is character, `1` is numeric and `2` is date
 ```{r}
 # define type of the data.frame
-wb_to_df(xlsxFile, cols = c(1, 4), types = c("Var1" = 0, "Var3" = 1))
+wb_to_df(xlsxFile, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
 ```
 
 ### startRow - where to begin
@@ -140,7 +140,7 @@ In addition to importing directly from xlsx or xlsm files, `openxlsx2` provides 
 Importing a file into a workbook looks like this:
 ```{r}
 # the file we are going to load
-xlsxFile <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 # loading the file into the workbook
 wb <- wb_load(file = xlsxFile)
 ```
@@ -175,6 +175,6 @@ try(wb$save("mtcars.xlsx", overwrite = FALSE))
 
 The current state of `openxlsx2` is that it is reasonably fast. That is, it works well with reasonably large input data when reading or writing. It may not work well with data that tests the limits of the openxml specification. Things may slow down on the R side of things, and performance and usability will depend on the speed and size of the local operating system's CPU and memory.
 
-Note that (i) when loading, `openxlsx2` usually needs to read the entire input file into pugixml and convert it into long data frame(s), and `wb_to_df()` converts one long data frame into two data frames that construct the output object and (ii) when adding data to the workbook, `openxlsx2` reshapes the input data frame into a long data frame and stores it in the workbook, and writes the entire worksheet into a pugixml file that is written when it is complete. Applying cell styles, date conversions etc. will further slow down the process and finally the sheets will be zipped to provide the xlsx output.
+Note that there are at least two cases where `openxlsx2` constructs potentially large data frames (i) when loading, `openxlsx2` usually needs to read the entire input file into pugixml and convert it into long data frame(s), and `wb_to_df()` converts one long data frame into two data frames that construct the output object and (ii) when adding data to the workbook, `openxlsx2` reshapes the input data frame into a long data frame and stores it in the workbook, and writes the entire worksheet into a pugixml file that is written when it is complete. Applying cell styles, date conversions etc. will further slow down the process and finally the sheets will be zipped to provide the xlsx output.
 
 Therefore, if you are faced with an unreasonably large dataset, either give yourself enough time, use another package to write the xlsx output (`openxlsx2` was not written with the intention of working with maximum memory efficiency), and by all means use other ways to store data (binary file formats or a database). However, we are always happy to improve, so if you have found a way to improve what we are currently doing, please let us know and open an issue or a pull request.

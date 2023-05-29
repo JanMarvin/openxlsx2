@@ -41,7 +41,7 @@ expected to be safe, but the feature is still experimental.
 }
 \examples{
 ## load existing workbook from package folder
-wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
 wb$get_sheet_names() # list worksheets
 wb ## view object
 ## Add a worksheet

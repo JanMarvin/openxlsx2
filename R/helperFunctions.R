@@ -55,7 +55,7 @@
 #'   startRow = 4,
 #'   x = create_hyperlink(
 #'     sheet = "testing", row = 3, col = 10,
-#'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+#'     file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #'   )
 #' )
 #'
@@ -65,7 +65,7 @@
 #'   startRow = 3,
 #'   x = create_hyperlink(
 #'     sheet = "testing", row = 3, col = 10,
-#'     file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"),
+#'     file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"),
 #'     text = "Link to File."
 #'   )
 #' )

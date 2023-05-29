@@ -19,8 +19,8 @@ wb_grid_lines(wb, sheet = current_sheet(), show = FALSE, print = show)
 Set worksheet gridlines to show or hide.
 }
 \examples{
-wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+wb <- wb_workbook()$add_worksheet()$add_worksheet()
 wb$get_sheet_names() ## list worksheets in workbook
 wb$grid_lines(1, show = FALSE)
-wb$grid_lines("testing", show = FALSE)
+wb$grid_lines("Sheet 2", show = FALSE)
 }

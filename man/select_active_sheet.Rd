@@ -30,13 +30,13 @@ active (visible). The visible sheet, must not necessarily be a selected
 sheet.
 }
 \examples{
-  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
   # testing is the selected sheet
   wb_get_selected(wb)
-  # change the selected sheet to IrisSample
-  wb <- wb_set_selected(wb, "IrisSample")
+  # change the selected sheet to Sheet2
+  wb <- wb_set_selected(wb, "Sheet2")
   # get the active sheet
   wb_get_active_sheet(wb)
-  # change the selected sheet to IrisSample
-  wb <- wb_set_active_sheet(wb, sheet = "IrisSample")
+  # change the selected sheet to Sheet2
+  wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
 }

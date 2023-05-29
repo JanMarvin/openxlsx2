@@ -142,12 +142,11 @@ wb$add_data(sheet = "Formula", x = df)
 
 ###########################################################################
 # update cell range and add mtcars
-xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
+xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 wb2 <- wb_load(xlsxFile)
 
 # read dataset with inlinestr
 wb_to_df(wb2)
-# read_xlsx(wb2)
 write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
 wb_to_df(wb2)
 }

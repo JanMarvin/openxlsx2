@@ -16,5 +16,5 @@ Character vector of worksheet names.
 Returns the worksheet names within an xlsx file
 }
 \examples{
-read_sheet_names(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+wb_load(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))$get_sheet_names()
 }

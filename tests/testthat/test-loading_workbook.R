@@ -1,6 +1,7 @@
 
 test_that("Loading readTest.xlsx Sheet 1", {
-  fl <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+
+  fl <- testfile_path("readTest.xlsx")
   wb <- wb_load(fl)
 
   sst <- wb$sharedStrings
@@ -11,8 +12,9 @@ test_that("Loading readTest.xlsx Sheet 1", {
 })
 
 test_that("Loading multiple pivot tables: loadPivotTables.xlsx works", {
+
   ## loadPivotTables.xlsx is a file with 3 pivot tables and 2 of them have the same reference data (pivotCacheDefinition)
-  fl <- system.file("extdata", "loadPivotTables.xlsx", package = "openxlsx2")
+  fl <- testfile_path("loadPivotTables.xlsx")
   wb <- wb_load(fl)
 
   # Check that wb is correctly loaded
@@ -33,8 +35,9 @@ test_that("Loading multiple pivot tables: loadPivotTables.xlsx works", {
 })
 
 test_that("Load and saving a file with Threaded Comments works", {
+
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
-  fl <- system.file("extdata", "loadThreadComment.xlsx", package = "openxlsx2")
+  fl <- testfile_path("loadThreadComment.xlsx")
   expect_silent(wb <- wb_load(fl))
   # Check that wb can be saved without error
   expect_silent(wb_save(wb, path = temp_xlsx()))
@@ -42,8 +45,9 @@ test_that("Load and saving a file with Threaded Comments works", {
 })
 
 test_that("Read and save file with inlineStr", {
+
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
-  fl <- system.file("extdata", "inlineStr.xlsx", package = "openxlsx2")
+  fl <- testfile_path("inlineStr.xlsx")
   wb <- wb_load(fl)
   wb_df <- wb_read(wb)
   attr(wb_df, "tt") <- NULL
@@ -133,7 +137,7 @@ test_that("read nodes", {
 test_that("sheet visibility", {
 
   # example is rather slow (lots of hidden cols)
-  fl <- system.file("extdata", "ColorTabs3.xlsx", package = "openxlsx2")
+  fl <- testfile_path("ColorTabs3.xlsx")
   tmp_dir <- temp_xlsx()
 
   exp_sheets <- c("Nums", "Chars", "hidden")
@@ -169,7 +173,7 @@ test_that("additional wb tests", {
   expect_message(expect_null(wb_to_df(wb, sheet = "Sheet 1")), "no data")
 
   # wb_to_df
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xlsxFile <- testfile_path("readTest.xlsx")
   wb1 <- wb_load(xlsxFile)
 
   # showFormula
@@ -254,7 +258,7 @@ test_that("test headerFooter", {
 
 test_that("load workbook with chartsheet", {
 
-  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  fl <- testfile_path("mtcars_chart.xlsx")
 
   expect_silent(z <- wb_load(fl))
   expect_silent(z <- wb_load(fl, sheet = "Chart1"))
@@ -276,7 +280,7 @@ test_that("Content Types is not modified", {
 
   # Content Types should remain identical during saving. All modifications should remain
   # temporary because otherwise they are applied over and over and over again during saving
-  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  wb <- wb_load(file = testfile_path("loadExample.xlsx"))
   pre <- wb$Content_Types
   wb$save(temp_xlsx())
   post <- wb$Content_Types
@@ -302,7 +306,7 @@ test_that("Sheet not found", {
 
 test_that("loading slicers works", {
 
-  fl <- system.file("extdata", "loadExample.xlsx", package = "openxlsx2")
+  fl <- testfile_path("loadExample.xlsx")
   wb <- wb_load(file = fl, calc_chain = TRUE)
 
   exp <- "<calcPr calcId=\"152511\" fullCalcOnLoad=\"1\"/>"
@@ -360,7 +364,7 @@ test_that("loading slicers works", {
 
 test_that("vml target is updated on load", {
 
-  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  fl <- testfile_path("mtcars_chart.xlsx")
   wb <- wb_load(fl)
 
   exp <- "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing\" Target=\"../drawings/vmlDrawing1.vml\"/>"
@@ -371,7 +375,7 @@ test_that("vml target is updated on load", {
 
 test_that("sheetView is not switched", {
 
-  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  wb <- wb_load(file = testfile_path("loadExample.xlsx"))
 
   exp <- "<sheetViews><sheetView workbookViewId=\"0\"/></sheetViews>"
   got <- wb$worksheets[[1]]$sheetViews

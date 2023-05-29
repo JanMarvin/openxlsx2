@@ -313,7 +313,7 @@ test_that("write_xlsx with na.strings", {
 
 test_that("write & load file with chartsheet", {
 
-  fl <- system.file("extdata", "mtcars_chart.xlsx", package = "openxlsx2")
+  fl <- testfile_path("mtcars_chart.xlsx")
   wb <- wb_load(fl)
 
   wb$worksheets[[1]]$sheetPr <- xml_node_create(

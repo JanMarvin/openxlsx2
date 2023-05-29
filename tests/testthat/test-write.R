@@ -105,17 +105,6 @@ test_that("update_cells", {
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
   expect_equal(exp, got)
 
-  ### write logical
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
-  wb1 <- wb_load(xlsxFile)
-
-  data <- head(wb_to_df(wb1, sheet = 3))
-  wb <- wb_workbook()$add_worksheet()$add_data(x = data)$add_data(x = data)
-
-  exp <- c("inlineStr", "", "b", "e")
-  got <- unique(wb$worksheets[[1]]$sheet_data$cc$c_t)
-  expect_equal(exp, got)
-
 
   set.seed(123)
   df <- data.frame(C = rnorm(10), D = rnorm(10))
@@ -139,6 +128,17 @@ test_that("update_cells", {
          f_t = c("array", "", "")),
     row.names = c("23", "110", "111"), class = "data.frame")
   got <- wb$worksheets[[1]]$sheet_data$cc[c(5, 8, 11), c("c_t", "f", "f_t")]
+  expect_equal(exp, got)
+
+  ### write logical
+  xlsxFile <- testfile_path("readTest.xlsx")
+  wb1 <- wb_load(xlsxFile)
+
+  data <- head(wb_to_df(wb1, sheet = 3))
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data)$add_data(x = data)
+
+  exp <- c("inlineStr", "", "b", "e")
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$c_t)
   expect_equal(exp, got)
 
 })
@@ -167,7 +167,7 @@ test_that("write dims", {
 
 test_that("update cell(s)", {
 
-  xlsxFile <- system.file("extdata", "update_test.xlsx", package = "openxlsx2")
+  xlsxFile <- testfile_path("update_test.xlsx")
   wb <- wb_load(xlsxFile)
 
   # update Cells D4:D6 with 1:3

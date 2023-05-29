@@ -2,7 +2,7 @@ test_that("wb_to_df", {
 
   ###########################################################################
   # numerics, dates, missings, bool and string
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xlsxFile <- testfile_path("readTest.xlsx")
   expect_silent(wb1 <- wb_load(xlsxFile))
 
   # import workbook
@@ -96,7 +96,7 @@ test_that("wb_to_df", {
 
   ###########################################################################
   # inlinestr
-  xlsxFile <- system.file("extdata", "inline_str.xlsx", package = "openxlsx2")
+  xlsxFile <- testfile_path("inline_str.xlsx")
   expect_silent(wb2 <- wb_load(xlsxFile))
 
   exp <- data.frame(
@@ -134,7 +134,7 @@ test_that("wb_to_df", {
 
 test_that("select_active_sheet", {
 
-  wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+  wb <- wb_load(file = testfile_path("loadExample.xlsx"))
 
   exp <- structure(
     list(tabSelected = c("", "1", "", ""),

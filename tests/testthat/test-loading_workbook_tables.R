@@ -1,7 +1,7 @@
 
-
 test_that("Tables loaded correctly", {
-  wb <- wb_load(system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+
+  wb <- wb_load(testfile_path("loadExample.xlsx"))
 
   expect_equal(wb$tables$tab_name, c("Table2", "Table3"))
   expect_equal(wb$tables$tab_ref, c("A1:E51", "A1:K30"))

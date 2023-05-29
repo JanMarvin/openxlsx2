@@ -18,7 +18,7 @@ Remove column widths from a worksheet
 }
 \examples{
 ## Create a new workbook
-wb <- wb_load(file = system.file("extdata", "loadExample.xlsx", package = "openxlsx2"))
+wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
 
 ## remove column widths in columns 1 to 20
 wb_remove_col_widths(wb, 1, cols = 1:20)
