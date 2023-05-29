@@ -710,6 +710,64 @@ expected_shared_strings <- function() {
   ), uniqueCount = "2114")
 }
 
+#' initiates testfiles in testthat folder
+#' @keywords internal
+#' @noRd
+download_testfiles <- function() {
+
+  fls <- c(
+    "charts.xlsx",
+    "cloneEmptyWorksheetExample.xlsx",
+    "cloneWorksheetExample.xlsx",
+    "ColorTabs3.xlsx",
+    "connection.xlsx",
+    "eurosymbol.xlsx",
+    "fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx",
+    "form_control.xlsx",
+    "formula.xlsx",
+    "gh_issue_416.xlsm",
+    "gh_issue_504.xlsx",
+    "inline_str.xlsx",
+    "inlineStr.xlsx",
+    "loadExample.xlsx",
+    "loadPivotTables.xlsx",
+    "loadThreadComment.xlsx",
+    "macro2.xlsm",
+    "mtcars_chart.xlsx",
+    "namedRegions.xlsx",
+    "namedRegions2.xlsx",
+    "overwrite_formula.xlsx",
+    "oxlsx2_sheet.xlsx",
+    "pivot_notes.xlsx",
+    "readTest.xlsx",
+    "Single_hyperlink.xlsx",
+    "tableStyles.xlsx",
+    "umlauts.xlsx",
+    "unemployment-nrw202208.xlsx",
+    "update_test.xlsx",
+    "vml_numbering.xlsx"
+  )
+
+  test_path <- testthat::test_path("testfiles")
+
+  if (dir.exists(test_path))  {
+    if (all(file.exists(testthat::test_path("testfiles", fls)))) {
+      return(TRUE)
+    }
+
+    unlink(test_path, recursive = TRUE)
+  }
+
+  dir.create(test_path)
+
+  # relies on libcurl and was optional in R < 4.2.0 on Windows
+  out <- paste0(test_path, "/", fls)
+  url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", fls)
+  try({download.file(url, destfile = out, quiet = TRUE, method = "libcurl")})
+
+  return(TRUE)
+}
+
 #' provides testfile path for testthat
 #' @param x a file assumed in testfiles folder
 #' @keywords internal
