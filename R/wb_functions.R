@@ -899,7 +899,7 @@ wb_ws <- wb_get_worksheet
 #' @name select_active_sheet
 wb_get_active_sheet <- function(wb) {
   assert_workbook(wb)
-  at <- rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))["activeTab"]
+  at <- rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))$activeTab
   # return c index as R index
   as.numeric(at) + 1
 }

@@ -2702,7 +2702,8 @@ wbWorkbook <- R6::R6Class(
       private$do_cell_init(sheet, dims)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
-      sel <- match(rows, row_attr$r)
+      sel <- match(as.character(rows), row_attr$r)
+      sel <- sel[!is.na(sel)]
 
       if (!is.null(heights)) {
         if (length(rows) > length(heights)) {
@@ -2747,7 +2748,8 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      sel <- match(rows, row_attr$r)
+      sel <- match(as.character(rows), row_attr$r)
+      sel <- sel[!is.na(sel)]
       row_attr[sel, "ht"] <- ""
       row_attr[sel, "customHeight"] <- ""
 
