@@ -710,7 +710,9 @@ expected_shared_strings <- function() {
   ), uniqueCount = "2114")
 }
 
-#' initiates testfiles in testthat folder
+#nocov start
+
+#' initiates testfiles in local testthat folder
 #' @keywords internal
 #' @noRd
 download_testfiles <- function() {
@@ -777,3 +779,5 @@ testfile_path <- function(x) {
   fl <- testthat::test_path("testfiles", x)
   if (!file.exists(fl)) testthat::skip("Testfile does not exist") else fl
 }
+
+#nocov end
