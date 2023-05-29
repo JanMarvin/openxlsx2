@@ -765,7 +765,9 @@ download_testfiles <- function() {
   # relies on libcurl and was optional in R < 4.2.0 on Windows
   out <- paste0(test_path, "/", fls)
   url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", fls)
-  try({download.file(url, destfile = out, quiet = TRUE, method = "libcurl")})
+  try({
+    download.file(url, destfile = out, quiet = TRUE, method = "libcurl")
+  })
 
   return(TRUE)
 }

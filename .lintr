@@ -10,6 +10,7 @@ exclusions: list(
   "vignettes/conditional-formatting.R",
   "vignettes/openxlsx2_basic_manual.R",
   "vignettes/openxlsx2_charts_manual.R",
+  "vignettes/openxlsx2_formulas_manual.R",
   "vignettes/openxlsx2_style_manual.R",
   "vignettes/Update-from-openxlsx.R"
   )
