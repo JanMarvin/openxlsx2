@@ -293,7 +293,7 @@ Yep, that is a color scale image.
 </p>
 </div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="st">"https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx"</span>, sheet <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"colorScale"</span>, zoom <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"colorScale"</span>, <span class="va">df</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co">## write data.frame</span></span></code></pre></div>
 <p>Rule is a vector or colors of length 2 or 3 (any hex color or any of

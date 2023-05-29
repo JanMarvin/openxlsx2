@@ -121,19 +121,19 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JanMarvin/openxlsx2" class="external-link">openxlsx2</a></span><span class="op">)</span></span>
 <span><span class="co"># read xlsx or xlsm files</span></span>
-<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7</span></span>
-<span><span class="co">#&gt; 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!</span></span>
-<span><span class="co">#&gt; 3   TRUE   NA NA #NUM!     b 2015-02-06         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4   TRUE    2 NA  1.34     c 2015-02-05         &lt;NA&gt;   #NUM!</span></span>
-<span><span class="co">#&gt; 5  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 6  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 7  FALSE    1 NA   1.7     f 2015-02-02         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8     NA   NA NA  &lt;NA&gt;  &lt;NA&gt; 2015-02-01         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 9  FALSE    2 NA    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    3 NA  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
+<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
+<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
+<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
+<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
+<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
+<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt; 2023-04-17         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span>
 <span></span>
 <span><span class="co"># or import workbooks</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
@@ -141,22 +141,22 @@
 <span><span class="co">#&gt; A Workbook object.</span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  Sheets: Sheet1 Sheet2 Sheet 3 Sheet 4 Sheet 5 Sheet 6 1 11 111 1111 11111 111111 </span></span>
-<span><span class="co">#&gt;  Write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12</span></span>
+<span><span class="co">#&gt;  Sheets: Sheet1 </span></span>
+<span><span class="co">#&gt;  Write order: 1</span></span>
 <span></span>
 <span><span class="co"># read a data frame</span></span>
 <span><span class="fu"><a href="reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7</span></span>
-<span><span class="co">#&gt; 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!</span></span>
-<span><span class="co">#&gt; 3   TRUE   NA NA #NUM!     b 2015-02-06         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4   TRUE    2 NA  1.34     c 2015-02-05         &lt;NA&gt;   #NUM!</span></span>
-<span><span class="co">#&gt; 5  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 6  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 7  FALSE    1 NA   1.7     f 2015-02-02         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8     NA   NA NA  &lt;NA&gt;  &lt;NA&gt; 2015-02-01         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 9  FALSE    2 NA    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    3 NA  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
+<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
+<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
+<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
+<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
+<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
+<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt; 2023-04-17         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span>
 <span></span>
 <span><span class="co"># and save</span></span>
 <span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span></span>

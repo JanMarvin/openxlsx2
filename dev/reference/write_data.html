@@ -259,102 +259,99 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###########################################################################</span></span></span>
 <span class="r-in"><span><span class="co"># update cell range and add mtcars</span></span></span>
-<span class="r-in"><span><span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"inline_str.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb2</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># read dataset with inlinestr</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    PairIndex Drug1 Drug2 Conc1 Conc2   Response ConcUnit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          1   abc   def 10000 10000 -1.7960711       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          1   abc   def 10000  3000  1.0102900       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          1   abc   def 10000  1000  0.4490178       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          1   abc   def 10000   300  0.0000000       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          1   abc   def 10000   100  0.8980355       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          1   abc   def 10000    30  0.1122544       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          1   abc   def 10000    10  3.1431244       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          1   abc   def 10000     0  1.4593078       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10         2   abc   def 10000     0  1.6838167       nM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11         2   abc   def 10000    10 -0.7857811       nM</span>
-<span class="r-in"><span><span class="co"># read_xlsx(wb2)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
 <span class="r-in"><span><span class="fu">write_data</span><span class="op">(</span><span class="va">wb2</span>, <span class="fl">1</span>, <span class="va">mtcars</span>, startCol <span class="op">=</span> <span class="fl">4</span>, startRow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Synergy </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2</span>
 <span class="r-in"><span><span class="fu"><a href="wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    PairIndex Drug1 Drug2 Conc1 Conc2           Response ConcUnit   NA    NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          1   abc   def 10000 10000 -1.796071094480823       nM &lt;NA&gt;  &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          1   abc   def 10000  3000  1.010289990645463       nM &lt;NA&gt;  &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          1   abc   def   mpg   cyl               disp       hp drat    wt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          1   abc   def    21     6                160      110  3.9  2.62</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          1   abc   def    21     6                160      110  3.9 2.875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          1   abc   def  22.8     4                108       93 3.85  2.32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          1   abc   def  21.4     6                258      110 3.08 3.215</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          1   abc   def  18.7     8                360      175 3.15  3.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10         2   abc   def  18.1     6                225      105 2.76  3.46</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11         2   abc   def  14.3     8                360      245 3.21  3.57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12        NA  &lt;NA&gt;  &lt;NA&gt;  24.4     4              146.7       62 3.69  3.19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13        NA  &lt;NA&gt;  &lt;NA&gt;  22.8     4              140.8       95 3.92  3.15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14        NA  &lt;NA&gt;  &lt;NA&gt;  19.2     6              167.6      123 3.92  3.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15        NA  &lt;NA&gt;  &lt;NA&gt;  17.8     6              167.6      123 3.92  3.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16        NA  &lt;NA&gt;  &lt;NA&gt;  16.4     8              275.8      180 3.07  4.07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17        NA  &lt;NA&gt;  &lt;NA&gt;  17.3     8              275.8      180 3.07  3.73</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18        NA  &lt;NA&gt;  &lt;NA&gt;  15.2     8              275.8      180 3.07  3.78</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19        NA  &lt;NA&gt;  &lt;NA&gt;  10.4     8                472      205 2.93  5.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20        NA  &lt;NA&gt;  &lt;NA&gt;  10.4     8                460      215    3 5.424</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21        NA  &lt;NA&gt;  &lt;NA&gt;  14.7     8                440      230 3.23 5.345</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22        NA  &lt;NA&gt;  &lt;NA&gt;  32.4     4               78.7       66 4.08   2.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23        NA  &lt;NA&gt;  &lt;NA&gt;  30.4     4               75.7       52 4.93 1.615</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24        NA  &lt;NA&gt;  &lt;NA&gt;  33.9     4               71.1       65 4.22 1.835</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25        NA  &lt;NA&gt;  &lt;NA&gt;  21.5     4              120.1       97  3.7 2.465</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26        NA  &lt;NA&gt;  &lt;NA&gt;  15.5     8                318      150 2.76  3.52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27        NA  &lt;NA&gt;  &lt;NA&gt;  15.2     8                304      150 3.15 3.435</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28        NA  &lt;NA&gt;  &lt;NA&gt;  13.3     8                350      245 3.73  3.84</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29        NA  &lt;NA&gt;  &lt;NA&gt;  19.2     8                400      175 3.08 3.845</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30        NA  &lt;NA&gt;  &lt;NA&gt;  27.3     4                 79       66 4.08 1.935</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31        NA  &lt;NA&gt;  &lt;NA&gt;    26     4              120.3       91 4.43  2.14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32        NA  &lt;NA&gt;  &lt;NA&gt;  30.4     4               95.1      113 3.77 1.513</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33        NA  &lt;NA&gt;  &lt;NA&gt;  15.8     8                351      264 4.22  3.17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34        NA  &lt;NA&gt;  &lt;NA&gt;  19.7     6                145      175 3.62  2.77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35        NA  &lt;NA&gt;  &lt;NA&gt;    15     8                301      335 3.54  3.57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36        NA  &lt;NA&gt;  &lt;NA&gt;  21.4     4                121      109 4.11  2.78</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       NA   NA   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   qsec   vs   am gear carb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  16.46    0    1    4    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  17.02    0    1    4    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  18.61    1    1    4    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  19.44    1    0    3    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  17.02    0    0    3    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 20.22    1    0    3    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 15.84    0    0    3    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    20    1    0    4    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  22.9    1    0    4    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  18.3    1    0    4    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  18.9    1    0    4    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  17.4    0    0    3    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  17.6    0    0    3    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18    18    0    0    3    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 17.98    0    0    3    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 17.82    0    0    3    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 17.42    0    0    3    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 19.47    1    1    4    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 18.52    1    1    4    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24  19.9    1    1    4    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 20.01    1    0    3    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 16.87    0    0    3    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  17.3    0    0    3    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 15.41    0    0    3    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 17.05    0    0    3    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  18.9    1    1    4    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  16.7    0    1    5    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32  16.9    1    1    5    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33  14.5    0    1    5    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34  15.5    0    1    5    6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35  14.6    0    1    5    8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36  18.6    1    1    4    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2   NA Var3  Var4       Var5         Var6    Var7     Var8   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 &lt;NA&gt;    1     a 2023-05-29 3209324 This #DIV/0! 01:27:15 &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA  mpg  cyl  disp         hp         drat      wt     qsec   vs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2   21    6   160 1900-04-19          3.9    2.62 11:02:24    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2   21    6   160        110          3.9   2.875 00:28:48    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 22.8    4   108         93         3.85    2.32    18.61    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 21.4    6   258 1900-04-19         3.08   3.215 10:33:36    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA 18.7    8   360        175         3.15    3.44    17.02    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 18.1    6   225 1900-04-14         2.76    3.46    20.22    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 14.3    8   360 1900-09-01         3.21    3.57    15.84    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 24.4    4 146.7 1900-03-02         3.69    3.19       20    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13    NA   NA 22.8    4 140.8         95         3.92    3.15     22.9    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14    NA   NA 19.2    6 167.6        123         3.92    3.44     18.3    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15    NA   NA 17.8    6 167.6        123         3.92    3.44     18.9    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16    NA   NA 16.4    8 275.8        180         3.07    4.07     17.4    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17    NA   NA 17.3    8 275.8        180         3.07    3.73     17.6    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18    NA   NA 15.2    8 275.8        180         3.07    3.78       18    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19    NA   NA 10.4    8   472        205         2.93    5.25    17.98    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20    NA   NA 10.4    8   460        215            3   5.424    17.82    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21    NA   NA 14.7    8   440        230         3.23   5.345    17.42    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22    NA   NA 32.4    4  78.7         66         4.08     2.2    19.47    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23    NA   NA 30.4    4  75.7         52         4.93   1.615    18.52    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24    NA   NA 33.9    4  71.1         65         4.22   1.835     19.9    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25    NA   NA 21.5    4 120.1         97          3.7   2.465    20.01    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26    NA   NA 15.5    8   318        150         2.76    3.52    16.87    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27    NA   NA 15.2    8   304        150         3.15   3.435     17.3    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28    NA   NA 13.3    8   350        245         3.73    3.84    15.41    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29    NA   NA 19.2    8   400        175         3.08   3.845    17.05    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30    NA   NA 27.3    4    79         66         4.08   1.935     18.9    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31    NA   NA   26    4 120.3         91         4.43    2.14     16.7    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32    NA   NA 30.4    4  95.1        113         3.77   1.513     16.9    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33    NA   NA 15.8    8   351        264         4.22    3.17     14.5    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34    NA   NA 19.7    6   145        175         3.62    2.77     15.5    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35    NA   NA   15    8   301        335         3.54    3.57     14.6    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36    NA   NA 21.4    4   121        109         4.11    2.78     18.6    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    am gear carb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1    4    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1    4    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     1    4    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0    3    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0    3    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0    3    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11    0    3    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    0    4    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13    0    4    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14    0    4    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15    0    4    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16    0    3    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17    0    3    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18    0    3    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19    0    3    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20    0    3    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21    0    3    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22    1    4    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23    1    4    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24    1    4    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25    0    3    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26    0    3    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27    0    3    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28    0    3    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29    0    3    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30    1    4    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31    1    5    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32    1    5    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33    1    5    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34    1    5    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35    1    5    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36    1    4    2</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

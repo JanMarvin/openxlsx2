@@ -104,7 +104,7 @@ still function arguments that use camel-case).</p>
 <code>read_xlsx</code>. Using a default xlsx file included in the
 package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"readTest.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
 <p>The old syntax looked like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in openxlsx</span></span>
@@ -113,17 +113,17 @@ package:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in openxlsx2</span></span>
 <span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7</span></span>
-<span><span class="co">## 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!</span></span>
-<span><span class="co">## 3   TRUE   NA NA #NUM!     b 2015-02-06         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">## 4   TRUE    2 NA  1.34     c 2015-02-05         &lt;NA&gt;   #NUM!</span></span>
-<span><span class="co">## 5  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">## 6  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">## 7  FALSE    1 NA   1.7     f 2015-02-02         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">## 8     NA   NA NA  &lt;NA&gt;  &lt;NA&gt; 2015-02-01         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">## 9  FALSE    2 NA    23     h 2015-01-31         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">## 10 FALSE    3 NA  67.3     i 2015-01-30         &lt;NA&gt;    &lt;NA&gt;</span></span>
-<span><span class="co">## 11    NA    1 NA   123  &lt;NA&gt; 2015-01-29         &lt;NA&gt;    &lt;NA&gt;</span></span></code></pre>
+<pre><code><span><span class="co">##     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
+<span><span class="co">## 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
+<span><span class="co">## 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
+<span><span class="co">## 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
+<span><span class="co">## 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
+<span><span class="co">## 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">## 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
+<span><span class="co">## 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">## 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
+<span><span class="co">## 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
+<span><span class="co">## 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre>
 <p>As you can see, we return the spreadsheet return codes (e.g.,
 <code>#NUM</code>) in openxlsx2. Another thing to see above, we return
 the cell row as rowname for the data frame returned.
