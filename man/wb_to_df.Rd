@@ -85,7 +85,7 @@ Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns \code
 
   ###########################################################################
   # numerics, dates, missings, bool and string
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
   wb1 <- wb_load(xlsxFile)
 
   # import workbook

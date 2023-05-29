@@ -74,7 +74,7 @@ This is a basic example which shows you how to solve a common problem:
 ```{r example}
 library(openxlsx2)
 # read xlsx or xlsm files
-path <- system.file("extdata/readTest.xlsx", package = "openxlsx2")
+path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
 read_xlsx(path)
 
 # or import workbooks

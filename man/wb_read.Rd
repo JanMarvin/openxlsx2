@@ -66,10 +66,10 @@ Read data from an Excel file or Workbook object into a data.frame
 Creates a data.frame of all data in worksheet.
 }
 \examples{
-xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1)
 
-xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 }
 \seealso{

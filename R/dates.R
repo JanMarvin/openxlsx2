@@ -101,7 +101,7 @@ convert_hms <- function(x) {
 #' m <- read_xlsx(temp)
 #'
 #' ## convert to dates
-#' do <- get_date_origin(system.file("extdata", "readTest.xlsx", package = "openxlsx2"))
+#' do <- get_date_origin(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
 #' convert_date(m[[1]], do)
 #'
 #' get_date_origin(wb_workbook())
@@ -207,7 +207,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
 #' @param df dataframe
 #' @param date1904 take different origin
 #' @examples
-#'  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+#'  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #'  wb1 <- wb_load(xlsxFile)
 #'  df <- wb_to_df(wb1)
 #'  # conversion is done on dataframes only

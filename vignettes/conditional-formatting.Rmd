@@ -251,7 +251,7 @@ knitr::include_graphics("img/cf_color_scale.jpg")
 ```
 
 ```{r}
-df <- read_xlsx(system.file("extdata", "readTest.xlsx", package = "openxlsx2"), sheet = 5)
+df <- read_xlsx("https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx", sheet = 5)
 wb$add_worksheet("colorScale", zoom = 30)
 wb$add_data("colorScale", df, colNames = FALSE) ## write data.frame
 ```

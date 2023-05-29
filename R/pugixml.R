@@ -237,7 +237,7 @@ print.pugi_xml <- function(x, indent = " ", raw = FALSE, attr_indent = FALSE, ..
 #' @param ... additional arguments passed to `read_xml()`
 #' @examples
 #' tmp_xlsx <- tempfile()
-#' xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+#' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #' unzip(xlsxFile, exdir = tmp_xlsx)
 #'
 #' wb <- wb_load(xlsxFile)

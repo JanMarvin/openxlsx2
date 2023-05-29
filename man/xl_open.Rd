@@ -39,7 +39,7 @@ Sheets (\code{calligrasheets}).
 \examples{
 \donttest{
 if (interactive()) {
-  xlsxFile <- system.file("extdata", "readTest.xlsx", package = "openxlsx2")
+  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
   xl_open(xlsxFile)
 
   # (not yet saved) Workbook example

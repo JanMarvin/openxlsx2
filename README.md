@@ -98,19 +98,19 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(openxlsx2)
 # read xlsx or xlsm files
-path <- system.file("extdata/readTest.xlsx", package = "openxlsx2")
+path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
 read_xlsx(path)
-#>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7
-#> 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!
-#> 3   TRUE   NA NA #NUM!     b 2015-02-06         <NA>    <NA>
-#> 4   TRUE    2 NA  1.34     c 2015-02-05         <NA>   #NUM!
-#> 5  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>    <NA>
-#> 6  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>
-#> 7  FALSE    1 NA   1.7     f 2015-02-02         <NA>    <NA>
-#> 8     NA   NA NA  <NA>  <NA> 2015-02-01         <NA>    <NA>
-#> 9  FALSE    2 NA    23     h 2015-01-31         <NA>    <NA>
-#> 10 FALSE    3 NA  67.3     i 2015-01-30         <NA>    <NA>
-#> 11    NA    1 NA   123  <NA> 2015-01-29         <NA>    <NA>
+#>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8
+#> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15
+#> 4   TRUE   NA NA #NUM!     b 2023-05-23         <NA>       0 14:02:57
+#> 5   TRUE    2 NA  1.34     c 2023-02-01         <NA> #VALUE! 23:01:02
+#> 6  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>       2 17:24:53
+#> 7  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>     <NA>
+#> 8  FALSE    1 NA   1.7     f 2023-03-02         <NA>     2.7 08:45:58
+#> 9     NA   NA NA  <NA>  <NA> 2023-04-17         <NA>    <NA>     <NA>
+#> 10 FALSE    2 NA    23     h 2023-12-24         <NA>      25     <NA>
+#> 11 FALSE    3 NA  67.3     i 2023-12-25         <NA>       3     <NA>
+#> 12    NA    1 NA   123  <NA> 2023-07-31         <NA>     122     <NA>
 
 # or import workbooks
 wb <- wb_load(path)
@@ -118,22 +118,22 @@ wb
 #> A Workbook object.
 #>  
 #> Worksheets:
-#>  Sheets: Sheet1 Sheet2 Sheet 3 Sheet 4 Sheet 5 Sheet 6 1 11 111 1111 11111 111111 
-#>  Write order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+#>  Sheets: Sheet1 
+#>  Write order: 1
 
 # read a data frame
 wb_to_df(wb)
-#>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7
-#> 2   TRUE    1 NA     1     a 2015-02-07 3209324 This #DIV/0!
-#> 3   TRUE   NA NA #NUM!     b 2015-02-06         <NA>    <NA>
-#> 4   TRUE    2 NA  1.34     c 2015-02-05         <NA>   #NUM!
-#> 5  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>    <NA>
-#> 6  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>
-#> 7  FALSE    1 NA   1.7     f 2015-02-02         <NA>    <NA>
-#> 8     NA   NA NA  <NA>  <NA> 2015-02-01         <NA>    <NA>
-#> 9  FALSE    2 NA    23     h 2015-01-31         <NA>    <NA>
-#> 10 FALSE    3 NA  67.3     i 2015-01-30         <NA>    <NA>
-#> 11    NA    1 NA   123  <NA> 2015-01-29         <NA>    <NA>
+#>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8
+#> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15
+#> 4   TRUE   NA NA #NUM!     b 2023-05-23         <NA>       0 14:02:57
+#> 5   TRUE    2 NA  1.34     c 2023-02-01         <NA> #VALUE! 23:01:02
+#> 6  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>       2 17:24:53
+#> 7  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>     <NA>
+#> 8  FALSE    1 NA   1.7     f 2023-03-02         <NA>     2.7 08:45:58
+#> 9     NA   NA NA  <NA>  <NA> 2023-04-17         <NA>    <NA>     <NA>
+#> 10 FALSE    2 NA    23     h 2023-12-24         <NA>      25     <NA>
+#> 11 FALSE    3 NA  67.3     i 2023-12-25         <NA>       3     <NA>
+#> 12    NA    1 NA   123  <NA> 2023-07-31         <NA>     122     <NA>
 
 # and save
 temp <- temp_xlsx()
