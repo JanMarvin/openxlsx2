@@ -22,3 +22,4 @@ cran-comments.md
 ^README\.Rmd$
 ^inst/img$
 ^tests/testthat/_snaps$
+^tests/testthat/testfiles$

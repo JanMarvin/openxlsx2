@@ -43,9 +43,7 @@ test_that("wb_load from different sources", {
 
 test_that("get_date_origin from different sources", {
 
-  skip_if_offline()
-
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/readTest.xlsx"
+  xlsxFile <- testfile_path("readTest.xlsx")
   origin_url <- get_date_origin(xlsxFile)
 
   expect_equal(origin_url, "1900-01-01")
@@ -54,11 +52,9 @@ test_that("get_date_origin from different sources", {
 
 test_that("read html source without r attribute on cell", {
 
-  skip_if_offline()
-
   # sheet without row attribute
   # original from https://www.atih.sante.fr/sites/default/files/public/content/3968/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx")
+  wb <- wb_load(testfile_path("fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx"))
 
   expect_equal(c(46, 1), dim(wb_to_df(wb, sheet = 1)))
   expect_equal(c(31564, 52), dim(wb_to_df(wb, sheet = 2)))
@@ -74,20 +70,16 @@ test_that("read html source without r attribute on cell", {
 
 test_that("read <br> node in vml", {
 
-  skip_if_offline()
-
   # test
-  expect_silent(wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/macro2.xlsm"))
+  expect_silent(wb <- wb_load(testfile_path("macro2.xlsm")))
 
 })
 
 
 test_that("read vml from sheet two works as expected", {
 
-  skip_if_offline()
-
   # test
-  expect_silent(wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/vml_numbering.xlsx"))
+  expect_silent(wb <- wb_load(testfile_path("vml_numbering.xlsx")))
 
   expect_equal(1L, length(wb$vml))
   expect_equal(1L, length(wb$vml_rels))
@@ -97,9 +89,7 @@ test_that("read vml from sheet two works as expected", {
 
 test_that("encoding", {
 
-  skip_if_offline()
-
-  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/umlauts.xlsx"
+  fl <- testfile_path("umlauts.xlsx")
   wb <- wb_load(fl)
   expect_equal("äöüß", names(wb$get_sheet_names()))
 
@@ -111,7 +101,7 @@ test_that("encoding", {
 
   expect_equal(exp, wb_to_df(wb, keep_attributes = TRUE))
 
-  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/eurosymbol.xlsx"
+  fl <- testfile_path("eurosymbol.xlsx")
   wb <- wb_load(fl)
   got <- wb$sharedStrings
 
@@ -147,11 +137,9 @@ test_that("encoding", {
 
 test_that("reading charts", {
 
-  skip_if_offline()
-
   temp <- temp_xlsx()
 
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/unemployment-nrw202208.xlsx")
+  wb <- wb_load(testfile_path("unemployment-nrw202208.xlsx"))
 
   exp <- c("", "", "", "", "", "", "", "", "", "", "", "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartUserShapes\" Target=\"../drawings/drawing18.xml\"/></Relationships>", "", "", "")
   got <- wb$charts$rels
@@ -189,7 +177,7 @@ test_that("reading charts", {
   wb$save(temp)
 
   # remove worksheet
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/unemployment-nrw202208.xlsx")
+  wb <- wb_load(testfile_path("unemployment-nrw202208.xlsx"))
   rmsheet <- length(wb$worksheets) - 2
   wb$remove_worksheet(rmsheet)
 
@@ -215,11 +203,9 @@ test_that("load file with xml namespace", {
 
 test_that("reading file with macro and custom xml", {
 
-  skip_if_offline()
-
   temp <- temp_xlsx()
 
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/gh_issue_416.xlsm")
+  wb <- wb_load(testfile_path("gh_issue_416.xlsm"))
   wb$save(temp)
   wb <- wb_load(temp)
 
@@ -234,11 +220,9 @@ test_that("reading file with macro and custom xml", {
 
 test_that("load file with connection", {
 
-  skip_if_offline()
-
   temp <- temp_xlsx()
 
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/connection.xlsx")
+  wb <- wb_load(testfile_path("connection.xlsx"))
 
   expect_true(!is.null(wb$customXml))
   expect_equal(3, length(wb$customXml))
@@ -256,11 +240,9 @@ test_that("load file with connection", {
 
 test_that("calcChain is updated", {
 
-  skip_if_offline()
-
   temp <- temp_xlsx()
 
-  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/overwrite_formula.xlsx"
+  fl <- testfile_path("overwrite_formula.xlsx")
 
   wb <- wb_load(fl, calc_chain = TRUE)
 
@@ -282,9 +264,7 @@ test_that("calcChain is updated", {
 
 test_that("read workbook with chart extension", {
 
-  skip_if_offline()
-
-  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/charts.xlsx"
+  fl <- testfile_path("charts.xlsx")
 
   wb <- wb_load(fl)
 
@@ -297,11 +277,9 @@ test_that("read workbook with chart extension", {
 
 test_that("reading of formControl works", {
 
-  skip_if_offline()
-
   temp <- temp_xlsx()
 
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/form_control.xlsx")
+  wb <- wb_load(testfile_path("form_control.xlsx"))
 
   exp <- c(
     "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"CheckBox\" checked=\"Checked\" lockText=\"1\" noThreeD=\"1\"/>",
@@ -345,9 +323,7 @@ test_that("reading xml escapes works", {
 
 test_that("reading multiple slicers on a pivot table works", {
 
-  skip_if_offline()
-
-  wb <- wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/gh_issue_504.xlsx")
+  wb <- wb_load(testfile_path("gh_issue_504.xlsx"))
 
   expect_equal(1L, length(wb$slicers))
   expect_equal(2L, length(wb$slicerCaches))
@@ -380,10 +356,8 @@ test_that("reading multiple slicers on a pivot table works", {
 
 test_that("hyperlinks work", {
 
-  skip_if_offline()
-
   tmp <- temp_xlsx()
-  wb_load("https://github.com/JanMarvin/openxlsx-data/raw/main/Single_hyperlink.xlsx")$save(tmp)
+  wb_load(testfile_path("Single_hyperlink.xlsx"))$save(tmp)
 
   temp_uzip <- paste0(tempdir(), "/unzip_openxlsx2")
   dir.create(temp_uzip)

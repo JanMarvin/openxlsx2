@@ -25,3 +25,5 @@ inst/doc
 /Meta/
 *.Rcheck
 *.tar.gz
+tests/testthat/_snaps
+tests/testthat/testfiles

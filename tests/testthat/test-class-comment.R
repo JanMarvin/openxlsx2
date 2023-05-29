@@ -58,9 +58,7 @@ test_that("comments", {
 
 test_that("load comments", {
 
-  skip_if_offline()
-
-  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/pivot_notes.xlsx"
+  fl <- testfile_path("pivot_notes.xlsx")
   wb <- wb_load(fl)
 
   temp <- temp_xlsx()

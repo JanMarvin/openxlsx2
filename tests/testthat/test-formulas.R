@@ -1,8 +1,6 @@
 test_that("load various formulas", {
 
-  skip_if_offline()
-
-  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/formula.xlsx"
+  fl <- testfile_path("formula.xlsx")
   wb <- wb_load(fl)
 
   expect_true(!is.null(wb$metadata))

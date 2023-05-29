@@ -1,11 +1,9 @@
 test_that("xf", {
 
-  skip_if_offline()
-
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx"
+  xlsxFile <- testfile_path("loadExample.xlsx")
   wb <- wb_load(xlsxFile)
 
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx"
+  xlsxFile <- testfile_path("readTest.xlsx")
   wb1 <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
@@ -38,9 +36,7 @@ test_that("xf", {
 
 test_that("border", {
 
-  skip_if_offline()
-
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx"
+  xlsxFile <- testfile_path("loadExample.xlsx")
   wb <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
@@ -68,9 +64,7 @@ test_that("border", {
 
 test_that("cellStyle", {
 
-  skip_if_offline()
-
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx"
+  xlsxFile <- testfile_path("loadExample.xlsx")
   wb <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
@@ -95,10 +89,9 @@ test_that("cellStyle", {
 
 test_that("tableStyle", {
 
-  skip_if_offline()
 
   # tableStyle elements exist only with custom tableStyles
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/tableStyles.xlsx"
+  xlsxFile <- testfile_path("tableStyles.xlsx")
   wb <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
@@ -123,9 +116,7 @@ test_that("tableStyle", {
 
 test_that("dxf", {
 
-  skip_if_offline()
-
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/loadExample.xlsx"
+  xlsxFile <- testfile_path("loadExample.xlsx")
   wb <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct
@@ -151,9 +142,7 @@ test_that("dxf", {
 
 test_that("colors", {
 
-  skip_if_offline()
-
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/oxlsx2_sheet.xlsx"
+  xlsxFile <- testfile_path("oxlsx2_sheet.xlsx")
   wb <- wb_load(xlsxFile)
 
   # likely not ordered entirely correct

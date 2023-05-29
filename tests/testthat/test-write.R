@@ -131,9 +131,7 @@ test_that("update_cells", {
   expect_equal(exp, got)
 
   ### write logical
-  skip_if_offline()
-
-  xlsxFile <- "https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx"
+  xlsxFile <- testfile_path("readTest.xlsx")
   wb1 <- wb_load(xlsxFile)
 
   data <- head(wb_to_df(wb1, sheet = 3))

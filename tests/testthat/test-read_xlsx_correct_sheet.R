@@ -2,7 +2,7 @@ test_that("read_xlsx correct sheet", {
 
   skip_if_offline()
 
-  fl <- "https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx"
+  fl <- testfile_path("readTest.xlsx")
   expect_warning(sheet_names <- read_sheet_names(file = fl),
                  "'read_sheet_names' is deprecated.")
 

@@ -50,12 +50,10 @@ test_that("Maintaining Named Regions on Load", {
 
 test_that("Correctly Loading Named Regions Created in Excel", {
 
-  skip_if_offline()
-
   # Load an excel workbook (in the repo, it's located in the /inst folder;
   # when installed on the user's system, it is located in the installation folder
   # of the package)
-  filename <- "https://github.com/JanMarvin/openxlsx-data/raw/main/namedRegions.xlsx"
+  filename <- testfile_path("namedRegions.xlsx")
 
   # Load this workbook. We will test read_xlsx by passing both the object wb and
   # the filename. Both should produce the same results.
@@ -115,7 +113,7 @@ test_that("Correctly Loading Named Regions Created in Excel", {
 
 # Ordering locally and in testthat differs.
 test_that("Load names from an Excel file with funky non-region names", {
-  filename <- "https://github.com/JanMarvin/openxlsx-data/raw/main/namedRegions2.xlsx"
+  filename <- testfile_path("namedRegions2.xlsx")
   wb <- wb_load(filename)
   dn <- wb_get_named_regions(wb)
 

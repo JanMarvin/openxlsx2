@@ -254,12 +254,10 @@ test_that("type = 'endsWith' works", {
 
 test_that("type = 'colorScale' works", {
 
-  skip_if_offline()
-
   wb <- my_workbook()
   wb$add_worksheet("colourScale", zoom = 30)
   ## colourscale colours cells based on cell value
-  df <- read_xlsx("https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx", sheet = 4)
+  df <- read_xlsx(testfile_path("readTest.xlsx"), sheet = 4)
   wb$add_data("colourScale", df, colNames = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
@@ -397,14 +395,12 @@ test_that("type as logical operators work", {
 
 test_that("colorScale", {
 
-  skip_if_offline()
-
   wb <- wb_workbook()
 
   ### two colors
   wb$add_worksheet("colourScale1", zoom = 30)
   ## colourscale colours cells based on cell value
-  df <- read_xlsx("https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx", sheet = 5)
+  df <- read_xlsx(testfile_path("readTest.xlsx"), sheet = 5)
   wb$add_data("colourScale1", df, colNames = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
