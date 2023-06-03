@@ -575,31 +575,31 @@ set_cellstyle <- function(
 ) {
   z <- read_xf(read_xml(xf_node))
 
-  if (!is.null(applyAlignment))    z$applyAlignment <- applyAlignment
-  if (!is.null(applyBorder))       z$applyBorder <- applyBorder
-  if (!is.null(applyFill))         z$applyFill <- applyFill
-  if (!is.null(applyFont))         z$applyFont <- applyFont
-  if (!is.null(applyNumberFormat)) z$applyNumberFormat <- applyNumberFormat
-  if (!is.null(applyProtection))   z$applyProtection <- applyProtection
-  if (!is.null(borderId))          z$borderId <- borderId
-  if (!is.null(extLst))            z$extLst <- extLst
-  if (!is.null(fillId))            z$fillId <- fillId
-  if (!is.null(fontId))            z$fontId <- fontId
-  if (!is.null(hidden))            z$hidden <- hidden
-  if (!is.null(horizontal))        z$horizontal <- horizontal
-  if (!is.null(indent))            z$indent <- indent
-  if (!is.null(justifyLastLine))   z$justifyLastLine <- justifyLastLine
-  if (!is.null(locked))            z$locked <- locked
-  if (!is.null(numFmtId))          z$numFmtId <- numFmtId
-  if (!is.null(pivotButton))       z$pivotButton <- pivotButton
-  if (!is.null(quotePrefix))       z$quotePrefix <- quotePrefix
-  if (!is.null(readingOrder))      z$readingOrder <- readingOrder
-  if (!is.null(relativeIndent))    z$relativeIndent <- relativeIndent
-  if (!is.null(shrinkToFit))       z$shrinkToFit <- shrinkToFit
-  if (!is.null(textRotation))      z$textRotation <- textRotation
-  if (!is.null(vertical))          z$vertical <- vertical
-  if (!is.null(wrapText))          z$wrapText <- wrapText
-  if (!is.null(xfId))              z$xfId <- xfId
+  if (!is.null(applyAlignment))    z$applyAlignment    <- as_xml_attr(applyAlignment)
+  if (!is.null(applyBorder))       z$applyBorder       <- as_xml_attr(applyBorder)
+  if (!is.null(applyFill))         z$applyFill         <- as_xml_attr(applyFill)
+  if (!is.null(applyFont))         z$applyFont         <- as_xml_attr(applyFont)
+  if (!is.null(applyNumberFormat)) z$applyNumberFormat <- as_xml_attr(applyNumberFormat)
+  if (!is.null(applyProtection))   z$applyProtection   <- as_xml_attr(applyProtection)
+  if (!is.null(borderId))          z$borderId          <- as_xml_attr(borderId)
+  if (!is.null(extLst))            z$extLst            <- as_xml_attr(extLst)
+  if (!is.null(fillId))            z$fillId            <- as_xml_attr(fillId)
+  if (!is.null(fontId))            z$fontId            <- as_xml_attr(fontId)
+  if (!is.null(hidden))            z$hidden            <- as_xml_attr(hidden)
+  if (!is.null(horizontal))        z$horizontal        <- as_xml_attr(horizontal)
+  if (!is.null(indent))            z$indent            <- as_xml_attr(indent)
+  if (!is.null(justifyLastLine))   z$justifyLastLine   <- as_xml_attr(justifyLastLine)
+  if (!is.null(locked))            z$locked            <- as_xml_attr(locked)
+  if (!is.null(numFmtId))          z$numFmtId          <- as_xml_attr(numFmtId)
+  if (!is.null(pivotButton))       z$pivotButton       <- as_xml_attr(pivotButton)
+  if (!is.null(quotePrefix))       z$quotePrefix       <- as_xml_attr(quotePrefix)
+  if (!is.null(readingOrder))      z$readingOrder      <- as_xml_attr(readingOrder)
+  if (!is.null(relativeIndent))    zz$relativeIndent   <- as_xml_attr(relativeIndent)
+  if (!is.null(shrinkToFit))       z$shrinkToFit       <- as_xml_attr(shrinkToFit)
+  if (!is.null(textRotation))      z$textRotation      <- as_xml_attr(textRotation)
+  if (!is.null(vertical))          z$vertical          <- as_xml_attr(vertical)
+  if (!is.null(wrapText))          z$wrapText          <- as_xml_attr(wrapText)
+  if (!is.null(xfId))              z$xfId              <- as_xml_attr(xfId)
 
   write_xf(z)
 }
