@@ -16,10 +16,10 @@ test_that("encode Hyperlink works", {
     add_formula(dims = "B1", x = formula_old)$
     add_formula(dims = "B2", x = formula_new)
 
-  got <- wb$worksheets[[1]]$sheet_data$cc["11", "f"]
+  got <- wb$worksheets[[1]]$sheet_data$cc["6", "f"]
   expect_equal(formula_old, got)
 
-  got <- wb$worksheets[[1]]$sheet_data$cc["12", "f"]
+  got <- wb$worksheets[[1]]$sheet_data$cc["7", "f"]
   expect_equal(formula_old, got)
 
   expect_equal(formula_new, wb_to_df(wb, colNames = FALSE, showFormula = TRUE)[1, "B"])
@@ -37,7 +37,7 @@ test_that("formulas with hyperlinks works", {
     add_formula(dims = "B2", x = '=IF(2017 = VALUE(A1), HYPERLINK("github.com","github.com"), A1)')
 
   exp <- "=IF(2017 = VALUE(A1), HYPERLINK(\"github.com\",\"github.com\"), A1)"
-  got <- wb$worksheets[[1]]$sheet_data$cc["12", "f"]
+  got <- wb$worksheets[[1]]$sheet_data$cc["7", "f"]
   expect_equal(exp, got)
 
 })

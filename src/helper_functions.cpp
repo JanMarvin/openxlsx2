@@ -348,6 +348,7 @@ void wide_to_long(
   Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
   Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
+  auto itr = 0;
   for (auto i = 0; i < m; ++i) {
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
 
@@ -466,6 +467,8 @@ void wide_to_long(
       cell.typ = std::to_string(vtyp);
       cell.r =  col + row;
 
+      pos = itr;
+
       zz_row_r[pos] = row;
       zz_c_r[pos]   = col;
       if (!cell.v.empty())     zz_v[pos]     = cell.v;
@@ -478,6 +481,8 @@ void wide_to_long(
       if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
       if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
       if (!cell.r.empty())     zz_r[pos]     = cell.r;
+
+      ++itr;
 
       ++startrow;
     }

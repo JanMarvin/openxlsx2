@@ -17,8 +17,8 @@ test_that("Writing Posixct with write_data & write_datatable", {
   wd <- wb$worksheets[[1]]$sheet_data$cc
   wdt <- wb$worksheets[[2]]$sheet_data$cc
 
-  expect_equal(wd$v[[3]], "42885.3541666667")
-  expect_equal(wd$is[[4]], "<is><t>2017-05-30 08:30</t></is>")
+  expect_equal(wd$v[[3]], "42885.3576388889")
+  expect_equal(wd$is[[15]], "<is><t>2017-05-30 08:30</t></is>")
 
   options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 })

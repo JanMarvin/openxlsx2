@@ -54,22 +54,33 @@ inner_update <- function(
 
   }
 
-  if (!all(cells_needed %in% cells_in_wb)) {
+  all_missing <- FALSE
+  cell_sel <- cells_needed %in% cells_in_wb
+  if (!all(cell_sel)) {
     # message("cell(s) not in workbook")
 
-    missing_cells <- cells_needed[!cells_needed %in% cells_in_wb]
+    if (all(!cell_sel)) {
+      all_missing <- TRUE
 
-    # create missing cells
-    cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
-    cc_missing$r     <- missing_cells
-    cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
-    cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
+      cc_missing <- x
+
+    } else {
+
+      missing_cells <- cells_needed[!cell_sel]
+
+      # create missing cells
+      cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
+      cc_missing$r     <- missing_cells
+      cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
+      cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
+
+    }
 
     # assign to cc
-    cc <- rbind(cc, cc_missing)
+    if (is.null(cc$typ)) cc$typ <- ""
+    if (is.null(cc_missing$typ)) cc_missing$typ <- ""
 
-    # order cc (not really necessary, will be done when saving)
-    cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
+    cc <- rbind(cc, cc_missing)
 
     # update dimensions (only required if new cols and rows are added) ------
     all_rows <- as.numeric(unique(cc$row_r))
@@ -86,21 +97,25 @@ inner_update <- function(
     na.strings <- NULL
   }
 
-  if (removeCellStyle) {
-    cell_style <- "c_s"
-  } else {
-    cell_style <- NULL
+  if (!all_missing) {
+
+    if (removeCellStyle) {
+      cell_style <- "c_s"
+    } else {
+      cell_style <- NULL
+    }
+
+    replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
+                    "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
+
+    sel <- match(x$r, cc$r)
+    cc[sel, replacement] <- x[replacement]
+
+    # avoid missings in cc
+    if (any(is.na(cc)))
+      cc[is.na(cc)] <- ""
+
   }
-
-  replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
-                   "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
-
-  sel <- match(x$r, cc$r)
-  cc[sel, replacement] <- x[replacement]
-
-  # avoid missings in cc
-  if (any(is.na(cc)))
-    cc[is.na(cc)] <- ""
 
   # push everything back to workbook
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc

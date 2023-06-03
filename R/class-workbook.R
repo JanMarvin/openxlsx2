@@ -6260,14 +6260,14 @@ wbWorkbook <- R6::R6Class(
       dims <- unname(unlist(dims))
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match(dims, cc$r)
+      sel <- cc$r %in% dims
       stls <- cc$c_s[sel]
       nams <- cc$r[sel]
 
       out <- vector("character", length(dims))
       names(out) <- dims
 
-      out[match(names(out), nams)] <- stls
+      out[match(nams, names(out))] <- stls
       out
     },
 

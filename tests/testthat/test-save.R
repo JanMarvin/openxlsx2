@@ -258,9 +258,9 @@ test_that("write cells without data", {
 
   exp <- structure(
     list(
-      r = c("B2", "C2", "B3", "C3"),
-      row_r = c("2", "2", "3", "3"),
-      c_r = c("B", "C", "B", "C"),
+      r = c("B2", "B3", "C2", "C3"),
+      row_r = c("2", "3", "2", "3"),
+      c_r = c("B", "B", "C", "C"),
       c_s = c("", "", "", ""),
       c_t = c("", "", "", ""),
       c_cm = c("", "", "", ""),
@@ -271,12 +271,9 @@ test_that("write cells without data", {
       f_t = c("", "", "", ""),
       f_ref = c("", "", "", ""),
       f_ca = c("", "", "", ""),
-      f_si = c("", "", "", ""),
-      is = c("", "", "", ""),
-      typ = c("3", "3", "3", "3")
-    ),
-    row.names = c(NA, 4L),
-    class = "data.frame")
+      f_si = c("", "", "",
+                                                                                                                                  ""), is = c("", "", "", ""), typ = c("3", "3", "3", "3")), row.names = c(NA,
+                                                                                                                                                                                                           4L), class = "data.frame")
   got <- wb$worksheets[[1]]$sheet_data$cc
   expect_equal(exp, got)
 

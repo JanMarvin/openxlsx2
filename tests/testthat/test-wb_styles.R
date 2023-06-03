@@ -129,8 +129,8 @@ test_that("test add_fill()", {
   expect_equal(exp, got)
 
   # check the actual styles
-  exp <- c("", "1", "", "1", "", "2", "2", "2", "2", "2", "", "1", "",
-           "1", "", "2", "2", "2", "2", "2", "", "1", "", "1", "", "2",
+  exp <- c("", "2", "", "2", "", "1", "2", "1", "2", "1", "", "2", "",
+           "2", "", "1", "2", "1", "2", "1", "", "2", "", "2", "", "2",
            "2", "2", "2", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
@@ -171,8 +171,8 @@ test_that("test add_font()", {
   expect_equal(exp, got)
 
   # check the actual styles
-  exp <- c("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "",
-           "", "", "", "", "", "", "", "")
+  exp <- c("1", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+           "", "", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
   expect_equal(exp, got)
 
@@ -209,8 +209,8 @@ test_that("test add_numfmt()", {
   expect_equal(exp, got)
 
   # check the actual styles
-  exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
-           "", "", "2", "", "", "")
+  exp <- c("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
+           "1", "1", "1", "1", "1", "1", "1", "1")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
   expect_equal(exp, got)
 
@@ -241,8 +241,8 @@ test_that("test add_cell_style()", {
   expect_equal(exp, got)
 
   # check the actual styles
-  exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
-           "", "", "2", "", "", "")
+  exp <- c("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
+           "1", "1", "1", "1", "1", "1", "1", "1")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
   expect_equal(exp, got)
 
@@ -404,7 +404,7 @@ test_that("applyCellStyle works", {
     add_data(dims = "A1", x = Sys.Date())
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
-  exp <- c("3", "2", "1", "3")
+  exp <- c("2", "1", "3", "3")
   got <- cc[cc$r %in% c("A1", "C3", "E3", "E5"), "c_s"]
   expect_equal(exp, got)
 

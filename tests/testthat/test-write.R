@@ -101,7 +101,7 @@ test_that("update_cells", {
   data <- matrix(NA, 2, 2)
   wb <- wb_workbook()$add_worksheet()$add_data(x = data)$add_data(x = data, na.strings = "N/A")
 
-  exp <- c("<is><t>V1</t></is>", "<is><t>V2</t></is>", "<is><t>N/A</t></is>")
+  exp <- c("<is><t>V1</t></is>", "<is><t>N/A</t></is>", "<is><t>V2</t></is>")
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
   expect_equal(exp, got)
 
@@ -126,8 +126,8 @@ test_that("update_cells", {
     list(c_t = c("", "str", "str"),
          f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\")"),
          f_t = c("array", "", "")),
-    row.names = c("23", "110", "111"), class = "data.frame")
-  got <- wb$worksheets[[1]]$sheet_data$cc[c(5, 8, 11), c("c_t", "f", "f_t")]
+    row.names = c(23L, 24L, 25L), class = "data.frame")
+  got <- wb$worksheets[[1]]$sheet_data$cc[c(23, 24, 25), c("c_t", "f", "f_t")]
   expect_equal(exp, got)
 
   ### write logical
@@ -137,7 +137,7 @@ test_that("update_cells", {
   data <- head(wb_to_df(wb1, sheet = 3))
   wb <- wb_workbook()$add_worksheet()$add_data(x = data)$add_data(x = data)
 
-  exp <- c("inlineStr", "", "b", "e")
+  exp <- c("inlineStr", "", "e", "b")
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$c_t)
   expect_equal(exp, got)
 
@@ -208,9 +208,9 @@ test_that("update cell(s)", {
     add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
     add_data(dims = "C3", x = Sys.Date())$
     add_data(dims = "E4", x = Sys.Date(), removeCellStyle = TRUE)
-  exp <- structure(list(r = c("B2", "C2", "D2", "E2", "F2", "G2"),
-                        row_r = c("2", "2", "2", "2", "2", "2"),
-                        c_r = c("B", "C", "D", "E", "F", "G"),
+  exp <- structure(list(r = c("B2", "B3", "B4", "B5", "B6", "B7"),
+                        row_r = c("2", "3", "4", "5", "6", "7"),
+                        c_r = c("B", "B", "B", "B", "B", "B"),
                         c_s = c("1", "1", "1", "1", "1", "1"),
                         c_t = c("", "", "", "", "", ""),
                         c_cm = c("", "", "", "", "", ""),
@@ -223,9 +223,8 @@ test_that("update cell(s)", {
                         f_ca = c("", "", "", "", "", ""),
                         f_si = c("", "", "", "", "", ""),
                         is = c("", "", "", "", "", ""),
-                        typ = c("4", "4", "4", "4", "4", "4")),
-                   row.names = 1:6,
-                   class = "data.frame")
+                        typ = c("4", "4", "4", "4", "4", "4")
+                      ), row.names = c(NA, 6L), class = "data.frame")
   got <- head(wb$worksheets[[1]]$sheet_data$cc)
   expect_equal(exp, got)
 
@@ -300,8 +299,8 @@ test_that("writeData() forces evaluation of x (#264)", {
   wb$add_data(startCol = 5, x = df2)
 
   exp <- c(
-    "<is><t>a</t></is>", "<is><t>b</t></is>", "<is><t>c</t></is>",
-    "<is><t>d</t></is>", "<is><t>e</t></is>", "<is><t>123.4</t></is>"
+    "<is><t>a</t></is>", "<is><t>123.4</t></is>", "<is><t>b</t></is>",
+    "<is><t>c</t></is>", "<is><t>d</t></is>", "<is><t>e</t></is>"
   )
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$is)
   expect_equal(exp, got)
