@@ -2,6 +2,9 @@
 % Please edit documentation in R/utils.R
 \name{fmt_txt}
 \alias{fmt_txt}
+\alias{+.fmt_txt}
+\alias{as.character.fmt_txt}
+\alias{print.fmt_txt}
 \title{format strings independent of the cell style.}
 \usage{
 fmt_txt(
@@ -17,9 +20,15 @@ fmt_txt(
   outline = NULL,
   vertAlign = NULL
 )
+
+\method{+}{fmt_txt}(x, y)
+
+\method{as.character}{fmt_txt}(x, ...)
+
+\method{print}{fmt_txt}(x, ...)
 }
 \arguments{
-\item{x}{a string or part of a string}
+\item{x}{an openxlsx2 fmt_txt string}
 
 \item{bold}{bold}
 
@@ -40,6 +49,10 @@ fmt_txt(
 \item{outline}{TRUE or FALSE}
 
 \item{vertAlign}{baseline, superscript, or subscript}
+
+\item{y}{an openxlsx2 fmt_txt string}
+
+\item{...}{additional arguments for default print}
 }
 \description{
 format strings independent of the cell style.
