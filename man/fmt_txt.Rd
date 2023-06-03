@@ -83,7 +83,11 @@ strings together to create a string with differing styles.
    "238" \tab "EASTEUROPE_CHARSET" \cr
    "255" \tab "OEM_CHARSET" \cr
 }
+
+You can join additional objects into fmt_txt() objects using "+". Though be aware that \code{fmt_txt("sum:") + (2 + 2)} is different to \code{fmt_txt("sum:") + 2 + 2}.
 }
 \examples{
 fmt_txt("bar", underline = TRUE)
+fmt_txt("foo ", bold = TRUE) + fmt_txt("bar")
+as.character(fmt_txt(2))
 }

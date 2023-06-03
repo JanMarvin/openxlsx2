@@ -425,8 +425,16 @@ fmt_txt <- function(
 #' @method + fmt_txt
 #' @param x an openxlsx2 fmt_txt string
 #' @param y an openxlsx2 fmt_txt string
+#' @details You can join additional objects into fmt_txt() objects using "+". Though be aware that `fmt_txt("sum:") + (2 + 2)` is different to `fmt_txt("sum:") + 2 + 2`.
+#' @examples
+#' fmt_txt("foo ", bold = TRUE) + fmt_txt("bar")
 #' @export
 "+.fmt_txt" <- function(x, y) {
+
+  if (!inherits(y, "character") || !inherits(y, "fmt_txt")) {
+    y <- fmt_txt(y)
+  }
+
   z <- paste0(x, y)
   class(z) <- c("character", "fmt_txt")
   z
@@ -436,6 +444,8 @@ fmt_txt <- function(
 #' @method as.character fmt_txt
 #' @param x an openxlsx2 fmt_txt string
 #' @param ... unused
+#' @examples
+#' as.character(fmt_txt(2))
 #' @export
 as.character.fmt_txt <- function(x, ...) {
   si_to_txt(xml_node_create("si", xml_children = x))
