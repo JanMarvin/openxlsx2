@@ -271,9 +271,10 @@ test_that("write cells without data", {
       f_t = c("", "", "", ""),
       f_ref = c("", "", "", ""),
       f_ca = c("", "", "", ""),
-      f_si = c("", "", "",
-                                                                                                                                  ""), is = c("", "", "", ""), typ = c("3", "3", "3", "3")), row.names = c(NA,
-                                                                                                                                                                                                           4L), class = "data.frame")
+      f_si = c("", "", "", ""),
+      is = c("", "", "", ""),
+      typ = c("3", "3", "3", "3")
+    ), row.names = c(1L, 3L, 2L, 4L), class = "data.frame")
   got <- wb$worksheets[[1]]$sheet_data$cc
   expect_equal(exp, got)
 

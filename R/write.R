@@ -80,6 +80,7 @@ inner_update <- function(
     if (is.null(cc$typ)) cc$typ <- ""
     if (is.null(cc_missing$typ)) cc_missing$typ <- ""
 
+    rownames(cc_missing) <- seq.int(nrow(cc) + 1L, length.out = nrow(cc_missing))
     cc <- rbind(cc, cc_missing)
 
     # update dimensions (only required if new cols and rows are added) ------
@@ -118,6 +119,7 @@ inner_update <- function(
   }
 
   # push everything back to workbook
+  # cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
   wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
 
   wb
@@ -358,7 +360,7 @@ write_data2 <- function(
   rows_attr <- vector("list", data_nrow)
 
   # create <rows ...>
-  want_rows <- startRow:endRow
+  want_rows <- seq.int(startRow, endRow)
   rows_attr <- empty_row_attr(n = length(want_rows))
   rows_attr$r <- rownames(rtyp)
 
@@ -420,6 +422,11 @@ write_data2 <- function(
 
     wb$worksheets[[sheetno]]$sheet_data$row_attr <- rows_attr
 
+    # ordr <- stringi::stri_order(
+    #   rownames(cc),
+    #   opts_collator = stringi::stri_opts_collator(numeric = TRUE)
+    # )
+    # cc <- cc[ordr,]
     wb$worksheets[[sheetno]]$sheet_data$cc <- cc
 
   } else {

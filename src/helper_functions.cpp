@@ -348,6 +348,8 @@ void wide_to_long(
   Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
   Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
+  Rcpp::IntegerVector rownames(zz.nrow());
+
   auto itr = 0;
   for (auto i = 0; i < m; ++i) {
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
@@ -363,6 +365,7 @@ void wide_to_long(
       std::string col = int_to_col(startcol);
 
       auto pos = (j * m) + i;
+      rownames[itr] = pos + 1L;
 
       // create struct
       celltyp cell;
@@ -488,6 +491,8 @@ void wide_to_long(
     }
     ++startcol;
   }
+
+  zz.attr("row.names") = rownames;
 }
 
 // simple helper function to create a data frame of type character
