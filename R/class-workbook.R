@@ -1458,13 +1458,14 @@ wbWorkbook <- R6::R6Class(
     ) {
       if (missing(file)) file <- substitute()
       if (missing(sheet)) sheet <- substitute()
-      wb_load(
+      self <- wb_load(
         file       = file,
         xlsxFile   = xlsxFile,
         sheet      = sheet,
         data_only  = data_only,
         calc_chain = calc_chain
-        )
+      )
+      invisible(self)
     },
 
     # TODO wb_save can be shortened a lot by some formatting and by using a
