@@ -551,3 +551,15 @@ test_that("create_tablestyle() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("wb_add_cell_style works with logical and numeric", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  wb$add_cell_style(wrapText = TRUE, textRotation = 45)
+
+  exp <- "<xf borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"><alignment textRotation=\"45\" wrapText=\"1\"/></xf>"
+  got <- wb$styles_mgr$styles$cellXfs[2]
+  expect_equal(exp, got)
+
+})
