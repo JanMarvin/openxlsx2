@@ -158,3 +158,36 @@ test_that("outdec = \",\" works", {
   expect_equal(exp, got)
 
 })
+
+test_that("fmt_txt works", {
+
+  exp <- structure(
+    "<r><rPr><b/></rPr><t xml:space=\"preserve\">Foo </t></r>",
+    class = c("character", "fmt_txt")
+  )
+  got <- fmt_txt("Foo ", bold = TRUE)
+  expect_equal(exp, got)
+
+  exp <- structure(
+    "<r><rPr><b/></rPr><t xml:space=\"preserve\">Hello </t></r><r><rPr/><t xml:space=\"preserve\">World </t></r>",
+    class = c("character", "fmt_txt")
+  )
+  got <- fmt_txt("Hello ", bold = TRUE) + fmt_txt("World ")
+  expect_equal(exp, got)
+
+  expect_message(got <- capture.output(print(got)), "fmt_txt string:")
+  exp <- "[1] \"Hello World \""
+  expect_equal(exp, got)
+
+  ## watch out!
+  txt <- fmt_txt("Sum ", bold = TRUE) + 2 + 2
+  exp <- "Sum 22"
+  got <- as.character(txt)
+  expect_equal(exp, got)
+
+  txt <- fmt_txt("Sum ", bold = TRUE) + (2 + 2)
+  exp <- "Sum 4"
+  got <- as.character(txt)
+  expect_equal(exp, got)
+
+})

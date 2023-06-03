@@ -6,6 +6,8 @@
 
 * Removed a few of the former example files and updated the code to use a new default example. This changes internal testing to only run locally if online and external files are required. This reduces the package footprint a little, because 1MB of xlsx files are now excluded. [632](https://github.com/JanMarvin/openxlsx2/pull/632)
 
+* The handling of `fmt_txt()` objects has been improved. It now creates objects of class `fmt_txt` with their own `print()`, `+`, and `as.character()` methods. Such objects can now also be used as `text` in `create_comment()`. [636](https://github.com/JanMarvin/openxlsx2/pull/636)
+
 ## Fixes
 
 * On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned. [629](https://github.com/JanMarvin/openxlsx2/pull/629)

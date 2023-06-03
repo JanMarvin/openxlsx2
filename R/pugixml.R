@@ -43,6 +43,7 @@
 read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE) {
 
   z <- NULL
+  xml <- unclass(xml)
 
   isvml <- grepl("^.vml$", xml)
 

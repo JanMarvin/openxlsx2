@@ -52,7 +52,7 @@ wbComment <- R6::R6Class(
     print = function() {
       showText <- c(
         sprintf("Author: %s\n", self$author),
-        sprintf("Text:\n %s\n\n", paste(self$text, collapse = ""))
+        sprintf("Text:\n %s\n\n", paste(as.character(self$text), collapse = ""))
       )
 
       s <- self$style
@@ -141,13 +141,18 @@ create_comment <- function(text,
   width <- round(width)
   height <- round(height)
 
-
   if (is.null(style)) {
     style <- create_font()
   }
 
   author <- replace_legal_chars(author)
-  text <- replace_legal_chars(text)
+  # if text was created using fmt_txt()
+  if (inherits(text, "fmt_txt")) {
+    text  <- text
+    style <- ""
+  } else {
+    text <- replace_legal_chars(text)
+  }
 
 
   if (author != "") {

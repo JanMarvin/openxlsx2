@@ -333,6 +333,7 @@ read_xml_files <- function(x) {
 #'  |"255"   | "OEM_CHARSET"        |
 #' @examples
 #' fmt_txt("bar", underline = TRUE)
+#' @name fmt_txt
 #' @export
 fmt_txt <- function(
     x,
@@ -409,11 +410,53 @@ fmt_txt <- function(
     )
   )
 
-  xml_node_create(
+  out <- xml_node_create(
     "r",
     xml_children = c(
       xml_rpr,
       xml_t
     )
   )
+  class(out) <- c("character", "fmt_txt")
+  out
+}
+
+#' @rdname fmt_txt
+#' @method + fmt_txt
+#' @param x an openxlsx2 fmt_txt string
+#' @param y an openxlsx2 fmt_txt string
+#' @details You can join additional objects into fmt_txt() objects using "+". Though be aware that `fmt_txt("sum:") + (2 + 2)` is different to `fmt_txt("sum:") + 2 + 2`.
+#' @examples
+#' fmt_txt("foo ", bold = TRUE) + fmt_txt("bar")
+#' @export
+"+.fmt_txt" <- function(x, y) {
+
+  if (!inherits(y, "character") || !inherits(y, "fmt_txt")) {
+    y <- fmt_txt(y)
+  }
+
+  z <- paste0(x, y)
+  class(z) <- c("character", "fmt_txt")
+  z
+}
+
+#' @rdname fmt_txt
+#' @method as.character fmt_txt
+#' @param x an openxlsx2 fmt_txt string
+#' @param ... unused
+#' @examples
+#' as.character(fmt_txt(2))
+#' @export
+as.character.fmt_txt <- function(x, ...) {
+  si_to_txt(xml_node_create("si", xml_children = x))
+}
+
+#' @rdname fmt_txt
+#' @method print fmt_txt
+#' @param x an openxlsx2 fmt_txt string
+#' @param ... additional arguments for default print
+#' @export
+print.fmt_txt <- function(x, ...) {
+  message("fmt_txt string: ")
+  print(as.character(x), ...)
 }

@@ -190,6 +190,7 @@ write_comment_xml <- function(comment_list, file_name) {
 
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
+
       # write styles and comments
       if (is_xml(comment_list[[i]]$comment[[j]])) {
         comment <- comment_list[[i]]$comment[[j]]
@@ -197,9 +198,17 @@ write_comment_xml <- function(comment_list, file_name) {
         comment <- sprintf('<t xml:space="preserve">%s</t>', comment_list[[i]]$comment[[j]])
       }
 
-      xml <- c(xml, sprintf('<r>%s%s</r>',
-                            comment_list[[i]]$style[[j]],
-                            comment))
+      is_fmt_txt <- FALSE
+      if (is_xml(comment))
+      is_fmt_txt <- all(xml_node_name(comment) == "r")
+
+      if (is_fmt_txt) {
+        xml <- c(xml, comment)
+      } else {
+        xml <- c(xml, sprintf('<r>%s%s</r>',
+                              comment_list[[i]]$style[[j]],
+                              comment))
+      }
     }
 
     xml <- c(xml, "</text></comment>")
