@@ -329,21 +329,21 @@ test_that("get & set cell style(s)", {
 
   # get style from b1 to assign it to a1
   numfmt <- wb$get_cell_style(dims = "B1")
-  expect_equal("1", numfmt)
+  expect_equal(c(B1 = "1"), numfmt)
 
   # assign style to a1
   pre <- wb$get_cell_style(dims = "A1")
-  expect_equal("", pre)
+  expect_equal(c(A1 = ""), pre)
 
   expect_silent(wb$set_cell_style(dims = "A1", style = numfmt))
 
   post <- wb$get_cell_style(dims = "A1")
-  expect_equal("1", post)
+  expect_equal(c(A1 = "1"), post)
 
   s_a1_b1 <- wb$get_cell_style(dims = "A1:B1")
   expect_silent(wb$set_cell_style(dims = "A2:B2", style = s_a1_b1))
   s_a2_b2 <- wb$get_cell_style(dims = "A2:B2")
-  expect_equal(s_a1_b1, s_a2_b2)
+  expect_equal(unname(s_a1_b1), unname(s_a2_b2))
 
 })
 
@@ -365,7 +365,7 @@ test_that("get_cell_styles()", {
                right_border = "",
                top_border = "")
 
-  exp <- "1"
+  exp <- c(B2 = "1")
   got <- wb$get_cell_style(dims = "B2")
   expect_equal(exp, got)
 
@@ -373,7 +373,7 @@ test_that("get_cell_styles()", {
   got <- get_cell_styles(wb, 1, "B2")
   expect_equal(exp, got)
 
-  exp <- "3"
+  exp <- c(B3 = "3")
   got <- wb$get_cell_style(dims = "B3")
   expect_equal(exp, got)
 

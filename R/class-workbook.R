@@ -6256,15 +6256,19 @@ wbWorkbook <- R6::R6Class(
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
-      # This alters the workbook
-      temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
-
       # if a range is passed (e.g. "A1:B2") we need to get every cell
       dims <- unname(unlist(dims))
 
-      # TODO check that cc$r is alway valid. not sure atm
-      sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% dims
-      temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match(dims, cc$r)
+      stls <- cc$c_s[sel]
+      nams <- cc$r[sel]
+
+      out <- vector("character", length(dims))
+      names(out) <- dims
+
+      out[match(names(out), nams)] <- stls
+      out
     },
 
     #' @description set sheet style
@@ -6283,9 +6287,11 @@ wbWorkbook <- R6::R6Class(
       # if a range is passed (e.g. "A1:B2") we need to get every cell
       dims <- unname(unlist(dims))
 
-      sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- cc$r %in% dims
+      cc$c_s[sel] <- style
 
-      self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- style
+      self$worksheets[[sheet]]$sheet_data$cc <- cc
 
       invisible(self)
     },
