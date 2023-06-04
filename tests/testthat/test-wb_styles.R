@@ -563,3 +563,26 @@ test_that("wb_add_cell_style works with logical and numeric", {
   expect_equal(exp, got)
 
 })
+
+test_that("wb_add_named_style() works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_named_style(dims = "A1", name = "Title")$
+    add_data(dims = "A1", x = "Title")
+
+  exp <- "<cellStyle name=\"Title\" xfId=\"1\" builtinId=\"15\"/>"
+  got <- wb$styles_mgr$styles$cellStyles[2]
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_named_style(dims = "A1", name = "Good")$
+    add_data(dims = "A1", x = "Title")$
+    add_named_style(dims = "A1", name = "Good")
+
+  exp <- 2
+  got <- length(wb$styles_mgr$styles$cellStyles)
+  expect_equal(exp, got)
+
+})

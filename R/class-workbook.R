@@ -6290,6 +6290,45 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description set sheet style
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param name name
+    #' @param font_name,font_size optional else the default of the theme
+    #' @return The `wbWorkbook`, invisibly
+    add_named_style = function(
+      sheet = current_sheet(),
+      dims = "A1",
+      name = "Normal",
+      font_name = NULL,
+      font_size = NULL
+    ) {
+
+      if (is.null(font_name)) font_name <- self$get_base_font()$name$val
+      if (is.null(font_size)) font_size <- self$get_base_font()$size$val
+
+      # if required initialize the cell style
+      self$styles_mgr$init_named_style(name, font_name, font_size)
+
+      ids <- self$styles_mgr$getstyle_ids(name)
+
+      border_id <- ids[["borderId"]]
+      fill_id   <- ids[["fillId"]]
+      font_id   <- ids[["fontId"]]
+      numfmt_id <- ids[["numFmtId"]]
+      title_id  <- ids[["titleId"]]
+
+      self$add_cell_style(
+        dims     = dims,
+        borderId = border_id,
+        fillId   = fill_id,
+        fontId   = font_id,
+        numFmtId = numfmt_id,
+        xfId     = title_id
+      )
+      invisible(self)
+    },
+
     #' @description clone style from one sheet to another
     #' @param from the worksheet you are cloning
     #' @param to the worksheet the style is applied to

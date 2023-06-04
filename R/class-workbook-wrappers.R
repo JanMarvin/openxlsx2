@@ -2664,6 +2664,33 @@ wb_add_cell_style <- function(
   )
 }
 
+#' add named style for cell region
+#' @param wb wbWorkbook
+#' @param sheet sheet
+#' @param dims dims
+#' @param name name
+#' @param font_name,font_size optional else the default of the theme
+#' @return The `wbWorkbook`, invisibly
+#' @export
+wb_add_named_style <- function(
+    wb,
+    sheet = current_sheet(),
+    dims = "A1",
+    name = "Normal",
+    font_name = NULL,
+    font_size = NULL
+) {
+  assert_workbook(wb)
+  assert_class(name, "character")
+  wb$clone()$add_named_style(
+    sheet = sheet,
+    dims = dims,
+    name = name,
+    font_name = font_name,
+    font_size = font_size
+  )
+}
+
 #' Add comment to worksheet
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook

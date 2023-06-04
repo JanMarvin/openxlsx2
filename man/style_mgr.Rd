@@ -133,7 +133,9 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 \item \href{#method-wbStylesMgr-next_cellstylexf_id}{\code{style_mgr$next_cellstylexf_id()}}
 \item \href{#method-wbStylesMgr-next_dxf_id}{\code{style_mgr$next_dxf_id()}}
 \item \href{#method-wbStylesMgr-next_tableStyle_id}{\code{style_mgr$next_tableStyle_id()}}
+\item \href{#method-wbStylesMgr-getstyle_ids}{\code{style_mgr$getstyle_ids()}}
 \item \href{#method-wbStylesMgr-add}{\code{style_mgr$add()}}
+\item \href{#method-wbStylesMgr-init_named_style}{\code{style_mgr$init_named_style()}}
 \item \href{#method-wbStylesMgr-clone}{\code{style_mgr$clone()}}
 }
 }
@@ -507,6 +509,23 @@ get next tableStyle id
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-getstyle_ids"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-getstyle_ids}{}}}
+\subsection{Method \code{getstyle_ids()}}{
+get named style ids
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$getstyle_ids(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbStylesMgr-add"></a>}}
 \if{latex}{\out{\hypertarget{method-wbStylesMgr-add}{}}}
 \subsection{Method \code{add()}}{
@@ -526,6 +545,77 @@ add entry
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-init_named_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-init_named_style}{}}}
+\subsection{Method \code{init_named_style()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$init_named_style(name, font_name = "Arial", font_size = 11)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{style name}
+
+\item{\code{font_name, font_size}}{optional else the default of the theme}
+
+\item{\code{wb}}{wbWorkbook}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+possible styles are:
+"20\% - Accent1"
+"20\% - Accent2"
+"20\% - Accent3"
+"20\% - Accent4"
+"20\% - Accent5"
+"20\% - Accent6"
+"40\% - Accent1"
+"40\% - Accent2"
+"40\% - Accent3"
+"40\% - Accent4"
+"40\% - Accent5"
+"40\% - Accent6"
+"60\% - Accent1"
+"60\% - Accent2"
+"60\% - Accent3"
+"60\% - Accent4"
+"60\% - Accent5"
+"60\% - Accent6"
+"Accent1"
+"Accent2"
+"Accent3"
+"Accent4"
+"Accent5"
+"Accent6"
+"Bad"
+"Calculation"
+"Check Cell"
+"Comma"
+"Comma [0]"
+"Currency"
+"Currency [0]"
+"Explanatory Text"
+"Good"
+"Heading 1"
+"Heading 2"
+"Heading 3"
+"Heading 4"
+"Input"
+"Linked Cell"
+”Neutral"
+"Normal"
+"Note"
+"Output"
+"Per cent"
+"Title"
+"Total"
+"Warning Text"
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbStylesMgr-clone"></a>}}

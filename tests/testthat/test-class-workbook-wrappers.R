@@ -488,6 +488,16 @@ test_that("wb_add_cell_style() is a wrapper", {
   )
 })
 
+# wb_add_named_style() -----------------------------------------------------
+
+test_that("wb_add_named_style() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet(1)
+  expect_wrapper(
+    "add_named_style",
+    wb = wb,
+    params = list(name = "Title")
+  )
+})
 
 # wb_clone_sheet_style() --------------------------------------------------
 
