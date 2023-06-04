@@ -8,6 +8,8 @@
 
 * The handling of `fmt_txt()` objects has been improved. It now creates objects of class `fmt_txt` with their own `print()`, `+`, and `as.character()` methods. Such objects can now also be used as `text` in `create_comment()`. [636](https://github.com/JanMarvin/openxlsx2/pull/636)
 
+* Improve support for inputs with `labels` attribute. If e.g. a `factor` label is numeric, we now try to write the label as number. This should impact the way other partially labeled variables are written. [639](https://github.com/JanMarvin/openxlsx2/pull/639)
+
 ## Fixes
 
 * On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned. [629](https://github.com/JanMarvin/openxlsx2/pull/629)

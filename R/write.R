@@ -224,8 +224,8 @@ write_data2 <- function(
   if (any(dc == openxlsx2_celltype[["factor"]])) {
     is_factor <- dc == openxlsx2_celltype[["factor"]]
     fcts <- names(dc[is_factor])
-    data[fcts] <- lapply(data[fcts], as.character)
-    dc <- openxlsx2_type(data)
+    data[fcts] <- lapply(data[fcts], to_string)
+    # dc <- openxlsx2_type(data)
   }
 
   hconvert_date1904 <- grepl('date1904="1"|date1904="true"',
