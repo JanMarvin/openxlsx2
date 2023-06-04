@@ -537,3 +537,34 @@ test_that("write tibble class", {
   expect_equal(tbl, read_xlsx(tmp), ignore_attr = TRUE)
 
 })
+
+
+test_that("writing labeled variables works", {
+
+  x <- c(1, 2, 1, -99, -97)
+  attr(x, "labels") <- c("N/A" = -97, "NaN" = -98, "NA" = -99)
+
+  exp <- c("1", "2", "1", "NA", "N/A")
+  got <- to_string(x)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x)
+
+  exp <- c("1", "2", "1",
+           "<is><t>x</t></is>", "<is><t>NA</t></is>", "<is><t>N/A</t></is>")
+  cc <- wb$worksheets[[1]]$sheet_data$cc[c("v", "is")]
+  cc[cc$v == "", "v"] <- NA
+  cc[cc$is == "", "is"] <- NA
+  got <- unlist(cc[!is.na(cc)])
+  expect_equal(exp, got)
+
+  x <- factor(x = c("M", "F"), levels = c("M", "F"), labels = c(1L, 2L))
+  exp <- c("1", "2")
+  got <- to_string(x)
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x)
+  exp <- c(1, 2)
+  got <- wb_to_df(wb, colNames = FALSE)$A
+  expect_equal(exp, got)
+
+})

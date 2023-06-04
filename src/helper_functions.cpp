@@ -84,7 +84,7 @@ SEXP openxlsx2_type(SEXP x) {
       type[i] = 8;
     } else if (Rf_inherits(z, "comma")) {
       type[i] = 9;
-    } else if (Rf_inherits(z, "factor")) {
+    } else if (Rf_inherits(z, "factor") || !Rf_isNull(Rf_getAttrib(z, Rf_install("labels")))) {
       type[i] = 12;
     } else if (Rf_inherits(z, "hms")) {
       type[i] = 15;
@@ -363,6 +363,9 @@ void wide_to_long(
 
       auto pos = (j * m) + i;
 
+      // factors can be numeric or string or both
+      if (vtyp == factor) string_nums = true;
+
       // create struct
       celltyp cell;
       switch(vtyp)
@@ -382,7 +385,9 @@ void wide_to_long(
         cell.v   = vals;
         cell.c_t = "b";
         break;
+      case factor:
       case character:
+
         // test if string can be written as number
         if (string_nums && is_double(vals)) {
           cell.v   = vals;
