@@ -10,6 +10,8 @@
 
 * Improve support for inputs with `labels` attribute. If e.g. a `factor` label is numeric, we now try to write the label as number. This should impact the way other partially labeled variables are written. [639](https://github.com/JanMarvin/openxlsx2/pull/639)
 
+* Added new wrapper function `wb_add_named_style()` this supports pre-defined theme aware cell styles like `Title` or `Note`. In addition loading of cell styles was improved and additional custom cell styles should be available as well. [628](https://github.com/JanMarvin/openxlsx2/pull/628)
+
 ## Fixes
 
 * On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned. [629](https://github.com/JanMarvin/openxlsx2/pull/629)
