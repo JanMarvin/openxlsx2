@@ -391,6 +391,7 @@ create_fill <- function(
 #' @param locked dummy
 #' @param horizontal alignment can be "", "center", "right"
 #' @param vertical alignment can be "", "center", "right"
+#' @param ... reserved for additional arguments
 #'
 #' @details
 #'  | "ID" | "numFmt"                    |
@@ -443,27 +444,38 @@ create_cell_style <- function(
     wrapText        = "",
     extLst          = "",
     hidden          = "",
-    locked          = ""
+    locked          = "",
+    ...
 ) {
   n <- length(numFmtId)
 
+  args <- list(...)
+
+  is_cell_style_xf <- isTRUE(args$is_cell_style_xf)
+
   applyAlignment <- ""
   if (any(horizontal != "") || any(textRotation != "") || any(vertical != "")) applyAlignment <- "1"
+  if (is_cell_style_xf) applyAlignment <- "0"
 
   applyBorder <- ""
   if (any(borderId != "")) applyBorder <- "1"
+  if (is_cell_style_xf && isTRUE(borderId == "")) applyBorder <- "0"
 
   applyFill <- ""
   if (any(fillId != "")) applyFill <- "1"
+  if (is_cell_style_xf && isTRUE(fillId == "")) applyFill <- "0"
 
   applyFont <- ""
   if (any(fontId != "")) applyFont <- "1"
+  if (is_cell_style_xf && isTRUE(fontId > "1")) applyFont <- "0"
 
   applyNumberFormat <- ""
   if (any(numFmtId != "")) applyNumberFormat <- "1"
+  if (is_cell_style_xf) applyNumberFormat <- "0"
 
   applyProtection <- ""
   if (any(hidden != "") || any(locked != "")) applyProtection <- "1"
+  if (is_cell_style_xf) applyProtection <- "0"
 
 
   df_cellXfs <- data.frame(

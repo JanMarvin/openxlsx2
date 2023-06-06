@@ -326,6 +326,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
 \item \href{#method-wbWorkbook-get_cell_style}{\code{wbWorkbook$get_cell_style()}}
 \item \href{#method-wbWorkbook-set_cell_style}{\code{wbWorkbook$set_cell_style()}}
+\item \href{#method-wbWorkbook-add_named_style}{\code{wbWorkbook$add_named_style()}}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
 \item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-add_ignore_error}{\code{wbWorkbook$add_ignore_error()}}
@@ -2906,6 +2907,38 @@ set sheet style
 }
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_named_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_named_style}{}}}
+\subsection{Method \code{add_named_style()}}{
+set sheet style
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_style(
+  sheet = current_sheet(),
+  dims = "A1",
+  name = "Normal",
+  font_name = NULL,
+  font_size = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+
+\item{\code{name}}{name}
+
+\item{\code{font_name, font_size}}{optional else the default of the theme}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook}, invisibly
 }
 }
 \if{html}{\out{<hr>}}

@@ -799,7 +799,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
 
   // openxml 2.8.1
   std::set<std::string> nam_attrs {"builtinId", "customBuiltin", "hidden",
-                                   "iLevel", "name", "xfId"};
+                                   "iLevel", "name", "xfId", "xr:uid"};
 
   std::set<std::string> nam_chlds {"extLst"};
 

@@ -23,7 +23,8 @@ create_cell_style(
   wrapText = "",
   extLst = "",
   hidden = "",
-  locked = ""
+  locked = "",
+  ...
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ create_cell_style(
 \item{hidden}{dummy}
 
 \item{locked}{dummy}
+
+\item{...}{reserved for additional arguments}
 }
 \description{
 create_cell_style

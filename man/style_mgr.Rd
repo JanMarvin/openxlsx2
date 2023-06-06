@@ -87,6 +87,10 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 
 \item{\code{xf}}{xf-ids}
 
+\item{\code{cellStyle}}{cellStyle-ids}
+
+\item{\code{cellStyleXf}}{cellStyleXf-ids}
+
 \item{\code{dxf}}{dxf-ids}
 
 \item{\code{tableStyle}}{tableStyle-ids}
@@ -108,12 +112,16 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 \item \href{#method-wbStylesMgr-get_fill}{\code{style_mgr$get_fill()}}
 \item \href{#method-wbStylesMgr-get_border}{\code{style_mgr$get_border()}}
 \item \href{#method-wbStylesMgr-get_xf}{\code{style_mgr$get_xf()}}
+\item \href{#method-wbStylesMgr-get_cellStyle}{\code{style_mgr$get_cellStyle()}}
+\item \href{#method-wbStylesMgr-get_cellStyleXf}{\code{style_mgr$get_cellStyleXf()}}
 \item \href{#method-wbStylesMgr-get_dxf}{\code{style_mgr$get_dxf()}}
 \item \href{#method-wbStylesMgr-get_numfmt_id}{\code{style_mgr$get_numfmt_id()}}
 \item \href{#method-wbStylesMgr-get_font_id}{\code{style_mgr$get_font_id()}}
 \item \href{#method-wbStylesMgr-get_fill_id}{\code{style_mgr$get_fill_id()}}
 \item \href{#method-wbStylesMgr-get_border_id}{\code{style_mgr$get_border_id()}}
 \item \href{#method-wbStylesMgr-get_xf_id}{\code{style_mgr$get_xf_id()}}
+\item \href{#method-wbStylesMgr-get_cellStyle_id}{\code{style_mgr$get_cellStyle_id()}}
+\item \href{#method-wbStylesMgr-get_cellStyleXf_id}{\code{style_mgr$get_cellStyleXf_id()}}
 \item \href{#method-wbStylesMgr-get_dxf_id}{\code{style_mgr$get_dxf_id()}}
 \item \href{#method-wbStylesMgr-get_tableStyle_id}{\code{style_mgr$get_tableStyle_id()}}
 \item \href{#method-wbStylesMgr-next_numfmt_id}{\code{style_mgr$next_numfmt_id()}}
@@ -121,9 +129,13 @@ wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 \item \href{#method-wbStylesMgr-next_fill_id}{\code{style_mgr$next_fill_id()}}
 \item \href{#method-wbStylesMgr-next_border_id}{\code{style_mgr$next_border_id()}}
 \item \href{#method-wbStylesMgr-next_xf_id}{\code{style_mgr$next_xf_id()}}
+\item \href{#method-wbStylesMgr-next_cellstyle_id}{\code{style_mgr$next_cellstyle_id()}}
+\item \href{#method-wbStylesMgr-next_cellstylexf_id}{\code{style_mgr$next_cellstylexf_id()}}
 \item \href{#method-wbStylesMgr-next_dxf_id}{\code{style_mgr$next_dxf_id()}}
 \item \href{#method-wbStylesMgr-next_tableStyle_id}{\code{style_mgr$next_tableStyle_id()}}
+\item \href{#method-wbStylesMgr-getstyle_ids}{\code{style_mgr$getstyle_ids()}}
 \item \href{#method-wbStylesMgr-add}{\code{style_mgr$add()}}
+\item \href{#method-wbStylesMgr-init_named_style}{\code{style_mgr$init_named_style()}}
 \item \href{#method-wbStylesMgr-clone}{\code{style_mgr$clone()}}
 }
 }
@@ -139,6 +151,8 @@ Creates a new \code{wbStylesMgr} object
   fill = NA,
   border = NA,
   xf = NA,
+  cellStyle = NA,
+  cellStyleXf = NA,
   dxf = NA,
   styles = NA
 )}\if{html}{\out{</div>}}
@@ -156,6 +170,10 @@ Creates a new \code{wbStylesMgr} object
 \item{\code{border}}{border}
 
 \item{\code{xf}}{xf}
+
+\item{\code{cellStyle}}{cellStyles}
+
+\item{\code{cellStyleXf}}{cellStylesXf}
 
 \item{\code{dxf}}{dxf}
 
@@ -214,6 +232,26 @@ get border ids
 get xf ids
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_xf()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyle"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyle}{}}}
+\subsection{Method \code{get_cellStyle()}}{
+get cellstyle ids
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyle()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyleXf"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyleXf}{}}}
+\subsection{Method \code{get_cellStyleXf()}}{
+get cellstylexf ids
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyleXf()}\if{html}{\out{</div>}}
 }
 
 }
@@ -313,6 +351,40 @@ get xf id by name
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyle_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyle_id}{}}}
+\subsection{Method \code{get_cellStyle_id()}}{
+get cellstyle id by name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyle_id(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-get_cellStyleXf_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-get_cellStyleXf_id}{}}}
+\subsection{Method \code{get_cellStyleXf_id()}}{
+get cellstyleXf id by name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$get_cellStyleXf_id(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbStylesMgr-get_dxf_id"></a>}}
 \if{latex}{\out{\hypertarget{method-wbStylesMgr-get_dxf_id}{}}}
 \subsection{Method \code{get_dxf_id()}}{
@@ -397,6 +469,26 @@ get next xf id
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-next_cellstyle_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_cellstyle_id}{}}}
+\subsection{Method \code{next_cellstyle_id()}}{
+get next xf id
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$next_cellstyle_id()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-next_cellstylexf_id"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-next_cellstylexf_id}{}}}
+\subsection{Method \code{next_cellstylexf_id()}}{
+get next xf id
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$next_cellstylexf_id()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbStylesMgr-next_dxf_id"></a>}}
 \if{latex}{\out{\hypertarget{method-wbStylesMgr-next_dxf_id}{}}}
 \subsection{Method \code{next_dxf_id()}}{
@@ -415,6 +507,23 @@ get next tableStyle id
 \if{html}{\out{<div class="r">}}\preformatted{style_mgr$next_tableStyle_id()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-getstyle_ids"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-getstyle_ids}{}}}
+\subsection{Method \code{getstyle_ids()}}{
+get named style ids
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$getstyle_ids(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbStylesMgr-add"></a>}}
@@ -436,6 +545,77 @@ add entry
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbStylesMgr-init_named_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbStylesMgr-init_named_style}{}}}
+\subsection{Method \code{init_named_style()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{style_mgr$init_named_style(name, font_name = "Arial", font_size = 11)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{style name}
+
+\item{\code{font_name, font_size}}{optional else the default of the theme}
+
+\item{\code{wb}}{wbWorkbook}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+possible styles are:
+"20\% - Accent1"
+"20\% - Accent2"
+"20\% - Accent3"
+"20\% - Accent4"
+"20\% - Accent5"
+"20\% - Accent6"
+"40\% - Accent1"
+"40\% - Accent2"
+"40\% - Accent3"
+"40\% - Accent4"
+"40\% - Accent5"
+"40\% - Accent6"
+"60\% - Accent1"
+"60\% - Accent2"
+"60\% - Accent3"
+"60\% - Accent4"
+"60\% - Accent5"
+"60\% - Accent6"
+"Accent1"
+"Accent2"
+"Accent3"
+"Accent4"
+"Accent5"
+"Accent6"
+"Bad"
+"Calculation"
+"Check Cell"
+"Comma"
+"Comma [0]"
+"Currency"
+"Currency [0]"
+"Explanatory Text"
+"Good"
+"Heading 1"
+"Heading 2"
+"Heading 3"
+"Heading 4"
+"Input"
+"Linked Cell"
+”Neutral"
+"Normal"
+"Note"
+"Output"
+"Per cent"
+"Title"
+"Total"
+"Warning Text"
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbStylesMgr-clone"></a>}}
