@@ -447,6 +447,7 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-add_cell_style"><code>wbWorkbook$add_cell_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-get_cell_style"><code>wbWorkbook$get_cell_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-set_cell_style"><code>wbWorkbook$set_cell_style()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-add_named_style"><code>wbWorkbook$add_named_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone_sheet_style"><code>wbWorkbook$clone_sheet_style()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_sparklines"><code>wbWorkbook$add_sparklines()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_ignore_error"><code>wbWorkbook$add_ignore_error()</code></a></p></li>
@@ -3674,15 +3675,53 @@ are removed.</p></dd>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
-</div><p></p><hr><a id="method-wbWorkbook-clone_sheet_style"></a><div class="section">
-<h3 id="method-clone-sheet-style-">Method <code>clone_sheet_style()</code><a class="anchor" aria-label="anchor" href="#method-clone-sheet-style-"></a></h3>
-<p>clone style from one sheet to another</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-add_named_style"></a><div class="section">
+<h3 id="method-add-named-style-">Method <code>add_named_style()</code><a class="anchor" aria-label="anchor" href="#method-add-named-style-"></a></h3>
+<p>set sheet style</p><div class="section">
 <h4 id="usage-75">Usage<a class="anchor" aria-label="anchor" href="#usage-75"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone_sheet_style</span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">to</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_named_style</span><span class="op">(</span></span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"Normal"</span>,</span>
+<span>  font_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  font_size <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-71">Arguments<a class="anchor" aria-label="anchor" href="#arguments-71"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
+<dt><code>name</code></dt>
+<dd><p>name</p></dd>
+
+
+<dt><code>font_name, font_size</code></dt>
+<dd><p>optional else the default of the theme</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-40">Returns<a class="anchor" aria-label="anchor" href="#returns-40"></a></h4>
+<p>The <code>wbWorkbook</code>, invisibly</p>
+</div>
+
+</div><p></p><hr><a id="method-wbWorkbook-clone_sheet_style"></a><div class="section">
+<h3 id="method-clone-sheet-style-">Method <code>clone_sheet_style()</code><a class="anchor" aria-label="anchor" href="#method-clone-sheet-style-"></a></h3>
+<p>clone style from one sheet to another</p><div class="section">
+<h4 id="usage-76">Usage<a class="anchor" aria-label="anchor" href="#usage-76"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone_sheet_style</span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">to</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-72">Arguments<a class="anchor" aria-label="anchor" href="#arguments-72"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>from</code></dt>
 <dd><p>the worksheet you are cloning</p></dd>
 
@@ -3697,12 +3736,12 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_sparklines"></a><div class="section">
 <h3 id="method-add-sparklines-">Method <code>add_sparklines()</code><a class="anchor" aria-label="anchor" href="#method-add-sparklines-"></a></h3>
 <p>apply sparkline to worksheet</p><div class="section">
-<h4 id="usage-76">Usage<a class="anchor" aria-label="anchor" href="#usage-76"></a></h4>
+<h4 id="usage-77">Usage<a class="anchor" aria-label="anchor" href="#usage-77"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_sparklines</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">sparklines</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-72">Arguments<a class="anchor" aria-label="anchor" href="#arguments-72"></a></h4>
+<h4 id="arguments-73">Arguments<a class="anchor" aria-label="anchor" href="#arguments-73"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>the worksheet you are using</p></dd>
 
@@ -3717,7 +3756,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-add_ignore_error"></a><div class="section">
 <h3 id="method-add-ignore-error-">Method <code>add_ignore_error()</code><a class="anchor" aria-label="anchor" href="#method-add-ignore-error-"></a></h3>
 <p>Ignore error on worksheet</p><div class="section">
-<h4 id="usage-77">Usage<a class="anchor" aria-label="anchor" href="#usage-77"></a></h4>
+<h4 id="usage-78">Usage<a class="anchor" aria-label="anchor" href="#usage-78"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_ignore_error</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
@@ -3734,7 +3773,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-73">Arguments<a class="anchor" aria-label="anchor" href="#arguments-73"></a></h4>
+<h4 id="arguments-74">Arguments<a class="anchor" aria-label="anchor" href="#arguments-74"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -3785,7 +3824,7 @@ are removed.</p></dd>
 </div><p></p><hr><a id="method-wbWorkbook-set_sheetview"></a><div class="section">
 <h3 id="method-set-sheetview-">Method <code>set_sheetview()</code><a class="anchor" aria-label="anchor" href="#method-set-sheetview-"></a></h3>
 <p>add sheetview</p><div class="section">
-<h4 id="usage-78">Usage<a class="anchor" aria-label="anchor" href="#usage-78"></a></h4>
+<h4 id="usage-79">Usage<a class="anchor" aria-label="anchor" href="#usage-79"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheetview</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -3811,7 +3850,7 @@ are removed.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-74">Arguments<a class="anchor" aria-label="anchor" href="#arguments-74"></a></h4>
+<h4 id="arguments-75">Arguments<a class="anchor" aria-label="anchor" href="#arguments-75"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
 
@@ -3895,19 +3934,19 @@ are removed.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-40">Returns<a class="anchor" aria-label="anchor" href="#returns-40"></a></h4>
+<h4 id="returns-41">Returns<a class="anchor" aria-label="anchor" href="#returns-41"></a></h4>
 <p>The <code>wbWorksheetObject</code>, invisibly</p>
 </div>
 
 </div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-79">Usage<a class="anchor" aria-label="anchor" href="#usage-79"></a></h4>
+<h4 id="usage-80">Usage<a class="anchor" aria-label="anchor" href="#usage-80"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-75">Arguments<a class="anchor" aria-label="anchor" href="#arguments-75"></a></h4>
+<h4 id="arguments-76">Arguments<a class="anchor" aria-label="anchor" href="#arguments-76"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
