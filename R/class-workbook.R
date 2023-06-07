@@ -6948,17 +6948,6 @@ wbWorkbook <- R6::R6Class(
             ws$sheet_data$cc_out <- NULL
           }
 
-          # row_attr <- ws$sheet_data$row_attr
-          # nam_at <- names(row_attr)
-          # wanted <- as.character(seq(min(as.numeric(nam_at)),
-          #                            max(as.numeric(nam_at))))
-          # empty_row_attr <- wanted[!wanted %in% nam_at]
-          # # add empty list
-          # if (!identical(empty_row_attr, character()))
-          #   row_attr[[empty_row_attr]] <- list()
-          # # restore order
-          # ws$sheet_data$row_attr <- row_attr[wanted]
-
           # create entire sheet prior to writing it
           sheet_xml <- write_worksheet(
             prior = prior,
@@ -6967,8 +6956,6 @@ wbWorkbook <- R6::R6Class(
           )
           ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
           write_xmlPtr(doc = sheet_xml, fl = ws_file)
-          ws_txt <- stringi::stri_read_lines(ws_file)
-          stringi::stri_write_lines(ws_txt, ws_file, encoding = "UTF-8")
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]]) || hasHL) {

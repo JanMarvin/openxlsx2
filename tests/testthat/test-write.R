@@ -568,3 +568,23 @@ test_that("writing labeled variables works", {
   expect_equal(exp, got)
 
 })
+
+test_that("writing in specific encoding works", {
+
+  options("openxlsx2.force_utf8_encoding" = TRUE)
+  options("openxlsx2.native_encoding" = "CP1251")
+
+  enc_str_u <- "\340\341\342\343\344"
+  Encoding(enc_str_u) <- "CP1251"
+  iconv(enc_str_u, "CP1251", "")
+
+  tmp <- temp_xlsx()
+  wb_workbook()$add_worksheet("sheet")$add_data("sheet", x = enc_str_c)$save(tmp)
+  expect_silent(wb <- wb_load(tmp))
+
+  tmp <- tempfile()
+  write_file(head = "<a>", body = enc_str_c, tail = "</a>", fl = tmp)
+  got <- iconv(xml_value(tmp, "a"), to = "CP1251")
+  expect_equal(enc_str_c, got)
+
+})

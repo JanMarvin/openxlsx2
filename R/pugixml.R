@@ -269,6 +269,10 @@ as_xml <- function(x, ...) {
 # TODO needs a unit test
 write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   xml_content <- stringi::stri_join(head, body, tail, collapse = "")
+  if (getOption("openxlsx2.force_utf8_encoding", default = FALSE)) {
+      from_enc <- getOption("openxlsx2.native_encoding")
+      xml_content <- stringi::stri_encode(xml_content, from = from_enc, to = "UTF-8")
+  }
   xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes)
   write_xmlPtr(xml_content, fl)
 }
