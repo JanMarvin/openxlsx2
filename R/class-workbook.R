@@ -6965,7 +6965,10 @@ wbWorkbook <- R6::R6Class(
             post = post,
             sheet_data = ws$sheet_data
           )
-          write_xmlPtr(doc = sheet_xml, fl = file.path(xlworksheetsDir, sprintf("sheet%s.xml", i)))
+          ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
+          write_xmlPtr(doc = sheet_xml, fl = ws_file)
+          ws_txt <- stringi::stri_read_lines(ws_file)
+          stringi::stri_write_lines(ws_txt, ws_file, encoding = "UTF-8")
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]]) || hasHL) {
