@@ -348,7 +348,7 @@ write_data2 <- function(
     }
   }
 
-  sel <- which(dc == openxlsx2_celltype[["character"]]) # character
+  sel <- which(dc == openxlsx2_celltype[["character"]] | dc == openxlsx2_celltype[["factor"]]) # character
   if (length(sel)) {
     data[sel][is.na(data[sel])] <- "_openxlsx_NA"
   }
