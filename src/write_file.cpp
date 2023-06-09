@@ -225,9 +225,6 @@ XPtrXML write_worksheet(
       worksheet.append_copy(po);
   }
 
-
-  // doc->load_string(post.c_str());
-
   pugi::xml_node decl = doc->prepend_child(pugi::node_declaration);
   decl.append_attribute("version") = "1.0";
   decl.append_attribute("encoding") = "UTF-8";
@@ -235,8 +232,6 @@ XPtrXML write_worksheet(
 
   XPtrXML ptr(doc, true);
   ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
-  // ptr.attr("escapes") = escapes;
-  // ptr.attr("is_utf8") = utf8;
 
   return ptr;
 }

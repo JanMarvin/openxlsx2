@@ -351,6 +351,11 @@ write_data2 <- function(
   sel <- which(dc == openxlsx2_celltype[["character"]] | dc == openxlsx2_celltype[["factor"]]) # character
   if (length(sel)) {
     data[sel][is.na(data[sel])] <- "_openxlsx_NA"
+
+    if (getOption("openxlsx2.force_utf8_encoding", default = FALSE)) {
+      from_enc <- getOption("openxlsx2.native_encoding")
+      data[sel] <- lapply(data[sel], stringi::stri_encode, from = from_enc, to = "UTF-8")
+    }
   }
 
   string_nums <- getOption("openxlsx2.string_nums", default = 0)
