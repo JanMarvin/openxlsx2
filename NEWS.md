@@ -12,6 +12,8 @@
 
 * Added new wrapper function `wb_add_named_style()` this supports pre-defined theme aware cell styles like `Title` or `Note`. In addition loading of cell styles was improved and additional custom cell styles should be available as well. [628](https://github.com/JanMarvin/openxlsx2/pull/628)
 
+* Provide additional options to write special characters in non-unicode environments. [641](https://github.com/JanMarvin/openxlsx2/pull/641)
+
 ## Fixes
 
 * On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned. [629](https://github.com/JanMarvin/openxlsx2/pull/629)
