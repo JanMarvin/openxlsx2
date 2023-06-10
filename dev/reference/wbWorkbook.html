@@ -2143,8 +2143,9 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-40">Usage<a class="anchor" aria-label="anchor" href="#usage-40"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">cols</span>,</span>
-<span>  <span class="va">rows</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rule <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  style <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expression"</span>, <span class="st">"colorScale"</span>, <span class="st">"dataBar"</span>, <span class="st">"iconSet"</span>, <span class="st">"duplicatedValues"</span>,</span>
@@ -2160,6 +2161,10 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="arguments-38">Arguments<a class="anchor" aria-label="anchor" href="#arguments-38"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
 
 
 <dt><code>cols</code></dt>
