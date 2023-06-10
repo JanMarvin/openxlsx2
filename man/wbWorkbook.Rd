@@ -1671,8 +1671,9 @@ Add conditional formatting
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_conditional_formatting(
   sheet = current_sheet(),
-  cols,
-  rows,
+  dims = NULL,
+  cols = NULL,
+  rows = NULL,
   rule = NULL,
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
@@ -1688,6 +1689,8 @@ Add conditional formatting
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 
 \item{\code{cols}}{cols}
 

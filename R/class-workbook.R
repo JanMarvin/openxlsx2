@@ -3669,6 +3669,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Add conditional formatting
     #' @param sheet sheet
+    #' @param dims dims
     #' @param cols cols
     #' @param rows rows
     #' @param rule rule
@@ -3677,20 +3678,23 @@ wbWorkbook <- R6::R6Class(
     #' @param params Additional parameters
     #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
-        sheet = current_sheet(),
-        cols,
-        rows,
-        rule  = NULL,
-        style = NULL,
+        sheet  = current_sheet(),
+        dims   = NULL,
+        cols   = NULL,
+        rows   = NULL,
+        rule   = NULL,
+        style  = NULL,
         # TODO add vector of possible values
-        type = c("expression", "colorScale",
-                 "dataBar", "iconSet",
-                 "duplicatedValues", "uniqueValues",
-                 "containsErrors", "notContainsErrors",
-                 "containsBlanks", "notContainsBlanks",
-                 "containsText", "notContainsText",
-                 "beginsWith", "endsWith",
-                 "between", "topN", "bottomN"),
+        type   = c(
+          "expression", "colorScale",
+          "dataBar", "iconSet",
+          "duplicatedValues", "uniqueValues",
+          "containsErrors", "notContainsErrors",
+          "containsBlanks", "notContainsBlanks",
+          "containsText", "notContainsText",
+          "beginsWith", "endsWith",
+          "between", "topN", "bottomN"
+        ),
         params = list(
           showValue = TRUE,
           gradient  = TRUE,
@@ -3706,12 +3710,20 @@ wbWorkbook <- R6::R6Class(
 
       type <- match.arg(type)
 
-      ## rows and cols
-      if (!is.numeric(cols)) {
-        cols <- col2int(cols)
-      }
+      if (length(cols) > 2)
+        warning("cols > 2, will create range from min to max.")
 
-      rows <- as.integer(rows)
+      ## rows and cols
+      if (!is.null(cols) && !is.null(rows)) {
+        if (!is.numeric(cols)) {
+          cols <- col2int(cols)
+        }
+        rows <- as.integer(rows)
+      } else if (!is.null(dims)) {
+        rowcol <- dims_to_rowcol(dims, as_integer = TRUE)
+        rows <- rowcol[[2]]
+        cols <- rowcol[[1]]
+      }
 
       ## check valid rule
       dxfId <- NULL

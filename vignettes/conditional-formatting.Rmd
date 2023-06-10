@@ -262,7 +262,7 @@ If rule is `NULL`, min and max of cells is used. Rule must be the same length as
 ```{r}
 wb$add_conditional_formatting(
   "colorScale",
-  cols = seq_along(df),
+  cols = c(1, ncol(df)),
   rows = seq_len(nrow(df)),
   style = c("black", "white"),
   rule = c(0, 255),

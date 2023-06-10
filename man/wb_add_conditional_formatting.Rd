@@ -7,8 +7,9 @@
 wb_add_conditional_formatting(
   wb,
   sheet = current_sheet(),
-  cols,
-  rows,
+  dims = NULL,
+  cols = NULL,
+  rows = NULL,
   rule = NULL,
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
@@ -23,6 +24,8 @@ wb_add_conditional_formatting(
 \item{wb}{A workbook object}
 
 \item{sheet}{A name or index of a worksheet}
+
+\item{dims}{A cell or cell range like "A1" or "A1:B2"}
 
 \item{cols}{Columns to apply conditional formatting to}
 
@@ -97,5 +100,5 @@ default is 3TrafficLights1.
 wb <- wb_workbook()
 wb$add_worksheet("a")
 wb$add_data("a", 1:4, colNames = FALSE)
-wb$add_conditional_formatting("a", 1, 1:4, ">2")
+wb$add_conditional_formatting("a", cols = 1, rows = 1:4, rule = ">2")
 }
