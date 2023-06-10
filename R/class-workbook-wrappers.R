@@ -2795,6 +2795,7 @@ wb_add_form_control <- function(
 #' Add conditional formatting to cells
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
+#' @param dims A cell or cell range like "A1" or "A1:B2"
 #' @param cols Columns to apply conditional formatting to
 #' @param rows Rows to apply conditional formatting to
 #' @param rule The condition under which to apply the formatting. See examples.
@@ -2859,23 +2860,26 @@ wb_add_form_control <- function(
 #' wb <- wb_workbook()
 #' wb$add_worksheet("a")
 #' wb$add_data("a", 1:4, colNames = FALSE)
-#' wb$add_conditional_formatting("a", 1, 1:4, ">2")
+#' wb$add_conditional_formatting("a", cols = 1, rows = 1:4, rule = ">2")
 #' @export
 wb_add_conditional_formatting <- function(
     wb,
-    sheet = current_sheet(),
-    cols,
-    rows,
-    rule = NULL,
-    style = NULL,
-    type = c("expression", "colorScale",
-             "dataBar", "iconSet",
-             "duplicatedValues", "uniqueValues",
-             "containsErrors", "notContainsErrors",
-             "containsBlanks", "notContainsBlanks",
-             "containsText", "notContainsText",
-             "beginsWith", "endsWith",
-             "between", "topN", "bottomN"),
+    sheet  = current_sheet(),
+    dims   = NULL,
+    cols   = NULL,
+    rows   = NULL,
+    rule   = NULL,
+    style  = NULL,
+    type   = c(
+      "expression", "colorScale",
+      "dataBar", "iconSet",
+      "duplicatedValues", "uniqueValues",
+      "containsErrors", "notContainsErrors",
+      "containsBlanks", "notContainsBlanks",
+      "containsText", "notContainsText",
+      "beginsWith", "endsWith",
+      "between", "topN", "bottomN"
+    ),
     params = list(
       showValue = TRUE,
       gradient  = TRUE,
