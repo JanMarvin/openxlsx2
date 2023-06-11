@@ -28,7 +28,7 @@ Coming from `openxlsx` you might know about `read.xlsx()` (two functions, one fo
 For this example we will use example data provided by the package. You can locate it in our "inst/extdata" folder. The files are included with the package source and you can open them in any calculation software as well.
 
 ### Basic import
-We begin with the `readTest.xlsx` file by telling R where to find this file on our system
+We begin with the `openxlsx2_example.xlsx` file by telling R where to find this file on our system
 ```{r}
 xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
