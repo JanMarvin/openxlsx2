@@ -733,3 +733,37 @@ test_that("warning on cols > 2 and dims", {
   expect_equal(exp, got)
 
 })
+
+test_that("un_list works", {
+
+  tmp <- temp_xlsx()
+
+  dat <- matrix(sample(0:2, 10L, TRUE), 5, 2)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = dat, colNames = FALSE)
+
+  negStyle <- create_dxfs_style(font_color = wb_color(hex = "FF9C0006"), bgFill = wb_color(hex = "FFFFC7CE"))
+  neuStyle <- create_dxfs_style(font_color = wb_color("red"), bgFill = wb_color("orange"))
+  posStyle <- create_dxfs_style(font_color = wb_color(hex = "FF006100"), bgFill = wb_color(hex = "FFC6EFCE"))
+  wb$styles_mgr$add(negStyle, "negStyle")
+  wb$styles_mgr$add(neuStyle, "neuStyle")
+  wb$styles_mgr$add(posStyle, "posStyle")
+
+  wb$add_conditional_formatting(cols = 1:2, rows = 1:5, rule = "==2", style = "negStyle")
+  wb$add_conditional_formatting(cols = 1:2, rows = 1:5, rule = "==1", style = "neuStyle")
+  wb$add_conditional_formatting(cols = 1:2, rows = 1:5, rule = "==0", style = "posStyle")
+
+  wb$add_conditional_formatting(cols = 5:6, rows = 1:5, rule = "==2", style = "negStyle")
+  wb$add_conditional_formatting(cols = 5:6, rows = 1:5, rule = "==1", style = "neuStyle")
+  wb$add_conditional_formatting(cols = 5:6, rows = 1:5, rule = "==0", style = "posStyle")
+
+  pre_save <- wb$worksheets[[1]]$conditionalFormatting
+
+  wb$save(tmp)
+  wb <- wb_load(tmp)
+
+  post_save <- wb$worksheets[[1]]$conditionalFormatting
+
+  expect_equal(pre_save, post_save)
+
+})
