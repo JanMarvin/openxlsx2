@@ -14,6 +14,7 @@ create_dxfs_style(
   border_style = getOption("openxlsx2.borderStyle", "thin"),
   bgFill = NULL,
   fgColor = NULL,
+  gradientFill = NULL,
   text_bold = NULL,
   text_strike = NULL,
   text_italic = NULL,
@@ -43,6 +44,8 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 \item{bgFill}{Cell background fill color.}
 
 \item{fgColor}{Cell foreground fill color.}
+
+\item{gradientFill}{An xml string beginning with \if{html}{\out{<gradientFill>}} ...}
 
 \item{text_bold}{bold}
 

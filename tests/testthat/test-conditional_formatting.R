@@ -767,3 +767,26 @@ test_that("un_list works", {
   expect_equal(pre_save, post_save)
 
 })
+
+test_that("conditional formatting with gradientFill works", {
+
+  gf <- read_xml(
+    "<gradientFill degree=\"45\">
+      <stop position=\"0\"><color rgb=\"FFFFC000\"/></stop>
+      <stop position=\"1\"><color rgb=\"FF00B0F0\"/></stop>
+   </gradientFill>",
+    pointer = FALSE)
+
+  gf_style <- create_dxfs_style(gradientFill = gf)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = 1)$
+    add_conditional_formatting(cols = 1, rows = 1, rule = "==1", style = "gf_style")$
+    add_style(gf_style)
+
+  exp <- "<dxf><fill><gradientFill degree=\"45\"><stop position=\"0\"><color rgb=\"FFFFC000\"/></stop><stop position=\"1\"><color rgb=\"FF00B0F0\"/></stop></gradientFill></fill></dxf>"
+  got <- wb$styles_mgr$styles$dxfs
+  expect_equal(exp, got)
+
+})
