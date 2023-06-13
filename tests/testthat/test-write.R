@@ -465,6 +465,25 @@ test_that("writing pivot tables works", {
 
 })
 
+test_that("writing pivot with escaped characters works", {
+
+  example_df <- data.frame(
+    location = c("London", "NYC", "NYC", "Berlin", "Madrid", "London", "Austin & Dallas"),
+    amount = c(7, 5, 3, 2.5, 6, 1, 17)
+  )
+
+  wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = example_df)
+  df <- wb_data(wb)
+  wb <- wb %>% wb_add_pivot_table(df, dims = "A3", rows = "location", data = "amount")
+
+  cf <- xml_node(wb$pivotDefinitions, "pivotCacheDefinition", "cacheFields", "cacheField")[1]
+
+  exp <- "<s v=\"Austin &amp; Dallas\"/>"
+  got <- xml_node(cf, "cacheField", "sharedItems", "s")[5]
+  expect_equal(exp, got)
+
+})
+
 test_that("writing na.strings = NULL works", {
 
   # write na.strings = na_strings()

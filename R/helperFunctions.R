@@ -542,7 +542,7 @@ cacheFields <- function(wbdata, filter, rows, cols, data) {
             } else {
 
               if (is_char) {
-                xml_node_create("s", xml_attributes = c(v = uni))
+                xml_node_create("s", xml_attributes = c(v = uni), escapes = TRUE)
               } else if (is_date) {
                 xml_node_create("d", xml_attributes = c(v = uni))
               } else {
