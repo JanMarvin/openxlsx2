@@ -26,6 +26,8 @@
 
 * Order of arguments in `wb_add_conditional_formatting()` changed, because previously overlooked `dims` argument was added. [642](https://github.com/JanMarvin/openxlsx2/pull/642)
 
+* New argument `gradientFill` was added to `create_dxfs_style()`. [651](https://github.com/JanMarvin/openxlsx2/pull/6501
+
 
 ***************************************************************************
 

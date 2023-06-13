@@ -667,6 +667,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' @param border_style "thin"
 #' @param bgFill Cell background fill color.
 #' @param fgColor Cell foreground fill color.
+#' @param gradientFill An xml string beginning with <gradientFill> ...
 #' @param text_bold bold
 #' @param text_strike strikeout
 #' @param text_italic italic
@@ -706,6 +707,7 @@ create_dxfs_style <- function(
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
     bgFill         = NULL,
     fgColor        = NULL,
+    gradientFill   = NULL,
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
@@ -742,8 +744,14 @@ create_dxfs_style <- function(
     patternType <- "solid"
   }
 
-  if (!is.null(bgFill) && !all(bgFill == "")) {
-    fill <- create_fill(patternType = patternType, bgColor = bgFill, fgColor = fgColor)
+  if (!is.null(bgFill) && !all(bgFill == "") || !is.null(gradientFill)) {
+    if (is.null(gradientFill)) {
+      # gradientFill is an xml string
+      gradientFill <- ""
+    } else {
+      patternType  <- ""
+    }
+    fill <- create_fill(patternType = patternType, bgColor = bgFill, fgColor = fgColor, gradientFill = gradientFill)
   } else {
     fill <- NULL
   }
