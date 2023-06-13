@@ -70,6 +70,7 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li><p>On load <code>app.xml</code> is now assigned to <code>wb$app</code>. Previously it was loaded but not assigned. <a href="https://github.com/JanMarvin/openxlsx2/pull/629" class="external-link">629</a></p></li>
 <li><p>Previously if <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> was used with argument <code>cols</code>, columns that were missing were created at the end of the output frame. Now columns are returned ordered. <a href="https://github.com/JanMarvin/openxlsx2/pull/631" class="external-link">631</a></p></li>
+<li><p>Fix a bug in <code><a href="../reference/wb_load.html">wb_load()</a></code> that was modifying the cell range of conditional formatting. <a href="https://github.com/JanMarvin/openxlsx2/pull/647" class="external-link">647</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
