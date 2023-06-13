@@ -757,7 +757,7 @@ wb_load <- function(
           nms <- unlist(xml_attr(cfs, "conditionalFormatting"))
           cf <- lapply(cfs, function(x) xml_node(x, "conditionalFormatting", "cfRule"))
           names(cf) <- nms
-          conditionalFormatting <- unlist(cf)
+          conditionalFormatting <- un_list(cf)
           wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
         }
 

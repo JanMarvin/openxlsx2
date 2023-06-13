@@ -294,6 +294,23 @@ read_xml_files <- function(x) {
          USE.NAMES = FALSE)
 }
 
+#' unlist modifies names
+#' @param x a cf list
+#' @keywords internal
+#' @noRd
+un_list <- function(x) {
+
+  names <- vapply(x, length, NA_integer_)
+  nams <- NULL
+  for (i in seq_along(names)) {
+    nam <- rep(names(names[i]), names[i])
+    nams <- c(nams, nam)
+  }
+  x <- unlist(x, use.names = FALSE)
+  names(x) <- nams
+  x
+}
+
 #' format strings independent of the cell style.
 #' @details
 #' The result is an xml string. It is possible to paste multiple `fmt_txt()`

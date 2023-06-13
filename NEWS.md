@@ -20,6 +20,8 @@
 
 * Previously if `wb_to_df()` was used with argument `cols`, columns that were missing were created at the end of the output frame. Now columns are returned ordered. [631](https://github.com/JanMarvin/openxlsx2/pull/631)
 
+* Fix a bug in `wb_load()` that was modifying the cell range of conditional formatting. [647](https://github.com/JanMarvin/openxlsx2/pull/647)
+
 ## Breaking changes
 
 * Order of arguments in `wb_add_conditional_formatting()` changed, because previously overlooked `dims` argument was added. [642](https://github.com/JanMarvin/openxlsx2/pull/642)
