@@ -75,6 +75,7 @@ assigned to a workbook to use them</p>
 <span>  border_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderStyle"</span>, <span class="st">"thin"</span><span class="op">)</span>,</span>
 <span>  bgFill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fgColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gradientFill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text_bold <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text_strike <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text_italic <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -123,6 +124,10 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 
 <dt>fgColor</dt>
 <dd><p>Cell foreground fill color.</p></dd>
+
+
+<dt>gradientFill</dt>
+<dd><p>An xml string beginning with <gradientfill> ...</gradientfill></p></dd>
 
 
 <dt>text_bold</dt>
