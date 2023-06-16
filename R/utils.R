@@ -172,10 +172,15 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
   return(res)
 }
 
-#' row and col to dims
+#' dims helpers
+#' @description Internal helpers to (de)construct a dims argument from/to a row
+#'  and column vector. Exported for user convenience.
+#' @name dims_helper
 #' @param x a dimension object "A1" or "A1:A1"
 #' @param as_integer optional if the output should be returned as interger
-#' @noRd
+#' @examples
+#' dims_to_rowcol("A1:J10")
+#' @export
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   dims <- x
@@ -230,10 +235,12 @@ rowcol_to_dim <- function(row, col) {
   stringi::stri_join(min_col, min_row)
 }
 
-#' row and col to dims
+#' @rdname dims_helper
 #' @param row a numeric vector of rows
 #' @param col a numeric or character vector of cols
-#' @noRd
+#' @examples
+#' rowcol_to_dims(1:10, 1:10)
+#' @export
 rowcol_to_dims <- function(row, col) {
 
   # no assert for col. will output character anyways
