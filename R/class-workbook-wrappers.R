@@ -2891,6 +2891,7 @@ wb_add_conditional_formatting <- function(
   assert_workbook(wb)
   wb$clone()$add_conditional_formatting(
     sheet = sheet,
+    dims  = dims,
     cols  = cols,
     rows  = rows,
     rule  = rule,
