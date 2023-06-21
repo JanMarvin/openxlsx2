@@ -789,4 +789,13 @@ test_that("conditional formatting with gradientFill works", {
   got <- wb$styles_mgr$styles$dxfs
   expect_equal(exp, got)
 
+  # check that the wrapper handles dims as well
+  expect_silent(
+    wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_conditional_formatting(dims = "A1:B5",
+                                  type = "between",
+                                  rule = c(2, 4))
+  )
+
 })
