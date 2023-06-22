@@ -724,3 +724,20 @@ test_that("workbook themes work", {
   expect_equal(exp, got)
 
 })
+
+test_that("changing sheet names works with named regions", {
+
+  filename <- testfile_path("namedRegions2.xlsx")
+  wb <- wb_load(filename)
+
+  wb$set_sheet_names("Sheet1", "new name")
+  wb$set_sheet_names("Sheet with space", "Sheet_without_space")
+
+  exp <- c(
+    "<definedName name=\"barref\" localSheetId=\"0\">'Sheet_without_space'!$B$4</definedName>",
+    "<definedName name=\"barref\" localSheetId=\"1\">'new name'!$B$4</definedName>"
+  )
+  got <- wb$workbook$definedNames[seq_len(2)]
+  expect_equal(exp, got)
+
+})

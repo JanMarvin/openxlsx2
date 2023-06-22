@@ -2666,11 +2666,15 @@ wbWorkbook <- R6::R6Class(
 
         ## rename defined names
         if (length(self$workbook$definedNames)) {
-          ind <- wb_get_named_regions(self)$sheets == old
+          ind <- wb_get_named_regions(self)
+          # TODO why is the order switched?
+          ind <- ind[order(as.integer(rownames(ind))), ]
+          ind <- ind$sheets == old
+
           if (any(ind)) {
             nn <- sprintf("'%s'", new_name[i])
             nn <- stringi::stri_replace_all_fixed(self$workbook$definedName[ind], old, nn)
-            nn <- stringi::stri_replace_all(nn, "'+", "'")
+            nn <- stringi::stri_replace_all(nn, regex = "'+", replacement = "'")
             self$workbook$definedNames[ind] <- nn
           }
         }
