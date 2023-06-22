@@ -4809,11 +4809,19 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(properties)) {
         # ensure only valid properties are listed
-        properties <- match.arg(properties, all_props, several.ok = TRUE)
+        if (is.null(names(properties))) {
+          properties <- match.arg(properties, all_props, several.ok = TRUE)
+          properties <- as_xml_attr(all_props %in% properties)
+          names(properties) <- all_props
+          properties <- properties[properties != "0"]
+        } else {
+          keep <- match.arg(names(properties), all_props, several.ok = TRUE)
+          properties <- properties[keep]
+          nms <- names(properties)
+          properties <- as_xml_attr(properties)
+          names(properties) <- nms
+        }
       }
-
-      properties <- as.character(as.numeric(all_props %in% properties))
-      names(properties) <- all_props
 
       if (!is.null(password))
         properties <- c(properties, password = hashPassword(password))
@@ -4822,7 +4830,7 @@ wbWorkbook <- R6::R6Class(
         "sheetProtection",
         xml_attributes = c(
           sheet = "1",
-          properties[properties != "0"]
+          properties
         )
       )
 
