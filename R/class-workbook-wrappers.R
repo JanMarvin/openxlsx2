@@ -2103,7 +2103,11 @@ wb_get_creators <- function(wb) {
 
 #' Set worksheet names for a workbook
 #'
-#' Sets the worksheet names for a [wbWorkbook] object
+#' Sets the worksheet names for a [wbWorkbook] object.
+#'
+#' @details This only changes the sheet name as shown in spreadsheet software
+#' and will not alter it anywhere else. Not in formulas, chart references,
+#' named regions, pivot tables or anywhere else.
 #'
 #' @param wb A [wbWorkbook] object
 #' @param old The name (or index) of the old sheet name. If `NULL` will assume
