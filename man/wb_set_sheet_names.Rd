@@ -18,5 +18,10 @@ all worksheets are to be renamed.}
 The \link{wbWorkbook} object
 }
 \description{
-Sets the worksheet names for a \link{wbWorkbook} object
+Sets the worksheet names for a \link{wbWorkbook} object.
+}
+\details{
+This only changes the sheet name as shown in spreadsheet software
+and will not alter it anywhere else. Not in formulas, chart references,
+named regions, pivot tables or anywhere else.
 }

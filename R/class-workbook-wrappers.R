@@ -633,6 +633,11 @@ wb_add_worksheet <- function(
 #'
 #' Clone a worksheet to a Workbook object
 #'
+#' @details
+#' Cloning is possible only to a limited extent. References to sheet names in
+#' formulas, charts, pivot tables, etc. may not be updated. Some elements like
+#' named ranges and slicers cannot be cloned yet.
+#'
 #' @param wb A [wbWorkbook] object
 #' @param old Name of existing worksheet to copy
 #' @param new Name of New worksheet to create
@@ -2103,7 +2108,11 @@ wb_get_creators <- function(wb) {
 
 #' Set worksheet names for a workbook
 #'
-#' Sets the worksheet names for a [wbWorkbook] object
+#' Sets the worksheet names for a [wbWorkbook] object.
+#'
+#' @details This only changes the sheet name as shown in spreadsheet software
+#' and will not alter it anywhere else. Not in formulas, chart references,
+#' named regions, pivot tables or anywhere else.
 #'
 #' @param wb A [wbWorkbook] object
 #' @param old The name (or index) of the old sheet name. If `NULL` will assume

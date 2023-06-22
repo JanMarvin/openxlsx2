@@ -19,6 +19,11 @@ The \code{wb} object
 \description{
 Clone a worksheet to a Workbook object
 }
+\details{
+Cloning is possible only to a limited extent. References to sheet names in
+formulas, charts, pivot tables, etc. may not be updated. Some elements like
+named ranges and slicers cannot be cloned yet.
+}
 \examples{
 # Create a new workbook
 wb <- wb_workbook("Fred")
