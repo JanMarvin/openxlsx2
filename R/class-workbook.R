@@ -944,7 +944,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(cmt_id)) {
-        self$append("comments", self$comments[[cmt_id]])
+        self$append("comments", self$comments[cmt_id])
         self$worksheets[[old]]$relships$comments <- length(self$comments)
       }
 

@@ -104,3 +104,17 @@ test_that("copy cells", {
   expect_equal(unlist(t(dat)), unlist(got), ignore_attr = TRUE)
 
 })
+
+test_that("cloning comments works", {
+
+  tmp <- temp_xlsx()
+
+  c1 <- create_comment(text = "this is a comment",  author = "")
+
+  # cloning comments from loaded worksheet did not work
+  wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)$save(tmp)
+  wb <- wb_load(tmp)$clone_worksheet()
+
+  expect_equal(wb$comments[[1]][[1]]$ref, wb$comments[[2]][[1]]$ref)
+
+})
