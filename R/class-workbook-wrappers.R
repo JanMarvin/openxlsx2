@@ -633,6 +633,11 @@ wb_add_worksheet <- function(
 #'
 #' Clone a worksheet to a Workbook object
 #'
+#' @details
+#' Cloning is possible only to a limited extent. References to sheet names in
+#' formulas, charts, pivot tables, etc. may not be updated. Some elements like
+#' named ranges and slicers cannot be cloned yet.
+#'
 #' @param wb A [wbWorkbook] object
 #' @param old Name of existing worksheet to copy
 #' @param new Name of New worksheet to create
