@@ -35,10 +35,18 @@ in the graphical user interface. Replaces an existing protection.
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 wb$add_data_table(1, x = iris[1:30, ])
-# Formatting cells / columns is allowed , but inserting / deleting columns is protected:
-wb$protect_worksheet("S1",
+
+wb$protect_worksheet(
+  "S1",
   protect = TRUE,
   properties = c("formatCells", "formatColumns", "insertColumns", "deleteColumns")
+)
+
+# Formatting cells / columns is allowed , but inserting / deleting columns is protected:
+wb$protect_worksheet(
+  "S1",
+  protect = TRUE,
+  properties = c(formatCells = FALSE, formatColumns = FALSE, insertColumns = TRUE, deleteColumns = TRUE)
 )
 
 # Remove the protection
