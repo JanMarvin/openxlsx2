@@ -743,3 +743,60 @@ test_that("wb_add_named_style() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("wb_add_dxfs_style() works", {
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_dxfs_style(
+      name = "nay",
+      font_color = wb_color(hex = "FF9C0006"),
+      bgFill = wb_color(hex = "FFFFC7CE")
+    ) %>%
+    wb_add_dxfs_style(
+      name = "yay",
+      font_color = wb_color(hex = "FF006100"),
+      bgFill = wb_color(hex = "FFC6EFCE")
+    ) %>%
+    wb_add_data(x = -5:5) %>%
+    wb_add_data(x = LETTERS[1:11], startCol = 2) %>%
+    wb_add_conditional_formatting(
+      cols = 1,
+      rows = 1:11,
+      rule = "!=0",
+      style = "nay"
+    ) %>%
+    wb_add_conditional_formatting(
+      cols = 1,
+      rows = 1:11,
+      rule = "==0",
+      style = "yay"
+    )
+
+  exp <- c(
+    `A1:A11` = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"2\"><formula>A1&lt;&gt;0</formula></cfRule>",
+    `A1:A11` = "<cfRule type=\"expression\" dxfId=\"1\" priority=\"1\"><formula>A1=0</formula></cfRule>"
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  exp <- c("nay", "yay")
+  got <- wb$styles_mgr$dxf$name
+  expect_equal(exp, got)
+
+  expect_warning(
+    wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_dxfs_style(
+      name = "nay",
+      font_color = wb_color(hex = "FF9C0006"),
+      bgFill = wb_color(hex = "FFFFC7CE")
+    ) %>%
+    wb_add_dxfs_style(
+      name = "nay",
+      font_color = wb_color(hex = "FF006100"),
+      bgFill = wb_color(hex = "FFC6EFCE")
+    ),
+    "dxfs style names should be unique"
+  )
+
+})

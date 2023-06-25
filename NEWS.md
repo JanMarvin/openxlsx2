@@ -14,6 +14,8 @@
 
 * Provide additional options to write special characters in non-unicode environments. [641](https://github.com/JanMarvin/openxlsx2/pull/641)
 
+* Add `wb_add_dxfs_style()` as single line wrapper to create dxf styles used in conditional formatting and custom table styles. [665](https://github.com/JanMarvin/openxlsx2/pull/665)
+
 ## Fixes
 
 * On load `app.xml` is now assigned to `wb$app`. Previously it was loaded but not assigned. [629](https://github.com/JanMarvin/openxlsx2/pull/629)

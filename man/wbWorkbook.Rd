@@ -327,6 +327,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-get_cell_style}{\code{wbWorkbook$get_cell_style()}}
 \item \href{#method-wbWorkbook-set_cell_style}{\code{wbWorkbook$set_cell_style()}}
 \item \href{#method-wbWorkbook-add_named_style}{\code{wbWorkbook$add_named_style()}}
+\item \href{#method-wbWorkbook-add_dxfs_style}{\code{wbWorkbook$add_dxfs_style()}}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
 \item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-add_ignore_error}{\code{wbWorkbook$add_ignore_error()}}
@@ -2942,6 +2943,68 @@ set sheet style
 }
 \subsection{Returns}{
 The \code{wbWorkbook}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_dxfs_style"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_dxfs_style}{}}}
+\subsection{Method \code{add_dxfs_style()}}{
+create dxfs style
+These styles are used with conditional formatting and custom table styles
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_dxfs_style(
+  name,
+  font_name = NULL,
+  font_size = NULL,
+  font_color = NULL,
+  numFmt = NULL,
+  border = NULL,
+  border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
+  border_style = getOption("openxlsx2.borderStyle", "thin"),
+  bgFill = NULL,
+  gradientFill = NULL,
+  text_bold = NULL,
+  text_italic = NULL,
+  text_underline = NULL,
+  ...
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{the style name}
+
+\item{\code{font_name}}{the font name}
+
+\item{\code{font_size}}{the font size}
+
+\item{\code{font_color}}{the font color (a \code{wb_color()} object)}
+
+\item{\code{numFmt}}{the number format}
+
+\item{\code{border}}{logical if borders are applied}
+
+\item{\code{border_color}}{the border color}
+
+\item{\code{border_style}}{the border style}
+
+\item{\code{bgFill}}{any background fill}
+
+\item{\code{gradientFill}}{any gradient fill}
+
+\item{\code{text_bold}}{logical if text is bold}
+
+\item{\code{text_italic}}{logical if text is italic}
+
+\item{\code{text_underline}}{logical if text is underlined}
+
+\item{\code{...}}{additional arguments passed to \code{create_dxfs_style()}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorksheetObject}, invisibly
 }
 }
 \if{html}{\out{<hr>}}
