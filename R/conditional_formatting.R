@@ -240,9 +240,9 @@ cf_create_contains_text <- function(dxfId, sqref, values) {
     </cfRule>',
     # cfRule
     dxfId,
-    values,
+    replace_legal_chars(values),
     # formula
-    values,
+    replace_legal_chars(values),
     strsplit(sqref, split = ":")[[1]][1]
   )
 
@@ -259,9 +259,9 @@ cf_create_not_contains_text <- function(dxfId, sqref, values) {
     </cfRule>',
     # cfRule
     dxfId,
-    values,
+    replace_legal_chars(values),
     # formula
-    values,
+    replace_legal_chars(values),
     strsplit(sqref, split = ":")[[1]][1]
   )
 
@@ -278,11 +278,11 @@ cf_begins_with <- function(dxfId, sqref, values) {
     </cfRule>',
     # cfRule
     dxfId,
-    values,
+    replace_legal_chars(values),
     # formula
     strsplit(sqref, split = ":")[[1]][1],
-    values,
-    values
+    replace_legal_chars(values),
+    replace_legal_chars(values)
   )
 
   cf_rule
@@ -298,11 +298,11 @@ cf_ends_with <- function(dxfId, sqref, values) {
     </cfRule>',
     # cfRule
     dxfId,
-    values,
+    replace_legal_chars(values),
     # formula
     strsplit(sqref, split = ":")[[1]][1],
-    values,
-    values
+    replace_legal_chars(values),
+    replace_legal_chars(values)
   )
 
   cf_rule
