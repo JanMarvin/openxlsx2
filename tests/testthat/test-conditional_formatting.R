@@ -799,3 +799,72 @@ test_that("conditional formatting with gradientFill works", {
   )
 
 })
+
+test_that("escaping conditional formatting works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = "A & B")$
+    add_conditional_formatting(
+      cols = 1,
+      rows = 1:10,
+      type = "containsText",
+      rule = "A & B"
+    )$
+    add_worksheet()$
+    add_data(x = "A == B")$
+    add_conditional_formatting(
+      cols = 1,
+      rows = 1:10,
+      type = "containsText",
+      rule = "A == B"
+    )$
+    add_worksheet()$
+    add_data(x = "A <> B")$
+    add_conditional_formatting(
+      cols = 1,
+      rows = 1:10,
+      type = "containsText",
+      rule = "A <> B"
+    )$
+    add_worksheet()$
+    add_data(x = "A != B")$
+    add_conditional_formatting(
+      cols = 1,
+      rows = 1:10,
+      type = "notContainsText",
+      rule = "A <> B"
+    )
+
+  exp <- c(`A1:A10` = "<cfRule type=\"containsText\" dxfId=\"0\" priority=\"1\" operator=\"containsText\" text=\"A &amp; B\"><formula>NOT(ISERROR(SEARCH(\"A &amp; B\", A1)))</formula></cfRule>")
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  exp <- c(`A1:A10` = "<cfRule type=\"containsText\" dxfId=\"1\" priority=\"1\" operator=\"containsText\" text=\"A == B\"><formula>NOT(ISERROR(SEARCH(\"A == B\", A1)))</formula></cfRule>")
+  got <- wb$worksheets[[2]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  exp <- c(`A1:A10` = "<cfRule type=\"containsText\" dxfId=\"2\" priority=\"1\" operator=\"containsText\" text=\"A &lt;&gt; B\"><formula>NOT(ISERROR(SEARCH(\"A &lt;&gt; B\", A1)))</formula></cfRule>")
+  got <- wb$worksheets[[3]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  ## imports quietly
+  wb$
+    add_worksheet()$
+    add_data(x = "A <> B")$
+    add_conditional_formatting(
+      cols = 1,
+      rows = 1:10,
+      type = "beginsWith",
+      rule = "A <"
+    )$
+    add_worksheet()$
+    add_data(x = "A <> B")$
+    add_conditional_formatting(
+      cols = 1,
+      rows = 1:10,
+      type = "endsWith",
+      rule = "> B"
+    )
+
+})
