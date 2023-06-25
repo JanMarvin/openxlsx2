@@ -46,7 +46,8 @@ wb$protect_worksheet(
 wb$protect_worksheet(
   "S1",
   protect = TRUE,
-  properties = c(formatCells = FALSE, formatColumns = FALSE, insertColumns = TRUE, deleteColumns = TRUE)
+   c(formatCells = FALSE, formatColumns = FALSE,
+                 insertColumns = TRUE, deleteColumns = TRUE)
 )
 
 # Remove the protection
