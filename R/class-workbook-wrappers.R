@@ -2726,6 +2726,14 @@ wb_add_named_style <- function(
 #' @param text_underline logical if text is underlined
 #' @param ... additional arguments passed to `create_dxfs_style()`
 #' @return The `wbWorkbookObject`, invisibly
+#' @examples
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet() %>%
+#'   wb_add_dxfs_style(
+#'    name = "nay",
+#'    font_color = wb_color(hex = "FF9C0006"),
+#'    bgFill = wb_color(hex = "FFFFC7CE")
+#'   )
 #' @export
 wb_add_dxfs_style <- function(
   wb,

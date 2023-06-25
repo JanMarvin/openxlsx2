@@ -61,3 +61,12 @@ The \code{wbWorkbookObject}, invisibly
 add dxfs style
 These styles are used with conditional formatting and custom table styles
 }
+\examples{
+wb <- wb_workbook() \%>\%
+  wb_add_worksheet() \%>\%
+  wb_add_dxfs_style(
+   name = "nay",
+   font_color = wb_color(hex = "FF9C0006"),
+   bgFill = wb_color(hex = "FFFFC7CE")
+  )
+}
