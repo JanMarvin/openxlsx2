@@ -20,7 +20,7 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, b
   }
 
   if (!result) {
-    Rcpp::stop("xml import unsuccessfull");
+    Rcpp::stop("xml import unsuccessful");
   }
 
   XPtrXML ptr(doc, true);
@@ -56,7 +56,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   }
 
   if (!result) {
-    Rcpp::stop("xml import unsuccessfull");
+    Rcpp::stop("xml import unsuccessful");
   }
 
   std::ostringstream oss;

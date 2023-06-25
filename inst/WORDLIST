@@ -18,7 +18,6 @@ FFFFFF
 Github
 Gnumeric
 GrossProfit
-Interger
 JIS
 JOHAB
 LastModifiedBy
@@ -35,6 +34,7 @@ STDEV
 STDEVP
 SalesPrice
 SalesQuantity
+Savon
 Schauberger
 Sparklines
 SuperA
@@ -57,7 +57,14 @@ bool
 calc
 calcChain
 calculatedColumn
+cellStyle
+cellStyleXf
+cellStyles
+cellStylesXf
 cellWatches
+cellstyle
+cellstyleXf
+cellstylexf
 charset
 chartShapes
 chartsheet
@@ -100,6 +107,7 @@ databar
 datatable
 datetime
 datetimes
+de
 defaultGridColor
 defaultPivotStyle
 defaultTableStyle
@@ -137,6 +145,7 @@ firstSheet
 firstTotalCell
 fitToHeight
 fitToWidth
+fmt
 fontColor
 fontName
 fontSize
@@ -217,6 +226,7 @@ pivotRecords
 pivotTables
 posix
 posixt
+pre
 printGridLines
 printOptions
 printTitleCols

@@ -59,7 +59,7 @@ wb_set_sheetview(
 
 \item{windowProtection}{Logical: if TRUE the panes are protected}
 
-\item{workbookViewId}{Interger: Pointing to some other view inside the workbook}
+\item{workbookViewId}{integer: Pointing to some other view inside the workbook}
 
 \item{zoomScale, zoomScaleNormal, zoomScalePageLayoutView, zoomScaleSheetLayoutView}{Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.}
 }

@@ -50,7 +50,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
     pugi::xml_parse_result result = doc.load_string(tmp.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
 
     if (!result) {
-      Rcpp::stop(type.c_str(), " xml import unsuccessfull");
+      Rcpp::stop(type.c_str(), " xml import unsuccessful");
     }
 
     for (auto is : doc.children(type.c_str()))

@@ -3074,7 +3074,7 @@ wb_add_ignore_error <- function(
 #' @param topLeftCell Cell: the cell shown in the top left corner / or top right with rightToLeft
 #' @param view View: "normal", "pageBreakPreview" or "pageLayout"
 #' @param windowProtection Logical: if TRUE the panes are protected
-#' @param workbookViewId Interger: Pointing to some other view inside the workbook
+#' @param workbookViewId integer: Pointing to some other view inside the workbook
 #' @param zoomScale,zoomScaleNormal,zoomScalePageLayoutView,zoomScaleSheetLayoutView Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()

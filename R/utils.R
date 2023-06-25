@@ -177,7 +177,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #'  and column vector. Exported for user convenience.
 #' @name dims_helper
 #' @param x a dimension object "A1" or "A1:A1"
-#' @param as_integer optional if the output should be returned as interger
+#' @param as_integer optional if the output should be returned as integer
 #' @examples
 #' dims_to_rowcol("A1:J10")
 #' @export

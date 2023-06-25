@@ -13,7 +13,7 @@ rowcol_to_dims(row, col)
 \arguments{
 \item{x}{a dimension object "A1" or "A1:A1"}
 
-\item{as_integer}{optional if the output should be returned as interger}
+\item{as_integer}{optional if the output should be returned as integer}
 
 \item{row}{a numeric vector of rows}
 
