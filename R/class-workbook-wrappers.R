@@ -2708,6 +2708,63 @@ wb_add_named_style <- function(
   )
 }
 
+#' add dxfs style
+#' These styles are used with conditional formatting and custom table styles
+#' @param wb wbWorkbook
+#' @param name the style name
+#' @param font_name the font name
+#' @param font_size the font size
+#' @param font_color the font color (a `wb_color()` object)
+#' @param numFmt the number format
+#' @param border logical if borders are applied
+#' @param border_color the border color
+#' @param border_style the border style
+#' @param bgFill any background fill
+#' @param gradientFill any gradient fill
+#' @param text_bold logical if text is bold
+#' @param text_italic logical if text is italic
+#' @param text_underline logical if text is underlined
+#' @param ... additional arguments passed to `create_dxfs_style()`
+#' @return The `wbWorkbookObject`, invisibly
+#' @export
+wb_add_dxfs_style <- function(
+  wb,
+  name,
+  font_name      = NULL,
+  font_size      = NULL,
+  font_color     = NULL,
+  numFmt         = NULL,
+  border         = NULL,
+  border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
+  border_style   = getOption("openxlsx2.borderStyle", "thin"),
+  bgFill         = NULL,
+  gradientFill   = NULL,
+  text_bold      = NULL,
+  text_italic    = NULL,
+  text_underline = NULL,
+  ...
+) {
+
+  assert_workbook(wb)
+  wb$clone()$add_dxfs_style(
+    name           = name,
+    font_name      = font_name,
+    font_size      = font_size,
+    font_color     = font_color,
+    numFmt         = numFmt,
+    border         = border,
+    border_color   = border_color,
+    border_style   = border_style,
+    bgFill         = bgFill,
+    gradientFill   = gradientFill,
+    text_bold      = text_bold,
+    text_italic    = text_italic,
+    text_underline = text_underline,
+    ...            = ...
+  )
+
+}
+
 #' Add comment to worksheet
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
