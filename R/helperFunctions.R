@@ -755,13 +755,26 @@ create_pivot_table <- function(
 
     dataField <- NULL
     axis <- NULL
+    sort <- NULL
+
     if (i %in% data_pos)    dataField <- c(dataField = "1")
-    if (i %in% filter_pos)  axis <- c(axis = "axisPage")
-    if (i %in% rows_pos)    axis <- c(axis = "axisRow")
-    if (i %in% cols_pos)    axis <- c(axis = "axisCol")
 
-    attrs <- c(axis, dataField, showAll = "0")
+    if (i %in% filter_pos)  {
+      axis <- c(axis = "axisPage")
+      sort <- params$sort_page
+    }
 
+    if (i %in% rows_pos) {
+      axis <- c(axis = "axisRow")
+      sort <- params$sort_row
+    }
+
+    if (i %in% cols_pos) {
+      axis <- c(axis = "axisCol")
+      sort <- params$sort_col
+    }
+
+    attrs <- c(axis, dataField, showAll = "0", sortType = sort)
 
     tmp <- xml_node_create(
       "pivotField",
