@@ -706,7 +706,8 @@ create_pivot_table <- function(
     data,
     n,
     fun,
-    params
+    params,
+    numfmts
   ) {
 
   if (missing(filter)) {
@@ -834,7 +835,8 @@ create_pivot_table <- function(
             fld       = sprintf("%s", data_pos[i] - 1L),
             subtotal  = fun[i],
             baseField = "0",
-            baseItem  = "0"
+            baseItem  = "0",
+            numFmtId  = numfmts[i]
           )
         )
       )

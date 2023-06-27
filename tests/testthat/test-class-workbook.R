@@ -741,3 +741,40 @@ test_that("changing sheet names works with named regions", {
   expect_equal(exp, got)
 
 })
+
+test_that("numfmt in pivot tables works", {
+
+  ## example code
+  df <- data.frame(
+    Plant = c("A", "C", "C", "B", "B", "C", "C", "C", "A", "C"),
+    Location = c("E", "F", "E", "E", "F", "E", "E", "G", "E", "F"),
+    Status = c("good", "good", "good", "good", "good", "good", "good", "good", "good", "bad"),
+    Units = c(0.95, 0.95, 0.95, 0.95, 0.89, 0.89, 0.94, 0.94, 0.9, 0.9),
+    stringsAsFactors = FALSE
+  )
+
+  ## Create the workbook and the pivot table
+  wb <- wb_workbook()$
+    add_worksheet("Data")$
+    add_data(x = df, startCol = 1, startRow = 2)
+
+  df <- wb_data(wb, 1, dims = "A2:D10")
+  wb$
+    add_pivot_table(df, dims = "A3", rows = "Plant",
+                    filter = c("Location", "Status"), data = "Units")$
+    add_pivot_table(df, dims = "A3", rows = "Plant",
+                    filter = c("Location", "Status"), data = "Units",
+                    param = list(numfmts = c(formatCode = "#,###0")))$
+    add_pivot_table(df, dims = "A3", rows = "Plant",
+                    filter = c("Location", "Status"), data = "Units",
+                    param = list(numfmts = c(numfmt = 10)))
+
+  exp <- c(
+    "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\"/>",
+    "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\" numFmtId=\"165\"/>",
+    "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\" numFmtId=\"10\"/>"
+  )
+  got <- xml_node(wb$pivotTables, "pivotTableDefinition", "dataFields", "dataField")
+  expect_equal(exp, got)
+
+})
