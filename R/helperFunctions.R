@@ -978,7 +978,7 @@ create_pivot_table <- function(
       applyPatternFormats     = applyPatternFormats,
       applyAlignmentFormats   = applyAlignmentFormats,
       applyWidthHeightFormats = applyWidthHeightFormats,
-      asteriskTotals          = params$asterixTotals,
+      asteriskTotals          = params$asteriskTotals,
       autoFormatId            = params$autoFormatId,
       chartFormat             = params$chartFormat,
       dataCaption             = dataCaption,
@@ -1016,7 +1016,7 @@ create_pivot_table <- function(
       pageStyle               = params$pageStyle,
       pageWrap                = params$pageWrap,
       # pivotTableStyle
-      preserveFormattinn      = params$preserveFormattin,
+      preserveFormatting      = params$preserveFormatting,
       printDrill              = params$printDrill,
       published               = params$published,
       rowGrandTotals          = params$rowGrandTotals,
