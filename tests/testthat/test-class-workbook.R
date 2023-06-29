@@ -741,3 +741,77 @@ test_that("changing sheet names works with named regions", {
   expect_equal(exp, got)
 
 })
+
+test_that("numfmt in pivot tables works", {
+
+  ## example code
+  df <- data.frame(
+    Plant = c("A", "C", "C", "B", "B", "C", "C", "C", "A", "C"),
+    Location = c("E", "F", "E", "E", "F", "E", "E", "G", "E", "F"),
+    Status = c("good", "good", "good", "good", "good", "good", "good", "good", "good", "bad"),
+    Units = c(0.95, 0.95, 0.95, 0.95, 0.89, 0.89, 0.94, 0.94, 0.9, 0.9),
+    stringsAsFactors = FALSE
+  )
+
+  ## Create the workbook and the pivot table
+  wb <- wb_workbook()$
+    add_worksheet("Data")$
+    add_data(x = df, startCol = 1, startRow = 2)
+
+  df <- wb_data(wb, 1, dims = "A2:D10")
+  wb$
+    add_pivot_table(df, dims = "A3", rows = "Plant",
+                    filter = c("Location", "Status"), data = "Units")$
+    add_pivot_table(df, dims = "A3", rows = "Plant",
+                    filter = c("Location", "Status"), data = "Units",
+                    param = list(numfmts = c(formatCode = "#,###0"), sort_row = "ascending"))$
+    add_pivot_table(df, dims = "A3", rows = "Plant",
+                    filter = c("Location", "Status"), data = "Units",
+                    param = list(numfmts = c(numfmt = 10), sort_row = "descending"))
+
+  exp <- c(
+    "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\"/>",
+    "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\" numFmtId=\"165\"/>",
+    "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\" numFmtId=\"10\"/>"
+  )
+  got <- xml_node(wb$pivotTables, "pivotTableDefinition", "dataFields", "dataField")
+  expect_equal(exp, got)
+
+  ## sort by column and row
+  df <- mtcars
+
+  ## Create the workbook and the pivot table
+  wb <- wb_workbook()$
+    add_worksheet("Data")$
+    add_data(x = df, startCol = 1, startRow = 2)
+
+  df <- wb_data(wb)
+  wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
+                     data = c("vs", "am"), param = list(sort_row = 1, sort_col = -2))
+
+  wb$add_pivot_table(df, dims = "A3", rows = "gear",
+                     filter = c("cyl"), data = c("vs", "am"),
+                     param = list(sort_row = "descending"))
+
+
+  exp <- c(
+    "<pivotField axis=\"axisRow\" showAll=\"0\" sortType=\"ascending\"><items count=\"4\"><item x=\"1\"/><item x=\"0\"/><item x=\"2\"/><item t=\"default\"/></items><autoSortScope><pivotArea dataOnly=\"0\" outline=\"0\" fieldPosition=\"0\"><references count=\"1\"><reference field=\"4294967294\" count=\"1\" selected=\"0\"><x v=\"0\"/></reference></references></pivotArea></autoSortScope></pivotField>",
+    "<pivotField axis=\"axisCol\" showAll=\"0\" sortType=\"descending\"><items count=\"4\"><item x=\"1\"/><item x=\"0\"/><item x=\"2\"/><item t=\"default\"/></items><autoSortScope><pivotArea dataOnly=\"0\" outline=\"0\" fieldPosition=\"0\"><references count=\"1\"><reference field=\"4294967294\" count=\"1\" selected=\"0\"><x v=\"1\"/></reference></references></pivotArea></autoSortScope></pivotField>"
+  )
+  got <- xml_node(wb$pivotTables[1], "pivotTableDefinition", "pivotFields", "pivotField")[c(2, 10)]
+  expect_equal(exp, got)
+
+  expect_warning(
+    wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
+                       data = c("vs", "am"), param = list(sort_row = 1, sort_col = -7)),
+    "invalid sort position found"
+  )
+
+  expect_error(
+    wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
+                       data = c("vs", "am"),
+                       param = list(numfmts = c(numfmt = 10))),
+    "length of numfmt and data does not match"
+  )
+
+})

@@ -706,7 +706,8 @@ create_pivot_table <- function(
     data,
     n,
     fun,
-    params
+    params,
+    numfmts
   ) {
 
   if (missing(filter)) {
@@ -754,13 +755,49 @@ create_pivot_table <- function(
 
     dataField <- NULL
     axis <- NULL
+    sort <- NULL
+    autoSortScope <- NULL
+
     if (i %in% data_pos)    dataField <- c(dataField = "1")
-    if (i %in% filter_pos)  axis <- c(axis = "axisPage")
-    if (i %in% rows_pos)    axis <- c(axis = "axisRow")
-    if (i %in% cols_pos)    axis <- c(axis = "axisCol")
 
-    attrs <- c(axis, dataField, showAll = "0")
+    if (i %in% filter_pos)  {
+      axis <- c(axis = "axisPage")
+      sort <- params$sort_page
+    }
 
+    if (i %in% rows_pos) {
+      axis <- c(axis = "axisRow")
+      sort <- params$sort_row
+    }
+
+    if (i %in% cols_pos) {
+      axis <- c(axis = "axisCol")
+      sort <- params$sort_col
+    }
+
+    if (!is.null(sort) && !is.character(sort)) {
+
+      if (abs(sort) == 0 || abs(sort) >= length(unique(x[[i]])))
+        warning("invalid sort position found")
+
+      autoSortScope <- read_xml(sprintf('
+        <autoSortScope>
+          <pivotArea dataOnly="0" outline="0" fieldPosition="0">
+            <references count="1">
+            <reference field="4294967294" count="1" selected="0">
+              <x v="%s" />
+            </reference>
+            </references>
+          </pivotArea>
+        </autoSortScope>
+        ',
+        abs(sort) - 1L), pointer = FALSE)
+
+      if (sign(sort) == -1) sort <- "descending"
+      else                  sort <- "ascending"
+    }
+
+    attrs <- c(axis, dataField, showAll = "0", sortType = sort)
 
     tmp <- xml_node_create(
       "pivotField",
@@ -770,7 +807,7 @@ create_pivot_table <- function(
       tmp <- xml_node_create(
         "pivotField",
         xml_attributes = attrs,
-        xml_children = paste0(get_items(x, i), collapse = ""))
+        xml_children = paste0(paste0(get_items(x, i), collapse = ""), autoSortScope))
     }
 
     pivotField <- c(pivotField, tmp)
@@ -834,7 +871,8 @@ create_pivot_table <- function(
             fld       = sprintf("%s", data_pos[i] - 1L),
             subtotal  = fun[i],
             baseField = "0",
-            baseItem  = "0"
+            baseItem  = "0",
+            numFmtId  = numfmts[i]
           )
         )
       )
@@ -978,7 +1016,7 @@ create_pivot_table <- function(
       applyPatternFormats     = applyPatternFormats,
       applyAlignmentFormats   = applyAlignmentFormats,
       applyWidthHeightFormats = applyWidthHeightFormats,
-      asteriskTotals          = params$asterixTotals,
+      asteriskTotals          = params$asteriskTotals,
       autoFormatId            = params$autoFormatId,
       chartFormat             = params$chartFormat,
       dataCaption             = dataCaption,
@@ -1016,7 +1054,7 @@ create_pivot_table <- function(
       pageStyle               = params$pageStyle,
       pageWrap                = params$pageWrap,
       # pivotTableStyle
-      preserveFormattinn      = params$preserveFormattin,
+      preserveFormatting      = params$preserveFormatting,
       printDrill              = params$printDrill,
       published               = params$published,
       rowGrandTotals          = params$rowGrandTotals,

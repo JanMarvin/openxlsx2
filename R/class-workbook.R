@@ -1226,16 +1226,34 @@ wbWorkbook <- R6::R6Class(
         self$add_worksheet()
       }
 
+      numfmts <- NULL
+      if (!is.null(numfmt <- params$numfmt)) {
+        if (length(numfmt) != length(data))
+          stop("length of numfmt and data does not match")
+
+        for (i in seq_along(numfmt)) {
+          if (names(numfmt)[i] == "formatCode") {
+            numfmt_i <- self$styles_mgr$next_numfmt_id()
+            sty_i <- create_numfmt(numfmt_i, formatCode = numfmt[i])
+            self$add_style(sty_i, sty_i)
+            numfmts <- c(numfmts, self$styles_mgr$get_numfmt_id(sty_i))
+          } else {
+            numfmts <- c(numfmts, as_xml_attr(numfmt[[i]]))
+          }
+        }
+      }
+
       pivot_table <- create_pivot_table(
-        x      = x,
-        dims   = dims,
-        filter = filter,
-        rows   = rows,
-        cols   = cols,
-        data   = data,
-        n      = length(self$pivotTables) + 1L,
-        fun    = fun,
-        params = params
+        x       = x,
+        dims    = dims,
+        filter  = filter,
+        rows    = rows,
+        cols    = cols,
+        data    = data,
+        n       = length(self$pivotTables) + 1L,
+        fun     = fun,
+        params  = params,
+        numfmts = numfmts
       )
 
       if (missing(filter)) filter <- ""
