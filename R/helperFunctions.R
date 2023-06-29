@@ -777,6 +777,9 @@ create_pivot_table <- function(
 
     if (!is.null(sort) && !is.character(sort)) {
 
+      if (abs(sort) == 0 || abs(sort) >= length(unique(x[[i]])))
+        warning("invalid sort position found")
+
       autoSortScope <- read_xml(sprintf('
         <autoSortScope>
           <pivotArea dataOnly="0" outline="0" fieldPosition="0">

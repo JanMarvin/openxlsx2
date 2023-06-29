@@ -801,4 +801,17 @@ test_that("numfmt in pivot tables works", {
   got <- xml_node(wb$pivotTables[1], "pivotTableDefinition", "pivotFields", "pivotField")[c(2, 10)]
   expect_equal(exp, got)
 
+  expect_warning(
+    wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
+                       data = c("vs", "am"), param = list(sort_row = 1, sort_col = -7)),
+    "invalid sort position found"
+  )
+
+  expect_error(
+    wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
+                       data = c("vs", "am"),
+                       param = list(numfmts = c(numfmt = 10))),
+    "length of numfmt and data does not match"
+  )
+
 })
