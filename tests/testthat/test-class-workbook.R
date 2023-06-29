@@ -777,4 +777,28 @@ test_that("numfmt in pivot tables works", {
   got <- xml_node(wb$pivotTables, "pivotTableDefinition", "dataFields", "dataField")
   expect_equal(exp, got)
 
+  ## sort by column and row
+  df <- mtcars
+
+  ## Create the workbook and the pivot table
+  wb <- wb_workbook()$
+    add_worksheet("Data")$
+    add_data(x = df, startCol = 1, startRow = 2)
+
+  df <- wb_data(wb)
+  wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
+                     data = c("vs", "am"), param = list(sort_row = 1, sort_col = -2))
+
+  wb$add_pivot_table(df, dims = "A3", rows = "gear",
+                     filter = c("cyl"), data = c("vs", "am"),
+                     param = list(sort_row = "descending"))
+
+
+  exp <- c(
+    "<pivotField axis=\"axisRow\" showAll=\"0\" sortType=\"ascending\"><items count=\"4\"><item x=\"1\"/><item x=\"0\"/><item x=\"2\"/><item t=\"default\"/></items><autoSortScope><pivotArea dataOnly=\"0\" outline=\"0\" fieldPosition=\"0\"><references count=\"1\"><reference field=\"4294967294\" count=\"1\" selected=\"0\"><x v=\"0\"/></reference></references></pivotArea></autoSortScope></pivotField>",
+    "<pivotField axis=\"axisCol\" showAll=\"0\" sortType=\"descending\"><items count=\"4\"><item x=\"1\"/><item x=\"0\"/><item x=\"2\"/><item t=\"default\"/></items><autoSortScope><pivotArea dataOnly=\"0\" outline=\"0\" fieldPosition=\"0\"><references count=\"1\"><reference field=\"4294967294\" count=\"1\" selected=\"0\"><x v=\"1\"/></reference></references></pivotArea></autoSortScope></pivotField>"
+  )
+  got <- xml_node(wb$pivotTables[1], "pivotTableDefinition", "pivotFields", "pivotField")[c(2, 10)]
+  expect_equal(exp, got)
+
 })

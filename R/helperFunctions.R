@@ -756,6 +756,7 @@ create_pivot_table <- function(
     dataField <- NULL
     axis <- NULL
     sort <- NULL
+    autoSortScope <- NULL
 
     if (i %in% data_pos)    dataField <- c(dataField = "1")
 
@@ -774,6 +775,25 @@ create_pivot_table <- function(
       sort <- params$sort_col
     }
 
+    if (!is.null(sort) && !is.character(sort)) {
+
+      autoSortScope <- read_xml(sprintf('
+        <autoSortScope>
+          <pivotArea dataOnly="0" outline="0" fieldPosition="0">
+            <references count="1">
+            <reference field="4294967294" count="1" selected="0">
+              <x v="%s" />
+            </reference>
+            </references>
+          </pivotArea>
+        </autoSortScope>
+        ',
+        abs(sort) - 1L), pointer = FALSE)
+
+      if (sign(sort) == -1) sort <- "descending"
+      else                  sort <- "ascending"
+    }
+
     attrs <- c(axis, dataField, showAll = "0", sortType = sort)
 
     tmp <- xml_node_create(
@@ -784,7 +804,7 @@ create_pivot_table <- function(
       tmp <- xml_node_create(
         "pivotField",
         xml_attributes = attrs,
-        xml_children = paste0(get_items(x, i), collapse = ""))
+        xml_children = paste0(paste0(get_items(x, i), collapse = ""), autoSortScope))
     }
 
     pivotField <- c(pivotField, tmp)
