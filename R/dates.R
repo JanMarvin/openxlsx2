@@ -230,6 +230,6 @@ convert_to_excel_date <- function(df, date1904 = FALSE) {
 #' @export
 #' @rdname convert_to_excel_date
 convertToExcelDate <- function(df, date1904 = FALSE) {
-  message("The function has been renamed to `convert_to_excel_date()`")
-  convert_to_excel_date
+  .Deprecated(old = "convertToExcelDate", new = "convert_to_excel_date", package = "openxlsx2")
+  convert_to_excel_date(df = df, date1904 = date1904)
 }
