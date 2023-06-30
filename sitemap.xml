@@ -94,6 +94,9 @@
     <loc>/reference/dataframe_to_dims.html</loc>
   </url>
   <url>
+    <loc>/reference/dims_helper.html</loc>
+  </url>
+  <url>
     <loc>/reference/dims_to_dataframe.html</loc>
   </url>
   <url>
@@ -202,6 +205,9 @@
     <loc>/reference/wb_add_drawing.html</loc>
   </url>
   <url>
+    <loc>/reference/wb_add_dxfs_style.html</loc>
+  </url>
+  <url>
     <loc>/reference/wb_add_fill.html</loc>
   </url>
   <url>
@@ -224,6 +230,9 @@
   </url>
   <url>
     <loc>/reference/wb_add_mschart.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wb_add_named_style.html</loc>
   </url>
   <url>
     <loc>/reference/wb_add_numfmt.html</loc>
