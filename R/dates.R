@@ -213,7 +213,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
 #'  # conversion is done on dataframes only
 #'  convertToExcelDate(df = df["Var5"], date1904 = FALSE)
 #' @export
-convertToExcelDate <- function(df, date1904 = FALSE) {
+convert_to_excel_date <- function(df, date1904 = FALSE) {
 
   is_date <- vapply(
     df,
@@ -226,4 +226,10 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
   df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
 
   df
+}
+#' @export
+#' @rdname convert_to_excel_date
+convertToExcelDate <- function(df, date1904 = FALSE) {
+  message("The function has been renamed to `convert_to_excel_date()`")
+  convert_to_excel_date
 }
