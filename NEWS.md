@@ -1,4 +1,4 @@
-# openxlsx2 (development version)
+# openxlsx2 0.7.1
 
 ## New features
 
@@ -110,12 +110,12 @@
     * `get_cell_style()`
     * `set_cell_style()`
     * `wb_conditional_formatting()`
-  
+
   * remove deprecated arguments
     * `xy` argument for `write_data_table()` interacting functions
     * `file` from `xl_open()`
     * `definedName` from `wb_to_df()` interacting functions
-  
+
   * deprecating function
     * `get_named_regions()` for `wb_get_named_regions()`
 
