@@ -760,25 +760,35 @@ create_pivot_table <- function(
 
     if (i %in% data_pos)    dataField <- c(dataField = "1")
 
-    if (i %in% filter_pos)  {
-      axis <- c(axis = "axisPage")
-      sort <- params$sort_page
-    }
+    if (i %in% filter_pos)  axis <- c(axis = "axisPage")
 
     if (i %in% rows_pos) {
       axis <- c(axis = "axisRow")
       sort <- params$sort_row
+
+      if (!is.null(sort) && !is.character(sort)) {
+        if (!abs(sort) %in% seq_along(rows_pos))
+          warning("invalid sort position found")
+
+       if (!abs(sort) == match(i, rows_pos))
+        sort <- NULL
+      }
     }
 
     if (i %in% cols_pos) {
       axis <- c(axis = "axisCol")
       sort <- params$sort_col
+
+      if (!is.null(sort) && !is.character(sort)) {
+        if (!abs(sort) %in% seq_along(cols_pos))
+          warning("invalid sort position found")
+
+       if (!abs(sort) == match(i, cols_pos))
+        sort <- NULL
+      }
     }
 
     if (!is.null(sort) && !is.character(sort)) {
-
-      if (abs(sort) == 0 || abs(sort) >= length(unique(x[[i]])))
-        warning("invalid sort position found")
 
       autoSortScope <- read_xml(sprintf('
         <autoSortScope>

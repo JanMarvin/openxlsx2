@@ -814,4 +814,29 @@ test_that("numfmt in pivot tables works", {
     "length of numfmt and data does not match"
   )
 
+  ### add sortType only to those pivot fields that are sorted
+
+  ## sort by column and row
+  df <- mtcars
+
+  ## Create the workbook and the pivot table
+  wb <- wb_workbook()$
+    add_worksheet("Data")$
+    add_data(x = df, startCol = 1, startRow = 2)
+
+  df <- wb_data(wb)
+  wb$add_pivot_table(
+    df,
+    dims = "A3",
+    rows = c("cyl", "am"),
+    cols = c("gear", "carb"),
+    data = c("disp", "mpg"),
+    param = list(sort_row = 1,
+                 sort_col = -2)
+  )
+
+  exp <- c("", "ascending", "", "", "", "", "", "", "", "descending", "")
+  got <- rbindlist(xml_attr(wb$pivotTables, "pivotTableDefinition", "pivotFields", "pivotField"))$sortType
+  expect_equal(exp, got)
+
 })
