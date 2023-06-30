@@ -667,7 +667,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' @param border_style "thin"
 #' @param bgFill Cell background fill color.
 #' @param fgColor Cell foreground fill color.
-#' @param gradientFill An xml string beginning with <gradientFill> ...
+#' @param gradientFill An xml string beginning with `<gradientFill>` ...
 #' @param text_bold bold
 #' @param text_strike strikeout
 #' @param text_italic italic

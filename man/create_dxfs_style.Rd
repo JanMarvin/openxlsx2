@@ -45,7 +45,7 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 
 \item{fgColor}{Cell foreground fill color.}
 
-\item{gradientFill}{An xml string beginning with \if{html}{\out{<gradientFill>}} ...}
+\item{gradientFill}{An xml string beginning with \verb{<gradientFill>} ...}
 
 \item{text_bold}{bold}
 
