@@ -846,12 +846,8 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param xy Alternate way to specify `startRow` and `startCol.`  A vector of
-#'   length `2` of form (`startcol`, `startRow`)
-#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when
-#'   `xy` is given.
-#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]`
-#'   when `xy` is given.
+#' @param startRow Row coordinate of upper left corner of figure.
+#' @param startCol Column coordinate of upper left corner of figure.
 #' @param rowOffset offset within cell (row)
 #' @param colOffset offset within cell (column)
 #' @param width Width of figure. Defaults to `6`in.
@@ -892,7 +888,6 @@ wb_add_plot <- function(
     sheet     = current_sheet(),
     width     = 6,
     height    = 4,
-    xy        = NULL,
     startRow  = 1,
     startCol  = 1,
     rowOffset = 0,
@@ -907,7 +902,6 @@ wb_add_plot <- function(
     sheet     = sheet,
     width     = width,
     height    = height,
-    xy        = xy,
     startRow  = startRow,
     startCol  = startCol,
     rowOffset = rowOffset,

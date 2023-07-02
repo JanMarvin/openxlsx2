@@ -4151,7 +4151,6 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param width width
     #' @param height height
-    #' @param xy xy
     #' @param startRow startRow
     #' @param startCol startCol
     #' @param rowOffset rowOffset
@@ -4165,7 +4164,6 @@ wbWorkbook <- R6::R6Class(
       sheet = current_sheet(),
       width     = 6,
       height    = 4,
-      xy        = NULL,
       startRow  = 1,
       startCol  = 1,
       rowOffset = 0,

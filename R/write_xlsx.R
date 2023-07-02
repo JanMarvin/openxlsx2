@@ -34,8 +34,6 @@
 #' \itemize{
 #'   \item{**startCol**}{ A vector specifying the starting column(s) to write df}
 #'   \item{**startRow**}{ A vector specifying the starting row(s) to write df}
-#'   \item{**xy**}{ An alternative to specifying startCol and startRow individually.
-#'  A vector of the form c(startCol, startRow)}
 #'   \item{**colNames or col.names**}{ If `TRUE`, column names of x are written.}
 #'   \item{**rowNames or row.names**}{ If `TRUE`, row names of x are written.}
 #'   \item{**na.strings**} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}

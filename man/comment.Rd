@@ -23,7 +23,6 @@ write_comment(
   col = NULL,
   row = NULL,
   comment,
-  xy = NULL,
   dims = rowcol_to_dim(row, col)
 )
 
@@ -76,10 +75,6 @@ wb_remove_comment(
 \item{row}{A row to apply the comment}
 
 \item{comment}{A comment to apply to the worksheet}
-
-\item{xy}{An alternative to specifying \code{col} and
-\code{row} individually.  A vector of the form
-\code{c(col, row)}.}
 
 \item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 
