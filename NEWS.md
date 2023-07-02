@@ -2,6 +2,8 @@
 
 ## Breaking changes
 
+* Order of arguments in `wb_add_named_region()` changed, because previously overlooked `dims` argument was added.
+
 * Cleanups
   * remove deprecated functions
   

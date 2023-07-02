@@ -11,6 +11,7 @@
 wb_add_named_region(
   wb,
   sheet = current_sheet(),
+  dims = "A1",
   cols,
   rows,
   name,
@@ -39,6 +40,8 @@ wb_get_named_regions(x, tables = FALSE)
 \item{wb}{A workbook object}
 
 \item{sheet}{A name or index of a worksheet}
+
+\item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
 
 \item{cols}{Numeric vector specifying columns to include in region}
 

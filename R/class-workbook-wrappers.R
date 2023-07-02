@@ -1538,6 +1538,7 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
+#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
 #' @param rows Numeric vector specifying rows to include in region
 #' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
@@ -1600,6 +1601,7 @@ NULL
 wb_add_named_region <- function(
   wb,
   sheet             = current_sheet(),
+  dims              = "A1",
   cols,
   rows,
   name,
@@ -1622,6 +1624,7 @@ wb_add_named_region <- function(
   assert_workbook(wb)
   wb$clone()$add_named_region(
     sheet             = sheet,
+    dims              = dims,
     cols              = cols,
     rows              = rows,
     name              = name,

@@ -2314,6 +2314,7 @@ add a named region
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
   sheet = current_sheet(),
+  dims = "A1",
   cols,
   rows,
   name,
@@ -2339,6 +2340,8 @@ add a named region
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 
 \item{\code{cols}}{cols}
 
