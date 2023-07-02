@@ -5,7 +5,6 @@
 \alias{named_region}
 \alias{wb_add_named_region}
 \alias{wb_remove_named_region}
-\alias{get_named_regions}
 \alias{wb_get_named_regions}
 \title{Create / delete a named region}
 \usage{
@@ -33,8 +32,6 @@ wb_add_named_region(
 )
 
 wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
-
-get_named_regions(x)
 
 wb_get_named_regions(x, tables = FALSE)
 }

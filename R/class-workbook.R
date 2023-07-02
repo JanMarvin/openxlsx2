@@ -4180,12 +4180,6 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      if (!is.null(xy)) {
-        .Deprecated("dims", old = "xy")
-        startCol <- xy[[1]]
-        startRow <- xy[[2]]
-      }
-
       fileType <- tolower(fileType)
       units <- tolower(units)
 

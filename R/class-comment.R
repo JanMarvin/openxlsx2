@@ -206,16 +206,6 @@ write_comment <- function(
   rPr <- gsub("font>", "rPr>", rPr)
   sheet <- wb_validate_sheet(wb, sheet)
 
-  ## All input conversions/validations
-  if (!is.null(xy)) {
-    .Deprecated("dims", old = "xy")
-    if (length(xy) != 2) {
-      stop("xy parameter must have length 2")
-    }
-    col <- xy[[1]]
-    row <- xy[[2]]
-  }
-
   if (!is.null(dims)) {
     ref <- dims
     col <- col2int(dims_to_rowcol(dims)[[1]])

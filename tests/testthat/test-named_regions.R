@@ -437,6 +437,4 @@ test_that("get_named_regions is deprecated", {
     cols = 6:8
   )
 
-  expect_warning(get_named_regions(wb), "deprecated")
-
 })
