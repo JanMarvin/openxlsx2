@@ -1,5 +1,15 @@
 # openxlsx2 (development version)
 
+## Breaking changes
+
+* Cleanups
+  * remove deprecated functions
+  
+  * remove deprecated arguments
+    * `xy` argument
+    
+  * deprecating function
+    * `convertToExcelDate()` for `convert_to_excel_date()`
 
 ***************************************************************************
 
