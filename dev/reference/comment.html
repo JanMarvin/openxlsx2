@@ -86,7 +86,6 @@ are called comments in openxml. Modification of what Excel now calls comment
 <span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">comment</span>,</span>
-<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -162,12 +161,6 @@ are called comments in openxml. Modification of what Excel now calls comment
 
 <dt>comment</dt>
 <dd><p>A comment to apply to the worksheet</p></dd>
-
-
-<dt>xy</dt>
-<dd><p>An alternative to specifying <code>col</code> and
-<code>row</code> individually.  A vector of the form
-<code>c(col, row)</code>.</p></dd>
 
 
 <dt>dims</dt>

@@ -2275,7 +2275,6 @@ are repeated across length of <code>cols</code></p></dd>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rowOffset <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -2299,10 +2298,6 @@ are repeated across length of <code>cols</code></p></dd>
 
 <dt><code>height</code></dt>
 <dd><p>height</p></dd>
-
-
-<dt><code>xy</code></dt>
-<dd><p>xy</p></dd>
 
 
 <dt><code>startRow</code></dt>
@@ -2933,6 +2928,7 @@ are removed.</p></dd>
 <h4 id="usage-61">Usage<a class="anchor" aria-label="anchor" href="#usage-61"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
 <span>  <span class="va">cols</span>,</span>
 <span>  <span class="va">rows</span>,</span>
 <span>  <span class="va">name</span>,</span>
@@ -2958,6 +2954,10 @@ are removed.</p></dd>
 <h4 id="arguments-58">Arguments<a class="anchor" aria-label="anchor" href="#arguments-58"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
 
 
 <dt><code>cols</code></dt>

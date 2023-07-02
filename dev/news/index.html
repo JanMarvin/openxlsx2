@@ -57,7 +57,26 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
-<hr></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li><p>Order of arguments in <code><a href="../reference/named_region.html">wb_add_named_region()</a></code> changed, because previously overlooked <code>dims</code> argument was added.</p></li>
+<li>
+<p>Cleanups</p>
+<ul><li><p>remove deprecated functions</p></li>
+<li>
+<p>remove deprecated arguments</p>
+<ul><li>
+<code>xy</code> argument</li>
+</ul></li>
+<li>
+<p>deprecating function</p>
+<ul><li>
+<code><a href="../reference/convert_to_excel_date.html">convertToExcelDate()</a></code> for <code><a href="../reference/convert_to_excel_date.html">convert_to_excel_date()</a></code>
+</li>
+</ul></li>
+</ul></li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.1" id="openxlsx2-071">openxlsx2 0.7.1<a class="anchor" aria-label="anchor" href="#openxlsx2-071"></a></h2><p class="text-muted">CRAN release: 2023-06-30</p>
 <div class="section level3">
@@ -148,7 +167,7 @@
 </ul></li>
 <li>deprecating function
 <ul><li>
-<code><a href="../reference/named_region.html">get_named_regions()</a></code> for <code><a href="../reference/named_region.html">wb_get_named_regions()</a></code>
+<code>get_named_regions()</code> for <code><a href="../reference/named_region.html">wb_get_named_regions()</a></code>
 </li>
 </ul></li>
 </ul></li>

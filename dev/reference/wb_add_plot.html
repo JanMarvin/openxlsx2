@@ -73,7 +73,6 @@ wb_add_image()."><meta name="robots" content="noindex"><!-- mathjax --><script s
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  xy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  rowOffset <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -103,19 +102,12 @@ wb_add_image()."><meta name="robots" content="noindex"><!-- mathjax --><script s
 <dd><p>Height of figure . Defaults to <code>4</code>in.</p></dd>
 
 
-<dt>xy</dt>
-<dd><p>Alternate way to specify <code>startRow</code> and <code>startCol.</code>  A vector of
-length <code>2</code> of form (<code>startcol</code>, <code>startRow</code>)</p></dd>
-
-
 <dt>startRow</dt>
-<dd><p>Row coordinate of upper left corner of figure. <code>xy[[2]]</code> when
-<code>xy</code> is given.</p></dd>
+<dd><p>Row coordinate of upper left corner of figure.</p></dd>
 
 
 <dt>startCol</dt>
-<dd><p>Column coordinate of upper left corner of figure. <code>xy[[1]]</code>
-when <code>xy</code> is given.</p></dd>
+<dd><p>Column coordinate of upper left corner of figure.</p></dd>
 
 
 <dt>rowOffset</dt>
