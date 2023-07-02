@@ -83,3 +83,13 @@ openxlsx2_celltype <- c(
   cm_formula     = 14,
   hms_time       = 15
 )
+
+#' Deprecated Functions in Package *openxlsx2*
+#' @description
+#' These functions are provided for compatibility with older versions of `openxlsx2`, and may be defunct as soon as the next release.
+#'
+#' @details
+#' `convertToExcelDate()` -> `convert_to_excel_date()`
+#' @seealso [.Deprecated]
+#' @name openxlsx2-deprecated
+NULL
