@@ -211,9 +211,9 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
 #'  wb1 <- wb_load(xlsxFile)
 #'  df <- wb_to_df(wb1)
 #'  # conversion is done on dataframes only
-#'  convertToExcelDate(df = df["Var5"], date1904 = FALSE)
+#'  convert_to_excel_date(df = df["Var5"], date1904 = FALSE)
 #' @export
-convertToExcelDate <- function(df, date1904 = FALSE) {
+convert_to_excel_date <- function(df, date1904 = FALSE) {
 
   is_date <- vapply(
     df,
@@ -226,4 +226,10 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
   df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
 
   df
+}
+#' @export
+#' @rdname convert_to_excel_date
+convertToExcelDate <- function(df, date1904 = FALSE) {
+  .Deprecated(old = "convertToExcelDate", new = "convert_to_excel_date", package = "openxlsx2")
+  convert_to_excel_date(df = df, date1904 = date1904)
 }

@@ -233,7 +233,7 @@ write_data2 <- function(
                              ignore.case = TRUE)
 
   # TODO need to tell excel that we have a date, apply some kind of numFmt
-  data <- convertToExcelDate(df = data, date1904 = hconvert_date1904)
+  data <- convert_to_excel_date(df = data, date1904 = hconvert_date1904)
 
   # backward compatible
   if (!inherits(data, "data.frame") || inherits(data, "matrix")) {
