@@ -9,7 +9,6 @@ wb_add_plot(
   sheet = current_sheet(),
   width = 6,
   height = 4,
-  xy = NULL,
   startRow = 1,
   startCol = 1,
   rowOffset = 0,
@@ -29,14 +28,9 @@ wb_add_plot(
 
 \item{height}{Height of figure . Defaults to \code{4}in.}
 
-\item{xy}{Alternate way to specify \code{startRow} and \code{startCol.}  A vector of
-length \code{2} of form (\code{startcol}, \code{startRow})}
+\item{startRow}{Row coordinate of upper left corner of figure.}
 
-\item{startRow}{Row coordinate of upper left corner of figure. \code{xy[[2]]} when
-\code{xy} is given.}
-
-\item{startCol}{Column coordinate of upper left corner of figure. \code{xy[[1]]}
-when \code{xy} is given.}
+\item{startCol}{Column coordinate of upper left corner of figure.}
 
 \item{rowOffset}{offset within cell (row)}
 

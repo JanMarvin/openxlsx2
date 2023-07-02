@@ -433,10 +433,14 @@ test_that("get_named_regions is deprecated", {
 
   wb <- wb_workbook()$add_worksheet()$add_named_region(
     name = "named_region",
-    rows = 5:7,
-    cols = 6:8
+    dims = rowcol_to_dims(
+      row = 5:7,
+      col = 6:8
+    )
   )
 
-  expect_warning(get_named_regions(wb), "deprecated")
+  exp <- "<definedName name=\"named_region\">'Sheet 1'!$F$5:$H$7</definedName>"
+  got <- wb$workbook$definedNames
+  expect_equal(exp, got)
 
 })

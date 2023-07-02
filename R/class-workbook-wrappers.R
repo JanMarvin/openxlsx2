@@ -846,12 +846,8 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param xy Alternate way to specify `startRow` and `startCol.`  A vector of
-#'   length `2` of form (`startcol`, `startRow`)
-#' @param startRow Row coordinate of upper left corner of figure. `xy[[2]]` when
-#'   `xy` is given.
-#' @param startCol Column coordinate of upper left corner of figure. `xy[[1]]`
-#'   when `xy` is given.
+#' @param startRow Row coordinate of upper left corner of figure.
+#' @param startCol Column coordinate of upper left corner of figure.
 #' @param rowOffset offset within cell (row)
 #' @param colOffset offset within cell (column)
 #' @param width Width of figure. Defaults to `6`in.
@@ -892,7 +888,6 @@ wb_add_plot <- function(
     sheet     = current_sheet(),
     width     = 6,
     height    = 4,
-    xy        = NULL,
     startRow  = 1,
     startCol  = 1,
     rowOffset = 0,
@@ -907,7 +902,6 @@ wb_add_plot <- function(
     sheet     = sheet,
     width     = width,
     height    = height,
-    xy        = xy,
     startRow  = startRow,
     startCol  = startCol,
     rowOffset = rowOffset,
@@ -1544,6 +1538,7 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
+#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
 #' @param rows Numeric vector specifying rows to include in region
 #' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
@@ -1606,6 +1601,7 @@ NULL
 wb_add_named_region <- function(
   wb,
   sheet             = current_sheet(),
+  dims              = "A1",
   cols,
   rows,
   name,
@@ -1628,6 +1624,7 @@ wb_add_named_region <- function(
   assert_workbook(wb)
   wb$clone()$add_named_region(
     sheet             = sheet,
+    dims              = dims,
     cols              = cols,
     rows              = rows,
     name              = name,

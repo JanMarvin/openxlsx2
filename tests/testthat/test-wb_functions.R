@@ -34,6 +34,8 @@ test_that("wb_to_df", {
   expect_equal(convert_to_excel_date(df = exp["Var5"], date1904 = FALSE),
                got["Var5"])
 
+  expect_warning(convertToExcelDate(df = exp["Var5"], date1904 = FALSE), "deprecated")
+
   # return the underlying Excel formula instead of their values
   got <- wb_to_df(wb1, showFormula = TRUE)
   expect_equal("1/0", got$Var7[1])

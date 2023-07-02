@@ -1770,7 +1770,6 @@ Add plot. A wrapper for add_image()
   sheet = current_sheet(),
   width = 6,
   height = 4,
-  xy = NULL,
   startRow = 1,
   startCol = 1,
   rowOffset = 0,
@@ -1790,8 +1789,6 @@ Add plot. A wrapper for add_image()
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
-
-\item{\code{xy}}{xy}
 
 \item{\code{startRow}}{startRow}
 
@@ -2317,6 +2314,7 @@ add a named region
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
   sheet = current_sheet(),
+  dims = "A1",
   cols,
   rows,
   name,
@@ -2342,6 +2340,8 @@ add a named region
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 
 \item{\code{cols}}{cols}
 

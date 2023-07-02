@@ -1,5 +1,17 @@
 # openxlsx2 (development version)
 
+## Breaking changes
+
+* Order of arguments in `wb_add_named_region()` changed, because previously overlooked `dims` argument was added.
+
+* Cleanups
+  * remove deprecated functions
+  
+  * remove deprecated arguments
+    * `xy` argument
+    
+  * deprecating function
+    * `convertToExcelDate()` for `convert_to_excel_date()`
 
 ***************************************************************************
 

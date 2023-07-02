@@ -96,13 +96,6 @@ NULL
 
 #' @rdname named_region
 #' @export
-get_named_regions <- function(x) {
-  .Deprecated("wb_get_named_regions")
-  wb_get_named_regions(x)
-}
-
-#' @rdname named_region
-#' @export
 wb_get_named_regions <- function(x, tables = FALSE) {
   if (inherits(x, "wbWorkbook")) {
     wb <- x

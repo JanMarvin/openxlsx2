@@ -4151,7 +4151,6 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param width width
     #' @param height height
-    #' @param xy xy
     #' @param startRow startRow
     #' @param startCol startCol
     #' @param rowOffset rowOffset
@@ -4165,7 +4164,6 @@ wbWorkbook <- R6::R6Class(
       sheet = current_sheet(),
       width     = 6,
       height    = 4,
-      xy        = NULL,
       startRow  = 1,
       startCol  = 1,
       rowOffset = 0,
@@ -4178,12 +4176,6 @@ wbWorkbook <- R6::R6Class(
       if (is.null(dev.list()[[1]])) {
         warning("No plot to insert.")
         return(invisible(self))
-      }
-
-      if (!is.null(xy)) {
-        .Deprecated("dims", old = "xy")
-        startCol <- xy[[1]]
-        startRow <- xy[[2]]
       }
 
       fileType <- tolower(fileType)
@@ -5271,6 +5263,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description add a named region
     #' @param sheet sheet
+    #' @param dims dims
     #' @param cols cols
     #' @param rows rows
     #' @param name name
@@ -5292,6 +5285,7 @@ wbWorkbook <- R6::R6Class(
     #' @returns The `wbWorkbook` object
     add_named_region = function(
       sheet = current_sheet(),
+      dims = "A1",
       cols,
       rows,
       name,
@@ -5313,12 +5307,21 @@ wbWorkbook <- R6::R6Class(
     ) {
       sheet <- private$get_sheet_index(sheet)
 
-      if (!is.numeric(rows)) {
-        stop("rows argument must be a numeric/integer vector")
-      }
+      if (!missing(cols) && !missing(rows)) {
 
-      if (!is.numeric(cols)) {
-        stop("cols argument must be a numeric/integer vector")
+        if (!is.numeric(rows)) {
+          stop("rows argument must be a numeric/integer vector")
+        }
+
+        if (!is.numeric(cols) && !is.character(cols)) {
+          stop("cols argument must be a character or numeric/integer vector")
+        }
+
+        # TODO not sure why this is here
+        cols <- round(cols)
+        rows <- round(rows)
+
+        dims <- rowcol_to_dims(rows, cols)
       }
 
       localSheetId <- ""
@@ -5346,8 +5349,9 @@ wbWorkbook <- R6::R6Class(
         stop("name cannot look like a cell reference.")
       }
 
-      cols <- round(cols)
-      rows <- round(rows)
+      rowcols <- dims_to_rowcol(dims, as_integer = TRUE)
+      rows <- rowcols[[2]]
+      cols <- rowcols[[1]]
 
       startCol <- min(cols)
       endCol <- max(cols)

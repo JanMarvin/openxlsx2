@@ -177,9 +177,6 @@ create_comment <- function(text,
 #' @param col Column a column number of letter. For `remove_comment` this can be a range.
 #' @param row A row number. For `remove_comment` this can be a range.
 #' @param comment A Comment object. See [create_comment()].
-#' @param xy An alternative to specifying `col` and
-#' `row` individually.  A vector of the form
-#' `c(col, row)`.
 #' @param dims worksheet cell "A1"
 #' @rdname comment
 #' @export
@@ -189,7 +186,6 @@ write_comment <- function(
     col     = NULL,
     row     = NULL,
     comment,
-    xy      = NULL,
     dims    = rowcol_to_dim(row, col)
   ) {
 
@@ -205,16 +201,6 @@ write_comment <- function(
 
   rPr <- gsub("font>", "rPr>", rPr)
   sheet <- wb_validate_sheet(wb, sheet)
-
-  ## All input conversions/validations
-  if (!is.null(xy)) {
-    .Deprecated("dims", old = "xy")
-    if (length(xy) != 2) {
-      stop("xy parameter must have length 2")
-    }
-    col <- xy[[1]]
-    row <- xy[[2]]
-  }
 
   if (!is.null(dims)) {
     ref <- dims
