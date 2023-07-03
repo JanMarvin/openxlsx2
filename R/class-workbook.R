@@ -1620,12 +1620,9 @@ wbWorkbook <- R6::R6Class(
 
         for (i in seq_len(nSheets)) {
           if (length(self$threadComments[[i]])) {
-            fl <- self$threadComments[[i]]
-            file.copy(
-              from = fl,
-              to = file.path(xlThreadComments, basename(fl)),
-              overwrite = TRUE,
-              copy.date = TRUE
+            write_file(
+              body = self$threadComments[[i]],
+              fl = file.path(xlThreadComments, sprintf("threadedComment%s.xml", i))
             )
           }
         }
@@ -1634,11 +1631,13 @@ wbWorkbook <- R6::R6Class(
       ## xl/persons/person.xml
       if (nPersons) {
         personDir <- dir_create(tmpDir, "xl", "persons")
-        file.copy(self$persons, personDir, overwrite = TRUE)
+        write_file(
+          body = self$persons,
+          fl = file.path(personDir, "person.xml")
+        )
       }
 
-
-
+      ## xl/embeddings
       if (length(self$embeddings)) {
         embeddingsDir <- dir_create(tmpDir, "xl", "embeddings")
         for (fl in self$embeddings) {
