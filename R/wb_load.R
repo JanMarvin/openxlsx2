@@ -1095,10 +1095,17 @@ wb_load <- function(
 
         comments <- lapply(comments, function(x) {
           text <- xml_node(x, "comment", "text")
-          list(
-            style = xml_node(text, "text", "r", "rPr"),
-            comments = xml_node(text, "text", "r", "t")
-          )
+          if (all(xml_node_name(x, "comment", "text") == "t")) {
+            list(
+              style = FALSE,
+              comments = xml_node(text, "text", "t")
+            )
+          } else {
+            list(
+              style = xml_node(text, "text", "r", "rPr"),
+              comments = xml_node(text, "text", "r", "t")
+            )
+          }
         })
 
         wb$comments[[comment_xml]] <- lapply(seq_along(comments), function(j) {

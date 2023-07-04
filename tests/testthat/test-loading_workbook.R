@@ -36,11 +36,22 @@ test_that("Loading multiple pivot tables: loadPivotTables.xlsx works", {
 
 test_that("Load and saving a file with Threaded Comments works", {
 
+  tmp <- temp_xlsx()
+
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
   fl <- testfile_path("loadThreadComment.xlsx")
   expect_silent(wb <- wb_load(fl))
+
+  exp <- "<t>[Threaded comment]\n\nYo"
+  got <- substr(wb$comments[[1]][[1]]$comment, 1, 25)
+  expect_equal(exp, got)
+
   # Check that wb can be saved without error
-  expect_silent(wb_save(wb, path = temp_xlsx()))
+  expect_silent(wb_save(wb, path = tmp))
+  wb <- wb_load(tmp)
+
+  got <- substr(wb$comments[[1]][[1]]$comment, 1, 25)
+  expect_equal(exp, got)
 
 })
 
