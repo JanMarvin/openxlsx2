@@ -5,66 +5,67 @@
 \title{Create Dataframe from Workbook}
 \usage{
 wb_to_df(
-  xlsxFile,
+  xlsx_file,
   sheet,
-  startRow = 1,
-  startCol = NULL,
-  rowNames = FALSE,
-  colNames = TRUE,
-  skipEmptyRows = FALSE,
-  skipEmptyCols = FALSE,
-  skipHiddenRows = FALSE,
-  skipHiddenCols = FALSE,
+  start_row = 1,
+  start_col = NULL,
+  row_names = FALSE,
+  col_names = TRUE,
+  skip_empty_rows = FALSE,
+  skip_empty_cols = FALSE,
+  skip_hidden_rows = FALSE,
+  skip_hidden_cols = FALSE,
   rows = NULL,
   cols = NULL,
-  detectDates = TRUE,
+  detect_dates = TRUE,
   na.strings = "#N/A",
   na.numbers = NA,
-  fillMergedCells = FALSE,
+  fill_merged_cells = FALSE,
   dims,
-  showFormula = FALSE,
+  show_formula = FALSE,
   convert = TRUE,
   types,
   named_region,
-  keep_attributes = FALSE
+  keep_attributes = FALSE,
+  ...
 )
 }
 \arguments{
-\item{xlsxFile}{An xlsx file, Workbook object or URL to xlsx file.}
+\item{xlsx_file}{An xlsx file, Workbook object or URL to xlsx file.}
 
 \item{sheet}{Either sheet name or index. When missing the first sheet in the workbook is selected.}
 
-\item{startRow}{first row to begin looking for data.}
+\item{start_row}{first row to begin looking for data.}
 
-\item{startCol}{first column to begin looking for data.}
+\item{start_col}{first column to begin looking for data.}
 
-\item{rowNames}{If TRUE, the first col of data will be used as row names.}
+\item{row_names}{If TRUE, the first col of data will be used as row names.}
 
-\item{colNames}{If TRUE, the first row of data will be used as column names.}
+\item{col_names}{If TRUE, the first row of data will be used as column names.}
 
-\item{skipEmptyRows}{If TRUE, empty rows are skipped.}
+\item{skip_empty_rows}{If TRUE, empty rows are skipped.}
 
-\item{skipEmptyCols}{If TRUE, empty columns are skipped.}
+\item{skip_empty_cols}{If TRUE, empty columns are skipped.}
 
-\item{skipHiddenRows}{If TRUE, hidden rows are skipped.}
+\item{skip_hidden_rows}{If TRUE, hidden rows are skipped.}
 
-\item{skipHiddenCols}{If TRUE, hidden columns are skipped.}
+\item{skip_hidden_cols}{If TRUE, hidden columns are skipped.}
 
 \item{rows}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
 
 \item{cols}{A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.}
 
-\item{detectDates}{If TRUE, attempt to recognize dates and perform conversion.}
+\item{detect_dates}{If TRUE, attempt to recognize dates and perform conversion.}
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 
 \item{na.numbers}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
 
-\item{fillMergedCells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+\item{fill_merged_cells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
 
 \item{dims}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
-\item{showFormula}{If TRUE, the underlying Excel formulas are shown.}
+\item{show_formula}{If TRUE, the underlying Excel formulas are shown.}
 
 \item{convert}{If TRUE, a conversion to dates and numerics is attempted.}
 
@@ -73,6 +74,8 @@ wb_to_df(
 \item{named_region}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
 
 \item{keep_attributes}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
+
+\item{...}{additional arguments}
 }
 \description{
 Simple function to create a dataframe from a workbook. Simple as in simply

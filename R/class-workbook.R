@@ -1385,77 +1385,81 @@ wbWorkbook <- R6::R6Class(
     ### to dataframe ----
     #' @description to_df
     #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
-    #' @param colNames If TRUE, the first row of data will be used as column names.
-    #' @param rowNames If TRUE, the first col of data will be used as row names.
+    #' @param col_names If TRUE, the first row of data will be used as column names.
+    #' @param row_names If TRUE, the first col of data will be used as row names.
     #' @param dims Character string of type "A1:B2" as optional dimensions to be imported.
-    #' @param detectDates If TRUE, attempt to recognize dates and perform conversion.
-    #' @param showFormula If TRUE, the underlying Excel formulas are shown.
+    #' @param detect_dates If TRUE, attempt to recognize dates and perform conversion.
+    #' @param show_formula If TRUE, the underlying Excel formulas are shown.
     #' @param convert If TRUE, a conversion to dates and numerics is attempted.
-    #' @param skipEmptyCols If TRUE, empty columns are skipped.
-    #' @param skipEmptyRows If TRUE, empty rows are skipped.
-    #' @param skipHiddenCols If TRUE, hidden columns are skipped.
-    #' @param skipHiddenRows If TRUE, hidden rows are skipped.
-    #' @param startRow first row to begin looking for data.
-    #' @param startCol first column to begin looking for data.
+    #' @param skip_empty_cols If TRUE, empty columns are skipped.
+    #' @param skip_empty_rows If TRUE, empty rows are skipped.
+    #' @param skip_hidden_cols If TRUE, hidden columns are skipped.
+    #' @param skip_hidden_rows If TRUE, hidden rows are skipped.
+    #' @param start_row first row to begin looking for data.
+    #' @param start_col first column to begin looking for data.
     #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
     #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
     #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
     #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
     #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
     #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
-    #' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+    #' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
+    #' @param ... additional arguments
     #' @return a data frame
     to_df = function(
       sheet,
-      startRow        = 1,
-      startCol        = NULL,
-      rowNames        = FALSE,
-      colNames        = TRUE,
-      skipEmptyRows   = FALSE,
-      skipEmptyCols   = FALSE,
-      skipHiddenRows  = FALSE,
-      skipHiddenCols  = FALSE,
-      rows            = NULL,
-      cols            = NULL,
-      detectDates     = TRUE,
-      na.strings      = "#N/A",
-      na.numbers      = NA,
-      fillMergedCells = FALSE,
+      start_row         = 1,
+      start_col         = NULL,
+      row_names         = FALSE,
+      col_names         = TRUE,
+      skip_empty_rows   = FALSE,
+      skip_empty_cols   = FALSE,
+      skip_hidden_rows  = FALSE,
+      skip_hidden_cols  = FALSE,
+      rows              = NULL,
+      cols              = NULL,
+      detect_dates      = TRUE,
+      na.strings        = "#N/A",
+      na.numbers        = NA,
+      fill_merged_cells = FALSE,
       dims,
-      showFormula     = FALSE,
-      convert         = TRUE,
+      show_formula      = FALSE,
+      convert           = TRUE,
       types,
       named_region,
-      keep_attributes = FALSE
+      keep_attributes   = FALSE,
+      ...
     ) {
 
       if (missing(sheet)) sheet <- substitute()
       if (missing(dims)) dims <- substitute()
       if (missing(named_region)) named_region <- substitute()
 
+      standardize_case_names(...)
+
       wb_to_df(
-        xlsxFile        = self,
-        sheet           = sheet,
-        startRow        = startRow,
-        startCol        = startCol,
-        rowNames        = rowNames,
-        colNames        = colNames,
-        skipEmptyRows   = skipEmptyRows,
-        skipEmptyCols   = skipEmptyCols,
-        skipHiddenRows  = skipHiddenRows,
-        skipHiddenCols  = skipHiddenCols,
-        rows            = rows,
-        cols            = cols,
-        detectDates     = detectDates,
-        na.strings      = na.strings,
-        na.numbers      = na.numbers,
-        fillMergedCells = fillMergedCells,
-        dims            = dims,
-        showFormula     = showFormula,
-        convert         = convert,
-        types           = types,
-        named_region    = named_region
+        xlsx_file         = self,
+        sheet             = sheet,
+        start_row         = start_row,
+        start_col         = start_col,
+        row_names         = row_names,
+        col_names         = col_names,
+        skip_empty_rows   = skip_empty_rows,
+        skip_empty_cols   = skip_empty_cols,
+        skip_hidden_rows  = skip_hidden_rows,
+        skip_hidden_cols  = skip_hidden_cols,
+        rows              = rows,
+        cols              = cols,
+        detect_dates      = detect_dates,
+        na.strings        = na.strings,
+        na.numbers        = na.numbers,
+        fill_merged_cells = fill_merged_cells,
+        dims              = dims,
+        show_formula      = show_formula,
+        convert           = convert,
+        types             = types,
+        named_region      = named_region
       )
     },
 

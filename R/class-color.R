@@ -67,3 +67,35 @@ standardize_color_names <- function(...) {
     }
   }
 }
+
+#' takes camelCase and returns camel_case
+#' @param ... ...
+#' @returns void. assigns an object in the parent frame
+#' @keywords internal
+#' @noRd
+standardize_case_names <- function(...) {
+
+  # since R 4.1.0: ...names()
+  args <- list(...)
+  got <- names(args)
+
+  regex <- "(\\G(?!^)|\\b[a-zA-Z][a-z]*)([A-Z][a-z]*|\\d+)"
+
+  got_camel_cases <- which(grepl(regex, got, perl = TRUE))
+
+  if (length(got_camel_cases)) {
+    for (got_camel_case in got_camel_cases) {
+      camel_case <- got[got_camel_case]
+      name_camel_case <- gsub(
+        pattern     = regex,
+        replacement = "\\L\\1_\\2",
+        x           = camel_case,
+        perl        = TRUE
+      )
+      # since R 3.5.0: ...elt(got_col)
+      value_camel_calse <- args[[got_camel_case]]
+      assign(name_camel_case, value_camel_calse, parent.frame())
+    }
+  }
+
+}

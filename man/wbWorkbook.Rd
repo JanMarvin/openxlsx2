@@ -810,26 +810,27 @@ to_df
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$to_df(
   sheet,
-  startRow = 1,
-  startCol = NULL,
-  rowNames = FALSE,
-  colNames = TRUE,
-  skipEmptyRows = FALSE,
-  skipEmptyCols = FALSE,
-  skipHiddenRows = FALSE,
-  skipHiddenCols = FALSE,
+  start_row = 1,
+  start_col = NULL,
+  row_names = FALSE,
+  col_names = TRUE,
+  skip_empty_rows = FALSE,
+  skip_empty_cols = FALSE,
+  skip_hidden_rows = FALSE,
+  skip_hidden_cols = FALSE,
   rows = NULL,
   cols = NULL,
-  detectDates = TRUE,
+  detect_dates = TRUE,
   na.strings = "#N/A",
   na.numbers = NA,
-  fillMergedCells = FALSE,
+  fill_merged_cells = FALSE,
   dims,
-  showFormula = FALSE,
+  show_formula = FALSE,
   convert = TRUE,
   types,
   named_region,
-  keep_attributes = FALSE
+  keep_attributes = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -838,37 +839,37 @@ to_df
 \describe{
 \item{\code{sheet}}{Either sheet name or index. When missing the first sheet in the workbook is selected.}
 
-\item{\code{startRow}}{first row to begin looking for data.}
+\item{\code{start_row}}{first row to begin looking for data.}
 
-\item{\code{startCol}}{first column to begin looking for data.}
+\item{\code{start_col}}{first column to begin looking for data.}
 
-\item{\code{rowNames}}{If TRUE, the first col of data will be used as row names.}
+\item{\code{row_names}}{If TRUE, the first col of data will be used as row names.}
 
-\item{\code{colNames}}{If TRUE, the first row of data will be used as column names.}
+\item{\code{col_names}}{If TRUE, the first row of data will be used as column names.}
 
-\item{\code{skipEmptyRows}}{If TRUE, empty rows are skipped.}
+\item{\code{skip_empty_rows}}{If TRUE, empty rows are skipped.}
 
-\item{\code{skipEmptyCols}}{If TRUE, empty columns are skipped.}
+\item{\code{skip_empty_cols}}{If TRUE, empty columns are skipped.}
 
-\item{\code{skipHiddenRows}}{If TRUE, hidden rows are skipped.}
+\item{\code{skip_hidden_rows}}{If TRUE, hidden rows are skipped.}
 
-\item{\code{skipHiddenCols}}{If TRUE, hidden columns are skipped.}
+\item{\code{skip_hidden_cols}}{If TRUE, hidden columns are skipped.}
 
 \item{\code{rows}}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
 
 \item{\code{cols}}{A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.}
 
-\item{\code{detectDates}}{If TRUE, attempt to recognize dates and perform conversion.}
+\item{\code{detect_dates}}{If TRUE, attempt to recognize dates and perform conversion.}
 
 \item{\code{na.strings}}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 
 \item{\code{na.numbers}}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
 
-\item{\code{fillMergedCells}}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+\item{\code{fill_merged_cells}}{If TRUE, the value in a merged cell is given to all cells within the merge.}
 
 \item{\code{dims}}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
-\item{\code{showFormula}}{If TRUE, the underlying Excel formulas are shown.}
+\item{\code{show_formula}}{If TRUE, the underlying Excel formulas are shown.}
 
 \item{\code{convert}}{If TRUE, a conversion to dates and numerics is attempted.}
 
@@ -877,6 +878,8 @@ to_df
 \item{\code{named_region}}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
 
 \item{\code{keep_attributes}}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
