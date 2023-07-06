@@ -735,6 +735,12 @@ write_data_table <- function(
     startRow <- min(dims[[2]])
   }
 
+  if (data_table && nrow(x) < 1) {
+    warning("Found data table with zero rows, adding one.",
+            " Modify na with na.strings")
+    x[1, ] <- NA
+  }
+
   ## common part ---------------------------------------------------------------
   if ((!is.character(sep)) || (length(sep) != 1))
     stop("sep must be a character vector of length 1")
