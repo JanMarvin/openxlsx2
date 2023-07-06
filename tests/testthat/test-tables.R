@@ -19,14 +19,11 @@ test_that("write_datatable over tables", {
   wb$add_data_table(sheet = 1, x = df1, startCol = 8, startRow = 11)
   wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 4, startRow = 1)
 
-
-
   ## Now error
   expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = "H", startRow = 21), regexp = overwrite_table_error)
   expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = 3, startRow = 12), regexp = overwrite_table_error)
   expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = 9, startRow = 12), regexp = overwrite_table_error)
   expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = "i", startRow = 12), regexp = overwrite_table_error)
-
 
   ## more errors
   expect_error(wb$add_data_table(sheet = 1, x = head(iris)), regexp = overwrite_table_error)
@@ -35,7 +32,6 @@ test_that("write_datatable over tables", {
   ## should work
   wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 22)
   wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 40)
-
 
   ## more errors
   expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 4, startRow = 38), regexp = overwrite_table_error)
@@ -49,9 +45,21 @@ test_that("write_datatable over tables", {
   expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 1, startRow = 46, colNames = FALSE), regexp = overwrite_table_error)
 })
 
+test_that("zero row data table works", {
 
+  wb <- wb_workbook() %>%
+    wb_add_worksheet()
 
+  expect_warning(
+    wb$add_data_table(x = data.frame(a = NA, b = NA)[0, ]),
+    "Found data table with zero rows, adding one. Modify na with na.strings"
+  )
 
+  exp <- "A1:B2"
+  got <- wb$tables$tab_ref
+  expect_equal(exp, got)
+
+})
 
 test_that("write_data over tables", {
   overwrite_table_error <- "Cannot overwrite table headers. Avoid writing over the header row"
@@ -72,15 +80,12 @@ test_that("write_data over tables", {
     wb$add_data(sheet = 1, x = head(iris), startRow = i, startCol = "i")
   }
 
-
-
   ## Now errors on headers
   expect_error(wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 4), regexp = overwrite_table_error)
   wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 5)
   wb$add_data(sheet = 1, x = head(iris)[1:3])
   wb$add_data(sheet = 1, x = head(iris, 2), startCol = 4)
   wb$add_data(sheet = 1, x = head(iris, 2), startCol = 4, colNames = FALSE)
-
 
   ## Example of how this should be used
   wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 30)
