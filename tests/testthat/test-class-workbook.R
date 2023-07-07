@@ -693,7 +693,7 @@ test_that("various image functions work as expected", {
 
   expect_warning(
     wb$add_worksheet()$add_image(file = img, width = 6, height = 5, dims = NULL, startRow = 2, startCol = 2),
-    "dims is NULL, startRow/startCol will have no impact"
+    "'start_col/start_row' is deprecated."
   )
 
 })

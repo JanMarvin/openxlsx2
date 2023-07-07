@@ -1466,26 +1466,29 @@ wbWorkbook <- R6::R6Class(
     ### load workbook ----
     #' @description load workbook
     #' @param file file
-    #' @param xlsxFile xlsxFile
+    #' @param xlsx_file xlsx_file
     #' @param sheet sheet
     #' @param data_only data_only
     #' @param calc_chain calc_chain
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object invisibly
     load = function(
       file,
-      xlsxFile   = NULL,
+      xlsx_file  = NULL,
       sheet,
       data_only  = FALSE,
-      calc_chain = FALSE
+      calc_chain = FALSE,
+      ...
     ) {
       if (missing(file)) file <- substitute()
       if (missing(sheet)) sheet <- substitute()
       self <- wb_load(
         file       = file,
-        xlsxFile   = xlsxFile,
+        xlsx_file  = xlsx_file,
         sheet      = sheet,
         data_only  = data_only,
-        calc_chain = calc_chain
+        calc_chain = calc_chain,
+        ...        = ...
       )
       invisible(self)
     },
@@ -4009,36 +4012,39 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Insert an image into a sheet
     #' @param sheet sheet
+    #' @param dims dims
     #' @param file file
-    #' @param startRow startRow
-    #' @param startCol startCol
     #' @param width width
     #' @param height height
-    #' @param rowOffset rowOffset
-    #' @param colOffset colOffset
+    #' @param row_offset,col_offset offsets
     #' @param units units
     #' @param dpi dpi
-    #' @param dims dims
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
       sheet = current_sheet(),
+      dims      = "A1",
       file,
       width     = 6,
       height    = 3,
-      startRow  = 1,
-      startCol  = 1,
-      rowOffset = 0,
-      colOffset = 0,
+      row_offset = 0,
+      col_offset = 0,
       units     = "in",
       dpi       = 300,
-      dims      = rowcol_to_dim(startRow, startCol)
+      ...
     ) {
-      if (!file.exists(file)) {
-        stop("File ", file, " does not exist.")
+
+      standardize_case_names(...)
+
+      if (exists("start_row") && !is.null(start_row) &&
+          exists("start_col") && !is.null(start_col)) {
+        .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
+        start_col <- col2int(start_col)
+        start_row <- as.integer(start_row)
       }
 
-      if (is.null(dims) && (startRow > 1 || startCol > 1)) {
-        warning("dims is NULL, startRow/startCol will have no impact")
+      if (!file.exists(file)) {
+        stop("File ", file, " does not exist.")
       }
 
       # TODO require user to pass a valid path
@@ -4052,9 +4058,6 @@ wbWorkbook <- R6::R6Class(
       if (!units %in% c("cm", "in", "px")) {
         stop("Invalid units.\nunits must be one of: cm, in, px")
       }
-
-      startCol <- col2int(startCol)
-      startRow <- as.integer(startRow)
 
       ## convert to inches
       if (units == "px") {
@@ -4075,8 +4078,6 @@ wbWorkbook <- R6::R6Class(
       imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
       imageType <- gsub("^\\.", "", imageType)
       mediaNo <- length(self$media) + 1L
-
-      startCol <- col2int(startCol)
 
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
@@ -4129,8 +4130,13 @@ wbWorkbook <- R6::R6Class(
         xml_attributes = xml_attr
       )
 
-      self$add_drawing(sheet, drawing, dims, colOffset, rowOffset)
-
+      self$add_drawing(
+        sheet      = sheet,
+        dims       = dims,
+        xml        = drawing,
+        col_offset = col_offset,
+        row_offset = row_offset
+      )
 
       # add image to drawings_rels
       old_drawings_rels <- unlist(self$drawings_rels[[sheet_drawing]])
@@ -4153,36 +4159,42 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Add plot. A wrapper for add_image()
     #' @param sheet sheet
+    #' @param dims dims
     #' @param width width
     #' @param height height
-    #' @param startRow startRow
-    #' @param startCol startCol
-    #' @param rowOffset rowOffset
-    #' @param colOffset colOffset
-    #' @param fileType fileType
+    #' @param row_offset,col_offset offsets
+    #' @param file_type fileType
     #' @param units units
     #' @param dpi dpi
-    #' @param dims dims
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_plot = function(
-      sheet = current_sheet(),
-      width     = 6,
-      height    = 4,
-      startRow  = 1,
-      startCol  = 1,
-      rowOffset = 0,
-      colOffset = 0,
-      fileType  = "png",
-      units     = "in",
-      dpi       = 300,
-      dims      = rowcol_to_dim(startRow, startCol)
+      sheet      = current_sheet(),
+      dims       = "A1",
+      width      = 6,
+      height     = 4,
+      row_offset = 0,
+      col_offset = 0,
+      file_type  = "png",
+      units      = "in",
+      dpi        = 300,
+      ...
     ) {
+
+      standardize_case_names(...)
+
+      if (exists("start_row") && !is.null(start_row) &&
+          exists("start_col") && !is.null(start_col)) {
+        .Deprecated(old = "start_row/start_col", new = "dims", package = "openxlsx2")
+        dims <- rowcol_to_dims(start_row, start_col)
+      }
+
       if (is.null(dev.list()[[1]])) {
         warning("No plot to insert.")
         return(invisible(self))
       }
 
-      fileType <- tolower(fileType)
+      fileType <- tolower(file_type)
       units <- tolower(units)
 
       # TODO just don't allow jpg
@@ -4199,7 +4211,7 @@ wbWorkbook <- R6::R6Class(
         stop("Invalid units.\nunits must be one of: cm, in, px")
       }
 
-      fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", fileType))
+      fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", file_type))
 
       # Workaround for wrapper test. Otherwise tempfile names differ
       if (requireNamespace("testthat")) {
@@ -4222,17 +4234,15 @@ wbWorkbook <- R6::R6Class(
       stopifnot(file.exists(fileName))
 
       self$add_image(
-        sheet     = sheet,
-        file      = fileName,
-        width     = width,
-        height    = height,
-        startRow  = startRow,
-        startCol  = startCol,
-        rowOffset = rowOffset,
-        colOffset = colOffset,
-        units     = units,
-        dpi       = dpi,
-        dims      = dims
+        sheet      = sheet,
+        dims       = dims,
+        file       = fileName,
+        width      = width,
+        height     = height,
+        row_offset = row_offset,
+        col_offset = col_offset,
+        units      = units,
+        dpi        = dpi
       )
     },
 
@@ -4240,15 +4250,20 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param dims dims
     #' @param xml xml
-    #' @param colOffset,rowOffset offsets for column and row
+    #' @param col_offset,row_offset offsets for column and row
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_drawing = function(
-      sheet = current_sheet(),
+      sheet      = current_sheet(),
+      dims       = "A1",
       xml,
-      dims = NULL,
-      colOffset = 0,
-      rowOffset = 0
+      col_offset = 0,
+      row_offset = 0,
+      ...
     ) {
+
+      standardize_case_names(...)
+
       sheet <- private$get_sheet_index(sheet)
 
       is_chartsheet <- self$is_chartsheet[sheet]
@@ -4299,8 +4314,8 @@ wbWorkbook <- R6::R6Class(
           dims_list <- strsplit(dims, ":")[[1]]
           cols <- col2int(dims_list)
           rows <- as.numeric(gsub("\\D+", "", dims_list))
-          if (length(colOffset) != 2) colOffset <- rep(colOffset, 2)
-          if (length(rowOffset) != 2) rowOffset <- rep(rowOffset, 2)
+          if (length(col_offset) != 2) col_offset <- rep(col_offset, 2)
+          if (length(row_offset) != 2) row_offset <- rep(row_offset, 2)
 
           anchor <- paste0(
             "<xdr:from>",
@@ -4314,10 +4329,10 @@ wbWorkbook <- R6::R6Class(
           )
           anchor <- sprintf(
             anchor,
-            cols[1] - 1L, colOffset[1],
-            rows[1] - 1L, rowOffset[1],
-            cols[2], colOffset[2],
-            rows[2], rowOffset[2]
+            cols[1] - 1L, col_offset[1],
+            rows[1] - 1L, row_offset[1],
+            cols[2], col_offset[2],
+            rows[2], row_offset[2]
           )
 
         } else {
@@ -4335,8 +4350,8 @@ wbWorkbook <- R6::R6Class(
           )
           anchor <- sprintf(
             anchor,
-            cols[1] - 1L, colOffset[1],
-            rows[1] - 1L, rowOffset[1]
+            cols[1] - 1L, col_offset[1],
+            rows[1] - 1L, row_offset[1]
           )
 
         }
@@ -4405,15 +4420,27 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param dims dims
     #' @param xml xml
-    #' @param colOffset,rowOffset startCol and startRow
+    #' @param col_offset,row_offset positioning parameters
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_chart_xml = function(
-      sheet     = current_sheet(),
+      sheet      = current_sheet(),
+      dims       = NULL,
       xml,
-      dims      = NULL,
-      colOffset = 0,
-      rowOffset = 0
+      col_offset = 0,
+      row_offset = 0,
+      ...
     ) {
+
+      args <- list(...)
+
+      standardize_case_names(...)
+
+      if (exists("start_row") && !is.null(start_row) &&
+          exists("start_col") && !is.null(start_col)) {
+        .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
+        dims <- rowcol_to_dims(args$start_row, args$start_col)
+      }
 
       sheet <- private$get_sheet_index(sheet)
       if (length(self$worksheets[[sheet]]$relships$drawing)) {
@@ -4427,12 +4454,12 @@ wbWorkbook <- R6::R6Class(
       next_chart <- NROW(self$charts) + 1
 
       chart <- data.frame(
-        chart = xml,
-        colors = colors1_xml,
-        style = styleplot_xml,
-        rels = chart1_rels_xml(next_chart),
+        chart   = xml,
+        colors  = colors1_xml,
+        style   = styleplot_xml,
+        rels    = chart1_rels_xml(next_chart),
         chartEx = "",
-        relsEx = ""
+        relsEx  = ""
       )
 
       self$charts <- rbind(self$charts, chart)
@@ -4441,11 +4468,11 @@ wbWorkbook <- R6::R6Class(
 
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
-        sheet     = sheet,
-        xml       = next_chart,
-        dims      = dims,
-        colOffset = colOffset,
-        rowOffset = rowOffset
+        sheet      = sheet,
+        dims       = dims,
+        xml        = next_chart,
+        col_offset = col_offset,
+        row_offset = row_offset
       )
 
       sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
@@ -4462,15 +4489,19 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet the sheet on which the graph will appear
     #' @param dims the dimensions where the sheet will appear
     #' @param graph mschart graph
-    #' @param colOffset,rowOffset startCol and startRow
+    #' @param col_offset,row_offset offsets for column and row
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_mschart = function(
-      sheet     = current_sheet(),
-      dims      = NULL,
+      sheet      = current_sheet(),
+      dims       = NULL,
       graph,
-      colOffset = 0,
-      rowOffset = 0
+      col_offset = 0,
+      row_offset = 0,
+      ...
     ) {
+
+      standardize_case_names(...)
 
       requireNamespace("mschart")
       assert_class(graph, "ms_chart")
@@ -4492,11 +4523,23 @@ wbWorkbook <- R6::R6Class(
       # write the chart data to the workbook
       if (inherits(graph$data_series, "wb_data")) {
         self$
-          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims, colOffset = colOffset, rowOffset = rowOffset)
+          add_chart_xml(
+            sheet      = sheet,
+            dims       = dims,
+            xml        = out_xml,
+            col_offset = col_offset,
+            row_offset = row_offset
+          )
       } else {
         self$
           add_data(sheet = sheet, x = graph$data_series)$
-          add_chart_xml(sheet = sheet, xml = out_xml, dims = dims, colOffset = colOffset, rowOffset = rowOffset)
+          add_chart_xml(
+            sheet      = sheet,
+            dims       = dims,
+            xml        = out_xml,
+            col_offset = col_offset,
+            row_offset = row_offset
+          )
       }
     },
 

@@ -895,10 +895,11 @@ load workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$load(
   file,
-  xlsxFile = NULL,
+  xlsx_file = NULL,
   sheet,
   data_only = FALSE,
-  calc_chain = FALSE
+  calc_chain = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -907,13 +908,15 @@ load workbook
 \describe{
 \item{\code{file}}{file}
 
-\item{\code{xlsxFile}}{xlsxFile}
+\item{\code{xlsx_file}}{xlsx_file}
 
 \item{\code{sheet}}{sheet}
 
 \item{\code{data_only}}{data_only}
 
 \item{\code{calc_chain}}{calc_chain}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1719,16 +1722,15 @@ Insert an image into a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_image(
   sheet = current_sheet(),
+  dims = "A1",
   file,
   width = 6,
   height = 3,
-  startRow = 1,
-  startCol = 1,
-  rowOffset = 0,
-  colOffset = 0,
+  row_offset = 0,
+  col_offset = 0,
   units = "in",
   dpi = 300,
-  dims = rowcol_to_dim(startRow, startCol)
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1737,25 +1739,21 @@ Insert an image into a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
+\item{\code{dims}}{dims}
+
 \item{\code{file}}{file}
 
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{rowOffset}}{rowOffset}
-
-\item{\code{colOffset}}{colOffset}
+\item{\code{row_offset, col_offset}}{offsets}
 
 \item{\code{units}}{units}
 
 \item{\code{dpi}}{dpi}
 
-\item{\code{dims}}{dims}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1771,16 +1769,15 @@ Add plot. A wrapper for add_image()
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_plot(
   sheet = current_sheet(),
+  dims = "A1",
   width = 6,
   height = 4,
-  startRow = 1,
-  startCol = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  fileType = "png",
+  row_offset = 0,
+  col_offset = 0,
+  file_type = "png",
   units = "in",
   dpi = 300,
-  dims = rowcol_to_dim(startRow, startCol)
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1789,25 +1786,21 @@ Add plot. A wrapper for add_image()
 \describe{
 \item{\code{sheet}}{sheet}
 
+\item{\code{dims}}{dims}
+
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
 
-\item{\code{startRow}}{startRow}
+\item{\code{row_offset, col_offset}}{offsets}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{rowOffset}}{rowOffset}
-
-\item{\code{colOffset}}{colOffset}
-
-\item{\code{fileType}}{fileType}
+\item{\code{file_type}}{fileType}
 
 \item{\code{units}}{units}
 
 \item{\code{dpi}}{dpi}
 
-\item{\code{dims}}{dims}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1820,10 +1813,11 @@ Add xml drawing
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(
   sheet = current_sheet(),
+  dims = "A1",
   xml,
-  dims = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1832,11 +1826,13 @@ Add xml drawing
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{xml}}{xml}
-
 \item{\code{dims}}{dims}
 
-\item{\code{colOffset, rowOffset}}{offsets for column and row}
+\item{\code{xml}}{xml}
+
+\item{\code{col_offset, row_offset}}{offsets for column and row}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1852,10 +1848,11 @@ Add xml chart
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(
   sheet = current_sheet(),
-  xml,
   dims = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  xml,
+  col_offset = 0,
+  row_offset = 0,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1864,11 +1861,13 @@ Add xml chart
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{xml}}{xml}
-
 \item{\code{dims}}{dims}
 
-\item{\code{colOffset, rowOffset}}{startCol and startRow}
+\item{\code{xml}}{xml}
+
+\item{\code{col_offset, row_offset}}{positioning parameters}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1883,8 +1882,9 @@ Add mschart chart to the workbook
   sheet = current_sheet(),
   dims = NULL,
   graph,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1897,7 +1897,9 @@ Add mschart chart to the workbook
 
 \item{\code{graph}}{mschart graph}
 
-\item{\code{colOffset, rowOffset}}{startCol and startRow}
+\item{\code{col_offset, row_offset}}{offsets for column and row}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

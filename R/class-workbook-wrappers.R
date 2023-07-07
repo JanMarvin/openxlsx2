@@ -846,17 +846,15 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param startRow Row coordinate of upper left corner of figure.
-#' @param startCol Column coordinate of upper left corner of figure.
-#' @param rowOffset offset within cell (row)
-#' @param colOffset offset within cell (column)
+#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
+#' @param row_offset,col_offset offset for column and row
 #' @param width Width of figure. Defaults to `6`in.
 #' @param height Height of figure . Defaults to `4`in.
-#' @param fileType File type of image
+#' @param file_type File type of image
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution
-#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @seealso [wb_add_image()]
+#' @param ... additional arguments
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()]
 #' @export
 #' @examples
 #' if (requireNamespace("ggplot2") && interactive()) {
@@ -885,40 +883,39 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' }
 wb_add_plot <- function(
     wb,
-    sheet     = current_sheet(),
-    width     = 6,
-    height    = 4,
-    startRow  = 1,
-    startCol  = 1,
-    rowOffset = 0,
-    colOffset = 0,
-    fileType  = "png",
-    units     = "in",
-    dpi       = 300,
-    dims      = rowcol_to_dim(startRow, startCol)
+    sheet      = current_sheet(),
+    dims       = "A1",
+    width      = 6,
+    height     = 4,
+    row_offset = 0,
+    col_offset = 0,
+    file_type  = "png",
+    units      = "in",
+    dpi        = 300,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_plot(
-    sheet     = sheet,
-    width     = width,
-    height    = height,
-    startRow  = startRow,
-    startCol  = startCol,
-    rowOffset = rowOffset,
-    colOffset = colOffset,
-    fileType  = fileType,
-    units     = units,
-    dpi       = dpi,
-    dims      = dims
+    sheet      = sheet,
+    dims       = dims,
+    width      = width,
+    height     = height,
+    row_offset = row_offset,
+    col_offset = col_offset,
+    file_type  = file_type,
+    units      = units,
+    dpi        = dpi,
+    ...        = ...
   )
 }
 
 #' add drawings to workbook
 #' @param wb a wbWorkbook
 #' @param sheet a sheet in the workbook
-#' @param xml the drawing xml as character or file
 #' @param dims the dimension where the drawing is added. Can be NULL
-#' @param colOffset,rowOffset offsets for column and row
+#' @param xml the drawing xml as character or file
+#' @param col_offset,row_offset offsets for column and row
+#' @param ... additional arguments
 #' @examples
 #' if (requireNamespace("rvg") && interactive()) {
 #'
@@ -934,22 +931,86 @@ wb_add_plot <- function(
 #'   add_drawing(xml = tmp)$
 #'   add_drawing(xml = tmp, dims = NULL)
 #' }
+#' @seealso [wb_add_chart_xml()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #‘ @export
 wb_add_drawing <- function(
   wb,
-  sheet     = current_sheet(),
+  sheet      = current_sheet(),
+  dims       = "A1",
   xml,
-  dims      = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_drawing(
-    sheet     = sheet,
-    xml       = xml,
-    dims      = dims,
-    colOffset = colOffset,
-    rowOffset = rowOffset
+    sheet      = sheet,
+    dims       = dims,
+    xml        = xml,
+    col_offset = col_offset,
+    row_offset = row_offset,
+    ...        = ...
+  )
+}
+
+#' Add mschart object to an existing workbook
+#' @param wb a workbook
+#' @param sheet the sheet on which the graph will appear
+#' @param dims the dimensions where the sheet will appear
+#' @param graph mschart object
+#' @param col_offset,row_offset offsets for column and row
+#' @param ... additional arguments
+#' @examples
+#' if (requireNamespace("mschart")) {
+#' require(mschart)
+#'
+#' ## Add mschart to worksheet (adds data and chart)
+#' scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
+#' scatter <- chart_settings(scatter, scatterstyle = "marker")
+#'
+#' wb <- wb_workbook() %>%
+#'  wb_add_worksheet() %>%
+#'  wb_add_mschart(dims = "F4:L20", graph = scatter)
+#'
+#' ## Add mschart to worksheet and use available data
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet() %>%
+#'   wb_add_data(x = mtcars, dims = "B2")
+#'
+#' # create wb_data object
+#' dat <- wb_data(wb, 1, dims = "B2:E6")
+#'
+#' # call ms_scatterplot
+#' data_plot <- ms_scatterchart(
+#'   data = dat,
+#'   x = "mpg",
+#'   y = c("disp", "hp"),
+#'   labels = c("disp", "hp")
+#' )
+#'
+#' # add the scatterplot to the data
+#' wb <- wb %>%
+#'   wb_add_mschart(dims = "F4:L20", graph = data_plot)
+#' }
+#' @seealso [wb_data()] [wb_add_chart_xml()] [wb_add_image] [wb_add_mschart()] [wb_add_plot]
+#' @export
+wb_add_mschart <- function(
+    wb,
+    sheet      = current_sheet(),
+    dims       = NULL,
+    graph,
+    col_offset = 0,
+    row_offset = 0,
+    ...
+) {
+  assert_workbook(wb)
+  wb$clone()$add_mschart(
+    sheet      = sheet,
+    dims       = dims,
+    graph      = graph,
+    col_offset = col_offset,
+    row_offset = row_offset,
+    ...        = ...
   )
 }
 
@@ -2171,59 +2232,52 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
+#' @param dims Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor
 #' @param file An image file. Valid file types are:` "jpeg"`, `"png"`, `"bmp"`
 #' @param width Width of figure.
 #' @param height Height of figure.
-#' @param startRow Row coordinate of upper left corner of the image
-#' @param startCol Column coordinate of upper left corner of the image
-#' @param rowOffset offset vector for one or two cell anchor within cell (row)
-#' @param colOffset offset vector for one or two cell anchor within cell (column)
+#' @param row_offset offset vector for one or two cell anchor within cell (row)
+#' @param col_offset offset vector for one or two cell anchor within cell (column)
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
-#' @param dims Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor
-#' @seealso [wb_add_plot()]
+#' @param ... additional arguments
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 #' @examples
-#' ## Create a new workbook
-#' wb <- wb_workbook("Ayanami")
-#'
-#' ## Add some worksheets
-#' wb$add_worksheet("Sheet 1")
-#' wb$add_worksheet("Sheet 2")
-#' wb$add_worksheet("Sheet 3")
-#'
-#' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-#' wb$add_image(2, img, startRow = 2, startCol = 2)
-#' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#'
+#' wb <- wb_workbook()$
+#'   add_worksheet()$
+#'   add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5)$
+#'   add_worksheet()$
+#'   add_image(dims = "B2", file = img)$
+#'   add_worksheet()$
+#'   add_image(dims = "G3", file = img, width = 15, height = 12, units = "cm")
 wb_add_image <- function(
   wb,
-  sheet     = current_sheet(),
+  sheet      = current_sheet(),
+  dims       = "A1",
   file,
-  width     = 6,
-  height    = 3,
-  startRow  = 1,
-  startCol  = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  units     = "in",
-  dpi       = 300,
-  dims      = rowcol_to_dim(startRow, startCol)
+  width      = 6,
+  height     = 3,
+  row_offset = 0,
+  col_offset = 0,
+  units      = "in",
+  dpi        = 300,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_image(
-    sheet     = sheet,
-    file      = file,
-    startRow  = startRow,
-    startCol  = startCol,
-    width     = width,
-    height    = height,
-    rowOffset = rowOffset,
-    colOffset = colOffset,
-    units     = units,
-    dpi       = dpi,
-    dims      = dims
+    sheet      = sheet,
+    dims       = dims,
+    file       = file,
+    width      = width,
+    height     = height,
+    row_offset = row_offset,
+    col_offset = col_offset,
+    units      = units,
+    dpi        = dpi,
+    ...
   )
 }
 
@@ -2231,20 +2285,30 @@ wb_add_image <- function(
 #' add a chart xml to a workbook
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
-#' @param xml chart xml
 #' @param dims the dimensions where the sheet will appear
-#' @param colOffset,rowOffset startCol and startRow
+#' @param xml chart xml
+#' @param col_offset,row_offset positioning
+#' @param ... additional arguments
+#' @seealso [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 wb_add_chart_xml <- function(
   wb,
-  sheet     = current_sheet(),
+  sheet      = current_sheet(),
+  dims       = NULL,
   xml,
-  dims      = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_chart_xml(sheet, xml, dims, colOffset, rowOffset)
+  wb$clone()$add_chart_xml(
+    sheet      = sheet,
+    xml        = xml,
+    dims       = dims,
+    col_offset = col_offset,
+    row_offset = row_offset,
+    ...        = ...
+  )
 }
 
 

@@ -939,58 +939,6 @@ wb_set_selected <- function(wb, sheet) {
   wb
 }
 
-#' Add mschart object to an existing workbook
-#' @param wb a workbook
-#' @param sheet the sheet on which the graph will appear
-#' @param dims the dimensions where the sheet will appear
-#' @param graph mschart object
-#' @param colOffset,rowOffset startCol and startRow
-#' @examples
-#' if (requireNamespace("mschart")) {
-#' require(mschart)
-#'
-#' ## Add mschart to worksheet (adds data and chart)
-#' scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
-#' scatter <- chart_settings(scatter, scatterstyle = "marker")
-#'
-#' wb <- wb_workbook() %>%
-#'  wb_add_worksheet() %>%
-#'  wb_add_mschart(dims = "F4:L20", graph = scatter)
-#'
-#' ## Add mschart to worksheet and use available data
-#' wb <- wb_workbook() %>%
-#'   wb_add_worksheet() %>%
-#'   wb_add_data(x = mtcars, dims = "B2")
-#'
-#' # create wb_data object
-#' dat <- wb_data(wb, 1, dims = "B2:E6")
-#'
-#' # call ms_scatterplot
-#' data_plot <- ms_scatterchart(
-#'   data = dat,
-#'   x = "mpg",
-#'   y = c("disp", "hp"),
-#'   labels = c("disp", "hp")
-#' )
-#'
-#' # add the scatterplot to the data
-#' wb <- wb %>%
-#'   wb_add_mschart(dims = "F4:L20", graph = data_plot)
-#' }
-#' @seealso [wb_data()]
-#' @export
-wb_add_mschart <- function(
-    wb,
-    sheet     = current_sheet(),
-    dims      = NULL,
-    graph,
-    colOffset = 0,
-    rowOffset = 0
-) {
-  assert_workbook(wb)
-  wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph, colOffset = colOffset, rowOffset = rowOffset)
-}
-
 #' provide wb_data object as mschart input
 #' @param wb a workbook
 #' @param sheet a sheet in the workbook either name or index
