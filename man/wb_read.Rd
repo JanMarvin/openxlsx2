@@ -5,40 +5,40 @@
 \title{Read from an Excel file or Workbook object}
 \usage{
 wb_read(
-  xlsxFile,
+  xlsx_file,
   sheet = 1,
-  startRow = 1,
-  startCol = NULL,
-  rowNames = FALSE,
-  colNames = TRUE,
-  skipEmptyRows = FALSE,
-  skipEmptyCols = FALSE,
+  start_row = 1,
+  start_col = NULL,
+  row_names = FALSE,
+  col_names = TRUE,
+  skip_empty_rows = FALSE,
+  skip_empty_cols = FALSE,
   rows = NULL,
   cols = NULL,
-  detectDates = TRUE,
-  namedRegion,
+  detect_dates = TRUE,
+  named_region,
   na.strings = "NA",
   na.numbers = NA,
   ...
 )
 }
 \arguments{
-\item{xlsxFile}{An xlsx file, Workbook object or URL to xlsx file.}
+\item{xlsx_file}{An xlsx file, Workbook object or URL to xlsx file.}
 
 \item{sheet}{The name or index of the sheet to read data from.}
 
-\item{startRow}{first row to begin looking for data.}
+\item{start_row}{first row to begin looking for data.}
 
-\item{startCol}{first column to begin looking for data.}
+\item{start_col}{first column to begin looking for data.}
 
-\item{rowNames}{If \code{TRUE}, first column of data will be used as row names.}
+\item{row_names}{If \code{TRUE}, first column of data will be used as row names.}
 
-\item{colNames}{If \code{TRUE}, the first row of data will be used as column names.}
+\item{col_names}{If \code{TRUE}, the first row of data will be used as column names.}
 
-\item{skipEmptyRows}{If \code{TRUE}, empty rows are skipped else empty rows after the first row containing data
+\item{skip_empty_rows}{If \code{TRUE}, empty rows are skipped else empty rows after the first row containing data
 will return a row of NAs.}
 
-\item{skipEmptyCols}{If \code{TRUE}, empty columns are skipped.}
+\item{skip_empty_cols}{If \code{TRUE}, empty columns are skipped.}
 
 \item{rows}{A numeric vector specifying which rows in the Excel file to read.
 If NULL, all rows are read.}
@@ -46,9 +46,9 @@ If NULL, all rows are read.}
 \item{cols}{A numeric vector specifying which columns in the Excel file to read.
 If NULL, all columns are read.}
 
-\item{detectDates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
+\item{detect_dates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
 
-\item{namedRegion}{A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.}
+\item{named_region}{A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.}
 
 \item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 

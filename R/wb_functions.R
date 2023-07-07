@@ -683,14 +683,14 @@ wb_to_df <- function(
           # TODO there probably is a better way in not reducing cc above, so
           # that we do not have to go through large xlsx files multiple times
           z_fill <- wb_to_df(
-            xlsxFile = wb,
-            sheet = sheet,
-            dims = filler,
-            na.strings = na.strings,
-            convert = FALSE,
-            colNames = FALSE,
-            detectDates = detect_dates,
-            showFormula = show_formula,
+            xlsx_file       = wb,
+            sheet           = sheet,
+            dims            = filler,
+            na.strings      = na.strings,
+            convert         = FALSE,
+            col_names       = FALSE,
+            detect_dates    = detect_dates,
+            show_formula    = show_formula,
             keep_attributes = TRUE
           )
 
