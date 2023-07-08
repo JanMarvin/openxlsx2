@@ -94,7 +94,7 @@ test_that("wb_add_comment", {
 
   wb2 <- wb_workbook() %>%
     wb_add_worksheet() %>%
-    wb_add_comment(col = "A", row = 1, comment = c1)
+    wb_add_comment(dims = "A1", comment = c1)
 
   expect_equal(wb$comments, wb2$comments)
 
@@ -114,10 +114,17 @@ test_that("wb_remove_comment", {
     add_comment(dims = "A1", comment = c1)$
     remove_comment(dims = "A1")
 
-  wb2 <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_comment(col = "A", row = 1, comment = c1) %>%
-    wb_remove_comment(col = "A", row = 1)
+  # deprecated col / row code
+  wb2 <- wb_workbook() %>% wb_add_worksheet()
+  expect_warning(
+    wb2 <- wb2 %>%
+      wb_add_comment(col = "A", row = 1, comment = c1),
+    "'col/row' is deprecated."
+  )
+  expect_warning(
+    wb2 <- wb2 %>% wb_remove_comment(col = "A", row = 1),
+    "'col/row/gridExpand' is deprecated."
+  )
 
   expect_equal(wb$comments, wb2$comments)
 
@@ -141,7 +148,7 @@ test_that("removing comment sheet works", {
 
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
-    add_comment(1, col = "B", row = 10, comment = c1)$
+    add_comment(dims = "B10", comment = c1)$
     add_worksheet()$
     remove_worksheet(1)
 

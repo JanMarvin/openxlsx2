@@ -174,19 +174,24 @@ wbWorkbook <- R6::R6Class(
     #' @param title title
     #' @param subject subject
     #' @param category category
-    #' @param datetimeCreated The datetime (as `POSIXt`) the workbook is
+    #' @param datetime_created The datetime (as `POSIXt`) the workbook is
     #'   created.  Defaults to the current `Sys.time()` when the workbook object
     #'   is created, not when the Excel files are saved.
     #' @param theme Optional theme identified by string or number
+    #' @param ... additional arguments
     #' @return a `wbWorkbook` object
     initialize = function(
       creator         = NULL,
       title           = NULL,
       subject         = NULL,
       category        = NULL,
-      datetimeCreated = Sys.time(),
-      theme           = NULL
+      datetime_created = Sys.time(),
+      theme           = NULL,
+      ...
     ) {
+
+      standardize_case_names(...)
+
       self$app <- genBaseApp()
       self$charts <- list()
       self$is_chartsheet <- logical()
@@ -286,22 +291,22 @@ wbWorkbook <- R6::R6Class(
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
-      assert_class(self$creator,    "character")
-      assert_class(title,           "character", or_null = TRUE)
-      assert_class(subject,         "character", or_null = TRUE)
-      assert_class(category,        "character", or_null = TRUE)
-      assert_class(datetimeCreated, "POSIXt")
+      assert_class(self$creator,     "character")
+      assert_class(title,            "character", or_null = TRUE)
+      assert_class(subject,          "character", or_null = TRUE)
+      assert_class(category,         "character", or_null = TRUE)
+      assert_class(datetime_created, "POSIXt")
 
       stopifnot(
         length(title) <= 1L,
         length(category) <= 1L,
-        length(datetimeCreated) == 1L
+        length(datetime_created) == 1L
       )
 
       self$title           <- title
       self$subject         <- subject
       self$category        <- category
-      self$datetimeCreated <- datetimeCreated
+      self$datetimeCreated <- datetime_created
       private$generate_base_core()
       private$current_sheet <- 0L
       invisible(self)
@@ -3640,24 +3645,28 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Add comment
     #' @param sheet sheet
-    #' @param col column to apply the comment
-    #' @param row row to apply the comment
     #' @param dims row and column as spreadsheet dimension, e.g. "A1"
     #' @param comment a comment to apply to the worksheet
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_comment = function(
         sheet   = current_sheet(),
-        col     = NULL,
-        row     = NULL,
-        dims    = rowcol_to_dim(row, col),
-        comment
+        dims    = "A1",
+        comment,
+        ...
     ) {
+
+      col <- list(...)[["col"]]
+      row <- list(...)[["row"]]
+
+      if (!is.null(row) && !is.null(col)) {
+        .Deprecated(old = "col/row", new = "dims", package = "openxlsx2")
+        dims <- rowcol_to_dim(row, col)
+      }
 
       write_comment(
         wb      = self,
         sheet   = sheet,
-        col     = col,
-        row     = row,
         comment = comment,
         dims    = dims
       ) # has no use: xy
@@ -3667,18 +3676,29 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Remove comment
     #' @param sheet sheet
-    #' @param col column to apply the comment
-    #' @param row row to apply the comment
     #' @param dims row and column as spreadsheet dimension, e.g. "A1"
-    #' @param gridExpand Remove all comments inside the grid. Similar to dims "A1:B2"
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     remove_comment = function(
       sheet      = current_sheet(),
-      col        = NULL,
-      row        = NULL,
-      dims       = rowcol_to_dims(row, col),
-      gridExpand = TRUE
+      dims       = "A1",
+      ...
     ) {
+
+      col <- list(...)[["col"]]
+      row <- list(...)[["row"]]
+      gridExpand <- list(...)[["gridExpand"]]
+
+      if ((!is.null(row) && !is.null(col))) {
+        .Deprecated(old = "col/row/gridExpand", new = "dims", package = "openxlsx2")
+        dims <- rowcol_to_dims(row, col)
+      }
+
+      # TODO: remove with deprication
+      if (is.null(gridExpand)) {
+        # default until deprecating
+        gridExpand <- TRUE
+      }
 
       remove_comment(
         wb         = self,

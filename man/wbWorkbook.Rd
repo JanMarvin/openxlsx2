@@ -346,8 +346,9 @@ Creates a new \code{wbWorkbook} object
   title = NULL,
   subject = NULL,
   category = NULL,
-  datetimeCreated = Sys.time(),
-  theme = NULL
+  datetime_created = Sys.time(),
+  theme = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -362,11 +363,13 @@ Creates a new \code{wbWorkbook} object
 
 \item{\code{category}}{category}
 
-\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+\item{\code{datetime_created}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
 is created, not when the Excel files are saved.}
 
 \item{\code{theme}}{Optional theme identified by string or number}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1614,13 +1617,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{add_comment()}}{
 Add comment
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_comment(
-  sheet = current_sheet(),
-  col = NULL,
-  row = NULL,
-  dims = rowcol_to_dim(row, col),
-  comment
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_comment(sheet = current_sheet(), dims = "A1", comment, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1628,13 +1625,11 @@ Add comment
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{col}}{column to apply the comment}
-
-\item{\code{row}}{row to apply the comment}
-
 \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
 \item{\code{comment}}{a comment to apply to the worksheet}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1645,13 +1640,7 @@ Add comment
 \subsection{Method \code{remove_comment()}}{
 Remove comment
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_comment(
-  sheet = current_sheet(),
-  col = NULL,
-  row = NULL,
-  dims = rowcol_to_dims(row, col),
-  gridExpand = TRUE
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_comment(sheet = current_sheet(), dims = "A1", ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1659,13 +1648,9 @@ Remove comment
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{col}}{column to apply the comment}
-
-\item{\code{row}}{row to apply the comment}
-
 \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
-\item{\code{gridExpand}}{Remove all comments inside the grid. Similar to dims "A1:B2"}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

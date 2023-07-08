@@ -7,8 +7,9 @@
 #' @param title Workbook properties title
 #' @param subject Workbook properties subject
 #' @param category Workbook properties category
-#' @param datetimeCreated The time of the workbook is created
+#' @param datetime_created The time of the workbook is created
 #' @param theme Optional theme identified by string or number
+#' @param ... additional arguments
 #' @return A [wbWorkbook] object
 #'
 #' @export
@@ -33,20 +34,22 @@
 #'   category = "sales"
 #' )
 wb_workbook <- function(
-  creator         = NULL,
-  title           = NULL,
-  subject         = NULL,
-  category        = NULL,
-  datetimeCreated = Sys.time(),
-  theme           = NULL
+  creator          = NULL,
+  title            = NULL,
+  subject          = NULL,
+  category         = NULL,
+  datetime_created = Sys.time(),
+  theme            = NULL,
+  ...
 ) {
   wbWorkbook$new(
-    creator         = creator,
-    title           = title,
-    subject         = subject,
-    category        = category,
-    datetimeCreated = datetimeCreated,
-    theme           = theme
+    creator          = creator,
+    title            = title,
+    subject          = subject,
+    category         = category,
+    datetime_created = datetime_created,
+    theme            = theme,
+    ...              = ...
   )
 }
 
@@ -2842,16 +2845,16 @@ wb_add_dxfs_style <- function(
 #' @param row A row to apply the comment
 #' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
 #' @param comment A comment to apply to the worksheet
+#' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @rdname comment
 #' @export
 wb_add_comment <- function(
     wb,
     sheet   = current_sheet(),
-    col     = NULL,
-    row     = NULL,
-    dims    = rowcol_to_dim(row, col),
-    comment
+    dims    = "A1",
+    comment,
+    ...
   ) {
 
   assert_workbook(wb)
@@ -2859,40 +2862,33 @@ wb_add_comment <- function(
 
   wb$clone()$add_comment(
     sheet   = sheet,
-    col     = col,
-    row     = row,
     dims    = dims,
-    comment = comment
+    comment = comment,
+    ...     = ...
   )
 }
 
 #' Remove comment from worksheet
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param col A column to apply the comment
-#' @param row A row to apply the comment
 #' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
-#' @param gridExpand Remove all comments inside the grid. Similar to dims "A1:B2"
+#' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @rdname comment
 #' @export
 wb_remove_comment <- function(
     wb,
     sheet      = current_sheet(),
-    col        = NULL,
-    row        = NULL,
-    dims       = rowcol_to_dims(row, col),
-    gridExpand = TRUE
+    dims       = "A1",
+    ...
   ) {
 
   assert_workbook(wb)
 
-  wb$clone()$remove_comment(
-    sheet      = sheet,
-    col        = col,
-    row        = row,
-    dims       = dims,
-    gridExpand = gridExpand
+  wb$clone(deep = TRUE)$remove_comment(
+    sheet       = sheet,
+    dims        = dims,
+    ...         = ...
   )
 }
 
