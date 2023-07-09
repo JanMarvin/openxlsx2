@@ -89,20 +89,21 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
-#' @param startCol A vector specifying the starting column to write to.
-#' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param start_col A vector specifying the starting column to write to.
+#' @param start_row A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
-#' @param colNames If `TRUE`, column names of x are written.
-#' @param rowNames If `TRUE`, data.frame row names of x are written.
-#' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
+#' @param col_names If `TRUE`, column names of x are written.
+#' @param row_names If `TRUE`, data.frame row names of x are written.
+#' @param with_filter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' @param applyCellStyle Should we write cell styles to the workbook
-#' @param removeCellStyle keep the cell style?
+#' @param apply_cell_style Should we write cell styles to the workbook
+#' @param remove_cell_style keep the cell style?
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
+#' @param ... additional arguments
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
@@ -113,39 +114,41 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @return A clone of `wb``
 wb_add_data <- function(
     wb,
-    sheet           = current_sheet(),
+    sheet             = current_sheet(),
     x,
-    startCol        = 1,
-    startRow        = 1,
-    dims            = rowcol_to_dims(startRow, startCol),
-    array           = FALSE,
-    colNames        = TRUE,
-    rowNames        = FALSE,
-    withFilter      = FALSE,
-    name            = NULL,
-    sep             = ", ",
-    applyCellStyle  = TRUE,
-    removeCellStyle = FALSE,
-    na.strings      = na_strings(),
-    inline_strings  = TRUE
+    dims              = rowcol_to_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    array             = FALSE,
+    col_names         = TRUE,
+    row_names         = FALSE,
+    with_filter       = FALSE,
+    name              = NULL,
+    sep               = ", ",
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    na.strings        = na_strings(),
+    inline_strings    = TRUE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_data(
-    sheet           = sheet,
-    x               = x,
-    startCol        = startCol,
-    startRow        = startRow,
-    dims            = dims,
-    array           = array,
-    colNames        = colNames,
-    rowNames        = rowNames,
-    withFilter      = withFilter,
-    name            = name,
-    sep             = sep,
-    applyCellStyle  = applyCellStyle,
-    removeCellStyle = removeCellStyle,
-    na.strings      = na.strings,
-    inline_strings  = inline_strings
+    sheet             = sheet,
+    x                 = x,
+    dims              = dims,
+    start_col         = start_col,
+    start_row         = start_row,
+    array             = array,
+    col_names         = col_names,
+    row_names         = row_names,
+    with_filter       = with_filter,
+    name              = name,
+    sep               = sep,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    na.strings        = na.strings,
+    inline_strings    = inline_strings,
+    ...               = ...
   )
 }
 
@@ -156,15 +159,15 @@ wb_add_data <- function(
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A dataframe.
-#' @param startCol A vector specifying the starting column to write df
-#' @param startRow A vector specifying the starting row to write df
+#' @param start_col A vector specifying the starting column to write df
+#' @param start_row A vector specifying the starting row to write df
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param colNames If `TRUE`, column names of x are written.
-#' @param rowNames If `TRUE`, row names of x are written.
-#' @param tableStyle Any excel table style name or "none" (see "formatting"
+#' @param col_names If `TRUE`, column names of x are written.
+#' @param row_names If `TRUE`, row names of x are written.
+#' @param table_style Any excel table style name or "none" (see "formatting"
 #'   vignette).
-#' @param tableName name of table in workbook. The table name must be unique.
-#' @param withFilter If `TRUE`, columns with have filters in the first row.
+#' @param table_name name of table in workbook. The table name must be unique.
+#' @param with_filter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list
 #'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
 #'   sep).
@@ -174,15 +177,16 @@ wb_add_data <- function(
 #' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 #' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
 #'
-#' @param firstColumn logical. If TRUE, the first column is bold
-#' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are color banded
-#' @param bandedCols logical. If TRUE, the columns are color banded
-#' @param applyCellStyle Should we write cell styles to the workbook
-#' @param removeCellStyle keep the cell style?
+#' @param first_column logical. If TRUE, the first column is bold
+#' @param last_column logical. If TRUE, the last column is bold
+#' @param banded_rows logical. If TRUE, rows are color banded
+#' @param banded_cols logical. If TRUE, the columns are color banded
+#' @param apply_cell_style Should we write cell styles to the workbook
+#' @param remove_cell_style keep the cell style?
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
+#' @param ... additional arguments
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,
@@ -193,47 +197,49 @@ wb_add_data <- function(
 #' @export
 wb_add_data_table <- function(
     wb,
-    sheet       = current_sheet(),
+    sheet             = current_sheet(),
     x,
-    startCol    = 1,
-    startRow    = 1,
-    dims        = rowcol_to_dims(startRow, startCol),
-    colNames    = TRUE,
-    rowNames    = FALSE,
-    tableStyle  = "TableStyleLight9",
-    tableName   = NULL,
-    withFilter  = TRUE,
-    sep         = ", ",
-    firstColumn = FALSE,
-    lastColumn  = FALSE,
-    bandedRows  = TRUE,
-    bandedCols  = FALSE,
-    applyCellStyle  = TRUE,
-    removeCellStyle = FALSE,
-    na.strings     = na_strings(),
-    inline_strings = TRUE
+    dims              = rowcol_to_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    col_names         = TRUE,
+    row_names         = FALSE,
+    table_style       = "TableStyleLight9",
+    table_name        = NULL,
+    with_filter       = TRUE,
+    sep               = ", ",
+    first_column      = FALSE,
+    last_column       = FALSE,
+    banded_rows       = TRUE,
+    banded_cols       = FALSE,
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    na.strings        = na_strings(),
+    inline_strings    = TRUE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_data_table(
-    sheet       = sheet,
-    x           = x,
-    startCol    = startCol,
-    startRow    = startRow,
-    dims        = dims,
-    colNames    = colNames,
-    rowNames    = rowNames,
-    tableStyle  = tableStyle,
-    tableName   = tableName,
-    withFilter  = withFilter,
-    sep         = sep,
-    firstColumn = firstColumn,
-    lastColumn  = lastColumn,
-    bandedRows  = bandedRows,
-    bandedCols  = bandedCols,
-    applyCellStyle  = applyCellStyle,
-    removeCellStyle = removeCellStyle,
-    na.strings  = na.strings,
-    inline_strings = inline_strings
+    sheet             = sheet,
+    x                 = x,
+    dims              = dims,
+    start_col         = start_col,
+    start_row         = start_row,
+    col_names         = col_names,
+    row_names         = row_names,
+    table_style       = table_style,
+    table_name        = table_name,
+    with_filter       = with_filter,
+    sep               = sep,
+    first_column      = first_column,
+    last_column       = last_column,
+    banded_rows       = banded_rows,
+    banded_cols       = banded_cols,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    na.strings        = na.strings,
+    inline_strings    = inline_strings,
+    ...               = ...
   )
 }
 
@@ -317,38 +323,41 @@ wb_add_pivot_table <- function(
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A character vector.
-#' @param startCol A vector specifying the starting column to write to.
-#' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param start_col A vector specifying the starting column to write to.
+#' @param start_row A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
 #' @param cm A special kind of array function that hides the curly braces in the cell. Add this, if you see "@" inserted into your formulas
-#' @param applyCellStyle Should we write cell styles to the workbook
-#' @param removeCellStyle keep the cell style?
+#' @param apply_cell_style Should we write cell styles to the workbook
+#' @param remove_cell_style keep the cell style?,
+#' @param ... additional arguments
 #' @family workbook wrappers
 #' @export
 wb_add_formula <- function(
     wb,
-    sheet           = current_sheet(),
+    sheet             = current_sheet(),
     x,
-    startCol        = 1,
-    startRow        = 1,
-    dims            = rowcol_to_dims(startRow, startCol),
-    array           = FALSE,
-    cm              = FALSE,
-    applyCellStyle  = TRUE,
-    removeCellStyle = FALSE
+    dims              = rowcol_to_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    array             = FALSE,
+    cm                = FALSE,
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_formula(
-    sheet           = sheet,
-    x               = x,
-    startCol        = startCol,
-    startRow        = startRow,
-    dims            = dims,
-    array           = array,
-    cm              = cm,
-    applyCellStyle  = applyCellStyle,
-    removeCellStyle = removeCellStyle
+    sheet             = sheet,
+    x                 = x,
+    dims              = dims,
+    start_col         = start_col,
+    start_row         = start_row,
+    array             = array,
+    cm                = cm,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    ...               = ...
   )
 }
 

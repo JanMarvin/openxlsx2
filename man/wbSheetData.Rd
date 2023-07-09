@@ -15,6 +15,7 @@ R6 class for a Workbook Hyperlink
 \details{
 A hyperlink
 }
+\keyword{internal}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{

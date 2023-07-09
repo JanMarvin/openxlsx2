@@ -1057,54 +1057,58 @@ wbWorkbook <- R6::R6Class(
     #' @description add data
     #' @param sheet sheet
     #' @param x x
-    #' @param startCol startCol
-    #' @param startRow startRow
     #' @param dims dims
+    #' @param start_col startCol
+    #' @param start_row startRow
     #' @param array array
-    #' @param colNames colNames
-    #' @param rowNames rowNames
-    #' @param withFilter withFilter
+    #' @param col_names colNames
+    #' @param row_names rowNames
+    #' @param with_filter withFilter
     #' @param name name
     #' @param sep sep
-    #' @param applyCellStyle applyCellStyle
-    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+    #' @param apply_cell_style applyCellStyle
+    #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
     #' @param na.strings Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
+    #' @param ... additional arguments
     #' @param return The `wbWorkbook` object
     add_data = function(
-        sheet           = current_sheet(),
+        sheet            = current_sheet(),
         x,
-        startCol        = 1,
-        startRow        = 1,
-        dims            = rowcol_to_dims(startRow, startCol),
-        array           = FALSE,
-        colNames        = TRUE,
-        rowNames        = FALSE,
-        withFilter      = FALSE,
-        name            = NULL,
-        sep             = ", ",
-        applyCellStyle  = TRUE,
-        removeCellStyle = FALSE,
-        na.strings      = na_strings(),
-        inline_strings  = TRUE
+        dims              = rowcol_to_dims(start_row, start_col),
+        start_col         = 1,
+        start_row         = 1,
+        array             = FALSE,
+        col_names         = TRUE,
+        row_names         = FALSE,
+        with_filter       = FALSE,
+        name              = NULL,
+        sep               = ", ",
+        apply_cell_style  = TRUE,
+        remove_cell_style = FALSE,
+        na.strings        = na_strings(),
+        inline_strings    = TRUE,
+        ...
       ) {
+
+      standardize(...)
 
       write_data(
         wb              = self,
         sheet           = sheet,
-        x               = x,
-        startCol        = startCol,
-        startRow        = startRow,
         dims            = dims,
+        x               = x,
+        startCol        = start_col,
+        startRow        = start_row,
         array           = array,
-        colNames        = colNames,
-        rowNames        = rowNames,
-        withFilter      = withFilter,
+        colNames        = col_names,
+        rowNames        = row_names,
+        withFilter      = with_filter,
         name            = name,
         sep             = sep,
-        applyCellStyle  = applyCellStyle,
-        removeCellStyle = removeCellStyle,
+        applyCellStyle  = apply_cell_style,
+        removeCellStyle = remove_cell_style,
         na.strings      = na.strings,
         inline_strings  = inline_strings
       )
@@ -1114,66 +1118,70 @@ wbWorkbook <- R6::R6Class(
     #' @description add a data table
     #' @param sheet sheet
     #' @param x x
-    #' @param startCol startCol
-    #' @param startRow startRow
     #' @param dims dims
-    #' @param colNames colNames
-    #' @param rowNames rowNames
-    #' @param tableStyle tableStyle
-    #' @param tableName tableName
-    #' @param withFilter withFilter
+    #' @param start_col startCol
+    #' @param start_row startRow
+    #' @param col_names colNames
+    #' @param row_names rowNames
+    #' @param table_style tableStyle
+    #' @param table_name tableName
+    #' @param with_filter withFilter
     #' @param sep sep
-    #' @param firstColumn firstColumn
-    #' @param lastColumn lastColumn
-    #' @param bandedRows bandedRows
-    #' @param bandedCols bandedCols
-    #' @param applyCellStyle applyCellStyle
-    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+    #' @param first_column firstColumn
+    #' @param last_column lastColumn
+    #' @param banded_rows bandedRows
+    #' @param banded_cols bandedCols
+    #' @param apply_cell_style applyCellStyle
+    #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
     #' @param na.strings Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_data_table = function(
-        sheet           = current_sheet(),
+        sheet             = current_sheet(),
         x,
-        startCol        = 1,
-        startRow        = 1,
-        dims            = rowcol_to_dims(startRow, startCol),
-        colNames        = TRUE,
-        rowNames        = FALSE,
-        tableStyle      = "TableStyleLight9",
-        tableName       = NULL,
-        withFilter      = TRUE,
-        sep             = ", ",
-        firstColumn     = FALSE,
-        lastColumn      = FALSE,
-        bandedRows      = TRUE,
-        bandedCols      = FALSE,
-        applyCellStyle  = TRUE,
-        removeCellStyle = FALSE,
-        na.strings      = na_strings(),
-        inline_strings  = TRUE
+        dims              = rowcol_to_dims(start_row, start_col),
+        start_col         = 1,
+        start_row         = 1,
+        col_names         = TRUE,
+        row_names         = FALSE,
+        table_style       = "TableStyleLight9",
+        table_name        = NULL,
+        with_filter       = TRUE,
+        sep               = ", ",
+        first_column      = FALSE,
+        last_column       = FALSE,
+        banded_rows       = TRUE,
+        banded_cols       = FALSE,
+        apply_cell_style  = TRUE,
+        remove_cell_style = FALSE,
+        na.strings        = na_strings(),
+        inline_strings    = TRUE,
+        ...
     ) {
+
+      standardize(...)
 
       write_datatable(
         wb              = self,
-        sheet           = sheet,
         x               = x,
+        sheet           = sheet,
         dims            = dims,
-        startCol        = startCol,
-        startRow        = startRow,
-        colNames        = colNames,
-        rowNames        = rowNames,
-        tableStyle      = tableStyle,
-        tableName       = tableName,
-        withFilter      = withFilter,
+        startCol        = start_col,
+        startRow        = start_row,
+        colNames        = col_names,
+        rowNames        = row_names,
+        tableStyle      = table_style,
+        tableName       = table_name,
+        withFilter      = with_filter,
         sep             = sep,
-        firstColumn     = firstColumn,
-        lastColumn      = lastColumn,
-        bandedRows      = bandedRows,
-        bandedCols      = bandedCols,
-        applyCellStyle  = applyCellStyle,
-        removeCellStyle = removeCellStyle,
+        firstColumn     = first_column,
+        lastColumn      = last_column,
+        bandedRows      = banded_rows,
+        bandedCols      = banded_cols,
+        applyCellStyle  = apply_cell_style,
+        removeCellStyle = remove_cell_style,
         na.strings      = na.strings,
         inline_strings  = inline_strings
       )
@@ -1330,37 +1338,41 @@ wbWorkbook <- R6::R6Class(
 
     #' @description add formula
     #' @param sheet sheet
-    #' @param x x
-    #' @param startCol startCol
-    #' @param startRow startRow
     #' @param dims dims
+    #' @param x x
+    #' @param start_col startCol
+    #' @param start_row startRow
     #' @param array array
     #' @param cm cm
-    #' @param applyCellStyle applyCellStyle
-    #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
+    #' @param apply_cell_style applyCellStyle
+    #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_formula = function(
-        sheet           = current_sheet(),
+        sheet             = current_sheet(),
         x,
-        startCol        = 1,
-        startRow        = 1,
-        dims            = rowcol_to_dims(startRow, startCol),
-        array           = FALSE,
-        cm              = FALSE,
-        applyCellStyle  = TRUE,
-        removeCellStyle = FALSE
+        dims              = rowcol_to_dims(start_row, start_col),
+        start_col         = 1,
+        start_row         = 1,
+        array             = FALSE,
+        cm                = FALSE,
+        apply_cell_style  = TRUE,
+        remove_cell_style = FALSE,
+        ...
     ) {
+
+      standardize_case_names(...)
       write_formula(
         wb              = self,
         sheet           = sheet,
         x               = x,
-        startCol        = startCol,
-        startRow        = startRow,
+        startCol        = start_col,
+        startRow        = start_row,
         dims            = dims,
         array           = array,
         cm              = cm,
-        applyCellStyle  = applyCellStyle,
-        removeCellStyle = removeCellStyle
+        applyCellStyle  = apply_cell_style,
+        removeCellStyle = remove_cell_style
       )
       invisible(self)
     },

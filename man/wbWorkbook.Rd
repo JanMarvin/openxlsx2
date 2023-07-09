@@ -571,19 +571,20 @@ add data
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
   sheet = current_sheet(),
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
-  colNames = TRUE,
-  rowNames = FALSE,
-  withFilter = FALSE,
+  col_names = TRUE,
+  row_names = FALSE,
+  with_filter = FALSE,
   name = NULL,
   sep = ", ",
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE,
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
   na.strings = na_strings(),
-  inline_strings = TRUE
+  inline_strings = TRUE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -594,32 +595,34 @@ add data
 
 \item{\code{x}}{x}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{startRow}}{startRow}
-
 \item{\code{dims}}{dims}
+
+\item{\code{start_col}}{startCol}
+
+\item{\code{start_row}}{startRow}
 
 \item{\code{array}}{array}
 
-\item{\code{colNames}}{colNames}
+\item{\code{col_names}}{colNames}
 
-\item{\code{rowNames}}{rowNames}
+\item{\code{row_names}}{rowNames}
 
-\item{\code{withFilter}}{withFilter}
+\item{\code{with_filter}}{withFilter}
 
 \item{\code{name}}{name}
 
 \item{\code{sep}}{sep}
 
-\item{\code{applyCellStyle}}{applyCellStyle}
+\item{\code{apply_cell_style}}{applyCellStyle}
 
-\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+\item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
 
 \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+
+\item{\code{...}}{additional arguments}
 
 \item{\code{return}}{The \code{wbWorkbook} object}
 }
@@ -635,23 +638,24 @@ add a data table
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
   sheet = current_sheet(),
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
-  colNames = TRUE,
-  rowNames = FALSE,
-  tableStyle = "TableStyleLight9",
-  tableName = NULL,
-  withFilter = TRUE,
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
+  col_names = TRUE,
+  row_names = FALSE,
+  table_style = "TableStyleLight9",
+  table_name = NULL,
+  with_filter = TRUE,
   sep = ", ",
-  firstColumn = FALSE,
-  lastColumn = FALSE,
-  bandedRows = TRUE,
-  bandedCols = FALSE,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE,
+  first_column = FALSE,
+  last_column = FALSE,
+  banded_rows = TRUE,
+  banded_cols = FALSE,
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
   na.strings = na_strings(),
-  inline_strings = TRUE
+  inline_strings = TRUE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -662,40 +666,42 @@ add a data table
 
 \item{\code{x}}{x}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{startRow}}{startRow}
-
 \item{\code{dims}}{dims}
 
-\item{\code{colNames}}{colNames}
+\item{\code{start_col}}{startCol}
 
-\item{\code{rowNames}}{rowNames}
+\item{\code{start_row}}{startRow}
 
-\item{\code{tableStyle}}{tableStyle}
+\item{\code{col_names}}{colNames}
 
-\item{\code{tableName}}{tableName}
+\item{\code{row_names}}{rowNames}
 
-\item{\code{withFilter}}{withFilter}
+\item{\code{table_style}}{tableStyle}
+
+\item{\code{table_name}}{tableName}
+
+\item{\code{with_filter}}{withFilter}
 
 \item{\code{sep}}{sep}
 
-\item{\code{firstColumn}}{firstColumn}
+\item{\code{first_column}}{firstColumn}
 
-\item{\code{lastColumn}}{lastColumn}
+\item{\code{last_column}}{lastColumn}
 
-\item{\code{bandedRows}}{bandedRows}
+\item{\code{banded_rows}}{bandedRows}
 
-\item{\code{bandedCols}}{bandedCols}
+\item{\code{banded_cols}}{bandedCols}
 
-\item{\code{applyCellStyle}}{applyCellStyle}
+\item{\code{apply_cell_style}}{applyCellStyle}
 
-\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+\item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
 
 \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -752,13 +758,14 @@ add formula
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
   cm = FALSE,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -769,19 +776,21 @@ add formula
 
 \item{\code{x}}{x}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{startRow}}{startRow}
-
 \item{\code{dims}}{dims}
+
+\item{\code{start_col}}{startCol}
+
+\item{\code{start_row}}{startRow}
 
 \item{\code{array}}{array}
 
 \item{\code{cm}}{cm}
 
-\item{\code{applyCellStyle}}{applyCellStyle}
+\item{\code{apply_cell_style}}{applyCellStyle}
 
-\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+\item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

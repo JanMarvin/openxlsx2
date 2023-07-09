@@ -27,7 +27,9 @@ wbSheetData <- R6::R6Class(
   )
 )
 
+## TODO is this even used?
 #' @rdname wbSheetData
+#' @keywords internal
 #' @export
 wb_sheet_data <- function() {
   wbSheetData$new()
