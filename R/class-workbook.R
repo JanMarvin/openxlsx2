@@ -1095,22 +1095,22 @@ wbWorkbook <- R6::R6Class(
       standardize(...)
 
       write_data(
-        wb              = self,
-        sheet           = sheet,
-        dims            = dims,
-        x               = x,
-        startCol        = start_col,
-        startRow        = start_row,
-        array           = array,
-        colNames        = col_names,
-        rowNames        = row_names,
-        withFilter      = with_filter,
-        name            = name,
-        sep             = sep,
-        applyCellStyle  = apply_cell_style,
-        removeCellStyle = remove_cell_style,
-        na.strings      = na.strings,
-        inline_strings  = inline_strings
+        wb                = self,
+        sheet             = sheet,
+        x                 = x,
+        dims              = dims,
+        start_col         = start_col,
+        start_row         = start_row,
+        array             = array,
+        col_names         = col_names,
+        row_names         = row_names,
+        with_filter       = with_filter,
+        name              = name,
+        sep               = sep,
+        apply_cell_style  = apply_cell_style,
+        remove_cell_style = remove_cell_style,
+        na.strings        = na.strings,
+        inline_strings    = inline_strings
       )
       invisible(self)
     },
