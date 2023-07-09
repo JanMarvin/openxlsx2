@@ -438,7 +438,7 @@ Add a chart sheet to the workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chartsheet(
   sheet = next_sheet(),
-  tabColor = NULL,
+  tab_color = NULL,
   zoom = 100,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
   ...
@@ -450,7 +450,7 @@ Add a chart sheet to the workbook
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{tabColor}}{tabColor}
+\item{\code{tab_color}}{tab_color}
 
 \item{\code{zoom}}{zoom}
 

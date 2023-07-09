@@ -478,7 +478,7 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #'
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheet A name for the new worksheet
-#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#' @param tab_color Color of the worksheet tab. A valid color (belonging to
 #'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
@@ -491,16 +491,16 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' @export
 wb_add_chartsheet <- function(
   wb,
-  sheet       = next_sheet(),
-  tabColor    = NULL,
-  zoom        = 100,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
+  sheet     = next_sheet(),
+  tab_color = NULL,
+  zoom      = 100,
+  visible   = c("true", "false", "hidden", "visible", "veryhidden"),
   ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
     sheet       = sheet,
-    tabColor    = tabColor,
+    tab_color   = tab_color,
     zoom        = zoom,
     visible     = visible,
     ...         = ...

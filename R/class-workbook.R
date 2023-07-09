@@ -361,14 +361,14 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Add a chart sheet to the workbook
     #' @param sheet sheet
-    #' @param tabColor tabColor
+    #' @param tab_color tab_color
     #' @param zoom zoom
     #' @param visible visible
     #' @param ... ...
     #' @return The `wbWorkbook` object, invisibly
     add_chartsheet = function(
       sheet     = next_sheet(),
-      tabColor  = NULL,
+      tab_color = NULL,
       zoom      = 100,
       visible   = c("true", "false", "hidden", "visible", "veryhidden"),
       ...
@@ -420,12 +420,13 @@ wbWorkbook <- R6::R6Class(
         )
       )
 
-      standardize_color_names(...)
-      if (!is.null(tabColor)) {
-        if (is_wbColour(tabColor)) {
-          tabColor <- as.character(tabColor)
+      standardize(...)
+
+      if (!is.null(tab_color)) {
+        if (is_wbColour(tab_color)) {
+          tab_color <- as.character(tab_color)
         } else {
-          tabColor <- validateColor(tabColor, "Invalid tabColor in add_chartsheet.")
+          tab_color <- validateColor(tab_color, "Invalid tab_color in add_chartsheet.")
         }
       }
 
@@ -444,7 +445,7 @@ wbWorkbook <- R6::R6Class(
 
       self$append("worksheets",
         wbChartSheet$new(
-          tabColor = tabColor
+          tabColor = tab_color
         )
       )
 
