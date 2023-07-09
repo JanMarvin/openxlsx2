@@ -2947,12 +2947,12 @@ These styles are used with conditional formatting and custom table styles
   font_name = NULL,
   font_size = NULL,
   font_color = NULL,
-  numFmt = NULL,
+  num_fmt = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
-  bgFill = NULL,
-  gradientFill = NULL,
+  bg_fill = NULL,
+  gradient_fill = NULL,
   text_bold = NULL,
   text_italic = NULL,
   text_underline = NULL,
@@ -2971,7 +2971,7 @@ These styles are used with conditional formatting and custom table styles
 
 \item{\code{font_color}}{the font color (a \code{wb_color()} object)}
 
-\item{\code{numFmt}}{the number format}
+\item{\code{num_fmt}}{the number format}
 
 \item{\code{border}}{logical if borders are applied}
 
@@ -2979,9 +2979,9 @@ These styles are used with conditional formatting and custom table styles
 
 \item{\code{border_style}}{the border style}
 
-\item{\code{bgFill}}{any background fill}
+\item{\code{bg_fill}}{any background fill}
 
-\item{\code{gradientFill}}{any gradient fill}
+\item{\code{gradient_fill}}{any gradient fill}
 
 \item{\code{text_bold}}{logical if text is bold}
 

@@ -661,13 +661,13 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' (Defaults to black)
 #' @param font_size Font size. A numeric greater than 0.
 #' If fontSize is NULL, the workbook base font size is used. (Defaults to 11)
-#' @param numFmt Cell formatting. Some custom openxml format
+#' @param num_fmt Cell formatting. Some custom openxml format
 #' @param border NULL or TRUE
 #' @param border_color "black"
 #' @param border_style "thin"
-#' @param bgFill Cell background fill color.
-#' @param fgColor Cell foreground fill color.
-#' @param gradientFill An xml string beginning with `<gradientFill>` ...
+#' @param bg_fill Cell background fill color.
+#' @param fg_color Cell foreground fill color.
+#' @param gradient_fill An xml string beginning with `<gradientFill>` ...
 #' @param text_bold bold
 #' @param text_strike strikeout
 #' @param text_italic italic
@@ -701,13 +701,13 @@ create_dxfs_style <- function(
     font_name      = NULL,
     font_size      = NULL,
     font_color     = NULL,
-    numFmt         = NULL,
+    num_fmt        = NULL,
     border         = NULL,
     border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
-    bgFill         = NULL,
-    fgColor        = NULL,
-    gradientFill   = NULL,
+    bg_fill        = NULL,
+    fg_color       = NULL,
+    gradient_fill  = NULL,
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
@@ -715,7 +715,7 @@ create_dxfs_style <- function(
     ...
 ) {
 
-  standardize_color_names(...)
+  standardize(...)
 
   args <- list(...)
   nams <- names(args)
@@ -728,7 +728,7 @@ create_dxfs_style <- function(
   if (is.null(text_underline)) text_underline <- ""
 
   # found numFmtId=3 in MS365 xml not sure if this should be increased
-  if (!is.null(numFmt)) numFmt <- create_numfmt(3, numFmt)
+  if (!is.null(num_fmt)) num_fmt <- create_numfmt(3, num_fmt)
 
   font <- create_font(
     color = font_color, name = font_name,
@@ -738,20 +738,20 @@ create_dxfs_style <- function(
     family = "", scheme = ""
   )
 
-  if ("patternType" %in% nams) {
-    patternType <- args$patternType
+  if (exists("pattern_type")) {
+    pattern_type <- args$patternType
   } else {
-    patternType <- "solid"
+    pattern_type <- "solid"
   }
 
-  if (!is.null(bgFill) && !all(bgFill == "") || !is.null(gradientFill)) {
-    if (is.null(gradientFill)) {
+  if (!is.null(bg_fill) && !all(bg_fill == "") || !is.null(gradient_fill)) {
+    if (is.null(gradient_fill)) {
       # gradientFill is an xml string
-      gradientFill <- ""
+      gradient_fill <- ""
     } else {
-      patternType  <- ""
+      pattern_type  <- ""
     }
-    fill <- create_fill(patternType = patternType, bgColor = bgFill, fgColor = fgColor, gradientFill = gradientFill)
+    fill <- create_fill(patternType = pattern_type, bgColor = bg_fill, fgColor = fg_color, gradientFill = gradient_fill)
   } else {
     fill <- NULL
   }
@@ -783,7 +783,7 @@ create_dxfs_style <- function(
     "dxf",
     xml_children = c(
       font,
-      numFmt,
+      num_fmt,
       fill,
       border
     )
