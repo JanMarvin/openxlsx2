@@ -148,29 +148,29 @@ Creates a new \code{wbWorksheet} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{tabColor}}{tabColor}
-
-\item{\code{oddHeader}}{oddHeader}
-
-\item{\code{oddFooter}}{oddFooter}
-
-\item{\code{evenHeader}}{evenHeader}
-
-\item{\code{evenFooter}}{evenFooter}
-
-\item{\code{firstHeader}}{firstHeader}
-
-\item{\code{firstFooter}}{firstFooter}
-
-\item{\code{paperSize}}{paperSize}
-
 \item{\code{orientation}}{orientation}
 
 \item{\code{hdpi}}{hdpi}
 
 \item{\code{vdpi}}{vdpi}
 
-\item{\code{printGridLines}}{printGridLines}
+\item{\code{tab_color}}{tabColor}
+
+\item{\code{odd_header}}{oddHeader}
+
+\item{\code{odd_footer}}{oddFooter}
+
+\item{\code{even_header}}{evenHeader}
+
+\item{\code{even_footer}}{evenFooter}
+
+\item{\code{first_header}}{firstHeader}
+
+\item{\code{first_footer}}{firstFooter}
+
+\item{\code{paper_size}}{paperSize}
+
+\item{\code{print_grid_lines}}{printGridLines}
 }
 \if{html}{\out{</div>}}
 }

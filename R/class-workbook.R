@@ -492,48 +492,51 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Add worksheet to the `wbWorkbook` object
     #' @param sheet sheet
-    #' @param gridLines gridLines
-    #' @param rowColHeaders rowColHeaders
-    #' @param tabColor tabColor
+    #' @param grid_lines gridLines
+    #' @param row_col_headers rowColHeaders
+    #' @param tab_color tabColor
     #' @param zoom zoom
     #' @param header header
     #' @param footer footer
-    #' @param oddHeader oddHeader
-    #' @param oddFooter oddFooter
-    #' @param evenHeader evenHeader
-    #' @param evenFooter evenFooter
-    #' @param firstHeader firstHeader
-    #' @param firstFooter firstFooter
+    #' @param odd_header oddHeader
+    #' @param odd_footer oddFooter
+    #' @param even_header evenHeader
+    #' @param even_footer evenFooter
+    #' @param first_header firstHeader
+    #' @param first_footer firstFooter
     #' @param visible visible
-    #' @param hasDrawing hasDrawing
-    #' @param paperSize paperSize
+    #' @param has_drawing hasDrawing
+    #' @param paper_size paperSize
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
     #' @param ... ...
     #' @return The `wbWorkbook` object, invisibly
     add_worksheet = function(
-      sheet       = next_sheet(),
-      gridLines   = TRUE,
-      rowColHeaders = TRUE,
-      tabColor    = NULL,
-      zoom        = 100,
-      header      = NULL,
-      footer      = NULL,
-      oddHeader   = header,
-      oddFooter   = footer,
-      evenHeader  = header,
-      evenFooter  = footer,
-      firstHeader = header,
-      firstFooter = footer,
-      visible     = c("true", "false", "hidden", "visible", "veryhidden"),
-      hasDrawing  = FALSE,
-      paperSize   = getOption("openxlsx2.paperSize", default = 9),
-      orientation = getOption("openxlsx2.orientation", default = "portrait"),
-      hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-      vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+      sheet           = next_sheet(),
+      grid_lines      = TRUE,
+      row_col_headers = TRUE,
+      tab_color       = NULL,
+      zoom            = 100,
+      header          = NULL,
+      footer          = NULL,
+      odd_header      = header,
+      odd_footer      = footer,
+      even_header     = header,
+      even_footer     = footer,
+      first_header    = header,
+      first_footer    = footer,
+      visible         = c("true", "false", "hidden", "visible", "veryhidden"),
+      has_drawing     = FALSE,
+      paper_size      = getOption("openxlsx2.paperSize", default = 9),
+      orientation     = getOption("openxlsx2.orientation", default = "portrait"),
+      hdpi            = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+      vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
       ...
     ) {
+
+      standardize(...)
+
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
       orientation <- match.arg(orientation, c("portrait", "landscape"))
@@ -567,17 +570,16 @@ wbWorkbook <- R6::R6Class(
       sheet_name <- replace_legal_chars(sheet)
       private$validate_new_sheet(sheet_name)
 
-      if (!is.logical(gridLines) | length(gridLines) > 1) {
+      if (!is.logical(grid_lines) | length(grid_lines) > 1) {
         fail <- TRUE
-        msg <- c(msg, "gridLines must be a logical of length 1.")
+        msg <- c(msg, "grid_lines must be a logical of length 1.")
       }
 
-      standardize_color_names(...)
-      if (!is.null(tabColor)) {
-        if (is_wbColour(tabColor)) {
-          tabColor <- as.character(tabColor)
+      if (!is.null(tab_color)) {
+        if (is_wbColour(tab_color)) {
+          tabColor <- as.character(tab_color)
         } else {
-          tabColor <- validateColor(tabColor, "Invalid tabColor in add_worksheet.")
+          tabColor <- validateColor(tab_color, "Invalid tab_color in add_worksheet.")
         }
       }
 
@@ -594,32 +596,32 @@ wbWorkbook <- R6::R6Class(
       }
       #nocov end
 
-      if (!is.null(oddHeader) & length(oddHeader) != 3) {
+      if (!is.null(odd_header) & length(odd_header) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("header"))
       }
 
-      if (!is.null(oddFooter) & length(oddFooter) != 3) {
+      if (!is.null(odd_footer) & length(odd_footer) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("footer"))
       }
 
-      if (!is.null(evenHeader) & length(evenHeader) != 3) {
+      if (!is.null(even_header) & length(even_header) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("evenHeader"))
       }
 
-      if (!is.null(evenFooter) & length(evenFooter) != 3) {
+      if (!is.null(even_footer) & length(even_footer) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("evenFooter"))
       }
 
-      if (!is.null(firstHeader) & length(firstHeader) != 3) {
+      if (!is.null(first_header) & length(first_header) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("firstHeader"))
       }
 
-      if (!is.null(firstFooter) & length(firstFooter) != 3) {
+      if (!is.null(first_footer) & length(first_footer) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("firstFooter"))
       }
@@ -677,18 +679,18 @@ wbWorkbook <- R6::R6Class(
       ## append to worksheets list
       self$append("worksheets",
         wbWorksheet$new(
-          tabColor   = tabColor,
-          oddHeader   = oddHeader,
-          oddFooter   = oddFooter,
-          evenHeader  = evenHeader,
-          evenFooter  = evenFooter,
-          firstHeader = firstHeader,
-          firstFooter = firstFooter,
-          paperSize   = paperSize,
-          orientation = orientation,
-          hdpi        = hdpi,
-          vdpi        = vdpi,
-          printGridLines = gridLines
+          tabColor       = tab_color,
+          oddHeader      = odd_header,
+          oddFooter      = odd_footer,
+          evenHeader     = even_header,
+          evenFooter     = even_footer,
+          firstHeader    = first_header,
+          firstFooter    = first_footer,
+          paperSize      = paper_size,
+          orientation    = orientation,
+          hdpi           = hdpi,
+          vdpi           = vdpi,
+          printGridLines = grid_lines
         )
       )
 
@@ -699,8 +701,8 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[newSheetIndex]]$set_sheetview(
         workbookViewId    = 0,
         zoomScale         = zoom,
-        showGridLines     = gridLines,
-        showRowColHeaders = rowColHeaders,
+        showGridLines     = grid_lines,
+        showRowColHeaders = row_col_headers,
         tabSelected       = newSheetIndex == 1,
         rightToLeft       = rightToLeft
       )
@@ -708,7 +710,7 @@ wbWorkbook <- R6::R6Class(
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
-      if (hasDrawing) {
+      if (has_drawing) {
         self$append("Content_Types", c(
           sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex),
           sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', newSheetIndex)

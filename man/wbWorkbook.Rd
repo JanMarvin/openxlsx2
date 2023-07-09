@@ -472,21 +472,21 @@ Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
   sheet = next_sheet(),
-  gridLines = TRUE,
-  rowColHeaders = TRUE,
-  tabColor = NULL,
+  grid_lines = TRUE,
+  row_col_headers = TRUE,
+  tab_color = NULL,
   zoom = 100,
   header = NULL,
   footer = NULL,
-  oddHeader = header,
-  oddFooter = footer,
-  evenHeader = header,
-  evenFooter = footer,
-  firstHeader = header,
-  firstFooter = footer,
+  odd_header = header,
+  odd_footer = footer,
+  even_header = header,
+  even_footer = footer,
+  first_header = header,
+  first_footer = footer,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
-  hasDrawing = FALSE,
-  paperSize = getOption("openxlsx2.paperSize", default = 9),
+  has_drawing = FALSE,
+  paper_size = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
   vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
@@ -499,11 +499,11 @@ Add worksheet to the \code{wbWorkbook} object
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{gridLines}}{gridLines}
+\item{\code{grid_lines}}{gridLines}
 
-\item{\code{rowColHeaders}}{rowColHeaders}
+\item{\code{row_col_headers}}{rowColHeaders}
 
-\item{\code{tabColor}}{tabColor}
+\item{\code{tab_color}}{tabColor}
 
 \item{\code{zoom}}{zoom}
 
@@ -511,23 +511,23 @@ Add worksheet to the \code{wbWorkbook} object
 
 \item{\code{footer}}{footer}
 
-\item{\code{oddHeader}}{oddHeader}
+\item{\code{odd_header}}{oddHeader}
 
-\item{\code{oddFooter}}{oddFooter}
+\item{\code{odd_footer}}{oddFooter}
 
-\item{\code{evenHeader}}{evenHeader}
+\item{\code{even_header}}{evenHeader}
 
-\item{\code{evenFooter}}{evenFooter}
+\item{\code{even_footer}}{evenFooter}
 
-\item{\code{firstHeader}}{firstHeader}
+\item{\code{first_header}}{firstHeader}
 
-\item{\code{firstFooter}}{firstFooter}
+\item{\code{first_footer}}{firstFooter}
 
 \item{\code{visible}}{visible}
 
-\item{\code{hasDrawing}}{hasDrawing}
+\item{\code{has_drawing}}{hasDrawing}
 
-\item{\code{paperSize}}{paperSize}
+\item{\code{paper_size}}{paperSize}
 
 \item{\code{orientation}}{orientation}
 

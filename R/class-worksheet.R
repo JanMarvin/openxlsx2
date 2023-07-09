@@ -140,18 +140,18 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorksheet` object
-    #' @param tabColor tabColor
-    #' @param oddHeader oddHeader
-    #' @param oddFooter oddFooter
-    #' @param evenHeader evenHeader
-    #' @param evenFooter evenFooter
-    #' @param firstHeader firstHeader
-    #' @param firstFooter firstFooter
-    #' @param paperSize paperSize
+    #' @param tab_color tabColor
+    #' @param odd_header oddHeader
+    #' @param odd_footer oddFooter
+    #' @param even_header evenHeader
+    #' @param even_footer evenFooter
+    #' @param first_header firstHeader
+    #' @param first_footer firstFooter
+    #' @param paper_size paperSize
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
-    #' @param printGridLines printGridLines
+    #' @param print_grid_lines printGridLines
     #' @return a `wbWorksheet` object
     initialize = function(
       tabColor   = NULL,

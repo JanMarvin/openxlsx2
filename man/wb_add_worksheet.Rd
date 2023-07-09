@@ -7,21 +7,21 @@
 wb_add_worksheet(
   wb,
   sheet = next_sheet(),
-  gridLines = TRUE,
-  rowColHeaders = TRUE,
-  tabColor = NULL,
+  grid_lines = TRUE,
+  row_col_headers = TRUE,
+  tab_color = NULL,
   zoom = 100,
   header = NULL,
   footer = NULL,
-  oddHeader = header,
-  oddFooter = footer,
-  evenHeader = header,
-  evenFooter = footer,
-  firstHeader = header,
-  firstFooter = footer,
+  odd_header = header,
+  odd_footer = footer,
+  even_header = header,
+  even_footer = footer,
+  first_header = header,
+  first_footer = footer,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
-  hasDrawing = FALSE,
-  paperSize = getOption("openxlsx2.paperSize", default = 9),
+  has_drawing = FALSE,
+  paper_size = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
   vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
@@ -33,28 +33,28 @@ wb_add_worksheet(
 
 \item{sheet}{A name for the new worksheet}
 
-\item{gridLines}{A logical. If \code{FALSE}, the worksheet grid lines will be
+\item{grid_lines}{A logical. If \code{FALSE}, the worksheet grid lines will be
 hidden.}
 
-\item{rowColHeaders}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
+\item{row_col_headers}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
 hidden.}
 
-\item{tabColor}{Color of the worksheet tab. A valid color (belonging to
+\item{tab_color}{Color of the worksheet tab. A valid color (belonging to
 colors()) or a valid hex color beginning with "#"}
 
 \item{zoom}{A numeric between 10 and 400. Worksheet zoom level as a
 percentage.}
 
-\item{header, oddHeader, evenHeader, firstHeader, footer, oddFooter, evenFooter, firstFooter}{Character vector of length 3 corresponding to positions left, center,
+\item{header, odd_header, even_header, first_header, footer, odd_footer, even_footer, first_footer}{Character vector of length 3 corresponding to positions left, center,
 right.  \code{header} and \code{footer} are used to default additional arguments.
 Setting \code{even}, \code{odd}, or \code{first}, overrides \code{header}/\code{footer}. Use \code{NA} to
 skip a position.}
 
 \item{visible}{If FALSE, sheet is hidden else visible.}
 
-\item{hasDrawing}{If TRUE prepare a drawing output (TODO does this work?)}
+\item{has_drawing}{If TRUE prepare a drawing output (TODO does this work?)}
 
-\item{paperSize}{An integer corresponding to a paper size. See ?ws_page_setup for
+\item{paper_size}{An integer corresponding to a paper size. See ?ws_page_setup for
 details.}
 
 \item{orientation}{One of "portrait" or "landscape"}

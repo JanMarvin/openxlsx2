@@ -520,22 +520,22 @@ wb_add_chartsheet <- function(
 #'
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheet A name for the new worksheet
-#' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
+#' @param grid_lines A logical. If `FALSE`, the worksheet grid lines will be
 #'   hidden.
-#' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
+#' @param row_col_headers A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#' @param tab_color Color of the worksheet tab. A valid color (belonging to
 #'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
-#' @param header,oddHeader,evenHeader,firstHeader,footer,oddFooter,evenFooter,firstFooter
+#' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
 #'   Character vector of length 3 corresponding to positions left, center,
 #'   right.  `header` and `footer` are used to default additional arguments.
 #'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
 #'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
-#' @param hasDrawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paperSize An integer corresponding to a paper size. See ?ws_page_setup for
+#' @param has_drawing If TRUE prepare a drawing output (TODO does this work?)
+#' @param paper_size An integer corresponding to a paper size. See ?ws_page_setup for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
 #' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
@@ -597,46 +597,46 @@ wb_add_chartsheet <- function(
 #' wb$add_data(sheet = 8, 1:400)
 wb_add_worksheet <- function(
   wb,
-  sheet       = next_sheet(),
-  gridLines   = TRUE,
-  rowColHeaders = TRUE,
-  tabColor    = NULL,
-  zoom        = 100,
-  header      = NULL,
-  footer      = NULL,
-  oddHeader   = header,
-  oddFooter   = footer,
-  evenHeader  = header,
-  evenFooter  = footer,
-  firstHeader = header,
-  firstFooter = footer,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
-  hasDrawing  = FALSE,
-  paperSize   = getOption("openxlsx2.paperSize", default = 9),
-  orientation = getOption("openxlsx2.orientation", default = "portrait"),
-  hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  sheet           = next_sheet(),
+  grid_lines      = TRUE,
+  row_col_headers = TRUE,
+  tab_color       = NULL,
+  zoom            = 100,
+  header          = NULL,
+  footer          = NULL,
+  odd_header      = header,
+  odd_footer      = footer,
+  even_header     = header,
+  even_footer     = footer,
+  first_header    = header,
+  first_footer    = footer,
+  visible         = c("true", "false", "hidden", "visible", "veryhidden"),
+  has_drawing     = FALSE,
+  paper_size      = getOption("openxlsx2.paperSize", default = 9),
+  orientation     = getOption("openxlsx2.orientation", default = "portrait"),
+  hdpi            = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
   ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_worksheet(
-    sheet       = sheet,
-    gridLines   = gridLines,
-    rowColHeaders = rowColHeaders,
-    tabColor    = tabColor,
-    zoom        = zoom,
-    oddHeader   = headerFooterSub(oddHeader),
-    oddFooter   = headerFooterSub(oddFooter),
-    evenHeader  = headerFooterSub(evenHeader),
-    evenFooter  = headerFooterSub(evenFooter),
-    firstHeader = headerFooterSub(firstHeader),
-    firstFooter = headerFooterSub(firstFooter),
-    visible     = visible,
-    paperSize   = paperSize,
-    orientation = orientation,
-    vdpi        = vdpi,
-    hdpi        = hdpi,
-    ...         = ...
+    sheet           = sheet,
+    grid_lines      = grid_lines,
+    row_col_headers = row_col_headers,
+    tab_color       = tab_color,
+    zoom            = zoom,
+    odd_header      = headerFooterSub(odd_header),
+    odd_footer      = headerFooterSub(odd_footer),
+    even_header     = headerFooterSub(even_header),
+    even_footer     = headerFooterSub(even_footer),
+    first_header    = headerFooterSub(first_header),
+    first_footer    = headerFooterSub(first_footer),
+    visible         = visible,
+    paper_size      = paper_size,
+    orientation     = orientation,
+    vdpi            = vdpi,
+    hdpi            = hdpi,
+    ...             = ...
   )
 }
 
